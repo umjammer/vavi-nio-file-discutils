@@ -1,8 +1,0 @@
-<Project>
-
-  <!-- Package related stuff -->
-  <PropertyGroup>
-    <IsPackable>false</IsPackable>
-  </PropertyGroup>
-
-</Project>
