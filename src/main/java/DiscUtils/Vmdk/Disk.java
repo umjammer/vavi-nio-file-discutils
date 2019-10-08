@@ -69,7 +69,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param path The path to the disk.
      * @param access The access requested to the disk.
      */
@@ -79,7 +79,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param fileSystem The file system containing the disk.
      * @param path The file system relative path to the disk.
      * @param access The access requested to the disk.
@@ -98,7 +98,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Only monolithic sparse
      * streams are supported.
-     * 
+     *
      * @param stream The stream containing the VMDK file.
      * @param ownsStream Indicates if the new instances owns the stream.
      */
@@ -154,7 +154,7 @@ public final class Disk extends VirtualDisk {
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
-    public SparseStream getContent() throws IOException {
+    public SparseStream getContent() {
         if (_content == null) {
             SparseStream stream = null;
             for (int i = _files.size() - 1; i >= 0; --i) {
@@ -219,7 +219,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param parameters The desired parameters for the new disk.
      * @return The newly created disk image.
@@ -230,7 +230,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param type The type of virtual disk to create.
@@ -242,7 +242,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or
@@ -257,7 +257,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified location on a file system.
-     * 
+     *
      * @param fileSystem The file system to contain the disk.
      * @param path The file system path to the disk.
      * @param capacity The desired capacity of the new disk.
@@ -273,7 +273,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param type The type of virtual disk to create.
@@ -289,7 +289,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or
@@ -309,7 +309,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk at the specified location on a file system.
-     * 
+     *
      * @param fileSystem The file system to contain the disk.
      * @param path The file system path to the disk.
      * @param capacity The desired capacity of the new disk.
@@ -327,7 +327,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk as a thin clone of an existing disk.
-     * 
+     *
      * @param path The path to the new disk.
      * @param type The type of disk to create.
      * @param parentPath The path to the parent disk.
@@ -339,7 +339,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new virtual disk as a thin clone of an existing disk.
-     * 
+     *
      * @param fileSystem The file system to contain the disk.
      * @param path The path to the new disk.
      * @param type The type of disk to create.
@@ -355,7 +355,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk, possibly within an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
@@ -366,7 +366,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk.
-     * 
+     *
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
@@ -427,8 +427,7 @@ public final class Disk extends VirtualDisk {
         while (file.getNeedsParent()) {
             boolean foundParent = false;
             FileLocator locator = file.getRelativeFileLocator();
-            for (Object __dummyForeachVar3 : file.getParentLocations()) {
-                String posParent = (String) __dummyForeachVar3;
+            for (String posParent : file.getParentLocations()) {
                 if (locator.exists(posParent)) {
                     file = openDiskLayer(file.getRelativeFileLocator(), posParent, FileAccess.Read);
                     _files.add(new Tuple<>(file, Ownership.Dispose));

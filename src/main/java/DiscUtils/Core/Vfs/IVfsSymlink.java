@@ -1,10 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/11 18:18:08
-//
-
-package DiscUtils.Core.Vfs;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25,17 +19,17 @@ package DiscUtils.Core.Vfs;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Core.Vfs;
+
 /**
-* Interface implemented by classes representing a directory.
-* Concrete type representing directory entries.Concrete type representing files.
-*/
-public interface IVfsSymlink <TDirEntry extends VfsDirEntry, TFile extends IVfsFile>  extends IVfsFile
-{
+ * Interface implemented by classes representing a directory.
+ * Concrete type representing directory entries.Concrete type representing
+ * files.
+ */
+public interface IVfsSymlink<TDirEntry extends VfsDirEntry, TFile extends IVfsFile> extends IVfsFile {
     /**
-    * Gets the target path for this symlink.
-    */
-    String getTargetPath() ;
-
+     * Gets the target path for this symlink.
+     */
+    String getTargetPath();
 }
-
-

@@ -62,7 +62,7 @@ public final class HeaderInfo {
 
     /**
      * Gets the GUID indicating which log records are valid.
-     * 
+     *
      * The NULL GUID indicates there are no log records to replay.
      */
     public UUID getLogGuid() {
@@ -92,7 +92,7 @@ public final class HeaderInfo {
 
     /**
      * Gets the sequence number of the header information.
-     * 
+     *
      * VHDX files contain two copies of the header, both contain a sequence
      * number, the highest
      * sequence number represents the current header information.

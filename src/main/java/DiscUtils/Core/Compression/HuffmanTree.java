@@ -24,7 +24,7 @@ package DiscUtils.Core.Compression;
 
 /**
  * A canonical Huffman tree implementation.
- * 
+ *
  * A lookup table is created that will take any bit sequence (max tree depth in
  * length),
  * indicating the output symbol. In WIM files, in practice, no chunk exceeds

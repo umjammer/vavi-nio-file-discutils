@@ -26,7 +26,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
@@ -44,6 +43,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
 import moe.yo3explorer.dotnetio4j.FileAccess;
+
 
 /**
  * Base class representing virtual hard disks.
@@ -125,7 +125,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
-    public abstract SparseStream getContent() throws IOException;
+    public abstract SparseStream getContent();
 
     /**
      * Gets the layers that make up the disk.
@@ -155,7 +155,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * for obviously
      * invalid data, such as overlapping partitions.
      */
-    public boolean getIsPartitioned() throws IOException {
+    public boolean isPartitioned() {
         return PartitionTable.isPartitioned(getContent());
     }
 
@@ -171,7 +171,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * the discovered partition
      * tables on a disk.
      */
-    public PartitionTable getPartitions() throws IOException {
+    public PartitionTable getPartitions() {
         List<PartitionTable> tables = PartitionTable.getPartitionTables(this);
         if (tables == null || tables.size() == 0) {
             return null;
@@ -219,7 +219,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Gets the set of supported variants of a type of virtual disk.
-     * 
+     *
      * @param type A type, as returned by
      *            {@link #getSupportedDiskTypes()}
      *            .
@@ -232,7 +232,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Gets information about disk type.
-     * 
+     *
      * @param type The disk type, as returned by
      *            {@link #getSupportedDiskTypes()}
      *            .
@@ -245,7 +245,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Create a new virtual disk, possibly within an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param type The type of disk to create (see
      *            {@link #getSupportedDiskTypes()}
@@ -270,8 +270,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         VirtualDiskFactory factory = VirtualDiskManager.getTypeMap().get(type);
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
         if (parameters != null) {
-            for (Object __dummyForeachVar0 : parameters.keySet()) {
-                String key = (String) __dummyForeachVar0;
+            for (String key : parameters.keySet()) {
                 diskParams.extendedParameters.put(key, parameters.get(key));
             }
         }
@@ -284,7 +283,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Create a new virtual disk.
-     * 
+     *
      * @param type The type of disk to create (see
      *            {@link #getSupportedDiskTypes()}
      *            ).
@@ -309,7 +308,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Create a new virtual disk.
-     * 
+     *
      * @param type The type of disk to create (see
      *            {@link #getSupportedDiskTypes()}
      *            ).
@@ -339,8 +338,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          Map<String, String> parameters) throws IOException {
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
         if (parameters != null) {
-            for (Object __dummyForeachVar1 : parameters.keySet()) {
-                String key = (String) __dummyForeachVar1;
+            for (String key : parameters.keySet()) {
                 diskParams.extendedParameters.put(key, parameters.get(key));
             }
         }
@@ -350,7 +348,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Create a new virtual disk.
-     * 
+     *
      * @param type The type of disk to create (see
      *            {@link #getSupportedDiskTypes()}
      *            ).
@@ -380,32 +378,27 @@ public abstract class VirtualDisk implements Serializable, Closeable {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }
 
-        Class<VirtualDiskTransport> transportType = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
-        try (VirtualDiskTransport transport = transportType.newInstance()) {
-
-            transport.connect(uri, user, password);
-            if (transport.getIsRawDisk()) {
-                result = transport.openDisk(FileAccess.ReadWrite);
-            } else {
-                VirtualDiskFactory factory = VirtualDiskManager.getTypeMap().get(type);
-                result = factory.createDisk(transport.getFileLocator(),
-                                            variant.toLowerCase(),
-                                            Utilities.getFileFromPath(path),
-                                            diskParameters);
-            }
-            if (result != null) {
-                result._transport = transport;
-            }
-
-            return result;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+        VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
+        transport.connect(uri, user, password);
+        if (transport.getIsRawDisk()) {
+            result = transport.openDisk(FileAccess.ReadWrite);
+        } else {
+            VirtualDiskFactory factory = VirtualDiskManager.getTypeMap().get(type);
+            result = factory.createDisk(transport.getFileLocator(),
+                                        variant.toLowerCase(),
+                                        Utilities.getFileFromPath(path),
+                                        diskParameters);
         }
+        if (result != null) {
+            result._transport = transport;
+        }
+
+        return result;
     }
 
     /**
      * Opens an existing virtual disk.
-     * 
+     *
      * @param path The path of the virtual disk to open, can be a URI.
      * @param access The desired access to the disk.
      * @return The Virtual Disk, or
@@ -418,7 +411,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Opens an existing virtual disk.
-     * 
+     *
      * @param path The path of the virtual disk to open, can be a URI.
      * @param access The desired access to the disk.
      * @param user The user name to use for authentication (if necessary).
@@ -433,7 +426,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Opens an existing virtual disk.
-     * 
+     *
      * @param path The path of the virtual disk to open, can be a URI.
      * @param forceType Force the detected disk type (
      *            {@code null}
@@ -459,45 +452,41 @@ public abstract class VirtualDisk implements Serializable, Closeable {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }
 
-        Class<VirtualDiskTransport> transportType = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
-        try (VirtualDiskTransport transport = transportType.newInstance()) {
-            transport.connect(uri, user, password);
-            if (transport.getIsRawDisk()) {
-                result = transport.openDisk(access);
+        VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
+        transport.connect(uri, user, password);
+        if (transport.getIsRawDisk()) {
+            result = transport.openDisk(access);
+        } else {
+            boolean foundFactory;
+            VirtualDiskFactory factory;
+            if (forceType != null && !forceType.isEmpty()) {
+                foundFactory = VirtualDiskManager.getTypeMap().containsKey(forceType);
+                factory = VirtualDiskManager.getTypeMap().get(forceType);
             } else {
-                boolean foundFactory;
-                VirtualDiskFactory factory;
-                if (forceType != null && !forceType.isEmpty()) {
-                    foundFactory = VirtualDiskManager.getTypeMap().containsKey(forceType);
-                    factory = VirtualDiskManager.getTypeMap().get(forceType);
-                } else {
-                    String pathString = uri.getPath();
-                    String extension = pathString.substring(pathString.lastIndexOf(".") + 1).toUpperCase();
-                    if (extension.startsWith(".")) {
-                        extension = extension.substring(1);
-                    }
-
-                    foundFactory = VirtualDiskManager.getExtensionMap().containsKey(extension);
-                    factory = VirtualDiskManager.getExtensionMap().get(extension);
-                }
-                if (foundFactory) {
-                    result = factory.openDisk(transport.getFileLocator(), transport.getFileName(), access);
+                String pathString = uri.getPath();
+                String extension = pathString.substring(pathString.lastIndexOf(".") + 1).toUpperCase();
+                if (extension.startsWith(".")) {
+                    extension = extension.substring(1);
                 }
 
+                foundFactory = VirtualDiskManager.getExtensionMap().containsKey(extension);
+                factory = VirtualDiskManager.getExtensionMap().get(extension);
             }
-            if (result != null) {
-                result._transport = transport;
+            if (foundFactory) {
+                result = factory.openDisk(transport.getFileLocator(), transport.getFileName(), access);
             }
 
-            return result;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
         }
+        if (result != null) {
+            result._transport = transport;
+        }
+
+        return result;
     }
 
     /**
      * Opens an existing virtual disk, possibly from within an existing disk.
-     * 
+     *
      * @param fs The file system to open the disk on.
      * @param path The path of the virtual disk to open.
      * @param access The desired access to the disk.
@@ -524,10 +513,10 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Reads the first sector of the disk, known as the Master Boot Record.
-     * 
+     *
      * @return The MBR as a byte array.
      */
-    public byte[] getMasterBootRecord() throws IOException {
+    public byte[] getMasterBootRecord() {
         byte[] sector = new byte[Sizes.Sector];
         long oldPos = getContent().getPosition();
         getContent().setPosition(0);
@@ -538,7 +527,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Overwrites the first sector of the disk, known as the Master Boot Record.
-     * 
+     *
      * @param data The master boot record, must be 512 bytes in length.
      */
     public void setMasterBootRecord(byte[] data) throws IOException {
@@ -559,7 +548,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Create a new differencing disk, possibly within an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
@@ -568,7 +557,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
     /**
      * Create a new differencing disk.
-     * 
+     *
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
@@ -599,38 +588,33 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     }
 
     private static URI pathToUri(String path) {
-        try {
-            if (Objects.isNull(path) || path.isEmpty()) {
-                throw new IllegalArgumentException("Path must not be null or empty " + path);
-            }
-
-            if (path.indexOf("://") > -1) {
-                return new URI(path);
-            }
-
-            path = Paths.get(path).toAbsolutePath().toString();
-
-            // Built-in Uri class does cope well with query params on file Uris, so do some
-            // parsing ourselves...
-            if (path.length() >= 1 && path.charAt(0) == '\\') {
-                URI builder = new URI("file:" + path.replace('\\', '/'));
-                return builder;
-            }
-
-            if (path.startsWith("//")) {
-                URI builder = new URI("file:" + path);
-                return builder;
-            }
-
-            if (path.length() >= 2 && path.charAt(1) == ':') {
-                URI builder = new URI("file:///" + path.replace('\\', '/'));
-                return builder;
-            }
-
-            return new URI(path);
-        } catch (URISyntaxException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        if (Objects.isNull(path) || path.isEmpty()) {
+            throw new IllegalArgumentException("Path must not be null or empty " + path);
         }
-    }
 
+        if (path.indexOf("://") > -1) {
+            return URI.create(path);
+        }
+
+        path = Paths.get(path).toAbsolutePath().toString();
+
+        // Built-in Uri class does cope well with query params on file Uris, so do some
+        // parsing ourselves...
+        if (path.length() >= 1 && path.charAt(0) == '\\') {
+            URI builder = URI.create("file:" + path.replace('\\', '/'));
+            return builder;
+        }
+
+        if (path.startsWith("//")) {
+            URI builder = URI.create("file:" + path);
+            return builder;
+        }
+
+        if (path.length() >= 2 && path.charAt(1) == ':') {
+            URI builder = URI.create("file:///" + path.replace('\\', '/'));
+            return builder;
+        }
+
+        return URI.create("file://" + path); // TODO "file:" added
+    }
 }

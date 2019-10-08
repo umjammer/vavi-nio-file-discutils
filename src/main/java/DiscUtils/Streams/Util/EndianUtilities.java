@@ -144,6 +144,10 @@ public class EndianUtilities {
         return UUID.nameUUIDFromBytes(temp);
     }
 
+    public static UUID toGuidBigEndian(byte[] buffer, int offset) {
+        return toGuidBigEndian(buffer, new int[] { offset });
+    }
+
     public static UUID toGuidBigEndian(byte[] buffer, int[] offset) {
         return UUID.nameUUIDFromBytes(new byte[] {
             (byte) toUInt32BigEndian(buffer, offset[0] + 0), (byte) toUInt16BigEndian(buffer, offset[0] + 4),
@@ -172,12 +176,12 @@ public class EndianUtilities {
     /**
      * Primitive conversion from Unicode to ASCII that preserves special
      * characters.
-     * 
+     *
      * @param value The string to convert.
      * @param dest The buffer to fill.
      * @param offset The start of the string in the buffer.
      * @param count The number of characters to convert.The built-in
-     *            ASCIIEncoding converts characters of codepoint > 127 to ?,
+     *            ASCIICharset converts characters of codepoint > 127 to ?,
      *            this preserves those code points by removing the top 16 bits
      *            of each character.
      */
@@ -197,11 +201,11 @@ public class EndianUtilities {
     /**
      * Primitive conversion from ASCII to Unicode that preserves special
      * characters.
-     * 
+     *
      * @param data The data to convert.
      * @param offset The first byte to convert.
      * @param count The number of bytes to convert.
-     * @return The string.The built-in ASCIIEncoding converts characters of
+     * @return The string.The built-in ASCIICharset converts characters of
      *         codepoint > 127 to ?,
      *         this preserves those code points.
      */
@@ -216,11 +220,11 @@ public class EndianUtilities {
     /**
      * Primitive conversion from ASCII to Unicode that stops at a
      * null-terminator.
-     * 
+     *
      * @param data The data to convert.
      * @param offset The first byte to convert.
      * @param count The number of bytes to convert.
-     * @return The string.The built-in ASCIIEncoding converts characters of
+     * @return The string.The built-in ASCIICharset converts characters of
      *         codepoint > 127 to ?,
      *         this preserves those code points.
      */

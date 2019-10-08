@@ -40,7 +40,7 @@ public class SubBuffer extends Buffer {
 
     /**
      * Initializes a new instance of the SubBuffer class.
-     * 
+     *
      * @param parent The parent buffer.
      * @param first The first byte in
      *            {@code parent}
@@ -97,7 +97,7 @@ public class SubBuffer extends Buffer {
 
     /**
      * Reads from the buffer into a byte array.
-     * 
+     *
      * @param pos The offset within the buffer to start reading.
      * @param buffer The destination byte array.
      * @param offset The start offset within the destination buffer.
@@ -118,7 +118,7 @@ public class SubBuffer extends Buffer {
 
     /**
      * Writes a byte array into the buffer.
-     * 
+     *
      * @param pos The start offset within the buffer.
      * @param buffer The source byte array.
      * @param offset The start offset within the source byte array.
@@ -138,7 +138,7 @@ public class SubBuffer extends Buffer {
 
     /**
      * Sets the capacity of the buffer, truncating if appropriate.
-     * 
+     *
      * @param value The desired capacity of the buffer.
      */
     public void setCapacity(long value) {
@@ -147,7 +147,7 @@ public class SubBuffer extends Buffer {
 
     /**
      * Gets the parts of a buffer that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.

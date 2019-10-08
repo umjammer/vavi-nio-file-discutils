@@ -58,7 +58,7 @@ public class FileChecker {
 
     /**
      * Initializes a new instance of the FileChecker class.
-     * 
+     *
      * @param stream The VHD file stream.
      */
     public FileChecker(Stream stream) {
@@ -67,7 +67,7 @@ public class FileChecker {
 
     /**
      * Verifies the VHD file, generating a report and a pass/fail indication.
-     * 
+     *
      * @param reportOutput The destination for the report.
      * @param levels How verbose the report should be.
      * @return

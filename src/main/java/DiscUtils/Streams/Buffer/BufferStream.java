@@ -44,7 +44,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Initializes a new instance of the BufferStream class.
-     * 
+     *
      * @param buffer The buffer to use.
      * @param access The access permitted to clients.
      */
@@ -107,7 +107,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Reads a number of bytes from the stream.
-     * 
+     *
      * @param buffer The destination buffer.
      * @param offset The start offset within the destination buffer.
      * @param count The number of bytes to read.
@@ -126,7 +126,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Changes the current stream position.
-     * 
+     *
      * @param offset The origin-relative stream position.
      * @param origin The origin for the stream position.
      * @return The new stream position.
@@ -149,7 +149,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Sets the length of the stream (the underlying buffer's capacity).
-     * 
+     *
      * @param value The new length of the stream.
      */
     public void setLength(long value) {
@@ -158,7 +158,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Writes a buffer to the stream.
-     * 
+     *
      * @param buffer The buffer to write.
      * @param offset The starting offset within buffer.
      * @param count The number of bytes to write.
@@ -175,7 +175,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Clears bytes from the stream.
-     * 
+     *
      * @param count The number of bytes (from the current position) to
      *            clear.Logically equivalent to writing
      *            {@code count}
@@ -202,7 +202,7 @@ public class BufferStream extends SparseStream {
 
     /**
      * Gets the parts of a stream that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.

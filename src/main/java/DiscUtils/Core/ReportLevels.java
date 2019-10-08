@@ -4,7 +4,7 @@ package DiscUtils.Core;
 public enum ReportLevels {
     /**
      * Flags for the amount of detail to include in a report.
-     * 
+     *
      * Report no information.
      */
     None,

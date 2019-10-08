@@ -47,7 +47,7 @@ class ParentLocator implements IByteArraySerializable {
 
     private Map<String, String> Entries = new HashMap<>();
 
-    public int getSize() {
+    public long getSize() {
         if (Entries.size() != 0) {
             throw new UnsupportedOperationException();
         }

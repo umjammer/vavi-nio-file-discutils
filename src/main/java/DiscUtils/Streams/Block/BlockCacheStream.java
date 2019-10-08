@@ -58,7 +58,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Initializes a new instance of the BlockCacheStream class.
-     * 
+     *
      * @param toWrap The stream to wrap.
      * @param ownership Whether to assume ownership of
      *            {@code toWrap}
@@ -70,7 +70,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Initializes a new instance of the BlockCacheStream class.
-     * 
+     *
      * @param toWrap The stream to wrap.
      * @param ownership Whether to assume ownership of
      *            {@code toWrap}
@@ -162,7 +162,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Gets the parts of a stream that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
@@ -174,7 +174,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Reads data from the stream.
-     * 
+     *
      * @param buffer The buffer to fill.
      * @param offset The buffer offset to start from.
      * @param count The number of bytes to read.
@@ -292,7 +292,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Moves the stream position.
-     * 
+     *
      * @param offset The origin-relative location.
      * @param origin The base location.
      * @return The new absolute stream position.
@@ -317,7 +317,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Sets the length of the stream.
-     * 
+     *
      * @param value The new length.
      */
     public void setLength(long value) {
@@ -327,7 +327,7 @@ public final class BlockCacheStream extends SparseStream {
 
     /**
      * Writes data to the stream at the current location.
-     * 
+     *
      * @param buffer The data to write.
      * @param offset The first byte to write from buffer.
      * @param count The number of bytes to write.

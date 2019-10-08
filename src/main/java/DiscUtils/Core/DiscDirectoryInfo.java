@@ -29,13 +29,13 @@ import java.util.stream.Collectors;
 
 /**
  * Provides information about a directory on a disc.
- * 
+ *
  * This class allows navigation of the disc directory/file hierarchy.
  */
 public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Initializes a new instance of the DiscDirectoryInfo class.
-     * 
+     *
      * @param fileSystem The file system the directory info relates to.
      * @param path The path within the file system of the directory.
      */
@@ -73,7 +73,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Deletes a directory, with the caller choosing whether to recurse.
-     * 
+     *
      * @param recursive
      *            {@code true}
      *            to delete all child node,
@@ -86,7 +86,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Moves a directory and it's contents to a new path.
-     * 
+     *
      * @param destinationDirName The destination directory name.
      */
     public void moveTo(String destinationDirName) throws IOException {
@@ -95,7 +95,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all child directories.
-     * 
+     *
      * @return An array of child directories.
      */
     public List<DiscDirectoryInfo> getDirectories() throws IOException {
@@ -106,7 +106,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all child directories matching a search pattern.
-     * 
+     *
      * @param pattern The search pattern.
      * @return An array of child directories, or empty if none match.The search
      *         pattern can include the wildcards * (matching 0 or more
@@ -119,7 +119,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all descendant directories matching a search pattern.
-     * 
+     *
      * @param pattern The search pattern.
      * @param searchOption Whether to search just this directory, or all
      *            children.
@@ -138,7 +138,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all files.
-     * 
+     *
      * @return An array of files.
      */
     public List<DiscDirectoryInfo> getFiles() throws IOException {
@@ -149,7 +149,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all files matching a search pattern.
-     * 
+     *
      * @param pattern The search pattern.
      * @return An array of files, or empty if none match.The search pattern can
      *         include the wildcards * (matching 0 or more characters)
@@ -161,7 +161,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all descendant files matching a search pattern.
-     * 
+     *
      * @param pattern The search pattern.
      * @param searchOption Whether to search just this directory, or all
      *            children.
@@ -180,7 +180,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all files and directories in this directory.
-     * 
+     *
      * @return An array of files and directories.
      */
     public List<DiscDirectoryInfo> getFileSystemInfos() throws IOException {
@@ -191,7 +191,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
     /**
      * Gets all files and directories in this directory.
-     * 
+     *
      * @param pattern The search pattern.
      * @return An array of files and directories.The search pattern can include
      *         the wildcards * (matching 0 or more characters)

@@ -37,7 +37,7 @@ import moe.yo3explorer.dotnetio4j.SeekOrigin;
  * their own Position), and ensures
  * only a single operation is executing on the wrapped stream at any time.This
  * example shows the pattern of use:
- * {@code 
+ * {@code
 * SparseStream baseStream = ...;
 * ThreadSafeStream tss = new ThreadSafeStream(baseStream);
 * for(int i = 0; i < 10; ++i)
@@ -60,7 +60,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Initializes a new instance of the ThreadSafeStream class.
-     * 
+     *
      * @param toWrap The stream to wrap.Do not directly modify
      *            {@code toWrap}
      *            after wrapping it, unless the thread-safe views
@@ -72,7 +72,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Initializes a new instance of the ThreadSafeStream class.
-     * 
+     *
      * @param toWrap The stream to wrap.
      * @param ownership Whether to transfer ownership of
      *            {@code toWrap}
@@ -170,7 +170,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Opens a new thread-safe view on the stream.
-     * 
+     *
      * @return The new view.
      */
     public SparseStream openView() {
@@ -179,7 +179,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Gets the parts of a stream that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
@@ -201,7 +201,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Reads data from the stream.
-     * 
+     *
      * @param buffer The buffer to fill.
      * @param offset The first byte in buffer to fill.
      * @param count The requested number of bytes to read.
@@ -219,7 +219,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Changes the current stream position (each view has it's own Position).
-     * 
+     *
      * @param offset The relative location to move to.
      * @param origin The origin of the location.
      * @return The new location as an absolute position.
@@ -242,7 +242,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Sets the length of the stream (not supported).
-     * 
+     *
      * @param value The new length.
      */
     public void setLength(long value) {
@@ -251,7 +251,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Writes data to the stream (not currently supported).
-     * 
+     *
      * @param buffer The data to write.
      * @param offset The first byte to write.
      * @param count The number of bytes to write.
@@ -271,7 +271,7 @@ public class ThreadSafeStream extends SparseStream {
 
     /**
      * Disposes of this instance, invalidating any remaining views.
-     * 
+     *
      * @throws IOException
      */
     public void close() throws IOException {

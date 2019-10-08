@@ -42,7 +42,7 @@ import DiscUtils.Streams.Util.Range;
 public final class StreamExtent implements Comparable<StreamExtent> {
     /**
      * Initializes a new instance of the StreamExtent class.
-     * 
+     *
      * @param start The start of the extent.
      * @param length The length of the extent.
      */
@@ -71,10 +71,10 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Compares this stream extent to another.
-     * 
+     *
      * @param other The extent to compare.
      * @return Value greater than zero if this extent starts after
-     * 
+     *
      *         {@code other}
      *         , zero if they start at the same position, else
      *         a value less than zero.
@@ -93,7 +93,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Indicates if this StreamExtent is equal to another.
-     * 
+     *
      * @param other The extent to compare.
      * @return
      *         {@code true}
@@ -111,7 +111,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Calculates the union of a list of extents with another extent.
-     * 
+     *
      * @param extents The list of extents.
      * @param other The other extent.
      * @return The union of the extents.
@@ -124,7 +124,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Calculates the union of the extents of multiple streams.
-     * 
+     *
      * @param streams The stream extents.
      * @return The union of the extents from multiple streams.A typical use of
      *         this method is to calculate the combined set of
@@ -198,7 +198,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     /**
      * Calculates the intersection of the extents of a stream with another
      * extent.
-     * 
+     *
      * @param extents The stream extents.
      * @param other The extent to intersect.
      * @return The intersection of the extents.
@@ -209,7 +209,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Calculates the intersection of the extents of multiple streams.
-     * 
+     *
      * @param streams The stream extents.
      * @return The intersection of the extents from multiple streams.A typical
      *         use of this method is to calculate the extents in a
@@ -267,7 +267,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Calculates the subtraction of the extents of a stream by another extent.
-     * 
+     *
      * @param extents The stream extents.
      * @param other The extent to subtract.
      * @return The subtraction of
@@ -282,7 +282,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Calculates the subtraction of the extents of a stream by another stream.
-     * 
+     *
      * @param a The stream extents to subtract from.
      * @param b The stream extents to subtract.
      * @return The subtraction of the extents of b from a.
@@ -293,25 +293,24 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Calculates the inverse of the extents of a stream.
-     * 
+     *
      * @param extents The stream extents to inverse.
      * @return The inverted extents.
      *         This method assumes a logical stream addressable from
      *         {@code 0}
      *         to
-     *         {@code long.MaxValue}
+     *         {@code Long.MAX_VALUE}
      *         , and is undefined
      *         should any stream extent start at less than 0. To constrain the
      *         extents to a specific range, use the
-     * 
+     *
      *         {@code Intersect}
      *         method.
      */
     public static List<StreamExtent> invert(List<StreamExtent> extents) {
         List<StreamExtent> result = new ArrayList<>();
         StreamExtent last = new StreamExtent(0, 0);
-        for (Object __dummyForeachVar0 : extents) {
-            StreamExtent extent = (StreamExtent) __dummyForeachVar0;
+        for (StreamExtent extent: extents) {
             // Skip over any 'noise'
             if (extent.getLength() == 0) {
                 continue;
@@ -333,7 +332,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Offsets the extents of a stream.
-     * 
+     *
      * @param stream The stream extents.
      * @param delta The amount to offset the extents by.
      * @return The stream extents, offset by delta.
@@ -344,7 +343,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Returns the number of blocks containing stream data.
-     * 
+     *
      * @param stream The stream extents.
      * @param blockSize The size of each block.
      * @return The number of blocks containing stream data.This method logically
@@ -374,7 +373,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Returns all of the blocks containing stream data.
-     * 
+     *
      * @param stream The stream extents.
      * @param blockSize The size of each block.
      * @return Ranges of blocks, as block indexes.This method logically divides
@@ -413,7 +412,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * The equality operator.
-     * 
+     *
      * @param a The first extent to compare.
      * @param b The second extent to compare.
      * @return Whether the two extents are equal.
@@ -421,7 +420,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * The inequality operator.
-     * 
+     *
      * @param a The first extent to compare.
      * @param b The second extent to compare.
      * @return Whether the two extents are different.
@@ -429,7 +428,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * The less-than operator.
-     * 
+     *
      * @param a The first extent to compare.
      * @param b The second extent to compare.
      * @return Whether a is less than b.
@@ -437,7 +436,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * The greater-than operator.
-     * 
+     *
      * @param a The first extent to compare.
      * @param b The second extent to compare.
      * @return Whether a is greater than b.
@@ -445,7 +444,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Returns a string representation of the extent as [start:+length].
-     * 
+     *
      * @return The string representation.
      */
     public String toString() {
@@ -454,7 +453,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Indicates if this stream extent is equal to another object.
-     * 
+     *
      * @param obj The object to test.
      * @return
      *         {@code true}
@@ -470,7 +469,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
     /**
      * Gets a hash code for this extent.
-     * 
+     *
      * @return The extent's hash code.
      */
     public int hashCode() {

@@ -35,7 +35,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 public abstract class VfsFileSystemFactory {
     /**
      * Detects if a stream contains any known file systems.
-     * 
+     *
      * @param stream The stream to inspect.
      * @return A list of file systems (may be empty).
      */
@@ -45,7 +45,7 @@ public abstract class VfsFileSystemFactory {
 
     /**
      * Detects if a volume contains any known file systems.
-     * 
+     *
      * @param volume The volume to inspect.
      * @return A list of file systems (may be empty).
      */
@@ -59,7 +59,7 @@ public abstract class VfsFileSystemFactory {
 
     /**
      * The logic for detecting file systems.
-     * 
+     *
      * @param stream The stream to inspect.
      * @param volumeInfo Optionally, information about the volume.
      * @return A list of file systems detected (may be empty).

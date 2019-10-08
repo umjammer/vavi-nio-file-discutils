@@ -22,6 +22,7 @@
 
 package DiscUtils.Core;
 
+import java.util.EnumSet;
 import java.util.Map;
 
 
@@ -31,11 +32,11 @@ import java.util.Map;
 public final class ClusterMap {
     private final Object[] _clusterToFileId;
 
-    private final ClusterRoles[] _clusterToRole;
+    private final EnumSet<ClusterRoles>[] _clusterToRole;
 
     private final Map<Object, String[]> _fileIdToPaths;
 
-    public ClusterMap(ClusterRoles[] clusterToRole,
+    public ClusterMap(EnumSet<ClusterRoles>[] clusterToRole,
             Object[] clusterToFileId,
             Map<Object, String[]> fileIdToPaths) {
         _clusterToRole = clusterToRole;
@@ -45,13 +46,13 @@ public final class ClusterMap {
 
     /**
      * Gets the role of a cluster within the file system.
-     * 
+     *
      * @param cluster The cluster to inspect.
      * @return The clusters role (or roles).
      */
-    public ClusterRoles getRole(int cluster) {
+    public EnumSet<ClusterRoles> getRole(int cluster) {
         if (_clusterToRole == null || _clusterToRole.length < cluster) {
-            return ClusterRoles.None;
+            return EnumSet.of(ClusterRoles.None);
         }
 
         return _clusterToRole[cluster];
@@ -59,7 +60,7 @@ public final class ClusterMap {
 
     /**
      * Converts a cluster to a list of file names.
-     * 
+     *
      * @param cluster The cluster to inspect.
      * @return A list of paths that map to the cluster.A list is returned
      *         because on file systems with the notion of
@@ -67,12 +68,11 @@ public final class ClusterMap {
      *         entries.
      */
     public String[] clusterToPaths(int cluster) {
-        if ((getRole(cluster).ordinal() & (ClusterRoles.DataFile.ordinal() | ClusterRoles.SystemFile.ordinal())) != 0) {
+        if (getRole(cluster).containsAll(EnumSet.of(ClusterRoles.DataFile, ClusterRoles.SystemFile))) {
             Object fileId = _clusterToFileId[cluster];
             return _fileIdToPaths.get(fileId);
         }
 
         return new String[0];
     }
-
 }

@@ -51,7 +51,7 @@ public final class RegionInfo {
 
     /**
      * Gets a value indicating whether this region is required.
-     * 
+     *
      * To load a VHDX file, a parser must be able to interpret all regions
      * marked as required.
      */
@@ -68,7 +68,7 @@ public final class RegionInfo {
 
     /**
      * Gets the well-known name (if any) of the region.
-     * 
+     *
      * VHDX 1.0 specification defines the "BAT" and "Metadata Region", unknown
      * regions
      * will return as

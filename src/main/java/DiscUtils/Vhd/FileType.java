@@ -27,7 +27,7 @@ import java.util.Arrays;
 public enum FileType {
     /**
      * The known types of VHD disks.
-     * 
+     *
      * Unknown type.
      */
     None,

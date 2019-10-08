@@ -85,7 +85,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream to interpret.
      */
     public DiskImageFile(Stream stream) {
@@ -96,7 +96,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream to interpret.
      * @param ownership Indicates if the new instance should control the
      *            lifetime of the stream.
@@ -110,7 +110,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param path The file path to open.
      * @param access Controls how the file can be accessed.
      */
@@ -227,7 +227,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a fixed-sized VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -242,7 +242,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a fixed-sized VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -262,7 +262,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a dynamically-sized VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -277,7 +277,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a dynamically-sized VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -296,7 +296,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a dynamically-sized VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -313,7 +313,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a dynamically-sized VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -335,7 +335,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a differencing disk VHD file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -359,7 +359,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Opens the content of the disk image file as a stream.
-     * 
+     *
      * @param parent The parent file's content (if any).
      * @param ownsParent Whether the created stream assumes ownership of parent
      *            stream.
@@ -371,7 +371,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the location of the parent file, given a base path.
-     * 
+     *
      * @return Array of candidate file locations.
      */
     public List<String> getParentLocations() {
@@ -380,7 +380,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the location of the parent file, given a base path.
-     * 
+     *
      * @param basePath The full path to this file.
      * @return Array of candidate file locations.
      */
@@ -509,7 +509,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                   Geometry geometry,
                                                   long blockSize) {
         if (blockSize > Integer.MAX_VALUE || blockSize < 0) {
-            throw new IndexOutOfBoundsException("Must be in the range 0 to uint.MaxValue");
+            throw new IndexOutOfBoundsException("Must be in the range 0 to Integer.MAX_VALUE");
         }
 
         if (geometry == null) {
@@ -588,7 +588,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the locations of the parent file.
-     * 
+     *
      * @param fileLocator The file locator to use.
      * @return Array of candidate file locations.
      */

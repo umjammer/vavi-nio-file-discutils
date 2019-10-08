@@ -50,7 +50,7 @@ public abstract class PartitionInfo {
 
     /**
      * Gets the type of the partition, as a GUID, when available.
-     * 
+     *
      * {@link #System.Guid}
      * .Empty for MBR-style partitions.
      */
@@ -81,14 +81,14 @@ public abstract class PartitionInfo {
 
     /**
      * Opens a stream that accesses the partition's contents.
-     * 
+     *
      * @return The new stream.
      */
     public abstract SparseStream open();
 
     /**
      * Gets a summary of the partition information as 'first - last (type)'.
-     * 
+     *
      * @return A string representation of the partition information.
      */
     public String toString() {

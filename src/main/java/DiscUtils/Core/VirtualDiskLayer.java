@@ -82,7 +82,7 @@ public abstract class VirtualDiskLayer implements Closeable {
      * that can resolve relative paths, or
      * {@code null}
      * .
-     * 
+     *
      * Typically used to locate parent disks.
      */
     public abstract FileLocator getRelativeFileLocator();
@@ -100,16 +100,16 @@ public abstract class VirtualDiskLayer implements Closeable {
 
     /**
      * Gets the content of this layer.
-     * 
+     *
      * @param parent The parent stream (if any).
      * @param ownsParent Controls ownership of the parent stream.
      * @return The content as a stream.
      */
-    public abstract SparseStream openContent(SparseStream parent, Ownership ownsParent) throws IOException;
+    public abstract SparseStream openContent(SparseStream parent, Ownership ownsParent);
 
     /**
      * Gets the possible locations of the parent file (if any).
-     * 
+     *
      * @return Array of strings, empty if no parent.
      */
     public abstract List<String> getParentLocations();

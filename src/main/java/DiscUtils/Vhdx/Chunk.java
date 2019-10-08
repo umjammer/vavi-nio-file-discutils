@@ -31,7 +31,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 /**
  * Represents a chunk of blocks in the Block Allocation Table.
- * 
+ *
  * The BAT entries for a chunk are always present in the BAT, but the data
  * blocks and
  * sector bitmap blocks may (or may not) be present.

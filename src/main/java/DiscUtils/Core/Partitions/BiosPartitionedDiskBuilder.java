@@ -43,7 +43,7 @@ import DiscUtils.Streams.Util.StreamUtilities;
 
 /**
  * Builds a stream with the contents of a BIOS partitioned disk.
- * 
+ *
  * This class assembles a disk image dynamically in memory. The
  * constructed stream will read data from the partition content
  * streams only when a client of this class tries to read from
@@ -60,7 +60,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
 
     /**
      * Initializes a new instance of the BiosPartitionedDiskBuilder class.
-     * 
+     *
      * @param capacity The capacity of the disk (in bytes).
      * @param biosGeometry The BIOS geometry of the disk.
      */
@@ -75,7 +75,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
 
     /**
      * Initializes a new instance of the BiosPartitionedDiskBuilder class.
-     * 
+     *
      * @param capacity The capacity of the disk (in bytes).
      * @param bootSectors The boot sector(s) of the disk.
      * @param biosGeometry The BIOS geometry of the disk.
@@ -97,7 +97,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
     /**
      * Initializes a new instance of the BiosPartitionedDiskBuilder class by
      * cloning the partition structure of a source disk.
-     * 
+     *
      * @param sourceDisk The disk to clone.
      */
     public BiosPartitionedDiskBuilder(VirtualDisk sourceDisk) throws IOException {
@@ -109,8 +109,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
         _biosGeometry = sourceDisk.getBiosGeometry();
         _bootSectors = new SparseMemoryStream();
         _bootSectors.setLength(_capacity);
-        for (Object __dummyForeachVar0 : (new BiosPartitionTable(sourceDisk)).getMetadataDiskExtents()) {
-            StreamExtent extent = (StreamExtent) __dummyForeachVar0;
+        for (StreamExtent extent: (new BiosPartitionTable(sourceDisk)).getMetadataDiskExtents()) {
             sourceDisk.getContent().setPosition(extent.getStart());
             byte[] buffer = StreamUtilities.readExact(sourceDisk.getContent(), (int) extent.getLength());
             _bootSectors.setPosition(extent.getStart());
@@ -132,7 +131,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
     /**
      * Sets a stream representing the content of a partition in the partition
      * table.
-     * 
+     *
      * @param index The index of the partition.
      * @param stream The stream with the contents of the partition.
      */
@@ -146,7 +145,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
     /**
      * Updates the CHS fields in partition records to reflect a new BIOS
      * geometry.
-     * 
+     *
      * @param geometry The disk's new BIOS geometry.The partitions are not
      *            relocated to a cylinder boundary, just the CHS fields are
      *            updated on the

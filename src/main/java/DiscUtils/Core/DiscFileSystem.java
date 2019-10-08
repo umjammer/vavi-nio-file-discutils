@@ -25,8 +25,8 @@ package DiscUtils.Core;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Map;
 
 import DiscUtils.Streams.SparseStream;
 import moe.yo3explorer.dotnetio4j.FileAccess;
@@ -46,7 +46,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Initializes a new instance of the DiscFileSystem class.
-     * 
+     *
      * @param defaultOptions The options instance to use for this file system
      *            instance.
      */
@@ -82,7 +82,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets a value indicating whether the file system is read-only or
      * read-write.
-     * 
+     *
      * @return true if the file system is read-write.
      */
     public abstract boolean canWrite();
@@ -110,7 +110,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Copies an existing file to a new file.
-     * 
+     *
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      */
@@ -121,7 +121,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Copies an existing file to a new file, allowing overwriting of an
      * existing file.
-     * 
+     *
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
@@ -130,32 +130,30 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Creates a directory.
-     * 
+     *
      * @param path The path of the new directory.
      */
     public abstract void createDirectory(String path) throws IOException;
 
     /**
      * Deletes a directory.
-     * 
+     *
      * @param path The path of the directory to delete.
      */
     public abstract void deleteDirectory(String path) throws IOException;
 
     /**
      * Deletes a directory, optionally with all descendants.
-     * 
+     *
      * @param path The path of the directory to delete.
      * @param recursive Determines if the all descendants should be deleted.
      */
     public void deleteDirectory(String path, boolean recursive) throws IOException {
         if (recursive) {
-            for (Object __dummyForeachVar0 : getDirectories(path)) {
-                String dir = (String) __dummyForeachVar0;
+            for (String dir : getDirectories(path)) {
                 deleteDirectory(dir, true);
             }
-            for (Object __dummyForeachVar1 : getFiles(path)) {
-                String file = (String) __dummyForeachVar1;
+            for (String file : getFiles(path)) {
                 deleteFile(file);
             }
         }
@@ -165,14 +163,14 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Deletes a file.
-     * 
+     *
      * @param path The path of the file to delete.
      */
     public abstract void deleteFile(String path) throws IOException;
 
     /**
      * Indicates if a directory exists.
-     * 
+     *
      * @param path The path to test.
      * @return true if the directory exists.
      */
@@ -180,7 +178,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Indicates if a file exists.
-     * 
+     *
      * @param path The path to test.
      * @return true if the file exists.
      */
@@ -188,7 +186,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Indicates if a file or directory exists.
-     * 
+     *
      * @param path The path to test.
      * @return true if the file or directory exists.
      */
@@ -198,7 +196,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of subdirectories in a specified directory.
-     * 
+     *
      * @param path The path to search.
      * @return Array of directories.
      */
@@ -210,7 +208,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Gets the names of subdirectories in a specified directory matching a
      * specified
      * search pattern.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of directories matching the search pattern.
@@ -224,7 +222,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * specified
      * search pattern, using a value to determine whether to search
      * subdirectories.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
@@ -234,7 +232,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of files in a specified directory.
-     * 
+     *
      * @param path The path to search.
      * @return Array of files.
      */
@@ -244,7 +242,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of files in a specified directory.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files matching the search pattern.
@@ -257,7 +255,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Gets the names of files in a specified directory matching a specified
      * search pattern, using a value to determine whether to search
      * subdirectories.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
@@ -267,7 +265,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of all files and subdirectories in a specified directory.
-     * 
+     *
      * @param path The path to search.
      * @return Array of files and subdirectories matching the search pattern.
      */
@@ -277,7 +275,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Gets the names of files and subdirectories in a specified directory
      * matching a specified
      * search pattern.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files and subdirectories matching the search pattern.
@@ -286,7 +284,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Moves a directory.
-     * 
+     *
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
@@ -294,7 +292,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Moves a file.
-     * 
+     *
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      */
@@ -304,7 +302,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Moves a file, allowing an existing file to be overwritten.
-     * 
+     *
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
@@ -313,7 +311,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Opens the specified file.
-     * 
+     *
      * @param path The full path of the file to open.
      * @param mode The file mode for the created stream.
      * @return The new stream.
@@ -324,7 +322,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Opens the specified file.
-     * 
+     *
      * @param path The full path of the file to open.
      * @param mode The file mode for the created stream.
      * @param access The access permissions for the created stream.
@@ -334,23 +332,23 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the attributes of a file or directory.
-     * 
+     *
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
-    public abstract BasicFileAttributes getAttributes(String path) throws IOException;
+    public abstract Map<String, Object> getAttributes(String path) throws IOException;
 
     /**
      * Sets the attributes of a file or directory.
-     * 
+     *
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public abstract void setAttributes(String path, BasicFileAttributes newValue) throws IOException;
+    public abstract void setAttributes(String path, Map<String, Object> newValue) throws IOException;
 
     /**
      * Gets the creation time (in local time) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The creation time.
      */
@@ -360,7 +358,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Sets the creation time (in local time) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -370,7 +368,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the creation time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The creation time.
      */
@@ -378,7 +376,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Sets the creation time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -386,7 +384,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the last access time (in local time) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The last access time.
      */
@@ -396,7 +394,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Sets the last access time (in local time) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -406,7 +404,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the last access time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The last access time.
      */
@@ -414,7 +412,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Sets the last access time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -422,7 +420,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the last modification time (in local time) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The last write time.
      */
@@ -432,7 +430,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Sets the last modification time (in local time) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -442,7 +440,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the last modification time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The last write time.
      */
@@ -450,7 +448,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Sets the last modification time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -458,7 +456,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the length of a file.
-     * 
+     *
      * @param path The path to the file.
      * @return The length in bytes.
      */
@@ -466,7 +464,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets an object representing a possible file.
-     * 
+     *
      * @param path The file path.
      * @return The representing object.The file does not need to exist.
      */
@@ -476,7 +474,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets an object representing a possible directory.
-     * 
+     *
      * @param path The directory path.
      * @return The representing object.The directory does not need to exist.
      */
@@ -487,7 +485,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets an object representing a possible file system object (file or
      * directory).
-     * 
+     *
      * @param path The file system path.
      * @return The representing object.The file system object does not need to
      *         exist.
@@ -498,7 +496,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Reads the boot code of the file system into a byte array.
-     * 
+     *
      * @return The boot code, or
      *         {@code null}
      *         if not available.

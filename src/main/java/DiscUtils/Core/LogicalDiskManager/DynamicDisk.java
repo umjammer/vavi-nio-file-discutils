@@ -94,14 +94,13 @@ public class DynamicDisk implements IDiagnosticTraceable {
     }
 
     public static PrivateHeader getPrivateHeader(VirtualDisk disk) throws IOException {
-        if (disk.getIsPartitioned()) {
+        if (disk.isPartitioned()) {
             long headerPos = 0;
             PartitionTable pt = disk.getPartitions();
             if (pt instanceof BiosPartitionTable) {
                 headerPos = 0xc00;
             } else {
-                for (Object __dummyForeachVar0 : pt.getPartitions()) {
-                    PartitionInfo part = (PartitionInfo) __dummyForeachVar0;
+                for (PartitionInfo part : pt.getPartitions()) {
                     if (part.getGuidType() == GuidPartitionTypes.WindowsLdmMetadata) {
                         headerPos = part.getLastSector() * Sizes.Sector;
                     }

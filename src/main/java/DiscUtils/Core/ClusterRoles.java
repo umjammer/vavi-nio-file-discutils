@@ -1,6 +1,10 @@
 
 package DiscUtils.Core;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.stream.Collectors;
+
 public enum ClusterRoles {
     /**
      * Enumeration of possible cluster roles.
@@ -60,5 +64,15 @@ public enum ClusterRoles {
     /**
      * Cluster is marked bad.
      */
-    Bad
+    Bad;
+
+    public static EnumSet<ClusterRoles> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> (value & v.ordinal()) != 0)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(ClusterRoles.class)));
+    }
+
+    public static long valueOf(EnumSet<ClusterRoles> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+    }
 }

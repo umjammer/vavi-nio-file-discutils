@@ -75,7 +75,7 @@ public class ZeroStream extends MappedStream {
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
-        return Arrays.asList(new StreamExtent[0]);
+        return Arrays.asList();
     }
 
     public void flush() {

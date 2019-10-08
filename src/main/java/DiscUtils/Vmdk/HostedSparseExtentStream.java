@@ -22,8 +22,6 @@
 
 package DiscUtils.Vmdk;
 
-import java.io.IOException;
-
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -31,6 +29,8 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
+import moe.yo3explorer.dotnetio4j.DeflateStream;
+import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
@@ -128,7 +128,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             // check against expected header values...
             short header = EndianUtilities.toUInt16BigEndian(readBuffer, 0);
             if (header % 31 != 0) {
-                throw new IOException("Invalid ZLib header found");
+                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid ZLib header found");
             }
 
             if ((header & 0x0F00) != 8 << 8) {

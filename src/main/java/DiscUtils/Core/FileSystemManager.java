@@ -24,33 +24,34 @@ package DiscUtils.Core;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Core.Vfs.VfsFileSystemFactory;
 import DiscUtils.Core.Vfs.VfsFileSystemFactoryAttribute;
+import moe.yo3explorer.dotnetio4j.BufferedStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
 /**
  * FileSystemManager determines which file systems are present on a volume.
- * 
+ *
  * The static detection methods detect default file systems. To plug in
  * additional
  * file systems, create an instance of this class and call RegisterFileSystems.
  */
 public class FileSystemManager {
     private static final List<VfsFileSystemFactory> _factories;
+
+    /* Initializes a new instance of the FileSystemManager class. */
     static {
-        /**
-         * Initializes a new instance of the FileSystemManager class.
-         */
         _factories = new ArrayList<>();
     }
 
     /**
      * Registers new file systems with an instance of this class.
-     * 
+     *
      * @param factory The detector for the new file systems.
      */
     public static void registerFileSystems(VfsFileSystemFactory factory) {
@@ -59,12 +60,12 @@ public class FileSystemManager {
 
     /**
      * Registers new file systems detected in an assembly.
-     * 
+     *
      * @param assembly The assembly to inspect.
      *            To be detected, the
      *            {@code VfsFileSystemFactory}
      *            instances must be marked with the
-     * 
+     *
      *            {@code VfsFileSystemFactoryAttribute}
      *            > attribute.
      */
@@ -74,7 +75,7 @@ public class FileSystemManager {
 
     /**
      * Detect which file systems are present on a volume.
-     * 
+     *
      * @param volume The volume to inspect.
      * @return The list of file systems detected.
      */
@@ -88,7 +89,7 @@ public class FileSystemManager {
 
     /**
      * Detect which file systems are present in a stream.
-     * 
+     *
      * @param stream The stream to inspect.
      * @return The list of file systems detected.
      */
@@ -99,7 +100,8 @@ public class FileSystemManager {
     private static List<VfsFileSystemFactory> detectFactories(List<Class<VfsFileSystemFactory>> assembly) {
         List<VfsFileSystemFactory> result = new ArrayList<>();
         for (Class<?> type : assembly) {
-            VfsFileSystemFactoryAttribute attrib = ReflectionHelper.getCustomAttribute(type, VfsFileSystemFactoryAttribute.class, false);
+            VfsFileSystemFactoryAttribute attrib = ReflectionHelper
+                    .getCustomAttribute(type, VfsFileSystemFactoryAttribute.class, false);
             if (attrib == null)
                 continue;
 // TODO result.add();
@@ -111,7 +113,7 @@ public class FileSystemManager {
         BufferedStream detectStream = new BufferedStream(stream);
         List<FileSystemInfo> detected = new ArrayList<>();
         for (VfsFileSystemFactory factory : _factories) {
-            detected.AddRange(factory.Detect(detectStream, volume));
+            detected.addAll(Arrays.asList(factory.detect(detectStream, volume)));
         }
         return detected;
     }

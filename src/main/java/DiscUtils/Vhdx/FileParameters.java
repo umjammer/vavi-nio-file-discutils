@@ -40,7 +40,7 @@ public final class FileParameters implements IByteArraySerializable {
 
     public EnumSet<FileParametersFlags> Flags;
 
-    public int getSize() {
+    public long getSize() {
         return 8;
     }
 

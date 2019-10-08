@@ -22,6 +22,7 @@
 
 package DiscUtils.Vhdx;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -85,7 +86,7 @@ public final class DiskBuilder extends DiskImageBuilder {
 
     /**
      * Initiates the build process.
-     * 
+     *
      * @param baseName The base name for the VHDX, for example 'foo' to create
      *            'foo.vhdx'.
      * @return A set of one or more logical files that constitute the virtual
@@ -190,9 +191,8 @@ public final class DiskBuilder extends DiskImageBuilder {
                                                                                                 _blockSize,
                                                                                                 chunkRatio);
             extents.add(batExtent);
-            for (Object __dummyForeachVar0 : presentBlocks) {
+            for (Range range : presentBlocks) {
                 // Stream contents
-                Range range = (Range) __dummyForeachVar0;
                 long substreamStart = range.getOffset() * _blockSize;
                 long substreamCount = Math.min(_content.getLength() - substreamStart, range.getCount() * _blockSize);
                 SubStream dataSubStream = new SubStream(_content, substreamStart, substreamCount);
@@ -205,11 +205,14 @@ public final class DiskBuilder extends DiskImageBuilder {
         }
 
         private static BuilderExtent extentForStruct(IByteArraySerializable structure, long position) {
-            byte[] buffer = new byte[structure.getSize()];
-            structure.writeTo(buffer, 0);
-            return new BuilderBufferExtent(position, buffer);
+            try {
+                byte[] buffer = new byte[(int) structure.getSize()];
+                structure.writeTo(buffer, 0);
+                return new BuilderBufferExtent(position, buffer);
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            }
         }
-
     }
 
     private static class BlockAllocationTableBuilderExtent extends BuilderExtent {
@@ -267,7 +270,5 @@ public final class DiskBuilder extends DiskImageBuilder {
         public void disposeReadState() {
             _batData = null;
         }
-
     }
-
 }

@@ -81,7 +81,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param path The path to the disk.
      * @param access The desired access to the disk.
      */
@@ -122,7 +122,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream containing a monolithic disk.
      * @param ownsStream Indicates if the created instance should own the
      *            stream.
@@ -144,7 +144,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param fileLocator An object to open the file and any extents.
      * @param file The file name.
      * @param access The type of access desired.
@@ -193,8 +193,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public long getCapacity() {
         long result = 0;
-        for (Object __dummyForeachVar0 : _descriptor.getExtents()) {
-            ExtentDescriptor extent = (ExtentDescriptor) __dummyForeachVar0;
+        for (ExtentDescriptor extent : _descriptor.getExtents()) {
             result += extent.getSizeInSectors() * Sizes.Sector;
         }
         return result;
@@ -227,8 +226,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             extents.add(new DiskExtent(_descriptor.getExtents().get(0), 0, _monolithicStream));
         } else {
             long pos = 0;
-            for (Object __dummyForeachVar2 : _descriptor.getExtents()) {
-                ExtentDescriptor record = (ExtentDescriptor) __dummyForeachVar2;
+            for (ExtentDescriptor record : _descriptor.getExtents()) {
                 extents.add(new DiskExtent(record, pos, _fileLocator, _access));
                 pos += record.getSizeInSectors() * Sizes.Sector;
             }
@@ -265,7 +263,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * that can resolve relative paths, or
      * {@code null}
      * .
-     * 
+     *
      * Typically used to locate parent disks.
      */
     public FileLocator getRelativeFileLocator() {
@@ -274,7 +272,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param parameters The desired parameters for the new disk.
      * @return The newly created disk image.
@@ -286,7 +284,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param path The name of the VMDK to create.
      * @param parameters The desired parameters for the new disk.
@@ -301,7 +299,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param type The type of virtual disk to create.
@@ -316,7 +314,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or
@@ -338,7 +336,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or
@@ -363,7 +361,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param fileSystem The file system to create the VMDK on.
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
@@ -382,7 +380,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param fileSystem The file system to create the VMDK on.
      * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
@@ -404,7 +402,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk that is a linked clone of an existing disk.
-     * 
+     *
      * @param path The path to the new disk.
      * @param type The type of the new disk.
      * @param parent The disk to clone.
@@ -431,7 +429,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk that is a linked clone of an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the VMDK on.
      * @param path The path to the new disk.
      * @param type The type of the new disk.
@@ -461,17 +459,21 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the contents of this disk as a stream.
-     * 
+     *
      * @param parent The content of the parent disk (needed if this is a
      *            differencing disk).
      * @param ownsParent A value indicating whether ownership of the parent
      *            stream is transfered.
      * @return The stream containing the disk contents.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) throws IOException {
+    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (_descriptor.getParentContentId() == Integer.MAX_VALUE) {
             if (parent != null && ownsParent == Ownership.Dispose) {
-                parent.close();
+                try {
+                    parent.close();
+                } catch (IOException e) {
+                    new moe.yo3explorer.dotnetio4j.IOException(e);
+                }
             }
 
             parent = null;
@@ -504,7 +506,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the location of the parent.
-     * 
+     *
      * @return The parent locations as an array.
      */
     public List<String> getParentLocations() {
@@ -513,7 +515,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Creates a new virtual disk at the specified path.
-     * 
+     *
      * @param fileLocator The object used to locate / create the component
      *            files.
      * @param path The name of the VMDK to create.
@@ -848,7 +850,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     private SparseStream openExtent(ExtentDescriptor extent,
                                     long extentStart,
                                     SparseStream parent,
-                                    Ownership ownsParent) throws IOException {
+                                    Ownership ownsParent) {
         FileAccess access = FileAccess.Read;
         FileShare share = FileShare.Read;
         if (extent.getAccess() == ExtentAccess.ReadWrite && _access != FileAccess.Read) {

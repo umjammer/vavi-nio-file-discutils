@@ -66,7 +66,7 @@ public abstract class PartitionTable {
             if (_factories == null) {
                 List<PartitionTableFactory> factories = new ArrayList<>();
                 for (Class<?> type : ReflectionHelper.getAssembly(VolumeManager.class)) {
-                    for (PartitionTableFactoryAttribute attr : ReflectionHelper
+                    for (@SuppressWarnings("unused") PartitionTableFactoryAttribute attr : ReflectionHelper
                             .getCustomAttributes(type, PartitionTableFactoryAttribute.class, false)) {
                         factories.add((PartitionTableFactory) type.newInstance());
                     }
@@ -82,7 +82,7 @@ public abstract class PartitionTable {
 
     /**
      * Gets information about a particular User partition.
-     * 
+     *
      * @param index The index of the partition.
      * @return Information about the partition.
      */
@@ -98,7 +98,7 @@ public abstract class PartitionTable {
 
     /**
      * Determines if a disk is partitioned with a known partitioning scheme.
-     * 
+     *
      * @param content The content of the disk to check.
      * @return
      *         {@code true}
@@ -107,19 +107,17 @@ public abstract class PartitionTable {
      *         .
      */
     public static boolean isPartitioned(Stream content) {
-        for (Object __dummyForeachVar2 : getFactories()) {
-            PartitionTableFactory partTableFactory = (PartitionTableFactory) __dummyForeachVar2;
+        for (PartitionTableFactory partTableFactory : getFactories()) {
             if (partTableFactory.detectIsPartitioned(content)) {
                 return true;
             }
-
         }
         return false;
     }
 
     /**
      * Determines if a disk is partitioned with a known partitioning scheme.
-     * 
+     *
      * @param disk The disk to check.
      * @return
      *         {@code true}
@@ -133,16 +131,15 @@ public abstract class PartitionTable {
 
     /**
      * Gets all of the partition tables found on a disk.
-     * 
+     *
      * @param disk The disk to inspect.
      * @return It is rare for a disk to have multiple partition tables, but
      *         theoretically
      *         possible.
      */
-    public static List<PartitionTable> getPartitionTables(VirtualDisk disk) throws IOException {
+    public static List<PartitionTable> getPartitionTables(VirtualDisk disk) {
         List<PartitionTable> tables = new ArrayList<>();
-        for (Object __dummyForeachVar3 : getFactories()) {
-            PartitionTableFactory factory = (PartitionTableFactory) __dummyForeachVar3;
+        for (PartitionTableFactory factory : getFactories()) {
             PartitionTable table = factory.detectPartitionTable(disk);
             if (table != null) {
                 tables.add(table);
@@ -154,7 +151,7 @@ public abstract class PartitionTable {
 
     /**
      * Gets all of the partition tables found on a disk.
-     * 
+     *
      * @param contentStream The content of the disk to inspect.
      * @return It is rare for a disk to have multiple partition tables, but
      *         theoretically
@@ -166,7 +163,7 @@ public abstract class PartitionTable {
 
     /**
      * Creates a new partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.The partition table must be empty
@@ -177,7 +174,7 @@ public abstract class PartitionTable {
 
     /**
      * Creates a new partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -187,7 +184,7 @@ public abstract class PartitionTable {
 
     /**
      * Creates a new aligned partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in byte).
@@ -204,7 +201,7 @@ public abstract class PartitionTable {
 
     /**
      * Creates a new aligned partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -220,7 +217,7 @@ public abstract class PartitionTable {
 
     /**
      * Deletes a partition at a given index.
-     * 
+     *
      * @param index The index of the partition.
      */
     public abstract void delete(int index);

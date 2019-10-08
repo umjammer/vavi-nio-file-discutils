@@ -41,7 +41,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
 
     /**
      * Initializes a new instance of the StreamBuffer class.
-     * 
+     *
      * @param stream The stream to wrap.
      * @param ownership Whether to dispose stream, when this object is disposed.
      */
@@ -102,7 +102,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
 
     /**
      * Reads from the buffer into a byte array.
-     * 
+     *
      * @param pos The offset within the buffer to start reading.
      * @param buffer The destination byte array.
      * @param offset The start offset within the destination buffer.
@@ -116,7 +116,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
 
     /**
      * Writes a byte array into the buffer.
-     * 
+     *
      * @param pos The start offset within the buffer.
      * @param buffer The source byte array.
      * @param offset The start offset within the source byte array.
@@ -136,7 +136,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
 
     /**
      * Sets the capacity of the buffer, truncating if appropriate.
-     * 
+     *
      * @param value The desired capacity of the buffer.
      */
     public void setCapacity(long value) {
@@ -145,7 +145,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
 
     /**
      * Gets the parts of a buffer that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.

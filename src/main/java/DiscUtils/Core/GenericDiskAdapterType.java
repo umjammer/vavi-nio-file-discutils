@@ -25,7 +25,7 @@ package DiscUtils.Core;
 public enum GenericDiskAdapterType {
     /**
      * Well known hard disk adaptor types.
-     * 
+     *
      * IDE adaptor.
      */
     Ide,

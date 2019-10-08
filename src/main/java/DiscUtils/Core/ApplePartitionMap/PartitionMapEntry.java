@@ -86,7 +86,7 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
         return PhysicalVolumeType.ApplePartition;
     }
 
-    public int getSize() {
+    public long getSize() {
         return 512;
     }
 

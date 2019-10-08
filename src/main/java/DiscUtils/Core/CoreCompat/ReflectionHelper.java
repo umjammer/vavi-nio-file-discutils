@@ -57,5 +57,4 @@ public class ReflectionHelper {
             throw new IllegalStateException(e);
         }
     }
-
 }

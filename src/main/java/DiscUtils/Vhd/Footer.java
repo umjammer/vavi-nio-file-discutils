@@ -28,39 +28,70 @@ import java.util.UUID;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.EndianUtilities;
 
-public class Footer   
-{
+
+public class Footer {
     public static final String FileCookie = "conectix";
+
     public static final int FeatureNone = 0x0;
+
     public static final int FeatureTemporary = 0x1;
+
     public static final int FeatureReservedMustBeSet = 0x2;
+
     public static final int Version1 = 0x00010000;
+
     public static final int Version6Point1 = 0x00060001;
+
     public static final String VirtualPCSig = "vpc ";
+
     public static final String VirtualServerSig = "vs  ";
+
     public static final int VirtualPC2004Version = 0x00050000;
+
     public static final int VirtualServer2004Version = 0x00010000;
+
     public static final String WindowsHostOS = "Wi2k";
+
     public static final String MacHostOS = "Mac ";
+
     public static final int CylindersMask = 0x0000FFFF;
+
     public static final int HeadsMask = 0x00FF0000;
+
     public static final int SectorsMask = 0xFF000000;
-    public static final long EpochUtc = 0;  // new DateTime(2000, 1, 1, 0, 0, 0, 0);
+
+    public static final long EpochUtc = 0; // new long(2000, 1, 1, 0, 0, 0, 0);
+
     public int Checksum;
+
     public String Cookie;
+
     public String CreatorApp;
+
     public String CreatorHostOS;
+
     public int CreatorVersion;
-    public long CurrentSize ;
-    public long DataOffset ;
+
+    public long CurrentSize;
+
+    public long DataOffset;
+
     public FileType DiskType = FileType.None;
+
     public int Features;
+
     public int FileFormatVersion;
+
     public Geometry Geometry;
-    public long OriginalSize ;
+
+    public long OriginalSize;
+
     public byte SavedState;
+
     public long Timestamp;
+
     public UUID UniqueId;
+
     public Footer(Geometry geometry, long capacity, FileType type) {
         Cookie = FileCookie;
         Features = FeatureReservedMustBeSet;
@@ -78,8 +109,8 @@ public class Footer
     }
 
     /**
-    * /SavedState = 0;
-    */
+     * /SavedState = 0;
+     */
     public Footer(Footer toCopy) {
         Cookie = toCopy.Cookie;
         Features = toCopy.Features;
@@ -121,9 +152,7 @@ public class Footer
         byte[] asBytes = new byte[512];
         copy.toBytes(asBytes, 0);
         int checksum = 0;
-        for (Object __dummyForeachVar0 : asBytes)
-        {
-            int value = (int)__dummyForeachVar0;
+        for (int value : asBytes) {
             checksum += value;
         }
         checksum = ~checksum;
@@ -145,7 +174,10 @@ public class Footer
         result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56), buffer[58], buffer[59]);
         result.DiskType = FileType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 60));
         result.Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
-        result.UniqueId = EndianUtilities.toGuidBigEndian(buffer, new int[] { offset + 68 });
+        result.UniqueId = EndianUtilities.toGuidBigEndian(buffer,
+                                                          new int[] {
+                                                              offset + 68
+                                                          });
         result.SavedState = buffer[84];
         return result;
     }
@@ -155,22 +187,19 @@ public class Footer
         EndianUtilities.writeBytesBigEndian(Features, buffer, offset + 8);
         EndianUtilities.writeBytesBigEndian(FileFormatVersion, buffer, offset + 12);
         EndianUtilities.writeBytesBigEndian(DataOffset, buffer, offset + 16);
-        EndianUtilities.writeBytesBigEndian((int)Timestamp, buffer, offset + 24);
+        EndianUtilities.writeBytesBigEndian((int) Timestamp, buffer, offset + 24);
         EndianUtilities.stringToBytes(CreatorApp, buffer, offset + 28, 4);
         EndianUtilities.writeBytesBigEndian(CreatorVersion, buffer, offset + 32);
         EndianUtilities.stringToBytes(CreatorHostOS, buffer, offset + 36, 4);
         EndianUtilities.writeBytesBigEndian(OriginalSize, buffer, offset + 40);
         EndianUtilities.writeBytesBigEndian(CurrentSize, buffer, offset + 48);
-        EndianUtilities.writeBytesBigEndian((short)Geometry.getCylinders(), buffer, offset + 56);
-        buffer[offset + 58] = (byte)Geometry.getHeadsPerCylinder();
-        buffer[offset + 59] = (byte)Geometry.getSectorsPerTrack();
+        EndianUtilities.writeBytesBigEndian((short) Geometry.getCylinders(), buffer, offset + 56);
+        buffer[offset + 58] = (byte) Geometry.getHeadsPerCylinder();
+        buffer[offset + 59] = (byte) Geometry.getSectorsPerTrack();
         EndianUtilities.writeBytesBigEndian(DiskType.ordinal(), buffer, offset + 60);
         EndianUtilities.writeBytesBigEndian(Checksum, buffer, offset + 64);
         EndianUtilities.writeBytesBigEndian(UniqueId, buffer, offset + 68);
         buffer[84] = SavedState;
         Arrays.fill(buffer, 85, 427, (byte) 0);
     }
-
 }
-
-

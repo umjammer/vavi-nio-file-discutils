@@ -53,8 +53,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
         GlobalDirectoryExtent gdExtent = new GlobalDirectoryExtent(header);
         long grainTableStart = header.GdOffset * Sizes.Sector + gdExtent.getLength();
         long grainTableCoverage = header.NumGTEsPerGT * header.GrainSize * Sizes.Sector;
-        for (Object __dummyForeachVar0 : StreamExtent.blocks(_content.getExtents(), grainTableCoverage)) {
-            Range grainTableRange = (Range) __dummyForeachVar0;
+        for (Range grainTableRange : StreamExtent.blocks(_content.getExtents(), grainTableCoverage)) {
             for (int i = 0; i < grainTableRange.getCount(); ++i) {
                 long grainTable = grainTableRange.getOffset() + i;
                 long dataStart = grainTable * grainTableCoverage;

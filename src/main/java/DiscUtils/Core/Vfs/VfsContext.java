@@ -1,11 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/11 18:18:08
-//
-
-package DiscUtils.Core.Vfs;
-
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26,11 +19,12 @@ package DiscUtils.Core.Vfs;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Core.Vfs;
+
 /**
-* Base class for a context object that holds global state for file system implementations.
-*/
-public abstract class VfsContext   
-{
+ * Base class for a context object that holds global state for file system
+ * implementations.
+ */
+public abstract class VfsContext {
 }
-
-

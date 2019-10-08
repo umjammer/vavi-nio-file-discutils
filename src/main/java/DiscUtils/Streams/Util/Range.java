@@ -33,7 +33,7 @@ import java.util.List;
 public class Range {
     /**
      * Initializes a new instance of the Range class.
-     * 
+     *
      * @param offset The offset (i.e. start) of the range.
      * @param count The size of the range.
      */
@@ -62,7 +62,7 @@ public class Range {
 
     /**
      * Compares this range to another.
-     * 
+     *
      * @param other The range to compare.
      * @return
      *         {@code true}
@@ -80,7 +80,7 @@ public class Range {
 
     /**
      * Merges sets of ranges into chunks.
-     * 
+     *
      * @param ranges The ranges to merge.
      * @param chunkSize The size of each chunk.
      * @return Ranges combined into larger chunks.The type of the offset and
@@ -118,7 +118,7 @@ public class Range {
 
     /**
      * Returns a string representation of the extent as [start:+length].
-     * 
+     *
      * @return The string representation.
      */
     public String toString() {

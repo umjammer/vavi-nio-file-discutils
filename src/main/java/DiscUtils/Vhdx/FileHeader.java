@@ -41,18 +41,18 @@ public final class FileHeader implements IByteArraySerializable {
         return Signature == VhdxSignature;
     }
 
-    public int getSize() {
+    public long getSize() {
         return (int) (64 * Sizes.OneKiB);
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Signature = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0);
         Creator = new String(buffer, offset + 8, 256 * 2, Charset.forName("utf-8")).replaceAll("\0*$", "");
-        return getSize();
+        return (int) getSize();
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        Arrays.fill(buffer, offset, getSize(), (byte) 0);
+        Arrays.fill(buffer, offset, (int) getSize(), (byte) 0);
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 0);
         System.arraycopy(Creator.getBytes(Charset.forName("utf-8")), 0, buffer, offset + 8, Creator.length());
     }

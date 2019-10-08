@@ -22,6 +22,7 @@
 
 package DiscUtils.Vhdx;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.UUID;
@@ -58,8 +59,7 @@ public final class Metadata {
 //                copy = new LinkedList<>(members);
 //            }
 //            Reader<T> prev = null;
-//            for (Object __dummyForeachVar0 : copy) {
-//                Reader<T> d = (Reader<T>) __dummyForeachVar0;
+//            for (Reader<T> d : copy) {
 //                if (prev != null)
 //                    prev.invoke(buffer, offset);
 //
@@ -264,16 +264,20 @@ public final class Metadata {
                                                                          MetadataTable header,
                                                                          int dataOffset,
                                                                          Stream stream) {
-        MetadataEntryKey key = new MetadataEntryKey(id, flags.contains(MetadataEntryFlags.IsUser));
-        MetadataEntry entry = new MetadataEntry();
-        entry.ItemId = id;
-        entry.Offset = dataOffset;
-        entry.Length = data.getSize();
-        entry.Flags = flags;
-        header.Entries.put(key, entry);
-        stream.setPosition(dataOffset);
-        StreamUtilities.writeStruct(stream, data);
-        return entry.Length;
+        try {
+            MetadataEntryKey key = new MetadataEntryKey(id, flags.contains(MetadataEntryFlags.IsUser));
+            MetadataEntry entry = new MetadataEntry();
+            entry.ItemId = id;
+            entry.Offset = dataOffset;
+            entry.Length = (int) data.getSize();
+            entry.Flags = flags;
+            header.Entries.put(key, entry);
+            stream.setPosition(dataOffset);
+            StreamUtilities.writeStruct(stream, data);
+            return entry.Length;
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     private static <T extends Serializable> int addEntryValue(T data,

@@ -24,7 +24,6 @@ package DiscUtils.Core;
 
 import java.io.IOException;
 
-import DiscUtils.Complete.SetupHelper;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Setup.FileOpenEventArgs;
 import moe.yo3explorer.dotnetio4j.FileAccess;
@@ -32,8 +31,11 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileShare;
 import moe.yo3explorer.dotnetio4j.Stream;
 
+
 public abstract class FileLocator {
     public abstract boolean exists(String fileName) throws IOException;
+
+//    static EventHandler<FileOpenEventArgs> openingFile;
 
     public Stream open(String fileName, FileMode mode, FileAccess access, FileShare share) {
         FileOpenEventArgs args = new FileOpenEventArgs(fileName, mode, access, share, (fileName1, mode1, access1, share1) -> {
@@ -43,11 +45,15 @@ public abstract class FileLocator {
                 throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         });
-        SetupHelper.onOpeningFile(this, args);
+//        openingFile.invoke(this, args); // TODO
         if (args.getResult() != null)
             return args.getResult();
 
-        return openFile(args.getFileName(), args.getFileMode(), args.getFileAccess(), args.getFileShare());
+        try {
+            return openFile(args.getFileName(), args.getFileMode(), args.getFileAccess(), args.getFileShare());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     protected abstract Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) throws IOException;
@@ -75,5 +81,4 @@ public abstract class FileLocator {
         String otherFullPath = fileLocator.getFullPath(path);
         return Utilities.makeRelativePath(otherFullPath, ourFullPath);
     }
-
 }

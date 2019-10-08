@@ -105,7 +105,7 @@ public final class GuidPartitionInfo extends PartitionInfo {
 
     /**
      * Opens a stream to access the content of the partition.
-     * 
+     *
      * @return The new stream.
      */
     public SparseStream open() {

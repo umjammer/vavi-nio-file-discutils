@@ -25,7 +25,7 @@ package DiscUtils.Streams.Util;
 public class MathUtilities {
     /**
      * Round up a value to a multiple of a unit size.
-     * 
+     *
      * @param value The value to round up.
      * @param unit The unit (the returned value will be a multiple of this
      *            number).
@@ -37,7 +37,7 @@ public class MathUtilities {
 
     /**
      * Round up a value to a multiple of a unit size.
-     * 
+     *
      * @param value The value to round up.
      * @param unit The unit (the returned value will be a multiple of this
      *            number).
@@ -49,7 +49,7 @@ public class MathUtilities {
 
     /**
      * Round down a value to a multiple of a unit size.
-     * 
+     *
      * @param value The value to round down.
      * @param unit The unit (the returned value will be a multiple of this
      *            number).
@@ -61,7 +61,7 @@ public class MathUtilities {
 
     /**
      * Calculates the CEIL function.
-     * 
+     *
      * @param numerator The value to divide.
      * @param denominator The value to divide by.
      * @return The value of CEIL(numerator/denominator).
@@ -72,7 +72,7 @@ public class MathUtilities {
 
     /**
      * Calculates the CEIL function.
-     * 
+     *
      * @param numerator The value to divide.
      * @param denominator The value to divide by.
      * @return The value of CEIL(numerator/denominator).

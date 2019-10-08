@@ -24,10 +24,11 @@ package DiscUtils.Core.Internal;
 
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import DiscUtils.Core.UnixFileType;
@@ -38,7 +39,7 @@ public class Utilities {
     /**
      * Indicates if two ranges overlap.
      * The type of the ordinals.
-     * 
+     *
      * @param xFirst The lowest ordinal of the first range (inclusive).
      * @param xLast The highest ordinal of the first range (exclusive).
      * @param yFirst The lowest ordinal of the second range (inclusive).
@@ -114,7 +115,7 @@ public class Utilities {
 
     /**
      * Extracts the directory part of a path.
-     * 
+     *
      * @param path The path to process.
      * @return The directory part.
      */
@@ -131,7 +132,7 @@ public class Utilities {
     // No directory, just a file name
     /**
      * Extracts the file part of a path.
-     * 
+     *
      * @param path The path to process.
      * @return The file part of the path.
      */
@@ -148,7 +149,7 @@ public class Utilities {
     // No directory, just a file name
     /**
      * Combines two paths.
-     * 
+     *
      * @param a The first part of the path.
      * @param b The second part of the path.
      * @return The combined path.
@@ -167,7 +168,7 @@ public class Utilities {
 
     /**
      * Resolves a relative path into an absolute one.
-     * 
+     *
      * @param basePath The base path to resolve from.
      * @param relativePath The relative path.
      * @return The absolute path. If no
@@ -175,7 +176,7 @@ public class Utilities {
      *         is specified
      *         then relativePath is returned as-is. If
      *         {@code relativePath}
-     * 
+     *
      *         contains more '..' characters than the base path contains levels
      *         of
      *         directory, the resultant string be the root drive followed by the
@@ -251,7 +252,7 @@ public class Utilities {
 
     /**
      * Indicates if a file name matches the 8.3 pattern.
-     * 
+     *
      * @param name The name to test.
      * @return
      *         {@code true}
@@ -302,7 +303,7 @@ public class Utilities {
     /**
      * Converts a 'standard' wildcard file/path specification into a regular
      * expression.
-     * 
+     *
      * @param pattern The wildcard pattern to convert.
      * @return The resultant regular expression.
      *         The wildcard * (star) matches zero or more characters (including
@@ -318,37 +319,82 @@ public class Utilities {
         return Pattern.compile(query);
     }
 
-    public static Set<String> fileAttributesFromUnixFileType(UnixFileType fileType) {
-        Set<String> result= new HashSet<>();
+    public static Map<String, Object> fileAttributesFromUnixFileType(UnixFileType fileType) {
+        Map<String, Object> result= new HashMap<>();
         switch (fileType) {
         case Fifo:
-            result.add("Device");
-            result.add("System");
+            result.put("Device", true);
+            result.put("System", true);
             break;
         case Character:
-            result.add("Device");
-            result.add("System");
+            result.put("Device", true);
+            result.put("System", true);
             break;
         case Directory:
-            result.add("Directory");
+            result.put("Directory", true);
             break;
         case Block:
-            result.add("Device");
-            result.add("System");
+            result.put("Device", true);
+            result.put("System", true);
             break;
         case Regular:
-            result.add("Normal");
+            result.put("Normal", true);
             break;
         case Link:
-            result.add("ReparsePoint");
+            result.put("ReparsePoint", true);
             break;
         case Socket:
-            result.add("Device");
-            result.add("System");
+            result.put("Device", true);
+            result.put("System", true);
             break;
         default:
             break;
         }
         return result;
+    }
+
+    public static int getCombinedHashCode(Object... objs) {
+        int result = 0;
+        assert objs.length > 1;
+        int hash = combineHashCode(toHashCode(objs[0]), toHashCode(objs[1]));
+        for (int i = 2; i < objs.length; i++) {
+            result = combineHashCode(hash, toHashCode(objs[i]));
+            hash = result;
+        }
+        return result;
+    }
+
+    private static int toHashCode(Object o) {
+        if (Integer.TYPE.isInstance(o)) {
+            return Integer.TYPE.cast(o);
+        } else if (Integer.class.isInstance(o)) {
+            return Integer.class.cast(o);
+        } else if (Byte.TYPE.isInstance(o)) {
+            return Byte.hashCode(Byte.TYPE.cast(o));
+        } else if (Byte.class.isInstance(o)) {
+            return Byte.hashCode(Byte.class.cast(o));
+        } else if (Character.TYPE.isInstance(o)) {
+            return Character.hashCode(Character.TYPE.cast(o));
+        } else if (Character.class.isInstance(o)) {
+            return Character.hashCode(Character.class.cast(o));
+        } else if (Short.TYPE.isInstance(o)) {
+            return Short.hashCode(Short.TYPE.cast(o));
+        } else if (Short.class.isInstance(o)) {
+            return Short.hashCode(Short.class.cast(o));
+        } else if (Long.TYPE.isInstance(o)) {
+            return Long.hashCode(Long.TYPE.cast(o));
+        } else if (Long.class.isInstance(o)) {
+            return Long.hashCode(Long.class.cast(o));
+        } else {
+            return o.hashCode();
+        }
+    }
+
+    private static int combineHashCode(int a, int b) {
+        return 997 * a ^ 991 * b;
+    }
+
+    public static Map<String, Object> fileAttributesFromInt(int value) {
+        return Collections.EMPTY_MAP; // TODO
     }
 }

@@ -22,7 +22,7 @@
 
 package DiscUtils.Core;
 
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 
 /**
@@ -58,13 +58,13 @@ public class WindowsFileInformation {
     /**
      * Gets or sets the file attributes.
      */
-    private BasicFileAttributes __FileAttributes;
+    private  Map<String, Object> __FileAttributes;
 
-    public BasicFileAttributes getFileAttributes() {
+    public Map<String, Object> getFileAttributes() {
         return __FileAttributes;
     }
 
-    public void setFileAttributes(BasicFileAttributes value) {
+    public void setFileAttributes( Map<String, Object> value) {
         __FileAttributes = value;
     }
 

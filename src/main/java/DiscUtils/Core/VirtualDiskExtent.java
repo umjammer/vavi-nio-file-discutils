@@ -32,7 +32,7 @@ import DiscUtils.Streams.Util.Ownership;
 
 /**
  * Base class represented a stored extent of a virtual disk.
- * 
+ *
  * Some file formats can divide a logical disk layer into multiple extents,
  * stored in
  * different files. This class represents those extents. Normally, all virtual
@@ -64,7 +64,7 @@ public abstract class VirtualDiskExtent implements Closeable {
 
     /**
      * Gets the content of this extent.
-     * 
+     *
      * @param parent The parent stream (if any).
      * @param ownsParent Controls ownership of the parent stream.
      * @return The content as a stream.

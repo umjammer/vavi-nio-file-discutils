@@ -68,8 +68,8 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
     }
 
     /**
-     * Always throws InvalidOperationException.
-     * 
+     * Always throws UnsupportedOperationException .
+     *
      * @param item The item to add.
      */
     public void add(MetadataInfo item) {
@@ -77,7 +77,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
     }
 
     /**
-     * Always throws InvalidOperationException.
+     * Always throws UnsupportedOperationException .
      */
     public void clear() {
         throw new UnsupportedOperationException();
@@ -85,7 +85,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
 
     /**
      * Determines if the specified metadata item is present already.
-     * 
+     *
      * @param item The item to look for.
      * @return
      *         {@code true}
@@ -106,7 +106,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
 
     /**
      * Copies this metadata table to an array.
-     * 
+     *
      * @param array The destination array.
      * @param arrayIndex The index of the first item to populate in the array.
      */
@@ -120,13 +120,13 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
 
     /**
      * Removes an item from the table.
-     * 
+     *
      * @param item The item to remove.
      * @return
      *         {@code true}
      *         if the item was removed, else
      *         {@code false}
-     *         .Always throws InvalidOperationException as the table is
+     *         .Always throws UnsupportedOperationException  as the table is
      *         read-only.
      */
     public boolean remove(MetadataInfo item) {
@@ -135,7 +135,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
 
     /**
      * Gets an enumerator for the metadata items.
-     * 
+     *
      * @return A new enumerator.
      */
     public Iterator<MetadataInfo> iterator() {

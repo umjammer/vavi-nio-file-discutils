@@ -68,8 +68,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         writer.println(linePrefix + "  Guid: " + _record.GroupGuidString);
         writer.println();
         writer.println(linePrefix + "  DISKS");
-        for (Object __dummyForeachVar0 : _database.getDisks()) {
-            DiskRecord disk = (DiskRecord) __dummyForeachVar0;
+        for (DiskRecord disk : _database.getDisks()) {
             writer.println(linePrefix + "    DISK (" + disk.Name + ")");
             writer.println(linePrefix + "      Name: " + disk.Name);
             writer.println(linePrefix + "      Flags: 0x" + String.format("%4x", disk.Flags & 0xFFF0));
@@ -83,8 +82,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
         }
         writer.println(linePrefix + "  VOLUMES");
-        for (Object __dummyForeachVar3 : _database.getVolumes()) {
-            VolumeRecord vol = (VolumeRecord) __dummyForeachVar3;
+        for (VolumeRecord vol : _database.getVolumes()) {
             writer.println(linePrefix + "    VOLUME (" + vol.Name + ")");
             writer.println(linePrefix + "      Name: " + vol.Name);
             writer.println(linePrefix + "      BIOS Type: " + String.format("%2x", vol.BiosType) + " [" +
@@ -97,8 +95,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
             writer.println(linePrefix + "      Num Components: " + vol.ComponentCount);
             writer.println(linePrefix + "      Link Id: " + vol.PartitionComponentLink);
             writer.println(linePrefix + "      COMPONENTS");
-            for (Object __dummyForeachVar2 : _database.getVolumeComponents(vol.Id)) {
-                ComponentRecord cmpnt = (ComponentRecord) __dummyForeachVar2;
+            for (ComponentRecord cmpnt : _database.getVolumeComponents(vol.Id)) {
                 writer.println(linePrefix + "        COMPONENT (" + cmpnt.Name + ")");
                 writer.println(linePrefix + "          Name: " + cmpnt.Name);
                 writer.println(linePrefix + "          Flags: 0x" + String.format("%4x", cmpnt.Flags & 0xFFF0));
@@ -110,8 +107,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
                 writer.println(linePrefix + "          Stripe Size: " + cmpnt.StripeSizeSectors + " (Sectors)");
                 writer.println(linePrefix + "          Stripe Stride: " + cmpnt.StripeStride);
                 writer.println(linePrefix + "          EXTENTS");
-                for (Object __dummyForeachVar1 : _database.getComponentExtents(cmpnt.Id)) {
-                    ExtentRecord extent = (ExtentRecord) __dummyForeachVar1;
+                for (ExtentRecord extent : _database.getComponentExtents(cmpnt.Id)) {
                     writer.println(linePrefix + "            EXTENT (" + extent.Name + ")");
                     writer.println(linePrefix + "              Name: " + extent.Name);
                     writer.println(linePrefix + "              Flags: 0x" + String.format("%4x", extent.Flags & 0xFFF0));
@@ -135,8 +131,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
     public DynamicVolume[] getVolumes() {
         List<DynamicVolume> vols = new ArrayList<>();
-        for (Object __dummyForeachVar4 : _database.getVolumes()) {
-            VolumeRecord record = (VolumeRecord) __dummyForeachVar4;
+        for (VolumeRecord record : _database.getVolumes()) {
             vols.add(new DynamicVolume(this, record.VolumeGuid));
         }
         return vols.toArray(new DynamicVolume[0]);

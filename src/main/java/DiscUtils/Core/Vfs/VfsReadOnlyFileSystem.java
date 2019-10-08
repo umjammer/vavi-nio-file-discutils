@@ -22,7 +22,7 @@
 
 package DiscUtils.Core.Vfs;
 
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Streams.SparseStream;
@@ -39,7 +39,7 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> extends VfsFileSystem<TDirEntry, TFile, TDirectory, TContext> {
     /**
      * Initializes a new instance of the VfsReadOnlyFileSystem class.
-     * 
+     *
      * @param defaultOptions The default file system options.
      */
     protected VfsReadOnlyFileSystem(DiscFileSystemOptions defaultOptions) {
@@ -48,7 +48,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Indicates whether the file system is read-only or read-write.
-     * 
+     *
      * @return Always false.
      */
     public boolean canWrite() {
@@ -57,7 +57,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Copies a file - not supported on read-only file systems.
-     * 
+     *
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
@@ -68,7 +68,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Creates a directory - not supported on read-only file systems.
-     * 
+     *
      * @param path The path of the new directory.
      */
     public void createDirectory(String path) {
@@ -77,7 +77,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Deletes a directory - not supported on read-only file systems.
-     * 
+     *
      * @param path The path of the directory to delete.
      */
     public void deleteDirectory(String path) {
@@ -86,7 +86,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Deletes a file - not supported on read-only file systems.
-     * 
+     *
      * @param path The path of the file to delete.
      */
     public void deleteFile(String path) {
@@ -95,7 +95,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Moves a directory - not supported on read-only file systems.
-     * 
+     *
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
@@ -105,7 +105,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Moves a file - not supported on read-only file systems.
-     * 
+     *
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      * @param overwrite Whether to allow an existing file to be overwritten.
@@ -116,7 +116,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
 
     /**
      * Opens the specified file.
-     * 
+     *
      * @param path The full path of the file to open.
      * @param mode The file mode for the created stream.
      * @return The new stream.
@@ -128,18 +128,18 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
     /**
      * Sets the attributes of a file or directory - not supported on read-only
      * file systems.
-     * 
+     *
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public void setAttributes(String path, BasicFileAttributes newValue) {
+    public void setAttributes(String path, Map<String, Object> newValue) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Sets the creation time (in UTC) of a file or directory - not supported on
      * read-only file systems.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -150,7 +150,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
     /**
      * Sets the last access time (in UTC) of a file or directory - not supported
      * on read-only file systems.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -161,7 +161,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
     /**
      * Sets the last modification time (in UTC) of a file or directory - not
      * supported on read-only file systems.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */

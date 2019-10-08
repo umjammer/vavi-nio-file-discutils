@@ -23,11 +23,13 @@
 package DiscUtils.Core;
 
 import java.io.IOException;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.StreamReader;
+import moe.yo3explorer.dotnetio4j.StreamWriter;
 
 
 /**
@@ -60,18 +62,20 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     }
 
     /**
-    * Gets or sets a value indicating whether the file is read-only.
-    */
-    public boolean getIsReadOnly() {
-        return getAttributes(). & BasicFileAttributes.ReadOnly;
+     * Gets or sets a value indicating whether the file is read-only.
+     */
+    public boolean getIsReadOnly() throws IOException {
+        return Boolean.class.cast(getAttributes().get("dos:readOnly"));
     }
 
-    public void setIsReadOnly(boolean value) {
+    public void setIsReadOnly(boolean value) throws IOException {
+        Map<String, Object> atributes = getAttributes();
         if (value) {
-            setAttributes(getAttributes() | BasicFileAttributes.ReadOnly);
+            atributes.put("dos:readOnly", true);
         } else {
-            setAttributes(getAttributes() & ~BasicFileAttributes.ReadOnly);
+            atributes.put("dos:readOnly", false);
         }
+        setAttributes(atributes);
     }
 
     /**
@@ -90,20 +94,20 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Creates a
-     * {@link #StreamWriter}
+     * {@link StreamWriter}
      * that appends text to the file represented by this
      * {@link #DiscFileInfo}
      * .
-     * 
+     *
      * @return The newly created writer.
      */
-    public StreamWriter appendText() {
+    public StreamWriter appendText() throws IOException {
         return new StreamWriter(open(FileMode.Append));
     }
 
     /**
      * Copies an existing file to a new file.
-     * 
+     *
      * @param destinationFileName The destination file.
      */
     public void copyTo(String destinationFileName) throws IOException {
@@ -113,7 +117,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     /**
      * Copies an existing file to a new file, allowing overwriting of an
      * existing file.
-     * 
+     *
      * @param destinationFileName The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
@@ -123,7 +127,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Creates a new file for reading and writing.
-     * 
+     *
      * @return The newly created stream.
      */
     public Stream create() throws IOException {
@@ -132,18 +136,18 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Creates a new
-     * {@link #StreamWriter}
+     * {@link StreamWriter}
      * that writes a new text file.
-     * 
+     *
      * @return A new stream writer that can write to the file contents.
      */
-    public StreamWriter createText() {
+    public StreamWriter createText() throws IOException {
         return new StreamWriter(open(FileMode.Create));
     }
 
     /**
      * Moves a file to a new location.
-     * 
+     *
      * @param destinationFileName The new name of the file.
      */
     public void moveTo(String destinationFileName) throws IOException {
@@ -152,9 +156,9 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Opens the current file.
-     * 
+     *
      * @param mode The file mode for the created stream.
-     * @return The newly created stream.Read-only file systems only support
+     * @return The newly created stream.read-only file systems only support
      *         {@code FileMode.Open}
      *         .
      */
@@ -164,10 +168,10 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Opens the current file.
-     * 
+     *
      * @param mode The file mode for the created stream.
      * @param access The access permissions for the created stream.
-     * @return The newly created stream.Read-only file systems only support
+     * @return The newly created stream.read-only file systems only support
      *         {@code FileMode.Open}
      *         and
      *         {@code FileAccess.Read}
@@ -179,7 +183,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Opens an existing file for read-only access.
-     * 
+     *
      * @return The newly created stream.
      */
     public Stream openRead() throws IOException {
@@ -188,16 +192,16 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
 
     /**
      * Opens an existing file for reading as UTF-8 text.
-     * 
+     *
      * @return The newly created reader.
      */
-    public StreamReader openText() {
+    public StreamReader openText() throws IOException {
         return new StreamReader(openRead());
     }
 
     /**
      * Opens a file for writing.
-     * 
+     *
      * @return The newly created stream.
      */
     public Stream openWrite() throws IOException {

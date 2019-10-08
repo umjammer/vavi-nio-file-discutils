@@ -34,7 +34,7 @@ import java.io.PrintWriter;
 public abstract class DiscFileSystemChecker {
     /**
      * Checks the integrity of a file system held in a stream.
-     * 
+     *
      * @param reportOutput A report on issues found.
      * @param levels The amount of detail to report.
      * @return

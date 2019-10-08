@@ -12,4 +12,9 @@ Nuget/
 packages/
 
 # Tests
-Tests/LibraryTests/TestResults/
+/Tests/
+/DiscUtils/
+/System/
+/Library/
+/Utilities/
+/Utilities_java/

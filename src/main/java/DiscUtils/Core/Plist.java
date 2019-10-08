@@ -51,6 +51,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.StreamInputStream;
+import moe.yo3explorer.dotnetio4j.StreamOutputStream;
 
 
 public class Plist {
@@ -67,7 +69,7 @@ public class Plist {
             // Ignore.
             // See https://msdn.microsoft.com/en-us/magazine/ee335713.aspx for additional information.
             dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            InputSource reader = new InputSource(stream);
+            InputSource reader = new InputSource(new StreamInputStream(stream));
             Document xmlDoc = dbf.newDocumentBuilder().parse(reader);
 
             Element root = xmlDoc.getDocumentElement();
@@ -75,8 +77,8 @@ public class Plist {
                 throw new IOException("XML document is not a plist");
             }
 
-            return parseDictionary(root.getFirstChild());
-        } catch (ParserConfigurationException | SAXException e) {
+            return parseMap(root.getFirstChild());
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -103,10 +105,10 @@ public class Plist {
             xmlDoc.getDocumentElement().setAttribute("Version", "1.0");
             rootElement.appendChild(createNode(xmlDoc, plist));
 
-            StreamResult result = new StreamResult(stream);
+            StreamResult result = new StreamResult(new StreamOutputStream(stream));
             Source source = new DOMSource(xmlDoc);
             transformer.transform(source, result);
-        } catch (TransformerException e) {
+        } catch (TransformerException | ParserConfigurationException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -114,7 +116,7 @@ public class Plist {
     private static Object parseNode(Node xmlNode) {
         String __dummyScrutVar0 = xmlNode.getNodeName();
         if (__dummyScrutVar0.equals("dict")) {
-            return parseDictionary(xmlNode);
+            return parseMap(xmlNode);
         } else if (__dummyScrutVar0.equals("array")) {
             return parseArray(xmlNode);
         } else if (__dummyScrutVar0.equals("string")) {
@@ -134,7 +136,7 @@ public class Plist {
 
     private static Node createNode(Document xmlDoc, Object obj) {
         if (obj instanceof Map) {
-            return createDictionary(xmlDoc, Map.class.cast(obj));
+            return createMap(xmlDoc, Map.class.cast(obj));
         }
 
         if (obj instanceof String) {
@@ -147,7 +149,7 @@ public class Plist {
         throw new UnsupportedOperationException();
     }
 
-    private static Node createDictionary(Document xmlDoc, Map<String, Object> dict) {
+    private static Node createMap(Document xmlDoc, Map<String, Object> dict) {
         Element dictNode = xmlDoc.createElement("dict");
         for (Map.Entry<String, Object> entry : dict.entrySet()) {
             Text text = xmlDoc.createTextNode(entry.getKey());
@@ -160,7 +162,7 @@ public class Plist {
         return dictNode;
     }
 
-    private static Map<String, Object> parseDictionary(Node xmlNode) {
+    private static Map<String, Object> parseMap(Node xmlNode) {
         Map<String, Object> result = new HashMap<>();
         Node focusNode = xmlNode.getFirstChild();
         while (focusNode != null) {

@@ -174,8 +174,7 @@ public class StripedStream extends SparseStream {
 
     public void close() throws IOException {
         if (_ownsWrapped == Ownership.Dispose && _wrapped != null) {
-            for (Object __dummyForeachVar2 : _wrapped) {
-                SparseStream stream = (SparseStream) __dummyForeachVar2;
+            for (SparseStream stream : _wrapped) {
                 stream.close();
             }
             _wrapped = null;

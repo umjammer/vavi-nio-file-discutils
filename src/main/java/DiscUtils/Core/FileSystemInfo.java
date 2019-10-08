@@ -27,7 +27,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 /**
  * Base class holding information about a file system.
- * 
+ *
  * File system implementations derive from this class, to provide information
  * about the file system.
  */
@@ -44,7 +44,7 @@ public abstract class FileSystemInfo {
 
     /**
      * Opens a volume using the file system.
-     * 
+     *
      * @param volume The volume to access.
      * @return A file system instance.
      */
@@ -54,7 +54,7 @@ public abstract class FileSystemInfo {
 
     /**
      * Opens a stream using the file system.
-     * 
+     *
      * @param stream The stream to access.
      * @return A file system instance.
      */
@@ -64,7 +64,7 @@ public abstract class FileSystemInfo {
 
     /**
      * Opens a volume using the file system.
-     * 
+     *
      * @param volume The volume to access.
      * @param parameters Parameters for the file system.
      * @return A file system instance.
@@ -73,7 +73,7 @@ public abstract class FileSystemInfo {
 
     /**
      * Opens a stream using the file system.
-     * 
+     *
      * @param stream The stream to access.
      * @param parameters Parameters for the file system.
      * @return A file system instance.
@@ -82,7 +82,7 @@ public abstract class FileSystemInfo {
 
     /**
      * Gets the name of the file system.
-     * 
+     *
      * @return The file system name.
      */
     public String toString() {

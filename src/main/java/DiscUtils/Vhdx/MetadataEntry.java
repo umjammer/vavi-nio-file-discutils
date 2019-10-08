@@ -40,7 +40,7 @@ public final class MetadataEntry implements IByteArraySerializable {
 
     public int Reserved;
 
-    public int getSize() {
+    public long getSize() {
         return 32;
     }
 

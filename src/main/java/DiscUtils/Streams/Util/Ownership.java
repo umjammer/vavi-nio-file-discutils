@@ -25,7 +25,7 @@ package DiscUtils.Streams.Util;
 public enum Ownership {
     /**
      * Enumeration used to indicate transfer of disposable objects.
-     * 
+     *
      * Indicates there is no transfer of ownership.
      */
     None,

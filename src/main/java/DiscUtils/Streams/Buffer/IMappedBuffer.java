@@ -23,6 +23,6 @@
 package DiscUtils.Streams.Buffer;
 
 public interface IMappedBuffer extends IBuffer {
-    long mapPosition(long position);
 
+    long mapPosition(long position);
 }

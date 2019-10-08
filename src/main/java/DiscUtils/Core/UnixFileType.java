@@ -22,10 +22,12 @@
 
 package DiscUtils.Core;
 
+import java.util.Arrays;
+
 public enum UnixFileType {
     /**
      * Standard Unix-style file type.
-     * 
+     *
      * No type specified.
      */
     None,
@@ -61,5 +63,9 @@ public enum UnixFileType {
     /**
      * A unix socket.
      */
-    Socket
+    Socket;
+
+    public static UnixFileType valueOf(int value) {
+        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+    }
 }

@@ -23,16 +23,19 @@
 package DiscUtils.Core.Internal;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 
+
 public abstract class VirtualDiskTransport implements Closeable {
+
     public abstract boolean getIsRawDisk();
 
-    public void close() {
+    public void close() throws IOException {
         close();
     }
 

@@ -104,7 +104,7 @@ public class BiosPartitionTypes {
 
     /**
      * Provides a string representation of some known BIOS partition types.
-     * 
+     *
      * @param type The partition type to represent as a string.
      * @return The string representation.
      */

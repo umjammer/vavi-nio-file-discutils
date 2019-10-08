@@ -27,10 +27,10 @@ import DiscUtils.Streams.Util.Ownership;
 
 /**
  * Represents a stream with a specified length
- * 
+ *
  * since the wrapped stream may not support
  * {@link #System.IO.Stream.Position}
- * 
+ *
  * there is no validation of the specified length
  */
 public class LengthWrappingStream extends WrappingStream {

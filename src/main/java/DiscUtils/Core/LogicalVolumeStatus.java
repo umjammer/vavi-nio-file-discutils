@@ -7,7 +7,7 @@ import java.util.Arrays;
 public enum LogicalVolumeStatus {
     /**
      * Enumeration of the health status of a logical volume.
-     * 
+     *
      * The volume is healthy and fully functional.
      */
     Healthy,

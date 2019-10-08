@@ -47,7 +47,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Converts any stream into a sparse stream.
-     * 
+     *
      * @param stream The stream to convert.
      * @param takeOwnership
      *            {@code true}
@@ -63,7 +63,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Converts any stream into a sparse stream.
-     * 
+     *
      * @param stream The stream to convert.
      * @param takeOwnership
      *            {@code true}
@@ -84,7 +84,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Efficiently pumps data from a sparse stream to another stream.
-     * 
+     *
      * @param inStream The sparse stream to pump from.
      * @param outStream The stream to pump to.
      *            {@code outStream}
@@ -96,7 +96,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Efficiently pumps data from a sparse stream to another stream.
-     * 
+     *
      * @param inStream The stream to pump from.
      * @param outStream The stream to pump to.
      * @param chunkSize The smallest sequence of zero bytes that will be skipped
@@ -113,7 +113,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Wraps a sparse stream in a read-only wrapper, preventing modification.
-     * 
+     *
      * @param toWrap The stream to make read-only.
      * @param ownership Whether to transfer responsibility for calling Dispose
      *            on
@@ -127,7 +127,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Clears bytes from the stream.
-     * 
+     *
      * @param count The number of bytes (from the current position) to
      *            clear.Logically equivalent to writing
      *            {@code count}
@@ -149,7 +149,7 @@ public abstract class SparseStream extends Stream {
 
     /**
      * Gets the parts of a stream that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.

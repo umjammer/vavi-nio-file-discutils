@@ -31,11 +31,11 @@ import java.util.Random;
 * Common file system options.
 * Not all options are honoured by all file systems.
 */
-public class DiscFileSystemOptions   
+public class DiscFileSystemOptions
 {
     /**
     * Gets or sets the random number generator the file system should use.
-    * This option is normally 
+    * This option is normally
     *  {@code null}
     * , which is fine for most purposes.
     * Use this option when you need to finely control the filesystem for

@@ -41,7 +41,7 @@ public final class BlockCacheSettings {
 
     /**
      * Initializes a new instance of the BlockCacheSettings class.
-     * 
+     *
      * @param settings The cache settings.
      */
     public BlockCacheSettings(BlockCacheSettings settings) {

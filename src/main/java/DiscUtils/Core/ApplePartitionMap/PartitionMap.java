@@ -44,7 +44,7 @@ public final class PartitionMap extends PartitionTable {
 
     /**
      * Initializes a new instance of the PartitionMap class.
-     * 
+     *
      * @param stream Stream containing the contents of a disk.
      */
     public PartitionMap(Stream stream) {
@@ -80,7 +80,7 @@ public final class PartitionMap extends PartitionTable {
 
     /**
      * Creates a new partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.The partition table must be empty
@@ -93,7 +93,7 @@ public final class PartitionMap extends PartitionTable {
 
     /**
      * Creates a new partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -105,7 +105,7 @@ public final class PartitionMap extends PartitionTable {
 
     /**
      * Creates a new aligned partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in byte).
@@ -124,7 +124,7 @@ public final class PartitionMap extends PartitionTable {
 
     /**
      * Creates a new aligned partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -142,7 +142,7 @@ public final class PartitionMap extends PartitionTable {
 
     /**
      * Deletes a partition at a given index.
-     * 
+     *
      * @param index The index of the partition.
      */
     public void delete(int index) {

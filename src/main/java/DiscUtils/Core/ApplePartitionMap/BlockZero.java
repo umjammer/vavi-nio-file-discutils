@@ -22,12 +22,11 @@
 
 package DiscUtils.Core.ApplePartitionMap;
 
-import java.io.Serializable;
-
+import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class BlockZero implements Serializable {
+public final class BlockZero implements IByteArraySerializable {
     public int BlockCount;
 
     public short BlockSize;
@@ -42,7 +41,7 @@ public final class BlockZero implements Serializable {
 
     public short Signature;
 
-    public int getSize() {
+    public long getSize() {
         return 512;
     }
 
@@ -60,5 +59,4 @@ public final class BlockZero implements Serializable {
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
-
 }

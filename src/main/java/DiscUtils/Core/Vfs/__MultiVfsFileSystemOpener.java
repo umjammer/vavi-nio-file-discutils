@@ -14,7 +14,7 @@ package DiscUtils.Core.Vfs;
 
 /**
  * Delegate for instantiating a file system.
- * 
+ *
  * @param stream The stream containing the file system.
  * @param volumeInfo Optional, information about the volume the file system is
  *            on.
@@ -28,8 +28,7 @@ package DiscUtils.Core.Vfs;
 //            copy = new LinkedList<VfsFileSystemOpener>(members);
 //        }
 //        VfsFileSystemOpener prev = null;
-//        for (Object __dummyForeachVar0 : copy) {
-//            VfsFileSystemOpener d = (VfsFileSystemOpener) __dummyForeachVar0;
+//        for (VfsFileSystemOpener d : copy) {
 //            if (prev != null)
 //                prev.invoke(stream, volumeInfo, parameters);
 //

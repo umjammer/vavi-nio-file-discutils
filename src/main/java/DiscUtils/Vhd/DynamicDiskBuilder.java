@@ -62,8 +62,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         BlockAllocationTableExtent batExtent = new BlockAllocationTableExtent(FooterSize + DynHeaderSize,
                                                                               dynHeader.MaxTableEntries);
         long streamPos = batExtent.getStart() + batExtent.getLength();
-        for (Object __dummyForeachVar0 : StreamExtent.blocks(_content.getExtents(), _blockSize)) {
-            Range blockRange = (Range) __dummyForeachVar0;
+        for (Range blockRange : StreamExtent.blocks(_content.getExtents(), _blockSize)) {
             for (int i = 0; i < blockRange.getCount(); ++i) {
                 long block = blockRange.getOffset() + i;
                 long blockStart = block * _blockSize;
@@ -177,8 +176,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         public void prepareForRead() {
             byte[] bitmap = new byte[(int) MathUtilities.roundUp(MathUtilities.ceil(_content.getLength(), Sizes.Sector) / 8,
                                                                  Sizes.Sector)];
-            for (Object __dummyForeachVar1 : StreamExtent.blocks(_content.getExtents(), Sizes.Sector)) {
-                Range range = (Range) __dummyForeachVar1;
+            for (Range range: StreamExtent.blocks(_content.getExtents(), Sizes.Sector)) {
                 for (int i = 0; i < range.getCount(); ++i) {
                     byte mask = (byte) (1 << (7 - (int) (range.getOffset() + i) % 8));
                     bitmap[(int) (range.getOffset() + i) / 8] |= mask;

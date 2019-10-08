@@ -34,7 +34,7 @@ import DiscUtils.Streams.SparseStream;
 /**
 * Provides access to partition records in a BIOS (MBR) partition table.
 */
-public final class BiosPartitionInfo  extends PartitionInfo 
+public final class BiosPartitionInfo  extends PartitionInfo
 {
     private final BiosPartitionRecord _record;
     private final BiosPartitionTable _table;
@@ -65,7 +65,7 @@ public final class BiosPartitionInfo  extends PartitionInfo
     }
 
     /**
-    * Always returns 
+    * Always returns
     *  {@link UUID}
     *  empty.
     */
@@ -95,7 +95,7 @@ public final class BiosPartitionInfo  extends PartitionInfo
     }
 
     /**
-    * Gets the index of the partition in the primary partition table, or 
+    * Gets the index of the partition in the primary partition table, or
     *  {@code -1}
     *  if not a primary partition.
     */
@@ -123,7 +123,7 @@ public final class BiosPartitionInfo  extends PartitionInfo
 
     /**
     * Opens a stream to access the content of the partition.
-    * 
+    *
     *  @return The new stream.
     */
     public SparseStream open() {

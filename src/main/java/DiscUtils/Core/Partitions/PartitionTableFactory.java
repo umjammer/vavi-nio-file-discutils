@@ -22,8 +22,6 @@
 
 package DiscUtils.Core.Partitions;
 
-import java.io.IOException;
-
 import DiscUtils.Core.VirtualDisk;
 import moe.yo3explorer.dotnetio4j.Stream;
 
@@ -32,5 +30,5 @@ public interface PartitionTableFactory {
 
     boolean detectIsPartitioned(Stream s);
 
-    PartitionTable detectPartitionTable(VirtualDisk disk) throws IOException;
+    PartitionTable detectPartitionTable(VirtualDisk disk);
 }

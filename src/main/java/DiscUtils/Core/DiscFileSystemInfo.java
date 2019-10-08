@@ -23,16 +23,16 @@
 package DiscUtils.Core;
 
 import java.io.IOException;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 import DiscUtils.Core.Internal.Utilities;
 
 
 /**
  * Provides the base class for both
- * {@link #tDiscFileInfo}
+ * {@link DiscFileInfo}
  * and
- * {@link #DiscDirectoryInfo}
+ * {@link DiscDirectoryInfo}
  * objects.
  */
 public class DiscFileSystemInfo {
@@ -47,16 +47,16 @@ public class DiscFileSystemInfo {
 
     /**
      * Gets or sets the
-     * {@link #System.IO.FileAttributes}
+     * {@link Map}
      * of the current
      * {@link #DiscFileSystemInfo}
      * object.
      */
-    public BasicFileAttributes getAttributes() throws IOException {
+    public Map<String, Object> getAttributes() throws IOException {
         return getFileSystem().getAttributes(getPath());
     }
 
-    public void setAttributes(BasicFileAttributes value) throws IOException {
+    public void setAttributes(Map<String, Object> value) throws IOException {
         getFileSystem().setAttributes(getPath(), value);
     }
 
@@ -181,7 +181,7 @@ public class DiscFileSystemInfo {
 
     /**
      * Gets the
-     * {@link #DiscDirectoryInfo}
+     * {@link DiscDirectoryInfo}
      * of the directory containing the current
      * {@link #DiscFileSystemInfo}
      * object.
@@ -207,7 +207,7 @@ public class DiscFileSystemInfo {
      * Deletes a file or directory.
      */
     public void delete() throws IOException {
-        if (getAttributes().isDirectory()) {
+        if (Boolean.class.cast(getAttributes().get("dos:directory"))) {
             getFileSystem().deleteDirectory(getPath());
         } else {
             getFileSystem().deleteFile(getPath());
@@ -218,7 +218,7 @@ public class DiscFileSystemInfo {
      * Indicates if
      * {@code obj}
      * is equivalent to this object.
-     * 
+     *
      * @param obj The object to compare.
      * @return
      *         {@code true}
@@ -239,7 +239,7 @@ public class DiscFileSystemInfo {
 
     /**
      * Gets the hash code for this object.
-     * 
+     *
      * @return The hash code.
      */
     public int hashCode() {

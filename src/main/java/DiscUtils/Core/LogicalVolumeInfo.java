@@ -130,7 +130,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
 
     /**
      * Opens a stream with access to the content of the logical volume.
-     * 
+     *
      * @return The volume's content as a stream.
      */
     public SparseStream open() {

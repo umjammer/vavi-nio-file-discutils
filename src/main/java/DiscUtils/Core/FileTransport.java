@@ -28,9 +28,11 @@ import java.nio.file.Paths;
 
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
+import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
+@VirtualDiskTransportAttribute(scheme = "file")
 public final class FileTransport extends VirtualDiskTransport {
     private String _extraInfo;
 

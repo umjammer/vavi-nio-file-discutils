@@ -22,6 +22,8 @@
 
 package DiscUtils.Core;
 
+import java.util.List;
+
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Range;
 
@@ -43,7 +45,7 @@ public interface IClusterBasedFileSystem extends IFileSystem {
     /**
      * Converts a cluster (index) into an absolute byte position in the
      * underlying stream.
-     * 
+     *
      * @param cluster The cluster to convert.
      * @return The corresponding absolute byte position.
      */
@@ -52,7 +54,7 @@ public interface IClusterBasedFileSystem extends IFileSystem {
     /**
      * Converts an absolute byte position in the underlying stream to a cluster
      * (index).
-     * 
+     *
      * @param offset The byte position to convert.
      * @return The cluster containing the specified byte.
      */
@@ -60,17 +62,17 @@ public interface IClusterBasedFileSystem extends IFileSystem {
 
     /**
      * Converts a file name to the list of clusters occupied by the file's data.
-     * 
+     *
      * @param path The path to inspect.
      * @return The clusters.Note that in some file systems, small files may not
      *         have dedicated
      *         clusters. Only dedicated clusters will be returned.
      */
-    Range[] pathToClusters(String path);
+    List<Range> pathToClusters(String path);
 
     /**
      * Converts a file name to the extents containing its data.
-     * 
+     *
      * @param path The path to inspect.
      * @return The file extents, as absolute byte positions in the underlying
      *         stream.Use this method with caution - not all file systems will
@@ -79,13 +81,12 @@ public interface IClusterBasedFileSystem extends IFileSystem {
      *         encrypted. This method
      *         merely indicates where file data is stored, not what's stored.
      */
-    StreamExtent[] pathToExtents(String path);
+    List<StreamExtent> pathToExtents(String path);
 
     /**
      * Gets an object that can convert between clusters and files.
-     * 
+     *
      * @return The cluster map.
      */
     ClusterMap buildClusterMap();
-
 }

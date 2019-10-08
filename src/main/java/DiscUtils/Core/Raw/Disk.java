@@ -51,7 +51,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param stream The stream to read.
      * @param ownsStream Indicates if the new instance should control the
      *            lifetime of the stream.
@@ -62,7 +62,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param stream The stream to read.
      * @param ownsStream Indicates if the new instance should control the
      *            lifetime of the stream.
@@ -74,7 +74,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param path The path to the disk image.
      */
     public Disk(String path) throws IOException {
@@ -83,7 +83,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param path The path to the disk image.
      * @param access The access requested to the disk.
      */
@@ -95,7 +95,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param file The contents of the disk.
      */
     private Disk(DiskImageFile file) {
@@ -155,7 +155,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as an unformatted disk.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -168,7 +168,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as an unformatted disk.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -187,7 +187,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as an unformatted floppy disk.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -200,7 +200,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk, possibly within an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
@@ -211,7 +211,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk.
-     * 
+     *
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */

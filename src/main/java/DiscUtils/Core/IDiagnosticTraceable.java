@@ -32,7 +32,7 @@ import java.io.PrintWriter;
 public interface IDiagnosticTraceable {
     /**
      * Writes a diagnostic report about the state of the object to a writer.
-     * 
+     *
      * @param writer The writer to send the report to.
      * @param linePrefix The prefix to place at the start of each line.
      */

@@ -28,7 +28,7 @@ package DiscUtils.Core.Compression;
 public abstract class BlockCompressor {
     /**
      * Gets or sets the block size parameter to the algorithm.
-     * 
+     *
      * Some algorithms may use this to control both compression and
      * decompression, others may
      * only use it to control compression. Some may ignore it entirely.
@@ -45,7 +45,7 @@ public abstract class BlockCompressor {
 
     /**
      * Compresses some data.
-     * 
+     *
      * @param source The uncompressed input.
      * @param sourceOffset Offset of the input data in
      *            {@code source}
@@ -69,7 +69,7 @@ public abstract class BlockCompressor {
 
     /**
      * Decompresses some data.
-     * 
+     *
      * @param source The compressed input.
      * @param sourceOffset Offset of the input data in
      *            {@code source}

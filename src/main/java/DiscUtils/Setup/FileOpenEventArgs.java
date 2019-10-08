@@ -6,7 +6,7 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileShare;
 import moe.yo3explorer.dotnetio4j.Stream;
 
-public class FileOpenEventArgs // extends EventArgs 
+public class FileOpenEventArgs // extends EventArgs
 {
     private FileOpenDelegate _opener;
 

@@ -42,7 +42,7 @@ public final class TarFile {
 
     /**
      * Initializes a new instance of the TarFile class.
-     * 
+     *
      * @param fileStream The Tar file.
      */
     public TarFile(Stream fileStream) {
@@ -62,7 +62,7 @@ public final class TarFile {
 
     /**
      * Tries to open a file contained in the archive, if it exists.
-     * 
+     *
      * @param path The path to the file within the archive.
      * @param stream A stream containing the file contents, or null.
      * @return
@@ -84,10 +84,11 @@ public final class TarFile {
 
     /**
      * Open a file contained in the archive.
-     * 
+     *
      * @param path The path to the file within the archive.
      * @return A stream containing the file contents.
-     * @throws moe.yo3explorer.dotnetio4j.FileNotFoundException Thrown if the file is not found.
+     * @throws moe.yo3explorer.dotnetio4j.FileNotFoundException Thrown if the
+     *             file is not found.
      */
     public Stream openFile(String path) {
         if (_files.containsKey(path)) {
@@ -100,7 +101,7 @@ public final class TarFile {
 
     /**
      * Determines if a given file exists in the archive.
-     * 
+     *
      * @param path The file path to test.
      * @return
      *         {@code true}
@@ -114,7 +115,7 @@ public final class TarFile {
 
     /**
      * Determines if a given directory exists in the archive.
-     * 
+     *
      * @param path The file path to test.
      * @return
      *         {@code true}
@@ -126,12 +127,10 @@ public final class TarFile {
         String searchStr = path;
         searchStr = searchStr.replace("\\", "/");
         searchStr = searchStr.endsWith("/") ? searchStr : searchStr + "/";
-        for (Object __dummyForeachVar0 : _files.keySet()) {
-            String filePath = (String) __dummyForeachVar0;
+        for (String filePath : _files.keySet()) {
             if (filePath.startsWith(searchStr)) {
                 return true;
             }
-
         }
         return false;
     }
@@ -141,8 +140,7 @@ public final class TarFile {
         String searchStr = dir;
         searchStr = searchStr.replace("\\", "/");
         searchStr = searchStr.endsWith("/") ? searchStr : searchStr + "/";
-        for (Object __dummyForeachVar1 : _files.keySet()) {
-            String filePath = (String) __dummyForeachVar1;
+        for (String filePath : _files.keySet()) {
             if (filePath.startsWith(searchStr)) {
                 result.add(_files.get(filePath));
             }

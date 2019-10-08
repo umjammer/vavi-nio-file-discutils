@@ -76,8 +76,8 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
     }
 
     /**
-     * Always throws InvalidOperationException.
-     * 
+     * Always throws UnsupportedOperationException .
+     *
      * @param item The item to add.
      */
     public void add(RegionInfo item) {
@@ -85,7 +85,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
     }
 
     /**
-     * Always throws InvalidOperationException.
+     * Always throws UnsupportedOperationException .
      */
     public void clear() {
         throw new UnsupportedOperationException();
@@ -93,7 +93,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
 
     /**
      * Determines if the specified region is present already.
-     * 
+     *
      * @param item The item to look for.
      * @return
      *         {@code true}
@@ -113,7 +113,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
 
     /**
      * Copies this region table to an array.
-     * 
+     *
      * @param array The destination array.
      * @param arrayIndex The index of the first item to populate in the array.
      */
@@ -127,13 +127,13 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
 
     /**
      * Removes an item from the table.
-     * 
+     *
      * @param item The item to remove.
      * @return
      *         {@code true}
      *         if the item was removed, else
      *         {@code false}
-     *         .Always throws InvalidOperationException as the table is
+     *         .Always throws UnsupportedOperationException  as the table is
      *         read-only.
      */
     public boolean remove(RegionInfo item) {
@@ -142,7 +142,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
 
     /**
      * Gets an enumerator for the regions.
-     * 
+     *
      * @return A new enumerator.
      */
     public Iterator<RegionInfo> iterator() {

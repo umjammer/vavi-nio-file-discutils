@@ -22,16 +22,17 @@
 
 package DiscUtils.Streams.Util;
 
+import java.io.IOException;
+
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Buffer.IBuffer;
-import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class StreamUtilities {
     /**
      * Validates standard buffer, offset, count parameters to a method.
-     * 
+     *
      * @param buffer The byte array to read from / write to.
      * @param offset The starting offset in
      *            {@code buffer}
@@ -59,7 +60,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or throw EndOfStreamException.
-     * 
+     *
      * @param stream The stream to read.
      * @param buffer The buffer to populate.
      * @param offset Offset in the buffer to start.
@@ -70,7 +71,7 @@ public class StreamUtilities {
         while (count > 0) {
             int numRead = stream.read(buffer, offset, count);
             if (numRead == 0) {
-                throw new IOException("Unable to complete read of " + originalCount + " bytes");
+                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to complete read of " + originalCount + " bytes");
             }
 
             offset += numRead;
@@ -80,7 +81,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or throw EndOfStreamException.
-     * 
+     *
      * @param stream The stream to read.
      * @param count The number of bytes to read.
      * @return The data read from the stream.
@@ -93,7 +94,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or throw EndOfStreamException.
-     * 
+     *
      * @param buffer The stream to read.
      * @param pos The position in buffer to read from.
      * @param data The buffer to populate.
@@ -105,7 +106,7 @@ public class StreamUtilities {
         while (count > 0) {
             int numRead = buffer.read(pos, data, offset, count);
             if (numRead == 0) {
-                throw new IOException("Unable to complete read of " + originalCount + " bytes");
+                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to complete read of " + originalCount + " bytes");
             }
 
             pos += numRead;
@@ -116,7 +117,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or throw EndOfStreamException.
-     * 
+     *
      * @param buffer The buffer to read.
      * @param pos The position in buffer to read from.
      * @param count The number of bytes to read.
@@ -130,7 +131,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or EOF.
-     * 
+     *
      * @param stream The stream to read.
      * @param buffer The buffer to populate.
      * @param offset Offset in the buffer to start.
@@ -154,7 +155,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or EOF.
-     * 
+     *
      * @param buffer The stream to read.
      * @param pos The position in buffer to read from.
      * @param data The buffer to populate.
@@ -180,7 +181,7 @@ public class StreamUtilities {
 
     /**
      * Read bytes until buffer filled or throw EndOfStreamException.
-     * 
+     *
      * @param buffer The buffer to read.
      * @return The data read from the stream.
      */
@@ -190,7 +191,7 @@ public class StreamUtilities {
 
     /**
      * Reads a disk sector (512 bytes).
-     * 
+     *
      * @param stream The stream to read.
      * @return The sector data as a byte array.
      */
@@ -201,16 +202,18 @@ public class StreamUtilities {
     /**
      * Reads a structure from a stream.
      * The type of the structure.
-     * 
+     *
      * @param stream The stream to read.
      * @return The structure.
      */
     public static <T extends IByteArraySerializable> T readStruct(Class<T> c, Stream stream) {
         try {
             T result = c.newInstance();
-            byte[] buffer = readExact(stream, result.getSize());
+            byte[] buffer = readExact(stream, (int) result.getSize());
             result.readFrom(buffer, 0);
             return result;
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
@@ -219,7 +222,7 @@ public class StreamUtilities {
     /**
      * Reads a structure from a stream.
      * The type of the structure.
-     * 
+     *
      * @param stream The stream to read.
      * @param length The number of bytes to read.
      * @return The structure.
@@ -238,19 +241,23 @@ public class StreamUtilities {
     /**
      * Writes a structure to a stream.
      * The type of the structure.
-     * 
+     *
      * @param stream The stream to write to.
      * @param obj The structure to write.
      */
     public static <T extends IByteArraySerializable> void writeStruct(Stream stream, T obj) {
-        byte[] buffer = new byte[obj.getSize()];
-        obj.writeTo(buffer, 0);
-        stream.write(buffer, 0, buffer.length);
+        try {
+            byte[] buffer = new byte[(int) obj.getSize()];
+            obj.writeTo(buffer, 0);
+            stream.write(buffer, 0, buffer.length);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
      * Copies the contents of one stream to another.
-     * 
+     *
      * @param source The stream to copy from.
      * @param dest The destination stream.Copying starts at the current stream
      *            positions.

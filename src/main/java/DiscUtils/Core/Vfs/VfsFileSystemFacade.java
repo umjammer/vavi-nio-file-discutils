@@ -5,8 +5,8 @@
 package DiscUtils.Core.Vfs;
 
 import java.io.IOException;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.Map;
 
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
@@ -40,16 +40,16 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 //
 /**
 * Base class for the public facade on a file system.
-* 
+*
 * The derived class can extend the functionality available from a file system
 * beyond that defined by DiscFileSystem.
 */
-public abstract class VfsFileSystemFacade  extends DiscFileSystem 
+public abstract class VfsFileSystemFacade  extends DiscFileSystem
 {
     private final DiscFileSystem _wrapped;
     /**
     * Initializes a new instance of the VfsFileSystemFacade class.
-    * 
+    *
     *  @param toWrap The actual file system instance.
     */
     protected VfsFileSystemFacade(DiscFileSystem toWrap) {
@@ -58,7 +58,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Indicates whether the file system is read-only or read-write.
-    * 
+    *
     *  @return true if the file system is read-write.
     */
     public boolean canWrite() {
@@ -102,7 +102,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Copies an existing file to a new file.
-    * 
+    *
     *  @param sourceFile The source file.
     *  @param destinationFile The destination file.
     */
@@ -112,7 +112,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Copies an existing file to a new file.
-    * 
+    *
     *  @param sourceFile The source file.
     *  @param destinationFile The destination file.
     *  @param overwrite Overwrite any existing file.
@@ -123,7 +123,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Creates a directory.
-    * 
+    *
     *  @param path The path of the new directory.
     */
     public void createDirectory(String path) throws IOException {
@@ -132,7 +132,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Deletes a directory.
-    * 
+    *
     *  @param path The path of the directory to delete.
     */
     public void deleteDirectory(String path) throws IOException {
@@ -141,7 +141,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Deletes a directory, optionally with all descendants.
-    * 
+    *
     *  @param path The path of the directory to delete.
     *  @param recursive Determines if the all descendants should be deleted.
     */
@@ -151,7 +151,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Deletes a file.
-    * 
+    *
     *  @param path The path of the file to delete.
     */
     public void deleteFile(String path) throws IOException {
@@ -160,7 +160,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Indicates if a directory exists.
-    * 
+    *
     *  @param path The path to test.
     *  @return true if the directory exists.
     */
@@ -170,7 +170,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Indicates if a file exists.
-    * 
+    *
     *  @param path The path to test.
     *  @return true if the file exists.
     */
@@ -180,7 +180,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Indicates if a file or directory exists.
-    * 
+    *
     *  @param path The path to test.
     *  @return true if the file or directory exists.
     */
@@ -190,7 +190,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the names of subdirectories in a specified directory.
-    * 
+    *
     *  @param path The path to search.
     *  @return Array of directories.
     */
@@ -201,7 +201,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
     /**
     * Gets the names of subdirectories in a specified directory matching a specified
     * search pattern.
-    * 
+    *
     *  @param path The path to search.
     *  @param searchPattern The search string to match against.
     *  @return Array of directories matching the search pattern.
@@ -213,7 +213,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
     /**
     * Gets the names of subdirectories in a specified directory matching a specified
     * search pattern, using a value to determine whether to search subdirectories.
-    * 
+    *
     *  @param path The path to search.
     *  @param searchPattern The search string to match against.
     *  @param searchOption Indicates whether to search subdirectories.
@@ -225,7 +225,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the names of files in a specified directory.
-    * 
+    *
     *  @param path The path to search.
     *  @return Array of files.
     */
@@ -235,7 +235,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the names of files in a specified directory.
-    * 
+    *
     *  @param path The path to search.
     *  @param searchPattern The search string to match against.
     *  @return Array of files matching the search pattern.
@@ -247,7 +247,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
     /**
     * Gets the names of files in a specified directory matching a specified
     * search pattern, using a value to determine whether to search subdirectories.
-    * 
+    *
     *  @param path The path to search.
     *  @param searchPattern The search string to match against.
     *  @param searchOption Indicates whether to search subdirectories.
@@ -259,7 +259,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the names of all files and subdirectories in a specified directory.
-    * 
+    *
     *  @param path The path to search.
     *  @return Array of files and subdirectories matching the search pattern.
     */
@@ -270,7 +270,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
     /**
     * Gets the names of files and subdirectories in a specified directory matching a specified
     * search pattern.
-    * 
+    *
     *  @param path The path to search.
     *  @param searchPattern The search string to match against.
     *  @return Array of files and subdirectories matching the search pattern.
@@ -281,7 +281,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Moves a directory.
-    * 
+    *
     *  @param sourceDirectoryName The directory to move.
     *  @param destinationDirectoryName The target directory name.
     */
@@ -291,7 +291,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Moves a file.
-    * 
+    *
     *  @param sourceName The file to move.
     *  @param destinationName The target file name.
     */
@@ -301,7 +301,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Moves a file, allowing an existing file to be overwritten.
-    * 
+    *
     *  @param sourceName The file to move.
     *  @param destinationName The target file name.
     *  @param overwrite Whether to permit a destination file to be overwritten.
@@ -312,7 +312,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Opens the specified file.
-    * 
+    *
     *  @param path The full path of the file to open.
     *  @param mode The file mode for the created stream.
     *  @return The new stream.
@@ -323,7 +323,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Opens the specified file.
-    * 
+    *
     *  @param path The full path of the file to open.
     *  @param mode The file mode for the created stream.
     *  @param access The access permissions for the created stream.
@@ -335,27 +335,27 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the attributes of a file or directory.
-    * 
+    *
     *  @param path The file or directory to inspect.
     *  @return The attributes of the file or directory.
     */
-    public BasicFileAttributes getAttributes(String path) throws IOException {
+    public Map<String, Object> getAttributes(String path) throws IOException {
         return _wrapped.getAttributes(path);
     }
 
     /**
     * Sets the attributes of a file or directory.
-    * 
+    *
     *  @param path The file or directory to change.
     *  @param newValue The new attributes of the file or directory.
     */
-    public void setAttributes(String path, BasicFileAttributes newValue) throws IOException {
+    public void setAttributes(String path, Map<String, Object> newValue) throws IOException {
         _wrapped.setAttributes(path, newValue);
     }
 
     /**
     * Gets the creation time (in local time) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @return The creation time.
     */
@@ -365,7 +365,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Sets the creation time (in local time) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @param newTime The new time to set.
     */
@@ -375,7 +375,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the creation time (in UTC) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @return The creation time.
     */
@@ -385,7 +385,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Sets the creation time (in UTC) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @param newTime The new time to set.
     */
@@ -395,7 +395,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the last access time (in local time) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @return The last access time.
     */
@@ -405,7 +405,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Sets the last access time (in local time) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @param newTime The new time to set.
     */
@@ -415,7 +415,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the last access time (in UTC) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @return The last access time.
     */
@@ -425,7 +425,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Sets the last access time (in UTC) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @param newTime The new time to set.
     */
@@ -435,7 +435,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the last modification time (in local time) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @return The last write time.
     */
@@ -445,7 +445,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Sets the last modification time (in local time) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @param newTime The new time to set.
     */
@@ -455,7 +455,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the last modification time (in UTC) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @return The last write time.
     */
@@ -465,7 +465,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Sets the last modification time (in UTC) of a file or directory.
-    * 
+    *
     *  @param path The path of the file or directory.
     *  @param newTime The new time to set.
     */
@@ -475,7 +475,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets the length of a file.
-    * 
+    *
     *  @param path The path to the file.
     *  @return The length in bytes.
     */
@@ -485,7 +485,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets an object representing a possible file.
-    * 
+    *
     *  @param path The file path.
     *  @return The representing object.The file does not need to exist.
     */
@@ -495,7 +495,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets an object representing a possible directory.
-    * 
+    *
     *  @param path The directory path.
     *  @return The representing object.The directory does not need to exist.
     */
@@ -505,7 +505,7 @@ public abstract class VfsFileSystemFacade  extends DiscFileSystem
 
     /**
     * Gets an object representing a possible file system object (file or directory).
-    * 
+    *
     *  @param path The file system path.
     *  @return The representing object.The file system object does not need to exist.
     */

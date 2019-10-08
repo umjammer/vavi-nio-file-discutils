@@ -22,25 +22,25 @@
 
 package DiscUtils.Core.Vfs;
 
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 
 /**
  * Base class for directory entries in a file system.
- * 
+ *
  * File system implementations should have a class that derives from
  * this abstract class. If the file system implementation is read-only,
  * it is acceptable to throw
- * {@code NotImplementedException}
+ * {@code UnsupportedOperationException}
  * from methods
  * that attempt to modify the file system.
  */
 public abstract class VfsDirEntry {
     /**
      * Gets the creation time of the file or directory.
-     * 
+     *
      * May throw
-     * {@code NotSupportedException}
+     * {@code UnsupportedOperationException}
      * if
      * {@code HasVfsTimeInfo}
      * is
@@ -51,16 +51,16 @@ public abstract class VfsDirEntry {
 
     /**
      * Gets the file attributes from the directory entry.
-     * 
+     *
      * May throw
-     * {@code NotSupportedException}
+     * {@code UnsupportedOperationException}
      * if
      * {@code HasVfsFileAttributes}
      * is
      * {@code false}
      * .
      */
-    public abstract BasicFileAttributes getFileAttributes();
+    public abstract Map<String, Object> getFileAttributes();
 
     /**
      * Gets the name of this directory entry.
@@ -99,13 +99,13 @@ public abstract class VfsDirEntry {
      * Gets a value indicating whether this directory entry represents a symlink
      * (rather than a file or directory).
      */
-    public abstract boolean getIsSymlink();
+    public abstract boolean isSymlink();
 
     /**
      * Gets the last access time of the file or directory.
-     * 
+     *
      * May throw
-     * {@code NotSupportedException}
+     * {@code UnsupportedOperationException}
      * if
      * {@code HasVfsTimeInfo}
      * is
@@ -116,9 +116,9 @@ public abstract class VfsDirEntry {
 
     /**
      * Gets the last write time of the file or directory.
-     * 
+     *
      * May throw
-     * {@code NotSupportedException}
+     * {@code UnsupportedOperationException}
      * if
      * {@code HasVfsTimeInfo}
      * is
@@ -129,7 +129,7 @@ public abstract class VfsDirEntry {
 
     /**
      * Gets a version of FileName that can be used in wildcard matches.
-     * 
+     *
      * The returned name, must have an extension separator '.', and not have any
      * optional version
      * information found in some files. The returned name is matched against a

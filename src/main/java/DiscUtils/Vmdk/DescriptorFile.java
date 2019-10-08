@@ -22,7 +22,6 @@
 
 package DiscUtils.Vmdk;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +30,7 @@ import java.util.UUID;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.Sizes;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.StreamReader;
 
 
 public class DescriptorFile {
@@ -334,58 +334,51 @@ public class DescriptorFile {
     }
 
     private String getHeader(String key) {
-        for (Object __dummyForeachVar0 : _header) {
-            DescriptorFileEntry entry = (DescriptorFileEntry) __dummyForeachVar0;
+        for (DescriptorFileEntry entry : _header) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
             }
-
         }
         return null;
     }
 
     private void setHeader(String key, String newValue, DescriptorFileEntryType type) {
-        for (Object __dummyForeachVar1 : _header) {
-            DescriptorFileEntry entry = (DescriptorFileEntry) __dummyForeachVar1;
+        for (DescriptorFileEntry entry : _header) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(newValue);
                 return;
             }
-
         }
         _header.add(new DescriptorFileEntry(key, newValue, type));
     }
 
     private String getDiskDatabase(String key) {
-        for (Object __dummyForeachVar2 : _diskDataBase) {
-            DescriptorFileEntry entry = (DescriptorFileEntry) __dummyForeachVar2;
+        for (DescriptorFileEntry entry : _diskDataBase) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
             }
-
         }
         return null;
     }
 
     private void setDiskDatabase(String key, String value) {
-        for (Object __dummyForeachVar3 : _diskDataBase) {
-            DescriptorFileEntry entry = (DescriptorFileEntry) __dummyForeachVar3;
+        for (DescriptorFileEntry entry : _diskDataBase) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(value);
                 return;
             }
-
         }
         _diskDataBase.add(new DescriptorFileEntry(key, value, DescriptorFileEntryType.Quoted));
     }
 
     private void load(Stream source) {
         if (source.getLength() - source.getPosition() > MaxSize) {
-            throw new IOException(String.format("Invalid VMDK descriptor file, more than {0} bytes in length", MaxSize));
+            throw new moe.yo3explorer.dotnetio4j.IOException(String
+                    .format("Invalid VMDK descriptor file, more than {0} bytes in length", MaxSize));
         }
 
         StreamReader reader = new StreamReader(source);
-        String line = reader.ReadLine();
+        String line = reader.readLine();
         while (line != null) {
             line = line.replaceAll("\0*$", "");
             int commentPos = line.indexOf('#');
@@ -406,7 +399,7 @@ public class DescriptorFile {
                 }
             }
 
-            line = reader.ReadLine();
+            line = reader.readLine();
         }
     }
 }

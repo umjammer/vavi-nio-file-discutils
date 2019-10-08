@@ -32,9 +32,13 @@ public enum HostedSparseExtentFlags {
     RedundantGrainTable,
     CompressedGrains,
     MarkersInUse;
+
     public static EnumSet<HostedSparseExtentFlags> valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> (value & v.ordinal()) != 0).collect(Collectors.toCollection(() -> EnumSet.noneOf(HostedSparseExtentFlags.class)));
+        return Arrays.stream(values())
+                .filter(v -> (value & v.ordinal()) != 0)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(HostedSparseExtentFlags.class)));
     }
+
     public static long valueOf(EnumSet<HostedSparseExtentFlags> flags) {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
     }

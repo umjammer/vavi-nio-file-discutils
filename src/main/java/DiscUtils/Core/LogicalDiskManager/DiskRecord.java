@@ -36,5 +36,4 @@ public final class DiskRecord extends DatabaseRecord {
             DiskGuidString = readVarString(buffer, pos);
         }
     }
-
 }

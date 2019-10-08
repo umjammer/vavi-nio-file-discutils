@@ -71,7 +71,7 @@ public class BiosExtendedPartitionTable {
 
     /**
      * Gets all of the disk ranges containing partition table data.
-     * 
+     *
      * @return Set of stream extents, indicated as byte offset from the start of
      *         the disk.
      */

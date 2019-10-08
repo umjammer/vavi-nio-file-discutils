@@ -51,7 +51,7 @@ public final class TarFileBuilder extends StreamBuilder {
 
     /**
      * Add a file to the tar archive.
-     * 
+     *
      * @param name The name of the file.
      * @param buffer The file data.
      */
@@ -61,7 +61,7 @@ public final class TarFileBuilder extends StreamBuilder {
 
     /**
      * Add a file to the tar archive.
-     * 
+     *
      * @param name The name of the file.
      * @param buffer The file data.
      * @param fileMode The access mode of the file.
@@ -80,7 +80,7 @@ public final class TarFileBuilder extends StreamBuilder {
 
     /**
      * Add a file to the tar archive.
-     * 
+     *
      * @param name The name of the file.
      * @param stream The file data.
      */
@@ -90,7 +90,7 @@ public final class TarFileBuilder extends StreamBuilder {
 
     /**
      * Add a file to the tar archive.
-     * 
+     *
      * @param name The name of the file.
      * @param stream The file data.
      * @param fileMode The access mode of the file.
@@ -110,8 +110,7 @@ public final class TarFileBuilder extends StreamBuilder {
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> result = new ArrayList<>(_files.size() * 2 + 2);
         long pos = 0;
-        for (Object __dummyForeachVar0 : _files) {
-            UnixBuildFileRecord file = (UnixBuildFileRecord) __dummyForeachVar0;
+        for (UnixBuildFileRecord file : _files) {
             BuilderExtent fileContentExtent = file.fix(pos + TarHeader.Length);
             result.add(new TarHeaderExtent(pos,
                                            file.getName(),

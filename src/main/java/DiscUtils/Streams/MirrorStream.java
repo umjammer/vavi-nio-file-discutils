@@ -50,8 +50,7 @@ public class MirrorStream extends SparseStream {
         _canWrite = _wrapped.get(0).canWrite();
         _canSeek = _wrapped.get(0).canSeek();
         _length = _wrapped.get(0).getLength();
-        for (Object __dummyForeachVar0 : _wrapped) {
-            SparseStream stream = (SparseStream) __dummyForeachVar0;
+        for (SparseStream stream : _wrapped) {
             if (stream.canRead() != _canRead || stream.canWrite() != _canWrite || stream.canSeek() != _canSeek) {
                 throw new IllegalArgumentException("All mirrored streams must have the same read/write/seek permissions");
             }
@@ -59,7 +58,6 @@ public class MirrorStream extends SparseStream {
             if (stream.getLength() != _length) {
                 throw new IllegalArgumentException("All mirrored streams must have the same length");
             }
-
         }
     }
 
@@ -116,8 +114,7 @@ public class MirrorStream extends SparseStream {
             throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to clear beyond end of mirrored stream");
         }
 
-        for (Object __dummyForeachVar1 : _wrapped) {
-            SparseStream stream = (SparseStream) __dummyForeachVar1;
+        for (SparseStream stream : _wrapped) {
             stream.setPosition(pos);
             stream.clear(count);
         }
@@ -129,8 +126,7 @@ public class MirrorStream extends SparseStream {
             throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of mirrored stream");
         }
 
-        for (Object __dummyForeachVar2 : _wrapped) {
-            SparseStream stream = (SparseStream) __dummyForeachVar2;
+        for (SparseStream stream  : _wrapped) {
             stream.setPosition(pos);
             stream.write(buffer, offset, count);
         }
@@ -138,12 +134,10 @@ public class MirrorStream extends SparseStream {
 
     public void close() throws IOException {
         if (_ownsWrapped == Ownership.Dispose && _wrapped != null) {
-            for (Object __dummyForeachVar3 : _wrapped) {
-                SparseStream stream = (SparseStream) __dummyForeachVar3;
+            for (SparseStream stream : _wrapped) {
                 stream.close();
             }
             _wrapped = null;
         }
     }
-
 }

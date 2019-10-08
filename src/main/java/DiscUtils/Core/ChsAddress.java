@@ -35,7 +35,7 @@ public final class ChsAddress {
 
     /**
      * Initializes a new instance of the ChsAddress class.
-     * 
+     *
      * @param cylinder The number of cylinders of the disk.
      * @param head The number of heads (aka platters) of the disk.
      * @param sector The number of sectors per track/cylinder of the disk.
@@ -75,7 +75,7 @@ public final class ChsAddress {
 
     /**
      * Determines if this object is equivalent to another.
-     * 
+     *
      * @param obj The object to test against.
      * @return
      *         {@code true}
@@ -103,7 +103,7 @@ public final class ChsAddress {
 
     /**
      * Calculates the hash code for this object.
-     * 
+     *
      * @return The hash code.
      */
     public int hashCode() {
@@ -112,7 +112,7 @@ public final class ChsAddress {
 
     /**
      * Gets a string representation of this object, in the form (C/H/S).
-     * 
+     *
      * @return The string representation.
      */
     public String toString() {

@@ -27,15 +27,27 @@ import java.util.EnumSet;
 import DiscUtils.Core.UnixFilePermissions;
 import DiscUtils.Streams.Builder.BuilderBufferExtent;
 
-public final class TarHeaderExtent  extends BuilderBufferExtent 
-{
-    private final long _fileLength ;
+
+public final class TarHeaderExtent extends BuilderBufferExtent {
+    private final long _fileLength;
+
     private final String _fileName;
-    private final int _groupId ;
+
+    private final int _groupId;
+
     private final EnumSet<UnixFilePermissions> _mode;
+
     private final long _modificationTime;
-    private final int _ownerId ;
-    public TarHeaderExtent(long start, String fileName, long fileLength, EnumSet<UnixFilePermissions> mode, int ownerId, int groupId, long modificationTime) {
+
+    private final int _ownerId;
+
+    public TarHeaderExtent(long start,
+            String fileName,
+            long fileLength,
+            EnumSet<UnixFilePermissions> mode,
+            int ownerId,
+            int groupId,
+            long modificationTime) {
         super(start, 512);
         _fileName = fileName;
         _fileLength = fileLength;
@@ -63,5 +75,3 @@ public final class TarHeaderExtent  extends BuilderBufferExtent
     }
 
 }
-
-

@@ -67,8 +67,7 @@ public class Database {
     }
 
     public DiskGroupRecord getDiskGroup(UUID guid) {
-        for (Object __dummyForeachVar2 : _records.values()) {
-            DatabaseRecord record = (DatabaseRecord) __dummyForeachVar2;
+        for (DatabaseRecord record  : _records.values()) {
             if (record._RecordType == RecordType.DiskGroup) {
                 DiskGroupRecord dgRecord = (DiskGroupRecord) record;
                 if (UUID.fromString(dgRecord.GroupGuidString) == guid || guid == UUID.fromString("")) {

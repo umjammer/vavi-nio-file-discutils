@@ -31,7 +31,7 @@ import moe.yo3explorer.dotnetio4j.SeekOrigin;
 
 /**
  * Base class for streams that wrap another stream.
- * 
+ *
  * Provides the default implementation of methods & properties, so
  * wrapping streams need only override the methods they need to intercept.
  */

@@ -112,7 +112,7 @@ public abstract class DiskImageBuilder {
     /**
      * Gets an instance that constructs the specified type (and variant) of
      * virtual disk image.
-     * 
+     *
      * @param type The type of image to build (VHD, VMDK, etc).
      * @param variant The variant type (differencing/dynamic, fixed/static,
      *            etc).
@@ -128,7 +128,7 @@ public abstract class DiskImageBuilder {
 
     /**
      * Initiates the construction of the disk image.
-     * 
+     *
      * @param baseName The base name for the disk images.
      * @return A set of one or more logical files that constitute the
      *         disk image. The first file is the 'primary' file that is normally
@@ -152,7 +152,7 @@ public abstract class DiskImageBuilder {
                         .getCustomAttribute(type, VirtualDiskFactoryAttribute.class, false);
                 if (attr != null) {
                     VirtualDiskFactory factory = (VirtualDiskFactory) type.newInstance();
-                    typeMap.put(attr.getType(), factory);
+                    typeMap.put(attr.type(), factory);
                 }
 
             }

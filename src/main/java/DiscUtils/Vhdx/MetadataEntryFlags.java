@@ -33,9 +33,13 @@ public enum MetadataEntryFlags {
     IsVirtualDisk,
     __dummyEnum__0,
     IsRequired;
+
     public static EnumSet<MetadataEntryFlags> valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> (value & v.ordinal()) != 0).collect(Collectors.toCollection(() -> EnumSet.noneOf(MetadataEntryFlags.class)));
+        return Arrays.stream(values())
+                .filter(v -> (value & v.ordinal()) != 0)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(MetadataEntryFlags.class)));
     }
+
     public static long valueOf(EnumSet<MetadataEntryFlags> flags) {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
     }

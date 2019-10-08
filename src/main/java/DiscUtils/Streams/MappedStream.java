@@ -30,7 +30,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 /**
  * Base class for streams that are essentially a mapping onto a parent stream.
- * 
+ *
  * This class provides access to the mapping underlying the stream, enabling
  * callers to convert a byte range in this stream into one or more ranges in
  * the parent stream.
@@ -38,7 +38,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 public abstract class MappedStream extends SparseStream {
     /**
      * Converts any stream into a non-linear stream.
-     * 
+     *
      * @param stream The stream to convert.
      * @param takeOwnership
      *            {@code true}
@@ -54,7 +54,7 @@ public abstract class MappedStream extends SparseStream {
 
     /**
      * Converts any stream into a non-linear stream.
-     * 
+     *
      * @param stream The stream to convert.
      * @param takeOwnership
      *            {@code true}
@@ -75,7 +75,7 @@ public abstract class MappedStream extends SparseStream {
 
     /**
      * Maps a logical range down to storage locations.
-     * 
+     *
      * @param start The first logical range to map.
      * @param length The length of the range to map.
      * @return One or more stream extents specifying the storage locations that

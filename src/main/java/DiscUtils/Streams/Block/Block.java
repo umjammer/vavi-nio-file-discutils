@@ -61,7 +61,5 @@ public class Block {
         } catch (Exception __dummyCatchVar0) {
             throw new RuntimeException(__dummyCatchVar0);
         }
-
     }
-
 }

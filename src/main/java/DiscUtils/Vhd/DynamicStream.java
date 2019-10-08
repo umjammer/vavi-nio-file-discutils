@@ -383,7 +383,7 @@ public class DynamicStream extends MappedStream {
         checkDisposed();
         long maxCount = Math.min(getLength(), start + count) - start;
         if (maxCount < 0) {
-            return Arrays.asList(new StreamExtent[0]);
+            return Arrays.asList();
         }
 
         List<StreamExtent> parentExtents = _parentStream.getExtentsInRange(start, maxCount);

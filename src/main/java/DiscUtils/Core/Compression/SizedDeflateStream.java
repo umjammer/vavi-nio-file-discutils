@@ -22,7 +22,9 @@
 
 package DiscUtils.Core.Compression;
 
+import moe.yo3explorer.dotnetio4j.DeflateStream;
 import moe.yo3explorer.dotnetio4j.Stream;
+
 
 public class SizedDeflateStream extends DeflateStream {
     private final int _length;

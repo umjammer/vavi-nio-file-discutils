@@ -29,7 +29,7 @@ import DiscUtils.Streams.StreamExtent;
 
 /**
  * Interface shared by all buffers.
- * 
+ *
  * Buffers are very similar to streams, except the buffer has no notion of
  * 'current position'. All I/O operations instead specify the position, as
  * needed. Buffers also support sparse behaviour.
@@ -58,7 +58,7 @@ public interface IBuffer {
 
     /**
      * Reads from the buffer into a byte array.
-     * 
+     *
      * @param pos The offset within the buffer to start reading.
      * @param buffer The destination byte array.
      * @param offset The start offset within the destination buffer.
@@ -69,7 +69,7 @@ public interface IBuffer {
 
     /**
      * Writes a byte array into the buffer.
-     * 
+     *
      * @param pos The start offset within the buffer.
      * @param buffer The source byte array.
      * @param offset The start offset within the source byte array.
@@ -79,7 +79,7 @@ public interface IBuffer {
 
     /**
      * Clears bytes from the buffer.
-     * 
+     *
      * @param pos The start offset within the buffer.
      * @param count The number of bytes to clear.Logically equivalent to writing
      *            {@code count}
@@ -104,14 +104,14 @@ public interface IBuffer {
 
     /**
      * Sets the capacity of the buffer, truncating if appropriate.
-     * 
+     *
      * @param value The desired capacity of the buffer.
      */
     void setCapacity(long value);
 
     /**
      * Gets the parts of a buffer that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.

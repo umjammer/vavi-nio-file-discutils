@@ -28,7 +28,7 @@ package DiscUtils.Core;
 public interface IUnixFileSystem extends IFileSystem {
     /**
      * Retrieves Unix-specific information about a file or directory.
-     * 
+     *
      * @param path Path to the file or directory.
      * @return Information about the owner, group, permissions and type of the
      *         file or directory.

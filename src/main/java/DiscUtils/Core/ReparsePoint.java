@@ -28,7 +28,7 @@ package DiscUtils.Core;
 public final class ReparsePoint {
     /**
      * Initializes a new instance of the ReparsePoint class.
-     * 
+     *
      * @param tag The defined reparse point tag.
      * @param content The reparse point's content.
      */

@@ -38,6 +38,7 @@ import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import moe.yo3explorer.dotnetio4j.Stream;
 
+
 /**
  * Represents a single raw disk image file.
  */
@@ -46,7 +47,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream to interpret.
      */
     public DiskImageFile(Stream stream) {
@@ -55,7 +56,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream to interpret.
      * @param ownsStream Indicates if the new instance should control the
      *            lifetime of the stream.
@@ -122,7 +123,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a raw disk image.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -130,10 +131,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param geometry The geometry of the new disk.
      * @return An object that accesses the stream as a raw disk image.
      */
-    public static DiskImageFile initialize(Stream stream,
-                                           Ownership ownsStream,
-                                           long capacity,
-                                           Geometry geometry) {
+    public static DiskImageFile initialize(Stream stream, Ownership ownsStream, long capacity, Geometry geometry) {
         stream.setLength(MathUtilities.roundUp(capacity, Sizes.Sector));
         // Wipe any pre-existing master boot record / BPB
         stream.setPosition(0);
@@ -144,22 +142,20 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as an unformatted floppy disk.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
      * @param type The type of floppy disk image to create.
      * @return An object that accesses the stream as a disk.
      */
-    public static DiskImageFile initialize(Stream stream,
-                                           Ownership ownsStream,
-                                           FloppyDiskType type) {
+    public static DiskImageFile initialize(Stream stream, Ownership ownsStream, FloppyDiskType type) {
         return initialize(stream, ownsStream, floppyCapacity(type), null);
     }
 
     /**
      * Gets the content of this layer.
-     * 
+     *
      * @param parent The parent stream (if any).
      * @param ownsParent Controls ownership of the parent stream.
      * @return The content as a stream.
@@ -178,7 +174,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the possible locations of the parent file (if any).
-     * 
+     *
      * @return Array of strings, empty if no parent.
      */
     public List<String> getParentLocations() {
@@ -203,7 +199,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Calculates the best guess geometry of a disk.
-     * 
+     *
      * @param disk The disk to detect the geometry of.
      * @return The geometry of the disk.
      */
@@ -227,9 +223,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     // Failing that, try to detect the geometry from any partition table.
     // Note: this call falls back to guessing the geometry from the capacity
+
     /**
      * Calculates the best guess disk type (i.e. floppy or hard disk).
-     * 
+     *
      * @param capacity The capacity of the disk.
      * @return The disk type.
      */
@@ -254,5 +251,4 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         }
     }
-
 }

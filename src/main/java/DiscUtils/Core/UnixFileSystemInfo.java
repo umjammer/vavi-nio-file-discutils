@@ -22,6 +22,8 @@
 
 package DiscUtils.Core;
 
+import java.util.EnumSet;
+
 /**
  * Information about a file or directory common to most Unix systems.
  */
@@ -95,13 +97,13 @@ public final class UnixFileSystemInfo {
     /**
      * Gets or sets the file permissions (aka flags) for this file or directory.
      */
-    private UnixFilePermissions __Permissions = UnixFilePermissions.None;
+    private EnumSet<UnixFilePermissions> __Permissions;
 
-    public UnixFilePermissions getPermissions() {
+    public EnumSet<UnixFilePermissions> getPermissions() {
         return __Permissions;
     }
 
-    public void setPermissions(UnixFilePermissions value) {
+    public void setPermissions(EnumSet<UnixFilePermissions> value) {
         __Permissions = value;
     }
 

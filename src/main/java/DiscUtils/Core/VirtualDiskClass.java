@@ -25,7 +25,7 @@ package DiscUtils.Core;
 public enum VirtualDiskClass {
     /**
      * Enumeration of different classes of disk.
-     * 
+     *
      * Unknown (or unspecified) type.
      */
     None,

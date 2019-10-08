@@ -60,16 +60,16 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Initializes a new instance of the GuidPartitionTable class.
-     * 
+     *
      * @param disk The disk containing the partition table.
      */
-    public GuidPartitionTable(VirtualDisk disk) throws IOException {
+    public GuidPartitionTable(VirtualDisk disk) {
         init(disk.getContent(), disk.getGeometry());
     }
 
     /**
      * Initializes a new instance of the GuidPartitionTable class.
-     * 
+     *
      * @param disk The stream containing the disk data.
      * @param diskGeometry The geometry of the disk.
      */
@@ -110,7 +110,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition table on a disk.
-     * 
+     *
      * @param disk The disk to initialize.
      * @return An object to access the newly created partition table.
      */
@@ -120,7 +120,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition table on a disk.
-     * 
+     *
      * @param disk The stream containing the disk data.
      * @param diskGeometry The geometry of the disk.
      * @return An object to access the newly created partition table.
@@ -163,7 +163,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition table on a disk containing a single partition.
-     * 
+     *
      * @param disk The disk to initialize.
      * @param type The partition type for the single partition.
      * @return An object to access the newly created partition table.
@@ -176,7 +176,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.The partition table must be empty
@@ -194,7 +194,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new primary partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -212,7 +212,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new aligned partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in bytes).
@@ -245,7 +245,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new aligned partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -277,7 +277,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Creates a new GUID partition on the disk.
-     * 
+     *
      * @param startSector The first sector of the partition.
      * @param endSector The last sector of the partition.
      * @param type The partition type.
@@ -295,7 +295,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     /**
      * Deletes a partition at a given index.
-     * 
+     *
      * @param index The index of the partition.
      */
     public void delete(int index) {
@@ -439,8 +439,7 @@ public final class GuidPartitionTable extends PartitionTable {
         List<GptEntry> list = getAllEntries();
         Collections.sort(list);
         long startSector = MathUtilities.roundUp(_primaryHeader.FirstUsable, alignmentSectors);
-        for (Object __dummyForeachVar1 : list) {
-            GptEntry entry = (GptEntry) __dummyForeachVar1;
+        for (GptEntry entry : list) {
             if (!Utilities.rangesOverlap(startSector,
                                          startSector + numSectors - 1,
                                          entry.FirstUsedLogicalBlock,
@@ -459,8 +458,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     private long firstAvailableSector(List<GptEntry> allEntries) {
         long start = _primaryHeader.FirstUsable;
-        for (Object __dummyForeachVar2 : allEntries) {
-            GptEntry entry = (GptEntry) __dummyForeachVar2;
+        for (GptEntry entry  : allEntries) {
             if (entry.LastUsedLogicalBlock >= start) {
                 start = entry.LastUsedLogicalBlock + 1;
             }
@@ -471,8 +469,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     private long findLastFreeSector(long start, List<GptEntry> allEntries) {
         long end = _primaryHeader.LastUsable;
-        for (Object __dummyForeachVar3 : allEntries) {
-            GptEntry entry = (GptEntry) __dummyForeachVar3;
+        for (GptEntry entry : allEntries) {
             if (entry.LastUsedLogicalBlock > start && entry.FirstUsedLogicalBlock <= end) {
                 end = entry.FirstUsedLogicalBlock - 1;
             }

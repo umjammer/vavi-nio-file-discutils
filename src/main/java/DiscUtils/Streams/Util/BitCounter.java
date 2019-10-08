@@ -44,7 +44,7 @@ public class BitCounter {
     /**
      * count the number of bits set in
      * {@code value}
-     * 
+     *
      * @return the number of bits set in
      *         {@code value}
      */
@@ -55,7 +55,7 @@ public class BitCounter {
     /**
      * count the number of bits set in each entry of
      * {@code values}
-     * 
+     *
      * @param values the
      *            {@link #Array}
      *            to process

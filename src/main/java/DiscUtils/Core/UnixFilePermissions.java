@@ -26,10 +26,11 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
+
 public enum UnixFilePermissions {
     /**
      * Standard Unix-style file system permissions.
-     * 
+     *
      * No permissions.
      */
     None,
@@ -93,9 +94,13 @@ public enum UnixFilePermissions {
      * Set UID on execute.
      */
     SetUserId;
+
     public static EnumSet<UnixFilePermissions> valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> (value & v.ordinal()) != 0).collect(Collectors.toCollection(() -> EnumSet.noneOf(UnixFilePermissions.class)));
+        return Arrays.stream(values())
+                .filter(v -> (value & v.ordinal()) != 0)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(UnixFilePermissions.class)));
     }
+
     public static long valueOf(EnumSet<UnixFilePermissions> flags) {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
     }

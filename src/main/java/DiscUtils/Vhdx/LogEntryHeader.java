@@ -22,13 +22,13 @@
 
 package DiscUtils.Vhdx;
 
-import java.io.Serializable;
 import java.util.UUID;
 
+import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class LogEntryHeader implements Serializable {
+public final class LogEntryHeader implements IByteArraySerializable {
     public static final int LogEntrySignature = 0x65676F6C;
 
     private byte[] _data;
@@ -57,13 +57,13 @@ public final class LogEntryHeader implements Serializable {
         return Signature == LogEntrySignature;
     }
 
-    public int getSize() {
+    public long getSize() {
         return 64;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _data = new byte[getSize()];
-        System.arraycopy(buffer, offset, _data, 0, getSize());
+        _data = new byte[(int) getSize()];
+        System.arraycopy(buffer, offset, _data, 0, (int) getSize());
         Signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         Checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         EntryLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
@@ -74,7 +74,7 @@ public final class LogEntryHeader implements Serializable {
         LogGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 32);
         FlushedFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
         LastFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
-        return getSize();
+        return (int) getSize();
     }
 
     public void writeTo(byte[] buffer, int offset) {

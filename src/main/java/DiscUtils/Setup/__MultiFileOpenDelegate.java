@@ -38,8 +38,8 @@ package DiscUtils.Setup;
 //            copy = new LinkedList<>(members);
 //        }
 //        FileOpenDelegate prev = null;
-//        for (Object __dummyForeachVar0 : copy) {
-//            FileOpenDelegate d = (FileOpenDelegate) __dummyForeachVar0;
+//        for (FileOpenDelegate d : copy) {
+//             = (FileOpenDelegate) __dummyForeachVar0;
 //            if (prev != null)
 //                prev.invoke(fileName, mode, access, share);
 //
@@ -95,7 +95,7 @@ package DiscUtils.Setup;
 //        } else {
 //            /**
 //             * returns the result from the builtin FileLocator
-//             * 
+//             *
 //             * @return
 //             */
 //            __MultiFileOpenDelegate ret = new __MultiFileOpenDelegate();

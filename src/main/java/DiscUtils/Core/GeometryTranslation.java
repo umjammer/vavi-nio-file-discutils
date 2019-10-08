@@ -25,7 +25,7 @@ package DiscUtils.Core;
 public enum GeometryTranslation {
     /**
      * Enumeration of standard BIOS disk geometry translation methods.
-     * 
+     *
      * Apply no translation.
      */
     None,

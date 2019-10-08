@@ -165,8 +165,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 //            synchronized (members) {
 //                copy = new LinkedList<>(members);
 //            }
-//            for (Object __dummyForeachVar0 : copy) {
-//                ModifyStream d = (ModifyStream) __dummyForeachVar0;
+//            for (ModifyStream d : copy) {
 //                d.invoke(stream, opOffset, count);
 //            }
 //        }
@@ -221,8 +220,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 //            synchronized (members) {
 //                copy = new LinkedList<>(members);
 //            }
-//            for (Object __dummyForeachVar1 : copy) {
-//                ModifyBuffer d = (ModifyBuffer) __dummyForeachVar1;
+//            for (ModifyBuffer d : copy) {
 //                d.invoke(buffer, offset, opOffset, count);
 //            }
 //        }

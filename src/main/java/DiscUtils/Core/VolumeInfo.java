@@ -75,9 +75,8 @@ public abstract class VolumeInfo implements Serializable {
 
     /**
      * Opens the volume, providing access to it's contents.
-     * 
+     *
      * @return Stream that can access the volume's contents.
      */
     public abstract SparseStream open();
-
 }

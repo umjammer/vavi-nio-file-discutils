@@ -39,7 +39,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 public abstract class StreamBuilder {
     /**
      * Builds a new stream.
-     * 
+     *
      * @return The stream created by the StreamBuilder instance.
      */
     public SparseStream build() {
@@ -50,7 +50,7 @@ public abstract class StreamBuilder {
 
     /**
      * Writes the stream contents to an existing stream.
-     * 
+     *
      * @param output The stream to write to.
      */
     public void build(Stream output) {
@@ -69,7 +69,7 @@ public abstract class StreamBuilder {
 
     /**
      * Writes the stream contents to a file.
-     * 
+     *
      * @param outputFile The file to write to.
      */
     public void build(String outputFile) {
@@ -81,5 +81,4 @@ public abstract class StreamBuilder {
     }
 
     protected abstract List<BuilderExtent> fixExtents(long[] totalLength);
-
 }

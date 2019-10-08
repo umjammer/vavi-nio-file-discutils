@@ -3,8 +3,8 @@ package DiscUtils.Core;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
@@ -18,74 +18,68 @@ import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
  */
 public class VirtualDiskManager {
     static {
-        __ExtensionMap = new HashMap<>();
-        __TypeMap = new HashMap<>();
-        __DiskTransports = new HashMap<>();
+        extensionMap = new HashMap<>();
+        typeMap = new HashMap<>();
+        diskTransports = new HashMap<>();
     }
 
-    private static Map<String, Class<VirtualDiskTransport>> __DiskTransports;
+    private static Map<String, VirtualDiskTransport> diskTransports;
 
-    public static Map<String, Class<VirtualDiskTransport>> getDiskTransports() {
-        return __DiskTransports;
+    public static Map<String, VirtualDiskTransport> getDiskTransports() {
+        return diskTransports;
     }
 
-    private static Map<String, VirtualDiskFactory> __ExtensionMap;
+    private static Map<String, VirtualDiskFactory> extensionMap;
 
     public static Map<String, VirtualDiskFactory> getExtensionMap() {
-        return __ExtensionMap;
+        return extensionMap;
     }
 
     /**
      * Gets the set of disk formats supported as an array of file extensions.
      */
     public static Collection<String> getSupportedDiskFormats() {
-        return getExtensionMap().keySet();
+        return extensionMap.keySet();
     }
 
     /**
      * Gets the set of disk types supported, as an array of identifiers.
      */
     public static Collection<String> getSupportedDiskTypes() {
-        return getTypeMap().keySet();
+        return typeMap.keySet();
     }
 
-    private static Map<String, VirtualDiskFactory> __TypeMap;
+    private static Map<String, VirtualDiskFactory> typeMap;
 
     public static Map<String, VirtualDiskFactory> getTypeMap() {
-        return __TypeMap;
+        return typeMap;
     }
 
-    /**
-     * Locates VirtualDiskFactory factories attributed with
+    /* Locates VirtualDiskFactory factories attributed with
      * VirtualDiskFactoryAttribute, and types marked with
      * VirtualDiskTransportAttribute, that are able to work with Virtual Disk
-     * types.
-     * 
-     * @param assembly An assembly to scan
-     */
-    public static void registerVirtualDiskTypes(List<Class<VirtualDiskTransport>> assembly) {
-        try {
-            for (Class<VirtualDiskTransport> type : assembly) {
-                VirtualDiskFactoryAttribute diskFactoryAttribute = ReflectionHelper
-                        .getCustomAttribute(type, VirtualDiskFactoryAttribute.class, false);
-                if (diskFactoryAttribute != null) {
-                    VirtualDiskFactory factory = VirtualDiskFactory.class.cast(type.newInstance());
-                    getTypeMap().put(diskFactoryAttribute.getType(), factory);
-                    for (String extension : diskFactoryAttribute.getFileExtensions()) {
-                        getExtensionMap().put(extension.toUpperCase(), factory);
-                    }
-                }
+     * types. */
+    static {
+        ServiceLoader<VirtualDiskTransport> assembly = ServiceLoader.load(VirtualDiskTransport.class);
 
-                if (VirtualDiskTransportAttribute.class
-                        .isInstance(ReflectionHelper.getCustomAttribute(type, VirtualDiskTransportAttribute.class, false))) {
-                    getDiskTransports().put(VirtualDiskTransportAttribute.class
-                            .cast(ReflectionHelper.getCustomAttribute(type, VirtualDiskTransportAttribute.class, false))
-                            .getScheme()
-                            .toUpperCase(), type);
+        for (VirtualDiskTransport type : assembly) {
+            VirtualDiskFactoryAttribute diskFactoryAttribute = ReflectionHelper
+                    .getCustomAttribute(type.getClass(), VirtualDiskFactoryAttribute.class, false);
+            if (diskFactoryAttribute != null) {
+                VirtualDiskFactory factory = VirtualDiskFactory.class.cast(type);
+                typeMap.put(diskFactoryAttribute.type(), factory);
+                for (String extension : diskFactoryAttribute.fileExtensions()) {
+                    getExtensionMap().put(extension.toUpperCase(), factory);
                 }
             }
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+
+            if (VirtualDiskTransportAttribute.class.isInstance(ReflectionHelper
+                    .getCustomAttribute(type.getClass(), VirtualDiskTransportAttribute.class, false))) {
+                diskTransports.put(VirtualDiskTransportAttribute.class
+                        .cast(ReflectionHelper.getCustomAttribute(type.getClass(), VirtualDiskTransportAttribute.class, false))
+                        .scheme()
+                        .toUpperCase(), type);
+            }
         }
     }
 }

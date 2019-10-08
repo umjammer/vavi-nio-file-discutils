@@ -37,7 +37,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
 
     /**
      * Initializes a new instance of the VfsFileSystemInfo class.
-     * 
+     *
      * @param name The name of the file system.
      * @param description A one-line description of the file system.
      * @param openDelegate A delegate that can open streams as the indicated
@@ -69,7 +69,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
 
     /**
      * Opens a volume using the file system.
-     * 
+     *
      * @param volume The volume to access.
      * @param parameters Parameters for the file system.
      * @return A file system instance.
@@ -80,7 +80,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
 
     /**
      * Opens a stream using the file system.
-     * 
+     *
      * @param stream The stream to access.
      * @param parameters Parameters for the file system.
      * @return A file system instance.

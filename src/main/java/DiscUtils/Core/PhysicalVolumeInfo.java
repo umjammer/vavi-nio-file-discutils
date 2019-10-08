@@ -46,7 +46,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
 
     /**
      * Initializes a new instance of the PhysicalVolumeInfo class.
-     * 
+     *
      * @param diskId The containing disk's identity.
      * @param disk The disk containing the partition.
      * @param partitionInfo Information about the partition.Use this constructor
@@ -64,7 +64,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
 
     /**
      * Initializes a new instance of the PhysicalVolumeInfo class.
-     * 
+     *
      * @param diskId The identity of the disk.
      * @param disk The disk itself.Use this constructor to represent an entire
      *            disk as a single volume.
@@ -73,11 +73,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
         _diskId = diskId;
         _disk = disk;
         _streamOpener = () -> {
-            try {
-                return new SubStream(disk.getContent(), Ownership.None, 0, disk.getCapacity());
-            } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
-            }
+            return new SubStream(disk.getContent(), Ownership.None, 0, disk.getCapacity());
         };
         __VolumeType = PhysicalVolumeType.EntireDisk;
     }
@@ -199,7 +195,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
 
     /**
      * Opens the volume, providing access to its contents.
-     * 
+     *
      * @return A stream that can be used to access the volume.
      */
     public SparseStream open() {

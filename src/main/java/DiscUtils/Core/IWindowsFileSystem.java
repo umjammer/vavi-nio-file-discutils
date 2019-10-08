@@ -23,6 +23,7 @@
 package DiscUtils.Core;
 
 import java.security.SecurityPermission;
+import java.util.List;
 
 
 /**
@@ -31,7 +32,7 @@ import java.security.SecurityPermission;
 public interface IWindowsFileSystem extends IFileSystem {
     /**
      * Gets the security descriptor associated with the file or directory.
-     * 
+     *
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
@@ -39,7 +40,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Sets the security descriptor associated with the file or directory.
-     * 
+     *
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
@@ -47,7 +48,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Gets the reparse point data associated with a file or directory.
-     * 
+     *
      * @param path The file to query.
      * @return The reparse point information.
      */
@@ -55,7 +56,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Sets the reparse point data on a file or directory.
-     * 
+     *
      * @param path The file to set the reparse point on.
      * @param reparsePoint The new reparse point.
      */
@@ -64,7 +65,7 @@ public interface IWindowsFileSystem extends IFileSystem {
     /**
      * Removes a reparse point from a file or directory, without deleting the
      * file or directory.
-     * 
+     *
      * @param path The path to the file or directory to remove the reparse point
      *            from.
      */
@@ -72,7 +73,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Gets the short name for a given path.
-     * 
+     *
      * @param path The path to convert.
      * @return The short name.
      *         This method only gets the short name for the final part of the
@@ -88,7 +89,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Sets the short name for a given file or directory.
-     * 
+     *
      * @param path The full path to the file or directory to change.
      * @param shortName The shortName, which should not include a path.
      */
@@ -96,7 +97,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Gets the standard file information for a file.
-     * 
+     *
      * @param path The full path to the file or directory to query.
      * @return The standard file information.
      */
@@ -104,7 +105,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Sets the standard file information for a file.
-     * 
+     *
      * @param path The full path to the file or directory to query.
      * @param info The standard file information.
      */
@@ -112,18 +113,18 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Gets the names of the alternate data streams for a file.
-     * 
+     *
      * @param path The path to the file.
      * @return
      *         The list of alternate data streams (or empty, if none). To access
      *         the contents
      *         of the alternate streams, use OpenFile(path + ":" + name, ...).
      */
-    String[] getAlternateDataStreams(String path);
+    List<String> getAlternateDataStreams(String path);
 
     /**
      * Gets the file id for a given path.
-     * 
+     *
      * @param path The path to get the id of.
      * @return The file id, or -1.
      *         The returned file id uniquely identifies the file, and is shared
@@ -136,7 +137,7 @@ public interface IWindowsFileSystem extends IFileSystem {
 
     /**
      * Indicates whether the file is known by other names.
-     * 
+     *
      * @param path The file to inspect.
      * @return
      *         {@code true}
@@ -145,5 +146,4 @@ public interface IWindowsFileSystem extends IFileSystem {
      *         .
      */
     boolean hasHardLinks(String path);
-
 }

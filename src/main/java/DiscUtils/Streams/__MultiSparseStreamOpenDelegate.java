@@ -1,14 +1,13 @@
 
 package DiscUtils.Streams;
 
-//import java.io.IOException;
 //import java.util.ArrayList;
 //import java.util.LinkedList;
 //import java.util.List;
 //
 //import DiscUtils.Core.CoreCompat.ListSupport;
-//
-//
+
+
 //public class __MultiSparseStreamOpenDelegate implements SparseStreamOpenDelegate {
 //    public SparseStream invoke() {
 //        List<SparseStreamOpenDelegate> copy = new ArrayList<>(), members = this.getInvocationList();
@@ -16,8 +15,7 @@ package DiscUtils.Streams;
 //            copy = new LinkedList<>(members);
 //        }
 //        SparseStreamOpenDelegate prev = null;
-//        for (Object __dummyForeachVar0 : copy) {
-//            SparseStreamOpenDelegate d = (SparseStreamOpenDelegate) __dummyForeachVar0;
+//        for (SparseStreamOpenDelegate d : copy) {
 //            if (prev != null)
 //                prev.invoke();
 //
@@ -59,5 +57,4 @@ package DiscUtils.Streams;
 //    public List<SparseStreamOpenDelegate> getInvocationList() {
 //        return _invocationList;
 //    }
-//
 //}

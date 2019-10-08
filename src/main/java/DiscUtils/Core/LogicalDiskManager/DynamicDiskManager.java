@@ -47,20 +47,19 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
 
     /**
      * Initializes a new instance of the DynamicDiskManager class.
-     * 
+     *
      * @param disks The initial set of disks to manage.
      */
     public DynamicDiskManager(VirtualDisk... disks) throws IOException {
         _groups = new HashMap<>();
-        for (Object __dummyForeachVar0 : disks) {
-            VirtualDisk disk = (VirtualDisk) __dummyForeachVar0;
+        for (VirtualDisk disk : disks) {
             add(disk);
         }
     }
 
     /**
      * Writes a diagnostic report about the state of the disk manager.
-     * 
+     *
      * @param writer The writer to send the report to.
      * @param linePrefix The prefix to place at the start of each line.
      */
@@ -73,7 +72,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
 
     /**
      * Determines if a physical volume contains LDM data.
-     * 
+     *
      * @param volumeInfo The volume to inspect.
      * @return
      *         {@code true}
@@ -92,7 +91,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
 
     /**
      * Determines if a disk is 'dynamic' (i.e. contains LDM volumes).
-     * 
+     *
      * @param disk The disk to inspect.
      * @return
      *         {@code true}
@@ -101,13 +100,11 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      *         .
      */
     public static boolean isDynamicDisk(VirtualDisk disk) throws IOException {
-        if (disk.getIsPartitioned()) {
-            for (Object __dummyForeachVar2 : disk.getPartitions().getPartitions()) {
-                PartitionInfo partition = (PartitionInfo) __dummyForeachVar2;
+        if (disk.isPartitioned()) {
+            for (PartitionInfo partition : disk.getPartitions().getPartitions()) {
                 if (isLdmPartition(partition)) {
                     return true;
                 }
-
             }
         }
 
@@ -116,7 +113,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
 
     /**
      * Adds a new disk to be managed.
-     * 
+     *
      * @param disk The disk to manage.
      */
     public void add(VirtualDisk disk) throws IOException {
@@ -132,14 +129,13 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
 
     /**
      * Gets the logical volumes held across the set of managed disks.
-     * 
+     *
      * @return An array of logical volumes.
      */
     public List<LogicalVolumeInfo> getLogicalVolumes() {
         List<LogicalVolumeInfo> result = new ArrayList<>();
         for (DynamicDiskGroup group : _groups.values()) {
-            for (Object __dummyForeachVar3 : group.getVolumes()) {
-                DynamicVolume volume = (DynamicVolume) __dummyForeachVar3;
+            for (DynamicVolume volume : group.getVolumes()) {
                 LogicalVolumeInfo lvi = new LogicalVolumeInfo(volume
                         .getIdentity(), null, () -> {
                             try {

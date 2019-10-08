@@ -41,7 +41,7 @@ public final class DiskParameters {
     /**
      * Initializes a new instance of the DiskParameters class with generic
      * parameters.
-     * 
+     *
      * @param genericParameters The generic parameters to copy.
      */
     public DiskParameters(VirtualDiskParameters genericParameters) {

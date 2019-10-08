@@ -62,7 +62,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are not
      * supported.
-     * 
+     *
      * @param stream The stream to read.
      * @param ownsStream Indicates if the new instance should control the
      *            lifetime of the stream.
@@ -78,7 +78,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are
      * supported.
-     * 
+     *
      * @param path The path to the disk image.
      */
     public Disk(String path) throws IOException {
@@ -91,7 +91,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are
      * supported.
-     * 
+     *
      * @param path The path to the disk image.
      * @param access The access requested to the disk.
      */
@@ -105,7 +105,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are
      * supported.
-     * 
+     *
      * @param fileSystem The file system containing the disk.
      * @param path The file system relative path to the disk.
      * @param access The access requested to the disk.
@@ -120,7 +120,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param files The set of image files.
      * @param ownsFiles Indicates if the new instance controls the lifetime of
      *            the image files.The disks should be ordered with the first
@@ -156,7 +156,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are
      * supported.
-     * 
+     *
      * @param locator The locator to access relative files.
      * @param path The path to the disk image.
      * @param access The access requested to the disk.
@@ -171,7 +171,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are not
      * supported.
-     * 
+     *
      * @param file The file containing the disk.
      * @param ownsFile Indicates if the new instance should control the lifetime
      *            of the file.
@@ -185,7 +185,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are
      * supported.
-     * 
+     *
      * @param file The file containing the disk.
      * @param ownsFile Indicates if the new instance should control the lifetime
      *            of the file.
@@ -205,7 +205,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are
      * supported.
-     * 
+     *
      * @param file The file containing the disk.
      * @param ownsFile Indicates if the new instance should control the lifetime
      *            of the file.
@@ -294,7 +294,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a fixed-sized VHDX file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -307,7 +307,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a fixed-sized VHDX file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -326,7 +326,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a dynamically-sized VHDX file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -339,7 +339,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a dynamically-sized VHDX file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -356,7 +356,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Creates a new VHDX differencing disk file.
-     * 
+     *
      * @param path The path to the new disk file.
      * @param parentPath The path to the parent disk file.
      * @return An object that accesses the new file as a Disk.
@@ -377,7 +377,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a differencing disk VHDX file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the
@@ -413,7 +413,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk, possibly within an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
@@ -426,7 +426,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk.
-     * 
+     *
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */

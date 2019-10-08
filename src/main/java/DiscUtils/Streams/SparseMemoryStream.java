@@ -40,7 +40,7 @@ public final class SparseMemoryStream extends BufferStream {
 
     /**
      * Initializes a new instance of the SparseMemoryStream class.
-     * 
+     *
      * @param buffer The buffer to use.
      * @param access The access permitted to clients.
      */

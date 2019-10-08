@@ -26,13 +26,18 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
+
 public enum FileParametersFlags {
     None,
     LeaveBlocksAllocated,
     HasParent;
+
     public static EnumSet<FileParametersFlags> valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> (value & v.ordinal()) != 0).collect(Collectors.toCollection(() -> EnumSet.noneOf(FileParametersFlags.class)));
+        return Arrays.stream(values())
+                .filter(v -> (value & v.ordinal()) != 0)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileParametersFlags.class)));
     }
+
     public static long valueOf(EnumSet<FileParametersFlags> flags) {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
     }

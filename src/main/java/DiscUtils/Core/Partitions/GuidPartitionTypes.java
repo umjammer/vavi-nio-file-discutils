@@ -71,7 +71,7 @@ public class GuidPartitionTypes {
 
     /**
      * Converts a well known partition type to a UUID.
-     * 
+     *
      * @param wellKnown The value to convert.
      * @return The GUID value.
      */

@@ -70,7 +70,7 @@ public final class SnapshotStream extends SparseStream {
 
     /**
      * Initializes a new instance of the SnapshotStream class.
-     * 
+     *
      * @param baseStream The stream to wrap.
      * @param owns Indicates if this stream should control the lifetime of
      *            baseStream.
@@ -194,8 +194,7 @@ public final class SnapshotStream extends SparseStream {
         }
 
         byte[] buffer = new byte[8192];
-        for (Object __dummyForeachVar0 : _diffExtents) {
-            StreamExtent extent = (StreamExtent) __dummyForeachVar0;
+        for (StreamExtent extent : _diffExtents) {
             _diffStream.setPosition(extent.getStart());
             _baseStream.setPosition(extent.getStart());
             int totalRead = 0;
@@ -220,7 +219,7 @@ public final class SnapshotStream extends SparseStream {
 
     /**
      * Reads data from the stream.
-     * 
+     *
      * @param buffer The buffer to fill.
      * @param offset The buffer offset to start from.
      * @param count The number of bytes to read.
@@ -250,8 +249,7 @@ public final class SnapshotStream extends SparseStream {
 
             // Now overlay any data from the overlay stream (if any)
             List<StreamExtent> overlayExtents = StreamExtent.intersect(_diffExtents, new StreamExtent(_position, toRead));
-            for (Object __dummyForeachVar1 : overlayExtents) {
-                StreamExtent extent = (StreamExtent) __dummyForeachVar1;
+            for (StreamExtent extent : overlayExtents) {
                 _diffStream.setPosition(extent.getStart());
                 int overlayNumRead = 0;
                 while (overlayNumRead < extent.getLength()) {
@@ -268,7 +266,7 @@ public final class SnapshotStream extends SparseStream {
 
     /**
      * Moves the stream position.
-     * 
+     *
      * @param offset The origin-relative location.
      * @param origin The base location.
      * @return The new absolute stream position.
@@ -292,7 +290,7 @@ public final class SnapshotStream extends SparseStream {
 
     /**
      * Sets the length of the stream.
-     * 
+     *
      * @param value The new length.
      */
     public void setLength(long value) {
@@ -306,7 +304,7 @@ public final class SnapshotStream extends SparseStream {
 
     /**
      * Writes data to the stream at the current location.
-     * 
+     *
      * @param buffer The data to write.
      * @param offset The first byte to write from buffer.
      * @param count The number of bytes to write.

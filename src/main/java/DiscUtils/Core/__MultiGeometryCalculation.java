@@ -10,19 +10,20 @@ import DiscUtils.Core.CoreCompat.ListSupport;
 
 /**
  * Delegate for calculating a disk geometry from a capacity.
- * 
- * @param capacity The disk capacity to convert.
- * @return The appropriate geometry for the disk.
  */
 public class __MultiGeometryCalculation implements GeometryCalculation {
+
+    /**
+     * @param capacity The disk capacity to convert.
+     * @return The appropriate geometry for the disk.
+     */
     public Geometry invoke(long capacity) {
         List<GeometryCalculation> copy = new ArrayList<>(), members = this.getInvocationList();
         synchronized (members) {
             copy = new LinkedList<>(members);
         }
         GeometryCalculation prev = null;
-        for (Object __dummyForeachVar0 : copy) {
-            GeometryCalculation d = (GeometryCalculation) __dummyForeachVar0;
+        for (GeometryCalculation d : copy) {
             if (prev != null)
                 prev.invoke(capacity);
 
@@ -64,5 +65,4 @@ public class __MultiGeometryCalculation implements GeometryCalculation {
     public List<GeometryCalculation> getInvocationList() {
         return _invocationList;
     }
-
 }

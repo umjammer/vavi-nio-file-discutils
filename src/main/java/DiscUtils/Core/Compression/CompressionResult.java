@@ -25,7 +25,7 @@ package DiscUtils.Core.Compression;
 public enum CompressionResult {
     /**
      * Possible results of attempting to compress data.
-     * 
+     *
      * A compression routine may return
      * {@code Compressed}
      * , even if the data
@@ -33,9 +33,9 @@ public enum CompressionResult {
      * {@code AllZeros}
      * and
      * {@code Incompressible}
-     * 
+     *
      * values are for algorithms that include special detection for these cases.
-     * 
+     *
      * The data compressed succesfully.
      */
     Compressed,

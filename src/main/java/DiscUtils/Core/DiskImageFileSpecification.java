@@ -48,7 +48,7 @@ public final class DiskImageFileSpecification {
 
     /**
      * Gets the object that provides access to the file's content.
-     * 
+     *
      * @return A stream object that contains the file's content.
      */
     public SparseStream openStream() {

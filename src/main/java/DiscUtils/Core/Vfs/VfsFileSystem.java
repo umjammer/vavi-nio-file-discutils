@@ -22,11 +22,9 @@
 
 package DiscUtils.Core.Vfs;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -51,7 +49,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Initializes a new instance of the VfsFileSystem class.
-     * 
+     *
      * @param defaultOptions The default file system options.
      */
     protected VfsFileSystem(DiscFileSystemOptions defaultOptions) {
@@ -92,7 +90,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Copies a file - not supported on read-only file systems.
-     * 
+     *
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
@@ -103,7 +101,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Creates a directory - not supported on read-only file systems.
-     * 
+     *
      * @param path The path of the new directory.
      */
     public void createDirectory(String path) {
@@ -112,7 +110,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Deletes a directory - not supported on read-only file systems.
-     * 
+     *
      * @param path The path of the directory to delete.
      */
     public void deleteDirectory(String path) {
@@ -121,7 +119,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Deletes a file - not supported on read-only file systems.
-     * 
+     *
      * @param path The path of the file to delete.
      */
     public void deleteFile(String path) {
@@ -130,7 +128,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Indicates if a directory exists.
-     * 
+     *
      * @param path The path to test.
      * @return true if the directory exists.
      */
@@ -149,7 +147,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Indicates if a file exists.
-     * 
+     *
      * @param path The path to test.
      * @return true if the file exists.
      */
@@ -167,7 +165,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * specified
      * search pattern, using a value to determine whether to search
      * subdirectories.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
@@ -184,7 +182,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * Gets the names of files in a specified directory matching a specified
      * search pattern, using a value to determine whether to search
      * subdirectories.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
@@ -199,7 +197,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Gets the names of all files and subdirectories in a specified directory.
-     * 
+     *
      * @param path The path to search.
      * @return Array of files and subdirectories matching the search pattern.
      */
@@ -220,7 +218,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * Gets the names of files and subdirectories in a specified directory
      * matching a specified
      * search pattern.
-     * 
+     *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files and subdirectories matching the search pattern.
@@ -240,7 +238,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Moves a directory.
-     * 
+     *
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
@@ -250,7 +248,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Moves a file.
-     * 
+     *
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      * @param overwrite Overwrite any existing file.
@@ -261,7 +259,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Opens the specified file.
-     * 
+     *
      * @param path The full path of the file to open.
      * @param mode The file mode for the created stream.
      * @param access The access permissions for the created stream.
@@ -306,7 +304,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             throw new moe.yo3explorer.dotnetio4j.IOException("File already exists");
         }
 
-        if (entry.getIsSymlink()) {
+        if (entry.isSymlink()) {
             entry = resolveSymlink(entry, entryPath);
         }
 
@@ -344,11 +342,11 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Gets the attributes of a file or directory.
-     * 
+     *
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
-    public BasicFileAttributes getAttributes(String path) {
+    public Map<String, Object> getAttributes(String path) {
         if (isRoot(path)) {
             return getRootDirectory().getFileAttributes();
         }
@@ -367,17 +365,17 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Sets the attributes of a file or directory.
-     * 
+     *
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public void setAttributes(String path, BasicFileAttributes newValue) {
+    public void setAttributes(String path, Map<String, Object> newValue) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Gets the creation time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The creation time.
      */
@@ -400,7 +398,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Sets the creation time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -410,7 +408,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Gets the last access time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The last access time.
      */
@@ -433,7 +431,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Sets the last access time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -443,7 +441,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Gets the last modification time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @return The last write time.
      */
@@ -466,7 +464,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Sets the last modification time (in UTC) of a file or directory.
-     * 
+     *
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
@@ -476,13 +474,13 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Gets the length of a file.
-     * 
+     *
      * @param path The path to the file.
      * @return The length in bytes.
      */
     public long getFileLength(String path) {
         TFile file = getFile(path);
-        if (file == null || file.getFileAttributes().isDirectory()) {
+        if (file == null || Boolean.class.cast(file.getFileAttributes().get("dos:isDirectory"))) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file: " + path);
         }
 
@@ -506,7 +504,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         }
 
         TDirEntry dirEntry = getDirectoryEntry(path);
-        if (dirEntry != null && dirEntry.getIsSymlink()) {
+        if (dirEntry != null && dirEntry.isSymlink()) {
             dirEntry = resolveSymlink(dirEntry, path);
         }
 
@@ -524,7 +522,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Gets all directory entries in the specified directory and
      * sub-directories.
-     * 
+     *
      * @param path The path to inspect.
      * @param handler Delegate invoked for each directory entry.
      */
@@ -534,30 +532,28 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (self != null) {
             handler.invoke(path, self);
             if (self.isDirectory()) {
-                dir = getFile(self) instanceof TDirectory ? (TDirectory) getFile(self) : (TDirectory) null;
+                dir = IVfsDirectory.class.isInstance(getFile(self))  ? (TDirectory) getFile(self) : (TDirectory) null;
             }
 
         } else {
-            dir = getFile(path) instanceof TDirectory ? (TDirectory) getFile(path) : (TDirectory) null;
+            dir = IVfsDirectory.class.isInstance(getFile(self)) ? (TDirectory) getFile(path) : (TDirectory) null;
         }
         if (dir != null) {
-            for (Object __dummyForeachVar1 : dir.getAllEntries()) {
-                TDirEntry subentry = (TDirEntry) __dummyForeachVar1;
+            for (TDirEntry subentry : dir.getAllEntries()) {
                 forAllDirEntries(Utilities.combinePaths(path, subentry.getFileName()), handler);
             }
         }
-
     }
 
     /**
      * Gets the file object for a given path.
-     * 
+     *
      * @param path The path to query.
      * @return The file object corresponding to the path.
      */
     protected TFile getFile(String path) {
         if (isRoot(path)) {
-            return getRootDirectory();
+            return (TFile) getRootDirectory();
         }
 
         if (path == null) {
@@ -566,7 +562,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
-            throw new FileNotFoundException("No such file or directory: " + path);
+            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file or directory: " + path);
         }
 
         return getFile(dirEntry);
@@ -574,7 +570,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Converts a directory entry to an object representing a file.
-     * 
+     *
      * @param dirEntry The directory entry to convert.
      * @return The corresponding file object.
      */
@@ -582,7 +578,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Converts an internal directory entry name into an external one.
-     * 
+     *
      * @param name The name to convert.
      * @return The external name.
      *         This method is called on a single path element (i.e. name
@@ -640,10 +636,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             resultPrefixPath = "\\";
         }
 
-        for (Object __dummyForeachVar2 : parentDir.getAllEntries()) {
-            TDirEntry de = (TDirEntry) __dummyForeachVar2;
+        for (TDirEntry de  : parentDir.getAllEntries()) {
             TDirEntry entry = de;
-            if (entry.getIsSymlink()) {
+            if (entry.isSymlink()) {
                 entry = resolveSymlink(entry, path + "\\" + entry.getFileName());
             }
 
@@ -675,8 +670,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         String currentPath = path;
         int resolvesLeft = 20;
-        while (currentEntry.getIsSymlink() && resolvesLeft > 0) {
-            IVfsSymlink<TDirEntry, TFile> symlink = getFile(currentEntry) instanceof IVfsSymlink ? (IVfsSymlink<TDirEntry, TFile>) getFile(currentEntry)
+        while (currentEntry.isSymlink() && resolvesLeft > 0) {
+            IVfsSymlink<TDirEntry, TFile> symlink = getFile(currentEntry) instanceof IVfsSymlink ? IVfsSymlink.class.cast(getFile(currentEntry))
                                                                                                  : (IVfsSymlink<TDirEntry, TFile>) null;
             if (symlink == null) {
                 throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);
@@ -690,27 +685,26 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
             --resolvesLeft;
         }
-        if (currentEntry.getIsSymlink()) {
+        if (currentEntry.isSymlink()) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink - too many links: " + path);
         }
 
         return currentEntry;
     }
 
-    /**
-     * Delegate for processing directory entries.
-     * 
-     * @param path Full path to the directory entry.
-     * @param dirEntry The directory entry itself.
-     */
+//    /**
+//     * Delegate for processing directory entries.
+//     *
+//     * @param path Full path to the directory entry.
+//     * @param dirEntry The directory entry itself.
+//     */
 //    protected static class __MultiDirEntryHandler implements DirEntryHandler {
 //        public void invoke(String path, TDirEntry dirEntry) {
 //            List<DirEntryHandler> copy = new ArrayList<>(), members = this.getInvocationList();
 //            synchronized (members) {
 //                copy = new LinkedList<>(members);
 //            }
-//            for (Object __dummyForeachVar3 : copy) {
-//                DirEntryHandler d = (DirEntryHandler) __dummyForeachVar3;
+//            for (DirEntryHandler d : copy) {
 //                d.invoke(path, dirEntry);
 //            }
 //        }
@@ -753,10 +747,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     @FunctionalInterface
     protected static interface DirEntryHandler<TDirEntry extends VfsDirEntry> {
+
         void invoke(String path, TDirEntry dirEntry);
 
 //        List<DirEntryHandler> getInvocationList();
-
     }
-
 }

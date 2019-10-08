@@ -26,6 +26,8 @@ import java.io.IOException;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
+import moe.yo3explorer.dotnetio4j.DeflateStream;
+import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
 import moe.yo3explorer.dotnetio4j.SeekOrigin;
 import moe.yo3explorer.dotnetio4j.Stream;
 
@@ -45,7 +47,7 @@ public class ZlibStream extends Stream {
 
     /**
      * Initializes a new instance of the ZlibStream class.
-     * 
+     *
      * @param stream The stream to compress of decompress.
      * @param mode Whether to compress or decompress.
      * @param leaveOpen Whether closing this stream should leave
@@ -60,7 +62,7 @@ public class ZlibStream extends Stream {
             byte[] headerBuffer = StreamUtilities.readExact(stream, 2);
             short header = EndianUtilities.toUInt16BigEndian(headerBuffer, 0);
             if (header % 31 != 0) {
-                throw new IOException("Invalid Zlib header found");
+                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid Zlib header found");
             }
 
             if ((header & 0x0F00) != 8 << 8) {
@@ -158,7 +160,7 @@ public class ZlibStream extends Stream {
 
     /**
      * Reads data from the stream.
-     * 
+     *
      * @param buffer The buffer to populate.
      * @param offset The first byte to write.
      * @param count The number of bytes requested.
@@ -173,7 +175,7 @@ public class ZlibStream extends Stream {
 
     /**
      * Seeks to a new position.
-     * 
+     *
      * @param offset Relative position to seek to.
      * @param origin The origin of the seek.
      * @return The new position.
@@ -184,7 +186,7 @@ public class ZlibStream extends Stream {
 
     /**
      * Changes the length of the stream.
-     * 
+     *
      * @param value The new desired length of the stream.
      */
     public void setLength(long value) {
@@ -193,7 +195,7 @@ public class ZlibStream extends Stream {
 
     /**
      * Writes data to the stream.
-     * 
+     *
      * @param buffer Buffer containing the data to write.
      * @param offset Offset of the first byte to write.
      * @param count Number of bytes to write.

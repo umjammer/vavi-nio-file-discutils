@@ -54,16 +54,16 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Initializes a new instance of the BiosPartitionTable class.
-     * 
+     *
      * @param disk The disk containing the partition table.
      */
-    public BiosPartitionTable(VirtualDisk disk) throws IOException {
+    public BiosPartitionTable(VirtualDisk disk) {
         init(disk.getContent(), disk.getBiosGeometry());
     }
 
     /**
      * Initializes a new instance of the BiosPartitionTable class.
-     * 
+     *
      * @param disk The stream containing the disk data.
      * @param diskGeometry The geometry of the disk.
      */
@@ -102,8 +102,7 @@ public final class BiosPartitionTable extends PartitionTable {
      */
     public List<PartitionInfo> getPartitions() {
         List<PartitionInfo> result = new ArrayList<>();
-        for (Object __dummyForeachVar1 : getAllRecords()) {
-            BiosPartitionRecord r = (BiosPartitionRecord) __dummyForeachVar1;
+        for (BiosPartitionRecord r : getAllRecords()) {
             if (r.isValid()) {
                 result.add(new BiosPartitionInfo(this, r));
             }
@@ -114,7 +113,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Makes a best guess at the geometry of a disk.
-     * 
+     *
      * @param disk String containing the disk image to detect the geometry from.
      * @return The detected geometry.
      */
@@ -125,8 +124,7 @@ public final class BiosPartitionTable extends PartitionTable {
             if (bootSector[510] == 0x55 && bootSector[511] == 0xAA) {
                 byte maxHead = 0;
                 byte maxSector = 0;
-                for (Object __dummyForeachVar2 : readPrimaryRecords(bootSector)) {
-                    BiosPartitionRecord record = (BiosPartitionRecord) __dummyForeachVar2;
+                for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
                     maxHead = (byte) Math.max(maxHead, record.getEndHead());
                     maxSector = (byte) Math.max(maxSector, record.getEndSector());
                 }
@@ -144,7 +142,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Indicates if a stream contains a valid partition table.
-     * 
+     *
      * @param disk The stream to inspect.
      * @return
      *         {@code true}
@@ -165,8 +163,7 @@ public final class BiosPartitionTable extends PartitionTable {
         }
 
         List<StreamExtent> knownPartitions = new ArrayList<>();
-        for (Object __dummyForeachVar4 : readPrimaryRecords(bootSector)) {
-            BiosPartitionRecord record = (BiosPartitionRecord) __dummyForeachVar4;
+        for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
             // If the partition extends beyond the end of the disk, this is probably an invalid partition table
             if (record.getLBALength() != 0xFFFFFFFF &&
                 (record.getLBAStart() + (long) record.getLBALength()) * Sizes.Sector > disk.getLength()) {
@@ -189,7 +186,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition table on a disk.
-     * 
+     *
      * @param disk The disk to initialize.
      * @return An object to access the newly created partition table.
      */
@@ -199,7 +196,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition table on a disk containing a single partition.
-     * 
+     *
      * @param disk The disk to initialize.
      * @param type The partition type for the single partition.
      * @return An object to access the newly created partition table.
@@ -212,7 +209,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition table on a disk.
-     * 
+     *
      * @param disk The stream containing the disk data.
      * @param diskGeometry The geometry of the disk.
      * @return An object to access the newly created partition table.
@@ -238,7 +235,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.The partition table must be empty
@@ -262,7 +259,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new primary partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -278,7 +275,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new aligned partition that encompasses the entire disk.
-     * 
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in bytes).
@@ -309,7 +306,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new aligned partition with a target size.
-     * 
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
@@ -341,7 +338,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Deletes a partition at a given index.
-     * 
+     *
      * @param index The index of the partition.
      */
     public void delete(int index) {
@@ -351,7 +348,7 @@ public final class BiosPartitionTable extends PartitionTable {
     /**
      * Creates a new Primary Partition that occupies whole cylinders, for best
      * compatibility.
-     * 
+     *
      * @param first The first cylinder to include in the partition (inclusive).
      * @param last The last cylinder to include in the partition (inclusive).
      * @param type The BIOS (MBR) type of the new partition.
@@ -378,7 +375,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Creates a new Primary Partition, specified by Logical Block Addresses.
-     * 
+     *
      * @param first The LBA address of the first sector (inclusive).
      * @param last The LBA address of the last sector (inclusive).
      * @param type The BIOS (MBR) type of the new partition.
@@ -418,9 +415,8 @@ public final class BiosPartitionTable extends PartitionTable {
         newRecord.setLBALength((int) (last - first + 1));
         newRecord.setPartitionType(type);
         newRecord.setStatus((byte) (markActive ? 0x80 : 0x00));
-        for (Object __dummyForeachVar5 : existing) {
+        for (BiosPartitionRecord r  : existing) {
             // First check for overlap with existing partition...
-            BiosPartitionRecord r = (BiosPartitionRecord) __dummyForeachVar5;
             if (Utilities.rangesOverlap((int) first,
                                         (int) last + 1,
                                         r.getLBAStartAbsolute(),
@@ -442,7 +438,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Sets the active partition.
-     * 
+     *
      * @param index The index of the primary partition to mark bootable, or
      *            {@code -1}
      *            for none.The supplied index is the index within the primary
@@ -462,15 +458,14 @@ public final class BiosPartitionTable extends PartitionTable {
 
     /**
      * Gets all of the disk ranges containing partition table metadata.
-     * 
+     *
      * @return Set of stream extents, indicated as byte offset from the start of
      *         the disk.
      */
     public List<StreamExtent> getMetadataDiskExtents() {
         List<StreamExtent> extents = new ArrayList<>();
         extents.add(new StreamExtent(0, Sizes.Sector));
-        for (Object __dummyForeachVar6 : getPrimaryRecords()) {
-            BiosPartitionRecord primaryRecord = (BiosPartitionRecord) __dummyForeachVar6;
+        for (BiosPartitionRecord primaryRecord : getPrimaryRecords()) {
             if (primaryRecord.isValid()) {
                 if (isExtendedPartition(primaryRecord)) {
                     extents.addAll(new BiosExtendedPartitionTable(_diskData, primaryRecord.getLBAStart())
@@ -486,7 +481,7 @@ public final class BiosPartitionTable extends PartitionTable {
     /**
      * Updates the CHS fields in partition records to reflect a new BIOS
      * geometry.
-     * 
+     *
      * @param geometry The disk's new BIOS geometry.The partitions are not
      *            relocated to a cylinder boundary, just the CHS fields are
      *            updated on the
@@ -570,8 +565,7 @@ public final class BiosPartitionTable extends PartitionTable {
     // Max BIOS size
     private List<BiosPartitionRecord> getAllRecords() {
         List<BiosPartitionRecord> newList = new ArrayList<>();
-        for (Object __dummyForeachVar7 : getPrimaryRecords()) {
-            BiosPartitionRecord primaryRecord = (BiosPartitionRecord) __dummyForeachVar7;
+        for (BiosPartitionRecord primaryRecord  : getPrimaryRecords()) {
             if (primaryRecord.isValid()) {
                 if (isExtendedPartition(primaryRecord)) {
                     newList.addAll(getExtendedRecords(primaryRecord));
@@ -606,8 +600,7 @@ public final class BiosPartitionTable extends PartitionTable {
         List<BiosPartitionRecord> list = getPrimaryRecords().stream().filter(r -> r.isValid()).collect(Collectors.toList());
         Collections.sort(list);
         int startCylinder = 0;
-        for (Object __dummyForeachVar8 : list) {
-            BiosPartitionRecord r = (BiosPartitionRecord) __dummyForeachVar8;
+        for (BiosPartitionRecord r : list) {
             int existingStart = r.getStartCylinder();
             int existingEnd = r.getEndCylinder();
             // LBA can represent bigger disk locations than CHS, so assume the LBA to be definitive in the case where it

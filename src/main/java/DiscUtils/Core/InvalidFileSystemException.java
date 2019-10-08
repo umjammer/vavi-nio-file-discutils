@@ -22,8 +22,7 @@
 
 package DiscUtils.Core;
 
-import java.io.IOException;
-
+import moe.yo3explorer.dotnetio4j.IOException;
 
 /**
  * Exception thrown when some invalid file system data is found, indicating
@@ -38,7 +37,7 @@ public class InvalidFileSystemException extends IOException {
 
     /**
      * Initializes a new instance of the InvalidFileSystemException class.
-     * 
+     *
      * @param message The exception message.
      */
     public InvalidFileSystemException(String message) {
@@ -47,7 +46,7 @@ public class InvalidFileSystemException extends IOException {
 
     /**
      * Initializes a new instance of the InvalidFileSystemException class.
-     * 
+     *
      * @param message The exception message.
      * @param innerException The inner exception.
      */
@@ -57,12 +56,11 @@ public class InvalidFileSystemException extends IOException {
 
     /**
      * Initializes a new instance of the InvalidFileSystemException class.
-     * 
+     *
      * @param info The serialization info.
      * @param context The streaming context.
      */
 //    protected InvalidFileSystemException(SerializationInfo info, StreamingContext context) {
 //        super(info, context);
 //    }
-
 }

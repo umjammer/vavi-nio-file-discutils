@@ -22,18 +22,18 @@
 
 package DiscUtils.Core.Vfs;
 
-import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Map;
 
 import DiscUtils.Streams.Buffer.IBuffer;
 
 
 /**
  * Interface implemented by a class representing a file.
- * 
+ *
  * File system implementations should have a class that implements this
  * interface. If the file system implementation is read-only, it is
  * acceptable to throw
- * {@code NotImplementedException}
+ * {@code UnsupportedOperationException}
  * from setters.
  */
 public interface IVfsFile {
@@ -47,9 +47,9 @@ public interface IVfsFile {
     /**
      * Gets or sets the file's attributes.
      */
-    BasicFileAttributes getFileAttributes();
+    Map<String, Object> getFileAttributes();
 
-    void setFileAttributes(BasicFileAttributes value);
+    void setFileAttributes(Map<String, Object> value);
 
     /**
      * Gets a buffer to access the file's contents.

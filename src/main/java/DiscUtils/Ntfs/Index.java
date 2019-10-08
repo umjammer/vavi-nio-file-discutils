@@ -1,0 +1,427 @@
+//
+// Copyright (c) 2008-2011, Kenneth Bell
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
+
+package DiscUtils.Ntfs;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import DiscUtils.Core.Internal.ObjectCache;
+import DiscUtils.Streams.IByteArraySerializable;
+import DiscUtils.Streams.Util.MathUtilities;
+import DiscUtils.Streams.Util.StreamUtilities;
+import moe.yo3explorer.dotnetio4j.FileAccess;
+import moe.yo3explorer.dotnetio4j.Stream;
+
+
+public class Index implements Closeable {
+    private final ObjectCache<Long, IndexBlock> _blockCache;
+
+    protected BiosParameterBlock _bpb;
+
+    private final Comparator<byte[]> _comparer;
+
+    protected File _file;
+
+    private Bitmap _indexBitmap;
+
+    protected String _name;
+
+    private final IndexRoot _root;
+
+    private final IndexNode _rootNode;
+
+    public Index(File file, String name, BiosParameterBlock bpb, UpperCase upCase) {
+        _file = file;
+        _name = name;
+        _bpb = bpb;
+        __IsFileIndex = name.equals("$I30");
+        _blockCache = new ObjectCache<>();
+        _root = _file.getStream(AttributeType.IndexRoot, _name).getContent();
+        _comparer = _root.getCollator(upCase);
+        Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Read);
+        try {
+            {
+                byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
+                _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
+                // Give the attribute some room to breathe, so long as it doesn't squeeze others out
+                // BROKEN, BROKEN, BROKEN - how to figure this out?  Query at the point of adding entries to the root node?
+                _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable() +
+                                                 (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
+            }
+        } finally {
+            if (s != null)
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                }
+        }
+        if (_file.streamExists(AttributeType.IndexAllocation, _name)) {
+            setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
+        }
+
+        if (_file.streamExists(AttributeType.Bitmap, _name)) {
+            _indexBitmap = new Bitmap(_file.openStream(AttributeType.Bitmap, _name, FileAccess.ReadWrite), Long.MAX_VALUE);
+        }
+    }
+
+    private Index(AttributeType attrType,
+            AttributeCollationRule collationRule,
+            File file,
+            String name,
+            BiosParameterBlock bpb,
+            UpperCase upCase) {
+        _file = file;
+        _name = name;
+        _bpb = bpb;
+        __IsFileIndex = name.equals("$I30");
+        _blockCache = new ObjectCache<>();
+        _file.createStream(AttributeType.IndexRoot, _name);
+        _root = new IndexRoot();
+        _comparer = _root.getCollator(upCase);
+        _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, 32);
+    }
+
+    private Stream __AllocationStream;
+
+    public Stream getAllocationStream() {
+        return __AllocationStream;
+    }
+
+    public void setAllocationStream(Stream value) {
+        __AllocationStream = value;
+    }
+
+    public int getCount() {
+        return getEntries().size();
+    }
+
+    public Map<byte[], byte[]> getEntries() {
+        Map<byte[], byte[]> result = new HashMap<>();
+        for (IndexEntry entry : enumerate(_rootNode)) {
+            result.put(entry.getKeyBuffer(), entry.getDataBuffer());
+        }
+        return result;
+    }
+
+    public int getIndexBufferSize() {
+        return _root.getIndexAllocationSize();
+    }
+
+    private boolean __IsFileIndex;
+
+    public boolean getIsFileIndex() {
+        return __IsFileIndex;
+    }
+
+    public byte[] get___idx(byte[] key) {
+        byte[][] value = new byte[1][];
+        ;
+        boolean boolVar___0 = tryGetValue(key, value);
+        if (boolVar___0) {
+            return value[0];
+        }
+
+        throw new NoSuchElementException();
+    }
+
+    public void set___idx(byte[] key, byte[] value) {
+        IndexEntry[] oldEntry = new IndexEntry[1];
+        IndexNode[] node = new IndexNode[1];
+        _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
+        boolean r = _rootNode.tryFindEntry(key, oldEntry, node);
+        if (r) {
+            node[0].updateEntry(key, value);
+        } else {
+            _rootNode.addEntry(key, value);
+        }
+    }
+
+    public void close() throws IOException {
+        if (_indexBitmap != null) {
+            _indexBitmap.close();
+            _indexBitmap = null;
+        }
+    }
+
+    public static void create(AttributeType attrType, AttributeCollationRule collationRule, File file, String name) {
+        Index idx = new Index(attrType,
+                              collationRule,
+                              file,
+                              name,
+                              file.getContext().getBiosParameterBlock(),
+                              file.getContext().getUpperCase());
+        idx.writeRootNodeToDisk();
+    }
+
+    public Map<byte[], byte[]> findAll(Comparable<byte[]> query) {
+        Map<byte[], byte[]> result = new HashMap<>();
+        for (IndexEntry entry : findAllIn(query, _rootNode)) {
+            result.put(entry.getKeyBuffer(), entry.getDataBuffer());
+        }
+        return result;
+    }
+
+    public boolean containsKey(byte[] key) {
+        return tryGetValue(key, new byte[1][]);
+    }
+
+    public boolean remove(byte[] key) {
+        _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
+        IndexEntry[] overflowEntry = new IndexEntry[1];
+        boolean found = _rootNode.removeEntry(key, overflowEntry);
+        if (overflowEntry[0] != null) {
+            throw new moe.yo3explorer.dotnetio4j.IOException("Error removing entry, root overflowed");
+        }
+
+        return found;
+    }
+
+    public boolean tryGetValue(byte[] key, byte[][] value) {
+        IndexEntry[] entry = new IndexEntry[1];
+        IndexNode[] node = new IndexNode[1];
+        boolean r = _rootNode.tryFindEntry(key, entry, node);
+        if (r) {
+            value[0] = entry[0].getDataBuffer();
+            return true;
+        }
+
+        value[0] = null;
+        return false;
+    }
+
+    public static String entryAsString(IndexEntry entry, String fileName, String indexName) {
+        IByteArraySerializable keyValue = null;
+        IByteArraySerializable dataValue = null;
+        // Try to guess the type of data in the key and data fields from the filename and index name
+        if (indexName.equals("$I30")) {
+            keyValue = new FileNameRecord();
+            dataValue = new FileRecordReference();
+        } else if (fileName.equals("$ObjId") && indexName.equals("$O")) {
+            keyValue = new DiscUtils.Ntfs.ObjectIds.IndexKey();
+            dataValue = new ObjectIdRecord();
+        } else if (fileName.equals("$Reparse") && indexName.equals("$R")) {
+            keyValue = new DiscUtils.Ntfs.ReparsePoints.Key();
+            dataValue = new DiscUtils.Ntfs.ReparsePoints.Data();
+        } else if (fileName.equals("$Quota")) {
+            if (indexName.equals("$O")) {
+                keyValue = new DiscUtils.Ntfs.Quotas.OwnerKey();
+                dataValue = new DiscUtils.Ntfs.Quotas.OwnerRecord();
+            } else if (indexName.equals("$Q")) {
+                keyValue = new DiscUtils.Ntfs.Quotas.OwnerRecord();
+                dataValue = new DiscUtils.Ntfs.Quotas.QuotaRecord();
+            }
+
+        } else if (fileName.equals("$Secure")) {
+            if (indexName.equals("$SII")) {
+                keyValue = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey();
+                dataValue = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexData();
+            } else if (indexName.equals("$SDH")) {
+                keyValue = new DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey();
+                dataValue = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexData();
+            }
+
+        }
+
+        try {
+            if (keyValue != null && dataValue != null) {
+                keyValue.readFrom(entry.getKeyBuffer(), 0);
+                dataValue.readFrom(entry.getDataBuffer(), 0);
+                return "{" + keyValue + "-->" + dataValue + "}";
+            }
+
+        } catch (Exception __dummyCatchVar0) {
+            return "{Parsing-Error}";
+        }
+
+        return "{Unknown-Index-Type}";
+    }
+
+    public long indexBlockVcnToPosition(long vcn) {
+        if (vcn % _root.getRawClustersPerIndexRecord() != 0) {
+            throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn +
+                                                    " rcpir=" + _root.getRawClustersPerIndexRecord());
+        }
+
+        if (_bpb.getBytesPerCluster() <= _root.getIndexAllocationSize()) {
+            return vcn * _bpb.getBytesPerCluster();
+        }
+
+        if (_root.getRawClustersPerIndexRecord() != 8) {
+            throw new UnsupportedOperationException("Unexpected RawClustersPerIndexRecord (multiple index blocks per cluster): " +
+                                                    _root.getRawClustersPerIndexRecord());
+        }
+
+        return vcn / _root.getRawClustersPerIndexRecord() * _root.getIndexAllocationSize();
+    }
+
+    public boolean shrinkRoot() {
+        if (_rootNode.depose()) {
+            writeRootNodeToDisk();
+            _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
+            return true;
+        }
+
+        return false;
+    }
+
+    public IndexBlock getSubBlock(IndexEntry parentEntry) {
+        IndexBlock block = _blockCache.get___idx(parentEntry.getChildrenVirtualCluster());
+        if (block == null) {
+            block = new IndexBlock(this, false, parentEntry, _bpb);
+            _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
+        }
+
+        return block;
+    }
+
+    public IndexBlock allocateBlock(IndexEntry parentEntry) {
+        if (getAllocationStream() == null) {
+            _file.createStream(AttributeType.IndexAllocation, _name);
+            setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
+        }
+
+        if (_indexBitmap == null) {
+            _file.createStream(AttributeType.Bitmap, _name);
+            _indexBitmap = new Bitmap(_file.openStream(AttributeType.Bitmap, _name, FileAccess.ReadWrite), Long.MAX_VALUE);
+        }
+
+        long idx = _indexBitmap.allocateFirstAvailable(0);
+        parentEntry.setChildrenVirtualCluster(idx * MathUtilities.ceil(_bpb.getIndexBufferSize(),
+                                                                       _bpb.SectorsPerCluster * _bpb.BytesPerSector));
+        parentEntry.getFlags().add(IndexEntryFlags.Node);
+        IndexBlock block = IndexBlock.initialize(this, false, parentEntry, _bpb);
+        _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
+        return block;
+    }
+
+    public void freeBlock(long vcn) {
+        long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.SectorsPerCluster * _bpb.BytesPerSector);
+        _indexBitmap.markAbsent(idx);
+        _blockCache.remove(vcn);
+    }
+
+    public int compare(byte[] x, byte[] y) {
+        return _comparer.compare(x, y);
+    }
+
+    public void dump(PrintWriter writer, String prefix) {
+        nodeAsString(writer, prefix, _rootNode, "R");
+    }
+
+    protected List<IndexEntry> enumerate(IndexNode node) {
+        List<IndexEntry> result = new ArrayList<>();
+        for (IndexEntry focus : node.getEntries()) {
+            if (focus.getFlags().contains(IndexEntryFlags.Node)) {
+                IndexBlock block = getSubBlock(focus);
+                for (IndexEntry subEntry : enumerate(block.getNode())) {
+                    result.add(subEntry);
+                }
+            }
+
+            if (!focus.getFlags().contains(IndexEntryFlags.End)) {
+                result.add(focus);
+            }
+        }
+        return result;
+    }
+
+    private List<IndexEntry> findAllIn(Comparable<byte[]> query, IndexNode node) {
+        List<IndexEntry> result = new ArrayList<>();
+        for (IndexEntry focus : node.getEntries()) {
+            boolean searchChildren = true;
+            boolean matches = false;
+            boolean keepIterating = true;
+            if (!focus.getFlags().contains(IndexEntryFlags.End)) {
+                int compVal = query.compareTo(focus.getKeyBuffer());
+                if (compVal == 0) {
+                    matches = true;
+                } else if (compVal > 0) {
+                    searchChildren = false;
+                } else if (compVal < 0) {
+                    keepIterating = false;
+                }
+            }
+
+            if (searchChildren && focus.getFlags().contains(IndexEntryFlags.Node)) {
+                IndexBlock block = getSubBlock(focus);
+                for (IndexEntry entry : findAllIn(query, block.getNode())) {
+                    result.add(entry);
+                }
+            }
+
+            if (matches) {
+                result.add(focus);
+            }
+
+            if (!keepIterating) {
+                break;
+            }
+        }
+        return result;
+    }
+
+    private void writeRootNodeToDisk() {
+        _rootNode.getHeader().AllocatedSizeOfEntries = _rootNode.calcSize();
+        byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + (int) _root.getSize()];
+        _root.writeTo(buffer, 0);
+        _rootNode.writeTo(buffer, (int) _root.getSize());
+        Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write);
+        try {
+            s.setPosition(0);
+            s.write(buffer, 0, buffer.length);
+            s.setLength(s.getPosition());
+        } finally {
+            if (s != null)
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                }
+        }
+    }
+
+    private void nodeAsString(PrintWriter writer, String prefix, IndexNode node, String id) {
+        writer.println(prefix + id + ":");
+        for (IndexEntry entry : node.getEntries()) {
+            if (entry.getFlags().contains(IndexEntryFlags.End)) {
+                writer.println(prefix + "      E");
+            } else {
+                writer.println(prefix + "      " + entryAsString(entry, _file.getBestName(), _name));
+            }
+            if (entry.getFlags().contains(IndexEntryFlags.Node)) {
+                nodeAsString(writer,
+                             prefix + "        ",
+                             getSubBlock(entry).getNode(),
+                             ":i" + entry.getChildrenVirtualCluster());
+            }
+        }
+    }
+}

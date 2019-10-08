@@ -46,7 +46,7 @@ public class Adler32 {
 
     /**
      * Provides data that should be checksummed.
-     * 
+     *
      * @param buffer Buffer containing the data to checksum.
      * @param offset Offset of the first byte to checksum.
      * @param count The number of bytes to checksum.

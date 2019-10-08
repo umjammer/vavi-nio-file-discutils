@@ -27,9 +27,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
@@ -58,9 +59,9 @@ public final class VolumeManager implements Serializable {
 
     private boolean _needScan;
 
-    private Map<String, PhysicalVolumeInfo> _physicalVolumes;
+    private SortedMap<String, PhysicalVolumeInfo> _physicalVolumes;
 
-    private Map<String, LogicalVolumeInfo> _logicalVolumes;
+    private SortedMap<String, LogicalVolumeInfo> _logicalVolumes;
 
     private static final List<Class<VolumeManager>> _coreAssembly = Arrays.asList(VolumeManager.class);
 
@@ -69,13 +70,13 @@ public final class VolumeManager implements Serializable {
      */
     public VolumeManager() {
         _disks = new ArrayList<>();
-        _physicalVolumes = new HashMap<>();
-        _logicalVolumes = new HashMap<>();
+        _physicalVolumes = new TreeMap<>();
+        _logicalVolumes = new TreeMap<>();
     }
 
     /**
      * Initializes a new instance of the VolumeManager class.
-     * 
+     *
      * @param initialDisk The initial disk to add.
      */
     public VolumeManager(VirtualDisk initialDisk) throws IOException {
@@ -85,7 +86,7 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Initializes a new instance of the VolumeManager class.
-     * 
+     *
      * @param initialDiskContent Content of the initial disk to add.
      */
     public VolumeManager(Stream initialDiskContent) throws IOException {
@@ -107,7 +108,7 @@ public final class VolumeManager implements Serializable {
         try {
             List<LogicalVolumeFactory> result = new ArrayList<>();
             for (Class<VolumeManager> type : assembly) {
-                for (LogicalVolumeFactoryAttribute attr : ReflectionHelper
+                for (@SuppressWarnings("unused") LogicalVolumeFactoryAttribute attr : ReflectionHelper
                         .getCustomAttributes(type, LogicalVolumeFactoryAttribute.class, false)) {
                     result.add(LogicalVolumeFactory.class.cast(type.newInstance()));
                 }
@@ -120,11 +121,11 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Register new LogicalVolumeFactories detected in an assembly
-     * 
+     *
      * @param assembly The assembly to inspect
      */
     public static void registerLogicalVolumeFactory(List<Class<VolumeManager>> assembly) throws IOException {
-        if (assembly == _coreAssembly)
+        if (assembly.equals(_coreAssembly)) // TODO
             return;
 
         getLogicalVolumeFactories().addAll(getLogicalVolumeFactories(assembly));
@@ -132,7 +133,7 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Gets the physical volumes held on a disk.
-     * 
+     *
      * @param diskContent The contents of the disk to inspect.
      * @return An array of volumes.By preference, use the form of this method
      *         that takes a disk parameter.If the disk isn't partitioned, this
@@ -145,7 +146,7 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Gets the physical volumes held on a disk.
-     * 
+     *
      * @param disk The disk to inspect.
      * @return An array of volumes.If the disk isn't partitioned, this method
      *         returns the entire disk contents
@@ -157,7 +158,7 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Adds a disk to the volume manager.
-     * 
+     *
      * @param disk The disk to add.
      * @return The GUID the volume manager will use to identify the disk.
      */
@@ -170,7 +171,7 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Adds a disk to the volume manager.
-     * 
+     *
      * @param content The contents of the disk to add.
      * @return The GUID the volume manager will use to identify the disk.
      */
@@ -180,33 +181,33 @@ public final class VolumeManager implements Serializable {
 
     /**
      * Gets the physical volumes from all disks added to this volume manager.
-     * 
+     *
      * @return An array of physical volumes.
      */
-    public Collection<PhysicalVolumeInfo> getPhysicalVolumes() throws IOException {
+    public List<PhysicalVolumeInfo> getPhysicalVolumes() throws IOException {
         if (_needScan) {
             scan();
         }
 
-        return _physicalVolumes.values();
+        return new ArrayList<>(_physicalVolumes.values());
     }
 
     /**
      * Gets the logical volumes from all disks added to this volume manager.
-     * 
+     *
      * @return An array of logical volumes.
      */
-    public Collection<LogicalVolumeInfo> getLogicalVolumes() throws IOException {
+    public List<LogicalVolumeInfo> getLogicalVolumes() throws IOException {
         if (_needScan) {
             scan();
         }
 
-        return _logicalVolumes.values();
+        return new ArrayList<>(_logicalVolumes.values());
     }
 
     /**
      * Gets a particular volume, based on it's identity.
-     * 
+     *
      * @param identity The volume's identity.
      * @return The volume information for the volume, or returns
      *         {@code null}
@@ -245,16 +246,16 @@ public final class VolumeManager implements Serializable {
      * Scans all of the disks for their physical and logical volumes.
      */
     private void scan() throws IOException {
-        Map<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
-        Map<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
+        SortedMap<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
+        SortedMap<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
         _physicalVolumes = newPhysicalVolumes;
         _logicalVolumes = newLogicalVolumes;
         _needScan = false;
     }
 
-    private Map<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) throws IOException {
+    private SortedMap<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) throws IOException {
         List<PhysicalVolumeInfo> unhandledPhysical = new ArrayList<>();
-        Map<String, LogicalVolumeInfo> result = new HashMap<>();
+        SortedMap<String, LogicalVolumeInfo> result = new TreeMap<>();
         for (PhysicalVolumeInfo pvi : physicalVols) {
             boolean handled = false;
             for (LogicalVolumeFactory volFactory : getLogicalVolumeFactories()) {
@@ -270,15 +271,14 @@ public final class VolumeManager implements Serializable {
 
         }
         mapPhysicalVolumes(unhandledPhysical, result);
-        for (Object __dummyForeachVar5 : getLogicalVolumeFactories()) {
-            LogicalVolumeFactory volFactory = (LogicalVolumeFactory) __dummyForeachVar5;
+        for (LogicalVolumeFactory volFactory : getLogicalVolumeFactories()) {
             volFactory.mapDisks(_disks, result);
         }
         return result;
     }
 
-    private Map<String, PhysicalVolumeInfo> scanForPhysicalVolumes() throws IOException {
-        Map<String, PhysicalVolumeInfo> result = new HashMap<>();
+    private SortedMap<String, PhysicalVolumeInfo> scanForPhysicalVolumes() throws IOException {
+        SortedMap<String, PhysicalVolumeInfo> result = new TreeMap<>();
         for (int i = 0; i < _disks.size(); ++i) {
             // First scan physical volumes
             VirtualDisk disk = _disks.get(i);
@@ -300,7 +300,7 @@ public final class VolumeManager implements Serializable {
 
     private String getDiskId(int ordinal) throws IOException {
         VirtualDisk disk = _disks.get(ordinal);
-        if (disk.getIsPartitioned()) {
+        if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
             if (guid != UUID.fromString("")) {
                 return "DG" + guid.toString(); // "B"

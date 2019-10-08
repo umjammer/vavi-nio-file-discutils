@@ -25,7 +25,7 @@ package DiscUtils.Core.Partitions;
 public enum WellKnownPartitionType {
     /**
      * Enumeration of partition-table technology neutral partition types.
-     * 
+     *
      * Windows FAT-based partition.
      */
     WindowsFat,

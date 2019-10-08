@@ -160,8 +160,7 @@ public class DynamicHeader {
         byte[] asBytes = new byte[1024];
         copy.toBytes(asBytes, 0);
         int checksum = 0;
-        for (Object __dummyForeachVar0 : asBytes) {
-            int value = (int) __dummyForeachVar0;
+        for (int value : asBytes) {
             checksum += value;
         }
         checksum = ~checksum;

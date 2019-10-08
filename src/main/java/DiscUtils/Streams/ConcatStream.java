@@ -47,12 +47,10 @@ public class ConcatStream extends SparseStream {
         _streams = streams;
         // Only allow writes if all streams can be written
         _canWrite = true;
-        for (Object __dummyForeachVar0 : streams) {
-            SparseStream stream = (SparseStream) __dummyForeachVar0;
+        for (SparseStream stream : streams) {
             if (!stream.canWrite()) {
                 _canWrite = false;
             }
-
         }
     }
 
@@ -179,8 +177,7 @@ public class ConcatStream extends SparseStream {
 
     public void close() throws IOException {
         if (_ownsStreams == Ownership.Dispose && _streams != null) {
-            for (Object __dummyForeachVar2 : _streams) {
-                SparseStream stream = (SparseStream) __dummyForeachVar2;
+            for (SparseStream stream : _streams) {
                 stream.close();
             }
             _streams = null;

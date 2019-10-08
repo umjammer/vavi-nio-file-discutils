@@ -31,7 +31,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 /**
  * Utility class for pumping the contents of one stream into another.
- * 
+ *
  * This class is aware of sparse streams, and will avoid copying data that is
  * not
  * valid in the source stream. This functionality should normally only be used
@@ -49,7 +49,7 @@ public final class StreamPump {
 
     /**
      * Initializes a new instance of the StreamPump class.
-     * 
+     *
      * @param inStream The stream to read from.
      * @param outStream The stream to write to.
      * @param sparseChunkSize The size of each sparse chunk.
@@ -135,7 +135,7 @@ public final class StreamPump {
 
     /**
      * Gets or sets, for sparse transfers, the size of each chunk.
-     * 
+     *
      * A chunk is transfered if any byte in the chunk is valid, otherwise it is
      * not.
      * This value should normally be set to reflect the underlying storage
@@ -170,7 +170,7 @@ public final class StreamPump {
 
     /**
      * Event raised periodically through the pump operation.
-     * 
+     *
      * This event is signalled synchronously, so to avoid slowing the pumping
      * activity
      * implementations should return quickly.

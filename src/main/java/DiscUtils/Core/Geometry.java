@@ -33,7 +33,7 @@ public final class Geometry {
     /**
      * Initializes a new instance of the Geometry class. The default 512 bytes
      * per sector is assumed.
-     * 
+     *
      * @param cylinders The number of cylinders of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
      * @param sectorsPerTrack The number of sectors per track/cylinder of the
@@ -48,7 +48,7 @@ public final class Geometry {
 
     /**
      * Initializes a new instance of the Geometry class.
-     * 
+     *
      * @param cylinders The number of cylinders of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
      * @param sectorsPerTrack The number of sectors per track/cylinder of the
@@ -64,7 +64,7 @@ public final class Geometry {
 
     /**
      * Initializes a new instance of the Geometry class.
-     * 
+     *
      * @param capacity The total capacity of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
      * @param sectorsPerTrack The number of sectors per track/cylinder of the
@@ -176,7 +176,7 @@ public final class Geometry {
 
     /**
      * Gets the 'Large' BIOS geometry for a disk, given it's physical geometry.
-     * 
+     *
      * @param ideGeometry The physical (aka IDE) geometry of the disk.
      * @return The geometry a BIOS using the 'Large' method for calculating disk
      *         geometry will indicate for the disk.
@@ -194,7 +194,7 @@ public final class Geometry {
 
     /**
      * Gets the 'LBA Assisted' BIOS geometry for a disk, given it's capacity.
-     * 
+     *
      * @param capacity The capacity of the disk.
      * @return The geometry a BIOS using the 'LBA Assisted' method for
      *         calculating disk geometry will indicate for the disk.
@@ -219,7 +219,7 @@ public final class Geometry {
 
     /**
      * Converts a geometry into one that is BIOS-safe, if not already.
-     * 
+     *
      * @param geometry The geometry to make BIOS-safe.
      * @param capacity The capacity of the disk.
      * @return The new geometry.This method returns the LBA-Assisted geometry if
@@ -240,7 +240,7 @@ public final class Geometry {
     /**
      * Calculates a sensible disk geometry for a disk capacity using the VHD
      * algorithm (errs under).
-     * 
+     *
      * @param capacity The desired capacity of the disk.
      * @return The appropriate disk geometry.The geometry returned tends to
      *         produce a disk with less capacity
@@ -256,7 +256,7 @@ public final class Geometry {
     /**
      * Calculates a sensible disk geometry for a disk capacity using the VHD
      * algorithm (errs under).
-     * 
+     *
      * @param capacity The desired capacity of the disk.
      * @param sectorSize The logical sector size of the disk.
      * @return The appropriate disk geometry.The geometry returned tends to
@@ -313,7 +313,7 @@ public final class Geometry {
     /**
      * Converts a CHS (Cylinder,Head,Sector) address to a LBA (Logical Block
      * Address).
-     * 
+     *
      * @param chsAddress The CHS address to convert.
      * @return The Logical Block Address (in sectors).
      */
@@ -324,7 +324,7 @@ public final class Geometry {
     /**
      * Converts a CHS (Cylinder,Head,Sector) address to a LBA (Logical Block
      * Address).
-     * 
+     *
      * @param cylinder The cylinder of the address.
      * @param head The head of the address.
      * @param sector The sector of the address.
@@ -357,7 +357,7 @@ public final class Geometry {
     /**
      * Converts a LBA (Logical Block Address) to a CHS (Cylinder, Head, Sector)
      * address.
-     * 
+     *
      * @param logicalBlockAddress The logical block address (in sectors).
      * @return The address in CHS form.
      */
@@ -376,7 +376,7 @@ public final class Geometry {
     /**
      * Translates an IDE (aka Physical) geometry to a BIOS (aka Logical)
      * geometry.
-     * 
+     *
      * @param translation The translation to perform.
      * @return The translated disk geometry.
      */
@@ -387,7 +387,7 @@ public final class Geometry {
     /**
      * Translates an IDE (aka Physical) geometry to a BIOS (aka Logical)
      * geometry.
-     * 
+     *
      * @param capacity The capacity of the disk, required if the geometry is an
      *            approximation on the actual disk size.
      * @param translation The translation to perform.
@@ -419,7 +419,7 @@ public final class Geometry {
 
     /**
      * Determines if this object is equivalent to another.
-     * 
+     *
      * @param obj The object to test against.
      * @return
      *         {@code true}
@@ -441,7 +441,7 @@ public final class Geometry {
 
     /**
      * Calculates the hash code for this object.
-     * 
+     *
      * @return The hash code.
      */
     public int hashCode() {
@@ -450,7 +450,7 @@ public final class Geometry {
 
     /**
      * Gets a string representation of this object, in the form (C/H/S).
-     * 
+     *
      * @return The string representation.
      */
     public String toString() {

@@ -22,12 +22,11 @@
 
 package DiscUtils.Vhdx;
 
-import java.io.Serializable;
-
+import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class BatEntry implements Serializable {
+public class BatEntry implements IByteArraySerializable {
     public BatEntry() {
     }
 
@@ -61,7 +60,7 @@ public class BatEntry implements Serializable {
         _value = (_value & 0xFFFFF) | value << 20;
     }
 
-    public int getSize() {
+    public long getSize() {
         return 8;
     }
 
@@ -73,5 +72,4 @@ public class BatEntry implements Serializable {
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(_value, buffer, offset);
     }
-
 }

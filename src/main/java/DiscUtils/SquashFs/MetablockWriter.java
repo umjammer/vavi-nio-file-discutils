@@ -1,0 +1,115 @@
+//
+// Copyright (c) 2008-2011, Kenneth Bell
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
+
+package DiscUtils.SquashFs;
+
+import java.io.Closeable;
+import java.io.IOException;
+
+import DiscUtils.Core.Compression.ZlibStream;
+import DiscUtils.Streams.Util.EndianUtilities;
+import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
+import moe.yo3explorer.dotnetio4j.MemoryStream;
+import moe.yo3explorer.dotnetio4j.Stream;
+
+
+public final class MetablockWriter implements Closeable {
+    private MemoryStream _buffer = new MemoryStream();
+
+    private final byte[] _currentBlock;
+
+    private int _currentBlockNum;
+
+    private int _currentOffset;
+
+    public MetablockWriter() {
+        _currentBlock = new byte[8 * 1024];
+        _buffer = new MemoryStream();
+    }
+
+    public MetadataRef getPosition() {
+        return new MetadataRef(_currentBlockNum, _currentOffset);
+    }
+
+    public void close() throws IOException {
+        if (_buffer != null) {
+            _buffer.close();
+            _buffer = null;
+        }
+    }
+
+    public void write(byte[] buffer, int offset, int count) {
+        int totalStored = 0;
+        while (totalStored < count) {
+            int toCopy = Math.min(_currentBlock.length - _currentOffset, count - totalStored);
+            System.arraycopy(buffer, offset + totalStored, _currentBlock, _currentOffset, toCopy);
+            _currentOffset += toCopy;
+            totalStored += toCopy;
+            if (_currentOffset == _currentBlock.length) {
+                nextBlock();
+                _currentOffset = 0;
+            }
+        }
+    }
+
+    public void persist(Stream output) {
+        if (_currentOffset > 0) {
+            nextBlock();
+        }
+
+        output.write(_buffer.toArray(), 0, (int) _buffer.getLength());
+    }
+
+    public long distanceFrom(MetadataRef startPos) {
+        return (_currentBlockNum - startPos.getBlock()) * VfsSquashFileSystemReader.MetadataBufferSize +
+               (_currentOffset - startPos.getOffset());
+    }
+
+    private void nextBlock() {
+        MemoryStream compressed = new MemoryStream();
+        ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true);
+        try {
+            compStream.write(_currentBlock, 0, _currentOffset);
+        } finally {
+            if (compStream != null)
+                try {
+                    compStream.close();
+                } catch (IOException e) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                }
+        }
+        byte[] writeData;
+        short writeLen;
+        if (compressed.getLength() < _currentOffset) {
+            writeData = compressed.toArray();
+            writeLen = (short) compressed.getLength();
+        } else {
+            writeData = _currentBlock;
+            writeLen = (short) (_currentOffset | 0x8000);
+        }
+        byte[] header = new byte[2];
+        EndianUtilities.writeBytesLittleEndian(writeLen, header, 0);
+        _buffer.write(header, 0, 2);
+        _buffer.write(writeData, 0, writeLen & 0x7FFF);
+        ++_currentBlockNum;
+    }
+}

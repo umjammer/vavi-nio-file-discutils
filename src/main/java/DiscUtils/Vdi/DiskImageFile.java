@@ -60,7 +60,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream to interpret.
      */
     public DiskImageFile(Stream stream) {
@@ -71,7 +71,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a new instance of the DiskImageFile class.
-     * 
+     *
      * @param stream The stream to interpret.
      * @param ownsStream Indicates if the new instance should control the
      *            lifetime of the stream.
@@ -122,7 +122,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a fixed-sized VDI file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -154,7 +154,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Initializes a stream as a dynamically-sized VDI file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -181,7 +181,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Opens the content of the disk image file as a stream.
-     * 
+     *
      * @param parent The parent file's content (if any).
      * @param ownsParent Whether the created stream assumes ownership of parent
      *            stream.
@@ -204,11 +204,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Gets the possible locations of the parent file (if any).
-     * 
+     *
      * @return Array of strings, empty if no parent.
      */
     public List<String> getParentLocations() {
-        return Arrays.asList(new String[0]);
+        return Arrays.asList();
     }
 
     // Until diff/undo supported

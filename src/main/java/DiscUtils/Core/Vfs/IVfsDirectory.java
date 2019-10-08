@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/11 18:18:08
-//
-
-package DiscUtils.Core.Vfs;
-
-import java.util.Collection;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,40 +19,43 @@ import java.util.Collection;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Core.Vfs;
+
+import java.util.Collection;
+
+
 /**
-* Interface implemented by classes representing a directory.
-* Concrete type representing directory entries.Concrete type representing files.
-*/
-public interface IVfsDirectory <TDirEntry extends VfsDirEntry, TFile extends IVfsFile>  extends IVfsFile
-{
+ * Interface implemented by classes representing a directory.
+ * Concrete type representing directory entries.Concrete type representing
+ * files.
+ */
+public interface IVfsDirectory<TDirEntry extends VfsDirEntry, TFile extends IVfsFile> extends IVfsFile {
     /**
-    * Gets all of the directory entries.
-    */
-    Collection<TDirEntry> getAllEntries() ;
+     * Gets all of the directory entries.
+     */
+    Collection<TDirEntry> getAllEntries();
 
     /**
-    * Gets a self-reference, if available.
-    */
-    TDirEntry getSelf() ;
+     * Gets a self-reference, if available.
+     */
+    TDirEntry getSelf();
 
     /**
-    * Gets a specific directory entry, by name.
-    * 
-    *  @param name The name of the directory entry.
-    *  @return The directory entry, or 
-    *  {@code null}
-    *  if not found.
-    */
-    TDirEntry getEntryByName(String name) ;
+     * Gets a specific directory entry, by name.
+     *
+     * @param name The name of the directory entry.
+     * @return The directory entry, or
+     *         {@code null}
+     *         if not found.
+     */
+    TDirEntry getEntryByName(String name);
 
     /**
-    * Creates a new file.
-    * 
-    *  @param name The name of the file (relative to this directory).
-    *  @return The newly created file.
-    */
-    TDirEntry createNewFile(String name) ;
-
+     * Creates a new file.
+     *
+     * @param name The name of the file (relative to this directory).
+     * @return The newly created file.
+     */
+    TDirEntry createNewFile(String name);
 }
-
-

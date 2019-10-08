@@ -23,7 +23,6 @@
 
 package DiscUtils.Vhdx;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -31,6 +30,7 @@ import java.util.stream.Collectors;
 
 import DiscUtils.Core.Internal.Crc32Algorithm;
 import DiscUtils.Core.Internal.Crc32LittleEndian;
+import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
@@ -91,8 +91,7 @@ public final class LogEntry {
         if (getIsEmpty())
             return;
 
-        for (Object __dummyForeachVar1 : _descriptors) {
-            Descriptor descriptor = (Descriptor) __dummyForeachVar1;
+        for (Descriptor descriptor : _descriptors) {
             descriptor.writeData(target);
         }
     }
@@ -156,7 +155,7 @@ public final class LogEntry {
         return true;
     }
 
-    private abstract static class Descriptor implements Serializable {
+    private abstract static class Descriptor implements IByteArraySerializable {
         public static final int ZeroDescriptorSignature = 0x6F72657A;
 
         public static final int DataDescriptorSignature = 0x63736564;
@@ -169,7 +168,7 @@ public final class LogEntry {
 
         public abstract long getFileLength();
 
-        public int getSize() {
+        public long getSize() {
             return 32;
         }
 
@@ -271,7 +270,5 @@ public final class LogEntry {
             target.write(_data, _offset + 8, 4084);
             target.write(trailing, 0, trailing.length);
         }
-
     }
-
 }

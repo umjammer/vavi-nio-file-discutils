@@ -50,7 +50,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param path The path to the disk.
      * @param access The access requested to the disk.
      */
@@ -62,7 +62,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a new instance of the Disk class.
-     * 
+     *
      * @param file The file containing the disk image.
      */
     public Disk(DiskImageFile file) {
@@ -72,7 +72,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are not
      * supported.
-     * 
+     *
      * @param stream The stream to read.
      */
     public Disk(Stream stream) {
@@ -82,7 +82,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class. Differencing disks are not
      * supported.
-     * 
+     *
      * @param stream The stream to read.
      * @param ownsStream Indicates if the new disk should take ownership of
      *            {@code stream}
@@ -149,7 +149,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a fixed-sized VDI file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -162,7 +162,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Initializes a stream as a dynamically-sized VDI file.
-     * 
+     *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
@@ -175,7 +175,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk, possibly within an existing disk.
-     * 
+     *
      * @param fileSystem The file system to create the disk on.
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
@@ -186,7 +186,7 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Create a new differencing disk.
-     * 
+     *
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */

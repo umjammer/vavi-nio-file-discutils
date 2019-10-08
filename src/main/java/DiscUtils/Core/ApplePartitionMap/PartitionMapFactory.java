@@ -22,8 +22,6 @@
 
 package DiscUtils.Core.ApplePartitionMap;
 
-import java.io.IOException;
-
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Partitions.PartitionTable;
 import DiscUtils.Core.Partitions.PartitionTableFactory;
@@ -50,7 +48,7 @@ public final class PartitionMapFactory implements PartitionTableFactory {
         return initialPart.Signature == 0x504d;
     }
 
-    public PartitionTable detectPartitionTable(VirtualDisk disk) throws IOException {
+    public PartitionTable detectPartitionTable(VirtualDisk disk) {
         if (!detectIsPartitioned(disk.getContent())) {
             return null;
         }

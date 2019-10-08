@@ -25,7 +25,7 @@ package DiscUtils.Vmdk;
 public enum DiskCreateType {
     /**
      * Enumeration of VMDK disk types.
-     * 
+     *
      * None - do not use.
      */
     None,

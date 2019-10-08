@@ -31,6 +31,7 @@ import DiscUtils.Core.Internal.Crc32;
 import DiscUtils.Core.Internal.Crc32Algorithm;
 import DiscUtils.Core.Internal.Crc32BigEndian;
 import DiscUtils.Streams.Util.Ownership;
+import moe.yo3explorer.dotnetio4j.BufferedStream;
 import moe.yo3explorer.dotnetio4j.SeekOrigin;
 import moe.yo3explorer.dotnetio4j.Stream;
 
@@ -65,7 +66,7 @@ public final class BZip2DecoderStream extends Stream {
 
     /**
      * Initializes a new instance of the BZip2DecoderStream class.
-     * 
+     *
      * @param stream The compressed input stream.
      * @param ownsStream Whether ownership of stream passes to the new instance.
      */
@@ -79,13 +80,13 @@ public final class BZip2DecoderStream extends Stream {
         magic[1] = (byte) _bitstream.read(8);
         magic[2] = (byte) _bitstream.read(8);
         if (magic[0] != 0x42 || magic[1] != 0x5A || magic[2] != 0x68) {
-            throw new IOException("Bad magic at start of stream");
+            throw new moe.yo3explorer.dotnetio4j.IOException("Bad magic at start of stream");
         }
 
         // The size of the decompression blocks in multiples of 100,000
         int blockSize = _bitstream.read(8) - 0x30;
         if (blockSize < 1 || blockSize > 9) {
-            throw new IOException("Unexpected block size in header: " + blockSize);
+            throw new moe.yo3explorer.dotnetio4j.IOException("Unexpected block size in header: " + blockSize);
         }
 
         blockSize *= 100000;
@@ -146,7 +147,7 @@ public final class BZip2DecoderStream extends Stream {
 
     /**
      * Reads a number of bytes from the stream.
-     * 
+     *
      * @param buffer The destination buffer.
      * @param offset The start offset within the destination buffer.
      * @param count The number of bytes to read.
@@ -231,7 +232,7 @@ public final class BZip2DecoderStream extends Stream {
 
     /**
      * Changes the current stream position.
-     * 
+     *
      * @param offset The origin-relative stream position.
      * @param origin The origin for the stream position.
      * @return The new stream position.
@@ -242,7 +243,7 @@ public final class BZip2DecoderStream extends Stream {
 
     /**
      * Sets the length of the stream (the underlying buffer's capacity).
-     * 
+     *
      * @param value The new length of the stream.
      */
     public void setLength(long value) {
@@ -251,7 +252,7 @@ public final class BZip2DecoderStream extends Stream {
 
     /**
      * Writes a buffer to the stream.
-     * 
+     *
      * @param buffer The buffer to write.
      * @param offset The starting offset within buffer.
      * @param count The number of bytes to write.

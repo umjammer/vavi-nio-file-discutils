@@ -30,8 +30,9 @@ import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.PhysicalVolumeInfo;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.LogicalVolumeFactory;
+import DiscUtils.Core.Internal.LogicalVolumeFactoryAttribute;
 
-
+@LogicalVolumeFactoryAttribute
 public class DynamicDiskManagerFactory extends LogicalVolumeFactory {
     public boolean handlesPhysicalVolume(PhysicalVolumeInfo volume) {
         return DynamicDiskManager.handlesPhysicalVolume(volume);
@@ -39,15 +40,13 @@ public class DynamicDiskManagerFactory extends LogicalVolumeFactory {
 
     public void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result) throws IOException {
         DynamicDiskManager mgr = new DynamicDiskManager();
-        for (Object __dummyForeachVar0 : disks) {
-            VirtualDisk disk = (VirtualDisk) __dummyForeachVar0;
+        for (VirtualDisk disk : disks) {
             if (DynamicDiskManager.isDynamicDisk(disk)) {
                 mgr.add(disk);
             }
 
         }
-        for (Object __dummyForeachVar1 : mgr.getLogicalVolumes()) {
-            LogicalVolumeInfo vol = (LogicalVolumeInfo) __dummyForeachVar1;
+        for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {
             result.put(vol.getIdentity(), vol);
         }
     }

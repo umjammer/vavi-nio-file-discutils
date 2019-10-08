@@ -100,7 +100,7 @@ public final class DiskBuilder extends DiskImageBuilder {
 
     /**
      * Initiates the build process.
-     * 
+     *
      * @param baseName The base name for the VMDK, for example 'foo' to create
      *            'foo.vmdk'.
      * @return A set of one or more logical files that constitute the VMDK. The

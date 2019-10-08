@@ -45,7 +45,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Initializes a new instance of the SparseMemoryBuffer class.
-     * 
+     *
      * @param chunkSize The size of each allocation chunk.
      */
     public SparseMemoryBuffer(int chunkSize) {
@@ -55,7 +55,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Gets the (sorted) list of allocated chunks, as chunk indexes.
-     * 
+     *
      * @return An enumeration of chunk indexes.This method returns chunks as an
      *         index rather than absolute stream position.
      *         For example, if ChunkSize is 16KB, and the first 32KB of the
@@ -106,7 +106,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Accesses this memory buffer as an infinite byte array.
-     * 
+     *
      * @param pos The buffer position to read.
      * @return The byte stored at this position (or Zero if not explicitly
      *         stored).
@@ -128,7 +128,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Reads a section of the sparse buffer into a byte array.
-     * 
+     *
      * @param pos The offset within the sparse buffer to start reading.
      * @param buffer The destination byte array.
      * @param offset The start offset within the destination buffer.
@@ -157,7 +157,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Writes a byte array into the sparse buffer.
-     * 
+     *
      * @param pos The start offset within the sparse buffer.
      * @param buffer The source byte array.
      * @param offset The start offset within the source byte array.
@@ -185,7 +185,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Clears bytes from the buffer.
-     * 
+     *
      * @param pos The start offset within the buffer.
      * @param count The number of bytes to clear.
      */
@@ -211,7 +211,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Sets the capacity of the sparse buffer, truncating if appropriate.
-     * 
+     *
      * @param value The desired capacity of the buffer.This method does not
      *            allocate any chunks, it merely records the logical
      *            capacity of the sparse buffer. Writes beyond the specified
@@ -224,7 +224,7 @@ public final class SparseMemoryBuffer extends Buffer {
 
     /**
      * Gets the parts of a buffer that are stored, within a specified range.
-     * 
+     *
      * @param start The offset of the first byte of interest.
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
