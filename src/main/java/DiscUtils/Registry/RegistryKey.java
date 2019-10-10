@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.omg.CORBA.Environment;
 
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 
@@ -341,7 +342,7 @@ public final class RegistryKey {
             return this;
         }
 
-        String[] split = subkey.split("\\", 2);
+        String[] split = subkey.split(Utilities.escapeForRegex("\\"), 2);
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             KeyNodeCell newKeyCell = new KeyNodeCell(split[0], _cell.getIndex());
@@ -377,7 +378,7 @@ public final class RegistryKey {
             return this;
         }
 
-        String[] split = path.split("\\", 2);
+        String[] split = path.split(Utilities.escapeForRegex("\\"), 2);
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             return null;
@@ -437,7 +438,7 @@ public final class RegistryKey {
             throw new IllegalArgumentException("Invalid SubKey");
         }
 
-        String[] split = subkey.split("\\", 2);
+        String[] split = subkey.split(Utilities.escapeForRegex("\\"), 2);
         int subkeyCellIndex = findSubKeyCell(split[0]);
         if (subkeyCellIndex < 0) {
             if (throwOnMissingSubKey) {

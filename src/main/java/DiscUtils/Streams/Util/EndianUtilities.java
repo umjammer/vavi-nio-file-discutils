@@ -52,7 +52,8 @@ public class EndianUtilities {
     }
 
     public static void writeBytesLittleEndian(UUID val, byte[] buffer, int offset) {
-        byte[] le = val.toString().getBytes();
+        final UUID empty = new UUID(0L, 0L);
+        byte[] le = (val == null ? empty : val).toString().getBytes();
         System.arraycopy(le, 0, buffer, offset, 16);
     }
 
@@ -88,7 +89,7 @@ public class EndianUtilities {
     }
 
     public static int toUInt16LittleEndian(byte[] buffer, int offset) {
-        return (short) (((buffer[offset + 1] << 8) & 0xFF00) | ((buffer[offset + 0] << 0) & 0x00FF));
+        return ((buffer[offset + 1] << 8) & 0xFF00) | ((buffer[offset + 0] << 0) & 0x00FF);
     }
 
     public static int toUInt32LittleEndian(byte[] buffer, int offset) {
@@ -240,5 +241,4 @@ public class EndianUtilities {
         }
         return new String(result);
     }
-
 }

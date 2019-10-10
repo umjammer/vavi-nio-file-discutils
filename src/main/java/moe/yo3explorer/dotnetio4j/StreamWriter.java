@@ -19,10 +19,10 @@ import java.nio.charset.Charset;
  */
 public class StreamWriter extends Writer {
 
-    Stream stream;
+    private Stream stream;
 
     // TODO
-    Charset encoding;
+    private Charset encoding = Charset.forName("utf-8");
 
     public StreamWriter(Stream stream) {
         this.stream = stream;
@@ -54,12 +54,16 @@ public class StreamWriter extends Writer {
 
     /** TODO */
     public void writeLine(Object obj) {
+        byte[] bytes = obj.toString().getBytes(encoding);
+        stream.write(bytes, 0, bytes.length);
+        
     }
 
     /**
      * TODO
      */
     public void println(String s) {
+        writeLine(s);
     }
 }
 

@@ -23,6 +23,7 @@
 package DiscUtils.Btrfs;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,9 +41,9 @@ public class SuperBlock implements IByteArraySerializable {
     public static final int Length = 0x1000;
 
     static {
-        // TODO
         ByteBuffer buffer = ByteBuffer.wrap("_BHRfS_M".getBytes(Charset.forName("ASCII")));
-        BtrfsMagic = buffer.getInt();
+        buffer.order(ByteOrder.nativeOrder());
+        BtrfsMagic = buffer.getLong();
     }
 
     public static final long BtrfsMagic;

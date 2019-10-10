@@ -45,14 +45,14 @@ public final class FatFileSystemOptions extends DiscFileSystemOptions {
     }
 
     public FatFileSystemOptions() {
-        setFileNameEncoding(Charset.forName("437"));
+        setFileNameEncoding(EncodingHelper.forCodePage(437));
     }
 
     public FatFileSystemOptions(FileSystemParameters parameters) {
         if (parameters != null && parameters.getFileNameEncoding() != null) {
             setFileNameEncoding(parameters.getFileNameEncoding());
         } else {
-            setFileNameEncoding(Charset.forName("437"));
+            setFileNameEncoding(EncodingHelper.forCodePage(437));
         }
     }
 

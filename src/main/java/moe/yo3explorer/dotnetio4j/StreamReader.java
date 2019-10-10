@@ -19,7 +19,9 @@ import java.nio.charset.Charset;
  */
 public class StreamReader extends Reader {
 
-    Stream stream;
+    private Stream stream;
+
+    private Charset encoding = Charset.forName("utf-8");
 
     public StreamReader(Stream stream) {
         this.stream = stream;
@@ -31,20 +33,15 @@ public class StreamReader extends Reader {
     }
 
     /**
-     * @param _contentStream
-     * @param forName
-     * @param b
      */
-    public StreamReader(Stream _contentStream, Charset forName, boolean b) {
-        // TODO Auto-generated constructor stub
+    public StreamReader(Stream stream, Charset encoding) {
+        this.stream = stream;
     }
 
     /**
-     * @param _contentStream
-     * @param encoding
      */
-    public StreamReader(Stream _contentStream, Charset encoding) {
-        // TODO Auto-generated constructor stub
+    public StreamReader(Stream stream, Charset encoding, boolean b) {
+        this.stream = stream;
     }
 
     @Override

@@ -6,99 +6,40 @@
 
 package moe.yo3explorer.dotnetio4j;
 
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
 
 
 /**
- * StreamOutputStream.
+ * DeflateStream.
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/09/30 umjammer initial version <br>
  */
-public class DeflateStream extends Stream {
+public class DeflateStream extends JavaIOStream {
 
-    public enum CompressionMode {
-        Decompress,
-        Compress
+    static InputStream toInputStream(Stream stream) {
+        return new ZipInputStream(new StreamInputStream(stream));
     }
 
-    Stream stream;
-
-    /**
-     * @param stream
-     * @param mode
-     * @param leaveOpen
-     */
-    public DeflateStream(Stream stream, CompressionMode mode, boolean leaveOpen) {
-        this.stream = stream;
+    static OutputStream toOutputStream(Stream stream) {
+        return new ZipOutputStream(new StreamOutputStream(stream));
     }
 
     /**
-     * @param stream
-     * @param mode
      */
-    public DeflateStream(Stream stream, CompressionMode mode) {
-        this(stream, mode, false);
+    public DeflateStream(Stream stream, CompressionMode decompress) {
+        super(toInputStream(stream), toOutputStream(stream));
     }
 
-    @Override
-    public boolean canRead() {
-        return stream.canRead();
-    }
-
-    @Override
-    public boolean canSeek() {
-        return stream.canSeek();
-    }
-
-    @Override
-    public boolean canWrite() {
-        return stream.canWrite();
-    }
-
-    @Override
-    public long getLength() {
-        return stream.getLength();
-    }
-
-    @Override
-    public long getPosition() {
-        return stream.getPosition();
-    }
-
-    @Override
-    public void setPosition(long value) {
-        stream.setPosition(value);
-    }
-
-    @Override
-    public void close() throws IOException {
-        stream.close();
-    }
-
-    @Override
-    public void flush() {
-        stream.flush();
-    }
-
-    @Override
-    public long seek(long offset, SeekOrigin origin) {
-        return stream.seek(offset, origin);
-    }
-
-    @Override
-    public void setLength(long value) {
-        stream.setLength(value);
-    }
-
-    @Override
-    public int read(byte[] buffer, int offset, int length) {
-        return stream.read(buffer, offset, length);
-    }
-
-    @Override
-    public void write(byte[] buffer, int offset, int count) {
-        stream.write(buffer, offset, count);
+    /**
+     */
+    public DeflateStream(Stream stream, CompressionMode compressMode, boolean b) {
+        this(stream, compressMode);
     }
 }
 

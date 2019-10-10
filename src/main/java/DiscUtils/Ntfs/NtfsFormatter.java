@@ -23,6 +23,9 @@
 package DiscUtils.Ntfs;
 
 import java.io.Closeable;
+import java.security.Permission;
+import java.security.Principal;
+import java.security.acl.AclEntry;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -62,13 +65,13 @@ public class NtfsFormatter {
         __BootCode = value;
     }
 
-    private SecurityIdentifier __ComputerAccount;
+    private Permission __ComputerAccount;
 
-    public SecurityIdentifier getComputerAccount() {
+    public Permission getComputerAccount() {
         return __ComputerAccount;
     }
 
-    public void setComputerAccount(SecurityIdentifier value) {
+    public void setComputerAccount(Permission value) {
         __ComputerAccount = value;
     }
 
@@ -118,7 +121,7 @@ public class NtfsFormatter {
         _context.setRawStream(stream);
         _context.setAttributeDefinitions(new AttributeDefinitions());
         String localAdminString = getComputerAccount() == null ? "LA"
-                                                               : (new SecurityIdentifier(WellKnownSidType.AccountAdministratorSid,
+                                                               : (new Principal(WellKnownSidType.AccountAdministratorSid,
                                                                                          getComputerAccount())).toString();
         Closeable __newVar0 = new NtfsTransaction();
         try {
@@ -275,22 +278,22 @@ public class NtfsFormatter {
         }
         // XP-style security permissions setup
         NtfsFileSystem ntfs = new NtfsFileSystem(stream);
-        ntfs.setSecurity("$MFT", new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
-        ntfs.setSecurity("$MFTMirr", new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
-        ntfs.setSecurity("$LogFile", new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
-        ntfs.setSecurity("$Bitmap", new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
-        ntfs.setSecurity("$BadClus", new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
-        ntfs.setSecurity("$UpCase", new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
+        ntfs.setSecurity("$MFT", new Permission("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
+        ntfs.setSecurity("$MFTMirr", new Permission("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
+        ntfs.setSecurity("$LogFile", new Permission("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
+        ntfs.setSecurity("$Bitmap", new Permission("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
+        ntfs.setSecurity("$BadClus", new Permission("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
+        ntfs.setSecurity("$UpCase", new Permission("O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)"));
         ntfs.setSecurity("$Secure",
-                         new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
+                         new Permission("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.setSecurity("$Extend",
-                         new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
+                         new Permission("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.setSecurity("$Extend\\$Quota",
-                         new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
+                         new Permission("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.setSecurity("$Extend\\$ObjId",
-                         new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
+                         new Permission("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.setSecurity("$Extend\\$Reparse",
-                         new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
+                         new Permission("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.createDirectory("System Volume Information");
         ntfs.setAttributes("System Volume Information", new HashMap<String, Object>() {
             {
@@ -299,7 +302,7 @@ public class NtfsFormatter {
                 put("Directory", true);
             }
         });
-        ntfs.setSecurity("System Volume Information", new RawSecurityDescriptor("O:BAG:SYD:(A;OICI;FA;;;SY)"));
+        ntfs.setSecurity("System Volume Information", new Permission("O:BAG:SYD:(A;OICI;FA;;;SY)"));
         Stream s = ntfs.openFile("System Volume Information\\MountPointManagerRemoteDatabase", FileMode.Create);
         try {
         } finally {
@@ -315,14 +318,14 @@ public class NtfsFormatter {
             }
         });
         ntfs.setSecurity("System Volume Information\\MountPointManagerRemoteDatabase",
-                         new RawSecurityDescriptor("O:BAG:SYD:(A;;FA;;;SY)"));
+                         new Permission("O:BAG:SYD:(A;;FA;;;SY)"));
         return ntfs;
     }
 
     private static void setSecurityAttribute(File file, String secDesc) {
         NtfsStream rootSecurityStream = file.createStream(AttributeType.SecurityDescriptor, null);
         SecurityDescriptor sd = new SecurityDescriptor();
-        sd.setDescriptor(new RawSecurityDescriptor(secDesc));
+        sd.setDescriptor(new Permission(secDesc));
         rootSecurityStream.setContent(sd);
     }
 

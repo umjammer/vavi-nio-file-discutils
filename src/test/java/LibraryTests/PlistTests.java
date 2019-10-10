@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import DiscUtils.Core.Plist;
 import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.InputStreamStream;
+import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
 
 
 public class PlistTests {
 
     @Test
     public void parse() throws Exception {
-        try (Stream stream = new InputStreamStream(getClass().getResourceAsStream("/plist.xml"))) {
+        try (Stream stream = new JavaIOStream(getClass().getResourceAsStream("/plist.xml"), null)) {
             Map<String, Object> plist = Plist.parse(stream);
             assertNotNull(plist);
             assertEquals(4, plist.keySet().size());

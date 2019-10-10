@@ -22,10 +22,12 @@
 
 package DiscUtils.Core;
 
+
 /**
  * Provides the base class for all file systems that support Unix semantics.
  */
 public interface IUnixFileSystem extends IFileSystem {
+
     /**
      * Retrieves Unix-specific information about a file or directory.
      *
@@ -34,5 +36,4 @@ public interface IUnixFileSystem extends IFileSystem {
      *         file or directory.
      */
     UnixFileSystemInfo getUnixFileInfo(String path);
-
 }

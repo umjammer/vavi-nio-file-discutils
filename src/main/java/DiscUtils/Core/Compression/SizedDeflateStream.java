@@ -22,6 +22,7 @@
 
 package DiscUtils.Core.Compression;
 
+import moe.yo3explorer.dotnetio4j.CompressionMode;
 import moe.yo3explorer.dotnetio4j.DeflateStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 

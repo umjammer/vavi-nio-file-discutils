@@ -244,7 +244,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets an indication as to whether the disk file is sparse.
      */
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return _descriptor.getCreateType() == DiskCreateType.MonolithicSparse ||
                _descriptor.getCreateType() == DiskCreateType.TwoGbMaxExtentSparse ||
                _descriptor.getCreateType() == DiskCreateType.VmfsSparse;

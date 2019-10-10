@@ -23,6 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.time.Instant;
 import java.util.Map;
 
@@ -82,12 +83,12 @@ public final class Quotas {
     }
 
     public final static class OwnerKey implements IByteArraySerializable {
-        public SecurityIdentifier Sid;
+        public Principal Sid;
 
         public OwnerKey() {
         }
 
-        public OwnerKey(SecurityIdentifier sid) {
+        public OwnerKey(Principal sid) {
             Sid = sid;
         }
 
@@ -96,7 +97,7 @@ public final class Quotas {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            Sid = new SecurityIdentifier(buffer, offset);
+            Sid = new Principal(buffer, offset);
             return Sid.BinaryLength;
         }
 

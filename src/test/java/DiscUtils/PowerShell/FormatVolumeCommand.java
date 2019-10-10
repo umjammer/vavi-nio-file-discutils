@@ -77,7 +77,7 @@ public class FormatVolumeCommand extends PSCmdlet {
         }
 
         if (volInfo == null) {
-            volInfoObj = SessionState.InvokeProvider.Item.Get(getLiteralPath())[0];
+            volInfoObj = SessionState.InvokeProvider.Item.get(getLiteralPath())[0];
             volInfo = volInfoObj.BaseObject instanceof VolumeInfo ? (VolumeInfo) volInfoObj.BaseObject : (VolumeInfo) null;
         }
 

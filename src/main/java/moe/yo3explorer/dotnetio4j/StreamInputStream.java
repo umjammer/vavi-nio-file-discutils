@@ -20,7 +20,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
  */
 public class StreamInputStream extends InputStream {
 
-    Stream stream;
+    private Stream stream;
 
     public StreamInputStream(Stream stream) {
         this.stream = stream;
@@ -28,7 +28,9 @@ public class StreamInputStream extends InputStream {
 
     @Override
     public int read() throws IOException {
-        return stream.readByte();
+         int r = stream.readByte();
+//System.err.printf("%02x: %c\n", r, (r & 0xff));
+         return r;
     }
 }
 

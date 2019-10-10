@@ -724,13 +724,13 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     private Nfs3FileHandle getParentDirectory(String path) {
-        String[] dirs = Utilities.getDirectoryFromPath(path).split("\\");
+        String[] dirs = Utilities.getDirectoryFromPath(path).split(Utilities.escapeForRegex("\\"));
         Nfs3FileHandle parent = getDirectory(_client.getRootHandle(), dirs);
         return parent;
     }
 
     private Nfs3FileHandle getDirectory(String path) {
-        String[] dirs = path.split("\\");
+        String[] dirs = path.split(Utilities.escapeForRegex("\\"));
         return getDirectory(_client.getRootHandle(), dirs);
     }
 

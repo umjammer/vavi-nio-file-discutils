@@ -55,7 +55,6 @@ public class StreamUtilities {
         if (buffer.length < offset + count) {
             throw new IllegalArgumentException("buffer is too small");
         }
-
     }
 
     /**

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import DiscUtils.Core.CoreCompat.Tuple;
+import DiscUtils.Core.Internal.Utilities;
 
 
 public class Metadata {
@@ -98,7 +99,7 @@ public class Metadata {
     }
 
     public static String[] parseArrayValue(String value) {
-        String[] values = value.replaceAll("(^[*|]*$", "").split("\\");
+        String[] values = value.replaceAll("(^[*|]*$", "").split(Utilities.escapeForRegex("\\"));
         for (int i = 0; i < values.length; i++) {
             values[i] = Metadata.parseStringValue(values[i]);
         }

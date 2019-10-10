@@ -209,7 +209,7 @@ public class File {
             ObjectId objId = new ObjectId();
             objId.Id = newId;
             stream.setContent(objId);
-            context.getObjectIds().add(newId, newFile.getMftReference(), newId, UUID.fromString(""), UUID.fromString(""));
+            context.getObjectIds().add(newId, newFile.getMftReference(), newId, new UUID(0L, 0L), new UUID(0L, 0L));
         }
 
         newFile.createAttribute(AttributeType.Data, dataAttrFlags);

@@ -70,7 +70,7 @@ public class InitializeVirtualDiskCommand extends PSCmdlet {
         }
 
         if (disk == null) {
-            diskObject = SessionState.InvokeProvider.Item.Get(getLiteralPath())[0];
+            diskObject = SessionState.InvokeProvider.Item.get(getLiteralPath())[0];
             VirtualDisk vdisk = diskObject.BaseObject instanceof VirtualDisk ? (VirtualDisk) diskObject.BaseObject
                                                                              : (VirtualDisk) null;
             if (vdisk == null) {

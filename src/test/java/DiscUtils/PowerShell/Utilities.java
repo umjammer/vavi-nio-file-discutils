@@ -68,7 +68,7 @@ public class Utilities {
     public static Stream createPsPath(SessionState session, String filePath) {
         String parentPath = session.Path.ParseParent(filePath, null);
         String childName = session.Path.ParseChildName(filePath);
-        Object parentItems = session.InvokeProvider.Item.Get(parentPath);
+        Object parentItems = session.InvokeProvider.Item.get(parentPath);
         if (parentItems.size() > 1) {
             throw new IOException(String.format("PowerShell path {0} is ambiguous", parentPath));
         } else if (parentItems.size() < 1) {
@@ -94,7 +94,7 @@ public class Utilities {
     }
 
     public static Stream openPsPath(SessionState session, String filePath, FileAccess access, FileShare share) {
-        Object items = session.InvokeProvider.Item.Get(filePath);
+        Object items = session.InvokeProvider.Item.get(filePath);
         if (items.size() == 1) {
             FileInfo itemAsFile = items[0].BaseObject instanceof FileInfo ? (FileInfo) items[0].BaseObject : (FileInfo) null;
             if (itemAsFile != null) {
@@ -116,7 +116,7 @@ public class Utilities {
     }
 
     public static String resolvePsPath(SessionState session, String filePath) {
-        Object paths = session.Path.GetResolvedPSPathFromPSPath(filePath);
+        Object paths = session.Path.getResolvedPSPathFromPSPath(filePath);
         if (paths.size() > 1) {
             throw new IOException(String.format("PowerShell path {0} is ambiguous", filePath));
         } else if (paths.size() < 1) {

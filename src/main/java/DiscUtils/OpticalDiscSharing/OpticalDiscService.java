@@ -163,7 +163,7 @@ public final class OpticalDiscService {
             }
         }
         if (askToken == null) {
-            throw new UnauthorizedAccessException("Access not granted");
+            throw new IllegalAccessException("Access not granted");
         }
 
         return askToken;

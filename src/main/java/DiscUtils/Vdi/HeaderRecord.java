@@ -30,70 +30,71 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class HeaderRecord {
-    private FileVersion _fileVersion = new FileVersion();
+    private FileVersion fileVersion;
 
-    public int BlockCount;
+    public int blockCount;
 
-    public int BlockExtraSize;
+    public int blockExtraSize;
 
-    public int BlocksAllocated;
+    public int blocksAllocated;
 
-    public int BlockSize;
+    public int blockSize;
 
-    public int BlocksOffset;
+    public int blocksOffset;
 
-    public String Comment;
+    public String comment;
 
-    public int DataOffset;
+    public int dataOffset;
 
-    public long DiskSize;
+    public long diskSize;
 
-    public ImageFlags Flags = ImageFlags.None;
+    public ImageFlags flags = ImageFlags.None;
 
-    public int HeaderSize;
+    public int headerSize;
 
     public ImageType imageType;
 
-    public GeometryRecord LChsGeometry;
+    public GeometryRecord lchsGeometry;
 
-    public GeometryRecord LegacyGeometry;
+    public GeometryRecord legacyGeometry;
 
-    public UUID ModificationId;
+    public UUID modificationId;
 
-    public UUID ParentId;
+    public UUID parentId;
 
-    public UUID ParentModificationId;
+    public UUID parentModificationId;
 
-    public UUID UniqueId;
+    public UUID uniqueId;
 
-    public static HeaderRecord initialized(ImageType type,
-                                           ImageFlags flags,
-                                           long size,
-                                           int blockSize,
-                                           int blockExtra) {
+    public static HeaderRecord initialized(ImageType type, ImageFlags flags, long size, int blockSize, int blockExtra) {
         HeaderRecord result = new HeaderRecord();
-        result._fileVersion = new FileVersion(0x00010001);
-        result.HeaderSize = 400;
+
+        result.fileVersion = new FileVersion(0x00010001);
+        result.headerSize = 400;
         result.imageType = type;
-        result.Flags = flags;
-        result.Comment = "Created by .NET DiscUtils";
-        result.LegacyGeometry = new GeometryRecord();
-        result.DiskSize = size;
-        result.BlockSize = blockSize;
-        result.BlockExtraSize = blockExtra;
-        result.BlockCount = (int) ((size + blockSize - 1) / blockSize);
-        result.BlocksAllocated = 0;
-        result.BlocksOffset = (PreHeaderRecord.Size + result.HeaderSize + 511) / 512 * 512;
-        result.DataOffset = (result.BlocksOffset + result.BlockCount * 4 + 511) / 512 * 512;
-        result.UniqueId = UUID.randomUUID();
-        result.ModificationId = UUID.randomUUID();
-        result.LChsGeometry = new GeometryRecord();
+        result.flags = flags;
+        result.comment = "Created by .NET DiscUtils";
+        result.legacyGeometry = new GeometryRecord();
+        result.diskSize = size;
+        result.blockSize = blockSize;
+        result.blockExtraSize = blockExtra;
+        result.blockCount = (int) ((size + blockSize - 1) / blockSize);
+        result.blocksAllocated = 0;
+
+        result.blocksOffset = (PreHeaderRecord.Size + result.headerSize + 511) / 512 * 512;
+        result.dataOffset = (result.blocksOffset + result.blockCount * 4 + 511) / 512 * 512;
+
+        result.uniqueId = UUID.randomUUID();
+        result.modificationId = UUID.randomUUID();
+
+        result.lchsGeometry = new GeometryRecord();
+
         return result;
     }
 
     public void read(FileVersion version, Stream s) {
         int headerSize;
-        _fileVersion = version;
+        fileVersion = version;
         // Determine header size...
         if (version.getMajor() == 0) {
             headerSize = 348;
@@ -109,94 +110,98 @@ public class HeaderRecord {
     public int read(FileVersion version, byte[] buffer, int offset) {
         if (version.getMajor() == 0) {
             imageType = ImageType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0));
-            Flags = ImageFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
-            Comment = EndianUtilities.bytesToString(buffer, offset + 8, 256).replaceFirst("\0*$", "");
-            LegacyGeometry = new GeometryRecord();
-            LegacyGeometry.read(buffer, offset + 264);
-            DiskSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 280);
-            BlockSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 288);
-            BlockCount = EndianUtilities.toInt32LittleEndian(buffer, offset + 292);
-            BlocksAllocated = EndianUtilities.toInt32LittleEndian(buffer, offset + 296);
-            UniqueId = EndianUtilities.toGuidLittleEndian(buffer, offset + 300);
-            ModificationId = EndianUtilities.toGuidLittleEndian(buffer, offset + 316);
-            ParentId = EndianUtilities.toGuidLittleEndian(buffer, offset + 332);
-            HeaderSize = 348;
-            BlocksOffset = HeaderSize + PreHeaderRecord.Size;
-            DataOffset = BlocksOffset + BlockCount * 4;
-            BlockExtraSize = 0;
-            ParentModificationId = UUID.fromString("");
+            flags = ImageFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
+            comment = EndianUtilities.bytesToString(buffer, offset + 8, 256).replaceFirst("\0*$", "");
+            legacyGeometry = new GeometryRecord();
+            legacyGeometry.read(buffer, offset + 264);
+            diskSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 280);
+            blockSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 288);
+            blockCount = EndianUtilities.toInt32LittleEndian(buffer, offset + 292);
+            blocksAllocated = EndianUtilities.toInt32LittleEndian(buffer, offset + 296);
+            uniqueId = EndianUtilities.toGuidLittleEndian(buffer, offset + 300);
+            modificationId = EndianUtilities.toGuidLittleEndian(buffer, offset + 316);
+            parentId = EndianUtilities.toGuidLittleEndian(buffer, offset + 332);
+            headerSize = 348;
+            blocksOffset = headerSize + PreHeaderRecord.Size;
+            dataOffset = blocksOffset + blockCount * 4;
+            blockExtraSize = 0;
+            parentModificationId = new UUID(0L, 0L);
         } else if (version.getMajor() == 1 && version.getMinor() == 1) {
-            HeaderSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+            headerSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
             imageType = ImageType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
-            Flags = ImageFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8));
-            Comment = EndianUtilities.bytesToString(buffer, offset + 12, 256).replaceFirst("\0*$", "");
-            BlocksOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
-            DataOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 272);
-            LegacyGeometry = new GeometryRecord();
-            LegacyGeometry.read(buffer, offset + 276);
-            DiskSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 296);
-            BlockSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 304);
-            BlockExtraSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 308);
-            BlockCount = EndianUtilities.toInt32LittleEndian(buffer, offset + 312);
-            BlocksAllocated = EndianUtilities.toInt32LittleEndian(buffer, offset + 316);
-            UniqueId = EndianUtilities.toGuidLittleEndian(buffer, offset + 320);
-            ModificationId = EndianUtilities.toGuidLittleEndian(buffer, offset + 336);
-            ParentId = EndianUtilities.toGuidLittleEndian(buffer, offset + 352);
-            ParentModificationId = EndianUtilities.toGuidLittleEndian(buffer, offset + 368);
-            if (HeaderSize > 384) {
-                LChsGeometry = new GeometryRecord();
-                LChsGeometry.read(buffer, offset + 384);
+            flags = ImageFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8));
+            comment = EndianUtilities.bytesToString(buffer, offset + 12, 256).replaceFirst("\0*$", "");
+            blocksOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
+            dataOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 272);
+            legacyGeometry = new GeometryRecord();
+            legacyGeometry.read(buffer, offset + 276);
+            diskSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 296);
+            blockSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 304);
+            blockExtraSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 308);
+            blockCount = EndianUtilities.toInt32LittleEndian(buffer, offset + 312);
+            blocksAllocated = EndianUtilities.toInt32LittleEndian(buffer, offset + 316);
+            uniqueId = EndianUtilities.toGuidLittleEndian(buffer, offset + 320);
+            modificationId = EndianUtilities.toGuidLittleEndian(buffer, offset + 336);
+            parentId = EndianUtilities.toGuidLittleEndian(buffer, offset + 352);
+            parentModificationId = EndianUtilities.toGuidLittleEndian(buffer, offset + 368);
+
+            if (headerSize > 384) {
+                lchsGeometry = new GeometryRecord();
+                lchsGeometry.read(buffer, offset + 384);
             }
 
         } else {
             throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized file version: " + version);
         }
-        return HeaderSize;
+
+        return headerSize;
     }
 
     public void write(Stream s) {
-        byte[] buffer = new byte[HeaderSize];
+        byte[] buffer = new byte[headerSize];
         write(buffer, 0);
         s.write(buffer, 0, buffer.length);
     }
 
     public int write(byte[] buffer, int offset) {
-        if (_fileVersion.getMajor() == 0) {
+        if (fileVersion.getMajor() == 0) {
             EndianUtilities.writeBytesLittleEndian(imageType.ordinal(), buffer, offset + 0);
-            EndianUtilities.writeBytesLittleEndian(Flags.ordinal(), buffer, offset + 4);
-            EndianUtilities.stringToBytes(Comment, buffer, offset + 8, 256);
-            LegacyGeometry.write(buffer, offset + 264);
-            EndianUtilities.writeBytesLittleEndian(DiskSize, buffer, offset + 280);
-            EndianUtilities.writeBytesLittleEndian(BlockSize, buffer, offset + 288);
-            EndianUtilities.writeBytesLittleEndian(BlockCount, buffer, offset + 292);
-            EndianUtilities.writeBytesLittleEndian(BlocksAllocated, buffer, offset + 296);
-            EndianUtilities.writeBytesLittleEndian(UniqueId, buffer, offset + 300);
-            EndianUtilities.writeBytesLittleEndian(ModificationId, buffer, offset + 316);
-            EndianUtilities.writeBytesLittleEndian(ParentId, buffer, offset + 332);
-        } else if (_fileVersion.getMajor() == 1 && _fileVersion.getMinor() == 1) {
-            EndianUtilities.writeBytesLittleEndian(HeaderSize, buffer, offset + 0);
+            EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 4);
+            EndianUtilities.stringToBytes(comment, buffer, offset + 8, 256);
+            legacyGeometry.write(buffer, offset + 264);
+            EndianUtilities.writeBytesLittleEndian(diskSize, buffer, offset + 280);
+            EndianUtilities.writeBytesLittleEndian(blockSize, buffer, offset + 288);
+            EndianUtilities.writeBytesLittleEndian(blockCount, buffer, offset + 292);
+            EndianUtilities.writeBytesLittleEndian(blocksAllocated, buffer, offset + 296);
+            EndianUtilities.writeBytesLittleEndian(uniqueId, buffer, offset + 300);
+            EndianUtilities.writeBytesLittleEndian(modificationId, buffer, offset + 316);
+            EndianUtilities.writeBytesLittleEndian(parentId, buffer, offset + 332);
+        } else if (fileVersion.getMajor() == 1 && fileVersion.getMinor() == 1) {
+            EndianUtilities.writeBytesLittleEndian(headerSize, buffer, offset + 0);
             EndianUtilities.writeBytesLittleEndian(imageType.ordinal(), buffer, offset + 4);
-            EndianUtilities.writeBytesLittleEndian(Flags.ordinal(), buffer, offset + 8);
-            EndianUtilities.stringToBytes(Comment, buffer, offset + 12, 256);
-            EndianUtilities.writeBytesLittleEndian(BlocksOffset, buffer, offset + 268);
-            EndianUtilities.writeBytesLittleEndian(DataOffset, buffer, offset + 272);
-            LegacyGeometry.write(buffer, offset + 276);
-            EndianUtilities.writeBytesLittleEndian(DiskSize, buffer, offset + 296);
-            EndianUtilities.writeBytesLittleEndian(BlockSize, buffer, offset + 304);
-            EndianUtilities.writeBytesLittleEndian(BlockExtraSize, buffer, offset + 308);
-            EndianUtilities.writeBytesLittleEndian(BlockCount, buffer, offset + 312);
-            EndianUtilities.writeBytesLittleEndian(BlocksAllocated, buffer, offset + 316);
-            EndianUtilities.writeBytesLittleEndian(UniqueId, buffer, offset + 320);
-            EndianUtilities.writeBytesLittleEndian(ModificationId, buffer, offset + 336);
-            EndianUtilities.writeBytesLittleEndian(ParentId, buffer, offset + 352);
-            EndianUtilities.writeBytesLittleEndian(ParentModificationId, buffer, offset + 368);
-            if (HeaderSize > 384) {
-                LChsGeometry.write(buffer, offset + 384);
+            EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 8);
+            EndianUtilities.stringToBytes(comment, buffer, offset + 12, 256);
+            EndianUtilities.writeBytesLittleEndian(blocksOffset, buffer, offset + 268);
+            EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 272);
+            legacyGeometry.write(buffer, offset + 276);
+            EndianUtilities.writeBytesLittleEndian(diskSize, buffer, offset + 296);
+            EndianUtilities.writeBytesLittleEndian(blockSize, buffer, offset + 304);
+            EndianUtilities.writeBytesLittleEndian(blockExtraSize, buffer, offset + 308);
+            EndianUtilities.writeBytesLittleEndian(blockCount, buffer, offset + 312);
+            EndianUtilities.writeBytesLittleEndian(blocksAllocated, buffer, offset + 316);
+            EndianUtilities.writeBytesLittleEndian(uniqueId, buffer, offset + 320);
+            EndianUtilities.writeBytesLittleEndian(modificationId, buffer, offset + 336);
+            EndianUtilities.writeBytesLittleEndian(parentId, buffer, offset + 352);
+            EndianUtilities.writeBytesLittleEndian(parentModificationId, buffer, offset + 368);
+
+            if (headerSize > 384) {
+                lchsGeometry.write(buffer, offset + 384);
             }
 
         } else {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized file version: " + _fileVersion);
+            throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized file version: " + fileVersion);
         }
-        return HeaderSize;
+
+        return headerSize;
     }
 }

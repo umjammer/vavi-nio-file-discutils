@@ -47,10 +47,6 @@ public enum UnixFilePermissions {
      */
     OthersRead,
     /**
-     * Any user all permissions.
-     */
-    OthersAll,
-    /**
      * Group execute permission.
      */
     GroupExecute,
@@ -62,10 +58,6 @@ public enum UnixFilePermissions {
      * Group read permission.
      */
     GroupRead,
-    /**
-     * Group all permissions.
-     */
-    GroupAll,
     /**
      * Owner execute permission.
      */
@@ -79,10 +71,6 @@ public enum UnixFilePermissions {
      */
     OwnerRead,
     /**
-     * Owner all permissions.
-     */
-    OwnerAll,
-    /**
      * Sticky bit (meaning ill-defined).
      */
     Sticky,
@@ -94,6 +82,21 @@ public enum UnixFilePermissions {
      * Set UID on execute.
      */
     SetUserId;
+
+    /**
+     * Any user all permissions.
+     */
+    public static final EnumSet<UnixFilePermissions> OthersAll = EnumSet.of(OthersExecute, OthersWrite, OthersRead);
+
+    /**
+     * Group all permissions.
+     */
+    public static final EnumSet<UnixFilePermissions> GroupAll = EnumSet.of(GroupExecute, GroupWrite, GroupRead);
+
+    /**
+     * Owner all permissions.
+     */
+    public static final EnumSet<UnixFilePermissions> OwnerAll = EnumSet.of(OthersExecute, OthersWrite, OthersRead);
 
     public static EnumSet<UnixFilePermissions> valueOf(int value) {
         return Arrays.stream(values())

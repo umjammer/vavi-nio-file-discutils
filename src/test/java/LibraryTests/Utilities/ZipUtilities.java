@@ -8,7 +8,7 @@ import java.util.zip.ZipFile;
 
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.InputStreamStream;
+import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
 
 
 public class ZipUtilities {
@@ -20,7 +20,7 @@ public class ZipUtilities {
             else
                 entry = zipArchive.getEntry(name);
             MemoryStream ms = new MemoryStream();
-            Stream zipFile = new InputStreamStream(zipArchive.getInputStream(entry));
+            Stream zipFile = new JavaIOStream(zipArchive.getInputStream(entry));
             try {
                 zipFile.copyTo(ms);
             } finally {

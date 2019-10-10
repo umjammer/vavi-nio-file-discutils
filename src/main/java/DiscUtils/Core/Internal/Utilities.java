@@ -120,7 +120,7 @@ public class Utilities {
      * @return The directory part.
      */
     public static String getDirectoryFromPath(String path) {
-        String trimmed = path.replaceFirst("\\*$", "");
+        String trimmed = path.replaceFirst(escapeForRegex("\\") + "*$", "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
             return "";
@@ -130,6 +130,7 @@ public class Utilities {
     }
 
     // No directory, just a file name
+
     /**
      * Extracts the file part of a path.
      *
@@ -137,7 +138,7 @@ public class Utilities {
      * @return The file part of the path.
      */
     public static String getFileFromPath(String path) {
-        String trimmed = path.replaceFirst("\\*$", "");
+        String trimmed = path.replaceFirst(escapeForRegex("\\") + "*$", "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
             return trimmed;
@@ -163,7 +164,8 @@ public class Utilities {
             return a;
         }
 
-        return a.replaceFirst("\\*$", "") + '\\' + b.replaceFirst("\\*$", "");
+        return a.replaceFirst(escapeForRegex("\\") + "*$", "") + '\\' +
+               b.replaceFirst(escapeForRegex("\\") + "*$", "");
     }
 
     /**
@@ -211,8 +213,8 @@ public class Utilities {
     }
 
     public static String makeRelativePath(String path, String basePath) {
-        List<String> pathElements = Arrays.asList(path.split("\\"));
-        List<String> basePathElements = Arrays.asList(basePath.split("\\"));
+        List<String> pathElements = Arrays.asList(path.split(escapeForRegex("\\")));
+        List<String> basePathElements = Arrays.asList(basePath.split(escapeForRegex("\\")));
         if (!basePath.endsWith("\\") && basePathElements.size() > 0) {
             basePathElements.remove(basePathElements.size() - 1);
         }
@@ -229,10 +231,10 @@ public class Utilities {
         // For each remaining part of the base path, insert '..'
         StringBuilder result = new StringBuilder();
         if (i == basePathElements.size()) {
-            result.append(".\\");
+            result.append("." + '\\');
         } else if (i < basePathElements.size()) {
             for (int j = 0; j < basePathElements.size() - i; ++j) {
-                result.append("..\\");
+                result.append(".." + '\\');
             }
         }
 
@@ -320,7 +322,7 @@ public class Utilities {
     }
 
     public static Map<String, Object> fileAttributesFromUnixFileType(UnixFileType fileType) {
-        Map<String, Object> result= new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         switch (fileType) {
         case Fifo:
             result.put("Device", true);
@@ -396,5 +398,11 @@ public class Utilities {
 
     public static Map<String, Object> fileAttributesFromInt(int value) {
         return Collections.EMPTY_MAP; // TODO
+    }
+
+    /**
+     */
+    public static String escapeForRegex(String separator) {
+        return separator.replace("\\", "\\\\");
     }
 }

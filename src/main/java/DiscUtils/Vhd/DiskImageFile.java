@@ -192,7 +192,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return _footer.DiskType != FileType.Fixed;
     }
 
@@ -207,7 +207,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the unique id of the parent disk.
      */
     public UUID getParentUniqueId() {
-        return _dynamicHeader == null ? UUID.fromString("") : _dynamicHeader.ParentUniqueId;
+        return _dynamicHeader == null ? new UUID(0L, 0L) : _dynamicHeader.ParentUniqueId;
     }
 
     public FileLocator getRelativeFileLocator() {

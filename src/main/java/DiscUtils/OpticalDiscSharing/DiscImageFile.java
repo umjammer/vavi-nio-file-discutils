@@ -62,7 +62,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
         return new Geometry(1, 1, 1, Mode1SectorSize);
     }
 
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return false;
     }
 

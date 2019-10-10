@@ -136,7 +136,6 @@ public abstract class BuildDirectoryMember {
                 if (xChar != yChar) {
                     return xChar - yChar;
                 }
-
             }
             return 0;
         }
@@ -151,7 +150,6 @@ public abstract class BuildDirectoryMember {
                 if (xChar != yChar) {
                     return yChar - xChar;
                 }
-
             }
             return 0;
         }

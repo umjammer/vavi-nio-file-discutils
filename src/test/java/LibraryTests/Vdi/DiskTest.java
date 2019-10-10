@@ -43,6 +43,7 @@ public class DiskTest {
 
         try (Disk disk = Disk.initializeFixed(ms, Ownership.None, 8 * 1024 * 1024)) {
             assertNotNull(disk);
+System.err.println(disk.getGeometry().getCapacity());
             assertTrue(disk.getGeometry().getCapacity() > 7.5 * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 8 * 1024 * 1024);
             assertTrue(disk.getGeometry().getCapacity() <= disk.getContent().getLength());
@@ -69,6 +70,7 @@ public class DiskTest {
 
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             assertNotNull(disk);
+System.err.println(disk.getGeometry().getCapacity());
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 16 * 1024L * 1024 * 1024);
             assertTrue(disk.getGeometry().getCapacity() <= disk.getContent().getLength());

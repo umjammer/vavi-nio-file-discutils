@@ -160,7 +160,7 @@ public final class DiskImageFileInfo {
      * Gets the parent locator type, for differencing files.
      */
     public UUID getParentLocatorType() {
-        return _metadata.getParentLocator() != null ? _metadata.getParentLocator().LocatorType : UUID.fromString("");
+        return _metadata.getParentLocator() != null ? _metadata.getParentLocator().LocatorType : new UUID(0L, 0L);
     }
 
     /**

@@ -22,6 +22,8 @@
 
 package DiscUtils.Ntfs;
 
+import java.security.Permission;
+
 /**
  * Class representing NTFS formatting options.
  */
@@ -48,13 +50,13 @@ public final class NtfsFormatOptions {
      * of the indicated
      * computer account.
      */
-    private SecurityIdentifier __ComputerAccount;
+    private Permission __ComputerAccount;
 
-    public SecurityIdentifier getComputerAccount() {
+    public Permission getComputerAccount() {
         return __ComputerAccount;
     }
 
-    public void setComputerAccount(SecurityIdentifier value) {
+    public void setComputerAccount(Permission value) {
         __ComputerAccount = value;
     }
 }

@@ -25,6 +25,7 @@ package DiscUtils.Ntfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -146,17 +147,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         _context.setAllocateFile(flags -> {
             return allocateFile(flags);
         });
-        _context.setForgetFile(new ForgetFileFn() {
-            public void invoke(File file) {
-                forgetFile(file);
-            }
-
-            public List<ForgetFileFn> getInvocationList() {
-                List<ForgetFileFn> ret = new ArrayList<>();
-                ret.add(this);
-                return ret;
-            }
-
+        _context.setForgetFile(file -> {
+            forgetFile(file);
         });
         _context.setReadOnly(!stream.canWrite());
         _fileCache = new ObjectCache<>();
@@ -193,7 +185,6 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             _context.setReparsePoints(new ReparsePoints(getFile(getDirectoryEntry("$Extend\\$Reparse").getReference())));
             _context.setQuotas(new Quotas(getFile(getDirectoryEntry("$Extend\\$Quota").getReference())));
         }
-
     }
 
     private boolean getCreateShortNames() {
@@ -258,99 +249,92 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      */
     @SuppressWarnings("incomplete-switch")
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
-        Closeable __newVar0 = new NtfsTransaction();
-        try {
-            {
-                DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceFile));
-                if (sourceParentDirEntry == null || !sourceParentDirEntry.getIsDirectory()) {
-                    throw new FileNotFoundException("No such file " + sourceFile);
-                }
 
-                Directory sourceParentDir = getDirectory(sourceParentDirEntry.getReference());
-                DirectoryEntry sourceEntry = sourceParentDir.getEntryByName(Utilities.getFileFromPath(sourceFile));
-                if (sourceEntry == null || sourceEntry.getIsDirectory()) {
-                    throw new FileNotFoundException("No such file " + sourceFile);
-                }
+        try (Closeable __newVar0 = new NtfsTransaction()) {
+            DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceFile));
+            if (sourceParentDirEntry == null || !sourceParentDirEntry.getIsDirectory()) {
+                throw new FileNotFoundException("No such file " + sourceFile);
+            }
 
-                File origFile = getFile(sourceEntry.getReference());
-                DirectoryEntry destParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(destinationFile));
-                if (destParentDirEntry == null || !destParentDirEntry.getIsDirectory()) {
-                    throw new FileNotFoundException("Destination directory not found " + destinationFile);
-                }
+            Directory sourceParentDir = getDirectory(sourceParentDirEntry.getReference());
+            DirectoryEntry sourceEntry = sourceParentDir.getEntryByName(Utilities.getFileFromPath(sourceFile));
+            if (sourceEntry == null || sourceEntry.getIsDirectory()) {
+                throw new FileNotFoundException("No such file " + sourceFile);
+            }
 
-                Directory destParentDir = getDirectory(destParentDirEntry.getReference());
-                DirectoryEntry destDirEntry = destParentDir.getEntryByName(Utilities.getFileFromPath(destinationFile));
-                if (destDirEntry != null && !destDirEntry.getIsDirectory()) {
-                    if (overwrite) {
-                        if (destDirEntry.getReference().getMftIndex() == sourceEntry.getReference().getMftIndex()) {
-                            throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists and is the source file");
-                        }
+            File origFile = getFile(sourceEntry.getReference());
+            DirectoryEntry destParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(destinationFile));
+            if (destParentDirEntry == null || !destParentDirEntry.getIsDirectory()) {
+                throw new FileNotFoundException("Destination directory not found " + destinationFile);
+            }
 
-                        File oldFile = getFile(destDirEntry.getReference());
-                        destParentDir.removeEntry(destDirEntry);
-                        if (oldFile.getHardLinkCount() == 0) {
-                            oldFile.delete();
-                        }
-
-                    } else {
-                        throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists");
+            Directory destParentDir = getDirectory(destParentDirEntry.getReference());
+            DirectoryEntry destDirEntry = destParentDir.getEntryByName(Utilities.getFileFromPath(destinationFile));
+            if (destDirEntry != null && !destDirEntry.getIsDirectory()) {
+                if (overwrite) {
+                    if (destDirEntry.getReference().getMftIndex() == sourceEntry.getReference().getMftIndex()) {
+                        throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists and is the source file");
                     }
+
+                    File oldFile = getFile(destDirEntry.getReference());
+                    destParentDir.removeEntry(destDirEntry);
+                    if (oldFile.getHardLinkCount() == 0) {
+                        oldFile.delete();
+                    }
+
+                } else {
+                    throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists");
                 }
+            }
 
-                File newFile = File.createNew(_context, destParentDir.getStandardInformation()._FileAttributes);
-                for (NtfsStream origStream : origFile.getAllStreams()) {
-                    NtfsStream newStream = newFile.getStream(origStream.getAttributeType(), origStream.getName());
-                    switch (origStream.getAttributeType()) {
-                    case Data:
-                        if (newStream == null) {
-                            newStream = newFile.createStream(origStream.getAttributeType(), origStream.getName());
-                        }
+            File newFile = File.createNew(_context, destParentDir.getStandardInformation()._FileAttributes);
+            for (NtfsStream origStream : origFile.getAllStreams()) {
+                NtfsStream newStream = newFile.getStream(origStream.getAttributeType(), origStream.getName());
+                switch (origStream.getAttributeType()) {
+                case Data:
+                    if (newStream == null) {
+                        newStream = newFile.createStream(origStream.getAttributeType(), origStream.getName());
+                    }
 
-                        SparseStream s = origStream.open(FileAccess.Read);
+                    SparseStream s = origStream.open(FileAccess.Read);
+                    try {
+                        SparseStream d = newStream.open(FileAccess.Write);
                         try {
-                            SparseStream d = newStream.open(FileAccess.Write);
-                            try {
-                                {
-                                    byte[] buffer = new byte[64 * (int) Sizes.OneKiB];
-                                    int numRead;
-                                    do {
-                                        numRead = s.read(buffer, 0, buffer.length);
-                                        d.write(buffer, 0, numRead);
-                                    } while (numRead != 0);
-                                }
-                            } finally {
-                                if (d != null)
-                                    try {
-                                        d.close();
-                                    } catch (IOException e) {
-                                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                                    }
+                            {
+                                byte[] buffer = new byte[64 * (int) Sizes.OneKiB];
+                                int numRead;
+                                do {
+                                    numRead = s.read(buffer, 0, buffer.length);
+                                    d.write(buffer, 0, numRead);
+                                } while (numRead != 0);
                             }
                         } finally {
-                            if (s != null)
+                            if (d != null)
                                 try {
-                                    s.close();
+                                    d.close();
                                 } catch (IOException e) {
                                     throw new moe.yo3explorer.dotnetio4j.IOException(e);
                                 }
                         }
-                        break;
-                    case StandardInformation:
-                        StandardInformation newSi = origStream.getContent();
-                        newStream.setContent(newSi);
-                        break;
+                    } finally {
+                        if (s != null)
+                            try {
+                                s.close();
+                            } catch (IOException e) {
+                                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                            }
                     }
+                    break;
+                case StandardInformation:
+                    StandardInformation newSi = origStream.getContent();
+                    newStream.setContent(newSi);
+                    break;
                 }
-                addFileToDirectory(newFile, destParentDir, Utilities.getFileFromPath(destinationFile), null);
-                destParentDirEntry.updateFrom(destParentDir);
             }
-        } finally {
-            if (__newVar0 != null)
-                try {
-                    __newVar0.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+            addFileToDirectory(newFile, destParentDir, Utilities.getFileFromPath(destinationFile), null);
+            destParentDirEntry.updateFrom(destParentDir);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -1157,7 +1141,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    public RawSecurityDescriptor getSecurity(String path) {
+    public Permission getSecurity(String path) {
         try (Closeable __newVar21 = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1177,7 +1161,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
+    public void setSecurity(String path, Permission securityDescriptor) {
         try (Closeable __newVar22 = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1679,7 +1663,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      */
     public void createDirectory(String path, NewFileOptions options) {
         try (Closeable __newVar31 = new NtfsTransaction()) {
-            String[] pathElements = path.split("\\");
+            String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
             Directory focusDir = getDirectory(MasterFileTable.RootDirIndex);
             DirectoryEntry focusDirEntry = focusDir.getDirectoryEntry();
             for (int i = 0; i < pathElements.length; ++i) {
@@ -1697,8 +1681,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                     Directory childDir = Directory.createNew(_context, newDirAttrs);
                     try {
                         childDirEntry = addFileToDirectory(childDir, focusDir, pathElements[i], options);
-                        RawSecurityDescriptor parentSd = doGetSecurity(focusDir);
-                        RawSecurityDescriptor newSd = new RawSecurityDescriptor();
+                        SecurityPermission parentSd = doGetSecurity(focusDir);
+                        SecurityPermission newSd = new SecurityPermission();
                         if (options != null && options.getSecurityDescriptor() != null) {
                             newSd = options.getSecurityDescriptor();
                         } else {
@@ -1969,8 +1953,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         File file = File.createNew(_context, newFileAttrs);
         try {
             result = addFileToDirectory(file, parentDir, Utilities.getFileFromPath(path), options);
-            RawSecurityDescriptor parentSd = doGetSecurity(parentDir);
-            RawSecurityDescriptor newSd = new RawSecurityDescriptor();
+            Permission parentSd = doGetSecurity(parentDir);
+            Permission newSd = new Permission();
             if (options != null && options.getSecurityDescriptor() != null) {
                 newSd = options.getSecurityDescriptor();
             } else {
@@ -1988,7 +1972,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     private DirectoryEntry getDirectoryEntry(Directory dir, String path) {
-        String[] pathElements = path.split("\\");
+        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
         return getDirectoryEntry(dir, pathElements, 0);
     }
 
@@ -2089,7 +2073,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         }
     }
 
-    private RawSecurityDescriptor doGetSecurity(File file) {
+    private Permission doGetSecurity(File file) {
         NtfsStream legacyStream = file.getStream(AttributeType.SecurityDescriptor, null);
         if (legacyStream != null) {
             return legacyStream.getContent().Descriptor;
@@ -2099,7 +2083,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         return _context.getSecurityDescriptors().getDescriptorById(si.SecurityId);
     }
 
-    private void doSetSecurity(File file, RawSecurityDescriptor securityDescriptor) {
+    private void doSetSecurity(File file, Permission securityDescriptor) {
         NtfsStream legacyStream = file.getStream(AttributeType.SecurityDescriptor, null);
         if (legacyStream != null) {
             SecurityDescriptor sd = new SecurityDescriptor();
@@ -2143,7 +2127,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         String fileName = Utilities.getFileFromPath(path);
         attributeName[0] = null;
         attributeType[0] = AttributeType.Data;
-        String[] fileNameElements = fileName.split("\\", 3);
+        String[] fileNameElements = fileName.split(Utilities.escapeForRegex("\\"), 3);
         fileName = fileNameElements[0];
         if (fileNameElements.length > 1) {
             attributeName[0] = fileNameElements[1];

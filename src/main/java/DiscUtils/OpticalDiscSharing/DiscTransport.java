@@ -31,6 +31,7 @@ import java.net.UnknownHostException;
 
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
@@ -51,7 +52,7 @@ public final class DiscTransport extends VirtualDiskTransport {
         try {
             String domain = uri.getHost();
             String[] pathParts;
-            pathParts = URLDecoder.decode(uri.getPath(), "utf-8").split("\\");
+            pathParts = URLDecoder.decode(uri.getPath(), "utf-8").split(Utilities.escapeForRegex("\\"));
             String instance = pathParts[0];
             String volName = pathParts[1];
             _odsClient = new OpticalDiscServiceClient();
@@ -96,7 +97,6 @@ public final class DiscTransport extends VirtualDiskTransport {
                 _odsClient.close();
                 _odsClient = null;
             }
-
         } finally {
             super.close();
         }

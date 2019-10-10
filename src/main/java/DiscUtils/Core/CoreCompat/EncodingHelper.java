@@ -2,6 +2,7 @@
 package DiscUtils.Core.CoreCompat;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.klab.commons.csv.CsvColumn;
@@ -68,5 +69,14 @@ public class EncodingHelper {
                 .map(cp -> cp.oneByte)
                 .findFirst()
                 .get();
+    }
+
+    // TODO check error
+    public static Charset forCodePage(int codePage) {
+        return Charset.forName(codePages.stream()
+                .filter(cp -> cp.codePage == codePage)
+                .map(cp -> cp.identifierAndName)
+                .findFirst()
+                .get());
     }
 }

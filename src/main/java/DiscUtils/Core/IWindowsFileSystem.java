@@ -22,7 +22,7 @@
 
 package DiscUtils.Core;
 
-import java.security.SecurityPermission;
+import java.security.Permission;
 import java.util.List;
 
 
@@ -36,7 +36,7 @@ public interface IWindowsFileSystem extends IFileSystem {
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    SecurityPermission getSecurity(String path);
+    Permission getSecurity(String path);
 
     /**
      * Sets the security descriptor associated with the file or directory.
@@ -44,7 +44,7 @@ public interface IWindowsFileSystem extends IFileSystem {
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    void setSecurity(String path, SecurityPermission securityDescriptor);
+    void setSecurity(String path, Permission securityDescriptor);
 
     /**
      * Gets the reparse point data associated with a file or directory.

@@ -22,11 +22,14 @@
 
 package DiscUtils.Vdi;
 
+import vavi.util.StringUtil;
+
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public class GeometryRecord {
+
     public int Cylinders;
 
     public int Heads;
@@ -41,6 +44,7 @@ public class GeometryRecord {
 
     public static GeometryRecord fromCapacity(long capacity) {
         GeometryRecord result = new GeometryRecord();
+
         long totalSectors = capacity / 512;
         if (totalSectors / (16 * 63) <= 1024) {
             result.Cylinders = (int) Math.max(totalSectors / (16 * 63), 1);
@@ -58,11 +62,14 @@ public class GeometryRecord {
             result.Cylinders = (int) Math.min(totalSectors / (255 * 63), 1024);
             result.Heads = 255;
         }
+
         result.Sectors = 63;
+
         return result;
     }
 
     public void read(byte[] buffer, int offset) {
+System.err.println(StringUtil.getDump(buffer, offset, buffer.length - offset));
         Cylinders = EndianUtilities.toInt32LittleEndian(buffer, offset + 0);
         Heads = EndianUtilities.toInt32LittleEndian(buffer, offset + 4);
         Sectors = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
@@ -80,5 +87,4 @@ public class GeometryRecord {
         long cylinderCapacity = SectorSize * (long) Sectors * Heads;
         return new Geometry((int) (actualCapacity / cylinderCapacity), Heads, Sectors, SectorSize);
     }
-
 }

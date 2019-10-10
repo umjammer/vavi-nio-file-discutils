@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Core.Compression.ZlibStream;
-import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
+import moe.yo3explorer.dotnetio4j.CompressionMode;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.SeekOrigin;
 

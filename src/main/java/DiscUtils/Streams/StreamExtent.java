@@ -109,6 +109,14 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         return getStart() == other.getStart() && getLength() == other.getLength();
     }
 
+    public static List<StreamExtent> union() {
+        return union(Arrays.asList());
+    }
+
+    public static List<StreamExtent> union(StreamExtent[]... streams) {
+        return union(Arrays.asList(streams).stream().flatMap(Arrays::stream).collect(Collectors.toList()));
+    }
+
     /**
      * Calculates the union of a list of extents with another extent.
      *
@@ -193,6 +201,14 @@ public final class StreamExtent implements Comparable<StreamExtent> {
             }
         }
         return result;
+    }
+
+    public static List<StreamExtent> intersect() {
+        return intersect(Arrays.asList());
+    }
+
+    public static List<StreamExtent> intersect(StreamExtent[]... streams) {
+        return intersect(Arrays.asList(streams).stream().flatMap(Arrays::stream).collect(Collectors.toList()));
     }
 
     /**
@@ -341,6 +357,10 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         return stream.stream().map(e -> new StreamExtent(e.getStart() + delta, e.getLength())).collect(Collectors.toList());
     }
 
+    public static long blockCount(StreamExtent[] stream, long blockSize) {
+        return blockCount(Arrays.asList(stream), blockSize);
+    }
+
     /**
      * Returns the number of blocks containing stream data.
      *
@@ -369,6 +389,10 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
         }
         return totalBlocks;
+    }
+
+    public static List<Range> blocks(StreamExtent[] stream, long blockSize) {
+        return blocks(Arrays.asList(stream), blockSize);
     }
 
     /**

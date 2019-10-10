@@ -29,7 +29,7 @@ import java.security.SecurityPermission;
 import java.util.Arrays;
 import java.util.List;
 
-import DiscUtils.Complete.SetupHelper;
+import DiscUtils.Complete.setupHelper;
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.Core.DiscFileSystem;
@@ -80,7 +80,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         String user = null;
         String password = null;
         if (drive.Credential != null && drive.Credential.UserName != null) {
-            NetworkCredential netCred = drive.Credential.GetNetworkCredential();
+            NetworkCredential netCred = drive.Credential.getNetworkCredential();
             user = netCred.UserName;
             password = netCred.Password;
         }
@@ -88,7 +88,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         try {
             String fullPath = Utilities.denormalizePath(diskPath);
             /* [UNSUPPORTED] 'var' as type is unsupported "var" */ resolvedPath = SessionState.Path
-                    .GetResolvedPSPathFromPSPath(fullPath)[0];
+                    .getResolvedPSPathFromPSPath(fullPath)[0];
             if (resolvedPath.Provider.Name.equals("FileSystem")) {
                 fullPath = resolvedPath.ProviderPath;
             }
@@ -125,7 +125,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             return null;
         }
 
-        vdDrive.getDisk().close();
+        vdDrive.getDisk(.close());
         return vdDrive;
     }
 
@@ -464,7 +464,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             }
         }
 
-        List<String> pathElems = Arrays.asList(relPath.split("\\"));
+        List<String> pathElems = Arrays.asList(relPath.split(DiscUtils.Core.Internal.Utilities.escapeForRegex("\\")));
         if (pathElems.size() == 0) {
             return disk;
         }
@@ -521,7 +521,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     private void showSlowDiskWarning() {
         final String varName = "DiscUtils_HideSlowDiskWarning";;
-        PSVariable psVar = this.SessionState.PSVariable.Get(varName);
+        PSVariable psVar = this.SessionState.PSVariable.get(varName);
         if (psVar != null && psVar.Value != null) {
             boolean warningHidden;
             String valStr = psVar.Value.toString();
@@ -598,7 +598,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             String name = "Volume" + i;
             String volPath = makePath(path, name);
             // new PathInfo(PathInfo.Parse(path, true).MountParts, "" + i).toString();
-            writeItemObject(namesOnly ? name : (Object) volumes[i], volPath, true);
+            writeItemObject(namesOnly ? name : (Object) volumes.get(i), volPath, true);
             if (recurse) {
                 getChildren(volPath, recurse, namesOnly);
             }

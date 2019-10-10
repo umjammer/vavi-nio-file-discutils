@@ -306,7 +306,6 @@ public class NativeFileSystem extends DiscFileSystem {
         } catch (IOException __dummyCatchVar0) {
             return Arrays.asList();
         }
-
     }
 
     /**

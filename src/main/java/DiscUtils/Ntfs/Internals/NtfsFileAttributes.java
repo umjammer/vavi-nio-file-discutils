@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import DiscUtils.Core.CoreCompat.EnumSettable;
 
+
 public enum NtfsFileAttributes implements EnumSettable {
     /**
      * File attributes as stored natively by NTFS.
@@ -96,19 +97,26 @@ public enum NtfsFileAttributes implements EnumSettable {
      * The file has an index attribute.
      */
     IndexView(0x20000000);
+
     int value;
+
     public int getValue() {
         return value;
     }
+
     NtfsFileAttributes(int value) {
         this.value = value;
     }
 
-    public Supplier<Integer> supplier() { return this::getValue; }
+    public Supplier<Integer> supplier() {
+        return this::getValue;
+    }
 
-    public Function<Integer, Boolean> function() { return v -> (v & supplier().get()) != 0; };
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
 
     public static long valueOf(EnumSet<NtfsFileAttributes> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

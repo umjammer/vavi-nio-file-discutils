@@ -22,6 +22,8 @@
 
 package DiscUtils.Net.Dns;
 
+import DiscUtils.Core.Internal.Utilities;
+
 /**
  * Base class for DNS clients.
  */
@@ -41,7 +43,7 @@ public abstract class DnsClient {
     public abstract ResourceRecord[] lookup(String name, RecordType type);
 
     public static String normalizeDomainName(String name) {
-        String[] labels = name.split("\\");
+        String[] labels = name.split(Utilities.escapeForRegex("\\"));
         return String.join(".", labels) + ".";
     }
 }

@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +30,7 @@ import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Vhdx.Disk;
 import DiscUtils.Vhdx.DiskImageFile;
 import LibraryTests.Utilities.ZipUtilities;
+import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 import moe.yo3explorer.dotnetio4j.StreamReader;
 
@@ -102,9 +105,13 @@ public class SampleDataTests {
         DiscFileInfo fileInfo = fs.getFileInfo(path);
         MessageDigest md5 = MessageDigest.getInstance("MD5");
 
-        try (Stream file = fileInfo.openRead()) {
-            int checksum = md5.ComputeHash(file.);
-            return BitConverter.toString(checksum).replace("-", "").ToLower();
+        try (MemoryStream ms = new MemoryStream();
+                Stream file = fileInfo.openRead()) {
+            file.copyTo(ms);
+            byte[] checksum = md5.digest(ms.toArray());
+            return IntStream.range(0, checksum.length)
+                    .mapToObj(i -> String.format("%02x", checksum[i]))
+                    .collect(Collectors.joining());
         }
     }
 }

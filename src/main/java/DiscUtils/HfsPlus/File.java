@@ -37,8 +37,8 @@ import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Buffer.SubBuffer;
 import DiscUtils.Streams.Util.Ownership;
+import moe.yo3explorer.dotnetio4j.CompressionMode;
 import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 

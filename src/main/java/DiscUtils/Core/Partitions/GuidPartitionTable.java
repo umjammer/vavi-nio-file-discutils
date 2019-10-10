@@ -522,7 +522,7 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType != UUID.fromString("")) {
+            if (entry.PartitionType != new UUID(0L, 0L)) {
                 result.add(entry);
             }
         }
@@ -536,7 +536,7 @@ public final class GuidPartitionTable extends PartitionTable {
         while (!found && position < _primaryHeader.PartitionEntryCount) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, position * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType != UUID.fromString("")) {
+            if (entry.PartitionType != new UUID(0L, 0L)) {
                 if (index == entriesSoFar) {
                     found = true;
                     break;
@@ -563,7 +563,7 @@ public final class GuidPartitionTable extends PartitionTable {
                 return index;
             }
 
-            if (entry.PartitionType != UUID.fromString("")) {
+            if (entry.PartitionType != new UUID(0L, 0L)) {
                 index++;
             }
 
@@ -575,7 +575,7 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType == UUID.fromString("")) {
+            if (entry.PartitionType == new UUID(0L, 0L)) {
                 return i * _primaryHeader.PartitionEntrySize;
             }
 

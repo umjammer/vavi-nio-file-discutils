@@ -22,11 +22,13 @@
 
 package DiscUtils.Wim;
 
+import java.io.IOException;
+import java.security.Permission;
+import java.security.acl.AclEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import vavi.util.win32.DateUtil;
@@ -44,7 +46,6 @@ import DiscUtils.Streams.Util.MathUtilities;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
@@ -60,7 +61,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     private long _rootDirPos;
 
-    private List<RawSecurityDescriptor> _securityDescriptors;
+    private List<Permission> _securityDescriptors;
 
     public WimFileSystem(WimFile file, int index) {
         _file = file;
@@ -87,14 +88,14 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    public RawSecurityDescriptor getSecurity(String path) {
+    public Permission getSecurity(String path) {
         int id = getEntry(path).SecurityId;
         if (id == Integer.MAX_VALUE) {
             return null;
         }
 
         if (id >= 0 && id < _securityDescriptors.size()) {
-            return _securityDescriptors[id];
+            return _securityDescriptors.get(id);
         }
 
         throw new UnsupportedOperationException();
@@ -108,7 +109,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
+    public void setSecurity(String path, Permission securityDescriptor) {
         throw new UnsupportedOperationException();
     }
 
@@ -122,19 +123,15 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         DirectoryEntry dirEntry = getEntry(path);
         ShortResourceHeader hdr = _file.locateResource(dirEntry.Hash);
         if (hdr == null) {
-            throw new IOException("No reparse point");
+            throw new moe.yo3explorer.dotnetio4j.IOException("No reparse point");
         }
 
-        Stream s = _file.openResourceStream(hdr);
-        try {
-            {
-                byte[] buffer = new byte[(int) s.getLength()];
-                s.read(buffer, 0, buffer.length);
-                return new ReparsePoint(dirEntry.ReparseTag, buffer);
-            }
-        } finally {
-            if (s != null)
-                s.close();
+        try (Stream s = _file.openResourceStream(hdr)) {
+            byte[] buffer = new byte[(int) s.getLength()];
+            s.read(buffer, 0, buffer.length);
+            return new ReparsePoint(dirEntry.ReparseTag, buffer);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -196,7 +193,13 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public WindowsFileInformation getFileStandardInformation(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return new WindowsFileInformation();
+        WindowsFileInformation wfi = new WindowsFileInformation();
+        wfi.setCreationTime(DateUtil.fromFileTime(dirEntry.CreationTime).toEpochMilli());
+        wfi.setLastAccessTime(DateUtil.fromFileTime(dirEntry.LastAccessTime).toEpochMilli());
+        wfi.setChangeTime(DateUtil.fromFileTime(Math.max(dirEntry.LastWriteTime, Math.max(dirEntry.CreationTime, dirEntry.LastAccessTime))).toEpochMilli());
+        wfi.setLastWriteTime(DateUtil.fromFileTime(dirEntry.LastWriteTime).toEpochMilli());
+        wfi.setFileAttributes(dirEntry.Attributes);
+        return wfi;
     }
 
     /**
@@ -389,7 +392,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
                 return new ZeroStream(0);
             }
 
-            throw new IOException("Unable to locate file contents");
+            throw new moe.yo3explorer.dotnetio4j.IOException("Unable to locate file contents");
         }
 
         return _file.openResourceStream(hdr);
@@ -568,9 +571,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         for (int i = 0; i < numEntries; ++i) {
             sdLengths[i] = reader.readUInt64();
         }
-        _securityDescriptors = new ArrayList<>((int) numEntries);
+        _securityDescriptors = new ArrayList<>(numEntries);
         for (int i = 0; i < numEntries; ++i) {
-            _securityDescriptors.add(new RawSecurityDescriptor(reader.readBytes((int) sdLengths[i]), 0));
+            _securityDescriptors.add(new Permission(reader.readBytes((int) sdLengths[i]), 0));
         }
         if (reader.getPosition() < startPos + totalLength) {
             reader.skip((int) (startPos + totalLength - reader.getPosition()));
@@ -588,7 +591,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             path = "\\" + path;
         }
 
-        return getEntry(getDirectory(0), path.split("\\"));
+        return getEntry(getDirectory(0), path.split(Utilities.escapeForRegex("\\")));
     }
 
     private DirectoryEntry getEntry(List<DirectoryEntry> dir, String[] path) {

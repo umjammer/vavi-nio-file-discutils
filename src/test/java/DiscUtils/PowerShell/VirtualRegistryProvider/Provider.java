@@ -246,7 +246,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         }
 
         for (Object prop : propertyValue.Properties) {
-            key.SetValue(prop.Name, prop.Value);
+            key.setValue(prop.Name, prop.Value);
         }
     }
 

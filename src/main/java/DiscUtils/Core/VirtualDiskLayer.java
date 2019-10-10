@@ -69,7 +69,7 @@ public abstract class VirtualDiskLayer implements Closeable {
     /**
      * Gets a value indicating whether the layer only stores meaningful sectors.
      */
-    public abstract boolean getIsSparse();
+    public abstract boolean isSparse();
 
     /**
      * Gets a value indicating whether this is a differential disk.

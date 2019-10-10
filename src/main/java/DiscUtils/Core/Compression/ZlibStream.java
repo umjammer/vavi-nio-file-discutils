@@ -26,8 +26,8 @@ import java.io.IOException;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
+import moe.yo3explorer.dotnetio4j.CompressionMode;
 import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
 import moe.yo3explorer.dotnetio4j.SeekOrigin;
 import moe.yo3explorer.dotnetio4j.Stream;
 

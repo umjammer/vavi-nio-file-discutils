@@ -70,7 +70,7 @@ public final class BiosPartitionInfo  extends PartitionInfo
     *  empty.
     */
     public UUID getGuidType() {
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     /**

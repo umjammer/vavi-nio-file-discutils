@@ -22,7 +22,6 @@
 
 package DiscUtils.Core;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import DiscUtils.Core.Partitions.GuidPartitionInfo;
@@ -96,15 +95,15 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the unique identity of the disk containing the volume, if known.
      */
-    public UUID getDiskIdentity() throws IOException {
-        return getVolumeType() != PhysicalVolumeType.EntireDisk ? _disk.getPartitions().getDiskGuid() : UUID.fromString("");
+    public UUID getDiskIdentity() {
+        return getVolumeType() != PhysicalVolumeType.EntireDisk ? _disk.getPartitions().getDiskGuid() : new UUID(0L, 0L);
     }
 
     /**
      * Gets the signature of the disk containing the volume (only valid for
      * partition-type volumes).
      */
-    public int getDiskSignature() throws IOException {
+    public int getDiskSignature() {
         return getVolumeType() != PhysicalVolumeType.EntireDisk ? _disk.getSignature() : 0;
     }
 
@@ -165,7 +164,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
             return gpi.getIdentity();
         }
 
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     /**

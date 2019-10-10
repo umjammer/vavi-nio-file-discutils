@@ -18,3 +18,6 @@ packages/
 /Library/
 /Utilities/
 /Utilities_java/
+tmp
+Tests_Java
+DiscUtils.sln

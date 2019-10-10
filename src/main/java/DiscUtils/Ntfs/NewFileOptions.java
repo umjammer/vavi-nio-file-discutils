@@ -22,6 +22,7 @@
 
 package DiscUtils.Ntfs;
 
+import java.security.SecurityPermission;
 import java.util.Optional;
 
 /**
@@ -75,13 +76,13 @@ public final class NewFileOptions {
      * {@code null}
      * ) value indicates the security descriptor is inherited.
      */
-    private RawSecurityDescriptor __SecurityDescriptor;
+    private SecurityPermission __SecurityDescriptor;
 
-    public RawSecurityDescriptor getSecurityDescriptor() {
+    public SecurityPermission getSecurityDescriptor() {
         return __SecurityDescriptor;
     }
 
-    public void setSecurityDescriptor(RawSecurityDescriptor value) {
+    public void setSecurityDescriptor(SecurityPermission value) {
         __SecurityDescriptor = value;
     }
 }

@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import vavi.util.StringUtil;
+
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.FloppyDiskType;
@@ -547,7 +549,11 @@ public final class FatFileSystem extends DiscFileSystem {
     public Map<String, Object> getAttributes(String path) {
         // Simulate a root directory entry - doesn't really exist though
         if (isRootPath(path)) {
-            return new HashMap<String, Object>() {{ put("Directory", true); }};
+            return new HashMap<String, Object>() {
+                {
+                    put("Directory", true);
+                }
+            };
         }
 
         DirectoryEntry dirEntry = getDirectoryEntry(path);
@@ -887,7 +893,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * @param path The directory to create.
      */
     public void createDirectory(String path) {
-        String[] pathElements = path.split("\\");
+        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
         Directory focusDir = _rootDir;
         for (int i = 0; i < pathElements.length; ++i) {
             FileName name;
@@ -1234,8 +1240,9 @@ public final class FatFileSystem extends DiscFileSystem {
         }
 
         DirectoryEntry dirEntry = parent.getEntry(parentId);
-        if (dirEntry.getAttributes().contains(FatAttributes.Directory)) {
-            throw new FileNotFoundException();
+        if (!dirEntry.getAttributes().contains(FatAttributes.Directory)) {
+            throw new FileNotFoundException(dirEntry.getName()
+                    .getRawName(Charset.forName(System.getProperty("file.encoding"))));
         }
 
         // If we have this one cached, return it
@@ -1256,7 +1263,6 @@ public final class FatFileSystem extends DiscFileSystem {
             _dirCache.remove(index);
             dir.close();
         }
-
     }
 
     public DirectoryEntry getDirectoryEntry(String path) {
@@ -1286,7 +1292,6 @@ public final class FatFileSystem extends DiscFileSystem {
                 _data.close();
                 _data = null;
             }
-
         } finally {
             super.close();
         }
@@ -1452,6 +1457,7 @@ public final class FatFileSystem extends DiscFileSystem {
         _data = data;
         _data.setPosition(0);
         _bootSector = StreamUtilities.readSector(_data);
+System.err.println(StringUtil.getDump(_bootSector, 64));
         setFatVariant(detectFATType(_bootSector));
         readBPB();
         loadFAT();
@@ -1522,7 +1528,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private long getDirectoryEntry(Directory dir, String path, Directory[] parent) {
-        String[] pathElements = path.split("\\");
+        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
         return getDirectoryEntry(dir, pathElements, 0, parent);
     }
 
@@ -1692,7 +1698,8 @@ public final class FatFileSystem extends DiscFileSystem {
         // Write the BIOS Parameter Block (BPB) - a single sector
         byte[] bpb = new byte[512];
         int sectors;
-        if (type == FloppyDiskType.DoubleDensity) {
+        switch (type) {
+        case DoubleDensity:
             sectors = 1440;
             writeBPB(bpb,
                      sectors,
@@ -1705,7 +1712,8 @@ public final class FatFileSystem extends DiscFileSystem {
                      true,
                      volId,
                      label);
-        } else if (type == FloppyDiskType.HighDensity) {
+            break;
+        case HighDensity:
             sectors = 2880;
             writeBPB(bpb,
                      sectors,
@@ -1718,7 +1726,8 @@ public final class FatFileSystem extends DiscFileSystem {
                      true,
                      volId,
                      label);
-        } else if (type == FloppyDiskType.Extended) {
+            break;
+        case Extended:
             sectors = 5760;
             writeBPB(bpb,
                      sectors,
@@ -1731,7 +1740,8 @@ public final class FatFileSystem extends DiscFileSystem {
                      true,
                      volId,
                      label);
-        } else {
+            break;
+        default:
             throw new IllegalArgumentException("Unrecognised Floppy Disk type");
         }
         stream.write(bpb, 0, bpb.length);

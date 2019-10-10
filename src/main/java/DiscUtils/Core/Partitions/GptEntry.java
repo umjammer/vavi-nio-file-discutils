@@ -42,8 +42,8 @@ public class GptEntry implements Comparable<GptEntry> {
     public UUID PartitionType;
 
     public GptEntry() {
-        PartitionType = UUID.fromString("");
-        Identity = UUID.fromString("");
+        PartitionType = new UUID(0L, 0L);
+        Identity = new UUID(0L, 0L);
         Name = "";
     }
 

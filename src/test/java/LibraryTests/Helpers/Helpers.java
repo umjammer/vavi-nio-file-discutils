@@ -2,8 +2,11 @@
 
 package LibraryTests.Helpers;
 
+import java.util.List;
+
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
-import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
+import moe.yo3explorer.dotnetio4j.CompressionMode;
+import moe.yo3explorer.dotnetio4j.GZipStream;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.SeekOrigin;
 import moe.yo3explorer.dotnetio4j.Stream;
@@ -18,7 +21,9 @@ public class Helpers {
     }
 
     public static Stream loadDataFile(String name) throws Exception {
-        Class<?> assembly = ReflectionHelper.getAssembly(Helpers.class);
+        List<Class<?>> assembly = ReflectionHelper.getAssembly(Helpers.class);
+
+        String formattedName = assembly.getName().Name + "._Data." + name;
         if (assembly.getManifestResourceNames().Contains(formattedName))
             return assembly.getManifestResourceStream(formattedName);
 
@@ -26,10 +31,10 @@ public class Helpers {
         formattedName += ".gz";
         if (assembly.getManifestResourceNames().Contains(formattedName)) {
             MemoryStream ms = new MemoryStream();
-            try (Stream stream = assembly.getManifestResourceStream(formattedName)) {
-                try (GZipStream gz = new GZipStream(stream, CompressionMode.Decompress)) {
-                    gz.CopyTo(ms);
-                }
+            try (Stream stream = assembly.getManifestResourceStream(formattedName);
+                    GZipStream gz = new GZipStream(stream, CompressionMode.Decompress)) {
+                gz.copyTo(ms);
+
             }
             ms.seek(0, SeekOrigin.Begin);
             return ms;

@@ -37,6 +37,7 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
 public abstract class VirtualDiskFactory {
+
     public abstract String[] getVariants();
 
     public abstract VirtualDiskTypeInfo getDiskTypeInformation(String variant);
@@ -65,5 +66,4 @@ public abstract class VirtualDiskFactory {
     }
 
     public abstract VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) throws IOException;
-
 }

@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import DiscUtils.Complete.SetupHelper;
+import DiscUtils.Complete.setupHelper;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.FileSystemManager;

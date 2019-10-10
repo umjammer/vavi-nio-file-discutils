@@ -22,7 +22,9 @@
 
 package DiscUtils.Ntfs;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.Permission;
 import java.util.Map;
 
 import DiscUtils.Core.IDiagnosticTraceable;
@@ -91,7 +93,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
 
                 String secDescStr = "--unknown--";
                 if (rec.SecurityDescriptor[0] != 0) {
-                    RawSecurityDescriptor sd = new RawSecurityDescriptor(rec.SecurityDescriptor, 0);
+                    Permission sd = new Permission(rec.SecurityDescriptor, 0);
                     secDescStr = sd.GetSddlForm(AccessControlSections.All);
                 }
 
@@ -130,7 +132,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         return null;
     }
 
-    public int addDescriptor(RawSecurityDescriptor newDescriptor) {
+    public int addDescriptor(Permission newDescriptor) {
         SecurityDescriptor newDescObj = new SecurityDescriptor(newDescriptor);
         int newHash = newDescObj.calcHash();
         byte[] newByteForm = new byte[(int) newDescObj.getSize()];
@@ -169,8 +171,11 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             }
         } finally {
             if (s != null)
-                s.close();
-
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                }
         }
         _nextSpace = MathUtilities.roundUp(_nextSpace + buffer.length, 16);
         _nextId++;
@@ -202,7 +207,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             byte[] buffer = StreamUtilities.readExact(s, data.SdsLength);
             SecurityDescriptorRecord record = new SecurityDescriptorRecord();
             record.read(buffer, 0);
-            return new SecurityDescriptor(new RawSecurityDescriptor(record.SecurityDescriptor, 0));
+            return new SecurityDescriptor(new Permission(record.SecurityDescriptor, 0));
         } finally {
             if (s != null)
                 s.close();

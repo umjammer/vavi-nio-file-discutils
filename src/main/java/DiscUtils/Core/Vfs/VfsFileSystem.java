@@ -204,7 +204,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     public List<String> getFileSystemEntries(String path) {
         String fullPath = path;
         if (!fullPath.startsWith("\\")) {
-            fullPath = "\\" + fullPath;
+            fullPath = '\\' + fullPath;
         }
 
         String _fullPath = fullPath;
@@ -594,7 +594,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     }
 
     private TDirEntry getDirectoryEntry(TDirectory dir, String path) {
-        String[] pathElements = path.split("\\");
+        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
         return getDirectoryEntry(dir, pathElements, 0);
     }
 
@@ -639,7 +639,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         for (TDirEntry de  : parentDir.getAllEntries()) {
             TDirEntry entry = de;
             if (entry.isSymlink()) {
-                entry = resolveSymlink(entry, path + "\\" + entry.getFileName());
+                entry = resolveSymlink(entry, path + '\\' + entry.getFileName());
             }
 
             boolean isDir = entry.isDirectory();
@@ -677,7 +677,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                 throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 
-            currentPath = Utilities.resolvePath(currentPath.replaceFirst("\\*$", ""), symlink.getTargetPath());
+            currentPath = Utilities.resolvePath(currentPath.replaceFirst(Utilities.escapeForRegex("\\") + "*$", ""), symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {
                 throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);

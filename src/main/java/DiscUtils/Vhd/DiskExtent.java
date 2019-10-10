@@ -40,7 +40,7 @@ public final class DiskExtent extends VirtualDiskExtent {
     }
 
     public boolean getIsSparse() {
-        return _file.getIsSparse();
+        return _file.isSparse();
     }
 
     public long getStoredSize() {

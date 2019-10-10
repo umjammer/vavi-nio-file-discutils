@@ -83,28 +83,28 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     public long getCapacity() {
-        return _header.DiskSize;
+        return _header.diskSize;
     }
 
     /**
      * Gets (a guess at) the geometry of the virtual disk.
      */
     public Geometry getGeometry() {
-        if (_header.LChsGeometry != null && _header.LChsGeometry.Cylinders != 0) {
-            return _header.LChsGeometry.toGeometry(_header.DiskSize);
+        if (_header.lchsGeometry != null && _header.lchsGeometry.Cylinders != 0) {
+            return _header.lchsGeometry.toGeometry(_header.diskSize);
         }
 
-        if (_header.LegacyGeometry.Cylinders != 0) {
-            return _header.LegacyGeometry.toGeometry(_header.DiskSize);
+        if (_header.legacyGeometry.Cylinders != 0) {
+            return _header.legacyGeometry.toGeometry(_header.diskSize);
         }
 
-        return GeometryRecord.fromCapacity(_header.DiskSize).toGeometry(_header.DiskSize);
+        return GeometryRecord.fromCapacity(_header.diskSize).toGeometry(_header.diskSize);
     }
 
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return _header.imageType != ImageType.Fixed;
     }
 
@@ -134,17 +134,17 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                 long capacity) {
         PreHeaderRecord preHeader = PreHeaderRecord.initialized();
         HeaderRecord header = HeaderRecord.initialized(ImageType.Fixed, ImageFlags.None, capacity, 1024 * 1024, 0);
-        byte[] blockTable = new byte[header.BlockCount * 4];
-        for (int i = 0; i < header.BlockCount; ++i) {
+        byte[] blockTable = new byte[header.blockCount * 4];
+        for (int i = 0; i < header.blockCount; ++i) {
             EndianUtilities.writeBytesLittleEndian(i, blockTable, i * 4);
         }
-        header.BlocksAllocated = header.BlockCount;
+        header.blocksAllocated = header.blockCount;
         stream.setPosition(0);
         preHeader.write(stream);
         header.write(stream);
-        stream.setPosition(header.BlocksOffset);
+        stream.setPosition(header.blocksOffset);
         stream.write(blockTable, 0, blockTable.length);
-        long totalSize = header.DataOffset + header.BlockSize * (long) header.BlockCount;
+        long totalSize = header.dataOffset + header.blockSize * (long) header.blockCount;
         if (stream.getLength() < totalSize) {
             stream.setLength(totalSize);
         }
@@ -166,15 +166,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                   long capacity) {
         PreHeaderRecord preHeader = PreHeaderRecord.initialized();
         HeaderRecord header = HeaderRecord.initialized(ImageType.Dynamic, ImageFlags.None, capacity, 1024 * 1024, 0);
-        byte[] blockTable = new byte[header.BlockCount * 4];
+        byte[] blockTable = new byte[header.blockCount * 4];
         for (int i = 0; i < blockTable.length; ++i) {
             blockTable[i] = (byte) 0xFF;
         }
-        header.BlocksAllocated = 0;
+        header.blocksAllocated = 0;
         stream.setPosition(0);
         preHeader.write(stream);
         header.write(stream);
-        stream.setPosition(header.BlocksOffset);
+        stream.setPosition(header.blocksOffset);
         stream.write(blockTable, 0, blockTable.length);
         return new DiskImageFile(stream, ownsStream);
     }
@@ -219,7 +219,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     public void close() throws IOException {
         try {
             if (_writeOccurred && _stream != null) {
-                _header.ModificationId = UUID.randomUUID();
+                _header.modificationId = UUID.randomUUID();
                 _stream.setPosition(PreHeaderRecord.Size);
                 _header.write(_stream);
             }

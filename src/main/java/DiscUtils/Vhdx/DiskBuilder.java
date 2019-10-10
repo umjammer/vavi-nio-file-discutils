@@ -140,7 +140,7 @@ public final class DiskBuilder extends DiskImageBuilder {
             header1.SequenceNumber = 0;
             header1.FileWriteGuid = UUID.randomUUID();
             header1.DataWriteGuid = UUID.randomUUID();
-            header1.LogGuid = UUID.fromString("");
+            header1.LogGuid = new UUID(0L, 0L);
             header1.LogVersion = 0;
             header1.Version = 1;
             header1.LogLength = (int) Sizes.OneMiB;

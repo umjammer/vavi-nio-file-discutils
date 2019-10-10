@@ -70,7 +70,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      * Gets a indication of whether the disk is 'sparse'.
      * Always true for XVA disks.
      */
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return true;
     }
 

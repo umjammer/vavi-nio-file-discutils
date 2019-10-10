@@ -33,7 +33,7 @@ import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.DeflateStream.CompressionMode;
+import moe.yo3explorer.dotnetio4j.CompressionMode;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
@@ -64,11 +64,12 @@ public final class SquashFileSystemBuilder {
                                              UnixFilePermissions.OwnerWrite,
                                              UnixFilePermissions.GroupRead,
                                              UnixFilePermissions.GroupWrite));
-        setDefaultDirectoryPermissions(EnumSet.of(UnixFilePermissions.OwnerAll,
-                                                  UnixFilePermissions.GroupRead,
-                                                  UnixFilePermissions.GroupExecute,
-                                                  UnixFilePermissions.OthersRead,
-                                                  UnixFilePermissions.OthersExecute));
+        EnumSet<UnixFilePermissions> flags = UnixFilePermissions.OwnerAll;
+        flags.addAll(EnumSet.of(UnixFilePermissions.GroupRead,
+                                UnixFilePermissions.GroupExecute,
+                                UnixFilePermissions.OthersRead,
+                                UnixFilePermissions.OthersExecute));
+        setDefaultDirectoryPermissions(flags);
         setDefaultUser(0);
         setDefaultGroup(0);
     }
@@ -460,7 +461,7 @@ public final class SquashFileSystemBuilder {
 
     private BuilderDirectory createDirectory(String path, int user, int group, EnumSet<UnixFilePermissions> permissions) {
         BuilderDirectory currentDir = getRoot();
-        String[] elems = path.split("\\");
+        String[] elems = path.split(Utilities.escapeForRegex("\\"));
         for (int i = 0; i < elems.length; ++i) {
             BuilderNode nextDirAsNode = currentDir.getChild(elems[i]);
             BuilderDirectory nextDir = nextDirAsNode instanceof BuilderDirectory ? (BuilderDirectory) nextDirAsNode

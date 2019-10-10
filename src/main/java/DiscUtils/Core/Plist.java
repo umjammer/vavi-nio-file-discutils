@@ -76,11 +76,27 @@ public class Plist {
             if (!"plist".equals(root.getNodeName())) {
                 throw new IOException("XML document is not a plist");
             }
-
-            return parseMap(root.getFirstChild());
+            return parseMap(getFirstChild(root));
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    // @see "https://stackoverflow.com/questions/2299807/element-firstchild-is-returning-textnode-instead-of-an-object-in-ff"
+    private static Node getFirstChild(Node el) {
+        Node firstChild = el.getFirstChild();
+        while (firstChild != null && firstChild.getNodeType() == 3) { // skip TextNodes
+            firstChild = firstChild.getNextSibling();
+        }
+        return firstChild;
+    }
+
+    private static Node getNextSibling(Node el) {
+        Node nextSibling = el.getNextSibling();
+        while (nextSibling != null && nextSibling.getNodeType() == 3) { // skip TextNodes
+            nextSibling = nextSibling.getNextSibling();
+        }
+        return nextSibling;
     }
 
     public static void write(Stream stream, Map<String, Object> plist) {
@@ -114,20 +130,20 @@ public class Plist {
     }
 
     private static Object parseNode(Node xmlNode) {
-        String __dummyScrutVar0 = xmlNode.getNodeName();
-        if (__dummyScrutVar0.equals("dict")) {
+        String nodeName = xmlNode.getNodeName();
+        if (nodeName.equals("dict")) {
             return parseMap(xmlNode);
-        } else if (__dummyScrutVar0.equals("array")) {
+        } else if (nodeName.equals("array")) {
             return parseArray(xmlNode);
-        } else if (__dummyScrutVar0.equals("string")) {
+        } else if (nodeName.equals("string")) {
             return parseString(xmlNode);
-        } else if (__dummyScrutVar0.equals("data")) {
+        } else if (nodeName.equals("data")) {
             return parseData(xmlNode);
-        } else if (__dummyScrutVar0.equals("integer")) {
+        } else if (nodeName.equals("integer")) {
             return parseInteger(xmlNode);
-        } else if (__dummyScrutVar0.equals("true")) {
+        } else if (nodeName.equals("true")) {
             return true;
-        } else if (__dummyScrutVar0.equals("false")) {
+        } else if (nodeName.equals("false")) {
             return false;
         } else {
             throw new UnsupportedOperationException();
@@ -164,26 +180,26 @@ public class Plist {
 
     private static Map<String, Object> parseMap(Node xmlNode) {
         Map<String, Object> result = new HashMap<>();
-        Node focusNode = xmlNode.getFirstChild();
+        Node focusNode = getFirstChild(xmlNode);
         while (focusNode != null) {
             if (!"key".equals(focusNode.getNodeName())) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("Invalid plist, expected dictionary key");
             }
 
             String key = focusNode.getTextContent();
-            focusNode = focusNode.getNextSibling();
+            focusNode = getNextSibling(focusNode);
             result.put(key, parseNode(focusNode));
-            focusNode = focusNode.getNextSibling();
+            focusNode = getNextSibling(focusNode);
         }
         return result;
     }
 
     private static Object parseArray(Node xmlNode) {
         List<Object> result = new ArrayList<>();
-        Node focusNode = xmlNode.getFirstChild();
+        Node focusNode = getFirstChild(xmlNode);
         while (focusNode != null) {
             result.add(parseNode(focusNode));
-            focusNode = focusNode.getNextSibling();
+            focusNode = getNextSibling(focusNode);
         }
         return result;
     }
@@ -194,11 +210,14 @@ public class Plist {
 
     private static Object parseData(Node xmlNode) {
         String base64 = xmlNode.getTextContent();
-        return Base64.getDecoder().decode(base64);
+        try {
+            return Base64.getDecoder().decode(base64);
+        } catch (IllegalArgumentException e) {
+            return base64;
+        }
     }
 
     private static Object parseInteger(Node xmlNode) {
         return Integer.parseInt(xmlNode.getTextContent());
     }
-
 }

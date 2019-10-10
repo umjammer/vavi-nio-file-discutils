@@ -70,7 +70,7 @@ public class Database {
         for (DatabaseRecord record  : _records.values()) {
             if (record._RecordType == RecordType.DiskGroup) {
                 DiskGroupRecord dgRecord = (DiskGroupRecord) record;
-                if (UUID.fromString(dgRecord.GroupGuidString) == guid || guid == UUID.fromString("")) {
+                if (UUID.fromString(dgRecord.GroupGuidString) == guid || guid == new UUID(0L, 0L)) {
                     return dgRecord;
                 }
 

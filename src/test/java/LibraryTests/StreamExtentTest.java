@@ -157,11 +157,11 @@ public class StreamExtentTest {
         compare(r, StreamExtent.union(s1));
     }
 
-//    @Test
-//    public void testUnion5() throws Exception {
-//        StreamExtent[] r = new StreamExtent[] {};
-//        compare(r, StreamExtent.union());
-//    }
+    @Test
+    public void testUnion5() throws Exception {
+        StreamExtent[] r = new StreamExtent[] {};
+        compare(r, StreamExtent.union());
+    }
 
     @Test
     public void testBlockCount() throws Exception {

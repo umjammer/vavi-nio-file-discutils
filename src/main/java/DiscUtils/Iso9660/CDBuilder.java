@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Builder.BuilderBufferExtent;
 import DiscUtils.Streams.Builder.BuilderExtent;
 import DiscUtils.Streams.Builder.BuilderStreamExtent;
@@ -165,7 +166,7 @@ public final class CDBuilder extends StreamBuilder {
      * }
      */
     public BuildDirectoryInfo addDirectory(String name) {
-        String[] nameElements = name.split("\\");
+        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
         return getDirectory(nameElements, nameElements.length, true);
     }
 
@@ -185,7 +186,7 @@ public final class CDBuilder extends StreamBuilder {
      *         specified the default of 1 will be used.
      */
     public BuildFileInfo addFile(String name, byte[] content) {
-        String[] nameElements = name.split("\\");
+        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
         boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
@@ -215,7 +216,7 @@ public final class CDBuilder extends StreamBuilder {
      *         specified the default of 1 will be used.
      */
     public BuildFileInfo addFile(String name, String sourcePath) {
-        String[] nameElements = name.split("\\");
+        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
         boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
@@ -249,7 +250,7 @@ public final class CDBuilder extends StreamBuilder {
             throw new IllegalArgumentException("source doesn't support seeking " + source);
         }
 
-        String[] nameElements = name.split("\\");
+        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
         boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);

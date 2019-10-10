@@ -80,7 +80,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * order, if the stability of this identity is paramount.
      */
     public String getIdentity() {
-        if (_guid != UUID.fromString("")) {
+        if (_guid != new UUID(0L, 0L)) {
             return "VLG" + _guid.toString(); // "B"
         }
 

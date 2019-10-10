@@ -136,7 +136,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Gets or sets the Windows disk signature of the disk, which uniquely
      * identifies the disk.
      */
-    public int getSignature() throws IOException {
+    public int getSignature() {
         return EndianUtilities.toInt32LittleEndian(getMasterBootRecord(), 0x01B8);
     }
 

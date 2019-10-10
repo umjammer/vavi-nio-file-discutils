@@ -90,7 +90,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return Geometry.fromCapacity(getCapacity());
     }
 
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return getBuffer() != null;
     }
 

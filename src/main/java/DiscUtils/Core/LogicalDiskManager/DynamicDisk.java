@@ -65,7 +65,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
     }
 
     public UUID getGroupId() {
-        return _header.DiskGroupId == null || _header.DiskGroupId.isEmpty() ? UUID.fromString("") : UUID.fromString(_header.DiskGroupId);
+        return _header.DiskGroupId == null || _header.DiskGroupId.isEmpty() ? new UUID(0L, 0L) : UUID.fromString(_header.DiskGroupId);
     }
 
     public UUID getId() {

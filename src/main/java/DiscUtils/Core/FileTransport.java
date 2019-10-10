@@ -34,6 +34,7 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
 
 @VirtualDiskTransportAttribute(scheme = "file")
 public final class FileTransport extends VirtualDiskTransport {
+
     private String _extraInfo;
 
     private String _path;
@@ -48,7 +49,6 @@ public final class FileTransport extends VirtualDiskTransport {
         if (!Files.exists(Paths.get(_path).getParent())) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("No such file '%s'", uri.toString()));
         }
-
     }
 
     public VirtualDisk openDisk(FileAccess access) {
@@ -66,5 +66,4 @@ public final class FileTransport extends VirtualDiskTransport {
     public String getExtraInfo() {
         return _extraInfo;
     }
-
 }

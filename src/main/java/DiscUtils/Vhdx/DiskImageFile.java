@@ -218,7 +218,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return true;
     }
 
@@ -241,14 +241,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public UUID getParentUniqueId() {
         if (_metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent)) {
-            return UUID.fromString("");
+            return new UUID(0L, 0L);
         }
 
         if (_metadata.getParentLocator().getEntries().containsKey("parent_linkage")) {
             return UUID.fromString(_metadata.getParentLocator().getEntries().get("parent_linkage"));
         }
 
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     public FileLocator getRelativeFileLocator() {
@@ -513,7 +513,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header1.SequenceNumber = 0;
         header1.FileWriteGuid = UUID.randomUUID();
         header1.DataWriteGuid = UUID.randomUUID();
-        header1.LogGuid = UUID.fromString("");
+        header1.LogGuid = new UUID(0L, 0L);
         header1.LogVersion = 0;
         header1.Version = 1;
         header1.LogLength = (int) Sizes.OneMiB;
@@ -626,7 +626,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _freeSpace.reserve(_header.LogOffset, _header.LogLength);
         _logicalStream = _fileStream;
         // If log is empty, skip.
-        if (_header.LogGuid == UUID.fromString("")) {
+        if (_header.LogGuid == new UUID(0L, 0L)) {
             return;
         }
 

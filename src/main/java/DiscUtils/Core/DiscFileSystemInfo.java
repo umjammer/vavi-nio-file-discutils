@@ -42,7 +42,7 @@ public class DiscFileSystemInfo {
         }
 
         __FileSystem = fileSystem;
-        __Path = path.replaceAll("\\\\$", "");
+        __Path = path.replaceAll(Utilities.escapeForRegex("\\") +"$", "");
     }
 
     /**

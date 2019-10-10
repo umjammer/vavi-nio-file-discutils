@@ -302,7 +302,7 @@ public final class VolumeManager implements Serializable {
         VirtualDisk disk = _disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
-            if (guid != UUID.fromString("")) {
+            if (guid != new UUID(0L, 0L)) {
                 return "DG" + guid.toString(); // "B"
             }
 

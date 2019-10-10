@@ -4,8 +4,11 @@
  * Programmed by Naohide Sano
  */
 
+import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.EnumSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import DiscUtils.Fat.FatAttributes;
 import DiscUtils.Ntfs.FileAttributeFlags;
 import DiscUtils.Ntfs.Internals.NtfsFileAttributes;
 
@@ -42,7 +46,15 @@ public class Test1 {
     @Test
     public void test2() throws Exception {
         EnumSet<NtfsFileAttributes> set = FileAttributeFlags.cast(NtfsFileAttributes.class, 7);
+//System.err.println(set);
         assertEquals(7, NtfsFileAttributes.valueOf(set));
+    }
+
+    @Test
+    public void test11() throws Exception {
+        EnumSet<FatAttributes> set = FatAttributes.valueOf(16);
+        assertTrue(set.contains(FatAttributes.Directory));
+        assertFalse(set.contains(FatAttributes.Archive));
     }
 
     // @see "https://stackoverflow.com/questions/2685537/how-can-i-implement-comparable-more-than-once"
@@ -66,10 +78,23 @@ public class Test1 {
     @Test
     void test3() {
         try {
-            System.err.println(Instant.parse("9999-12-31T23:59:59.999999900Z"));
+            Instant i = Instant.parse("9999-12-31T23:59:59.999999900Z");
+//System.err.println(i);
+            assertEquals("9999-12-31T23:59:59.999999900Z", i.toString());
         } catch (Exception e) {
             fail(e.getMessage());
         }
+    }
+
+    @Test
+    void test4() throws Exception {
+        ByteBuffer buffer = ByteBuffer.allocate(4);
+        buffer.putInt(0xcafebabe);
+        byte[] b = buffer.array();
+        String hex = IntStream.range(0, b.length)
+                .mapToObj(i -> String.format("%02x", b[i]))
+                .collect(Collectors.joining());
+        assertEquals("cafebabe", hex);
     }
 }
 

@@ -23,7 +23,9 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
+import java.security.Permission;
 import java.security.acl.Acl;
+import java.security.acl.AclEntry;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
@@ -35,17 +37,17 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     public SecurityDescriptor() {
     }
 
-    public SecurityDescriptor(RawSecurityDescriptor secDesc) {
+    public SecurityDescriptor(Permission secDesc) {
         setDescriptor(secDesc);
     }
 
-    private RawSecurityDescriptor __Descriptor = new RawSecurityDescriptor();
+    private Permission __Descriptor;
 
-    public RawSecurityDescriptor getDescriptor() {
+    public Permission getDescriptor() {
         return __Descriptor;
     }
 
-    public void setDescriptor(RawSecurityDescriptor value) {
+    public void setDescriptor(Permission value) {
         __Descriptor = value;
     }
 
@@ -54,7 +56,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setDescriptor(new RawSecurityDescriptor(buffer, offset));
+        setDescriptor(new Permission(buffer, offset));
         return getDescriptor().BinaryLength;
     }
 
@@ -113,10 +115,10 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         return hash;
     }
 
-    public static RawSecurityDescriptor calcNewObjectDescriptor(RawSecurityDescriptor parent, boolean isContainer) {
+    public static AclEntry calcNewObjectDescriptor(Permission parent, boolean isContainer) {
         Acl sacl = inheritAcl(parent.SystemAcl, isContainer);
         Acl dacl = InheritAcl(parent.DiscretionaryAcl, isContainer);
-        return new RawSecurityDescriptor(parent.ControlFlags, parent.Owner, parent.Group, sacl, dacl);
+        return new AclEntry(parent.ControlFlags, parent.Owner, parent.Group, sacl, dacl);
     }
 
     private static Acl inheritAcl(Acl parentAcl, boolean isContainer) {

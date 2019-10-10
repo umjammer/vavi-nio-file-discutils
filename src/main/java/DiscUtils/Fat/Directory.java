@@ -207,7 +207,7 @@ public class Directory implements Closeable {
     public long findEntry(FileName name) {
         for (long id : _entries.keySet()) {
             DirectoryEntry focus = _entries.get(id);
-            if (focus.getName() == name && focus.getAttributes().contains(FatAttributes.VolumeId)) {
+            if (focus.getName().equals(name) && !focus.getAttributes().contains(FatAttributes.VolumeId)) {
                 return id;
             }
 
@@ -328,10 +328,10 @@ public class Directory implements Closeable {
             if (entry.getName().isDeleted()) {
                 // E5 = Free Entry
                 _freeEntries.add(streamPos);
-            } else if (entry.getName() == FileName.SelfEntryName) {
+            } else if (entry.getName().equals(FileName.SelfEntryName)) {
                 _selfEntry = entry;
                 _selfEntryLocation = streamPos;
-            } else if (entry.getName() == FileName.ParentEntryName) {
+            } else if (entry.getName().equals(FileName.ParentEntryName)) {
                 _parentEntry = entry;
                 _parentEntryLocation = streamPos;
             } else if (entry.getName().isEndMarker()) {
@@ -362,37 +362,27 @@ public class Directory implements Closeable {
                 parentEntry.setLastWriteTime(entry.getLastWriteTime());
                 setParentsChildEntry(parentEntry);
             }
-
         }
-
     }
 
     private void populateNewChildDirectory(DirectoryEntry newEntry) {
         // Populate new directory with initial (special) entries.  First one is easy, just change the name!
-        ClusterStream stream = new ClusterStream(getFileSystem(),
-                                                 FileAccess.Write,
-                                                 newEntry.getFirstCluster(),
-                                                 Integer.MAX_VALUE);
-        try {
-            {
-                // First is the self-referencing entry...
-                DirectoryEntry selfEntry = new DirectoryEntry(newEntry);
-                selfEntry.setName(FileName.SelfEntryName);
-                selfEntry.writeTo(stream);
-                // Second is a clone of our self entry (i.e. parent) - though dates are odd...
-                DirectoryEntry parentEntry = new DirectoryEntry(getSelfEntry());
-                parentEntry.setName(FileName.ParentEntryName);
-                parentEntry.setCreationTime(newEntry.getCreationTime());
-                parentEntry.setLastWriteTime(newEntry.getLastWriteTime());
-                parentEntry.writeTo(stream);
-            }
-        } finally {
-            if (stream != null)
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        try (ClusterStream stream = new ClusterStream(getFileSystem(),
+                                                      FileAccess.Write,
+                                                      newEntry.getFirstCluster(),
+                                                      Integer.MAX_VALUE)) {
+            // First is the self-referencing entry...
+            DirectoryEntry selfEntry = new DirectoryEntry(newEntry);
+            selfEntry.setName(FileName.SelfEntryName);
+            selfEntry.writeTo(stream);
+            // Second is a clone of our self entry (i.e. parent) - though dates are odd...
+            DirectoryEntry parentEntry = new DirectoryEntry(getSelfEntry());
+            parentEntry.setName(FileName.ParentEntryName);
+            parentEntry.setCreationTime(newEntry.getCreationTime());
+            parentEntry.setLastWriteTime(newEntry.getLastWriteTime());
+            parentEntry.writeTo(stream);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 

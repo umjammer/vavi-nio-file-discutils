@@ -49,7 +49,7 @@ public class UdifPartitionInfo extends PartitionInfo {
     }
 
     public UUID getGuidType() {
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     public long getLastSector() {

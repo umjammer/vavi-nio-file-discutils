@@ -30,6 +30,7 @@ import java.util.Map;
 import vavi.util.win32.DateUtil;
 
 import DiscUtils.Core.IDiagnosticTraceable;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -147,7 +148,8 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
     }
 
     public static EnumSet<FileAttributeFlags> setAttributes(Map<String, Object> attrs, EnumSet<FileAttributeFlags> flags) {
-        Map<String, Object> attrMask = (FileAttributes) 0xFFFF & ~"Directory";
+        Map<String, Object> attrMask = FileAttributes.all();
+        FileAttributes.not(attrMask, FileAttributes.Directory);
         return FileAttributeFlags.valueOf((flags & 0xFFFF0000) | (int) (attrs & attrMask));
     }
 

@@ -5,9 +5,10 @@ package LibraryTests.Xfs;
 import java.io.File;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ import DiscUtils.Vhdx.DiskImageFile;
 import DiscUtils.Xfs.XfsFileSystem;
 import LibraryTests.Utilities.ZipUtilities;
 import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileStream;
+import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
@@ -90,19 +91,27 @@ public class SampleDataTests {
             assertTrue(xfs.fileExists("folder\\file.{i}"), "File file.{i} not found");
         }
 
-        try (Stream file = xfs.openFile("folder\\file.100", FileMode.Open)) {
-            MessageDigest md5 = MessageDigest.getInstance("MD5").ComputeHash(file);
-            assertEquals("620f0b67a91f7f74151bc5be745b7110", BitConverter.toString(md5).ToLowerInvariant().Replace("-", ""));
+        try (Stream file = xfs.openFile("folder\\file.100", FileMode.Open); MemoryStream ms = new MemoryStream()) {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            file.copyTo(ms);
+            byte[] checksum = md5.digest(ms.toArray());
+            assertEquals("620f0b67a91f7f74151bc5be745b7110",
+                         IntStream.range(0, checksum.length)
+                                 .mapToObj(i -> String.format("%02x", checksum[i]))
+                                 .collect(Collectors.joining()));
         }
 
-        try (Stream file = xfs.openFile("folder\\file.random", FileMode.Open)) {
-            MessageDigest md5 = MessageDigest.getInstance("MD5").ComputeHash(file);
+        try (Stream file = xfs.openFile("folder\\file.random", FileMode.Open); MemoryStream ms = new MemoryStream()) {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            file.copyTo(ms);
+            byte[] checksum = md5.digest(ms.toArray());
             assertEquals("9a202a11d6e87688591eb97714ed56f1",
-                         BitConverter.toString(md5).ToLowerInvariant().Replace("-", ""));
+                         IntStream.range(0, checksum.length)
+                                 .mapToObj(i -> String.format("%02x", checksum[i]))
+                                 .collect(Collectors.joining()));
         }
         for (int i = 1; i <= 999; i++) {
             assertTrue(xfs.fileExists("huge\\{i}"), "File huge/{i} not found");
         }
     }
-
 }

@@ -36,7 +36,7 @@ public class PreHeaderRecord {
 
     public int Signature;
 
-    public FileVersion Version = new FileVersion();
+    public FileVersion Version;
 
     public static PreHeaderRecord initialized() {
         PreHeaderRecord result = new PreHeaderRecord();

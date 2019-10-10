@@ -130,7 +130,7 @@ public final class Disk extends VirtualDisk {
      * BIOS geometry is preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
-        return DiskFactory.makeDiskTypeInfo(_diskImage.getIsSparse() ? "dynamic" : "fixed");
+        return DiskFactory.makeDiskTypeInfo(_diskImage.isSparse() ? "dynamic" : "fixed");
     }
 
     /**

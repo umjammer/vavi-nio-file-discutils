@@ -50,7 +50,7 @@ public class UdifPartitionTable extends PartitionTable {
     }
 
     public UUID getDiskGuid() {
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     /**

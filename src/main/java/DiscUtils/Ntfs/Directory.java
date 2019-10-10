@@ -117,7 +117,7 @@ public class Directory extends File {
             throw new IOException("Invalid file name, more than 255 characters: " + name);
         }
 
-        if ((name.indexOf('\0') & name.indexOf('/' )) != -1) {
+        if ((name.indexOf('\0') & name.indexOf('/')) != -1) {
             throw new IOException("Invalid file name, contains \'\\0\' or \'/\': " + name);
         }
 

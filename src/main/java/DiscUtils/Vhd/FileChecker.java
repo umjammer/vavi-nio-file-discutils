@@ -233,9 +233,9 @@ public class FileChecker {
             reportError("DynHeader: Invalid checksum");
         }
 
-        if (_footer.DiskType == FileType.Dynamic && _dynamicHeader.ParentUniqueId != UUID.fromString("")) {
+        if (_footer.DiskType == FileType.Dynamic && _dynamicHeader.ParentUniqueId != new UUID(0L, 0L)) {
             reportWarning("DynHeader: Parent Id is not null for dynamic disk");
-        } else if (_footer.DiskType == FileType.Differencing && _dynamicHeader.ParentUniqueId == UUID.fromString("")) {
+        } else if (_footer.DiskType == FileType.Differencing && _dynamicHeader.ParentUniqueId == new UUID(0L, 0L)) {
             reportError("DynHeader: Parent Id is null for differencing disk");
         }
 
@@ -294,7 +294,7 @@ public class FileChecker {
             reportError("Footer: Invalid footer checksum");
         }
 
-        if (_footer.UniqueId == UUID.fromString("")) {
+        if (_footer.UniqueId == new UUID(0L, 0L)) {
             reportWarning("Footer: Unique Id is null");
         }
 

@@ -71,7 +71,7 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
     }
 
     public UUID getGuidType() {
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     public long getLastSector() {

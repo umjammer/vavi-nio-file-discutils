@@ -68,7 +68,7 @@ public final class PartitionMap extends PartitionTable {
      * Gets the GUID of the disk, always returns UUID.Empty.
      */
     public UUID getDiskGuid() {
-        return UUID.fromString("");
+        return new UUID(0L, 0L);
     }
 
     /**

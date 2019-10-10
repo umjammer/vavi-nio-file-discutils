@@ -124,7 +124,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return false;
     }
 
