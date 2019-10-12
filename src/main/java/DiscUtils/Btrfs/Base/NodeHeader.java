@@ -175,7 +175,7 @@ public abstract class NodeHeader implements IByteArraySerializable {
         setFsUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20));
         setLogicalAddress(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30));
         //todo validate shift
-        setFlags(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38) >> 8);
+        setFlags(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38) >>> 8);
         setBackrefRevision(buffer[offset + 0x3f]);
         setChunkTreeUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x40));
         setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x50));

@@ -22,11 +22,14 @@
 
 package DiscUtils.Streams.Util;
 
+
 /**
  * Helper to count the number of bits set in a byte or byte[]
  */
 public class BitCounter {
+
     private static final byte[] _lookupTable;
+
     static {
         _lookupTable = new byte[256];
         for (int i = 0; i < 256; i++) {
@@ -38,7 +41,6 @@ public class BitCounter {
             }
             _lookupTable[i] = bitCount;
         }
-
     }
 
     /**
@@ -56,9 +58,7 @@ public class BitCounter {
      * count the number of bits set in each entry of
      * {@code values}
      *
-     * @param values the
-     *            {@link #Array}
-     *            to process
+     * @param values the array to process
      * @param offset the values offset to start from
      * @param count the number of bytes to count
      * @return
@@ -75,5 +75,4 @@ public class BitCounter {
         }
         return result;
     }
-
 }

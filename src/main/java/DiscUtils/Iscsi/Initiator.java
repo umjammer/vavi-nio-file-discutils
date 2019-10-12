@@ -22,17 +22,18 @@
 
 package DiscUtils.Iscsi;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 
 /**
- * Class representing an iSCSI initiator.
- * Normally, this is the first class instantiated when talking to an iSCSI
- * Portal (i.e. network entity).
- * Create an instance and configure it, before communicating with the Target.
+ * Class representing an iSCSI initiator. Normally, this is the first class
+ * instantiated when talking to an iSCSI Portal (i.e. network entity). Create an
+ * instance and configure it, before communicating with the Target.
  */
 public class Initiator {
+    @SuppressWarnings("unused")
     private static final int DefaultPort = 3260;
 
     private String _password;
@@ -105,12 +106,10 @@ public class Initiator {
      *         this method to discover the available Targets.
      */
     public TargetInfo[] getTargets(TargetAddress address) {
-        Session session = new Session(SessionType.Discovery, null, _userName, _password, Arrays.asList()); // TODO
-        try {
+        try (Session session = new Session(SessionType.Discovery, null, _userName, _password, Arrays.asList(address))) {
             return session.enumerateTargets();
-        } finally {
-            if (session != null)
-                session.close();
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 }

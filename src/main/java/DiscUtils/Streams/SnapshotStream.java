@@ -214,7 +214,7 @@ public final class SnapshotStream extends SparseStream {
      */
     public void flush() {
         checkFrozen();
-//        _baseStream.flush();
+        _baseStream.flush();
     }
 
     /**

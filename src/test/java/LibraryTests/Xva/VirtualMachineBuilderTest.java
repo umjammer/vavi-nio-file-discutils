@@ -60,7 +60,7 @@ public class VirtualMachineBuilderTest {
         MemoryStream ms = new MemoryStream();
         for (int i = 0; i < 1024 * 1024; ++i) {
             ms.setPosition(i * 10);
-            ms.writeByte((byte) (i ^ (i >> 8) ^ (i >> 16) ^ (i >> 24)));
+            ms.writeByte((byte) (i ^ (i >>> 8) ^ (i >>> 16) ^ (i >>> 24)));
         }
         vmb.addDisk("Foo", ms, Ownership.Dispose);
         vmb.build(xvaStream);
@@ -72,7 +72,7 @@ public class VirtualMachineBuilderTest {
         Stream diskContent = disks.get(0).getContent();
         for (int i = 0; i < 1024 * 1024; ++i) {
             diskContent.setPosition(i * 10);
-            if ((byte) (i ^ (i >> 8) ^ (i >> 16) ^ (i >> 24)) != diskContent.readByte()) {
+            if ((byte) (i ^ (i >>> 8) ^ (i >>> 16) ^ (i >>> 24)) != diskContent.readByte()) {
                 assertTrue(false, "Mismatch at offset " + i);
             }
         }

@@ -25,29 +25,30 @@ package DiscUtils.Ntfs;
 import java.io.PrintWriter;
 import java.security.Permission;
 import java.security.acl.Acl;
-import java.security.acl.AclEntry;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
+import moe.yo3explorer.dotnetio4j.AccessControlSections;
 import moe.yo3explorer.dotnetio4j.IOException;
+import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 
 public final class SecurityDescriptor implements IByteArraySerializable, IDiagnosticTraceable {
     public SecurityDescriptor() {
     }
 
-    public SecurityDescriptor(Permission secDesc) {
+    public SecurityDescriptor(RawSecurityDescriptor secDesc) {
         setDescriptor(secDesc);
     }
 
-    private Permission __Descriptor;
+    private RawSecurityDescriptor __Descriptor;
 
-    public Permission getDescriptor() {
+    public RawSecurityDescriptor getDescriptor() {
         return __Descriptor;
     }
 
-    public void setDescriptor(Permission value) {
+    public void setDescriptor(RawSecurityDescriptor value) {
         __Descriptor = value;
     }
 
@@ -56,7 +57,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setDescriptor(new Permission(buffer, offset));
+        setDescriptor(new RawSecurityDescriptor(buffer, offset));
         return getDescriptor().BinaryLength;
     }
 
@@ -102,7 +103,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "Descriptor: " + getDescriptor().GetSddlForm(AccessControlSections.All));
+        writer.println(indent + "Descriptor: " + getDescriptor().getSddlForm(AccessControlSections.All));
     }
 
     public int calcHash() {
@@ -110,15 +111,15 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         writeTo(buffer, 0);
         int hash = 0;
         for (int i = 0; i < buffer.length / 4; ++i) {
-            hash = EndianUtilities.toUInt32LittleEndian(buffer, i * 4) + ((hash << 3) | (hash >> 29));
+            hash = EndianUtilities.toUInt32LittleEndian(buffer, i * 4) + ((hash << 3) | (hash >>> 29));
         }
         return hash;
     }
 
-    public static AclEntry calcNewObjectDescriptor(Permission parent, boolean isContainer) {
+    public static RawSecurityDescriptor calcNewObjectDescriptor(RawSecurityDescriptor parent, boolean isContainer) {
         Acl sacl = inheritAcl(parent.SystemAcl, isContainer);
         Acl dacl = InheritAcl(parent.DiscretionaryAcl, isContainer);
-        return new AclEntry(parent.ControlFlags, parent.Owner, parent.Group, sacl, dacl);
+        return new RawSecurityDescriptor(parent.ControlFlags, parent.Owner, parent.Group, sacl, dacl);
     }
 
     private static Acl inheritAcl(Acl parentAcl, boolean isContainer) {

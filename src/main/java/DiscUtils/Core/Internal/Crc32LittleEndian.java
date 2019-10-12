@@ -26,9 +26,8 @@ package DiscUtils.Core.Internal;
  * Calculates CRC32 of buffers.
  */
 public final class Crc32LittleEndian extends Crc32 {
-    private static final int[][] Tables;
+    private static final int[][] Tables = new int[4][];
     static {
-        Tables = new int[4][];
         Tables[Crc32Algorithm.Common.ordinal()] = calcTable(0xEDB88320);
         Tables[Crc32Algorithm.Castagnoli.ordinal()] = calcTable(0x82F63B78);
         Tables[Crc32Algorithm.Koopman.ordinal()] = calcTable(0xEB31D82E);
@@ -54,9 +53,9 @@ public final class Crc32LittleEndian extends Crc32 {
             int crc = i;
             for (int j = 8; j > 0; --j) {
                 if ((crc & 1) != 0) {
-                    crc = (crc >> 1) ^ polynomial;
+                    crc = (crc >>> 1) ^ polynomial;
                 } else {
-                    crc >>= 1;
+                    crc >>>= 1;
                 }
             }
             table[i] = crc;
@@ -68,11 +67,10 @@ public final class Crc32LittleEndian extends Crc32 {
         int value = accumulator;
         for (int i = 0; i < count; ++i) {
             byte b = buffer[offset + i];
-            int temp1 = (value >> 8) & 0x00FFFFFF;
+            int temp1 = (value >>> 8) & 0x00FFFFFF;
             int temp2 = table[(value ^ b) & 0xFF];
             value = temp1 ^ temp2;
         }
         return value;
     }
-
 }

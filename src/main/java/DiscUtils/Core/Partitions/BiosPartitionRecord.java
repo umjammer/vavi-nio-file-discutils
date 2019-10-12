@@ -171,11 +171,11 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = getStatus();
         buffer[offset + 1] = getStartHead();
-        buffer[offset + 2] = (byte) ((getStartSector() & 0x3F) | ((getStartCylinder() >> 2) & 0xC0));
+        buffer[offset + 2] = (byte) ((getStartSector() & 0x3F) | ((getStartCylinder() >>> 2) & 0xC0));
         buffer[offset + 3] = (byte) getStartCylinder();
         buffer[offset + 4] = getPartitionType();
         buffer[offset + 5] = getEndHead();
-        buffer[offset + 6] = (byte) ((getEndSector() & 0x3F) | ((getEndCylinder() >> 2) & 0xC0));
+        buffer[offset + 6] = (byte) ((getEndSector() & 0x3F) | ((getEndCylinder() >>> 2) & 0xC0));
         buffer[offset + 7] = (byte) getEndCylinder();
         EndianUtilities.writeBytesLittleEndian(getLBAStart(), buffer, offset + 8);
         EndianUtilities.writeBytesLittleEndian(getLBALength(), buffer, offset + 12);

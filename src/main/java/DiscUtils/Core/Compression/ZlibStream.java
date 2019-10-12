@@ -155,7 +155,7 @@ public class ZlibStream extends Stream {
      * Flushes the stream.
      */
     public void flush() {
-//        _deflateStream.flush();
+        _deflateStream.flush();
     }
 
     /**

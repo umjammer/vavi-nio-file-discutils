@@ -241,7 +241,7 @@ public class HfsPlusUtilities {
         result.setUserId(EndianUtilities.toInt32BigEndian(buffer, offset + 0));
         result.setGroupId(EndianUtilities.toInt32BigEndian(buffer, offset + 4));
         short fileMode = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
-        result.setFileType(UnixFileType.valueOf((fileMode >> 12) & 0xF));
+        result.setFileType(UnixFileType.valueOf((fileMode >>> 12) & 0xF));
         result.setPermissions(UnixFilePermissions.valueOf(fileMode & 0xFFF));
         special[0] = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
         if (result.getFileType() == UnixFileType.Block || result.getFileType() == UnixFileType.Character) {
@@ -259,7 +259,7 @@ public class HfsPlusUtilities {
             char bChar = '\0';
             while (aPos < a.length() && aChar == '\0') {
                 aChar = a.charAt(aPos++);
-                int temp = _lowerCaseTable[(aChar >> 8) & 0xFF];
+                int temp = _lowerCaseTable[(aChar >>> 8) & 0xFF];
                 if (temp != 0) {
                     aChar = (char) _lowerCaseTable[temp + (aChar & 0xFF)];
                 }
@@ -267,7 +267,7 @@ public class HfsPlusUtilities {
             }
             while (bPos < b.length() && bChar == '\0') {
                 bChar = b.charAt(bPos++);
-                int temp = _lowerCaseTable[(bChar >> 8) & 0xFF];
+                int temp = _lowerCaseTable[(bChar >>> 8) & 0xFF];
                 if (temp != 0) {
                     bChar = (char) _lowerCaseTable[temp + (bChar & 0xFF)];
                 }

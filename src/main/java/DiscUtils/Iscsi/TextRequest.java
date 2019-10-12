@@ -37,6 +37,7 @@ public class TextRequest {
     private int _expectedStatusSequenceNumber;
 
     // Per-connection (ack)
+    @SuppressWarnings("unused")
     private long _lun;
 
     private final int _targetTransferTag = 0xFFFFFFFF;
@@ -52,11 +53,11 @@ public class TextRequest {
         _basicHeader.FinalPdu = isFinalData;
         _basicHeader.TotalAhsLength = 0;
         _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.Session.CurrentTaskTag;
+        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
         _continue = !isFinalData;
         _lun = lun;
-        _commandSequenceNumber = _connection.Session.CommandSequenceNumber;
-        _expectedStatusSequenceNumber = _connection.ExpectedStatusSequenceNumber;
+        _commandSequenceNumber = _connection.getSession().getCommandSequenceNumber();
+        _expectedStatusSequenceNumber = _connection.getExpectedStatusSequenceNumber();
         byte[] buffer = new byte[MathUtilities.roundUp(48 + count, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] |= (byte) (_continue ? 0x40 : 0x00);

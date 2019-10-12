@@ -42,8 +42,8 @@ public class Inode implements IByteArraySerializable {
     public Inode(long number, Context context) {
         SuperBlock sb = context.getSuperBlock();
         setRelativeInodeNumber((int) (number & sb.getRelativeInodeMask()));
-        setAllocationGroup((int) ((number & sb.getAgInodeMask()) >> (sb.getAgBlocksLog2() + sb.getInodesPerBlockLog2())));
-        setAgBlock((int) ((number >> context.getSuperBlock().getInodesPerBlockLog2()) &
+        setAllocationGroup((int) ((number & sb.getAgInodeMask()) >>> (sb.getAgBlocksLog2() + sb.getInodesPerBlockLog2())));
+        setAgBlock((int) ((number >>> context.getSuperBlock().getInodesPerBlockLog2()) &
                           xFS_INO_MASK(context.getSuperBlock().getAgBlocksLog2())));
         setBlockOffset((int) (number & xFS_INO_MASK(sb.getInodesPerBlockLog2())));
     }
@@ -491,7 +491,7 @@ public class Inode implements IByteArraySerializable {
     }
 
     public UnixFileType getFileType() {
-        return UnixFileType.valueOf((getMode() >> 12) & 0xF);
+        return UnixFileType.valueOf((getMode() >>> 12) & 0xF);
     }
 
     private byte[] __DataFork;

@@ -25,6 +25,7 @@ package DiscUtils.Net.Dns;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -36,10 +37,13 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.naming.Context;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
 import org.bouncycastle.util.IPAddress;
+
+import moe.yo3explorer.dotnetio4j.IOException;
 
 
 /**
@@ -144,22 +148,26 @@ public final class UnicastDnsClient extends DnsClient {
 
     // Do nothing - bad packet (probably...)
     private static InetSocketAddress[] getDefaultDnsServers() {
-        Map<InetSocketAddress, Object> addresses = new HashMap<>();
-        for (NetworkInterface nic : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-            if (nic.isUp()) {
-                Hashtable<String, String> env = new Hashtable<>();
-                env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
-                DirContext ictx = new InitialDirContext(env);
-                String dnsServers = (String) ictx.getEnvironment().get("java.naming.provider.url");
-                for (String _address : dnsServers.split(",")) {
-                    URI uri = URI.create(_address);
-                    InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort());
-                    if (address.AddressFamily == AddressFamily.InterNetwork && !addresses.containsKey(address)) {
-                        addresses.put(address, null);
+        try {
+            Map<InetSocketAddress, Object> addresses = new HashMap<>();
+            for (NetworkInterface nic : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                if (nic.isUp()) {
+                    Hashtable<String, String> env = new Hashtable<>();
+                    env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
+                    DirContext ictx = new InitialDirContext(env);
+                    String dnsServers = (String) ictx.getEnvironment().get("java.naming.provider.url");
+                    for (String _address : dnsServers.split(",")) {
+                        URI uri = URI.create(_address);
+                        InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort());
+                        if (!addresses.containsKey(address)) {
+                            addresses.put(address, null);
+                        }
                     }
                 }
             }
+            return new ArrayList<>(addresses.keySet()).toArray(new InetSocketAddress[addresses.size()]);
+        } catch (NamingException | SocketException e) {
+            throw new IOException(e);
         }
-        return new ArrayList<>(addresses.keySet()).toArray(new InetSocketAddress[addresses.size()]);
     }
 }

@@ -38,7 +38,7 @@ public class ShortResourceHeader {
 
     public void read(byte[] buffer, int offset) {
         CompressedSize = EndianUtilities.toInt64LittleEndian(buffer, offset);
-        Flags = ResourceFlags.valueOf((int) (CompressedSize >> 56) & 0xFF);
+        Flags = ResourceFlags.valueOf((int) (CompressedSize >>> 56) & 0xFF);
         CompressedSize = CompressedSize & 0x00FFFFFFFFFFFFFFl;
         FileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 8);
         OriginalSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);

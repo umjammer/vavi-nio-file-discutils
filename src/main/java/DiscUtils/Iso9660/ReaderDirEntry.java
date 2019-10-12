@@ -113,7 +113,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
         if (_context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty()) {
             PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "PX");
             if (pfi != null) {
-                attrs = Utilities.fileAttributesFromUnixFileType(UnixFileType.valueOf((pfi.FileMode >> 12) & 0xF));
+                attrs = Utilities.fileAttributesFromUnixFileType(UnixFileType.valueOf((pfi.FileMode >>> 12) & 0xF));
             }
 
             if (_fileName.startsWith(".")) {

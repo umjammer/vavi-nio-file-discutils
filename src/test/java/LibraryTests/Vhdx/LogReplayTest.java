@@ -23,7 +23,7 @@
 package LibraryTests.Vhdx;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.net.URI;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 public class LogReplayTest {
     @Test
     public void replayLog() throws Exception {
-        File fs = Paths.get("..", "..", "..", "Vhdx", "Data", "vhdx-log-replay.zip").toFile();
+        File fs = new File(URI.create(getClass().getResource("vhdx-log-replay.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
                 Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {

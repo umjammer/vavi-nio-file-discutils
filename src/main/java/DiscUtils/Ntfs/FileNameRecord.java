@@ -150,7 +150,9 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
     public static EnumSet<FileAttributeFlags> setAttributes(Map<String, Object> attrs, EnumSet<FileAttributeFlags> flags) {
         Map<String, Object> attrMask = FileAttributes.all();
         FileAttributes.not(attrMask, FileAttributes.Directory);
-        return FileAttributeFlags.valueOf((flags & 0xFFFF0000) | (int) (attrs & attrMask));
+        EnumSet<FileAttributeFlags> newFlags = FileAttributeFlags.and(flags, 0xFFFF0000);
+        newFlags.addAll(FileAttributeFlags.and(attrs, attrMask));
+        return newFlags;
     }
 
     public static Map<String, Object> convertFlags(EnumSet<FileAttributeFlags> flags) {

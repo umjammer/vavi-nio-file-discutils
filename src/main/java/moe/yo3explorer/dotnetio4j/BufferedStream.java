@@ -22,18 +22,30 @@ import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
  */
 public class BufferedStream extends JavaIOStream {
 
-    static InputStream toInputStream(Stream stream) {
-        return new BufferedInputStream(new StreamInputStream(stream));
+    static InputStream toInputStream(Stream stream, int bufferSize) {
+        if (bufferSize > 0) {
+            return new BufferedInputStream(new StreamInputStream(stream), bufferSize);
+        } else {
+            return new BufferedInputStream(new StreamInputStream(stream));
+        }
     }
 
-    static OutputStream toOutputStream(Stream stream) {
-        return new BufferedOutputStream(new StreamOutputStream(stream));
+    static OutputStream toOutputStream(Stream stream, int bufferSize) {
+        if (bufferSize > 0) {
+            return new BufferedOutputStream(new StreamOutputStream(stream), bufferSize);
+        } else {
+            return new BufferedOutputStream(new StreamOutputStream(stream));
+        }
     }
 
-    /**
-     */
+    /** */
     public BufferedStream(Stream stream) {
-        super(toInputStream(stream), toOutputStream(stream));
+        this(stream, 0);
+    }
+
+    /** */
+    public BufferedStream(Stream stream, int bufferSize) {
+        super(toInputStream(stream, bufferSize), toOutputStream(stream, bufferSize));
     }
 }
 

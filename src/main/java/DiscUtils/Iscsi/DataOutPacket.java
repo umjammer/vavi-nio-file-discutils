@@ -49,13 +49,13 @@ public class DataOutPacket {
         _basicHeader.FinalPdu = isFinalData;
         _basicHeader.TotalAhsLength = 0;
         _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.Session.CurrentTaskTag;
+        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[48 + MathUtilities.roundUp(count, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] = (byte) (isFinalData ? 0x80 : 0x00);
         EndianUtilities.writeBytesBigEndian(_lun, buffer, 8);
         EndianUtilities.writeBytesBigEndian(targetTransferTag, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_connection.ExpectedStatusSequenceNumber, buffer, 28);
+        EndianUtilities.writeBytesBigEndian(_connection.getExpectedStatusSequenceNumber(), buffer, 28);
         EndianUtilities.writeBytesBigEndian(dataSeqNumber, buffer, 36);
         EndianUtilities.writeBytesBigEndian(bufferOffset, buffer, 40);
         System.arraycopy(data, offset, buffer, 48, count);

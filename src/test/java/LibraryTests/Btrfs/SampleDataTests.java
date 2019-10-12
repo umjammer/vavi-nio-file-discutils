@@ -3,7 +3,7 @@
 package LibraryTests.Btrfs;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +40,7 @@ public class SampleDataTests {
     public void btrfsVhdxZip() throws Exception {
 //        DiscUtils.Setup.SetupHelper.RegisterAssembly(Disk.class.getTypeInfo().Assembly);
 //        DiscUtils.Setup.SetupHelper.RegisterAssembly(BtrfsFileSystem.class.getTypeInfo().Assembly);
-        File fs = Paths.get("..", "..", "..", "Btrfs", "Data", "btrfs.zip").toFile();
+        File fs = new File(URI.create(getClass().getResource("btrfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
                 Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {

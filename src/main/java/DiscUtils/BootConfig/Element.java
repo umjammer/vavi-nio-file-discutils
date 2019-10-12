@@ -68,14 +68,14 @@ public class Element {
      * Gets the class of the element.
      */
     public ElementClass getClass_() {
-        return ElementClass.valueOf((_identifier >> 28) & 0xF);
+        return ElementClass.valueOf((_identifier >>> 28) & 0xF);
     }
 
     /**
      * Gets the element's format.
      */
     public ElementFormat getFormat() {
-        return ElementFormat.valueOf((_identifier >> 24) & 0xF);
+        return ElementFormat.valueOf((_identifier >>> 24) & 0xF);
     }
 
     /**
@@ -393,7 +393,7 @@ public class Element {
     }
 
     private static ElementClass getClass(int identifier) {
-        return ElementClass.values()[((identifier >> 28) & 0xF)];
+        return ElementClass.values()[((identifier >>> 28) & 0xF)];
     }
 
     private ElementValue loadValue() {

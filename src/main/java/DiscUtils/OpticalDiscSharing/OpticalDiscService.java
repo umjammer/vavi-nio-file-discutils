@@ -41,6 +41,9 @@ import DiscUtils.Net.Dns.ServiceInstance;
 import DiscUtils.Net.Dns.ServiceInstanceEndPoint;
 import DiscUtils.Net.Dns.ServiceInstanceFields;
 import moe.yo3explorer.dotnetio4j.Stream;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 /**
@@ -55,9 +58,15 @@ public final class OpticalDiscService {
 
     private String _userName;
 
+    OkHttpClient client;
+
     public OpticalDiscService(ServiceInstance instance, ServiceDiscoveryClient sdClient) {
         _sdClient = sdClient;
         _instance = instance;
+        client = new OkHttpClient().newBuilder()
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .build();
     }
 
     /**
@@ -146,9 +155,9 @@ public final class OpticalDiscService {
         Duration maxWait = Duration.ofSeconds(maxWaitSecs);
         while (askStatus.equals("unknown") && maxWait.compareTo(Duration.between(Instant.now(), start)) > 0) {
             Thread.sleep(1000);
-            WebRequest wreq = WebRequest.Create(uri);
+            Request wreq = client.Request.Create(uri);
             wreq.Method = "GET";
-            WebResponse wrsp = wreq.GetResponse();
+            Response wrsp = wreq.GetResponse();
             Stream inStream = wrsp.GetResponseStream();
             try {
                 Map<String, Object> plist = Plist.parse(inStream);
@@ -171,7 +180,7 @@ public final class OpticalDiscService {
 
     private static String initiateAsk(String userName, String computerName, URI uri) {
         URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask");
-        HttpWebRequest wreq = (HttpWebRequest) WebRequest.Create(uri);
+        Request wreq = (HttpWebRequest) WebRequest.Create(uri);
         wreq.Method = "POST";
         Map<String, Object> req = new HashMap<>();
         req.put("askDevice", "");
@@ -186,7 +195,7 @@ public final class OpticalDiscService {
 
         }
         String askId;
-        WebResponse wrsp = wreq.GetResponse();
+        Response wrsp = wreq.GetResponse();
         Stream inStream = wrsp.GetResponseStream();
         try {
             Map<String, Object> plist = Plist.parse(inStream);

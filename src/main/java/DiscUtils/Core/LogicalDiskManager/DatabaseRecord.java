@@ -82,57 +82,48 @@ public abstract class DatabaseRecord {
         for (int i = 0; i < length; ++i) {
             result = (result << 8) | buffer[offset[0] + i + 1];
         }
-        offset[0] = offset[0] + (length + 1);
+        offset[0] += length + 1;
         return result;
     }
 
     protected static long readVarLong(byte[] buffer, int[] offset) {
-        int length = buffer[offset[0]];
-
-        long result = 0;
-        for (int i = 0; i < length; ++i) {
-            result = (result << 8) | buffer[offset[0] + i + 1];
-        }
-
-        offset[0] += length + 1;
-
-        return result;
+        return readVarULong(buffer, offset);
     }
 
     protected static String readVarString(byte[] buffer, int[] offset) {
         int length = buffer[offset[0]];
         String result = EndianUtilities.bytesToString(buffer, offset[0] + 1, length);
-        offset[0] = offset[0] + (length + 1);
+        offset[0] += length + 1;
         return result;
     }
 
     protected static byte readByte(byte[] buffer, int[] offset) {
-        return buffer[offset[0] = offset[0] + 1];
+        return buffer[offset[0]++];
     }
 
     protected static int readUInt(byte[] buffer, int[] offset) {
-        offset[0] = offset[0] + 4;
+        offset[0] += 4;
         return EndianUtilities.toUInt32BigEndian(buffer, offset[0] - 4);
     }
 
     protected static long readLong(byte[] buffer, int[] offset) {
-        offset[0] = offset[0] + 8;
+        offset[0] += 8;
         return EndianUtilities.toInt64BigEndian(buffer, offset[0] - 8);
     }
 
     protected static long readULong(byte[] buffer, int[] offset) {
-        offset[0] = offset[0] + 8;
+        offset[0] += 8;
         return EndianUtilities.toUInt64BigEndian(buffer, offset[0] - 8);
     }
 
     protected static String readString(byte[] buffer, int len, int[] offset) {
-        offset[0] = offset[0] + len;
+        offset[0] += len;
         return EndianUtilities.bytesToString(buffer, offset[0] - len, len);
     }
 
     protected static UUID readBinaryGuid(byte[] buffer, int[] offset) {
-        offset[0] = offset[0] + 16;
-        return EndianUtilities.toGuidBigEndian(buffer, new int[] { offset[0] - 16 });
+        offset[0] += 16;
+        return EndianUtilities.toGuidBigEndian(buffer, offset[0] - 16);
     }
 
     protected void doReadFrom(byte[] buffer, int offset) {
@@ -144,5 +135,4 @@ public abstract class DatabaseRecord {
         _RecordType = RecordType.valueOf(Flags & 0xF);
         DataLength = EndianUtilities.toUInt32BigEndian(buffer, 0x14);
     }
-
 }

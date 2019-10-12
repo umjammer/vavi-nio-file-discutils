@@ -80,9 +80,9 @@ public class Extent implements IByteArraySerializable {
         long middle = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x6);
         long upper = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
         setBlockCount((int) (lower & 0x001FFFFF));
-        setStartBlock((middle >> 5) & 0x000FFFFFFFFFFFFFl);
-        setStartOffset((upper >> 9) & 0x003FFFFFFFFFFFFFl);
-        setFlag(ExtentFlag.valueOf((buffer[offset + 0x0] >> 6) & 0x3));
+        setStartBlock((middle >>> 5) & 0x000FFFFFFFFFFFFFl);
+        setStartOffset((upper >>> 9) & 0x003FFFFFFFFFFFFFl);
+        setFlag(ExtentFlag.valueOf((buffer[offset + 0x0] >>> 6) & 0x3));
         return (int) getSize();
     }
 
@@ -95,7 +95,7 @@ public class Extent implements IByteArraySerializable {
     }
 
     public static long getOffset(Context context, long block) {
-        long daddr = (block >> context.getSuperBlock().getAgBlocksLog2()) * context.getSuperBlock().getAgBlocks() +
+        long daddr = (block >>> context.getSuperBlock().getAgBlocksLog2()) * context.getSuperBlock().getAgBlocks() +
                      (block &
                       (1 << context.getSuperBlock().getAgBlocksLog2()) - 1) << (context.getSuperBlock().getBlocksizeLog2() - 9);
         return daddr * 512;

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -275,9 +276,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param capacity The desired capacity of the new disk.
      * @return An object that accesses the stream as a VHDX file.
      */
-    public static DiskImageFile initializeFixed(Stream stream,
-                                                Ownership ownsStream,
-                                                long capacity) {
+    public static DiskImageFile initializeFixed(Stream stream, Ownership ownsStream, long capacity) {
         return initializeFixed(stream, ownsStream, capacity, null);
     }
 
@@ -293,10 +292,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            for default.
      * @return An object that accesses the stream as a VHDX file.
      */
-    public static DiskImageFile initializeFixed(Stream stream,
-                                                Ownership ownsStream,
-                                                long capacity,
-                                                Geometry geometry) {
+    public static DiskImageFile initializeFixed(Stream stream, Ownership ownsStream, long capacity, Geometry geometry) {
         initializeFixedInternal(stream, capacity, geometry);
         return new DiskImageFile(stream, ownsStream);
     }
@@ -310,9 +306,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param capacity The desired capacity of the new disk.
      * @return An object that accesses the stream as a VHDX file.
      */
-    public static DiskImageFile initializeDynamic(Stream stream,
-                                                  Ownership ownsStream,
-                                                  long capacity) {
+    public static DiskImageFile initializeDynamic(Stream stream, Ownership ownsStream, long capacity) {
         initializeDynamicInternal(stream, capacity, FileParameters.DefaultDynamicBlockSize);
         return new DiskImageFile(stream, ownsStream);
     }
@@ -327,10 +321,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param blockSize The size of each block (unit of allocation).
      * @return An object that accesses the stream as a VHDX file.
      */
-    public static DiskImageFile initializeDynamic(Stream stream,
-                                                  Ownership ownsStream,
-                                                  long capacity,
-                                                  long blockSize) {
+    public static DiskImageFile initializeDynamic(Stream stream, Ownership ownsStream, long capacity, long blockSize) {
         initializeDynamicInternal(stream, capacity, blockSize);
         return new DiskImageFile(stream, ownsStream);
     }
@@ -409,16 +400,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                 long capacity,
                                                 Geometry geometry) throws IOException {
         DiskImageFile result = null;
-        Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-        try {
+        try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeFixedInternal(stream, capacity, geometry);
             result = new DiskImageFile(locator, path, stream, Ownership.Dispose);
-            stream = null;
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-
         }
         return result;
     }
@@ -428,16 +412,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                   long capacity,
                                                   long blockSize) throws IOException {
         DiskImageFile result = null;
-        Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-        try {
+        try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeDynamicInternal(stream, capacity, blockSize);
             result = new DiskImageFile(locator, path, stream, Ownership.Dispose);
-            stream = null;
-        } finally {
-            if (stream != null) {
-                stream.close();
-            }
-
         }
         return result;
     }
@@ -472,6 +449,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Disposes of underlying resources.
+     * 
      * @throws IOException
      */
     public void close() throws IOException {
@@ -505,10 +483,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
         int physicalSectorSize = 4096;
         long chunkRatio = 0x800000L * logicalSectorSize / blockSize;
         long dataBlocksCount = MathUtilities.ceil(capacity, blockSize);
+        @SuppressWarnings("unused")
         long sectorBitmapBlocksCount = MathUtilities.ceil(dataBlocksCount, chunkRatio);
         long totalBatEntriesDynamic = dataBlocksCount + (dataBlocksCount - 1) / chunkRatio;
+
         FileHeader fileHeader = new FileHeader();
+        fileHeader.Creator = ".NET DiscUtils";
+
         long fileEnd = Sizes.OneMiB;
+
         VhdxHeader header1 = new VhdxHeader();
         header1.SequenceNumber = 0;
         header1.FileWriteGuid = UUID.randomUUID();
@@ -519,48 +502,64 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header1.LogLength = (int) Sizes.OneMiB;
         header1.LogOffset = fileEnd;
         header1.calcChecksum();
+
         fileEnd += header1.LogLength;
+
         VhdxHeader header2 = new VhdxHeader(header1);
         header2.SequenceNumber = 1;
         header2.calcChecksum();
+
         RegionTable regionTable = new RegionTable();
+
         RegionEntry metadataRegion = new RegionEntry();
         metadataRegion.Guid = RegionEntry.MetadataRegionGuid;
         metadataRegion.FileOffset = fileEnd;
         metadataRegion.Length = (int) Sizes.OneMiB;
         metadataRegion.Flags = RegionFlags.Required;
         regionTable.Regions.put(metadataRegion.Guid, metadataRegion);
+
         fileEnd += metadataRegion.Length;
+
         RegionEntry batRegion = new RegionEntry();
         batRegion.Guid = RegionEntry.BatGuid;
         batRegion.FileOffset = 3 * Sizes.OneMiB;
         batRegion.Length = (int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB);
         batRegion.Flags = RegionFlags.Required;
         regionTable.Regions.put(batRegion.Guid, batRegion);
+
         fileEnd += batRegion.Length;
+
         stream.setPosition(0);
         StreamUtilities.writeStruct(stream, fileHeader);
+
         stream.setPosition(64 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, header1);
+
         stream.setPosition(128 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, header2);
+
         stream.setPosition(192 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, regionTable);
+
         stream.setPosition(256 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, regionTable);
+
         // Set stream to min size
         stream.setPosition(fileEnd - 1);
         stream.writeByte((byte) 0);
+
         // Metadata
         FileParameters fileParams = new FileParameters();
+        fileParams.BlockSize = (int) blockSize;
+        fileParams.Flags = EnumSet.of(FileParametersFlags.None);
+
+        @SuppressWarnings("unused")
         ParentLocator parentLocator = new ParentLocator();
+
         Stream metadataStream = new SubStream(stream, metadataRegion.FileOffset, metadataRegion.Length);
-        Metadata metadata = Metadata.initialize(metadataStream,
-                                                fileParams,
-                                                capacity,
-                                                logicalSectorSize,
-                                                physicalSectorSize,
-                                                null);
+        @SuppressWarnings("unused")
+        Metadata metadata = Metadata
+                .initialize(metadataStream, fileParams, capacity, logicalSectorSize, physicalSectorSize, null);
     }
 
     private static void initializeDifferencingInternal(Stream stream,
@@ -574,7 +573,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     private void initialize() {
         _fileStream.setPosition(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, _fileStream);
-        if (!fileHeader.getIsValid()) {
+        if (!fileHeader.isValid()) {
             throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - file signature mismatch");
         }
 
@@ -590,7 +589,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
             _header.FileWriteGuid = UUID.randomUUID();
             writeHeader();
         }
-
     }
 
     private List<StreamExtent> batControlledFileExtents() {
@@ -602,7 +600,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         List<StreamExtent> extents = new ArrayList<>();
         for (int i = 0; i < batData.length; i += 8) {
             long entry = EndianUtilities.toUInt64LittleEndian(batData, i);
-            long filePos = ((entry >> 20) & 0xFFFFFFFFFFFl) * Sizes.OneMiB;
+            long filePos = ((entry >>> 20) & 0xFFFFFFFFFFFl) * Sizes.OneMiB;
             if (filePos != 0) {
                 if (i % ((chunkRatio + 1) * 8) == chunkRatio * 8) {
                     // This is a sector bitmap block (always 1MB in size)
@@ -611,7 +609,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     extents.add(new StreamExtent(filePos, blockSize));
                 }
             }
-
         }
         Collections.sort(extents);
         return extents;
@@ -659,15 +656,12 @@ public final class DiskImageFile extends VirtualDiskLayer {
             }
             _logicalStream.seek(activeLogSequence.getHead().getLastFileOffset(), SeekOrigin.Begin);
         }
-
     }
 
     private LogSequence findActiveLogSequence() {
 
-        try (Stream logStream = new CircularStream(new SubStream(_fileStream,
-                                                                           _header.LogOffset,
-                                                                           _header.LogLength),
-                                                             Ownership.Dispose)) {
+        try (Stream logStream = new CircularStream(new SubStream(_fileStream, _header.LogOffset, _header.LogLength),
+                                                   Ownership.Dispose)) {
             LogSequence candidateActiveSequence = new LogSequence();
             LogEntry[] logEntry = new LogEntry[1];
             long oldTail;
@@ -676,7 +670,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 oldTail = currentTail;
                 logStream.setPosition(currentTail);
                 LogSequence currentSequence = new LogSequence();
-                while (LogEntry.tryRead(logStream, logEntry) && logEntry[0].getLogGuid() == _header.LogGuid &&
+                while (LogEntry.tryRead(logStream, logEntry) && logEntry[0].getLogGuid().equals(_header.LogGuid) &&
                        (currentSequence.size() == 0 ||
                         logEntry[0].getSequenceNumber() == currentSequence.getHead().getSequenceNumber() + 1)) {
                     currentSequence.add(logEntry[0]);
@@ -705,10 +699,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _regionTable = StreamUtilities.readStruct(RegionTable.class, _fileStream);
         for (RegionEntry entry : _regionTable.Regions.values()) {
             if (entry.Flags == RegionFlags.Required) {
-                if (entry.Guid != RegionTable.BatGuid && entry.Guid != RegionTable.MetadataRegionGuid) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - unrecognised required region");
+                if (!entry.Guid.equals(RegionTable.BatGuid) && !entry.Guid.equals(RegionTable.MetadataRegionGuid)) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - unrecognised required region: " + entry.Guid);
                 }
-
             }
 
             _freeSpace.reserve(entry.FileOffset, entry.Length);
@@ -720,14 +713,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _activeHeader = 0;
         _fileStream.setPosition(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, _fileStream);
-        if (vhdxHeader1.getIsValid()) {
+        if (vhdxHeader1.isValid()) {
             _header = vhdxHeader1;
             _activeHeader = 1;
         }
 
         _fileStream.setPosition(128 * Sizes.OneKiB);
         VhdxHeader vhdxHeader2 = StreamUtilities.readStruct(VhdxHeader.class, _fileStream);
-        if (vhdxHeader2.getIsValid() && (_activeHeader == 0 || _header.SequenceNumber < vhdxHeader2.SequenceNumber)) {
+        if (vhdxHeader2.isValid() && (_activeHeader == 0 || _header.SequenceNumber < vhdxHeader2.SequenceNumber)) {
             _header = vhdxHeader2;
             _activeHeader = 2;
         }
@@ -735,13 +728,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         if (_activeHeader == 0) {
             throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - no valid VHDX headers found");
         }
-
     }
 
     private void writeHeader() {
         long otherPos;
+
         _header.SequenceNumber++;
         _header.calcChecksum();
+
         if (_activeHeader == 1) {
             _fileStream.setPosition(128 * Sizes.OneKiB);
             otherPos = 64 * Sizes.OneKiB;
@@ -749,13 +743,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
             _fileStream.setPosition(64 * Sizes.OneKiB);
             otherPos = 128 * Sizes.OneKiB;
         }
+
         StreamUtilities.writeStruct(_fileStream, _header);
-//        _fileStream.flush();
+        _fileStream.flush();
+
         _header.SequenceNumber++;
         _header.calcChecksum();
+
         _fileStream.setPosition(otherPos);
         StreamUtilities.writeStruct(_fileStream, _header);
-//        _fileStream.flush();
+        _fileStream.flush();
     }
 
     /**
@@ -790,5 +787,4 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         return paths;
     }
-
 }

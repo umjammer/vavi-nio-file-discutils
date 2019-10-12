@@ -886,7 +886,7 @@ public class SuperBlock implements IByteArraySerializable {
         }
 
         long agOffset = getAgBlocksLog2() + getInodesPerBlockLog2();
-        setRelativeInodeMask(0xffffffff >> (32 - agOffset));
+        setRelativeInodeMask(0xffffffff >>> (32 - agOffset));
         setAgInodeMask(~getRelativeInodeMask());
         setDirBlockSize(getBlocksize() << getDirBlockLog2());
         return (int) getSize();

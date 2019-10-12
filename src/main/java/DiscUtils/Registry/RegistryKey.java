@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import org.omg.CORBA.Environment;
-
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
+import moe.yo3explorer.dotnetio4j.RegistryValueOptions;
+import moe.yo3explorer.dotnetio4j.compat.RegistrySecurity;
 
 
 /**
@@ -163,7 +163,8 @@ public final class RegistryKey {
     public List<String> getSubKeyNames() {
         List<String> names = new ArrayList<>();
         if (_cell.NumSubKeys != 0) {
-            _hive.getCell(_cell.SubKeysIndex).enumerateKeys(names);
+            ListCell cell = _hive.getCell(_cell.SubKeysIndex);
+            cell.enumerateKeys(names);
         }
 
         return names;
@@ -179,7 +180,7 @@ public final class RegistryKey {
      *         typeStringstringExpandStringstringLinkstringDWorduintDWordBigEndianuintMultiStringstring[]QWordulong
      */
     public Object getValue(String name) {
-        return GetValue(name, null, RegistryValueOptions.None);
+        return getValue(name, null, RegistryValueOptions.None);
     }
 
     /**
@@ -194,7 +195,7 @@ public final class RegistryKey {
      *         typeStringstringExpandStringstringLinkstringDWorduintDWordBigEndianuintMultiStringstring[]QWordulong
      */
     public Object getValue(String name, Object defaultValue) {
-        return GetValue(name, defaultValue, RegistryValueOptions.None);
+        return getValue(name, defaultValue, RegistryValueOptions.None);
     }
 
     /**
@@ -214,8 +215,8 @@ public final class RegistryKey {
         RegistryValue regVal = getRegistryValue(name);
         if (regVal != null) {
             if (regVal.getDataType() == RegistryValueType.ExpandString &&
-                (options & RegistryValueOptions.DoNotExpandEnvironmentNames) == 0) {
-                return Environment.ExpandEnvironmentVariables((String) regVal.getValue());
+                options == RegistryValueOptions.DoNotExpandEnvironmentNames) {
+                return System.getenv((String) regVal.getValue());
             }
 
             return regVal.getValue();

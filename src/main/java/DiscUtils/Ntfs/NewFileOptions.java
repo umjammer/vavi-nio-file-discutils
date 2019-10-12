@@ -22,8 +22,9 @@
 
 package DiscUtils.Ntfs;
 
-import java.security.SecurityPermission;
 import java.util.Optional;
+
+import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 /**
  * Options controlling how new NTFS files are created.
@@ -76,13 +77,13 @@ public final class NewFileOptions {
      * {@code null}
      * ) value indicates the security descriptor is inherited.
      */
-    private SecurityPermission __SecurityDescriptor;
+    private RawSecurityDescriptor __SecurityDescriptor;
 
-    public SecurityPermission getSecurityDescriptor() {
+    public RawSecurityDescriptor getSecurityDescriptor() {
         return __SecurityDescriptor;
     }
 
-    public void setSecurityDescriptor(SecurityPermission value) {
+    public void setSecurityDescriptor(RawSecurityDescriptor value) {
         __SecurityDescriptor = value;
     }
 }

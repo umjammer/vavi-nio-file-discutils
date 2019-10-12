@@ -22,7 +22,11 @@
 
 package DiscUtils.Registry;
 
+import java.nio.charset.Charset;
+
 import DiscUtils.Streams.Util.EndianUtilities;
+import moe.yo3explorer.dotnetio4j.AccessControlSections;
+import moe.yo3explorer.dotnetio4j.compat.RegistrySecurity;
 
 
 public final class SecurityCell extends Cell {
@@ -68,7 +72,7 @@ public final class SecurityCell extends Cell {
     }
 
     public long getSize() {
-        int sdLen = getSecurityDescriptor().GetSecurityDescriptorBinaryForm().length;
+        int sdLen = getSecurityDescriptor().getSecurityDescriptorBinaryForm().getBytes(Charset.forName("ASCII")).length;
         return 0x14 + sdLen;
     }
 
@@ -90,12 +94,12 @@ public final class SecurityCell extends Cell {
         byte[] secDesc = new byte[secDescSize];
         System.arraycopy(buffer, offset + 0x14, secDesc, 0, secDescSize);
         setSecurityDescriptor(new RegistrySecurity());
-        getSecurityDescriptor().SetSecurityDescriptorBinaryForm(secDesc);
+        getSecurityDescriptor().setSecurityDescriptorBinaryForm(new String(secDesc, Charset.forName("ASCII")));
         return 0x14 + secDescSize;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        byte[] sd = getSecurityDescriptor().GetSecurityDescriptorBinaryForm();
+        byte[] sd = getSecurityDescriptor().getSecurityDescriptorBinaryForm().getBytes(Charset.forName("ASCII"));
         EndianUtilities.stringToBytes("sk", buffer, offset, 2);
         EndianUtilities.writeBytesLittleEndian(getPreviousIndex(), buffer, offset + 0x04);
         EndianUtilities.writeBytesLittleEndian(getNextIndex(), buffer, offset + 0x08);
@@ -105,7 +109,7 @@ public final class SecurityCell extends Cell {
     }
 
     public String toString() {
-        return "SecDesc:" + getSecurityDescriptor().GetSecurityDescriptorSddlForm(AccessControlSections.All) + " (refCount:" +
+        return "SecDesc:" + getSecurityDescriptor().getSecurityDescriptorSddlForm(AccessControlSections.All) + " (refCount:" +
                getUsageCount() + ")";
     }
 }

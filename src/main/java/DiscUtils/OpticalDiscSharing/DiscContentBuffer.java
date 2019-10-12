@@ -34,10 +34,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.api.client.http.HttpStatusCodes;
+
 import DiscUtils.Core.CoreCompat.ListSupport;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import moe.yo3explorer.dotnetio4j.Stream;
+import okhttp3.Request;
+import okhttp3.Response;
 
 
 public final class DiscContentBuffer extends Buffer {
@@ -53,8 +57,8 @@ public final class DiscContentBuffer extends Buffer {
         _uri = uri;
         _userName = userName;
         _password = password;
-        HttpWebResponse response = sendRequest(() -> {
-            HttpWebRequest wr = (HttpWebRequest) WebRequest.Create(uri);
+        Response response = sendRequest(() -> {
+            Request wr = (HttpWebRequest) WebRequest.Create(uri);
             wr.Method = "HEAD";
             return wr;
         });
@@ -76,10 +80,10 @@ public final class DiscContentBuffer extends Buffer {
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        HttpWebResponse response = sendRequest(() -> {
-            HttpWebRequest wr = (HttpWebRequest) WebRequest.Create(_uri);
+        Response response = sendRequest(() -> {
+            Request wr = (HttpWebRequest) WebRequest.Create(_uri);
             wr.Method = "GET";
-            wr.AddRange((int) pos, (int) (pos + count - 1));
+            wr.addRange((int) pos, (int) (pos + count - 1));
             return wr;
         });
         Stream s = response.getResponseStream();
@@ -111,7 +115,7 @@ public final class DiscContentBuffer extends Buffer {
     private static String toHexString(byte[] p) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < p.length; ++i) {
-            int j = (p[i] >> 4) & 0xf;
+            int j = (p[i] >>> 4) & 0xf;
             result.append((char) (j <= 9 ? '0' + j : 'a' + (j - 10)));
             j = p[i] & 0xf;
             result.append((char) (j <= 9 ? '0' + j : 'a' + (j - 10)));
@@ -130,22 +134,20 @@ public final class DiscContentBuffer extends Buffer {
         return result;
     }
 
-    private HttpWebResponse sendRequest(WebRequestCreator wrc) {
-        HttpWebRequest wr = wrc.invoke();
+    private Response sendRequest(WebRequestCreator wrc) {
+        Request wr = wrc.invoke();
         if (_authHeader != null) {
-            wr.Headers.put("Authorization", _authHeader);
+            wr.newBuilder().addHeader("Authorization", _authHeader);
         }
 
         try {
-            return (HttpWebResponse) wr.GetResponse();
+            return (Response) wr.GetResponse();
         } catch (WebException we) {
-            HttpWebResponse wresp = (HttpWebResponse) we.Response;
+            Response wresp = (HttpWebResponse) we.Response;
             if (wresp.StatusCode == HttpStatusCode.Unauthorized) {
-                String authMethod;
-                RefSupport<String> refVar___0 = new RefSupport<String>();
-                Map<String, String> authParams = ParseAuthenticationHeader(wresp.Headers.get("WWW-Authenticate"), refVar___0);
-                authMethod = refVar___0.getValue();
-                if (!authMethod.equals("Digest")) {
+                String[] authMethod = new String[1];
+                Map<String, String> authParams = ParseAuthenticationHeader(wresp.Headers.get("WWW-Authenticate"), authMethod);
+                if (!authMethod[0].equals("Digest")) {
                     throw we;
                 }
 
@@ -158,7 +160,7 @@ public final class DiscContentBuffer extends Buffer {
                 (wresp instanceof Closeable ? (Closeable) wresp : (Closeable) null).close();
                 wr = wrc.invoke();
                 wr.Headers.put("Authorization", _authHeader);
-                return (HttpWebResponse) wr.GetResponse();
+                return (Response) wr.GetResponse();
             }
 
             throw we;
@@ -235,7 +237,7 @@ public final class DiscContentBuffer extends Buffer {
 
     @FunctionalInterface
     public static interface WebRequestCreator {
-        HttpWebRequest invoke();
+        Request invoke();
 
 //        List<WebRequestCreator> getInvocationList();
     }

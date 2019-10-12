@@ -186,7 +186,7 @@ public class UdifBuffer extends Buffer {
                 written += chunkSize;
             } else {
                 // 2 byte code
-                int chunkSize = ((focusByte & 0x3F) >> 2) + 3;
+                int chunkSize = ((focusByte & 0x3F) >>> 2) + 3;
                 int offset = ((focusByte & 0x3) << 8) + (inputBuffer[inputOffset + consumed + 1] & 0xFF);
                 for (int i = 0; i < chunkSize; ++i) {
                     outputBuffer[outputOffset + written + i] = outputBuffer[outputOffset + written + i - offset - 1];

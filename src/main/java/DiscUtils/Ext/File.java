@@ -102,6 +102,6 @@ public class File implements IVfsFile {
     }
 
     private static Map<String, Object> fromMode(int mode) {
-        return Utilities.fileAttributesFromUnixFileType(UnixFileType.valueOf((mode >> 12) & 0xF));
+        return Utilities.fileAttributesFromUnixFileType(UnixFileType.valueOf((mode >>> 12) & 0xF));
     }
 }

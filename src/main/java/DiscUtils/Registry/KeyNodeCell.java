@@ -131,12 +131,6 @@ public final class KeyNodeCell extends Cell {
     }
 
     public String toString() {
-        try {
-            return "Key:" + Name + "[" + Flags + "] <" + Timestamp + ">";
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
+        return "Key:" + Name + "[" + Flags + "] <" + Timestamp + ">";
     }
 }

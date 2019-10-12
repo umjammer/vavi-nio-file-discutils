@@ -82,4 +82,16 @@ public enum FileAttributeFlags implements EnumSettable {
     public static EnumSet<FileAttributeFlags> convert(Map<String, Object> flags) {
         return EnumSet.noneOf(FileAttributeFlags.class);
     }
+
+    /** */
+    public static EnumSet<FileAttributeFlags> and(Map<String, Object> attrs, Map<String, Object> mask) {
+        // TODO Auto-generated method stub
+        return EnumSet.noneOf(FileAttributeFlags.class);
+    }
+
+    /** */
+    public static EnumSet<FileAttributeFlags> and(EnumSet<FileAttributeFlags> flags, int mask) {
+        // TODO Auto-generated method stub
+        return EnumSet.noneOf(FileAttributeFlags.class);
+    }
 }

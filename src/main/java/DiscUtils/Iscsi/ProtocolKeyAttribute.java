@@ -23,93 +23,103 @@
 package DiscUtils.Iscsi;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-
-import com.google.api.client.util.FieldInfo;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
 
 
+@Target({
+    ElementType.FIELD, ElementType.METHOD
+})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface ProtocolKeyAttribute {
 
-    String getDefaultValue();
+    String defaultValue() default "";
 
-    boolean getLeadingConnectionOnly();
+    boolean leadingConnectionOnly() default false;
 
-    String getName();
+    String name();
 
-    KeyUsagePhase getPhase();
+    KeyUsagePhase phase();
 
-    KeySender getSender();
+    KeySender sender();
 
-    KeyType getType();
+    KeyType type();
 
-    boolean getUsedForDiscovery();
+    boolean usedForDiscovery() default false;
 
     class Util {
         public static String getValueAsString(Object value, Class<?> valueType) {
-            if (valueType == Boolean.TYPE) {
-                return (Boolean) value ? "Yes" : "No";
-            }
+            try {
+                if (valueType == Boolean.TYPE) {
+                    return (Boolean) value ? "Yes" : "No";
+                }
 
-            if (valueType == String.class) {
-                return (String) value;
-            }
+                if (valueType == String.class) {
+                    return (String) value;
+                }
 
-            if (valueType == int.class) {
-                return ((Integer) value).toString();
-            }
+                if (valueType == int.class) {
+                    return ((Integer) value).toString();
+                }
 
-            if (ReflectionHelper.isEnum(valueType)) {
-                Field[] infos = valueType.getFields();
-                for (Field info : infos) {
-                    if (info.isLiteral) {
-                        Object literalValue = info.getValue(null);
-                        if (literalValue.equals(value)) {
-                            Annotation attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
-                            return ((ProtocolKeyValueAttribute) attr).getName();
+                if (ReflectionHelper.isEnum(valueType)) {
+                    Field[] infos = valueType.getFields();
+                    for (Field info : infos) {
+                        if (info.isEnumConstant()) {
+                            Object literalValue = info.get(null);
+                            if (literalValue.equals(value)) {
+                                Annotation attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
+                                return ((ProtocolKeyValueAttribute) attr).name();
+                            }
                         }
                     }
+                    throw new UnsupportedOperationException();
                 }
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Unknown property type: " + valueType);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new IllegalStateException(e);
             }
-
-            throw new UnsupportedOperationException("Unknown property type: " + valueType);
         }
 
         public static Object getValueAsObject(String value, Class<?> valueType) {
-            if (valueType == Boolean.TYPE) {
-                return value.equals("Yes");
-            }
+            try {
+                if (valueType == Boolean.TYPE) {
+                    return value.equals("Yes");
+                }
 
-            if (valueType == String.class) {
-                return value;
-            }
+                if (valueType == String.class) {
+                    return value;
+                }
 
-            if (valueType == int.class) {
-                return Integer.parseInt(value);
-            }
+                if (valueType == int.class) {
+                    return Integer.parseInt(value);
+                }
 
-            if (ReflectionHelper.isEnum(valueType)) {
-                Field[] infos = valueType.getFields();
-                for (Field info : infos) {
-                    if (info.isLiteral) {
-                        Annotation attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
-                        if (attr != null && ((ProtocolKeyValueAttribute) attr).getName().equals(value)) {
-                            return info.getValue(null);
+                if (ReflectionHelper.isEnum(valueType)) {
+                    Field[] infos = valueType.getFields();
+                    for (Field info : infos) {
+                        if (info.isEnumConstant()) {
+                            Annotation attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
+                            if (attr != null && ((ProtocolKeyValueAttribute) attr).name().equals(value)) {
+                                return info.get(null);
+                            }
                         }
                     }
+                    throw new UnsupportedOperationException();
                 }
-                throw new UnsupportedOperationException();
+                throw new UnsupportedOperationException("Unknown property type: " + valueType);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                throw new IllegalStateException(e);
             }
-
-            throw new UnsupportedOperationException("Unknown property type: " + valueType);
         }
 
-        public boolean shouldTransmit(Object currentValue, Class<?> valueType, KeyUsagePhase phase, boolean discoverySession) {
-            return (getPhase().ordinal() & phase.ordinal()) != 0 && (discoverySession ? getUsedForDiscovery() : true) &&
-                   currentValue != null && !getValueAsString(currentValue, valueType).equals(getDefaultValue()) &&
-                   (getSender().ordinal() & KeySender.Initiator.ordinal()) != 0;
+        public static boolean shouldTransmit(ProtocolKeyAttribute attr, Object currentValue, Class<?> valueType, KeyUsagePhase phase, boolean discoverySession) {
+            return (attr.phase().ordinal() & phase.ordinal()) != 0 && (discoverySession ? attr.usedForDiscovery() : true) && currentValue != null && !getValueAsString(currentValue, valueType).equals(attr.defaultValue()) && (attr.sender().ordinal() & KeySender.Initiator.ordinal()) != 0;
         }
     }
 }

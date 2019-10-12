@@ -25,7 +25,7 @@ public class SampleDataTests {
     @Test
     public void lvm2VhdxZip() throws Exception {
 //        SetupHelper.setupComplete();
-        File fs = new File(new URI(getClass().getResource("lvm2.zip").toString()));
+        File fs = new File(URI.create(getClass().getResource("lvm2.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
                 Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {

@@ -186,7 +186,7 @@ public final class Geometry {
         int heads = ideGeometry.getHeadsPerCylinder();
         int sectors = ideGeometry.getSectorsPerTrack();
         while (cylinders > 1024 && heads <= 127) {
-            cylinders >>= 1;
+            cylinders >>>= 1;
             heads <<= 1;
         }
         return new Geometry(cylinders, heads, sectors);

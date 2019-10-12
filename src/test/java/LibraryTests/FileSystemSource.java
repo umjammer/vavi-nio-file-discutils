@@ -9,7 +9,6 @@ import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FloppyDiskType;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Diagnostics.ValidatingFileSystem;
-import DiscUtils.Fat.FatFileSystem;
 import DiscUtils.Ntfs.NtfsFileSystem;
 import DiscUtils.Ntfs.NtfsFileSystemChecker;
 import DiscUtils.Streams.SparseMemoryBuffer;
@@ -20,11 +19,11 @@ public class FileSystemSource {
     public static List<NewFileSystemDelegate[]> getReadWriteFileSystems() {
         return Arrays.asList(
             new NewFileSystemDelegate[] {
-                s ->  { return new FatFileSystem(s); }
+                FileSystemSource::fatFileSystem
             },
             // TODO: When format code complete, format a vanilla partition rather than relying on file on disk
             new NewFileSystemDelegate[] {
-                s -> { return  new DiagnosticNtfsFileSystem(s); }
+                FileSystemSource::diagnosticNtfsFileSystem
             }
         );
     }
@@ -32,10 +31,10 @@ public class FileSystemSource {
     public static List<NewFileSystemDelegate[]> getQuickReadWriteFileSystems() {
         return Arrays.asList(
             new NewFileSystemDelegate[] {
-                () ->  { return FatFileSystem.class; }
+                FileSystemSource::fatFileSystem
             },
             new NewFileSystemDelegate[] {
-                () ->  { return NtfsFileSystem.class; })
+                FileSystemSource::ntfsFileSystem
             }
         );
     }

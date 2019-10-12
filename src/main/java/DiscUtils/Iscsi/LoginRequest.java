@@ -60,17 +60,17 @@ public class LoginRequest {
         _basicHeader.FinalPdu = isFinalData;
         _basicHeader.TotalAhsLength = 0;
         _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.Session.CurrentTaskTag;
+        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
         _transit = isFinalData;
         _continue = !isFinalData;
-        _currentStage = _connection.CurrentLoginStage;
+        _currentStage = _connection.getCurrentLoginStage();
         if (_transit) {
-            _nextStage = _connection.NextLoginStage;
+            _nextStage = _connection.getNextLoginStage();
         }
 
-        _connectionId = _connection.Id;
-        _commandSequenceNumber = _connection.Session.CommandSequenceNumber;
-        _expectedStatusSequenceNumber = _connection.ExpectedStatusSequenceNumber;
+        _connectionId = _connection.getId();
+        _commandSequenceNumber = _connection.getSession().getCommandSequenceNumber();
+        _expectedStatusSequenceNumber = _connection.getExpectedStatusSequenceNumber();
         byte[] buffer = new byte[MathUtilities.roundUp(48 + count, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] = packState();
@@ -78,9 +78,9 @@ public class LoginRequest {
         // Max Version
         buffer[3] = 0;
         // Min Version
-        EndianUtilities.writeBytesBigEndian(_connection.Session.InitiatorSessionId, buffer, 8);
+        EndianUtilities.writeBytesBigEndian(_connection.getSession().getInitiatorSessionId(), buffer, 8);
         EndianUtilities.writeBytesBigEndian(IsidQualifier, buffer, 12);
-        EndianUtilities.writeBytesBigEndian(_connection.Session.TargetSessionId, buffer, 14);
+        EndianUtilities.writeBytesBigEndian(_connection.getSession().getTargetSessionId(), buffer, 14);
         EndianUtilities.writeBytesBigEndian(_connectionId, buffer, 20);
         EndianUtilities.writeBytesBigEndian(_commandSequenceNumber, buffer, 24);
         EndianUtilities.writeBytesBigEndian(_expectedStatusSequenceNumber, buffer, 28);

@@ -3,6 +3,7 @@
 package LibraryTests.Iso9660;
 
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -18,8 +19,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 public class SampleDataTests {
     public void appleTestZip() throws Exception {
-        File fs = Paths.get("..", "..", "..", "Iso9660", "Data", "apple-test.zip").toFile();
-
+        File fs = new File(URI.create(getClass().getResource("apple-test.zip").toString()));
         try (Stream iso = ZipUtilities.readFileFromZip(fs, null);
                 CDReader cr = new CDReader(iso, false)) {
             DiscDirectoryInfo dir = cr.getDirectoryInfo("sub-directory");

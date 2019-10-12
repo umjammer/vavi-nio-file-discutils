@@ -31,7 +31,7 @@ public class FileVersion {
     }
 
     public int getMajor() {
-        return getValue() >> 16;
+        return getValue() >>> 16;
     }
 
     public int getMinor() {

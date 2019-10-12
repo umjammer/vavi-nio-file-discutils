@@ -90,7 +90,7 @@ public class MirrorStream extends SparseStream {
     }
 
     public void flush() {
-//        _wrapped.get(0).flush();
+        _wrapped.get(0).flush();
     }
 
     public int read(byte[] buffer, int offset, int count) {

@@ -50,7 +50,7 @@ public abstract class DataWriter {
     }
 
     public void flush() {
-//        _stream.flush();
+        _stream.flush();
     }
 
     protected void ensureBuffer() {

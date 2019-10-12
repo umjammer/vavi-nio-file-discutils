@@ -31,6 +31,7 @@ public enum ImageType {
     Undo,
     Differencing;
     public static ImageType valueOf(int i) {
+System.err.printf("%8x\n", i);
         return Arrays.stream(values()).filter(e -> e.ordinal() == i).findFirst().get();
     }
 }

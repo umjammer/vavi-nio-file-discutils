@@ -22,8 +22,9 @@
 
 package DiscUtils.Core;
 
-import java.security.Permission;
 import java.util.List;
+
+import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 
 /**
@@ -36,7 +37,7 @@ public interface IWindowsFileSystem extends IFileSystem {
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    Permission getSecurity(String path);
+    RawSecurityDescriptor getSecurity(String path);
 
     /**
      * Sets the security descriptor associated with the file or directory.
@@ -44,7 +45,7 @@ public interface IWindowsFileSystem extends IFileSystem {
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    void setSecurity(String path, Permission securityDescriptor);
+    void setSecurity(String path, RawSecurityDescriptor securityDescriptor);
 
     /**
      * Gets the reparse point data associated with a file or directory.

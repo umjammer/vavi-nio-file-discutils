@@ -73,7 +73,7 @@ public final class VhdxHeader implements IByteArraySerializable {
         LogOffset = header.LogOffset;
     }
 
-    public boolean getIsValid() {
+    public boolean isValid() {
         if (Signature != VhdxHeaderSignature) {
             return false;
         }
@@ -126,5 +126,4 @@ public final class VhdxHeader implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(LogLength, _data, 68);
         EndianUtilities.writeBytesLittleEndian(LogOffset, _data, 72);
     }
-
 }

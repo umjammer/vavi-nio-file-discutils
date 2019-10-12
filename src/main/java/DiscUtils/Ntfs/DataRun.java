@@ -69,7 +69,7 @@ public class DataRun {
     }
 
     public int read(byte[] buffer, int offset) {
-        int runOffsetSize = (buffer[offset] >> 4) & 0x0F;
+        int runOffsetSize = (buffer[offset] >>> 4) & 0x0F;
         int runLengthSize = buffer[offset] & 0x0F;
         setRunLength(readVarLong(buffer, offset + 1, runLengthSize));
         setRunOffset(readVarLong(buffer, offset + 1 + runLengthSize, runOffsetSize));
@@ -117,7 +117,7 @@ public class DataRun {
         int pos = 0;
         do {
             buffer[offset + pos] = (byte) (val & 0xFF);
-            val >>= 8;
+            val >>>= 8;
             pos++;
         } while (val != 0 && val != -1);
         // Avoid appearing to have a negative number that is actually positive,
@@ -139,7 +139,7 @@ public class DataRun {
         int len = 0;
         do {
             lastByteHighBitSet = (val & 0x80) != 0;
-            val >>= 8;
+            val >>>= 8;
             len++;
         } while (val != 0 && val != -1);
         if ((isPositive && lastByteHighBitSet) || (!isPositive && !lastByteHighBitSet)) {

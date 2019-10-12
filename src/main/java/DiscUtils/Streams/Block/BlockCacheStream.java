@@ -287,7 +287,7 @@ public final class BlockCacheStream extends SparseStream {
      */
     public void flush() {
         checkDisposed();
-//        _wrappedStream.flush();
+        _wrappedStream.flush();
     }
 
     /**

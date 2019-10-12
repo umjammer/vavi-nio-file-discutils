@@ -75,7 +75,7 @@ public class UdfUtilities {
         }
 
         short typeAndZone = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset);
-        int type = (typeAndZone >> 12) & 0x0F;
+        int type = (typeAndZone >>> 12) & 0x0F;
         int minutesWest = typeAndZone & 0xFFF;
         if ((minutesWest & 0x800) != 0) {
             minutesWest = (-1 & ~0xFFF) | minutesWest;

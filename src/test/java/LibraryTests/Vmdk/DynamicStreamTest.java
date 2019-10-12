@@ -93,9 +93,9 @@ public class DynamicStreamTest {
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.TwoGbMaxExtentSparse)) {
             byte[] content = new byte[3 * 1024 * 1024];
             for (int i = 0; i < content.length / 4; ++i) {
-                content[i * 4 + 0] = (byte) ((i >> 24) & 0xFF);
-                content[i * 4 + 1] = (byte) ((i >> 16) & 0xFF);
-                content[i * 4 + 2] = (byte) ((i >> 8) & 0xFF);
+                content[i * 4 + 0] = (byte) ((i >>> 24) & 0xFF);
+                content[i * 4 + 1] = (byte) ((i >>> 16) & 0xFF);
+                content[i * 4 + 2] = (byte) ((i >>> 8) & 0xFF);
                 content[i * 4 + 3] = (byte) (i & 0xFF);
             }
             Stream s = disk.getContent();
@@ -205,9 +205,9 @@ public class DynamicStreamTest {
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.VmfsSparse)) {
             byte[] content = new byte[3 * 1024 * 1024];
             for (int i = 0; i < content.length / 4; ++i) {
-                content[i * 4 + 0] = (byte) ((i >> 24) & 0xFF);
-                content[i * 4 + 1] = (byte) ((i >> 16) & 0xFF);
-                content[i * 4 + 2] = (byte) ((i >> 8) & 0xFF);
+                content[i * 4 + 0] = (byte) ((i >>> 24) & 0xFF);
+                content[i * 4 + 1] = (byte) ((i >>> 16) & 0xFF);
+                content[i * 4 + 2] = (byte) ((i >>> 8) & 0xFF);
                 content[i * 4 + 3] = (byte) (i & 0xFF);
             }
             Stream s = disk.getContent();

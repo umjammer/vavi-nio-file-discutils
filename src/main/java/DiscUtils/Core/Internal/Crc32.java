@@ -23,6 +23,7 @@
 package DiscUtils.Core.Internal;
 
 public abstract class Crc32 {
+
     protected final int[] Table;
 
     protected int _value;
@@ -37,5 +38,4 @@ public abstract class Crc32 {
     }
 
     public abstract void process(byte[] buffer, int offset, int count);
-
 }

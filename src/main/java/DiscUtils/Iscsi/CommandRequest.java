@@ -50,14 +50,14 @@ public class CommandRequest {
         _basicHeader.FinalPdu = isFinalData;
         _basicHeader.TotalAhsLength = 0;
         _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.Session.CurrentTaskTag;
+        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[48 + MathUtilities.roundUp(count, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] = packAttrByte(isFinalData, willRead, willWrite, cmd.getTaskAttributes());
         EndianUtilities.writeBytesBigEndian(_lun, buffer, 8);
         EndianUtilities.writeBytesBigEndian(expected, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_connection.Session.CommandSequenceNumber, buffer, 24);
-        EndianUtilities.writeBytesBigEndian(_connection.ExpectedStatusSequenceNumber, buffer, 28);
+        EndianUtilities.writeBytesBigEndian(_connection.getSession().getCommandSequenceNumber(), buffer, 24);
+        EndianUtilities.writeBytesBigEndian(_connection.getExpectedStatusSequenceNumber(), buffer, 28);
         cmd.writeTo(buffer, 32);
         if (immediateData != null && count != 0) {
             System.arraycopy(immediateData, offset, buffer, 48, count);

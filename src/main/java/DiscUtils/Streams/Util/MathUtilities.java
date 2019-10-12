@@ -88,7 +88,7 @@ public class MathUtilities {
 
         int result = 0;
         while ((val & 1) != 1) {
-            val >>= 1;
+            val >>>= 1;
             ++result;
         }
         if (val == 1) {

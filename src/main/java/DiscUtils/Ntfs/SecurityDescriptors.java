@@ -24,7 +24,6 @@ package DiscUtils.Ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.Permission;
 import java.util.Map;
 
 import DiscUtils.Core.IDiagnosticTraceable;
@@ -33,8 +32,10 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
+import moe.yo3explorer.dotnetio4j.AccessControlSections;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 
 public final class SecurityDescriptors implements IDiagnosticTraceable {
@@ -79,8 +80,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "SECURITY DESCRIPTORS");
-        Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read);
-        try {
+        try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
             for (Map.Entry<DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey, DiscUtils.Ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
                     .getEntries()
@@ -93,8 +93,8 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
 
                 String secDescStr = "--unknown--";
                 if (rec.SecurityDescriptor[0] != 0) {
-                    Permission sd = new Permission(rec.SecurityDescriptor, 0);
-                    secDescStr = sd.GetSddlForm(AccessControlSections.All);
+                    RawSecurityDescriptor sd = new RawSecurityDescriptor(rec.SecurityDescriptor, 0);
+                    secDescStr = sd.getSddlForm(AccessControlSections.All);
                 }
 
                 writer.println(indent + "  SECURITY DESCRIPTOR RECORD");
@@ -104,9 +104,8 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
                 writer.println(indent + "           Size: " + rec.EntrySize);
                 writer.println(indent + "          Value: " + secDescStr);
             }
-        } finally {
-            if (s != null)
-                s.close();
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -132,7 +131,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         return null;
     }
 
-    public int addDescriptor(Permission newDescriptor) {
+    public int addDescriptor(RawSecurityDescriptor newDescriptor) {
         SecurityDescriptor newDescObj = new SecurityDescriptor(newDescriptor);
         int newHash = newDescObj.calcHash();
         byte[] newByteForm = new byte[(int) newDescObj.getSize()];
@@ -146,7 +145,6 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             if (Utilities.areEqual(newByteForm, storedByteForm)) {
                 return entry.getValue().Id;
             }
-
         }
         long offset = _nextSpace;
         SecurityDescriptorRecord record = new SecurityDescriptorRecord();
@@ -161,21 +159,13 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         record.OffsetInFile = offset;
         byte[] buffer = new byte[(int) record.getSize()];
         record.writeTo(buffer, 0);
-        Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.ReadWrite);
-        try {
-            {
-                s.setPosition(_nextSpace);
-                s.write(buffer, 0, buffer.length);
-                s.setPosition(BlockSize + _nextSpace);
-                s.write(buffer, 0, buffer.length);
-            }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.ReadWrite)) {
+            s.setPosition(_nextSpace);
+            s.write(buffer, 0, buffer.length);
+            s.setPosition(BlockSize + _nextSpace);
+            s.write(buffer, 0, buffer.length);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         _nextSpace = MathUtilities.roundUp(_nextSpace + buffer.length, 16);
         _nextId++;
@@ -201,16 +191,14 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
     }
 
     private SecurityDescriptor readDescriptor(IndexData data) {
-        Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read);
-        try {
+        try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
             s.setPosition(data.SdsOffset);
             byte[] buffer = StreamUtilities.readExact(s, data.SdsLength);
             SecurityDescriptorRecord record = new SecurityDescriptorRecord();
             record.read(buffer, 0);
-            return new SecurityDescriptor(new Permission(record.SecurityDescriptor, 0));
-        } finally {
-            if (s != null)
-                s.close();
+            return new SecurityDescriptor(new RawSecurityDescriptor(record.SecurityDescriptor, 0));
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 

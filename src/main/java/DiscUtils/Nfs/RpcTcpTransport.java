@@ -26,13 +26,12 @@ package DiscUtils.Nfs;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.net.SocketException;
-import java.nio.channels.SocketChannel;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
+import moe.yo3explorer.dotnetio4j.NetworkStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
@@ -47,7 +46,7 @@ public final class RpcTcpTransport implements IRpcTransport {
 
     private Socket _socket;
 
-    private SocketChannel _tcpStream;
+    private NetworkStream _tcpStream;
 
     public RpcTcpTransport(String address, int port) {
         this(address, port, 0);
@@ -69,7 +68,6 @@ public final class RpcTcpTransport implements IRpcTransport {
             _socket.close();
             _socket = null;
         }
-
     }
 
     public byte[] sendAndReceive(byte[] message) {
@@ -108,13 +106,13 @@ public final class RpcTcpTransport implements IRpcTransport {
                     retries++;
                     lastException = se;
                     if (!isNewConnection) {
-                        Thread.sleep(1000);
+                        try { Thread.sleep(1000); } catch (InterruptedException e) {}
                     }
                 } catch (IOException connectException) {
                     retries++;
                     lastException = connectException;
                     if (!isNewConnection) {
-                        Thread.sleep(1000);
+                        try { Thread.sleep(1000); } catch (InterruptedException e) {}
                     }
                 }
             }
@@ -122,20 +120,24 @@ public final class RpcTcpTransport implements IRpcTransport {
                 try {
                     send(_tcpStream, message);
                     response = receive();
-                } catch (IOException sendReceiveException) {
+                } catch (moe.yo3explorer.dotnetio4j.IOException sendReceiveException) {
                     lastException = sendReceiveException;
-                    _tcpStream.close();
-                    _tcpStream = null;
-                    _socket.close();
-                    _socket = null;
+                    try {
+                        _tcpStream.close();
+                        _tcpStream = null;
+                        _socket.close();
+                        _socket = null;
+                    } catch (IOException e) {
+                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    }
                 }
 
                 retries++;
             }
-
         }
         if (response == null) {
-            throw new IOException(String.format("Unable to send RPC message to {0}:{1}", _address, _port), lastException);
+            throw new moe.yo3explorer.dotnetio4j.IOException(String
+                    .format("Unable to send RPC message to %s:%d", _address, _port), lastException);
         }
 
         return response;

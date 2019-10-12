@@ -67,7 +67,7 @@ public final class LzxBitStream extends BitStream {
         _bufferAvailable -= count;
         _position += count;
         int mask = (1 << count) - 1;
-        return (_buffer >> _bufferAvailable) & mask;
+        return (_buffer >>> _bufferAvailable) & mask;
     }
 
     public int peek(int count) {
@@ -76,7 +76,7 @@ public final class LzxBitStream extends BitStream {
         }
 
         int mask = (1 << count) - 1;
-        return (_buffer >> (_bufferAvailable - count)) & mask;
+        return (_buffer >>> (_bufferAvailable - count)) & mask;
     }
 
     public void consume(int count) {

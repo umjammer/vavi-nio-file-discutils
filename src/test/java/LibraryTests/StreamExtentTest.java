@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Range;
 
+
 public class StreamExtentTest {
     @Test
     public void testIntersect1() throws Exception {
@@ -181,17 +182,23 @@ public class StreamExtentTest {
 
     @Test
     public void testBlocks() throws Exception {
-        StreamExtent[] s = new StreamExtent[]{ new StreamExtent(0, 8), new StreamExtent(11, 4) };
+        StreamExtent[] s = new StreamExtent[] {
+            new StreamExtent(0, 8), new StreamExtent(11, 4)
+        };
         List<Range> ranges = new ArrayList<>(StreamExtent.blocks(s, 10));
         assertEquals(1, ranges.size());
         assertEquals(0, ranges.get(0).getOffset());
         assertEquals(2, ranges.get(0).getCount());
-        s = new StreamExtent[]{ new StreamExtent(0, 8), new StreamExtent(9, 8) };
+        s = new StreamExtent[] {
+            new StreamExtent(0, 8), new StreamExtent(9, 8)
+        };
         ranges = new ArrayList<>(StreamExtent.blocks(s, 10));
         assertEquals(1, ranges.size());
         assertEquals(0, ranges.get(0).getOffset());
         assertEquals(2, ranges.get(0).getCount());
-        s = new StreamExtent[]{ new StreamExtent(3, 4), new StreamExtent(19, 4), new StreamExtent(44, 4) };
+        s = new StreamExtent[] {
+            new StreamExtent(3, 4), new StreamExtent(19, 4), new StreamExtent(44, 4)
+        };
         ranges = new ArrayList<>(StreamExtent.blocks(s, 10));
         assertEquals(2, ranges.size());
         assertEquals(0, ranges.get(0).getOffset());
@@ -207,7 +214,7 @@ public class StreamExtentTest {
         int failedIndex = -1;
         if (eList.size() == aList.size()) {
             for (int i = 0; i < eList.size(); ++i) {
-                if (eList.get(i) != aList.get(i)) {
+                if (!eList.get(i).equals(aList.get(i))) {
                     failed = true;
                     failedIndex = i;
                     break;

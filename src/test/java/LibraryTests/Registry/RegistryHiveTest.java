@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Registry.RegistryHive;
 import DiscUtils.Registry.RegistryKeyFlags;
+import moe.yo3explorer.dotnetio4j.AccessControlSections;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 

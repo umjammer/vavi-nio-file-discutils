@@ -23,7 +23,7 @@
 package LibraryTests.Iso9660;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -143,7 +143,7 @@ public class IsoDirectoryInfoTest {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         long end = Instant.now().toEpochMilli();
-        assertEquals(FileAttributes.Directory | FileAttributes.ReadOnly, fs.getRoot().getAttributes());
+        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Directory, FileAttributes.ReadOnly)), fs.getRoot().getAttributes());
         assertTrue(fs.getRoot().getCreationTimeUtc() >= start);
         assertTrue(fs.getRoot().getCreationTimeUtc() <= end);
         assertTrue(fs.getRoot().getLastAccessTimeUtc() >= start);
@@ -161,7 +161,7 @@ public class IsoDirectoryInfoTest {
         CDReader fs = new CDReader(builder.build(), false);
         long end = Instant.now().toEpochMilli();
         DiscDirectoryInfo di = fs.getDirectoryInfo("Foo");
-        assertEquals(FileAttributes.Directory | FileAttributes.ReadOnly, di.getAttributes());
+        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Directory, FileAttributes.ReadOnly)), di.getAttributes());
         assertTrue(di.getCreationTimeUtc() >= start);
         assertTrue(di.getCreationTimeUtc() <= end);
         assertTrue(di.getLastAccessTimeUtc() >= start);

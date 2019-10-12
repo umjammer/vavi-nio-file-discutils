@@ -174,10 +174,7 @@ public class Footer {
         result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56), buffer[58], buffer[59]);
         result.DiskType = FileType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 60));
         result.Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
-        result.UniqueId = EndianUtilities.toGuidBigEndian(buffer,
-                                                          new int[] {
-                                                              offset + 68
-                                                          });
+        result.UniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 68);
         result.SavedState = buffer[84];
         return result;
     }

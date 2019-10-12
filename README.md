@@ -121,3 +121,9 @@ Automated CI builds are available on Myget. Add this source to your nuget config
   </packageSources>
 </configuration>
 ```
+
+## References
+
+ * https://github.com/twiglet/cs2j
+ * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnetIo4j)
+ * https://github.com/shevek/lzo-java

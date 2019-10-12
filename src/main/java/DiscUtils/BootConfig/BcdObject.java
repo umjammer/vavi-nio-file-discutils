@@ -170,7 +170,7 @@ public class BcdObject {
      * Gets the image type for this application.
      */
     public ApplicationImageType getApplicationImageType() {
-        return getIsApplication() ? ApplicationImageType.values()[((_type & 0x00F00000) >> 20)] : ApplicationImageType.None;
+        return getIsApplication() ? ApplicationImageType.values()[((_type & 0x00F00000) >>> 20)] : ApplicationImageType.None;
     }
 
     /**
@@ -218,7 +218,7 @@ public class BcdObject {
      * Gets the object type for this object.
      */
     public ObjectType getObjectType() {
-        return ObjectType.values()[((_type >> 28) & 0xF)];
+        return ObjectType.values()[((_type >>> 28) & 0xF)];
     }
 
     /**
@@ -243,7 +243,7 @@ public class BcdObject {
             return false;
         }
 
-        InheritType setting = InheritType.values()[((_type & 0x00F00000) >> 20)];
+        InheritType setting = InheritType.values()[((_type & 0x00F00000) >>> 20)];
         getObjectType();
         getObjectType();
         return setting == InheritType.AnyObject ||

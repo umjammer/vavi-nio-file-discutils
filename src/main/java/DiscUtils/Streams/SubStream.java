@@ -51,7 +51,6 @@ public class SubStream extends MappedStream {
         if (_first + _length > _parent.getLength()) {
             throw new IllegalArgumentException("Substream extends beyond end of parent stream");
         }
-
     }
 
     public SubStream(Stream parent, Ownership ownsParent, long first, long length) {
@@ -62,7 +61,6 @@ public class SubStream extends MappedStream {
         if (_first + _length > _parent.getLength()) {
             throw new IllegalArgumentException("Substream extends beyond end of parent stream");
         }
-
     }
 
     public boolean canRead() {
@@ -106,7 +104,7 @@ public class SubStream extends MappedStream {
     }
 
     public void flush() {
-//        _parent.flush();
+        _parent.flush();
     }
 
     public int read(byte[] buffer, int offset, int count) {
@@ -167,5 +165,4 @@ public class SubStream extends MappedStream {
     private List<StreamExtent> offsetExtents(List<StreamExtent> src) {
         return src.stream().map(e -> new StreamExtent(e.getStart() - _first, e.getLength())).collect(Collectors.toList());
     }
-
 }

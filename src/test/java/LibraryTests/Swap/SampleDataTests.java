@@ -3,7 +3,7 @@
 package LibraryTests.Swap;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +27,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 public class SampleDataTests {
     public void swapVhdxGzip() throws Exception {
         SetupHelper.setupComplete();
-        File fs = Paths.get("..", "..", "..", "Swap", "Data", "swap.zip").toFile();
-
+        File fs = new File(URI.create(getClass().getResource("swap.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
                 Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {

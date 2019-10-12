@@ -23,8 +23,9 @@
 package DiscUtils.Iscsi;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,9 +138,9 @@ public final class Session implements Closeable {
     /**
      * Disposes of this instance, closing the session with the Target.
      */
-    public void close() {
+    public void close() throws IOException {
         if (getActiveConnection() != null) {
-            getActiveConnection().close(LogoutReason.CloseSession);
+            getActiveConnection().close();
         }
 
         setActiveConnection(null);
@@ -163,10 +164,10 @@ public final class Session implements Closeable {
      */
     public LunInfo[] getLuns() {
         ScsiReportLunsCommand cmd = new ScsiReportLunsCommand(ScsiReportLunsCommand.InitialResponseSize);
-        ScsiReportLunsResponse resp = send(cmd, null, 0, 0, ScsiReportLunsCommand.InitialResponseSize);
+        ScsiReportLunsResponse resp = send(ScsiReportLunsResponse.class, cmd, null, 0, 0, ScsiReportLunsCommand.InitialResponseSize);
         if (resp.getTruncated()) {
             cmd = new ScsiReportLunsCommand(resp.getNeededDataLength());
-            resp = send(cmd, null, 0, 0, resp.getNeededDataLength());
+            resp = send(ScsiReportLunsResponse.class, cmd, null, 0, 0, resp.getNeededDataLength());
         }
 
         if (resp.getTruncated()) {
@@ -203,7 +204,7 @@ public final class Session implements Closeable {
      */
     public LunInfo getInfo(long lun) {
         ScsiInquiryCommand cmd = new ScsiInquiryCommand(lun, ScsiInquiryCommand.InitialResponseDataLength);
-        ScsiInquiryStandardResponse resp = send(cmd, null, 0, 0, ScsiInquiryCommand.InitialResponseDataLength);
+        ScsiInquiryStandardResponse resp = send(ScsiInquiryStandardResponse.class, cmd, null, 0, 0, ScsiInquiryCommand.InitialResponseDataLength);
         TargetInfo targetInfo = new TargetInfo(getTargetName(), _addresses);
         return new LunInfo(targetInfo,
                            lun,
@@ -222,7 +223,7 @@ public final class Session implements Closeable {
      */
     public LunCapacity getCapacity(long lun) {
         ScsiReadCapacityCommand cmd = new ScsiReadCapacityCommand(lun);
-        ScsiReadCapacityResponse resp = send(cmd, null, 0, 0, ScsiReadCapacityCommand.ResponseDataLength);
+        ScsiReadCapacityResponse resp = send(ScsiReadCapacityResponse.class, cmd, null, 0, 0, ScsiReadCapacityCommand.ResponseDataLength);
         if (resp.getTruncated()) {
             throw new IllegalArgumentException("Truncated response");
         }
@@ -337,47 +338,54 @@ public final class Session implements Closeable {
     }
 
     public void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase) {
-        Class<?> properties = getClass()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        for (PropertyInfo propInfo : properties) {
-            ProtocolKeyAttribute attr = (ProtocolKeyAttribute) ReflectionHelper.GetCustomAttribute(propInfo,
-                                                                                                   ProtocolKeyAttribute.class);
-            if (attr != null) {
-                Object value = propInfo.GetGetMethod(true).Invoke(this, null);
-                getSessionType();
-                if (attr.ShouldTransmit(value, propInfo.PropertyType, phase, getSessionType() == SessionType.Discovery)) {
-                    parameters.add(attr.getName(), ProtocolKeyAttribute.GetValueAsString(value, propInfo.PropertyType));
-                    _negotiatedParameters.put(attr.getName(), "");
+        try {
+            for (Field propInfo : getClass().getDeclaredFields()) {
+                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                if (attr != null) {
+                    Object value = propInfo.get(this);
+                    if (ProtocolKeyAttribute.Util.shouldTransmit(attr, value, propInfo.getType(), phase, getSessionType() == SessionType.Discovery)) {
+                        parameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
+                        _negotiatedParameters.put(attr.name(), "");
+                    }
                 }
             }
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
     }
 
     public void consumeParameters(TextBuffer inParameters, TextBuffer outParameters) {
-        Class<?> properties = getClass()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        for (PropertyInfo propInfo : properties) {
-            ProtocolKeyAttribute attr = (ProtocolKeyAttribute) ReflectionHelper.GetCustomAttribute(propInfo,
-                                                                                                   ProtocolKeyAttribute.class);
-            if (attr != null) {
-                if (inParameters.get___idx(attr.getName()) != null) {
-                    Object value = ProtocolKeyAttribute.GetValueAsObject(inParameters.get___idx(attr.getName()),
-                                                                         propInfo.PropertyType);
-                    propInfo.GetSetMethod(true).Invoke(this);
-                    inParameters.remove(attr.getName());
-                    if (attr.getType() == KeyType.Negotiated && !_negotiatedParameters.containsKey(attr.getName())) {
-                        value = propInfo.GetGetMethod(true).Invoke(this, null);
-                        outParameters.add(attr.getName(), ProtocolKeyAttribute.GetValueAsString(value, propInfo.PropertyType));
-                        _negotiatedParameters.put(attr.getName(), "");
+        try {
+            for (Field propInfo : getClass().getDeclaredFields()) {
+                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                if (attr != null) {
+                    if (inParameters.get___idx(attr.name()) != null) {
+                        Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get___idx(attr.name()),
+                                                                             propInfo.getType());
+                        propInfo.set(this, value);
+                        inParameters.remove(attr.name());
+
+                        if (attr.type() == KeyType.Negotiated && !_negotiatedParameters.containsKey(attr.name())) {
+                            value = propInfo.get(this);
+                            outParameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
+                            _negotiatedParameters.put(attr.name(), "");
+                        }
                     }
                 }
             }
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new IllegalStateException(e);
         }
     }
 
     /**
      * Gets the name of the iSCSI target this session is connected to.
      */
+    @ProtocolKeyAttribute(name = "TargetName",
+                          phase = KeyUsagePhase.SecurityNegotiation,
+                          sender = KeySender.Initiator,
+                          type = KeyType.Declarative,
+                          usedForDiscovery = true)
     private String __TargetName;
 
     public String getTargetName() {
@@ -391,6 +399,11 @@ public final class Session implements Closeable {
     /**
      * Gets the name of the iSCSI initiator seen by the target for this session.
      */
+    @ProtocolKeyAttribute(name = "InitiatorName",
+                          phase = KeyUsagePhase.SecurityNegotiation,
+                          sender = KeySender.Initiator,
+                          type = KeyType.Declarative,
+                          usedForDiscovery = true)
     public String getInitiatorName() {
         return "iqn.2008-2010-04.discutils.codeplex.com";
     }
@@ -398,6 +411,11 @@ public final class Session implements Closeable {
     /**
      * Gets the friendly name of the iSCSI target this session is connected to.
      */
+    @ProtocolKeyAttribute(name = "TargetAlias",
+                          defaultValue = "",
+                          phase = KeyUsagePhase.All,
+                          sender = KeySender.Target,
+                          type = KeyType.Declarative)
     private String __TargetAlias;
 
     public String getTargetAlias() {
@@ -408,6 +426,11 @@ public final class Session implements Closeable {
         __TargetAlias = value;
     }
 
+    @ProtocolKeyAttribute(name = "SessionType",
+                          phase = KeyUsagePhase.SecurityNegotiation,
+                          sender = KeySender.Initiator,
+                          type = KeyType.Declarative,
+                          usedForDiscovery = true)
     private SessionType __SessionType = SessionType.Discovery;
 
     public SessionType getSessionType() {
@@ -418,6 +441,12 @@ public final class Session implements Closeable {
         __SessionType = value;
     }
 
+    @ProtocolKeyAttribute(name = "MaxConnections",
+                          defaultValue = "1",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __MaxConnections;
 
     public int getMaxConnections() {
@@ -428,6 +457,11 @@ public final class Session implements Closeable {
         __MaxConnections = value;
     }
 
+    @ProtocolKeyAttribute(name = "InitiatorAlias",
+                          defaultValue = "",
+                          phase = KeyUsagePhase.All,
+                          sender = KeySender.Initiator,
+                          type = KeyType.Declarative)
     private String __InitiatorAlias;
 
     public String getInitiatorAlias() {
@@ -438,6 +472,10 @@ public final class Session implements Closeable {
         __InitiatorAlias = value;
     }
 
+    @ProtocolKeyAttribute(name = "TargetPortalGroupTag",
+                          phase = KeyUsagePhase.SecurityNegotiation,
+                          sender = KeySender.Target,
+                          type = KeyType.Declarative)
     private int __TargetPortalGroupTag;
 
     public int getTargetPortalGroupTag() {
@@ -448,6 +486,12 @@ public final class Session implements Closeable {
         __TargetPortalGroupTag = value;
     }
 
+    @ProtocolKeyAttribute(name = "InitialR2T",
+                          defaultValue = "Yes",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private boolean __InitialR2T;
 
     public boolean getInitialR2T() {
@@ -458,6 +502,12 @@ public final class Session implements Closeable {
         __InitialR2T = value;
     }
 
+    @ProtocolKeyAttribute(name = "ImmediateData",
+                          defaultValue = "Yes",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private boolean __ImmediateData;
 
     public boolean getImmediateData() {
@@ -468,6 +518,12 @@ public final class Session implements Closeable {
         __ImmediateData = value;
     }
 
+    @ProtocolKeyAttribute(name = "MaxBurstLength",
+                          defaultValue = "262144",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __MaxBurstLength;
 
     public int getMaxBurstLength() {
@@ -478,6 +534,12 @@ public final class Session implements Closeable {
         __MaxBurstLength = value;
     }
 
+    @ProtocolKeyAttribute(name = "FirstBurstLength",
+                          defaultValue = "65536",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __FirstBurstLength;
 
     public int getFirstBurstLength() {
@@ -488,6 +550,12 @@ public final class Session implements Closeable {
         __FirstBurstLength = value;
     }
 
+    @ProtocolKeyAttribute(name = "DefaultTime2Wait",
+                          defaultValue = "2",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __DefaultTime2Wait;
 
     public int getDefaultTime2Wait() {
@@ -498,6 +566,12 @@ public final class Session implements Closeable {
         __DefaultTime2Wait = value;
     }
 
+    @ProtocolKeyAttribute(name = "DefaultTime2Retain",
+                          defaultValue = "20",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __DefaultTime2Retain;
 
     public int getDefaultTime2Retain() {
@@ -508,6 +582,12 @@ public final class Session implements Closeable {
         __DefaultTime2Retain = value;
     }
 
+    @ProtocolKeyAttribute(name = "MaxOutstandingR2T",
+                          defaultValue = "1",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __MaxOutstandingR2T;
 
     public int getMaxOutstandingR2T() {
@@ -518,6 +598,12 @@ public final class Session implements Closeable {
         __MaxOutstandingR2T = value;
     }
 
+    @ProtocolKeyAttribute(name = "DataPDUInOrder",
+                          defaultValue = "Yes",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private boolean __DataPDUInOrder;
 
     public boolean getDataPDUInOrder() {
@@ -528,6 +614,12 @@ public final class Session implements Closeable {
         __DataPDUInOrder = value;
     }
 
+    @ProtocolKeyAttribute(name = "DataSequenceInOrder",
+                          defaultValue = "Yes",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private boolean __DataSequenceInOrder;
 
     public boolean getDataSequenceInOrder() {
@@ -538,6 +630,12 @@ public final class Session implements Closeable {
         __DataSequenceInOrder = value;
     }
 
+    @ProtocolKeyAttribute(name = "ErrorRecoveryLevel",
+                          defaultValue = "0",
+                          phase = KeyUsagePhase.OperationalNegotiation,
+                          sender = KeySender.Both,
+                          type = KeyType.Negotiated,
+                          leadingConnectionOnly = true)
     private int __ErrorRecoveryLevel;
 
     public int getErrorRecoveryLevel() {
@@ -571,8 +669,7 @@ public final class Session implements Closeable {
                 .send(cmd, outBuffer, outBufferOffset, outBufferCount, inBuffer, inBufferOffset, inBufferMax);
     }
 
-    private <T extends ScsiResponse> T send(ScsiCommand cmd, byte[] buffer, int offset, int count, int expected) {
-        return getActiveConnection().<T> send(cmd, buffer, offset, count, expected);
+    private <T extends ScsiResponse> T send(Class<T> clazz, ScsiCommand cmd, byte[] buffer, int offset, int count, int expected) {
+        return getActiveConnection().send(clazz, cmd, buffer, offset, count, expected);
     }
-
 }

@@ -228,7 +228,7 @@ public class LzxStream extends Stream {
             } else {
                 int lengthHeader = (symbol - 256) & 7;
                 int matchLength = lengthHeader + 2 + (lengthHeader == 7 ? _lengthTree.nextSymbol(_bitStream) : 0);
-                int positionSlot = (symbol - 256) >> 3;
+                int positionSlot = (symbol - 256) >>> 3;
                 int matchOffset;
                 if (positionSlot == 0) {
                     matchOffset = _repeatedOffsets[0];

@@ -26,12 +26,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 
 public final class Transaction implements Closeable {
     public Transaction() {
         __Answers = new ArrayList<>();
-        setCompleteEvent(new ManualResetEvent(false));
+        setCompleteEvent(new CountDownLatch(1));
     }
 
     private List<ResourceRecord> __Answers;
@@ -40,13 +41,13 @@ public final class Transaction implements Closeable {
         return __Answers;
     }
 
-    private ManualResetEvent __CompleteEvent;
+    private CountDownLatch __CompleteEvent;
 
-    public ManualResetEvent getCompleteEvent() {
+    public CountDownLatch getCompleteEvent() {
         return __CompleteEvent;
     }
 
-    public void setCompleteEvent(ManualResetEvent value) {
+    public void setCompleteEvent(CountDownLatch value) {
         __CompleteEvent = value;
     }
 

@@ -1694,7 +1694,7 @@ System.err.println(StringUtil.getDump(_bootSector, 64));
     public static FatFileSystem formatFloppy(Stream stream, FloppyDiskType type, String label) {
         long pos = stream.getPosition();
         long ticks = System.currentTimeMillis();
-        int volId = (int) ((ticks & 0xFFFF) | (ticks >> 32));
+        int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
         // Write the BIOS Parameter Block (BPB) - a single sector
         byte[] bpb = new byte[512];
         int sectors;
@@ -1817,7 +1817,7 @@ System.err.println(StringUtil.getDump(_bootSector, 64));
                                                 short reservedSectors) {
         long pos = stream.getPosition();
         long ticks = System.currentTimeMillis();
-        int volId = (int) ((ticks & 0xFFFF) | (ticks >> 32));
+        int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
         byte sectorsPerCluster;
         FatType fatType = FatType.None;
         short maxRootEntries;

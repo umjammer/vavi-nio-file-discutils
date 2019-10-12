@@ -125,7 +125,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             return null;
         }
 
-        vdDrive.getDisk(.close());
+        vdDrive.close();
         return vdDrive;
     }
 

@@ -71,7 +71,7 @@ public class Utilities {
         }
 
         while ((val & 1) != 1) {
-            val >>= 1;
+            val >>>= 1;
         }
         return val == 1;
     }
@@ -82,7 +82,7 @@ public class Utilities {
         }
 
         while ((val & 1) != 1) {
-            val >>= 1;
+            val >>>= 1;
         }
         return val == 1;
     }

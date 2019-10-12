@@ -132,7 +132,7 @@ public class FatBuffer {
 
         // FAT12
         if ((cluster & 1) != 0) {
-            return (EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) >> 4) & 0x0FFF;
+            return (EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) >>> 4) & 0x0FFF;
         }
 
         return EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) & 0x0FFF;

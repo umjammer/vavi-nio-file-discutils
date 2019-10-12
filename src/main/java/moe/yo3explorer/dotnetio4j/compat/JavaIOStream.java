@@ -37,11 +37,7 @@ public class JavaIOStream extends Stream {
 
     @Override
     public boolean canRead() {
-        try {
-            return is != null && is.available() > 0;
-        } catch (Exception e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
-        }
+        return is != null && getLength() > 0;
     }
 
     @Override
@@ -108,12 +104,15 @@ public class JavaIOStream extends Stream {
     public int read(byte[] buffer, int offset, int length) {
         try {
             int r = is.read(buffer, offset, length);
+//System.err.println(StringUtil.getDump(buffer, 16));
             if (r > 0) {
                 position += r;
             }
             if (r == -1) {
+//System.err.println("EOF");
                 return 0; // C# Spec.
             }
+//System.err.println("position: " + position);
             return r;
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
@@ -124,6 +123,7 @@ public class JavaIOStream extends Stream {
     public void write(byte[] buffer, int offset, int count) {
         try {
             os.write(buffer, offset, count);
+            position += count;
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }

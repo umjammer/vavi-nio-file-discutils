@@ -90,7 +90,6 @@ public final class LocalFileLocator extends FileLocator {
             if (otherDir.charAt(1) == ':' && _dir.charAt(1) == ':') {
                 return Character.toUpperCase(otherDir.charAt(0)) == Character.toUpperCase(_dir.charAt(0));
             }
-
         }
 
         return true;
@@ -99,5 +98,4 @@ public final class LocalFileLocator extends FileLocator {
     public String resolveRelativePath(String path) {
         return Utilities.resolveRelativePath(_dir, path);
     }
-
 }

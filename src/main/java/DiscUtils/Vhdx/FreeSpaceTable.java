@@ -32,7 +32,7 @@ import DiscUtils.Streams.Util.Sizes;
 public final class FreeSpaceTable {
     private long _fileSize;
 
-    private List<StreamExtent> _freeExtents = new ArrayList<>();
+    private List<StreamExtent> _freeExtents;
 
     public FreeSpaceTable(long fileSize) {
         // There used to be a check here that the file size is a multiple of 1 MB.
@@ -57,23 +57,22 @@ public final class FreeSpaceTable {
 
         _fileSize = fileSize;
         if (isFree) {
-            _freeExtents = new ArrayList<>(StreamExtent.union(_freeExtents, new StreamExtent(_fileSize, fileSize - _fileSize)));
+            _freeExtents = StreamExtent.union(_freeExtents, new StreamExtent(_fileSize, fileSize - _fileSize));
         }
-
     }
 
     public void release(long start, long length) {
         validateRange(start, length, "release");
-        _freeExtents = new ArrayList<>(StreamExtent.union(_freeExtents, new StreamExtent(start, length)));
+        _freeExtents = StreamExtent.union(_freeExtents, new StreamExtent(start, length));
     }
 
     public void reserve(long start, long length) {
         validateRange(start, length, "reserve");
-        _freeExtents = new ArrayList<>(StreamExtent.subtract(_freeExtents, new StreamExtent(start, length)));
+        _freeExtents = StreamExtent.subtract(_freeExtents, new StreamExtent(start, length));
     }
 
     public void reserve(List<StreamExtent> extents) {
-        _freeExtents = new ArrayList<>(StreamExtent.subtract(_freeExtents, extents));
+        _freeExtents = StreamExtent.subtract(_freeExtents, extents);
     }
 
     public boolean tryAllocate(long length, long[] start) {
@@ -112,7 +111,5 @@ public final class FreeSpaceTable {
         if (start < 0 || start > _fileSize || length > _fileSize - start) {
             throw new IndexOutOfBoundsException("Attempt to " + method + " space outside of file range");
         }
-
     }
-
 }

@@ -47,26 +47,26 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @param length The length of the extent.
      */
     public StreamExtent(long start, long length) {
-        __Start = start;
-        __Length = length;
+        this.start = start;
+        this.length = length;
     }
 
     /**
      * Gets the start of the extent (in bytes).
      */
-    private long __Length;
+    private long length;
 
     public long getLength() {
-        return __Length;
+        return length;
     }
 
     /**
      * Gets the start of the extent (in bytes).
      */
-    private long __Start;
+    private long start;
 
     public long getStart() {
-        return __Start;
+        return start;
     }
 
     /**
@@ -113,8 +113,9 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         return union(Arrays.asList());
     }
 
+    @SuppressWarnings("unchecked")
     public static List<StreamExtent> union(StreamExtent[]... streams) {
-        return union(Arrays.asList(streams).stream().flatMap(Arrays::stream).collect(Collectors.toList()));
+        return union(Arrays.stream(streams).map(Arrays::asList).toArray(List[]::new));
     }
 
     /**
@@ -125,9 +126,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @return The union of the extents.
      */
     public static List<StreamExtent> union(List<StreamExtent> extents, StreamExtent other) {
-        List<StreamExtent> otherList = new ArrayList<>();
-        otherList.add(other);
-        return union(extents, otherList);
+        return union(extents, Arrays.asList(other));
     }
 
     /**
@@ -143,6 +142,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         long extentStart = Long.MAX_VALUE;
         long extentEnd = 0;
         // Initialize enumerations and find first stored byte position
+        @SuppressWarnings("unchecked")
         Iterator<StreamExtent>[] enums = new Iterator[streams.length];
         boolean[] streamsValid = new boolean[streams.length];
         int validStreamsRemaining = 0;
@@ -150,11 +150,11 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         for (int i = 0; i < streams.length; ++i) {
             enums[i] = streams[i].iterator();
             streamsValid[i] = enums[i].hasNext();
-            current[i] = enums[i].next();
             if (streamsValid[i]) {
+                current[i] = enums[i].next();
                 ++validStreamsRemaining;
                 if (current[i].getStart() < extentStart) {
-                    extentStart =current[i].getStart();
+                    extentStart = current[i].getStart();
                     extentEnd = current[i].getStart() + current[i].getLength();
                 }
             }
@@ -169,7 +169,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
                 for (int i = 0; i < streams.length; ++i) {
                     while (streamsValid[i] && current[i].getStart() + current[i].getLength() <= extentEnd) {
                         streamsValid[i] = enums[i].hasNext();
-                        current[i] = enums[i].next();
+                        if (streamsValid[i])
+                            current[i] = enums[i].next();
                     }
                     if (streamsValid[i]) {
                         ++validStreamsRemaining;
@@ -179,7 +180,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
                         extentEnd = current[i].getStart() + current[i].getLength();
                         foundIntersection = true;
                         streamsValid[i] = enums[i].hasNext();
-                        current[i] = enums[i].next();
+                        if (streamsValid[i])
+                            current[i] = enums[i].next();
                     }
                 }
             } while (foundIntersection && validStreamsRemaining > 0);
@@ -207,8 +209,9 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         return intersect(Arrays.asList());
     }
 
+    @SuppressWarnings("unchecked")
     public static List<StreamExtent> intersect(StreamExtent[]... streams) {
-        return intersect(Arrays.asList(streams).stream().flatMap(Arrays::stream).collect(Collectors.toList()));
+        return intersect(Arrays.stream(streams).map(Arrays::asList).toArray(List[]::new));
     }
 
     /**
@@ -236,6 +239,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         List<StreamExtent> result = new ArrayList<>();
         long extentStart = Long.MIN_VALUE;
         long extentEnd = Long.MAX_VALUE;
+        @SuppressWarnings("unchecked")
         Iterator<StreamExtent>[] enums = new Iterator[streams.length];
         StreamExtent[] current = new StreamExtent[streams.length];
         for (int i = 0; i < streams.length; ++i) {
@@ -326,7 +330,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     public static List<StreamExtent> invert(List<StreamExtent> extents) {
         List<StreamExtent> result = new ArrayList<>();
         StreamExtent last = new StreamExtent(0, 0);
-        for (StreamExtent extent: extents) {
+        for (StreamExtent extent : extents) {
             // Skip over any 'noise'
             if (extent.getLength() == 0) {
                 continue;
@@ -341,7 +345,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         }
         long finalEnd = last.getStart() + last.getLength();
         if (finalEnd < Long.MAX_VALUE) {
-            result.add(new StreamExtent(finalEnd, Long.MAX_VALUE- finalEnd));
+            result.add(new StreamExtent(finalEnd, Long.MAX_VALUE - finalEnd));
         }
         return result;
     }
@@ -374,7 +378,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     public static long blockCount(List<StreamExtent> stream, long blockSize) {
         long totalBlocks = 0;
         long lastBlock = -1;
-        for (StreamExtent extent  : stream) {
+        for (StreamExtent extent : stream) {
             if (extent.getLength() > 0) {
                 long extentStartBlock = extent.getStart() / blockSize;
                 long extentNextBlock = MathUtilities.ceil(extent.getStart() + extent.getLength(), blockSize);
@@ -382,11 +386,9 @@ public final class StreamExtent implements Comparable<StreamExtent> {
                 if (extentStartBlock == lastBlock) {
                     extentNumBlocks--;
                 }
-
                 lastBlock = extentNextBlock - 1;
                 totalBlocks += extentNumBlocks;
             }
-
         }
         return totalBlocks;
     }
@@ -421,11 +423,9 @@ public final class StreamExtent implements Comparable<StreamExtent> {
                     // First extent, so start first range
                     rangeStart = extentStartBlock;
                 }
-
                 // Set the length of the current range, based on the end of this extent
                 rangeLength = extentNextBlock - rangeStart;
             }
-
         }
         // Final range (if any ranges at all) hasn't been returned yet, so do that now
         if (rangeStart != null) {

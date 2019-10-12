@@ -3,7 +3,7 @@
 package LibraryTests.Xfs;
 
 import java.io.File;
-import java.nio.file.Paths;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ public class SampleDataTests {
     @Test
     public void xfsVhdxZip() throws Exception {
         SetupHelper.setupComplete();
-        File fs = Paths.get("..", "..", "..", "Xfs", "Data", "xfs.zip").toFile();
+        File fs = new File(URI.create(getClass().getResource("xfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
                 Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {
@@ -60,7 +60,7 @@ public class SampleDataTests {
     @Test
     public void xfs5VhdxZip() throws Exception {
         SetupHelper.setupComplete();
-        File fs = Paths.get("..", "..", "..", "Xfs", "Data", "xfs5.zip").toFile();
+        File fs = new File(URI.create(getClass().getResource("xfs5.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
                 Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {

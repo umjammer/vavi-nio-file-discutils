@@ -104,10 +104,7 @@ public class DynamicHeader {
         result.MaxTableEntries = EndianUtilities.toInt32BigEndian(data, offset + 28);
         result.BlockSize = EndianUtilities.toUInt32BigEndian(data, offset + 32);
         result.Checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
-        result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data,
-                                                                new int[] {
-                                                                    offset + 40
-                                                                });
+        result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
         result.ParentTimestamp = EndianUtilities.toUInt32BigEndian(data, offset + 56);
         result.ParentUnicodeName = new String(data, offset + 64, 512, Charset.forName("utf-8")).replaceFirst("\0*$", "");
         result.ParentLocators = new ParentLocator[8];

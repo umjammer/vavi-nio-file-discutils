@@ -40,13 +40,13 @@ public class LogoutRequest {
         _basicHeader.FinalPdu = true;
         _basicHeader.TotalAhsLength = 0;
         _basicHeader.DataSegmentLength = 0;
-        _basicHeader.InitiatorTaskTag = _connection.Session.CurrentTaskTag;
+        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[MathUtilities.roundUp(48, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] |= (byte) (reason.ordinal() & 0x7F);
-        EndianUtilities.writeBytesBigEndian(_connection.Id, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_connection.Session.CommandSequenceNumber, buffer, 24);
-        EndianUtilities.writeBytesBigEndian(_connection.ExpectedStatusSequenceNumber, buffer, 28);
+        EndianUtilities.writeBytesBigEndian(_connection.getId(), buffer, 20);
+        EndianUtilities.writeBytesBigEndian(_connection.getSession().getCommandSequenceNumber(), buffer, 24);
+        EndianUtilities.writeBytesBigEndian(_connection.getExpectedStatusSequenceNumber(), buffer, 28);
         return buffer;
     }
 }

@@ -125,7 +125,7 @@ public class DirectoryEntry {
 
     public void setFirstCluster(int value) {
         if (_fatVariant == FatType.Fat32) {
-            _firstClusterHi = (short) ((value >> 16) & 0xFFFF);
+            _firstClusterHi = (short) ((value >>> 16) & 0xFFFF);
         }
 
         _firstClusterLo = (short) (value & 0xFFFF);
@@ -185,11 +185,11 @@ public class DirectoryEntry {
         }
 
         // Return Epoch - this is an invalid date
-        int year = 1980 + ((date & 0xFE00) >> 9);
-        int month = (date & 0x01E0) >> 5;
+        int year = 1980 + ((date & 0xFE00) >>> 9);
+        int month = (date & 0x01E0) >>> 5;
         int day = date & 0x001F;
-        int hour = (time & 0xF800) >> 11;
-        int minute = (time & 0x07E0) >> 5;
+        int hour = (time & 0xF800) >>> 11;
+        int minute = (time & 0x07E0) >>> 5;
         int second = (time & 0x001F) * 2 + tenths / 100;
         int millis = tenths % 100 * 10;
         return LocalDateTime.of(year, month, day, hour, minute, second, millis * 1000).toEpochSecond(ZoneOffset.UTC); // TODO

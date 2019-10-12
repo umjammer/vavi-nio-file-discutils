@@ -59,8 +59,8 @@ public class BasicHeaderSegment implements IByteArraySerializable {
         buffer[offset] = (byte) ((Immediate ? 0x40 : 0x00) | (_OpCode.ordinal() & 0x3F));
         buffer[offset + 1] |= (byte) (FinalPdu ? 0x80 : 0x00);
         buffer[offset + 4] = TotalAhsLength;
-        buffer[offset + 5] = (byte) ((DataSegmentLength >> 16) & 0xFF);
-        buffer[offset + 6] = (byte) ((DataSegmentLength >> 8) & 0xFF);
+        buffer[offset + 5] = (byte) ((DataSegmentLength >>> 16) & 0xFF);
+        buffer[offset + 6] = (byte) ((DataSegmentLength >>> 8) & 0xFF);
         buffer[offset + 7] = (byte) (DataSegmentLength & 0xFF);
         EndianUtilities.writeBytesBigEndian(InitiatorTaskTag, buffer, offset + 16);
     }

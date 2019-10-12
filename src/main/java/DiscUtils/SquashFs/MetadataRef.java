@@ -35,7 +35,7 @@ public class MetadataRef {
     }
 
     public long getBlock() {
-        return (getValue() >> 16) & 0xFFFFFFFFFFFFl;
+        return (getValue() >>> 16) & 0xFFFFFFFFFFFFl;
     }
 
     public int getOffset() {

@@ -186,7 +186,7 @@ public final class BZip2DecoderStream extends Stream {
                     throw new moe.yo3explorer.dotnetio4j.IOException("Decompression failed - block CRC mismatch");
                 }
 
-                _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >> 31)) ^ _blockCrc;
+                _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >>> 31)) ^ _blockCrc;
             }
 
             // Read a new block (if any), if none - check the overall CRC before returning
@@ -214,7 +214,7 @@ public final class BZip2DecoderStream extends Stream {
 
             }
 
-            _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >> 31)) ^ _blockCrc;
+            _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >>> 31)) ^ _blockCrc;
             if (readBlock() == 0) {
                 _eof = true;
                 if (_calcCompoundCrc != _compoundCrc) {

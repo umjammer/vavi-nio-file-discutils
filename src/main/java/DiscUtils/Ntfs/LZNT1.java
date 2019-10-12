@@ -225,14 +225,14 @@ public final class LZNT1 extends BlockCompressor {
                             short lengthMask = (short) ((1 << lengthBits) - 1);
                             short phraseToken = (short) EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
                             sourceIdx += 2;
-                            int destBackAddr = destIdx - (phraseToken >> lengthBits) - 1;
+                            int destBackAddr = destIdx - (phraseToken >>> lengthBits) - 1;
                             int length = (phraseToken & lengthMask) + 3;
                             for (int i = 0; i < length; ++i) {
                                 decompressed[decompressedOffset + destIdx++] = decompressed[decompressedOffset +
                                                                                             destBackAddr++];
                             }
                         }
-                        tag >>= 1;
+                        tag >>>= 1;
                     }
                 }
                 // Bug-compatible - if we decompressed less than 4KB, jump to next 4KB boundary.  If

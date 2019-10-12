@@ -108,7 +108,7 @@ public class XpressStream extends Stream {
         for (int i = 0; i < lengths.length; i += 2) {
             int b = readCompressedByte();
             lengths[i] = b & 0xF;
-            lengths[i + 1] = b >> 4;
+            lengths[i + 1] = b >>> 4;
         }
         return new HuffmanTree(lengths);
     }

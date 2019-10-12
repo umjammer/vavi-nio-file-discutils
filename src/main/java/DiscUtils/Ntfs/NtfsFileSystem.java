@@ -25,7 +25,6 @@ package DiscUtils.Ntfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import DiscUtils.Core.InvalidFileSystemException;
 import DiscUtils.Core.ReparsePoint;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.WindowsFileInformation;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.SparseStream;
@@ -60,6 +60,7 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 
 /**
@@ -72,9 +73,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
     private static final Map<String, Object> NonSettableFileAttributes = new HashMap<String, Object>() {
         {
-            put("Directory", true);
-            put("Offline", true);
-            put("ReparsePoint", true);
+            put(FileAttributes.Directory.name(), true);
+            put(FileAttributes.Offline.name(), true);
+            put(FileAttributes.ReparsePoint.name(), true);
         }
     };
 
@@ -756,8 +757,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             }
 
             Map<String, Object> oldValue = dirEntry.getDetails().getFileAttributes();
-            Map<String, Object> changedAttribs = oldValue ^ newValue;
-            if (changedAttribs == 0) {
+            Map<String, Object> changedAttribs = FileAttributes.xor(oldValue, newValue);
+            if (FileAttributes.count(changedAttribs) == 0) {
                 return;
             }
 
@@ -1141,7 +1142,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    public Permission getSecurity(String path) {
+    public RawSecurityDescriptor getSecurity(String path) {
         try (Closeable __newVar21 = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1161,7 +1162,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    public void setSecurity(String path, Permission securityDescriptor) {
+    public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
         try (Closeable __newVar22 = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1409,7 +1410,13 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             File file = getFile(dirEntry.getReference());
             StandardInformation si = file.getStandardInformation();
-            return new WindowsFileInformation();
+            WindowsFileInformation wfi = new WindowsFileInformation();
+            wfi.setCreationTime(si.CreationTime);
+            wfi.setLastAccessTime(si.LastAccessTime);
+            wfi.setChangeTime(si.MftChangedTime);
+            wfi.setLastWriteTime(si.ModificationTime);
+            wfi.setFileAttributes(StandardInformation.convertFlags(si._FileAttributes, file.getIsDirectory()));
+            return wfi;
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
@@ -1422,7 +1429,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @param info The standard file information.
      */
     public void setFileStandardInformation(String path, WindowsFileInformation info) {
-        try (Closeable __newVar29 = new NtfsTransaction()) {
+        try (Closeable ntfs = new NtfsTransaction()) {
             updateStandardInformation(path, si -> {
                 si.CreationTime = info.getCreationTime();
                 si.LastAccessTime = info.getLastAccessTime();
@@ -1447,7 +1454,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      *         The MFT index is held in the lower 48 bits of the id.
      */
     public long getFileId(String path) {
-        try (Closeable __newVar30 = new NtfsTransaction()) {
+        try (Closeable ntfs = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
                 throw new FileNotFoundException("File not found " + path);
@@ -1681,8 +1688,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                     Directory childDir = Directory.createNew(_context, newDirAttrs);
                     try {
                         childDirEntry = addFileToDirectory(childDir, focusDir, pathElements[i], options);
-                        SecurityPermission parentSd = doGetSecurity(focusDir);
-                        SecurityPermission newSd = new SecurityPermission();
+                        RawSecurityDescriptor parentSd = doGetSecurity(focusDir);
+                        RawSecurityDescriptor newSd;
                         if (options != null && options.getSecurityDescriptor() != null) {
                             newSd = options.getSecurityDescriptor();
                         } else {
@@ -1953,8 +1960,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         File file = File.createNew(_context, newFileAttrs);
         try {
             result = addFileToDirectory(file, parentDir, Utilities.getFileFromPath(path), options);
-            Permission parentSd = doGetSecurity(parentDir);
-            Permission newSd = new Permission();
+            RawSecurityDescriptor parentSd = doGetSecurity(parentDir);
+            RawSecurityDescriptor newSd;
             if (options != null && options.getSecurityDescriptor() != null) {
                 newSd = options.getSecurityDescriptor();
             } else {
@@ -2073,17 +2080,17 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         }
     }
 
-    private Permission doGetSecurity(File file) {
+    private RawSecurityDescriptor doGetSecurity(File file) {
         NtfsStream legacyStream = file.getStream(AttributeType.SecurityDescriptor, null);
         if (legacyStream != null) {
-            return legacyStream.getContent().Descriptor;
+            return SecurityDescriptor.class.cast(legacyStream.getContent()).getDescriptor();
         }
 
         StandardInformation si = file.getStandardInformation();
         return _context.getSecurityDescriptors().getDescriptorById(si.SecurityId);
     }
 
-    private void doSetSecurity(File file, Permission securityDescriptor) {
+    private void doSetSecurity(File file, RawSecurityDescriptor securityDescriptor) {
         NtfsStream legacyStream = file.getStream(AttributeType.SecurityDescriptor, null);
         if (legacyStream != null) {
             SecurityDescriptor sd = new SecurityDescriptor();

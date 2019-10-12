@@ -177,7 +177,7 @@ public class LunInfo {
      */
     public String toString() {
         if ((getLun() & 0xFF00000000000000l) == 0) {
-            return String.valueOf(getLun() >> (6 * 8));
+            return String.valueOf(getLun() >>> (6 * 8));
         }
 
         return String.valueOf(getLun());

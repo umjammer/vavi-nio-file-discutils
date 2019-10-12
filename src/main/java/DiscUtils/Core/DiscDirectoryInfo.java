@@ -141,9 +141,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @return An array of files.
      */
-    public List<DiscDirectoryInfo> getFiles() throws IOException {
+    public List<DiscFileInfo> getFiles() throws IOException {
         return getFileSystem().getFiles(getPath()).stream().map(p -> {
-            return new DiscDirectoryInfo(getFileSystem(), p);
+            return new DiscFileInfo(getFileSystem(), p);
         }).collect(Collectors.toList());
     }
 
@@ -155,7 +155,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         include the wildcards * (matching 0 or more characters)
      *         and ? (matching 1 character).
      */
-    public List<DiscDirectoryInfo> getFiles(String pattern) throws IOException {
+    public List<DiscFileInfo> getFiles(String pattern) throws IOException {
         return getFiles(pattern, "TopDirectoryOnly");
     }
 
@@ -172,9 +172,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         whether only immediate
      *         children, or all children are returned.
      */
-    public List<DiscDirectoryInfo> getFiles(String pattern, String searchOption) throws IOException {
+    public List<DiscFileInfo> getFiles(String pattern, String searchOption) throws IOException {
         return getFileSystem().getFiles(getPath(), pattern, searchOption).stream().map(p -> {
-            return new DiscDirectoryInfo(getFileSystem(), p);
+            return new DiscFileInfo(getFileSystem(), p);
         }).collect(Collectors.toList());
     }
 
@@ -183,9 +183,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @return An array of files and directories.
      */
-    public List<DiscDirectoryInfo> getFileSystemInfos() throws IOException {
+    public List<DiscFileSystemInfo> getFileSystemInfos() throws IOException {
         return getFileSystem().getFileSystemEntries(getPath()).stream().map(p -> {
-            return new DiscDirectoryInfo(getFileSystem(), p);
+            return new DiscFileSystemInfo(getFileSystem(), p);
         }).collect(Collectors.toList());
     }
 
@@ -197,9 +197,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         the wildcards * (matching 0 or more characters)
      *         and ? (matching 1 character).
      */
-    public List<DiscDirectoryInfo> getFileSystemInfos(String pattern) throws IOException {
+    public List<DiscFileSystemInfo> getFileSystemInfos(String pattern) throws IOException {
         return getFileSystem().getFileSystemEntries(getPath(), pattern).stream().map(p -> {
-            return new DiscDirectoryInfo(getFileSystem(), p);
+            return new DiscFileSystemInfo(getFileSystem(), p);
         }).collect(Collectors.toList());
     }
 }

@@ -23,8 +23,6 @@
 package DiscUtils.Wim;
 
 import java.io.IOException;
-import java.security.Permission;
-import java.security.acl.AclEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +45,7 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 
 /**
@@ -61,7 +60,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     private long _rootDirPos;
 
-    private List<Permission> _securityDescriptors;
+    private List<RawSecurityDescriptor> _securityDescriptors;
 
     public WimFileSystem(WimFile file, int index) {
         _file = file;
@@ -88,7 +87,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    public Permission getSecurity(String path) {
+    public RawSecurityDescriptor getSecurity(String path) {
         int id = getEntry(path).SecurityId;
         if (id == Integer.MAX_VALUE) {
             return null;
@@ -109,7 +108,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    public void setSecurity(String path, Permission securityDescriptor) {
+    public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
         throw new UnsupportedOperationException();
     }
 
@@ -573,7 +572,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         }
         _securityDescriptors = new ArrayList<>(numEntries);
         for (int i = 0; i < numEntries; ++i) {
-            _securityDescriptors.add(new Permission(reader.readBytes((int) sdLengths[i]), 0));
+            _securityDescriptors.add(new RawSecurityDescriptor(reader.readBytes((int) sdLengths[i]), 0));
         }
         if (reader.getPosition() < startPos + totalLength) {
             reader.skip((int) (startPos + totalLength - reader.getPosition()));
@@ -605,7 +604,6 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
                     nextEntry = entry;
                     break;
                 }
-
             }
             if (nextEntry == null) {
                 return null;
@@ -614,7 +612,6 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             if (nextEntry.SubdirOffset != 0) {
                 currentDir = getDirectory(nextEntry.SubdirOffset);
             }
-
         }
         return nextEntry;
     }

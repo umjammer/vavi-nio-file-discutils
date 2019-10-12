@@ -53,7 +53,7 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public long getFileOffsetMB() {
-        return _value >> 20 & 0xFFFFFFFFFFFL;
+        return _value >>> 20 & 0xFFFFFFFFFFFL;
     }
 
     public void setFileOffsetMB(long value) {

@@ -149,7 +149,7 @@ public final class Quotas {
 
         public long HardLimit;
 
-        public SecurityIdentifier Sid;
+        public Principal Sid;
 
         public int Version;
 
@@ -158,7 +158,7 @@ public final class Quotas {
         public QuotaRecord() {
         }
 
-        public QuotaRecord(SecurityIdentifier sid) {
+        public QuotaRecord(Principal sid) {
             Version = 2;
             Flags = 1;
             ChangeTime = System.currentTimeMillis();
@@ -180,7 +180,7 @@ public final class Quotas {
             HardLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x20);
             ExceededTime = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x28);
             if (buffer.length - offset > 0x30) {
-                Sid = new SecurityIdentifier(buffer, offset + 0x30);
+                Sid = new Principal(buffer, offset + 0x30);
                 return 0x30 + Sid.BinaryLength;
             }
 

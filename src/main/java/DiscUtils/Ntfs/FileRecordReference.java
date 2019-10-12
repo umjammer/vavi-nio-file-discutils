@@ -53,7 +53,7 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public short getSequenceNumber() {
-        return (short) ((getValue() >> 48) & 0xFFFF);
+        return (short) ((getValue() >>> 48) & 0xFFFF);
     }
 
     public long getSize() {

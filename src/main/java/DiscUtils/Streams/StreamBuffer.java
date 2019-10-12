@@ -131,7 +131,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * Flushes all data to the underlying storage.
      */
     public void flush() {
-//        _stream.flush();
+        _stream.flush();
     }
 
     /**

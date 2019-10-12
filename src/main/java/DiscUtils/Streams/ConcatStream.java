@@ -104,7 +104,7 @@ public class ConcatStream extends SparseStream {
     public void flush() {
         checkDisposed();
         for (int i = 0; i < _streams.size(); ++i) {
-//            _streams[i].flush();
+            _streams.get(i).flush();
         }
     }
 

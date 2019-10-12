@@ -242,7 +242,7 @@ public final class SubKeyHashedListCell extends ListCell {
             boolean match = true;
             int hash = _nameHashes.get(i);
             for (int j = 0; j < 4; ++j) {
-                char ch = (char) ((hash >> (j * 8)) & 0xFF);
+                char ch = (char) ((hash >>> (j * 8)) & 0xFF);
                 if (Character.toUpperCase(ch) != compStr.charAt(j)) {
                     match = false;
                     break;

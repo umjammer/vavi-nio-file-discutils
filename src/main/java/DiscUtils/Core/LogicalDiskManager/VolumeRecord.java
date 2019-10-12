@@ -89,7 +89,7 @@ public final class VolumeRecord extends DatabaseRecord {
         Size = readVarLong(buffer, pos);
         Unknown2 = readUInt(buffer, pos);
         BiosType = readByte(buffer, pos);
-        VolumeGuid = EndianUtilities.toGuidBigEndian(buffer, pos);
+        VolumeGuid = EndianUtilities.toGuidBigEndian(buffer, pos[0]);
         pos[0] += 16;
         if ((Flags & 0x0200) != 0) {
             MountHint = readVarString(buffer, pos);

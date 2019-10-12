@@ -23,7 +23,7 @@ public class Helpers {
     public static Stream loadDataFile(String name) throws Exception {
         List<Class<?>> assembly = ReflectionHelper.getAssembly(Helpers.class);
 
-        String formattedName = assembly.getName().Name + "._Data." + name;
+        String formattedName = assembly.name().Name + "._Data." + name;
         if (assembly.getManifestResourceNames().Contains(formattedName))
             return assembly.getManifestResourceStream(formattedName);
 

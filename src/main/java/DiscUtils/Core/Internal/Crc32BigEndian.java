@@ -67,7 +67,7 @@ public final class Crc32BigEndian extends Crc32 {
         int value = accumulator;
         for (int i = 0; i < count; ++i) {
             byte b = buffer[offset + i];
-            value = table[(value >> 24) ^ b] ^ (value << 8);
+            value = table[(value >>> 24) ^ b] ^ (value << 8);
         }
         return value;
     }

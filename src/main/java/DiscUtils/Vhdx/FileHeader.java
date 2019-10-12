@@ -37,7 +37,7 @@ public final class FileHeader implements IByteArraySerializable {
 
     public long Signature = VhdxSignature;
 
-    public boolean getIsValid() {
+    public boolean isValid() {
         return Signature == VhdxSignature;
     }
 
@@ -56,5 +56,4 @@ public final class FileHeader implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 0);
         System.arraycopy(Creator.getBytes(Charset.forName("utf-8")), 0, buffer, offset + 8, Creator.length());
     }
-
 }

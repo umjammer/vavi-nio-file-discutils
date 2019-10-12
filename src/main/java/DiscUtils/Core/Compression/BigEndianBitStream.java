@@ -53,13 +53,13 @@ public class BigEndianBitStream extends BitStream {
         ensureBufferFilled();
         _bufferAvailable -= count;
         int mask = (1 << count) - 1;
-        return (_buffer >> _bufferAvailable) & mask;
+        return (_buffer >>> _bufferAvailable) & mask;
     }
 
     public int peek(int count) {
         ensureBufferFilled();
         int mask = (1 << count) - 1;
-        return (_buffer >> (_bufferAvailable - count)) & mask;
+        return (_buffer >>> (_bufferAvailable - count)) & mask;
     }
 
     public void consume(int count) {
