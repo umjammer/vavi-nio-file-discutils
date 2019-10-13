@@ -23,7 +23,6 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.security.Principal;
 import java.time.Instant;
 import java.util.Map;
 
@@ -31,6 +30,8 @@ import vavi.util.win32.DateUtil;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
+import moe.yo3explorer.dotnetio4j.compat.SecurityIdentifier;
+import moe.yo3explorer.dotnetio4j.compat.WellKnownSidType;
 
 
 public final class Quotas {
@@ -83,26 +84,26 @@ public final class Quotas {
     }
 
     public final static class OwnerKey implements IByteArraySerializable {
-        public Principal Sid;
+        public SecurityIdentifier Sid;
 
         public OwnerKey() {
         }
 
-        public OwnerKey(Principal sid) {
+        public OwnerKey(SecurityIdentifier sid) {
             Sid = sid;
         }
 
         public long getSize() {
-            return Sid.BinaryLength;
+            return Sid.getBinaryLength();
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            Sid = new Principal(buffer, offset);
-            return Sid.BinaryLength;
+            Sid = new SecurityIdentifier(buffer, offset);
+            return Sid.getBinaryLength();
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            Sid.GetBinaryForm(buffer, offset);
+            Sid.getBinaryForm(buffer, offset);
         }
 
         public String toString() {
@@ -149,7 +150,7 @@ public final class Quotas {
 
         public long HardLimit;
 
-        public Principal Sid;
+        public SecurityIdentifier Sid;
 
         public int Version;
 
@@ -158,7 +159,7 @@ public final class Quotas {
         public QuotaRecord() {
         }
 
-        public QuotaRecord(Principal sid) {
+        public QuotaRecord(SecurityIdentifier sid) {
             Version = 2;
             Flags = 1;
             ChangeTime = System.currentTimeMillis();
@@ -168,7 +169,7 @@ public final class Quotas {
         }
 
         public long getSize() {
-            return 0x30 + (Sid == null ? 0 : Sid.BinaryLength);
+            return 0x30 + (Sid == null ? 0 : Sid.getBinaryLength());
         }
 
         public int readFrom(byte[] buffer, int offset) {
@@ -180,8 +181,8 @@ public final class Quotas {
             HardLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x20);
             ExceededTime = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x28);
             if (buffer.length - offset > 0x30) {
-                Sid = new Principal(buffer, offset + 0x30);
-                return 0x30 + Sid.BinaryLength;
+                Sid = new SecurityIdentifier(buffer, offset + 0x30);
+                return 0x30 + Sid.getBinaryLength();
             }
 
             return 0x30;
@@ -191,19 +192,20 @@ public final class Quotas {
             EndianUtilities.writeBytesLittleEndian(Version, buffer, offset);
             EndianUtilities.writeBytesLittleEndian(Flags, buffer, offset + 0x04);
             EndianUtilities.writeBytesLittleEndian(BytesUsed, buffer, offset + 0x08);
-            EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(ChangeTime)), buffer, offset + 0x10);
+            EndianUtilities
+                    .writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(ChangeTime)), buffer, offset + 0x10);
             EndianUtilities.writeBytesLittleEndian(WarningLimit, buffer, offset + 0x18);
             EndianUtilities.writeBytesLittleEndian(HardLimit, buffer, offset + 0x20);
             EndianUtilities.writeBytesLittleEndian(ExceededTime, buffer, offset + 0x28);
             if (Sid != null) {
-                Sid.GetBinaryForm(buffer, offset + 0x30);
+                Sid.getBinaryForm(buffer, offset + 0x30);
             }
 
         }
 
         public String toString() {
-            return "[V:" + Version + ",F:" + Flags + ",BU:" + BytesUsed + ",CT:" + ChangeTime + ",WL:" + WarningLimit + ",HL:" +
-                   HardLimit + ",ET:" + ExceededTime + ",SID:" + Sid + "]";
+            return "[V:" + Version + ",F:" + Flags + ",BU:" + BytesUsed + ",CT:" + ChangeTime + ",WL:" + WarningLimit + ",HL:"
+                    + HardLimit + ",ET:" + ExceededTime + ",SID:" + Sid + "]";
         }
     }
 }

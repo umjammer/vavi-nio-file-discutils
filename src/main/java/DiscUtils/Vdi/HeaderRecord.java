@@ -60,9 +60,9 @@ public class HeaderRecord {
 
     public UUID modificationId;
 
-    public UUID parentId;
+    public UUID parentId = new UUID(0, 0);
 
-    public UUID parentModificationId;
+    public UUID parentModificationId = new UUID(0, 0);
 
     public UUID uniqueId;
 
@@ -100,10 +100,14 @@ public class HeaderRecord {
             headerSize = 348;
         } else {
             long savedPos = s.getPosition();
+//System.err.println("savedPos: " + savedPos);
             headerSize = EndianUtilities.toInt32LittleEndian(StreamUtilities.readExact(s, 4), 0);
+//System.err.printf("headerSize: %1$8x, %1$d\n", headerSize);
             s.setPosition(savedPos);
+//System.err.println("getPosition: " + s.getPosition());
         }
         byte[] buffer = StreamUtilities.readExact(s, headerSize);
+//System.err.println("R:\n" + StringUtil.getDump(buffer, 64));
         read(version, buffer, 0);
     }
 
@@ -201,7 +205,7 @@ public class HeaderRecord {
         } else {
             throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized file version: " + fileVersion);
         }
-
+//System.err.println("W:\n" + StringUtil.getDump(buffer, 64));
         return headerSize;
     }
 }

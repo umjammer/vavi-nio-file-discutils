@@ -22,13 +22,12 @@
 
 package DiscUtils.OpticalDiscSharing;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,9 +39,13 @@ import DiscUtils.Net.Dns.ServiceDiscoveryClient;
 import DiscUtils.Net.Dns.ServiceInstance;
 import DiscUtils.Net.Dns.ServiceInstanceEndPoint;
 import DiscUtils.Net.Dns.ServiceInstanceFields;
+import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
@@ -58,15 +61,15 @@ public final class OpticalDiscService {
 
     private String _userName;
 
-    OkHttpClient client;
+    static OkHttpClient client;
+
+    static {
+        client = new OkHttpClient().newBuilder().followRedirects(false).followSslRedirects(false).build();
+    }
 
     public OpticalDiscService(ServiceInstance instance, ServiceDiscoveryClient sdClient) {
         _sdClient = sdClient;
         _instance = instance;
-        client = new OkHttpClient().newBuilder()
-                .followRedirects(false)
-                .followSslRedirects(false)
-                .build();
     }
 
     /**
@@ -105,12 +108,12 @@ public final class OpticalDiscService {
     /**
      * Connects to the service.
      *
-     * @param userName The username to use, if the owner of the Mac / PC is
-     *            prompted.
-     * @param computerName The computer name to use, if the owner of the Mac /
-     *            PC is prompted.
+     * @param userName       The username to use, if the owner of the Mac / PC is
+     *                           prompted.
+     * @param computerName   The computer name to use, if the owner of the Mac / PC
+     *                           is prompted.
      * @param maxWaitSeconds The maximum number of seconds to wait to be granted
-     *            access.
+     *                           access.
      */
     public void connect(String userName, String computerName, int maxWaitSeconds) {
         Map<String, String> sysParams = getParams("sys");
@@ -124,7 +127,8 @@ public final class OpticalDiscService {
         if ((volFlags & 0x200) != 0) {
             _userName = userName;
             askForAccess(userName, computerName, maxWaitSeconds);
-            // Flush any stale mDNS data - the server advertises extra info (such as the discs available)
+            // Flush any stale mDNS data - the server advertises extra info (such as the
+            // discs available)
             // after a client is granted permission to access a disc.
             _sdClient.flushCache();
             _instance = _sdClient.lookupInstance(_instance.getName(), ServiceInstanceFields.All);
@@ -146,65 +150,63 @@ public final class OpticalDiscService {
     }
 
     private static String getAskToken(String askId, URI uri, int maxWaitSecs) {
-        URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask-status" + "?" +
-                                "askID=" + askId);
+        URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask-status" + "?"
+                + "askID=" + askId);
         boolean askBusy = true;
         String askStatus = "unknown";
         String askToken = null;
         Instant start = Instant.now();
         Duration maxWait = Duration.ofSeconds(maxWaitSecs);
         while (askStatus.equals("unknown") && maxWait.compareTo(Duration.between(Instant.now(), start)) > 0) {
-            Thread.sleep(1000);
-            Request wreq = client.Request.Create(uri);
-            wreq.Method = "GET";
-            Response wrsp = wreq.GetResponse();
-            Stream inStream = wrsp.GetResponseStream();
             try {
-                Map<String, Object> plist = Plist.parse(inStream);
-                askBusy = (boolean) plist.get("askBusy");
-                askStatus = plist.get("askStatus") instanceof String ? (String) plist.get("askStatus") : (String) null;
-                if (askStatus.equals("accepted")) {
-                    askToken = plist.get("askToken") instanceof String ? (String) plist.get("askToken") : (String) null;
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
                 }
-            } finally {
-                if (inStream != null)
-                    inStream.close();
+                Request wreq = new Request.Builder().url(uri.toString()).get().build();
+                Response wrsp = client.newCall(wreq).execute();
+                try (Stream inStream = new JavaIOStream(wrsp.body().byteStream(), null)) {
+                    Map<String, Object> plist = Plist.parse(inStream);
+                    askBusy = (boolean) plist.get("askBusy");
+                    askStatus = plist.get("askStatus") instanceof String ? (String) plist.get("askStatus") : (String) null;
+                    if (askStatus.equals("accepted")) {
+                        askToken = plist.get("askToken") instanceof String ? (String) plist.get("askToken") : (String) null;
+                    }
+                }
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         }
         if (askToken == null) {
-            throw new IllegalAccessException("Access not granted");
+            throw new moe.yo3explorer.dotnetio4j.IOException("Access not granted");
         }
 
         return askToken;
     }
 
     private static String initiateAsk(String userName, String computerName, URI uri) {
-        URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask");
-        Request wreq = (HttpWebRequest) WebRequest.Create(uri);
-        wreq.Method = "POST";
-        Map<String, Object> req = new HashMap<>();
-        req.put("askDevice", "");
-        req.put("computer", computerName);
-        req.put("user", userName);
-        Stream outStream = wreq.GetRequestStream();
         try {
-            Plist.write(outStream, req);
-        } finally {
-            if (outStream != null)
-                outStream.close();
-
+            URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask");
+            RequestBody rb;
+            try (MemoryStream outStream = new MemoryStream()) {
+                Map<String, Object> req = new HashMap<>();
+                req.put("askDevice", "");
+                req.put("computer", computerName);
+                req.put("user", userName);
+                Plist.write(outStream, req);
+                rb = RequestBody.create(MediaType.get("text/xml"), outStream.toArray());
+            }
+            Request wreq = new Request.Builder().url(uri.toString()).post(rb).build();
+            String askId;
+            Response wrsp = client.newCall(wreq).execute();
+            try (Stream inStream = new JavaIOStream(wrsp.body().byteStream(), null)) {
+                Map<String, Object> plist = Plist.parse(inStream);
+                askId = String.valueOf((int) plist.get("askID"));
+            }
+            return askId;
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
-        String askId;
-        Response wrsp = wreq.GetResponse();
-        Stream inStream = wrsp.GetResponseStream();
-        try {
-            Map<String, Object> plist = Plist.parse(inStream);
-            askId = String.valueOf((int) plist.get("askID"));
-        } finally {
-            if (inStream != null)
-                inStream.close();
-        }
-        return askId;
     }
 
     private static int parseInt(String volFlagsStr) {

@@ -58,7 +58,7 @@ public class StreamUtilities {
     }
 
     /**
-     * Read bytes until buffer filled or throw EndOfStreamException.
+     * Read bytes until buffer filled or throw @link{moe.yo3explorer.dotnetio4j.IOException}.
      *
      * @param stream The stream to read.
      * @param buffer The buffer to populate.
@@ -79,7 +79,7 @@ public class StreamUtilities {
     }
 
     /**
-     * Read bytes until buffer filled or throw EndOfStreamException.
+     * Read bytes until buffer filled or throw @link{moe.yo3explorer.dotnetio4j.IOException}.
      *
      * @param stream The stream to read.
      * @param count The number of bytes to read.
@@ -92,7 +92,7 @@ public class StreamUtilities {
     }
 
     /**
-     * Read bytes until buffer filled or throw EndOfStreamException.
+     * Read bytes until buffer filled or throw @link{moe.yo3explorer.dotnetio4j.IOException}.
      *
      * @param buffer The stream to read.
      * @param pos The position in buffer to read from.

@@ -78,7 +78,7 @@ public class DiskStream extends SparseStream {
 
     public boolean canWrite() {
         checkDisposed();
-        return true; // TODO _fileStream.canWrite();
+        return _fileStream.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
@@ -127,7 +127,7 @@ public class DiskStream extends SparseStream {
 
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
-System.err.println(_position + ", " + _fileHeader.diskSize);
+//Debug.println(_position + ", " + _fileHeader.diskSize);
         if (_atEof || _position > _fileHeader.diskSize) {
             _atEof = true;
             throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of file");
@@ -150,6 +150,7 @@ System.err.println(_position + ", " + _fileHeader.diskSize);
             } else if (_blockTable[block] == BlockZero) {
                 Arrays.fill(buffer, offset + numRead, toRead, (byte) 0);
             } else {
+                // TODO _blockTable[block] got negative
                 long blockOffset = _blockTable[block] * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
                 long filePos = _fileHeader.dataOffset + _fileHeader.blockExtraSize + blockOffset + offsetInBlock;
                 _fileStream.setPosition(filePos);
@@ -218,7 +219,6 @@ System.err.println(_position + ", " + _fileHeader.diskSize);
                     _position += toWrite;
                     continue;
                 }
-
             }
 
             if (_blockTable[block] == BlockFree || _blockTable[block] == BlockZero) {
@@ -227,9 +227,9 @@ System.err.println(_position + ", " + _fileHeader.diskSize);
                 if (toWrite != _fileHeader.blockSize) {
                     writeBuffer = new byte[_fileHeader.blockSize];
                     if (_blockTable[block] == BlockFree) {
+                        // TODO: Use parent stream data...
                     }
 
-                    // TODO: Use parent stream data...
                     // Copy actual data into temporary buffer, then this is a full block write.
                     System.arraycopy(buffer, offset + numWritten, writeBuffer, offsetInBlock, toWrite);
                     writeBufferOffset = 0;
@@ -278,7 +278,8 @@ System.err.println(_position + ", " + _fileHeader.diskSize);
         byte[] buffer = StreamUtilities.readExact(_fileStream, _fileHeader.blockCount * 4);
         _blockTable = new int[_fileHeader.blockCount];
         for (int i = 0; i < _fileHeader.blockCount; ++i) {
-            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4);
+            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4); // TODO
+System.err.println(_blockTable[i]);
         }
     }
 

@@ -53,12 +53,12 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public long getSize() {
-        return getDescriptor().BinaryLength;
+        return getDescriptor().getBinaryLength();
     }
 
     public int readFrom(byte[] buffer, int offset) {
         setDescriptor(new RawSecurityDescriptor(buffer, offset));
-        return getDescriptor().BinaryLength;
+        return (int) getDescriptor().getBinaryLength();
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -91,12 +91,12 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
             EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x0C);
         }
         EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x04);
-        getDescriptor().Owner.GetBinaryForm(buffer, offset + pos);
-        pos += getDescriptor().Owner.BinaryLength;
+        getDescriptor().getOwner().getBinaryForm(buffer, offset + pos);
+        pos += getDescriptor().getOwner().getBinaryLength();
         EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x08);
-        getDescriptor().Group.GetBinaryForm(buffer, offset + pos);
-        pos += getDescriptor().Group.BinaryLength;
-        if (pos != getDescriptor().BinaryLength) {
+        getDescriptor().getGroup().getBinaryForm(buffer, offset + pos);
+        pos += getDescriptor().getGroup().getBinaryLength();
+        if (pos != getDescriptor().getBinaryLength()) {
             throw new IOException("Failed to write Security Descriptor correctly");
         }
 
@@ -119,7 +119,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     public static RawSecurityDescriptor calcNewObjectDescriptor(RawSecurityDescriptor parent, boolean isContainer) {
         Acl sacl = inheritAcl(parent.SystemAcl, isContainer);
         Acl dacl = InheritAcl(parent.DiscretionaryAcl, isContainer);
-        return new RawSecurityDescriptor(parent.ControlFlags, parent.Owner, parent.Group, sacl, dacl);
+        return new RawSecurityDescriptor(parent.ControlFlags, parent.getOwner(), parent.getGroup(), sacl, dacl);
     }
 
     private static Acl inheritAcl(Acl parentAcl, boolean isContainer) {

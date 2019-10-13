@@ -22,24 +22,20 @@
 
 package DiscUtils.OpticalDiscSharing;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.api.client.http.HttpStatusCodes;
-
-import DiscUtils.Core.CoreCompat.ListSupport;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import moe.yo3explorer.dotnetio4j.Stream;
+import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -53,16 +49,18 @@ public final class DiscContentBuffer extends Buffer {
 
     private String _userName;
 
+    OkHttpClient client;
+
     public DiscContentBuffer(URI uri, String userName, String password) {
         _uri = uri;
         _userName = userName;
         _password = password;
+        client = new OkHttpClient().newBuilder().followRedirects(false).followSslRedirects(false).build();
         Response response = sendRequest(() -> {
-            Request wr = (HttpWebRequest) WebRequest.Create(uri);
-            wr.Method = "HEAD";
+            Request wr = new Request.Builder().url(uri.toString()).head().build();
             return wr;
         });
-        __Capacity = response.ContentLength;
+        __Capacity = response.body().contentLength();
     }
 
     public boolean canRead() {
@@ -81,22 +79,21 @@ public final class DiscContentBuffer extends Buffer {
 
     public int read(long pos, byte[] buffer, int offset, int count) {
         Response response = sendRequest(() -> {
-            Request wr = (HttpWebRequest) WebRequest.Create(_uri);
-            wr.Method = "GET";
-            wr.addRange((int) pos, (int) (pos + count - 1));
+            Request wr = new Request.Builder().url(_uri.toString())
+                    .get()
+                    .addHeader("Range", String.format("bytes=%d-%d", (int) pos, (int) (pos + count - 1)))
+                    .build();
             return wr;
         });
-        Stream s = response.getResponseStream();
-        try {
-            int total = (int) response.ContentLength;
+        try (Stream s = new JavaIOStream(response.body().byteStream(), null)) {
+            int total = (int) response.body().contentLength();
             int read = 0;
             while (read < Math.min(total, count)) {
                 read += s.read(buffer, offset + read, count - read);
             }
             return read;
-        } finally {
-            if (s != null)
-                s.close();
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -137,33 +134,39 @@ public final class DiscContentBuffer extends Buffer {
     private Response sendRequest(WebRequestCreator wrc) {
         Request wr = wrc.invoke();
         if (_authHeader != null) {
-            wr.newBuilder().addHeader("Authorization", _authHeader);
+            wr = wr.newBuilder().addHeader("Authorization", _authHeader).build();
         }
 
+        Response wresp = null;
         try {
-            return (Response) wr.GetResponse();
-        } catch (WebException we) {
-            Response wresp = (HttpWebResponse) we.Response;
-            if (wresp.StatusCode == HttpStatusCode.Unauthorized) {
+            wresp = client.newCall(wr).execute();
+            if (wresp.isSuccessful()) {
+                return wresp;
+            } else if (wresp.code() == 401) {
                 String[] authMethod = new String[1];
-                Map<String, String> authParams = ParseAuthenticationHeader(wresp.Headers.get("WWW-Authenticate"), authMethod);
+                Map<String, String> authParams = parseAuthenticationHeader(wresp.header("WWW-Authenticate"), authMethod);
                 if (!authMethod[0].equals("Digest")) {
-                    throw we;
+                    throw new moe.yo3explorer.dotnetio4j.IOException("status: " + wresp.code());
                 }
 
-                String resp = CalcDigestResponse(authParams.get("nonce"),
-                                                 wr.RequestUri.AbsolutePath,
-                                                 wr.Method,
+                String resp = calcDigestResponse(authParams.get("nonce"),
+                                                 wr.url().uri().getPath(),
+                                                 wr.method(),
                                                  authParams.get("realm"));
-                _authHeader = "Digest username=\"" + _userName + "\", realm=\"ODS\", nonce=\"" + authParams.get("nonce") +
-                              "\", uri=\"" + wr.RequestUri.AbsolutePath + "\", response=\"" + resp + "\"";
-                (wresp instanceof Closeable ? (Closeable) wresp : (Closeable) null).close();
+                _authHeader = "Digest username=\"" + _userName + "\", realm=\"ODS\", nonce=\"" + authParams.get("nonce")
+                        + "\", uri=\"" + wr.url().uri().getPath() + "\", response=\"" + resp + "\"";
                 wr = wrc.invoke();
-                wr.Headers.put("Authorization", _authHeader);
-                return (Response) wr.GetResponse();
+                wr = wr.newBuilder().addHeader("Authorization", _authHeader).build();
+                try {
+                    return client.newCall(wr).execute();
+                } catch (IOException e) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                }
+            } else {
+                throw new moe.yo3explorer.dotnetio4j.IOException("status: " + wresp.code());
             }
-
-            throw we;
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 

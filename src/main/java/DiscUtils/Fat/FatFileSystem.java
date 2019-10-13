@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import vavi.util.StringUtil;
-
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.FloppyDiskType;
@@ -900,7 +898,7 @@ public final class FatFileSystem extends DiscFileSystem {
             try {
                 name = new FileName(pathElements[i], getFatOptions().getFileNameEncoding());
             } catch (IllegalArgumentException ae) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid path");
+                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid path: " + path, ae);
             }
 
             Directory child = focusDir.getChildDirectory(name);
@@ -1457,7 +1455,7 @@ public final class FatFileSystem extends DiscFileSystem {
         _data = data;
         _data.setPosition(0);
         _bootSector = StreamUtilities.readSector(_data);
-System.err.println(StringUtil.getDump(_bootSector, 64));
+//System.err.println(StringUtil.getDump(_bootSector, 64));
         setFatVariant(detectFATType(_bootSector));
         readBPB();
         loadFAT();

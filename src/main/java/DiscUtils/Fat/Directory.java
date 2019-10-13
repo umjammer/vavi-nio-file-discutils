@@ -24,6 +24,7 @@ package DiscUtils.Fat;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -59,12 +60,12 @@ public class Directory implements Closeable {
     private long _selfEntryLocation;
 
     /**
-     * Initializes a new instance of the Directory class. Use this constructor
-     * to represent non-root directories.
+     * Initializes a new instance of the Directory class. Use this constructor to
+     * represent non-root directories.
      *
-     * @param parent The parent directory.
-     * @param parentId The identity of the entry representing this directory in
-     *            the parent.
+     * @param parent   The parent directory.
+     * @param parentId The identity of the entry representing this directory in the
+     *                     parent.
      */
     public Directory(Directory parent, long parentId) {
         __FileSystem = parent.getFileSystem();
@@ -76,11 +77,11 @@ public class Directory implements Closeable {
     }
 
     /**
-     * Initializes a new instance of the Directory class. Use this constructor
-     * to represent the root directory.
+     * Initializes a new instance of the Directory class. Use this constructor to
+     * represent the root directory.
      *
      * @param fileSystem The file system.
-     * @param dirStream The stream containing the directory info.
+     * @param dirStream  The stream containing the directory info.
      */
     public Directory(FatFileSystem fileSystem, Stream dirStream) {
         __FileSystem = fileSystem;
@@ -148,7 +149,8 @@ public class Directory implements Closeable {
         long id = findEntry(name);
         if (id >= 0) {
             if (_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("A file exists with the same name");
+                throw new moe.yo3explorer.dotnetio4j.IOException("A file exists with the same name: "
+                        + name.getDisplayName(Charset.forName(System.getProperty("file.encoding"))));
             }
 
             return getFileSystem().getDirectory(this, id);
@@ -173,7 +175,8 @@ public class Directory implements Closeable {
             populateNewChildDirectory(newEntry);
             return getFileSystem().getDirectory(this, id);
         } finally {
-            // Rather than just creating a new instance, pull it through the fileSystem cache
+            // Rather than just creating a new instance, pull it through the
+            // fileSystem cache
             // to ensure the cache model is preserved.
             getFileSystem().getFat().flush();
         }
@@ -227,8 +230,8 @@ public class Directory implements Closeable {
         }
 
         if (mode == FileMode.Open && !exists) {
-            throw new FileNotFoundException("File not found " +
-                                            name.getDisplayName(getFileSystem().getFatOptions().getFileNameEncoding()));
+            throw new FileNotFoundException("File not found "
+                    + name.getDisplayName(getFileSystem().getFatOptions().getFileNameEncoding()));
         }
 
         if ((mode == FileMode.Open || mode == FileMode.OpenOrCreate || mode == FileMode.Create) && exists) {
@@ -260,7 +263,8 @@ public class Directory implements Closeable {
 
     // Should never get here...
     public long addEntry(DirectoryEntry newEntry) {
-        // Unlink an entry from the free list (or add to the end of the existing directory)
+        // Unlink an entry from the free list (or add to the end of the existing
+        // directory)
         long pos;
         if (_freeEntries.size() > 0) {
             pos = _freeEntries.get(0);
@@ -272,7 +276,8 @@ public class Directory implements Closeable {
         // Put the new entry into it's slot
         _dirStream.setPosition(pos);
         newEntry.writeTo(_dirStream);
-        // Update internal structures to reflect new entry (as if read from disk)
+        // Update internal structures to reflect new entry (as if read from
+        // disk)
         _entries.put(pos, newEntry);
         handleAccessed(true);
         return pos;
@@ -366,7 +371,8 @@ public class Directory implements Closeable {
     }
 
     private void populateNewChildDirectory(DirectoryEntry newEntry) {
-        // Populate new directory with initial (special) entries.  First one is easy, just change the name!
+        // Populate new directory with initial (special) entries. First one is
+        // easy, just change the name!
         try (ClusterStream stream = new ClusterStream(getFileSystem(),
                                                       FileAccess.Write,
                                                       newEntry.getFirstCluster(),
@@ -375,7 +381,8 @@ public class Directory implements Closeable {
             DirectoryEntry selfEntry = new DirectoryEntry(newEntry);
             selfEntry.setName(FileName.SelfEntryName);
             selfEntry.writeTo(stream);
-            // Second is a clone of our self entry (i.e. parent) - though dates are odd...
+            // Second is a clone of our self entry (i.e. parent) - though dates
+            // are odd...
             DirectoryEntry parentEntry = new DirectoryEntry(getSelfEntry());
             parentEntry.setName(FileName.ParentEntryName);
             parentEntry.setCreationTime(newEntry.getCreationTime());
@@ -419,7 +426,8 @@ public class Directory implements Closeable {
         return _selfEntry;
     }
 
-    // If we're the root directory, simulate the parent entry with a dummy record
+    // If we're the root directory, simulate the parent entry with a dummy
+    // record
     public void setSelfEntry(DirectoryEntry value) {
         if (_selfEntryLocation >= 0) {
             _dirStream.setPosition(_selfEntryLocation);

@@ -147,7 +147,7 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
             synchronized (_udpClient) {
                 _udpClient.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
             }
-            transaction.getCompleteEvent().WaitOne(2000);
+            transaction.getCompleteEvent().waitOne(2000);
         } finally {
             synchronized (_transactions) {
                 _transactions.remove(transactionId);

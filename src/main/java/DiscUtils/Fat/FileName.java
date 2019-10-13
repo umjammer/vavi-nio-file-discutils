@@ -53,6 +53,9 @@ public final class FileName {
         System.arraycopy(data, offset, _raw, 0, 11);
     }
 
+    /**
+     * @throws IllegalArgumentException
+     */
     public FileName(String name, Charset encoding) {
         _raw = new byte[11];
         byte[] bytes = name.toUpperCase().getBytes(encoding);
@@ -60,8 +63,8 @@ public final class FileName {
         int rawIdx = 0;
         while (nameIdx < bytes.length && bytes[nameIdx] != '.' && rawIdx < _raw.length) {
             byte b = bytes[nameIdx++];
-            if (b < 0x20 || contains(InvalidBytes, b)) {
-                throw new IllegalArgumentException("Invalid character in file name '" + (char) b + "'");
+            if ((b & 0xff) < 0x20 || contains(InvalidBytes, b)) {
+                throw new IllegalArgumentException("Invalid character in file name '" + (char) b + "', 0x" + Integer.toHexString(b & 0xff));
             }
 
             _raw[rawIdx++] = b;

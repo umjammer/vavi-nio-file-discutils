@@ -22,8 +22,6 @@
 
 package DiscUtils.Vdi;
 
-import vavi.util.StringUtil;
-
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -69,7 +67,6 @@ public class GeometryRecord {
     }
 
     public void read(byte[] buffer, int offset) {
-System.err.println(StringUtil.getDump(buffer, offset, buffer.length - offset));
         Cylinders = EndianUtilities.toInt32LittleEndian(buffer, offset + 0);
         Heads = EndianUtilities.toInt32LittleEndian(buffer, offset + 4);
         Sectors = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);

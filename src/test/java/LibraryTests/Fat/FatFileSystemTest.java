@@ -215,7 +215,7 @@ public class FatFileSystemTest {
         byte[] buffer = new byte[1024 * 1024];
         stream.write(buffer, 0, 1024 * 1024);
         stream.setPosition(0);
-        assertThrows(InvalidFileSystemException.class, () -> {
+        assertThrows(IllegalStateException.class, () -> { // InvalidFileSystemException
             return new FatFileSystem(stream);
         });
     }

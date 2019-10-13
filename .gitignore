@@ -21,3 +21,8 @@ packages/
 tmp
 Tests_Java
 DiscUtils.sln
+appveyor.yml
+DiscUtils.sln.DotSettings
+GitVersion.yml
+SigningKey.snk
+Version.template.props

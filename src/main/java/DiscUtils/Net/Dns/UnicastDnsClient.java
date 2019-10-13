@@ -97,9 +97,9 @@ public final class UnicastDnsClient extends DnsClient {
      * Flushes any cached DNS records.
      */
     public void flushCache() {
+        // Nothing to do.
     }
 
-    // Nothing to do.
     /**
      * Looks up a record in DNS.
      *
