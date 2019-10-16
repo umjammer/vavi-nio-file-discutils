@@ -166,7 +166,7 @@ public final class BiosPartitionTable extends PartitionTable {
         for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
             // If the partition extends beyond the end of the disk, this is probably an invalid partition table
             if (record.getLBALength() != 0xFFFFFFFF &&
-                (record.getLBAStart() + (long) record.getLBALength()) * Sizes.Sector > disk.getLength()) {
+                (record.getLBAStart() + record.getLBALength()) * Sizes.Sector > disk.getLength()) {
                 return false;
             }
 
@@ -174,7 +174,7 @@ public final class BiosPartitionTable extends PartitionTable {
                 List<StreamExtent> thisPartitionExtents = Arrays
                         .asList(new StreamExtent(record.getLBAStart(), record.getLBALength()));
                 // If the partition intersects another partition, this is probably an invalid partition table
-                for (StreamExtent overlap : StreamExtent.intersect(knownPartitions, thisPartitionExtents)) {
+                for (@SuppressWarnings("unused") StreamExtent overlap : StreamExtent.intersect(knownPartitions, thisPartitionExtents)) {
                     return false;
                 }
                 knownPartitions = new ArrayList<>(StreamExtent.union(knownPartitions, thisPartitionExtents));
@@ -216,7 +216,7 @@ public final class BiosPartitionTable extends PartitionTable {
      */
     public static BiosPartitionTable initialize(Stream disk, Geometry diskGeometry) {
         Stream data = disk;
-        byte[] bootSector = new byte[Sizes.Sector];
+        byte[] bootSector;
         if (data.getLength() >= Sizes.Sector) {
             data.setPosition(0);
             bootSector = StreamUtilities.readExact(data, Sizes.Sector);
@@ -224,7 +224,7 @@ public final class BiosPartitionTable extends PartitionTable {
             bootSector = new byte[Sizes.Sector];
         }
         // Wipe all four 16-byte partition table entries
-        Arrays.fill(bootSector, 0x01BE, 16 * 4, (byte) 0);
+        Arrays.fill(bootSector, 0x01BE, 0x01BE + 16 * 4, (byte) 0);
         // Marker bytes
         bootSector[510] = 0x55;
         bootSector[511] = (byte) 0xAA;
@@ -388,6 +388,7 @@ public final class BiosPartitionTable extends PartitionTable {
         }
 
         if ((last + 1) * _diskGeometry.getBytesPerSector() > _diskData.getLength()) {
+System.err.printf("%x, %x\n", (last + 1) * _diskGeometry.getBytesPerSector(), _diskData.getLength());
             throw new IndexOutOfBoundsException("The last sector extends beyond the end of the disk");
         }
 
@@ -417,8 +418,8 @@ public final class BiosPartitionTable extends PartitionTable {
         newRecord.setStatus((byte) (markActive ? 0x80 : 0x00));
         for (BiosPartitionRecord r  : existing) {
             // First check for overlap with existing partition...
-            if (Utilities.rangesOverlap((int) first,
-                                        (int) last + 1,
+            if (Utilities.rangesOverlap(first,
+                                        last + 1,
                                         r.getLBAStartAbsolute(),
                                         r.getLBAStartAbsolute() + r.getLBALength())) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("New partition overlaps with existing partition");
@@ -468,7 +469,7 @@ public final class BiosPartitionTable extends PartitionTable {
         for (BiosPartitionRecord primaryRecord : getPrimaryRecords()) {
             if (primaryRecord.isValid()) {
                 if (isExtendedPartition(primaryRecord)) {
-                    extents.addAll(new BiosExtendedPartitionTable(_diskData, primaryRecord.getLBAStart())
+                    extents.addAll(new BiosExtendedPartitionTable(_diskData, (int) primaryRecord.getLBAStart())
                             .getMetadataDiskExtents());
                 }
 
@@ -585,7 +586,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private List<BiosPartitionRecord> getExtendedRecords(BiosPartitionRecord r) {
-        return new BiosExtendedPartitionTable(_diskData, r.getLBAStart()).getPartitions();
+        return new BiosExtendedPartitionTable(_diskData, (int) r.getLBAStart()).getPartitions();
     }
 
     private void writeRecord(int i, BiosPartitionRecord newRecord) {
@@ -637,8 +638,8 @@ public final class BiosPartitionTable extends PartitionTable {
             }
             if (Utilities.rangesOverlap(startSector,
                                         startSector + numSectors,
-                                        (long) entry.getLBAStartAbsolute(),
-                                        (long) entry.getLBAStartAbsolute() + entry.getLBALength())) {
+                                        entry.getLBAStartAbsolute(),
+                                        entry.getLBAStartAbsolute() + entry.getLBALength())) {
                 startSector = MathUtilities.roundUp(entry.getLBAStartAbsolute() + entry.getLBALength(), alignmentSectors);
             }
 
@@ -656,7 +657,7 @@ public final class BiosPartitionTable extends PartitionTable {
         _diskGeometry = diskGeometry;
         _diskData.setPosition(0);
         byte[] bootSector = StreamUtilities.readExact(_diskData, Sizes.Sector);
-        if (bootSector[510] != 0x55 || bootSector[511] != 0xAA) {
+        if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
             throw new moe.yo3explorer.dotnetio4j.IOException("Invalid boot sector - no magic number 0xAA55");
         }
     }

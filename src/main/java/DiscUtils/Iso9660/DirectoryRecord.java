@@ -48,7 +48,7 @@ public class DirectoryRecord {
     public short VolumeSequenceNumber;
 
     public static int readFrom(byte[] src, int offset, Charset enc, DirectoryRecord[] record) {
-        int length = src[offset + 0];
+        int length = src[offset + 0] & 0xff;
         record[0] = new DirectoryRecord();
         record[0].ExtendedAttributeRecordLength = src[offset + 1];
         record[0].LocationOfExtent = IsoUtilities.toUInt32FromBoth(src, offset + 2);
@@ -59,9 +59,9 @@ public class DirectoryRecord {
         record[0].InterleaveGapSize = src[offset + 27];
         record[0].VolumeSequenceNumber = IsoUtilities.toUInt16FromBoth(src, offset + 28);
         byte lengthOfFileIdentifier = src[offset + 32];
-        record[0].FileIdentifier = IsoUtilities.readChars(src, offset + 33, lengthOfFileIdentifier, enc);
+        record[0].FileIdentifier = IsoUtilities.readChars(src, offset + 33, lengthOfFileIdentifier & 0xff, enc);
         int padding = (lengthOfFileIdentifier & 1) == 0 ? 1 : 0;
-        int startSystemArea = lengthOfFileIdentifier + padding + 33;
+        int startSystemArea = (lengthOfFileIdentifier & 0xff) + padding + 33;
         int lenSystemArea = length - startSystemArea;
         if (lenSystemArea > 0) {
             record[0].SystemUseData = new byte[lenSystemArea];

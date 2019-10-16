@@ -24,6 +24,9 @@ package LibraryTests.Registry;
 
 import java.util.EnumSet;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -37,6 +40,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class RegistryHiveTest {
+    @Disabled(value = "Issue #14")
     public void create() throws Exception {
         MemoryStream ms = new MemoryStream();
         RegistryHive hive = RegistryHive.create(ms);
@@ -49,6 +53,7 @@ public class RegistryHiveTest {
         assertEquals(EnumSet.of(RegistryKeyFlags.Root, RegistryKeyFlags.Normal), hive.getRoot().getFlags());
     }
 
+    @Test
     public void create_Null() throws Exception {
         assertThrows(NullPointerException.class, () -> {
             RegistryHive.create((Stream) null);

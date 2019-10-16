@@ -64,7 +64,7 @@ public class SuperBlock implements IByteArraySerializable {
 
     public short MinorVersion;
 
-    public MetadataRef RootInode = new MetadataRef();
+    public MetadataRef RootInode;
 
     public short UidGidCount;
 

@@ -19,7 +19,7 @@ package DiscUtils.Ntfs;
 //        }
 //    }
 //
-//    private List<IndexNodeSaveFn> _invocationList = new ArrayList<>();
+//    private List<IndexNodeSaveFn> _invocationList;
 //
 //    public static IndexNodeSaveFn combine(IndexNodeSaveFn a, IndexNodeSaveFn b) {
 //        if (a == null)

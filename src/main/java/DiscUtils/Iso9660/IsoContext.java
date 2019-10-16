@@ -25,6 +25,7 @@ package DiscUtils.Iso9660;
 import java.util.List;
 
 import DiscUtils.Core.Vfs.VfsContext;
+import DiscUtils.Iso9660.Susp.SuspExtension;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 

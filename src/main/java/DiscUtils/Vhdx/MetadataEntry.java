@@ -32,7 +32,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public final class MetadataEntry implements IByteArraySerializable {
     public EnumSet<MetadataEntryFlags> Flags;
 
-    public UUID ItemId = UUID.randomUUID();
+    public UUID ItemId;
 
     public int Length;
 

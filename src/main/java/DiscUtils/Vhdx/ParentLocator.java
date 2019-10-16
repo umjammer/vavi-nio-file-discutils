@@ -45,7 +45,7 @@ class ParentLocator implements IByteArraySerializable {
         return Entries;
     }
 
-    private Map<String, String> Entries = new HashMap<>();
+    private Map<String, String> Entries;
 
     public long getSize() {
         if (Entries.size() != 0) {
@@ -71,8 +71,8 @@ class ParentLocator implements IByteArraySerializable {
             int keyLength = EndianUtilities.toUInt16LittleEndian(buffer, kvOffset + 8);
             int valueLength = EndianUtilities.toUInt16LittleEndian(buffer, kvOffset + 10);
 
-            String key = new String(buffer, keyOffset, keyLength, Charset.forName("utf-8"));
-            String value = new String(buffer, valueOffset, valueLength, Charset.forName("utf-8"));
+            String key = new String(buffer, keyOffset, keyLength, Charset.forName("UTF-16LE"));
+            String value = new String(buffer, valueOffset, valueLength, Charset.forName("UTF-16LE"));
 
             Entries.put(key, value);
         }

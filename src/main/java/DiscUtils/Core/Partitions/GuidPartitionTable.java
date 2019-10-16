@@ -48,6 +48,8 @@ import moe.yo3explorer.dotnetio4j.Stream;
  * Represents a GUID Partition Table.
  */
 public final class GuidPartitionTable extends PartitionTable {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private Stream _diskData;
 
     private Geometry _diskGeometry;
@@ -300,7 +302,7 @@ public final class GuidPartitionTable extends PartitionTable {
      */
     public void delete(int index) {
         int offset = getPartitionOffset(index);
-        Arrays.fill(_entryBuffer, offset, _primaryHeader.PartitionEntrySize, (byte) 0);
+        Arrays.fill(_entryBuffer, offset, offset + _primaryHeader.PartitionEntrySize, (byte) 0);
         write();
     }
 
@@ -522,7 +524,7 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType != new UUID(0L, 0L)) {
+            if (!entry.PartitionType.equals(EMPTY)) {
                 result.add(entry);
             }
         }
@@ -536,7 +538,7 @@ public final class GuidPartitionTable extends PartitionTable {
         while (!found && position < _primaryHeader.PartitionEntryCount) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, position * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType != new UUID(0L, 0L)) {
+            if (!entry.PartitionType.equals(EMPTY)) {
                 if (index == entriesSoFar) {
                     found = true;
                     break;
@@ -559,14 +561,13 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.Identity == identity) {
+            if (entry.Identity.equals(identity)) {
                 return index;
             }
 
-            if (entry.PartitionType != new UUID(0L, 0L)) {
+            if (!entry.PartitionType.equals(EMPTY)) {
                 index++;
             }
-
         }
         throw new moe.yo3explorer.dotnetio4j.IOException("No such partition");
     }
@@ -575,12 +576,10 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType == new UUID(0L, 0L)) {
+            if (entry.PartitionType.equals(EMPTY)) {
                 return i * _primaryHeader.PartitionEntrySize;
             }
-
         }
         throw new moe.yo3explorer.dotnetio4j.IOException("No free partition entries available");
     }
-
 }

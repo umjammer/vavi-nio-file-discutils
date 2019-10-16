@@ -115,7 +115,7 @@ public final class RpcException extends IOException {
         }
 
         if (reply.RejectedReply.MismatchInfo != null) {
-            return String.format("RPC protocol version mismatch, server supports versions {0} through {1}",
+            return String.format("RPC protocol version mismatch, server supports versions %d through %d",
                                  reply.RejectedReply.MismatchInfo.Low,
                                  reply.RejectedReply.MismatchInfo.High);
         }

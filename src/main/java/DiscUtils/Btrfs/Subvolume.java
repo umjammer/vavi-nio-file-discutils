@@ -1,8 +1,4 @@
 //
-
-package DiscUtils.Btrfs;
-
-//
 // Copyright (c) 2017, Bianco Veigel
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -23,6 +19,9 @@ package DiscUtils.Btrfs;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Btrfs;
+
 public class Subvolume {
     private long __Id;
 
@@ -34,7 +33,7 @@ public class Subvolume {
         __Id = value;
     }
 
-    private String __Name = new String();
+    private String __Name;
 
     public String getName() {
         return __Name;
@@ -43,5 +42,4 @@ public class Subvolume {
     public void setName(String value) {
         __Name = value;
     }
-
 }

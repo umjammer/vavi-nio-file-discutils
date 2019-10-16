@@ -37,6 +37,7 @@ import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.ThreadSafeStream;
 import DiscUtils.Streams.Util.Ownership;
 import moe.yo3explorer.dotnetio4j.FileAccess;
+import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.SeekOrigin;
 import moe.yo3explorer.dotnetio4j.Stream;
 
@@ -120,7 +121,7 @@ public class ThreadSafeStreamTest {
         try {
             altView.readByte();
             assertTrue(false, "Disposed stream didn't stop view");
-        } catch (UnsupportedOperationException __dummyCatchVar1) {
+        } catch (IOException __dummyCatchVar1) {
         }
     }
 

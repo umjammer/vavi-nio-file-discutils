@@ -47,7 +47,7 @@ public class AlternateStreamEntry {
         result.Hash = reader.readBytes(20);
         int nameLength = reader.readUInt16();
         if (nameLength > 0) {
-            result.Name = new String(reader.readBytes(nameLength + 2), Charset.forName("Unicode")).replaceAll("\0*$", "");
+            result.Name = new String(reader.readBytes(nameLength + 2), Charset.forName("UTF-16LE")).replaceFirst("\0*$", "");
         } else {
             result.Name = "";
         }

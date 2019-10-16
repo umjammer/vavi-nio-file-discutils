@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Nfs.PortMap2Mapping;
+import DiscUtils.Nfs.PortMap2Protocol;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +37,11 @@ public class PortMap2MappingTest {
     @Test
     public void roundTripTest() throws Exception {
         PortMap2Mapping attributes = new PortMap2Mapping();
+        attributes.setPort(1);
+        attributes.setProgram(2);
+        attributes.setProtocol(PortMap2Protocol.Tcp);
+        attributes.setVersion(4);
+
         PortMap2Mapping clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

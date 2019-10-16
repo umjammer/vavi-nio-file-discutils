@@ -101,7 +101,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
         }
 
         return other.getStatus() == getStatus() && other.getFileHandle().equals(getFileHandle()) &&
-               other.getFileAttributes().equals(getFileAttributes()) &&
+               Utilities.equals(other.getFileAttributes(), getFileAttributes()) &&
                other.getCacheConsistency().equals(getCacheConsistency());
     }
 

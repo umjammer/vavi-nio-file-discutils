@@ -26,6 +26,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -42,18 +44,20 @@ import moe.yo3explorer.dotnetio4j.SeekOrigin;
 
 
 public class DiskTest {
+    @Test
     public void initializeFixed() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeFixed(ms, Ownership.None, 8 * 1024 * 1024)) {
             assertNotNull(disk);
-            assertTrue(disk.getGeometry().getCapacity() > 7.5 * 1024 * 1024 &&
-                       disk.getGeometry().getCapacity() <= 8 * 1024 * 1024);
+            assertTrue(disk.getGeometry().getCapacity() > 7.5 * 1024 * 1024
+                    && disk.getGeometry().getCapacity() <= 8 * 1024 * 1024);
         }
         // Check the stream is still valid
         ms.readByte();
         ms.close();
     }
 
+    @Test
     public void initializeFixedOwnStream() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeFixed(ms, Ownership.Dispose, 8 * 1024 * 1024)) {
@@ -63,48 +67,45 @@ public class DiskTest {
         });
     }
 
+    @Test
     public void initializeDynamic() throws Exception {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             assertNotNull(disk);
-            assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
-                       disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
+            assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024
+                    && disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
         }
         assertTrue(1 * 1024 * 1024 > ms.getLength());
         try (Disk disk = new Disk(ms, Ownership.Dispose)) {
-            assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
-                       disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
+            assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024
+                    && disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
         }
     }
 
+    @Test
     public void initializeDifferencing() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         MemoryStream diffStream = new MemoryStream();
         DiskImageFile baseFile = DiskImageFile.initializeDynamic(baseStream, Ownership.Dispose, 16 * 1024L * 1024 * 1024);
-        Disk disk = Disk.initializeDifferencing(diffStream,
-                                                Ownership.None,
-                                                baseFile,
-                                                Ownership.Dispose,
-                                                "C:\\TEMP\\Base.vhd",
-                                                ".\\Base.vhd",
-                                                Instant.now().toEpochMilli());
-        try {
-            {
-                assertNotNull(disk);
-                assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
-                           disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
-                assertTrue(disk.getGeometry().getCapacity() == baseFile.getGeometry().getCapacity());
-                assertEquals(2, (new ArrayList<>(disk.getLayers())).size());
-            }
-        } finally {
-            if (disk != null)
-                disk.close();
 
+        try (Disk disk = Disk.initializeDifferencing(diffStream,
+                                                     Ownership.None,
+                                                     baseFile,
+                                                     Ownership.Dispose,
+                                                     "C:\\TEMP\\Base.vhd",
+                                                     ".\\Base.vhd",
+                                                     Instant.now().toEpochMilli())) {
+            assertNotNull(disk);
+            assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024
+                    && disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
+            assertTrue(disk.getGeometry().getCapacity() == baseFile.getGeometry().getCapacity());
+            assertEquals(2, (new ArrayList<>(disk.getLayers())).size());
         }
         assertTrue(1 * 1024 * 1024 > diffStream.getLength());
         diffStream.close();
     }
 
+    @Test
     public void constructorDynamic() throws Exception {
         Geometry geometry;
         MemoryStream ms = new MemoryStream();
@@ -121,6 +122,7 @@ public class DiskTest {
         }
     }
 
+    @Test
     public void constructorFromFiles() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         DiskImageFile baseFile = DiskImageFile.initializeDynamic(baseStream, Ownership.Dispose, 16 * 1024L * 1024 * 1024);
@@ -143,18 +145,13 @@ public class DiskTest {
         }
     }
 
+    @Test
     public void undisposedChangedDynamic() throws Exception {
         byte[] firstSector = new byte[512];
         byte[] lastSector = new byte[512];
         MemoryStream ms = new MemoryStream();
-        Disk newDisk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024);
-        try {
-            {
-            }
-        } finally {
-            if (newDisk != null)
-                newDisk.close();
 
+        try (Disk newDisk = Disk.initializeDynamic(ms, Ownership.None, 16 * 1024L * 1024 * 1024)) {
         }
 
         try (Disk disk = new Disk(ms, Ownership.None)) {

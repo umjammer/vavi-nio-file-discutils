@@ -137,7 +137,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         buffer[offset + 0x17] = 0;
         // Padding
         if (getName() != null) {
-            byte[] bytes = getName().getBytes(Charset.forName("Unicode"));
+            byte[] bytes = getName().getBytes(Charset.forName("UTF-16LE"));
             System.arraycopy(bytes, 0, buffer, offset + nameOffset, bytes.length);
         }
 

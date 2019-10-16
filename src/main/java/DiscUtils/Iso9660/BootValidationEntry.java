@@ -59,7 +59,7 @@ public class BootValidationEntry {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        Arrays.fill(buffer, offset, 0x20, (byte) 0);
+        Arrays.fill(buffer, offset, offset + 0x20, (byte) 0);
         buffer[offset + 0x00] = HeaderId;
         buffer[offset + 0x01] = PlatformId;
         EndianUtilities.stringToBytes(ManfId, buffer, offset + 0x04, 24);

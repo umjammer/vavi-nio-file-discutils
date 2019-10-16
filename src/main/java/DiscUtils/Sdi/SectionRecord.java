@@ -39,7 +39,7 @@ public class SectionRecord {
     public long Size;
 
     public void readFrom(byte[] buffer, int offset) {
-        SectionType = EndianUtilities.bytesToString(buffer, offset, 8).replaceAll("\0*$", "");
+        SectionType = EndianUtilities.bytesToString(buffer, offset, 8).replaceFirst("\0*$", "");
         Attr = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
         Offset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
         Size = EndianUtilities.toInt64LittleEndian(buffer, offset + 24);

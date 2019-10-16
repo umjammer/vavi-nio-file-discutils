@@ -24,6 +24,8 @@ package LibraryTests.SquashFs;
 
 import java.util.EnumSet;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,6 +39,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public final class SquashFileSystemBuilderTest {
+    @Test
     public void singleFile() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
@@ -53,6 +56,7 @@ public final class SquashFileSystemBuilderTest {
         assertFalse(reader.fileExists("otherfile"));
     }
 
+    @Test
     public void createDirs() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
@@ -67,6 +71,7 @@ public final class SquashFileSystemBuilderTest {
         assertTrue(reader.fileExists("adir\\anotherdir\\file"));
     }
 
+    @Test
     public void defaults() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
@@ -106,18 +111,23 @@ public final class SquashFileSystemBuilderTest {
         assertEquals(UnixFilePermissions.GroupAll, reader.getUnixFileInfo("dir2").getPermissions());
     }
 
+    @Test
     public void fragmentData() throws Exception {
         MemoryStream fsImage = new MemoryStream();
+
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
         builder.addFile("file",
                         new MemoryStream(new byte[] {
                             1, 2, 3, 4
                         }));
         builder.build(fsImage);
+
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);
+
         try (Stream fs = reader.openFile("file", FileMode.Open)) {
             byte[] buffer = new byte[100];
             int numRead = fs.read(buffer, 0, 100);
+
             assertEquals(4, numRead);
             assertEquals(1, buffer[0]);
             assertEquals(2, buffer[1]);
@@ -126,25 +136,28 @@ public final class SquashFileSystemBuilderTest {
         }
     }
 
+    @Test
     public void blockData() throws Exception {
         byte[] testData = new byte[(512 * 1024) + 21];
         for (int i = 0; i < testData.length; ++i) {
             testData[i] = (byte) (i % 33);
         }
+
         MemoryStream fsImage = new MemoryStream();
+
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
         builder.addFile("file", new MemoryStream(testData));
         builder.build(fsImage);
+
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);
+
         try (Stream fs = reader.openFile("file", FileMode.Open)) {
             byte[] buffer = new byte[(512 * 1024) + 1024];
             int numRead = fs.read(buffer, 0, buffer.length);
             assertEquals(testData.length, numRead);
             for (int i = 0; i < testData.length; ++i) {
-                assertEquals(testData[i], buffer[i]);
+                assertEquals(testData[i], buffer[i] /* , "Data differs at index " + i */);
             }
         }
     }
 }
-
-/* , "Data differs at index " + i */

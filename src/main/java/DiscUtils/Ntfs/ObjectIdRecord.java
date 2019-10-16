@@ -35,7 +35,7 @@ public final class ObjectIdRecord implements IByteArraySerializable {
 
     public UUID BirthVolumeId;
 
-    public FileRecordReference MftReference = new FileRecordReference();
+    public FileRecordReference MftReference;
 
     public long getSize() {
         return 0x38;

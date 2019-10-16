@@ -24,6 +24,7 @@ package DiscUtils.Nfs;
 
 import DiscUtils.Core.Internal.Utilities;
 
+
 public class RpcMessageHeader {
     public RpcMessageHeader() {
     }
@@ -39,8 +40,8 @@ public class RpcMessageHeader {
     }
 
     public boolean getIsSuccess() {
-        return getReplyHeader() != null && getReplyHeader().Status == RpcReplyStatus.Accepted &&
-               getReplyHeader().AcceptReply.AcceptStatus == RpcAcceptStatus.Success;
+        return getReplyHeader() != null && getReplyHeader().Status == RpcReplyStatus.Accepted
+                && getReplyHeader().AcceptReply.AcceptStatus == RpcAcceptStatus.Success;
     }
 
     private RpcReplyHeader __ReplyHeader;
@@ -78,8 +79,8 @@ public class RpcMessageHeader {
             return false;
         }
 
-        return other.getIsSuccess() == getIsSuccess() && other.getTransactionId() == getTransactionId() &&
-               other.getReplyHeader().equals(getReplyHeader());
+        return other.getIsSuccess() == getIsSuccess() && other.getTransactionId() == getTransactionId()
+                && other.getReplyHeader().equals(getReplyHeader());
     }
 
     public int hashCode() {
@@ -87,10 +88,29 @@ public class RpcMessageHeader {
     }
 
     public static RpcMessageHeader accepted(int transactionId) {
-        return new RpcMessageHeader();
+        RpcMessageHeader header = new RpcMessageHeader();
+        header.setTransactionId(transactionId);
+        RpcReplyHeader replyHeader = new RpcReplyHeader();
+        replyHeader.Status = RpcReplyStatus.Accepted;
+        RpcAcceptedReplyHeader acceptedReplyHeader = new RpcAcceptedReplyHeader();
+        acceptedReplyHeader.AcceptStatus = RpcAcceptStatus.Success;
+        acceptedReplyHeader.Verifier = RpcAuthentication.null_();
+        replyHeader.AcceptReply = acceptedReplyHeader;
+        header.setReplyHeader(replyHeader);
+        return header;
     }
 
     public static RpcMessageHeader procedureUnavailable(int transactionId) {
-        return new RpcMessageHeader();
+        RpcMessageHeader header = new RpcMessageHeader();
+        header.setTransactionId(transactionId);
+        RpcReplyHeader replyHeader = new RpcReplyHeader();
+        replyHeader.Status = RpcReplyStatus.Accepted;
+        RpcAcceptedReplyHeader acceptedReplyHeader = new RpcAcceptedReplyHeader();
+        acceptedReplyHeader.AcceptStatus = RpcAcceptStatus.ProcedureUnavailable;
+        acceptedReplyHeader.MismatchInfo = new RpcMismatchInfo();
+        acceptedReplyHeader.Verifier = RpcAuthentication.null_();
+        replyHeader.AcceptReply = acceptedReplyHeader;
+        header.setReplyHeader(replyHeader);
+        return header;
     }
 }

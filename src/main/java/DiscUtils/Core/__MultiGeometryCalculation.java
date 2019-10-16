@@ -32,7 +32,7 @@ public class __MultiGeometryCalculation implements GeometryCalculation {
         return prev.invoke(capacity);
     }
 
-    private List<GeometryCalculation> _invocationList = new ArrayList<>();
+    private List<GeometryCalculation> _invocationList;
 
     public static GeometryCalculation combine(GeometryCalculation a, GeometryCalculation b) {
         if (a == null)

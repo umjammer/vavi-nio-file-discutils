@@ -48,7 +48,7 @@ public final class MetadataEntryKey {
             return false;
         }
 
-        return _itemId == other._itemId && isUser() == other.isUser();
+        return _itemId.equals(other._itemId) && isUser() == other.isUser();
     }
 
     public static MetadataEntryKey fromEntry(MetadataEntry entry) {

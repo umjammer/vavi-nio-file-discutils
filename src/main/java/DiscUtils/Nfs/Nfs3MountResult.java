@@ -46,7 +46,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
     public Nfs3MountResult() {
     }
 
-    private List<RpcAuthFlavour> __AuthFlavours = new ArrayList<>();
+    private List<RpcAuthFlavour> __AuthFlavours;
 
     public List<RpcAuthFlavour> getAuthFlavours() {
         return __AuthFlavours;

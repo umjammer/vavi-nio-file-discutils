@@ -70,7 +70,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class.
      *
-     * @param path The path to the disk.
+     * @param path   The path to the disk.
      * @param access The access requested to the disk.
      */
     public Disk(String path, FileAccess access) throws IOException {
@@ -81,8 +81,8 @@ public final class Disk extends VirtualDisk {
      * Initializes a new instance of the Disk class.
      *
      * @param fileSystem The file system containing the disk.
-     * @param path The file system relative path to the disk.
-     * @param access The access requested to the disk.
+     * @param path       The file system relative path to the disk.
+     * @param access     The access requested to the disk.
      */
     public Disk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
         _path = path;
@@ -96,10 +96,10 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Initializes a new instance of the Disk class. Only monolithic sparse
-     * streams are supported.
+     * Initializes a new instance of the Disk class. Only monolithic sparse streams
+     * are supported.
      *
-     * @param stream The stream containing the VMDK file.
+     * @param stream     The stream containing the VMDK file.
      * @param ownsStream Indicates if the new instances owns the stream.
      */
     public Disk(Stream stream, Ownership ownsStream) {
@@ -146,13 +146,11 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets the contents of this disk as a stream.
-     * Note the returned stream is not guaranteed to be at any particular
-     * position. The actual position
-     * will depend on the last partition table/file system activity, since all
-     * access to the disk contents pass
-     * through a single stream instance. Set the stream position before
-     * accessing the stream.
+     * Gets the contents of this disk as a stream. Note the returned stream is not
+     * guaranteed to be at any particular position. The actual position will depend
+     * on the last partition table/file system activity, since all access to the
+     * disk contents pass through a single stream instance. Set the stream position
+     * before accessing the stream.
      */
     public SparseStream getContent() {
         if (_content == null) {
@@ -174,10 +172,9 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets information about the type of disk.
-     * This property provides access to meta-data about the disk format, for
-     * example whether the
-     * BIOS geometry is preserved in the disk file.
+     * Gets information about the type of disk. This property provides access to
+     * meta-data about the disk format, for example whether the BIOS geometry is
+     * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo(((DiskImageFile) _files.get(_files.size() - 1).Item1).getCreateType());
@@ -205,9 +202,8 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets the parameters of the disk.
-     * Most of the parameters are also available individually, such as DiskType
-     * and Capacity.
+     * Gets the parameters of the disk. Most of the parameters are also available
+     * individually, such as DiskType and Capacity.
      */
     public VirtualDiskParameters getParameters() {
         DiskImageFile file = (DiskImageFile) _files.get(_files.size() - 1).Item1;
@@ -220,7 +216,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path The name of the VMDK to create.
+     * @param path       The name of the VMDK to create.
      * @param parameters The desired parameters for the new disk.
      * @return The newly created disk image.
      */
@@ -231,9 +227,9 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path The name of the VMDK to create.
+     * @param path     The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
-     * @param type The type of virtual disk to create.
+     * @param type     The type of virtual disk to create.
      * @return The newly created disk image.
      */
     public static Disk initialize(String path, long capacity, DiskCreateType type) throws IOException {
@@ -243,12 +239,11 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path The name of the VMDK to create.
+     * @param path     The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
-     * @param geometry The desired geometry of the new disk, or
-     *            {@code null}
-     *            for default.
-     * @param type The type of virtual disk to create.
+     * @param geometry The desired geometry of the new disk, or {@code null} for
+     *                     default.
+     * @param type     The type of virtual disk to create.
      * @return The newly created disk image.
      */
     public static Disk initialize(String path, long capacity, Geometry geometry, DiskCreateType type) throws IOException {
@@ -259,9 +254,9 @@ public final class Disk extends VirtualDisk {
      * Creates a new virtual disk at the specified location on a file system.
      *
      * @param fileSystem The file system to contain the disk.
-     * @param path The file system path to the disk.
-     * @param capacity The desired capacity of the new disk.
-     * @param type The type of virtual disk to create.
+     * @param path       The file system path to the disk.
+     * @param capacity   The desired capacity of the new disk.
+     * @param type       The type of virtual disk to create.
      * @return The newly created disk image.
      */
     public static Disk initialize(DiscFileSystem fileSystem,
@@ -274,9 +269,9 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path The name of the VMDK to create.
-     * @param capacity The desired capacity of the new disk.
-     * @param type The type of virtual disk to create.
+     * @param path        The name of the VMDK to create.
+     * @param capacity    The desired capacity of the new disk.
+     * @param type        The type of virtual disk to create.
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
@@ -290,12 +285,11 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path The name of the VMDK to create.
-     * @param capacity The desired capacity of the new disk.
-     * @param geometry The desired geometry of the new disk, or
-     *            {@code null}
-     *            for default.
-     * @param type The type of virtual disk to create.
+     * @param path        The name of the VMDK to create.
+     * @param capacity    The desired capacity of the new disk.
+     * @param geometry    The desired geometry of the new disk, or {@code null} for
+     *                        default.
+     * @param type        The type of virtual disk to create.
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
@@ -310,10 +304,10 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified location on a file system.
      *
-     * @param fileSystem The file system to contain the disk.
-     * @param path The file system path to the disk.
-     * @param capacity The desired capacity of the new disk.
-     * @param type The type of virtual disk to create.
+     * @param fileSystem  The file system to contain the disk.
+     * @param path        The file system path to the disk.
+     * @param capacity    The desired capacity of the new disk.
+     * @param type        The type of virtual disk to create.
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
@@ -328,8 +322,8 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk as a thin clone of an existing disk.
      *
-     * @param path The path to the new disk.
-     * @param type The type of disk to create.
+     * @param path       The path to the new disk.
+     * @param type       The type of disk to create.
      * @param parentPath The path to the parent disk.
      * @return The new disk.
      */
@@ -341,8 +335,8 @@ public final class Disk extends VirtualDisk {
      * Creates a new virtual disk as a thin clone of an existing disk.
      *
      * @param fileSystem The file system to contain the disk.
-     * @param path The path to the new disk.
-     * @param type The type of disk to create.
+     * @param path       The path to the new disk.
+     * @param type       The type of disk to create.
      * @param parentPath The path to the parent disk.
      * @return The new disk.
      */
@@ -357,7 +351,7 @@ public final class Disk extends VirtualDisk {
      * Create a new differencing disk, possibly within an existing disk.
      *
      * @param fileSystem The file system to create the disk on.
-     * @param path The path (or URI) for the disk to create.
+     * @param path       The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
@@ -415,7 +409,6 @@ public final class Disk extends VirtualDisk {
                 return DiskCreateType.MonolithicSparse;
             default:
                 return DiskCreateType.VmfsSparse;
-
             }
         }
 
@@ -424,7 +417,7 @@ public final class Disk extends VirtualDisk {
 
     private void resolveFileChain() throws IOException {
         VirtualDiskLayer file = _files.get(_files.size() - 1).Item1;
-        while (file.getNeedsParent()) {
+        while (file.needsParent()) {
             boolean foundParent = false;
             FileLocator locator = file.getRelativeFileLocator();
             for (String posParent : file.getParentLocations()) {
@@ -434,7 +427,6 @@ public final class Disk extends VirtualDisk {
                     foundParent = true;
                     break;
                 }
-
             }
             if (!foundParent) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("Parent disk not found");

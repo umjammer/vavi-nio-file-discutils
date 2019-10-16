@@ -70,7 +70,7 @@ public final class Disk extends VirtualDisk {
     public Disk(Stream stream, Ownership ownsStream) {
         _files = new ArrayList<>();
         _files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
-        if (_files.get(0).Item1.getNeedsParent()) {
+        if (_files.get(0).Item1.needsParent()) {
             throw new UnsupportedOperationException("Differencing disks cannot be opened from a stream");
         }
     }
@@ -132,19 +132,19 @@ public final class Disk extends VirtualDisk {
             throw new IllegalArgumentException("At least one file must be provided");
         }
 
-        if (files.get(files.size() - 1).getNeedsParent()) {
+        if (files.get(files.size() - 1).needsParent()) {
             throw new IllegalArgumentException("Final image file needs a parent");
         }
 
         List<Tuple<DiskImageFile, Ownership>> tempList = new ArrayList<>(files.size());
         for (int i = 0; i < files.size() - 1; ++i) {
-            if (!files.get(i).getNeedsParent()) {
-                throw new IllegalArgumentException(String.format("File at index {0} does not have a parent disk", i));
+            if (!files.get(i).needsParent()) {
+                throw new IllegalArgumentException(String.format("File at index %d does not have a parent disk", i));
             }
 
             if (files.get(i).getParentUniqueId() != files.get(i + 1).getUniqueId()) {
                 throw new IllegalArgumentException(String
-                        .format("File at index {0} is not the parent of file at index {1} - Unique Ids don't match", i + 1, i));
+                        .format("File at index %d is not the parent of file at index %d - Unique Ids don't match", i + 1, i));
             }
 
             tempList.add(new Tuple<>(files.get(i), ownsFiles));
@@ -195,7 +195,7 @@ public final class Disk extends VirtualDisk {
     private Disk(DiskImageFile file, Ownership ownsFile, FileLocator parentLocator, String parentPath) throws IOException {
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, ownsFile));
-        if (file.getNeedsParent()) {
+        if (file.needsParent()) {
             _files.add(new Tuple<>(new DiskImageFile(parentLocator, parentPath, FileAccess.Read), Ownership.Dispose));
             resolveFileChain();
         }
@@ -216,7 +216,7 @@ public final class Disk extends VirtualDisk {
     private Disk(DiskImageFile file, Ownership ownsFile, DiskImageFile parentFile, Ownership ownsParent) throws IOException {
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, ownsFile));
-        if (file.getNeedsParent()) {
+        if (file.needsParent()) {
             _files.add(new Tuple<>(parentFile, ownsParent));
             resolveFileChain();
         } else {
@@ -475,7 +475,7 @@ public final class Disk extends VirtualDisk {
 
     private void resolveFileChain() throws IOException {
         DiskImageFile file = _files.get(_files.size() - 1).Item1;
-        while (file.getNeedsParent()) {
+        while (file.needsParent()) {
             FileLocator fileLocator = file.getRelativeFileLocator();
             boolean found = false;
             for (String testPath : file.getParentLocations()) {

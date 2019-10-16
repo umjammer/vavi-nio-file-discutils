@@ -4,8 +4,9 @@ package LibraryTests.Iso9660;
 
 import java.io.File;
 import java.net.URI;
-import java.nio.file.Paths;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,6 +19,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class SampleDataTests {
+    @Test
     public void appleTestZip() throws Exception {
         File fs = new File(URI.create(getClass().getResource("apple-test.zip").toString()));
         try (Stream iso = ZipUtilities.readFileFromZip(fs, null);

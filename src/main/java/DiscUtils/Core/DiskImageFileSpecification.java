@@ -54,5 +54,4 @@ public final class DiskImageFileSpecification {
     public SparseStream openStream() {
         return _builder.build();
     }
-
 }

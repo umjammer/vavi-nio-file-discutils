@@ -213,7 +213,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
 
         public String toString() {
             try {
-                return String.format("[Data-Hash:{0},Id:{1},SdsOffset:{2},SdsLength:{3}]", Hash, Id, SdsOffset, SdsLength);
+                return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", Hash, Id, SdsOffset, SdsLength);
             } catch (RuntimeException __dummyCatchVar0) {
                 throw __dummyCatchVar0;
             } catch (Exception __dummyCatchVar0) {
@@ -244,7 +244,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
 
         public String toString() {
             try {
-                return String.format("[Key-Hash:{0},Id:{1}]", Hash, Id);
+                return String.format("[Key-Hash:%x,Id:%d]", Hash, Id);
             } catch (RuntimeException __dummyCatchVar1) {
                 throw __dummyCatchVar1;
             } catch (Exception __dummyCatchVar1) {
@@ -274,10 +274,8 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         }
     }
 
-    /**
-     * /System.arraycopy(new byte[] { (byte)'I', 0, (byte)'I', 0 }, 0, buffer,
-     * offset + 0x14, 4);
-     */
+    //System.arraycopy(new byte[] { (byte)'I', 0, (byte)'I', 0 }, 0, buffer, offset + 0x14, 4);
+
     public final static class IdIndexKey implements IByteArraySerializable {
         public int Id;
 
@@ -302,13 +300,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         }
 
         public String toString() {
-            try {
-                return String.format("[Key-Id:{0}]", Id);
-            } catch (RuntimeException __dummyCatchVar2) {
-                throw __dummyCatchVar2;
-            } catch (Exception __dummyCatchVar2) {
-                throw new RuntimeException(__dummyCatchVar2);
-            }
+            return String.format("[Key-Id:%d]", Id);
         }
     }
 

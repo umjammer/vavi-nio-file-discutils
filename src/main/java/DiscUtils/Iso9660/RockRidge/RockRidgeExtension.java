@@ -24,9 +24,9 @@ package DiscUtils.Iso9660.RockRidge;
 
 import java.nio.charset.Charset;
 
-import DiscUtils.Iso9660.GenericSystemUseEntry;
-import DiscUtils.Iso9660.SuspExtension;
-import DiscUtils.Iso9660.SystemUseEntry;
+import DiscUtils.Iso9660.Susp.GenericSystemUseEntry;
+import DiscUtils.Iso9660.Susp.SuspExtension;
+import DiscUtils.Iso9660.Susp.SystemUseEntry;
 
 
 public final class RockRidgeExtension extends SuspExtension {

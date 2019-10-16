@@ -22,11 +22,16 @@
 
 package LibraryTests.Nfs;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Nfs.Nfs3FileHandle;
 import DiscUtils.Nfs.Nfs3MountResult;
+import DiscUtils.Nfs.Nfs3Status;
+import DiscUtils.Nfs.RpcAuthFlavour;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +41,14 @@ public class Nfs3MountResultTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3MountResult result = new Nfs3MountResult();
+        result.setAuthFlavours(Arrays.asList(RpcAuthFlavour.Des, RpcAuthFlavour.Null));
+        Nfs3FileHandle handle = new Nfs3FileHandle();
+        handle.setValue(new byte[] {
+            0x5
+        });
+        result.setFileHandle(handle);
+        result.setStatus(Nfs3Status.Ok);
+
         Nfs3MountResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

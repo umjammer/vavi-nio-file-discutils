@@ -146,9 +146,9 @@ public class DiskStream extends SparseStream {
             int toRead = Math.min(maxToRead - numRead, _fileHeader.blockSize - offsetInBlock);
             if (_blockTable[block] == BlockFree) {
                 // TODO: Use parent
-                Arrays.fill(buffer, offset + numRead, toRead, (byte) 0);
+                Arrays.fill(buffer, offset + numRead, offset + numRead + toRead, (byte) 0);
             } else if (_blockTable[block] == BlockZero) {
-                Arrays.fill(buffer, offset + numRead, toRead, (byte) 0);
+                Arrays.fill(buffer, offset + numRead, offset + numRead + toRead, (byte) 0);
             } else {
                 // TODO _blockTable[block] got negative
                 long blockOffset = _blockTable[block] * (_fileHeader.blockSize + _fileHeader.blockExtraSize);

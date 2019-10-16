@@ -26,3 +26,4 @@ DiscUtils.sln.DotSettings
 GitVersion.yml
 SigningKey.snk
 Version.template.props
+lib

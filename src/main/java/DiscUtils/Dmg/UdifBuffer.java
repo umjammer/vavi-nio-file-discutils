@@ -63,7 +63,7 @@ public class UdifBuffer extends Buffer {
         }
     }
 
-    private List<CompressedBlock> __Blocks = new ArrayList<>();
+    private List<CompressedBlock> __Blocks;
 
     public List<CompressedBlock> getBlocks() {
         return __Blocks;
@@ -90,7 +90,7 @@ public class UdifBuffer extends Buffer {
             int toCopy = (int) Math.min(_activeRun.SectorCount * Sizes.Sector - bufferOffset, count - totalCopied);
             switch (_activeRun.Type) {
             case Zeros:
-                Arrays.fill(buffer, offset + totalCopied, toCopy, (byte) 0);
+                Arrays.fill(buffer, offset + totalCopied, offset + totalCopied + toCopy, (byte) 0);
                 break;
             case Raw:
                 _stream.setPosition(_activeRun.CompOffset + bufferOffset);

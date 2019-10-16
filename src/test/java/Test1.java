@@ -7,6 +7,7 @@
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.EnumSet;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -95,6 +96,16 @@ public class Test1 {
                 .mapToObj(i -> String.format("%02x", b[i]))
                 .collect(Collectors.joining());
         assertEquals("cafebabe", hex);
+    }
+
+    @Test
+    void test5() throws Exception {
+        byte b = (byte) 0xaa;
+        assertTrue((b & 0xff) == 0xaa);
+
+        UUID uuid1 = new UUID(0L, 0L);
+        UUID uuid2 = new UUID(0L, 0L);
+        assertTrue(uuid1.equals(uuid2));
     }
 }
 

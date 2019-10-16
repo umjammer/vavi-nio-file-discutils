@@ -212,7 +212,7 @@ public final class CompressedClusterStream extends ClusterStream {
                 }
             } else {
                 // Sparse, wipe cache buffer directly
-                Arrays.fill(_cacheBuffer, 0, _cacheBuffer.length, (byte) 0);
+                Arrays.fill(_cacheBuffer, 0, 0 + _cacheBuffer.length, (byte) 0);
             }
             _cacheBufferVcn = cuStart;
         }

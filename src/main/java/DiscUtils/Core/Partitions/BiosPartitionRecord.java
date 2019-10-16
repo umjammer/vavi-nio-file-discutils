@@ -48,8 +48,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     private short __EndCylinder;
 
-    public short getEndCylinder() {
-        return __EndCylinder;
+    public int getEndCylinder() {
+        return __EndCylinder & 0xffff;
     }
 
     public void setEndCylinder(short value) {
@@ -58,8 +58,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     private byte __EndHead;
 
-    public byte getEndHead() {
-        return __EndHead;
+    public int getEndHead() {
+        return __EndHead & 0xff;
     }
 
     public void setEndHead(byte value) {
@@ -87,13 +87,13 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     }
 
     public boolean isValid() {
-        return getEndHead() != 0 || getEndSector() != 0 || getEndCylinder() != 0 || getLBALength() != 0;
+        return __EndHead != 0 || __EndSector != 0 || __EndCylinder != 0 || __LBALength != 0;
     }
 
     private int __LBALength;
 
-    public int getLBALength() {
-        return __LBALength;
+    public long getLBALength() {
+        return __LBALength & 0xffffffffl;
     }
 
     public void setLBALength(int value) {
@@ -102,15 +102,15 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     private int __LBAStart;
 
-    public int getLBAStart() {
-        return __LBAStart;
+    public long getLBAStart() {
+        return __LBAStart & 0xffffffffl;
     }
 
     public void setLBAStart(int value) {
         __LBAStart = value;
     }
 
-    public int getLBAStartAbsolute() {
+    public long getLBAStartAbsolute() {
         return getLBAStart() + _lbaOffset;
     }
 
@@ -126,8 +126,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     private short __StartCylinder;
 
-    public short getStartCylinder() {
-        return __StartCylinder;
+    public int getStartCylinder() {
+        return __StartCylinder & 0xffff;
     }
 
     public void setStartCylinder(short value) {
@@ -136,8 +136,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     private byte __StartHead;
 
-    public byte getStartHead() {
-        return __StartHead;
+    public int getStartHead() {
+        return __StartHead & 0xff;
     }
 
     public void setStartHead(byte value) {
@@ -165,20 +165,19 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     }
 
     public int compareTo(BiosPartitionRecord other) {
-        return getLBAStartAbsolute() - other.getLBAStartAbsolute();
+        return Long.compare(getLBAStartAbsolute(), other.getLBAStartAbsolute());
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        buffer[offset] = getStatus();
-        buffer[offset + 1] = getStartHead();
-        buffer[offset + 2] = (byte) ((getStartSector() & 0x3F) | ((getStartCylinder() >>> 2) & 0xC0));
-        buffer[offset + 3] = (byte) getStartCylinder();
-        buffer[offset + 4] = getPartitionType();
-        buffer[offset + 5] = getEndHead();
-        buffer[offset + 6] = (byte) ((getEndSector() & 0x3F) | ((getEndCylinder() >>> 2) & 0xC0));
-        buffer[offset + 7] = (byte) getEndCylinder();
-        EndianUtilities.writeBytesLittleEndian(getLBAStart(), buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(getLBALength(), buffer, offset + 12);
+        buffer[offset] = __Status;
+        buffer[offset + 1] = __StartHead;
+        buffer[offset + 2] = (byte) ((__StartSector & 0x3F) | ((__StartCylinder >>> 2) & 0xC0));
+        buffer[offset + 3] = (byte) __StartCylinder;
+        buffer[offset + 4] = __PartitionType;
+        buffer[offset + 5] = __EndHead;
+        buffer[offset + 6] = (byte) ((__EndSector & 0x3F) | ((__EndCylinder >>> 2) & 0xC0));
+        buffer[offset + 7] = (byte) __EndCylinder;
+        EndianUtilities.writeBytesLittleEndian(__LBAStart, buffer, offset + 8);
+        EndianUtilities.writeBytesLittleEndian(__LBALength, buffer, offset + 12);
     }
-
 }

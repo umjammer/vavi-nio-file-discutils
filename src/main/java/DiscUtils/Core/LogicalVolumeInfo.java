@@ -80,8 +80,8 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * order, if the stability of this identity is paramount.
      */
     public String getIdentity() {
-        if (_guid != new UUID(0L, 0L)) {
-            return "VLG" + _guid.toString(); // "B"
+        if (!_guid.equals(new UUID(0L, 0L))) {
+            return "VLG" + String.format("{%s}", _guid);
         }
 
         return "VLP:" + _physicalVol.getIdentity();
@@ -136,5 +136,4 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     public SparseStream open() {
         return _opener.invoke();
     }
-
 }

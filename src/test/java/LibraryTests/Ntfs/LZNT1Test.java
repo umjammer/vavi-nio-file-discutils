@@ -25,6 +25,8 @@ package LibraryTests.Ntfs;
 import java.nio.ByteBuffer;
 import java.util.Random;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,9 +56,10 @@ public class LZNT1Test {
     }
 
     private static <T> Object createInstance(String name) throws Exception {
-        return createInstance(name);
+        return Class.forName(name).newInstance();
     }
 
+    @Test
     public void compress() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -75,6 +78,7 @@ public class LZNT1Test {
         assertTrue(compressedLength[0] < _uncompressedData.length * 0.66);
     }
 
+    @Test
     public void compressMidSourceBuffer() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -94,6 +98,7 @@ public class LZNT1Test {
         assertEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
+    @Test
     public void compressMidDestBuffer() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -112,6 +117,7 @@ public class LZNT1Test {
         assertEquals(_uncompressedData, nativeDecompress(compressedData, 32 * 1024, compressedLength[0]));
     }
 
+    @Test
     public void compress1KBlockSize() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -130,11 +136,13 @@ public class LZNT1Test {
         int numDuDecompressed = compressor.decompress(compressedData, 0, compressedLength[0], duDecompressed, 0);
         byte[] rightSizedDuDecompressed = new byte[numDuDecompressed];
         System.arraycopy(duDecompressed, 0, rightSizedDuDecompressed, 0, numDuDecompressed);
-        // Note: Due to bug in Windows LZNT1, we compare against native decompression, not the original data, since
+        // Note: Due to bug in Windows LZNT1, we compare against native decompression,
+        // not the original data, since
         // Windows LZNT1 corrupts data on decompression when block size != 4096.
         assertEquals(rightSizedDuDecompressed, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
+    @Test
     public void compress1KBlock() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -153,6 +161,7 @@ public class LZNT1Test {
         assertEquals(uncompressed1K, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
+    @Test
     public void compressAllZeros() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -164,6 +173,7 @@ public class LZNT1Test {
                      compressor.compress(new byte[64 * 1024], 0, 64 * 1024, compressed, 0, numCompressed));
     }
 
+    @Test
     public void compressIncompressible() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -178,6 +188,7 @@ public class LZNT1Test {
                      compressor.compress(uncompressed, 0, uncompressed.length, compressed, 0, numCompressed));
     }
 
+    @Test
     public void decompress() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -190,6 +201,7 @@ public class LZNT1Test {
         assertEquals(_uncompressedData, decompressed);
     }
 
+    @Test
     public void decompressMidSourceBuffer() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -204,6 +216,7 @@ public class LZNT1Test {
         assertEquals(_uncompressedData, decompressed);
     }
 
+    @Test
     public void decompressMidDestBuffer() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -218,6 +231,7 @@ public class LZNT1Test {
         assertEquals(_uncompressedData, decompressed);
     }
 
+    @Test
     public void decompress1KBlockSize() throws Exception {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
@@ -232,39 +246,28 @@ public class LZNT1Test {
     private static byte[] nativeCompress(byte[] data, int offset, int length, int chunkSize) throws Exception {
         ByteBuffer compressedBuffer = null;
         ByteBuffer uncompressedBuffer = null;
-        ByteBuffer workspaceBuffer = null;
         try {
             uncompressedBuffer = ByteBuffer.allocateDirect(length);
             uncompressedBuffer.put(data, offset, length);
-            compressedBuffer = ByteBuffer.allocateDirect(length);
-            int[] bufferWorkspaceSize = new int[1];
-            int[] fragmentWorkspaceSize = new int[1];
-            rtlGetCompressionWorkSpaceSize((short) 2, bufferWorkspaceSize, fragmentWorkspaceSize);
-            workspaceBuffer = ByteBuffer.allocateDirect(bufferWorkspaceSize[0]);
+            int maxSize = MSCompression.INSTANCE.ms_max_compressed_size(MSCompression.MSCOMP_LZNT1, length);
+            compressedBuffer = ByteBuffer.allocateDirect(maxSize);
             int[] compressedSize = new int[1];
-            int ntStatus = rtlCompressBuffer((short) 2,
-                                             uncompressedBuffer,
-                                             length,
-                                             compressedBuffer,
-                                             length,
-                                             chunkSize,
-                                             compressedSize,
-                                             workspaceBuffer);
-            assertEquals(0, ntStatus);
+            int ntStatus = MSCompression.INSTANCE.ms_compress(MSCompression.MSCOMP_LZNT1,
+                                                              uncompressedBuffer,
+                                                              length,
+                                                              compressedBuffer,
+                                                              compressedSize);
+            assertEquals(MSCompression.MSCOMP_OK, ntStatus);
             byte[] result = new byte[compressedSize[0]];
             compressedBuffer.put(result, 0, compressedSize[0]);
             return result;
         } finally {
-            if (compressedBuffer.position() != 0) {
+            if (compressedBuffer != null) {
                 compressedBuffer.clear();
             }
 
-            if (uncompressedBuffer.position() != 0) {
+            if (uncompressedBuffer != null) {
                 uncompressedBuffer.clear();
-            }
-
-            if (workspaceBuffer.position() != 0) {
-                workspaceBuffer.clear();
             }
         }
     }
@@ -277,46 +280,47 @@ public class LZNT1Test {
             compressedBuffer.put(data, offset, length);
             uncompressedBuffer = ByteBuffer.allocateDirect(64 * 1024);
             int[] uncompressedSize = new int[1];
-            int ntStatus = rtlDecompressBuffer((short) 2,
-                                               uncompressedBuffer,
-                                               64 * 1024,
-                                               compressedBuffer,
-                                               length,
-                                               uncompressedSize);
-            assertEquals(0, ntStatus);
+            int ntStatus = MSCompression.INSTANCE.ms_decompress(MSCompression.MSCOMP_LZNT1,
+                                                                compressedBuffer,
+                                                                length,
+                                                                uncompressedBuffer,
+                                                                uncompressedSize);
+            assertEquals(MSCompression.MSCOMP_OK, ntStatus);
             byte[] result = new byte[uncompressedSize[0]];
             uncompressedBuffer.get(result);
             return result;
         } finally {
-            if (compressedBuffer.position() != 0) {
+            if (compressedBuffer != null) {
                 compressedBuffer.clear();
             }
 
-            if (uncompressedBuffer.position() != 0) {
+            if (uncompressedBuffer != null) {
                 uncompressedBuffer.clear();
             }
-
         }
     }
 
-    private static native int rtlGetCompressionWorkSpaceSize(short formatAndEngine,
-                                                             int[] bufferWorkspaceSize,
-                                                             int[] fragmentWorkspaceSize);
+    static {
+        com.sun.jna.NativeLibrary.addSearchPath("MSCompression", System.getProperty("java.library.path"));
+    }
 
-    private static native int rtlCompressBuffer(short formatAndEngine,
-                                                ByteBuffer uncompressedBuffer,
-                                                int uncompressedBufferSize,
-                                                ByteBuffer compressedBuffer,
-                                                int compressedBufferSize,
-                                                int uncompressedChunkSize,
-                                                int[] finalCompressedSize,
-                                                ByteBuffer workspace);
-
-    private static native int rtlDecompressBuffer(short formatAndEngine,
-                                                  ByteBuffer uncompressedBuffer,
-                                                  int uncompressedBufferSize,
-                                                  ByteBuffer compressedBuffer,
-                                                  int compressedBufferSize,
-                                                  int[] finalUncompressedSize);
-
+//    private static native int rtlGetCompressionWorkSpaceSize(short formatAndEngine,
+//                                                             int[] bufferWorkspaceSize,
+//                                                             int[] fragmentWorkspaceSize);
+//
+//    private static native int rtlCompressBuffer(short formatAndEngine,
+//                                                ByteBuffer uncompressedBuffer,
+//                                                int uncompressedBufferSize,
+//                                                ByteBuffer compressedBuffer,
+//                                                int compressedBufferSize,
+//                                                int uncompressedChunkSize,
+//                                                int[] finalCompressedSize,
+//                                                ByteBuffer workspace);
+//
+//    private static native int rtlDecompressBuffer(short formatAndEngine,
+//                                                  ByteBuffer uncompressedBuffer,
+//                                                  int uncompressedBufferSize,
+//                                                  ByteBuffer compressedBuffer,
+//                                                  int compressedBufferSize,
+//                                                  int[] finalUncompressedSize);
 }

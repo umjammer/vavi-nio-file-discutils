@@ -20,19 +20,14 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
-public final class ContinuationSystemUseEntry extends SystemUseEntry {
-    public int Block;
+import java.nio.charset.Charset;
 
-    public int BlockOffset;
 
-    public int Length;
+public abstract class SuspExtension {
+    public abstract String getIdentifier();
 
-    public ContinuationSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
-        checkAndSetCommonProperties(name, length, version, (byte) 28, (byte) 1);
-        Block = IsoUtilities.toUInt32FromBoth(data, offset + 4);
-        BlockOffset = IsoUtilities.toUInt32FromBoth(data, offset + 12);
-        Length = IsoUtilities.toUInt32FromBoth(data, offset + 20);
-    }
+    public abstract SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding);
+
 }

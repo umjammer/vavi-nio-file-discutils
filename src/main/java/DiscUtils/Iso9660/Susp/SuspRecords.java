@@ -20,13 +20,14 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import DiscUtils.Iso9660.IsoContext;
 import DiscUtils.Streams.Util.StreamUtilities;
 
 

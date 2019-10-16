@@ -22,6 +22,8 @@
 
 package LibraryTests.Iso9660;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,6 +34,7 @@ import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 public class BuilderTest {
+    @Test
     public void addFileStream() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("ADIR\\AFILE.TXT", new MemoryStream());
@@ -39,6 +42,7 @@ public class BuilderTest {
         assertTrue(fs.exists("ADIR\\AFILE.TXT"));
     }
 
+    @Test
     public void addFileBytes() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("ADIR\\AFILE.TXT", new byte[] {});
@@ -46,6 +50,7 @@ public class BuilderTest {
         assertTrue(fs.exists("ADIR\\AFILE.TXT"));
     }
 
+    @Test
     public void bootImage() throws Exception {
         byte[] memoryStream = new byte[33 * 512];
         for (int i = 0; i < memoryStream.length; ++i) {

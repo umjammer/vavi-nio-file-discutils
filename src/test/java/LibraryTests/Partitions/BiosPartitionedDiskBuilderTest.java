@@ -22,6 +22,8 @@
 
 package LibraryTests.Partitions;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Core.Geometry;
@@ -35,6 +37,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class BiosPartitionedDiskBuilderTest {
+    @Test
     public void basic() throws Exception {
         long capacity = 10 * 1024 * 1024;
         Geometry geometry = Geometry.fromCapacity(capacity);
@@ -52,7 +55,7 @@ public class BiosPartitionedDiskBuilderTest {
 
         try (Stream builtPartitionStream = bpt.getPartitions().get(0).open()) {
             builtPartitionStream.setPosition(4053);
-            assertEquals(0xAf, builtPartitionStream.readByte());
+            assertEquals(0xAf, builtPartitionStream.readByte() & 0xff);
         }
     }
 }

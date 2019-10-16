@@ -60,19 +60,17 @@ public abstract class DeviceRecord {
         case 0:
             newRecord = new DeviceAndPathRecord();
             break;
-        case 5:
-        case 6:
-            // Logical 'boot' device
-            // Disk partition
+        case 5: // Logical 'boot' device
+        case 6: // Disk partition
             newRecord = new PartitionRecord();
             break;
-        case 8:
+        case 8: // custom:nnnnnn
             break;
         default:
             throw new IllegalArgumentException("Unknown device type: " + type);
 
         }
-        // custom:nnnnnn
+
         if (newRecord != null) {
             newRecord.doParse(data, offset);
         }

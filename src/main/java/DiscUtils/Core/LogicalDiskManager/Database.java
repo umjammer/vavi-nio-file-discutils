@@ -54,7 +54,6 @@ public class Database {
             if (rec != null) {
                 _records.put(rec.Id, rec);
             }
-
         }
     }
 
@@ -70,12 +69,10 @@ public class Database {
         for (DatabaseRecord record  : _records.values()) {
             if (record._RecordType == RecordType.DiskGroup) {
                 DiskGroupRecord dgRecord = (DiskGroupRecord) record;
-                if (UUID.fromString(dgRecord.GroupGuidString) == guid || guid == new UUID(0L, 0L)) {
+                if (UUID.fromString(dgRecord.GroupGuidString).equals(guid) || guid.equals(new UUID(0L, 0L))) {
                     return dgRecord;
                 }
-
             }
-
         }
         return null;
     }
@@ -127,11 +124,8 @@ public class Database {
                 if (pred.test(t)) {
                     return t;
                 }
-
             }
-
         }
         return null;
     }
-
 }

@@ -36,6 +36,8 @@ public class PortMap2PortTest {
     @Test
     public void roundTripTest() throws Exception {
         PortMap2Port port = new PortMap2Port();
+        port.setPort(2);
+
         PortMap2Port clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

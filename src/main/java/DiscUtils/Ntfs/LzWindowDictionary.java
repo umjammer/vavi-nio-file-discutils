@@ -91,9 +91,9 @@ public final class LzWindowDictionary {
             return match;
         }
 
-        for (int i = 0; i < _offsetList[decompressedData[decompressedDataOffset + index]].size(); i++) {
+        for (int i = 0; i < _offsetList[decompressedData[decompressedDataOffset + index] & 0xff].size(); i++) {
             // Can't find matches if there isn't enough data
-            int matchStart = _offsetList[decompressedData[decompressedDataOffset + index]].get(i);
+            int matchStart = _offsetList[decompressedData[decompressedDataOffset + index] & 0xff].get(i);
             int matchSize = 1;
             if (index - matchStart > getBlockSize()) {
                 break;
@@ -123,7 +123,7 @@ public final class LzWindowDictionary {
     // Return the real match (or the default 0:0 match).
     // Add entries
     public void addEntry(byte[] decompressedData, int decompressedDataOffset, int index) {
-        _offsetList[decompressedData[decompressedDataOffset + index]].add(index);
+        _offsetList[decompressedData[decompressedDataOffset + index] & 0xff].add(index);
     }
 
     public void addEntryRange(byte[] decompressedData, int decompressedDataOffset, int index, int length) {
@@ -139,8 +139,8 @@ public final class LzWindowDictionary {
     }
 
     private void removeOldEntries(byte index) {
-        while (_offsetList[index].size() > 256) {
-            _offsetList[index].remove(0);
+        while (_offsetList[index & 0xff].size() > 256) {
+            _offsetList[index & 0xff].remove(0);
         }
     }
 }

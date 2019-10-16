@@ -26,49 +26,35 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
+
 public enum Nfs3AccessPermissions {
-    None,
-    Read,
-    Lookup,
-    __dummyEnum__0,
-    Modify,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    Extend,
-    __dummyEnum__4,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    Delete,
-    __dummyEnum__11,
-    __dummyEnum__12,
-    __dummyEnum__13,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    __dummyEnum__17,
-    __dummyEnum__18,
-    __dummyEnum__19,
-    __dummyEnum__20,
-    __dummyEnum__21,
-    __dummyEnum__22,
-    __dummyEnum__23,
-    __dummyEnum__24,
-    __dummyEnum__25,
-    Execute,
-    All;
+    None(0x00),
+    Read(0x01),
+    Lookup(0x02),
+    Modify(0x04),
+    Extend(0x08),
+    Delete(0x10),
+    Execute(0x20);
+
+    public static final EnumSet<Nfs3AccessPermissions> All = EnumSet.of(Read, Lookup, Modify, Extend, Delete, Execute);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private Nfs3AccessPermissions(int value) {
+        this.value = value;
+    }
 
     public static EnumSet<Nfs3AccessPermissions> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> (value & v.getValue()) != 0)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Nfs3AccessPermissions.class)));
     }
 
     public static long valueOf(EnumSet<Nfs3AccessPermissions> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
     }
 }

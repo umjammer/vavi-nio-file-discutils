@@ -54,15 +54,14 @@ public class BiosExtendedPartitionTable {
             int nextPartPos = 0;
             for (int offset = 0x1BE; offset <= 0x1EE; offset += 0x10) {
                 BiosPartitionRecord thisPart = new BiosPartitionRecord(sector, offset, partPos, -1);
-                if (thisPart.getStartCylinder() != 0 || thisPart.getStartHead() != 0 || thisPart.getStartSector() != 0 ||
-                    (thisPart.getLBAStart() != 0 && thisPart.getLBALength() != 0)) {
+                if (thisPart.getStartCylinder() != 0 || thisPart.getStartHead() != 0 || thisPart.getStartSector() != 0
+                        || (thisPart.getLBAStart() != 0 && thisPart.getLBALength() != 0)) {
                     if (thisPart.getPartitionType() != 0x05 && thisPart.getPartitionType() != 0x0F) {
                         result.add(thisPart);
                     } else {
-                        nextPartPos = _firstSector + thisPart.getLBAStart();
+                        nextPartPos = _firstSector + (int) thisPart.getLBAStart();
                     }
                 }
-
             }
             partPos = nextPartPos;
         }
@@ -72,8 +71,8 @@ public class BiosExtendedPartitionTable {
     /**
      * Gets all of the disk ranges containing partition table data.
      *
-     * @return Set of stream extents, indicated as byte offset from the start of
-     *         the disk.
+     * @return Set of stream extents, indicated as byte offset from the start of the
+     *         disk.
      */
     public List<StreamExtent> getMetadataDiskExtents() {
         List<StreamExtent> extents = new ArrayList<>();
@@ -91,15 +90,12 @@ public class BiosExtendedPartitionTable {
                 BiosPartitionRecord thisPart = new BiosPartitionRecord(sector, offset, partPos, -1);
                 if (thisPart.getStartCylinder() != 0 || thisPart.getStartHead() != 0 || thisPart.getStartSector() != 0) {
                     if (thisPart.getPartitionType() == 0x05 || thisPart.getPartitionType() == 0x0F) {
-                        nextPartPos = _firstSector + thisPart.getLBAStart();
+                        nextPartPos = _firstSector + (int) thisPart.getLBAStart();
                     }
-
                 }
-
             }
             partPos = nextPartPos;
         }
         return extents;
     }
-
 }

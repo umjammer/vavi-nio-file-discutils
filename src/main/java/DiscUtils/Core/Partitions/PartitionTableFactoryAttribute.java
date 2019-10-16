@@ -22,5 +22,6 @@
 
 package DiscUtils.Core.Partitions;
 
+@Deprecated
 public @interface PartitionTableFactoryAttribute {
 }

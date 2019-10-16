@@ -23,6 +23,8 @@
 package LibraryTests;
 
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,6 +36,7 @@ import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 
 public class BlockCacheTest {
+    @Test
     public void dispose() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose), Ownership.Dispose);
@@ -51,9 +54,9 @@ public class BlockCacheTest {
             assertTrue(false, "Cache stream should have failed - disposed");
         } catch (IOException __dummyCatchVar1) {
         }
-
     }
 
+    @Test
     public void largeRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -69,6 +72,7 @@ public class BlockCacheTest {
         assertEquals(1, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void readThrough() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -84,6 +88,7 @@ public class BlockCacheTest {
         assertEquals(1, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void cachedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -106,6 +111,7 @@ public class BlockCacheTest {
         assertEquals(2, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void unalignedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -121,6 +127,7 @@ public class BlockCacheTest {
         assertEquals(1, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void unalignedCachedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -143,6 +150,7 @@ public class BlockCacheTest {
         assertEquals(2, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void overread() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -159,6 +167,7 @@ public class BlockCacheTest {
         assertEquals(1, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void cachedOverread() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -183,6 +192,7 @@ public class BlockCacheTest {
         assertEquals(2, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void cacheBlockRecycle() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -207,6 +217,7 @@ public class BlockCacheTest {
         assertEquals(2, cacheStream.getStatistics().getTotalReadsIn());
     }
 
+    @Test
     public void write() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, true);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -229,6 +240,7 @@ public class BlockCacheTest {
         assertEquals(0, buffer[19]);
     }
 
+    @Test
     public void failWrite() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
@@ -265,7 +277,7 @@ public class BlockCacheTest {
         for (int i = 0; i < count; ++i) {
             if (buffer[i + offset] != (byte) (i + seqOffset)) {
                 assertTrue(false,
-                           String.format("Expected {0} at index {1}, was {2}",
+                           String.format("Expected %2x at index %d, was %2x",
                                          (byte) (i + seqOffset),
                                          i + offset,
                                          buffer[i + offset]));

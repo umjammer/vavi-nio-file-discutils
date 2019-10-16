@@ -66,7 +66,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
         return false;
     }
 
-    public boolean getNeedsParent() {
+    public boolean needsParent() {
         return false;
     }
 

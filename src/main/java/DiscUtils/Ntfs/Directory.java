@@ -140,7 +140,7 @@ public class Directory extends File {
         FileNameRecord nameRecord = dirEntry.getDetails();
         getIndex().remove(dirEntry.getDetails());
         for (NtfsStream stream : file.getStreams(AttributeType.FileName, null)) {
-            FileNameRecord streamName = stream.getContent();
+            FileNameRecord streamName = stream.getContent(FileNameRecord.class);
             if (nameRecord.equals(streamName)) {
                 file.removeStream(stream);
                 break;
@@ -220,7 +220,7 @@ public class Directory extends File {
         private final UpperCase _upperCase;
 
         public FileNameQuery(String query, UpperCase upperCase) {
-            _query = query.getBytes(Charset.forName("Unicode"));
+            _query = query.getBytes(Charset.forName("UTF-16LE"));
             _upperCase = upperCase;
         }
 

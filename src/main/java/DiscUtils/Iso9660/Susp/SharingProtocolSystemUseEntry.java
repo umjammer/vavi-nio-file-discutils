@@ -20,23 +20,17 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
-import java.nio.charset.Charset;
+public final class SharingProtocolSystemUseEntry extends SystemUseEntry {
+    public byte SystemAreaSkip;
 
+    public SharingProtocolSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
+        checkAndSetCommonProperties(name, length, version, (byte) 7, (byte) 1);
+        if (data[offset + 4] != 0xBE || data[offset + 5] != 0xEF) {
+            throw new IllegalArgumentException("Invalid SUSP SP entry - invalid checksum bytes");
+        }
 
-public final class GenericSuspExtension extends SuspExtension {
-    public GenericSuspExtension(String identifier) {
-        __Identifier = identifier;
-    }
-
-    private String __Identifier;
-
-    public String getIdentifier() {
-        return __Identifier;
-    }
-
-    public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
-        return new GenericSystemUseEntry(name, length, version, data, offset);
+        SystemAreaSkip = data[offset + 6];
     }
 }

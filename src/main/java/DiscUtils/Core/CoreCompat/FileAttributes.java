@@ -48,9 +48,10 @@ public enum FileAttributes {
     }
 
     /** */
-    public static Map<String, Object> toMap(EnumSet<FileAttributes> of) {
-        // TODO Auto-generated method stub
-        return null;
+    public static Map<String, Object> toMap(EnumSet<FileAttributes> flags) {
+        Map<String, Object> attrs = new HashMap<>();
+        flags.forEach(v -> attrs.put(v.name(), true));
+        return attrs;
     }
 
     // TODO EnumMap?

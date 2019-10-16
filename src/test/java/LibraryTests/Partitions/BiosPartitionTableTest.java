@@ -22,6 +22,8 @@
 
 package LibraryTests.Partitions;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,6 +37,7 @@ import DiscUtils.Core.Partitions.WellKnownPartitionType;
 import DiscUtils.Streams.SparseMemoryStream;
 
 public class BiosPartitionTableTest {
+    @Test
     public void initialize() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -44,6 +47,7 @@ public class BiosPartitionTableTest {
         assertEquals(0, table.getCount());
     }
 
+    @Test
     public void createWholeDisk() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -66,6 +70,7 @@ public class BiosPartitionTableTest {
         assertEquals(0, ((BiosPartitionInfo) table.get___idx(idx)).getPrimaryIndex());
     }
 
+    @Test
     public void createWholeDiskAligned() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -80,6 +85,7 @@ public class BiosPartitionTableTest {
         assertEquals(0, ((BiosPartitionInfo) table.get___idx(idx)).getPrimaryIndex());
     }
 
+    @Test
     public void createBySize() throws Exception {
         long capacity = 3 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -94,6 +100,7 @@ public class BiosPartitionTableTest {
         assertEquals(geom.getSectorsPerTrack(), geom.toChsAddress((int) table.get___idx(idx).getLastSector()).getSector());
     }
 
+    @Test
     public void createBySizeInGap() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         Geometry geom = new Geometry(15, 30, 63);
@@ -104,6 +111,7 @@ public class BiosPartitionTableTest {
         table.create(geom.toLogicalBlockAddress(new ChsAddress(4, 0, 1)) * 512, WellKnownPartitionType.WindowsFat, true);
     }
 
+    @Test
     public void createBySizeInGapAligned() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         Geometry geom = new Geometry(15, 30, 63);
@@ -117,6 +125,7 @@ public class BiosPartitionTableTest {
         assertEquals(0, (table.get___idx(idx).getLastSector() + 1) % 128);
     }
 
+    @Test
     public void createByCylinder() throws Exception {
         SparseMemoryStream ms = new SparseMemoryStream();
         Geometry geom = new Geometry(15, 30, 63);
@@ -130,6 +139,7 @@ public class BiosPartitionTableTest {
         assertEquals(geom.toLogicalBlockAddress(new ChsAddress(14, 29, 63)), table.get___idx(1).getLastSector());
     }
 
+    @Test
     public void delete() throws Exception {
         long capacity = 10 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -147,6 +157,7 @@ public class BiosPartitionTableTest {
         assertEquals(sectorCount[2], table.get___idx(1).getSectorCount());
     }
 
+    @Test
     public void setActive() throws Exception {
         long capacity = 10 * 1024 * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -162,6 +173,7 @@ public class BiosPartitionTableTest {
         assertTrue(((BiosPartitionInfo) table.getPartitions().get(2)).getIsActive());
     }
 
+    @Test
     public void largeDisk() throws Exception {
         long capacity = 300 * 1024L * 1024L * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();
@@ -169,7 +181,7 @@ public class BiosPartitionTableTest {
         Geometry geom = Geometry.lbaAssistedBiosGeometry(capacity);
         BiosPartitionTable table = BiosPartitionTable.initialize(ms, geom);
         table.create(150 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false);
-        table.create(20 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false);
+        table.create(20 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false); // TODO
         table.create(20 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false);
         assertEquals(3, table.getPartitions().size());
         assertTrue(table.get___idx(0).getSectorCount() * 512L > 140 * 1024L * 1024L * 1024);
@@ -180,6 +192,7 @@ public class BiosPartitionTableTest {
         assertTrue(table.get___idx(2).getFirstSector() > table.get___idx(1).getLastSector());
     }
 
+    @Test
     public void veryLargePartition() throws Exception {
         long capacity = 1300 * 1024L * 1024L * 1024;
         SparseMemoryStream ms = new SparseMemoryStream();

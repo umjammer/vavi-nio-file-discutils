@@ -58,60 +58,41 @@ public class NtfsStream {
         return getAttribute().getName();
     }
 
-    /** */
-    private Class<?> contentType;
-
     /**
-     * Gets the content of a stream.
-     * The stream's content structure.
-     *
+     * Gets the content of a stream. The stream's content structure.
+     * @param contentType 
      * @return The content.
      */
-    public <T extends IByteArraySerializable & IDiagnosticTraceable> T getContent() {
+    public <T extends IByteArraySerializable & IDiagnosticTraceable> T getContent(Class<T> contentType) {
         assert contentType != null;
         byte[] buffer;
-        Stream s = open(FileAccess.Read);
-        try {
+
+        try (Stream s = open(FileAccess.Read)) {
             buffer = StreamUtilities.readExact(s, (int) s.getLength());
 
-            T value = (T) contentType.newInstance();
+            T value = contentType.newInstance();
             value.readFrom(buffer, 0);
             return value;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     /**
-     * Sets the content of a stream.
-     * The stream's content structure.
+     * Sets the content of a stream. The stream's content structure.
      *
      * @param value The new value for the stream.
      */
     public <T extends IByteArraySerializable & IDiagnosticTraceable> void setContent(T value) {
-        contentType = value.getClass();
-        Stream s = open(FileAccess.Write);
-        try {
+        try (Stream s = open(FileAccess.Write)) {
             byte[] buffer = new byte[(int) value.getSize()];
             value.writeTo(buffer, 0);
             s.write(buffer, 0, buffer.length);
             s.setLength(buffer.length);
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
         }
     }
 

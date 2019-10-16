@@ -97,8 +97,8 @@ public class DescriptorFile {
         String cylStr = getDiskDatabase(DiskDbBiosCylinders);
         String headsStr = getDiskDatabase(DiskDbBiosHeads);
         String sectorsStr = getDiskDatabase(DiskDbBiosSectors);
-        if (cylStr != null && !cylStr.isEmpty() && headsStr != null && !headsStr.isEmpty() && sectorsStr != null &&
-            !sectorsStr.isEmpty()) {
+        if (cylStr != null && !cylStr.isEmpty() && headsStr != null && !headsStr.isEmpty() && sectorsStr != null
+                && !sectorsStr.isEmpty()) {
             return new Geometry(Integer.parseInt(cylStr), Integer.parseInt(headsStr), Integer.parseInt(sectorsStr));
         }
 
@@ -131,8 +131,8 @@ public class DescriptorFile {
         String cylStr = getDiskDatabase(DiskDbCylinders);
         String headsStr = getDiskDatabase(DiskDbHeads);
         String sectorsStr = getDiskDatabase(DiskDbSectors);
-        if (cylStr != null && !cylStr.isEmpty() && headsStr != null && !headsStr.isEmpty() && sectorsStr != null &&
-            !sectorsStr.isEmpty()) {
+        if (cylStr != null && !cylStr.isEmpty() && headsStr != null && !headsStr.isEmpty() && sectorsStr != null
+                && !sectorsStr.isEmpty()) {
             return new Geometry(Integer.parseInt(cylStr), Integer.parseInt(headsStr), Integer.parseInt(sectorsStr));
         }
 
@@ -145,7 +145,7 @@ public class DescriptorFile {
         setDiskDatabase(DiskDbSectors, String.valueOf(value.getSectorsPerTrack()));
     }
 
-    private List<ExtentDescriptor> __Extents = new ArrayList<>();
+    private List<ExtentDescriptor> __Extents;
 
     public List<ExtentDescriptor> getExtents() {
         return __Extents;
@@ -159,8 +159,8 @@ public class DescriptorFile {
         setDiskDatabase(DiskDbHardwareVersion, value);
     }
 
-    public int getParentContentId() {
-        return Integer.parseInt(getHeader(HeaderParentContentId), 16);
+    public long getParentContentId() {
+        return Long.parseLong(getHeader(HeaderParentContentId), 16);
     }
 
     public void setParentContentId(int value) {
@@ -200,7 +200,7 @@ public class DescriptorFile {
         for (int i = 0; i < _diskDataBase.size(); ++i) {
             content.append(_diskDataBase.get(i).toString() + "\n");
         }
-        byte[] contentBytes = content.toString().getBytes(Charset.forName("ascii"));
+        byte[] contentBytes = content.toString().getBytes(Charset.forName("ASCII"));
         stream.write(contentBytes, 0, contentBytes.length);
     }
 
@@ -215,7 +215,7 @@ public class DescriptorFile {
         } else if (__dummyScrutVar0.equals("legacyESX")) {
             return DiskAdapterType.LegacyEsx;
         } else {
-            throw new IllegalArgumentException(String.format("Unknown type: {0}", value));
+            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
         }
     }
 
@@ -230,39 +230,38 @@ public class DescriptorFile {
         case LegacyEsx:
             return "legacyESX";
         default:
-            throw new IllegalArgumentException(String.format("Unknown type: {0}", value));
-
+            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
         }
     }
 
     private static DiskCreateType parseCreateType(String value) {
-        String __dummyScrutVar2 = value;
-        if (__dummyScrutVar2.equals("monolithicSparse")) {
+        switch (value) {
+        case "monolithicSparse":
             return DiskCreateType.MonolithicSparse;
-        } else if (__dummyScrutVar2.equals("vmfsSparse")) {
+        case "vmfsSparse":
             return DiskCreateType.VmfsSparse;
-        } else if (__dummyScrutVar2.equals("monolithicFlat")) {
+        case "monolithicFlat":
             return DiskCreateType.MonolithicFlat;
-        } else if (__dummyScrutVar2.equals("vmfs")) {
+        case "vmfs":
             return DiskCreateType.Vmfs;
-        } else if (__dummyScrutVar2.equals("twoGbMaxExtentSparse")) {
+        case "twoGbMaxExtentSparse":
             return DiskCreateType.TwoGbMaxExtentSparse;
-        } else if (__dummyScrutVar2.equals("twoGbMaxExtentFlat")) {
+        case "twoGbMaxExtentFlat":
             return DiskCreateType.TwoGbMaxExtentFlat;
-        } else if (__dummyScrutVar2.equals("fullDevice")) {
+        case "fullDevice":
             return DiskCreateType.FullDevice;
-        } else if (__dummyScrutVar2.equals("vmfsRaw")) {
+        case "vmfsRaw":
             return DiskCreateType.VmfsRaw;
-        } else if (__dummyScrutVar2.equals("partitionedDevice")) {
+        case "partitionedDevice":
             return DiskCreateType.PartitionedDevice;
-        } else if (__dummyScrutVar2.equals("vmfsRawDeviceMap")) {
+        case "vmfsRawDeviceMap":
             return DiskCreateType.VmfsRawDeviceMap;
-        } else if (__dummyScrutVar2.equals("vmfsPassthroughRawDeviceMap")) {
+        case "vmfsPassthroughRawDeviceMap":
             return DiskCreateType.VmfsPassthroughRawDeviceMap;
-        } else if (__dummyScrutVar2.equals("streamOptimized")) {
+        case "streamOptimized":
             return DiskCreateType.StreamOptimized;
-        } else {
-            throw new IllegalArgumentException(String.format("Unknown type: {0}", value));
+        default:
+            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
         }
     }
 
@@ -293,8 +292,7 @@ public class DescriptorFile {
         case StreamOptimized:
             return "streamOptimized";
         default:
-            throw new IllegalArgumentException(String.format("Unknown type: {0}", value));
-
+            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
         }
     }
 
@@ -313,24 +311,23 @@ public class DescriptorFile {
 
     private static String formatUuid(UUID value) {
         byte[] data = value.toString().getBytes();
-        return String
-                .format("{0:x2} {1:x2} {2:x2} {3:x2} {4:x2} {5:x2} {6:x2} {7:x2}-{8:x2} {9:x2} {10:x2} {11:x2} {12:x2} {13:x2} {14:x2} {15:x2}",
-                        data[0],
-                        data[1],
-                        data[2],
-                        data[3],
-                        data[4],
-                        data[5],
-                        data[6],
-                        data[7],
-                        data[8],
-                        data[9],
-                        data[10],
-                        data[11],
-                        data[12],
-                        data[13],
-                        data[14],
-                        data[15]);
+        return String.format("%02x %02x %02x %02x %02x %02x %02x %02x-%02x %02x %02x %02x %02x %02x %02x %02x",
+                             data[0],
+                             data[1],
+                             data[2],
+                             data[3],
+                             data[4],
+                             data[5],
+                             data[6],
+                             data[7],
+                             data[8],
+                             data[9],
+                             data[10],
+                             data[11],
+                             data[12],
+                             data[13],
+                             data[14],
+                             data[15]);
     }
 
     private String getHeader(String key) {
@@ -374,13 +371,13 @@ public class DescriptorFile {
     private void load(Stream source) {
         if (source.getLength() - source.getPosition() > MaxSize) {
             throw new moe.yo3explorer.dotnetio4j.IOException(String
-                    .format("Invalid VMDK descriptor file, more than {0} bytes in length", MaxSize));
+                    .format("Invalid VMDK descriptor file, more than %s bytes in length", MaxSize));
         }
 
         StreamReader reader = new StreamReader(source);
         String line = reader.readLine();
         while (line != null) {
-            line = line.replaceAll("\0*$", "");
+            line = line.replaceFirst("\0*$", "");
             int commentPos = line.indexOf('#');
             if (commentPos >= 0) {
                 line = line.substring(0, commentPos);

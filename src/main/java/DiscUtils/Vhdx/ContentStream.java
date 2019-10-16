@@ -199,7 +199,7 @@ public final class ContentStream extends MappedStream {
                 totalRead += read;
             } else {
                 int zeroed = Math.min(blockBytesRemaining, totalToRead - totalRead);
-                Arrays.fill(buffer, offset + totalRead, zeroed, (byte) 0);
+                Arrays.fill(buffer, offset + totalRead, offset + totalRead + zeroed, (byte) 0);
                 totalRead += zeroed;
             }
         }
@@ -268,7 +268,6 @@ public final class ContentStream extends MappedStream {
                 if (changed) {
                     chunk.writeBlockBitmap(blockIndex);
                 }
-
             }
 
             totalWritten += toWrite;
@@ -307,7 +306,6 @@ public final class ContentStream extends MappedStream {
                     result.add(new StreamExtent(pos + i * _metadata.getFileParameters().BlockSize,
                                                 _metadata.getFileParameters().BlockSize));
                     break;
-
                 }
             }
             pos += chunkSize;
@@ -336,7 +334,5 @@ public final class ContentStream extends MappedStream {
         if (_parentStream == null) {
             throw new moe.yo3explorer.dotnetio4j.IOException("ContentStream: Attempt to use closed stream");
         }
-
     }
-
 }

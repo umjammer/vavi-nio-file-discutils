@@ -109,7 +109,7 @@ public class File {
             return null;
         }
 
-        FileNameRecord record = stream.getContent();
+        FileNameRecord record = stream.getContent(FileNameRecord.class);
         // Root dir is stored without root directory flag set in FileNameRecord, simulate it.
         if (_records.get(0).getMasterFileTableIndex() == MasterFileTable.RootDirIndex) {
             record.Flags.add(FileAttributeFlags.Directory);
@@ -185,7 +185,7 @@ public class File {
     }
 
     public StandardInformation getStandardInformation() {
-        return getStream(AttributeType.StandardInformation, null).getContent();
+        return getStream(AttributeType.StandardInformation, null).getContent(StandardInformation.class);
     }
 
     public static File createNew(INtfsContext context, EnumSet<FileAttributeFlags> dirFlags) {
@@ -230,7 +230,7 @@ public class File {
     public void modified() {
         long now = System.currentTimeMillis();
         NtfsStream siStream = getStream(AttributeType.StandardInformation, null);
-        StandardInformation si = siStream.getContent();
+        StandardInformation si = siStream.getContent(StandardInformation.class);
         si.LastAccessTime = now;
         si.ModificationTime = now;
         siStream.setContent(si);
@@ -240,7 +240,7 @@ public class File {
     public void accessed() {
         long now = System.currentTimeMillis();
         NtfsStream siStream = getStream(AttributeType.StandardInformation, null);
-        StandardInformation si = siStream.getContent();
+        StandardInformation si = siStream.getContent(StandardInformation.class);
         si.LastAccessTime = now;
         siStream.setContent(si);
         markMftRecordDirty();
@@ -254,7 +254,7 @@ public class File {
         if (getMftRecordIsDirty()) {
             if (NtfsTransaction.getCurrent() != null) {
                 NtfsStream stream = getStream(AttributeType.StandardInformation, null);
-                StandardInformation si = stream.getContent();
+                StandardInformation si = stream.getContent(StandardInformation.class);
                 si.MftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
                 stream.setContent(si);
             }
@@ -338,7 +338,7 @@ public class File {
         _context.getForgetFile().invoke(this);
         NtfsStream objIdStream = getStream(AttributeType.ObjectId, null);
         if (objIdStream != null) {
-            ObjectId objId = objIdStream.getContent();
+            ObjectId objId = objIdStream.getContent(ObjectId.class);
             getContext().getObjectIds().remove(objId.Id);
         }
 
@@ -384,7 +384,7 @@ public class File {
     public List<NtfsStream> getStreams(AttributeType attrType, String name) {
         List<NtfsStream> result = new ArrayList<>();
         for (NtfsAttribute attr : _attributes) {
-            if (attr.getType() == attrType && attr.getName().equals(name)) {
+            if (attr.getType() == attrType && Utilities.equals(attr.getName(), name)) {
                 result.add(new NtfsStream(this, attr));
             }
         }
@@ -518,7 +518,7 @@ public class File {
      */
     public NtfsAttribute getAttribute(AttributeType type, String name) {
         for (NtfsAttribute attr : _attributes) {
-            if (attr.getPrimaryRecord().getAttributeType() == type && attr.getName().equals(name)) {
+            if (attr.getPrimaryRecord().getAttributeType() == type && Utilities.equals(attr.getName(), name)) {
                 return attr;
             }
         }
@@ -585,7 +585,7 @@ public class File {
 
         if (updateMftRecord) {
             for (NtfsStream stream : getStreams(AttributeType.FileName, null)) {
-                FileNameRecord fnr = stream.getContent();
+                FileNameRecord fnr = stream.getContent(FileNameRecord.class);
                 if (fnr.equals(fileName)) {
                     fnr = new FileNameRecord(fileName);
                     fnr.Flags.remove(FileAttributeFlags.ReparsePoint);

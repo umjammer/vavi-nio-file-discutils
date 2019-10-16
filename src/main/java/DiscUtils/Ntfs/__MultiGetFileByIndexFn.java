@@ -24,7 +24,7 @@ package DiscUtils.Ntfs;
 //        return prev.invoke(index);
 //    }
 //
-//    private List<GetFileByIndexFn> _invocationList = new ArrayList<>();
+//    private List<GetFileByIndexFn> _invocationList;
 //
 //    public static GetFileByIndexFn combine(GetFileByIndexFn a, GetFileByIndexFn b) {
 //        if (a == null)

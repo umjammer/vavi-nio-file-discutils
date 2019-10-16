@@ -25,10 +25,12 @@ package DiscUtils.Core.ApplePartitionMap;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Partitions.PartitionTable;
 import DiscUtils.Core.Partitions.PartitionTableFactory;
+import DiscUtils.Core.Partitions.PartitionTableFactoryAttribute;
 import DiscUtils.Streams.Util.StreamUtilities;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
+@PartitionTableFactoryAttribute
 public final class PartitionMapFactory implements PartitionTableFactory {
     public boolean detectIsPartitioned(Stream s) {
         if (s.getLength() < 1024) {

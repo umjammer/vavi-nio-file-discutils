@@ -24,7 +24,7 @@ package DiscUtils.SquashFs;
 //        return prev.invoke(pos);
 //    }
 //
-//    private List<ReadMetaBlock> _invocationList = new ArrayList<>();
+//    private List<ReadMetaBlock> _invocationList;
 //
 //    public static ReadMetaBlock combine(ReadMetaBlock a, ReadMetaBlock b) {
 //        if (a == null)

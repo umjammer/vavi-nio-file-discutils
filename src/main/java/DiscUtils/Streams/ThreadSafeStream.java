@@ -87,6 +87,8 @@ public class ThreadSafeStream extends SparseStream {
         }
 
         _common = new CommonState();
+        _common.WrappedStream = toWrap;
+        _common.WrappedStreamOwnership = ownership;
         _ownsCommon = true;
     }
 
@@ -162,7 +164,7 @@ public class ThreadSafeStream extends SparseStream {
     private SparseStream getWrapped() {
         SparseStream wrapped = _common.WrappedStream;
         if (wrapped == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("ThreadSafeStream");
+            throw new moe.yo3explorer.dotnetio4j.IOException("no wrapped stream.");
         }
 
         return wrapped;

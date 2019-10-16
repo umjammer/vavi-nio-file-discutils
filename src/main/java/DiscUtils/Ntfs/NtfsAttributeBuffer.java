@@ -90,7 +90,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         if (pos + totalToRead > record.getInitializedDataLength()) {
             if (pos >= record.getInitializedDataLength()) {
                 // We're just reading zero bytes from the uninitialized area
-                Arrays.fill(buffer, offset, totalToRead, (byte) 0);
+                Arrays.fill(buffer, offset, offset + totalToRead, (byte) 0);
                 pos += totalToRead;
                 return totalToRead;
             }

@@ -1,13 +1,4 @@
 //
-
-package DiscUtils.BootConfig;
-
-import java.util.UUID;
-
-import DiscUtils.Core.PhysicalVolumeInfo;
-
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -28,6 +19,14 @@ import DiscUtils.Core.PhysicalVolumeInfo;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.BootConfig;
+
+import java.util.UUID;
+
+import DiscUtils.Core.PhysicalVolumeInfo;
+
+
 /**
  * The value of an element.
  */
@@ -96,7 +95,7 @@ public abstract class ElementValue {
         for (int i = 0; i < values.length; ++i) {
             ulValues[i] = values[i];
         }
-        throw new IllegalArgumentException(String.valueOf(ulValues));
+        return new IntegerListElementValue(ulValues);
     }
 
     /**
@@ -116,7 +115,7 @@ public abstract class ElementValue {
      * @return The value as an object.
      */
     public static ElementValue forGuid(UUID value) {
-        return new GuidElementValue(String.format("%d", value)); // TODO "B"
+        return new GuidElementValue(String.format("{%s}", value));
     }
 
     /**
@@ -128,7 +127,7 @@ public abstract class ElementValue {
     public static ElementValue forGuidList(UUID[] values) {
         String[] strValues = new String[values.length];
         for (int i = 0; i < values.length; ++i) {
-            strValues[i] = String.format("%d", values[i]); // TODO "B"
+            strValues[i] = String.format("{%s}", values[i]);
         }
         return new GuidListElementValue(strValues);
     }

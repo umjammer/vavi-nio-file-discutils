@@ -24,7 +24,7 @@ package DiscUtils.Streams;
 //        return prev.invoke();
 //    }
 //
-//    private List<SparseStreamOpenDelegate> _invocationList = new ArrayList<>();
+//    private List<SparseStreamOpenDelegate> _invocationList;
 //
 //    public static SparseStreamOpenDelegate combine(SparseStreamOpenDelegate a, SparseStreamOpenDelegate b) {
 //        if (a == null)

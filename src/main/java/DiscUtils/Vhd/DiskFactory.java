@@ -69,7 +69,7 @@ public final class DiskFactory extends VirtualDiskFactory {
                                           diskParameters.getGeometry(),
                                           DynamicHeader.DefaultBlockSize);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown VHD disk variant '{0}'", variant));
+            throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
         }
     }
 

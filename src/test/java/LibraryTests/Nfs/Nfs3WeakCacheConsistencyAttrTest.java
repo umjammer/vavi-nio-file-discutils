@@ -22,10 +22,14 @@
 
 package LibraryTests.Nfs;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Nfs.Nfs3FileTime;
 import DiscUtils.Nfs.Nfs3WeakCacheConsistencyAttr;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
@@ -36,6 +40,16 @@ public class Nfs3WeakCacheConsistencyAttrTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3WeakCacheConsistencyAttr attr = new Nfs3WeakCacheConsistencyAttr();
+        attr.setChangeTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli()));
+        attr.setModifyTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli()));
+        attr.setSize(3);
+
         Nfs3WeakCacheConsistencyAttr clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

@@ -34,6 +34,8 @@ import DiscUtils.Iso9660.RockRidge.FileTimeSystemUseEntry;
 import DiscUtils.Iso9660.RockRidge.PosixFileInfoSystemUseEntry;
 import DiscUtils.Iso9660.RockRidge.PosixNameSystemUseEntry;
 import DiscUtils.Iso9660.RockRidge.FileTimeSystemUseEntry.Timestamps;
+import DiscUtils.Iso9660.Susp.SuspRecords;
+import DiscUtils.Iso9660.Susp.SystemUseEntry;
 import DiscUtils.Streams.Util.StreamUtilities;
 
 

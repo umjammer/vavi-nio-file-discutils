@@ -7,6 +7,8 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,6 +27,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class SampleDataTests {
+    @Test
     public void swapVhdxGzip() throws Exception {
         SetupHelper.setupComplete();
         File fs = new File(URI.create(getClass().getResource("swap.zip").toString()));
@@ -35,13 +38,17 @@ public class SampleDataTests {
             VolumeManager manager = new VolumeManager(disk);
             List<LogicalVolumeInfo> logicalVolumes = manager.getLogicalVolumes();
             assertEquals(1, logicalVolumes.size());
+
             LogicalVolumeInfo volume = logicalVolumes.get(0);
             List<FileSystemInfo> filesystems = FileSystemManager.detectFileSystems(volume);
             assertEquals(1, filesystems.size());
+
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("Swap", filesystem.getName());
+
             DiscFileSystem swap = filesystem.open(volume);
             assertTrue(SwapFileSystem.class.isInstance(swap)); // TODO
+
             assertEquals(0, swap.getAvailableSpace());
             assertEquals(10737414144L, swap.getSize());
             assertEquals(swap.getSize(), swap.getUsedSpace());

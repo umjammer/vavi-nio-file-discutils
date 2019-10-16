@@ -61,6 +61,8 @@ import moe.yo3explorer.dotnetio4j.Stream;
  * Represents a single .VHDX file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     /**
      * Which VHDX header is active.
      */
@@ -233,7 +235,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean getNeedsParent() {
+    public boolean needsParent() {
         return _metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent);
     }
 
@@ -242,14 +244,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public UUID getParentUniqueId() {
         if (_metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent)) {
-            return new UUID(0L, 0L);
+            return EMPTY;
         }
 
         if (_metadata.getParentLocator().getEntries().containsKey("parent_linkage")) {
             return UUID.fromString(_metadata.getParentLocator().getEntries().get("parent_linkage"));
         }
 
-        return new UUID(0L, 0L);
+        return EMPTY;
     }
 
     public FileLocator getRelativeFileLocator() {
@@ -496,7 +498,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header1.SequenceNumber = 0;
         header1.FileWriteGuid = UUID.randomUUID();
         header1.DataWriteGuid = UUID.randomUUID();
-        header1.LogGuid = new UUID(0L, 0L);
+        header1.LogGuid = EMPTY;
         header1.LogVersion = 0;
         header1.Version = 1;
         header1.LogLength = (int) Sizes.OneMiB;
@@ -514,20 +516,20 @@ public final class DiskImageFile extends VirtualDiskLayer {
         RegionEntry metadataRegion = new RegionEntry();
         metadataRegion.Guid = RegionEntry.MetadataRegionGuid;
         metadataRegion.FileOffset = fileEnd;
-        metadataRegion.Length = (int) Sizes.OneMiB;
+        metadataRegion.setLength((int) Sizes.OneMiB);
         metadataRegion.Flags = RegionFlags.Required;
         regionTable.Regions.put(metadataRegion.Guid, metadataRegion);
 
-        fileEnd += metadataRegion.Length;
+        fileEnd += metadataRegion.getLength();
 
         RegionEntry batRegion = new RegionEntry();
         batRegion.Guid = RegionEntry.BatGuid;
         batRegion.FileOffset = 3 * Sizes.OneMiB;
-        batRegion.Length = (int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB);
+        batRegion.setLength((int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB));
         batRegion.Flags = RegionFlags.Required;
         regionTable.Regions.put(batRegion.Guid, batRegion);
 
-        fileEnd += batRegion.Length;
+        fileEnd += batRegion.getLength();
 
         stream.setPosition(0);
         StreamUtilities.writeStruct(stream, fileHeader);
@@ -556,7 +558,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         @SuppressWarnings("unused")
         ParentLocator parentLocator = new ParentLocator();
 
-        Stream metadataStream = new SubStream(stream, metadataRegion.FileOffset, metadataRegion.Length);
+        Stream metadataStream = new SubStream(stream, metadataRegion.FileOffset, metadataRegion.getLength());
         @SuppressWarnings("unused")
         Metadata metadata = Metadata
                 .initialize(metadataStream, fileParams, capacity, logicalSectorSize, physicalSectorSize, null);
@@ -623,7 +625,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _freeSpace.reserve(_header.LogOffset, _header.LogLength);
         _logicalStream = _fileStream;
         // If log is empty, skip.
-        if (_header.LogGuid == new UUID(0L, 0L)) {
+        if (_header.LogGuid.equals(EMPTY)) {
             return;
         }
 
@@ -704,7 +706,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 }
             }
 
-            _freeSpace.reserve(entry.FileOffset, entry.Length);
+            _freeSpace.reserve(entry.FileOffset, entry.getLength());
         }
     }
 
@@ -762,7 +764,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return Array of candidate file locations.
      */
     private List<String> getParentLocations(FileLocator fileLocator) {
-        if (!getNeedsParent()) {
+        if (!needsParent()) {
             throw new moe.yo3explorer.dotnetio4j.IOException("Only differencing disks contain parent locations");
         }
 

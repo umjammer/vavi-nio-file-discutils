@@ -32,7 +32,7 @@ public class MasterFileTableReference {
     public MasterFileTableReference() {
     }
 
-    private FileRecordReference _ref = new FileRecordReference();
+    private FileRecordReference _ref;
 
     public MasterFileTableReference(FileRecordReference recordRef) {
         _ref = recordRef;

@@ -22,6 +22,8 @@
 
 package LibraryTests.Nfs;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +38,8 @@ public class Nfs3ExportTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3Export export = new Nfs3Export();
+        export.setDirPath("test");
+        export.setGroups(Arrays.asList("Group1", "Group2"));
         Nfs3Export clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

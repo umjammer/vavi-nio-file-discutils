@@ -22,6 +22,8 @@
 
 package DiscUtils.Vhd;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -60,7 +62,7 @@ public class Footer {
 
     public static final int SectorsMask = 0xFF000000;
 
-    public static final long EpochUtc = 0; // new long(2000, 1, 1, 0, 0, 0, 0);
+    public static final long EpochUtc = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
 
     public int Checksum;
 
@@ -133,10 +135,11 @@ public class Footer {
     }
 
     public boolean isValid() {
-        return (FileCookie.equals(Cookie)) && isChecksumValid() && FileFormatVersion == Version1;
+        return (FileCookie.equals(Cookie)) && isChecksumValid()
+        // && ((Features & FeatureReservedMustBeSet) != 0)
+                && FileFormatVersion == Version1;
     }
 
-    ////&& ((Features & FeatureReservedMustBeSet) != 0)
     public boolean isChecksumValid() {
         return Checksum == calculateChecksum();
     }
@@ -171,7 +174,7 @@ public class Footer {
         result.CreatorHostOS = EndianUtilities.bytesToString(buffer, offset + 36, 4);
         result.OriginalSize = EndianUtilities.toInt64BigEndian(buffer, offset + 40);
         result.CurrentSize = EndianUtilities.toInt64BigEndian(buffer, offset + 48);
-        result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56), buffer[58], buffer[59]);
+        result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56), buffer[58] & 0xff, buffer[59] & 0xff);
         result.DiskType = FileType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 60));
         result.Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
         result.UniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 68);
@@ -197,6 +200,6 @@ public class Footer {
         EndianUtilities.writeBytesBigEndian(Checksum, buffer, offset + 64);
         EndianUtilities.writeBytesBigEndian(UniqueId, buffer, offset + 68);
         buffer[84] = SavedState;
-        Arrays.fill(buffer, 85, 427, (byte) 0);
+        Arrays.fill(buffer, 85, 85 + 427, (byte) 0);
     }
 }

@@ -203,7 +203,7 @@ public final class DiscContentBuffer extends Buffer {
 //            return prev.invoke();
 //        }
 //
-//        private List<WebRequestCreator> _invocationList = new ArrayList<>();
+//        private List<WebRequestCreator> _invocationList;
 //
 //        public static WebRequestCreator combine(WebRequestCreator a, WebRequestCreator b) {
 //            if (a == null)

@@ -38,7 +38,7 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
 
     /**
      * Initializes a new instance of the BtrfsFileSystem class.
-     * 
+     *
      * @param stream The stream containing the btrfs file system.
      */
     public BtrfsFileSystem(Stream stream) {
@@ -47,8 +47,8 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
 
     /**
      * Initializes a new instance of the BtrfsFileSystem class.
-     * 
-     * @param stream The stream containing the btrfs file system.
+     *
+     * @param stream  The stream containing the btrfs file system.
      * @param options Options for opening the file system
      */
     public BtrfsFileSystem(Stream stream, BtrfsFileSystemOptions options) {
@@ -68,10 +68,10 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
     }
 
     /**
-    * retrieve all subvolumes
-    * 
-    *  @return a list of subvolumes with id and name
-    */
+     * retrieve all subvolumes
+     *
+     * @return a list of subvolumes with id and name
+     */
     public Subvolume[] getSubvolumes() {
         return VfsBtrfsFileSystem.class.cast(getRealFileSystem()).getSubvolumes();
     }

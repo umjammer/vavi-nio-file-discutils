@@ -78,14 +78,7 @@ public class DataRun {
     }
 
     public String toString() {
-        try {
-            return String.format("{0:+##;-##;0}[+{1}]", getRunOffset(), getRunLength());
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return String.format("%-2d[+%sd]", getRunOffset(), getRunLength());
     }
 
     public int write(byte[] buffer, int offset) {

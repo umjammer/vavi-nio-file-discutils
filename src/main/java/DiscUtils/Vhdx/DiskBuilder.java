@@ -25,6 +25,7 @@ package DiscUtils.Vhdx;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -128,14 +129,20 @@ public final class DiskBuilder extends DiskImageBuilder {
             }
 
             List<BuilderExtent> extents = new ArrayList<>();
+
             int logicalSectorSize = 512;
             int physicalSectorSize = 4096;
             long chunkRatio = 0x800000L * logicalSectorSize / _blockSize;
             long dataBlocksCount = MathUtilities.ceil(_content.getLength(), _blockSize);
+            @SuppressWarnings("unused")
             long sectorBitmapBlocksCount = MathUtilities.ceil(dataBlocksCount, chunkRatio);
             long totalBatEntriesDynamic = dataBlocksCount + (dataBlocksCount - 1) / chunkRatio;
+
             FileHeader fileHeader = new FileHeader();
+            fileHeader.Creator = ".NET DiscUtils";
+
             long fileEnd = Sizes.OneMiB;
+
             VhdxHeader header1 = new VhdxHeader();
             header1.SequenceNumber = 0;
             header1.FileWriteGuid = UUID.randomUUID();
@@ -146,34 +153,47 @@ public final class DiskBuilder extends DiskImageBuilder {
             header1.LogLength = (int) Sizes.OneMiB;
             header1.LogOffset = fileEnd;
             header1.calcChecksum();
+
             fileEnd += header1.LogLength;
+
             VhdxHeader header2 = new VhdxHeader(header1);
             header2.SequenceNumber = 1;
             header2.calcChecksum();
+
             RegionTable regionTable = new RegionTable();
+
             RegionEntry metadataRegion = new RegionEntry();
             metadataRegion.Guid = RegionEntry.MetadataRegionGuid;
             metadataRegion.FileOffset = fileEnd;
-            metadataRegion.Length = (int) Sizes.OneMiB;
+            metadataRegion.setLength((int) Sizes.OneMiB);
             metadataRegion.Flags = RegionFlags.Required;
             regionTable.Regions.put(metadataRegion.Guid, metadataRegion);
-            fileEnd += metadataRegion.Length;
+
+            fileEnd += metadataRegion.getLength();
+
             RegionEntry batRegion = new RegionEntry();
             batRegion.Guid = RegionEntry.BatGuid;
             batRegion.FileOffset = fileEnd;
-            batRegion.Length = (int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB);
+            batRegion.setLength((int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB));
             batRegion.Flags = RegionFlags.Required;
             regionTable.Regions.put(batRegion.Guid, batRegion);
-            fileEnd += batRegion.Length;
+
+            fileEnd += batRegion.getLength();
+
             extents.add(extentForStruct(fileHeader, 0));
             extents.add(extentForStruct(header1, 64 * Sizes.OneKiB));
             extents.add(extentForStruct(header2, 128 * Sizes.OneKiB));
             extents.add(extentForStruct(regionTable, 192 * Sizes.OneKiB));
             extents.add(extentForStruct(regionTable, 256 * Sizes.OneKiB));
+
             // Metadata
             FileParameters fileParams = new FileParameters();
+            fileParams.BlockSize = (int)_blockSize;
+            fileParams.Flags = EnumSet.of(FileParametersFlags.None);
+            @SuppressWarnings("unused")
             ParentLocator parentLocator = new ParentLocator();
-            byte[] metadataBuffer = new byte[metadataRegion.Length];
+
+            byte[] metadataBuffer = new byte[(int) metadataRegion.getLength()];
             MemoryStream metadataStream = new MemoryStream(metadataBuffer);
             Metadata.initialize(metadataStream,
                                 fileParams,
@@ -182,17 +202,19 @@ public final class DiskBuilder extends DiskImageBuilder {
                                 physicalSectorSize,
                                 null);
             extents.add(new BuilderBufferExtent(metadataRegion.FileOffset, metadataBuffer));
-            List<Range> presentBlocks = new ArrayList<>(StreamExtent.blocks(_content.getExtents(), _blockSize));
+            List<Range> presentBlocks = StreamExtent.blocks(_content.getExtents(), _blockSize);
+
             // BAT
             BlockAllocationTableBuilderExtent batExtent = new BlockAllocationTableBuilderExtent(batRegion.FileOffset,
-                                                                                                batRegion.Length,
+                                                                                                batRegion.getLength(),
                                                                                                 presentBlocks,
                                                                                                 fileEnd,
                                                                                                 _blockSize,
                                                                                                 chunkRatio);
             extents.add(batExtent);
+
+            // Stream contents
             for (Range range : presentBlocks) {
-                // Stream contents
                 long substreamStart = range.getOffset() * _blockSize;
                 long substreamCount = Math.min(_content.getLength() - substreamStart, range.getCount() * _blockSize);
                 SubStream dataSubStream = new SubStream(_content, substreamStart, substreamCount);
@@ -200,7 +222,9 @@ public final class DiskBuilder extends DiskImageBuilder {
                 extents.add(dataExtent);
                 fileEnd += range.getCount() * _blockSize;
             }
+
             totalLength[0] = fileEnd;
+
             return extents;
         }
 

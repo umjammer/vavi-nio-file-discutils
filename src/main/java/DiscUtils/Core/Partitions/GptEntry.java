@@ -128,7 +128,7 @@ public class GptEntry implements Comparable<GptEntry> {
         FirstUsedLogicalBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 32);
         LastUsedLogicalBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 40);
         Attributes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
-        Name = new String(buffer, offset + 56, 72, Charset.forName("tuf-8")).replaceFirst("\0*$", "");
+        Name = new String(buffer, offset + 56, 72, Charset.forName("UTF-16LE")).replaceFirst("\0*$", "");
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -137,7 +137,7 @@ public class GptEntry implements Comparable<GptEntry> {
         EndianUtilities.writeBytesLittleEndian(FirstUsedLogicalBlock, buffer, offset + 32);
         EndianUtilities.writeBytesLittleEndian(LastUsedLogicalBlock, buffer, offset + 40);
         EndianUtilities.writeBytesLittleEndian(Attributes, buffer, offset + 48);
-        System.arraycopy((Name + new String(new char[36])).getBytes(Charset.forName("utf-8")), 0, buffer, offset + 56, 36);
+        System.arraycopy((Name + new String(new char[36])).getBytes(Charset.forName("UTF-16LE")), 0, buffer, offset + 56, 36);
     }
 
 }

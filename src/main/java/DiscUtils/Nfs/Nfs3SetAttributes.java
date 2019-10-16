@@ -233,7 +233,7 @@ public final class Nfs3SetAttributes {
             return false;
         }
 
-        return other.getSetMode() == getSetMode() && other.getMode() == getMode() && other.getSetUid() == getSetUid() &&
+        return other.getSetMode() == getSetMode() && other.getMode().equals(getMode()) && other.getSetUid() == getSetUid() &&
                other.getUid() == getUid() && other.getSetGid() == getSetGid() && other.getGid() == getGid() &&
                other.getSetSize() == getSetSize() && other.getSize() == getSize() &&
                other.getSetAccessTime() == getSetAccessTime() && other.getAccessTime().equals(getAccessTime()) &&

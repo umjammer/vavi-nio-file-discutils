@@ -95,12 +95,14 @@ public class DirectoryEntry {
         int shortNameLength = reader.readUInt16();
         int fileNameLength = reader.readUInt16();
         if (fileNameLength > 0) {
-            result.FileName = new String(reader.readBytes(fileNameLength + 2), Charset.forName("Unicode")).replaceFirst("\0*$", "");
+            result.FileName = new String(reader.readBytes(fileNameLength + 2), Charset.forName("UTF-16LE")).replaceFirst("\0*$",
+                                                                                                                         "");
         } else {
             result.FileName = "";
         }
         if (shortNameLength > 0) {
-            result.ShortName = new String(reader.readBytes(shortNameLength + 2), Charset.forName("Unicode")).replaceFirst("\0*$", "");
+            result.ShortName = new String(reader.readBytes(shortNameLength + 2), Charset.forName("UTF-16LE"))
+                    .replaceFirst("\0*$", "");
         } else {
             result.ShortName = null;
         }

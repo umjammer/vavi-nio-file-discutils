@@ -63,7 +63,7 @@ public final class RegionInfo {
      * Gets the length of this region within the VHDX file.
      */
     public long getLength() {
-        return _entry.Length;
+        return _entry.getLength();
     }
 
     /**

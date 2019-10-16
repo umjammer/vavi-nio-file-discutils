@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
@@ -122,7 +123,7 @@ public final class SubKeyHashedListCell extends ListCell {
         }
 
         KeyFinder finder = new KeyFinder(_hive, name);
-        int idx = Collections.binarySearch(_subKeyIndexes, null, finder); // TODO -1
+        int idx = Collections.binarySearch(_subKeyIndexes, -1, finder);
         cellIndex[0] = finder.getCellIndex();
         return idx < 0 ? -1 : 0;
     }
@@ -205,14 +206,11 @@ public final class SubKeyHashedListCell extends ListCell {
 
         ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
         if (listCell != null) {
-            int[] found = new int[1];
-            int result = listCell.findKey(name, found);
-            cellIndex[0] = found[0];
-            return result;
+            return listCell.findKey(name, cellIndex);
         }
 
         cellIndex[0] = _subKeyIndexes.get(listIndex);
-        return name.compareTo(((KeyNodeCell) cell).Name);
+        return Utilities.compareTo(name, ((KeyNodeCell) cell).Name, true);
     }
 
     private List<Integer> find(String name, int start) {
@@ -278,7 +276,7 @@ public final class SubKeyHashedListCell extends ListCell {
         public int compare(Integer x, Integer y) {
             // TODO: Be more efficient at ruling out no-hopes by using the hash values
             KeyNodeCell cell = _hive.getCell(x);
-            int result = cell.Name.compareTo(_searchName);
+            int result = Utilities.compareTo(cell.Name, _searchName, true); // TODO cell can be null
             if (result == 0) {
                 setCellIndex(x);
             }

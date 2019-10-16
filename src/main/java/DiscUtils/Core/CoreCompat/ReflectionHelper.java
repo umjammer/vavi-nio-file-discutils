@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
 public class ReflectionHelper {
@@ -38,7 +39,7 @@ public class ReflectionHelper {
     }
 
     public static <T extends Annotation> List<T> getCustomAttributes(Class<?> type, Class<T> attributeType, boolean inherit) {
-        return Arrays.asList(type.getAnnotation(attributeType));
+        return Arrays.asList(type.getAnnotationsByType(attributeType));
     }
 
     public static List<Class<?>> getAssembly(Class<?> type) {
@@ -49,7 +50,15 @@ public class ReflectionHelper {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(c.newInstance());
+            if (Long.class.equals(c)) {
+                oos.writeObject(Long.valueOf(0));
+            } else if (Integer.class.equals(c)) {
+                oos.writeObject(Integer.valueOf(0));
+            } else if (UUID.class.equals(c)) {
+                oos.writeObject(new UUID(0, 0));
+            } else {
+                oos.writeObject(c.newInstance());
+            }
             oos.flush();
             oos.close();
             return baos.size();

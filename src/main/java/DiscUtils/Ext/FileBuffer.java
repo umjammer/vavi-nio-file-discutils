@@ -102,7 +102,7 @@ public class FileBuffer extends Buffer {
             int toRead = Math.min(totalBytesRemaining, blockSize - blockOffset);
             int numRead;
             if (physicalBlock == 0) {
-                Arrays.fill(buffer, offset + totalRead, toRead, (byte) 0);
+                Arrays.fill(buffer, offset + totalRead, offset + totalRead + toRead, (byte) 0);
                 numRead = toRead;
             } else {
                 _context.getRawStream().setPosition(physicalBlock * (long) blockSize + blockOffset);

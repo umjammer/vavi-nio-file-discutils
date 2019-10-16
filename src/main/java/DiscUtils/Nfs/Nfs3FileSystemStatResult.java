@@ -81,8 +81,8 @@ public class Nfs3FileSystemStatResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getPostOpAttributes().equals(getPostOpAttributes()) &&
-               other.getFileSystemStat().equals(getFileSystemStat());
+        return other.getStatus() == getStatus() && Utilities.equals(other.getPostOpAttributes(), getPostOpAttributes()) &&
+               Utilities.equals(other.getFileSystemStat(), getFileSystemStat());
     }
 
     public int hashCode() {

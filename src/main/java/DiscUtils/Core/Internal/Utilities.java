@@ -22,6 +22,7 @@
 
 package DiscUtils.Core.Internal;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,18 +38,13 @@ import DiscUtils.Core.UnixFileType;
 public class Utilities {
 
     /**
-     * Indicates if two ranges overlap.
-     * The type of the ordinals.
+     * Indicates if two ranges overlap. The type of the ordinals.
      *
      * @param xFirst The lowest ordinal of the first range (inclusive).
-     * @param xLast The highest ordinal of the first range (exclusive).
+     * @param xLast  The highest ordinal of the first range (exclusive).
      * @param yFirst The lowest ordinal of the second range (inclusive).
-     * @param yLast The highest ordinal of the second range (exclusive).
-     * @return
-     *         {@code true}
-     *         if the ranges overlap, else
-     *         {@code false}
-     *         .
+     * @param yLast  The highest ordinal of the second range (exclusive).
+     * @return {@code true} if the ranges overlap, else {@code false} .
      */
     public static <T extends Comparable<T>> boolean rangesOverlap(T xFirst, T xLast, T yFirst, T yLast) {
         return !((xLast.compareTo(yFirst) <= 0) || (xFirst.compareTo(yLast) >= 0));
@@ -120,7 +116,7 @@ public class Utilities {
      * @return The directory part.
      */
     public static String getDirectoryFromPath(String path) {
-        String trimmed = path.replaceFirst(escapeForRegex("\\") + "*$", "");
+        String trimmed = path.replaceFirst(escapeForRegex("\\*$"), "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
             return "";
@@ -138,7 +134,7 @@ public class Utilities {
      * @return The file part of the path.
      */
     public static String getFileFromPath(String path) {
-        String trimmed = path.replaceFirst(escapeForRegex("\\") + "*$", "");
+        String trimmed = path.replaceFirst(escapeForRegex("\\*$"), "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
             return trimmed;
@@ -164,37 +160,32 @@ public class Utilities {
             return a;
         }
 
-        return a.replaceFirst(escapeForRegex("\\") + "*$", "") + '\\' +
-               b.replaceFirst(escapeForRegex("\\") + "*$", "");
+        return a.replaceFirst(escapeForRegex("\\*$"), "") + '\\' + b.replaceFirst(escapeForRegex("\\*$"), "");
     }
 
     /**
      * Resolves a relative path into an absolute one.
      *
-     * @param basePath The base path to resolve from.
+     * @param basePath     The base path to resolve from.
      * @param relativePath The relative path.
-     * @return The absolute path. If no
-     *         {@code basePath}
-     *         is specified
-     *         then relativePath is returned as-is. If
-     *         {@code relativePath}
+     * @return The absolute path. If no {@code basePath} is specified then
+     *         relativePath is returned as-is. If {@code relativePath}
      *
-     *         contains more '..' characters than the base path contains levels
-     *         of
+     *         contains more '..' characters than the base path contains levels of
      *         directory, the resultant string be the root drive followed by the
-     *         file name.
-     *         If no the basePath starts with '\' (no drive specified) then the
-     *         returned
-     *         path will also start with '\'.
-     *         For example: (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).
+     *         file name. If no the basePath starts with '\' (no drive specified)
+     *         then the returned path will also start with '\'. For example:
+     *         (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).
      */
     public static String resolveRelativePath(String basePath, String relativePath) {
         if (Objects.isNull(basePath) || basePath.isEmpty()) {
             return relativePath;
         }
 
-        if (!basePath.endsWith("\\"))
-            basePath = Paths.get(basePath).getParent().toAbsolutePath().toString();
+        if (!basePath.endsWith("\\")) {
+            Path parent = Paths.get(basePath).getParent();
+            basePath = parent != null ? parent.toString() : "\\"; // TODO
+        }
 
         String merged = Paths.get(basePath, relativePath).toAbsolutePath().toString();
         if (basePath.startsWith("\\") && merged.length() > 2 && merged.charAt(1) == ':') {
@@ -256,11 +247,7 @@ public class Utilities {
      * Indicates if a file name matches the 8.3 pattern.
      *
      * @param name The name to test.
-     * @return
-     *         {@code true}
-     *         if the name is 8.3, otherwise
-     *         {@code false}
-     *         .
+     * @return {@code true} if the name is 8.3, otherwise {@code false} .
      */
     public static boolean is8Dot3(String name) {
         if (name.length() > 12) {
@@ -307,10 +294,9 @@ public class Utilities {
      * expression.
      *
      * @param pattern The wildcard pattern to convert.
-     * @return The resultant regular expression.
-     *         The wildcard * (star) matches zero or more characters (including
-     *         '.'), and ?
-     *         (question mark) matches precisely one character (except '.').
+     * @return The resultant regular expression. The wildcard * (star) matches zero
+     *         or more characters (including '.'), and ? (question mark) matches
+     *         precisely one character (except '.').
      */
     public static Pattern convertWildcardsToRegEx(String pattern) {
         if (!pattern.contains(".")) {
@@ -404,5 +390,31 @@ public class Utilities {
      */
     public static String escapeForRegex(String separator) {
         return separator.replace("\\", "\\\\");
+    }
+
+    public static int compareTo(String s1, String s2, boolean ignoreCase) {
+        if (s1 == null) {
+            if (s2 == null) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+        if (s2 == null) {
+            return 1;
+        }
+        if (ignoreCase) {
+            return s1.compareToIgnoreCase(s2);
+        } else {
+            return s1.compareTo(s2);
+        }
+    }
+
+    public static boolean equals(Object obj1, Object obj2) {
+        if (obj1 == null) {
+            return obj2 == null;
+        } else {
+            return obj1.equals(obj2);
+        }
     }
 }

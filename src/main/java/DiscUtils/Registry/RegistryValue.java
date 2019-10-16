@@ -56,9 +56,18 @@ public final class RegistryValue {
 
     /**
      * Gets the value data mapped to a .net object.
+     * <p>
      * The mapping from registry type of .NET type is as follows:
-     * Value Type.NET
-     * typeStringstringExpandStringstringLinkstringDWorduintDWordBigEndianuintMultiStringstring[]QWordulong
+     * <pre>
+     * Value Type: .NET type
+     * String: string
+     * ExpandString: string
+     * Link: string
+     * DWord: uint
+     * DWordBigEndian: uint
+     * MultiString: string[]
+     * QWord: ulong
+     * </pre>
      */
     public Object getValue() {
         return convertToObject(getData(), getDataType());
@@ -165,13 +174,13 @@ public final class RegistryValue {
         case String:
         case ExpandString:
         case Link:
-            return new String(data, Charset.forName("Unicode")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
+            return new String(data, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
         case Dword:
             return EndianUtilities.toInt32LittleEndian(data, 0);
         case DwordBigEndian:
             return EndianUtilities.toInt32BigEndian(data, 0);
         case MultiString:
-            String multiString = new String(data, Charset.forName("Unicode")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
+            String multiString = new String(data, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
             return multiString.split("\0");
         case QWord:
             return "" + EndianUtilities.toUInt64LittleEndian(data, 0);
@@ -190,7 +199,7 @@ public final class RegistryValue {
         case String:
         case ExpandString:
             String strValue = value.toString();
-            data = strValue.getBytes(Charset.forName("Unicode"));
+            data = strValue.getBytes(Charset.forName("UTF-16LE"));
             break;
         case Dword:
             data = new byte[4];
@@ -202,7 +211,7 @@ public final class RegistryValue {
             break;
         case MultiString:
             String multiStrValue = String.join("\0", (String[]) value) + "\0";
-            data = multiStrValue.getBytes(Charset.forName("Unicode"));
+            data = multiStrValue.getBytes(Charset.forName("UTF-16LE"));
             break;
         default:
             data = (byte[]) value;
@@ -226,9 +235,9 @@ public final class RegistryValue {
             byte[] data = getData();
             String result = "";
             for (int i = 0; i < Math.min(data.length, 8); ++i) {
-                result += String.format("{0:X2} ", (int) data[i]);
+                result += String.format("%2x ", (int) data[i]);
             }
-            return result + String.format(" ({0} bytes)", data.length);
+            return result + String.format(" (%d bytes)", data.length);
         }
     }
 }

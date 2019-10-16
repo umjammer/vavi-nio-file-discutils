@@ -36,14 +36,10 @@ import moe.yo3explorer.dotnetio4j.Stream;
 /**
  * Low-level non-resident attribute operations.
  *
- * Responsible for:
- * * Cluster Allocation / Release
- * * Reading clusters from disk
- * * Writing clusters to disk
- * * Substituting zeros for 'sparse'/'unallocated' clusters
- * Not responsible for:
- * * Compression / Decompression
- * * Extending attributes.
+ * Responsible for: * Cluster Allocation / Release * Reading clusters from disk
+ * * Writing clusters to disk * Substituting zeros for 'sparse'/'unallocated'
+ * clusters Not responsible for: * Compression / Decompression * Extending
+ * attributes.
  */
 public final class RawClusterStream extends ClusterStream {
     private final int _bytesPerCluster;
@@ -178,7 +174,6 @@ public final class RawClusterStream extends ClusterStream {
                         nextCluster = _cookedRuns.get___idx(i).getStartLcn() + _cookedRuns.get___idx(i).getLength();
                         break;
                     }
-
                 }
                 List<Tuple<Long, Long>> alloced = _context.getClusterBitmap()
                         .allocateClusters(numClusters, nextCluster, _isMft, getAllocatedClusterCount());
@@ -239,7 +234,10 @@ public final class RawClusterStream extends ClusterStream {
             CookedDataRun run = _cookedRuns.get___idx(runIdx);
             int toRead = (int) Math.min(count - totalRead, run.getLength() - (focusVcn - run.getStartVcn()));
             if (run.getIsSparse()) {
-                Arrays.fill(buffer, offset + totalRead * _bytesPerCluster, toRead * _bytesPerCluster, (byte) 0);
+                Arrays.fill(buffer,
+                            offset + totalRead * _bytesPerCluster,
+                            offset + totalRead * _bytesPerCluster + toRead * _bytesPerCluster,
+                            (byte) 0);
             } else {
                 long lcn = _cookedRuns.get___idx(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
                 _fsStream.setPosition(lcn * _bytesPerCluster);

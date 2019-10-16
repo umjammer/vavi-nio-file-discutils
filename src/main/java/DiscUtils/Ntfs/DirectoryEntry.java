@@ -41,7 +41,7 @@ public class DirectoryEntry {
         return getDetails().Flags.contains(FileAttributeFlags.Directory);
     }
 
-    private FileRecordReference __Reference = new FileRecordReference();
+    private FileRecordReference __Reference;
 
     public FileRecordReference getReference() {
         return __Reference;

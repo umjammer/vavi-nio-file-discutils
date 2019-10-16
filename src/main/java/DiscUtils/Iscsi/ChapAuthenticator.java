@@ -90,7 +90,7 @@ public class ChapAuthenticator extends Authenticator {
 
         byte[] data = new byte[(p.length() - 2) / 2];
         for (int i = 0; i < data.length; ++i) {
-            data[i] = Byte.parseByte(p.substring(2 + i * 2, 2), 16);
+            data[i] = Byte.parseByte(p.substring(2 + i * 2, 2 + i * 2 + 2), 16);
         }
         return data;
     }

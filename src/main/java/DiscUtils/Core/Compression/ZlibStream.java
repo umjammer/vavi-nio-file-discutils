@@ -139,7 +139,6 @@ public class ZlibStream extends Stream {
                 if (EndianUtilities.toInt32BigEndian(footerBuffer, 0) != _adler32.getValue()) {
                     throw new IOException("Corrupt decompressed data detected");
                 }
-
             }
 
             _deflateStream.close();

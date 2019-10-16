@@ -25,6 +25,8 @@ package LibraryTests.Vmdk;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,6 +46,7 @@ public class DiskTest {
 //        SetupHelper.setupComplete();
     }
 
+    @Test
     public void initializeFixed() throws Exception {
         try (Disk disk = Disk.initialize(new InMemoryFileSystem(), "a.vmdk", 8 * 1024 * 1024, DiskCreateType.MonolithicFlat)) {
             assertNotNull(disk);
@@ -57,6 +60,7 @@ public class DiskTest {
         }
     }
 
+    @Test
     public void initializeFixedIDE() throws Exception {
         try (Disk disk = Disk.initialize(new InMemoryFileSystem(),
                                          "a.vmdk",
@@ -74,6 +78,7 @@ public class DiskTest {
         }
     }
 
+    @Test
     public void initializeDynamic() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse)) {
@@ -95,6 +100,7 @@ public class DiskTest {
         }
     }
 
+    @Test
     public void initializeDifferencing() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         DiskImageFile baseFile = DiskImageFile
@@ -116,6 +122,7 @@ public class DiskTest {
         assertTrue(fs.getFileLength("\\diff\\diff.vmdk") < 4 * 1024 * 1024);
     }
 
+    @Test
     public void initializeDifferencingRelPath() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         DiskImageFile baseFile = DiskImageFile
@@ -132,6 +139,7 @@ public class DiskTest {
         assertTrue(fs.getFileLength("\\dir\\diff.vmdk") < 4 * 1024 * 1024);
     }
 
+    @Test
     public void readOnlyHosted() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse)) {

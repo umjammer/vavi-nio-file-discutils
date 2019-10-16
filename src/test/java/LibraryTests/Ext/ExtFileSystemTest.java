@@ -26,7 +26,7 @@ public class ExtFileSystemTest {
         try (Stream data = Helpers.loadDataFile("data.ext4.dat"); ExtFileSystem fs = new ExtFileSystem(data, new FileSystemParameters())) {
             List<DiscFileSystemInfo> fsis = fs.getRoot().getFileSystemInfos();
             Collections.sort(fsis, (s1, s2) -> s1.getName().compareTo(s2.getName()));
-            assertAll(fsis, (s) -> {
+            fsis.forEach(s) -> {
                 assertEquals("bar", s.Name);
                 assertTrue((s.Attributes & FileAttributes.Directory) != 0);
             }, (s) -> {

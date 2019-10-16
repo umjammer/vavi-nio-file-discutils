@@ -497,7 +497,7 @@ public class NativeFileSystem extends DiscFileSystem {
             path = path.substring(1);
         }
 
-        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>(); // TODO
         for (String key : new String[] { "dos:isDirectry" }) {
             result.put(key, Files.getAttribute(Paths.get(getBasePath(), path), null));
         }

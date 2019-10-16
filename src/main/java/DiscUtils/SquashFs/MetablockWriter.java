@@ -33,7 +33,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public final class MetablockWriter implements Closeable {
-    private MemoryStream _buffer = new MemoryStream();
+    private MemoryStream _buffer;
 
     private final byte[] _currentBlock;
 

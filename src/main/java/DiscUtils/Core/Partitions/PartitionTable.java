@@ -25,11 +25,10 @@ package DiscUtils.Core.Partitions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.UUID;
 
 import DiscUtils.Core.VirtualDisk;
-import DiscUtils.Core.VolumeManager;
-import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Core.Raw.Disk;
 import DiscUtils.Streams.Util.Ownership;
 import moe.yo3explorer.dotnetio4j.Stream;
@@ -62,22 +61,15 @@ public abstract class PartitionTable {
     public abstract UUID getDiskGuid();
 
     private static List<PartitionTableFactory> getFactories() {
-        try {
-            if (_factories == null) {
-                List<PartitionTableFactory> factories = new ArrayList<>();
-                for (Class<?> type : ReflectionHelper.getAssembly(VolumeManager.class)) {
-                    for (@SuppressWarnings("unused") PartitionTableFactoryAttribute attr : ReflectionHelper
-                            .getCustomAttributes(type, PartitionTableFactoryAttribute.class, false)) {
-                        factories.add((PartitionTableFactory) type.newInstance());
-                    }
-                }
-                _factories = factories;
+        if (_factories == null) {
+            List<PartitionTableFactory> factories = new ArrayList<>();
+            for (PartitionTableFactory type : ServiceLoader.load(PartitionTableFactory.class)) {
+                factories.add(type);
             }
-
-            return _factories;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+            _factories = factories;
         }
+
+        return _factories;
     }
 
     /**

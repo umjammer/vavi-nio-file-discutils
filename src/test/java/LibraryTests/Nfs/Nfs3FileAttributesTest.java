@@ -22,11 +22,17 @@
 
 package LibraryTests.Nfs;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Core.UnixFilePermissions;
 import DiscUtils.Nfs.Nfs3FileAttributes;
+import DiscUtils.Nfs.Nfs3FileTime;
+import DiscUtils.Nfs.Nfs3FileType;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +42,29 @@ public class Nfs3FileAttributesTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
+        attributes.AccessTime = new Nfs3FileTime(LocalDateTime.of(2018, 1, 1, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        attributes.BytesUsed = 1;
+        attributes.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2018, 1, 2, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        attributes.FileId = 3;
+        attributes.FileSystemId = 4;
+        attributes.Gid = 5;
+        attributes.LinkCount = 6;
+        attributes.Mode = UnixFilePermissions.GroupAll;
+        attributes.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2018, 1, 3, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        attributes.RdevMajor = 7;
+        attributes.RdevMinor = 8;
+        attributes.Size = 9;
+        attributes.Type = Nfs3FileType.BlockDevice;
+        attributes.Uid = 11;
         Nfs3FileAttributes clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

@@ -28,9 +28,9 @@ import java.util.List;
 
 public final class Nfs3ExportResult extends Nfs3CallResult {
     public Nfs3ExportResult(XdrDataReader reader) {
-        setExports(new ArrayList<>());
+        __Exports = new ArrayList<>();
         while (reader.readBool()) {
-            getExports().add(new Nfs3Export(reader));
+            __Exports.add(new Nfs3Export(reader));
         }
     }
 
@@ -48,7 +48,7 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        for (Nfs3Export export : getExports()) {
+        for (Nfs3Export export : __Exports) {
             writer.write(true);
             export.write(writer);
         }
@@ -64,16 +64,16 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
             return false;
         }
 
-        if (other.getExports() == null || getExports() == null) {
+        if (other.getExports() == null || __Exports == null) {
             return false;
         }
 
-        if (other.getExports().size() != getExports().size()) {
+        if (other.getExports().size() != __Exports.size()) {
             return false;
         }
 
         for (int i = 0; i < getExports().size(); i++) {
-            if (!other.getExports().get(i).equals(getExports().get(i))) {
+            if (!other.getExports().get(i).equals(__Exports.get(i))) {
                 return false;
             }
         }
@@ -81,6 +81,6 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return getExports().hashCode();
+        return __Exports.hashCode();
     }
 }

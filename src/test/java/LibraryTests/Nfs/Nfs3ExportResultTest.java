@@ -22,10 +22,13 @@
 
 package LibraryTests.Nfs;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Nfs.Nfs3Export;
 import DiscUtils.Nfs.Nfs3ExportResult;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
@@ -36,7 +39,11 @@ public class Nfs3ExportResultTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3ExportResult result = new Nfs3ExportResult();
-        Nfs3ExportResult clone = null;
+        Nfs3Export export = new Nfs3Export();
+        export.setDirPath("export");
+        export.setGroups(Arrays.asList("GroupA","GroupB"));
+        result.setExports(Arrays.asList(export));
+      Nfs3ExportResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

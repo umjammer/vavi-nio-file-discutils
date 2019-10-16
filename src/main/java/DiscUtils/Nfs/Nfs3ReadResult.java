@@ -22,7 +22,10 @@
 
 package DiscUtils.Nfs;
 
+import java.util.Arrays;
+
 import DiscUtils.Core.Internal.Utilities;
+
 
 public final class Nfs3ReadResult extends Nfs3CallResult {
     public Nfs3ReadResult(XdrDataReader reader) {
@@ -104,9 +107,8 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getFileAttributes().equals(getFileAttributes()) &&
-               other.getCount() == getCount() && other.getData().equals(getData()) &&
-               other.getEof() == getEof();
+        return other.getStatus() == getStatus() && Utilities.equals(other.getFileAttributes(), getFileAttributes())
+                && other.getCount() == getCount() && Arrays.equals(other.getData(), getData()) && other.getEof() == getEof();
     }
 
     public int hashCode() {

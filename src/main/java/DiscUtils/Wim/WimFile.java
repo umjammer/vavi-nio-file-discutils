@@ -102,16 +102,10 @@ public class WimFile {
      * Gets the embedded manifest describing the file and the contained images.
      */
     public String getManifest() {
-        StreamReader reader = new StreamReader(openResourceStream(_fileHeader.XmlDataHeader), true);
-        try {
+        try (StreamReader reader = new StreamReader(openResourceStream(_fileHeader.XmlDataHeader), true)) {
             return reader.readToEnd();
-        } finally {
-            if (reader != null)
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -120,8 +114,7 @@ public class WimFile {
      *
      * @param index The index of the image to retrieve.
      * @return The image as a file system.The XML manifest file uses a one-based
-     *         index, whereas this
-     *         method is zero-based.
+     *         index, whereas this method is zero-based.
      */
     public WimFileSystem getImage(int index) {
         return new WimFileSystem(this, index);
@@ -129,8 +122,7 @@ public class WimFile {
 
     public ShortResourceHeader locateImage(int index) {
         int i = 0;
-        Stream s = openResourceStream(_fileHeader.OffsetTableHeader);
-        try {
+        try (Stream s = openResourceStream(_fileHeader.OffsetTableHeader)) {
             long numRead = 0;
             while (numRead < s.getLength()) {
                 byte[] resBuffer = StreamUtilities.readExact(s, ResourceInfo.Size);
@@ -145,13 +137,8 @@ public class WimFile {
                     ++i;
                 }
             }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         return null;
     }
@@ -166,7 +153,6 @@ public class WimFile {
             if (Utilities.areEqual(header.Hash, hash)) {
                 return header.Header;
             }
-
         }
         return null;
     }
@@ -185,8 +171,7 @@ public class WimFile {
 
     private void readResourceTable() {
         _resources = new HashMap<>();
-        Stream s = openResourceStream(_fileHeader.OffsetTableHeader);
-        try {
+        try (Stream s = openResourceStream(_fileHeader.OffsetTableHeader)) {
             long numRead = 0;
             while (numRead < s.getLength()) {
                 byte[] resBuffer = StreamUtilities.readExact(s, ResourceInfo.Size);
@@ -200,13 +185,8 @@ public class WimFile {
 
                 _resources.get(hashHash).add(info);
             }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 }

@@ -24,6 +24,9 @@ package LibraryTests.Vhdx;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Core.DiskImageFileSpecification;
@@ -45,76 +48,66 @@ public class DiskBuilderTest {
             sourceStream.setPosition(i * 1024L * 1024);
             sourceStream.writeByte((byte) i);
         }
+
         sourceStream.setPosition(150 * 1024 * 1024);
         sourceStream.writeByte((byte) 0xFF);
+
         diskContent = sourceStream;
     }
 
+    @Disabled("Ported from DiscUtils")
     public void buildFixed() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(DiskType.Fixed);
         builder.setContent(diskContent);
+
         List<DiskImageFileSpecification> fileSpecs = builder.build("foo");
         assertEquals(1, fileSpecs.size());
         assertEquals("foo.vhdx", fileSpecs.get(0).getName());
-        Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose);
-        try {
-            {
-                for (int i = 0; i < 8; ++i) {
-                    disk.getContent().setPosition(i * 1024L * 1024);
-                    assertEquals(i, disk.getContent().readByte());
-                }
-                disk.getContent().setPosition(150 * 1024 * 1024);
-                assertEquals(0xFF, disk.getContent().readByte());
-            }
-        } finally {
-            if (disk != null)
-                disk.close();
 
+        try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
+            for (int i = 0; i < 8; ++i) {
+                disk.getContent().setPosition(i * 1024L * 1024);
+                assertEquals(i, disk.getContent().readByte());
+            }
+
+            disk.getContent().setPosition(150 * 1024 * 1024);
+            assertEquals(0xFF, disk.getContent().readByte());
         }
     }
 
+    @Test
     public void buildEmptyDynamic() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(DiskType.Dynamic);
         builder.setContent(new SparseMemoryStream());
+
         List<DiskImageFileSpecification> fileSpecs = builder.build("foo");
         assertEquals(1, fileSpecs.size());
         assertEquals("foo.vhdx", fileSpecs.get(0).getName());
-        Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose);
-        try {
-            {
-                assertEquals(0, disk.getContent().getLength());
-            }
-        } finally {
-            if (disk != null)
-                disk.close();
 
+        try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
+            assertEquals(0, disk.getContent().getLength());
         }
     }
 
+    @Test
     public void buildDynamic() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(DiskType.Dynamic);
         builder.setContent(diskContent);
+
         List<DiskImageFileSpecification> fileSpecs = builder.build("foo");
         assertEquals(1, fileSpecs.size());
         assertEquals("foo.vhdx", fileSpecs.get(0).getName());
-        Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose);
-        try {
-            {
-                for (int i = 0; i < 8; ++i) {
-                    disk.getContent().setPosition(i * 1024L * 1024);
-                    assertEquals(i, disk.getContent().readByte());
-                }
-                disk.getContent().setPosition(150 * 1024 * 1024);
-                assertEquals(0xFF, disk.getContent().readByte());
-            }
-        } finally {
-            if (disk != null)
-                disk.close();
 
+        try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
+            for (int i = 0; i < 8; ++i) {
+                disk.getContent().setPosition(i * 1024L * 1024);
+                assertEquals(i, disk.getContent().readByte());
+            }
+            disk.getContent().setPosition(150 * 1024 * 1024);
+            assertEquals(0xFF, disk.getContent().readByte());
         }
     }
-
 }

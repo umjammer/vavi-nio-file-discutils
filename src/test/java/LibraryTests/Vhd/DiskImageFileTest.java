@@ -27,6 +27,8 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,6 +42,7 @@ import moe.yo3explorer.dotnetio4j.MemoryStream;
 
 
 public class DiskImageFileTest {
+    @Test
     public void initializeDifferencing() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         MemoryStream diffStream = new MemoryStream();
@@ -66,6 +69,7 @@ public class DiskImageFileTest {
         assertTrue(1 * 1024 * 1024 > diffStream.getLength());
     }
 
+    @Test
     public void getParentLocations() throws Exception {
         MemoryStream baseStream = new MemoryStream();
         MemoryStream diffStream = new MemoryStream();
@@ -104,6 +108,7 @@ public class DiskImageFileTest {
         }
     }
 
+    @Test
     public void footerMissing() throws Exception {
         //
         // Simulates a partial failure extending the file, that the file footer is corrupt - should read start of the file instead.

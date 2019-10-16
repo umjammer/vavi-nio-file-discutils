@@ -226,7 +226,7 @@ public class HfsPlusUtilities {
 
     public static String readUniStr255(byte[] buffer, int offset) {
         int len = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        return new String(buffer, offset + 2, len * 2, Charset.forName("BigEndianUnicode"));
+        return new String(buffer, offset + 2, len * 2, Charset.forName("UTF-16BE"));
     }
 
     public static long readHFSPlusDate(ZoneId kind, byte[] buffer, int offset) {

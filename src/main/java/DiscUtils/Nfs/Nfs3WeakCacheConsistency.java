@@ -80,7 +80,7 @@ public final class Nfs3WeakCacheConsistency {
             return false;
         }
 
-        return other.getAfter().equals(getAfter()) && other.getBefore().equals(getBefore());
+        return Utilities.equals(other.getAfter(), getAfter()) && Utilities.equals(other.getBefore(), getBefore());
     }
 
     public int hashCode() {

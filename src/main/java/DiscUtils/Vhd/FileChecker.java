@@ -42,6 +42,8 @@ import moe.yo3explorer.dotnetio4j.Stream;
  * VHD file format verifier, that identifies corrupt VHD files.
  */
 public class FileChecker {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private final Stream _fileStream;
 
     private Footer _footer;
@@ -175,7 +177,7 @@ public class FileChecker {
         long pos = _footer.DataOffset;
         while (pos != -1) {
             if (pos % 512 != 0) {
-                reportError("DynHeader: Unaligned header @{0}", pos);
+                reportError("DynHeader: Unaligned header @%s", pos);
             }
 
             _fileStream.setPosition(pos);
@@ -233,16 +235,15 @@ public class FileChecker {
             reportError("DynHeader: Invalid checksum");
         }
 
-        if (_footer.DiskType == FileType.Dynamic && _dynamicHeader.ParentUniqueId != new UUID(0L, 0L)) {
+        if (_footer.DiskType == FileType.Dynamic && !_dynamicHeader.ParentUniqueId.equals(EMPTY)) {
             reportWarning("DynHeader: Parent Id is not null for dynamic disk");
-        } else if (_footer.DiskType == FileType.Differencing && _dynamicHeader.ParentUniqueId == new UUID(0L, 0L)) {
+        } else if (_footer.DiskType == FileType.Differencing && _dynamicHeader.ParentUniqueId.equals(EMPTY)) {
             reportError("DynHeader: Parent Id is null for differencing disk");
         }
 
         if (_footer.DiskType == FileType.Differencing && _dynamicHeader.ParentTimestamp > System.currentTimeMillis()) {
             reportWarning("DynHeader: Parent timestamp is greater than current time");
         }
-
     }
 
     private void checkFooterFields() {
@@ -294,10 +295,9 @@ public class FileChecker {
             reportError("Footer: Invalid footer checksum");
         }
 
-        if (_footer.UniqueId == new UUID(0L, 0L)) {
+        if (_footer.UniqueId.equals(EMPTY)) {
             reportWarning("Footer: Unique Id is null");
         }
-
     }
 
     private void checkFooter() {
@@ -307,7 +307,6 @@ public class FileChecker {
         if (!_footer.isValid()) {
             reportError("Invalid VHD footer at end of file");
         }
-
     }
 
     private void checkHeader() {
@@ -327,7 +326,6 @@ public class FileChecker {
         if (_footer == null || !_footer.isValid()) {
             _footer = header;
         }
-
     }
 
     private void reportInfo(String str, Object... args) {
@@ -335,7 +333,6 @@ public class FileChecker {
         if (_reportLevels.contains(ReportLevels.Information)) {
             _report.printf("INFO: " + str, args);
         }
-
     }
 
     private void reportWarning(String str, Object... args) {
@@ -351,10 +348,8 @@ public class FileChecker {
         if (_reportLevels.contains(ReportLevels.Errors)) {
             _report.printf("ERROR: " + str, args);
         }
-
     }
 
     private final static class AbortException extends InvalidFileSystemException {
     }
-
 }

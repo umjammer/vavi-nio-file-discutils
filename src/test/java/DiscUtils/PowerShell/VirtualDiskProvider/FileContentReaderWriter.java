@@ -183,8 +183,8 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
 
     private Charset getEncoding(Charset defEncoding) {
         switch (_encoding) {
-        case BigEndianUnicode:
-            return Charset.forName("BigEndianUnicode");
+        case UTF-16:
+            return Charset.forName("UTF-16");
         case UTF8:
             return Charset.forName("UTF8");
         case UTF7:

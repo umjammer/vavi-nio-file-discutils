@@ -43,7 +43,7 @@ public final class Nfs3FileAttributes {
 
     public int LinkCount;
 
-    public EnumSet<UnixFilePermissions> Mode;
+    public EnumSet<UnixFilePermissions> Mode = EnumSet.noneOf(UnixFilePermissions.class);
 
     public Nfs3FileTime ModifyTime;
 
@@ -102,8 +102,7 @@ public final class Nfs3FileAttributes {
         if (other == null) {
             return false;
         }
-
-        return other.Type == Type && other.Mode == Mode && other.LinkCount == LinkCount && other.Uid == Uid &&
+        return other.Type == Type && other.Mode.equals(Mode) && other.LinkCount == LinkCount && other.Uid == Uid &&
                other.Gid == Gid && other.Size == Size && other.BytesUsed == BytesUsed && other.RdevMajor == RdevMajor &&
                other.RdevMinor == RdevMinor && other.FileSystemId == FileSystemId && other.FileId == FileId &&
                other.AccessTime.equals(AccessTime) && other.ModifyTime.equals(ModifyTime) &&
@@ -120,5 +119,4 @@ public final class Nfs3FileAttributes {
                                   ModifyTime,
                                   ChangeTime);
     }
-
 }

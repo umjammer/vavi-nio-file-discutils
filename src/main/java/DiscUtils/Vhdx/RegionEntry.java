@@ -39,7 +39,15 @@ public final class RegionEntry implements IByteArraySerializable {
 
     public UUID Guid;
 
-    public int Length;
+    private int Length;
+
+    public long getLength() {
+        return Length & 0xffffffffl;
+    }
+
+    public void setLength(int value) {
+        Length = value;
+    }
 
     public long getSize() {
         return 32;

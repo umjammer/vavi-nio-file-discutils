@@ -28,6 +28,7 @@ import java.util.Arrays;
 public enum RegionFlags {
     None,
     Required;
+
     public static RegionFlags valueOf(int value) {
         return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
     }

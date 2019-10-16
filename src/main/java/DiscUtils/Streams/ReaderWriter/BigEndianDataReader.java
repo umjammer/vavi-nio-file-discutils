@@ -55,5 +55,4 @@ public class BigEndianDataReader extends DataReader {
         readToBuffer(8);
         return EndianUtilities.toUInt64BigEndian(_buffer, 0);
     }
-
 }

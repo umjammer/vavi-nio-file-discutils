@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Nfs.NfsProc3;
+import DiscUtils.Nfs.RpcAuthentication;
 import DiscUtils.Nfs.RpcCallHeader;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
@@ -36,6 +38,12 @@ public class RpcCallHeaderTest {
     @Test
     public void roundTripTest() throws Exception {
         RpcCallHeader header = new RpcCallHeader();
+        header.setCredentials(new RpcAuthentication());
+        header.setProc(NfsProc3.Commit.ordinal());
+        header.setProgram(5);
+        header.setRpcVersion(6);
+        header.setVerifier(new RpcAuthentication());
+        header.setVersion(7);
         RpcCallHeader clone = null;
 
         try (MemoryStream stream = new MemoryStream()) {

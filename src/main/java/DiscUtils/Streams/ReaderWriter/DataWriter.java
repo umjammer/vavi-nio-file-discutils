@@ -25,7 +25,7 @@ package DiscUtils.Streams.ReaderWriter;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 public abstract class DataWriter {
-    private static int _bufferSize;
+    private static final int _bufferSize = 8; // sizeof(UInt64)
 
     protected final Stream _stream;
 
@@ -57,11 +57,9 @@ public abstract class DataWriter {
         if (_buffer == null) {
             _buffer = new byte[_bufferSize];
         }
-
     }
 
     protected void flushBuffer(int count) {
         _stream.write(_buffer, 0, count);
     }
-
 }

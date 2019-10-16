@@ -56,7 +56,7 @@ public abstract class BuilderNode {
         __InodeNumber = value;
     }
 
-    private MetadataRef __InodeRef = new MetadataRef();
+    private MetadataRef __InodeRef;
 
     public MetadataRef getInodeRef() {
         return __InodeRef;
@@ -66,7 +66,7 @@ public abstract class BuilderNode {
         __InodeRef = value;
     }
 
-    private EnumSet<UnixFilePermissions> __Mode;
+    private EnumSet<UnixFilePermissions> __Mode = EnumSet.noneOf(UnixFilePermissions.class);
 
     public EnumSet<UnixFilePermissions> getMode() {
         return __Mode;

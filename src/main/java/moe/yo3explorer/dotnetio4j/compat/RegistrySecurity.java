@@ -55,7 +55,7 @@ public class RegistrySecurity extends Permission {
      */
     public String getSecurityDescriptorBinaryForm() {
         // TODO Auto-generated method stub
-        return null;
+        return "";
     }
 
     /**

@@ -32,6 +32,6 @@ public class UdfEntityIdentifier extends EntityIdentifier {
         String minor = String.format("%02x", Suffix[0]);
         OSClass osClass = OSClass.valueOf(Suffix[2]);
         OSIdentifier osId = OSIdentifier.valueOf(EndianUtilities.toUInt16BigEndian(Suffix, 2));
-        return String.format("{0} [UDF {1}.{2} : OS {3} {4}]", Identifier, major, minor, osClass, osId);
+        return String.format("%s [UDF %s.%s : OS %s %s]", Identifier, major, minor, osClass, osId);
     }
 }

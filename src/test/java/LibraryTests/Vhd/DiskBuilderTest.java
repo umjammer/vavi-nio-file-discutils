@@ -24,6 +24,8 @@ package LibraryTests.Vhd;
 
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Core.DiskImageFileSpecification;
@@ -50,6 +52,7 @@ public class DiskBuilderTest {
         diskContent = baseFile.getContent();
     }
 
+    @Test
     public void buildFixed() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(FileType.Fixed);
@@ -67,6 +70,7 @@ public class DiskBuilderTest {
         }
     }
 
+    @Test
     public void buildDynamic() throws Exception {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(FileType.Dynamic);

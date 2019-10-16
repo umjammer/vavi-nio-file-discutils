@@ -60,7 +60,7 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getAttributes().equals(getAttributes());
+        return other.getStatus() == getStatus() && Utilities.equals(other.getAttributes(), getAttributes());
     }
 
     public int hashCode() {

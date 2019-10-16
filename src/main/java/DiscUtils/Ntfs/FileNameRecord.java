@@ -95,7 +95,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         EASizeOrReparsePointTag = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3C);
         byte fnLen = buffer[offset + 0x40];
         _FileNameNamespace = FileNameNamespace.valueOf(buffer[offset + 0x41]);
-        FileName = new String(buffer, offset + 0x42, fnLen * 2, Charset.forName("Unicode"));
+        FileName = new String(buffer, offset + 0x42, fnLen * 2, Charset.forName("UTF-16LE"));
         return 0x42 + fnLen * 2;
     }
 
@@ -111,7 +111,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         EndianUtilities.writeBytesLittleEndian(EASizeOrReparsePointTag, buffer, offset + 0x3C);
         buffer[offset + 0x40] = (byte) FileName.length();
         buffer[offset + 0x41] = (byte) _FileNameNamespace.ordinal();
-        byte[] bytes = FileName.getBytes(Charset.forName("Unicode"));
+        byte[] bytes = FileName.getBytes(Charset.forName("UTF-16LE"));
         System.arraycopy(bytes, 0, buffer, offset + 0x42, bytes.length);
     }
 

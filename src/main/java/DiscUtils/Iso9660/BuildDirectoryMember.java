@@ -28,17 +28,17 @@ import java.util.Comparator;
 
 /**
  * Provides the base class for
- * {@link #BuildFileInfo}
+ * {@link BuildFileInfo}
  * and
  *
- * {@link #BuildDirectoryInfo}
+ * {@link BuildDirectoryInfo}
  * objects that will be built into an
  * ISO image.
  * Instances of this class have two names, a
- * {@link #Name}
+ * {@link #__Name}
  * ,
  * which is the full-length Joliet name and a
- * {@link #ShortName}
+ * {@link #__ShortName}
  * ,
  * which is the strictly compliant ISO 9660 name.
  */

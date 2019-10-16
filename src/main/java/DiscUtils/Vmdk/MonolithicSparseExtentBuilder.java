@@ -263,7 +263,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             long readStart = grainStart + outputGrainOffset;
             int toRead = (int) Math.min(count, maxRead - outputGrainOffset);
             if (readStart > _content.getLength()) {
-                Arrays.fill(block, offset, toRead, (byte) 0);
+                Arrays.fill(block, offset, offset + toRead, (byte) 0);
                 return toRead;
             }
 

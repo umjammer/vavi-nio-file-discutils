@@ -66,7 +66,7 @@ public final class DiskTransport extends VirtualDiskTransport {
         }
         if (bestRoot == null) {
             throw new moe.yo3explorer.dotnetio4j.IOException(String
-                    .format("Unable to find an NFS export providing access to '{0}'", fsPath));
+                    .format("Unable to find an NFS export providing access to '%s'", fsPath));
         }
 
         _fileSystem = new NfsFileSystem(uri.getHost(), bestRoot);

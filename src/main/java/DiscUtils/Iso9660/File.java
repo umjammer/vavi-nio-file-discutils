@@ -27,6 +27,7 @@ import java.util.Map;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.Vfs.IVfsFile;
 import DiscUtils.Iso9660.RockRidge.PosixFileInfoSystemUseEntry;
+import DiscUtils.Iso9660.Susp.SuspRecords;
 import DiscUtils.Streams.StreamBuffer;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.Ownership;

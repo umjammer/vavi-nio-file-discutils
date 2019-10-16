@@ -37,7 +37,7 @@ public class InformationControlBlock implements IByteArraySerializable {
 
     public short MaxEntries;
 
-    public LogicalBlockAddress ParentICBLocation = new LogicalBlockAddress();
+    public LogicalBlockAddress ParentICBLocation;
 
     public int PriorDirectEntries;
 

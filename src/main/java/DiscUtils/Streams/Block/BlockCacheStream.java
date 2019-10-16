@@ -59,10 +59,8 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Initializes a new instance of the BlockCacheStream class.
      *
-     * @param toWrap The stream to wrap.
-     * @param ownership Whether to assume ownership of
-     *            {@code toWrap}
-     *            .
+     * @param toWrap    The stream to wrap.
+     * @param ownership Whether to assume ownership of {@code toWrap} .
      */
     public BlockCacheStream(SparseStream toWrap, Ownership ownership) {
         this(toWrap, ownership, new BlockCacheSettings());
@@ -71,11 +69,9 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Initializes a new instance of the BlockCacheStream class.
      *
-     * @param toWrap The stream to wrap.
-     * @param ownership Whether to assume ownership of
-     *            {@code toWrap}
-     *            .
-     * @param settings The cache settings.
+     * @param toWrap    The stream to wrap.
+     * @param ownership Whether to assume ownership of {@code toWrap} .
+     * @param settings  The cache settings.
      */
     public BlockCacheStream(SparseStream toWrap, Ownership ownership, BlockCacheSettings settings) {
         if (!toWrap.canRead()) {
@@ -123,8 +119,8 @@ public final class BlockCacheStream extends SparseStream {
     }
 
     /**
-     * Gets the parts of the stream that are stored.
-     * This may be an empty enumeration if all bytes are zero.
+     * Gets the parts of the stream that are stored. This may be an empty
+     * enumeration if all bytes are zero.
      */
     public List<StreamExtent> getExtents() {
         checkDisposed();
@@ -177,7 +173,7 @@ public final class BlockCacheStream extends SparseStream {
      *
      * @param buffer The buffer to fill.
      * @param offset The buffer offset to start from.
-     * @param count The number of bytes to read.
+     * @param count  The number of bytes to read.
      * @return The number of bytes read.
      */
     public int read(byte[] buffer, int offset, int count) {
@@ -223,7 +219,7 @@ public final class BlockCacheStream extends SparseStream {
             Block[] block = new Block[1];
             while (blocksRead < numBlocks && _cache.tryGetBlock(firstBlock + blocksRead, block)) {
                 int bytesToRead = Math.min(count - totalBytesRead, block[0].getAvailable() - offsetInNextBlock);
-                System.arraycopy(block[0], offsetInNextBlock, buffer, offset + totalBytesRead, bytesToRead);
+                System.arraycopy(block[0].getData(), offsetInNextBlock, buffer, offset + totalBytesRead, bytesToRead);
                 offsetInNextBlock = 0;
                 totalBytesRead += bytesToRead;
                 _position += bytesToRead;
@@ -235,8 +231,8 @@ public final class BlockCacheStream extends SparseStream {
                 servicedOutsideCache = true;
                 // Figure out how many blocks to read from the wrapped stream
                 int blocksToRead = 0;
-                while (blocksRead + blocksToRead < numBlocks && blocksToRead < _blocksInReadBuffer &&
-                       !_cache.containsBlock(firstBlock + blocksRead + blocksToRead)) {
+                while (blocksRead + blocksToRead < numBlocks && blocksToRead < _blocksInReadBuffer
+                        && !_cache.containsBlock(firstBlock + blocksRead + blocksToRead)) {
                     ++blocksToRead;
                 }
                 // Allow for the end of the stream not being block-aligned
@@ -249,11 +245,14 @@ public final class BlockCacheStream extends SparseStream {
                 for (int i = 0; i < blocksToRead; ++i) {
                     // Cache the read blocks
                     int copyBytes = Math.min(blockSize, bytesRead - i * blockSize);
-                    block[0] = _cache.getBlock(firstBlock + blocksRead + i, Class.class.cast(block[0].getClass()));
-                    System.arraycopy(_readBuffer, i * blockSize, block[0], 0, copyBytes);
+                    block[0] = _cache.getBlock(firstBlock + blocksRead + i, Block.class);
+                    System.arraycopy(_readBuffer, i * blockSize, block[0].getData(), 0, copyBytes);
                     block[0].setAvailable(copyBytes);
                     if (copyBytes < blockSize) {
-                        Arrays.fill(_readBuffer, i * blockSize + copyBytes, blockSize - copyBytes, (byte) 0);
+                        Arrays.fill(_readBuffer,
+                                    i * blockSize + copyBytes,
+                                    (i * blockSize + copyBytes) + (blockSize - copyBytes),
+                                    (byte) 0);
                     }
 
                 }
@@ -330,7 +329,7 @@ public final class BlockCacheStream extends SparseStream {
      *
      * @param buffer The data to write.
      * @param offset The first byte to write from buffer.
-     * @param count The number of bytes to write.
+     * @param count  The number of bytes to write.
      */
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
@@ -360,7 +359,7 @@ public final class BlockCacheStream extends SparseStream {
             Block[] block = new Block[1];
             boolean boolVar___0 = _cache.tryGetBlock(firstBlock + i, block);
             if (boolVar___0) {
-                System.arraycopy(buffer, bufferPos, block[0], offsetInNextBlock, bytesThisBlock);
+                System.arraycopy(buffer, bufferPos, block[0].getData(), offsetInNextBlock, bytesThisBlock);
                 block[0].setAvailable(Math.max(block[0].getAvailable(), offsetInNextBlock + bytesThisBlock));
             }
 
@@ -383,9 +382,8 @@ public final class BlockCacheStream extends SparseStream {
 
     private void checkDisposed() {
         if (_wrappedStream == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("BlockCacheStream");
+            throw new moe.yo3explorer.dotnetio4j.IOException("it has been closed.");
         }
-
     }
 
     private void invalidateBlocks(long firstBlock, int numBlocks) {
@@ -393,5 +391,4 @@ public final class BlockCacheStream extends SparseStream {
             _cache.releaseBlock(i);
         }
     }
-
 }

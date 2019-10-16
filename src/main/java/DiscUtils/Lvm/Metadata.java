@@ -127,7 +127,7 @@ public class Metadata {
         if (index < 0)
             throw new IllegalArgumentException("invalid parameter line " + line);
 
-        return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1, line.length() - (index + 1)).trim());
+        return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1, (index + 1) + line.length() - (index + 1)).trim());
     }
 
     public static String removeComment(String line) {

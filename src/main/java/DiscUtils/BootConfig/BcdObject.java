@@ -133,31 +133,24 @@ public class BcdObject {
     private final BaseStorage _storage;
 
     private final int _type;
+
     static {
-        try
-        {
-            _nameToGuid = new HashMap<>();
-            _guidToName = new HashMap<>();
-            addMapping("{emssettings}",EmsSettingsGroupId);
-            addMapping("{resumeloadersettings}",ResumeLoaderSettingsGroupId);
-            addMapping("{default}",DefaultBootEntryId);
-            addMapping("{dbgsettings}",DebuggerSettingsGroupId);
-            addMapping("{legacy}",WindowsLegacyNtldrId);
-            addMapping("{ntldr}",WindowsLegacyNtldrId);
-            addMapping("{badmemory}",BadMemoryGroupId);
-            addMapping("{bootloadersettings}",BootLoaderSettingsGroupId);
-            addMapping("{globalsettings}",GlobalSettingsGroupId);
-            addMapping("{bootmgr}",WindowsBootManagerId);
-            addMapping("{fwbootmgr}",FirmwareBootManagerId);
-            addMapping("{ramdiskoptions}",WindowsSetupRamdiskOptionsId);
-            addMapping("{memdiag}",WindowsMemoryTesterId);
-            addMapping("{current}",CurrentBootEntryId);
-        }
-        catch (Exception __dummyStaticConstructorCatchVar0)
-        {
-            throw new ExceptionInInitializerError(__dummyStaticConstructorCatchVar0);
-        }
-    
+        _nameToGuid = new HashMap<>();
+        _guidToName = new HashMap<>();
+        addMapping("{emssettings}", EmsSettingsGroupId);
+        addMapping("{resumeloadersettings}", ResumeLoaderSettingsGroupId);
+        addMapping("{default}", DefaultBootEntryId);
+        addMapping("{dbgsettings}", DebuggerSettingsGroupId);
+        addMapping("{legacy}", WindowsLegacyNtldrId);
+        addMapping("{ntldr}", WindowsLegacyNtldrId);
+        addMapping("{badmemory}", BadMemoryGroupId);
+        addMapping("{bootloadersettings}", BootLoaderSettingsGroupId);
+        addMapping("{globalsettings}", GlobalSettingsGroupId);
+        addMapping("{bootmgr}", WindowsBootManagerId);
+        addMapping("{fwbootmgr}", FirmwareBootManagerId);
+        addMapping("{ramdiskoptions}", WindowsSetupRamdiskOptionsId);
+        addMapping("{memdiag}", WindowsMemoryTesterId);
+        addMapping("{current}", CurrentBootEntryId);
     }
 
     public BcdObject(BaseStorage store, UUID id) {
@@ -170,14 +163,14 @@ public class BcdObject {
      * Gets the image type for this application.
      */
     public ApplicationImageType getApplicationImageType() {
-        return getIsApplication() ? ApplicationImageType.values()[((_type & 0x00F00000) >>> 20)] : ApplicationImageType.None;
+        return isApplication() ? ApplicationImageType.values()[((_type & 0x00F00000) >>> 20)] : ApplicationImageType.None;
     }
 
     /**
      * Gets the application type for this application.
      */
     public ApplicationType getApplicationType() {
-        return getIsApplication() ? ApplicationType.values()[(_type & 0xFFFFF)] : ApplicationType.None;
+        return isApplication() ? ApplicationType.values()[(_type & 0xFFFFF)] : ApplicationType.None;
     }
 
     /**
@@ -199,7 +192,7 @@ public class BcdObject {
             return _guidToName.get(_id);
         }
 
-        return String.format("%d", _id); // TODO "B"
+        return String.format("{%s}", _id);
     }
 
     /**
@@ -209,8 +202,7 @@ public class BcdObject {
         return _id;
     }
 
-    private boolean getIsApplication() {
-        getObjectType();
+    private boolean isApplication() {
         return getObjectType() == ObjectType.Application;
     }
 
@@ -222,44 +214,30 @@ public class BcdObject {
     }
 
     /**
-     * Indicates if the settings in this object are inheritable by another
-     * object.
+     * Indicates if the settings in this object are inheritable by another object.
      * 
      * @param type The type of the object to test for inheritability.
-     * @return
-     *         {@code true}
-     *         if the settings can be inherited, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the settings can be inherited, else {@code false} .
      */
     public boolean isInheritableBy(ObjectType type) {
-        getObjectType();
         if (type == ObjectType.Inherit) {
             throw new IllegalArgumentException("Can not test inheritability by inherit objects");
         }
 
-        getObjectType();
         if (getObjectType() != ObjectType.Inherit) {
             return false;
         }
 
         InheritType setting = InheritType.values()[((_type & 0x00F00000) >>> 20)];
-        getObjectType();
-        getObjectType();
-        return setting == InheritType.AnyObject ||
-               (setting == InheritType.ApplicationObjects && type == ObjectType.Application) ||
-               (setting == InheritType.DeviceObjects && type == ObjectType.Device);
+        return setting == InheritType.AnyObject || (setting == InheritType.ApplicationObjects && type == ObjectType.Application)
+                || (setting == InheritType.DeviceObjects && type == ObjectType.Device);
     }
 
     /**
      * Indicates if this object has a specific element.
      * 
      * @param id The identity of the element to look for.
-     * @return
-     *         {@code true}
-     *         if present, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if present, else {@code false} .
      */
     public boolean hasElement(int id) {
         return _storage.hasValue(_id, id);
@@ -269,14 +247,10 @@ public class BcdObject {
      * Indicates if this object has a specific element.
      * 
      * @param id The identity of the element to look for.
-     * @return
-     *         {@code true}
-     *         if present, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if present, else {@code false} .
      */
     public boolean hasElement(WellKnownElement id) {
-        return hasElement(id.ordinal());
+        return hasElement(id.getValue());
     }
 
     /**
@@ -300,13 +274,13 @@ public class BcdObject {
      * @return The element object.
      */
     public Element getElement(WellKnownElement id) {
-        return getElement(id.ordinal());
+        return getElement(id.getValue());
     }
 
     /**
      * Adds an element in this object.
      * 
-     * @param id The identity of the element to add.
+     * @param id           The identity of the element to add.
      * @param initialValue The initial value of the element.
      * @return The element object.
      */
@@ -320,12 +294,12 @@ public class BcdObject {
     /**
      * Adds an element in this object.
      * 
-     * @param id The identity of the element to add.
+     * @param id           The identity of the element to add.
      * @param initialValue The initial value of the element.
      * @return The element object.
      */
     public Element addElement(WellKnownElement id, ElementValue initialValue) {
-        return addElement(id.ordinal(), initialValue);
+        return addElement(id.getValue(), initialValue);
     }
 
     /**
@@ -343,7 +317,7 @@ public class BcdObject {
      * @param id The element to remove.
      */
     public void removeElement(WellKnownElement id) {
-        removeElement(id.ordinal());
+        removeElement(id.getValue());
     }
 
     /**
@@ -352,7 +326,7 @@ public class BcdObject {
      * @return A string representation, with surrounding curly braces.
      */
     public String toString() {
-        return String.format("%d", _id); // "B"
+        return String.format("{%s}", _id);
     }
 
     public static int makeApplicationType(ApplicationImageType imageType, ApplicationType appType) {
@@ -364,7 +338,7 @@ public class BcdObject {
     }
 
     private static void addMapping(String name, String id) {
-        UUID guid = UUID.fromString(id);
+        UUID guid = UUID.fromString(id.replaceAll("[\\{\\}]", ""));
         _nameToGuid.put(name, guid);
         _guidToName.put(guid, name);
     }

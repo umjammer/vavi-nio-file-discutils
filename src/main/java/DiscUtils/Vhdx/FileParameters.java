@@ -52,7 +52,6 @@ public final class FileParameters implements IByteArraySerializable {
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(BlockSize, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(FileParametersFlags.valueOf(Flags), buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian((int) FileParametersFlags.valueOf(Flags), buffer, offset + 4);
     }
-
 }

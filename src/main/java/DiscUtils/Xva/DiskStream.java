@@ -139,7 +139,7 @@ public class DiskStream extends SparseStream {
             }
 
             Stream[] tmp = new Stream[1];
-            boolean result = !_archive.tryOpenFile(String.format("{0}/{1:D8}", _dir, chunk), tmp);
+            boolean result = !_archive.tryOpenFile(String.format("%s/%8d", _dir, chunk), tmp);
             _currentChunkData = tmp[0];
             if (result) {
                 _currentChunkData = new ZeroStream(Sizes.OneMiB);
@@ -181,7 +181,7 @@ public class DiskStream extends SparseStream {
     }
 
     private boolean chunkExists(int i) {
-        return _archive.fileExists(String.format("{0}/{1:D8}", _dir, correctChunkIndex(i)));
+        return _archive.fileExists(String.format("%s/%8d", _dir, correctChunkIndex(i)));
     }
 
     private void readChunkSkipList() {

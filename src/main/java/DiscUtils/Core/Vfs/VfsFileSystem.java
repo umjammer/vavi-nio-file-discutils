@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.DiscFileSystemOptions;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.SparseStream;
@@ -480,7 +481,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      */
     public long getFileLength(String path) {
         TFile file = getFile(path);
-        if (file == null || Boolean.class.cast(file.getFileAttributes().get("dos:isDirectory"))) {
+        if (file == null || file.getFileAttributes().containsKey(FileAttributes.Directory.name()) && Boolean.class.cast(file.getFileAttributes().get(FileAttributes.Directory.name()))) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file: " + path);
         }
 

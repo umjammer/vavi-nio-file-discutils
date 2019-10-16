@@ -29,7 +29,7 @@ import moe.yo3explorer.dotnetio4j.MemoryStream;
 public class RpcAuthentication {
     private byte[] _body;
 
-    private RpcAuthFlavour _flavour;
+    private RpcAuthFlavour _flavour = RpcAuthFlavour.Null;
 
     public RpcAuthentication() {
         _body = new byte[400];
@@ -58,29 +58,15 @@ public class RpcAuthentication {
     }
 
     public boolean equals(Object obj) {
-        try {
-            return equals(obj instanceof RpcAuthentication ? (RpcAuthentication) obj : (RpcAuthentication) null);
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return equals(obj instanceof RpcAuthentication ? (RpcAuthentication) obj : (RpcAuthentication) null);
     }
 
     public boolean equals(RpcAuthentication other) {
-        try {
-            if (other == null) {
-                return false;
-            }
-
-            return other._flavour == _flavour;
-        } catch (RuntimeException __dummyCatchVar1) {
-            throw __dummyCatchVar1;
-        } catch (Exception __dummyCatchVar1) {
-            throw new RuntimeException(__dummyCatchVar1);
+        if (other == null) {
+            return false;
         }
 
+        return other._flavour == _flavour;
     }
 
     public int hashCode() {

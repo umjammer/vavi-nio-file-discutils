@@ -69,7 +69,7 @@ public class FileRecord extends FixupRecordBase {
         __Attributes = value;
     }
 
-    private FileRecordReference __BaseFile = new FileRecordReference();
+    private FileRecordReference __BaseFile;
 
     public FileRecordReference getBaseFile() {
         return __BaseFile;
@@ -411,8 +411,10 @@ public class FileRecord extends FixupRecordBase {
 
     protected short write(byte[] buffer, int offset) {
         short headerEnd = (short) (_haveIndex ? 0x30 : 0x2A);
+
         _firstAttributeOffset = (short) MathUtilities.roundUp(headerEnd + getUpdateSequenceSize(), 0x08);
         setRealSize(calcSize());
+
         EndianUtilities.writeBytesLittleEndian(getLogFileSequenceNumber(), buffer, offset + 0x08);
         EndianUtilities.writeBytesLittleEndian(getSequenceNumber(), buffer, offset + 0x10);
         EndianUtilities.writeBytesLittleEndian(getHardLinkCount(), buffer, offset + 0x12);
@@ -422,9 +424,9 @@ public class FileRecord extends FixupRecordBase {
         EndianUtilities.writeBytesLittleEndian(getAllocatedSize(), buffer, offset + 0x1C);
         EndianUtilities.writeBytesLittleEndian(getBaseFile().getValue(), buffer, offset + 0x20);
         EndianUtilities.writeBytesLittleEndian(getNextAttributeId(), buffer, offset + 0x28);
+
         if (_haveIndex) {
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A);
-            // Alignment field
+            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A); // Alignment field
             EndianUtilities.writeBytesLittleEndian(_index, buffer, offset + 0x2C);
         }
 
@@ -432,19 +434,21 @@ public class FileRecord extends FixupRecordBase {
         for (AttributeRecord attr : getAttributes()) {
             pos += attr.write(buffer, offset + pos);
         }
+
         EndianUtilities.writeBytesLittleEndian(Integer.MAX_VALUE, buffer, offset + pos);
+
         return headerEnd;
     }
 
     protected int calcSize() {
         int firstAttrPos = (short) MathUtilities.roundUp((_haveIndex ? 0x30 : 0x2A) + getUpdateSequenceSize(), 8);
+
         int size = firstAttrPos;
         for (AttributeRecord attr : getAttributes()) {
             size += attr.getSize();
         }
-        return MathUtilities.roundUp(size + 4, 8);
-    }
 
+        return MathUtilities.roundUp(size + 4, 8); // 0xFFFFFFFF terminator on attributes
+    }
 }
 
-// 0xFFFFFFFF terminator on attributes

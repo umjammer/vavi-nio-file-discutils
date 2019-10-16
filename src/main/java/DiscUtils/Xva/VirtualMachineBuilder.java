@@ -137,7 +137,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
             int diskIdx = 0;
             for (DiskRecord diskRec : _disks) {
                 SparseStream diskStream = diskRec.Item2;
-                List<StreamExtent> extents = new ArrayList<>(diskStream.getExtents());
+                List<StreamExtent> extents = diskStream.getExtents();
                 int lastChunkAdded = -1;
                 for (StreamExtent extent : extents) {
                     int firstChunk = (int) (extent.getStart() / Sizes.OneMiB);
@@ -158,13 +158,13 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                             Stream chunkHashStream;
                             MessageDigest hashAlgDotnet = MessageDigest.getInstance("SHA-1");
                             chunkHashStream = new HashStreamDotnet(chunkStream, Ownership.Dispose, hashAlgDotnet);
-                            tarBuilder.addFile(String.format("Ref:{0}/{1:D8}", diskIds[0][diskIdx], i), chunkHashStream);
+                            tarBuilder.addFile(String.format("Ref:%s/%8d", diskIds[0][diskIdx], i), chunkHashStream);
                             byte[] hash;
                             hashAlgDotnet.update(new byte[0], 0, 0);
                             hash = hashAlgDotnet.digest();
                             String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
                             byte[] hashStringAscii = hashString.getBytes(Charset.forName("ASCII"));
-                            tarBuilder.addFile(String.format("Ref:{0}/{1:D8}.checksum", diskIds[0][diskIdx], i),
+                            tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], i),
                                                hashStringAscii);
                             lastChunkAdded = i;
                         }
@@ -177,13 +177,13 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                     Stream chunkHashStream;
                     MessageDigest hashAlgDotnet = MessageDigest.getInstance("SHA-1");
                     chunkHashStream = new HashStreamDotnet(chunkStream, Ownership.Dispose, hashAlgDotnet);
-                    tarBuilder.addFile(String.format("Ref:{0}/{1:D8}", diskIds[diskIdx], lastActualChunk), chunkHashStream);
+                    tarBuilder.addFile(String.format("Ref:%s/%8d", diskIds[0][diskIdx], lastActualChunk), chunkHashStream);
                     byte[] hash;
                     hashAlgDotnet.update(new byte[0], 0, 0);
                     hash = hashAlgDotnet.digest();
                     String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
                     byte[] hashStringAscii = hashString.getBytes(Charset.forName("ASCII"));
-                    tarBuilder.addFile(String.format("Ref:{0}/{1:D8}.checksum", diskIds[diskIdx], lastActualChunk),
+                    tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], lastActualChunk),
                                        hashStringAscii);
                 }
 

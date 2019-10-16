@@ -78,7 +78,7 @@ public class RootRef extends BaseItem {
     /**
      * name
      */
-    private String __Name = new String();
+    private String __Name;
 
     public String getName() {
         return __Name;

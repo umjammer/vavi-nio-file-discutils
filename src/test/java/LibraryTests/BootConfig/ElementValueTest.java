@@ -120,7 +120,7 @@ public class ElementValueTest {
         BcdObject obj = s.createInherit(InheritType.AnyObject);
         Element el = obj.addElement(WellKnownElement.BootMgrDefaultObject, ElementValue.forGuid(testGuid));
         el = obj.getElement(WellKnownElement.BootMgrDefaultObject);
-        assertEquals(String.format("%d", testGuid), el.getValue().toString()); // TODO "B"
+        assertEquals(String.format("{%s}", testGuid), el.getValue().toString());
     }
 
     @Test
@@ -135,7 +135,7 @@ public class ElementValueTest {
                                         testGuid1, testGuid2
                                     }));
         el = obj.getElement(WellKnownElement.BootMgrDisplayOrder);
-        assertEquals(String.format("%d", testGuid1) + "," + String.format("%d", testGuid2), el.getValue().toString()); // TODO "B"
+        assertEquals(String.format("{%s}", testGuid1) + "," + String.format("{%s}", testGuid2), el.getValue().toString());
     }
 
     @Test

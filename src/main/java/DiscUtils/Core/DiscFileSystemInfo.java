@@ -42,7 +42,7 @@ public class DiscFileSystemInfo {
         }
 
         __FileSystem = fileSystem;
-        __Path = path.replaceAll(Utilities.escapeForRegex("\\") +"$", "");
+        __Path = path.replaceAll(Utilities.escapeForRegex("(^\\*|\\*$)"), "");
     }
 
     /**
@@ -245,5 +245,4 @@ public class DiscFileSystemInfo {
     public int hashCode() {
         return getPath().hashCode() ^ getFileSystem().hashCode();
     }
-
 }

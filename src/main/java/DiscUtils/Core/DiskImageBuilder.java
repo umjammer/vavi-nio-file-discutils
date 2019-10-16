@@ -36,7 +36,7 @@ import DiscUtils.Streams.SparseStream;
  * Base class for all disk image builders.
  */
 public abstract class DiskImageBuilder {
-    private static Map<String, VirtualDiskFactory> _typeMap = new HashMap<>();
+    private static Map<String, VirtualDiskFactory> _typeMap;
 
     /**
      * Gets or sets the geometry of this disk, as reported by the BIOS, will be

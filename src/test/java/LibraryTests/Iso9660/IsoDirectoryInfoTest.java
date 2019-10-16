@@ -26,6 +26,8 @@ import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -38,6 +40,7 @@ import DiscUtils.Iso9660.CDBuilder;
 import DiscUtils.Iso9660.CDReader;
 
 public class IsoDirectoryInfoTest {
+    @Test
     public void exists() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("SOMEDIR\\CHILDDIR\\FILE.TXT", new byte[0]);
@@ -50,6 +53,7 @@ public class IsoDirectoryInfoTest {
         assertFalse(fs.getDirectoryInfo("SOMEDIR\\NONDIR").getExists());
     }
 
+    @Test
     public void fullName() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -58,14 +62,16 @@ public class IsoDirectoryInfoTest {
         assertEquals("SOMEDIR\\CHILDDIR\\", fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").getFullName());
     }
 
+    @Test
     public void simpleSearch() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("SOMEDIR\\CHILDDIR\\GCHILDIR\\FILE.TXT", new byte[0]);
         CDReader fs = new CDReader(builder.build(), false);
         DiscDirectoryInfo di = fs.getDirectoryInfo("SOMEDIR\\CHILDDIR");
-        List<DiscFileInfo> fis = di.getFiles("*.*", "AllDirectories"); // TODO
+        List<DiscFileInfo> fis = di.getFiles("*.*", "AllDirectories");
     }
 
+    @Test
     public void extension() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -73,6 +79,7 @@ public class IsoDirectoryInfoTest {
         assertEquals("", fs.getDirectoryInfo("fred").getExtension());
     }
 
+    @Test
     public void getDirectories() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -93,6 +100,7 @@ public class IsoDirectoryInfoTest {
         assertEquals("SOMEDIR\\CHILD\\GCHILD\\", fs.getRoot().getDirectories("GCHILD", "AllDirectories").get(0).getFullName());
     }
 
+    @Test
     public void getFiles() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -109,6 +117,7 @@ public class IsoDirectoryInfoTest {
         assertEquals(0, fs.getRoot().getFiles("*.DIR", "AllDirectories").size());
     }
 
+    @Test
     public void getFileSystemInfos() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -123,6 +132,7 @@ public class IsoDirectoryInfoTest {
         assertEquals(2, fs.getRoot().getFileSystemInfos("*.?XT").size());
     }
 
+    @Test
     public void parent() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("SOMEDIR");
@@ -130,12 +140,14 @@ public class IsoDirectoryInfoTest {
         assertEquals(fs.getRoot(), fs.getRoot().getDirectories("SOMEDIR").get(0).getParent());
     }
 
+    @Test
     public void parent_Root() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertNull(fs.getRoot().getParent());
     }
 
+    @Test
     public void rootBehaviour() throws Exception {
         // Start time rounded down to whole seconds
         long start = Instant.now().toEpochMilli();
@@ -152,6 +164,7 @@ public class IsoDirectoryInfoTest {
         assertTrue(fs.getRoot().getLastWriteTimeUtc() <= end);
     }
 
+    @Test
     public void attributes() throws Exception {
         // Start time rounded down to whole seconds
         long start = Instant.now().toEpochMilli();
@@ -169,5 +182,4 @@ public class IsoDirectoryInfoTest {
         assertTrue(di.getLastWriteTimeUtc() >= start);
         assertTrue(di.getLastWriteTimeUtc() <= end);
     }
-
 }

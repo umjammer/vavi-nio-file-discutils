@@ -46,7 +46,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
 
     public List<DirEntry> getAllEntries() {
         if (_allEntries != null)
-            return new ArrayList(_allEntries.values());
+            return new ArrayList<>(_allEntries.values());
 
         Map<String, DirEntry> result = new HashMap<>();
         long treeId = DirEntry.getTreeId();
@@ -65,7 +65,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
             result.put(item.getName(), new DirEntry(treeId, item, (InodeItem) inode));
         }
         _allEntries = result;
-        return new ArrayList(result.values());
+        return new ArrayList<>(result.values());
     }
 
     public DirEntry getSelf() {

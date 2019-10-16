@@ -48,7 +48,7 @@ public final class RegionTable implements IByteArraySerializable {
 
     public int EntryCount;
 
-    public Map<UUID, RegionEntry> Regions;
+    public Map<UUID, RegionEntry> Regions = new HashMap<>();
 
     public int Reserved;
 

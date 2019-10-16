@@ -20,9 +20,11 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
 import java.nio.charset.Charset;
+
+import DiscUtils.Iso9660.IsoUtilities;
 
 
 public final class ExtensionSystemUseEntry extends SystemUseEntry {

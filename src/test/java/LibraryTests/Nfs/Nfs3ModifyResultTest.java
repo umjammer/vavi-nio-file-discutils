@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Nfs.Nfs3ModifyResult;
+import DiscUtils.Nfs.Nfs3Status;
+import DiscUtils.Nfs.Nfs3WeakCacheConsistency;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +38,9 @@ public class Nfs3ModifyResultTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3ModifyResult result = new Nfs3ModifyResult();
+        result.setCacheConsistency(new Nfs3WeakCacheConsistency());
+        result.setStatus(Nfs3Status.Ok);
+
         Nfs3ModifyResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

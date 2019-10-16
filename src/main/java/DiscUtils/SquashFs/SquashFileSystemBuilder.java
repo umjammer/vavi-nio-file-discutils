@@ -129,12 +129,12 @@ public final class SquashFileSystemBuilder {
     /**
      * Adds a file to the file system.
      *
-     * @param path The full path to the file.
-     * @param content The content of the file.The created file with have the
-     *            default owner, group, permissions and the
-     *            current time as it's modification time. Any missing parent
-     *            directories will be
-     *            created, with default owner, group and directory permissions.
+     * @param path    The full path to the file.
+     * @param content The content of the file.The created file with have the default
+     *                    owner, group, permissions and the current time as it's
+     *                    modification time. Any missing parent directories will be
+     *                    created, with default owner, group and directory
+     *                    permissions.
      */
     public void addFile(String path, Stream content) {
         addFile(path, content, getDefaultUser(), getDefaultGroup(), getDefaultFilePermissions(), System.currentTimeMillis());
@@ -143,12 +143,12 @@ public final class SquashFileSystemBuilder {
     /**
      * Adds a file to the file system.
      *
-     * @param path The full path to the file.
-     * @param contentPath Local file system path to the file to add.The created
-     *            file with have the default owner, group, permissions and the
-     *            current time as it's modification time. Any missing parent
-     *            directories will be
-     *            created with default owner, group and directory permissions.
+     * @param path        The full path to the file.
+     * @param contentPath Local file system path to the file to add.The created file
+     *                        with have the default owner, group, permissions and
+     *                        the current time as it's modification time. Any
+     *                        missing parent directories will be created with
+     *                        default owner, group and directory permissions.
      */
     public void addFile(String path, String contentPath) {
         addFile(path,
@@ -162,16 +162,15 @@ public final class SquashFileSystemBuilder {
     /**
      * Adds a file to the file system.
      *
-     * @param path The full path to the file.
-     * @param content The content of the file.
-     * @param user The owner of the file.
-     * @param group The group of the file.
-     * @param permissions The access permission of the file.
-     * @param modificationTime The modification time of the file.Any missing
-     *            parent directories will be created with the specified owner
-     *            and group,
-     *            default directory permissions and the current time as the
-     *            modification time.
+     * @param path             The full path to the file.
+     * @param content          The content of the file.
+     * @param user             The owner of the file.
+     * @param group            The group of the file.
+     * @param permissions      The access permission of the file.
+     * @param modificationTime The modification time of the file.Any missing parent
+     *                             directories will be created with the specified
+     *                             owner and group, default directory permissions
+     *                             and the current time as the modification time.
      */
     public void addFile(String path,
                         Stream content,
@@ -194,16 +193,15 @@ public final class SquashFileSystemBuilder {
     /**
      * Adds a file to the file system.
      *
-     * @param path The full path to the file.
-     * @param contentPath Local file system path to the file to add.
-     * @param user The owner of the file.
-     * @param group The group of the file.
-     * @param permissions The access permission of the file.
-     * @param modificationTime The modification time of the file.Any missing
-     *            parent directories will be created with the specified owner
-     *            and group,
-     *            default directory permissions and the current time as the
-     *            modification time.
+     * @param path             The full path to the file.
+     * @param contentPath      Local file system path to the file to add.
+     * @param user             The owner of the file.
+     * @param group            The group of the file.
+     * @param permissions      The access permission of the file.
+     * @param modificationTime The modification time of the file.Any missing parent
+     *                             directories will be created with the specified
+     *                             owner and group, default directory permissions
+     *                             and the current time as the modification time.
      */
     public void addFile(String path,
                         String contentPath,
@@ -226,11 +224,11 @@ public final class SquashFileSystemBuilder {
     /**
      * Adds a directory to the file system.
      *
-     * @param path The full path to the directory.The created directory with
-     *            have the default owner, group, permissions and the
-     *            current time as it's modification time. Any missing parent
-     *            directories will be
-     *            created with default owner, group and directory permissions.
+     * @param path The full path to the directory.The created directory with have
+     *                 the default owner, group, permissions and the current time as
+     *                 it's modification time. Any missing parent directories will
+     *                 be created with default owner, group and directory
+     *                 permissions.
      */
     public void addDirectory(String path) {
         addDirectory(path, getDefaultUser(), getDefaultGroup(), getDefaultDirectoryPermissions(), System.currentTimeMillis());
@@ -239,20 +237,23 @@ public final class SquashFileSystemBuilder {
     /**
      * Adds a directory to the file system.
      *
-     * @param path The full path to the directory.
-     * @param user The owner of the directory.
-     * @param group The group of the directory.
-     * @param permissions The access permission of the directory.
-     * @param modificationTime The modification time of the directory.The
-     *            created directory with have the default owner, group,
-     *            permissions and the
-     *            current time as it's modification time. Any missing parent
-     *            directories will be
-     *            created with the specified owner, group, and directory
-     *            permissions. The current time
-     *            will be used as the modification time.
+     * @param path             The full path to the directory.
+     * @param user             The owner of the directory.
+     * @param group            The group of the directory.
+     * @param permissions      The access permission of the directory.
+     * @param modificationTime The modification time of the directory.The created
+     *                             directory with have the default owner, group,
+     *                             permissions and the current time as it's
+     *                             modification time. Any missing parent directories
+     *                             will be created with the specified owner, group,
+     *                             and directory permissions. The current time will
+     *                             be used as the modification time.
      */
-    public void addDirectory(String path, int user, int group, EnumSet<UnixFilePermissions> permissions, long modificationTime) {
+    public void addDirectory(String path,
+                             int user,
+                             int group,
+                             EnumSet<UnixFilePermissions> permissions,
+                             long modificationTime) {
         BuilderDirectory dir = new BuilderDirectory();
         dir.setUserId(user);
         dir.setGroupId(group);
@@ -265,15 +266,10 @@ public final class SquashFileSystemBuilder {
     /**
      * Builds the file system, returning a new stream.
      *
-     * @return The stream containing the file system.
-     *         This method uses a temporary file to construct the file system,
-     *         use of
-     *         the
-     *         {@code Build(Stream)}
-     *         or
-     *         {@code Build(string)}
-     *         variant is recommended
-     *         when the file system will be written to a file.
+     * @return The stream containing the file system. This method uses a temporary
+     *         file to construct the file system, use of the {@code Build(Stream)}
+     *         or {@code Build(string)} variant is recommended when the file system
+     *         will be written to a file.
      */
     public Stream build() {
         Stream stream = new FileStream(getClass().getSimpleName() + new Random().nextInt(),
@@ -301,9 +297,8 @@ public final class SquashFileSystemBuilder {
     /**
      * Writes the file system to an existing stream.
      *
-     * @param output The stream to write to.The
-     *            {@code output}
-     *            stream must support seeking and writing.
+     * @param output The stream to write to.The {@code output} stream must support
+     *                   seeking and writing.
      */
     public void build(Stream output) {
         if (output == null) {
@@ -311,18 +306,23 @@ public final class SquashFileSystemBuilder {
         }
 
         if (!output.canWrite()) {
-            throw new IllegalArgumentException("Output stream must be writable");
+            throw new IllegalArgumentException("Output stream must be writable: " + output.getClass());
         }
 
         if (!output.canSeek()) {
-            throw new IllegalArgumentException("Output stream must support seeking");
+            throw new IllegalArgumentException("Output stream must support seeking: " + output.getClass());
         }
 
         _context = new BuilderContext();
+        _context.setRawStream(output);
+        _context.setDataBlockSize(DefaultBlockSize);
+        _context.setIoBuffer(new byte[DefaultBlockSize]);
+
         MetablockWriter inodeWriter = new MetablockWriter();
         MetablockWriter dirWriter = new MetablockWriter();
         FragmentWriter fragWriter = new FragmentWriter(_context);
         IdTableWriter idWriter = new IdTableWriter(_context);
+
         _context.setAllocateInode(this::allocateInode);
         _context.setAllocateId(id -> {
             return idWriter.allocateId(id);
@@ -333,17 +333,20 @@ public final class SquashFileSystemBuilder {
         });
         _context.setInodeWriter(inodeWriter);
         _context.setDirectoryWriter(dirWriter);
+
         _nextInode = 1;
+
         SuperBlock superBlock = new SuperBlock();
         superBlock.Magic = SuperBlock.SquashFsMagic;
         superBlock.CreationTime = System.currentTimeMillis();
         superBlock.BlockSize = _context.getDataBlockSize();
-        superBlock.Compression = 1;
-        // DEFLATE
+        superBlock.Compression = 1; // DEFLATE
         superBlock.BlockSizeLog2 = (short) MathUtilities.log2(superBlock.BlockSize);
         superBlock.MajorVersion = 4;
         superBlock.MinorVersion = 0;
+
         output.setPosition(superBlock.getSize());
+
         getRoot().reset();
         getRoot().write(_context);
         fragWriter.flush();
@@ -351,15 +354,19 @@ public final class SquashFileSystemBuilder {
         superBlock.InodesCount = _nextInode - 1;
         superBlock.FragmentsCount = fragWriter.getFragmentCount();
         superBlock.UidGidCount = (short) idWriter.getIdCount();
+
         superBlock.InodeTableStart = output.getPosition();
         inodeWriter.persist(output);
+
         superBlock.DirectoryTableStart = output.getPosition();
         dirWriter.persist(output);
+
         superBlock.FragmentTableStart = fragWriter.persist();
         superBlock.LookupTableStart = -1;
         superBlock.UidGidTableStart = idWriter.persist();
         superBlock.ExtendedAttrsTableStart = -1;
         superBlock.BytesUsed = output.getPosition();
+
         // Pad to 4KB
         long end = MathUtilities.roundUp(output.getPosition(), 4 * Sizes.OneKiB);
         if (end != output.getPosition()) {
@@ -382,16 +389,10 @@ public final class SquashFileSystemBuilder {
      */
     public void build(String outputFile) {
         LocalFileLocator locator = new LocalFileLocator("");
-        Stream destStream = locator.open(outputFile, FileMode.Create, FileAccess.Write, FileShare.None);
-        try {
+        try (Stream destStream = locator.open(outputFile, FileMode.Create, FileAccess.Write, FileShare.None)) {
             build(destStream);
-        } finally {
-            if (destStream != null)
-                try {
-                    destStream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -409,23 +410,17 @@ public final class SquashFileSystemBuilder {
      *
      * @param buffer The data to write.
      * @param offset Offset of the first byte to write.
-     * @param count The number of bytes to write.
-     * @return
-     *         The 'length' of the (possibly compressed) data written, including
-     *         a flag indicating compression (or not).
+     * @param count  The number of bytes to write.
+     * @return The 'length' of the (possibly compressed) data written, including a
+     *         flag indicating compression (or not).
      */
     private int writeDataBlock(byte[] buffer, int offset, int count) {
         MemoryStream compressed = new MemoryStream();
-        ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true);
-        try {
+
+        try (ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true)) {
             compStream.write(buffer, offset, count);
-        } finally {
-            if (compStream != null)
-                try {
-                    compStream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         byte[] writeData;
         int writeOffset;
@@ -444,9 +439,8 @@ public final class SquashFileSystemBuilder {
     }
 
     /**
-     * Delayed root construction, to permit default permissions / identity info
-     * to be
-     * set before root is created.
+     * Delayed root construction, to permit default permissions / identity info to
+     * be set before root is created.
      *
      * @return The root directory.
      */
@@ -470,8 +464,8 @@ public final class SquashFileSystemBuilder {
                 nextDir = new BuilderDirectory();
                 currentDir.addChild(elems[i], nextDir);
             } else if (nextDir == null) {
-                throw new FileNotFoundException("Found " + nextDirAsNode.getInode().Type + ", expecting Directory " +
-                                                String.join("\\", Arrays.copyOfRange(elems, 0, i + 1)));
+                throw new FileNotFoundException("Found " + nextDirAsNode.getInode().Type + ", expecting Directory "
+                        + String.join("\\", Arrays.copyOfRange(elems, 0, i + 1)));
             }
 
             currentDir = nextDir;

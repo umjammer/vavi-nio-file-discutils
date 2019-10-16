@@ -75,7 +75,7 @@ public class ExtentsFileBuffer extends Buffer {
             if (extent.FirstLogicalBlock > logicalBlock) {
                 numRead = (int) Math.min(totalBytesRemaining,
                                          (extent.FirstLogicalBlock - logicalBlock) * blockSize - blockOffset);
-                Arrays.fill(buffer, offset + totalRead, numRead, (byte) 0);
+                Arrays.fill(buffer, offset + totalRead, offset + totalRead + numRead, (byte) 0);
             } else {
                 long physicalBlock = logicalBlock - extent.FirstLogicalBlock + extent.getFirstPhysicalBlock();
                 int toRead = (int) Math

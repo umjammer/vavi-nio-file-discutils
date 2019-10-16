@@ -24,7 +24,7 @@ package DiscUtils.SquashFs;
 //        return prev.invoke();
 //    }
 //
-//    private List<AllocateInode> _invocationList = new ArrayList<>();
+//    private List<AllocateInode> _invocationList;
 //
 //    public static AllocateInode combine(AllocateInode a, AllocateInode b) {
 //        if (a == null)

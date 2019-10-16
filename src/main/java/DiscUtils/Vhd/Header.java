@@ -42,5 +42,4 @@ public class Header {
         result.DataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
         return result;
     }
-
 }

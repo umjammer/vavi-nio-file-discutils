@@ -46,18 +46,12 @@ public abstract class Nfs3CallResult implements IRpcObject {
     }
 
     public long getSize() {
-        MemoryStream stream = new MemoryStream();
-        try {
+        try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             write(writer);
             return stream.getLength();
-        } finally {
-            if (stream != null)
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 }

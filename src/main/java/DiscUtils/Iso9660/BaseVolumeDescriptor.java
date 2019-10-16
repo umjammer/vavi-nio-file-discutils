@@ -42,13 +42,13 @@ public class BaseVolumeDescriptor {
     }
 
     public BaseVolumeDescriptor(byte[] src, int offset) {
-        _VolumeDescriptorType = VolumeDescriptorType.valueOf(src[offset + 0]);
+        _VolumeDescriptorType = VolumeDescriptorType.valueOf(src[offset + 0] & 0xff);
         StandardIdentifier = new String(src, offset + 1, 5, Charset.forName("ASCII"));
         VolumeDescriptorVersion = src[offset + 6];
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        Arrays.fill(buffer, offset, IsoUtilities.SectorSize, (byte) 0);
+        Arrays.fill(buffer, offset, offset + IsoUtilities.SectorSize, (byte) 0);
         buffer[offset] = (byte) _VolumeDescriptorType.ordinal();
         IsoUtilities.writeAChars(buffer, offset + 1, 5, StandardIdentifier);
         buffer[offset + 6] = VolumeDescriptorVersion;

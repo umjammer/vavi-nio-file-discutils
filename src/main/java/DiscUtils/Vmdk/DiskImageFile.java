@@ -59,6 +59,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
  * Represents a single VMDK file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+    private static final long UINT_MAX_VALUE = 0xffffffffl;
     private static final Random _rng = new Random();
 
     private final FileAccess _access;
@@ -134,7 +135,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                      _descriptor.getCreateType() == DiskCreateType.StreamOptimized;
         if (!createTypeIsSparse || _descriptor.getExtents().size() != 1 ||
             _descriptor.getExtents().get(0).getType() != ExtentType.Sparse ||
-            _descriptor.getParentContentId() != Integer.MAX_VALUE) {
+            _descriptor.getParentContentId() != (Integer.MAX_VALUE & UINT_MAX_VALUE)) {
             throw new IllegalArgumentException("Only Monolithic Sparse and Streaming Optimized disks can be accessed via a stream");
         }
 
@@ -253,8 +254,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether this disk is a linked differencing disk.
      */
-    public boolean getNeedsParent() {
-        return _descriptor.getParentContentId() != Integer.MAX_VALUE;
+    public boolean needsParent() {
+//System.err.println(_descriptor.getParentContentId() + ", " + UINT_MAX_VALUE);
+        return _descriptor.getParentContentId() != UINT_MAX_VALUE;
     }
 
     /**
@@ -467,7 +469,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The stream containing the disk contents.
      */
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
-        if (_descriptor.getParentContentId() == Integer.MAX_VALUE) {
+        if (_descriptor.getParentContentId() == UINT_MAX_VALUE) {
             if (parent != null && ownsParent == Ownership.Dispose) {
                 try {
                     parent.close();
@@ -494,7 +496,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         long extentStart = 0;
         List<SparseStream> streams = new ArrayList<>(_descriptor.getExtents().size());
-        for (int i = 0; i < streams.size(); ++i) {
+        for (int i = 0; i < _descriptor.getExtents().size(); ++i) {
             streams.add(i, openExtent(_descriptor.getExtents().get(i),
                                     extentStart,
                                     parent,
@@ -654,9 +656,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 while (totalSize < capacity) {
                     String adornment;
                     if (type == DiskCreateType.TwoGbMaxExtentSparse) {
-                        adornment = String.format("s{0:x3}", i);
+                        adornment = String.format("s%3x", i);
                     } else {
-                        adornment = String.format("{0:x6}", i);
+                        adornment = String.format("%6x", i);
                     }
                     String fileName = adornFileName(file, adornment);
 

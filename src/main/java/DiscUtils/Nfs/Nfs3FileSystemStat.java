@@ -24,6 +24,7 @@ package DiscUtils.Nfs;
 
 import DiscUtils.Core.Internal.Utilities;
 
+
 public final class Nfs3FileSystemStat {
     public Nfs3FileSystemStat() {
     }
@@ -59,8 +60,7 @@ public final class Nfs3FileSystemStat {
     }
 
     /**
-     * The amount of free space, in bytes, in the file
-     * system.
+     * The amount of free space, in bytes, in the file system.
      */
     private long __FreeSpaceBytes;
 
@@ -73,11 +73,10 @@ public final class Nfs3FileSystemStat {
     }
 
     /**
-     * The amount of free space, in bytes, available to the
-     * user identified by the authentication information in
-     * the RPC. (This reflects space that is reserved by the
-     * file system; it does not reflect any quota system
-     * implemented by the server.)
+     * The amount of free space, in bytes, available to the user identified by the
+     * authentication information in the RPC. (This reflects space that is reserved
+     * by the file system; it does not reflect any quota system implemented by the
+     * server.)
      */
     private long __AvailableFreeSpaceBytes;
 
@@ -90,9 +89,8 @@ public final class Nfs3FileSystemStat {
     }
 
     /**
-     * The total number of file slots in the file system. (On
-     * a UNIX server, this often corresponds to the number of
-     * inodes configured.)
+     * The total number of file slots in the file system. (On a UNIX server, this
+     * often corresponds to the number of inodes configured.)
      */
     private long __FileSlotCount;
 
@@ -118,11 +116,10 @@ public final class Nfs3FileSystemStat {
     }
 
     /**
-     * The number of free file slots that are available to the
-     * user corresponding to the authentication information in
-     * the RPC. (This reflects slots that are reserved by the
-     * file system; it does not reflect any quota system
-     * implemented by the server.)
+     * The number of free file slots that are available to the user corresponding to
+     * the authentication information in the RPC. (This reflects slots that are
+     * reserved by the file system; it does not reflect any quota system implemented
+     * by the server.)
      */
     private long __AvailableFreeFileSlotCount;
 
@@ -135,18 +132,15 @@ public final class Nfs3FileSystemStat {
     }
 
     /**
-     * A measure of file system volatility: this is the number
-     * of seconds for which the file system is not expected to
-     * change.For a volatile, frequently updated file system,
-     * this will be 0. For an immutable file system, such as a
-     * CD-ROM, this would be the largest unsigned integer.For
-     * file systems that are infrequently modified, for
-     * example, one containing local executable programs and
-     * on-line documentation, a value corresponding to a few
-     * hours or days might be used. The client may use this as
-     * a hint in tuning its cache management. Note however,
-     * this measure is assumed to be dynamic and may change at
-     * any time.
+     * A measure of file system volatility: this is the number of seconds for which
+     * the file system is not expected to change.For a volatile, frequently updated
+     * file system, this will be 0. For an immutable file system, such as a CD-ROM,
+     * this would be the largest unsigned integer.For file systems that are
+     * infrequently modified, for example, one containing local executable programs
+     * and on-line documentation, a value corresponding to a few hours or days might
+     * be used. The client may use this as a hint in tuning its cache management.
+     * Note however, this measure is assumed to be dynamic and may change at any
+     * time.
      */
     private long __Invariant;
 
@@ -183,42 +177,28 @@ public final class Nfs3FileSystemStat {
     }
 
     public boolean equals(Object obj) {
-        try {
-            return equals(obj instanceof Nfs3FileSystemStat ? (Nfs3FileSystemStat) obj : (Nfs3FileSystemStat) null);
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return equals(obj instanceof Nfs3FileSystemStat ? (Nfs3FileSystemStat) obj : (Nfs3FileSystemStat) null);
     }
 
     public boolean equals(Nfs3FileSystemStat other) {
-        try {
-            if (other == null) {
-                return false;
-            }
-
-            return other.getTotalSizeBytes() == getTotalSizeBytes() && other.getFreeSpaceBytes() == getFreeSpaceBytes() &&
-                   other.getAvailableFreeSpaceBytes() == getAvailableFreeSpaceBytes() &&
-                   other.getFileSlotCount() == getFileSlotCount() && other.getFreeFileSlotCount() == getFreeFileSlotCount() &&
-                   other.getAvailableFreeFileSlotCount() == getAvailableFreeFileSlotCount() &&
-                   other.getInvariant() == getInvariant();
-        } catch (RuntimeException __dummyCatchVar1) {
-            throw __dummyCatchVar1;
-        } catch (Exception __dummyCatchVar1) {
-            throw new RuntimeException(__dummyCatchVar1);
+        if (other == null) {
+            return false;
         }
 
+        return other.getTotalSizeBytes() == getTotalSizeBytes() && other.getFreeSpaceBytes() == getFreeSpaceBytes()
+                && other.getAvailableFreeSpaceBytes() == getAvailableFreeSpaceBytes()
+                && other.getFileSlotCount() == getFileSlotCount() && other.getFreeFileSlotCount() == getFreeFileSlotCount()
+                && other.getAvailableFreeFileSlotCount() == getAvailableFreeFileSlotCount()
+                && other.getInvariant() == getInvariant();
     }
 
     public int hashCode() {
         return Utilities.getCombinedHashCode(getTotalSizeBytes(),
-                                getFreeSpaceBytes(),
-                                getAvailableFreeSpaceBytes(),
-                                getFileSlotCount(),
-                                getFreeFileSlotCount(),
-                                getAvailableFreeFileSlotCount(),
-                                getInvariant());
+                                             getFreeSpaceBytes(),
+                                             getAvailableFreeSpaceBytes(),
+                                             getFileSlotCount(),
+                                             getFreeFileSlotCount(),
+                                             getAvailableFreeFileSlotCount(),
+                                             getInvariant());
     }
 }

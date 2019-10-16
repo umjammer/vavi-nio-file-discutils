@@ -28,7 +28,7 @@ import DiscUtils.Core.Internal.Utilities;
  * Fully-qualified reference to an attribute.
  */
 public class AttributeReference implements Comparable<AttributeReference> {
-    private FileRecordReference _fileReference = new FileRecordReference();
+    private FileRecordReference _fileReference;
 
     /**
      * Initializes a new instance of the AttributeReference class.

@@ -37,20 +37,21 @@ public final class BlockCacheStreamTest {
     public void bug5203_IncreaseSize() throws Exception {
         MemoryStream ms = new MemoryStream();
         BlockCacheSettings settings = new BlockCacheSettings();
-        BlockCacheStream bcs = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
-                                                    Ownership.Dispose,
-                                                    settings);
-        // Pre-load read cache with a 'short' block
-        bcs.write(new byte[11], 0, 11);
-        bcs.setPosition(0);
-        bcs.read(new byte[11], 0, 11);
-        for (int i = 0; i < 20; ++i) {
-            // Extend stream
+        try (BlockCacheStream bcs = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
+                                                         Ownership.Dispose,
+                                                         settings)) {
+            // Pre-load read cache with a 'short' block
             bcs.write(new byte[11], 0, 11);
+            bcs.setPosition(0);
+            bcs.read(new byte[11], 0, 11);
+            for (int i = 0; i < 20; ++i) {
+                // Extend stream
+                bcs.write(new byte[11], 0, 11);
+            }
+            // Try to read from first block beyond length of original cached short length
+            // Bug was throwing exception here
+            bcs.setPosition(60);
+            bcs.read(new byte[20], 0, 20);
         }
-        // Try to read from first block beyond length of original cached short length
-        // Bug was throwing exception here
-        bcs.setPosition(60);
-        bcs.read(new byte[20], 0, 20);
     }
 }

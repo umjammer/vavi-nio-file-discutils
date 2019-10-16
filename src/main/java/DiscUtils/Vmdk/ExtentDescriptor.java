@@ -222,7 +222,7 @@ public class ExtentDescriptor {
                 while (idx < source.length() && source.charAt(idx) != '"') {
                     idx++;
                 }
-                result.add(source.substring(start, idx - start + 1));
+                result.add(source.substring(start, start + idx - start + 1));
             } else {
                 // An unquoted value, find end of value
                 int start = idx;
@@ -230,7 +230,7 @@ public class ExtentDescriptor {
                 while (idx < source.length() && source.charAt(idx) != ' ') {
                     idx++;
                 }
-                result.add(source.substring(start, idx - start));
+                result.add(source.substring(start, start + idx - start));
             }
             idx++;
         }

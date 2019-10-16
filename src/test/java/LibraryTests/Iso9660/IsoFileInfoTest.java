@@ -24,6 +24,9 @@ package LibraryTests.Iso9660;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.EnumSet;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -41,6 +44,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class IsoFileInfoTest {
+    @Test
     public void length() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("FILE.TXT", new byte[0]);
@@ -55,6 +59,7 @@ public class IsoFileInfoTest {
         assertEquals(132, fs.getFileInfo("FILE3.txt").getLength());
     }
 
+    @Test
     public void open_FileNotFound() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -65,6 +70,7 @@ public class IsoFileInfoTest {
         });
     }
 
+    @Test
     public void open_Read() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("foo.txt",
@@ -80,6 +86,7 @@ public class IsoFileInfoTest {
         }
     }
 
+    @Test
     public void name() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -88,6 +95,7 @@ public class IsoFileInfoTest {
         assertEquals("foo.txt", fs.getFileInfo("\\foo.txt").getName());
     }
 
+    @Test
     public void attributes() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("foo.txt",
@@ -97,9 +105,10 @@ public class IsoFileInfoTest {
         CDReader fs = new CDReader(builder.build(), false);
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
         // Check default attributes
-        assertEquals(FileAttributes.ReadOnly, fi.getAttributes());
+        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.ReadOnly)), fi.getAttributes());
     }
 
+    @Test
     public void exists() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("dir\\foo.txt",
@@ -112,6 +121,7 @@ public class IsoFileInfoTest {
         assertFalse(fs.getFileInfo("dir").getExists());
     }
 
+    @Test
     public void creationTimeUtc() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("foo.txt",
@@ -124,12 +134,14 @@ public class IsoFileInfoTest {
                 .getCreationTimeUtc());
     }
 
+    @Test
     public void fileInfoEquals() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals(fs.getFileInfo("foo.txt"), fs.getFileInfo("foo.txt"));
     }
 
+    @Test
     public void parent() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.addFile("SOMEDIR\\ADIR\\FILE.TXT",

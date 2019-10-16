@@ -52,7 +52,7 @@ public final class MetadataTable implements IByteArraySerializable {
 
     private final byte[] _headerData = new byte[32];
 
-    public Map<MetadataEntryKey, MetadataEntry> Entries;
+    public Map<MetadataEntryKey, MetadataEntry> Entries = new HashMap<>();
 
     public short EntryCount;
 
@@ -118,5 +118,4 @@ public final class MetadataTable implements IByteArraySerializable {
         knownMetadata.put(ParentLocatorGuid, null);
         return knownMetadata;
     }
-
 }

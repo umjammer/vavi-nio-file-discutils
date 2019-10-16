@@ -24,7 +24,7 @@ package DiscUtils.SquashFs;
 //        return prev.invoke(buffer, offset, count);
 //    }
 //
-//    private List<WriteDataBlock> _invocationList = new ArrayList<>();
+//    private List<WriteDataBlock> _invocationList;
 //
 //    public static WriteDataBlock combine(WriteDataBlock a, WriteDataBlock b) {
 //        if (a == null)

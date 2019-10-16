@@ -65,7 +65,7 @@ public class InodeRef extends BaseItem {
     /**
      * name in the directory
      */
-    private String __Name = new String();
+    private String __Name;
 
     public String getName() {
         return __Name;

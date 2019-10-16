@@ -107,7 +107,7 @@ public final class Quotas {
         }
 
         public String toString() {
-            return String.format("[Sid:{0}]", Sid);
+            return String.format("[Sid:%s]", Sid);
         }
     }
 

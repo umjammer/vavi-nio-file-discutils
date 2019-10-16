@@ -198,6 +198,6 @@ public class LunInfo {
     }
 
     private static void throwInvalidURI(String uri) {
-        throw new IllegalArgumentException(String.format("Not a valid iSCSI URI: {0}", uri));
+        throw new IllegalArgumentException(String.format("Not a valid iSCSI URI: %s", uri));
     }
 }

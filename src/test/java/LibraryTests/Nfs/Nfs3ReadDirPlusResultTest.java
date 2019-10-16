@@ -22,11 +22,23 @@
 
 package LibraryTests.Nfs;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.EnumSet;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Core.UnixFilePermissions;
+import DiscUtils.Nfs.Nfs3DirectoryEntry;
+import DiscUtils.Nfs.Nfs3FileAttributes;
+import DiscUtils.Nfs.Nfs3FileHandle;
+import DiscUtils.Nfs.Nfs3FileTime;
+import DiscUtils.Nfs.Nfs3FileType;
 import DiscUtils.Nfs.Nfs3ReadDirPlusResult;
+import DiscUtils.Nfs.Nfs3Status;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +48,70 @@ public class Nfs3ReadDirPlusResultTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3ReadDirPlusResult result = new Nfs3ReadDirPlusResult();
+        result.setCookieVerifier(1);
+        Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();
+        dirAttrs.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        dirAttrs.BytesUsed = 1;
+        dirAttrs.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        dirAttrs.FileId = 2;
+        dirAttrs.FileSystemId = 3;
+        dirAttrs.Gid = 4;
+        dirAttrs.LinkCount = 5;
+        dirAttrs.Mode = UnixFilePermissions.GroupAll;
+        dirAttrs.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        dirAttrs.RdevMajor = 6;
+        dirAttrs.RdevMinor = 7;
+        dirAttrs.Size = 8;
+        dirAttrs.Type = Nfs3FileType.BlockDevice;
+        dirAttrs.Uid = 9;
+        result.setDirAttributes(dirAttrs);
+        Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
+        entry.setCookie(2);
+        Nfs3FileAttributes fileAttrs = new Nfs3FileAttributes();
+        fileAttrs.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 10, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        fileAttrs.BytesUsed = 11;
+        fileAttrs.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 12, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        fileAttrs.FileId = 12;
+        fileAttrs.FileSystemId = 13;
+        fileAttrs.Gid = 14;
+        fileAttrs.LinkCount = 15;
+        fileAttrs.Mode = EnumSet.of(UnixFilePermissions.GroupWrite);
+        fileAttrs.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 13, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        fileAttrs.RdevMajor = 16;
+        fileAttrs.RdevMinor = 17;
+        fileAttrs.Size = 18;
+        fileAttrs.Type = Nfs3FileType.Socket;
+        fileAttrs.Uid = 19;
+        entry.setFileAttributes(fileAttrs);
+        Nfs3FileHandle handle = new Nfs3FileHandle();
+        handle.setValue(new byte[] {
+            0xa
+        });
+        entry.setFileHandle(handle);
+        entry.setFileId(99);
+        entry.setName("test");
+        result.setDirEntries(Arrays.asList(entry));
+        result.setEof(false);
+        result.setStatus(Nfs3Status.Ok);
+
         Nfs3ReadDirPlusResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

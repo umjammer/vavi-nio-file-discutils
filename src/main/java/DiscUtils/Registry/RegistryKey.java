@@ -53,7 +53,7 @@ public final class RegistryKey {
      */
     public String getClassName() {
         if (_cell.ClassNameIndex > 0) {
-            return new String(_hive.rawCellData(_cell.ClassNameIndex, _cell.ClassNameLength), Charset.forName("Unicode"));
+            return new String(_hive.rawCellData(_cell.ClassNameIndex, _cell.ClassNameLength), Charset.forName("UTF-16LE"));
         }
 
         return null;
@@ -191,8 +191,15 @@ public final class RegistryKey {
      *            stored.
      * @return The value as a .NET object.The mapping from registry type of .NET
      *         type is as follows:
-     *         Value Type.NET
-     *         typeStringstringExpandStringstringLinkstringDWorduintDWordBigEndianuintMultiStringstring[]QWordulong
+     *         Value Type: .NET type
+     *
+     *         String: string
+     *         ExpandString: string
+     *         Link: string
+     *         DWord: uint
+     *         DWordBigEndian: uint
+     *         MultiString: string[]
+     *         QWord: ulong
      */
     public Object getValue(String name, Object defaultValue) {
         return getValue(name, defaultValue, RegistryValueOptions.None);
@@ -208,8 +215,15 @@ public final class RegistryKey {
      *            returned.
      * @return The value as a .NET object.The mapping from registry type of .NET
      *         type is as follows:
-     *         Value Type.NET
-     *         typeStringstringExpandStringstringLinkstringDWorduintDWordBigEndianuintMultiStringstring[]QWordulong
+     *
+     *         Value Type: .NET type
+     *         String: string
+     *         ExpandString: string
+     *         Link: string
+     *         DWord: uint
+     *         DWordBigEndian: uint
+     *         MultiString: string[]
+     *         QWord: ulong
      */
     public Object getValue(String name, Object defaultValue, RegistryValueOptions options) {
         RegistryValue regVal = getRegistryValue(name);
@@ -276,7 +290,8 @@ public final class RegistryKey {
             while (i < _cell.NumValues) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell valueCell = _hive.getCell(valueIndex);
-                if (valueCell.getName().compareTo(name) == 0) {
+//System.err.println(valueCell.getName() + ", " + name);
+                if (Utilities.compareTo(valueCell.getName(), name, true) == 0) {
                     foundValue = true;
                     _hive.freeCell(valueIndex);
                     _cell.NumValues--;
@@ -295,10 +310,11 @@ public final class RegistryKey {
                 }
                 _hive.writeRawCellData(_cell.ValueListIndex, valueList, 0, _cell.NumValues * 4);
             }
+
+            // TODO: Update maxbytes for value name and value content if this was the largest value for either.
+            // Windows seems to repair this info, if not accurate, though.
         }
 
-        // TODO: Update maxbytes for value name and value content if this was the largest value for either.
-        // Windows seems to repair this info, if not accurate, though.
         if (throwOnMissingValue && !foundValue) {
             throw new IllegalArgumentException("No such value: " + name);
         }
@@ -492,7 +508,7 @@ public final class RegistryKey {
             for (int i = 0; i < _cell.NumValues; ++i) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell cell = _hive.getCell(valueIndex);
-                if (cell.getName().compareTo(name) == 0) {
+                if (Utilities.compareTo(cell.getName(), name, true) == 0) {
                     return new RegistryValue(_hive, cell);
                 }
             }
@@ -511,7 +527,7 @@ public final class RegistryKey {
         while (insertIdx < _cell.NumValues) {
             int valueCellIndex = EndianUtilities.toInt32LittleEndian(valueList, insertIdx * 4);
             ValueCell cell = _hive.getCell(valueCellIndex);
-            if (name.compareTo(cell.getName()) < 0) {
+            if (Utilities.compareTo(name, cell.getName(), true) < 0) {
                 break;
             }
 
@@ -615,7 +631,6 @@ public final class RegistryKey {
             cell.MaxValDataBytes = 0;
             cell.MaxValNameBytes = 0;
         }
-
     }
 
     private void freeSubKeys(KeyNodeCell subkeyCell) {
@@ -627,8 +642,8 @@ public final class RegistryKey {
         SubKeyIndirectListCell indirectList = list instanceof SubKeyIndirectListCell ? (SubKeyIndirectListCell) list
                                                                                      : (SubKeyIndirectListCell) null;
         if (indirectList != null) {
+            // foreach (int listIndex in indirectList.CellIndexes)
             for (int i = 0; i < indirectList.getCellIndexes().size(); ++i) {
-                // foreach (int listIndex in indirectList.CellIndexes)
                 int listIndex = indirectList.getCellIndexes().get(i);
                 _hive.freeCell(listIndex);
             }

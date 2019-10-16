@@ -45,14 +45,15 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 /**
  * Class that creates ISO images.
- *
+ * <pre>
  * {@code
  * CDBuilder builder = new CDBuilder();
  * builder.VolumeIdentifier = "MYISO";
  * builder.UseJoliet = true;
- * builder.AddFile("Hello.txt", Charset.forName("ASCII.GetBytes("hello world!"));
+ * builder.AddFile("Hello.txt", Encoding("ASCII").GetBytes("hello world!"));
  * builder.Build(@"C:\TEMP\myiso.iso");
  * }
+ * </pre>
  */
 public final class CDBuilder extends StreamBuilder {
     private static final long DiskStart = 0x8000;
@@ -85,7 +86,7 @@ public final class CDBuilder extends StreamBuilder {
      * Gets or sets a value indicating whether to update the ISOLINUX info table
      * at the
      * start of the boot image. Use with ISOLINUX only.
-     *
+     * <p>
      * ISOLINUX has an 'information table' at the start of the boot loader that
      * verifies
      * the CD has been loaded correctly by the BIOS. This table needs to be
@@ -116,7 +117,7 @@ public final class CDBuilder extends StreamBuilder {
 
     /**
      * Gets or sets the Volume Identifier for the ISO file.
-     *
+     * <p>
      * Must be a valid identifier, i.e. max 32 characters in the range A-Z, 0-9
      * or _.
      * Lower-case characters are not permitted.
@@ -160,7 +161,7 @@ public final class CDBuilder extends StreamBuilder {
      * @param name The name of the directory on the ISO image.
      * @return The object representing this directory.
      *         The name is the full path to the directory, for example:
-     *
+     * <pre>
      *         {@code
      * builder.AddDirectory(@"DIRA\DIRB\DIRC");
      * }
@@ -177,10 +178,11 @@ public final class CDBuilder extends StreamBuilder {
      * @param content The contents of the file.
      * @return The object representing this file.
      *         The name is the full path to the file, for example:
-     *
+     * <pre>
      *         {@code
      *         builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", new byte[]{0,1,2});
      *         }
+     * </pre>
      *         Note the version number at the end of the file name is optional,
      *         if not
      *         specified the default of 1 will be used.
@@ -207,10 +209,11 @@ public final class CDBuilder extends StreamBuilder {
      * @param sourcePath The name of the file on disk.
      * @return The object representing this file.
      *         The name is the full path to the file, for example:
-     *
+     * <pre>
      *         {@code
      * builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", @"C:\temp\tempfile.bin");
      * }
+     * </pre>
      *         Note the version number at the end of the file name is optional,
      *         if not
      *         specified the default of 1 will be used.
@@ -237,10 +240,11 @@ public final class CDBuilder extends StreamBuilder {
      * @param source The contents of the file.
      * @return The object representing this file.
      *         The name is the full path to the file, for example:
-     *
+     * <pre>
      *         {@code
      * builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", stream);
      * }
+     * </pre>
      *         Note the version number at the end of the file name is optional,
      *         if not
      *         specified the default of 1 will be used.
@@ -267,7 +271,7 @@ public final class CDBuilder extends StreamBuilder {
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> fixedRegions = new ArrayList<>();
         long buildTime = System.currentTimeMillis();
-        Charset suppEncoding = _buildParams.getUseJoliet() ? Charset.forName("BigEndianUnicode") : Charset.forName("ASCII");
+        Charset suppEncoding = _buildParams.getUseJoliet() ? Charset.forName("UTF-16BE") : Charset.forName("ASCII");
         Map<BuildDirectoryMember, Integer> primaryLocationTable = new HashMap<>();
         Map<BuildDirectoryMember, Integer> supplementaryLocationTable = new HashMap<>();
         long focus = DiskStart + 3 * IsoUtilities.SectorSize;
@@ -439,7 +443,7 @@ public final class CDBuilder extends StreamBuilder {
         }
 
         byte[] bootData = StreamUtilities.readExact(bootImage, (int) bootImage.getLength());
-        Arrays.fill(bootData, 8, 56, (byte) 0);
+        Arrays.fill(bootData, 8, 8 + 56, (byte) 0);
         int checkSum = 0;
         for (int i = 64; i < bootData.length; i += 4) {
             checkSum += EndianUtilities.toUInt32LittleEndian(bootData, i);

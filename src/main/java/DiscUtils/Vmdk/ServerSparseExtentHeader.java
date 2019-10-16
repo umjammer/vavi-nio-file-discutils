@@ -77,5 +77,4 @@ public class ServerSparseExtentHeader extends CommonSparseExtentHeader {
         EndianUtilities.writeBytesLittleEndian(UncleanShutdown, buffer, 0x66C);
         return buffer;
     }
-
 }

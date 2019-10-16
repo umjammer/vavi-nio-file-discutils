@@ -38,6 +38,12 @@ import DiscUtils.Core.InvalidFileSystemException;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.Vfs.VfsReadOnlyFileSystem;
 import DiscUtils.Iso9660.RockRidge.RockRidgeExtension;
+import DiscUtils.Iso9660.Susp.ExtensionSystemUseEntry;
+import DiscUtils.Iso9660.Susp.GenericSuspExtension;
+import DiscUtils.Iso9660.Susp.SharingProtocolSystemUseEntry;
+import DiscUtils.Iso9660.Susp.SuspExtension;
+import DiscUtils.Iso9660.Susp.SuspRecords;
+import DiscUtils.Iso9660.Susp.SystemUseEntry;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.SubStream;
 import DiscUtils.Streams.Util.MathUtilities;
@@ -134,7 +140,6 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 if (!_bootVolDesc.getSystemId().equals(BootVolumeDescriptor.ElToritoSystemIdentifier)) {
                     _bootVolDesc = null;
                 }
-
                 break;
             case Primary:
                 // Primary Vol Descriptor
@@ -148,7 +153,6 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 break;
             case SetTerminator:
                 break;
-
             }
             // Volume Partition Descriptor
             // Volume Descriptor Set Terminator
@@ -167,7 +171,6 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                                                          new ReaderDirEntry(getContext(), volDesc.RootDirectory)));
                     __ActiveVariant = Iso9660Variant.Iso9660;
                 }
-
                 break;
             case RockRidge:
             case Iso9660:

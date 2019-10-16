@@ -47,7 +47,7 @@ package LibraryTests;
 //        return prev.invoke();
 //    }
 //
-//    private List<NewFileSystemDelegate> _invocationList = new ArrayList<NewFileSystemDelegate>();
+//    private List<NewFileSystemDelegate> _invocationList;
 //
 //    public static NewFileSystemDelegate combine(NewFileSystemDelegate a, NewFileSystemDelegate b) throws Exception {
 //        if (a == null)

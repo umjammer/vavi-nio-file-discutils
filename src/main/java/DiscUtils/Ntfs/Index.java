@@ -63,25 +63,21 @@ public class Index implements Closeable {
         _bpb = bpb;
         __IsFileIndex = name.equals("$I30");
         _blockCache = new ObjectCache<>();
-        _root = _file.getStream(AttributeType.IndexRoot, _name).getContent();
+        _root = _file.getStream(AttributeType.IndexRoot, _name).getContent(IndexRoot.class);
         _comparer = _root.getCollator(upCase);
-        Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Read);
-        try {
+        try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Read)) {
             {
                 byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
                 _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
-                // Give the attribute some room to breathe, so long as it doesn't squeeze others out
-                // BROKEN, BROKEN, BROKEN - how to figure this out?  Query at the point of adding entries to the root node?
-                _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable() +
-                                                 (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
+                // Give the attribute some room to breathe, so long as it doesn't squeeze others
+                // out
+                // BROKEN, BROKEN, BROKEN - how to figure this out? Query at the point of adding
+                // entries to the root node?
+                _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable()
+                        + (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
             }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         if (_file.streamExists(AttributeType.IndexAllocation, _name)) {
             setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
@@ -220,7 +216,8 @@ public class Index implements Closeable {
     public static String entryAsString(IndexEntry entry, String fileName, String indexName) {
         IByteArraySerializable keyValue = null;
         IByteArraySerializable dataValue = null;
-        // Try to guess the type of data in the key and data fields from the filename and index name
+        // Try to guess the type of data in the key and data fields from the filename
+        // and index name
         if (indexName.equals("$I30")) {
             keyValue = new FileNameRecord();
             dataValue = new FileRecordReference();
@@ -238,7 +235,6 @@ public class Index implements Closeable {
                 keyValue = new DiscUtils.Ntfs.Quotas.OwnerRecord();
                 dataValue = new DiscUtils.Ntfs.Quotas.QuotaRecord();
             }
-
         } else if (fileName.equals("$Secure")) {
             if (indexName.equals("$SII")) {
                 keyValue = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey();
@@ -247,7 +243,6 @@ public class Index implements Closeable {
                 keyValue = new DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey();
                 dataValue = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexData();
             }
-
         }
 
         try {
@@ -256,7 +251,6 @@ public class Index implements Closeable {
                 dataValue.readFrom(entry.getDataBuffer(), 0);
                 return "{" + keyValue + "-->" + dataValue + "}";
             }
-
         } catch (Exception __dummyCatchVar0) {
             return "{Parsing-Error}";
         }
@@ -266,8 +260,8 @@ public class Index implements Closeable {
 
     public long indexBlockVcnToPosition(long vcn) {
         if (vcn % _root.getRawClustersPerIndexRecord() != 0) {
-            throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn +
-                                                    " rcpir=" + _root.getRawClustersPerIndexRecord());
+            throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn
+                    + " rcpir=" + _root.getRawClustersPerIndexRecord());
         }
 
         if (_bpb.getBytesPerCluster() <= _root.getIndexAllocationSize()) {
@@ -275,8 +269,8 @@ public class Index implements Closeable {
         }
 
         if (_root.getRawClustersPerIndexRecord() != 8) {
-            throw new UnsupportedOperationException("Unexpected RawClustersPerIndexRecord (multiple index blocks per cluster): " +
-                                                    _root.getRawClustersPerIndexRecord());
+            throw new UnsupportedOperationException("Unexpected RawClustersPerIndexRecord (multiple index blocks per cluster): "
+                    + _root.getRawClustersPerIndexRecord());
         }
 
         return vcn / _root.getRawClustersPerIndexRecord() * _root.getIndexAllocationSize();
@@ -314,8 +308,8 @@ public class Index implements Closeable {
         }
 
         long idx = _indexBitmap.allocateFirstAvailable(0);
-        parentEntry.setChildrenVirtualCluster(idx * MathUtilities.ceil(_bpb.getIndexBufferSize(),
-                                                                       _bpb.SectorsPerCluster * _bpb.BytesPerSector));
+        parentEntry.setChildrenVirtualCluster(idx
+                * MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.SectorsPerCluster * _bpb.BytesPerSector));
         parentEntry.getFlags().add(IndexEntryFlags.Node);
         IndexBlock block = IndexBlock.initialize(this, false, parentEntry, _bpb);
         _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
@@ -393,18 +387,12 @@ public class Index implements Closeable {
         byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + (int) _root.getSize()];
         _root.writeTo(buffer, 0);
         _rootNode.writeTo(buffer, (int) _root.getSize());
-        Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write);
-        try {
+        try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write)) {
             s.setPosition(0);
             s.write(buffer, 0, buffer.length);
             s.setLength(s.getPosition());
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 

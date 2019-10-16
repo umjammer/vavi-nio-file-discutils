@@ -22,11 +22,18 @@
 
 package LibraryTests.Nfs;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Nfs.Nfs3FileAttributes;
+import DiscUtils.Nfs.Nfs3FileSystemStat;
 import DiscUtils.Nfs.Nfs3FileSystemStatResult;
+import DiscUtils.Nfs.Nfs3FileTime;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +43,27 @@ public class Nfs3FileSystemStatResultTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileSystemStatResult result = new Nfs3FileSystemStatResult();
+        result.setFileSystemStat(new Nfs3FileSystemStat());
+        result.getFileSystemStat().setAvailableFreeFileSlotCount(1);
+        result.getFileSystemStat().setAvailableFreeSpaceBytes(2);
+        result.getFileSystemStat().setFileSlotCount(3);
+        result.getFileSystemStat().setFreeFileSlotCount(4);
+        result.getFileSystemStat().setFreeSpaceBytes(5);
+        result.getFileSystemStat().setInvariant(Duration.ofSeconds(7).toMillis());
+        result.getFileSystemStat().setTotalSizeBytes(8);
+        result.setPostOpAttributes(new Nfs3FileAttributes());
+        result.getPostOpAttributes().AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        result.getPostOpAttributes().ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        result.getPostOpAttributes().ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
         Nfs3FileSystemStatResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

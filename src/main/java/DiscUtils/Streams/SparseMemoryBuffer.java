@@ -142,7 +142,7 @@ public final class SparseMemoryBuffer extends Buffer {
             int chunkOffset = (int) (pos % getChunkSize());
             int numToRead = (int) Math.min(Math.min(getChunkSize() - chunkOffset, _capacity - pos), count);
             if (!_buffers.containsKey(chunk)) {
-                Arrays.fill(buffer, offset, numToRead, (byte) 0);
+                Arrays.fill(buffer, offset, offset + numToRead, (byte) 0);
             } else {
                 byte[] chunkBuffer = _buffers.get(chunk);
                 System.arraycopy(chunkBuffer, chunkOffset, buffer, offset, numToRead);
@@ -199,7 +199,7 @@ public final class SparseMemoryBuffer extends Buffer {
                     _buffers.remove(chunk);
                 } else {
                     byte[] chunkBuffer = _buffers.get(chunk);
-                    Arrays.fill(chunkBuffer, chunkOffset, numToClear, (byte) 0);
+                    Arrays.fill(chunkBuffer, chunkOffset, chunkOffset + numToClear, (byte) 0);
                 }
             }
 

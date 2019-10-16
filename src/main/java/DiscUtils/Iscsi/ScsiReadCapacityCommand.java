@@ -46,7 +46,7 @@ public class ScsiReadCapacityCommand extends ScsiCommand {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        Arrays.fill(buffer, offset, 10, (byte) 0);
+        Arrays.fill(buffer, offset, offset + 10, (byte) 0);
         buffer[offset] = 0x25;
     }
 }

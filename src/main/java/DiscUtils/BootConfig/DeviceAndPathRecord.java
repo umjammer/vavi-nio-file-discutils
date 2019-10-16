@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 public class DeviceAndPathRecord extends DeviceRecord {
     private DeviceRecord _container;
 
-    private String _path = new String();
+    private String _path;
 
     public int getSize() {
         throw new UnsupportedOperationException();
@@ -52,6 +52,6 @@ public class DeviceAndPathRecord extends DeviceRecord {
         super.doParse(data, offset);
         _container = parse(data, offset + 0x34);
         int pathStart = 0x34 + _container.getSize();
-        _path = new String(data, offset + pathStart, getLength() - pathStart, Charset.forName("Unicode"));
+        _path = new String(data, offset + pathStart, getLength() - pathStart, Charset.forName("UTF-16LE"));
     }
 }

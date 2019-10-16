@@ -47,5 +47,4 @@ public final class SparseMemoryStream extends BufferStream {
     public SparseMemoryStream(SparseMemoryBuffer buffer, FileAccess access) {
         super(buffer, access);
     }
-
 }

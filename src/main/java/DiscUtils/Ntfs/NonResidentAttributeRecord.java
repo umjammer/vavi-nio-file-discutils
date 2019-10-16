@@ -198,7 +198,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
             throw new IllegalArgumentException("Attempt to replace non-existant run");
         }
 
-        getDataRuns().add(idx, newRun);
+        getDataRuns().set(idx, newRun);
     }
 
     public int removeRun(DataRun run) {
@@ -217,11 +217,11 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
             throw new IllegalArgumentException("Attempt to replace non-existant run");
         }
 
-        getDataRuns().set(idx + 1, newRun);
+        getDataRuns().add(idx + 1, newRun);
     }
 
     public void insertRun(int index, DataRun newRun) {
-        getDataRuns().set(index, newRun);
+        getDataRuns().add(index, newRun);
     }
 
     public List<Range> getClusters() {
@@ -285,7 +285,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         }
 
         if (getName() != null) {
-            System.arraycopy(getName().getBytes(Charset.forName("Unicode")), 0, buffer, offset + nameOffset, nameLength * 2);
+            System.arraycopy(getName().getBytes(Charset.forName("UTF-16LE")), 0, buffer, offset + nameOffset, nameLength * 2);
         }
 
         return length;

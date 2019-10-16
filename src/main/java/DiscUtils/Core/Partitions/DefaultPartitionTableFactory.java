@@ -26,6 +26,7 @@ import DiscUtils.Core.VirtualDisk;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
+@PartitionTableFactoryAttribute
 public final class DefaultPartitionTableFactory implements PartitionTableFactory {
     public boolean detectIsPartitioned(Stream s) {
         return BiosPartitionTable.isValid(s);

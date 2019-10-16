@@ -64,14 +64,7 @@ public class DescriptorFileEntry {
     }
 
     public String toString() {
-        try {
-            return toString(true);
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return toString(true);
     }
 
     public String toString(boolean spaceOut) {
@@ -86,8 +79,6 @@ public class DescriptorFileEntry {
             return getKey() + sep + "=" + sep + "\"" + getValue() + "\"";
         default:
             throw new IllegalStateException(String.format("Unknown type: %s", _type));
-
         }
     }
-
 }

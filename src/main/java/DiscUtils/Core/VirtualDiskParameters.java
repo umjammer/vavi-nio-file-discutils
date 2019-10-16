@@ -22,7 +22,6 @@
 
 package DiscUtils.Core;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -56,7 +55,7 @@ public class VirtualDiskParameters {
     /**
      * a dictionary of extended parameters, that varies by disk type.
      */
-    public Map<String, String> extendedParameters = new HashMap<>();
+    public Map<String, String> extendedParameters;
 
     /**
      * the physical (aka IDE) geometry of the disk.

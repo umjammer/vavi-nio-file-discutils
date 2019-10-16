@@ -129,7 +129,6 @@ public final class BiosPartitionInfo  extends PartitionInfo
     public SparseStream open() {
         return _table.open(_record);
     }
-
 }
 
 

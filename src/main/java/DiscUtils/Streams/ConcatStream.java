@@ -202,7 +202,7 @@ public class ConcatStream extends SparseStream {
 
     private void checkDisposed() {
         if (_streams == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("ConcatStream");
+            throw new moe.yo3explorer.dotnetio4j.IOException("it has been closed.");
         }
     }
 }

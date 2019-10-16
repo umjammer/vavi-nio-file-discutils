@@ -24,6 +24,7 @@ package DiscUtils.Vhdx;
 
 import java.util.Arrays;
 
+
 public enum PayloadBlockStatus {
     NotPresent,
     Undefined,
@@ -33,6 +34,7 @@ public enum PayloadBlockStatus {
     __dummyEnum__1,
     FullyPresent,
     PartiallyPresent;
+
     public static PayloadBlockStatus valueOf(int value) {
         return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
     }

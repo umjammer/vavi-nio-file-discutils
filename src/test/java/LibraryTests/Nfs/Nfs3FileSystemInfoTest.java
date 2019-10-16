@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Nfs.Nfs3FileSystemInfo;
+import DiscUtils.Nfs.Nfs3FileSystemProperties;
+import DiscUtils.Nfs.Nfs3FileTime;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +38,16 @@ public class Nfs3FileSystemInfoTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileSystemInfo attributes = new Nfs3FileSystemInfo();
+        attributes.setDirectoryPreferredBytes(1);
+        attributes.setFileSystemProperties(Nfs3FileSystemProperties.HardLinks);
+        attributes.setMaxFileSize(2);
+        attributes.setReadMaxBytes(3);
+        attributes.setReadMultipleSize(4);
+        attributes.setReadPreferredBytes(5);
+        attributes.setTimePrecision(Nfs3FileTime.getPrecision());
+        attributes.setWriteMaxBytes(7);
+        attributes.setWriteMultipleSize(8);
+        attributes.setWritePreferredBytes(9);
         Nfs3FileSystemInfo clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

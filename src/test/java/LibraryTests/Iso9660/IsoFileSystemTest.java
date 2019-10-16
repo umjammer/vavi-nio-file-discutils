@@ -22,6 +22,8 @@
 
 package LibraryTests.Iso9660;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,12 +39,14 @@ import DiscUtils.Streams.SparseStream;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 
 public class IsoFileSystemTest {
+    @Test
     public void canWrite() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertFalse(fs.canWrite());
     }
 
+    @Test
     public void fileInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -50,6 +54,7 @@ public class IsoFileSystemTest {
         assertNotNull(fi);
     }
 
+    @Test
     public void directoryInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -57,6 +62,7 @@ public class IsoFileSystemTest {
         assertNotNull(fi);
     }
 
+    @Test
     public void fileSystemInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -64,6 +70,7 @@ public class IsoFileSystemTest {
         assertNotNull(fi);
     }
 
+    @Test
     public void root() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
@@ -73,6 +80,7 @@ public class IsoFileSystemTest {
         assertNull(fs.getRoot().getParent());
     }
 
+    @Test
     public void largeDirectory() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.setUseJoliet(true);
@@ -83,6 +91,7 @@ public class IsoFileSystemTest {
         assertEquals(3000, reader.getRoot().getFiles().size());
     }
 
+    @Test
     public void hideVersions() throws Exception {
         CDBuilder builder = new CDBuilder();
         builder.setUseJoliet( true);

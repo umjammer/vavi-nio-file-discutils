@@ -48,7 +48,7 @@ package DiscUtils.Setup;
 //        return prev.invoke(fileName, mode, access, share);
 //    }
 //
-//    private List<FileOpenDelegate> _invocationList = new ArrayList<>();
+//    private List<FileOpenDelegate> _invocationList;
 //
 //    public static FileOpenDelegate combine(FileOpenDelegate a, FileOpenDelegate b) {
 //        if (a == null)

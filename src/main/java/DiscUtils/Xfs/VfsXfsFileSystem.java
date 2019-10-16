@@ -91,7 +91,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         } else if (dirEntry.getInode().getFileType() == UnixFileType.Regular) {
             return new File(getContext(), dirEntry.getInode());
         } else {
-            throw new UnsupportedOperationException(String.format("Type {0} is not supported in XFS",
+            throw new UnsupportedOperationException(String.format("Type %s is not supported in XFS",
                                                                   dirEntry.getInode().getFileType()));
         }
     }

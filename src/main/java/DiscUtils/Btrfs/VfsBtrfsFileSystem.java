@@ -145,7 +145,7 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
         } else if (dirEntry.getType() == DirItemChildType.RegularFile) {
             return new File(dirEntry, getContext());
         } else {
-            throw new IllegalArgumentException(String.format("Type {0} is not supported in btrfs", dirEntry.getType()));
+            throw new IllegalArgumentException(String.format("Type %s is not supported in btrfs", dirEntry.getType()));
         }
     }
 

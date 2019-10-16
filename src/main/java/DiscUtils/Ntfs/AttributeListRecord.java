@@ -34,7 +34,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySerializable, Comparable<AttributeListRecord> {
     public short AttributeId;
 
-    public FileRecordReference BaseFileReference = new FileRecordReference();
+    public FileRecordReference BaseFileReference;
 
     public String Name;
 
@@ -49,7 +49,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
     public AttributeType Type = AttributeType.None;
 
     public long getSize() {
-        return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(Charset.forName("Unicode")).length), 8);
+        return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(Charset.forName("UTF-16LE")).length), 8);
     }
 
     public int readFrom(byte[] data, int offset) {
@@ -61,7 +61,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         BaseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
         AttributeId = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
         if (NameLength > 0) {
-            Name = new String(data, offset + NameOffset, NameLength * 2, Charset.forName("Unicode"));
+            Name = new String(data, offset + NameOffset, NameLength * 2, Charset.forName("UTF-16LE"));
         } else {
             Name = null;
         }
@@ -77,7 +77,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         if (Name == null || Name.isEmpty()) {
             NameLength = 0;
         } else {
-            byte[] bytes = Name.getBytes(Charset.forName("Unicode"));
+            byte[] bytes = Name.getBytes(Charset.forName("UTF-16LE"));
             System.arraycopy(bytes, 0, buffer, offset + NameOffset, bytes.length);
             NameLength = (byte) bytes.length;
         }

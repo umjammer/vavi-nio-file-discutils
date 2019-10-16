@@ -61,7 +61,7 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(getStatus().getValue());
         writer.write(getObjectAttributes() != null);
         if (getObjectAttributes() != null) {
             getObjectAttributes().write(writer);
@@ -79,8 +79,8 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getAccess() == getAccess() && other.getObjectAttributes().equals(getObjectAttributes()) &&
-               other.getStatus() == getStatus();
+        return other.getAccess().equals(getAccess()) && Utilities.equals(other.getObjectAttributes(), getObjectAttributes())
+                && other.getStatus() == getStatus();
     }
 
     public int hashCode() {

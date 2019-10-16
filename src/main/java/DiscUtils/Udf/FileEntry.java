@@ -45,7 +45,7 @@ public class FileEntry implements IByteArraySerializable {
 
     public LongAllocationDescriptor ExtendedAttributeIcb;
 
-    public List<ExtendedAttributeRecord> ExtendedAttributes = new ArrayList<>();
+    public List<ExtendedAttributeRecord> ExtendedAttributes;
 
     public int ExtendedAttributesLength;
 

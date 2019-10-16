@@ -214,14 +214,14 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 File f = new File(_context, fr);
                 for (NtfsStream stream : f.getAllStreams()) {
                     if (stream.getAttributeType() == AttributeType.ObjectId) {
-                        ObjectId objId = stream.getContent();
+                        ObjectId objId = stream.getContent(ObjectId.class);
                         ObjectIdRecord[] objIdRec = new ObjectIdRecord[1];
                         boolean r = !_context.getObjectIds().tryGetValue(objId.Id, objIdRec);
                         if (r) {
                             reportError("ObjectId %s for file %s is not indexed", objId.Id, f.getBestName());
                         } else {
                             if (objIdRec[0].MftReference != f.getMftReference()) {
-                                reportError("ObjectId {0} for file {1} points to {2}",
+                                reportError("ObjectId %s for file %s points to {2}",
                                             objId.Id,
                                             f.getBestName(),
                                             objIdRec[0].MftReference);
@@ -233,7 +233,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
         for (Map.Entry<UUID, ObjectIdRecord> objIdRec : _context.getObjectIds().getAll().entrySet()) {
             if (_context.getMft().getRecord(objIdRec.getValue().MftReference) == null) {
-                reportError("ObjectId {0} refers to non-existant file {1}",
+                reportError("ObjectId %s refers to non-existant file %s",
                             objIdRec.getKey(),
                             objIdRec.getValue().MftReference);
             }
@@ -282,8 +282,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void selfCheckIndex(File file, String name) {
-        reportInfo("About to self-check index {0} in file {1} (MFT:{2})", name, file.getBestName(), file.getIndexInMft());
-        IndexRoot root = file.getStream(AttributeType.IndexRoot, name).getContent();
+        reportInfo("About to self-check index %s in file %s (MFT:{2})", name, file.getBestName(), file.getIndexInMft());
+        IndexRoot root = file.getStream(AttributeType.IndexRoot, name).getContent(IndexRoot.class);
         byte[] rootBuffer;
         Stream s = file.openStream(AttributeType.IndexRoot, name, FileAccess.Read);
         try {
@@ -302,12 +302,12 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
 
         if (!selfCheckIndexNode(rootBuffer, IndexRoot.HeaderOffset, indexBitmap, root, file.getBestName(), name)) {
-            reportError("Index {0} in file {1} (MFT:{2}) has corrupt IndexRoot attribute",
+            reportError("Index %s in file %s (MFT:{2}) has corrupt IndexRoot attribute",
                         name,
                         file.getBestName(),
                         file.getIndexInMft());
         } else {
-            reportInfo("Self-check of index {0} in file {1} (MFT:{2}) complete",
+            reportInfo("Self-check of index %s in file %s (MFT:{2}) complete",
                        name,
                        file.getBestName(),
                        file.getIndexInMft());
@@ -335,7 +335,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                               _context.getBiosParameterBlock().SectorsPerCluster *
                                                              _context.getBiosParameterBlock().BytesPerSector);
                 if (!bitmap.isPresent(bitmapIdx)) {
-                    reportError("Index entry {0} is non-leaf, but child vcn {1} is not in bitmap at index {2}",
+                    reportError("Index entry %s is non-leaf, but child vcn %s is not in bitmap at index {2}",
                                 Index.entryAsString(entry, fileName, indexName),
                                 entry.getChildrenVirtualCluster(),
                                 bitmapIdx);
@@ -345,7 +345,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
             if (entry.getFlags().contains(IndexEntryFlags.End)) {
                 if (pos != header.TotalSizeOfEntries) {
-                    reportError("Found END index entry {0}, but not at end of node",
+                    reportError("Found END index entry %s, but not at end of node",
                                 Index.entryAsString(entry, fileName, indexName));
                     ok = false;
                 }
@@ -353,7 +353,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             }
 
             if (lastEntry != null && collator.compare(lastEntry.getKeyBuffer(), entry.getKeyBuffer()) >= 0) {
-                reportError("Found entries out of order {0} was before {1}",
+                reportError("Found entries out of order %s was before %s",
                             Index.entryAsString(lastEntry, fileName, indexName),
                             Index.entryAsString(entry, fileName, indexName));
                 ok = false;
@@ -370,13 +370,13 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         for (Range range : file.getAttribute(AttributeType.Data, null).getClusters()) {
             // Check out the MFT's clusters
             if (!verifyClusterRange(range)) {
-                reportError("Corrupt cluster range in MFT data attribute {0}", range.toString());
+                reportError("Corrupt cluster range in MFT data attribute %s", range.toString());
                 abort();
             }
         }
         for (Range range : file.getAttribute(AttributeType.Bitmap, null).getClusters()) {
             if (!verifyClusterRange(range)) {
-                reportError("Corrupt cluster range in MFT bitmap attribute {0}", range.toString());
+                reportError("Corrupt cluster range in MFT bitmap attribute %s", range.toString());
                 abort();
             }
         }
@@ -392,7 +392,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     String magic = EndianUtilities.bytesToString(recordData, 0, 4);
                     if (!magic.equals("FILE")) {
                         if (bitmap.isPresent(index)) {
-                            reportError("Invalid MFT record magic at index {0} - was ({2},{3},{4},{5}) \"{1}\"",
+                            reportError("Invalid MFT record magic at index %s - was ({2},{3},{4},{5}) \"%s\"",
                                         index,
                                         magic.replaceAll("(^\0*|\0*$)", ""),
                                         (int) magic.charAt(0),
@@ -403,12 +403,12 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
                     } else {
                         if (!verifyMftRecord(recordData, bitmap.isPresent(index), bytesPerSector)) {
-                            reportError("Invalid MFT record at index {0}", index);
+                            reportError("Invalid MFT record at index %s", index);
                             StringBuilder bldr = new StringBuilder();
                             for (int i = 0; i < recordData.length; ++i) {
-                                bldr.append(String.format(" {0:X2}", recordData[i]));
+                                bldr.append(String.format(" %2x}", recordData[i]));
                             }
-                            reportInfo("MFT record binary data for index {0}:{1}", index, bldr.toString());
+                            reportInfo("MFT record binary data for index %s:%s", index, bldr.toString());
                         }
 
                     }
@@ -443,12 +443,12 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     String attrKey = fr.getMasterFileTableIndex() + ":" + attr.getId();
                     for (Range range : attr.getClusters()) {
                         if (!verifyClusterRange(range)) {
-                            reportError("Attribute {0} contains bad cluster range {1}", attrKey, range);
+                            reportError("Attribute %s contains bad cluster range %s", attrKey, range);
                         }
 
                         for (long cluster = range.getOffset(); cluster < range.getOffset() + range.getCount(); ++cluster) {
                             if (clusterMap.containsKey(cluster)) {
-                                reportError("Two attributes referencing cluster {0} (0x{0:X16}) - {1} and {2} (as MftIndex:AttrId)",
+                                reportError("Two attributes referencing cluster %s (0x{0:X16}) - %s and {2} (as MftIndex:AttrId)",
                                             cluster,
                                             clusterMap.get(cluster),
                                             attrKey);
@@ -475,7 +475,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             try {
                 AttributeRecord ar = AttributeRecord.fromBytes(genericRecord.getContent(), pos, attrLen);
                 if (attrLen[0] != ar.getSize()) {
-                    reportError("Attribute size is different to calculated size.  AttrId={0}", ar.getAttributeId());
+                    reportError("Attribute size is different to calculated size.  AttrId=%s", ar.getAttributeId());
                     ok = false;
                 }
 
@@ -487,13 +487,13 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                             totalVcn += run.getRunLength();
                         }
                         if (totalVcn != nrr.getLastVcn() - nrr.getStartVcn() + 1) {
-                            reportError("Declared VCNs doesn't match data runs.  AttrId={0}", ar.getAttributeId());
+                            reportError("Declared VCNs doesn't match data runs.  AttrId=%s", ar.getAttributeId());
                             ok = false;
                         }
                     }
                 }
             } catch (Exception __dummyCatchVar0) {
-                reportError("Failure parsing attribute at pos={0}", pos);
+                reportError("Failure parsing attribute at pos=%s", pos);
                 return false;
             }
 
@@ -506,14 +506,14 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         record.fromBytes(recordData, 0);
         boolean inUse = record.getFlags().contains(FileRecordFlags.InUse);
         if (inUse != presentInBitmap) {
-            reportError("MFT bitmap and record in-use flag don't agree.  Mft={0}, Record={1}",
+            reportError("MFT bitmap and record in-use flag don't agree.  Mft=%s, Record=%s",
                         presentInBitmap ? "InUse" : "Free",
                         inUse ? "InUse" : "Free");
             ok = false;
         }
 
         if (record.getSize() != record.getRealSize()) {
-            reportError("MFT record real size is different to calculated size.  Stored in MFT={0}, Calculated={1}",
+            reportError("MFT record real size is different to calculated size.  Stored in MFT=%s, Calculated=%s",
                         record.getRealSize(),
                         record.getSize());
             ok = false;
@@ -530,18 +530,18 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     private boolean verifyClusterRange(Range range) {
         boolean ok = true;
         if (range.getOffset() < 0) {
-            reportError("Invalid cluster range {0} - negative start", range);
+            reportError("Invalid cluster range %s - negative start", range);
             ok = false;
         }
 
         if (range.getCount() <= 0) {
-            reportError("Invalid cluster range {0} - negative/zero count", range);
+            reportError("Invalid cluster range %s - negative/zero count", range);
             ok = false;
         }
 
         if ((range.getOffset() + range.getCount()) *
             _context.getBiosParameterBlock().getBytesPerCluster() > _context.getRawStream().getLength()) {
-            reportError("Invalid cluster range {0} - beyond end of disk", range);
+            reportError("Invalid cluster range %s - beyond end of disk", range);
             ok = false;
         }
 

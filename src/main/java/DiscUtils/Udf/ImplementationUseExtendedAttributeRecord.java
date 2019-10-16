@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:13:06
-//
-
-package DiscUtils.Udf;
-
-import DiscUtils.Streams.Util.EndianUtilities;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,10 +19,17 @@ import DiscUtils.Streams.Util.EndianUtilities;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public final class ImplementationUseExtendedAttributeRecord  extends ExtendedAttributeRecord
-{
+
+package DiscUtils.Udf;
+
+import DiscUtils.Streams.Util.EndianUtilities;
+
+
+public final class ImplementationUseExtendedAttributeRecord extends ExtendedAttributeRecord {
     public ImplementationEntityIdentifier ImplementationIdentifier;
+
     public byte[] ImplementationUseData;
+
     public int readFrom(byte[] buffer, int offset) {
         int read = super.readFrom(buffer, offset);
         int iuSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
@@ -40,7 +39,4 @@ public final class ImplementationUseExtendedAttributeRecord  extends ExtendedAtt
         System.arraycopy(buffer, offset + 48, ImplementationUseData, 0, iuSize);
         return read;
     }
-
 }
-
-

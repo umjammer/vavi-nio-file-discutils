@@ -99,7 +99,7 @@ public class Element {
     public void setValue(ElementValue value) {
         if (getFormat() != value.getFormat()) {
             throw new IllegalArgumentException(String
-                    .format("Attempt to assign {1} value to {0} format element", getFormat(), value.getFormat()));
+                    .format("Attempt to assign %2$s value to %1$s format element", getFormat(), value.getFormat()));
         }
 
         _value = value;
@@ -185,7 +185,6 @@ public class Element {
                 return "extendedinput";
             case 0x15000051:
                 return "initialconsoleinput";
-
             }
         } else if (idClass == ElementClass.Application) {
             switch (appType) {
@@ -216,7 +215,6 @@ public class Element {
                     return "bcdfilepath";
                 case 0x27000030:
                     return "customactions";
-
                 }
                 break;
             case OsLoader:
@@ -303,7 +301,6 @@ public class Element {
                     return "driverloadfailurepolicy";
                 case 0x250000E0:
                     return "bootstatuspolicy";
-
                 }
                 break;
             case Resume:
@@ -320,7 +317,6 @@ public class Element {
                     return "associatedosdevice";
                 case 0x26000006:
                     return "debugoptionenabled";
-
                 }
                 break;
             case MemoryDiagnostics:
@@ -333,7 +329,6 @@ public class Element {
                     return "failurecount";
                 case 0x25000004:
                     return "testtofail";
-
                 }
                 break;
             case NtLoader:
@@ -341,7 +336,6 @@ public class Element {
                 switch (identifier) {
                 case 0x22000001:
                     return "bpbstring";
-
                 }
                 break;
             case Startup:
@@ -350,10 +344,8 @@ public class Element {
                     return "pxesoftreboot";
                 case 0x22000002:
                     return "applicationname";
-
                 }
                 break;
-
             }
         } else if (idClass == ElementClass.Device) {
             switch (identifier) {
@@ -371,7 +363,6 @@ public class Element {
                 return "exportascd";
             case 0x35000007:
                 return "ramdisktftpblocksize";
-
             }
         } else if (idClass == ElementClass.Hidden) {
             switch (identifier) {
@@ -385,7 +376,6 @@ public class Element {
                 return "omitosloaderelements";
             case 0x46000010:
                 return "recoveryos";
-
             }
         }
 
@@ -414,7 +404,6 @@ public class Element {
             return new StringElementValue(_storage.getString(_obj, _identifier));
         default:
             throw new IllegalArgumentException("Unknown element format: " + getFormat());
-
         }
     }
 
@@ -441,7 +430,6 @@ public class Element {
             break;
         default:
             throw new IllegalArgumentException("Unknown element format: " + getFormat());
-
         }
     }
 }

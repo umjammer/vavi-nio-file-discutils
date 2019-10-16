@@ -73,5 +73,4 @@ public abstract class DataReader {
 
         StreamUtilities.readExact(_stream, _buffer, 0, count);
     }
-
 }

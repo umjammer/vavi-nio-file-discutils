@@ -22,11 +22,18 @@
 
 package LibraryTests.Nfs;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Core.UnixFilePermissions;
 import DiscUtils.Nfs.Nfs3DirectoryEntry;
+import DiscUtils.Nfs.Nfs3FileAttributes;
+import DiscUtils.Nfs.Nfs3FileTime;
+import DiscUtils.Nfs.Nfs3FileType;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +43,34 @@ public class Nfs3DirectoryEntryTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
+        entry.setCookie(1);
+        Nfs3FileAttributes attributes = new Nfs3FileAttributes();
+        attributes.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        attributes.BytesUsed = 2;
+        attributes.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        attributes.FileId = 3;
+        attributes.FileSystemId = 4;
+        attributes.Gid = 5;
+        attributes.LinkCount = 6;
+        attributes.Mode = UnixFilePermissions.GroupAll;
+        attributes.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
+                .atZone(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli());
+        attributes.RdevMajor = 7;
+        attributes.RdevMinor = 8;
+        attributes.Size = 9;
+        attributes.Type = Nfs3FileType.NamedPipe;
+        attributes.Uid = 10;
+        entry.setFileAttributes(attributes);
+        entry.setName("test");
+
         Nfs3DirectoryEntry clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

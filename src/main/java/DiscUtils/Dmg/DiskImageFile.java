@@ -97,7 +97,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean getNeedsParent() {
+    public boolean needsParent() {
         return false;
     }
 

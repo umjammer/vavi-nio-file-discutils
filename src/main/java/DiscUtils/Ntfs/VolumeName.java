@@ -48,16 +48,16 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
     }
 
     public long getSize() {
-        return getName().getBytes(Charset.forName("utf-8")).length;
+        return getName().getBytes(Charset.forName("UTF-16LE")).length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setName(new String(buffer, offset, buffer.length - offset, Charset.forName("Unicode")));
+        setName(new String(buffer, offset, buffer.length - offset, Charset.forName("UTF-16LE")));
         return buffer.length - offset;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        byte[] bytes = getName().getBytes(Charset.forName("Unicode"));
+        byte[] bytes = getName().getBytes(Charset.forName("UTF-16LE"));
         System.arraycopy(bytes, 0, buffer, offset, bytes.length);
     }
 

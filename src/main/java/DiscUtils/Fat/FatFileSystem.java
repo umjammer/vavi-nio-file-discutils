@@ -918,7 +918,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public void deleteDirectory(String path) {
         Directory dir = getDirectory(path);
         if (dir == null) {
-            throw new FileNotFoundException(String.format("No such directory: {0}", path));
+            throw new FileNotFoundException(String.format("No such directory: %s", path));
         }
 
         if (!dir.getIsEmpty()) {
@@ -1016,7 +1016,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public List<String> getDirectories(String path) {
         Directory dir = getDirectory(path);
         if (dir == null) {
-            throw new FileNotFoundException(String.format("The directory '{0}' was not found", path));
+            throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
         }
 
         List<DirectoryEntry> entries = dir.getDirectories();
@@ -1374,7 +1374,7 @@ public final class FatFileSystem extends DiscFileSystem {
             // Sector number of the Backup Boot Sector
             EndianUtilities.writeBytesLittleEndian(6, bootSector, 50);
             // Reserved area - must be set to 0
-            Arrays.fill(bootSector, 52, 12, (byte) 0);
+            Arrays.fill(bootSector, 52, 52 + 12, (byte) 0);
             writeBS(bootSector, 64, isFloppy, volId, label, fatType);
         }
         bootSector[510] = 0x55;
@@ -1560,7 +1560,7 @@ public final class FatFileSystem extends DiscFileSystem {
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         Directory dir = getDirectory(path);
         if (dir == null) {
-            throw new FileNotFoundException(String.format("The directory '{0}' was not found", path));
+            throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
         }
 
         List<DirectoryEntry> entries = dir.getEntries();

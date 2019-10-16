@@ -117,5 +117,4 @@ public interface IBuffer {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     List<StreamExtent> getExtentsInRange(long start, long count);
-
 }

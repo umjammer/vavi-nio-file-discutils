@@ -20,13 +20,21 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
-public final class ExtensionSelectSystemUseEntry extends SystemUseEntry {
-    public byte SelectedExtension;
+import DiscUtils.Iso9660.IsoUtilities;
 
-    public ExtensionSelectSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
-        checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);
-        SelectedExtension = data[offset + 4];
+public final class ContinuationSystemUseEntry extends SystemUseEntry {
+    public int Block;
+
+    public int BlockOffset;
+
+    public int Length;
+
+    public ContinuationSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
+        checkAndSetCommonProperties(name, length, version, (byte) 28, (byte) 1);
+        Block = IsoUtilities.toUInt32FromBoth(data, offset + 4);
+        BlockOffset = IsoUtilities.toUInt32FromBoth(data, offset + 12);
+        Length = IsoUtilities.toUInt32FromBoth(data, offset + 20);
     }
 }

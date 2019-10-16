@@ -74,7 +74,7 @@ public abstract class VirtualDiskLayer implements Closeable {
     /**
      * Gets a value indicating whether this is a differential disk.
      */
-    public abstract boolean getNeedsParent();
+    public abstract boolean needsParent();
 
     /**
      * Gets a

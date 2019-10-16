@@ -22,6 +22,8 @@
 
 package LibraryTests.Nfs;
 
+import java.time.Duration;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +38,13 @@ public class Nfs3FileSystemStatTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileSystemStat attributes = new Nfs3FileSystemStat();
+        attributes.setAvailableFreeFileSlotCount(1);
+        attributes.setAvailableFreeSpaceBytes(2);
+        attributes.setFileSlotCount(3);
+        attributes.setFreeFileSlotCount(4);
+        attributes.setFreeSpaceBytes(5);
+        attributes.setInvariant(Duration.ofSeconds(7).toMillis());
+        attributes.setTotalSizeBytes(8);
         Nfs3FileSystemStat clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

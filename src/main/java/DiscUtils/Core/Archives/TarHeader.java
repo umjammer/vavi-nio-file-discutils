@@ -54,7 +54,7 @@ public final class TarHeader {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        Arrays.fill(buffer, offset, Length, (byte) 0);
+        Arrays.fill(buffer, offset, offset + Length, (byte) 0);
         EndianUtilities.stringToBytes(FileName, buffer, offset, 99);
         EndianUtilities.stringToBytes(longToOctal(UnixFilePermissions.valueOf(FileMode), 7), buffer, offset + 100, 7);
         EndianUtilities.stringToBytes(longToOctal(OwnerId, 7), buffer, offset + 108, 7);

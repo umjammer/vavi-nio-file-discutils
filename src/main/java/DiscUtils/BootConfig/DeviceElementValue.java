@@ -30,12 +30,14 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public class DeviceElementValue extends ElementValue {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private final UUID _parentObject;
 
     private final DeviceRecord _record;
 
     public DeviceElementValue() {
-        _parentObject = new UUID(0, 0);
+        _parentObject = EMPTY;
         PartitionRecord record = new PartitionRecord();
         record.setType(5);
         _record = record;
@@ -58,8 +60,8 @@ public class DeviceElementValue extends ElementValue {
             record.setPartitionIdentity(new byte[16]);
             EndianUtilities.writeBytesLittleEndian(pvi.getPartitionIdentity(), record.getPartitionIdentity(), 0);
         } else {
-            throw new IllegalArgumentException(String.format("Unknown how to convert volume type {0} to a Device element",
-                                                            pvi.getVolumeType()));
+            throw new IllegalArgumentException(String.format("Unknown how to convert volume type %s to a Device element",
+                                                             pvi.getVolumeType()));
         }
         _record = record;
     }
@@ -78,22 +80,15 @@ public class DeviceElementValue extends ElementValue {
     }
 
     public String toString() {
-        try {
-            if (_parentObject != new UUID(0, 0)) {
-                return _parentObject + ":" + _record;
-            }
-
-            if (_record != null) {
-                return _record.toString();
-            }
-
-            return "<unknown>";
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
+        if (!_parentObject.equals(EMPTY)) {
+            return _parentObject + ":" + _record;
         }
 
+        if (_record != null) {
+            return _record.toString();
+        }
+
+        return "<unknown>";
     }
 
     public byte[] getBytes() {
@@ -102,5 +97,4 @@ public class DeviceElementValue extends ElementValue {
         _record.getBytes(buffer, 0x10);
         return buffer;
     }
-
 }

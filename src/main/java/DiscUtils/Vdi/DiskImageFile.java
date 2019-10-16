@@ -111,7 +111,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean getNeedsParent() {
+    public boolean needsParent() {
         return _header.imageType == ImageType.Differencing || _header.imageType == ImageType.Undo;
     }
 

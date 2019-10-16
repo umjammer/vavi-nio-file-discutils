@@ -111,7 +111,6 @@ public class BuiltStream extends SparseStream {
                         extent.prepareForRead();
                         _currentExtent = extent;
                     }
-
                 }
             }
 

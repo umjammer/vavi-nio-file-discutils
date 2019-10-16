@@ -95,8 +95,8 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
         MapEntries = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
         PhysicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
         PhysicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        Name = EndianUtilities.bytesToString(buffer, offset + 16, 32).replaceAll("\0*$", "");
-        Type = EndianUtilities.bytesToString(buffer, offset + 48, 32).replaceAll("\0*$", "");
+        Name = EndianUtilities.bytesToString(buffer, offset + 16, 32).replaceFirst("\0*$", "");
+        Type = EndianUtilities.bytesToString(buffer, offset + 48, 32).replaceFirst("\0*$", "");
         LogicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 80);
         LogicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 84);
         Flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 88);

@@ -65,5 +65,4 @@ public class ParentLocator {
         EndianUtilities.writeBytesBigEndian(0, data, offset + 12);
         EndianUtilities.writeBytesBigEndian(PlatformDataOffset, data, offset + 16);
     }
-
 }

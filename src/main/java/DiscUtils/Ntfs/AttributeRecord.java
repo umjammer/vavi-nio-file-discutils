@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Range;
@@ -105,7 +106,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
             return val;
         }
 
-        val = _name.compareTo(other._name);
+        val = Utilities.compareTo(_name, other._name, true);
         if (val != 0) {
             return val;
         }
@@ -173,7 +174,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
                 throw new IOException("Corrupt attribute, name outside of attribute");
             }
 
-            _name = new String(buffer, offset + nameOffset, nameLength * 2, Charset.forName("utf-8"));
+            _name = new String(buffer, offset + nameOffset, nameLength * 2, Charset.forName("UTF-16LE"));
         }
     }
 }

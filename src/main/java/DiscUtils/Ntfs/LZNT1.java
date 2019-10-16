@@ -243,7 +243,7 @@ public final class LZNT1 extends BlockCompressor {
 
                 if (destIdx < destSubBlockStart + FixedBlockSize) {
                     int skip = destSubBlockStart + FixedBlockSize - destIdx;
-                    Arrays.fill(decompressed, decompressedOffset + destIdx, skip, (byte) 0);
+                    Arrays.fill(decompressed, decompressedOffset + destIdx, decompressedOffset + destIdx + skip, (byte) 0);
                     destIdx += skip;
                 }
             }

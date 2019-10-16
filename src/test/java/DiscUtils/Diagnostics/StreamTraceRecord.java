@@ -114,7 +114,7 @@ public final class StreamTraceRecord {
      * @return
      */
     public String toString() {
-        return String.format("{0:D3}{1,1}:{2,5}  @{3:X10}  [count={4}, result={5}]",
+        return String.format("%3d%1s:%5s  %10x  [count=%d, result=%d]",
                              _id,
                              _exThrown != null ? "E" : " ",
                              _fileAction,

@@ -26,7 +26,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import DiscUtils.Nfs.RpcAuthenticationStatus;
+import DiscUtils.Nfs.RpcMismatchInfo;
 import DiscUtils.Nfs.RpcRejectedReplyHeader;
+import DiscUtils.Nfs.RpcRejectedStatus;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
@@ -36,6 +39,13 @@ public class RpcRejectedReplyHeaderTest {
     @Test
     public void roundTripTest() throws Exception {
         RpcRejectedReplyHeader header = new RpcRejectedReplyHeader();
+        header.AuthenticationStatus = RpcAuthenticationStatus.None;
+        RpcMismatchInfo info = new RpcMismatchInfo();
+        info.High = 1;
+        info.Low = 2;
+        header.MismatchInfo = info;
+        header.Status = RpcRejectedStatus.RpcMismatch;
+
         RpcRejectedReplyHeader clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

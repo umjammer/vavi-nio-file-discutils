@@ -58,7 +58,6 @@ public class ClusterBitmap implements Closeable {
             _bitmap.close();
             _bitmap = null;
         }
-
     }
 
     /**
@@ -242,5 +241,4 @@ public class ClusterBitmap implements Closeable {
 
         return numFound;
     }
-
 }

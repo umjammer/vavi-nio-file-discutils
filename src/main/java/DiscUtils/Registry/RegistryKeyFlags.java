@@ -32,75 +32,85 @@ public enum RegistryKeyFlags {
      *
      * Unknown purpose.
      */
-    Unknown0001,
+    Unknown0001(0x0001),
     /**
      * Unknown purpose.
      */
-    Unknown0002,
+    Unknown0002(0x0002),
     /**
      * The key is the root key in the registry hive.
      */
-    Root,
+    Root(0x0004),
     /**
      * Unknown purpose.
      */
-    Unknown0008,
+    Unknown0008(0x0008),
     /**
      * The key is a link to another key.
      */
-    Link,
+    Link(0x0010),
     /**
      * This is a normal key.
      */
-    Normal,
+    Normal(0x0020),
     /**
      * Unknown purpose.
      */
-    Unknown0040,
+    Unknown0040(0x0040),
     /**
      * Unknown purpose.
      */
-    Unknown0080,
+    Unknown0080(0x0080),
     /**
      * Unknown purpose.
      */
-    Unknown0100,
+    Unknown0100(0x0100),
     /**
      * Unknown purpose.
      */
-    Unknown0200,
+    Unknown0200(0x0200),
     /**
      * Unknown purpose.
      */
-    Unknown0400,
+    Unknown0400(0x0400),
     /**
      * Unknown purpose.
      */
-    Unknown0800,
+    Unknown0800(0x0800),
     /**
      * Unknown purpose.
      */
-    Unknown1000,
+    Unknown1000(0x1000),
     /**
      * Unknown purpose.
      */
-    Unknown2000,
+    Unknown2000(0x2000),
     /**
      * Unknown purpose.
      */
-    Unknown4000,
+    Unknown4000(0x4000),
     /**
      * Unknown purpose.
      */
-    Unknown8000;
+    Unknown8000(0x8000);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private RegistryKeyFlags(int value) {
+        this.value = value;
+    }
 
     public static EnumSet<RegistryKeyFlags> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> (value & v.getValue()) != 0)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(RegistryKeyFlags.class)));
     }
 
     public static long valueOf(EnumSet<RegistryKeyFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
     }
 }

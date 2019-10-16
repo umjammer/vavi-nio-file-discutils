@@ -25,7 +25,7 @@ package DiscUtils.SquashFs;
 //        return prev.invoke(pos, diskLen);
 //    }
 //
-//    private List<ReadBlock> _invocationList = new ArrayList<>();
+//    private List<ReadBlock> _invocationList;
 //
 //    public static ReadBlock combine(ReadBlock a, ReadBlock b) {
 //        if (a == null)

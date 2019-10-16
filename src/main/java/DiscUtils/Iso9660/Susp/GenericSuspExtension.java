@@ -20,14 +20,23 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
 import java.nio.charset.Charset;
 
 
-public abstract class SuspExtension {
-    public abstract String getIdentifier();
+public final class GenericSuspExtension extends SuspExtension {
+    public GenericSuspExtension(String identifier) {
+        __Identifier = identifier;
+    }
 
-    public abstract SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding);
+    private String __Identifier;
 
+    public String getIdentifier() {
+        return __Identifier;
+    }
+
+    public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
+        return new GenericSystemUseEntry(name, length, version, data, offset);
+    }
 }

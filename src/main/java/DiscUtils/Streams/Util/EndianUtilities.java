@@ -167,10 +167,10 @@ public class EndianUtilities {
     public static UUID toGuidBigEndian(byte[] buffer, int offset) {
         // TODO incomplete
         byte[] temp = new byte[16];
-        writeBytesLittleEndian(toInt32BigEndian(buffer, offset + 0), temp, offset + 0);
-        writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 4), temp, offset + 4);
-        writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 6), temp, offset + 6);
-        System.arraycopy(buffer, 8, temp, offset + 8, 8);
+        writeBytesLittleEndian(toInt32BigEndian(buffer, offset + 0), temp, 0);
+        writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 4), temp, 4);
+        writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 6), temp, 6);
+        System.arraycopy(buffer, offset + 8, temp, 8, 8);
         ByteBuffer bb = ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN);
         long msb = bb.getLong();
         long lsb = bb.getLong();

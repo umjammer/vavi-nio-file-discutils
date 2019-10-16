@@ -33,55 +33,66 @@ public enum UnixFilePermissions {
      *
      * No permissions.
      */
-    None,
+    None(0),
     /**
      * Any user execute permission.
      */
-    OthersExecute,
+    OthersExecute(0x001),
     /**
      * Any user write permission.
      */
-    OthersWrite,
+    OthersWrite(0x002),
     /**
      * Any user read permission.
      */
-    OthersRead,
+    OthersRead(0x004),
     /**
      * Group execute permission.
      */
-    GroupExecute,
+    GroupExecute(0x008),
     /**
      * Group write permission.
      */
-    GroupWrite,
+    GroupWrite(0x010),
     /**
      * Group read permission.
      */
-    GroupRead,
+    GroupRead(0x020),
     /**
      * Owner execute permission.
      */
-    OwnerExecute,
+    OwnerExecute(0x040),
     /**
      * Owner write permission.
      */
-    OwnerWrite,
+    OwnerWrite(0x080),
     /**
      * Owner read permission.
      */
-    OwnerRead,
+    OwnerRead(0x100),
     /**
      * Sticky bit (meaning ill-defined).
      */
-    Sticky,
+    Sticky(0x200),
     /**
      * Set GUID on execute.
      */
-    SetGroupId,
+    SetGroupId(0x400),
     /**
      * Set UID on execute.
      */
-    SetUserId;
+    SetUserId(0x800);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private UnixFilePermissions(int value) {
+        this.value = value;
+    }
+
 
     /**
      * Any user all permissions.
@@ -100,11 +111,11 @@ public enum UnixFilePermissions {
 
     public static EnumSet<UnixFilePermissions> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> (value & v.getValue()) != 0)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(UnixFilePermissions.class)));
     }
 
     public static long valueOf(EnumSet<UnixFilePermissions> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
     }
 }

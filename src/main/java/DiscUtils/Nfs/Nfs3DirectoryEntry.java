@@ -108,7 +108,6 @@ public final class Nfs3DirectoryEntry {
         if (getFileHandle() != null) {
             getFileHandle().write(writer);
         }
-
     }
 
     public boolean equals(Object obj) {
@@ -120,17 +119,17 @@ public final class Nfs3DirectoryEntry {
             return false;
         }
 
-        return other.getCookie() == getCookie() && other.getFileAttributes().equals(getFileAttributes()) &&
-               other.getFileHandle().equals(getFileHandle()) && other.getFileId() == getFileId() &&
-               other.getName().equals(getName());
+        return other.getCookie() == getCookie() && Utilities.equals(other.getFileAttributes(), getFileAttributes())
+                && Utilities.equals(other.getFileHandle(), getFileHandle()) && other.getFileId() == getFileId()
+                && other.getName().equals(getName());
     }
 
     public int hashCode() {
         return Utilities.getCombinedHashCode(Long.hashCode(getCookie()),
-                                          getFileAttributes().hashCode(),
-                                          getFileHandle().hashCode(),
-                                          Long.hashCode(getFileId()),
-                                          getName().hashCode());
+                                             getFileAttributes().hashCode(),
+                                             getFileHandle().hashCode(),
+                                             Long.hashCode(getFileId()),
+                                             getName().hashCode());
     }
 
     public String toString() {
@@ -138,19 +137,12 @@ public final class Nfs3DirectoryEntry {
     }
 
     public long getSize() {
-        MemoryStream stream = new MemoryStream();
-        try {
+        try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             write(writer);
             return stream.getLength();
-        } finally {
-            if (stream != null)
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
-
 }

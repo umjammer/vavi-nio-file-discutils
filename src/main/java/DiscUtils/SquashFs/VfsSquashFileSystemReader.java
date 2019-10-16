@@ -74,12 +74,12 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         }
 
         if (_context.getSuperBlock().MajorVersion != 4) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported file system version: " +
-                                                             _context.getSuperBlock().MajorVersion + "." +
-                                                             _context.getSuperBlock().MinorVersion);
+            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported file system version: "
+                    + _context.getSuperBlock().MajorVersion + "." + _context.getSuperBlock().MinorVersion);
         }
 
-        // Create block caches, used to reduce the amount of I/O and decompression activity.
+        // Create block caches, used to reduce the amount of I/O and decompression
+        // activity.
         _blockCache = new BlockCache<>(_context.getSuperBlock().BlockSize, 20);
         _metablockCache = new BlockCache<>(MetadataBufferSize, 20);
         _context.setReadBlock(this::readBlock);
@@ -166,7 +166,6 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
             return UnixFileType.Link;
         default:
             throw new UnsupportedOperationException("Unrecognized inode type: " + inodeType);
-
         }
     }
 
@@ -222,19 +221,14 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
             }
 
             StreamUtilities.readExact(stream, _ioBuffer, 0, readLen);
-            ZlibStream zlibStream = new ZlibStream(new MemoryStream(_ioBuffer, 0, readLen, false),
-                                                   CompressionMode.Decompress,
-                                                   true);
-            try {
+
+            try (ZlibStream zlibStream = new ZlibStream(new MemoryStream(_ioBuffer, 0, readLen, false),
+                                                        CompressionMode.Decompress,
+                                                        true)) {
                 block.setAvailable(StreamUtilities
                         .readMaximum(zlibStream, block.getData(), 0, _context.getSuperBlock().BlockSize));
-            } finally {
-                if (zlibStream != null)
-                    try {
-                        zlibStream.close();
-                    } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                    }
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         } else {
             StreamUtilities.readExact(stream, block.getData(), 0, readLen);
@@ -266,18 +260,13 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
             }
 
             StreamUtilities.readExact(stream, _ioBuffer, 0, readLen);
-            ZlibStream zlibStream = new ZlibStream(new MemoryStream(_ioBuffer, 0, readLen, false),
-                                                   CompressionMode.Decompress,
-                                                   true);
-            try {
+
+            try (ZlibStream zlibStream = new ZlibStream(new MemoryStream(_ioBuffer, 0, readLen, false),
+                                                        CompressionMode.Decompress,
+                                                        true)) {
                 block.setAvailable(StreamUtilities.readMaximum(zlibStream, block.getData(), 0, MetadataBufferSize));
-            } finally {
-                if (zlibStream != null)
-                    try {
-                        zlibStream.close();
-                    } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                    }
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         } else {
             block.setAvailable(StreamUtilities.readMaximum(stream, block.getData(), 0, readLen));

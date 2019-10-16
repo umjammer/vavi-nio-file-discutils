@@ -97,7 +97,7 @@ public class ZeroStream extends MappedStream {
         }
 
         int numToClear = (int) Math.min(count, _length - _position);
-        Arrays.fill(buffer, offset, numToClear, (byte) 0);
+        Arrays.fill(buffer, offset, offset + numToClear, (byte) 0);
         _position += numToClear;
         return numToClear;
     }

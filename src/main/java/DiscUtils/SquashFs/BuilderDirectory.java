@@ -55,6 +55,8 @@ public final class BuilderDirectory extends BuilderNode {
         }
 
         Entry newEntry = new Entry();
+        newEntry.Name = name;
+        newEntry.Node = node;
         _children.add(newEntry);
         _index.put(name, newEntry);
     }
@@ -69,7 +71,7 @@ public final class BuilderDirectory extends BuilderNode {
     }
 
     public void reset() {
-        for (Entry entry  : _children) {
+        for (Entry entry : _children) {
             entry.Node.reset();
         }
         _inode = new DirectoryInode();
@@ -81,7 +83,7 @@ public final class BuilderDirectory extends BuilderNode {
         }
 
         Collections.sort(_children);
-        for (Entry entry  : _children) {
+        for (Entry entry : _children) {
             entry.Node.write(context);
         }
         writeDirectory(context);
@@ -91,40 +93,55 @@ public final class BuilderDirectory extends BuilderNode {
 
     private void writeDirectory(BuilderContext context) {
         MetadataRef startPos = context.getDirectoryWriter().getPosition();
+
         int currentChild = 0;
         int numDirs = 0;
         while (currentChild < _children.size()) {
             long thisBlock = _children.get(currentChild).Node.getInodeRef().getBlock();
             int firstInode = _children.get(currentChild).Node.getInodeNumber();
+
             int count = 1;
-            while (currentChild + count < _children.size() &&
-                   _children.get(currentChild + count).Node.getInodeRef().getBlock() == thisBlock &&
-                   _children.get(currentChild + count).Node.getInodeNumber() - firstInode < 0x7FFF) {
+            while (currentChild + count < _children.size()
+                    && _children.get(currentChild + count).Node.getInodeRef().getBlock() == thisBlock
+                    && _children.get(currentChild + count).Node.getInodeNumber() - firstInode < 0x7FFF) {
                 ++count;
             }
+
             DirectoryHeader hdr = new DirectoryHeader();
+            hdr.Count = count - 1;
+            hdr.InodeNumber = firstInode;
+            hdr.StartBlock = (int) thisBlock;
+
             hdr.writeTo(context.getIoBuffer(), 0);
             context.getDirectoryWriter().write(context.getIoBuffer(), 0, (int) hdr.getSize());
+
             for (int i = 0; i < count; ++i) {
                 Entry child = _children.get(currentChild + i);
                 DirectoryRecord record = new DirectoryRecord();
+                record.Offset = (short) child.Node.getInodeRef().getOffset();
+                record.InodeNumber = (short) (child.Node.getInodeNumber() - firstInode);
+                record.Type = child.Node.getInode().Type;
+                record.Name = child.Name;
+
                 record.writeTo(context.getIoBuffer(), 0);
                 context.getDirectoryWriter().write(context.getIoBuffer(), 0, (int) record.getSize());
-                if (child.Node.getInode().Type == InodeType.Directory ||
-                    child.Node.getInode().Type == InodeType.ExtendedDirectory) {
+
+                if (child.Node.getInode().Type == InodeType.Directory
+                        || child.Node.getInode().Type == InodeType.ExtendedDirectory) {
                     ++numDirs;
                 }
-
             }
+
             currentChild += count;
         }
+
         long size = context.getDirectoryWriter().distanceFrom(startPos);
         if (size > Integer.MAX_VALUE) {
             throw new UnsupportedOperationException("Writing large directories");
         }
 
-        setNumLinks(numDirs + 2);
-        // +1 for self, +1 for parent
+        setNumLinks(numDirs + 2); // +1 for self, +1 for parent
+
         _inode.setStartBlock((int) startPos.getBlock());
         _inode.setOffset((short) startPos.getOffset());
         _inode.setFileSize((int) size + 3);
@@ -136,7 +153,7 @@ public final class BuilderDirectory extends BuilderNode {
         _inode.Type = InodeType.Directory;
         setInodeRef(context.getInodeWriter().getPosition());
         _inode.writeTo(context.getIoBuffer(), 0);
-        context.getInodeWriter().write(context.getIoBuffer(), 0,(int)  _inode.getSize());
+        context.getInodeWriter().write(context.getIoBuffer(), 0, (int) _inode.getSize());
     }
 
     private static class Entry implements Comparable<Entry> {

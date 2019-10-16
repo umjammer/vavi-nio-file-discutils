@@ -43,6 +43,7 @@ public final class BinHeader implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         int sig = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         if (sig != Signature) {
+System.err.printf("%x\n", sig);
             throw new IOException("Invalid signature for registry bin");
         }
 

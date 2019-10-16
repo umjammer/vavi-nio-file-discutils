@@ -66,7 +66,7 @@ public class PartitionRecord extends DeviceRecord {
     public void getBytes(byte[] data, int offset) {
         writeHeader(data, offset);
         if (getType() == 5) {
-            Arrays.fill(data, offset + 0x10, 0x38, (byte) 0);
+            Arrays.fill(data, offset + 0x10, offset + 0x10 + 0x38, (byte) 0);
         } else if (getType() == 6) {
             EndianUtilities.writeBytesLittleEndian(getPartitionType(), data, offset + 0x24);
             if (getPartitionType() == 1) {
@@ -90,7 +90,7 @@ public class PartitionRecord extends DeviceRecord {
 
         if (getType() == 6) {
             if (getPartitionType() == 1) {
-                return String.format("(disk:{0:X2}{1:X2}{2:X2}{3:X2} part-offset:{4})",
+                return String.format("(disk:%02x%02x%02x%02x part-offset:%d)",
                                      getDiskIdentity()[0],
                                      getDiskIdentity()[1],
                                      getDiskIdentity()[2],
@@ -100,7 +100,7 @@ public class PartitionRecord extends DeviceRecord {
 
             UUID diskGuid = EndianUtilities.toGuidLittleEndian(getDiskIdentity(), 0);
             UUID partitionGuid = EndianUtilities.toGuidLittleEndian(getPartitionIdentity(), 0);
-            return String.format("(disk:{0} partition:{1})", diskGuid, partitionGuid);
+            return String.format("(disk:%s partition:%d)", diskGuid, partitionGuid);
         }
 
         if (getType() == 8) {

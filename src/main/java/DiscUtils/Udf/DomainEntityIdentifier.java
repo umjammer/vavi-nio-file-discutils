@@ -30,7 +30,7 @@ public class DomainEntityIdentifier extends EntityIdentifier {
         String major = String.format("%02x", Suffix[1]);
         String minor = String.format("%02x", Suffix[0]);
         DomainFlags flags = DomainFlags.valueOf(Suffix[2]);
-        return String.format("{0} [UDF {1}.{2} : Flags {3}]", Identifier, major, minor, flags);
+        return String.format("%s [UDF %d.%d : Flags %s]", Identifier, major, minor, flags);
     }
 
     private enum DomainFlags {

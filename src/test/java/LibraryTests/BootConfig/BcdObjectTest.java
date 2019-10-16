@@ -22,6 +22,8 @@
 
 package LibraryTests.BootConfig;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,6 +38,7 @@ import DiscUtils.Registry.RegistryHive;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 
 public class BcdObjectTest {
+    @Test
     public void addElement() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
@@ -46,6 +49,7 @@ public class BcdObjectTest {
         assertEquals("\\a\\path\\to\\nowhere", obj.getElement(WellKnownElement.LibraryApplicationPath).getValue().toString());
     }
 
+    @Test
     public void addElement_WrongType() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
@@ -55,6 +59,7 @@ public class BcdObjectTest {
         });
     }
 
+    @Test
     public void removeElement() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
@@ -64,6 +69,7 @@ public class BcdObjectTest {
         assertFalse(obj.hasElement(WellKnownElement.LibraryApplicationPath));
     }
 
+    @Test
     public void removeElement_NonExistent() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
@@ -71,10 +77,11 @@ public class BcdObjectTest {
         obj.removeElement(WellKnownElement.LibraryApplicationPath);
     }
 
+    @Test
     public void friendlyName() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
-        assertEquals(String.format("%d", obj.getIdentity()), obj.getFriendlyName()); // "B"
+        assertEquals(String.format("{%s}", obj.getIdentity()), obj.getFriendlyName());
     }
 }

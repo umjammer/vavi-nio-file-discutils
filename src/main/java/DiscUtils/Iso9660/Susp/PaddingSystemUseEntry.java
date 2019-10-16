@@ -20,14 +20,10 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-package DiscUtils.Iso9660;
+package DiscUtils.Iso9660.Susp;
 
-public final class GenericSystemUseEntry extends SystemUseEntry {
-    public byte[] Data;
-
-    public GenericSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
-        checkAndSetCommonProperties(name, length, version, (byte) 4, (byte) 0xFF);
-        Data = new byte[length - 4];
-        System.arraycopy(data, offset + 4, Data, 0, length - 4);
+public final class PaddingSystemUseEntry extends SystemUseEntry {
+    public PaddingSystemUseEntry(String name, byte length, byte version) {
+        checkAndSetCommonProperties(name, length, version, (byte) 4, (byte) 1);
     }
 }

@@ -126,10 +126,11 @@ public class IsoUtilities {
                                   boolean canTruncate) {
         String paddedString = pad ? str + new String(new char[numBytes]).replace('\0', ' ') : str;
         // Assumption: never less than one byte per character
-        byte[] bytes = paddedString.substring(0, paddedString.length()).getBytes(enc);
+        byte[] bytes = paddedString.substring(0, str.length()).getBytes(enc);
         if (!canTruncate && numBytes < bytes.length) {
             throw new IOException("Failed to write entire string");
         }
+        System.arraycopy(bytes, 0, buffer, offset, bytes.length);
 
         return bytes.length;
     }
@@ -141,7 +142,6 @@ public class IsoUtilities {
                   (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') || (str.charAt(i) == '_'))) {
                 return false;
             }
-
         }
         return true;
     }
@@ -151,7 +151,6 @@ public class IsoUtilities {
             if (!isValidDChar(str.charAt(i))) {
                 return false;
             }
-
         }
         return true;
     }
@@ -166,7 +165,6 @@ public class IsoUtilities {
                   (str.charAt(i) == '_') || (str.charAt(i) == '.') || (str.charAt(i) == ';'))) {
                 return false;
             }
-
         }
         return true;
     }
@@ -193,7 +191,7 @@ public class IsoUtilities {
             parts[0] = name.substring(0, endOfFilePart);
             if (name.contains(";")) {
                 int verSep = name.indexOf(';', endOfFilePart + 1);
-                parts[1] = name.substring(endOfFilePart + 1, verSep - (endOfFilePart + 1));
+                parts[1] = name.substring(endOfFilePart + 1, (endOfFilePart + 1) + verSep - (endOfFilePart + 1));
                 parts[2] = name.substring(verSep + 1);
             } else {
                 parts[1] = name.substring(endOfFilePart + 1);
@@ -244,7 +242,7 @@ public class IsoUtilities {
     // In case the ISO has a bad date encoded, we'll just fall back to using a fixed date
     public static void toDirectoryTimeFromUTC(byte[] data, int offset, long dateTime_) {
         if (dateTime_ == Long.MIN_VALUE) {
-            Arrays.fill(data, offset, 7, (byte) 0);
+            Arrays.fill(data, offset, offset + 7, (byte) 0);
         } else {
             ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime_), ZoneId.of("UTC")); // TODO
             if (dateTime.getYear() < 1900) {
@@ -278,12 +276,12 @@ public class IsoUtilities {
         // Work around bugs in burning software that may use zero bytes (rather than '0' characters)
         strForm = strForm.replace('\0', '0');
         int year = safeParseInt(1, 9999, strForm.substring(0, 4));
-        int month = safeParseInt(1, 12, strForm.substring(4, 2));
-        int day = safeParseInt(1, 31, strForm.substring(6, 2));
-        int hour = safeParseInt(0, 23, strForm.substring(8, 2));
-        int min = safeParseInt(0, 59, strForm.substring(10, 2));
-        int sec = safeParseInt(0, 59, strForm.substring(12, 2));
-        int hundredths = safeParseInt(0, 99, strForm.substring(14, 2));
+        int month = safeParseInt(1, 12, strForm.substring(4, 4 + 2));
+        int day = safeParseInt(1, 31, strForm.substring(6, 6 + 2));
+        int hour = safeParseInt(0, 23, strForm.substring(8, 8 + 2));
+        int min = safeParseInt(0, 59, strForm.substring(10, 10 + 2));
+        int sec = safeParseInt(0, 59, strForm.substring(12, 12 + 2));
+        int hundredths = safeParseInt(0, 99, strForm.substring(14, 14 + 2));
         try {
             Instant time = ZonedDateTime.of(year, month, day, hour, min, sec, hundredths * 10, ZoneId.of("UTC")).toInstant();
             return time.minus(Duration.ofMinutes(15 * data[offset + 16])).toEpochMilli();
@@ -301,20 +299,19 @@ public class IsoUtilities {
             return;
         }
 
-        String strForm = new SimpleDateFormat("yyyyMMddHHmmssff").format(dateTime);
+        String strForm = new SimpleDateFormat("yyyyMMddHHmmssSS").format(dateTime);
         EndianUtilities.stringToBytes(strForm, buffer, offset, 16);
         buffer[offset + 16] = 0;
     }
 
     public static void encodingToBytes(Charset enc, byte[] data, int offset) {
-        Arrays.fill(data, offset, 32, (byte) 0);
+        Arrays.fill(data, offset, offset + 32, (byte) 0);
         if (enc == Charset.forName("ASCII")) {
-        } else // Nothing to do
-        if (enc == Charset.forName("BigEndianUnicode")) {
+            // Nothing to do
+        } else if (enc == Charset.forName("UTF-16BE")) {
             data[offset + 0] = 0x25;
             data[offset + 1] = 0x2F;
             data[offset + 2] = 0x45;
-
         } else {
             throw new IllegalArgumentException("Unrecognized character encoding");
         }
@@ -325,7 +322,7 @@ public class IsoUtilities {
         if (data[offset + 0] == 0x25 && data[offset + 1] == 0x2F &&
             (data[offset + 2] == 0x40 || data[offset + 2] == 0x43 || data[offset + 2] == 0x45)) {
             // I.e. this is a joliet disc!
-            enc = Charset.forName("BigEndianUnicode");
+            enc = Charset.forName("UTF-16BE");
         }
 
         return enc;

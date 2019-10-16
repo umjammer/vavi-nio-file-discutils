@@ -99,7 +99,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         doOperation((s, opOffset, opCount) -> {
             s.clear(opCount);
         }, (buffer, offset, opOffset, opCount) -> {
-            Arrays.fill(buffer, offset, opCount, (byte) 0);
+            Arrays.fill(buffer, offset, offset + opCount, (byte) 0);
         }, count);
     }
 
@@ -170,7 +170,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 //            }
 //        }
 //
-//        private List<ModifyStream> _invocationList = new ArrayList<>();
+//        private List<ModifyStream> _invocationList;
 //
 //        public static ModifyStream combine(ModifyStream a, ModifyStream b) {
 //            if (a == null)
@@ -225,7 +225,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 //            }
 //        }
 //
-//        private List<ModifyBuffer> _invocationList = new ArrayList<>();
+//        private List<ModifyBuffer> _invocationLis;
 //
 //        public static ModifyBuffer combine(ModifyBuffer a, ModifyBuffer b) {
 //            if (a == null)

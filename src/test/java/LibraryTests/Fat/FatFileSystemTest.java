@@ -43,7 +43,6 @@ import DiscUtils.Core.FileSystemManager;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.FloppyDiskType;
 import DiscUtils.Core.Geometry;
-import DiscUtils.Core.InvalidFileSystemException;
 import DiscUtils.Core.CoreCompat.EncodingHelper;
 import DiscUtils.Fat.FatFileSystem;
 import DiscUtils.Streams.SparseMemoryStream;

@@ -68,7 +68,7 @@ public final class Metadata {
 //            return prev.invoke(buffer, offset);
 //        }
 //
-//        private List<Reader<T>> _invocationList = new ArrayList<>();
+//        private List<Reader<T>> _invocationList;
 //
 //        public static <T> Reader<T> combine(Reader<T> a, Reader<T> b) {
 //            if (a == null)
@@ -108,7 +108,6 @@ public final class Metadata {
         T invoke(byte[] buffer, int offset);
 
 //        List<Reader<T>> getInvocationList();
-
     }
 
 //    private static class __MultiWriter<T> implements Writer<T> {
@@ -122,7 +121,7 @@ public final class Metadata {
 //            }
 //        }
 //
-//        private List<Writer<T>> _invocationList = new ArrayList<>();
+//        private List<Writer<T>> _invocationList;
 //
 //        public static <T> Writer<T> combine(Writer<T> a, Writer<T> b) {
 //            if (a == null)
@@ -163,7 +162,6 @@ public final class Metadata {
         void invoke(T val, byte[] buffer, int offset);
 
 //        List<Writer<T>> getInvocationList();
-
     }
 
     private MetadataTable __Table;
@@ -316,7 +314,7 @@ public final class Metadata {
         MetadataEntryKey key = new MetadataEntryKey(itemId, isUser);
         if (getTable().Entries.containsKey(key)) {
             _regionStream.setPosition(getTable().Entries.get(key).Offset);
-            byte[] data = StreamUtilities.readExact(_regionStream, ReflectionHelper.sizeOf(Class.class.cast(reader.getClass().getGenericInterfaces()[0].getClass())));
+            byte[] data = StreamUtilities.readExact(_regionStream, ReflectionHelper.sizeOf(UUID.class)); // uuid hard coded
             return reader.invoke(data, 0);
         }
 

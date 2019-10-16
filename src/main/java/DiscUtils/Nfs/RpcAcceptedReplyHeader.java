@@ -25,6 +25,7 @@ package DiscUtils.Nfs;
 
 import DiscUtils.Core.Internal.Utilities;
 
+
 public class RpcAcceptedReplyHeader {
     public RpcAcceptStatus AcceptStatus = RpcAcceptStatus.Success;
 
@@ -62,7 +63,8 @@ public class RpcAcceptedReplyHeader {
             return false;
         }
 
-        return other.Verifier.equals(Verifier) && other.AcceptStatus == AcceptStatus && other.MismatchInfo.equals(MismatchInfo);
+        return Utilities.equals(other.Verifier, Verifier) && other.AcceptStatus == AcceptStatus
+                && Utilities.equals(other.MismatchInfo, MismatchInfo);
     }
 
     public int hashCode() {

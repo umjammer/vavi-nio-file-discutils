@@ -156,13 +156,13 @@ public class NfsFileSystem extends DiscFileSystem {
 
             Nfs3FileAttributes sourceAttrs = _client.getAttributes(sourceFileHandle);
             if ((sourceAttrs.Type.ordinal() & Nfs3FileType.Directory.ordinal()) != 0) {
-                throw new FileNotFoundException(String.format("The path '{0}' is not a file", sourceFile));
+                throw new FileNotFoundException(String.format("The path '%s' is not a file", sourceFile));
             }
 
             Nfs3FileHandle destFileHandle = _client.lookup(destParent, destFileName);
             if (destFileHandle != null) {
                 if (overwrite == false) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(String.format("The destination file '{0}' already exists",
+                    throw new moe.yo3explorer.dotnetio4j.IOException(String.format("The destination file '%s' already exists",
                                                                                    destinationFile));
                 }
             }
@@ -486,7 +486,7 @@ public class NfsFileSystem extends DiscFileSystem {
                 EnumSet<Nfs3AccessPermissions> actualPerms = _client.access(handle, requested);
                 if (actualPerms != requested) {
                     throw new moe.yo3explorer.dotnetio4j.IOException(String
-                            .format("Access denied opening '{0}'. Requested permission '{1}', got '{2}'",
+                            .format("Access denied opening '%s'. Requested permission '%s', got '%s'",
                                     path,
                                     requested,
                                     actualPerms));

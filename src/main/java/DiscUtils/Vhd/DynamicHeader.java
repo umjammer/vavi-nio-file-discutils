@@ -26,6 +26,8 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.UUID;
 
+import vavi.util.StringUtil;
+
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
 import moe.yo3explorer.dotnetio4j.Stream;
@@ -73,6 +75,7 @@ public class DynamicHeader {
         ParentTimestamp = Footer.EpochUtc;
         ParentUnicodeName = "";
         ParentLocators = new ParentLocator[8];
+        ParentUniqueId = new UUID(0, 0); // TODO
         for (int i = 0; i < 8; ++i) {
             ParentLocators[i] = new ParentLocator();
         }
@@ -106,7 +109,7 @@ public class DynamicHeader {
         result.Checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
         result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
         result.ParentTimestamp = EndianUtilities.toUInt32BigEndian(data, offset + 56);
-        result.ParentUnicodeName = new String(data, offset + 64, 512, Charset.forName("utf-8")).replaceFirst("\0*$", "");
+        result.ParentUnicodeName = new String(data, offset + 64, 512, Charset.forName("UTF-16BE")).replaceFirst("\0*$", "");
         result.ParentLocators = new ParentLocator[8];
         for (int i = 0; i < 8; ++i) {
             result.ParentLocators[i] = ParentLocator.fromBytes(data, offset + 576 + i * 24);
@@ -125,20 +128,21 @@ public class DynamicHeader {
         EndianUtilities.writeBytesBigEndian(ParentUniqueId, data, offset + 40);
         EndianUtilities.writeBytesBigEndian(ParentTimestamp, data, offset + 56);
         EndianUtilities.writeBytesBigEndian(0, data, offset + 60);
-        Arrays.fill(data, offset + 64, 512, (byte) 0);
-        System.arraycopy(ParentUnicodeName
-                .getBytes(Charset.forName("utf-8")), 0, data, offset + 64, ParentUnicodeName.length());
+        Arrays.fill(data, offset + 64, offset + 64 + 512, (byte) 0);
+        byte[] bytes = ParentUnicodeName.getBytes(Charset.forName("UTF-16BE"));
+        System.arraycopy(bytes, 0, data, offset + 64, bytes.length);
         for (int i = 0; i < 8; ++i) {
             ParentLocators[i].toBytes(data, offset + 576 + i * 24);
         }
-        Arrays.fill(data, offset + 1024 - 256, 256, (byte) 0);
+        Arrays.fill(data, offset + 1024 - 256, offset + 1024 - 256 + 256, (byte) 0);
     }
 
     public boolean isValid() {
-        return (HeaderCookie.equals(Cookie)) && isChecksumValid() && HeaderVersion == Version1;
+        return HeaderCookie.equals(Cookie) && isChecksumValid() && HeaderVersion == Version1;
     }
 
     public boolean isChecksumValid() {
+System.err.println(Checksum + ", " + calculateChecksum()); // TODO
         return Checksum == calculateChecksum();
     }
 
@@ -152,10 +156,14 @@ public class DynamicHeader {
     }
 
     private int calculateChecksum() {
+byte[] tmp = new byte[1024];
+toBytes(tmp, 0);
+System.err.println("O:\n" + StringUtil.getDump(tmp, 128));
         DynamicHeader copy = new DynamicHeader(this);
         copy.Checksum = 0;
         byte[] asBytes = new byte[1024];
         copy.toBytes(asBytes, 0);
+System.err.println("C:\n" + StringUtil.getDump(asBytes, 128));
         int checksum = 0;
         for (int value : asBytes) {
             checksum += value;
@@ -163,5 +171,4 @@ public class DynamicHeader {
         checksum = ~checksum;
         return checksum;
     }
-
 }

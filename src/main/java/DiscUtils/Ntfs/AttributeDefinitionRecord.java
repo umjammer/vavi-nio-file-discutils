@@ -46,7 +46,7 @@ public final class AttributeDefinitionRecord {
     public AttributeType Type = AttributeType.None;
 
     public void read(byte[] buffer, int offset) {
-        Name = new String(buffer, offset + 0, 128, Charset.forName("Unicode")).replaceFirst("^\0*", "")
+        Name = new String(buffer, offset + 0, 128, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "")
                 .replaceFirst("\0*$", "");
         Type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x80));
         DisplayRule = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x84);
@@ -57,7 +57,7 @@ public final class AttributeDefinitionRecord {
     }
 
     public void write(byte[] buffer, int offset) {
-        byte[] bytes = Name.getBytes(Charset.forName("Unicode"));
+        byte[] bytes = Name.getBytes(Charset.forName("UTF-16LE"));
         System.arraycopy(bytes, 0, buffer, offset + 0, bytes.length);
         EndianUtilities.writeBytesLittleEndian(Type.ordinal(), buffer, offset + 0x80);
         EndianUtilities.writeBytesLittleEndian(DisplayRule, buffer, offset + 0x84);

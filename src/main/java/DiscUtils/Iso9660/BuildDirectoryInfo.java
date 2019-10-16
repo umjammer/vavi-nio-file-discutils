@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,7 +124,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
             int recordSize = m.getDirectoryRecordSize(enc);
             if (pos % IsoUtilities.SectorSize + recordSize > IsoUtilities.SectorSize) {
                 int padLength = IsoUtilities.SectorSize - pos % IsoUtilities.SectorSize;
-                Arrays.fill(buffer, offset + pos, padLength, (byte) 0);
+                Arrays.fill(buffer, offset + pos, offset + pos + padLength, (byte) 0);
                 pos += padLength;
             }
 
@@ -131,7 +132,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
         }
         // Ensure final padding data is zero'd
         int finalPadLength = MathUtilities.roundUp(pos, IsoUtilities.SectorSize) - pos;
-        Arrays.fill(buffer, offset + pos, finalPadLength, (byte) 0);
+        Arrays.fill(buffer, offset + pos, offset + pos + finalPadLength, (byte) 0);
         return pos + finalPadLength;
     }
 
@@ -147,7 +148,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
         dr.LocationOfExtent = locationTable.get(m);
         dr.DataLength = (int) m.getDataSize(dataEnc);
         dr.RecordingDateAndTime = m.getCreationTime();
-        dr.Flags.add(m instanceof BuildDirectoryInfo ? FileFlags.Directory : FileFlags.None);
+        dr.Flags = EnumSet.of(m instanceof BuildDirectoryInfo ? FileFlags.Directory : FileFlags.None);
         return dr.writeTo(buffer, offset, nameEnc);
     }
 

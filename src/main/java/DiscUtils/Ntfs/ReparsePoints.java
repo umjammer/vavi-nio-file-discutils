@@ -90,7 +90,7 @@ public class ReparsePoints {
          * /Utilities.WriteBytesLittleEndian((int)0, buffer, offset + 12);
          */
         public String toString() {
-            return String.format("{0:x}:", Tag) + File;
+            return String.format("%x:", Tag) + File;
         }
     }
 

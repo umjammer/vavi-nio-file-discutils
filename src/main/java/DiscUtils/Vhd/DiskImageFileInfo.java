@@ -145,7 +145,7 @@ public class DiskImageFileInfo {
                 ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.PlatformCode)) {
                 _vhdStream.setPosition(pl.PlatformDataOffset);
                 byte[] buffer = StreamUtilities.readExact(_vhdStream, pl.PlatformDataLength);
-                vals.add(new String(buffer, Charset.forName("utf-8")));
+                vals.add(new String(buffer, Charset.forName("UTF-16LE")));
             }
 
         }

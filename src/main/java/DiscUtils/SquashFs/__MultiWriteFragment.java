@@ -31,7 +31,7 @@ package DiscUtils.SquashFs;
 //        return result;
 //    }
 //
-//    private List<WriteFragment> _invocationList = new ArrayList<>();
+//    private List<WriteFragment> _invocationList;
 //
 //    public static WriteFragment combine(WriteFragment a, WriteFragment b) {
 //        if (a == null)

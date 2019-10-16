@@ -36,6 +36,7 @@ public class Nfs3FileHandleTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileHandle attributes = new Nfs3FileHandle();
+        attributes.setValue(new byte[] { 0x01 });
         Nfs3FileHandle clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

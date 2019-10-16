@@ -186,7 +186,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
                 int toClear = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
                 if (_activeStream.isClusterStored(vcn)) {
                     _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
-                    Arrays.fill(_ioBuffer, (int) clusterOffset, toClear, (byte) 0);
+                    Arrays.fill(_ioBuffer, (int) clusterOffset, (int) clusterOffset + toClear, (byte) 0);
                     releasedClusters -= _activeStream.writeClusters(vcn, 1, _ioBuffer, 0);
                 }
 
@@ -238,7 +238,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
                 int toClear = (int) Math.min(_bytesPerCluster - clusterOffset, pos - initDataLen);
                 if (_activeStream.isClusterStored(vcn)) {
                     _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
-                    Arrays.fill(_ioBuffer, clusterOffset, toClear, (byte) 0);
+                    Arrays.fill(_ioBuffer, clusterOffset, clusterOffset + toClear, (byte) 0);
                     clustersAllocated += _activeStream.writeClusters(vcn, 1, _ioBuffer, 0);
                 }
 

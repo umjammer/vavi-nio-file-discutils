@@ -22,7 +22,7 @@
 
 package DiscUtils.Iso9660.RockRidge;
 
-import DiscUtils.Iso9660.SystemUseEntry;
+import DiscUtils.Iso9660.Susp.SystemUseEntry;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
