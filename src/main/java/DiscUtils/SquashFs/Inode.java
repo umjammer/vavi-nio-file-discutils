@@ -22,6 +22,8 @@
 
 package DiscUtils.SquashFs;
 
+import java.time.Instant;
+
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import moe.yo3explorer.dotnetio4j.IOException;
@@ -57,7 +59,7 @@ public abstract class Inode implements IByteArraySerializable {
         Mode = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
         UidKey = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         GidKey = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        ModificationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8) * 1000; // TODO zone?
+        ModificationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
         InodeNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         return 16;
     }
@@ -67,9 +69,7 @@ public abstract class Inode implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(Mode, buffer, offset + 2);
         EndianUtilities.writeBytesLittleEndian(UidKey, buffer, offset + 4);
         EndianUtilities.writeBytesLittleEndian(GidKey, buffer, offset + 6);
-        EndianUtilities.writeBytesLittleEndian(ModificationTime / 1000, // TODO zone?
-                                               buffer,
-                                               offset + 8);
+        EndianUtilities.writeBytesLittleEndian(Instant.ofEpochMilli(ModificationTime).getEpochSecond(), buffer, offset + 8);
         EndianUtilities.writeBytesLittleEndian(InodeNumber, buffer, offset + 12);
     }
 

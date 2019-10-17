@@ -47,7 +47,7 @@ public class SampleDataTests {
             assertEquals("Swap", filesystem.getName());
 
             DiscFileSystem swap = filesystem.open(volume);
-            assertTrue(SwapFileSystem.class.isInstance(swap)); // TODO
+            assertTrue(SwapFileSystem.class.isInstance(swap));
 
             assertEquals(0, swap.getAvailableSpace());
             assertEquals(10737414144L, swap.getSize());

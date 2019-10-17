@@ -23,49 +23,32 @@
 package DiscUtils.Fat;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 public enum FatAttributes {
-    __dummyEnum__0,
-    ReadOnly,
-    Hidden,
-    __dummyEnum__1,
-    System,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
-    VolumeId,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    __dummyEnum__11,
-    Directory,
-    __dummyEnum__12,
-    __dummyEnum__13,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    __dummyEnum__17,
-    __dummyEnum__18,
-    __dummyEnum__19,
-    __dummyEnum__20,
-    __dummyEnum__21,
-    __dummyEnum__22,
-    __dummyEnum__23,
-    __dummyEnum__24,
-    __dummyEnum__25,
-    __dummyEnum__26,
-    Archive;
+    ReadOnly(0x01),
+    Hidden(0x02),
+    System(0x04),
+    VolumeId(0x08),
+    Directory(0x10),
+    Archive(0x20);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private FatAttributes(int value) {
+        this.value = value;
+    }
 
     public static EnumSet<FatAttributes> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> (value & v.getValue()) != 0)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FatAttributes.class)));
     }
 
@@ -73,11 +56,15 @@ public enum FatAttributes {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
     }
 
-    public static Map<String, Object> convert(EnumSet<FatAttributes> flags) {
-        return Collections.EMPTY_MAP; // TODO
+    // TODO name()
+    public static Map<String, Object> toMap(EnumSet<FatAttributes> flags) {
+        return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
     }
 
-    public static EnumSet<FatAttributes> convert(Map<String, Object> value) {
-        return EnumSet.noneOf(FatAttributes.class); // TODO
+    // TODO name()
+    public static EnumSet<FatAttributes> toEnumSet(Map<String, Object> flags) {
+        return Arrays.stream(values())
+                .filter(v -> Boolean.class.cast(flags.get(v.name())))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FatAttributes.class)));
     }
 }

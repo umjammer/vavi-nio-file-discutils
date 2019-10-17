@@ -23,8 +23,9 @@
 package DiscUtils.Core;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.EnumSet;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.Stream;
@@ -57,23 +58,27 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     /**
      * Gets a value indicating whether the file exists.
      */
-    public boolean getExists() throws IOException {
-        return getFileSystem().fileExists(getPath());
+    public boolean exists() {
+        try {
+            return getFileSystem().fileExists(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
      * Gets or sets a value indicating whether the file is read-only.
      */
-    public boolean getIsReadOnly() throws IOException {
-        return Boolean.class.cast(getAttributes().get("dos:readOnly"));
+    public boolean isReadOnly() {
+        return getAttributes().contains(FileAttributes.ReadOnly);
     }
 
-    public void setIsReadOnly(boolean value) throws IOException {
-        Map<String, Object> atributes = getAttributes();
+    public void setReadOnly(boolean value) {
+        EnumSet<FileAttributes> atributes = getAttributes();
         if (value) {
-            atributes.put("dos:readOnly", true);
+            atributes.add(FileAttributes.ReadOnly);
         } else {
-            atributes.put("dos:readOnly", false);
+            atributes.remove(FileAttributes.ReadOnly);
         }
         setAttributes(atributes);
     }
@@ -81,15 +86,23 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     /**
      * Gets the length of the current file in bytes.
      */
-    public long getLength() throws IOException {
-        return getFileSystem().getFileLength(getPath());
+    public long getLength() {
+        try {
+            return getFileSystem().getFileLength(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
      * Deletes a file.
      */
-    public void delete() throws IOException {
-        getFileSystem().deleteFile(getPath());
+    public void delete() {
+        try {
+            getFileSystem().deleteFile(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -101,7 +114,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @return The newly created writer.
      */
-    public StreamWriter appendText() throws IOException {
+    public StreamWriter appendText() {
         return new StreamWriter(open(FileMode.Append));
     }
 
@@ -110,7 +123,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @param destinationFileName The destination file.
      */
-    public void copyTo(String destinationFileName) throws IOException {
+    public void copyTo(String destinationFileName) {
         copyTo(destinationFileName, false);
     }
 
@@ -121,8 +134,12 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      * @param destinationFileName The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
-    public void copyTo(String destinationFileName, boolean overwrite) throws IOException {
-        getFileSystem().copyFile(getPath(), destinationFileName, overwrite);
+    public void copyTo(String destinationFileName, boolean overwrite) {
+        try {
+            getFileSystem().copyFile(getPath(), destinationFileName, overwrite);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -130,7 +147,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @return The newly created stream.
      */
-    public Stream create() throws IOException {
+    public Stream create() {
         return open(FileMode.Create);
     }
 
@@ -141,7 +158,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @return A new stream writer that can write to the file contents.
      */
-    public StreamWriter createText() throws IOException {
+    public StreamWriter createText() {
         return new StreamWriter(open(FileMode.Create));
     }
 
@@ -150,8 +167,12 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @param destinationFileName The new name of the file.
      */
-    public void moveTo(String destinationFileName) throws IOException {
-        getFileSystem().moveFile(getPath(), destinationFileName);
+    public void moveTo(String destinationFileName) {
+        try {
+            getFileSystem().moveFile(getPath(), destinationFileName);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -162,8 +183,12 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *         {@code FileMode.Open}
      *         .
      */
-    public Stream open(FileMode mode) throws IOException {
-        return getFileSystem().openFile(getPath(), mode);
+    public Stream open(FileMode mode) {
+        try {
+            return getFileSystem().openFile(getPath(), mode);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -177,8 +202,12 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *         {@code FileAccess.Read}
      *         .
      */
-    public Stream open(FileMode mode, FileAccess access) throws IOException {
-        return getFileSystem().openFile(getPath(), mode, access);
+    public Stream open(FileMode mode, FileAccess access) {
+        try {
+            return getFileSystem().openFile(getPath(), mode, access);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -186,7 +215,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @return The newly created stream.
      */
-    public Stream openRead() throws IOException {
+    public Stream openRead() {
         return open(FileMode.Open, FileAccess.Read);
     }
 
@@ -195,7 +224,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @return The newly created reader.
      */
-    public StreamReader openText() throws IOException {
+    public StreamReader openText() {
         return new StreamReader(openRead());
     }
 
@@ -204,8 +233,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @return The newly created stream.
      */
-    public Stream openWrite() throws IOException {
+    public Stream openWrite() {
         return open(FileMode.Open, FileAccess.Write);
     }
-
 }

@@ -25,7 +25,6 @@ package DiscUtils.Core.Internal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,7 +183,7 @@ public class Utilities {
 
         if (!basePath.endsWith("\\")) {
             Path parent = Paths.get(basePath).getParent();
-            basePath = parent != null ? parent.toString() : "\\"; // TODO
+            basePath = parent != null ? parent.toString() : "\\"; // TODO check
         }
 
         String merged = Paths.get(basePath, relativePath).toAbsolutePath().toString();
@@ -382,16 +381,15 @@ public class Utilities {
         return 997 * a ^ 991 * b;
     }
 
-    public static Map<String, Object> fileAttributesFromInt(int value) {
-        return Collections.EMPTY_MAP; // TODO
-    }
-
-    /**
-     */
+    /** currently only '\' is replaced */
     public static String escapeForRegex(String separator) {
         return separator.replace("\\", "\\\\");
     }
 
+    /**
+     * @param s1 nullable
+     * @param s2 nullable
+     */
     public static int compareTo(String s1, String s2, boolean ignoreCase) {
         if (s1 == null) {
             if (s2 == null) {
@@ -410,6 +408,10 @@ public class Utilities {
         }
     }
 
+    /**
+     * @param obj1 nullable
+     * @param obj2 nullable
+     */
     public static boolean equals(Object obj1, Object obj2) {
         if (obj1 == null) {
             return obj2 == null;

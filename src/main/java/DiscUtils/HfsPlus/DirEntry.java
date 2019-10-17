@@ -69,7 +69,7 @@ public final class DirEntry extends VfsDirEntry {
 
     public boolean isSymlink() {
         return !isDirectory() &&
-               ((CatalogFileInfo) getCatalogFileInfo()).FileInfo.FileType == FileTypeFlags.SymLinkFileType.ordinal(); // TODO
+               ((CatalogFileInfo) getCatalogFileInfo()).FileInfo.FileType == FileTypeFlags.SymLinkFileType.getValue();
     }
 
     public long getLastAccessTimeUtc() {

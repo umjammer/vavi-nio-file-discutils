@@ -23,9 +23,11 @@
 package DiscUtils.Wim;
 
 import java.nio.charset.Charset;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.ReaderWriter.DataReader;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
@@ -34,7 +36,7 @@ import moe.yo3explorer.dotnetio4j.FileNotFoundException;
 public class DirectoryEntry {
     public Map<String, AlternateStreamEntry> AlternateStreams;
 
-    public Map<String, Object> Attributes;
+    public EnumSet<FileAttributes> Attributes;
 
     /** FILETIME raw data */
     public long CreationTime;
@@ -80,7 +82,7 @@ public class DirectoryEntry {
 
         DirectoryEntry result = new DirectoryEntry();
         result.Length = length;
-        result.Attributes = Utilities.fileAttributesFromInt(reader.readUInt32());
+        result.Attributes = FileAttributes.valueOf(reader.readUInt32());
         result.SecurityId = reader.readUInt32();
         result.SubdirOffset = reader.readInt64();
         reader.skip(16);

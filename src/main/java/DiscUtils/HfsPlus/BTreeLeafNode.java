@@ -31,8 +31,8 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
     private List<BTreeLeafRecord<TKey>> _records;
 
-    public BTreeLeafNode(BTree<?> tree, BTreeNodeDescriptor descriptor) {
-        super(tree, descriptor);
+    public BTreeLeafNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
+        super(clazz, tree, descriptor);
     }
 
     public byte[] findKey(TKey key) {
@@ -66,7 +66,7 @@ public final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNod
         int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);
         for (int i = 0; i < numRecords; ++i) {
             int end = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - (i + 2) * 2);
-            _records.add(i, new BTreeLeafRecord<>(null, end - start)); // TODO null
+            _records.add(i, new BTreeLeafRecord<>(keyClass, end - start));
             _records.get(i).readFrom(buffer, offset + start);
             start = end;
         }

@@ -22,7 +22,9 @@
 
 package DiscUtils.Core;
 
-import java.util.Map;
+import java.util.EnumSet;
+
+import DiscUtils.Core.CoreCompat.FileAttributes;
 
 
 /**
@@ -58,13 +60,13 @@ public class WindowsFileInformation {
     /**
      * Gets or sets the file attributes.
      */
-    private  Map<String, Object> __FileAttributes;
+    private EnumSet<FileAttributes> __FileAttributes;
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         return __FileAttributes;
     }
 
-    public void setFileAttributes( Map<String, Object> value) {
+    public void setFileAttributes(EnumSet<FileAttributes> value) {
         __FileAttributes = value;
     }
 
@@ -93,5 +95,4 @@ public class WindowsFileInformation {
     public void setLastWriteTime(long value) {
         __LastWriteTime = value;
     }
-
 }

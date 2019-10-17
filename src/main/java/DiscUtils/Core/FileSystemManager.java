@@ -26,10 +26,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 
-import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Core.Vfs.VfsFileSystemFactory;
-import DiscUtils.Core.Vfs.VfsFileSystemFactoryAttribute;
 import moe.yo3explorer.dotnetio4j.BufferedStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
@@ -59,21 +58,6 @@ public class FileSystemManager {
     }
 
     /**
-     * Registers new file systems detected in an assembly.
-     *
-     * @param assembly The assembly to inspect.
-     *            To be detected, the
-     *            {@code VfsFileSystemFactory}
-     *            instances must be marked with the
-     *
-     *            {@code VfsFileSystemFactoryAttribute}
-     *            > attribute.
-     */
-    public static void registerFileSystems(List<Class<VfsFileSystemFactory>> assembly) {
-        _factories.addAll(detectFactories(assembly));
-    }
-
-    /**
      * Detect which file systems are present on a volume.
      *
      * @param volume The volume to inspect.
@@ -97,16 +81,12 @@ public class FileSystemManager {
         return doDetect(stream, null);
     }
 
-    private static List<VfsFileSystemFactory> detectFactories(List<Class<VfsFileSystemFactory>> assembly) {
-        List<VfsFileSystemFactory> result = new ArrayList<>();
-        for (Class<?> type : assembly) {
-            VfsFileSystemFactoryAttribute attrib = ReflectionHelper
-                    .getCustomAttribute(type, VfsFileSystemFactoryAttribute.class, false);
-            if (attrib == null)
-                continue;
-// TODO result.add();
+    static {
+        ServiceLoader<VfsFileSystemFactory> detectFactories = ServiceLoader.load(VfsFileSystemFactory.class);
+
+        for (VfsFileSystemFactory type : detectFactories) {
+            _factories.add(type);
         }
-        return result;
     }
 
     private static List<FileSystemInfo> doDetect(Stream stream, VolumeInfo volume) {
@@ -117,5 +97,4 @@ public class FileSystemManager {
         }
         return detected;
     }
-
 }

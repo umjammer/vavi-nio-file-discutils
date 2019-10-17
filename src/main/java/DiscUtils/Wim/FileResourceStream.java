@@ -175,6 +175,6 @@ public class FileResourceStream extends SparseStream {
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
+        _currentChunkStream.close();
     }
 }

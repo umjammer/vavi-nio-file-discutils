@@ -26,6 +26,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.EnumSet;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,13 +47,15 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 public class DiscFileSystemFileTest {
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         try (Stream s = fs.getFileInfo("foo.txt").open(FileMode.Create, FileAccess.ReadWrite)) {
             s.writeByte((byte) 1);
         }
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
         assertEquals(FileAttributes.Archive, fi.getAttributes());
         assertEquals(1, fi.getLength());
 
@@ -59,6 +64,8 @@ public class DiscFileSystemFileTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createFileInvalid_Long(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(IOException.class, () -> {
@@ -68,6 +75,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createFileInvalid_Characters(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(IOException.class, () -> {
@@ -77,6 +86,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void deleteFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         Stream s = fs.getFileInfo("foo.txt").open(FileMode.Create, FileAccess.ReadWrite);
@@ -94,6 +105,8 @@ public class DiscFileSystemFileTest {
         assertEquals(0, fs.getRoot().getFiles().size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void length(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         try (Stream s = fs.getFileInfo("foo.txt").open(FileMode.Create, FileAccess.ReadWrite)) {
@@ -132,6 +145,8 @@ public class DiscFileSystemFileTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_FileNotFound(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
@@ -141,6 +156,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_FileExists(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
@@ -153,6 +170,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_DirExists(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("FOO.TXT");
@@ -162,6 +181,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_Read(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
@@ -176,6 +197,8 @@ public class DiscFileSystemFileTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_Read_Fail(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
@@ -186,6 +209,8 @@ public class DiscFileSystemFileTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_Write(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
@@ -196,6 +221,8 @@ public class DiscFileSystemFileTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void open_Write_Fail(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
@@ -212,6 +239,8 @@ public class DiscFileSystemFileTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void name(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals("foo.txt", fs.getFileInfo("foo.txt").getName());
@@ -219,6 +248,8 @@ public class DiscFileSystemFileTest {
         assertEquals("foo.txt", fs.getFileInfo("\\foo.txt").getName());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void attributes(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
@@ -229,34 +260,42 @@ public class DiscFileSystemFileTest {
         assertEquals(FileAttributes.Archive, fi.getAttributes());
         // Check round-trip
         EnumSet<FileAttributes> newAttrs = EnumSet.of(FileAttributes.Hidden, FileAttributes.ReadOnly, FileAttributes.System);
-        fi.setAttributes(FileAttributes.toMap(newAttrs));
+        fi.setAttributes(newAttrs);
         assertEquals(newAttrs, fi.getAttributes());
         // And check persistence to disk
         assertEquals(newAttrs, fs.getFileInfo("foo.txt").getAttributes());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void attributes_ChangeType(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
         try (Stream s = fi.open(FileMode.Create)) {
         }
         assertThrows(IllegalArgumentException.class, () -> {
-            fi.setAttributes(FileAttributes.or(fi.getAttributes(), FileAttributes.Directory));
+            EnumSet<FileAttributes> flags = fi.getAttributes();
+            flags.add(FileAttributes.Directory);
+            fi.setAttributes(flags);
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void exists(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
-        assertFalse(fi.getExists());
+        assertFalse(fi.exists());
 
         try (Stream s = fi.open(FileMode.Create)) {
         }
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
         fs.createDirectory("dir.txt");
-        assertFalse(fs.getFileInfo("dir.txt").getExists());
+        assertFalse(fs.getFileInfo("dir.txt").exists());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void creationTimeUtc(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
 
@@ -266,6 +305,8 @@ public class DiscFileSystemFileTest {
         assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTimeUtc());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void creationTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
 
@@ -275,6 +316,8 @@ public class DiscFileSystemFileTest {
         assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTime());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void lastAccessTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         try (Stream s = fs.openFile("foo.txt", FileMode.Create)) {
@@ -288,6 +331,8 @@ public class DiscFileSystemFileTest {
         assertTrue(baseTime < fi.getLastAccessTime());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void lastWriteTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         try (Stream s = fs.openFile("foo.txt", FileMode.Create)) {
@@ -302,6 +347,8 @@ public class DiscFileSystemFileTest {
         assertTrue(baseTime < fi.getLastWriteTime());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void delete(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         try (Stream s = fs.openFile("foo.txt", FileMode.Create)) {
@@ -310,6 +357,8 @@ public class DiscFileSystemFileTest {
         assertFalse(fs.fileExists("foo.txt"));
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void delete_Dir(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("foo.txt");
@@ -318,6 +367,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void delete_NoFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(FileNotFoundException.class, () -> {
@@ -325,6 +376,8 @@ public class DiscFileSystemFileTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void copyFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
@@ -333,22 +386,24 @@ public class DiscFileSystemFileTest {
                 s.write(new byte[111], 0, 111);
             }
         }
-        fi.setAttributes(FileAttributes.toMap(EnumSet.of(FileAttributes.Hidden, FileAttributes.System)));
+        fi.setAttributes(EnumSet.of(FileAttributes.Hidden, FileAttributes.System));
         fi.copyTo("foo2.txt");
         fi = fs.getFileInfo("foo2.txt");
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
         assertEquals(1110, fi.getLength());
-        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Hidden, FileAttributes.System)), fi.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Hidden, FileAttributes.System), fi.getAttributes());
         fi = fs.getFileInfo("foo.txt");
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
         fi = fs.getFileInfo("foo2.txt");
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
         assertEquals(1110, fi.getLength());
-        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Hidden, FileAttributes.System)), fi.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Hidden, FileAttributes.System), fi.getAttributes());
         fi = fs.getFileInfo("foo.txt");
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void moveFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
@@ -358,16 +413,18 @@ public class DiscFileSystemFileTest {
                 s.write(new byte[111], 0, 111);
             }
         }
-        fi.setAttributes(FileAttributes.toMap(EnumSet.of(FileAttributes.Hidden, FileAttributes.System)));
+        fi.setAttributes(EnumSet.of(FileAttributes.Hidden, FileAttributes.System));
         fi.moveTo("foo2.txt");
         fi = fs.getFileInfo("foo2.txt");
-        assertTrue(fi.getExists());
+        assertTrue(fi.exists());
         assertEquals(1110, fi.getLength());
-        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Hidden, FileAttributes.System)), fi.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Hidden, FileAttributes.System), fi.getAttributes());
         fi = fs.getFileInfo("foo.txt");
-        assertFalse(fi.getExists());
+        assertFalse(fi.exists());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void moveFile_Overwrite(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
@@ -379,16 +436,20 @@ public class DiscFileSystemFileTest {
         try (Stream s = fi2.create()) {
         }
         fs.moveFile("foo.txt", "foo2.txt", true);
-        assertFalse(fi.getExists());
-        assertTrue(fi2.getExists());
+        assertFalse(fi.exists());
+        assertTrue(fi2.exists());
         assertEquals(1, fi2.getLength());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void equals(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals(fs.getFileInfo("foo.txt"), fs.getFileInfo("foo.txt"));
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void parent(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("SOMEDIR\\ADIR");
@@ -399,6 +460,8 @@ public class DiscFileSystemFileTest {
         assertEquals(fs.getDirectoryInfo("SOMEDIR\\ADIR"), fi.getDirectory());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void volumeLabel(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         String volLabel = fs.getVolumeLabel();

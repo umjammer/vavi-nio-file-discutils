@@ -50,7 +50,6 @@ public class ExtentStream extends Stream {
         if (_fileUnitSize != 0 || _interleaveGapSize != 0) {
             throw new UnsupportedOperationException("Non-contiguous extents not supported");
         }
-
     }
 
     public boolean canRead() {
@@ -114,6 +113,6 @@ public class ExtentStream extends Stream {
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
+        _isoStream.close();
     }
 }

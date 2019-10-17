@@ -42,11 +42,11 @@ public final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, D
         getContext().setVolumeStream(s);
         getContext().setVolumeHeader(hdr);
         FileBuffer catalogBuffer = new FileBuffer(getContext(), hdr.CatalogFile, CatalogNodeId.CatalogFileId);
-        getContext().setCatalog(new BTree<CatalogKey>(catalogBuffer));
+        getContext().setCatalog(new BTree<>(CatalogKey.class, catalogBuffer));
         FileBuffer extentsBuffer = new FileBuffer(getContext(), hdr.ExtentsFile, CatalogNodeId.ExtentsFileId);
-        getContext().setExtentsOverflow(new BTree<ExtentKey>(extentsBuffer));
+        getContext().setExtentsOverflow(new BTree<>(ExtentKey.class, extentsBuffer));
         FileBuffer attributesBuffer = new FileBuffer(getContext(), hdr.AttributesFile, CatalogNodeId.AttributesFileId);
-        getContext().setAttributes(new BTree<AttributeKey>(attributesBuffer));
+        getContext().setAttributes(new BTree<>(AttributeKey.class, attributesBuffer));
         // Establish Root directory
         byte[] rootThreadData = getContext().getCatalog().find(new CatalogKey(CatalogNodeId.RootFolderId, ""));
         CatalogThread rootThread = new CatalogThread();

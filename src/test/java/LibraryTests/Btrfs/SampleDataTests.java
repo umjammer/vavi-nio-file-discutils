@@ -53,7 +53,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("btrfs", filesystem.getName());
             try (DiscFileSystem btrfs = filesystem.open(volume)) {
-                assertTrue(BtrfsFileSystem.class.isInstance(btrfs)); // TODO
+                assertTrue(BtrfsFileSystem.class.isInstance(btrfs));
                 assertEquals(1072594944, btrfs.getAvailableSpace());
                 assertEquals(1072693248, btrfs.getSize());
                 assertEquals(98304, btrfs.getUsedSpace());

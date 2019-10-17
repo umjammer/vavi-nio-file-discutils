@@ -2,7 +2,6 @@
 package DiscUtils.Ntfs;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Function;
@@ -57,7 +56,7 @@ public enum FileAttributeFlags implements EnumSettable {
     }
 
     public static long valueOf(EnumSet<FileAttributeFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 
     // TODO
@@ -72,26 +71,29 @@ public enum FileAttributeFlags implements EnumSettable {
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(clazz)));
     }
 
-    // TODO
-    public static Map<String, Object> convert(EnumSet<FileAttributeFlags> flags) {
-//        return flags.stream().collect(Collectors.toMap(f -> f.name(), true));
-        return Collections.EMPTY_MAP;
+    // TODO using name()
+    public static Map<String, Object> toMap(EnumSet<FileAttributeFlags> flags) {
+        return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
     }
 
-    // TODO
-    public static EnumSet<FileAttributeFlags> convert(Map<String, Object> flags) {
-        return EnumSet.noneOf(FileAttributeFlags.class);
+    // TODO using name(), loop flags is fewer than loop all enums
+    public static EnumSet<FileAttributeFlags> toEnumSet(Map<String, Object> flags) {
+        return Arrays.stream(values())
+                .filter(v -> Boolean.class.cast(flags.get(v.name())))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributeFlags.class)));
     }
 
-    /** */
+    /** TODO using name() */
     public static EnumSet<FileAttributeFlags> and(Map<String, Object> attrs, Map<String, Object> mask) {
-        // TODO Auto-generated method stub
-        return EnumSet.noneOf(FileAttributeFlags.class);
+        return mask.entrySet()
+                .stream()
+                .filter(e -> attrs.containsKey(e.getKey()) && attrs.get(e.getKey()) == e.getValue())
+                .map(e -> valueOf(e.getKey()))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributeFlags.class)));
     }
 
-    /** */
+    /** TODO */
     public static EnumSet<FileAttributeFlags> and(EnumSet<FileAttributeFlags> flags, int mask) {
-        // TODO Auto-generated method stub
-        return EnumSet.noneOf(FileAttributeFlags.class);
+        return and(toMap(flags), toMap(valueOf(mask)));
     }
 }

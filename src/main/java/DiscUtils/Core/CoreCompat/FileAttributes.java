@@ -8,8 +8,10 @@ package DiscUtils.Core.CoreCompat;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 
 /**
@@ -18,7 +20,7 @@ import java.util.Map;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/10/09 umjammer initial version <br>
  */
-public enum FileAttributes {
+public enum FileAttributes implements EnumSettable {
 
     ReadOnly(0x1),
     Hidden(0x2),
@@ -46,19 +48,41 @@ public enum FileAttributes {
     private FileAttributes(int value) {
         this.value = value;
     }
+    // TODO
+    public Supplier<Integer> supplier() {
+        return this::getValue;
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<FileAttributes> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributes.class)));
+    }
+
+    public static long valueOf(EnumSet<FileAttributes> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
+    }
 
     /** */
     public static Map<String, Object> toMap(EnumSet<FileAttributes> flags) {
-        Map<String, Object> attrs = new HashMap<>();
-        flags.forEach(v -> attrs.put(v.name(), true));
-        return attrs;
+        return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
+    }
+
+    // TODO using name(), loop flags is fewer than loop all enums
+    public static EnumSet<FileAttributes> toEnumSet(Map<String, Object> flags) {
+        return Arrays.stream(values())
+                .filter(v -> flags.containsKey(v.name()) && Boolean.class.cast(flags.get(v.name())))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributes.class)));
     }
 
     // TODO EnumMap?
     public static Map<String, Object> all() {
-        Map<String, Object> attrs = new HashMap<>();
-        Arrays.stream(values()).forEach(v -> attrs.put(v.name(), true));
-        return attrs;
+        return Arrays.stream(values()).collect(Collectors.toMap(f -> f.name(), f -> true));
     }
 
     public static Map<String, Object> not(Map<String, Object> attrs, FileAttributes key) {
@@ -71,12 +95,25 @@ public enum FileAttributes {
         return attrs;
     }
 
-    /** TODO filter? */
+    /** TODO should not filter? */
     public static Map<String, Object> xor(Map<String, Object> attrs1, Map<String, Object> attrs2) {
         attrs2.entrySet().stream().forEach(e2 -> {
-            attrs1.entrySet().stream().filter(e1 -> e1.getKey().equals(e2.getKey())).forEach(e1 -> attrs1.put(e1.getKey(), Boolean.class.cast(e1.getValue()) ^ Boolean.class.cast(e2.getValue())));
+            attrs1.entrySet()
+                    .stream()
+                    .filter(e1 -> e1.getKey().equals(e2.getKey()))
+                    .forEach(e1 -> attrs1.put(e1.getKey(),
+                                              Boolean.class.cast(e1.getValue()) ^ Boolean.class.cast(e2.getValue())));
         });
         return attrs1;
+    }
+
+    /** TODO using name() */
+    public static Map<String, Object> and(Map<String, Object> attrs, Map<String, Object> mask) {
+        return mask.entrySet()
+                .stream()
+                .filter(e -> attrs.containsKey(e.getKey())
+                        && Boolean.class.cast(attrs.get(e.getKey())) & Boolean.class.cast(e.getValue()))
+                .collect(Collectors.toMap(e -> e.getKey(), e -> true));
     }
 
     /** */

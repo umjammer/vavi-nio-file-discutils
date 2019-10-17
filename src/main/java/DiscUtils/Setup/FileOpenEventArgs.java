@@ -6,15 +6,11 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileShare;
 import moe.yo3explorer.dotnetio4j.Stream;
 
-public class FileOpenEventArgs // extends EventArgs
-{
+
+public class FileOpenEventArgs /* extends EventArgs */ {
     private FileOpenDelegate _opener;
 
-    public FileOpenEventArgs(String fileName,
-                             FileMode mode,
-                             FileAccess access,
-                             FileShare share,
-            FileOpenDelegate opener) {
+    public FileOpenEventArgs(String fileName, FileMode mode, FileAccess access, FileShare share, FileOpenDelegate opener) {
         setFileName(fileName);
         setFileMode(mode);
         setFileAccess(access);
@@ -75,5 +71,4 @@ public class FileOpenEventArgs // extends EventArgs
     public Stream getFileStream() {
         return _opener.invoke(getFileName(), getFileMode(), getFileAccess(), getFileShare());
     }
-
 }

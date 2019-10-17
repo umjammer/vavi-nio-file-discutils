@@ -27,11 +27,13 @@ import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.Vfs.VfsFileSystemFactory;
+import DiscUtils.Core.Vfs.VfsFileSystemFactoryAttribute;
 import DiscUtils.Core.Vfs.VfsFileSystemInfo;
 import DiscUtils.Streams.Util.Ownership;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
+@VfsFileSystemFactoryAttribute
 public class FileSystemFactory extends VfsFileSystemFactory {
     public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (FatFileSystem.detect(stream)) {

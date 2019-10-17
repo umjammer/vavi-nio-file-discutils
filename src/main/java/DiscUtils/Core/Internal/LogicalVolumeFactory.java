@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.Internal;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +31,8 @@ import DiscUtils.Core.VirtualDisk;
 
 
 public abstract class LogicalVolumeFactory {
+
     public abstract boolean handlesPhysicalVolume(PhysicalVolumeInfo volume);
 
-    public abstract void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result) throws IOException;
-
+    public abstract void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result);
 }

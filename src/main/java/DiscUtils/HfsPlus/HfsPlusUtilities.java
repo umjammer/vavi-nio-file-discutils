@@ -23,6 +23,7 @@
 package DiscUtils.HfsPlus;
 
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -231,8 +232,8 @@ public class HfsPlusUtilities {
 
     public static long readHFSPlusDate(ZoneId kind, byte[] buffer, int offset) {
         int val = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        long epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0, 0, kind).toEpochSecond(); // TODO check
-        long result = epoch + val;
+        Instant epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0, 0, kind).toInstant();
+        long result = epoch.plusSeconds(val).toEpochMilli();
         return result;
     }
 

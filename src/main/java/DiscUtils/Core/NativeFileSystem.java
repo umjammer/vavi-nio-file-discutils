@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
@@ -497,9 +498,9 @@ public class NativeFileSystem extends DiscFileSystem {
             path = path.substring(1);
         }
 
-        Map<String, Object> result = new HashMap<>(); // TODO
-        for (String key : new String[] { "dos:isDirectry" }) {
-            result.put(key, Files.getAttribute(Paths.get(getBasePath(), path), null));
+        Map<String, Object> result = new HashMap<>(); // TODO impl
+        for (FileAttributes key : FileAttributes.values()) {
+            result.put(key.name(), Files.getAttribute(Paths.get(getBasePath(), key.name()), null));
         }
         return result;
     }

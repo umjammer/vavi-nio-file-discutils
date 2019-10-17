@@ -527,8 +527,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         Closeable __newVar8 = new NtfsTransaction();
         try {
             // TODO: Be smarter, use the B*Tree for better performance when the start of the
-            // pattern is known
-            // characters
+            // pattern is known characters
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             DirectoryEntry parentDirEntry = getDirectoryEntry(path);
             if (parentDirEntry == null) {
@@ -702,7 +701,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             }
 
             // Abort - nothing changed
-            if (changedAttribs.containsKey("NonSettableFileAttributes")) {
+            if (FileAttributes.count(FileAttributes.and(changedAttribs, NonSettableFileAttributes)) != 0) {
                 throw new IllegalArgumentException("Attempt to change attributes that are read-only");
             }
 
@@ -1976,18 +1975,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         NtfsStream stream = file.getStream(AttributeType.ReparsePoint, null);
         if (stream != null) {
             ReparsePointRecord rp = new ReparsePointRecord();
-            Stream contentStream = stream.open(FileAccess.Read);
-            try {
+
+            try (Stream contentStream = stream.open(FileAccess.Read)) {
                 byte[] buffer = StreamUtilities.readExact(contentStream, (int) contentStream.getLength());
                 rp.readFrom(buffer, 0);
-            } finally {
-                if (contentStream != null)
-                    try {
-                        contentStream.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
             file.removeStream(stream);
             // Update the standard information attribute - so it reflects the actual file

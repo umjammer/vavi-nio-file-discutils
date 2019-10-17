@@ -25,6 +25,8 @@ package DiscUtils.Fat;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -59,7 +61,7 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * The Epoch for FAT file systems (1st Jan, 1980).
      */
-    public static final long Epoch = 0;
+    public static final long Epoch = ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
 
     private final Map<Integer, Directory> _dirCache;
 
@@ -559,7 +561,7 @@ public final class FatFileSystem extends DiscFileSystem {
             throw new FileNotFoundException("No such file " + path);
         }
 
-        return FatAttributes.convert(dirEntry.getAttributes());
+        return FatAttributes.toMap(dirEntry.getAttributes());
     }
 
     // Luckily, FAT and .NET Map<String, Object> match, bit-for-bit
@@ -582,7 +584,7 @@ public final class FatFileSystem extends DiscFileSystem {
         Directory[] parent = new Directory[1];
         long id = getDirectoryEntry(path, parent);
         DirectoryEntry dirEntry = parent[0].getEntry(id);
-        EnumSet<FatAttributes> newFatAttr = FatAttributes.convert(newValue);
+        EnumSet<FatAttributes> newFatAttr = FatAttributes.toEnumSet(newValue);
         if (newFatAttr.contains(FatAttributes.Directory) != dirEntry.getAttributes().contains(FatAttributes.Directory)) {
             throw new IllegalArgumentException("Attempted to change the directory attribute");
         }
@@ -1448,7 +1450,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private long defaultTimeConverter(long time, boolean toUtc) {
-        return toUtc ? time : Instant.ofEpochMilli(time).toEpochMilli(); // TODO ToLocalTime();
+        return toUtc ? time : Instant.ofEpochMilli(time).toEpochMilli();
     }
 
     private void initialize(Stream data) {

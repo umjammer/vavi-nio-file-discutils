@@ -75,7 +75,7 @@ public class IsoFileSystemTest {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertNotNull(fs.getRoot());
-        assertTrue(fs.getRoot().getExists());
+        assertTrue(fs.getRoot().exists());
         assertTrue(fs.getRoot().getName().isEmpty());
         assertNull(fs.getRoot().getParent());
     }

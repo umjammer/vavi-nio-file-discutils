@@ -46,8 +46,12 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets a value indicating whether the directory exists.
      */
-    public boolean getExists() throws IOException {
-        return getFileSystem().directoryExists(getPath());
+    public boolean exists() {
+        try {
+            return getFileSystem().directoryExists(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -60,15 +64,23 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Creates a directory.
      */
-    public void create() throws IOException {
-        getFileSystem().createDirectory(getPath());
+    public void create() {
+        try {
+            getFileSystem().createDirectory(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
      * Deletes a directory, even if it's not empty.
      */
-    public void delete() throws IOException {
-        getFileSystem().deleteDirectory(getPath(), false);
+    public void delete() {
+        try {
+            getFileSystem().deleteDirectory(getPath(), false);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -80,8 +92,12 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *            {@code false}
      *            to fail if the directory is not empty.
      */
-    public void delete(boolean recursive) throws IOException {
-        getFileSystem().deleteDirectory(getPath(), recursive);
+    public void delete(boolean recursive) {
+        try {
+            getFileSystem().deleteDirectory(getPath(), recursive);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -89,8 +105,12 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @param destinationDirName The destination directory name.
      */
-    public void moveTo(String destinationDirName) throws IOException {
-        getFileSystem().moveDirectory(getPath(), destinationDirName);
+    public void moveTo(String destinationDirName) {
+        try {
+            getFileSystem().moveDirectory(getPath(), destinationDirName);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -98,10 +118,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @return An array of child directories.
      */
-    public List<DiscDirectoryInfo> getDirectories() throws IOException {
-        return getFileSystem().getDirectories(getPath()).stream().map(p -> {
-            return new DiscDirectoryInfo(getFileSystem(), p);
-        }).collect(Collectors.toList());
+    public List<DiscDirectoryInfo> getDirectories() {
+        try {
+            return getFileSystem().getDirectories(getPath()).stream().map(p -> {
+                return new DiscDirectoryInfo(getFileSystem(), p);
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -113,7 +137,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         characters)
      *         and ? (matching 1 character).
      */
-    public List<DiscDirectoryInfo> getDirectories(String pattern) throws IOException {
+    public List<DiscDirectoryInfo> getDirectories(String pattern) {
         return getDirectories(pattern, "TopDirectoryOnly");
     }
 
@@ -130,10 +154,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         whether only immediate
      *         children, or all children are returned.
      */
-    public List<DiscDirectoryInfo> getDirectories(String pattern, String searchOption) throws IOException {
-        return getFileSystem().getDirectories(getPath(), pattern, searchOption).stream().map(p -> {
-            return new DiscDirectoryInfo(getFileSystem(), p);
-        }).collect(Collectors.toList());
+    public List<DiscDirectoryInfo> getDirectories(String pattern, String searchOption) {
+        try {
+            return getFileSystem().getDirectories(getPath(), pattern, searchOption).stream().map(p -> {
+                return new DiscDirectoryInfo(getFileSystem(), p);
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -141,10 +169,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @return An array of files.
      */
-    public List<DiscFileInfo> getFiles() throws IOException {
-        return getFileSystem().getFiles(getPath()).stream().map(p -> {
-            return new DiscFileInfo(getFileSystem(), p);
-        }).collect(Collectors.toList());
+    public List<DiscFileInfo> getFiles() {
+        try {
+            return getFileSystem().getFiles(getPath()).stream().map(p -> {
+                return new DiscFileInfo(getFileSystem(), p);
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -155,7 +187,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         include the wildcards * (matching 0 or more characters)
      *         and ? (matching 1 character).
      */
-    public List<DiscFileInfo> getFiles(String pattern) throws IOException {
+    public List<DiscFileInfo> getFiles(String pattern) {
         return getFiles(pattern, "TopDirectoryOnly");
     }
 
@@ -172,10 +204,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         whether only immediate
      *         children, or all children are returned.
      */
-    public List<DiscFileInfo> getFiles(String pattern, String searchOption) throws IOException {
-        return getFileSystem().getFiles(getPath(), pattern, searchOption).stream().map(p -> {
-            return new DiscFileInfo(getFileSystem(), p);
-        }).collect(Collectors.toList());
+    public List<DiscFileInfo> getFiles(String pattern, String searchOption) {
+        try {
+            return getFileSystem().getFiles(getPath(), pattern, searchOption).stream().map(p -> {
+                return new DiscFileInfo(getFileSystem(), p);
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -183,10 +219,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @return An array of files and directories.
      */
-    public List<DiscFileSystemInfo> getFileSystemInfos() throws IOException {
-        return getFileSystem().getFileSystemEntries(getPath()).stream().map(p -> {
-            return new DiscFileSystemInfo(getFileSystem(), p);
-        }).collect(Collectors.toList());
+    public List<DiscFileSystemInfo> getFileSystemInfos() {
+        try {
+            return getFileSystem().getFileSystemEntries(getPath()).stream().map(p -> {
+                return new DiscFileSystemInfo(getFileSystem(), p);
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -197,9 +237,13 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *         the wildcards * (matching 0 or more characters)
      *         and ? (matching 1 character).
      */
-    public List<DiscFileSystemInfo> getFileSystemInfos(String pattern) throws IOException {
-        return getFileSystem().getFileSystemEntries(getPath(), pattern).stream().map(p -> {
-            return new DiscFileSystemInfo(getFileSystem(), p);
-        }).collect(Collectors.toList());
+    public List<DiscFileSystemInfo> getFileSystemInfos(String pattern) {
+        try {
+            return getFileSystem().getFileSystemEntries(getPath(), pattern).stream().map(p -> {
+                return new DiscFileSystemInfo(getFileSystem(), p);
+            }).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 }

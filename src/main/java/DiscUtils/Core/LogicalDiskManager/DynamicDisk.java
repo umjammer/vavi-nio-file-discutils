@@ -41,7 +41,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
 
     private final PrivateHeader _header;
 
-    public DynamicDisk(VirtualDisk disk) throws IOException {
+    public DynamicDisk(VirtualDisk disk) {
         _disk = disk;
         _header = getPrivateHeader(_disk);
         TocBlock toc = getTableOfContents();
@@ -93,7 +93,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
         writer.println(linePrefix + "              Log Size: " + _header.LogSizeLba + " (Sectors)");
     }
 
-    public static PrivateHeader getPrivateHeader(VirtualDisk disk) throws IOException {
+    public static PrivateHeader getPrivateHeader(VirtualDisk disk) {
         if (disk.isPartitioned()) {
             long headerPos = 0;
             PartitionTable pt = disk.getPartitions();
@@ -104,7 +104,6 @@ public class DynamicDisk implements IDiagnosticTraceable {
                     if (part.getGuidType() == GuidPartitionTypes.WindowsLdmMetadata) {
                         headerPos = part.getLastSector() * Sizes.Sector;
                     }
-
                 }
             }
             if (headerPos != 0) {
@@ -115,13 +114,12 @@ public class DynamicDisk implements IDiagnosticTraceable {
                 hdr.readFrom(buffer, 0);
                 return hdr;
             }
-
         }
 
         return null;
     }
 
-    private TocBlock getTableOfContents() throws IOException {
+    private TocBlock getTableOfContents() {
         byte[] buffer = new byte[(int) _header.TocSizeLba * 512];
         _disk.getContent().setPosition(_header.ConfigurationStartLba * 512 + 1 * _header.TocSizeLba * 512);
         _disk.getContent().read(buffer, 0, buffer.length);
@@ -133,5 +131,4 @@ public class DynamicDisk implements IDiagnosticTraceable {
 
         return null;
     }
-
 }

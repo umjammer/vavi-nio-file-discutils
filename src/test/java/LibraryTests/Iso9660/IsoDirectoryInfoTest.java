@@ -45,12 +45,12 @@ public class IsoDirectoryInfoTest {
         CDBuilder builder = new CDBuilder();
         builder.addFile("SOMEDIR\\CHILDDIR\\FILE.TXT", new byte[0]);
         CDReader fs = new CDReader(builder.build(), false);
-        assertTrue(fs.getDirectoryInfo("\\").getExists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR").getExists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").getExists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR\\").getExists());
-        assertFalse(fs.getDirectoryInfo("NONDIR").getExists());
-        assertFalse(fs.getDirectoryInfo("SOMEDIR\\NONDIR").getExists());
+        assertTrue(fs.getDirectoryInfo("\\").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR\\").exists());
+        assertFalse(fs.getDirectoryInfo("NONDIR").exists());
+        assertFalse(fs.getDirectoryInfo("SOMEDIR\\NONDIR").exists());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class IsoDirectoryInfoTest {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         long end = Instant.now().toEpochMilli();
-        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Directory, FileAttributes.ReadOnly)), fs.getRoot().getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Directory, FileAttributes.ReadOnly), fs.getRoot().getAttributes());
         assertTrue(fs.getRoot().getCreationTimeUtc() >= start);
         assertTrue(fs.getRoot().getCreationTimeUtc() <= end);
         assertTrue(fs.getRoot().getLastAccessTimeUtc() >= start);
@@ -174,7 +174,7 @@ public class IsoDirectoryInfoTest {
         CDReader fs = new CDReader(builder.build(), false);
         long end = Instant.now().toEpochMilli();
         DiscDirectoryInfo di = fs.getDirectoryInfo("Foo");
-        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.Directory, FileAttributes.ReadOnly)), di.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Directory, FileAttributes.ReadOnly), di.getAttributes());
         assertTrue(di.getCreationTimeUtc() >= start);
         assertTrue(di.getCreationTimeUtc() <= end);
         assertTrue(di.getLastAccessTimeUtc() >= start);

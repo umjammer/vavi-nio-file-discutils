@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * EnumSettable.
  *
- * TODO
+ * TODO should consider more
  *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/10/07 umjammer initial version <br>

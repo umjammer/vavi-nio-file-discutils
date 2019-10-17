@@ -166,7 +166,10 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                     data.setPosition(svdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     SupplementaryVolumeDescriptor volDesc = new SupplementaryVolumeDescriptor(buffer, 0);
-                    setContext(new IsoContext());
+                    IsoContext context = new IsoContext();
+                    context.setVolumeDescriptor(volDesc);
+                    context.setDataStream(_data);
+                    setContext(context);
                     setRootDirectory(new ReaderDirectory(getContext(),
                                                          new ReaderDirEntry(getContext(), volDesc.RootDirectory)));
                     __ActiveVariant = Iso9660Variant.Iso9660;

@@ -22,6 +22,7 @@
 
 package DiscUtils.Btrfs;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,18 +193,17 @@ public class Context extends VfsContext {
         }
     }
 
-    // TODO
-    private void checkStriping(BlockGroupFlag flags) {
-        if ((flags.ordinal() & BlockGroupFlag.Raid0.ordinal()) == BlockGroupFlag.Raid0.ordinal())
+    private void checkStriping(EnumSet<BlockGroupFlag> flags) {
+        if (flags.contains(BlockGroupFlag.Raid0))
             throw new IOException("Raid0 not supported");
 
-        if ((flags.ordinal() & BlockGroupFlag.Raid10.ordinal()) == BlockGroupFlag.Raid0.ordinal())
+        if (flags.contains(BlockGroupFlag.Raid10))
             throw new IOException("Raid10 not supported");
 
-        if ((flags.ordinal() & BlockGroupFlag.Raid5.ordinal()) == BlockGroupFlag.Raid0.ordinal())
+        if (flags.contains(BlockGroupFlag.Raid5))
             throw new IOException("Raid5 not supported");
 
-        if ((flags.ordinal() & BlockGroupFlag.Raid6.ordinal()) == BlockGroupFlag.Raid0.ordinal())
+        if (flags.contains(BlockGroupFlag.Raid6))
             throw new IOException("Raid6 not supported");
     }
 

@@ -30,9 +30,11 @@ import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
+import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
+@VirtualDiskTransportAttribute(scheme = "nfs")
 public final class DiskTransport extends VirtualDiskTransport {
     private String _extraInfo;
 

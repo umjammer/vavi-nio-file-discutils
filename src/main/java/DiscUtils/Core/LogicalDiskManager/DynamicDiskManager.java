@@ -50,7 +50,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      *
      * @param disks The initial set of disks to manage.
      */
-    public DynamicDiskManager(VirtualDisk... disks) throws IOException {
+    public DynamicDiskManager(VirtualDisk... disks) {
         _groups = new HashMap<>();
         for (VirtualDisk disk : disks) {
             add(disk);
@@ -99,7 +99,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      *         {@code false}
      *         .
      */
-    public static boolean isDynamicDisk(VirtualDisk disk) throws IOException {
+    public static boolean isDynamicDisk(VirtualDisk disk) {
         if (disk.isPartitioned()) {
             for (PartitionInfo partition : disk.getPartitions().getPartitions()) {
                 if (isLdmPartition(partition)) {
@@ -116,7 +116,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      *
      * @param disk The disk to manage.
      */
-    public void add(VirtualDisk disk) throws IOException {
+    public void add(VirtualDisk disk) {
         PrivateHeader header = DynamicDisk.getPrivateHeader(disk);
         if (_groups.containsKey(header.DiskGroupId)) {
             DynamicDiskGroup group = _groups.get(header.DiskGroupId);
@@ -155,5 +155,4 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
                partition.getGuidType() == GuidPartitionTypes.WindowsLdmMetadata ||
                partition.getGuidType() == GuidPartitionTypes.WindowsLdmData;
     }
-
 }

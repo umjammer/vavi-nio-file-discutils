@@ -35,6 +35,7 @@ import DiscUtils.Core.IWindowsFileSystem;
 import DiscUtils.Core.ReadOnlyDiscFileSystem;
 import DiscUtils.Core.ReparsePoint;
 import DiscUtils.Core.WindowsFileInformation;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.SparseStream;
@@ -273,7 +274,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public boolean directoryExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry != null && dirEntry.Attributes.containsKey("Directory");
+        return dirEntry != null && dirEntry.Attributes.contains(FileAttributes.Directory);
     }
 
     /**
@@ -284,7 +285,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public boolean fileExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry != null && dirEntry.Attributes.containsKey("Directory");
+        return dirEntry != null && dirEntry.Attributes.contains(FileAttributes.Directory);
     }
 
     /**
@@ -409,7 +410,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException("No such file or directory " + path);
         }
 
-        return dirEntry.Attributes;
+        return FileAttributes.toMap(dirEntry.Attributes);
     }
 
     /**
@@ -624,7 +625,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
         List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.SubdirOffset);
         for (DirectoryEntry de : parentDir) {
-            boolean isDir = de.Attributes.containsKey("Directory");
+            boolean isDir = de.Attributes.contains(FileAttributes.Directory);
             if ((isDir && dirs) || (!isDir && files)) {
                 if (regex.matcher(de.getSearchName()).find()) {
                     results.add(Utilities.combinePaths(path, de.FileName));

@@ -30,7 +30,7 @@ public class StreamInputStream extends InputStream {
     public int read() throws IOException {
          int r = stream.readByte();
 //System.err.printf("%02x: %c\n", r, (r & 0xff));
-         return r;
+         return r == -1 ? -1 : r & 0xff;
     }
 }
 

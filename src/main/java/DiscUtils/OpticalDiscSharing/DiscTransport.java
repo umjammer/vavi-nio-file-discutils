@@ -33,10 +33,12 @@ import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
+import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileNotFoundException;
 
 
+@VirtualDiskTransportAttribute(scheme = "ods")
 public final class DiscTransport extends VirtualDiskTransport {
     private String _disk;
 

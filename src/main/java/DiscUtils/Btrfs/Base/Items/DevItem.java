@@ -22,6 +22,7 @@
 
 package DiscUtils.Btrfs.Base.Items;
 
+import java.util.EnumSet;
 import java.util.UUID;
 
 import DiscUtils.Btrfs.Base.BlockGroupFlag;
@@ -120,13 +121,13 @@ public class DevItem extends BaseItem {
     /**
      * type and info about this device
      */
-    private BlockGroupFlag __Type = BlockGroupFlag.Data;
+    private EnumSet<BlockGroupFlag> __Type;
 
-    public BlockGroupFlag getType() {
+    public EnumSet<BlockGroupFlag> getType() {
         return __Type;
     }
 
-    public void setType(BlockGroupFlag value) {
+    public void setType(EnumSet<BlockGroupFlag> value) {
         __Type = value;
     }
 

@@ -6,7 +6,9 @@
 
 package moe.yo3explorer.dotnetio4j.compat;
 
+import java.nio.charset.Charset;
 import java.security.Permission;
+import java.util.EnumSet;
 
 import moe.yo3explorer.dotnetio4j.AccessControlSections;
 
@@ -19,57 +21,106 @@ import moe.yo3explorer.dotnetio4j.AccessControlSections;
  */
 public class RawSecurityDescriptor extends Permission {
 
-    /** */
-    public RawSecurityDescriptor(String name) {
-        super(name);
-        // TODO Auto-generated constructor stub
-    }
+    private String sddl;
 
     /** */
-    public RawSecurityDescriptor(byte[] readBytes, int i) {
-        super(null);
+    public RawSecurityDescriptor(String sddl) {
+        super("sddl");
+        this.sddl = sddl;
+        this.binaryForm = sddl.getBytes(Charset.forName("ASCII"));
+    }
+
+    private byte[] binaryForm;
+
+    /** */
+    public RawSecurityDescriptor(byte[] bytes, int offset) {
+        super("binaryForm");
+        this.binaryForm = new byte[bytes.length - offset];
+        System.arraycopy(this.binaryForm, 0, bytes, offset, bytes.length);
+    }
+
+    private SecurityIdentifier owner;
+    private SecurityIdentifier group;
+    private RawAcl sacl;
+    private RawAcl dacl;
+
+    /** */
+    public RawSecurityDescriptor(EnumSet<ControlFlags> controlFlags,
+            SecurityIdentifier owner,
+            SecurityIdentifier group,
+            RawAcl sacl,
+            RawAcl dacl) {
+        super("acl");
+        this.owner = owner;
+        this.group = group;
+        this.sacl = sacl;
+        this.dacl = dacl;
     }
 
     @Override
     public boolean implies(Permission permission) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return false;
+        return sddl.equals(RawSecurityDescriptor.class.cast(obj).sddl);
     }
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return 0;
+        return sddl.hashCode();
     }
 
     @Override
     public String getActions() {
-        // TODO Auto-generated method stub
-        return null;
+        return sddl;
     }
 
     /** */
     public String getSddlForm(AccessControlSections all) {
-        // TODO Auto-generated method stub
-        return null;
+        return sddl;
     }
 
     /** */
     public long getBinaryLength() {
-        return 0;
+        return binaryForm == null ? 0 : binaryForm.length;
     }
 
     public SecurityIdentifier getOwner() {
-        return null;
+        return owner;
     }
 
     public SecurityIdentifier getGroup() {
-        return null;
+        return group;
+    }
+
+    /**
+     * @return
+     */
+    public EnumSet<ControlFlags> getControlFlags() {
+        return EnumSet.noneOf(ControlFlags.class);
+    }
+
+    /**
+     * @return
+     */
+    public int getResourceManagerControl() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    /**
+     * @return
+     */
+    public RawAcl getDiscretionaryAcl() {
+        return dacl;
+    }
+
+    /**
+     * @return
+     */
+    public RawAcl getSystemAcl() {
+        return sacl;
     }
 }

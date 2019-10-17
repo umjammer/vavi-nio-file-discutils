@@ -60,7 +60,7 @@ public final class ValueCell extends Cell {
         __DataLength = value;
     }
 
-    private RegistryValueType __DataType = RegistryValueType.None; // TODO
+    private RegistryValueType __DataType = RegistryValueType.None;
 
     public RegistryValueType getDataType() {
         return __DataType;
@@ -99,7 +99,7 @@ public final class ValueCell extends Cell {
 
     public void writeTo(byte[] buffer, int offset) {
         int nameLen;
-        if (_flags == null) { // TODO
+        if (_flags == null) { // TODO no initializer
             _flags = EnumSet.noneOf(ValueFlags.class);
         }
         if (getName() == null || getName().isEmpty()) {

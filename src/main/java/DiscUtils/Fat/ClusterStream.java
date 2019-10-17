@@ -388,6 +388,5 @@ public class ClusterStream extends Stream {
 
     @Override
     public void close() throws java.io.IOException {
-        // TODO Auto-generated method stub
     }
 }

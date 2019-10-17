@@ -30,8 +30,10 @@ import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.PhysicalVolumeInfo;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.LogicalVolumeFactory;
+import DiscUtils.Core.Internal.LogicalVolumeFactoryAttribute;
 
 
+@LogicalVolumeFactoryAttribute
 public class LogicalVolumeManagerFactory extends LogicalVolumeFactory {
     public boolean handlesPhysicalVolume(PhysicalVolumeInfo volume) {
         return LogicalVolumeManager.handlesPhysicalVolume(volume);

@@ -105,13 +105,12 @@ public class Key implements IByteArraySerializable {
         throw new UnsupportedOperationException();
     }
 
-    // TODO
     public String toString() {
         try {
             ReservedObjectId.valueOf((int) getObjectId());
-            return "{ReservedObjectId}|{ItemType}|{Offset}";
+            return String.format("%d|%s|%d", __ObjectId, __ItemType, __Offset);
         } catch (Exception e) {
-            return "{ObjectId}|{ItemType}|{Offset}";
+            return String.format("%d|%s|%d", __ObjectId, __ItemType, __Offset);
         }
     }
 }

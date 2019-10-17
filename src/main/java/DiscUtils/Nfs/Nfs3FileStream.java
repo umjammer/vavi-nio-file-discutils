@@ -128,6 +128,6 @@ public final class Nfs3FileStream extends SparseStream {
 
     @Override
     public void close() throws IOException {
-        // TODO Auto-generated method stub
+        _client.close();
     }
 }

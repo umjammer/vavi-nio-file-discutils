@@ -93,19 +93,16 @@ public class EndianUtilities {
         writeBytesBigEndian(toInt16LittleEndian(le, 4), buffer, offset + 4);
         writeBytesBigEndian(toInt16LittleEndian(le, 6), buffer, offset + 6);
         System.arraycopy(le, 8, buffer, offset + 8, 8);
-//System.err.printf("%08x, %08x, %s\n", val.getMostSignificantBits(), val.getLeastSignificantBits(), StringUtil.getDump(buffer));
     }
 
     public static int toUInt16LittleEndian(byte[] buffer, int offset) {
         int val = ((buffer[offset + 1] << 8) & 0xFF00) | ((buffer[offset + 0] << 0) & 0x00FF);
-//if (val < 0) new Error(String.valueOf(val)).printStackTrace();
         return val;
     }
 
     public static int toUInt32LittleEndian(byte[] buffer, int offset) {
         int val = ((buffer[offset + 3] << 24) & 0xFF000000) | ((buffer[offset + 2] << 16) & 0x00FF0000) |
                ((buffer[offset + 1] << 8) & 0x0000FF00) | ((buffer[offset + 0] << 0) & 0x000000FF);
-//if (val < 0) new Error(String.valueOf(val)).printStackTrace();
         return val;
     }
 
@@ -127,19 +124,16 @@ public class EndianUtilities {
 
     public static short toUInt16BigEndian(byte[] buffer, int offset) {
         short val = (short) (((buffer[offset] << 8) & 0xFF00) | ((buffer[offset + 1] << 0) & 0x00FF));
-//if (val < 0) new Error(String.valueOf(val)).printStackTrace();
         return val;
     }
 
     public static int toUInt32BigEndian(byte[] buffer, int offset) {
         int val = ((buffer[offset + 0] << 24) & 0xFF000000) | ((buffer[offset + 1] << 16) & 0x00FF0000) |
                   ((buffer[offset + 2] << 8) & 0x0000FF00) | ((buffer[offset + 3] << 0) & 0x000000FF);
-//if (val < 0) new Error(String.valueOf(val)).printStackTrace();
         return val;
     }
 
     public static long toUInt64BigEndian(byte[] buffer, int offset) {
-//System.err.printf("%x\n", ((long) toUInt32BigEndian(buffer, offset + 0) << 32));
         return ((long) toUInt32BigEndian(buffer, offset + 0) << 32) | toUInt32BigEndian(buffer, offset + 4);
     }
 
@@ -165,7 +159,6 @@ public class EndianUtilities {
     }
 
     public static UUID toGuidBigEndian(byte[] buffer, int offset) {
-        // TODO incomplete
         byte[] temp = new byte[16];
         writeBytesLittleEndian(toInt32BigEndian(buffer, offset + 0), temp, 0);
         writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 4), temp, 4);
@@ -174,7 +167,6 @@ public class EndianUtilities {
         ByteBuffer bb = ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN);
         long msb = bb.getLong();
         long lsb = bb.getLong();
-//System.err.printf("%08x, %08x, %s\n", msb, lsb, StringUtil.getDump(temp));
         return new UUID(msb, lsb);
     }
 

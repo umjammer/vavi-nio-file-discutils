@@ -24,17 +24,21 @@ package DiscUtils.Iso9660;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import moe.yo3explorer.dotnetio4j.IOException;
 
 
 public class IsoUtilities {
+    private static Logger logger = Logger.getLogger(IsoUtilities.class.getName());
+
     public static final int SectorSize = 2048;
 
     public static int toUInt32FromBoth(byte[] data, int offset) {
@@ -244,7 +248,7 @@ public class IsoUtilities {
         if (dateTime_ == Long.MIN_VALUE) {
             Arrays.fill(data, offset, offset + 7, (byte) 0);
         } else {
-            ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime_), ZoneId.of("UTC")); // TODO
+            ZonedDateTime dateTime = ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime_), ZoneId.of("UTC"));
             if (dateTime.getYear() < 1900) {
                 throw new IOException("Year is out of range");
             }
@@ -285,7 +289,8 @@ public class IsoUtilities {
         try {
             Instant time = ZonedDateTime.of(year, month, day, hour, min, sec, hundredths * 10, ZoneId.of("UTC")).toInstant();
             return time.minus(Duration.ofMinutes(15 * data[offset + 16])).toEpochMilli();
-        } catch (IndexOutOfBoundsException __dummyCatchVar1) {
+        } catch (DateTimeException e) {
+            logger.warning(e.getMessage());
             return Long.MIN_VALUE;
         }
     }

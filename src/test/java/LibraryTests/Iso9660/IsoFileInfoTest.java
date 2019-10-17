@@ -105,7 +105,7 @@ public class IsoFileInfoTest {
         CDReader fs = new CDReader(builder.build(), false);
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
         // Check default attributes
-        assertEquals(FileAttributes.toMap(EnumSet.of(FileAttributes.ReadOnly)), fi.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.ReadOnly), fi.getAttributes());
     }
 
     @Test
@@ -116,9 +116,9 @@ public class IsoFileInfoTest {
                             1
                         });
         CDReader fs = new CDReader(builder.build(), false);
-        assertFalse(fs.getFileInfo("unknown.txt").getExists());
-        assertTrue(fs.getFileInfo("dir\\foo.txt").getExists());
-        assertFalse(fs.getFileInfo("dir").getExists());
+        assertFalse(fs.getFileInfo("unknown.txt").exists());
+        assertTrue(fs.getFileInfo("dir\\foo.txt").exists());
+        assertFalse(fs.getFileInfo("dir").exists());
     }
 
     @Test

@@ -156,7 +156,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
     }
 
     public static Map<String, Object> convertFlags(EnumSet<FileAttributeFlags> flags) {
-        Map<String, Object> result = FileAttributeFlags.convert(flags); // (int) flags & 0xFFFF
+        Map<String, Object> result = FileAttributeFlags.toMap(flags); // (int) flags & 0xFFFF
         if (flags.contains(FileAttributeFlags.Directory)) {
             result.put("Directory", true);
         }

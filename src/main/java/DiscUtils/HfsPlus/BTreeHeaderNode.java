@@ -28,14 +28,13 @@ import java.util.List;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class BTreeHeaderNode extends BTreeNode {
-    public BTreeHeaderNode(BTree<?> tree, BTreeNodeDescriptor descriptor) {
-        super(tree, descriptor);
+public class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
+    public BTreeHeaderNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
+        super(clazz, tree, descriptor);
     }
 
     public BTreeHeaderRecord getHeaderRecord() {
-        return getRecords().get(0) instanceof BTreeHeaderRecord ? (BTreeHeaderRecord) getRecords().get(0)
-                                                                : (BTreeHeaderRecord) null;
+        return getRecords().get(0) instanceof BTreeHeaderRecord ? BTreeHeaderRecord.class.cast(getRecords().get(0)) : null;
     }
 
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {

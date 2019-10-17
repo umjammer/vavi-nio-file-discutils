@@ -31,9 +31,11 @@ import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Core.VirtualDiskParameters;
 import DiscUtils.Core.VirtualDiskTypeInfo;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
+import DiscUtils.Core.Internal.VirtualDiskFactoryAttribute;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
+@VirtualDiskFactoryAttribute(type = "VHDX", fileExtensions = { ".vhdx", ".avhdx" })
 public final class DiskFactory extends VirtualDiskFactory {
     public String[] getVariants() {
         return new String[] { "fixed", "dynamic" };

@@ -135,9 +135,8 @@ public final class BuildFileInfo extends BuildDirectoryMember {
         }
 
         String candidate = parts[0] + '.' + parts[1] + ';' + parts[2];
+
+        // TODO: Make unique
         return candidate;
     }
-
 }
-
-// TODO: Make unique

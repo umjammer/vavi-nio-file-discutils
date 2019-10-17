@@ -22,6 +22,8 @@
 
 package DiscUtils.Btrfs.Base.Items;
 
+import java.util.EnumSet;
+
 import DiscUtils.Btrfs.Base.BlockGroupFlag;
 import DiscUtils.Btrfs.Base.Key;
 import DiscUtils.Btrfs.Base.Stripe;
@@ -78,13 +80,13 @@ public class ChunkItem extends BaseItem {
     /**
      * type (same as flags for block group?)
      */
-    private BlockGroupFlag __Type = BlockGroupFlag.Data;
+    private EnumSet<BlockGroupFlag> __Type;
 
-    public BlockGroupFlag getType() {
+    public EnumSet<BlockGroupFlag> getType() {
         return __Type;
     }
 
-    public void setType(BlockGroupFlag value) {
+    public void setType(EnumSet<BlockGroupFlag> value) {
         __Type = value;
     }
 

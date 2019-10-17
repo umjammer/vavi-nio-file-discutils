@@ -29,12 +29,14 @@ import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Core.VirtualDiskParameters;
 import DiscUtils.Core.VirtualDiskTypeInfo;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
+import DiscUtils.Core.Internal.VirtualDiskFactoryAttribute;
 import DiscUtils.Streams.Util.Ownership;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.FileShare;
 
 
+@VirtualDiskFactoryAttribute(type = "Optical", fileExtensions = { ".iso", ".bin" })
 public final class DiscFactory extends VirtualDiskFactory {
     public String[] getVariants() {
         return new String[] {};

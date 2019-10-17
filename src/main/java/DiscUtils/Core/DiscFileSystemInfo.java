@@ -23,17 +23,15 @@
 package DiscUtils.Core;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.EnumSet;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 
 
 /**
- * Provides the base class for both
- * {@link DiscFileInfo}
- * and
- * {@link DiscDirectoryInfo}
- * objects.
+ * Provides the base class for both {@link DiscFileInfo} and
+ * {@link DiscDirectoryInfo} objects.
  */
 public class DiscFileSystemInfo {
     public DiscFileSystemInfo(DiscFileSystem fileSystem, String path) {
@@ -46,51 +44,66 @@ public class DiscFileSystemInfo {
     }
 
     /**
-     * Gets or sets the
-     * {@link Map}
-     * of the current
-     * {@link #DiscFileSystemInfo}
-     * object.
+     * Gets or sets the {@link FileAttributes} of the current
+     * {@link DiscFileSystemInfo} object.
      */
-    public Map<String, Object> getAttributes() throws IOException {
-        return getFileSystem().getAttributes(getPath());
+    public EnumSet<FileAttributes> getAttributes() {
+        try {
+            return FileAttributes.toEnumSet(getFileSystem().getAttributes(getPath()));
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
-    public void setAttributes(Map<String, Object> value) throws IOException {
-        getFileSystem().setAttributes(getPath(), value);
+    public void setAttributes(EnumSet<FileAttributes> value) {
+        try {
+            getFileSystem().setAttributes(getPath(), FileAttributes.toMap(value));
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
      * Gets or sets the creation time (in local time) of the current
-     * {@link #DiscFileSystemInfo}
-     * object.
+     * {@link DiscFileSystemInfo} object.
      */
-    public long getCreationTime() throws IOException {
+    public long getCreationTime() {
         return getCreationTimeUtc();
     }
 
-    public void setCreationTime(long value) throws IOException {
+    public void setCreationTime(long value) {
         setCreationTimeUtc(value);
     }
 
     /**
      * Gets or sets the creation time (in UTC) of the current
-     * {@link #DiscFileSystemInfo}
-     * object.
+     * {@link DiscFileSystemInfo} object.
      */
-    public long getCreationTimeUtc() throws IOException {
-        return getFileSystem().getCreationTimeUtc(getPath());
+    public long getCreationTimeUtc() {
+        try {
+            return getFileSystem().getCreationTimeUtc(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
-    public void setCreationTimeUtc(long value) throws IOException {
-        getFileSystem().setCreationTimeUtc(getPath(), value);
+    public void setCreationTimeUtc(long value) {
+        try {
+            getFileSystem().setCreationTimeUtc(getPath(), value);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
      * Gets a value indicating whether the file system object exists.
      */
-    public boolean getExists() throws IOException {
-        return getFileSystem().exists(getPath());
+    public boolean exists() {
+        try {
+            return getFileSystem().exists(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -124,15 +137,14 @@ public class DiscFileSystemInfo {
 
     /**
      * Gets or sets the last time (in local time) the file or directory was
-     * accessed.
-     * Read-only file systems will never update this value, it will remain at a
-     * fixed value.
+     * accessed. Read-only file systems will never update this value, it will remain
+     * at a fixed value.
      */
-    public long getLastAccessTime() throws IOException {
+    public long getLastAccessTime() {
         return getLastAccessTimeUtc();
     }
 
-    public void setLastAccessTime(long value) throws IOException {
+    public void setLastAccessTime(long value) {
         setLastAccessTimeUtc(value);
     }
 
@@ -141,35 +153,52 @@ public class DiscFileSystemInfo {
      * Read-only file systems will never update this value, it will remain at a
      * fixed value.
      */
-    public long getLastAccessTimeUtc() throws IOException {
-        return getFileSystem().getLastAccessTimeUtc(getPath());
+    public long getLastAccessTimeUtc() {
+        try {
+            return getFileSystem().getLastAccessTimeUtc(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
-    public void setLastAccessTimeUtc(long value) throws IOException {
-        getFileSystem().setLastAccessTimeUtc(getPath(), value);
+    public void setLastAccessTimeUtc(long value) {
+        try {
+            getFileSystem().setLastAccessTimeUtc(getPath(), value);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Gets or sets the last time (in local time) the file or directory was
-     * written to.
+     * Gets or sets the last time (in local time) the file or directory was written
+     * to.
      */
-    public long getLastWriteTime() throws IOException {
+    public long getLastWriteTime() {
         return getLastWriteTimeUtc();
     }
 
-    public void setLastWriteTime(long value) throws IOException {
+    public void setLastWriteTime(long value) {
         setLastWriteTimeUtc(value);
     }
 
     /**
      * Gets or sets the last time (in UTC) the file or directory was written to.
      */
-    public long getLastWriteTimeUtc() throws IOException {
-        return getFileSystem().getLastWriteTimeUtc(getPath());
+    public long getLastWriteTimeUtc() {
+        try {
+            return getFileSystem().getLastWriteTimeUtc(getPath());
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
-    public void setLastWriteTimeUtc(long value) throws IOException {
-        getFileSystem().setLastWriteTimeUtc(getPath(), value);
+    public void setLastWriteTimeUtc(long value) {
+        try {
+            getFileSystem().setLastWriteTimeUtc(getPath(), value);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -180,11 +209,8 @@ public class DiscFileSystemInfo {
     }
 
     /**
-     * Gets the
-     * {@link DiscDirectoryInfo}
-     * of the directory containing the current
-     * {@link #DiscFileSystemInfo}
-     * object.
+     * Gets the {@link DiscDirectoryInfo} of the directory containing the current
+     * {@link #DiscFileSystemInfo} object.
      */
     public DiscDirectoryInfo getParent() {
         if (getPath() == null || getPath().isEmpty()) {
@@ -206,27 +232,23 @@ public class DiscFileSystemInfo {
     /**
      * Deletes a file or directory.
      */
-    public void delete() throws IOException {
-        if (Boolean.class.cast(getAttributes().get("dos:directory"))) {
-            getFileSystem().deleteDirectory(getPath());
-        } else {
-            getFileSystem().deleteFile(getPath());
+    public void delete() {
+        try {
+            if (getAttributes().contains(FileAttributes.Directory)) {
+                getFileSystem().deleteDirectory(getPath());
+            } else {
+                getFileSystem().deleteFile(getPath());
+            }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     /**
-     * Indicates if
-     * {@code obj}
-     * is equivalent to this object.
+     * Indicates if {@code obj} is equivalent to this object.
      *
      * @param obj The object to compare.
-     * @return
-     *         {@code true}
-     *         if
-     *         {@code obj}
-     *         is equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if {@code obj} is equivalent, else {@code false} .
      */
     public boolean equals(Object obj) {
         DiscFileSystemInfo asInfo = obj instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) obj : (DiscFileSystemInfo) null;

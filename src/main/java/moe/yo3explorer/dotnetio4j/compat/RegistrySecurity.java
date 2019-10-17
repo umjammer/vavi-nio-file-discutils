@@ -1,5 +1,7 @@
-/**
+/*
+ * Copyright (c) 2019 by Naohide Sano, All rights reserved.
  *
+ * Programmed by Naohide Sano
  */
 
 package moe.yo3explorer.dotnetio4j.compat;
@@ -8,11 +10,12 @@ import java.security.Permission;
 
 import moe.yo3explorer.dotnetio4j.AccessControlSections;
 
+
 /**
- * ${type_name}.
+ * RegistrySecurity.
  *
- * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
- * @version 0.00 ${id:date('YYYY/MM/dd')} umjammer initial version <br>
+ * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
+ * @version 0.00 2019/10/17 nsano initial version <br>
  */
 public class RegistrySecurity extends Permission {
 
@@ -22,55 +25,50 @@ public class RegistrySecurity extends Permission {
         super(null); // TODO
     }
 
-    /* ${see_to_overridden} */
     @Override
     public boolean implies(Permission permission) {
-        // TODO Auto-generated method stub
         return false;
     }
 
-    /* ${see_to_overridden} */
     @Override
     public boolean equals(Object obj) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* ${see_to_overridden} */
     @Override
     public int hashCode() {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    /* ${see_to_overridden} */
     @Override
     public String getActions() {
         // TODO Auto-generated method stub
         return null;
     }
 
+    private String binaryForm;
+
     /**
      * @return
      */
     public String getSecurityDescriptorBinaryForm() {
-        // TODO Auto-generated method stub
-        return "";
+        return binaryForm;
     }
 
     /**
      * @param secDesc
      */
-    public void setSecurityDescriptorBinaryForm(String form) {
-        // TODO Auto-generated method stub
-        
+    public void setSecurityDescriptorBinaryForm(String binaryForm) {
+        this.binaryForm = binaryForm;
     }
 
     /**
      */
     public String getSecurityDescriptorSddlForm(AccessControlSections sections) {
         // TODO Auto-generated method stub
-        return null;
+        return binaryForm;
     }
 
     /**

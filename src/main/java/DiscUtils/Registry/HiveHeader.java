@@ -87,6 +87,7 @@ public final class HiveHeader implements IByteArraySerializable {
         Timestamp = DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x000C));
         MajorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0014);
         MinorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0018);
+        @SuppressWarnings("unused")
         int isLog = EndianUtilities.toInt32LittleEndian(buffer, 0x001C);
         RootCell = EndianUtilities.toInt32LittleEndian(buffer, 0x0024);
         Length = EndianUtilities.toInt32LittleEndian(buffer, 0x0028);
@@ -109,7 +110,7 @@ public final class HiveHeader implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset);
         EndianUtilities.writeBytesLittleEndian(Sequence1, buffer, offset + 0x0004);
         EndianUtilities.writeBytesLittleEndian(Sequence2, buffer, offset + 0x0008);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(Timestamp)), buffer, offset + 0x000C); // TODO
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(Timestamp)), buffer, offset + 0x000C);
         EndianUtilities.writeBytesLittleEndian(MajorVersion, buffer, offset + 0x0014);
         EndianUtilities.writeBytesLittleEndian(MinorVersion, buffer, offset + 0x0018);
         EndianUtilities.writeBytesLittleEndian(1, buffer, offset + 0x0020);

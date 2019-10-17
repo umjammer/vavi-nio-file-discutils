@@ -52,7 +52,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
     private final DiskGroupRecord _record;
 
-    public DynamicDiskGroup(VirtualDisk disk) throws IOException {
+    public DynamicDiskGroup(VirtualDisk disk) {
         _disks = new HashMap<>();
         DynamicDisk dynDisk = new DynamicDisk(disk);
         _database = dynDisk.getDatabase();
@@ -124,7 +124,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         }
     }
 
-    public void add(VirtualDisk disk) throws IOException {
+    public void add(VirtualDisk disk) {
         DynamicDisk dynDisk = new DynamicDisk(disk);
         _disks.put(dynDisk.getId(), dynDisk);
     }

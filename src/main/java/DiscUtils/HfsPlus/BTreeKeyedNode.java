@@ -22,10 +22,10 @@
 
 package DiscUtils.HfsPlus;
 
-public abstract class BTreeKeyedNode<TKey extends BTreeKey<?>> extends BTreeNode {
+public abstract class BTreeKeyedNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
 
-    public BTreeKeyedNode(BTree<?> tree, BTreeNodeDescriptor descriptor) {
-        super(tree, descriptor);
+    public BTreeKeyedNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
+        super(clazz, tree, descriptor);
     }
 
     public abstract byte[] findKey(TKey key);

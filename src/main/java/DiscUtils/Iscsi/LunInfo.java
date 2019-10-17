@@ -115,10 +115,8 @@ public class LunInfo {
      * Parses a URI referring to a LUN.
      *
      * @param uri The URI to parse.
-     * @return The LUN info.
-     *         Note the LUN info is incomplete, only as much of the information
-     *         as is encoded
-     *         into the URL is available.
+     * @return The LUN info. Note the LUN info is incomplete, only as much of the
+     *         information as is encoded into the URL is available.
      */
     public static LunInfo parseUri(String uri) {
         return parseUri(URI.create(uri));
@@ -128,10 +126,8 @@ public class LunInfo {
      * Parses a URI referring to a LUN.
      *
      * @param uri The URI to parse.
-     * @return The LUN info.
-     *         Note the LUN info is incomplete, only as much of the information
-     *         as is encoded
-     *         into the URL is available.
+     * @return The LUN info. Note the LUN info is incomplete, only as much of the
+     *         information as is encoded into the URL is available.
      */
     public static LunInfo parseUri(URI uri) {
         String address;
@@ -139,6 +135,7 @@ public class LunInfo {
         String targetGroupTag = "";
         String targetName = "";
         long lun = 0;
+
         if (!uri.getScheme().equals("iscsi")) {
             throwInvalidURI(uri.toString());
         }
@@ -149,16 +146,18 @@ public class LunInfo {
             port = TargetAddress.DefaultPort;
         }
 
-        String[] uriSegments = null; // TODO uri.Segments;
-        if (uriSegments.length == 2) {
-            targetName = uriSegments[1].replace("/", "");
-        } else if (uriSegments.length == 3) {
-            targetGroupTag = uriSegments[1].replace("/", "");
-            targetName = uriSegments[2].replace("/", "");
+        String[] uriSegments = uri.getPath().split("/"); // TODO check
+        if (uriSegments.length == 1) {
+            targetName = uriSegments[0];
+        } else if (uriSegments.length == 2) {
+            targetGroupTag = uriSegments[0];
+            targetName = uriSegments[1];
         } else {
             throwInvalidURI(uri.toString());
         }
-        TargetInfo targetInfo = new TargetInfo(targetName, Arrays.asList());
+
+        TargetInfo targetInfo = new TargetInfo(targetName, Arrays.asList(new TargetAddress(address, port, targetGroupTag)));
+
         for (String queryElem : uri.getQuery().substring(1).split("&")) {
             if (queryElem.startsWith("LUN=")) {
                 lun = Long.parseLong(queryElem.substring(4));
@@ -167,6 +166,7 @@ public class LunInfo {
                 }
             }
         }
+
         return new LunInfo(targetInfo, lun, LunClass.Unknown, false, "", "", "");
     }
 
@@ -179,7 +179,6 @@ public class LunInfo {
         if ((getLun() & 0xFF00000000000000l) == 0) {
             return String.valueOf(getLun() >>> (6 * 8));
         }
-
         return String.valueOf(getLun());
     }
 
@@ -194,6 +193,7 @@ public class LunInfo {
         for (TargetAddress targetAddress : getTarget().getAddresses()) {
             results.add(targetAddress.toUri() + "/" + getTarget().getName() + "?LUN=" + toString());
         }
+
         return results;
     }
 

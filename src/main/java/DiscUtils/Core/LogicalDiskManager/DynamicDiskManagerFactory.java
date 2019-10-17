@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -38,17 +37,15 @@ public class DynamicDiskManagerFactory extends LogicalVolumeFactory {
         return DynamicDiskManager.handlesPhysicalVolume(volume);
     }
 
-    public void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result) throws IOException {
+    public void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result) {
         DynamicDiskManager mgr = new DynamicDiskManager();
         for (VirtualDisk disk : disks) {
             if (DynamicDiskManager.isDynamicDisk(disk)) {
                 mgr.add(disk);
             }
-
         }
         for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {
             result.put(vol.getIdentity(), vol);
         }
     }
-
 }

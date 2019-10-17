@@ -23,14 +23,17 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.security.Permission;
-import java.security.acl.Acl;
+import java.util.EnumSet;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import moe.yo3explorer.dotnetio4j.AccessControlSections;
 import moe.yo3explorer.dotnetio4j.IOException;
+import moe.yo3explorer.dotnetio4j.compat.AceFlags;
+import moe.yo3explorer.dotnetio4j.compat.ControlFlags;
+import moe.yo3explorer.dotnetio4j.compat.GenericAce;
+import moe.yo3explorer.dotnetio4j.compat.RawAcl;
 import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
 
 
@@ -65,28 +68,28 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         // Write out the security descriptor manually because on NTFS the DACL is written
         // before the Owner & Group.  Writing the components in the same order means the
         // hashes will match for identical Security Descriptors.
-        ControlFlags controlFlags = getDescriptor().ControlFlags;
+        EnumSet<ControlFlags> controlFlags = getDescriptor().getControlFlags();
         buffer[offset + 0x00] = 1;
-        buffer[offset + 0x01] = getDescriptor().ResourceManagerControl;
-        EndianUtilities.writeBytesLittleEndian((short) controlFlags, buffer, offset + 0x02);
+        buffer[offset + 0x01] = (byte) getDescriptor().getResourceManagerControl();
+        EndianUtilities.writeBytesLittleEndian((short) ControlFlags.valueOf(controlFlags), buffer, offset + 0x02);
         for (int i = 0x04; i < 0x14; ++i) {
             // Blank out offsets, will fill later
             buffer[offset + i] = 0;
         }
         int pos = 0x14;
-        Acl discAcl = getDescriptor().DiscretionaryAcl;
-        if ((controlFlags & ControlFlags.DiscretionaryAclPresent) != 0 && discAcl != null) {
+        RawAcl discAcl = getDescriptor().getDiscretionaryAcl();
+        if (controlFlags.contains(ControlFlags.DiscretionaryAclPresent) && discAcl != null) {
             EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x10);
-            discAcl.GetBinaryForm(buffer, offset + pos);
-            pos += getDescriptor().DiscretionaryAcl.BinaryLength;
+            discAcl.getBinaryForm(buffer, offset + pos);
+            pos += getDescriptor().getDiscretionaryAcl().getBinaryLength();
         } else {
             EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x10);
         }
-        Acl sysAcl = getDescriptor().SystemAcl;
-        if ((controlFlags & ControlFlags.SystemAclPresent) != 0 && sysAcl != null) {
+        RawAcl sysAcl = getDescriptor().getSystemAcl();
+        if (controlFlags.contains(ControlFlags.SystemAclPresent) && sysAcl != null) {
             EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x0C);
-            sysAcl.GetBinaryForm(buffer, offset + pos);
-            pos += getDescriptor().SystemAcl.BinaryLength;
+            sysAcl.getBinaryForm(buffer, offset + pos);
+            pos += getDescriptor().getSystemAcl().getBinaryLength();
         } else {
             EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x0C);
         }
@@ -99,7 +102,6 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         if (pos != getDescriptor().getBinaryLength()) {
             throw new IOException("Failed to write Security Descriptor correctly");
         }
-
     }
 
     public void dump(PrintWriter writer, String indent) {
@@ -117,28 +119,30 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public static RawSecurityDescriptor calcNewObjectDescriptor(RawSecurityDescriptor parent, boolean isContainer) {
-        Acl sacl = inheritAcl(parent.SystemAcl, isContainer);
-        Acl dacl = InheritAcl(parent.DiscretionaryAcl, isContainer);
-        return new RawSecurityDescriptor(parent.ControlFlags, parent.getOwner(), parent.getGroup(), sacl, dacl);
+        RawAcl sacl = inheritAcl(parent.getSystemAcl(), isContainer);
+        RawAcl dacl = inheritAcl(parent.getDiscretionaryAcl(), isContainer);
+        return new RawSecurityDescriptor(parent.getControlFlags(), parent.getOwner(), parent.getGroup(), sacl, dacl);
     }
 
-    private static Acl inheritAcl(Acl parentAcl, boolean isContainer) {
+    private static RawAcl inheritAcl(RawAcl parentAcl, boolean isContainer) {
         AceFlags inheritTest = isContainer ? AceFlags.ContainerInherit : AceFlags.ObjectInherit;
-        Acl newAcl = null;
+        RawAcl newAcl = null;
         if (parentAcl != null) {
-            newAcl = new Acl(parentAcl.Revision, parentAcl.size());
+            newAcl = new RawAcl(parentAcl.getRevision(), parentAcl.getCount());
             for (GenericAce ace : parentAcl) {
-                if ((ace.AceFlags & inheritTest) != 0) {
-                    GenericAce newAce = ace.Copy();
-                    AceFlags newFlags = ace.AceFlags;
-                    if ((newFlags & AceFlags.NoPropagateInherit) != 0) {
-                        newFlags &= ~(AceFlags.ContainerInherit | AceFlags.ObjectInherit | AceFlags.NoPropagateInherit);
+                if (ace.getAceFlags().contains(inheritTest)) {
+                    GenericAce newAce = (GenericAce) ace.clone();
+                    EnumSet<AceFlags> newFlags = ace.getAceFlags();
+                    if (newFlags.contains(AceFlags.NoPropagateInherit)) {
+                        newFlags.remove(AceFlags.ContainerInherit);
+                        newFlags.remove(AceFlags.ObjectInherit);
+                        newFlags.remove(AceFlags.NoPropagateInherit);
                     }
 
-                    newFlags &= ~AceFlags.InheritOnly;
-                    newFlags |= AceFlags.Inherited;
-                    newAce.AceFlags = newFlags;
-                    newAcl.InsertAce(newAcl.size(), newAce);
+                    newFlags.remove(AceFlags.InheritOnly);
+                    newFlags.add(AceFlags.Inherited);
+                    newAce.setAceFlags(newFlags);
+                    newAcl.insertAce(newAcl.getCount(), newAce);
                 }
             }
         }

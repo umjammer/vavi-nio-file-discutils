@@ -73,7 +73,7 @@ public class Initiator {
         for (int i = 0; i < addresses.length; ++i) {
             addressObjs[i] = TargetAddress.parse(addresses[i]);
         }
-        return connectTo(target, Arrays.asList(addressObjs)); // TODO
+        return connectTo(target, Arrays.asList(addressObjs));
     }
 
     /**

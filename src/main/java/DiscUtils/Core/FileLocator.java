@@ -23,6 +23,7 @@
 package DiscUtils.Core;
 
 import java.io.IOException;
+import java.util.function.BiConsumer;
 
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Setup.FileOpenEventArgs;
@@ -35,7 +36,7 @@ import moe.yo3explorer.dotnetio4j.Stream;
 public abstract class FileLocator {
     public abstract boolean exists(String fileName) throws IOException;
 
-//    static EventHandler<FileOpenEventArgs> openingFile;
+    public static BiConsumer<Object, FileOpenEventArgs> openingFile;
 
     public Stream open(String fileName, FileMode mode, FileAccess access, FileShare share) {
         FileOpenEventArgs args = new FileOpenEventArgs(fileName, mode, access, share, (fileName1, mode1, access1, share1) -> {
@@ -45,7 +46,9 @@ public abstract class FileLocator {
                 throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         });
-//        openingFile.invoke(this, args); // TODO
+        if (openingFile != null) {
+            openingFile.accept(this, args);
+        }
         if (args.getResult() != null)
             return args.getResult();
 

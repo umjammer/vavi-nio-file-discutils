@@ -278,7 +278,7 @@ public class DiskStream extends SparseStream {
         byte[] buffer = StreamUtilities.readExact(_fileStream, _fileHeader.blockCount * 4);
         _blockTable = new int[_fileHeader.blockCount];
         for (int i = 0; i < _fileHeader.blockCount; ++i) {
-            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4); // TODO
+            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4); // TODO negative
 System.err.println(_blockTable[i]);
         }
     }

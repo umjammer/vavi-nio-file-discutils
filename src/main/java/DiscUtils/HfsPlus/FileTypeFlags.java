@@ -2,14 +2,23 @@
 package DiscUtils.HfsPlus;
 
 public enum FileTypeFlags {
-    None,
-    SymLinkFileType,
-    /* 'slnk' */
-    SymLinkCreator,
-    /* 'rhap' */
-    HardLinkFileType,
-    /* 'hlnk' */
-    HFSPlusCreator
-}
+    None(0x0),
+    /** 'slnk' */
+    SymLinkFileType(0x736C6E6B),
+    /** 'rhap' */
+    SymLinkCreator(0x72686170),
+    /** 'hlnk' */
+    HardLinkFileType(0x686C6E6B),
+    /** 'hfs+' */
+    HFSPlusCreator(0x6866732B);
 
-/* 'hfs+' */
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private FileTypeFlags(int value) {
+        this.value = value;
+    }
+}

@@ -75,7 +75,7 @@ public class DynamicHeader {
         ParentTimestamp = Footer.EpochUtc;
         ParentUnicodeName = "";
         ParentLocators = new ParentLocator[8];
-        ParentUniqueId = new UUID(0, 0); // TODO
+        ParentUniqueId = new UUID(0, 0); // TODO no initializer
         for (int i = 0; i < 8; ++i) {
             ParentLocators[i] = new ParentLocator();
         }
@@ -142,7 +142,7 @@ public class DynamicHeader {
     }
 
     public boolean isChecksumValid() {
-System.err.println(Checksum + ", " + calculateChecksum()); // TODO
+System.err.println(Checksum + ", " + calculateChecksum()); // TODO not equal
         return Checksum == calculateChecksum();
     }
 

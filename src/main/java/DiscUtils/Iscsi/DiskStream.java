@@ -165,6 +165,6 @@ public class DiskStream extends SparseStream {
 
     @Override
     public void close() throws java.io.IOException {
-        // TODO Auto-generated method stub
+        _session.close();
     }
 }

@@ -25,17 +25,15 @@ package DiscUtils.Core;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Core.Internal.LogicalVolumeFactory;
-import DiscUtils.Core.Internal.LogicalVolumeFactoryAttribute;
 import DiscUtils.Core.Partitions.PartitionInfo;
 import DiscUtils.Core.Partitions.PartitionTable;
 import DiscUtils.Core.Raw.Disk;
@@ -45,15 +43,13 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 /**
  * VolumeManager interprets partitions and other on-disk structures (possibly
- * combining multiple disks).
- * Although file systems commonly are placed directly within partitions on a
- * disk, in some
- * cases a logical volume manager / logical disk manager may be used, to combine
- * disk regions in multiple
- * ways for data redundancy or other purposes.
+ * combining multiple disks). Although file systems commonly are placed directly
+ * within partitions on a disk, in some cases a logical volume manager / logical
+ * disk manager may be used, to combine disk regions in multiple ways for data
+ * redundancy or other purposes.
  */
 public final class VolumeManager implements Serializable {
-    private static List<LogicalVolumeFactory> s_logicalVolumeFactories;
+    private static ServiceLoader<LogicalVolumeFactory> s_logicalVolumeFactories;
 
     private final List<VirtualDisk> _disks;
 
@@ -62,8 +58,6 @@ public final class VolumeManager implements Serializable {
     private SortedMap<String, PhysicalVolumeInfo> _physicalVolumes;
 
     private SortedMap<String, LogicalVolumeInfo> _logicalVolumes;
-
-    private static final List<Class<VolumeManager>> _coreAssembly = Arrays.asList(VolumeManager.class);
 
     /**
      * Initializes a new instance of the VolumeManager class.
@@ -79,7 +73,7 @@ public final class VolumeManager implements Serializable {
      *
      * @param initialDisk The initial disk to add.
      */
-    public VolumeManager(VirtualDisk initialDisk) throws IOException {
+    public VolumeManager(VirtualDisk initialDisk) {
         this();
         addDisk(initialDisk);
     }
@@ -94,51 +88,20 @@ public final class VolumeManager implements Serializable {
         addDisk(initialDiskContent);
     }
 
-    private static List<LogicalVolumeFactory> getLogicalVolumeFactories() throws IOException {
-        if (s_logicalVolumeFactories == null) {
-            List<LogicalVolumeFactory> factories = new ArrayList<>();
-            factories.addAll(getLogicalVolumeFactories(_coreAssembly));
-            s_logicalVolumeFactories = factories;
-        }
-
-        return s_logicalVolumeFactories;
-    }
-
-    private static List<LogicalVolumeFactory> getLogicalVolumeFactories(List<Class<VolumeManager>> assembly) {
-        try {
-            List<LogicalVolumeFactory> result = new ArrayList<>();
-            for (Class<VolumeManager> type : assembly) {
-                for (@SuppressWarnings("unused") LogicalVolumeFactoryAttribute attr : ReflectionHelper
-                        .getCustomAttributes(type, LogicalVolumeFactoryAttribute.class, false)) {
-                    result.add(LogicalVolumeFactory.class.cast(type.newInstance()));
-                }
-            }
-            return result;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     /**
      * Register new LogicalVolumeFactories detected in an assembly
-     *
-     * @param assembly The assembly to inspect
      */
-    public static void registerLogicalVolumeFactory(List<Class<VolumeManager>> assembly) throws IOException {
-        if (assembly.equals(_coreAssembly)) // TODO
-            return;
-
-        getLogicalVolumeFactories().addAll(getLogicalVolumeFactories(assembly));
+    static {
+        s_logicalVolumeFactories = ServiceLoader.load(LogicalVolumeFactory.class);
     }
 
     /**
      * Gets the physical volumes held on a disk.
      *
      * @param diskContent The contents of the disk to inspect.
-     * @return An array of volumes.By preference, use the form of this method
-     *         that takes a disk parameter.If the disk isn't partitioned, this
-     *         method returns the entire disk contents
-     *         as a single volume.
+     * @return An array of volumes.By preference, use the form of this method that
+     *         takes a disk parameter.If the disk isn't partitioned, this method
+     *         returns the entire disk contents as a single volume.
      */
     public static Collection<PhysicalVolumeInfo> getPhysicalVolumes(Stream diskContent) throws IOException {
         return getPhysicalVolumes(new Disk(diskContent, Ownership.None));
@@ -149,8 +112,7 @@ public final class VolumeManager implements Serializable {
      *
      * @param disk The disk to inspect.
      * @return An array of volumes.If the disk isn't partitioned, this method
-     *         returns the entire disk contents
-     *         as a single volume.
+     *         returns the entire disk contents as a single volume.
      */
     public static Collection<PhysicalVolumeInfo> getPhysicalVolumes(VirtualDisk disk) throws IOException {
         return new VolumeManager(disk).getPhysicalVolumes();
@@ -162,7 +124,7 @@ public final class VolumeManager implements Serializable {
      * @param disk The disk to add.
      * @return The GUID the volume manager will use to identify the disk.
      */
-    public String addDisk(VirtualDisk disk) throws IOException {
+    public String addDisk(VirtualDisk disk) {
         _needScan = true;
         int ordinal = _disks.size();
         _disks.add(disk);
@@ -209,9 +171,7 @@ public final class VolumeManager implements Serializable {
      * Gets a particular volume, based on it's identity.
      *
      * @param identity The volume's identity.
-     * @return The volume information for the volume, or returns
-     *         {@code null}
-     *         .
+     * @return The volume information for the volume, or returns {@code null} .
      */
     public VolumeInfo getVolume(String identity) throws IOException {
         if (_needScan) {
@@ -229,8 +189,7 @@ public final class VolumeManager implements Serializable {
         return null;
     }
 
-    private static void mapPhysicalVolumes(List<PhysicalVolumeInfo> physicalVols,
-                                           Map<String, LogicalVolumeInfo> result) {
+    private static void mapPhysicalVolumes(List<PhysicalVolumeInfo> physicalVols, Map<String, LogicalVolumeInfo> result) {
         for (PhysicalVolumeInfo physicalVol : physicalVols) {
             LogicalVolumeInfo lvi = new LogicalVolumeInfo(physicalVol.getPartitionIdentity(),
                                                           physicalVol,
@@ -245,7 +204,7 @@ public final class VolumeManager implements Serializable {
     /**
      * Scans all of the disks for their physical and logical volumes.
      */
-    private void scan() throws IOException {
+    private void scan() {
         SortedMap<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
         SortedMap<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
         _physicalVolumes = newPhysicalVolumes;
@@ -253,12 +212,12 @@ public final class VolumeManager implements Serializable {
         _needScan = false;
     }
 
-    private SortedMap<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) throws IOException {
+    private SortedMap<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) {
         List<PhysicalVolumeInfo> unhandledPhysical = new ArrayList<>();
         SortedMap<String, LogicalVolumeInfo> result = new TreeMap<>();
         for (PhysicalVolumeInfo pvi : physicalVols) {
             boolean handled = false;
-            for (LogicalVolumeFactory volFactory : getLogicalVolumeFactories()) {
+            for (LogicalVolumeFactory volFactory : s_logicalVolumeFactories) {
                 if (volFactory.handlesPhysicalVolume(pvi)) {
                     handled = true;
                     break;
@@ -271,13 +230,13 @@ public final class VolumeManager implements Serializable {
 
         }
         mapPhysicalVolumes(unhandledPhysical, result);
-        for (LogicalVolumeFactory volFactory : getLogicalVolumeFactories()) {
+        for (LogicalVolumeFactory volFactory : s_logicalVolumeFactories) {
             volFactory.mapDisks(_disks, result);
         }
         return result;
     }
 
-    private SortedMap<String, PhysicalVolumeInfo> scanForPhysicalVolumes() throws IOException {
+    private SortedMap<String, PhysicalVolumeInfo> scanForPhysicalVolumes() {
         SortedMap<String, PhysicalVolumeInfo> result = new TreeMap<>();
         for (int i = 0; i < _disks.size(); ++i) {
             // First scan physical volumes
@@ -298,7 +257,7 @@ public final class VolumeManager implements Serializable {
         return result;
     }
 
-    private String getDiskId(int ordinal) throws IOException {
+    private String getDiskId(int ordinal) {
         VirtualDisk disk = _disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();

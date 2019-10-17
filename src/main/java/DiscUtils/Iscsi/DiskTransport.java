@@ -28,9 +28,11 @@ import java.net.URI;
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
+import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
+@VirtualDiskTransportAttribute(scheme = "iscsi")
 public final class DiskTransport extends VirtualDiskTransport {
     private LunInfo _lunInfo;
 

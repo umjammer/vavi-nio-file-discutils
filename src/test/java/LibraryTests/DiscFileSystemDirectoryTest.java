@@ -25,6 +25,9 @@ package LibraryTests;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -41,6 +44,8 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class DiscFileSystemDirectoryTest {
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void create(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo("SOMEDIR");
@@ -48,6 +53,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(1, fs.getRoot().getDirectories().size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createRecursive(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo("SOMEDIR\\CHILDDIR");
@@ -57,6 +64,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals("CHILDDIR", fs.getDirectoryInfo("SOMEDIR").getDirectories().get(0).getName());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createExisting(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo("SOMEDIR");
@@ -65,6 +74,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(1, fs.getRoot().getDirectories().size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createInvalid_Long(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo(new String(new char[256]).replace('\0', 'X'));
@@ -73,6 +84,8 @@ public class DiscFileSystemDirectoryTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void createInvalid_Characters(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo("SOME\0DIR");
@@ -81,18 +94,22 @@ public class DiscFileSystemDirectoryTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void exists(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo("SOMEDIR\\CHILDDIR");
         dirInfo.create();
-        assertTrue(fs.getDirectoryInfo("\\").getExists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR").getExists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").getExists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR\\").getExists());
-        assertFalse(fs.getDirectoryInfo("NONDIR").getExists());
-        assertFalse(fs.getDirectoryInfo("SOMEDIR\\NONDIR").getExists());
+        assertTrue(fs.getDirectoryInfo("\\").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR\\").exists());
+        assertFalse(fs.getDirectoryInfo("NONDIR").exists());
+        assertFalse(fs.getDirectoryInfo("SOMEDIR\\NONDIR").exists());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void fullName(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals("\\", fs.getRoot().getFullName());
@@ -100,6 +117,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals("SOMEDIR\\CHILDDIR\\", fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").getFullName());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void delete(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("Fred");
@@ -108,6 +127,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(0, fs.getRoot().getDirectories().size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void deleteRecursive(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("Fred\\child");
@@ -116,6 +137,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(0, fs.getRoot().getDirectories().size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void deleteRoot(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(IOException.class, () -> {
@@ -123,6 +146,8 @@ public class DiscFileSystemDirectoryTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void deleteNonEmpty_NonRecursive(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("Fred\\child");
@@ -131,6 +156,8 @@ public class DiscFileSystemDirectoryTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getQuickReadWriteFileSystems")
     public void createDeleteLeakTest(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         for (int i = 0; i < 2000; ++i) {
@@ -146,6 +173,8 @@ public class DiscFileSystemDirectoryTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void move(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -154,12 +183,16 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(0, fs.getRoot().getDirectories("SOMEDIR").get(0).getDirectories().size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void extension(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals("dir", fs.getDirectoryInfo("fred.dir").getExtension());
         assertEquals("", fs.getDirectoryInfo("fred").getExtension());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void getDirectories(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -179,6 +212,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals("SOMEDIR\\CHILD\\GCHILD\\", fs.getRoot().getDirectories("GCHILD", "AllDirectories").get(0).getFullName());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void getDirectories_BadPath(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(FileNotFoundException.class, () -> {
@@ -186,6 +221,8 @@ public class DiscFileSystemDirectoryTest {
         });
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void getFiles(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -205,6 +242,8 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(0, fs.getRoot().getFiles("*.DIR", "AllDirectories").size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void getFileSystemInfos(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("SOMEDIR\\CHILD\\GCHILD");
@@ -222,17 +261,23 @@ public class DiscFileSystemDirectoryTest {
         assertEquals(2, fs.getRoot().getFileSystemInfos("*.?XT").size());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void parent(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("SOMEDIR");
         assertEquals(fs.getRoot(), fs.getRoot().getDirectories("SOMEDIR").get(0).getParent());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void parent_Root(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertNull(fs.getRoot().getParent());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void creationTimeUtc(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("DIR");
@@ -242,6 +287,8 @@ public class DiscFileSystemDirectoryTest {
                 .toEpochMilli() <= fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void creationTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("DIR");
@@ -251,6 +298,8 @@ public class DiscFileSystemDirectoryTest {
                 .toEpochMilli() <= fs.getRoot().getDirectories("DIR").get(0).getCreationTime());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void lastAccessTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("DIR");
@@ -261,6 +310,8 @@ public class DiscFileSystemDirectoryTest {
         assertTrue(baseTime < di.getLastAccessTime());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void lastWriteTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("DIR");
@@ -271,11 +322,15 @@ public class DiscFileSystemDirectoryTest {
         assertTrue(baseTime < di.getLastWriteTime());
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void equals(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals(fs.getDirectoryInfo("foo"), fs.getDirectoryInfo("foo"));
     }
 
+    @ParameterizedTest
+    @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void rootBehaviour(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         // Not all file systems can modify the root directory, so we just make sure 'get' and 'no-op' change work.

@@ -1,0 +1,2 @@
+DiscUtils.Core.LogicalDiskManager.DynamicDiskManagerFactory
+DiscUtils.Lvm.LogicalVolumeManagerFactory

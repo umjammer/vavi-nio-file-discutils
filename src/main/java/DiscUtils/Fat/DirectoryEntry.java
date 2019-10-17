@@ -22,8 +22,10 @@
 
 package DiscUtils.Fat;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.EnumSet;
 
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -67,7 +69,7 @@ public class DirectoryEntry {
         _options = options;
         _fatVariant = fatVariant;
         setName(name);
-        _attr = (byte) FatAttributes.valueOf(attrs);
+        _attr = (byte) (FatAttributes.valueOf(attrs) & 0xff);
     }
 
     public DirectoryEntry(DirectoryEntry toCopy) {
@@ -192,7 +194,7 @@ public class DirectoryEntry {
         int minute = (time & 0x07E0) >>> 5;
         int second = (time & 0x001F) * 2 + tenths / 100;
         int millis = tenths % 100 * 10;
-        return LocalDateTime.of(year, month, day, hour, minute, second, millis * 1000).toEpochSecond(ZoneOffset.UTC); // TODO
+        return ZonedDateTime.of(year, month, day, hour, minute, second, millis * 1000, ZoneId.of("UTC")).toInstant().toEpochMilli();
     }
 
     private static void dateTimeToFileTime(long value, short[] date) {
@@ -206,9 +208,8 @@ public class DirectoryEntry {
         dateTimeToFileTime(value, date, time, tenths);
     }
 
-    // TODO
     private static void dateTimeToFileTime(long value_, short[] date, short[] time, byte[] tenths) {
-        LocalDateTime value = LocalDateTime.ofEpochSecond(value_, 0, ZoneOffset.UTC);
+        LocalDateTime value = Instant.ofEpochMilli(value_).atZone(ZoneId.of("UTC")).toLocalDateTime();
         if (value.getYear() < 1980) {
             value_ = FatFileSystem.Epoch;
         }

@@ -24,9 +24,11 @@ package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
 import java.util.EnumSet;
-import java.util.Map;
+
+import vavi.util.win32.DateUtil;
 
 import DiscUtils.Core.IDiagnosticTraceable;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -129,22 +131,22 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
         return si;
     }
 
-    public static Map<String, Object> convertFlags(EnumSet<FileAttributeFlags> flags, boolean isDirectory) {
-        Map<String, Object> result = FileAttributeFlags.convert(flags);
+    public static EnumSet<FileAttributes> convertFlags(EnumSet<FileAttributeFlags> flags, boolean isDirectory) {
+        EnumSet<FileAttributes> result = FileAttributeFlags.cast(FileAttributes.class, flags);
         if (isDirectory) {
-            result.put("Directory", true);
+            result.add(FileAttributes.Directory);
         }
 
         return result;
     }
 
-    public static EnumSet<FileAttributeFlags> setFileAttributes(Map<String, Object> newAttributes, EnumSet<FileAttributeFlags> existing) {
-        int _newAttributes = (int) FileAttributeFlags.valueOf(FileAttributeFlags.convert(newAttributes));
+    public static EnumSet<FileAttributeFlags> setFileAttributes(EnumSet<FileAttributes> newAttributes, EnumSet<FileAttributeFlags> existing) {
+        int _newAttributes = (int) FileAttributes.valueOf(newAttributes);
         int _existing = (int) FileAttributeFlags.valueOf(existing);
         return FileAttributeFlags.valueOf((_existing & 0xFFFF0000) | ( _newAttributes & 0xFFFF));
     }
 
     private static long readDateTime(byte[] buffer, int offset) {
-        return EndianUtilities.toInt64LittleEndian(buffer, offset);
+        return DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset));
     }
 }

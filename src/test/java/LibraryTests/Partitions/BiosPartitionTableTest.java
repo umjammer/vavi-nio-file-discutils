@@ -181,7 +181,7 @@ public class BiosPartitionTableTest {
         Geometry geom = Geometry.lbaAssistedBiosGeometry(capacity);
         BiosPartitionTable table = BiosPartitionTable.initialize(ms, geom);
         table.create(150 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false);
-        table.create(20 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false); // TODO
+        table.create(20 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false); // TODO error
         table.create(20 * 1024L * 1024L * 1024, WellKnownPartitionType.WindowsNtfs, false);
         assertEquals(3, table.getPartitions().size());
         assertTrue(table.get___idx(0).getSectorCount() * 512L > 140 * 1024L * 1024L * 1024);

@@ -25,6 +25,7 @@ package DiscUtils.Core;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
@@ -36,7 +37,7 @@ import DiscUtils.Streams.SparseStream;
  * Base class for all disk image builders.
  */
 public abstract class DiskImageBuilder {
-    private static Map<String, VirtualDiskFactory> _typeMap;
+    private static final Map<String, VirtualDiskFactory> _typeMap;
 
     /**
      * Gets or sets the geometry of this disk, as reported by the BIOS, will be
@@ -66,8 +67,8 @@ public abstract class DiskImageBuilder {
     }
 
     /**
-     * Gets or sets the adapter type for created virtual disk, for file formats
-     * that encode this information.
+     * Gets or sets the adapter type for created virtual disk, for file formats that
+     * encode this information.
      */
     private GenericDiskAdapterType __GenericAdapterType = GenericDiskAdapterType.Ide;
 
@@ -102,20 +103,15 @@ public abstract class DiskImageBuilder {
     }
 
     private static Map<String, VirtualDiskFactory> getTypeMap() {
-        if (_typeMap == null) {
-            initializeMaps();
-        }
-
         return _typeMap;
     }
 
     /**
-     * Gets an instance that constructs the specified type (and variant) of
-     * virtual disk image.
+     * Gets an instance that constructs the specified type (and variant) of virtual
+     * disk image.
      *
-     * @param type The type of image to build (VHD, VMDK, etc).
-     * @param variant The variant type (differencing/dynamic, fixed/static,
-     *            etc).
+     * @param type    The type of image to build (VHD, VMDK, etc).
+     * @param variant The variant type (differencing/dynamic, fixed/static, etc).
      * @return The builder instance.
      */
     public static DiskImageBuilder getBuilder(String type, String variant) {
@@ -130,36 +126,23 @@ public abstract class DiskImageBuilder {
      * Initiates the construction of the disk image.
      *
      * @param baseName The base name for the disk images.
-     * @return A set of one or more logical files that constitute the
-     *         disk image. The first file is the 'primary' file that is normally
-     *         attached to VMs.The supplied
-     *         {@code baseName}
-     *         is the start of the file name, with no file
-     *         extension. The set of file specifications will indicate the
-     *         actual name corresponding
-     *         to each logical file that comprises the disk image. For example,
-     *         given a base name
-     *         'foo', the files 'foo.vmdk' and 'foo-flat.vmdk' could be
-     *         returned.
+     * @return A set of one or more logical files that constitute the disk image.
+     *         The first file is the 'primary' file that is normally attached to
+     *         VMs.The supplied {@code baseName} is the start of the file name, with
+     *         no file extension. The set of file specifications will indicate the
+     *         actual name corresponding to each logical file that comprises the
+     *         disk image. For example, given a base name 'foo', the files
+     *         'foo.vmdk' and 'foo-flat.vmdk' could be returned.
      */
     public abstract List<DiskImageFileSpecification> build(String baseName);
 
-    private static void initializeMaps() {
-        try {
-            Map<String, VirtualDiskFactory> typeMap = new HashMap<>();
-            for (Class<?> type : ReflectionHelper.getAssembly(VirtualDisk.class)) {
-                VirtualDiskFactoryAttribute attr = ReflectionHelper
-                        .getCustomAttribute(type, VirtualDiskFactoryAttribute.class, false);
-                if (attr != null) {
-                    VirtualDiskFactory factory = (VirtualDiskFactory) type.newInstance();
-                    typeMap.put(attr.type(), factory);
-                }
-
-            }
-            _typeMap = typeMap;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException(e);
+    static {
+        ServiceLoader<VirtualDiskFactory> loader = ServiceLoader.load(VirtualDiskFactory.class);
+        _typeMap = new HashMap<>();
+        for (VirtualDiskFactory factory : loader) {
+            VirtualDiskFactoryAttribute attr = ReflectionHelper
+                    .getCustomAttribute(factory.getClass(), VirtualDiskFactoryAttribute.class, false);
+            _typeMap.put(attr.type(), factory);
         }
     }
-
 }

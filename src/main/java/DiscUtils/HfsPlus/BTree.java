@@ -27,20 +27,23 @@ import DiscUtils.Streams.Util.StreamUtilities;
 
 
 public final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
+    private Class<TKey> keyClass;
+
     private final IBuffer _data;
 
     private final BTreeHeaderRecord _header;
 
     private BTreeKeyedNode<TKey> _rootNode;
 
-    public BTree(IBuffer data) {
+    public BTree(Class<TKey> clazz, IBuffer data) {
+        keyClass = clazz;
         _data = data;
         byte[] headerInfo = StreamUtilities.readExact(_data, 0, 114);
         _header = new BTreeHeaderRecord();
         _header.readFrom(headerInfo, 14);
         byte[] node0data = StreamUtilities.readExact(_data, 0, _header.NodeSize);
-        BTreeHeaderNode node0 = BTreeNode.readNode(this, node0data, 0) instanceof BTreeHeaderNode ? (BTreeHeaderNode) BTreeNode
-                .readNode(this, node0data, 0) : (BTreeHeaderNode) null;
+        BTreeNode<TKey> node = BTreeNode.readNode(keyClass, this, node0data, 0);
+        BTreeHeaderNode<TKey> node0 = node instanceof BTreeHeaderNode ? BTreeHeaderNode.class.cast(node) : null;
         node0.readFrom(node0data, 0);
         if (node0.getHeaderRecord().RootNode != 0) {
             _rootNode = getKeyedNode(node0.getHeaderRecord().RootNode);
@@ -62,12 +65,11 @@ public final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
 
     public BTreeKeyedNode<TKey> getKeyedNode(int nodeId) {
         byte[] nodeData = StreamUtilities.readExact(_data, nodeId * _header.NodeSize, _header.NodeSize);
-        BTreeKeyedNode<TKey> node = BTreeNode.readNode(this, nodeData, 0) instanceof BTreeKeyedNode ? BTreeKeyedNode.class
-                .cast(BTreeNode.readNode(this, nodeData, 0)) : (BTreeKeyedNode<TKey>) null;
+        BTreeNode<TKey> node_ = BTreeNode.readNode(keyClass, this, nodeData, 0);
+        BTreeKeyedNode<TKey> node = node_ instanceof BTreeKeyedNode ? BTreeKeyedNode.class.cast(node_) : null;
         node.readFrom(nodeData, 0);
         return node;
     }
-
 }
 
 abstract class InternalBTree {

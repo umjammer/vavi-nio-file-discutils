@@ -166,7 +166,7 @@ public class FatFileSystemTest {
     public void root() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         assertNotNull(fs.getRoot());
-        assertTrue(fs.getRoot().getExists());
+        assertTrue(fs.getRoot().exists());
         assertTrue(fs.getRoot().getName().isEmpty());
         assertNull(fs.getRoot().getParent());
     }

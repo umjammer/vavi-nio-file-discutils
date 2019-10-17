@@ -27,7 +27,9 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
-public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnosticTraceable, TChecker extends DiscFileSystemChecker> extends DiscFileSystem {
+public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnosticTraceable, TChecker extends DiscFileSystemChecker>
+        extends
+        DiscFileSystem {
 //    public static class __MultiStreamOpenFn implements StreamOpenFn {
 //        public SparseStream invoke(TFileSystem fs) {
 //            List<StreamOpenFn> copy = new ArrayList<>(), members = this.getInvocationList();
@@ -129,7 +131,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Creates a new instance.
      *
      * @param stream A stream containing an existing (valid) file system.The new
-     *            instance does not take ownership of the stream.
+     *                   instance does not take ownership of the stream.
      */
     public ValidatingFileSystem(Class<TFileSystem> fileSystemClass, Class<TChecker> checkerClass, Stream stream) {
         _baseStream = stream;
@@ -153,11 +155,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     /**
-     * Gets and sets how often an automatic checkpoint occurs.
-     * The number here represents the number of distinct file system operations.
-     * Each method/property access on DiscFileSystem or a stream retrieved from
-     * DiscFileSystem
-     * counts as an operation.
+     * Gets and sets how often an automatic checkpoint occurs. The number here
+     * represents the number of distinct file system operations. Each
+     * method/property access on DiscFileSystem or a stream retrieved from
+     * DiscFileSystem counts as an operation.
      */
     public int getCheckpointInterval() {
         return _checkpointPeriod;
@@ -194,24 +195,22 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Gets access to a view of the stream being validated, forcing 'lock-down'.
      *
-     * @param view The view to open.
+     * @param view     The view to open.
      * @param readOnly Whether to fail changes to the stream.
      * @return The new stream, the caller must dispose.Always use this method to
-     *         access the stream, rather than keeping
-     *         a reference to the stream passed to the constructor. This method
-     *         never
-     *         lets changes through to the underlying stream, so ensures the
-     *         integrity
-     *         of the underlying stream. Any changes made to the returned stream
-     *         are held
-     *         as a private delta and discarded when the stream is disposed.
+     *         access the stream, rather than keeping a reference to the stream
+     *         passed to the constructor. This method never lets changes through to
+     *         the underlying stream, so ensures the integrity of the underlying
+     *         stream. Any changes made to the returned stream are held as a private
+     *         delta and discarded when the stream is disposed.
      */
     public Stream openStreamView(StreamView view, boolean readOnly) {
         // Prevent further changes.
         _lockdown = true;
         Stream s;
         // Perversely, the snap stream has the current view (squirrelled away in it's
-        // delta).  The base stream is actually the stream state back at the last checkpoint.
+        // delta). The base stream is actually the stream state back at the last
+        // checkpoint.
         if (view == StreamView.Current) {
             s = _snapStream;
         } else {
@@ -231,29 +230,22 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Verifies the file system integrity.
      *
      * @param reportOutput The destination for the verification report, or
-     *            {@code null}
+     *                         {@code null}
      *
-     * @param levels The amount of detail to include in the report (if not
-     *            {@code null}
-     *            )
-     * @return
-     *         {@code true}
-     *         if the file system is OK, else
-     *         {@code false}
-     *         .This method may place this object into "lock-down", where no
-     *         further
-     *         changes are permitted (if corruption is detected). Unlike
-     *         Checkpoint, this method
-     *         doesn't cause the snapshot to be re-taken.
+     * @param levels       The amount of detail to include in the report (if not
+     *                         {@code null} )
+     * @return {@code true} if the file system is OK, else {@code false} .This
+     *         method may place this object into "lock-down", where no further
+     *         changes are permitted (if corruption is detected). Unlike Checkpoint,
+     *         this method doesn't cause the snapshot to be re-taken.
      */
     public boolean verify(PrintWriter reportOutput, ReportLevels levels) {
         boolean ok = true;
         _snapStream.freeze();
-        // Note the trace stream means that we can guarantee no further stream access after
-        // the file system object is disposed - when we dispose it, it forcibly severes the
-        // connection to the snapshot stream.
-        TracingStream traceStream = new TracingStream(_snapStream, Ownership.None);
-        try {
+        // Note the trace stream means that we can guarantee no further stream access
+        // after the file system object is disposed - when we dispose it, it forcibly
+        // severes the connection to the snapshot stream.
+        try (TracingStream traceStream = new TracingStream(_snapStream, Ownership.None)) {
             try {
                 if (!doVerify(checkerClass, traceStream, reportOutput, levels)) {
                     ok = false;
@@ -262,14 +254,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 _failureException = e;
                 ok = false;
             }
-        } finally {
-            if (traceStream != null)
-                try {
-                    traceStream.close();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         if (ok) {
             _snapStream.thaw();
@@ -290,13 +276,12 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * checkpoint.
      *
      * @param reportOutput The destination for the verification report, or
-     *            {@code null}
+     *                         {@code null}
      *
-     * @param levels The amount of detail to include in the report (if not
-     *            {@code null}
-     *            )This method is automatically invoked according to the
-     *            CheckpointInterval property,
-     *            but can be called manually as well.
+     * @param levels       The amount of detail to include in the report (if not
+     *                         {@code null} )This method is automatically invoked
+     *                         according to the CheckpointInterval property, but can
+     *                         be called manually as well.
      */
     public boolean checkpoint(PrintWriter reportOutput, ReportLevels levels) {
         if (!verify(reportOutput, levels)) {
@@ -319,9 +304,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     /**
-     * Generates a diagnostic report by replaying file system activities since
-     * the last
-     * checkpoint.
+     * Generates a diagnostic report by replaying file system activities since the
+     * last checkpoint.
      */
     public ReplayReport replayFromLastCheckpoint() {
         if (!doReplayAndVerify(0)) {
@@ -354,7 +338,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 try (StringWriter preVerificationReport = new StringWriter()) {
                     TFileSystem replayFs = createFileSystem(fileSystemClass, ts);
                     try {
-                        // Re-init the RNG to it's state when the checkpoint started, so we get reproducibility.
+                        // Re-init the RNG to it's state when the checkpoint started, so we get
+                        // reproducibility.
                         replayFs.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
                         Map<String, Object> replayContext = new HashMap<>();
                         for (int i = 0; i < lowPoint - 1; ++i) {
@@ -414,7 +399,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             replayCapture.snapshot();
             try {
                 try (TFileSystem replayFs = createFileSystem(fileSystemClass, replayCapture)) {
-                    // Re-init the RNG to it's state when the checkpoint started, so we get reproducibility.
+                    // Re-init the RNG to it's state when the checkpoint started, so we get
+                    // reproducibility.
                     replayFs.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
                     Map<String, Object> replayContext = new HashMap<>();
                     for (int i = 0; i < activityCount; ++i) {
@@ -431,17 +417,16 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     /**
-     * Used to perform filesystem activities that are exposed in addition to
-     * those in the DiscFileSystem class.
+     * Used to perform filesystem activities that are exposed in addition to those
+     * in the DiscFileSystem class.
      * 
      * @param activity The activity to perform, as a delegate
      * 
-     * @return The value returned from the activity delegateThe supplied
-     *         activity may be executed multiple times, against multiple
-     *         instances of the
-     *         file system if a replay is requested. Always drive the file
-     *         system object supplied as a parameter and
-     *         do not persist references to that object.
+     * @return The value returned from the activity delegateThe supplied activity
+     *         may be executed multiple times, against multiple instances of the
+     *         file system if a replay is requested. Always drive the file system
+     *         object supplied as a parameter and do not persist references to that
+     *         object.
      */
     public Object performActivity(Activity<TFileSystem> activity) {
         if (_lockdown) {
@@ -467,9 +452,12 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                     _globalTrace.writeToFile(String.format("C:\\temp\\working\\trace%3X.log", _numScheduledCheckpoints++));
                 }
 
-                // We only do a full checkpoint, if the activity didn't throw an exception.  Otherwise,
-                // we'll discard all replay info just when the caller might want it.  Instead, just do a
-                // verify until (and unless), an activity that doesn't throw an exception happens.
+                // We only do a full checkpoint, if the activity didn't throw an exception.
+                // Otherwise,
+                // we'll discard all replay info just when the caller might want it. Instead,
+                // just do a
+                // verify until (and unless), an activity that doesn't throw an exception
+                // happens.
                 if (doCheckpoint) {
                     checkpointAndThrow();
                 } else {
@@ -505,7 +493,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         // (above) is not significant...
         _snapStream.snapshot();
         _initialized = true;
-        // Preliminary test, lets make sure we think the file system's good before we start...
+        // Preliminary test, lets make sure we think the file system's good before we
+        // start...
         verifyAndThrow();
     }
 
@@ -554,8 +543,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     private static <TFileSystem> TFileSystem createFileSystem(Class<TFileSystem> clazz, Stream stream) {
         try {
             return clazz.getConstructor(Stream.class).newInstance(stream);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
-                NoSuchMethodException | SecurityException tie) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException
+                | NoSuchMethodException | SecurityException tie) {
             try {
                 Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
@@ -569,8 +558,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     private static <TChecker> TChecker createChecker(Class<TChecker> clazz, Stream stream) {
         try {
             return clazz.getConstructor(Stream.class).newInstance(stream);
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
-                NoSuchMethodException | SecurityException tie) {
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException
+                | NoSuchMethodException | SecurityException tie) {
             try {
                 Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
@@ -611,7 +600,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Copies an existing file to a new file.
      *
-     * @param sourceFile The source file
+     * @param sourceFile      The source file
      * @param destinationFile The destination file
      */
     public void copyFile(String sourceFile, String destinationFile) {
@@ -626,12 +615,12 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     /**
-     * Copies an existing file to a new file, allowing overwriting of an
-     * existing file.
+     * Copies an existing file to a new file, allowing overwriting of an existing
+     * file.
      *
-     * @param sourceFile The source file
+     * @param sourceFile      The source file
      * @param destinationFile The destination file
-     * @param overwrite Whether to permit over-writing of an existing file.
+     * @param overwrite       Whether to permit over-writing of an existing file.
      */
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         performActivity((fs, context) -> {
@@ -758,10 +747,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern.
+     * specified search pattern.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of directories matching the search pattern.
      */
@@ -777,13 +765,12 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
-     * @param searchOption Indicates whether to search subdirectories.
+     * @param searchOption  Indicates whether to search subdirectories.
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
@@ -815,7 +802,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Gets the names of files in a specified directory.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files matching the search pattern.
      */
@@ -830,13 +817,12 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     /**
-     * Gets the names of files in a specified directory matching a specified
-     * search pattern, using a value to determine whether to search
-     * subdirectories.
+     * Gets the names of files in a specified directory matching a specified search
+     * pattern, using a value to determine whether to search subdirectories.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
-     * @param searchOption Indicates whether to search subdirectories.
+     * @param searchOption  Indicates whether to search subdirectories.
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
@@ -866,11 +852,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     /**
-     * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * Gets the names of files and subdirectories in a specified directory matching
+     * a specified search pattern.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files and subdirectories matching the search pattern.
      */
@@ -887,7 +872,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Moves a directory.
      *
-     * @param sourceDirectoryName The directory to move.
+     * @param sourceDirectoryName      The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
@@ -904,7 +889,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Moves a file.
      *
-     * @param sourceName The file to move.
+     * @param sourceName      The file to move.
      * @param destinationName The target file name.
      */
     public void moveFile(String sourceName, String destinationName) {
@@ -921,9 +906,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Moves a file, allowing an existing file to be overwritten.
      *
-     * @param sourceName The file to move.
+     * @param sourceName      The file to move.
      * @param destinationName The target file name.
-     * @param overwrite Whether to permit a destination file to be overwritten
+     * @param overwrite       Whether to permit a destination file to be overwritten
      */
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         performActivity((fs, context) -> {
@@ -946,7 +931,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return The new stream.
      */
     public SparseStream openFile(String path, FileMode mode) {
-        // This delegate can be used at any time the wrapper needs it, if it's in a 'replay' but the real file open isn't.
+        // This delegate can be used at any time the wrapper needs it, if it's in a
+        // 'replay' but the real file open isn't.
         ValidatingFileSystemWrapperStream<TFileSystem, TChecker> wrapper = new ValidatingFileSystemWrapperStream<>(this, fs -> {
             try {
                 return fs.openFile(path, mode);
@@ -969,13 +955,14 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Opens the specified file.
      *
-     * @param path The full path of the file to open.
-     * @param mode The file mode for the created stream.
+     * @param path   The full path of the file to open.
+     * @param mode   The file mode for the created stream.
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
-        // This delegate can be used at any time the wrapper needs it, if it's in a 'replay' but the real file open isn't.
+        // This delegate can be used at any time the wrapper needs it, if it's in a
+        // 'replay' but the real file open isn't.
         ValidatingFileSystemWrapperStream<TFileSystem, TChecker> wrapper = new ValidatingFileSystemWrapperStream<>(this, fs -> {
             try {
                 return fs.openFile(path, mode, access);
@@ -1014,7 +1001,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the attributes of a file or directory.
      *
-     * @param path The file or directory to change
+     * @param path     The file or directory to change
      * @param newValue The new attributes of the file or directory
      */
     public void setAttributes(String path, Map<String, Object> newValue) {
@@ -1047,7 +1034,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the creation time (in local time) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setCreationTime(String path, long newTime) throws IOException {
@@ -1080,7 +1067,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the creation time (in UTC) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setCreationTimeUtc(String path, long newTime) {
@@ -1113,7 +1100,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the last access time (in local time) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastAccessTime(String path, long newTime) {
@@ -1146,7 +1133,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the last access time (in UTC) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastAccessTimeUtc(String path, long newTime) {
@@ -1179,7 +1166,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the last modification time (in local time) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastWriteTime(String path, long newTime) {
@@ -1212,7 +1199,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Sets the last modification time (in UTC) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastWriteTimeUtc(String path, long newTime) {
@@ -1279,8 +1266,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * directory).
      *
      * @param path The file system path
-     * @return The representing objectThe file system object does not need to
-     *         exist
+     * @return The representing objectThe file system object does not need to exist
      */
     public DiscFileSystemInfo getFileSystemInfo(String path) {
         return (DiscFileSystemInfo) performActivity((fs, context) -> {

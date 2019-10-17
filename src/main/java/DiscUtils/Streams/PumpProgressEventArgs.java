@@ -25,7 +25,7 @@ package DiscUtils.Streams;
 /**
  * Event arguments indicating progress on pumping a stream.
  */
-public class PumpProgressEventArgs {
+public class PumpProgressEventArgs /* extends EventArgs */ {
     /**
      * Gets or sets the number of bytes read from
      * {@code InputStream}

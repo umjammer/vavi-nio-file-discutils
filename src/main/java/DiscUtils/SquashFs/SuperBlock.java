@@ -4,6 +4,8 @@
 
 package DiscUtils.SquashFs;
 
+import java.time.Instant;
+
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -80,7 +82,7 @@ public class SuperBlock implements IByteArraySerializable {
             return (int) getSize();
 
         InodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        CreationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8) * 1000;
+        CreationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
         BlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         FragmentsCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
         Compression = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
@@ -103,7 +105,7 @@ public class SuperBlock implements IByteArraySerializable {
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(Magic, buffer, offset + 0);
         EndianUtilities.writeBytesLittleEndian(InodesCount, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(CreationTime / 1000, buffer, offset + 8); // TODO .ToUnixTimeSeconds()
+        EndianUtilities.writeBytesLittleEndian(Instant.ofEpochMilli(CreationTime).getEpochSecond(), buffer, offset + 8);
         EndianUtilities.writeBytesLittleEndian(BlockSize, buffer, offset + 12);
         EndianUtilities.writeBytesLittleEndian(FragmentsCount, buffer, offset + 16);
         EndianUtilities.writeBytesLittleEndian(Compression, buffer, offset + 20);
