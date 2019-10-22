@@ -76,14 +76,14 @@ public final class BiosPartitionInfo  extends PartitionInfo
     /**
     * Gets a value indicating whether this partition is active (bootable).
     */
-    public boolean getIsActive() {
+    public boolean isActive() {
         return _record.getStatus() != 0;
     }
 
     /**
     * Gets a value indicating whether the partition is a primary (rather than extended) partition.
     */
-    public boolean getIsPrimary() {
+    public boolean isPrimary() {
         return getPrimaryIndex() >= 0;
     }
 

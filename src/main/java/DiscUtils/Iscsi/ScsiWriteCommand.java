@@ -45,7 +45,6 @@ public class ScsiWriteCommand extends ScsiCommand {
     }
 
     public TaskAttributes getTaskAttributes() {
-        getTaskAttributes();
         return TaskAttributes.Simple;
     }
 

@@ -71,7 +71,7 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
         return _records.size();
     }
 
-    public boolean getIsReadOnly() {
+    public boolean isReadOnly() {
         return false;
     }
 

@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.Partitions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -117,7 +116,7 @@ public abstract class PartitionTable {
      *         {@code false}
      *         .
      */
-    public static boolean isPartitioned(VirtualDisk disk) throws IOException {
+    public static boolean isPartitioned(VirtualDisk disk) {
         return isPartitioned(disk.getContent());
     }
 
@@ -149,7 +148,7 @@ public abstract class PartitionTable {
      *         theoretically
      *         possible.
      */
-    public static List<PartitionTable> getPartitionTables(Stream contentStream) throws IOException {
+    public static List<PartitionTable> getPartitionTables(Stream contentStream) {
         return getPartitionTables(new Disk(contentStream, Ownership.None));
     }
 

@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Core.IUnixFileSystem;
+import DiscUtils.Core.UnixFilePermissions;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.Compression.ZlibStream;
@@ -40,8 +41,8 @@ import moe.yo3explorer.dotnetio4j.MemoryStream;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
-public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context> implements
-                                       IUnixFileSystem {
+public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context>
+    implements IUnixFileSystem {
     public static final int MetadataBufferSize = 8 * 1024;
 
     private final BlockCache<Block> _blockCache;
@@ -74,8 +75,8 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         }
 
         if (_context.getSuperBlock().MajorVersion != 4) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported file system version: "
-                    + _context.getSuperBlock().MajorVersion + "." + _context.getSuperBlock().MinorVersion);
+            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported file system version: " +
+                _context.getSuperBlock().MajorVersion + "." + _context.getSuperBlock().MinorVersion);
         }
 
         // Create block caches, used to reduce the amount of I/O and decompression
@@ -116,7 +117,16 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         File file = getFile(path);
         Inode inode = file.getInode();
         DeviceInode devInod = inode instanceof DeviceInode ? (DeviceInode) inode : (DeviceInode) null;
+
         UnixFileSystemInfo info = new UnixFileSystemInfo();
+        info.setFileType(fileTypeFromInodeType(inode.Type));
+        info.setUserId(getId(inode.UidKey));
+        info.setGroupId(getId(inode.GidKey));
+        info.setPermissions(UnixFilePermissions.valueOf(inode.Mode));
+        info.setInode(inode.InodeNumber);
+        info.setLinkCount(inode.NumLinks);
+        info.setDeviceId(devInod == null ? 0 : devInod.getDeviceId());
+
         return info;
     }
 

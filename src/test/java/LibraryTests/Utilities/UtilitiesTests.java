@@ -19,7 +19,7 @@ public class UtilitiesTests {
         checkResolvePath("\\TEMP\\Foo.txt", "..\\..\\Bar.txt", "\\Bar.txt");
     }
 
-    private void checkResolvePath(String basePath, String relativePath, String expectedResult) throws Exception {
+    private void checkResolvePath(String basePath, String relativePath, String expectedResult) {
         String result = Utilities.resolvePath(basePath, relativePath);
         assertEquals(expectedResult, result);
     }

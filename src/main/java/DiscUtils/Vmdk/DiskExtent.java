@@ -65,7 +65,7 @@ public final class DiskExtent extends VirtualDiskExtent {
         return _descriptor.getSizeInSectors() * Sizes.Sector;
     }
 
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return _descriptor.getType() == ExtentType.Sparse || _descriptor.getType() == ExtentType.VmfsSparse ||
                _descriptor.getType() == ExtentType.Zero;
     }

@@ -37,15 +37,18 @@ public class IndexEntry {
 
     protected byte[] _keyBuffer;
 
+    // Only valid if Node flag set
     protected long _vcn;
 
-    // Only valid if Node flag set
     public IndexEntry(boolean isFileIndexEntry) {
-        __IsFileIndexEntry = isFileIndexEntry;
+        _isFileIndexEntry = isFileIndexEntry;
+        _flags = EnumSet.noneOf(IndexEntryFlags.class);
+//        _keyBuffer = new byte[0]; // TODO
+//        _dataBuffer = new byte[0];
     }
 
     public IndexEntry(IndexEntry toCopy, byte[] newKey, byte[] newData) {
-        __IsFileIndexEntry = toCopy.getIsFileIndexEntry();
+        _isFileIndexEntry = toCopy.isFileIndexEntry();
         _flags = toCopy._flags;
         _vcn = toCopy._vcn;
         _keyBuffer = newKey;
@@ -53,8 +56,8 @@ public class IndexEntry {
     }
 
     public IndexEntry(byte[] key, byte[] data, boolean isFileIndexEntry) {
-        __IsFileIndexEntry = isFileIndexEntry;
-        _flags = EnumSet.of(IndexEntryFlags.None);
+        _isFileIndexEntry = isFileIndexEntry;
+        _flags = EnumSet.noneOf(IndexEntryFlags.class);
         _keyBuffer = key;
         _dataBuffer = data;
     }
@@ -83,10 +86,10 @@ public class IndexEntry {
         _flags = value;
     }
 
-    private boolean __IsFileIndexEntry;
+    private boolean _isFileIndexEntry;
 
-    protected boolean getIsFileIndexEntry() {
-        return __IsFileIndexEntry;
+    protected boolean isFileIndexEntry() {
+        return _isFileIndexEntry;
     }
 
     public byte[] getKeyBuffer() {
@@ -98,14 +101,15 @@ public class IndexEntry {
     }
 
     public long getSize() {
-        int size = 0x10;
-        // start of variable data
+        int size = 0x10; // start of variable data
+
         if (_flags.contains(IndexEntryFlags.End)) {
             size += _keyBuffer.length;
-            size += getIsFileIndexEntry() ? 0 : _dataBuffer.length;
+            size += isFileIndexEntry() ? 0 : _dataBuffer.length;
         }
 
         size = MathUtilities.roundUp(size, 8);
+
         if (_flags.contains(IndexEntryFlags.Node)) {
             size += 8;
         }
@@ -114,6 +118,7 @@ public class IndexEntry {
     }
 
     public void read(byte[] buffer, int offset) {
+        @SuppressWarnings("unused")
         short dataOffset = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x00);
         short dataLength = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
         short length = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
@@ -122,7 +127,7 @@ public class IndexEntry {
         if (_flags.contains(IndexEntryFlags.End)) {
             _keyBuffer = new byte[keyLength];
             System.arraycopy(buffer, offset + 0x10, _keyBuffer, 0, keyLength);
-            if (getIsFileIndexEntry()) {
+            if (isFileIndexEntry()) {
                 // Special case, for file indexes, the MFT ref is held where the data offset & length go
                 _dataBuffer = new byte[8];
                 System.arraycopy(buffer, offset + 0x00, _dataBuffer, 0, 8);
@@ -138,28 +143,32 @@ public class IndexEntry {
     }
 
     public void writeTo(byte[] buffer, int offset) {
+        assert buffer.length > offset : buffer.length + ", " + offset;
+
         short length = (short) getSize();
+
         if (!_flags.contains(IndexEntryFlags.End)) {
             short keyLength = (short) _keyBuffer.length;
-            if (getIsFileIndexEntry()) {
+
+            if (isFileIndexEntry()) {
                 System.arraycopy(_dataBuffer, 0, buffer, offset + 0x00, 8);
             } else {
-                short dataOffset = (short) (getIsFileIndexEntry() ? 0 : 0x10 + keyLength);
+                short dataOffset = (short) (isFileIndexEntry() ? 0 : 0x10 + keyLength);
                 short dataLength = (short) _dataBuffer.length;
+
                 EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x00);
                 EndianUtilities.writeBytesLittleEndian(dataLength, buffer, offset + 0x02);
+System.err.println(_dataBuffer.length + ", " + buffer.length + ", " + offset + ", " + dataOffset);
                 System.arraycopy(_dataBuffer, 0, buffer, offset + dataOffset, _dataBuffer.length);
             }
             EndianUtilities.writeBytesLittleEndian(keyLength, buffer, offset + 0x0A);
             System.arraycopy(_keyBuffer, 0, buffer, offset + 0x10, _keyBuffer.length);
         } else {
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x00);
-            // dataOffset
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x02);
-            // dataLength
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0A);
+            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x00); // dataOffset
+            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x02); // dataLength
+            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0A); // keyLength
         }
-        // keyLength
+
         EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x08);
         EndianUtilities.writeBytesLittleEndian((short) IndexEntryFlags.valueOf(_flags), buffer, offset + 0x0C);
         if (_flags.contains(IndexEntryFlags.Node)) {

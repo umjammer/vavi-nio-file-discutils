@@ -23,10 +23,10 @@
 package DiscUtils.Udf;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.IVfsFile;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -93,30 +93,30 @@ public class File implements IVfsFile {
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> getFileAttributes() {
-        Map<String, Object> attribs = new HashMap<>();
+    public EnumSet<FileAttributes> getFileAttributes() {
+        EnumSet<FileAttributes> attribs = EnumSet.noneOf(FileAttributes.class);
         EnumSet<InformationControlBlockFlags> flags = _fileEntry.InformationControlBlock.Flags;
         if (_fileEntry.InformationControlBlock._FileType == FileType.Directory) {
-            attribs.put("Directory", true);
+            attribs.add(FileAttributes.Directory);
         } else if (_fileEntry.InformationControlBlock._FileType == FileType.Fifo ||
                    _fileEntry.InformationControlBlock._FileType == FileType.Socket ||
                    _fileEntry.InformationControlBlock._FileType == FileType.SpecialBlockDevice ||
                    _fileEntry.InformationControlBlock._FileType == FileType.SpecialCharacterDevice ||
                    _fileEntry.InformationControlBlock._FileType == FileType.TerminalEntry) {
-            attribs.put("Device", true);
+            attribs.add(FileAttributes.Device);
         }
 
         if (flags.contains(InformationControlBlockFlags.Archive)) {
-            attribs.put("Archive", true);
+            attribs.add(FileAttributes.Archive);
         }
 
         if (flags.contains(InformationControlBlockFlags.System)) {
-            attribs.put("System", true);
-            attribs.put("Hidden", true);
+            attribs.add(FileAttributes.System);
+            attribs.add(FileAttributes.Hidden);
         }
 
         if (attribs.size() == 0) {
-            attribs.put("Normal", true);
+            attribs.add(FileAttributes.Normal);
         }
 
         return attribs;

@@ -8,6 +8,4 @@ import DiscUtils.Core.DiscFileSystem;
 public interface NewFileSystemDelegate {
 
     DiscFileSystem invoke();
-
-//    List<NewFileSystemDelegate> getInvocationList();
 }

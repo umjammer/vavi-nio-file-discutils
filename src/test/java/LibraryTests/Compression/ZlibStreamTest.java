@@ -24,6 +24,7 @@ package LibraryTests.Compression;
 
 import java.nio.charset.Charset;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -44,7 +45,7 @@ public class ZlibStreamTest {
         try (ZlibStream uzs = new ZlibStream(compressedStream, CompressionMode.Decompress, true)) {
             byte[] outData = new byte[testData.length];
             uzs.read(outData, 0, outData.length);
-            assertEquals(testData, outData);
+            assertArrayEquals(testData, outData);
             // Should be end of stream
             assertEquals(-1, uzs.readByte());
         }
@@ -65,7 +66,7 @@ public class ZlibStreamTest {
             try (ZlibStream uzs = new ZlibStream(compressedStream, CompressionMode.Decompress, true)) {
                 byte[] outData = new byte[testData.length];
                 uzs.read(outData, 0, outData.length);
-                assertEquals(testData, outData);
+                assertArrayEquals(testData, outData);
                 // Should be end of stream
                 assertEquals(-1, uzs.readByte());
             }

@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,12 +40,10 @@ public class Nfs3WeakCacheConsistencyAttrTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3WeakCacheConsistencyAttr attr = new Nfs3WeakCacheConsistencyAttr();
-        attr.setChangeTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attr.setChangeTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()));
-        attr.setModifyTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attr.setModifyTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()));
         attr.setSize(3);

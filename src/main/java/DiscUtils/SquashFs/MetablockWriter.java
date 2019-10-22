@@ -81,21 +81,16 @@ public final class MetablockWriter implements Closeable {
 
     public long distanceFrom(MetadataRef startPos) {
         return (_currentBlockNum - startPos.getBlock()) * VfsSquashFileSystemReader.MetadataBufferSize +
-               (_currentOffset - startPos.getOffset());
+            (_currentOffset - startPos.getOffset());
     }
 
     private void nextBlock() {
         MemoryStream compressed = new MemoryStream();
-        ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true);
-        try {
+
+        try (ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true)) {
             compStream.write(_currentBlock, 0, _currentOffset);
-        } finally {
-            if (compStream != null)
-                try {
-                    compStream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         byte[] writeData;
         short writeLen;

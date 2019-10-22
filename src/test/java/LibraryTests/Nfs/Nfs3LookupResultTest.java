@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.EnumSet;
 
 import org.junit.jupiter.api.Test;
@@ -47,13 +47,11 @@ public class Nfs3LookupResultTest {
     public void roundTripTest() throws Exception {
         Nfs3LookupResult result = new Nfs3LookupResult();
         Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();
-        dirAttrs.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        dirAttrs.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         dirAttrs.BytesUsed = 1;
-        dirAttrs.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        dirAttrs.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         dirAttrs.FileId = 2;
@@ -61,8 +59,7 @@ public class Nfs3LookupResultTest {
         dirAttrs.Gid = 4;
         dirAttrs.LinkCount = 5;
         dirAttrs.Mode = UnixFilePermissions.GroupAll;
-        dirAttrs.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        dirAttrs.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         dirAttrs.RdevMajor = 6;
@@ -73,13 +70,11 @@ public class Nfs3LookupResultTest {
         result.setDirAttributes(dirAttrs);
 
         Nfs3FileAttributes objAttrs = new Nfs3FileAttributes();
-        objAttrs.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 10, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        objAttrs.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 10, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         objAttrs.BytesUsed = 11;
-        objAttrs.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 12, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        objAttrs.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 12, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         objAttrs.FileId = 12;
@@ -87,8 +82,7 @@ public class Nfs3LookupResultTest {
         objAttrs.Gid = 14;
         objAttrs.LinkCount = 15;
         objAttrs.Mode = EnumSet.of(UnixFilePermissions.GroupWrite);
-        objAttrs.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 13, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        objAttrs.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 13, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         objAttrs.RdevMajor = 16;

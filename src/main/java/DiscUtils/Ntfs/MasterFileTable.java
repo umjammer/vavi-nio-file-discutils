@@ -46,10 +46,10 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 /**
- * Class representing the $MFT file on disk, including mirror.
- * This class only understands basic record structure, and is
- * ignorant of files that span multiple records. This class should only
- * be used by the NtfsFileSystem and File classes.
+ * Class representing the $MFT file on disk, including mirror. This class only
+ * understands basic record structure, and is ignorant of files that span
+ * multiple records. This class should only be used by the NtfsFileSystem and
+ * File classes.
  */
 public class MasterFileTable implements IDiagnosticTraceable, Closeable {
     /**
@@ -144,8 +144,8 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
      */
     public List<FileRecord> getRecords() {
         List<FileRecord> result = new ArrayList<>();
-        Stream mftStream = _self.openStream(AttributeType.Data, null, FileAccess.Read);
-        try {
+
+        try (Stream mftStream = _self.openStream(AttributeType.Data, null, FileAccess.Read)) {
             int index = 0;
             while (mftStream.getPosition() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
@@ -162,13 +162,8 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                 index++;
             }
             return result;
-        } finally {
-            if (mftStream != null)
-                try {
-                    mftStream.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -250,20 +245,13 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         wipe(_recordStream);
         NtfsStream bitmapStream = _self
                 .createStream(AttributeType.Bitmap, null, firstBitmapCluster, numBitmapClusters, bpb.getBytesPerCluster());
-        Stream s = bitmapStream.open(FileAccess.ReadWrite);
-        try {
-            {
-                wipe(s);
-                s.setLength(8);
-                _bitmap = new Bitmap(s, Long.MAX_VALUE);
-            }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+
+        try (Stream s = bitmapStream.open(FileAccess.ReadWrite)) {
+            wipe(s);
+            s.setLength(8);
+            _bitmap = new Bitmap(s, Long.MAX_VALUE);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
         setRecordSize(context.getBiosParameterBlock().getMftRecordSize());
         _bytesPerSector = context.getBiosParameterBlock().BytesPerSector;
@@ -281,8 +269,10 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         long index;
         if (isMft) {
             for (int i = 15; i > 11; --i) {
-                // Have to take a lot of care extending the MFT itself, to ensure we never end up unable to
-                // bootstrap the file system via the MFT itself - hence why special records are reserved
+                // Have to take a lot of care extending the MFT itself, to ensure we never end
+                // up unable to
+                // bootstrap the file system via the MFT itself - hence why special records are
+                // reserved
                 // for MFT's own MFT record overflow.
                 FileRecord r = getRecord(i, false);
                 if (r.getBaseFile().getSequenceNumber() == 0) {
@@ -297,7 +287,8 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
         index = _bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
         if (index * getRecordSize() >= _recordStream.getLength()) {
-            // Note: 64 is significant, since bitmap extends by 8 bytes (=64 bits) at a time.
+            // Note: 64 is significant, since bitmap extends by 8 bytes (=64 bits) at a
+            // time.
             long newEndIndex = MathUtilities.roundUp(index + 1, 64);
             _recordStream.setLength(newEndIndex * getRecordSize());
             for (long i = index; i < newEndIndex; ++i) {
@@ -398,22 +389,19 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             _self.updateRecordInMft();
         }
 
-        // Need to update Mirror.  OpenRaw is OK because this is short duration, and we don't
-        // extend or otherwise modify any meta-data, just the content of the Data stream.
+        // Need to update Mirror. OpenRaw is OK because this is short duration, and we
+        // don't
+        // extend or otherwise modify any meta-data, just the content of the Data
+        // stream.
         if (record.getMasterFileTableIndex() < 4 && _self.getContext().getGetFileByIndex() != null) {
             File mftMirror = _self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
             if (mftMirror != null) {
-                Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite);
-                try {
+
+                try (Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
                     s.setPosition(record.getMasterFileTableIndex() * getRecordSize());
                     s.write(buffer, 0, getRecordSize());
-                } finally {
-                    if (s != null)
-                        try {
-                            s.close();
-                        } catch (IOException e) {
-                            throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                        }
+                } catch (IOException e) {
+                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
                 }
             }
         }

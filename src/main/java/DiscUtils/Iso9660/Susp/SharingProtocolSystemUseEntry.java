@@ -27,7 +27,7 @@ public final class SharingProtocolSystemUseEntry extends SystemUseEntry {
 
     public SharingProtocolSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 7, (byte) 1);
-        if (data[offset + 4] != 0xBE || data[offset + 5] != 0xEF) {
+        if ((data[offset + 4] & 0xff) != 0xBE || (data[offset + 5] & 0xff) != 0xEF) {
             throw new IllegalArgumentException("Invalid SUSP SP entry - invalid checksum bytes");
         }
 

@@ -6,7 +6,10 @@
 
 package moe.yo3explorer.dotnetio4j.compat;
 
+import java.nio.charset.Charset;
 import java.security.Permission;
+import java.util.Arrays;
+import java.util.EnumSet;
 
 import moe.yo3explorer.dotnetio4j.AccessControlSections;
 
@@ -19,10 +22,12 @@ import moe.yo3explorer.dotnetio4j.AccessControlSections;
  */
 public class RegistrySecurity extends Permission {
 
+    RawSecurityDescriptor descriptor;
+
     /**
      */
     public RegistrySecurity() {
-        super(null); // TODO
+        super("RegistrySecurity");
     }
 
     @Override
@@ -32,14 +37,14 @@ public class RegistrySecurity extends Permission {
 
     @Override
     public boolean equals(Object obj) {
-        // TODO Auto-generated method stub
-        return false;
+        if (obj == null)
+            return false;
+        return Arrays.equals(binaryForm, RegistrySecurity.class.cast(obj).binaryForm);
     }
 
     @Override
     public int hashCode() {
-        // TODO Auto-generated method stub
-        return 0;
+        return Arrays.hashCode(binaryForm);
     }
 
     @Override
@@ -48,33 +53,27 @@ public class RegistrySecurity extends Permission {
         return null;
     }
 
-    private String binaryForm;
+    // TODO impl
+    private byte[] binaryForm;
 
-    /**
-     * @return
-     */
-    public String getSecurityDescriptorBinaryForm() {
+    /** TODO impl */
+    public byte[] getSecurityDescriptorBinaryForm() {
         return binaryForm;
     }
 
-    /**
-     * @param secDesc
-     */
-    public void setSecurityDescriptorBinaryForm(String binaryForm) {
-        this.binaryForm = binaryForm;
+    /** TODO impl */
+    public void setSecurityDescriptorBinaryForm(byte[] form) {
+        this.binaryForm = form;
     }
 
-    /**
-     */
-    public String getSecurityDescriptorSddlForm(AccessControlSections sections) {
-        // TODO Auto-generated method stub
-        return binaryForm;
+    /** TODO impl */
+    public String getSecurityDescriptorSddlForm(EnumSet<AccessControlSections> sections) {
+        return new String(binaryForm, Charset.forName("ASCII"));
     }
 
-    /**
-     */
-    public void setSecurityDescriptorSddlForm(String form, AccessControlSections sections) {
-        // TODO Auto-generated method stub
-        
+    /** TODO impl */
+    public void setSecurityDescriptorSddlForm(String form, EnumSet<AccessControlSections> sections) {
+//System.err.println(form);
+        binaryForm = form.getBytes(Charset.forName("ASCII"));
     }
 }

@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.Partitions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -116,7 +115,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param disk The disk to initialize.
      * @return An object to access the newly created partition table.
      */
-    public static GuidPartitionTable initialize(VirtualDisk disk) throws IOException {
+    public static GuidPartitionTable initialize(VirtualDisk disk) {
         return initialize(disk.getContent(), disk.getGeometry());
     }
 
@@ -170,7 +169,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param type The partition type for the single partition.
      * @return An object to access the newly created partition table.
      */
-    public static GuidPartitionTable initialize(VirtualDisk disk, WellKnownPartitionType type) throws IOException {
+    public static GuidPartitionTable initialize(VirtualDisk disk, WellKnownPartitionType type) {
         GuidPartitionTable pt = initialize(disk);
         pt.create(type, true);
         return pt;
@@ -181,9 +180,8 @@ public final class GuidPartitionTable extends PartitionTable {
      *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
-     * @return The index of the partition.The partition table must be empty
-     *         before this method is called,
-     *         otherwise IOException is thrown.
+     * @return The index of the partition.The partition table must be empty before
+     *         this method is called, otherwise IOException is thrown.
      */
     public int create(WellKnownPartitionType type, boolean active) {
         List<GptEntry> allEntries = new ArrayList<>(getAllEntries());
@@ -218,14 +216,11 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in bytes).
-     * @return The index of the partition.The partition table must be empty
-     *         before this method is called,
-     *         otherwise IOException is thrown.
-     *         Traditionally partitions were aligned to the physical structure
-     *         of the underlying disk,
-     *         however with modern storage greater efficiency is acheived by
-     *         aligning partitions on
-     *         large values that are a power of two.
+     * @return The index of the partition.The partition table must be empty before
+     *         this method is called, otherwise IOException is thrown. Traditionally
+     *         partitions were aligned to the physical structure of the underlying
+     *         disk, however with modern storage greater efficiency is acheived by
+     *         aligning partitions on large values that are a power of two.
      */
     public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
         if (alignment % _diskGeometry.getBytesPerSector() != 0) {
@@ -252,11 +247,9 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in bytes).
-     * @return The index of the new partition.
-     *         Traditionally partitions were aligned to the physical structure
-     *         of the underlying disk,
-     *         however with modern storage greater efficiency is achieved by
-     *         aligning partitions on
+     * @return The index of the new partition. Traditionally partitions were aligned
+     *         to the physical structure of the underlying disk, however with modern
+     *         storage greater efficiency is achieved by aligning partitions on
      *         large values that are a power of two.
      */
     public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
@@ -286,9 +279,8 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param attributes The partition attributes.
      * @param name The name of the partition.
      * @return The index of the new partition.No checking is performed on the
-     *         parameters, the caller is
-     *         responsible for ensuring that the partition does not overlap
-     *         other partitions.
+     *         parameters, the caller is responsible for ensuring that the partition
+     *         does not overlap other partitions.
      */
     public int create(long startSector, long endSector, UUID type, long attributes, String name) {
         GptEntry newEntry = createEntry(startSector, endSector, type, attributes, name);
@@ -374,29 +366,25 @@ public final class GuidPartitionTable extends PartitionTable {
                 _secondaryHeader = new GptHeader(_primaryHeader);
                 _secondaryHeader.HeaderLba = _secondaryHeader.AlternateHeaderLba;
                 _secondaryHeader.AlternateHeaderLba = _secondaryHeader.HeaderLba;
-                _secondaryHeader.PartitionEntriesLba = _secondaryHeader.HeaderLba - MathUtilities
-                        .roundUp(_secondaryHeader.PartitionEntryCount * _secondaryHeader.PartitionEntrySize,
-                                 diskGeometry.getBytesPerSector());
+                _secondaryHeader.PartitionEntriesLba = _secondaryHeader.HeaderLba -
+                    MathUtilities.roundUp(_secondaryHeader.PartitionEntryCount * _secondaryHeader.PartitionEntrySize,
+                                          diskGeometry.getBytesPerSector());
                 // If the disk is writeable, fix up the secondary partition table based on the
                 // (valid) primary table.
                 if (disk.canWrite()) {
                     writeSecondaryHeader();
                 }
-
             }
-
         }
-
     }
 
     private void establishReservedPartition(List<GptEntry> allEntries) {
-        // If no MicrosoftReserved partition, and no Microsoft Data partitions, and the disk
+        // If no MicrosoftReserved partition, and no Microsoft Data partitions, and the
+        // disk
         // has a 'reasonable' size free, create a Microsoft Reserved partition.
-        if (countEntries(allEntries, e -> {
-            return e.PartitionType == GuidPartitionTypes.MicrosoftReserved;
-        }) == 0 && countEntries(allEntries, e -> {
-            return e.PartitionType == GuidPartitionTypes.WindowsBasicData;
-        }) == 0 && _diskGeometry.getCapacity() > 512 * 1024 * 1024) {
+        if (countEntries(allEntries, e -> e.PartitionType.equals(GuidPartitionTypes.MicrosoftReserved)) == 0 &&
+            countEntries(allEntries, e -> e.PartitionType.equals(GuidPartitionTypes.WindowsBasicData)) == 0 &&
+            _diskGeometry.getCapacity() > 512 * 1024 * 1024) {
             long reservedStart = firstAvailableSector(allEntries);
             long reservedEnd = findLastFreeSector(reservedStart, allEntries);
             if ((reservedEnd - reservedStart + 1) * _diskGeometry.getBytesPerSector() > 512 * 1024 * 1024) {
@@ -413,9 +401,7 @@ public final class GuidPartitionTable extends PartitionTable {
                 newReservedEntry.writeTo(_entryBuffer, reservedOffset);
                 allEntries.add(newReservedEntry);
             }
-
         }
-
     }
 
     private GptEntry createEntry(long startSector, long endSector, UUID type, long attributes, String name) {
@@ -452,7 +438,8 @@ public final class GuidPartitionTable extends PartitionTable {
             startSector = MathUtilities.roundUp(entry.LastUsedLogicalBlock + 1, alignmentSectors);
         }
         if (_diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("Unable to find free space of %d sectors", numSectors));
+            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("Unable to find free space of %d sectors",
+                                                                           numSectors));
         }
 
         return startSector;
@@ -460,7 +447,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
     private long firstAvailableSector(List<GptEntry> allEntries) {
         long start = _primaryHeader.FirstUsable;
-        for (GptEntry entry  : allEntries) {
+        for (GptEntry entry : allEntries) {
             if (entry.LastUsedLogicalBlock >= start) {
                 start = entry.LastUsedLogicalBlock + 1;
             }

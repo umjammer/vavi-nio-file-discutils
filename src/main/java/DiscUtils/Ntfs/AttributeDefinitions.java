@@ -76,8 +76,8 @@ public final class AttributeDefinitions {
     public AttributeDefinitions(File file) {
         _attrDefs = new HashMap<>();
         byte[] buffer = new byte[AttributeDefinitionRecord.Size];
-        Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read);
-        try {
+
+        try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read)) {
             while (StreamUtilities.readMaximum(s, buffer, 0, buffer.length) == buffer.length) {
                 AttributeDefinitionRecord record = new AttributeDefinitionRecord();
                 record.read(buffer, 0);
@@ -87,39 +87,27 @@ public final class AttributeDefinitions {
                 }
 
             }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     public void writeTo(File file) {
         List<AttributeType> attribs = new ArrayList<>(_attrDefs.keySet());
         Collections.sort(attribs);
-        Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite);
-        try {
-            {
-                byte[] buffer;
-                for (int i = 0; i < attribs.size(); ++i) {
-                    buffer = new byte[AttributeDefinitionRecord.Size];
-                    AttributeDefinitionRecord attrDef = _attrDefs.get(attribs.get(i));
-                    attrDef.write(buffer, 0);
-                    s.write(buffer, 0, buffer.length);
-                }
+
+        try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
+            byte[] buffer;
+            for (int i = 0; i < attribs.size(); ++i) {
                 buffer = new byte[AttributeDefinitionRecord.Size];
+                AttributeDefinitionRecord attrDef = _attrDefs.get(attribs.get(i));
+                attrDef.write(buffer, 0);
                 s.write(buffer, 0, buffer.length);
             }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+            buffer = new byte[AttributeDefinitionRecord.Size];
+            s.write(buffer, 0, buffer.length);
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 

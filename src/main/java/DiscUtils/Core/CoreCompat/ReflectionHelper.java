@@ -14,34 +14,42 @@ import java.util.UUID;
 
 
 public class ReflectionHelper {
+    @Deprecated
     public static boolean isEnum(Class<?> type) {
         return type.isEnum();
     }
 
+    @Deprecated
     public static <T extends Annotation> T getCustomAttribute(Method property, Class<T> attributeType) {
         return property.getAnnotation(attributeType);
     }
 
+    @Deprecated
     public static <T extends Annotation> T getCustomAttribute(Method property, Class<T> attributeType, boolean inherit) {
         return property.getAnnotation(attributeType);
     }
 
+    @Deprecated
     public static <T extends Annotation> T getCustomAttribute(Field field, Class<T> attributeType) {
         return field.getAnnotation(attributeType);
     }
 
+    @Deprecated
     public static <T extends Annotation> T getCustomAttribute(Class<?> type, Class<T> attributeType) {
         return type.getAnnotation(attributeType);
     }
 
+    @Deprecated
     public static <T extends Annotation> T getCustomAttribute(Class<?> type, Class<T> attributeType, boolean inherit) {
         return type.getAnnotation(attributeType);
     }
 
+    @Deprecated
     public static <T extends Annotation> List<T> getCustomAttributes(Class<?> type, Class<T> attributeType, boolean inherit) {
         return Arrays.asList(type.getAnnotationsByType(attributeType));
     }
 
+    @Deprecated
     public static List<Class<?>> getAssembly(Class<?> type) {
         return Arrays.asList(type);
     }

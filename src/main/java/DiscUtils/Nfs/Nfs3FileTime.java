@@ -22,7 +22,11 @@
 
 package DiscUtils.Nfs;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+
 import DiscUtils.Core.Internal.Utilities;
+
 
 public final class Nfs3FileTime {
     private static final long TicksPerSec = 10 * 1000 * 1000;
@@ -31,7 +35,7 @@ public final class Nfs3FileTime {
     private static final long TicksPerNanoSec = 100;
 
     // 1 tick = 100 ns
-    private final long nfsEpoch = 0;
+    private static final long nfsEpoch = ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
 
     private final int _nseconds;
 

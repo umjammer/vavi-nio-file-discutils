@@ -24,6 +24,7 @@ package DiscUtils.Core.Internal;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.FileLocator;
@@ -62,7 +63,8 @@ public final class LocalFileLocator extends FileLocator {
     }
 
     public String getDirectoryFromPath(String path) {
-        return Paths.get(path).getParent().toString();
+        Path parant = Paths.get(path).getParent();
+        return parant == null ? null : parant.toString();
     }
 
     public String getFileFromPath(String path) {

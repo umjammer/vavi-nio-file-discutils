@@ -130,19 +130,19 @@ public class FileChecker {
             bat[i] = EndianUtilities.toUInt32BigEndian(batData, i * 4);
         }
         for (int i = _dynamicHeader.MaxTableEntries; i < bat.length; ++i) {
-            if (bat[i] != Integer.MAX_VALUE) {
+            if (bat[i] != 0xffffffff) {
                 reportError("BAT: Padding record '" + i + "' should be 0xFFFFFFFF");
             }
 
         }
-        int dataStartSector = Integer.MAX_VALUE;
+        int dataStartSector = 0xffffffff;
         for (int i = 0; i < _dynamicHeader.MaxTableEntries; ++i) {
             if (bat[i] < dataStartSector) {
                 dataStartSector = bat[i];
             }
 
         }
-        if (dataStartSector == Integer.MAX_VALUE) {
+        if (dataStartSector == 0xffffffff) {
             return;
         }
 
@@ -151,7 +151,7 @@ public class FileChecker {
         int storedBlockSize = _dynamicHeader.BlockSize + blockBitmapSize;
         boolean[] seenBlocks = new boolean[_dynamicHeader.MaxTableEntries];
         for (int i = 0; i < _dynamicHeader.MaxTableEntries; ++i) {
-            if (bat[i] != Integer.MAX_VALUE) {
+            if (bat[i] != 0xffffffff) {
                 long absPos = (long) bat[i] * Sizes.Sector;
                 if (absPos + storedBlockSize > _fileStream.getLength()) {
                     reportError("BAT: block stored beyond end of stream");

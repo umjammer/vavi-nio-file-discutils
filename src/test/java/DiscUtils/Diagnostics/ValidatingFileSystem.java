@@ -27,74 +27,37 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
+/**
+ * Class that wraps a {@link DiscFileSystem}, validating file system integrity. The
+ * concrete type of file system to validate.The concrete type of the file system
+ * checker.
+ */
 public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnosticTraceable, TChecker extends DiscFileSystemChecker>
         extends
         DiscFileSystem {
-//    public static class __MultiStreamOpenFn implements StreamOpenFn {
-//        public SparseStream invoke(TFileSystem fs) {
-//            List<StreamOpenFn> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<StreamOpenFn>(members);
-//            }
-//            StreamOpenFn prev = null;
-//            for (StreamOpenFn d : copy) {
-//                if (prev != null)
-//                    prev.invoke(fs);
-//
-//                prev = d;
-//            }
-//            return prev.invoke(fs);
-//        }
-//
-//        private List<StreamOpenFn> _invocationList;
-//
-//        public static StreamOpenFn combine(StreamOpenFn a, StreamOpenFn b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiStreamOpenFn ret = new __MultiStreamOpenFn();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static StreamOpenFn remove(StreamOpenFn a, StreamOpenFn b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<StreamOpenFn> aInvList = a.getInvocationList();
-//            List<StreamOpenFn> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiStreamOpenFn ret = new __MultiStreamOpenFn();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<StreamOpenFn> getInvocationList() {
-//            return _invocationList;
-//        }
-//
-//    }
-//
-//    public interface StreamOpenFn<TFileSystem> {
-//        SparseStream invoke(TFileSystem fs);
-//
-//        List<StreamOpenFn> getInvocationList();
-//    }
 
     private Stream _baseStream;
 
+    // -------------------------------------
+    // CONFIG
+
+    /**
+     * How often a check point is run (in number of 'activities').
+     */
     private int _checkpointPeriod = 1;
 
+    /**
+     * Indicates if a read/write trace should run all the time.
+     */
     private boolean _runGlobalTrace;
 
+    /**
+     * Indicates whether to capture full stack traces when doing a global trace.
+     */
     private boolean _globalTraceCaptureStackTraces;
+
+    // -------------------------------------
+    // INITIALIZED STATE
 
     private SnapshotStream _snapStream;
 
@@ -106,19 +69,44 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
 
     private TracingStream _globalTrace;
 
+    /**
+     * The random number generator used to generate seeds for checkpoint-specific
+     * generators.
+     */
     private Random _masterRng;
 
+    // -------------------------------------
+    // RUNNING STATE
+
+    /**
+     * Activities get logged here until a checkpoint is hit, so we can replay
+     * between checkpoints.
+     */
     private List<Activity<TFileSystem>> _checkpointBuffer;
 
+    /**
+     * The random number generator seed value (set at checkpoint).
+     */
     private int _checkpointRngSeed;
 
+    /**
+     * The last verification report generated at a scheduled checkpoint.
+     */
     private String _lastCheckpointReport;
 
+    /**
+     * Flag set when a validation failure is observed, preventing further file system activity.
+     */
     private boolean _lockdown;
 
+    /**
+     * The exception (if any) that indicated the file system was corrupt.
+     */
     private Exception _failureException;
 
-    /// </summary>
+    /**
+     * The total number of events carried out before lock-down occured.
+     */
     private long _totalEventsBeforeLockDown;
 
     private int _numScheduledCheckpoints;

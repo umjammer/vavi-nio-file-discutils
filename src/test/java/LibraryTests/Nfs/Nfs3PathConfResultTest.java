@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -50,16 +50,13 @@ public class Nfs3PathConfResultTest {
         authentication.setNameMax(2);
         authentication.setNoTrunc(true);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         authentication.setObjectAttributes(attributes);

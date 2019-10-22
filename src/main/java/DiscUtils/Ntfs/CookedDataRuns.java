@@ -118,7 +118,7 @@ public class CookedDataRuns {
 
         long prevLcn = index == 0 ? 0 : _runs.get(index - 1).getStartLcn();
         CookedDataRun run = _runs.get(index);
-        if (run.getIsSparse()) {
+        if (run.isSparse()) {
             throw new IllegalArgumentException("Run is already sparse");
         }
 
@@ -129,7 +129,7 @@ public class CookedDataRuns {
                                     run.getAttributeExtent()));
         run.getAttributeExtent().replaceRun(run.getDataRun(), _runs.get(index).getDataRun());
         for (int i = index + 1; i < _runs.size(); ++i) {
-            if (!_runs.get(i).getIsSparse()) {
+            if (!_runs.get(i).isSparse()) {
                 _runs.get(i).getDataRun().setRunOffset(_runs.get(i).getDataRun().getRunOffset() + run.getStartLcn() - prevLcn);
                 break;
             }
@@ -147,7 +147,7 @@ public class CookedDataRuns {
 
         long prevLcn = index == 0 ? 0 : _runs.get(index - 1).getStartLcn();
         CookedDataRun run = _runs.get(index);
-        if (!run.getIsSparse()) {
+        if (!run.isSparse()) {
             throw new IllegalArgumentException("Run is already non-sparse");
         }
 
@@ -167,7 +167,7 @@ public class CookedDataRuns {
             index++;
         }
         for (int i = index; i < _runs.size(); ++i) {
-            if (_runs.get(i).getIsSparse()) {
+            if (_runs.get(i).isSparse()) {
                 _runs.get(i).setStartLcn(lastNewRun.getStartLcn());
             } else {
                 _runs.get(i).getDataRun().setRunOffset(_runs.get(i).getStartLcn() - lastNewRun.getStartLcn());
@@ -191,8 +191,8 @@ public class CookedDataRuns {
         }
 
         long distance = vcn - run.getStartVcn();
-        long offset = run.getIsSparse() ? 0 : distance;
-        CookedDataRun newRun = new CookedDataRun(new DataRun(offset, run.getLength() - distance, run.getIsSparse()),
+        long offset = run.isSparse() ? 0 : distance;
+        CookedDataRun newRun = new CookedDataRun(new DataRun(offset, run.getLength() - distance, run.isSparse()),
                                                  vcn,
                                                  run.getStartLcn(),
                                                  run.getAttributeExtent());
@@ -200,7 +200,7 @@ public class CookedDataRuns {
         _runs.add(runIdx + 1, newRun);
         run.getAttributeExtent().insertRun(run.getDataRun(), newRun.getDataRun());
         for (int i = runIdx + 2; i < _runs.size(); ++i) {
-            if (_runs.get(i).getIsSparse()) {
+            if (_runs.get(i).isSparse()) {
                 _runs.get(i).setStartLcn(_runs.get(i).getStartLcn() + offset);
             } else {
                 _runs.get(i).getDataRun().setRunOffset(_runs.get(i).getDataRun().getRunOffset() - offset);
@@ -224,17 +224,17 @@ public class CookedDataRuns {
     public void collapseRuns() {
         int i = _firstDirty > 1 ? _firstDirty - 1 : 0;
         while (i < _runs.size() - 1 && i <= _lastDirty + 1) {
-            if (_runs.get(i).getIsSparse() && _runs.get(i + 1).getIsSparse()) {
+            if (_runs.get(i).isSparse() && _runs.get(i + 1).isSparse()) {
                 _runs.get(i).setLength(_runs.get(i).getLength() + _runs.get(i + 1).getLength());
                 _runs.get(i + 1).getAttributeExtent().removeRun(_runs.get(i + 1).getDataRun());
                 _runs.remove(i + 1);
-            } else if (!_runs.get(i).getIsSparse() && !_runs.get(i).getIsSparse() &&
+            } else if (!_runs.get(i).isSparse() && !_runs.get(i + 1).isSparse() && // TODO bug report
                        _runs.get(i).getStartLcn() + _runs.get(i).getLength() == _runs.get(i + 1).getStartLcn()) {
                 _runs.get(i).setLength(_runs.get(i).getLength() + _runs.get(i + 1).getLength());
                 _runs.get(i + 1).getAttributeExtent().removeRun(_runs.get(i + 1).getDataRun());
                 _runs.remove(i + 1);
                 for (int j = i + 1; j < _runs.size(); ++j) {
-                    if (_runs.get(j).getIsSparse()) {
+                    if (_runs.get(j).isSparse()) {
                         _runs.get(j).setStartLcn(_runs.get(j).getStartLcn());
                     } else {
                         _runs.get(j).getDataRun().setRunOffset(_runs.get(j).getStartLcn() - _runs.get(i).getStartLcn());
@@ -245,7 +245,7 @@ public class CookedDataRuns {
                 ++i;
             }
         }
-        _firstDirty = Integer.MAX_VALUE;
+        _firstDirty = 0xffffffff;
         _lastDirty = 0;
     }
 }

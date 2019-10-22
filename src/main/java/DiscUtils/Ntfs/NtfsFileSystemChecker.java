@@ -220,7 +220,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                         if (r) {
                             reportError("ObjectId %s for file %s is not indexed", objId.Id, f.getBestName());
                         } else {
-                            if (objIdRec[0].MftReference != f.getMftReference()) {
+                            if (!objIdRec[0].MftReference.equals(f.getMftReference())) {
                                 reportError("ObjectId %s for file %s points to {2}",
                                             objId.Id,
                                             f.getBestName(),
@@ -321,14 +321,19 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                                        String fileName,
                                        String indexName) {
         boolean ok = true;
+
         IndexHeader header = new IndexHeader(buffer, offset);
+
         IndexEntry lastEntry = null;
+
         Comparator<byte[]> collator = root.getCollator(_context.getUpperCase());
-        int pos = header.OffsetToFirstEntry;
-        while (pos < header.TotalSizeOfEntries) {
+
+        int pos = header._offsetToFirstEntry;
+        while (pos < header._totalSizeOfEntries) {
             IndexEntry entry = new IndexEntry(indexName.equals("$I30"));
             entry.read(buffer, offset + pos);
             pos += entry.getSize();
+
             if (entry.getFlags().contains(IndexEntryFlags.Node)) {
                 long bitmapIdx = entry.getChildrenVirtualCluster() / MathUtilities
                         .ceil(root.getIndexAllocationSize(),
@@ -340,16 +345,14 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                                 entry.getChildrenVirtualCluster(),
                                 bitmapIdx);
                 }
-
             }
 
             if (entry.getFlags().contains(IndexEntryFlags.End)) {
-                if (pos != header.TotalSizeOfEntries) {
+                if (pos != header._totalSizeOfEntries) {
                     reportError("Found END index entry %s, but not at end of node",
                                 Index.entryAsString(entry, fileName, indexName));
                     ok = false;
                 }
-
             }
 
             if (lastEntry != null && collator.compare(lastEntry.getKeyBuffer(), entry.getKeyBuffer()) >= 0) {
@@ -361,6 +364,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
             lastEntry = entry;
         }
+
         return ok;
     }
 
@@ -479,7 +483,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     ok = false;
                 }
 
-                if (ar.getIsNonResident()) {
+                if (ar.isNonResident()) {
                     NonResidentAttributeRecord nrr = (NonResidentAttributeRecord) ar;
                     if (nrr.getDataRuns().size() > 0) {
                         long totalVcn = 0;
@@ -519,7 +523,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             ok = false;
         }
 
-        if (EndianUtilities.toUInt32LittleEndian(recordData, record.getRealSize() - 8) != Integer.MAX_VALUE) {
+        if (EndianUtilities.toUInt32LittleEndian(recordData, record.getRealSize() - 8) != 0xffffffff) {
             reportError("MFT record is not correctly terminated with 0xFFFFFFFF");
             ok = false;
         }

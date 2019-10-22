@@ -57,7 +57,7 @@ public final class Nfs3Mount extends RpcProgram {
         MemoryStream ms = new MemoryStream();
         XdrDataWriter writer = startCallMessage(ms, null, MountProc3.Export);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             List<Nfs3Export> exports = new ArrayList<>();
             while (reply.getBodyReader().readBool()) {
                 exports.add(new Nfs3Export(reply.getBodyReader()));
@@ -73,7 +73,7 @@ public final class Nfs3Mount extends RpcProgram {
         XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), MountProc3.Mnt);
         writer.write(dirPath);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3MountResult(reply.getBodyReader());
         }
 

@@ -22,15 +22,15 @@
 
 package DiscUtils.Ntfs;
 
-import java.security.Permission;
+import moe.yo3explorer.dotnetio4j.compat.SecurityIdentifier;
+
 
 /**
  * Class representing NTFS formatting options.
  */
 public final class NtfsFormatOptions {
     /**
-     * Gets or sets the NTFS bootloader code to put in the formatted file
-     * system.
+     * Gets or sets the NTFS bootloader code to put in the formatted file system.
      */
     private byte[] __BootCode;
 
@@ -43,20 +43,19 @@ public final class NtfsFormatOptions {
     }
 
     /**
-     * Gets or sets the SID of the computer account that notionally formatted
-     * the file system.
+     * Gets or sets the SID of the computer account that notionally formatted the
+     * file system.
      *
-     * Certain ACLs in the file system will refer to the 'local' administrator
-     * of the indicated
-     * computer account.
+     * Certain ACLs in the file system will refer to the 'local' administrator of
+     * the indicated computer account.
      */
-    private Permission __ComputerAccount;
+    private SecurityIdentifier __ComputerAccount;
 
-    public Permission getComputerAccount() {
+    public SecurityIdentifier getComputerAccount() {
         return __ComputerAccount;
     }
 
-    public void setComputerAccount(Permission value) {
+    public void setComputerAccount(SecurityIdentifier value) {
         __ComputerAccount = value;
     }
 }

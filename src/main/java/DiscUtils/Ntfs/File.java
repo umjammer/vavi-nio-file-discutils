@@ -110,7 +110,8 @@ public class File {
         }
 
         FileNameRecord record = stream.getContent(FileNameRecord.class);
-        // Root dir is stored without root directory flag set in FileNameRecord, simulate it.
+        // Root dir is stored without root directory flag set in FileNameRecord,
+        // simulate it.
         if (_records.get(0).getMasterFileTableIndex() == MasterFileTable.RootDirIndex) {
             record.Flags.add(FileAttributeFlags.Directory);
         }
@@ -127,9 +128,8 @@ public class File {
     }
 
     public boolean getHasWin32OrDosName() {
-        //StructuredNtfsAttribute<FileNameRecord>
-        for (Object _attr : getAttributes(AttributeType.FileName)) {
-            StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute<FileNameRecord>) _attr;
+        for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
+            StructuredNtfsAttribute<FileNameRecord> attr = StructuredNtfsAttribute.class.cast(_attr);
             FileNameRecord fnr = attr.getContent();
             if (fnr._FileNameNamespace != FileNameNamespace.Posix) {
                 return true;
@@ -143,7 +143,7 @@ public class File {
         return _records.get(0).getMasterFileTableIndex();
     }
 
-    public boolean getIsDirectory() {
+    public boolean isDirectory() {
         return _records.get(0).getFlags().contains(FileRecordFlags.IsDirectory);
     }
 
@@ -170,8 +170,8 @@ public class File {
         if (getIndexInMft() == MasterFileTable.RootDirIndex) {
             result.add("");
         } else {
-            for (Object _attr : getAttributes(AttributeType.FileName)) {
-                StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute<FileNameRecord>) _attr;
+            for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
+                StructuredNtfsAttribute<FileNameRecord> attr = StructuredNtfsAttribute.class.cast(_attr);
                 String name = attr.getContent().FileName;
                 Directory parentDir = _context.getGetDirectoryByRef().invoke(attr.getContent().ParentDirectory);
                 if (parentDir != null) {
@@ -196,7 +196,8 @@ public class File {
         File newFile = context.getAllocateFile().invoke(flags);
         EnumSet<FileAttributeFlags> fileFlags = FileRecord.convertFlags(flags);
         fileFlags.add(FileAttributeFlags.Archive);
-        fileFlags.add(dirFlags.contains(FileAttributeFlags.Compressed) ? FileAttributeFlags.Compressed : FileAttributeFlags.None);
+        fileFlags.add(dirFlags.contains(FileAttributeFlags.Compressed) ? FileAttributeFlags.Compressed
+                                                                       : FileAttributeFlags.None);
         EnumSet<AttributeFlags> dataAttrFlags = EnumSet.noneOf(AttributeFlags.class);
         if (dirFlags.contains(FileAttributeFlags.Compressed)) {
             dataAttrFlags.add(AttributeFlags.Compressed);
@@ -269,8 +270,8 @@ public class File {
                         fixedAttribute = false;
                         if (!fixedAttribute && !record.getIsMftRecord()) {
                             for (AttributeRecord attr : record.getAttributes()) {
-                                if (!attr.getIsNonResident() &&
-                                    !_context.getAttributeDefinitions().mustBeResident(attr.getAttributeType())) {
+                                if (!attr.isNonResident()
+                                        && !_context.getAttributeDefinitions().mustBeResident(attr.getAttributeType())) {
                                     makeAttributeNonResident(new AttributeReference(record.getReference(),
                                                                                     attr.getAttributeId()),
                                                              (int) attr.getDataLength());
@@ -342,8 +343,10 @@ public class File {
             getContext().getObjectIds().remove(objId.Id);
         }
 
-        // Truncate attributes, allowing for truncation silently removing the AttributeList attribute
-        // in some cases (large file with all attributes first extent in the first MFT record).  This
+        // Truncate attributes, allowing for truncation silently removing the
+        // AttributeList attribute
+        // in some cases (large file with all attributes first extent in the first MFT
+        // record). This
         // releases all allocated clusters in most cases.
         List<NtfsAttribute> truncateAttrs = new ArrayList<>(_attributes.size());
         for (NtfsAttribute attr : _attributes) {
@@ -355,7 +358,8 @@ public class File {
         for (NtfsAttribute attr : truncateAttrs) {
             attr.getDataBuffer().setCapacity(0);
         }
-        // If the attribute list record remains, free any possible clusters it owns.  We've now freed
+        // If the attribute list record remains, free any possible clusters it owns.
+        // We've now freed
         // all clusters.
         NtfsAttribute attrList = getAttribute(AttributeType.AttributeList, null);
         if (attrList != null) {
@@ -427,11 +431,11 @@ public class File {
         StructuredNtfsAttribute<FileNameRecord> attr = null;
         if (name == null || name.isEmpty()) {
             if (attrs.size() != 0) {
-                attr = (StructuredNtfsAttribute<FileNameRecord>) attrs.get(0);
+                attr = StructuredNtfsAttribute.class.cast(attrs.get(0));
             }
         } else {
-            for (Object _a : attrs) {
-                StructuredNtfsAttribute<FileNameRecord> a = (StructuredNtfsAttribute<FileNameRecord>) _a;
+            for (Object _a : attrs) { // need cast
+                StructuredNtfsAttribute<FileNameRecord> a = StructuredNtfsAttribute.class.cast(_a);
                 if (_context.getUpperCase().compare(a.getContent().FileName, name) == 0) {
                     attr = a;
                 }
@@ -439,7 +443,6 @@ public class File {
             if (attr == null) {
                 throw new FileNotFoundException("File name not found on file: " + name);
             }
-
         }
         FileNameRecord fnr = attr == null ? new FileNameRecord() : new FileNameRecord(attr.getContent());
         if (freshened) {
@@ -512,9 +515,7 @@ public class File {
      *
      * @param type The attribute type.
      * @param name The attribute's name.
-     * @return The attribute of
-     *         {@code null}
-     *         .
+     * @return The attribute of {@code null} .
      */
     public NtfsAttribute getAttribute(AttributeType type, String name) {
         for (NtfsAttribute attr : _attributes) {
@@ -573,7 +574,8 @@ public class File {
             fileName.MftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
         }
 
-        // Directories don't have directory flag set in StandardInformation, so set from MFT record
+        // Directories don't have directory flag set in StandardInformation, so set from
+        // MFT record
         if (_records.get(0).getFlags().contains(FileRecordFlags.IsDirectory)) {
             fileName.Flags.add(FileAttributeFlags.Directory);
         }
@@ -601,6 +603,7 @@ public class File {
         return recordOffset + frs.getAttributeOffset(attrRef.getAttributeId());
     }
 
+    // TODO do be deprecated, use UUID.randomUUID()
     private static UUID createNewGuid(INtfsContext context) {
         Random rng = context.getOptions().getRandomNumberGenerator();
         if (rng != null) {
@@ -617,8 +620,8 @@ public class File {
         AttributeRecord attrListRec = _records.get(0).getAttribute(AttributeType.AttributeList);
         if (attrListRec != null) {
             NtfsAttribute lastAttr = null;
-            StructuredNtfsAttribute<AttributeList> attrListAttr = (StructuredNtfsAttribute<AttributeList>) NtfsAttribute
-                    .fromRecord(this, getMftReference(), attrListRec);
+            StructuredNtfsAttribute<AttributeList> attrListAttr = StructuredNtfsAttribute.class
+                    .cast(NtfsAttribute.fromRecord(this, getMftReference(), attrListRec));
             AttributeList attrList = attrListAttr.getContent();
             _attributes.add(attrListAttr);
             for (AttributeListRecord record : attrList) {
@@ -643,9 +646,7 @@ public class File {
                             lastAttr.addExtent(record.BaseFileReference, attrRec);
                         }
                     }
-
                 }
-
             }
             for (Map.Entry<Long, FileRecord> extraFileRecord : extraFileRecords.entrySet()) {
                 _records.add(extraFileRecord.getValue());
@@ -689,7 +690,6 @@ public class File {
                 targetRecord.addAttribute(newAttr);
                 newAttrHome = targetRecord;
             }
-
         }
         if (newAttrHome == null) {
             _records.get(0).getFlags().remove(FileRecordFlags.InUse);
@@ -703,18 +703,16 @@ public class File {
         boolean added = false;
         for (NtfsAttribute attr : _attributes) {
             for (Map.Entry<AttributeReference, AttributeRecord> existingRecord : attr.getExtents().entrySet()) {
-                if (existingRecord.getKey().getFile() == record.getReference() &&
-                    existingRecord.getKey().getAttributeId() == targetAttr.getAttributeId()) {
+                if (existingRecord.getKey().getFile() == record.getReference()
+                        && existingRecord.getKey().getAttributeId() == targetAttr.getAttributeId()) {
                     attr.addExtent(newAttrHome.getReference(), newAttr);
                     added = true;
                     break;
                 }
-
             }
             if (added) {
                 break;
             }
-
         }
         updateAttributeList();
         return true;
@@ -722,7 +720,8 @@ public class File {
 
     private boolean expelAttribute(FileRecord record) {
         if (record.getMasterFileTableIndex() == MasterFileTable.MftIndex) {
-            // Special case for MFT - can't fully expel attributes, instead split most of the data runs off.
+            // Special case for MFT - can't fully expel attributes, instead split most of
+            // the data runs off.
             List<AttributeRecord> attrs = record.getAttributes();
             for (int i = attrs.size() - 1; i >= 0; --i) {
                 AttributeRecord attr = attrs.get(i);
@@ -730,9 +729,7 @@ public class File {
                     if (splitAttribute(record, (NonResidentAttributeRecord) attr, true)) {
                         return true;
                     }
-
                 }
-
             }
         } else {
             List<AttributeRecord> attrs = record.getAttributes();
@@ -744,7 +741,6 @@ public class File {
                             moveAttribute(record, attr, targetRecord);
                             return true;
                         }
-
                     }
                     FileRecord newFileRecord = _mft.allocateRecord(EnumSet.of(FileRecordFlags.None), record.getIsMftRecord());
                     newFileRecord.setBaseFile(record.getReference());
@@ -752,7 +748,6 @@ public class File {
                     moveAttribute(record, attr, newFileRecord);
                     return true;
                 }
-
             }
         }
         return false;
@@ -771,8 +766,8 @@ public class File {
 
     private void createAttributeList() {
         short id = _records.get(0).createAttribute(AttributeType.AttributeList, null, false, EnumSet.of(AttributeFlags.None));
-        StructuredNtfsAttribute<AttributeList> newAttr = (StructuredNtfsAttribute<AttributeList>) NtfsAttribute
-                .fromRecord(this, getMftReference(), _records.get(0).getAttribute(id));
+        StructuredNtfsAttribute<AttributeList> newAttr = StructuredNtfsAttribute.class
+                .cast(NtfsAttribute.fromRecord(this, getMftReference(), _records.get(0).getAttribute(id)));
         _attributes.add(newAttr);
         updateAttributeList();
     }
@@ -786,20 +781,18 @@ public class File {
                         attrList.add(AttributeListRecord.fromAttribute(extent.getValue(), extent.getKey().getFile()));
                     }
                 }
-
             }
             StructuredNtfsAttribute<AttributeList> alAttr;
-            alAttr = (StructuredNtfsAttribute<AttributeList>) getAttribute(AttributeType.AttributeList, null);
+            alAttr = StructuredNtfsAttribute.class.cast(getAttribute(AttributeType.AttributeList, null));
             alAttr.setContent(attrList);
             alAttr.save();
         }
-
     }
 
     /**
      * Creates a new unnamed attribute.
      *
-     * @param type The type of the new attribute.
+     * @param type  The type of the new attribute.
      * @param flags The flags of the new attribute.
      * @return The new attribute.
      */
@@ -810,8 +803,8 @@ public class File {
     /**
      * Creates a new attribute.
      *
-     * @param type The type of the new attribute.
-     * @param name The name of the new attribute.
+     * @param type  The type of the new attribute.
+     * @param name  The name of the new attribute.
      * @param flags The flags of the new attribute.
      * @return The new attribute.
      */
@@ -829,12 +822,12 @@ public class File {
     /**
      * Creates a new attribute at a fixed cluster.
      *
-     * @param type The type of the new attribute.
-     * @param name The name of the new attribute.
-     * @param flags The flags of the new attribute.
-     * @param firstCluster The first cluster to assign to the attribute.
-     * @param numClusters The number of sequential clusters to assign to the
-     *            attribute.
+     * @param type            The type of the new attribute.
+     * @param name            The name of the new attribute.
+     * @param flags           The flags of the new attribute.
+     * @param firstCluster    The first cluster to assign to the attribute.
+     * @param numClusters     The number of sequential clusters to assign to the
+     *                            attribute.
      * @param bytesPerCluster The number of bytes in each cluster.
      * @return The new attribute.
      */
@@ -844,6 +837,7 @@ public class File {
                                           long firstCluster,
                                           long numClusters,
                                           int bytesPerCluster) {
+        @SuppressWarnings("unused")
         boolean indexed = _context.getAttributeDefinitions().isIndexed(type);
         short id = _records.get(0).createNonResidentAttribute(type, name, flags, firstCluster, numClusters, bytesPerCluster);
         AttributeRecord newAttrRecord = _records.get(0).getAttribute(id);
@@ -1012,26 +1006,19 @@ public class File {
         }
 
         public String toString() {
-            try {
-                return _file + ".attr[" + _attr.getId() + "]";
-            } catch (RuntimeException __dummyCatchVar1) {
-                throw __dummyCatchVar1;
-            } catch (Exception __dummyCatchVar1) {
-                throw new RuntimeException(__dummyCatchVar1);
-            }
-
+            return _file + ".attr[" + _attr.getId() + "]";
         }
 
         /**
          * Change attribute residency if it gets too big (or small).
          *
-         * @param value The new (anticipated) length of the stream.Has
-         *            hysteresis - the decision is based on the input and the
-         *            current
-         *            state, not the current state alone.
+         * @param value The new (anticipated) length of the stream.Has hysteresis - the
+         *                  decision is based on the input and the current state, not
+         *                  the current state alone.
          */
         private void changeAttributeResidencyByLength(long value) {
-            // This is a bit of a hack - but it's really important the bitmap file remains non-resident
+            // This is a bit of a hack - but it's really important the bitmap file remains
+            // non-resident
             if (_file._records.get(0).getMasterFileTableIndex() == MasterFileTable.BitmapIndex) {
                 return;
             }
@@ -1039,7 +1026,8 @@ public class File {
             if (!_attr.getIsNonResident() && value >= _file.getMaxMftRecordSize()) {
                 _file.makeAttributeNonResident(_attr.getReference(), (int) Math.min(value, _wrapped.getLength()));
             } else if (_attr.getIsNonResident() && value <= _file.getMaxMftRecordSize() / 4) {
-                // Use of 1/4 of record size here is just a heuristic - the important thing is not to end up with
+                // Use of 1/4 of record size here is just a heuristic - the important thing is
+                // not to end up with
                 // zero-length non-resident attributes
                 _file.makeAttributeResident(_attr.getReference(), (int) value);
             }

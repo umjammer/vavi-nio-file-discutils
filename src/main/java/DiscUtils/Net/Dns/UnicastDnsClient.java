@@ -22,6 +22,7 @@
 
 package DiscUtils.Net.Dns;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
@@ -35,21 +36,26 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 
-import org.bouncycastle.util.IPAddress;
-
-import moe.yo3explorer.dotnetio4j.IOException;
-
 
 /**
  * Implements the (conventional) unicast DNS protocol.
  */
 public final class UnicastDnsClient extends DnsClient {
+    private static final Logger logger = Logger.getLogger(UnicastDnsClient.class.getName());
+
     private short _nextTransId;
 
     private final InetSocketAddress[] _servers;
@@ -57,6 +63,8 @@ public final class UnicastDnsClient extends DnsClient {
     private final int maxRetries = 3;
 
     private final int responseTimeout = 2000;
+
+    private static Random random = new Random();
 
     /**
      * Initializes a new instance of the UnicastDnsClient class.
@@ -75,7 +83,7 @@ public final class UnicastDnsClient extends DnsClient {
      * @param servers The servers to use (non-standard ports may be specified).
      */
     public UnicastDnsClient(InetSocketAddress... servers) {
-        _nextTransId = (short) (new Random()).nextInt();
+        _nextTransId = (short) random.nextInt();
         _servers = servers;
     }
 
@@ -86,7 +94,7 @@ public final class UnicastDnsClient extends DnsClient {
      * @param servers The servers to use (the default DNS port, 53, is used).
      */
     public UnicastDnsClient(InetAddress... servers) {
-        _nextTransId = (short) (new Random()).nextInt();
+        _nextTransId = (short) random.nextInt();
         _servers = new InetSocketAddress[servers.length];
         for (int i = 0; i < servers.length; ++i) {
             _servers[i] = new InetSocketAddress(servers[i], 53);
@@ -110,43 +118,62 @@ public final class UnicastDnsClient extends DnsClient {
     public ResourceRecord[] lookup(String name, RecordType type) {
         short transactionId = _nextTransId++;
         String normName = normalizeDomainName(name);
-        DatagramChannel udpClient = DatagramChannel.open();
-        try {
-            ByteBuffer result = udpClient.beginReceive(null, null);
+
+        try (DatagramChannel udpClient = DatagramChannel.open()) {
+            udpClient.bind(new InetSocketAddress(0)); // TODO needed?
+
             PacketWriter writer = new PacketWriter(1800);
             Message msg = new Message();
             msg.setTransactionId(transactionId);
             msg.setFlags(new MessageFlags(false, OpCode.Query, false, false, false, false, ResponseCode.Success));
-            msg.getQuestions().add(new Question());
+            Question question = new Question();
+            question.setName(normName);
+            question.setType(type);
+            question.setClass(RecordClass.Internet);
+            msg.getQuestions().add(question);
+
             msg.writeTo(writer);
+
             byte[] msgBytes = writer.getBytes();
+
             for (InetSocketAddress server : _servers) {
                 udpClient.send(ByteBuffer.wrap(msgBytes), server);
             }
+
             for (int i = 0; i < maxRetries; ++i) {
                 long now = System.currentTimeMillis();
-                while (result.AsyncWaitHandle.WaitOne(Math.max(responseTimeout - (System.currentTimeMillis() - now), 0))) {
+                ExecutorService es = Executors.newSingleThreadExecutor();
+                Future<ResourceRecord[]> future = es.submit(() -> {
                     try {
-                        InetSocketAddress[] sourceEndPoint = new InetSocketAddress[1];
-                        byte[] packetBytes = udpClient.endReceive(result, sourceEndPoint);
-                        PacketReader reader = new PacketReader(packetBytes);
+                        ByteBuffer packetBytes = ByteBuffer.allocate(1800); // TODO size
+                        udpClient.receive(packetBytes);
+                        PacketReader reader = new PacketReader(packetBytes.array());
                         Message response = Message.read(reader);
                         if (response.getTransactionId() == transactionId) {
                             return response.getAnswers().toArray(new ResourceRecord[0]);
                         }
-
-                    } catch (Exception __dummyCatchVar0) {
+                    } catch (IOException e) {
+                        // Do nothing - bad packet (probably...)
+                        logger.info(e.getMessage());
                     }
+                    return null;
+                });
+                try {
+                    ResourceRecord[] result = future.get(Math.max(responseTimeout - (System.currentTimeMillis() - now), 0), TimeUnit.MILLISECONDS);
+                    if (result != null) {
+                        return result;
+                    }
+                } catch (TimeoutException e) {
+                    logger.info(e.getMessage());
                 }
             }
-        } finally {
-            if (udpClient != null)
-                udpClient.close();
+
+            return null;
+        } catch (InterruptedException | ExecutionException | IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
-        return null;
     }
 
-    // Do nothing - bad packet (probably...)
     private static InetSocketAddress[] getDefaultDnsServers() {
         try {
             Map<InetSocketAddress, Object> addresses = new HashMap<>();
@@ -167,7 +194,7 @@ public final class UnicastDnsClient extends DnsClient {
             }
             return new ArrayList<>(addresses.keySet()).toArray(new InetSocketAddress[addresses.size()]);
         } catch (NamingException | SocketException e) {
-            throw new IOException(e);
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 }

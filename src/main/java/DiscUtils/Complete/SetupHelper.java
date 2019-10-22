@@ -1,6 +1,7 @@
 
 package DiscUtils.Complete;
 
+@Deprecated
 public class SetupHelper {
     public static void setupComplete() {
 //        Setup.SetupHelper.RegisterAssembly(ReflectionHelper.GetAssembly(Store.class));
@@ -30,5 +31,4 @@ public class SetupHelper {
 //        Setup.SetupHelper.RegisterAssembly(ReflectionHelper.GetAssembly(Xva.Disk.class));
 //        Setup.SetupHelper.RegisterAssembly(ReflectionHelper.GetAssembly(Lvm.LogicalVolumeManager.class));
     }
-
 }

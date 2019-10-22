@@ -125,5 +125,21 @@ Automated CI builds are available on Myget. Add this source to your nuget config
 ## References
 
  * https://github.com/twiglet/cs2j
+    * getter/setter properties naming
+    * enum with value
+    * injection without constructor
+    * lambda expression
+    * extended for
+    * delegate eliminate listFoo etc.
+    * Encoding
+    * substring 2nd param is index instead of length 
+    * Array.copy, Array.clear
+    * Guid -> UUID
+    * unit test (xUnit -> junit)
+    * assembly -> ServiceLoader
+    * attribute -> annotation
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnetIo4j)
  * https://github.com/shevek/lzo-java
+ * https://github.com/akaigoro/df4j
+ * https://github.com/coderforlife/ms-compress
+ * https://github.com/Saine87/SDDL-parser

@@ -159,114 +159,15 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         _position = unalignedEnd;
     }
 
-//    private static class __MultiModifyStream implements ModifyStream {
-//        public void invoke(SparseStream stream, int opOffset, int count) {
-//            List<ModifyStream> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            for (ModifyStream d : copy) {
-//                d.invoke(stream, opOffset, count);
-//            }
-//        }
-//
-//        private List<ModifyStream> _invocationList;
-//
-//        public static ModifyStream combine(ModifyStream a, ModifyStream b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiModifyStream ret = new __MultiModifyStream();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static ModifyStream remove(ModifyStream a, ModifyStream b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<ModifyStream> aInvList = a.getInvocationList();
-//            List<ModifyStream> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiModifyStream ret = new __MultiModifyStream();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<ModifyStream> getInvocationList() {
-//            return _invocationList;
-//        }
-//
-//    }
-
     @FunctionalInterface
     private static interface ModifyStream {
+
         void invoke(SparseStream stream, int opOffset, int count);
-
-//        List<ModifyStream> getInvocationList();
-
     }
-
-//    private static class __MultiModifyBuffer implements ModifyBuffer {
-//        public void invoke(byte[] buffer, int offset, int opOffset, int count) {
-//            List<ModifyBuffer> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            for (ModifyBuffer d : copy) {
-//                d.invoke(buffer, offset, opOffset, count);
-//            }
-//        }
-//
-//        private List<ModifyBuffer> _invocationLis;
-//
-//        public static ModifyBuffer combine(ModifyBuffer a, ModifyBuffer b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiModifyBuffer ret = new __MultiModifyBuffer();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static ModifyBuffer remove(ModifyBuffer a, ModifyBuffer b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<ModifyBuffer> aInvList = a.getInvocationList();
-//            List<ModifyBuffer> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiModifyBuffer ret = new __MultiModifyBuffer();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<ModifyBuffer> getInvocationList() {
-//            return _invocationList;
-//        }
-//
-//    }
 
     @FunctionalInterface
     private static interface ModifyBuffer {
+
         void invoke(byte[] buffer, int offset, int opOffset, int count);
-
-//        List<ModifyBuffer> getInvocationList();
-
     }
-
 }

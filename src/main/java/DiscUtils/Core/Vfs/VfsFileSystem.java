@@ -40,12 +40,13 @@ import moe.yo3explorer.dotnetio4j.FileMode;
 
 
 /**
- * Base class for VFS file systems.
- * The concrete type representing directory entries.The concrete type
- * representing files.The concrete type representing directories.The concrete
- * type holding global state.
+ * Base class for VFS file systems. The concrete type representing directory
+ * entries.The concrete type representing files.The concrete type representing
+ * directories.The concrete type holding global state.
  */
-public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> extends DiscFileSystem {
+public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext>
+        extends
+        DiscFileSystem {
     private final ObjectCache<Long, TFile> _fileCache;
 
     /**
@@ -92,9 +93,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Copies a file - not supported on read-only file systems.
      *
-     * @param sourceFile The source file.
+     * @param sourceFile      The source file.
      * @param destinationFile The destination file.
-     * @param overwrite Whether to permit over-writing of an existing file.
+     * @param overwrite       Whether to permit over-writing of an existing file.
      */
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         throw new UnsupportedOperationException();
@@ -163,36 +164,34 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
-     * @param searchOption Indicates whether to search subdirectories.
+     * @param searchOption  Indicates whether to search subdirectories.
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> dirs = new ArrayList<>();
-        doSearch(dirs, path, re, searchOption == "AllDirectories", true, false);
+        doSearch(dirs, path, re, "AllDirectories".equalsIgnoreCase(searchOption), true, false);
         return dirs;
     }
 
     /**
-     * Gets the names of files in a specified directory matching a specified
-     * search pattern, using a value to determine whether to search
-     * subdirectories.
+     * Gets the names of files in a specified directory matching a specified search
+     * pattern, using a value to determine whether to search subdirectories.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
-     * @param searchOption Indicates whether to search subdirectories.
+     * @param searchOption  Indicates whether to search subdirectories.
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> results = new ArrayList<>();
-        doSearch(results, path, re, searchOption == "AllDirectories", false, true);
+        doSearch(results, path, re, "AllDirectories".equalsIgnoreCase(searchOption), false, true);
         return results;
     }
 
@@ -210,17 +209,17 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         String _fullPath = fullPath;
         TDirectory parentDir = getDirectory(fullPath);
-        return parentDir.getAllEntries().stream().map(m -> {
-            return Utilities.combinePaths(_fullPath, formatFileName(m.getFileName()));
-        }).collect(Collectors.toList());
+        return parentDir.getAllEntries()
+                .stream()
+                .map(m -> Utilities.combinePaths(_fullPath, formatFileName(m.getFileName())))
+                .collect(Collectors.toList());
     }
 
     /**
-     * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * Gets the names of files and subdirectories in a specified directory matching
+     * a specified search pattern.
      *
-     * @param path The path to search.
+     * @param path          The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files and subdirectories matching the search pattern.
      */
@@ -232,7 +231,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (re.matcher(dirEntry.getSearchName()).find()) {
                 result.add(Utilities.combinePaths(path, dirEntry.getFileName()));
             }
-
         }
         return result;
     }
@@ -240,7 +238,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Moves a directory.
      *
-     * @param sourceDirectoryName The directory to move.
+     * @param sourceDirectoryName      The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
@@ -250,9 +248,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Moves a file.
      *
-     * @param sourceName The file to move.
+     * @param sourceName      The file to move.
      * @param destinationName The target file name.
-     * @param overwrite Overwrite any existing file.
+     * @param overwrite       Overwrite any existing file.
      */
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         throw new UnsupportedOperationException();
@@ -261,8 +259,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Opens the specified file.
      *
-     * @param path The full path of the file to open.
-     * @param mode The file mode for the created stream.
+     * @param path   The full path of the file to open.
+     * @param mode   The file mode for the created stream.
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
@@ -349,7 +347,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      */
     public Map<String, Object> getAttributes(String path) {
         if (isRoot(path)) {
-            return getRootDirectory().getFileAttributes();
+            return FileAttributes.toMap(getRootDirectory().getFileAttributes());
         }
 
         TDirEntry dirEntry = getDirectoryEntry(path);
@@ -358,16 +356,16 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         }
 
         if (dirEntry.hasVfsFileAttributes()) {
-            return dirEntry.getFileAttributes();
+            return FileAttributes.toMap(dirEntry.getFileAttributes());
         }
 
-        return getFile(dirEntry).getFileAttributes();
+        return FileAttributes.toMap(getFile(dirEntry).getFileAttributes());
     }
 
     /**
      * Sets the attributes of a file or directory.
      *
-     * @param path The file or directory to change.
+     * @param path     The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
     public void setAttributes(String path, Map<String, Object> newValue) {
@@ -400,7 +398,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Sets the creation time (in UTC) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setCreationTimeUtc(String path, long newTime) {
@@ -433,7 +431,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Sets the last access time (in UTC) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastAccessTimeUtc(String path, long newTime) {
@@ -466,7 +464,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Sets the last modification time (in UTC) of a file or directory.
      *
-     * @param path The path of the file or directory.
+     * @param path    The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastWriteTimeUtc(String path, long newTime) {
@@ -481,7 +479,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      */
     public long getFileLength(String path) {
         TFile file = getFile(path);
-        if (file == null || file.getFileAttributes().containsKey(FileAttributes.Directory.name()) && Boolean.class.cast(file.getFileAttributes().get(FileAttributes.Directory.name()))) {
+        if (file == null || file.getFileAttributes().contains(FileAttributes.Directory)) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file: " + path);
         }
 
@@ -521,10 +519,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     }
 
     /**
-     * Gets all directory entries in the specified directory and
-     * sub-directories.
+     * Gets all directory entries in the specified directory and sub-directories.
      *
-     * @param path The path to inspect.
+     * @param path    The path to inspect.
      * @param handler Delegate invoked for each directory entry.
      */
     protected void forAllDirEntries(String path, DirEntryHandler handler) {
@@ -533,11 +530,11 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (self != null) {
             handler.invoke(path, self);
             if (self.isDirectory()) {
-                dir = IVfsDirectory.class.isInstance(getFile(self))  ? (TDirectory) getFile(self) : (TDirectory) null;
+                dir = (TDirectory) IVfsDirectory.class.cast(getFile(self));
             }
 
         } else {
-            dir = IVfsDirectory.class.isInstance(getFile(self)) ? (TDirectory) getFile(path) : (TDirectory) null;
+            dir = (TDirectory) IVfsDirectory.class.cast(getFile(path));
         }
         if (dir != null) {
             for (TDirEntry subentry : dir.getAllEntries()) {
@@ -581,10 +578,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * Converts an internal directory entry name into an external one.
      *
      * @param name The name to convert.
-     * @return The external name.
-     *         This method is called on a single path element (i.e. name
-     *         contains no path
-     *         separators).
+     * @return The external name. This method is called on a single path element
+     *         (i.e. name contains no path separators).
      */
     protected String formatFileName(String name) {
         return name;
@@ -595,7 +590,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     }
 
     private TDirEntry getDirectoryEntry(TDirectory dir, String path) {
-        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
+        String[] pathElements = path.replaceFirst(Utilities.escapeForRegex("^\\"), "").split(Utilities.escapeForRegex("\\"));
         return getDirectoryEntry(dir, pathElements, 0);
     }
 
@@ -615,18 +610,14 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                 return getDirectoryEntry((TDirectory) convertDirEntryToFile(entry), pathEntries, pathOffset + 1);
             }
 
-            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("%s is a file, not a directory", pathEntries[pathOffset]));
+            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("%s is a file, not a directory",
+                                                                           pathEntries[pathOffset]));
         }
 
         return null;
     }
 
-    private void doSearch(List<String> results,
-                          String path,
-                          Pattern regex,
-                          boolean subFolders,
-                          boolean dirs,
-                          boolean files) {
+    private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         TDirectory parentDir = getDirectory(path);
         if (parentDir == null) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("The directory '%s' was not found", path));
@@ -637,7 +628,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             resultPrefixPath = "\\";
         }
 
-        for (TDirEntry de  : parentDir.getAllEntries()) {
+        for (TDirEntry de : parentDir.getAllEntries()) {
             TDirEntry entry = de;
             if (entry.isSymlink()) {
                 entry = resolveSymlink(entry, path + '\\' + entry.getFileName());
@@ -648,7 +639,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                 if (regex.matcher(de.getSearchName()).find()) {
                     results.add(Utilities.combinePaths(resultPrefixPath, formatFileName(entry.getFileName())));
                 }
-
             }
 
             if (subFolders && isDir) {
@@ -659,7 +649,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                          dirs,
                          files);
             }
-
         }
     }
 
@@ -672,13 +661,14 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         String currentPath = path;
         int resolvesLeft = 20;
         while (currentEntry.isSymlink() && resolvesLeft > 0) {
-            IVfsSymlink<TDirEntry, TFile> symlink = getFile(currentEntry) instanceof IVfsSymlink ? IVfsSymlink.class.cast(getFile(currentEntry))
-                                                                                                 : (IVfsSymlink<TDirEntry, TFile>) null;
+            IVfsSymlink<TDirEntry, TFile> symlink = getFile(currentEntry) instanceof IVfsSymlink ? IVfsSymlink.class
+                    .cast(getFile(currentEntry)) : (IVfsSymlink<TDirEntry, TFile>) null;
             if (symlink == null) {
                 throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 
-            currentPath = Utilities.resolvePath(currentPath.replaceFirst(Utilities.escapeForRegex("\\") + "*$", ""), symlink.getTargetPath());
+            currentPath = Utilities.resolvePath(currentPath.replaceFirst(Utilities.escapeForRegex("\\") + "*$", ""),
+                                                symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {
                 throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);
@@ -693,64 +683,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         return currentEntry;
     }
 
-//    /**
-//     * Delegate for processing directory entries.
-//     *
-//     * @param path Full path to the directory entry.
-//     * @param dirEntry The directory entry itself.
-//     */
-//    protected static class __MultiDirEntryHandler implements DirEntryHandler {
-//        public void invoke(String path, TDirEntry dirEntry) {
-//            List<DirEntryHandler> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            for (DirEntryHandler d : copy) {
-//                d.invoke(path, dirEntry);
-//            }
-//        }
-//
-//        private List<DirEntryHandler> _invocationList = new ArrayList<>();
-//
-//        public static DirEntryHandler combine(DirEntryHandler a, DirEntryHandler b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiDirEntryHandler ret = new __MultiDirEntryHandler();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static DirEntryHandler remove(DirEntryHandler a, DirEntryHandler b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<DirEntryHandler> aInvList = a.getInvocationList();
-//            List<DirEntryHandler> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiDirEntryHandler ret = new __MultiDirEntryHandler();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<DirEntryHandler> getInvocationList() {
-//            return _invocationList;
-//        }
-//
-//    }
-
     @FunctionalInterface
     protected static interface DirEntryHandler<TDirEntry extends VfsDirEntry> {
 
         void invoke(String path, TDirEntry dirEntry);
-
-//        List<DirEntryHandler> getInvocationList();
     }
 }

@@ -24,6 +24,7 @@ package DiscUtils.Diagnostics;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Core.Internal.LocalFileLocator;
@@ -321,7 +322,7 @@ public final class TracingStream extends Stream {
             if (_fileOut != null) {
                 _fileOut.writeLine(record);
                 if (trace != null) {
-                    _fileOut.write(trace.toString());
+                    _fileOut.write(Arrays.toString(trace));
                 }
 
                 if (ex != null) {

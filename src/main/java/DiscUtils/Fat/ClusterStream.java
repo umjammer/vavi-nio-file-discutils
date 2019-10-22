@@ -61,11 +61,11 @@ public class ClusterStream extends Stream {
         } else {
             _knownClusters.add(FatBuffer.EndOfChain);
         }
-        if (_length == Integer.MAX_VALUE) {
+        if (_length == 0xffffffff) {
             _length = detectLength();
         }
 
-        _currentCluster = Integer.MAX_VALUE;
+        _currentCluster = 0xffffffff;
         _clusterBuffer = new byte[_reader.getClusterSize()];
     }
 
@@ -347,14 +347,14 @@ public class ClusterStream extends Stream {
         int index = (int) (pos / _reader.getClusterSize());
         if (_knownClusters.size() <= index) {
             if (!tryPopulateKnownClusters(index)) {
-                cluster[0] = Integer.MAX_VALUE;
+                cluster[0] = 0xffffffff;
                 return false;
             }
         }
 
         // Chain is shorter than the current stream position
         if (_knownClusters.size() <= index) {
-            cluster[0] = Integer.MAX_VALUE;
+            cluster[0] = 0xffffffff;
             return false;
         }
 

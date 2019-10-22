@@ -68,7 +68,7 @@ public final class BlockBitmap {
         int bytePos = first / 8;
         while (marked < count) {
             if (bitPos == 0 && count - marked >= 8) {
-                if (_data[_offset + bytePos] != 0xFF) {
+                if ((_data[_offset + bytePos] & 0xff) != 0xFF) {
                     _data[_offset + bytePos] = (byte) 0xFF;
                     changed = true;
                 }

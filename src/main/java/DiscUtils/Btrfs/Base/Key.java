@@ -34,9 +34,9 @@ public class Key implements IByteArraySerializable {
 
     public Key(long objectId, ItemType type, long offset) {
         this();
-        setObjectId(objectId);
-        setItemType(type);
-        setOffset(offset);
+        __ObjectId = objectId;
+        __ItemType = type;
+        __Offset = offset;
     }
 
     public Key(long objectId, ItemType type) {

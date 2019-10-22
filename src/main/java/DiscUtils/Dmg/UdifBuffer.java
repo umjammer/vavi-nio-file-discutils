@@ -222,7 +222,7 @@ public class UdifBuffer extends Buffer {
 
                 }
                 throw new moe.yo3explorer.dotnetio4j.IOException("No run for sector " + findSector + " in block starting at " +
-                                                                 block.FirstSector);
+                    block.FirstSector);
             }
 
         }
@@ -235,18 +235,11 @@ public class UdifBuffer extends Buffer {
         case ZlibCompressed: {
             _stream.setPosition(run.CompOffset + 2);
             // 2 byte zlib header
-            DeflateStream ds = new DeflateStream(_stream, CompressionMode.Decompress, true);
-            try {
-                {
-                    StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
-                }
-            } finally {
-                if (ds != null)
-                    try {
-                        ds.close();
-                    } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                    }
+
+            try (DeflateStream ds = new DeflateStream(_stream, CompressionMode.Decompress, true)) {
+                StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         }
             break;
@@ -259,16 +252,11 @@ public class UdifBuffer extends Buffer {
         }
             break;
         case BZlibCompressed: {
-            BZip2DecoderStream ds = new BZip2DecoderStream(new SubStream(_stream, run.CompOffset, run.CompLength),
-                                                           Ownership.None);
-            try {
+            try (BZip2DecoderStream ds = new BZip2DecoderStream(new SubStream(_stream, run.CompOffset, run.CompLength),
+                                                                Ownership.None)) {
                 StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
-            } finally {
-                try {
-                    ds.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+            } catch (IOException e) {
+                throw new moe.yo3explorer.dotnetio4j.IOException(e);
             }
         }
             break;
@@ -277,7 +265,6 @@ public class UdifBuffer extends Buffer {
             break;
         default:
             throw new UnsupportedOperationException("Unrecognized run type " + run.Type);
-
         }
         _activeRun = run;
     }

@@ -174,7 +174,7 @@ public class Footer {
         result.CreatorHostOS = EndianUtilities.bytesToString(buffer, offset + 36, 4);
         result.OriginalSize = EndianUtilities.toInt64BigEndian(buffer, offset + 40);
         result.CurrentSize = EndianUtilities.toInt64BigEndian(buffer, offset + 48);
-        result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56), buffer[58] & 0xff, buffer[59] & 0xff);
+        result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56) & 0xffff, buffer[58] & 0xff, buffer[59] & 0xff);
         result.DiskType = FileType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 60));
         result.Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
         result.UniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 68);

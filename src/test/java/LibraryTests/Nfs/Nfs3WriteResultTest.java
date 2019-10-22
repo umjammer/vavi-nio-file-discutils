@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -48,23 +48,19 @@ public class Nfs3WriteResultTest {
     public void roundTripTest() throws Exception {
         Nfs3WriteResult result = new Nfs3WriteResult();
         Nfs3WeakCacheConsistencyAttr before = new Nfs3WeakCacheConsistencyAttr();
-        before.setChangeTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        before.setChangeTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()));
-        before.setModifyTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        before.setModifyTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()));
         before.setSize(3);
         Nfs3FileAttributes after = new Nfs3FileAttributes();
-        after.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        after.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         after.BytesUsed = 2;
-        after.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        after.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         after.FileId = 3;
@@ -72,8 +68,7 @@ public class Nfs3WriteResultTest {
         after.Gid = 5;
         after.LinkCount = 6;
         after.Mode = UnixFilePermissions.GroupAll;
-        after.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        after.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         after.RdevMajor = 7;

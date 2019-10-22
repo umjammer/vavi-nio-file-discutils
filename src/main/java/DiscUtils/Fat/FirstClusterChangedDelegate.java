@@ -5,6 +5,4 @@ package DiscUtils.Fat;
 public interface FirstClusterChangedDelegate {
 
     void invoke(int cluster);
-
-//    List<FirstClusterChangedDelegate> getInvocationList();
 }

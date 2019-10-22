@@ -54,7 +54,7 @@ public class MessageFlags {
         return __Value;
     }
 
-    public boolean getIsResponse() {
+    public boolean isResponse() {
         return (getValue() & 0x8000) != 0;
     }
 
@@ -62,11 +62,11 @@ public class MessageFlags {
         return OpCode.valueOf((getValue() >>> 11) & 0xF);
     }
 
-    public boolean getIsAuthorative() {
+    public boolean isAuthorative() {
         return (getValue() & 0x0400) != 0;
     }
 
-    public boolean getIsTruncated() {
+    public boolean isTruncated() {
         return (getValue() & 0x0200) != 0;
     }
 

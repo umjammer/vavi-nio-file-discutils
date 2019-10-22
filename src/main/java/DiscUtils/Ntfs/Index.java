@@ -62,23 +62,25 @@ public class Index implements Closeable {
         _name = name;
         _bpb = bpb;
         __IsFileIndex = name.equals("$I30");
+
         _blockCache = new ObjectCache<>();
+
         _root = _file.getStream(AttributeType.IndexRoot, _name).getContent(IndexRoot.class);
         _comparer = _root.getCollator(upCase);
+
         try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Read)) {
-            {
-                byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
-                _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
-                // Give the attribute some room to breathe, so long as it doesn't squeeze others
-                // out
-                // BROKEN, BROKEN, BROKEN - how to figure this out? Query at the point of adding
-                // entries to the root node?
-                _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable()
-                        + (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
-            }
+            byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
+            _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
+            // Give the attribute some room to breathe, so long as it doesn't squeeze others
+            // out
+            // BROKEN, BROKEN, BROKEN - how to figure this out? Query at the point of adding
+            // entries to the root node?
+            _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable()
+                    + (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
+
         if (_file.streamExists(AttributeType.IndexAllocation, _name)) {
             setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
         }
@@ -98,10 +100,19 @@ public class Index implements Closeable {
         _name = name;
         _bpb = bpb;
         __IsFileIndex = name.equals("$I30");
+
         _blockCache = new ObjectCache<>();
+
         _file.createStream(AttributeType.IndexRoot, _name);
+
         _root = new IndexRoot();
+        _root.setAttributeType(attrType != null ? attrType.ordinal() : 0);
+        _root.setCollationRule(collationRule);
+        _root.setIndexAllocationSize(bpb.getIndexBufferSize());
+        _root.setRawClustersPerIndexRecord(bpb.RawIndexBufferSize);
+
         _comparer = _root.getCollator(upCase);
+
         _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, 32);
     }
 

@@ -22,7 +22,7 @@
 
 package DiscUtils.Btrfs;
 
-import java.util.Map;
+import java.util.EnumSet;
 
 import DiscUtils.Btrfs.Base.DirItemChildType;
 import DiscUtils.Btrfs.Base.InodeFlag;
@@ -30,6 +30,7 @@ import DiscUtils.Btrfs.Base.ItemType;
 import DiscUtils.Btrfs.Base.Items.DirIndex;
 import DiscUtils.Btrfs.Base.Items.InodeItem;
 import DiscUtils.Core.UnixFileType;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
@@ -68,33 +69,40 @@ public class DirEntry extends VfsDirEntry {
         return true;
     }
 
-    public Map<String, Object> getFileAttributes() {
-        UnixFileType unixFileType;
-        DirItemChildType __dummyScrutVar0 = _item.getChildType();
-        if (__dummyScrutVar0.equals(DirItemChildType.Unknown)) {
+    public EnumSet<FileAttributes> getFileAttributes() {
+        UnixFileType unixFileType = UnixFileType.None;
+        switch (_item.getChildType()) {
+        case Unknown:
             unixFileType = UnixFileType.None;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.RegularFile)) {
+            break;
+        case RegularFile:
             unixFileType = UnixFileType.Regular;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.Directory)) {
+            break;
+        case Directory:
             unixFileType = UnixFileType.Directory;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.CharDevice)) {
+            break;
+        case CharDevice:
             unixFileType = UnixFileType.Character;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.BlockDevice)) {
+            break;
+        case BlockDevice:
             unixFileType = UnixFileType.Block;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.Fifo)) {
+            break;
+        case Fifo:
             unixFileType = UnixFileType.Fifo;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.Socket)) {
+            break;
+        case Socket:
             unixFileType = UnixFileType.Socket;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.Symlink)) {
+            break;
+        case Symlink:
             unixFileType = UnixFileType.Link;
-        } else if (__dummyScrutVar0.equals(DirItemChildType.ExtendedAttribute)) {
+            break;
+        case ExtendedAttribute:
             unixFileType = UnixFileType.None;
-        } else {
-            throw new IllegalArgumentException();
+            break;
         }
-        Map<String, Object> result = Utilities.fileAttributesFromUnixFileType(unixFileType);
+        EnumSet<FileAttributes> result = Utilities.fileAttributesFromUnixFileType(unixFileType);
         if (_inode != null && _inode.getFlags().contains(InodeFlag.Readonly))
-            result.put("ReadOnly", true);
+            result.add(FileAttributes.ReadOnly);
 
         return result;
     }
@@ -154,7 +162,7 @@ public class DirEntry extends VfsDirEntry {
         return _inode.getFileSize();
     }
 
-    public boolean getIsSubtree() {
+    public boolean isSubtree() {
         return _item != null && _item.getChildLocation().getItemType() == ItemType.RootItem;
     }
 }

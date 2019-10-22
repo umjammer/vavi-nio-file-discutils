@@ -180,7 +180,7 @@ public class LzxStream extends Stream {
         byte[] temp = new byte[4];
         int i = 0;
         while (i < _bufferCount - 10) {
-            if (_buffer[i] == 0xE8) {
+            if ((_buffer[i] & 0xff) == 0xE8) {
                 System.arraycopy(_buffer, i + 1, temp, 0, 4);
                 int absoluteValue = EndianUtilities.toInt32LittleEndian(_buffer, i + 1);
                 if (absoluteValue >= -i && absoluteValue < _fileSize) {

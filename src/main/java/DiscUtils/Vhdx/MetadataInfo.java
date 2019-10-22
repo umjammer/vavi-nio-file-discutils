@@ -83,31 +83,30 @@ public final class MetadataInfo {
      * Gets the descriptive name for well-known metadata.
      */
     public String getWellKnownName() {
-        if (_entry.ItemId == MetadataTable.FileParametersGuid) {
+        if (_entry.ItemId.equals(MetadataTable.FileParametersGuid)) {
             return "File Parameters";
         }
 
-        if (_entry.ItemId == MetadataTable.LogicalSectorSizeGuid) {
+        if (_entry.ItemId.equals(MetadataTable.LogicalSectorSizeGuid)) {
             return "Logical Sector Size";
         }
 
-        if (_entry.ItemId == MetadataTable.Page83DataGuid) {
+        if (_entry.ItemId.equals(MetadataTable.Page83DataGuid)) {
             return "SCSI Page 83 Data";
         }
 
-        if (_entry.ItemId == MetadataTable.ParentLocatorGuid) {
+        if (_entry.ItemId.equals(MetadataTable.ParentLocatorGuid)) {
             return "Parent Locator";
         }
 
-        if (_entry.ItemId == MetadataTable.PhysicalSectorSizeGuid) {
+        if (_entry.ItemId.equals(MetadataTable.PhysicalSectorSizeGuid)) {
             return "Physical Sector Size";
         }
 
-        if (_entry.ItemId == MetadataTable.VirtualDiskSizeGuid) {
+        if (_entry.ItemId.equals(MetadataTable.VirtualDiskSizeGuid)) {
             return "Virtual Disk Size";
         }
 
         return null;
     }
-
 }

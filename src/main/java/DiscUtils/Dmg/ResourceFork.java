@@ -51,13 +51,12 @@ public class ResourceFork {
         }
         Object typesObject = plist.get("resource-fork");
 
-        Map<String, Object> types = typesObject instanceof Map<?, ?> ? Map.class.cast(typesObject) : null;
+        Map<String, Object> types = Map.class.cast(typesObject);
         List<Resource> resources = new ArrayList<>();
         for (String type : types.keySet()) {
-            List<Object> typeResources = types.get(type) instanceof List<?> ? List.class.cast(types.get(type)) : null;
+            List<Object> typeResources = List.class.cast(types.get(type));
             for (Object typeResource : typeResources) {
-                resources
-                        .add(Resource.fromPlist(type, typeResource instanceof Map<?, ?> ? Map.class.cast(typeResource) : null));
+                resources.add(Resource.fromPlist(type, Map.class.cast(typeResource)));
             }
         }
         return new ResourceFork(resources);

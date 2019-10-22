@@ -91,8 +91,6 @@ class Connection implements Closeable {
         return Id;
     }
 
-    private LoginStages NextLoginStage;
-
     public LoginStages getNextLoginStage() {
         switch (CurrentLoginStage) {
         case SecurityNegotiation:
@@ -339,7 +337,7 @@ class Connection implements Closeable {
 
         Authenticator authenticator = null;
         for (int i = 0; i < _authenticators.length; ++i) {
-            if (settings.get___idx(AuthMethodParameter) == _authenticators[i].getIdentifier()) {
+            if (settings.get___idx(AuthMethodParameter).equals(_authenticators[i].getIdentifier())) {
                 authenticator = _authenticators[i];
                 break;
             }
@@ -402,8 +400,8 @@ class Connection implements Closeable {
             }
         }
 
-        if (resp.NextStage != NextLoginStage) {
-            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + NextLoginStage + ")");
+        if (resp.NextStage != getNextLoginStage()) {
+            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + getNextLoginStage() + ")");
         }
 
         CurrentLoginStage = resp.NextStage;
@@ -500,8 +498,8 @@ class Connection implements Closeable {
             }
         }
 
-        if (resp.NextStage != NextLoginStage) {
-            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + NextLoginStage + ")");
+        if (resp.NextStage != getNextLoginStage()) {
+            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + getNextLoginStage() + ")");
         }
 
         CurrentLoginStage = resp.NextStage;
@@ -602,12 +600,11 @@ class Connection implements Closeable {
             SeenStatusSequenceNumber(resp.StatusSequenceNumber);
         }
 
-        T result = (T) resp;
-        if (result == null) {
-            throw new InvalidProtocolException("Unexpected response, expected " + clazz.getName() + ", got " + result.getClass());
+        if (clazz.isInstance(resp)) {
+            throw new InvalidProtocolException("Unexpected response, expected " + clazz.getName() + ", got " + resp.getClass());
         }
 
-        return result;
+        return (T) resp;
     }
 
     private static final String InitiatorNameParameter = "InitiatorName";

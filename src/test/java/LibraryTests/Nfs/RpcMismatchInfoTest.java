@@ -38,15 +38,18 @@ public class RpcMismatchInfoTest {
         RpcMismatchInfo info = new RpcMismatchInfo();
         info.High = 1;
         info.Low = 2;
+
         RpcMismatchInfo clone = null;
 
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             info.write(writer);
+
             stream.setPosition(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new RpcMismatchInfo(reader);
         }
+
         assertEquals(info, clone);
     }
 }

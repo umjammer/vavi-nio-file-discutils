@@ -41,7 +41,6 @@ public class ScsiRawCommand extends ScsiCommand {
     }
 
     public TaskAttributes getTaskAttributes() {
-        getTaskAttributes();
         return TaskAttributes.Simple;
     }
 

@@ -41,7 +41,6 @@ public abstract class ScsiCommand implements IByteArraySerializable {
     }
 
     public TaskAttributes getTaskAttributes() {
-        getTaskAttributes();
         return TaskAttributes.Untagged;
     }
 

@@ -3,6 +3,7 @@ package DiscUtils.Udf;
 
 import java.util.Arrays;
 
+// use ordinal()
 public enum ShortAllocationFlags {
     RecordedAndAllocated,
     AllocatedNotRecorded,

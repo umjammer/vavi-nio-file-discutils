@@ -23,9 +23,10 @@
 
 package DiscUtils.Xfs;
 
-import java.util.Map;
+import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFileType;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
@@ -100,7 +101,7 @@ public class DirEntry extends VfsDirEntry {
         return true;
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         return Utilities.fileAttributesFromUnixFileType(getInode().getFileType());
     }
 

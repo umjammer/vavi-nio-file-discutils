@@ -54,12 +54,6 @@ public class Block {
     }
 
     public boolean equals(Block other) {
-        try {
-            return getPosition() == other.getPosition();
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
+        return getPosition() == other.getPosition();
     }
 }

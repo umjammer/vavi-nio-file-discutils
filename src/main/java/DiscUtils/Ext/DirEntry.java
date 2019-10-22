@@ -22,8 +22,9 @@
 
 package DiscUtils.Ext;
 
-import java.util.Map;
+import java.util.EnumSet;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
 
@@ -36,7 +37,7 @@ public class DirEntry extends VfsDirEntry {
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         throw new UnsupportedOperationException();
     }
 

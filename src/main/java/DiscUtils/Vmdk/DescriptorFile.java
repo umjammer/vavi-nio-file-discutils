@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.UUID;
 
 import DiscUtils.Core.Geometry;
+import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
 import moe.yo3explorer.dotnetio4j.Stream;
 import moe.yo3explorer.dotnetio4j.StreamReader;
@@ -112,7 +113,7 @@ public class DescriptorFile {
     }
 
     public int getContentId() {
-        return Integer.parseInt(getHeader(HeaderContentId), 16);
+        return (int) Long.parseLong(getHeader(HeaderContentId), 16);
     }
 
     public void setContentId(int value) {
@@ -159,8 +160,8 @@ public class DescriptorFile {
         setDiskDatabase(DiskDbHardwareVersion, value);
     }
 
-    public long getParentContentId() {
-        return Long.parseLong(getHeader(HeaderParentContentId), 16);
+    public int getParentContentId() {
+        return (int) Long.parseLong(getHeader(HeaderParentContentId), 16);
     }
 
     public void setParentContentId(int value) {
@@ -310,7 +311,8 @@ public class DescriptorFile {
     }
 
     private static String formatUuid(UUID value) {
-        byte[] data = value.toString().getBytes();
+        byte[] data = new byte[16];
+        EndianUtilities.writeBytesLittleEndian(value, data, 0);
         return String.format("%02x %02x %02x %02x %02x %02x %02x %02x-%02x %02x %02x %02x %02x %02x %02x %02x",
                              data[0],
                              data[1],
@@ -333,6 +335,7 @@ public class DescriptorFile {
     private String getHeader(String key) {
         for (DescriptorFileEntry entry : _header) {
             if (entry.getKey().equals(key)) {
+System.err.println(entry.getKey() + ", " + key);
                 return entry.getValue();
             }
         }

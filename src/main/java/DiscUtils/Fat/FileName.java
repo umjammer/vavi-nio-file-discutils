@@ -132,7 +132,7 @@ public final class FileName {
     }
 
     public boolean isDeleted() {
-        return _raw[0] == 0xE5;
+        return (_raw[0] & 0xff) == 0xE5;
     }
 
     public boolean isEndMarker() {

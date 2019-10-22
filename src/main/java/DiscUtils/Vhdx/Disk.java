@@ -23,6 +23,7 @@
 package DiscUtils.Vhdx;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -362,12 +363,14 @@ public final class Disk extends VirtualDisk {
      * @return An object that accesses the new file as a Disk.
      */
     public static Disk initializeDifferencing(String path, String parentPath) {
-        LocalFileLocator parentLocator = new LocalFileLocator(Paths.get(parentPath).getParent().toString());
+        Path _parent = Paths.get(parentPath).getParent();
+        LocalFileLocator parentLocator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
         String parentFileName = Paths.get(parentPath).getFileName().toString();
         DiskImageFile newFile;
 
         try (DiskImageFile parent = new DiskImageFile(parentLocator, parentFileName, FileAccess.Read)) {
-            LocalFileLocator locator = new LocalFileLocator(Paths.get(path).getParent().toString());
+            _parent = Paths.get(path).getParent();
+            LocalFileLocator locator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
             newFile = parent.createDifferencing(locator, Paths.get(path).getFileName().toString());
             return new Disk(newFile, Ownership.Dispose, parentLocator, parentFileName);
         } catch (IOException e) {
@@ -431,7 +434,8 @@ public final class Disk extends VirtualDisk {
      * @return The newly created disk.
      */
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
-        FileLocator locator = new LocalFileLocator(Paths.get(path).getParent().toString());
+        Path parent = Paths.get(path).getParent();
+        FileLocator locator = new LocalFileLocator(parent == null ? "" : parent.toString());
         DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Paths.get(path).getFileName().toString());
         return new Disk(file, Ownership.Dispose);
     }

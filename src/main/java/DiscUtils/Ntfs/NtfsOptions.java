@@ -27,8 +27,7 @@ import DiscUtils.Core.Compression.BlockCompressor;
 
 
 /**
- * Class whose instances hold options controlling how
- * {@link #NtfsFileSystem}
+ * Class whose instances hold options controlling how {@link NtfsFileSystem}
  * works.
  */
 public final class NtfsOptions extends DiscFileSystemOptions {
@@ -56,18 +55,14 @@ public final class NtfsOptions extends DiscFileSystemOptions {
     }
 
     /**
-     * Gets or sets a value indicating whether file length information comes
-     * from directory entries or file data.
-     * The default (
-     * {@code true}
-     * ) is that file length information is supplied by the directory entry
-     * for a file. In some circumstances that information may be inaccurate -
-     * specifically for files with multiple
-     * hard links, the directory entries are only updated for the hard link used
-     * to open the file.Setting this value to
-     * {@code false}
-     * , will always retrieve the latest information from the underlying
-     * NTFS attribute information, which reflects the true size of the file.
+     * Gets or sets a value indicating whether file length information comes from
+     * directory entries or file data. The default ( {@code true} ) is that file
+     * length information is supplied by the directory entry for a file. In some
+     * circumstances that information may be inaccurate - specifically for files
+     * with multiple hard links, the directory entries are only updated for the hard
+     * link used to open the file.Setting this value to {@code false} , will always
+     * retrieve the latest information from the underlying NTFS attribute
+     * information, which reflects the true size of the file.
      */
     private boolean __FileLengthFromDirectoryEntries;
 
@@ -80,8 +75,8 @@ public final class NtfsOptions extends DiscFileSystemOptions {
     }
 
     /**
-     * Gets or sets a value indicating whether to hide DOS (8.3-style) file
-     * names when enumerating directories.
+     * Gets or sets a value indicating whether to hide DOS (8.3-style) file names
+     * when enumerating directories.
      */
     private boolean __HideDosFileNames;
 
@@ -109,8 +104,8 @@ public final class NtfsOptions extends DiscFileSystemOptions {
 
     /**
      * Gets or sets a value indicating whether to include file system meta-files
-     * when enumerating directories.
-     * Meta-files are those with an MFT (Master File Table) index less than 24.
+     * when enumerating directories. Meta-files are those with an MFT (Master File
+     * Table) index less than 24.
      */
     private boolean __HideMetafiles;
 
@@ -150,8 +145,8 @@ public final class NtfsOptions extends DiscFileSystemOptions {
     }
 
     /**
-     * Gets or sets a value indicating whether short (8.3) file names are
-     * created automatically.
+     * Gets or sets a value indicating whether short (8.3) file names are created
+     * automatically.
      */
     private ShortFileNameOption __ShortNameCreation = ShortFileNameOption.UseVolumeFlag;
 
@@ -169,7 +164,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      * @return A string of the form Show: XX XX XX.
      */
     public String toString() {
-        return "Show: Normal " + (getHideMetafiles() ? "" : "Meta ") + (getHideHiddenFiles() ? "" : "Hidden ") +
-               (getHideSystemFiles() ? "" : "System ") + (getHideDosFileNames() ? "" : "ShortNames ");
+        return "Show: Normal " + (__HideMetafiles ? "" : "Meta ") + (__HideHiddenFiles ? "" : "Hidden ")
+                + (__HideSystemFiles ? "" : "System ") + (__HideDosFileNames ? "" : "ShortNames ");
     }
 }

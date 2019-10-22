@@ -24,6 +24,7 @@ package DiscUtils.Nfs;
 
 import java.util.Arrays;
 
+// use ordinal()
 public enum Nfs3FileType {
     None,
     File,

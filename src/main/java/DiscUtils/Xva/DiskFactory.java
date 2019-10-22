@@ -22,6 +22,7 @@
 
 package DiscUtils.Xva;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +63,8 @@ public final class DiskFactory extends VirtualDiskFactory {
     }
 
     public VirtualDisk openDisk(String path, FileAccess access) {
-        return openDisk(new LocalFileLocator(Paths.get(path).getParent().toString()),
+        Path parent = Paths.get(path).getParent();
+        return openDisk(new LocalFileLocator(parent == null ? "" : parent.toString()),
                         Paths.get(path).getFileName().toString(),
                         access);
     }

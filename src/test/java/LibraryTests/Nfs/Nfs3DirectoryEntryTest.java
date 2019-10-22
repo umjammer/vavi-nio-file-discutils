@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -45,13 +45,11 @@ public class Nfs3DirectoryEntryTest {
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
         entry.setCookie(1);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         attributes.BytesUsed = 2;
-        attributes.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         attributes.FileId = 3;
@@ -59,8 +57,7 @@ public class Nfs3DirectoryEntryTest {
         attributes.Gid = 5;
         attributes.LinkCount = 6;
         attributes.Mode = UnixFilePermissions.GroupAll;
-        attributes.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         attributes.RdevMajor = 7;

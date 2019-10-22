@@ -5,6 +5,4 @@ package DiscUtils.SquashFs;
 public interface AllocateInode {
 
     int invoke();
-
-//    List<AllocateInode> getInvocationList();
 }

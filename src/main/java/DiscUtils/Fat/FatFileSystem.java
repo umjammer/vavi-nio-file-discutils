@@ -551,7 +551,7 @@ public final class FatFileSystem extends DiscFileSystem {
         if (isRootPath(path)) {
             return new HashMap<String, Object>() {
                 {
-                    put("Directory", true);
+                    put(FatAttributes.Directory.name(), true);
                 }
             };
         }
@@ -574,7 +574,7 @@ public final class FatFileSystem extends DiscFileSystem {
      */
     public void setAttributes(String path, Map<String, Object> newValue) {
         if (isRootPath(path)) {
-            if (!newValue.containsKey("Directory")) {
+            if (!newValue.containsKey(FatAttributes.Directory.name())) {
                 throw new UnsupportedOperationException("The attributes of the root directory cannot be modified");
             }
 
@@ -923,7 +923,7 @@ public final class FatFileSystem extends DiscFileSystem {
             throw new FileNotFoundException(String.format("No such directory: %s", path));
         }
 
-        if (!dir.getIsEmpty()) {
+        if (!dir.isEmpty()) {
             throw new moe.yo3explorer.dotnetio4j.IOException("Unable to delete non-empty directory");
         }
 
@@ -1043,7 +1043,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> dirs = new ArrayList<>();
-        doSearch(dirs, path, re, searchOption == "AllDirectories", true, false);
+        doSearch(dirs, path, re, "AllDirectories".equalsIgnoreCase(searchOption), true, false);
         return dirs;
     }
 
@@ -1076,7 +1076,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> results = new ArrayList<>();
-        doSearch(results, path, re, searchOption == "AllDirectories", false, true);
+        doSearch(results, path, re, "AllDirectories".equalsIgnoreCase(searchOption), false, true);
         return results;
     }
 
@@ -1128,7 +1128,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         if (destinationDirectoryName == null || destinationDirectoryName.isEmpty()) {
             if (destinationDirectoryName == null) {
-                throw new NullPointerException(destinationDirectoryName);
+                throw new NullPointerException("destinationDirectoryName");
             }
 
             throw new IllegalArgumentException("Invalid destination name (empty string)");
@@ -1478,7 +1478,7 @@ public final class FatFileSystem extends DiscFileSystem {
                                       (_bpbRsvdSecCnt + getFatCount() * _bpbFATSz16) * _bpbBytesPerSec,
                                       _bpbRootEntCnt * 32);
         } else {
-            fatStream = new ClusterStream(this, FileAccess.ReadWrite, _bpbRootClus, Integer.MAX_VALUE);
+            fatStream = new ClusterStream(this, FileAccess.ReadWrite, _bpbRootClus, 0xffffffff);
         }
         _rootDir = new Directory(this, fatStream);
     }
@@ -1528,7 +1528,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private long getDirectoryEntry(Directory dir, String path, Directory[] parent) {
-        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
+        String[] pathElements = Arrays.asList(path.split(Utilities.escapeForRegex("\\"))).stream().filter(s -> !s.isEmpty()).toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0, parent);
     }
 
@@ -1628,58 +1628,10 @@ public final class FatFileSystem extends DiscFileSystem {
         return getSize() - getUsedSpace();
     }
 
-//    private static class __MultiEntryUpdateAction implements EntryUpdateAction {
-//        public void invoke(DirectoryEntry entry) {
-//            List<EntryUpdateAction> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            for (EntryUpdateAction d : copy) {
-//                d.invoke(entry);
-//            }
-//        }
-//
-//        private List<EntryUpdateAction> _invocationList = new ArrayList<>();
-//
-//        public static EntryUpdateAction combine(EntryUpdateAction a, EntryUpdateAction b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiEntryUpdateAction ret = new __MultiEntryUpdateAction();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static EntryUpdateAction remove(EntryUpdateAction a, EntryUpdateAction b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<EntryUpdateAction> aInvList = a.getInvocationList();
-//            List<EntryUpdateAction> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiEntryUpdateAction ret = new __MultiEntryUpdateAction();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<EntryUpdateAction> getInvocationList() {
-//            return _invocationList;
-//        }
-//    }
-
     @FunctionalInterface
     private static interface EntryUpdateAction {
 
         void invoke(DirectoryEntry entry);
-
-//        List<EntryUpdateAction> getInvocationList();
     }
 
     /**

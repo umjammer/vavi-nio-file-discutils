@@ -5,6 +5,4 @@ package DiscUtils.SquashFs;
 public interface AllocateId {
 
     short invoke(int id);
-
-//    List<AllocateId> getInvocationList();
 }

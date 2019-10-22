@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -107,23 +108,19 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     }
 
     /**
-     * Gets the logical sector size of the disk, in bytes.
-     * This is an alias for the
-     * {@code BlockSize}
-     * property.
+     * Gets the logical sector size of the disk, in bytes. This is an alias for the
+     * {@code BlockSize} property.
      */
     public int getSectorSize() {
         return getBlockSize();
     }
 
     /**
-     * Gets the content of the disk as a stream.
-     * Note the returned stream is not guaranteed to be at any particular
-     * position. The actual position
-     * will depend on the last partition table/file system activity, since all
-     * access to the disk contents pass
-     * through a single stream instance. Set the stream position before
-     * accessing the stream.
+     * Gets the content of the disk as a stream. Note the returned stream is not
+     * guaranteed to be at any particular position. The actual position will depend
+     * on the last partition table/file system activity, since all access to the
+     * disk contents pass through a single stream instance. Set the stream position
+     * before accessing the stream.
      */
     public abstract SparseStream getContent();
 
@@ -147,29 +144,23 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     }
 
     /**
-     * Gets a value indicating whether the disk appears to have a valid
-     * partition table.
-     * There is no reliable way to determine whether a disk has a valid
-     * partition
-     * table. The 'guess' consists of checking for basic indicators and looking
-     * for obviously
-     * invalid data, such as overlapping partitions.
+     * Gets a value indicating whether the disk appears to have a valid partition
+     * table. There is no reliable way to determine whether a disk has a valid
+     * partition table. The 'guess' consists of checking for basic indicators and
+     * looking for obviously invalid data, such as overlapping partitions.
      */
     public boolean isPartitioned() {
         return PartitionTable.isPartitioned(getContent());
     }
 
     /**
-     * Gets the object that interprets the partition structure.
-     * It is theoretically possible for a disk to contain two independent
-     * partition structures - a
-     * BIOS/GPT one and an Apple one, for example. This method will return in
-     * order of preference,
-     * a GUID partition table, a BIOS partition table, then in undefined
-     * preference one of any other partition
-     * tables found. See PartitionTable.GetPartitionTables to gain access to all
-     * the discovered partition
-     * tables on a disk.
+     * Gets the object that interprets the partition structure. It is theoretically
+     * possible for a disk to contain two independent partition structures - a
+     * BIOS/GPT one and an Apple one, for example. This method will return in order
+     * of preference, a GUID partition table, a BIOS partition table, then in
+     * undefined preference one of any other partition tables found. See
+     * PartitionTable.GetPartitionTables to gain access to all the discovered
+     * partition tables on a disk.
      */
     public PartitionTable getPartitions() {
         List<PartitionTable> tables = PartitionTable.getPartitionTables(this);
@@ -201,30 +192,26 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     }
 
     /**
-     * Gets the parameters of the disk.
-     * Most of the parameters are also available individually, such as DiskType
-     * and Capacity.
+     * Gets the parameters of the disk. Most of the parameters are also available
+     * individually, such as DiskType and Capacity.
      */
     public VirtualDiskParameters getParameters() {
         return new VirtualDiskParameters();
     }
 
     /**
-     * Gets information about the type of disk.
-     * This property provides access to meta-data about the disk format, for
-     * example whether the
-     * BIOS geometry is preserved in the disk file.
+     * Gets information about the type of disk. This property provides access to
+     * meta-data about the disk format, for example whether the BIOS geometry is
+     * preserved in the disk file.
      */
     public abstract VirtualDiskTypeInfo getDiskTypeInfo();
 
     /**
      * Gets the set of supported variants of a type of virtual disk.
      *
-     * @param type A type, as returned by
-     *            {@link #getSupportedDiskTypes()}
-     *            .
-     * @return A collection of identifiers, or empty if there is no variant
-     *         concept for this type of disk.
+     * @param type A type, as returned by {@link #getSupportedDiskTypes()} .
+     * @return A collection of identifiers, or empty if there is no variant concept
+     *         for this type of disk.
      */
     public static String[] getSupportedDiskVariants(String type) {
         return VirtualDiskManager.getTypeMap().get(type).getVariants();
@@ -233,9 +220,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Gets information about disk type.
      *
-     * @param type The disk type, as returned by
-     *            {@link #getSupportedDiskTypes()}
-     *            .
+     * @param type The disk type, as returned by {@link #getSupportedDiskTypes()} .
      * @param variant The variant of the disk type.
      * @return Information about the disk type.
      */
@@ -247,17 +232,14 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Create a new virtual disk, possibly within an existing disk.
      *
      * @param fileSystem The file system to create the disk on.
-     * @param type The type of disk to create (see
-     *            {@link #getSupportedDiskTypes()}
+     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
      *            ).
      * @param variant The variant of the type to create (see
-     *            {@link #getSupportedDiskVariants(String)}
-     *            ).
+     *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
      * @param capacity The capacity of the new disk.
      * @param geometry The geometry of the new disk (or null).
-     * @param parameters Untyped parameters controlling the creation process
-     *            (TBD).
+     * @param parameters Untyped parameters controlling the creation process (TBD).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(DiscFileSystem fileSystem,
@@ -266,9 +248,15 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String path,
                                          long capacity,
                                          Geometry geometry,
-                                         Map<String, String> parameters) throws IOException {
+                                         Map<String, String> parameters)
+            throws IOException {
         VirtualDiskFactory factory = VirtualDiskManager.getTypeMap().get(type);
+
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
+        diskParams.setAdapterType(GenericDiskAdapterType.Scsi);
+        diskParams.setCapacity(capacity);
+        diskParams.geometry = geometry;
+
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 diskParams.extendedParameters.put(key, parameters.get(key));
@@ -284,17 +272,14 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Create a new virtual disk.
      *
-     * @param type The type of disk to create (see
-     *            {@link #getSupportedDiskTypes()}
+     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
      *            ).
      * @param variant The variant of the type to create (see
-     *            {@link #getSupportedDiskVariants(String)}
-     *            ).
+     *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
      * @param capacity The capacity of the new disk.
      * @param geometry The geometry of the new disk (or null).
-     * @param parameters Untyped parameters controlling the creation process
-     *            (TBD).
+     * @param parameters Untyped parameters controlling the creation process (TBD).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(String type,
@@ -302,30 +287,26 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String path,
                                          long capacity,
                                          Geometry geometry,
-                                         Map<String, String> parameters) throws IOException {
+                                         Map<String, String> parameters)
+            throws IOException {
         return createDisk(type, variant, path, capacity, geometry, null, null, parameters);
     }
 
     /**
      * Create a new virtual disk.
      *
-     * @param type The type of disk to create (see
-     *            {@link #getSupportedDiskTypes()}
+     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
      *            ).
      * @param variant The variant of the type to create (see
-     *            {@link #getSupportedDiskVariants(String)}
-     *            ).
+     *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
      * @param capacity The capacity of the new disk.
      * @param geometry The geometry of the new disk (or null).
-     * @param user The user identity to use when accessing the
-     *            {@code path}
-     *            (or null).
-     * @param password The password to use when accessing the
-     *            {@code path}
-     *            (or null).
-     * @param parameters Untyped parameters controlling the creation process
-     *            (TBD).
+     * @param user The user identity to use when accessing the {@code path} (or
+     *            null).
+     * @param password The password to use when accessing the {@code path} (or
+     *            null).
+     * @param parameters Untyped parameters controlling the creation process (TBD).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(String type,
@@ -335,8 +316,13 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          Geometry geometry,
                                          String user,
                                          String password,
-                                         Map<String, String> parameters) throws IOException {
+                                         Map<String, String> parameters)
+            throws IOException {
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
+        diskParams.setAdapterType(GenericDiskAdapterType.Scsi);
+        diskParams.setCapacity(capacity);
+        diskParams.geometry = geometry;
+
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 diskParams.extendedParameters.put(key, parameters.get(key));
@@ -349,21 +335,17 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Create a new virtual disk.
      *
-     * @param type The type of disk to create (see
-     *            {@link #getSupportedDiskTypes()}
+     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
      *            ).
      * @param variant The variant of the type to create (see
-     *            {@link #getSupportedDiskVariants(String)}
-     *            ).
+     *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
-     * @param diskParameters Parameters controlling the capacity, geometry, etc
-     *            of the new disk.
-     * @param user The user identity to use when accessing the
-     *            {@code path}
-     *            (or null).
-     * @param password The password to use when accessing the
-     *            {@code path}
-     *            (or null).
+     * @param diskParameters Parameters controlling the capacity, geometry, etc of
+     *            the new disk.
+     * @param user The user identity to use when accessing the {@code path} (or
+     *            null).
+     * @param password The password to use when accessing the {@code path} (or
+     *            null).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(String type,
@@ -371,7 +353,8 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String path,
                                          VirtualDiskParameters diskParameters,
                                          String user,
-                                         String password) throws IOException {
+                                         String password)
+            throws IOException {
         URI uri = pathToUri(path);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
@@ -380,7 +363,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
         transport.connect(uri, user, password);
-        if (transport.getIsRawDisk()) {
+        if (transport.isRawDisk()) {
             result = transport.openDisk(FileAccess.ReadWrite);
         } else {
             VirtualDiskFactory factory = VirtualDiskManager.getTypeMap().get(type);
@@ -401,9 +384,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      *
      * @param path The path of the virtual disk to open, can be a URI.
      * @param access The desired access to the disk.
-     * @return The Virtual Disk, or
-     *         {@code null}
-     *         if an unknown disk format.
+     * @return The Virtual Disk, or {@code null} if an unknown disk format.
      */
     public static VirtualDisk openDisk(String path, FileAccess access) throws IOException {
         return openDisk(path, null, access, null, null);
@@ -416,9 +397,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * @param access The desired access to the disk.
      * @param user The user name to use for authentication (if necessary).
      * @param password The password to use for authentication (if necessary).
-     * @return The Virtual Disk, or
-     *         {@code null}
-     *         if an unknown disk format.
+     * @return The Virtual Disk, or {@code null} if an unknown disk format.
      */
     public static VirtualDisk openDisk(String path, FileAccess access, String user, String password) throws IOException {
         return openDisk(path, null, access, user, password);
@@ -428,24 +407,16 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Opens an existing virtual disk.
      *
      * @param path The path of the virtual disk to open, can be a URI.
-     * @param forceType Force the detected disk type (
-     *            {@code null}
-     *            to detect).
+     * @param forceType Force the detected disk type ( {@code null} to detect).
      * @param access The desired access to the disk.
      * @param user The user name to use for authentication (if necessary).
      * @param password The password to use for authentication (if necessary).
-     * @return The Virtual Disk, or
-     *         {@code null}
-     *         if an unknown disk format.
-     *         The detected disk type can be forced by specifying a known disk
-     *         type:
+     * @return The Virtual Disk, or {@code null} if an unknown disk format. The
+     *         detected disk type can be forced by specifying a known disk type:
      *         RAW, VHD, VMDK, etc.
      */
-    public static VirtualDisk openDisk(String path,
-                                       String forceType,
-                                       FileAccess access,
-                                       String user,
-                                       String password) throws IOException {
+    public static VirtualDisk openDisk(String path, String forceType, FileAccess access, String user, String password)
+            throws IOException {
         URI uri = pathToUri(path);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
@@ -454,7 +425,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
         transport.connect(uri, user, password);
-        if (transport.getIsRawDisk()) {
+        if (transport.isRawDisk()) {
             result = transport.openDisk(access);
         } else {
             boolean foundFactory;
@@ -490,9 +461,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * @param fs The file system to open the disk on.
      * @param path The path of the virtual disk to open.
      * @param access The desired access to the disk.
-     * @return The Virtual Disk, or
-     *         {@code null}
-     *         if an unknown disk format.
+     * @return The Virtual Disk, or {@code null} if an unknown disk format.
      */
     public static VirtualDisk openDisk(DiscFileSystem fs, String path, FileAccess access) throws IOException {
         if (fs == null) {
@@ -530,14 +499,14 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      *
      * @param data The master boot record, must be 512 bytes in length.
      */
-    public void setMasterBootRecord(byte[] data) throws IOException {
+    public void setMasterBootRecord(byte[] data) {
         if (data == null) {
-            throw new IllegalArgumentException(new String(data));
+            throw new NullPointerException("data");
         }
 
         if (data.length != Sizes.Sector) {
             throw new IllegalArgumentException("The Master Boot Record must be exactly 512 bytes in length " +
-                                               new String(data));
+                Arrays.toString(data));
         }
 
         long oldPos = getContent().getPosition();

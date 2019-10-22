@@ -43,6 +43,7 @@ import DiscUtils.Core.InvalidFileSystemException;
 import DiscUtils.Core.ReparsePoint;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.WindowsFileInformation;
+import DiscUtils.Core.Compression.BlockCompressor;
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Core.Internal.Utilities;
@@ -217,25 +218,25 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
         try (Closeable __newVar0 = new NtfsTransaction()) {
             DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceFile));
-            if (sourceParentDirEntry == null || !sourceParentDirEntry.getIsDirectory()) {
+            if (sourceParentDirEntry == null || !sourceParentDirEntry.isDirectory()) {
                 throw new FileNotFoundException("No such file " + sourceFile);
             }
 
             Directory sourceParentDir = getDirectory(sourceParentDirEntry.getReference());
             DirectoryEntry sourceEntry = sourceParentDir.getEntryByName(Utilities.getFileFromPath(sourceFile));
-            if (sourceEntry == null || sourceEntry.getIsDirectory()) {
+            if (sourceEntry == null || sourceEntry.isDirectory()) {
                 throw new FileNotFoundException("No such file " + sourceFile);
             }
 
             File origFile = getFile(sourceEntry.getReference());
             DirectoryEntry destParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(destinationFile));
-            if (destParentDirEntry == null || !destParentDirEntry.getIsDirectory()) {
+            if (destParentDirEntry == null || !destParentDirEntry.isDirectory()) {
                 throw new FileNotFoundException("Destination directory not found " + destinationFile);
             }
 
             Directory destParentDir = getDirectory(destParentDirEntry.getReference());
             DirectoryEntry destDirEntry = destParentDir.getEntryByName(Utilities.getFileFromPath(destinationFile));
-            if (destDirEntry != null && !destDirEntry.getIsDirectory()) {
+            if (destDirEntry != null && !destDirEntry.isDirectory()) {
                 if (overwrite) {
                     if (destDirEntry.getReference().getMftIndex() == sourceEntry.getReference().getMftIndex()) {
                         throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists and is the source file");
@@ -326,18 +327,18 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             String parent = Utilities.getDirectoryFromPath(path);
             DirectoryEntry parentDirEntry = getDirectoryEntry(parent);
-            if (parentDirEntry == null || !parentDirEntry.getIsDirectory()) {
+            if (parentDirEntry == null || !parentDirEntry.isDirectory()) {
                 throw new FileNotFoundException("No such directory: " + path);
             }
 
             Directory parentDir = getDirectory(parentDirEntry.getReference());
             DirectoryEntry dirEntry = parentDir.getEntryByName(Utilities.getFileFromPath(path));
-            if (dirEntry == null || !dirEntry.getIsDirectory()) {
+            if (dirEntry == null || !dirEntry.isDirectory()) {
                 throw new FileNotFoundException("No such directory: " + path);
             }
 
             Directory dir = getDirectory(dirEntry.getReference());
-            if (!dir.getIsEmpty()) {
+            if (!dir.isEmpty()) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("Unable to delete non-empty directory");
             }
 
@@ -372,13 +373,13 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             String dirEntryPath = parsePath(path, attributeName, attributeType);
             String parentDirPath = Utilities.getDirectoryFromPath(dirEntryPath);
             DirectoryEntry parentDirEntry = getDirectoryEntry(parentDirPath);
-            if (parentDirEntry == null || !parentDirEntry.getIsDirectory()) {
+            if (parentDirEntry == null || !parentDirEntry.isDirectory()) {
                 throw new FileNotFoundException("No such file " + path);
             }
 
             Directory parentDir = getDirectory(parentDirEntry.getReference());
             DirectoryEntry dirEntry = parentDir.getEntryByName(Utilities.getFileFromPath(dirEntryPath));
-            if (dirEntry == null || dirEntry.getIsDirectory()) {
+            if (dirEntry == null || dirEntry.isDirectory()) {
                 throw new FileNotFoundException("No such file " + path);
             }
 
@@ -562,19 +563,19 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         try (Closeable __newVar9 = new NtfsTransaction()) {
             try (Closeable __newVar10 = new NtfsTransaction()) {
                 DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceDirectoryName));
-                if (sourceParentDirEntry == null || !sourceParentDirEntry.getIsDirectory()) {
+                if (sourceParentDirEntry == null || !sourceParentDirEntry.isDirectory()) {
                     throw new FileNotFoundException("No such directory: " + sourceDirectoryName);
                 }
 
                 Directory sourceParentDir = getDirectory(sourceParentDirEntry.getReference());
                 DirectoryEntry sourceEntry = sourceParentDir.getEntryByName(Utilities.getFileFromPath(sourceDirectoryName));
-                if (sourceEntry == null || !sourceEntry.getIsDirectory()) {
+                if (sourceEntry == null || !sourceEntry.isDirectory()) {
                     throw new FileNotFoundException("No such directory: " + sourceDirectoryName);
                 }
 
                 File file = getFile(sourceEntry.getReference());
                 DirectoryEntry destParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(destinationDirectoryName));
-                if (destParentDirEntry == null || !destParentDirEntry.getIsDirectory()) {
+                if (destParentDirEntry == null || !destParentDirEntry.isDirectory()) {
                     throw new FileNotFoundException("Destination directory not found: " + destinationDirectoryName);
                 }
 
@@ -603,25 +604,25 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         try (Closeable __newVar11 = new NtfsTransaction()) {
             DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceName));
-            if (sourceParentDirEntry == null || !sourceParentDirEntry.getIsDirectory()) {
+            if (sourceParentDirEntry == null || !sourceParentDirEntry.isDirectory()) {
                 throw new FileNotFoundException("No such file " + sourceName);
             }
 
             Directory sourceParentDir = getDirectory(sourceParentDirEntry.getReference());
             DirectoryEntry sourceEntry = sourceParentDir.getEntryByName(Utilities.getFileFromPath(sourceName));
-            if (sourceEntry == null || sourceEntry.getIsDirectory()) {
+            if (sourceEntry == null || sourceEntry.isDirectory()) {
                 throw new FileNotFoundException("No such file " + sourceName);
             }
 
             File file = getFile(sourceEntry.getReference());
             DirectoryEntry destParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(destinationName));
-            if (destParentDirEntry == null || !destParentDirEntry.getIsDirectory()) {
+            if (destParentDirEntry == null || !destParentDirEntry.isDirectory()) {
                 throw new FileNotFoundException("Destination directory not found " + destinationName);
             }
 
             Directory destParentDir = getDirectory(destParentDirEntry.getReference());
             DirectoryEntry destDirEntry = destParentDir.getEntryByName(Utilities.getFileFromPath(destinationName));
-            if (destDirEntry != null && !destDirEntry.getIsDirectory()) {
+            if (destDirEntry != null && !destDirEntry.isDirectory()) {
                 if (overwrite) {
                     if (destDirEntry.getReference().getMftIndex() == sourceEntry.getReference().getMftIndex()) {
                         throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists and is the source file");
@@ -707,7 +708,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             File file = getFile(dirEntry.getReference());
             if (changedAttribs.containsKey("SparseFile")) {
-                if (dirEntry.getIsDirectory()) {
+                if (dirEntry.isDirectory()) {
                     throw new IllegalArgumentException("Attempt to change sparse attribute on a directory");
                 }
 
@@ -729,7 +730,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             }
 
-            if (changedAttribs.containsKey("Compressed") && !dirEntry.getIsDirectory()) {
+            if (changedAttribs.containsKey("Compressed") && !dirEntry.isDirectory()) {
                 if (!newValue.containsKey("Compressed")) {
                     throw new IllegalArgumentException("Attempt to remove compressed attribute from file " + "newValue");
                 }
@@ -888,7 +889,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             NtfsAttribute attr = file.getAttribute(attributeType[0], attributeName[0]);
             if (attr == null) {
                 throw new FileNotFoundException(String
-                        .format("No such attribute '%s(%d)'", attributeName[0], attributeType[1]));
+                        .format("No such attribute '%s(%d)'", attributeName[0], attributeType[0]));
             }
 
             return attr.getLength();
@@ -932,7 +933,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         String[] attributeName = new String[1];
         splitPath(path, plainPath, attributeName);
         DirectoryEntry dirEntry = getDirectoryEntry(plainPath[0]);
-        if (dirEntry == null || dirEntry.getIsDirectory()) {
+        if (dirEntry == null || dirEntry.isDirectory()) {
             throw new FileNotFoundException("No such file " + path);
         }
 
@@ -963,7 +964,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         String[] attributeName = new String[1];
         splitPath(path, plainPath, attributeName);
         DirectoryEntry dirEntry = getDirectoryEntry(plainPath[0]);
-        if (dirEntry == null || dirEntry.getIsDirectory()) {
+        if (dirEntry == null || dirEntry.isDirectory()) {
             throw new FileNotFoundException("No such file " + path);
         }
 
@@ -1342,7 +1343,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             wfi.setLastAccessTime(si.LastAccessTime);
             wfi.setChangeTime(si.MftChangedTime);
             wfi.setLastWriteTime(si.ModificationTime);
-            wfi.setFileAttributes(StandardInformation.convertFlags(si._FileAttributes, file.getIsDirectory()));
+            wfi.setFileAttributes(StandardInformation.convertFlags(si._FileAttributes, file.isDirectory()));
             return wfi;
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
@@ -1808,9 +1809,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             _context.setMft(null);
         }
 
-        Closeable disposableCompressor = _context.getOptions()
-                .getCompressor() instanceof Closeable ? (Closeable) _context.getOptions().getCompressor() : (Closeable) null;
-        if (disposableCompressor != null) {
+        BlockCompressor _disposableCompressor = _context.getOptions().getCompressor();
+        if (_disposableCompressor instanceof Closeable) {
+            Closeable disposableCompressor = Closeable.class.cast(_disposableCompressor);
             disposableCompressor.close();
             _context.getOptions().setCompressor(null);
         }
@@ -2076,58 +2077,10 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         }
     }
 
-//    private static class __MultiStandardInformationModifier implements StandardInformationModifier {
-//        public void invoke(StandardInformation si) {
-//            List<StandardInformationModifier> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            for (StandardInformationModifier d : copy) {
-//                d.invoke(si);
-//            }
-//        }
-//
-//        private List<StandardInformationModifier> _invocationList;
-//
-//        public static StandardInformationModifier combine(StandardInformationModifier a, StandardInformationModifier b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiStandardInformationModifier ret = new __MultiStandardInformationModifier();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static StandardInformationModifier remove(StandardInformationModifier a, StandardInformationModifier b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<StandardInformationModifier> aInvList = a.getInvocationList();
-//            List<StandardInformationModifier> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiStandardInformationModifier ret = new __MultiStandardInformationModifier();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<StandardInformationModifier> getInvocationList() {
-//            return _invocationList;
-//        }
-//    }
-
     @FunctionalInterface
     private static interface StandardInformationModifier {
 
         void invoke(StandardInformation si);
-
-//        List<StandardInformationModifier> getInvocationList();
     }
 
     public Directory getDirectory(long index) {

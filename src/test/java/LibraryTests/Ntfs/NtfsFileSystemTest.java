@@ -31,6 +31,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -384,7 +385,7 @@ public class NtfsFileSystemTest {
             stream.setPosition(stream.getLength() - largeReadBuffer.length);
             stream.read(largeReadBuffer, 0, largeReadBuffer.length);
         }
-        assertEquals(largeWriteBuffer, largeReadBuffer);
+        assertArrayEquals(largeWriteBuffer, largeReadBuffer);
     }
 
     @Test
@@ -425,7 +426,7 @@ public class NtfsFileSystemTest {
                 data[i] = 0;
             }
             data[72 * 1024] = 99;
-            assertEquals(data, readBuffer);
+            assertArrayEquals(data, readBuffer);
         }
     }
 }

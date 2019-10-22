@@ -435,7 +435,7 @@ public class FileRecord extends FixupRecordBase {
             pos += attr.write(buffer, offset + pos);
         }
 
-        EndianUtilities.writeBytesLittleEndian(Integer.MAX_VALUE, buffer, offset + pos);
+        EndianUtilities.writeBytesLittleEndian(0xffffffff, buffer, offset + pos);
 
         return headerEnd;
     }

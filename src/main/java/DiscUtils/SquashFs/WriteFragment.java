@@ -5,6 +5,4 @@ package DiscUtils.SquashFs;
 public interface WriteFragment {
 
     int invoke(int length, int[] offset);
-
-//    List<WriteFragment> getInvocationList();
 }

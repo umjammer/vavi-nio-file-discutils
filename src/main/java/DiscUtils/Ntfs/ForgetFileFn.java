@@ -5,6 +5,4 @@ package DiscUtils.Ntfs;
 public interface ForgetFileFn {
 
     void invoke(File file);
-
-//    List<ForgetFileFn> getInvocationList();
 }

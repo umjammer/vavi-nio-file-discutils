@@ -38,8 +38,8 @@ import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
-public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context> implements
-                                    IUnixFileSystem {
+public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context>
+    implements IUnixFileSystem {
     public static final EnumSet<IncompatibleFeatures> SupportedIncompatibleFeatures = EnumSet
             .of(IncompatibleFeatures.FileType,
                 IncompatibleFeatures.FlexBlockGroups,
@@ -53,8 +53,10 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         super(new ExtFileSystemOptions(parameters));
         stream.setPosition(1024);
         byte[] superblockData = StreamUtilities.readExact(stream, 1024);
+
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);
+
         if (superblock.Magic != SuperBlock.Ext2Magic) {
             throw new IOException("Invalid superblock magic - probably not an Ext file system");
         }
@@ -67,18 +69,26 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
             throw new IOException("Incompatible ext features present: " + superblock._IncompatibleFeatures);
         }
 
-        setContext(new Context());
+        Context context = new Context();
+        context.setRawStream(stream);
+        context.setSuperBlock(superblock);
+        context.setOptions((ExtFileSystemOptions) getOptions());
+        setContext(context);
+
         int numGroups = MathUtilities.ceil(superblock.BlocksCount, superblock.BlocksPerGroup);
         long blockDescStart = (superblock.FirstDataBlock + 1) * (long) superblock.getBlockSize();
+
         stream.setPosition(blockDescStart);
         int bgDescSize = superblock.getHas64Bit() ? superblock.DescriptorSize : BlockGroup.DescriptorSize;
         byte[] blockDescData = StreamUtilities.readExact(stream, numGroups * bgDescSize);
+
         _blockGroups = new BlockGroup[numGroups];
         for (int i = 0; i < numGroups; ++i) {
             BlockGroup bg = superblock.getHas64Bit() ? new BlockGroup64(bgDescSize) : new BlockGroup();
             bg.readFrom(blockDescData, i * bgDescSize);
             _blockGroups[i] = bg;
         }
+
         JournalSuperBlock journalSuperBlock = new JournalSuperBlock();
         if (superblock.JournalInode != 0) {
             Inode journalInode = getInode(superblock.JournalInode);
@@ -102,7 +112,9 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     public UnixFileSystemInfo getUnixFileInfo(String path) {
         File file = getFile(path);
         Inode inode = file.getInode();
+
         UnixFileType fileType = UnixFileType.valueOf((inode.Mode >>> 12) & 0xff);
+
         int deviceId = 0;
         if (fileType == UnixFileType.Character || fileType == UnixFileType.Block) {
             if (inode.DirectBlocks[0] != 0) {
@@ -132,23 +144,27 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         if (dirEntry.getRecord().FileType == DirectoryRecord.FileTypeSymlink) {
             return new Symlink(getContext(), dirEntry.getRecord().Inode, inode);
         }
-
         return new File(getContext(), dirEntry.getRecord().Inode, inode);
     }
 
     private Inode getInode(int inodeNum) {
         int index = inodeNum - 1;
+
         SuperBlock superBlock = getContext().getSuperBlock();
+
         int group = index / superBlock.InodesPerGroup;
         int groupOffset = index - group * superBlock.InodesPerGroup;
         BlockGroup inodeBlockGroup = getBlockGroup(group);
+
         int inodesPerBlock = superBlock.getBlockSize() / superBlock.InodeSize;
         int block = groupOffset / inodesPerBlock;
         int blockOffset = groupOffset - block * inodesPerBlock;
+
         getContext().getRawStream()
                 .setPosition((inodeBlockGroup.InodeTableBlock + block) * (long) superBlock.getBlockSize() +
-                             blockOffset * superBlock.InodeSize);
+                    blockOffset * superBlock.InodeSize);
         byte[] inodeData = StreamUtilities.readExact(getContext().getRawStream(), superBlock.InodeSize);
+
         return EndianUtilities.<Inode> toStruct(Inode.class, inodeData, 0);
     }
 
@@ -161,18 +177,16 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      */
     public long getSize() {
         SuperBlock superBlock = getContext().getSuperBlock();
-        long blockCount = (superBlock.BlocksCountHigh << 32) | superBlock.BlocksCount;
+        long blockCount = ((long) superBlock.BlocksCountHigh << 32) | superBlock.BlocksCount;
         long inodeSize = superBlock.InodesCount * superBlock.InodeSize;
         long overhead = 0;
         long journalSize = 0;
         if (superBlock.OverheadBlocksCount != 0) {
             overhead = superBlock.OverheadBlocksCount * superBlock.getBlockSize();
         }
-
         if (getContext().getJournalSuperblock() != null) {
             journalSize = getContext().getJournalSuperblock().MaxLength * getContext().getJournalSuperblock().BlockSize;
         }
-
         return superBlock.getBlockSize() * blockCount - (inodeSize + overhead + journalSize);
     }
 
@@ -191,14 +205,14 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         if (superBlock.getHas64Bit()) {
             long free = 0;
             for (BlockGroup blockGroup : _blockGroups) {
-                //ext4 64Bit Feature
+                // ext4 64Bit Feature
                 free += BlockGroup64.class.cast(blockGroup).FreeBlocksCountHigh << 16 | blockGroup.FreeBlocksCount;
             }
             return superBlock.getBlockSize() * free;
         } else {
             long free = 0;
             for (BlockGroup blockGroup : _blockGroups) {
-                //ext4 64Bit Feature
+                // ext4 64Bit Feature
                 free += blockGroup.FreeBlocksCount;
             }
             return superBlock.getBlockSize() * free;

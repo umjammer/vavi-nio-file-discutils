@@ -25,11 +25,11 @@ package DiscUtils.Iscsi;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
@@ -40,7 +40,7 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
  * Represents a connection to a particular Target.
  */
 public final class Session implements Closeable {
-    private static AtomicInteger _nextInitiatorSessionId = new AtomicInteger(new Random().nextInt());
+    private static AtomicInteger _nextInitiatorSessionId = new AtomicInteger(new SecureRandom().nextInt());
 
     private final List<TargetAddress> _addresses;
 

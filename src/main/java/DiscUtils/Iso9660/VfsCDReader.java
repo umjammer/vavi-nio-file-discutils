@@ -55,9 +55,8 @@ import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
-public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, ReaderDirectory, IsoContext> implements
-                         IClusterBasedFileSystem,
-                         IUnixFileSystem {
+public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, ReaderDirectory, IsoContext>
+    implements IClusterBasedFileSystem, IUnixFileSystem {
     private static final Iso9660Variant[] DefaultVariantsNoJoliet = {
         Iso9660Variant.RockRidge, Iso9660Variant.Iso9660
     };
@@ -79,8 +78,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
      *
      * @param data The stream to read the ISO image from.
      * @param joliet Whether to read Joliet extensions.
-     * @param hideVersions Hides version numbers (e.g. ";1") from the end of
-     *            files.
+     * @param hideVersions Hides version numbers (e.g. ";1") from the end of files.
      */
     public VfsCDReader(Stream data, boolean joliet, boolean hideVersions) {
         this(data, joliet ? DefaultVariantsWithJoliet : DefaultVariantsNoJoliet, hideVersions);
@@ -90,37 +88,35 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
      * Initializes a new instance of the VfsCDReader class.
      *
      * @param data The stream to read the ISO image from.
-     * @param variantPriorities Which possible file system variants to use, and
-     *            with which priority.
-     * @param hideVersions Hides version numbers (e.g. ";1") from the end of
-     *            files.
-     *            The implementation considers each of the file system variants
-     *            in
-     *            {@code variantProperties}
-     *            and selects
-     *            the first which is determined to be present. In this example
-     *            Joliet, then Rock Ridge, then vanilla
-     *            Iso9660 will be considered:
+     * @param variantPriorities Which possible file system variants to use, and with
+     *            which priority.
+     * @param hideVersions Hides version numbers (e.g. ";1") from the end of files.
+     *            The implementation considers each of the file system variants in
+     *            {@code variantProperties} and selects the first which is
+     *            determined to be present. In this example Joliet, then Rock Ridge,
+     *            then vanilla Iso9660 will be considered:
      *
      *            {@code
      *            VfsCDReader(stream, new Iso9660Variant[] {Joliet, RockRidge,
-     *            Iso9660}, true);
-     *            }
-     *            The Iso9660 variant should normally be specified as the final
-     *            entry in the list. Placing it earlier
-     *            in the list will effectively mask later items and not
-     *            including it may prevent some ISOs from being read.
+     *            Iso9660}, true); } The Iso9660 variant should normally be
+     *            specified as the final entry in the list. Placing it earlier in
+     *            the list will effectively mask later items and not including it
+     *            may prevent some ISOs from being read.
      */
     @SuppressWarnings("incomplete-switch")
     public VfsCDReader(Stream data, Iso9660Variant[] variantPriorities, boolean hideVersions) {
         super(new DiscFileSystemOptions());
+
         _data = data;
         _hideVersions = hideVersions;
-        long vdpos = 0x8000;
-        // Skip lead-in
+
+        long vdpos = 0x8000; // Skip lead-in
+
         byte[] buffer = new byte[IsoUtilities.SectorSize];
+
         long pvdPos = 0;
         long svdPos = 0;
+
         BaseVolumeDescriptor bvd;
         do {
             data.setPosition(vdpos);
@@ -130,6 +126,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             }
 
             bvd = new BaseVolumeDescriptor(buffer, 0);
+
             if (!bvd.StandardIdentifier.equals(BaseVolumeDescriptor.Iso9660StandardIdentifier)) {
                 throw new InvalidFileSystemException("Volume is not ISO-9660");
             }
@@ -141,23 +138,21 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                     _bootVolDesc = null;
                 }
                 break;
-            case Primary:
-                // Primary Vol Descriptor
+            case Primary: // Primary Vol Descriptor
                 pvdPos = vdpos;
                 break;
-            case Supplementary:
-                // Supplementary Vol Descriptor
+            case Supplementary: // Supplementary Vol Descriptor
                 svdPos = vdpos;
                 break;
-            case Partition:
+            case Partition: // Volume Partition Descriptor
                 break;
-            case SetTerminator:
+            case SetTerminator: // Volume Descriptor Set Terminator
                 break;
             }
-            // Volume Partition Descriptor
-            // Volume Descriptor Set Terminator
+
             vdpos += IsoUtilities.SectorSize;
         } while (bvd._VolumeDescriptorType != VolumeDescriptorType.SetTerminator);
+
         __ActiveVariant = Iso9660Variant.None;
         for (Iso9660Variant variant : variantPriorities) {
             switch (variant) {
@@ -166,6 +161,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                     data.setPosition(svdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     SupplementaryVolumeDescriptor volDesc = new SupplementaryVolumeDescriptor(buffer, 0);
+
                     IsoContext context = new IsoContext();
                     context.setVolumeDescriptor(volDesc);
                     context.setDataStream(_data);
@@ -181,14 +177,16 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                     data.setPosition(pvdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     PrimaryVolumeDescriptor volDesc = new PrimaryVolumeDescriptor(buffer, 0);
+
                     IsoContext context = new IsoContext();
                     context.setVolumeDescriptor(volDesc);
                     context.setDataStream(_data);
                     DirectoryRecord rootSelfRecord = readRootSelfRecord(context);
+
                     initializeSusp(context, rootSelfRecord);
-                    if (variant == Iso9660Variant.Iso9660 ||
-                        (variant == Iso9660Variant.RockRidge && context.getRockRidgeIdentifier() != null &&
-                         !context.getRockRidgeIdentifier().isEmpty())) {
+
+                    if (variant == Iso9660Variant.Iso9660 || (variant == Iso9660Variant.RockRidge &&
+                        context.getRockRidgeIdentifier() != null && !context.getRockRidgeIdentifier().isEmpty())) {
                         setContext(context);
                         setRootDirectory(new ReaderDirectory(context, new ReaderDirEntry(context, rootSelfRecord)));
                         __ActiveVariant = variant;
@@ -196,10 +194,12 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 }
                 break;
             }
+
             if (getActiveVariant() != Iso9660Variant.None) {
                 break;
             }
         }
+
         if (getActiveVariant() == Iso9660Variant.None) {
             throw new IOException("None of the permitted ISO9660 file system variants was detected");
         }
@@ -354,14 +354,18 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 newPaths[paths.length] = path;
                 fileIdToPaths.put(entry.getUniqueCacheId(), newPaths);
             }
-            if (ReaderDirEntry.class.cast(entry).getRecord().FileUnitSize != 0 || ReaderDirEntry.class.cast(entry).getRecord().InterleaveGapSize != 0) {
+            if (ReaderDirEntry.class.cast(entry).getRecord().FileUnitSize != 0 ||
+                ReaderDirEntry.class.cast(entry).getRecord().InterleaveGapSize != 0) {
                 throw new UnsupportedOperationException("Non-contiguous extents not supported");
             }
 
-            long clusters = MathUtilities.ceil(ReaderDirEntry.class.cast(entry).getRecord().DataLength, IsoUtilities.SectorSize);
+            long clusters = MathUtilities.ceil(ReaderDirEntry.class.cast(entry).getRecord().DataLength,
+                                               IsoUtilities.SectorSize);
             for (long i = 0; i < clusters; ++i) {
-                clusterToRole[(int) i + ReaderDirEntry.class.cast(entry).getRecord().LocationOfExtent] = EnumSet.of(ClusterRoles.DataFile);
-                clusterToFileId[(int) i + ReaderDirEntry.class.cast(entry).getRecord().LocationOfExtent] = entry.getUniqueCacheId();
+                clusterToRole[(int) i + ReaderDirEntry.class.cast(entry).getRecord().LocationOfExtent] = EnumSet
+                        .of(ClusterRoles.DataFile);
+                clusterToFileId[(int) i + ReaderDirEntry.class.cast(entry).getRecord().LocationOfExtent] = entry
+                        .getUniqueCacheId();
             }
         });
         return new ClusterMap(clusterToRole, clusterToFileId, fileIdToPaths);
@@ -431,7 +435,8 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 }
             }
         } else if (suspRecords.getEntries(null, "RR") != null) {
-            // Some ISO creators don't add the 'ER' record for RockRidge, but write the (legacy)
+            // Some ISO creators don't add the 'ER' record for RockRidge, but write the
+            // (legacy)
             // RR record anyway
             extensions.add(new RockRidgeExtension("RRIP_1991A"));
             context.setRockRidgeIdentifier("RRIP_1991A");
@@ -443,7 +448,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
     private static DirectoryRecord readRootSelfRecord(IsoContext context) {
         context.getDataStream()
                 .setPosition(context.getVolumeDescriptor().RootDirectory.LocationOfExtent *
-                             context.getVolumeDescriptor().LogicalBlockSize);
+                    context.getVolumeDescriptor().LogicalBlockSize);
         byte[] firstSector = StreamUtilities.readExact(context.getDataStream(), context.getVolumeDescriptor().LogicalBlockSize);
         DirectoryRecord[] rootSelfRecord = new DirectoryRecord[1];
         DirectoryRecord.readFrom(firstSector, 0, context.getVolumeDescriptor().CharacterEncoding, rootSelfRecord);

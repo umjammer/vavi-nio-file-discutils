@@ -149,7 +149,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param access Controls how the file can be accessed.
      */
     public DiskImageFile(String path, FileAccess access) throws IOException {
-        this(new LocalFileLocator(Paths.get(path).getParent().toString()), Paths.get(path).getFileName().toString(), access);
+        this(new LocalFileLocator(Paths.get(path).getParent() == null ? "" : Paths.get(path).getParent().toString()),
+             Paths.get(path).getFileName().toString(),
+             access);
     }
 
     public DiskImageFile(FileLocator locator, String path, Stream stream, Ownership ownsStream) {
@@ -554,7 +556,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
         FileParameters fileParams = new FileParameters();
         fileParams.BlockSize = (int) blockSize;
         fileParams.Flags = EnumSet.of(FileParametersFlags.None);
-
         @SuppressWarnings("unused")
         ParentLocator parentLocator = new ParentLocator();
 

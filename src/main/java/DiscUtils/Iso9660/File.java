@@ -22,9 +22,11 @@
 
 package DiscUtils.Iso9660;
 
+import java.util.EnumSet;
 import java.util.Map;
 
 import DiscUtils.Core.UnixFileSystemInfo;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.IVfsFile;
 import DiscUtils.Iso9660.RockRidge.PosixFileInfoSystemUseEntry;
 import DiscUtils.Iso9660.Susp.SuspRecords;
@@ -86,7 +88,7 @@ public class File implements IVfsFile {
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         return _dirEntry.getFileAttributes();
     }
 

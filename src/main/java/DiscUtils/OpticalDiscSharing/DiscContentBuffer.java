@@ -126,7 +126,7 @@ public final class DiscContentBuffer extends Buffer {
         authMethod[0] = elements[0];
         for (int i = 1; i < elements.length; ++i) {
             String[] nvPair = elements[i].split("=", 2);
-            result.put(nvPair[0], nvPair[1].replaceAll("(^\"*|\"*$", ""));
+            result.put(nvPair[0], nvPair[1].replaceAll("(^\"*|\"*$)", ""));
         }
         return result;
     }
@@ -187,61 +187,9 @@ public final class DiscContentBuffer extends Buffer {
         }
     }
 
-//    public static class __MultiWebRequestCreator implements WebRequestCreator {
-//        public HttpWebRequest invoke() {
-//            List<WebRequestCreator> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            WebRequestCreator prev = null;
-//            for (WebRequestCreator d : copy) {
-//                if (prev != null)
-//                    prev.invoke();
-//
-//                prev = d;
-//            }
-//            return prev.invoke();
-//        }
-//
-//        private List<WebRequestCreator> _invocationList;
-//
-//        public static WebRequestCreator combine(WebRequestCreator a, WebRequestCreator b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiWebRequestCreator ret = new __MultiWebRequestCreator();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static WebRequestCreator remove(WebRequestCreator a, WebRequestCreator b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<WebRequestCreator> aInvList = a.getInvocationList();
-//            List<WebRequestCreator> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiWebRequestCreator ret = new __MultiWebRequestCreator();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<WebRequestCreator> getInvocationList() {
-//            return _invocationList;
-//        }
-//    }
-
     @FunctionalInterface
     public static interface WebRequestCreator {
-        Request invoke();
 
-//        List<WebRequestCreator> getInvocationList();
+        Request invoke();
     }
 }

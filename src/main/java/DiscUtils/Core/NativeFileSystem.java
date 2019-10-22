@@ -500,7 +500,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
         Map<String, Object> result = new HashMap<>(); // TODO impl
         for (FileAttributes key : FileAttributes.values()) {
-            result.put(key.name(), Files.getAttribute(Paths.get(getBasePath(), key.name()), null));
+            result.put(key.name(), Files.getAttribute(Paths.get(getBasePath(), path), key.name()));
         }
         return result;
     }

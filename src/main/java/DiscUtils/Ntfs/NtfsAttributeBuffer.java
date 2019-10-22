@@ -141,7 +141,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         }
 
         _attribute.getRawBuffer().write(pos, buffer, offset, count);
-        if (!record.getIsNonResident()) {
+        if (!record.isNonResident()) {
             _file.markMftRecordDirty();
         }
 
@@ -158,7 +158,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         }
 
         _attribute.getRawBuffer().clear(pos, count);
-        if (!record.getIsNonResident()) {
+        if (!record.isNonResident()) {
             _file.markMftRecordDirty();
         }
 

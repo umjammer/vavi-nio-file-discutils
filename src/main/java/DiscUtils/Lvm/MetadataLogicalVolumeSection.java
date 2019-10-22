@@ -47,7 +47,7 @@ public class MetadataLogicalVolumeSection {
 
     public UUID Identity;
 
-    public EnumSet<LogicalVolumeStatus> Status;
+    public EnumSet<LogicalVolumeStatus> Status = EnumSet.noneOf(LogicalVolumeStatus.class);
 
     public String[] Flags;
 
@@ -65,7 +65,7 @@ public class MetadataLogicalVolumeSection {
 
     public void parse(String head, Scanner data) {
         List<MetadataSegmentSection> segments = new ArrayList<>();
-        Name = head.trim().replaceFirst("{*$", "").replaceFirst(" *$", "");
+        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while ((line = Metadata.readLine(data)) != null) {
             if (line.equals(""))

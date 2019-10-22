@@ -47,7 +47,7 @@ public class BiosExtendedPartitionTable {
         while (partPos != 0) {
             _disk.setPosition((long) partPos * Sizes.Sector);
             byte[] sector = StreamUtilities.readExact(_disk, Sizes.Sector);
-            if (sector[510] != 0x55 || sector[511] != 0xAA) {
+            if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("Invalid extended partition sector");
             }
 
@@ -81,7 +81,7 @@ public class BiosExtendedPartitionTable {
             extents.add(new StreamExtent((long) partPos * Sizes.Sector, Sizes.Sector));
             _disk.setPosition((long) partPos * Sizes.Sector);
             byte[] sector = StreamUtilities.readExact(_disk, Sizes.Sector);
-            if (sector[510] != 0x55 || sector[511] != 0xAA) {
+            if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("Invalid extended partition sector");
             }
 

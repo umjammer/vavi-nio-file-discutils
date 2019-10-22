@@ -26,6 +26,7 @@ import DiscUtils.Streams.Buffer.IBuffer;
 
 
 public class Type1Partition extends LogicalPartition {
+    @SuppressWarnings("unused")
     private Type1PartitionMap _partitionMap;
 
     private final PhysicalPartition _physical;

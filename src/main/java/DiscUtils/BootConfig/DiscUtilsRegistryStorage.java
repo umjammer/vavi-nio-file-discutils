@@ -96,6 +96,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         RegistryKey descKey = _rootKey.openSubKey(path);
         Object val = descKey.getValue("Type");
+System.err.println("getObjectType: " + val);
         return val == null ? 0 : (Integer) val; // TODO check spec
     }
 

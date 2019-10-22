@@ -22,6 +22,8 @@
 
 package DiscUtils.HfsPlus;
 
+import java.util.Arrays;
+
 public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
     private final int _size;
     Class<TKey> clazz;
@@ -75,6 +77,6 @@ public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRe
     }
 
     public String toString() {
-        return getKey() + ":" + getData();
+        return getKey() + ":" + Arrays.toString(getData());
     }
 }

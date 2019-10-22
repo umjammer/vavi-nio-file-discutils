@@ -120,7 +120,7 @@ public class BlockDirectory implements IByteArraySerializable {
         long eof = buffer.length - 0x8 - getLeafCount() * 0x8;
         while (offset < eof) {
             BlockDirectoryData entry;
-            if (buffer[offset] == 0xff && buffer[offset + 0x1] == 0xff) {
+            if ((buffer[offset] & 0xff) == 0xff && (buffer[offset + 0x1] & 0xff) == 0xff) {
                 //unused
                 entry = new BlockDirectoryDataUnused();
             } else {

@@ -228,7 +228,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param searchOption Indicates whether to search subdirectories.
      * @return Array of directories matching the search pattern.
      */
-    public abstract List<String>  getDirectories(String path, String searchPattern, String searchOption) throws IOException;
+    public abstract List<String> getDirectories(String path, String searchPattern, String searchOption) throws IOException;
 
     /**
      * Gets the names of files in a specified directory.

@@ -215,7 +215,7 @@ public class BcdObject {
 
     /**
      * Indicates if the settings in this object are inheritable by another object.
-     * 
+     *
      * @param type The type of the object to test for inheritability.
      * @return {@code true} if the settings can be inherited, else {@code false} .
      */
@@ -229,13 +229,14 @@ public class BcdObject {
         }
 
         InheritType setting = InheritType.values()[((_type & 0x00F00000) >>> 20)];
-        return setting == InheritType.AnyObject || (setting == InheritType.ApplicationObjects && type == ObjectType.Application)
-                || (setting == InheritType.DeviceObjects && type == ObjectType.Device);
+        return setting == InheritType.AnyObject ||
+            (setting == InheritType.ApplicationObjects && type == ObjectType.Application) ||
+            (setting == InheritType.DeviceObjects && type == ObjectType.Device);
     }
 
     /**
      * Indicates if this object has a specific element.
-     * 
+     *
      * @param id The identity of the element to look for.
      * @return {@code true} if present, else {@code false} .
      */
@@ -245,7 +246,7 @@ public class BcdObject {
 
     /**
      * Indicates if this object has a specific element.
-     * 
+     *
      * @param id The identity of the element to look for.
      * @return {@code true} if present, else {@code false} .
      */
@@ -255,11 +256,12 @@ public class BcdObject {
 
     /**
      * Gets a specific element in this object.
-     * 
+     *
      * @param id The identity of the element to look for.
      * @return The element object.
      */
     public Element getElement(int id) {
+System.err.println(id + ", " + hasElement(id));
         if (hasElement(id)) {
             return new Element(_storage, _id, getApplicationType(), id);
         }
@@ -269,7 +271,7 @@ public class BcdObject {
 
     /**
      * Gets a specific element in this object.
-     * 
+     *
      * @param id The identity of the element to look for.
      * @return The element object.
      */
@@ -279,8 +281,8 @@ public class BcdObject {
 
     /**
      * Adds an element in this object.
-     * 
-     * @param id           The identity of the element to add.
+     *
+     * @param id The identity of the element to add.
      * @param initialValue The initial value of the element.
      * @return The element object.
      */
@@ -293,8 +295,8 @@ public class BcdObject {
 
     /**
      * Adds an element in this object.
-     * 
-     * @param id           The identity of the element to add.
+     *
+     * @param id The identity of the element to add.
      * @param initialValue The initial value of the element.
      * @return The element object.
      */
@@ -304,7 +306,7 @@ public class BcdObject {
 
     /**
      * Removes a specific element.
-     * 
+     *
      * @param id The element to remove.
      */
     public void removeElement(int id) {
@@ -313,7 +315,7 @@ public class BcdObject {
 
     /**
      * Removes a specific element.
-     * 
+     *
      * @param id The element to remove.
      */
     public void removeElement(WellKnownElement id) {
@@ -322,7 +324,7 @@ public class BcdObject {
 
     /**
      * Returns the object identity as a GUID string.
-     * 
+     *
      * @return A string representation, with surrounding curly braces.
      */
     public String toString() {

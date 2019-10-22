@@ -207,7 +207,7 @@ public class ZlibStream extends Stream {
 
     private static void checkParams(byte[] buffer, int offset, int count) {
         if (buffer == null) {
-            throw new IllegalArgumentException("buffer");
+            throw new NullPointerException("buffer");
         }
 
         if (offset < 0 || offset > buffer.length) {

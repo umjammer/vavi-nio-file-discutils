@@ -42,7 +42,7 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
 public class DiskTest {
-    public DiskTest() throws Exception {
+    public DiskTest() {
 //        SetupHelper.setupComplete();
     }
 

@@ -211,7 +211,6 @@ public final class BZip2DecoderStream extends Stream {
                 if (_blockCrc != _calcBlockCrc.getValue()) {
                     throw new moe.yo3explorer.dotnetio4j.IOException("Decompression failed - block CRC mismatch");
                 }
-
             }
 
             _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >>> 31)) ^ _blockCrc;
@@ -223,7 +222,6 @@ public final class BZip2DecoderStream extends Stream {
 
                 return numRead;
             }
-
         }
 
         _position += numRead;

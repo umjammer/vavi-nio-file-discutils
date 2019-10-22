@@ -3,6 +3,7 @@ package DiscUtils.Iscsi;
 
 import java.util.Arrays;
 
+// use ordinal()
 public enum LoginStages {
     SecurityNegotiation,
     LoginOperationalNegotiation,

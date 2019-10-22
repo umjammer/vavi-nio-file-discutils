@@ -23,11 +23,11 @@
 package DiscUtils.Iso9660.Susp;
 
 public final class GenericSystemUseEntry extends SystemUseEntry {
-    public byte[] Data;
+    public byte[] _data;
 
     public GenericSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 4, (byte) 0xFF);
-        Data = new byte[length - 4];
-        System.arraycopy(data, offset + 4, Data, 0, length - 4);
+        _data = new byte[length - 4];
+        System.arraycopy(data, offset + 4, _data, 0, length - 4);
     }
 }

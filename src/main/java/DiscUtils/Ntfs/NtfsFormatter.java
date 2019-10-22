@@ -24,7 +24,6 @@ package DiscUtils.Ntfs;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.security.Permission;
 import java.util.EnumSet;
 import java.util.HashMap;
 
@@ -64,13 +63,13 @@ public class NtfsFormatter {
         __BootCode = value;
     }
 
-    private Permission __ComputerAccount;
+    private SecurityIdentifier __ComputerAccount;
 
-    public Permission getComputerAccount() {
+    public SecurityIdentifier getComputerAccount() {
         return __ComputerAccount;
     }
 
-    public void setComputerAccount(Permission value) {
+    public void setComputerAccount(SecurityIdentifier value) {
         __ComputerAccount = value;
     }
 
@@ -278,9 +277,9 @@ public class NtfsFormatter {
         ntfs.createDirectory("System Volume Information");
         ntfs.setAttributes("System Volume Information", new HashMap<String, Object>() {
             {
-                put("Hidden", true);
-                put("System", true);
-                put("Directory", true);
+                put(FileAttributeFlags.Hidden.name(), true);
+                put(FileAttributeFlags.System.name(), true);
+                put(FileAttributeFlags.Directory.name(), true);
             }
         });
         ntfs.setSecurity("System Volume Information", new RawSecurityDescriptor("O:BAG:SYD:(A;OICI;FA;;;SY)"));
@@ -290,9 +289,9 @@ public class NtfsFormatter {
         }
         ntfs.setAttributes("System Volume Information\\MountPointManagerRemoteDatabase", new HashMap<String, Object>() {
             {
-                put("Hidden", true);
-                put("System", true);
-                put("Archive", true);
+                put(FileAttributeFlags.Hidden.name(), true);
+                put(FileAttributeFlags.System.name(), true);
+                put(FileAttributeFlags.Archive.name(), true);
             }
         });
         ntfs.setSecurity("System Volume Information\\MountPointManagerRemoteDatabase",

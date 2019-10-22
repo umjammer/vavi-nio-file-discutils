@@ -23,12 +23,14 @@
 package DiscUtils.Btrfs;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
 import DiscUtils.Btrfs.Base.ItemType;
 import DiscUtils.Btrfs.Base.Key;
 import DiscUtils.Btrfs.Base.Items.ExtentData;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.IVfsFile;
 import DiscUtils.Streams.BuiltStream;
 import DiscUtils.Streams.StreamBuffer;
@@ -57,7 +59,7 @@ public class File implements IVfsFile {
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         return DirEntry.getFileAttributes();
     }
 

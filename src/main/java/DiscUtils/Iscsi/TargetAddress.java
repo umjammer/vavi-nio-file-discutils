@@ -96,7 +96,7 @@ public class TargetAddress {
                 port = Integer.parseInt(address.substring(portStart));
                 focus = address.length();
             } else {
-                port = Integer.parseInt(address.substring(portStart, portEnd - portStart));
+                port = Integer.parseInt(address.substring(portStart, portEnd));
                 focus = portEnd;
             }
         }

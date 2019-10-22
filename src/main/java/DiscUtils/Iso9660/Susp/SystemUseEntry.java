@@ -28,44 +28,47 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public abstract class SystemUseEntry {
-    public String Name;
+    public String _name;
 
-    public byte Version;
+    public byte _version;
 
-    public static SystemUseEntry parse(byte[] data,
-                                       int offset,
-                                       Charset encoding,
-                                       SuspExtension extension,
-                                       byte[] length) {
+    /**
+     * @param length out
+     */
+    public static SystemUseEntry parse(byte[] data, int offset, Charset encoding, SuspExtension extension, byte[] length) {
         if (data[offset] == 0) {
             // A zero-byte here is invalid and indicates an incorrectly written SUSP field.
             // Return null to indicate to the caller that SUSP parsing is terminated.
             length[0] = 0;
+
             return null;
         }
 
         String name = EndianUtilities.bytesToString(data, offset, 2);
         length[0] = data[offset + 2];
         byte version = data[offset + 3];
-        String __dummyScrutVar0 = name;
-        if (__dummyScrutVar0.equals("CE")) {
+
+        switch (name) {
+        case "CE":
             return new ContinuationSystemUseEntry(name, length[0], version, data, offset);
-        } else if (__dummyScrutVar0.equals("PD")) {
+        case "PD":
             return new PaddingSystemUseEntry(name, length[0], version);
-        } else if (__dummyScrutVar0.equals("SP")) {
+        case "SP":
             return new SharingProtocolSystemUseEntry(name, length[0], version, data, offset);
-        } else if (__dummyScrutVar0.equals("ST")) {
+        case "ST":
+            // Termination entry. There's no point in storing or validating this one.
+            // Return null to indicate to the caller that SUSP parsing is terminated.
             return null;
-        } else // Termination entry. There's no point in storing or validating this one.
-        // Return null to indicate to the caller that SUSP parsing is terminated.
-        if (__dummyScrutVar0.equals("ER")) {
+        case "ER":
             return new ExtensionSystemUseEntry(name, length[0], version, data, offset, encoding);
-        } else if (__dummyScrutVar0.equals("ES")) {
+        case "ES":
             return new ExtensionSelectSystemUseEntry(name, length[0], version, data, offset);
-        } else if (__dummyScrutVar0.equals("AA") || __dummyScrutVar0.equals("AB") || __dummyScrutVar0.equals("AS")) {
-            return new GenericSystemUseEntry(name, length[0], version, data, offset);
-        } else {
+        case "AA":
+        case "AB":
+        case "AS":
             // Placeholder support for Apple and Amiga extension records.
+            return new GenericSystemUseEntry(name, length[0], version, data, offset);
+        default:
             if (extension == null) {
                 return new GenericSystemUseEntry(name, length[0], version, data, offset);
             }
@@ -75,15 +78,15 @@ public abstract class SystemUseEntry {
     }
 
     protected void checkAndSetCommonProperties(String name, byte length, byte version, byte minLength, byte maxVersion) {
-        if (length < minLength) {
-            throw new IllegalArgumentException("Invalid SUSP " + Name + " entry - too short, only " + length + " bytes");
+        if ((length & 0xff) < minLength) {
+            throw new IllegalArgumentException("Invalid SUSP " + _name + " entry - too short, only " + length + " bytes");
         }
 
-        if (version > maxVersion || version == 0) {
-            throw new UnsupportedOperationException("Unknown SUSP " + Name + " entry version: " + version);
+        if ((version & 0xff) > (maxVersion & 0xff) || version == 0) {
+            throw new UnsupportedOperationException("Unknown SUSP " + _name + " entry version: " + version);
         }
 
-        Name = name;
-        Version = version;
+        _name = name;
+        _version = version;
     }
 }

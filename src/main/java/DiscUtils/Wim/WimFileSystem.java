@@ -90,7 +90,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public RawSecurityDescriptor getSecurity(String path) {
         int id = getEntry(path).SecurityId;
-        if (id == Integer.MAX_VALUE) {
+        if (id == 0xffffffff) {
             return null;
         }
 

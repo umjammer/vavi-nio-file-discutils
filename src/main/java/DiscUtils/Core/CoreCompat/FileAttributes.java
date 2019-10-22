@@ -112,7 +112,7 @@ public enum FileAttributes implements EnumSettable {
         return mask.entrySet()
                 .stream()
                 .filter(e -> attrs.containsKey(e.getKey())
-                        && Boolean.class.cast(attrs.get(e.getKey())) & Boolean.class.cast(e.getValue()))
+                        && (Boolean.class.cast(attrs.get(e.getKey())) && Boolean.class.cast(e.getValue())))
                 .collect(Collectors.toMap(e -> e.getKey(), e -> true));
     }
 

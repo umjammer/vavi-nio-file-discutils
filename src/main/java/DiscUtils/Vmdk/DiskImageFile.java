@@ -23,6 +23,7 @@
 package DiscUtils.Vmdk;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,7 +60,6 @@ import moe.yo3explorer.dotnetio4j.Stream;
  * Represents a single VMDK file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
-    private static final long UINT_MAX_VALUE = 0xffffffffl;
     private static final Random _rng = new Random();
 
     private final FileAccess _access;
@@ -96,7 +96,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
 
         Stream fileStream = null;
-        _fileLocator = new LocalFileLocator(Paths.get(path).getParent().toString());
+        Path parent = Paths.get(path).getParent();
+        _fileLocator = new LocalFileLocator(parent == null ? "" : parent.toString());
         try {
             fileStream = _fileLocator.open(Paths.get(path).getFileName().toString(), FileMode.Open, fileAccess, fileShare);
             loadDescriptor(fileStream);
@@ -135,7 +136,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                      _descriptor.getCreateType() == DiskCreateType.StreamOptimized;
         if (!createTypeIsSparse || _descriptor.getExtents().size() != 1 ||
             _descriptor.getExtents().get(0).getType() != ExtentType.Sparse ||
-            _descriptor.getParentContentId() != (Integer.MAX_VALUE & UINT_MAX_VALUE)) {
+            _descriptor.getParentContentId() != 0xffffffff) {
             throw new IllegalArgumentException("Only Monolithic Sparse and Streaming Optimized disks can be accessed via a stream");
         }
 
@@ -255,8 +256,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets a value indicating whether this disk is a linked differencing disk.
      */
     public boolean needsParent() {
-//System.err.println(_descriptor.getParentContentId() + ", " + UINT_MAX_VALUE);
-        return _descriptor.getParentContentId() != UINT_MAX_VALUE;
+        return _descriptor.getParentContentId() != 0xffffffff;
     }
 
     /**
@@ -280,7 +280,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The newly created disk image.
      */
     public static DiskImageFile initialize(String path, DiskParameters parameters) {
-        FileLocator locator = new LocalFileLocator(Paths.get(path).getParent().toString());
+        Path parent = Paths.get(path).getParent();
+        FileLocator locator = new LocalFileLocator(parent == null ? "" : parent.toString());
         return initialize(locator, Paths.get(path).getFileName().toString(), parameters);
     }
 
@@ -418,7 +419,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         try (DiskImageFile parentFile = new DiskImageFile(parent, FileAccess.Read)) {
             DescriptorFile baseDescriptor = createDifferencingDiskDescriptor(type, parentFile, parent);
-            FileLocator locator = new LocalFileLocator(Paths.get(path).getParent().toString());
+            Path _parent = Paths.get(path).getParent();
+            FileLocator locator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
             return doInitialize(locator,
                                 Paths.get(path).getFileName().toString(),
                                 parentFile.getCapacity(),
@@ -469,7 +471,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The stream containing the disk contents.
      */
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
-        if (_descriptor.getParentContentId() == UINT_MAX_VALUE) {
+        if (_descriptor.getParentContentId() == 0xffffffff) {
             if (parent != null && ownsParent == Ownership.Dispose) {
                 try {
                     parent.close();

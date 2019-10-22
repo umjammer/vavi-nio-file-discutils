@@ -34,7 +34,7 @@ import moe.yo3explorer.dotnetio4j.MemoryStream;
 
 public final class SquashFileSystemReaderTest {
     @Test
-    public void detect() throws Exception {
+    public void detect() {
         MemoryStream ms = new MemoryStream(new byte[1000]);
         assertFalse(SquashFileSystemReader.detect(ms));
         ms = new MemoryStream(new byte[10]);

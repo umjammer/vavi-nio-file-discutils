@@ -49,7 +49,7 @@ public class Directory extends File {
         return _index;
     }
 
-    public boolean getIsEmpty() {
+    public boolean isEmpty() {
         return getIndex().getCount() == 0;
     }
 

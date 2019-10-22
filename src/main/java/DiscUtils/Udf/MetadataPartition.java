@@ -31,6 +31,7 @@ import moe.yo3explorer.dotnetio4j.IOException;
 public class MetadataPartition extends LogicalPartition {
     private final File _metadataFile;
 
+    @SuppressWarnings("unused")
     private MetadataPartitionMap _partitionMap;
 
     public MetadataPartition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, MetadataPartitionMap partitionMap) {

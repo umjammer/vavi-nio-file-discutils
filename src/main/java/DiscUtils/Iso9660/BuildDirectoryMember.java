@@ -100,7 +100,7 @@ public abstract class BuildDirectoryMember {
             return nameOverride;
         }
 
-        return enc == Charset.forName("ASCII") ? getShortName() : getName();
+        return enc.equals(Charset.forName("ASCII")) ? getShortName() : getName();
     }
 
     public abstract long getDataSize(Charset enc);

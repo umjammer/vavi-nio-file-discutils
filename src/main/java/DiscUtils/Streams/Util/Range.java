@@ -27,8 +27,8 @@ import java.util.List;
 
 
 /**
- * Represents a range of values.
- * The type of the offset element.The type of the size element.
+ * Represents a range of values. The type of the offset element.The type of the
+ * size element.
  */
 public class Range {
     /**
@@ -64,11 +64,7 @@ public class Range {
      * Compares this range to another.
      *
      * @param other The range to compare.
-     * @return
-     *         {@code true}
-     *         if the ranges are equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the ranges are equivalent, else {@code false} .
      */
     public boolean equals(Range other) {
         if (other == null) {
@@ -83,8 +79,8 @@ public class Range {
      *
      * @param ranges The ranges to merge.
      * @param chunkSize The size of each chunk.
-     * @return Ranges combined into larger chunks.The type of the offset and
-     *         count in the ranges.
+     * @return Ranges combined into larger chunks.The type of the offset and count
+     *         in the ranges.
      */
     public static List<Range> chunked(List<Range> ranges, long chunkSize) {
         List<Range> result = new ArrayList<>();
@@ -96,7 +92,8 @@ public class Range {
                 long rangeNext = MathUtilities.roundUp(range.getOffset() + range.getCount(), chunkSize);
                 if (chunkStart != 0 && rangeStart > chunkStart + chunkLength) {
 
-                    // This extent is non-contiguous (in terms of blocks), so write out the last range and start new
+                    // This extent is non-contiguous (in terms of blocks), so write out the last
+                    // range and start new
                     chunkStart = rangeStart;
                 } else if (chunkStart == 0) {
                     // First extent, so start first range

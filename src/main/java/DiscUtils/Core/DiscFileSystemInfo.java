@@ -36,11 +36,11 @@ import DiscUtils.Core.Internal.Utilities;
 public class DiscFileSystemInfo {
     public DiscFileSystemInfo(DiscFileSystem fileSystem, String path) {
         if (path == null) {
-            throw new IllegalArgumentException(path);
+            throw new NullPointerException("path");
         }
 
-        __FileSystem = fileSystem;
-        __Path = path.replaceAll(Utilities.escapeForRegex("(^\\*|\\*$)"), "");
+        _fileSystem = fileSystem;
+        _path = path.replaceAll(Utilities.escapeForRegex("(^\\*|\\*$)"), "");
     }
 
     /**
@@ -122,10 +122,10 @@ public class DiscFileSystemInfo {
     /**
      * Gets the file system the referenced file or directory exists on.
      */
-    private DiscFileSystem __FileSystem;
+    private DiscFileSystem _fileSystem;
 
     public DiscFileSystem getFileSystem() {
-        return __FileSystem;
+        return _fileSystem;
     }
 
     /**
@@ -165,8 +165,7 @@ public class DiscFileSystemInfo {
         try {
             getFileSystem().setLastAccessTimeUtc(getPath(), value);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -223,10 +222,10 @@ public class DiscFileSystemInfo {
     /**
      * Gets the path to the referenced file.
      */
-    private String __Path;
+    private String _path;
 
     protected String getPath() {
-        return __Path;
+        return _path;
     }
 
     /**

@@ -23,6 +23,8 @@
 package LibraryTests.Iso9660;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -150,8 +152,9 @@ public class IsoDirectoryInfoTest {
     @Test
     public void rootBehaviour() throws Exception {
         // Start time rounded down to whole seconds
-        long start = Instant.now().toEpochMilli();
-//        start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute, start.Second);
+        Instant start_ = Instant.now();
+//        start = LocalDateTime.of(start.getYear, start.Month, start.Day, start.Hour, start.Minute, start.Second);
+        long start = start_.minusNanos(start_.getNano()).toEpochMilli();
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         long end = Instant.now().toEpochMilli();
@@ -167,8 +170,9 @@ public class IsoDirectoryInfoTest {
     @Test
     public void attributes() throws Exception {
         // Start time rounded down to whole seconds
-        long start = Instant.now().toEpochMilli();
+        Instant start_ = Instant.now();
 //        start = LocalDateTime.of(start.Year, start.Month, start.Day, start.Hour, start.Minute, start.Second);
+        long start = start_.minusNanos(start_.getNano()).toEpochMilli();
         CDBuilder builder = new CDBuilder();
         builder.addDirectory("Foo");
         CDReader fs = new CDReader(builder.build(), false);

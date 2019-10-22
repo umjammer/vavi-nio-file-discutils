@@ -40,7 +40,7 @@ public final class SuspRecords {
         while (contEntry != null) {
             context.getDataStream()
                     .setPosition(contEntry.Block * (long) context.getVolumeDescriptor().LogicalBlockSize +
-                                 contEntry.BlockOffset);
+                        contEntry.BlockOffset);
             byte[] contData = StreamUtilities.readExact(context.getDataStream(), contEntry.Length);
             contEntry = parse(context, contData, 0);
         }
@@ -51,8 +51,8 @@ public final class SuspRecords {
             return false;
         }
 
-        return data[offset] == 83 && data[offset + 1] == 80 && data[offset + 2] == 7 && data[offset + 3] == 1 &&
-               data[offset + 4] == 0xBE && data[offset + 5] == 0xEF;
+        return (data[offset] & 0xff) == 83 && (data[offset + 1] & 0xff) == 80 && (data[offset + 2] & 0xff) == 7 &&
+            (data[offset + 3] & 0xff) == 1 && (data[offset + 4] & 0xff) == 0xBE && (data[offset + 5] & 0xff) == 0xEF;
     }
 
     public List<SystemUseEntry> getEntries(String extension, String name) {
@@ -105,23 +105,29 @@ public final class SuspRecords {
                     .parse(data, pos, context.getVolumeDescriptor().CharacterEncoding, extension, len);
             pos += len[0];
             if (entry == null) {
+                // A null entry indicates SUSP parsing must terminate.
+                // This will occur if a termination record is found,
+                // or if there is a problem with the SUSP data.
                 return contEntry;
             }
 
-            // A null entry indicates SUSP parsing must terminate.
-            // This will occur if a termination record is found,
-            // or if there is a problem with the SUSP data.
-            String __dummyScrutVar0 = entry.Name;
-            if (__dummyScrutVar0.equals("CE")) {
+            switch (entry._name) {
+            case "CE":
                 contEntry = (ContinuationSystemUseEntry) entry;
-            } else if (__dummyScrutVar0.equals("ES")) {
+                break;
+            case "ES":
                 ExtensionSelectSystemUseEntry esEntry = (ExtensionSelectSystemUseEntry) entry;
                 extension = context.getSuspExtensions().get(esEntry.SelectedExtension);
-            } else if (__dummyScrutVar0.equals("PD")) {
-            } else if (__dummyScrutVar0.equals("SP") || __dummyScrutVar0.equals("ER")) {
+                break;
+            case "PD":
+                break;
+            case "SP":
+            case "ER":
                 storeEntry(null, entry);
-            } else {
+                break;
+            default:
                 storeEntry(extension, entry);
+                break;
             }
         }
         return contEntry;
@@ -137,11 +143,11 @@ public final class SuspRecords {
         extensionEntries = _records.get(extensionId);
 
         List<SystemUseEntry> entries;
-        if (!extensionEntries.containsKey(entry.Name)) {
+        if (!extensionEntries.containsKey(entry._name)) {
             entries = new ArrayList<>();
-            extensionEntries.put(entry.Name, entries);
+            extensionEntries.put(entry._name, entries);
         }
-        entries = extensionEntries.get(entry.Name);
+        entries = extensionEntries.get(entry._name);
 
         entries.add(entry);
     }

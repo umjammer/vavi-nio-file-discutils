@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.EnumSet;
 
 import org.junit.jupiter.api.Test;
@@ -60,13 +60,11 @@ public class Nfs3FileSystemInfoResultTest {
         info.setWritePreferredBytes(10);
         result.setFileSystemInfo(info);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         attributes.BytesUsed = 2;
-        attributes.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         attributes.FileId = 4;
@@ -74,8 +72,7 @@ public class Nfs3FileSystemInfoResultTest {
         attributes.Gid = 6;
         attributes.LinkCount = 7;
         attributes.Mode = EnumSet.of(UnixFilePermissions.OthersExecute);
-        attributes.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 8, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 8, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         attributes.RdevMajor = 9;

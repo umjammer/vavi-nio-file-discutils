@@ -13,12 +13,44 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+          <encoding>utf-8</encoding>
+          <excludes>vavi/**</excludes>
+          <testExcludes>DiscUtils/PowerShell/**</testExcludes>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.22.1</version>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>3.1.11</version>
+        <dependencies>
+          <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+          <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>4.0.0-beta1</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <plugins>
+            <plugin>
+              <groupId>com.mebigfatguy.fb-contrib</groupId>
+              <artifactId>fb-contrib</artifactId>
+              <version>7.4.3.sb</version>
+            </plugin>
+          </plugins>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -35,6 +67,11 @@
       <groupId>vavi</groupId>
       <artifactId>vavi-commons</artifactId>
       <version>1.0.12-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.umjammer</groupId>
+      <artifactId>vavi-commons-sandbox</artifactId>
+      <version>0.3.4</version>
     </dependency>
 
     <dependency>
@@ -79,7 +116,7 @@
     <dependency>
       <groupId>net.java.dev.jna</groupId>
       <artifactId>jna</artifactId>
-      <version>5.3.1</version>
+      <version>5.4.0</version>
     </dependency>
 
     <dependency>
@@ -98,6 +135,7 @@
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-commons</artifactId>
       <version>1.5.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

@@ -205,5 +205,4 @@ public final class NtfsContext implements INtfsContext {
     public void setReadOnly(boolean value) {
         __ReadOnly = value;
     }
-
 }

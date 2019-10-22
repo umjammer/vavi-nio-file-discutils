@@ -166,7 +166,7 @@ public class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     public boolean getIsNonResident() {
-        return _primaryRecord.getIsNonResident();
+        return _primaryRecord.isNonResident();
     }
 
     public AttributeRecord getLastExtent() {
@@ -206,7 +206,7 @@ public class NtfsAttribute implements IDiagnosticTraceable {
 
     public IBuffer getRawBuffer() {
         if (_cachedRawBuffer == null) {
-            if (_primaryRecord.getIsNonResident()) {
+            if (_primaryRecord.isNonResident()) {
                 _cachedRawBuffer = new NonResidentAttributeBuffer(_file, this);
             } else {
                 _cachedRawBuffer = ((ResidentAttributeRecord) _primaryRecord).getDataBuffer();

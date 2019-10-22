@@ -88,7 +88,7 @@ public abstract class GenericAttribute {
      * MFT record itself.
      */
     public boolean getIsResident() {
-        return !_record.getIsNonResident();
+        return !_record.isNonResident();
     }
 
     /**

@@ -139,7 +139,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
             return false;
         }
 
-        return ParentDirectory == other.ParentDirectory && _FileNameNamespace == other._FileNameNamespace &&
+        return ParentDirectory.equals(other.ParentDirectory) && _FileNameNamespace.equals(other._FileNameNamespace) &&
                FileName.equals(other.FileName);
     }
 
@@ -158,7 +158,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
     public static Map<String, Object> convertFlags(EnumSet<FileAttributeFlags> flags) {
         Map<String, Object> result = FileAttributeFlags.toMap(flags); // (int) flags & 0xFFFF
         if (flags.contains(FileAttributeFlags.Directory)) {
-            result.put("Directory", true);
+            result.put(FileAttributeFlags.Directory.name(), true);
         }
 
         return result;

@@ -113,7 +113,7 @@ public class Database {
 
     public VolumeRecord getVolume(UUID id) {
         return findRecord(r -> {
-            return r.VolumeGuid == id;
+            return r.VolumeGuid.equals(id);
         }, RecordType.Volume);
     }
 

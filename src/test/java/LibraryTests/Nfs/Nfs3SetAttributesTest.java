@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,14 +42,12 @@ public class Nfs3SetAttributesTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3SetAttributes attributes = new Nfs3SetAttributes();
-        attributes.setAccessTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.setAccessTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()));
         attributes.setGid(1);
         attributes.setMode(UnixFilePermissions.GroupAll);
-        attributes.setModifyTime(new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        attributes.setModifyTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli()));
         attributes.setSetAccessTime(Nfs3SetTimeMethod.ClientTime);

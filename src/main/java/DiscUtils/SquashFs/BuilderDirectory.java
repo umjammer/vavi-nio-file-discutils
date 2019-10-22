@@ -136,7 +136,7 @@ public final class BuilderDirectory extends BuilderNode {
         }
 
         long size = context.getDirectoryWriter().distanceFrom(startPos);
-        if (size > Integer.MAX_VALUE) {
+        if (size > 0xffffffffl) {
             throw new UnsupportedOperationException("Writing large directories");
         }
 

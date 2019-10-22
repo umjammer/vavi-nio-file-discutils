@@ -107,7 +107,8 @@ public class IsoUtilities {
 
     public static String readChars(byte[] buffer, int offset, int numBytes, Charset enc) {
         char[] chars;
-        // Special handling for 'magic' names '\x00' and '\x01', which indicate root and parent, respectively
+        // Special handling for 'magic' names '\x00' and '\x01', which indicate root and
+        // parent, respectively
         if (numBytes == 1) {
             chars = new char[1];
             chars[0] = (char) buffer[offset];
@@ -142,8 +143,8 @@ public class IsoUtilities {
     public static boolean isValidAString(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!((str.charAt(i) >= ' ' && str.charAt(i) <= '\"') || (str.charAt(i) >= '%' && str.charAt(i) <= '/') ||
-                  (str.charAt(i) >= ':' && str.charAt(i) <= '?') || (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
-                  (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') || (str.charAt(i) == '_'))) {
+                (str.charAt(i) >= ':' && str.charAt(i) <= '?') || (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+                (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') || (str.charAt(i) == '_'))) {
                 return false;
             }
         }
@@ -166,7 +167,7 @@ public class IsoUtilities {
     public static boolean isValidFileName(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
-                  (str.charAt(i) == '_') || (str.charAt(i) == '.') || (str.charAt(i) == ';'))) {
+                (str.charAt(i) == '_') || (str.charAt(i) == '.') || (str.charAt(i) == ';'))) {
                 return false;
             }
         }
@@ -195,7 +196,7 @@ public class IsoUtilities {
             parts[0] = name.substring(0, endOfFilePart);
             if (name.contains(";")) {
                 int verSep = name.indexOf(';', endOfFilePart + 1);
-                parts[1] = name.substring(endOfFilePart + 1, (endOfFilePart + 1) + verSep - (endOfFilePart + 1));
+                parts[1] = name.substring(endOfFilePart + 1, verSep);
                 parts[2] = name.substring(verSep + 1);
             } else {
                 parts[1] = name.substring(endOfFilePart + 1);
@@ -243,7 +244,8 @@ public class IsoUtilities {
         return relTime.minus(Duration.ofMinutes(15 * data[offset + 6])).toEpochMilli();
     }
 
-    // In case the ISO has a bad date encoded, we'll just fall back to using a fixed date
+    // In case the ISO has a bad date encoded, we'll just fall back to using a fixed
+    // date
     public static void toDirectoryTimeFromUTC(byte[] data, int offset, long dateTime_) {
         if (dateTime_ == Long.MIN_VALUE) {
             Arrays.fill(data, offset, offset + 7, (byte) 0);
@@ -277,7 +279,8 @@ public class IsoUtilities {
         }
 
         String strForm = new String(data, offset, 16, Charset.forName("ASCII"));
-        // Work around bugs in burning software that may use zero bytes (rather than '0' characters)
+        // Work around bugs in burning software that may use zero bytes (rather than '0'
+        // characters)
         strForm = strForm.replace('\0', '0');
         int year = safeParseInt(1, 9999, strForm.substring(0, 4));
         int month = safeParseInt(1, 12, strForm.substring(4, 4 + 2));
@@ -311,9 +314,9 @@ public class IsoUtilities {
 
     public static void encodingToBytes(Charset enc, byte[] data, int offset) {
         Arrays.fill(data, offset, offset + 32, (byte) 0);
-        if (enc == Charset.forName("ASCII")) {
+        if (enc.equals(Charset.forName("ASCII"))) {
             // Nothing to do
-        } else if (enc == Charset.forName("UTF-16BE")) {
+        } else if (enc.equals(Charset.forName("UTF-16BE"))) {
             data[offset + 0] = 0x25;
             data[offset + 1] = 0x2F;
             data[offset + 2] = 0x45;

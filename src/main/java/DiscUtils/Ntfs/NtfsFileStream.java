@@ -84,16 +84,11 @@ public final class NtfsFileStream extends SparseStream {
 
     public void setPosition(long value) {
         assertOpen();
-        Closeable __newVar0 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar0 = new NtfsTransaction()) {
             _baseStream.setPosition(value);
-        } finally {
-            if (__newVar0 != null)
-                try {
-                    __newVar0.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
@@ -102,118 +97,85 @@ public final class NtfsFileStream extends SparseStream {
             return;
         }
 
-        Closeable __newVar1 = new NtfsTransaction();
-        try {
+        try (Closeable __newVar1 = new NtfsTransaction()) {
             _baseStream.close();
             updateMetadata();
             _baseStream = null;
-        } finally {
-            if (__newVar1 != null)
-                __newVar1.close();
         }
     }
 
     public void flush() {
         assertOpen();
-        Closeable __newVar2 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar2 = new NtfsTransaction()) {
             _baseStream.flush();
             updateMetadata();
-        } finally {
-            if (__newVar2 != null)
-                try {
-                    __newVar2.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     public int read(byte[] buffer, int offset, int count) {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
-        Closeable __newVar3 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar3 = new NtfsTransaction()) {
             return _baseStream.read(buffer, offset, count);
-        } finally {
-            if (__newVar3 != null)
-                try {
-                    __newVar3.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     public long seek(long offset, SeekOrigin origin) {
         assertOpen();
-        Closeable __newVar4 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar4 = new NtfsTransaction()) {
             return _baseStream.seek(offset, origin);
-        } finally {
-            if (__newVar4 != null)
-                try {
-                    __newVar4.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     public void setLength(long value) {
         assertOpen();
-        Closeable __newVar5 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar5 = new NtfsTransaction()) {
             if (value != getLength()) {
                 _isDirty = true;
                 _baseStream.setLength(value);
             }
-        } finally {
-            if (__newVar5 != null)
-                try {
-                    __newVar5.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     public void write(byte[] buffer, int offset, int count) {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
-        Closeable __newVar6 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar6 = new NtfsTransaction()) {
             _isDirty = true;
             _baseStream.write(buffer, offset, count);
-        } finally {
-            if (__newVar6 != null)
-                try {
-                    __newVar6.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     public void clear(int count) {
         assertOpen();
-        Closeable __newVar7 = new NtfsTransaction();
-        try {
+
+        try (Closeable __newVar7 = new NtfsTransaction()) {
             _isDirty = true;
             _baseStream.clear(count);
-        } finally {
-            if (__newVar7 != null)
-                try {
-                    __newVar7.close();
-                } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
     }
 
     private void updateMetadata() {
         if (!_file.getContext().getReadOnly()) {
-            // Update the standard information attribute - so it reflects the actual file state
+            // Update the standard information attribute - so it reflects the actual file
+            // state
             if (_isDirty) {
                 _file.modified();
             } else {

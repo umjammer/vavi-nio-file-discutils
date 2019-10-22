@@ -156,34 +156,28 @@ public final class ContentStream extends MappedStream {
         int totalToRead = (int) Math.min(_length - _position, count);
         int totalRead = 0;
         while (totalRead < totalToRead) {
-            int chunkIndex;
-            int blockIndex;
-            int sectorIndex;
-            int[] refVar___0 = new int[] {};
-            int[] refVar___1 = new int[] {};
-            int[] refVar___2 = new int[] {};
-            Chunk chunk = getChunk(_position + totalRead, refVar___0, refVar___1, refVar___2);
-            chunkIndex = refVar___0[0];
-            blockIndex = refVar___1[0];
-            sectorIndex = refVar___2[0];
-            int blockOffset = sectorIndex * _metadata.getLogicalSectorSize();
+            int[] chunkIndex = new int[1];
+            int[] blockIndex = new int[1];
+            int[] sectorIndex = new int[1];
+            Chunk chunk = getChunk(_position + totalRead, chunkIndex, blockIndex, sectorIndex);
+            int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
             int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
-            PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex);
+            PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus == PayloadBlockStatus.FullyPresent) {
-                _fileStream.setPosition(chunk.getBlockPosition(blockIndex) + blockOffset);
+                _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                 int read = StreamUtilities.readMaximum(_fileStream,
                                                        buffer,
                                                        offset + totalRead,
                                                        Math.min(blockBytesRemaining, totalToRead - totalRead));
                 totalRead += read;
             } else if (blockStatus == PayloadBlockStatus.PartiallyPresent) {
-                BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex);
+                BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex[0]);
                 boolean[] present = new boolean[1];
-                int numSectors = bitmap.contiguousSectors(sectorIndex, present);
+                int numSectors = bitmap.contiguousSectors(sectorIndex[0], present);
                 int toRead = Math.min(numSectors * _metadata.getLogicalSectorSize(), totalToRead - totalRead);
                 int read;
                 if (present[0]) {
-                    _fileStream.setPosition(chunk.getBlockPosition(blockIndex) + blockOffset);
+                    _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                     read = StreamUtilities.readMaximum(_fileStream, buffer, offset + totalRead, toRead);
                 } else {
                     _parentStream.setPosition(_position + totalRead);
@@ -242,31 +236,25 @@ public final class ContentStream extends MappedStream {
 
         int totalWritten = 0;
         while (totalWritten < count) {
-            int chunkIndex;
-            int blockIndex;
-            int sectorIndex;
-            int[] refVar___4 = new int[] {};
-            int[] refVar___5 = new int[] {};
-            int[] refVar___6 = new int[] {};
-            Chunk chunk = getChunk(_position + totalWritten, refVar___4, refVar___5, refVar___6);
-            chunkIndex = refVar___4[0];
-            blockIndex = refVar___5[0];
-            sectorIndex = refVar___6[0];
-            int blockOffset = sectorIndex * _metadata.getLogicalSectorSize();
+            int[] chunkIndex = new int[1];
+            int[] blockIndex = new int[1];
+            int[] sectorIndex = new int[1];
+            Chunk chunk = getChunk(_position + totalWritten, chunkIndex, blockIndex, sectorIndex);
+            int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
             int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
-            PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex);
+            PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus != PayloadBlockStatus.FullyPresent && blockStatus != PayloadBlockStatus.PartiallyPresent) {
-                blockStatus = chunk.allocateSpaceForBlock(blockIndex);
+                blockStatus = chunk.allocateSpaceForBlock(blockIndex[0]);
             }
 
             int toWrite = Math.min(blockBytesRemaining, count - totalWritten);
-            _fileStream.setPosition(chunk.getBlockPosition(blockIndex) + blockOffset);
+            _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
             _fileStream.write(buffer, offset + totalWritten, toWrite);
             if (blockStatus == PayloadBlockStatus.PartiallyPresent) {
-                BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex);
-                boolean changed = bitmap.markSectorsPresent(sectorIndex, toWrite / _metadata.getLogicalSectorSize());
+                BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex[0]);
+                boolean changed = bitmap.markSectorsPresent(sectorIndex[0], toWrite / _metadata.getLogicalSectorSize());
                 if (changed) {
-                    chunk.writeBlockBitmap(blockIndex);
+                    chunk.writeBlockBitmap(blockIndex[0]);
                 }
             }
 

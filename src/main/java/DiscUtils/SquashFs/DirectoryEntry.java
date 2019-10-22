@@ -22,9 +22,10 @@
 
 package DiscUtils.SquashFs;
 
-import java.util.Map;
+import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFileType;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
@@ -43,7 +44,7 @@ public class DirectoryEntry extends VfsDirEntry {
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(_record.Type);
         return Utilities.fileAttributesFromUnixFileType(fileType);
     }

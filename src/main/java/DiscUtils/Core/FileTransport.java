@@ -24,6 +24,7 @@ package DiscUtils.Core;
 
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.Internal.LocalFileLocator;
@@ -39,14 +40,15 @@ public final class FileTransport extends VirtualDiskTransport {
 
     private String _path;
 
-    public boolean getIsRawDisk() {
+    public boolean isRawDisk() {
         return false;
     }
 
     public void connect(URI uri, String username, String password) {
         _path = uri.getPath();
         _extraInfo = uri.getFragment();
-        if (!Files.exists(Paths.get(_path).getParent())) {
+        Path path = Paths.get(_path).getParent();
+        if (path == null || !Files.exists(path)) {
             throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("No such file '%s'", uri.toString()));
         }
     }
@@ -65,5 +67,10 @@ public final class FileTransport extends VirtualDiskTransport {
 
     public String getExtraInfo() {
         return _extraInfo;
+    }
+
+    @Override
+    public void close() {
+        // TODO Auto-generated method stub
     }
 }

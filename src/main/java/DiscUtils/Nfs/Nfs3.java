@@ -58,7 +58,7 @@ public final class Nfs3 extends RpcProgram {
         handle.write(writer);
         writer.write(false);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3GetAttributesResult(reply.getBodyReader());
         }
 
@@ -72,7 +72,7 @@ public final class Nfs3 extends RpcProgram {
         newAttributes.write(writer);
         writer.write(false);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3ModifyResult(reply.getBodyReader());
         }
 
@@ -85,7 +85,7 @@ public final class Nfs3 extends RpcProgram {
         dir.write(writer);
         writer.write(name);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3LookupResult(reply.getBodyReader());
         }
 
@@ -98,7 +98,7 @@ public final class Nfs3 extends RpcProgram {
         handle.write(writer);
         writer.write((int) Nfs3AccessPermissions.valueOf(requested));
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3AccessResult(reply.getBodyReader());
         }
 
@@ -112,7 +112,7 @@ public final class Nfs3 extends RpcProgram {
         writer.write(position);
         writer.write(count);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3ReadResult(reply.getBodyReader());
         }
 
@@ -128,7 +128,7 @@ public final class Nfs3 extends RpcProgram {
         writer.write(Nfs3StableHow.Unstable.ordinal());
         writer.writeBuffer(buffer, bufferOffset, count);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3WriteResult(reply.getBodyReader());
         }
 
@@ -143,7 +143,7 @@ public final class Nfs3 extends RpcProgram {
         writer.write(createNew ? 1 : 0);
         attributes.write(writer);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3CreateResult(reply.getBodyReader());
         }
 
@@ -157,7 +157,7 @@ public final class Nfs3 extends RpcProgram {
         writer.write(name);
         attributes.write(writer);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3CreateResult(reply.getBodyReader());
         }
 
@@ -170,7 +170,7 @@ public final class Nfs3 extends RpcProgram {
         dirHandle.write(writer);
         writer.write(name);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3ModifyResult(reply.getBodyReader());
         }
 
@@ -183,7 +183,7 @@ public final class Nfs3 extends RpcProgram {
         dirHandle.write(writer);
         writer.write(name);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3ModifyResult(reply.getBodyReader());
         }
 
@@ -198,7 +198,7 @@ public final class Nfs3 extends RpcProgram {
         toDirHandle.write(writer);
         writer.write(toName);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3RenameResult(reply.getBodyReader());
         }
 
@@ -214,7 +214,7 @@ public final class Nfs3 extends RpcProgram {
         writer.write(dirCount);
         writer.write(maxCount);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             return new Nfs3ReadDirPlusResult(reply.getBodyReader());
         }
 
@@ -226,7 +226,7 @@ public final class Nfs3 extends RpcProgram {
         XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Fsinfo);
         fileHandle.write(writer);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             Nfs3FileSystemInfoResult fsiReply = new Nfs3FileSystemInfoResult(reply.getBodyReader());
             if (fsiReply.getStatus() == Nfs3Status.Ok) {
                 return fsiReply;
@@ -243,7 +243,7 @@ public final class Nfs3 extends RpcProgram {
         XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Fsstat);
         fileHandle.write(writer);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             Nfs3FileSystemStatResult statReply = new Nfs3FileSystemStatResult(reply.getBodyReader());
             if (statReply.getStatus() == Nfs3Status.Ok) {
                 return statReply;

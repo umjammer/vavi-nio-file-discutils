@@ -39,9 +39,9 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 public class DiskStream extends SparseStream {
-    private static final int BlockFree = 0;
+    private static final int BlockFree = 0xffffffff;
 
-    private static final int BlockZero = 1;
+    private static final int BlockZero = 0;
 
     private boolean _atEof;
 
@@ -127,7 +127,6 @@ public class DiskStream extends SparseStream {
 
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
-//Debug.println(_position + ", " + _fileHeader.diskSize);
         if (_atEof || _position > _fileHeader.diskSize) {
             _atEof = true;
             throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of file");
@@ -278,8 +277,7 @@ public class DiskStream extends SparseStream {
         byte[] buffer = StreamUtilities.readExact(_fileStream, _fileHeader.blockCount * 4);
         _blockTable = new int[_fileHeader.blockCount];
         for (int i = 0; i < _fileHeader.blockCount; ++i) {
-            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4); // TODO negative
-System.err.println(_blockTable[i]);
+            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4);
         }
     }
 

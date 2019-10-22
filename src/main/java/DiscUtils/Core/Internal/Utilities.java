@@ -25,13 +25,13 @@ package DiscUtils.Core.Internal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import DiscUtils.Core.UnixFileType;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 
 
 public class Utilities {
@@ -159,7 +159,7 @@ public class Utilities {
             return a;
         }
 
-        return a.replaceFirst(escapeForRegex("\\*$"), "") + '\\' + b.replaceFirst(escapeForRegex("\\*$"), "");
+        return a.replaceFirst(escapeForRegex("\\*$"), "") + '\\' + b.replaceFirst(escapeForRegex("^\\*"), "");
     }
 
     /**
@@ -187,6 +187,7 @@ public class Utilities {
         }
 
         String merged = Paths.get(basePath, relativePath).toAbsolutePath().toString();
+
         if (basePath.startsWith("\\") && merged.length() > 2 && merged.charAt(1) == ':') {
             return merged.substring(2);
         }
@@ -212,7 +213,7 @@ public class Utilities {
         // Find first part of paths that don't match
         int i = 0;
         while (i < Math.min(pathElements.size() - 1, basePathElements.size())) {
-            if (pathElements.get(i).toUpperCase() != basePathElements.get(i).toUpperCase()) {
+            if (!pathElements.get(i).toUpperCase().equals(basePathElements.get(i).toUpperCase())) {
                 break;
             }
 
@@ -253,7 +254,7 @@ public class Utilities {
             return false;
         }
 
-        String[] split = name.split(".");
+        String[] split = name.split("\\.");
         if (split.length > 2 || split.length < 1) {
             return false;
         }
@@ -266,7 +267,6 @@ public class Utilities {
             if (!is8Dot3Char(ch)) {
                 return false;
             }
-
         }
         if (split.length > 1) {
             if (split[1].length() > 3) {
@@ -277,7 +277,6 @@ public class Utilities {
                 if (!is8Dot3Char(ch)) {
                     return false;
                 }
-
             }
         }
 
@@ -302,42 +301,29 @@ public class Utilities {
             pattern += ".";
         }
 
-        String query = "^" + pattern.replace("\\*", ".*").replace("\\?", "[^.]") + "$";
-        return Pattern.compile(query);
+        String query = "^" + pattern.replaceAll("\\*", ".*").replaceAll("\\?", "[^.]") + "$";
+        return Pattern.compile(query, Pattern.CASE_INSENSITIVE);
     }
 
-    public static Map<String, Object> fileAttributesFromUnixFileType(UnixFileType fileType) {
-        Map<String, Object> result = new HashMap<>();
+    public static EnumSet<FileAttributes> fileAttributesFromUnixFileType(UnixFileType fileType) {
         switch (fileType) {
         case Fifo:
-            result.put("Device", true);
-            result.put("System", true);
-            break;
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
         case Character:
-            result.put("Device", true);
-            result.put("System", true);
-            break;
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
         case Directory:
-            result.put("Directory", true);
-            break;
+            return EnumSet.of(FileAttributes.Directory);
         case Block:
-            result.put("Device", true);
-            result.put("System", true);
-            break;
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
         case Regular:
-            result.put("Normal", true);
-            break;
+            return EnumSet.of(FileAttributes.Normal);
         case Link:
-            result.put("ReparsePoint", true);
-            break;
+            return EnumSet.of(FileAttributes.ReparsePoint);
         case Socket:
-            result.put("Device", true);
-            result.put("System", true);
-            break;
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
         default:
-            break;
+            return EnumSet.noneOf(FileAttributes.class);
         }
-        return result;
     }
 
     public static int getCombinedHashCode(Object... objs) {

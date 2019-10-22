@@ -23,10 +23,9 @@
 package DiscUtils.Vhd;
 
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
-
-import vavi.util.StringUtil;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
@@ -108,7 +107,7 @@ public class DynamicHeader {
         result.BlockSize = EndianUtilities.toUInt32BigEndian(data, offset + 32);
         result.Checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
         result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
-        result.ParentTimestamp = EndianUtilities.toUInt32BigEndian(data, offset + 56);
+        result.ParentTimestamp = Instant.EPOCH.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56)).toEpochMilli();
         result.ParentUnicodeName = new String(data, offset + 64, 512, Charset.forName("UTF-16BE")).replaceFirst("\0*$", "");
         result.ParentLocators = new ParentLocator[8];
         for (int i = 0; i < 8; ++i) {
@@ -126,7 +125,7 @@ public class DynamicHeader {
         EndianUtilities.writeBytesBigEndian(BlockSize, data, offset + 32);
         EndianUtilities.writeBytesBigEndian(Checksum, data, offset + 36);
         EndianUtilities.writeBytesBigEndian(ParentUniqueId, data, offset + 40);
-        EndianUtilities.writeBytesBigEndian(ParentTimestamp, data, offset + 56);
+        EndianUtilities.writeBytesBigEndian((int) Instant.ofEpochMilli(ParentTimestamp).getEpochSecond(), data, offset + 56);
         EndianUtilities.writeBytesBigEndian(0, data, offset + 60);
         Arrays.fill(data, offset + 64, offset + 64 + 512, (byte) 0);
         byte[] bytes = ParentUnicodeName.getBytes(Charset.forName("UTF-16BE"));
@@ -134,7 +133,7 @@ public class DynamicHeader {
         for (int i = 0; i < 8; ++i) {
             ParentLocators[i].toBytes(data, offset + 576 + i * 24);
         }
-        Arrays.fill(data, offset + 1024 - 256, offset + 1024 - 256 + 256, (byte) 0);
+        Arrays.fill(data, offset + 1024 - 256, offset + 1024, (byte) 0);
     }
 
     public boolean isValid() {
@@ -142,7 +141,6 @@ public class DynamicHeader {
     }
 
     public boolean isChecksumValid() {
-System.err.println(Checksum + ", " + calculateChecksum()); // TODO not equal
         return Checksum == calculateChecksum();
     }
 
@@ -156,17 +154,13 @@ System.err.println(Checksum + ", " + calculateChecksum()); // TODO not equal
     }
 
     private int calculateChecksum() {
-byte[] tmp = new byte[1024];
-toBytes(tmp, 0);
-System.err.println("O:\n" + StringUtil.getDump(tmp, 128));
         DynamicHeader copy = new DynamicHeader(this);
         copy.Checksum = 0;
         byte[] asBytes = new byte[1024];
         copy.toBytes(asBytes, 0);
-System.err.println("C:\n" + StringUtil.getDump(asBytes, 128));
         int checksum = 0;
         for (int value : asBytes) {
-            checksum += value;
+            checksum += value & 0xff;
         }
         checksum = ~checksum;
         return checksum;

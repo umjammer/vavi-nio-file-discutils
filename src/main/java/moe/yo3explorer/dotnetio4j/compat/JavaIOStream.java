@@ -22,17 +22,24 @@ import moe.yo3explorer.dotnetio4j.Stream;
  */
 public class JavaIOStream extends Stream {
 
-    private InputStream is;
+    protected boolean leaveOpen;
 
-    private OutputStream os;
+    protected InputStream is;
+
+    protected OutputStream os;
 
     private int position = 0;
 
-    /**
-     */
+    /** */
     public JavaIOStream(InputStream is, OutputStream os) {
+        this(is, os, false);
+    }
+
+    /** */
+    public JavaIOStream(InputStream is, OutputStream os, boolean leaveOpen) {
         this.is = is;
         this.os = os;
+        this.leaveOpen = leaveOpen;
     }
 
     @Override
@@ -71,13 +78,15 @@ public class JavaIOStream extends Stream {
 
     @Override
     public void close() throws IOException {
-        if (is != null) {
-            is.close();
-            is = null;
-        }
-        if (is != null) {
-            os.close();
-            os = null;
+        if (!leaveOpen) {
+            if (is != null) {
+                is.close();
+                is = null;
+            }
+            if (is != null) {
+                os.close();
+                os = null;
+            }
         }
     }
 

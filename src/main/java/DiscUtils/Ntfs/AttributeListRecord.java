@@ -117,11 +117,16 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
 
     public static AttributeListRecord fromAttribute(AttributeRecord attr, FileRecordReference mftRecord) {
         AttributeListRecord newRecord = new AttributeListRecord();
-        if (attr.getIsNonResident()) {
+        newRecord.Type = attr.getAttributeType();
+        newRecord.Name = attr.getName();
+        newRecord.StartVcn = 0;
+        newRecord.BaseFileReference = mftRecord;
+        newRecord.AttributeId = attr.getAttributeId();
+
+        if (attr.isNonResident()) {
             newRecord.StartVcn = ((NonResidentAttributeRecord) attr).getStartVcn();
         }
 
         return newRecord;
     }
-
 }

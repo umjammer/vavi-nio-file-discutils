@@ -25,6 +25,7 @@ package DiscUtils.BootConfig;
 import java.util.List;
 import java.util.UUID;
 
+
 /**
  * Base class for BCD storage repositories.
  */
@@ -35,11 +36,7 @@ public abstract class BaseStorage {
      * 
      * @param obj The object to inspect.
      * @param element The element to inspect.
-     * @return
-     *         {@code true}
-     *         if present, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if present, else {@code false} .
      */
     public abstract boolean hasValue(UUID obj, int element);
 

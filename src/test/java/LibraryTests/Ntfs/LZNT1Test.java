@@ -22,11 +22,14 @@
 
 package LibraryTests.Ntfs;
 
-import java.nio.ByteBuffer;
 import java.util.Random;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import com.sun.jna.ptr.IntByReference;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,10 +37,11 @@ import DiscUtils.Core.Compression.BlockCompressor;
 import DiscUtils.Core.Compression.CompressionResult;
 
 
+@Disabled
 public class LZNT1Test {
     private byte[] _uncompressedData;
 
-    public LZNT1Test() throws Exception {
+    public LZNT1Test() {
         Random rng = new Random(3425);
         _uncompressedData = new byte[64 * 1024];
         for (int i = 0; i < 16 * 4096; ++i) {
@@ -69,12 +73,12 @@ public class LZNT1Test {
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
-        assertEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(4096);
         CompressionResult r = compressor
                 .compress(_uncompressedData, 0, _uncompressedData.length, compressedData, 0, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        assertEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
+        assertArrayEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
         assertTrue(compressedLength[0] < _uncompressedData.length * 0.66);
     }
 
@@ -90,12 +94,12 @@ public class LZNT1Test {
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(inData, 32 * 1024, _uncompressedData.length, 4096);
-        assertEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(4096);
         CompressionResult r = compressor
                 .compress(inData, 32 * 1024, _uncompressedData.length, compressedData, 0, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        assertEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
+        assertArrayEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
     @Test
@@ -104,7 +108,7 @@ public class LZNT1Test {
         BlockCompressor compressor = (BlockCompressor) instance;
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
-        assertEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         int[] compressedLength = new int[] {
             128 * 1024
         };
@@ -114,7 +118,7 @@ public class LZNT1Test {
                 .compress(_uncompressedData, 0, _uncompressedData.length, compressedData, 32 * 1024, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
         assertTrue(compressedLength[0] < _uncompressedData.length);
-        assertEquals(_uncompressedData, nativeDecompress(compressedData, 32 * 1024, compressedLength[0]));
+        assertArrayEquals(_uncompressedData, nativeDecompress(compressedData, 32 * 1024, compressedLength[0]));
     }
 
     @Test
@@ -127,7 +131,7 @@ public class LZNT1Test {
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 1024);
-        assertEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(1024);
         CompressionResult r = compressor
                 .compress(_uncompressedData, 0, _uncompressedData.length, compressedData, 0, compressedLength);
@@ -139,7 +143,7 @@ public class LZNT1Test {
         // Note: Due to bug in Windows LZNT1, we compare against native decompression,
         // not the original data, since
         // Windows LZNT1 corrupts data on decompression when block size != 4096.
-        assertEquals(rightSizedDuDecompressed, nativeDecompress(compressedData, 0, compressedLength[0]));
+        assertArrayEquals(rightSizedDuDecompressed, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
     @Test
@@ -154,11 +158,11 @@ public class LZNT1Test {
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(uncompressed1K, 0, 1024, 1024);
-        assertEquals(uncompressed1K, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        assertArrayEquals(uncompressed1K, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(1024);
         CompressionResult r = compressor.compress(uncompressed1K, 0, 1024, compressedData, 0, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        assertEquals(uncompressed1K, nativeDecompress(compressedData, 0, compressedLength[0]));
+        assertArrayEquals(uncompressed1K, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
     @Test
@@ -194,11 +198,11 @@ public class LZNT1Test {
         BlockCompressor compressor = (BlockCompressor) instance;
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
-        assertEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
         byte[] decompressed = new byte[_uncompressedData.length];
         int numDecompressed = compressor.decompress(compressed, 0, compressed.length, decompressed, 0);
         assertEquals(numDecompressed, _uncompressedData.length);
-        assertEquals(_uncompressedData, decompressed);
+        assertArrayEquals(_uncompressedData, decompressed);
     }
 
     @Test
@@ -209,11 +213,11 @@ public class LZNT1Test {
         byte[] inData = new byte[128 * 1024];
         System.arraycopy(compressed, 0, inData, 32 * 1024, compressed.length);
         // Double-check, make sure native code round-trips
-        assertEquals(_uncompressedData, nativeDecompress(inData, 32 * 1024, compressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(inData, 32 * 1024, compressed.length));
         byte[] decompressed = new byte[_uncompressedData.length];
         int numDecompressed = compressor.decompress(inData, 32 * 1024, compressed.length, decompressed, 0);
         assertEquals(numDecompressed, _uncompressedData.length);
-        assertEquals(_uncompressedData, decompressed);
+        assertArrayEquals(_uncompressedData, decompressed);
     }
 
     @Test
@@ -222,13 +226,13 @@ public class LZNT1Test {
         BlockCompressor compressor = (BlockCompressor) instance;
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
-        assertEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
         byte[] outData = new byte[128 * 1024];
         int numDecompressed = compressor.decompress(compressed, 0, compressed.length, outData, 32 * 1024);
         assertEquals(numDecompressed, _uncompressedData.length);
         byte[] decompressed = new byte[_uncompressedData.length];
         System.arraycopy(outData, 32 * 1024, decompressed, 0, _uncompressedData.length);
-        assertEquals(_uncompressedData, decompressed);
+        assertArrayEquals(_uncompressedData, decompressed);
     }
 
     @Test
@@ -236,68 +240,40 @@ public class LZNT1Test {
         Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
         BlockCompressor compressor = (BlockCompressor) instance;
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 1024);
-        assertEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
+        assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
         byte[] decompressed = new byte[_uncompressedData.length];
         int numDecompressed = compressor.decompress(compressed, 0, compressed.length, decompressed, 0);
         assertEquals(numDecompressed, _uncompressedData.length);
-        assertEquals(_uncompressedData, decompressed);
+        assertArrayEquals(_uncompressedData, decompressed);
     }
 
-    private static byte[] nativeCompress(byte[] data, int offset, int length, int chunkSize) throws Exception {
-        ByteBuffer compressedBuffer = null;
-        ByteBuffer uncompressedBuffer = null;
-        try {
-            uncompressedBuffer = ByteBuffer.allocateDirect(length);
-            uncompressedBuffer.put(data, offset, length);
-            int maxSize = MSCompression.INSTANCE.ms_max_compressed_size(MSCompression.MSCOMP_LZNT1, length);
-            compressedBuffer = ByteBuffer.allocateDirect(maxSize);
-            int[] compressedSize = new int[1];
-            int ntStatus = MSCompression.INSTANCE.ms_compress(MSCompression.MSCOMP_LZNT1,
-                                                              uncompressedBuffer,
-                                                              length,
-                                                              compressedBuffer,
-                                                              compressedSize);
-            assertEquals(MSCompression.MSCOMP_OK, ntStatus);
-            byte[] result = new byte[compressedSize[0]];
-            compressedBuffer.put(result, 0, compressedSize[0]);
-            return result;
-        } finally {
-            if (compressedBuffer != null) {
-                compressedBuffer.clear();
-            }
-
-            if (uncompressedBuffer != null) {
-                uncompressedBuffer.clear();
-            }
-        }
+    private static byte[] nativeCompress(byte[] data, int offset, int length, int chunkSize) {
+        byte[] uncompressedBuffer = new byte[length];
+        System.arraycopy(data, offset, uncompressedBuffer, 0, length);
+        int maxSize = MSCompression.INSTANCE.ms_max_compressed_size(MSCompression.MSCOMP_LZNT1, length);
+        byte[] compressedBuffer = new byte[maxSize];
+        IntByReference compressedSize = new IntByReference();
+        int ntStatus = MSCompression.INSTANCE.ms_compress(MSCompression.MSCOMP_LZNT1,
+                                                          uncompressedBuffer,
+                                                          length,
+                                                          compressedBuffer,
+                                                          compressedSize);
+        assertEquals(MSCompression.MSCOMP_OK, ntStatus);
+        return compressedBuffer;
     }
 
-    private static byte[] nativeDecompress(byte[] data, int offset, int length) throws Exception {
-        ByteBuffer compressedBuffer = null;
-        ByteBuffer uncompressedBuffer = null;
-        try {
-            compressedBuffer = ByteBuffer.allocateDirect(length);
-            compressedBuffer.put(data, offset, length);
-            uncompressedBuffer = ByteBuffer.allocateDirect(64 * 1024);
-            int[] uncompressedSize = new int[1];
-            int ntStatus = MSCompression.INSTANCE.ms_decompress(MSCompression.MSCOMP_LZNT1,
-                                                                compressedBuffer,
-                                                                length,
-                                                                uncompressedBuffer,
-                                                                uncompressedSize);
-            assertEquals(MSCompression.MSCOMP_OK, ntStatus);
-            byte[] result = new byte[uncompressedSize[0]];
-            uncompressedBuffer.get(result);
-            return result;
-        } finally {
-            if (compressedBuffer != null) {
-                compressedBuffer.clear();
-            }
-
-            if (uncompressedBuffer != null) {
-                uncompressedBuffer.clear();
-            }
-        }
+    private static byte[] nativeDecompress(byte[] data, int offset, int length) {
+        byte[] compressedBuffer = new byte[length];
+        System.arraycopy(data, offset, compressedBuffer, 0, length);
+        byte[] uncompressedBuffer = new byte[64 * 1024];
+        IntByReference uncompressedSize = new IntByReference();
+        int ntStatus = MSCompression.INSTANCE.ms_decompress(MSCompression.MSCOMP_LZNT1,
+                                                            compressedBuffer,
+                                                            length,
+                                                            uncompressedBuffer,
+                                                            uncompressedSize);
+        assertEquals(MSCompression.MSCOMP_OK, ntStatus);
+        return uncompressedBuffer;
     }
 
     static {

@@ -56,7 +56,7 @@ public class DiscFileSystemFileTest {
         }
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
         assertTrue(fi.exists());
-        assertEquals(FileAttributes.Archive, fi.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Archive), fi.getAttributes());
         assertEquals(1, fi.getLength());
 
         try (Stream s = fs.openFile("Foo.txt", FileMode.Open, FileAccess.Read)) {
@@ -69,7 +69,8 @@ public class DiscFileSystemFileTest {
     public void createFileInvalid_Long(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(IOException.class, () -> {
-            try (Stream s = fs.getFileInfo(new String(new char[256]).replace('\0', 'X')).open(FileMode.Create, FileAccess.ReadWrite)) {
+            try (Stream s = fs.getFileInfo(new String(new char[256]).replace('\0', 'X'))
+                    .open(FileMode.Create, FileAccess.ReadWrite)) {
                 s.writeByte((byte) 1);
             }
         });
@@ -90,14 +91,7 @@ public class DiscFileSystemFileTest {
     @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void deleteFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
-        Stream s = fs.getFileInfo("foo.txt").open(FileMode.Create, FileAccess.ReadWrite);
-        try {
-            {
-            }
-        } finally {
-            if (s != null)
-                s.close();
-
+        try (Stream s = fs.getFileInfo("foo.txt").open(FileMode.Create, FileAccess.ReadWrite)) {
         }
         assertEquals(1, fs.getRoot().getFiles().size());
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
@@ -257,7 +251,7 @@ public class DiscFileSystemFileTest {
         try (Stream s = fi.open(FileMode.Create)) {
         }
         // Check default attributes
-        assertEquals(FileAttributes.Archive, fi.getAttributes());
+        assertEquals(EnumSet.of(FileAttributes.Archive), fi.getAttributes());
         // Check round-trip
         EnumSet<FileAttributes> newAttrs = EnumSet.of(FileAttributes.Hidden, FileAttributes.ReadOnly, FileAttributes.System);
         fi.setAttributes(newAttrs);
@@ -302,7 +296,8 @@ public class DiscFileSystemFileTest {
         try (Stream s = fs.openFile("foo.txt", FileMode.Create)) {
         }
         assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTimeUtc());
-        assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTimeUtc());
+        assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt")
+                .getCreationTimeUtc());
     }
 
     @ParameterizedTest

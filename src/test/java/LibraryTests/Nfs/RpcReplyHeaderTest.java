@@ -47,13 +47,16 @@ public class RpcReplyHeaderTest {
         header.AcceptReply = accepted;
 
         RpcReplyHeader clone = null;
+
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             header.write(writer);
+
             stream.setPosition(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new RpcReplyHeader(reader);
         }
+
         assertEquals(header, clone);
     }
 }

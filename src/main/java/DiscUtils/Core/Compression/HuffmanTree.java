@@ -22,6 +22,7 @@
 
 package DiscUtils.Core.Compression;
 
+
 /**
  * A canonical Huffman tree implementation.
  *
@@ -89,8 +90,7 @@ public final class HuffmanTree {
             }
         }
         for (int i = position; i < _buffer.length; ++i) {
-            _buffer[i] = Integer.MAX_VALUE;
+            _buffer[i] = 0xffffffff;
         }
     }
-
 }

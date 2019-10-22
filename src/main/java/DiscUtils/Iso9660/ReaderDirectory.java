@@ -57,7 +57,6 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
                             !childDirEntry.getSuspRecords().hasEntry(context.getRockRidgeIdentifier(), "RE")) {
                             _records.add(childDirEntry);
                         }
-
                     } else {
                         _records.add(childDirEntry);
                     }

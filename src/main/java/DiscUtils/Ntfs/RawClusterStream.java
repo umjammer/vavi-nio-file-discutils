@@ -64,7 +64,7 @@ public final class RawClusterStream extends ClusterStream {
         long total = 0;
         for (int i = 0; i < _cookedRuns.getCount(); ++i) {
             CookedDataRun run = _cookedRuns.get___idx(i);
-            total += run.getIsSparse() ? 0 : run.getLength();
+            total += run.isSparse() ? 0 : run.getLength();
         }
         return total;
     }
@@ -75,7 +75,7 @@ public final class RawClusterStream extends ClusterStream {
         int runCount = _cookedRuns.getCount();
         for (int i = 0; i < runCount; i++) {
             CookedDataRun cookedRun = _cookedRuns.get___idx(i);
-            if (!cookedRun.getIsSparse()) {
+            if (!cookedRun.isSparse()) {
                 long startPos = cookedRun.getStartVcn();
                 if (lastVcnRange != null && lastVcnRange.getOffset() + lastVcnRange.getCount() == startPos) {
                     lastVcnRange = new Range(lastVcnRange.getOffset(), lastVcnRange.getCount() + cookedRun.getLength());
@@ -92,7 +92,7 @@ public final class RawClusterStream extends ClusterStream {
 
     public boolean isClusterStored(long vcn) {
         int runIdx = _cookedRuns.findDataRun(vcn, 0);
-        return !_cookedRuns.get___idx(runIdx).getIsSparse();
+        return !_cookedRuns.get___idx(runIdx).isSparse();
     }
 
     public boolean areAllClustersStored(long vcn, int count) {
@@ -101,7 +101,7 @@ public final class RawClusterStream extends ClusterStream {
         while (focusVcn < vcn + count) {
             runIdx = _cookedRuns.findDataRun(focusVcn, runIdx);
             CookedDataRun run = _cookedRuns.get___idx(runIdx);
-            if (run.getIsSparse()) {
+            if (run.isSparse()) {
                 return false;
             }
 
@@ -155,7 +155,7 @@ public final class RawClusterStream extends ClusterStream {
         while (focus < startVcn + count) {
             runIdx = _cookedRuns.findDataRun(focus, runIdx);
             CookedDataRun run = _cookedRuns.get___idx(runIdx);
-            if (run.getIsSparse()) {
+            if (run.isSparse()) {
                 if (focus != run.getStartVcn()) {
                     _cookedRuns.splitRun(runIdx, focus);
                     runIdx++;
@@ -170,7 +170,7 @@ public final class RawClusterStream extends ClusterStream {
 
                 long nextCluster = -1;
                 for (int i = runIdx - 1; i >= 0; --i) {
-                    if (!_cookedRuns.get___idx(i).getIsSparse()) {
+                    if (!_cookedRuns.get___idx(i).isSparse()) {
                         nextCluster = _cookedRuns.get___idx(i).getStartLcn() + _cookedRuns.get___idx(i).getLength();
                         break;
                     }
@@ -200,7 +200,7 @@ public final class RawClusterStream extends ClusterStream {
         while (focus < startVcn + count) {
             runIdx = _cookedRuns.findDataRun(focus, runIdx);
             CookedDataRun run = _cookedRuns.get___idx(runIdx);
-            if (run.getIsSparse()) {
+            if (run.isSparse()) {
                 focus += run.getLength();
             } else {
                 if (focus != run.getStartVcn()) {
@@ -233,7 +233,7 @@ public final class RawClusterStream extends ClusterStream {
             runIdx = _cookedRuns.findDataRun(focusVcn, runIdx);
             CookedDataRun run = _cookedRuns.get___idx(runIdx);
             int toRead = (int) Math.min(count - totalRead, run.getLength() - (focusVcn - run.getStartVcn()));
-            if (run.getIsSparse()) {
+            if (run.isSparse()) {
                 Arrays.fill(buffer,
                             offset + totalRead * _bytesPerCluster,
                             offset + totalRead * _bytesPerCluster + toRead * _bytesPerCluster,
@@ -255,7 +255,7 @@ public final class RawClusterStream extends ClusterStream {
             long focusVcn = startVcn + totalWritten;
             runIdx = _cookedRuns.findDataRun(focusVcn, runIdx);
             CookedDataRun run = _cookedRuns.get___idx(runIdx);
-            if (run.getIsSparse()) {
+            if (run.isSparse()) {
                 throw new UnsupportedOperationException("Writing to sparse datarun");
             }
 

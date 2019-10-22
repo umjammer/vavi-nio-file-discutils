@@ -38,7 +38,7 @@ public final class DiskTransport extends VirtualDiskTransport {
 
     private Session _session;
 
-    public boolean getIsRawDisk() {
+    public boolean isRawDisk() {
         return true;
     }
 
@@ -71,7 +71,5 @@ public final class DiskTransport extends VirtualDiskTransport {
         }
 
         _session = null;
-
-        super.close();
     }
 }

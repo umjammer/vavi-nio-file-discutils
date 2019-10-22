@@ -39,7 +39,7 @@ public class MetadataVolumeGroupSection {
 
     public String Format;
 
-    public EnumSet<VolumeGroupStatus> Status;
+    public EnumSet<VolumeGroupStatus> Status = EnumSet.noneOf(VolumeGroupStatus.class);
 
     public String[] Flags;
 
@@ -56,7 +56,7 @@ public class MetadataVolumeGroupSection {
     public List<MetadataLogicalVolumeSection> LogicalVolumes;
 
     public void parse(String head, Scanner data) {
-        Name = head.trim().replaceFirst("{*$", "").replaceFirst(" *$", "");
+        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while ((line = Metadata.readLine(data)) != null) {
             if (line.equals(""))
@@ -99,7 +99,7 @@ public class MetadataVolumeGroupSection {
                     throw new IndexOutOfBoundsException("Unexpected parameter in volume group metadata");
                 }
             } else if (line.endsWith("{")) {
-                String sectionName = line.replaceFirst("{*$", "").replaceFirst(" *$", "").toLowerCase();
+                String sectionName = line.replaceFirst("\\{*$", "").replaceFirst(" *$", "").toLowerCase();
                 if (sectionName.equals("physical_volumes")) {
                     PhysicalVolumes = parsePhysicalVolumeSection(data);
                 } else if (sectionName.equals("logical_volumes")) {

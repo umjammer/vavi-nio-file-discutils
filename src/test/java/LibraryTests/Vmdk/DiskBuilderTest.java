@@ -69,7 +69,7 @@ public class DiskBuilderTest {
                 assertEquals(i, disk.getContent().readByte());
             }
             disk.getContent().setPosition(15 * 1024 * 1024);
-            assertEquals(0xFF, disk.getContent().readByte());
+            assertEquals(0xFF, disk.getContent().readByte() & 0xff);
         }
     }
 
@@ -88,7 +88,7 @@ public class DiskBuilderTest {
                 assertEquals(i, disk.getContent().readByte());
             }
             disk.getContent().setPosition(15 * 1024 * 1024);
-            assertEquals(0xFF, disk.getContent().readByte());
+            assertEquals(0xFF, disk.getContent().readByte() & 0xff);
         }
     }
 }

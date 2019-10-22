@@ -55,7 +55,7 @@ public @interface ProtocolKeyAttribute {
     class Util {
         public static String getValueAsString(Object value, Class<?> valueType) {
             try {
-                if (valueType == Boolean.TYPE) {
+                if (valueType == Boolean.TYPE || valueType == Boolean.class) {
                     return (Boolean) value ? "Yes" : "No";
                 }
 
@@ -63,7 +63,7 @@ public @interface ProtocolKeyAttribute {
                     return (String) value;
                 }
 
-                if (valueType == int.class) {
+                if (valueType == int.class || valueType == Integer.class) {
                     return ((Integer) value).toString();
                 }
 
@@ -88,7 +88,7 @@ public @interface ProtocolKeyAttribute {
 
         public static Object getValueAsObject(String value, Class<?> valueType) {
             try {
-                if (valueType == Boolean.TYPE) {
+                if (valueType == Boolean.TYPE || valueType == Boolean.class) {
                     return value.equals("Yes");
                 }
 
@@ -96,7 +96,7 @@ public @interface ProtocolKeyAttribute {
                     return value;
                 }
 
-                if (valueType == int.class) {
+                if (valueType == int.class || valueType == Integer.class) {
                     return Integer.parseInt(value);
                 }
 

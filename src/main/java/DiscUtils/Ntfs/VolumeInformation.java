@@ -61,7 +61,7 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
     }
 
     public int getVersion() {
-        return _majorVersion << 8 | _minorVersion;
+        return _majorVersion << 8 | (_minorVersion & 0xff);
     }
 
     public long getSize() {

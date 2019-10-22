@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Core.DiscFileSystemInfo;
@@ -54,9 +55,9 @@ public class ExtFileSystemTest {
             fsis.stream().forEach(f -> j.next().accept(f));
             byte[] tmpData = Helpers.readAll(fs.openFile("bar\\blah.txt", FileMode.Open));
 
-            assertEquals("hello world\n".getBytes(Charset.forName("ASCII")), tmpData);
+            assertArrayEquals("hello world\n".getBytes(Charset.forName("ASCII")), tmpData);
             tmpData = Helpers.readAll(fs.openFile("bar\\testdir1\\test.txt", FileMode.Open));
-            assertEquals("Mon Feb 11 19:54:14 UTC 2019\n".getBytes(Charset.forName("ASCII")), tmpData);
+            assertArrayEquals("Mon Feb 11 19:54:14 UTC 2019\n".getBytes(Charset.forName("ASCII")), tmpData);
         }
     }
 }

@@ -106,6 +106,11 @@ public class Test1 {
         UUID uuid1 = new UUID(0L, 0L);
         UUID uuid2 = new UUID(0L, 0L);
         assertTrue(uuid1.equals(uuid2));
+
+        System.err.printf("%s:%s\n", uuid1, uuid2);
+
+        assertEquals("doubleQuoteStriped", "\"doubleQuoteStriped\"".replaceAll("(^\"*|\"*$)", ""));
+        assertEquals("parenthesesStriped", "[parenthesesStriped]".replaceAll("(^\\[*|\\]*$)", ""));
     }
 }
 

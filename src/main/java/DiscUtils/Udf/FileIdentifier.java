@@ -23,8 +23,8 @@
 package DiscUtils.Udf;
 
 import java.util.EnumSet;
-import java.util.Map;
 
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -52,7 +52,7 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
         throw new UnsupportedOperationException();
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         throw new UnsupportedOperationException();
     }
 

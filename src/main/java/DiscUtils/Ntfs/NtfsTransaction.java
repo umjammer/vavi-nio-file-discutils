@@ -23,7 +23,6 @@
 package DiscUtils.Ntfs;
 
 import java.io.Closeable;
-import java.io.IOException;
 
 
 public final class NtfsTransaction implements Closeable {
@@ -50,7 +49,7 @@ public final class NtfsTransaction implements Closeable {
         return __Timestamp;
     }
 
-    public void close() throws IOException {
+    public void close() {
         if (_ownRecord) {
             _instance = null;
         }

@@ -48,7 +48,9 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
 
     public VfsBtrfsFileSystem(Stream stream, BtrfsFileSystemOptions options) {
         super(options);
-        setContext(new Context(options));
+        Context context = new Context(options);
+        context.setRawStream(stream);
+        setContext(context);
         for (long offset : BtrfsFileSystem.SuperblockOffsets) {
             if (offset + SuperBlock.Length > stream.getLength())
                 break;
@@ -57,6 +59,7 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
             byte[] superblockData = StreamUtilities.readExact(stream, SuperBlock.Length);
             SuperBlock superblock = new SuperBlock();
             superblock.readFrom(superblockData, 0);
+
             if (superblock.getMagic() != SuperBlock.BtrfsMagic)
                 throw new IOException("Invalid Superblock Magic");
 
@@ -69,25 +72,24 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
         }
         if (getContext().getSuperBlock() == null)
             throw new IOException("No Superblock detected");
-
-        getContext().setChunkTreeRoot(getContext().readTree(getContext().getSuperBlock().getChunkRoot(),
-                                                            getContext().getSuperBlock().getChunkRootLevel()));
-        getContext().setRootTreeRoot(getContext().readTree(getContext().getSuperBlock().getRoot(),
-                                                           getContext().getSuperBlock().getRootLevel()));
-        DirItem rootDir = (DirItem) getContext().findKey(getContext().getSuperBlock().getRootDirObjectid(), ItemType.DirItem);
+        context.setChunkTreeRoot(context.readTree(context.getSuperBlock().getChunkRoot(),
+                                                            context.getSuperBlock().getChunkRootLevel()));
+        context.setRootTreeRoot(context.readTree(context.getSuperBlock().getRoot(),
+                                                           context.getSuperBlock().getRootLevel()));
+        DirItem rootDir = (DirItem) context.findKey(context.getSuperBlock().getRootDirObjectid(), ItemType.DirItem);
         RootItem fsTreeLocation;
         if (!options.getUseDefaultSubvolume()) {
-            fsTreeLocation = (RootItem) getContext().findKey(options.getSubvolumeId(), ItemType.RootItem);
+            fsTreeLocation = (RootItem) context.findKey(options.getSubvolumeId(), ItemType.RootItem);
         } else {
-            fsTreeLocation = (RootItem) getContext().findKey(rootDir.getChildLocation().getObjectId(),
+            fsTreeLocation = (RootItem) context.findKey(rootDir.getChildLocation().getObjectId(),
                                                              rootDir.getChildLocation().getItemType());
         }
         long rootDirObjectId = fsTreeLocation.getRootDirId();
-        getContext().getFsTrees()
+        context.getFsTrees()
                 .put(rootDir.getChildLocation().getObjectId(),
-                     getContext().readTree(fsTreeLocation.getByteNr(), fsTreeLocation.getLevel()));
+                     context.readTree(fsTreeLocation.getByteNr(), fsTreeLocation.getLevel()));
         DirEntry dirEntry = new DirEntry(rootDir.getChildLocation().getObjectId(), rootDirObjectId);
-        setRootDirectory(new Directory(dirEntry, getContext()));
+        setRootDirectory(new Directory(dirEntry, context));
     }
 
     public String getFriendlyName() {

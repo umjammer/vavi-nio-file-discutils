@@ -6,6 +6,4 @@ package DiscUtils.Ntfs;
 public interface IndexNodeSaveFn {
 
     void invoke();
-
-//    List<IndexNodeSaveFn> getInvocationList();
 }

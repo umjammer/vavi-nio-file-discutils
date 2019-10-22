@@ -23,6 +23,7 @@
 package DiscUtils.Udf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import DiscUtils.Core.Vfs.VfsFileSystemFacade;
@@ -65,9 +66,7 @@ public final class UdfReader extends VfsFileSystemFacade {
      * Detects if a stream contains a valid UDF file system.
      *
      * @param data The stream to inspect.
-     * @return
-     *         {@code true}
-     *         if the stream contains a UDF file system, else false.
+     * @return {@code true} if the stream contains a UDF file system, else false.
      */
     public static boolean detect(Stream data) {
         if (data.getLength() < IsoUtilities.SectorSize) {
@@ -91,9 +90,8 @@ public final class UdfReader extends VfsFileSystemFacade {
             if (bvd.StandardIdentifier.equals("NSR02") || bvd.StandardIdentifier.equals("NSR03")) {
                 foundUdfMarker = true;
             } else if (bvd.StandardIdentifier.equals("BEA01") || bvd.StandardIdentifier.equals("BOOT2") ||
-                       bvd.StandardIdentifier.equals("CD001") || bvd.StandardIdentifier.equals("CDW02") ||
-                       bvd.StandardIdentifier.equals("TEA01")) {
-            } else {
+                bvd.StandardIdentifier.equals("CD001") || bvd.StandardIdentifier.equals("CDW02") ||
+                bvd.StandardIdentifier.equals("TEA01")) {} else {
                 validDescriptor = false;
             }
             vdpos += IsoUtilities.SectorSize;
@@ -102,14 +100,12 @@ public final class UdfReader extends VfsFileSystemFacade {
     }
 
     /**
-    * Gets UDF extended attributes for a file or directory.
-    *
-    *  @param path Path to the file or directory.
-    *  @return Array of extended attributes, which may be empty or
-    *  {@code null}
-    *  if
-    * there are no extended attributes.
-    */
+     * Gets UDF extended attributes for a file or directory.
+     *
+     * @param path Path to the file or directory.
+     * @return Array of extended attributes, which may be empty or {@code null} if
+     *         there are no extended attributes.
+     */
     public List<ExtendedAttribute> getExtendedAttributes(String path) {
         VfsUdfReader realFs = VfsUdfReader.class.cast(getRealFileSystem());
         return realFs.getExtendedAttributes(path);
@@ -206,16 +202,24 @@ public final class UdfReader extends VfsFileSystemFacade {
         }
 
         private void initialize() {
-            setContext(new UdfContext());
+            UdfContext context = new UdfContext();
+            context.PhysicalPartitions = new HashMap<>();
+            context.PhysicalSectorSize = _sectorSize;
+            context.LogicalPartitions = new ArrayList<>();
+            setContext(context);
+
             IBuffer dataBuffer = new StreamBuffer(_data, Ownership.None);
-            AnchorVolumeDescriptorPointer avdp = AnchorVolumeDescriptorPointer.fromStream(_data, 256, _sectorSize, AnchorVolumeDescriptorPointer.class);
+
+            AnchorVolumeDescriptorPointer avdp = AnchorVolumeDescriptorPointer
+                    .fromStream(_data, 256, _sectorSize, AnchorVolumeDescriptorPointer.class);
+
             int sector = avdp.MainDescriptorSequence.Location;
             boolean terminatorFound = false;
             while (!terminatorFound) {
                 _data.setPosition(sector * (long) _sectorSize);
+
                 DescriptorTag[] dt = new DescriptorTag[1];
-                boolean result = !DescriptorTag.tryFromStream(_data, dt);
-                if (result) {
+                if (!DescriptorTag.tryFromStream(_data, dt)) {
                     break;
                 }
 
@@ -224,10 +228,11 @@ public final class UdfReader extends VfsFileSystemFacade {
                     _pvd = PrimaryVolumeDescriptor.fromStream(_data, sector, _sectorSize, PrimaryVolumeDescriptor.class);
                     break;
                 case ImplementationUseVolumeDescriptor:
+                    // Not used
                     break;
                 case PartitionDescriptor:
-                    // Not used
-                    PartitionDescriptor pd = PartitionDescriptor.fromStream(_data, sector, _sectorSize, PartitionDescriptor.class);
+                    PartitionDescriptor pd = PartitionDescriptor
+                            .fromStream(_data, sector, _sectorSize, PartitionDescriptor.class);
                     if (getContext().PhysicalPartitions.containsKey(pd.PartitionNumber)) {
                         throw new IOException("Duplicate partition number reading UDF Partition Descriptor");
                     }
@@ -235,17 +240,18 @@ public final class UdfReader extends VfsFileSystemFacade {
                     getContext().PhysicalPartitions.put(pd.PartitionNumber, new PhysicalPartition(pd, dataBuffer, _sectorSize));
                     break;
                 case LogicalVolumeDescriptor:
+                    _lvd = LogicalVolumeDescriptor.fromStream(_data, sector, _sectorSize, LogicalVolumeDescriptor.class);
                     break;
                 case UnallocatedSpaceDescriptor:
+                    // Not used for reading
                     break;
                 case TerminatingDescriptor:
-                    // Not used for reading
                     terminatorFound = true;
                     break;
                 default:
                     break;
-
                 }
+
                 sector++;
             }
             for (int i = 0; i < _lvd.PartitionMaps.length; ++i) {
@@ -257,7 +263,6 @@ public final class UdfReader extends VfsFileSystemFacade {
                 FileSetDescriptor fsd = EndianUtilities.<FileSetDescriptor> toStruct(FileSetDescriptor.class, fsdBuffer, 0);
                 setRootDirectory((Directory) File.fromDescriptor(getContext(), fsd.RootDirectoryIcb));
             }
-
         }
 
         private boolean probeSectorSize(int size) {

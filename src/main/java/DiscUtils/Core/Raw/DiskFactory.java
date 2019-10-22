@@ -55,7 +55,7 @@ public final class DiskFactory extends VirtualDiskFactory {
     public VirtualDisk createDisk(FileLocator locator,
                                   String variant,
                                   String path,
-                                  VirtualDiskParameters diskParameters) throws IOException {
+                                  VirtualDiskParameters diskParameters) {
         return Disk.initialize(locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None),
                                Ownership.Dispose,
                                diskParameters.capacity,
@@ -66,7 +66,7 @@ public final class DiskFactory extends VirtualDiskFactory {
         return new Disk(path, access);
     }
 
-    public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) throws IOException {
+    public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         return new Disk(locator.open(path, FileMode.Open, access, share), Ownership.Dispose);
     }

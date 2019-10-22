@@ -41,6 +41,7 @@ public final class FragmentWriter {
         _context = context;
         _currentBlock = new byte[context.getDataBlockSize()];
         _currentOffset = 0;
+
         _fragmentBlocks = new ArrayList<>();
     }
 
@@ -58,7 +59,6 @@ public final class FragmentWriter {
         if (_currentOffset != 0) {
             nextBlock();
         }
-
     }
 
     public int writeFragment(int length, int[] offset) {
@@ -70,7 +70,9 @@ public final class FragmentWriter {
         offset[0] = _currentOffset;
         System.arraycopy(_context.getIoBuffer(), 0, _currentBlock, _currentOffset, length);
         _currentOffset += length;
+
         ++__FragmentCount;
+
         return _fragmentBlocks.size();
     }
 
@@ -90,20 +92,27 @@ public final class FragmentWriter {
         for (int i = 0; i < _fragmentBlocks.size(); ++i) {
             _fragmentBlocks.get(i).writeTo(buffer, i * recordSize);
         }
+
         MetablockWriter writer = new MetablockWriter();
         writer.write(buffer, 0, buffer.length);
         writer.persist(_context.getRawStream());
+
         long tablePos = _context.getRawStream().getPosition();
         byte[] tableBuffer = new byte[8];
         EndianUtilities.writeBytesLittleEndian(blockPos, tableBuffer, 0);
         _context.getRawStream().write(tableBuffer, 0, 8);
+
         return tablePos;
     }
 
     private void nextBlock() {
         long position = _context.getRawStream().getPosition();
+
         int writeLen = _context.getWriteDataBlock().invoke(_currentBlock, 0, _currentOffset);
         FragmentRecord blockRecord = new FragmentRecord();
+        blockRecord.StartBlock = position;
+        blockRecord.CompressedSize = writeLen;
+
         _fragmentBlocks.add(blockRecord);
     }
 }

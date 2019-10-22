@@ -44,16 +44,19 @@ public class RpcRejectedReplyHeaderTest {
         info.High = 1;
         info.Low = 2;
         header.MismatchInfo = info;
+
         header.Status = RpcRejectedStatus.RpcMismatch;
 
         RpcRejectedReplyHeader clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             header.write(writer);
+
             stream.setPosition(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new RpcRejectedReplyHeader(reader);
         }
+
         assertEquals(header, clone);
     }
 }

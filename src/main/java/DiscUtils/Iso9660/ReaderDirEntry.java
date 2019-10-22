@@ -22,18 +22,18 @@
 
 package DiscUtils.Iso9660;
 
-import java.util.HashMap;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 
 import DiscUtils.Core.UnixFileType;
+import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 import DiscUtils.Iso9660.RockRidge.ChildLinkSystemUseEntry;
 import DiscUtils.Iso9660.RockRidge.FileTimeSystemUseEntry;
+import DiscUtils.Iso9660.RockRidge.FileTimeSystemUseEntry.Timestamps;
 import DiscUtils.Iso9660.RockRidge.PosixFileInfoSystemUseEntry;
 import DiscUtils.Iso9660.RockRidge.PosixNameSystemUseEntry;
-import DiscUtils.Iso9660.RockRidge.FileTimeSystemUseEntry.Timestamps;
 import DiscUtils.Iso9660.Susp.SuspRecords;
 import DiscUtils.Iso9660.Susp.SystemUseEntry;
 import DiscUtils.Streams.Util.StreamUtilities;
@@ -110,8 +110,8 @@ public final class ReaderDirEntry extends VfsDirEntry {
         return __CreationTimeUtc;
     }
 
-    public Map<String, Object> getFileAttributes() {
-        Map<String, Object> attrs = new HashMap<>();
+    public EnumSet<FileAttributes> getFileAttributes() {
+        EnumSet<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
         if (_context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty()) {
             PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "PX");
             if (pfi != null) {
@@ -119,17 +119,17 @@ public final class ReaderDirEntry extends VfsDirEntry {
             }
 
             if (_fileName.startsWith(".")) {
-                attrs.put("Hidden", true);
+                attrs.add(FileAttributes.Hidden);
             }
         }
 
-        attrs.put("ReadOnly", true);
+        attrs.add(FileAttributes.ReadOnly);
         if (_record.Flags.contains(FileFlags.Directory)) {
-            attrs.put("Directory", true);
+            attrs.add(FileAttributes.Directory);
         }
 
         if (_record.Flags.contains(FileFlags.Hidden)) {
-            attrs.put("Hidden", true);
+            attrs.add(FileAttributes.Hidden);
         }
 
         return attrs;
@@ -179,5 +179,9 @@ public final class ReaderDirEntry extends VfsDirEntry {
 
     public long getUniqueCacheId() {
         return ((long) _record.LocationOfExtent << 32) | _record.DataLength;
+    }
+
+    public String toString() {
+        return _fileName;
     }
 }

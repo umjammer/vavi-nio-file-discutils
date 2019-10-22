@@ -72,7 +72,7 @@ public class Directory implements Closeable {
         _parent = parent;
         _parentId = parentId;
         DirectoryEntry dirEntry = getParentsChildEntry();
-        _dirStream = new ClusterStream(getFileSystem(), FileAccess.ReadWrite, dirEntry.getFirstCluster(), Integer.MAX_VALUE);
+        _dirStream = new ClusterStream(getFileSystem(), FileAccess.ReadWrite, dirEntry.getFirstCluster(), 0xffffffff);
         loadEntries();
     }
 
@@ -99,7 +99,7 @@ public class Directory implements Closeable {
         return __FileSystem;
     }
 
-    public boolean getIsEmpty() {
+    public boolean isEmpty() {
         return _entries.size() == 0;
     }
 
@@ -148,7 +148,7 @@ public class Directory implements Closeable {
     public Directory createChildDirectory(FileName name) {
         long id = findEntry(name);
         if (id >= 0) {
-            if (_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
+            if (!_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
                 throw new moe.yo3explorer.dotnetio4j.IOException("A file exists with the same name: "
                         + name.getDisplayName(Charset.forName(System.getProperty("file.encoding"))));
             }
@@ -376,7 +376,7 @@ public class Directory implements Closeable {
         try (ClusterStream stream = new ClusterStream(getFileSystem(),
                                                       FileAccess.Write,
                                                       newEntry.getFirstCluster(),
-                                                      Integer.MAX_VALUE)) {
+                                                      0xffffffff)) {
             // First is the self-referencing entry...
             DirectoryEntry selfEntry = new DirectoryEntry(newEntry);
             selfEntry.setName(FileName.SelfEntryName);

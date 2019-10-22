@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.Partitions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -121,7 +120,7 @@ public final class BiosPartitionTable extends PartitionTable {
         if (disk.getLength() >= Sizes.Sector) {
             disk.setPosition(0);
             byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
-            if (bootSector[510] == 0x55 && bootSector[511] == 0xAA) {
+            if ((bootSector[510] & 0xff) == 0x55 && (bootSector[511] & 0xff) == 0xAA) {
                 byte maxHead = 0;
                 byte maxSector = 0;
                 for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
@@ -158,7 +157,7 @@ public final class BiosPartitionTable extends PartitionTable {
         disk.setPosition(0);
         byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
         // Check for the 'bootable sector' marker
-        if (bootSector[510] != 0x55 || bootSector[511] != 0xAA) {
+        if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
             return false;
         }
 
@@ -190,7 +189,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param disk The disk to initialize.
      * @return An object to access the newly created partition table.
      */
-    public static BiosPartitionTable initialize(VirtualDisk disk) throws IOException {
+    public static BiosPartitionTable initialize(VirtualDisk disk) {
         return initialize(disk.getContent(), disk.getBiosGeometry());
     }
 
@@ -201,7 +200,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param type The partition type for the single partition.
      * @return An object to access the newly created partition table.
      */
-    public static BiosPartitionTable initialize(VirtualDisk disk, WellKnownPartitionType type) throws IOException {
+    public static BiosPartitionTable initialize(VirtualDisk disk, WellKnownPartitionType type) {
         BiosPartitionTable table = initialize(disk.getContent(), disk.getBiosGeometry());
         table.create(type, true);
         return table;
@@ -370,6 +369,7 @@ public final class BiosPartitionTable extends PartitionTable {
                                    : _diskGeometry.toLogicalBlockAddress(first, 0, 1);
         long lbaLast = _diskGeometry
                 .toLogicalBlockAddress(last, _diskGeometry.getHeadsPerCylinder() - 1, _diskGeometry.getSectorsPerTrack());
+System.err.printf("%x, %x, %x, %s\n", first, last, lbaStart, lbaLast);
         return createPrimaryBySector(lbaStart, lbaLast, type, markActive);
     }
 
@@ -387,8 +387,8 @@ public final class BiosPartitionTable extends PartitionTable {
             throw new IllegalArgumentException("The first sector in a partition must be before the last");
         }
 
+System.err.printf("%x, %x, %x\n", (last + 1), _diskGeometry.getBytesPerSector(), _diskData.getLength());
         if ((last + 1) * _diskGeometry.getBytesPerSector() > _diskData.getLength()) {
-System.err.printf("%x, %x\n", (last + 1) * _diskGeometry.getBytesPerSector(), _diskData.getLength());
             throw new IndexOutOfBoundsException("The last sector extends beyond the end of the disk");
         }
 

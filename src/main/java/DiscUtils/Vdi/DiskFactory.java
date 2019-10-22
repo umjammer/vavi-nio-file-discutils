@@ -59,7 +59,7 @@ public final class DiskFactory extends VirtualDiskFactory {
     public VirtualDisk createDisk(FileLocator locator,
                                   String variant,
                                   String path,
-                                  VirtualDiskParameters diskParameters) throws IOException {
+                                  VirtualDiskParameters diskParameters) {
         if (variant.equals("fixed")) {
             return Disk.initializeFixed(locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None), Ownership.Dispose, diskParameters.capacity);
         } else if (variant.equals("dynamic")) {
@@ -73,12 +73,12 @@ public final class DiskFactory extends VirtualDiskFactory {
         return new Disk(path, access);
     }
 
-    public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) throws IOException {
+    public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         return new Disk(locator.open(path, FileMode.Open, access, share), Ownership.Dispose);
     }
 
-    public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) throws IOException {
+    public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) {
         FileMode mode = access == FileAccess.Read ? FileMode.Open : FileMode.OpenOrCreate;
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         return new DiskImageFile(locator.open(path, mode, access, share), Ownership.Dispose);

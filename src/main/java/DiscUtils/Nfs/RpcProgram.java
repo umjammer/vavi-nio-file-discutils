@@ -43,7 +43,7 @@ public abstract class RpcProgram {
         @SuppressWarnings("unused")
         XdrDataWriter writer = startCallMessage(ms, null, NfsProc3.Null);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
         } else {
             throw new RpcException(reply.getHeader().getReplyHeader());
         }

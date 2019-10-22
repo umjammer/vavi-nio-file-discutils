@@ -35,7 +35,6 @@ public class CookedDataRun {
         if (getStartLcn() < 0) {
             throw new IndexOutOfBoundsException("LCN must be >= 0");
         }
-
     }
 
     private NonResidentAttributeRecord __AttributeExtent;
@@ -50,7 +49,7 @@ public class CookedDataRun {
         return __DataRun;
     }
 
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return getDataRun().isSparse();
     }
 

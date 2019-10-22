@@ -168,7 +168,7 @@ public final class SubKeyHashedListCell extends ListCell {
     public int indexOf(String name) {
         for (int index : find(name, 0)) {
             KeyNodeCell cell = _hive.<KeyNodeCell> getCell(_subKeyIndexes.get(index));
-            if (cell.Name.toUpperCase() == name.toUpperCase()) {
+            if (cell.Name.toUpperCase().equals(name.toUpperCase())) {
                 return index;
             }
         }

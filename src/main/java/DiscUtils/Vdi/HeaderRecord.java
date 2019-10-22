@@ -100,11 +100,11 @@ public class HeaderRecord {
             headerSize = 348;
         } else {
             long savedPos = s.getPosition();
-//System.err.println("savedPos: " + savedPos);
+System.err.println("savedPos: " + savedPos);
             headerSize = EndianUtilities.toInt32LittleEndian(StreamUtilities.readExact(s, 4), 0);
-//System.err.printf("headerSize: %1$8x, %1$d\n", headerSize);
+System.err.printf("headerSize: %1$8x, %1$d\n", headerSize);
             s.setPosition(savedPos);
-//System.err.println("getPosition: " + s.getPosition());
+System.err.println("getPosition: " + s.getPosition());
         }
         byte[] buffer = StreamUtilities.readExact(s, headerSize);
 //System.err.println("R:\n" + StringUtil.getDump(buffer, 64));

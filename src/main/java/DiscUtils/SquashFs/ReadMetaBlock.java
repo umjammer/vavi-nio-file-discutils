@@ -5,6 +5,4 @@ package DiscUtils.SquashFs;
 public interface ReadMetaBlock {
 
     Metablock invoke(long pos);
-
-//    List<ReadMetaBlock> getInvocationList();
 }

@@ -53,7 +53,6 @@ public class ScsiInquiryCommand extends ScsiCommand {
 //    }
 
     public TaskAttributes getTaskAttributes() {
-        getTaskAttributes();
         return TaskAttributes.Untagged;
     }
 

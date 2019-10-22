@@ -49,7 +49,7 @@ public abstract class VirtualDiskExtent implements Closeable {
      * Gets a value indicating whether the extent only stores meaningful
      * sectors.
      */
-    public abstract boolean getIsSparse();
+    public abstract boolean isSparse();
 
     /**
      * Gets the size of the extent (in bytes) on underlying storage.

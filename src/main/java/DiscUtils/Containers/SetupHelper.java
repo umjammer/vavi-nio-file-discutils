@@ -2,6 +2,7 @@
 
 package DiscUtils.Containers;
 
+@Deprecated
 public class SetupHelper {
     public static void setupContainers() {
 //        Setup.SetupHelper.RegisterAssembly(ReflectionHelper.GetAssembly(Disk.class));
@@ -12,5 +13,4 @@ public class SetupHelper {
 //        Setup.SetupHelper.RegisterAssembly(ReflectionHelper.GetAssembly(WimFile.class));
 //        Setup.SetupHelper.RegisterAssembly(ReflectionHelper.GetAssembly(Xva.Disk.class));
     }
-
 }

@@ -137,7 +137,7 @@ public final class VolumeManager implements Serializable {
      * @param content The contents of the disk to add.
      * @return The GUID the volume manager will use to identify the disk.
      */
-    public String addDisk(Stream content) throws IOException {
+    public String addDisk(Stream content) {
         return addDisk(new Disk(content, Ownership.None));
     }
 
@@ -146,7 +146,7 @@ public final class VolumeManager implements Serializable {
      *
      * @return An array of physical volumes.
      */
-    public List<PhysicalVolumeInfo> getPhysicalVolumes() throws IOException {
+    public List<PhysicalVolumeInfo> getPhysicalVolumes() {
         if (_needScan) {
             scan();
         }
@@ -159,7 +159,7 @@ public final class VolumeManager implements Serializable {
      *
      * @return An array of logical volumes.
      */
-    public List<LogicalVolumeInfo> getLogicalVolumes() throws IOException {
+    public List<LogicalVolumeInfo> getLogicalVolumes() {
         if (_needScan) {
             scan();
         }

@@ -88,7 +88,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
 
     public abstract void setInitializedDataLength(long value);
 
-    public boolean getIsNonResident() {
+    public boolean isNonResident() {
         return _nonResidentFlag != 0;
     }
 
@@ -121,10 +121,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         }
 
         if (buffer[offset + 0x08] != 0x00) {
-            int[] refVar___0 = new int[] {};
-            NonResidentAttributeRecord resVar___0 = new NonResidentAttributeRecord(buffer, offset, length);
-            length[0] = refVar___0[0];
-            return resVar___0;
+            return new NonResidentAttributeRecord(buffer, offset, length);
         }
 
         ResidentAttributeRecord result = new ResidentAttributeRecord(buffer, offset, length);

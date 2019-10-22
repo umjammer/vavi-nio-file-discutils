@@ -33,11 +33,9 @@ import moe.yo3explorer.dotnetio4j.FileAccess;
 
 public abstract class VirtualDiskTransport implements Closeable {
 
-    public abstract boolean getIsRawDisk();
+    public abstract boolean isRawDisk();
 
-    public void close() throws IOException {
-        close();
-    }
+    public abstract void close() throws IOException;
 
     public abstract void connect(URI uri, String username, String password);
 

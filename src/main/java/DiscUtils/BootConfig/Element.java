@@ -115,6 +115,7 @@ public class Element {
         return String.format("%8x", _identifier);
     }
 
+    @SuppressWarnings("incomplete-switch")
     private static String identifierToName(ApplicationType appType, int identifier) {
         ElementClass idClass = getClass(identifier);
         if (idClass == ElementClass.Library) {
@@ -387,6 +388,7 @@ public class Element {
     }
 
     private ElementValue loadValue() {
+System.err.println("getFormat():" + getFormat());
         switch (getFormat()) {
         case Boolean:
             return new BooleanElementValue(_storage.getBinary(_obj, _identifier));

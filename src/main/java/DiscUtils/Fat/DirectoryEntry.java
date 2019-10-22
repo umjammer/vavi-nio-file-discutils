@@ -23,7 +23,6 @@
 package DiscUtils.Fat;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.EnumSet;
@@ -209,9 +208,9 @@ public class DirectoryEntry {
     }
 
     private static void dateTimeToFileTime(long value_, short[] date, short[] time, byte[] tenths) {
-        LocalDateTime value = Instant.ofEpochMilli(value_).atZone(ZoneId.of("UTC")).toLocalDateTime();
+        ZonedDateTime value = Instant.ofEpochMilli(value_).atZone(ZoneId.of("UTC"));
         if (value.getYear() < 1980) {
-            value_ = FatFileSystem.Epoch;
+            value = Instant.EPOCH.atZone(ZoneId.of("UTC"));
         }
 
         date[0] = (short) ((((value.getYear() - 1980) << 9) & 0xFE00) | ((value.getMonthValue() << 5) & 0x01E0) |

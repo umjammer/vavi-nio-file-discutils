@@ -206,10 +206,9 @@ public final class ServiceDiscoveryClient implements Closeable {
                 List<ResourceRecord> ip6Records = doLookup(ServiceRecord.class.cast(record).getTarget(), RecordType.IP6Address);
             }
 
-            // foreach (Ip6AddressRecord ipRecord in ipRecords)
-            // {
-            //     ipEndPoints.add(new IPEndPoint(ipRecord.Address, record.Port));
-            // }
+//            for (Ip6AddressRecord ipRecord : ipRecords) {
+//                ipEndPoints.add(new IPEndPoint(ipRecord.Address, record.Port));
+//            }
             endpoints.add(new ServiceInstanceEndPoint(ServiceRecord.class.cast(record).getPriority(),
                                                       ServiceRecord.class.cast(record).getWeight(),
                                                       ServiceRecord.class.cast(record).getPort(),

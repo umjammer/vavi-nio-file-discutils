@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import DiscUtils.Core.DiscFileLocator;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileLocator;
+import DiscUtils.Core.GenericDiskAdapterType;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.VirtualDiskClass;
@@ -70,19 +71,21 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class.
      *
-     * @param path   The path to the disk.
+     * @param path The path to the disk.
      * @param access The access requested to the disk.
      */
     public Disk(String path, FileAccess access) throws IOException {
-        this(new LocalFileLocator(Paths.get(path).getParent().toString()), path, access);
+        this(new LocalFileLocator(Paths.get(path).getParent() == null ? "" : Paths.get(path).getParent().toString()),
+             path,
+             access);
     }
 
     /**
      * Initializes a new instance of the Disk class.
      *
      * @param fileSystem The file system containing the disk.
-     * @param path       The file system relative path to the disk.
-     * @param access     The access requested to the disk.
+     * @param path The file system relative path to the disk.
+     * @param access The access requested to the disk.
      */
     public Disk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
         _path = path;
@@ -99,7 +102,7 @@ public final class Disk extends VirtualDisk {
      * Initializes a new instance of the Disk class. Only monolithic sparse streams
      * are supported.
      *
-     * @param stream     The stream containing the VMDK file.
+     * @param stream The stream containing the VMDK file.
      * @param ownsStream Indicates if the new instances owns the stream.
      */
     public Disk(Stream stream, Ownership ownsStream) {
@@ -207,16 +210,25 @@ public final class Disk extends VirtualDisk {
      */
     public VirtualDiskParameters getParameters() {
         DiskImageFile file = (DiskImageFile) _files.get(_files.size() - 1).Item1;
+
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
+        diskParams.setDiskType(getDiskClass());
+        diskParams.setCapacity(getCapacity());
+        diskParams.geometry = getGeometry();
+        diskParams.setBiosGeometry(getBiosGeometry());
+        diskParams.setAdapterType(file.getAdapterType() == DiskAdapterType.Ide ? GenericDiskAdapterType.Ide
+                                                                               : GenericDiskAdapterType.Scsi);
+
         diskParams.getExtendedParameters().put(ExtendedParameterKeyAdapterType, file.getAdapterType().toString());
         diskParams.getExtendedParameters().put(ExtendedParameterKeyCreateType, file.getCreateType().toString());
+
         return diskParams;
     }
 
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path       The name of the VMDK to create.
+     * @param path The name of the VMDK to create.
      * @param parameters The desired parameters for the new disk.
      * @return The newly created disk image.
      */
@@ -227,9 +239,9 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path     The name of the VMDK to create.
+     * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
-     * @param type     The type of virtual disk to create.
+     * @param type The type of virtual disk to create.
      * @return The newly created disk image.
      */
     public static Disk initialize(String path, long capacity, DiskCreateType type) throws IOException {
@@ -239,11 +251,11 @@ public final class Disk extends VirtualDisk {
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path     The name of the VMDK to create.
+     * @param path The name of the VMDK to create.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or {@code null} for
-     *                     default.
-     * @param type     The type of virtual disk to create.
+     *            default.
+     * @param type The type of virtual disk to create.
      * @return The newly created disk image.
      */
     public static Disk initialize(String path, long capacity, Geometry geometry, DiskCreateType type) throws IOException {
@@ -254,42 +266,38 @@ public final class Disk extends VirtualDisk {
      * Creates a new virtual disk at the specified location on a file system.
      *
      * @param fileSystem The file system to contain the disk.
-     * @param path       The file system path to the disk.
-     * @param capacity   The desired capacity of the new disk.
-     * @param type       The type of virtual disk to create.
+     * @param path The file system path to the disk.
+     * @param capacity The desired capacity of the new disk.
+     * @param type The type of virtual disk to create.
      * @return The newly created disk image.
      */
-    public static Disk initialize(DiscFileSystem fileSystem,
-                                  String path,
-                                  long capacity,
-                                  DiskCreateType type) throws IOException {
+    public static Disk initialize(DiscFileSystem fileSystem, String path, long capacity, DiskCreateType type)
+            throws IOException {
         return new Disk(DiskImageFile.initialize(fileSystem, path, capacity, type), Ownership.Dispose);
     }
 
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path        The name of the VMDK to create.
-     * @param capacity    The desired capacity of the new disk.
-     * @param type        The type of virtual disk to create.
+     * @param path The name of the VMDK to create.
+     * @param capacity The desired capacity of the new disk.
+     * @param type The type of virtual disk to create.
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
-    public static Disk initialize(String path,
-                                  long capacity,
-                                  DiskCreateType type,
-                                  DiskAdapterType adapterType) throws IOException {
+    public static Disk initialize(String path, long capacity, DiskCreateType type, DiskAdapterType adapterType)
+            throws IOException {
         return initialize(path, capacity, null, type, adapterType);
     }
 
     /**
      * Creates a new virtual disk at the specified path.
      *
-     * @param path        The name of the VMDK to create.
-     * @param capacity    The desired capacity of the new disk.
-     * @param geometry    The desired geometry of the new disk, or {@code null} for
-     *                        default.
-     * @param type        The type of virtual disk to create.
+     * @param path The name of the VMDK to create.
+     * @param capacity The desired capacity of the new disk.
+     * @param geometry The desired geometry of the new disk, or {@code null} for
+     *            default.
+     * @param type The type of virtual disk to create.
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
@@ -297,17 +305,18 @@ public final class Disk extends VirtualDisk {
                                   long capacity,
                                   Geometry geometry,
                                   DiskCreateType type,
-                                  DiskAdapterType adapterType) throws IOException {
+                                  DiskAdapterType adapterType)
+            throws IOException {
         return new Disk(DiskImageFile.initialize(path, capacity, geometry, type, adapterType), Ownership.Dispose);
     }
 
     /**
      * Creates a new virtual disk at the specified location on a file system.
      *
-     * @param fileSystem  The file system to contain the disk.
-     * @param path        The file system path to the disk.
-     * @param capacity    The desired capacity of the new disk.
-     * @param type        The type of virtual disk to create.
+     * @param fileSystem The file system to contain the disk.
+     * @param path The file system path to the disk.
+     * @param capacity The desired capacity of the new disk.
+     * @param type The type of virtual disk to create.
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
@@ -315,15 +324,16 @@ public final class Disk extends VirtualDisk {
                                   String path,
                                   long capacity,
                                   DiskCreateType type,
-                                  DiskAdapterType adapterType) throws IOException {
+                                  DiskAdapterType adapterType)
+            throws IOException {
         return new Disk(DiskImageFile.initialize(fileSystem, path, capacity, type, adapterType), Ownership.Dispose);
     }
 
     /**
      * Creates a new virtual disk as a thin clone of an existing disk.
      *
-     * @param path       The path to the new disk.
-     * @param type       The type of disk to create.
+     * @param path The path to the new disk.
+     * @param type The type of disk to create.
      * @param parentPath The path to the parent disk.
      * @return The new disk.
      */
@@ -335,15 +345,13 @@ public final class Disk extends VirtualDisk {
      * Creates a new virtual disk as a thin clone of an existing disk.
      *
      * @param fileSystem The file system to contain the disk.
-     * @param path       The path to the new disk.
-     * @param type       The type of disk to create.
+     * @param path The path to the new disk.
+     * @param type The type of disk to create.
      * @param parentPath The path to the parent disk.
      * @return The new disk.
      */
-    public static Disk initializeDifferencing(DiscFileSystem fileSystem,
-                                              String path,
-                                              DiskCreateType type,
-                                              String parentPath) throws IOException {
+    public static Disk initializeDifferencing(DiscFileSystem fileSystem, String path, DiskCreateType type, String parentPath)
+            throws IOException {
         return new Disk(DiskImageFile.initializeDifferencing(fileSystem, path, type, parentPath), Ownership.Dispose);
     }
 
@@ -351,7 +359,7 @@ public final class Disk extends VirtualDisk {
      * Create a new differencing disk, possibly within an existing disk.
      *
      * @param fileSystem The file system to create the disk on.
-     * @param path       The path (or URI) for the disk to create.
+     * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {

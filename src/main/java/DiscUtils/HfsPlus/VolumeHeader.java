@@ -83,7 +83,7 @@ public final class VolumeHeader implements IByteArraySerializable {
 
     public int WriteCount;
 
-    public boolean getIsValid() {
+    public boolean isValid() {
         return Signature == HfsPlusSignature;
     }
 
@@ -93,7 +93,7 @@ public final class VolumeHeader implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         Signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        if (!getIsValid())
+        if (!isValid())
             return (int) getSize();
 
         Version = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);

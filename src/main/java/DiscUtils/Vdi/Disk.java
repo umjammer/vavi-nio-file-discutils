@@ -54,7 +54,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path to the disk.
      * @param access The access requested to the disk.
      */
-    public Disk(String path, FileAccess access) throws IOException {
+    public Disk(String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         FileLocator locator = new LocalFileLocator("");
         _diskImage = new DiskImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose);

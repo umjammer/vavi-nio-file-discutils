@@ -22,7 +22,6 @@
 
 package LibraryTests;
 
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +34,7 @@ import DiscUtils.Streams.Util.Ownership;
 import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.MemoryStream;
 
+
 public class BlockCacheTest {
     @Test
     public void dispose() throws Exception {
@@ -45,21 +45,23 @@ public class BlockCacheTest {
             cacheStream.setPosition(0);
             cacheStream.readByte();
             assertTrue(false, "Cache stream should have failed - disposed");
-        } catch (IOException __dummyCatchVar0) {
-        }
+        } catch (IOException __dummyCatchVar0) {}
 
         try {
             ms.setPosition(0);
             ms.readByte();
             assertTrue(false, "Cache stream should have failed - disposed");
-        } catch (IOException __dummyCatchVar1) {
-        }
+        } catch (IOException __dummyCatchVar1) {}
     }
 
     @Test
     public void largeRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -76,6 +78,10 @@ public class BlockCacheTest {
     public void readThrough() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -92,6 +98,10 @@ public class BlockCacheTest {
     public void cachedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -115,6 +125,10 @@ public class BlockCacheTest {
     public void unalignedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -131,6 +145,10 @@ public class BlockCacheTest {
     public void unalignedCachedRead() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -154,6 +172,10 @@ public class BlockCacheTest {
     public void overread() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -171,6 +193,10 @@ public class BlockCacheTest {
     public void cachedOverread() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -196,6 +222,10 @@ public class BlockCacheTest {
     public void cacheBlockRecycle() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -221,6 +251,10 @@ public class BlockCacheTest {
     public void write() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, true);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -244,6 +278,10 @@ public class BlockCacheTest {
     public void failWrite() throws Exception {
         MemoryStream ms = createSequencedMemStream(100, false);
         BlockCacheSettings settings = new BlockCacheSettings();
+        settings.setBlockSize(10);
+        settings.setOptimumReadSize(20);
+        settings.setReadCacheSize(100);
+        settings.setLargeReadSize(30);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);
@@ -261,7 +299,7 @@ public class BlockCacheTest {
 
     }
 
-    private MemoryStream createSequencedMemStream(int length, boolean writable) throws Exception {
+    private MemoryStream createSequencedMemStream(int length, boolean writable) {
         byte[] buffer = new byte[length];
         for (int i = 0; i < length; ++i) {
             buffer[i] = (byte) i;
@@ -273,7 +311,7 @@ public class BlockCacheTest {
         assertSequenced(buffer, 0, buffer.length, seqOffset);
     }
 
-    private void assertSequenced(byte[] buffer, int offset, int count, int seqOffset) throws Exception {
+    private void assertSequenced(byte[] buffer, int offset, int count, int seqOffset) {
         for (int i = 0; i < count; ++i) {
             if (buffer[i + offset] != (byte) (i + seqOffset)) {
                 assertTrue(false,

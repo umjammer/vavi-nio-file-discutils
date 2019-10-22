@@ -18,10 +18,9 @@
 
 package LibraryTests.Ntfs;
 
-import java.nio.ByteBuffer;
-
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.ptr.IntByReference;
 
 
 /**
@@ -50,23 +49,33 @@ public interface MSCompression extends Library {
 
     /** COMPRESSION_FORMAT_NONE */
     public static final int MSCOMP_NONE = 0;
+
     /** Called COMPRESSION_FORMAT_DEFAULT in MSDN but can never be used */
     public static final int MSCOMP_RESERVED = 1;
+
     /** COMPRESSION_FORMAT_LZNT1 */
     public static final int MSCOMP_LZNT1 = 2;
+
     /** COMPRESSION_FORMAT_XPRESS */
     public static final int MSCOMP_XPRESS = 3;
+
     /** COMPRESSION_FORMAT_XPRESS_HUFF */
     public static final int MSCOMP_XPRESS_HUFF = 4;
 
     public static final int MSCOMP_OK = 0;
+
     public static final int MSCOMP_STREAM_END = 1;
+
     public static final int MSCOMP_POSSIBLE_STREAM_END = 2;
 
     public static final int MSCOMP_ERRNO = -1;
+
     public static final int MSCOMP_ARG_ERROR = -2;
+
     public static final int MSCOMP_DATA_ERROR = -3;
+
     public static final int MSCOMP_MEM_ERROR = -4;
+
     public static final int MSCOMP_BUF_ERROR = -5;
 
     /**
@@ -84,23 +93,21 @@ public interface MSCompression extends Library {
      * </pre>
      * 
      * @param format one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
-     *                   MSCOMP_XPRESS_HUFF (4) which are numerically equivalent to
-     *                   the various COMPRESSION_FORMAT_* formats used by
-     *                   RtlCompressBuffer. The COMPRESSION_ENGINE_* are not
-     *                   supported (always MAXIMUM).
-     * @param in     the input buffer of bytes to be compressed
+     *            MSCOMP_XPRESS_HUFF (4) which are numerically equivalent to the
+     *            various COMPRESSION_FORMAT_* formats used by RtlCompressBuffer.
+     *            The COMPRESSION_ENGINE_* are not supported (always MAXIMUM).
+     * @param in the input buffer of bytes to be compressed
      * @param in_len the length of that buffer.
-     * @param out    the output buffer, where to compress bytes to. <out_len>
-     *                   initially points to the length of the output buffer, and
-     *                   upon success contains the number of bytes used in the
-     *                   output buffer. If the function does not return
-     *                   successfully, the value pointed to by <out_len> is
-     *                   undefined.
+     * @param out the output buffer, where to compress bytes to. <out_len> initially
+     *            points to the length of the output buffer, and upon success
+     *            contains the number of bytes used in the output buffer. If the
+     *            function does not return successfully, the value pointed to by
+     *            <out_len> is undefined.
      * @return value is MSCOMP_OK (0) if successful or negative if an error occurred
      *         (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), MSCOMP_MEM_ERROR
      *         (-4), or MSCOMP_BUF_ERROR (-5)).
      */
-    public int ms_compress(int format, ByteBuffer in, int in_len, ByteBuffer out, int[] out_len);
+    public int ms_compress(int format, byte[] in, int in_len, byte[] out, IntByReference out_len);
 
     /**
      * Decompress the input buffer into the output buffer all in one go using the
@@ -117,29 +124,27 @@ public interface MSCompression extends Library {
      * </pre>
      *
      * @param format one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
-     *                   MSCOMP_XPRESS_HUFF (4) which are numerically equivalent to
-     *                   the various COMPRESSION_FORMAT_* formats used by
-     *                   RtlDecompressBuffer.
-     * @param in     the input buffer of bytes to be decompressed
+     *            MSCOMP_XPRESS_HUFF (4) which are numerically equivalent to the
+     *            various COMPRESSION_FORMAT_* formats used by RtlDecompressBuffer.
+     * @param in the input buffer of bytes to be decompressed
      * @param in_len are the length of that buffer.
-     * @param out    the output buffer, where to decompress bytes to. <out_len>
-     *                   initially points to the length of the output buffer, and
-     *                   upon success contains the number of bytes used in the
-     *                   output buffer. If the function does not return
-     *                   successfully, the value pointed to by <out_len> is
-     *                   undefined.
+     * @param out the output buffer, where to decompress bytes to. <out_len>
+     *            initially points to the length of the output buffer, and upon
+     *            success contains the number of bytes used in the output buffer. If
+     *            the function does not return successfully, the value pointed to by
+     *            <out_len> is undefined.
      * @return MSCOMP_OK (0) if successful or negative if an error occurred (one of
      *         MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), MSCOMP_DATA_ERROR (-3),
      *         MSCOMP_MEM_ERROR (-4), or MSCOMP_BUF_ERROR (-5)).
      */
-    int ms_decompress(int format, ByteBuffer in, int in_len, ByteBuffer out, int[] out_len);
+    int ms_decompress(int format, byte[] in, int in_len, byte[] out, IntByReference out_len);
 
     /**
      * Calculate the upper bound of the length of compressed data based on the
      * format.
      *
      * @param format one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
-     *                   MSCOMP_XPRESS_HUFF (4).
+     *            MSCOMP_XPRESS_HUFF (4).
      * @parma in_len the number of bytes that will be compressed.
      *
      * @return some value >=in_len.

@@ -446,7 +446,7 @@ public class DynamicStream extends MappedStream {
             } else {
                 int offsetInBlock = (int) (pos % _dynamicHeader.BlockSize);
                 int sectorInBlock = offsetInBlock / Sizes.Sector;
-                if (_blockBitmaps[(int) block][sectorInBlock / 8] == 0xFF) {
+                if ((_blockBitmaps[(int) block][sectorInBlock / 8] & 0xff) == 0xFF) {
                     pos += (8 - sectorInBlock % 8) * Sizes.Sector;
                 } else {
                     byte mask = (byte) (1 << (7 - sectorInBlock % 8));
@@ -477,7 +477,7 @@ public class DynamicStream extends MappedStream {
         }
 
         // Nothing to do...
-        if (_blockAllocationTable[(int) block] == Integer.MAX_VALUE) {
+        if (_blockAllocationTable[(int) block] == 0xffffffff) { // uint.MAX_VALUE
             return false;
         }
 
@@ -489,7 +489,7 @@ public class DynamicStream extends MappedStream {
     }
 
     private void allocateBlock(long block) {
-        if (_blockAllocationTable[(int) block] != Integer.MAX_VALUE) {
+        if (_blockAllocationTable[(int) block] != 0xffffffff) { // uint.MAX_VALUE
             throw new IllegalArgumentException("Attempt to allocate existing block");
         }
 
@@ -514,7 +514,6 @@ public class DynamicStream extends MappedStream {
         if (_autoCommitFooter) {
             updateFooter();
         }
-
     }
 
     private void writeBlockBitmap(long block) {
@@ -526,7 +525,6 @@ public class DynamicStream extends MappedStream {
         if (_parentStream == null) {
             throw new moe.yo3explorer.dotnetio4j.IOException("DynamicStream: Attempt to use closed stream");
         }
-
     }
 
     private void updateFooter() {
@@ -540,7 +538,5 @@ public class DynamicStream extends MappedStream {
             _fileStream.setPosition(_nextBlockStart);
             _fileStream.write(_footerCache, 0, _footerCache.length);
         }
-
     }
-
 }

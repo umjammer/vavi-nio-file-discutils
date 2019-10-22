@@ -8,6 +8,7 @@ package moe.yo3explorer.dotnetio4j;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
@@ -23,23 +24,25 @@ import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
 public class DeflateStream extends JavaIOStream {
 
     static InputStream toInputStream(Stream stream, CompressionMode compressionMode) {
-        return compressionMode == CompressionMode.Decompress ? new InflaterInputStream(new StreamInputStream(stream)) : null;
+        InputStream is = new StreamInputStream(stream);
+        return compressionMode == CompressionMode.Decompress ? new InflaterInputStream(is) : new DeflaterInputStream(is);
     }
 
     static OutputStream toOutputStream(Stream stream, CompressionMode compressionMode) {
-        return compressionMode == CompressionMode.Compress ? new DeflaterOutputStream(new StreamOutputStream(stream)) : null;
+        OutputStream os = new StreamOutputStream(stream);
+        return compressionMode == CompressionMode.Compress ? new DeflaterOutputStream(os) : new DeflaterOutputStream(os);
     }
 
     /**
      */
     public DeflateStream(Stream stream, CompressionMode compressionMode) {
-        super(toInputStream(stream, compressionMode), toOutputStream(stream, compressionMode));
+        this(stream, compressionMode, false);
     }
 
     /**
      */
-    public DeflateStream(Stream stream, CompressionMode compressionMode, boolean b) {
-        this(stream, compressionMode);
+    public DeflateStream(Stream stream, CompressionMode compressionMode, boolean leaveOpen) {
+        super(toInputStream(stream, compressionMode), toOutputStream(stream, compressionMode), false);
     }
 }
 

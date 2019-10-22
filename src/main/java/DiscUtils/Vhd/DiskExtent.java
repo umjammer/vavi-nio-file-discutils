@@ -39,7 +39,7 @@ public final class DiskExtent extends VirtualDiskExtent {
         return _file.getCapacity();
     }
 
-    public boolean getIsSparse() {
+    public boolean isSparse() {
         return _file.isSparse();
     }
 

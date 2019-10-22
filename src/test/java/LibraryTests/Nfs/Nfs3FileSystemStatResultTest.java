@@ -23,8 +23,8 @@
 package LibraryTests.Nfs;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -52,16 +52,13 @@ public class Nfs3FileSystemStatResultTest {
         result.getFileSystemStat().setInvariant(Duration.ofSeconds(7).toMillis());
         result.getFileSystemStat().setTotalSizeBytes(8);
         result.setPostOpAttributes(new Nfs3FileAttributes());
-        result.getPostOpAttributes().AccessTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        result.getPostOpAttributes().AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        result.getPostOpAttributes().ChangeTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        result.getPostOpAttributes().ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        result.getPostOpAttributes().ModifyTime = new Nfs3FileTime(LocalDateTime.of(2017, 1, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        result.getPostOpAttributes().ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         Nfs3FileSystemStatResult clone = null;

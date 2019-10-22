@@ -99,7 +99,7 @@ public class Metadata {
     }
 
     public static String[] parseArrayValue(String value) {
-        String[] values = value.replaceAll("(^[*|]*$", "").split(Utilities.escapeForRegex("\\"));
+        String[] values = value.replaceAll("(^\\[*|\\]*$)", "").split(Utilities.escapeForRegex("\\"));
         for (int i = 0; i < values.length; i++) {
             values[i] = Metadata.parseStringValue(values[i]);
         }
@@ -107,7 +107,7 @@ public class Metadata {
     }
 
     public static String parseStringValue(String value) {
-        return value.trim().replaceAll("(^\"*|\"*$", "");
+        return value.trim().replaceAll("(^\"*|\"*$)", "");
     }
 
     public static long parseDateTimeValue(String value) {
@@ -127,7 +127,7 @@ public class Metadata {
         if (index < 0)
             throw new IllegalArgumentException("invalid parameter line " + line);
 
-        return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1, (index + 1) + line.length() - (index + 1)).trim());
+        return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1, line.length()).trim());
     }
 
     public static String removeComment(String line) {

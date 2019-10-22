@@ -28,6 +28,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
@@ -46,7 +47,7 @@ public final class DiscTransport extends VirtualDiskTransport {
 
     private OpticalDiscService _service;
 
-    public boolean getIsRawDisk() {
+    public boolean isRawDisk() {
         return true;
     }
 
@@ -54,7 +55,7 @@ public final class DiscTransport extends VirtualDiskTransport {
         try {
             String domain = uri.getHost();
             String[] pathParts;
-            pathParts = URLDecoder.decode(uri.getPath(), "utf-8").split(Utilities.escapeForRegex("\\"));
+            pathParts = URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8.name()).split(Utilities.escapeForRegex("\\"));
             String instance = pathParts[0];
             String volName = pathParts[1];
             _odsClient = new OpticalDiscServiceClient();
@@ -70,7 +71,7 @@ public final class DiscTransport extends VirtualDiskTransport {
                 }
             }
             if (_disk == null) {
-                throw new FileNotFoundException("No such disk " + uri.toString());
+                throw new FileNotFoundException("No such disk " + uri);
             }
         } catch (UnsupportedEncodingException | UnknownHostException e) {
             throw new IllegalStateException(e);
@@ -94,13 +95,9 @@ public final class DiscTransport extends VirtualDiskTransport {
     }
 
     public void close() throws IOException {
-        try {
-            if (_odsClient != null) {
-                _odsClient.close();
-                _odsClient = null;
-            }
-        } finally {
-            super.close();
+        if (_odsClient != null) {
+            _odsClient.close();
+            _odsClient = null;
         }
     }
 }

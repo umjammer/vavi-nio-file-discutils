@@ -1,6 +1,7 @@
 
 package DiscUtils.FileSystems;
 
+@Deprecated
 public class SetupHelper {
     public static void setupFileSystems() {
 //        ExtFileSystem.class;
@@ -11,5 +12,4 @@ public class SetupHelper {
 //        SquashFileSystemBuilder.class;
 //        XfsFileSystem.class;
     }
-
 }

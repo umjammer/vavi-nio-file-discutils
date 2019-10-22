@@ -22,8 +22,8 @@
 
 package LibraryTests.Fat;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -197,9 +197,9 @@ public class FatFileSystemTest {
             w.writeLine("FOO - some sample text");
             w.flush();
         }
-        fs.setLastAccessTimeUtc("BAR", LocalDateTime.of(1980, 1, 1, 0, 0).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+        fs.setLastAccessTimeUtc("BAR", ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli());
         fs.setLastAccessTimeUtc("BAR\\FOO.TXT",
-                                LocalDateTime.of(1980, 1, 1, 0, 0).atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+                                ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli());
         // Check we can access a file without any errors
         SparseStream roDiskStream = SparseStream.readOnly(diskStream, Ownership.None);
         FatFileSystem fatFs = new FatFileSystem(roDiskStream);

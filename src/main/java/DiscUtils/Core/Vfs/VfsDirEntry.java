@@ -22,45 +22,35 @@
 
 package DiscUtils.Core.Vfs;
 
-import java.util.Map;
+import java.util.EnumSet;
+
+import DiscUtils.Core.CoreCompat.FileAttributes;
 
 
 /**
  * Base class for directory entries in a file system.
  *
- * File system implementations should have a class that derives from
- * this abstract class. If the file system implementation is read-only,
- * it is acceptable to throw
- * {@code UnsupportedOperationException}
- * from methods
- * that attempt to modify the file system.
+ * File system implementations should have a class that derives from this
+ * abstract class. If the file system implementation is read-only, it is
+ * acceptable to throw {@code UnsupportedOperationException} from methods that
+ * attempt to modify the file system.
  */
 public abstract class VfsDirEntry {
     /**
      * Gets the creation time of the file or directory.
      *
-     * May throw
-     * {@code UnsupportedOperationException}
-     * if
-     * {@code HasVfsTimeInfo}
-     * is
-     * {@code false}
-     * .
+     * May throw {@link UnsupportedOperationException} if {@link #hasVfsTimeInfo} is
+     * {@code false} .
      */
     public abstract long getCreationTimeUtc();
 
     /**
      * Gets the file attributes from the directory entry.
      *
-     * May throw
-     * {@code UnsupportedOperationException}
-     * if
-     * {@code HasVfsFileAttributes}
-     * is
-     * {@code false}
-     * .
+     * May throw {@link UnsupportedOperationException} if
+     * {@link #hasVfsFileAttributes} is {@code false} .
      */
-    public abstract Map<String, Object> getFileAttributes();
+    public abstract EnumSet<FileAttributes> getFileAttributes();
 
     /**
      * Gets the name of this directory entry.
@@ -68,30 +58,20 @@ public abstract class VfsDirEntry {
     public abstract String getFileName();
 
     /**
-     * Gets a value indicating whether this directory entry contains file
-     * attribute information.
-     * Typically either always returns
-     * {@code true}
-     * or
-     * {@code false}
-     * .
+     * Gets a value indicating whether this directory entry contains file attribute
+     * information. Typically either always returns {@code true} or {@code false} .
      */
     public abstract boolean hasVfsFileAttributes();
 
     /**
      * Gets a value indicating whether this directory entry contains time
-     * information.
-     * Typically either always returns
-     * {@code true}
-     * or
-     * {@code false}
-     * .
+     * information. Typically either always returns {@code true} or {@code false} .
      */
     public abstract boolean hasVfsTimeInfo();
 
     /**
-     * Gets a value indicating whether this directory entry represents a
-     * directory (rather than a file).
+     * Gets a value indicating whether this directory entry represents a directory
+     * (rather than a file).
      */
     public abstract boolean isDirectory();
 
@@ -104,26 +84,16 @@ public abstract class VfsDirEntry {
     /**
      * Gets the last access time of the file or directory.
      *
-     * May throw
-     * {@code UnsupportedOperationException}
-     * if
-     * {@code HasVfsTimeInfo}
-     * is
-     * {@code false}
-     * .
+     * May throw {@link UnsupportedOperationException} if {@link #hasVfsTimeInfo} is
+     * {@code false} .
      */
     public abstract long getLastAccessTimeUtc();
 
     /**
      * Gets the last write time of the file or directory.
      *
-     * May throw
-     * {@code UnsupportedOperationException}
-     * if
-     * {@code HasVfsTimeInfo}
-     * is
-     * {@code false}
-     * .
+     * May throw {@link UnsupportedOperationException} if {@link #hasVfsTimeInfo} is
+     * {@code false} .
      */
     public abstract long getLastWriteTimeUtc();
 
@@ -131,10 +101,8 @@ public abstract class VfsDirEntry {
      * Gets a version of FileName that can be used in wildcard matches.
      *
      * The returned name, must have an extension separator '.', and not have any
-     * optional version
-     * information found in some files. The returned name is matched against a
-     * wildcard patterns
-     * such as "*.*".
+     * optional version information found in some files. The returned name is
+     * matched against a wildcard patterns such as "*.*".
      */
     public String getSearchName() {
         String fileName = getFileName();
@@ -150,5 +118,4 @@ public abstract class VfsDirEntry {
      * entry.
      */
     public abstract long getUniqueCacheId();
-
 }

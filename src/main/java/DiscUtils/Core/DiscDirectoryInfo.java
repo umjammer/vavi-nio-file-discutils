@@ -37,7 +37,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      * Initializes a new instance of the DiscDirectoryInfo class.
      *
      * @param fileSystem The file system the directory info relates to.
-     * @param path The path within the file system of the directory.
+     * @param path       The path within the file system of the directory.
      */
     public DiscDirectoryInfo(DiscFileSystem fileSystem, String path) {
         super(fileSystem, path);
@@ -86,11 +86,8 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Deletes a directory, with the caller choosing whether to recurse.
      *
-     * @param recursive
-     *            {@code true}
-     *            to delete all child node,
-     *            {@code false}
-     *            to fail if the directory is not empty.
+     * @param recursive {@code true} to delete all child node, {@code false} to fail
+     *                      if the directory is not empty.
      */
     public void delete(boolean recursive) {
         try {
@@ -120,9 +117,10 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscDirectoryInfo> getDirectories() {
         try {
-            return getFileSystem().getDirectories(getPath()).stream().map(p -> {
-                return new DiscDirectoryInfo(getFileSystem(), p);
-            }).collect(Collectors.toList());
+            return getFileSystem().getDirectories(getPath())
+                    .stream()
+                    .map(p -> new DiscDirectoryInfo(getFileSystem(), p))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
@@ -133,8 +131,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @param pattern The search pattern.
      * @return An array of child directories, or empty if none match.The search
-     *         pattern can include the wildcards * (matching 0 or more
-     *         characters)
+     *         pattern can include the wildcards * (matching 0 or more characters)
      *         and ? (matching 1 character).
      */
     public List<DiscDirectoryInfo> getDirectories(String pattern) {
@@ -144,21 +141,19 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all descendant directories matching a search pattern.
      *
-     * @param pattern The search pattern.
-     * @param searchOption Whether to search just this directory, or all
-     *            children.
-     * @return An array of descendant directories, or empty if none match.The
-     *         search pattern can include the wildcards * (matching 0 or more
-     *         characters)
-     *         and ? (matching 1 character). The option parameter determines
-     *         whether only immediate
-     *         children, or all children are returned.
+     * @param pattern      The search pattern.
+     * @param searchOption Whether to search just this directory, or all children.
+     * @return An array of descendant directories, or empty if none match.The search
+     *         pattern can include the wildcards * (matching 0 or more characters)
+     *         and ? (matching 1 character). The option parameter determines whether
+     *         only immediate children, or all children are returned.
      */
     public List<DiscDirectoryInfo> getDirectories(String pattern, String searchOption) {
         try {
-            return getFileSystem().getDirectories(getPath(), pattern, searchOption).stream().map(p -> {
-                return new DiscDirectoryInfo(getFileSystem(), p);
-            }).collect(Collectors.toList());
+            return getFileSystem().getDirectories(getPath(), pattern, searchOption)
+                    .stream()
+                    .map(p -> new DiscDirectoryInfo(getFileSystem(), p))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
@@ -171,9 +166,10 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscFileInfo> getFiles() {
         try {
-            return getFileSystem().getFiles(getPath()).stream().map(p -> {
-                return new DiscFileInfo(getFileSystem(), p);
-            }).collect(Collectors.toList());
+            return getFileSystem().getFiles(getPath())
+                    .stream()
+                    .map(p -> new DiscFileInfo(getFileSystem(), p))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
@@ -184,8 +180,8 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      *
      * @param pattern The search pattern.
      * @return An array of files, or empty if none match.The search pattern can
-     *         include the wildcards * (matching 0 or more characters)
-     *         and ? (matching 1 character).
+     *         include the wildcards * (matching 0 or more characters) and ?
+     *         (matching 1 character).
      */
     public List<DiscFileInfo> getFiles(String pattern) {
         return getFiles(pattern, "TopDirectoryOnly");
@@ -194,21 +190,19 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all descendant files matching a search pattern.
      *
-     * @param pattern The search pattern.
-     * @param searchOption Whether to search just this directory, or all
-     *            children.
+     * @param pattern      The search pattern.
+     * @param searchOption Whether to search just this directory, or all children.
      * @return An array of descendant files, or empty if none match.The search
-     *         pattern can include the wildcards * (matching 0 or more
-     *         characters)
-     *         and ? (matching 1 character). The option parameter determines
-     *         whether only immediate
-     *         children, or all children are returned.
+     *         pattern can include the wildcards * (matching 0 or more characters)
+     *         and ? (matching 1 character). The option parameter determines whether
+     *         only immediate children, or all children are returned.
      */
     public List<DiscFileInfo> getFiles(String pattern, String searchOption) {
         try {
-            return getFileSystem().getFiles(getPath(), pattern, searchOption).stream().map(p -> {
-                return new DiscFileInfo(getFileSystem(), p);
-            }).collect(Collectors.toList());
+            return getFileSystem().getFiles(getPath(), pattern, searchOption)
+                    .stream()
+                    .map(p -> new DiscFileInfo(getFileSystem(), p))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
@@ -221,9 +215,10 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscFileSystemInfo> getFileSystemInfos() {
         try {
-            return getFileSystem().getFileSystemEntries(getPath()).stream().map(p -> {
-                return new DiscFileSystemInfo(getFileSystem(), p);
-            }).collect(Collectors.toList());
+            return getFileSystem().getFileSystemEntries(getPath())
+                    .stream()
+                    .map(p -> new DiscFileSystemInfo(getFileSystem(), p))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }
@@ -233,15 +228,16 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      * Gets all files and directories in this directory.
      *
      * @param pattern The search pattern.
-     * @return An array of files and directories.The search pattern can include
-     *         the wildcards * (matching 0 or more characters)
-     *         and ? (matching 1 character).
+     * @return An array of files and directories.The search pattern can include the
+     *         wildcards * (matching 0 or more characters) and ? (matching 1
+     *         character).
      */
     public List<DiscFileSystemInfo> getFileSystemInfos(String pattern) {
         try {
-            return getFileSystem().getFileSystemEntries(getPath(), pattern).stream().map(p -> {
-                return new DiscFileSystemInfo(getFileSystem(), p);
-            }).collect(Collectors.toList());
+            return getFileSystem().getFileSystemEntries(getPath(), pattern)
+                    .stream()
+                    .map(p -> new DiscFileSystemInfo(getFileSystem(), p))
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             throw new moe.yo3explorer.dotnetio4j.IOException(e);
         }

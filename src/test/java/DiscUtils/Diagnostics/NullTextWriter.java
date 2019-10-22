@@ -33,7 +33,7 @@ public final class NullTextWriter extends PrintWriter {
     }
 
     public Charset getEncoding() {
-        return getEncoding();
+        return Charset.forName(System.getProperty("file.encoding"));
     }
 
     public void write(char value) {

@@ -33,35 +33,42 @@ import moe.yo3explorer.dotnetio4j.IOException;
 import moe.yo3explorer.dotnetio4j.Stream;
 
 
-public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context> implements
-                                    IUnixFileSystem {
+public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context>
+    implements IUnixFileSystem {
     private static final int XFS_ALLOC_AGFL_RESERVE = 4;
 
     private static final int BBSHIFT = 9;
 
     public VfsXfsFileSystem(Stream stream, FileSystemParameters parameters) {
         super(new XfsFileSystemOptions(parameters));
+
         stream.setPosition(0);
         byte[] superblockData = StreamUtilities.readExact(stream, 264);
+
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);
+
         if (superblock.getMagic() != SuperBlock.XfsMagic) {
             throw new IOException("Invalid superblock magic - probably not an xfs file system");
         }
 
-        setContext(new Context());
+        Context context = new Context();
+        context.setRawStream(stream);
+        context.setSuperBlock(superblock);
+        context.setOptions((XfsFileSystemOptions) getOptions());
+        setContext(context);
+
         AllocationGroup[] allocationGroups = new AllocationGroup[superblock.getAgCount()];
         long offset = 0;
         for (int i = 0; i < allocationGroups.length; i++) {
-            AllocationGroup ag = new AllocationGroup(getContext(), offset);
+            AllocationGroup ag = new AllocationGroup(context, offset);
             allocationGroups[ag.getInodeBtreeInfo().getSequenceNumber()] = ag;
-            offset = (xFS_AG_DADDR(getContext().getSuperBlock(),
-                                   i + 1,
-                                   xFS_AGF_DADDR(getContext().getSuperBlock())) << BBSHIFT) -
-                     superblock.getSectorSize();
+            offset = (xFS_AG_DADDR(context.getSuperBlock(), i + 1, xFS_AGF_DADDR(context.getSuperBlock())) << BBSHIFT) -
+                superblock.getSectorSize();
         }
-        getContext().setAllocationGroups(allocationGroups);
-        setRootDirectory(new Directory(getContext(), getContext().getInode(superblock.getRootInode())));
+        context.setAllocationGroups(allocationGroups);
+
+        setRootDirectory(new Directory(context, context.getInode(superblock.getRootInode())));
     }
 
     public String getFriendlyName() {
@@ -122,7 +129,9 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
             fdblocks += agf.getFreeBlockInfo().getFreeBlocks();
         }
         long alloc_set_aside = 0;
+
         alloc_set_aside = 4 + (superblock.getAgCount() * XFS_ALLOC_AGFL_RESERVE);
+
         if ((superblock.getReadOnlyCompatibleFeatures().ordinal() & ReadOnlyCompatibleFeatures.RMAPBT.ordinal()) != 0) {
             int rmapMaxlevels = 9;
             if ((superblock.getReadOnlyCompatibleFeatures().ordinal() & ReadOnlyCompatibleFeatures.REFLINK.ordinal()) != 0) {
@@ -131,7 +140,6 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
 
             alloc_set_aside += superblock.getAgCount() * rmapMaxlevels;
         }
-
         return (fdblocks - alloc_set_aside) * superblock.getBlocksize();
     }
 

@@ -76,11 +76,11 @@ public final class RegionInfo {
      * .
      */
     public String getWellKnownName() {
-        if (_entry.Guid == RegionEntry.BatGuid) {
+        if (_entry.Guid.equals(RegionEntry.BatGuid)) {
             return "BAT";
         }
 
-        if (_entry.Guid == RegionEntry.MetadataRegionGuid) {
+        if (_entry.Guid.equals(RegionEntry.MetadataRegionGuid)) {
             return "Metadata Region";
         }
 

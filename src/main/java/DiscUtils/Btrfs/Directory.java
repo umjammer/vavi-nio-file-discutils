@@ -51,7 +51,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
         Map<String, DirEntry> result = new HashMap<>();
         long treeId = DirEntry.getTreeId();
         long objectId = DirEntry.getObjectId();
-        if (DirEntry.getIsSubtree()) {
+        if (DirEntry.isSubtree()) {
             treeId = objectId;
             RootItem rootItem = Context.getRootTreeRoot()
                     .findFirst(RootItem.class, new Key(treeId, ItemType.RootItem), Context);

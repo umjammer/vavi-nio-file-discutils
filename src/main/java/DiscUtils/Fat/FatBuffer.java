@@ -114,10 +114,9 @@ public class FatBuffer {
         case Fat16:
             return (val & 0xFFFF) == 0xFFF7;
         case Fat32:
-            return (val & 0x0FFFFFF8) == 0x0FFFFFF7;
+            return (val & 0x0FFFFFFF) == 0x0FFFFFF7; // TODO bug report
         default:
             throw new IllegalArgumentException("Unknown FAT type");
-
         }
     }
 

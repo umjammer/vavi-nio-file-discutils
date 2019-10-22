@@ -37,8 +37,8 @@ public class DirectoryInode extends Inode implements IDirectoryInode {
     }
 
     public void setFileSize(long value) {
-        if (value > Short.MAX_VALUE) {
-            throw new IndexOutOfBoundsException("File size greater than " + Short.MAX_VALUE);
+        if (value > 0xffff) {
+            throw new IndexOutOfBoundsException("File size greater than " + 0xffff);
         }
 
         _fileSize = (short) value;

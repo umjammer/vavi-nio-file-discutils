@@ -24,14 +24,17 @@ package DiscUtils.Btrfs.Base;
 
 import java.util.Arrays;
 
+/**
+ * All root objectids between FIRST_FREE = 256ULL and LAST_FREE = -256ULL
+ * refer to file trees.
+ * <p>
+ * use ordinal
+ */
 public enum ReservedObjectId {
+    __dummyEnum__0,
     /**
-     * All root objectids between FIRST_FREE = 256ULL and LAST_FREE = -256ULL
-     * refer to file trees.
-     * 
      * The object id that refers to the ROOT_TREE itself
      */
-    __dummyEnum__0,
     RootTree,
     /**
      * The objectid that refers to the EXTENT_TREE

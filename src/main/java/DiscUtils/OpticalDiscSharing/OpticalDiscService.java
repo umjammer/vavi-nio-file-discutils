@@ -81,7 +81,10 @@ public final class OpticalDiscService {
             if (sdParam.getKey().startsWith("disk")) {
                 Map<String, String> diskParams = getParams(sdParam.getKey());
                 String infoVal;
+
                 DiscInfo info = new DiscInfo();
+                info.setName(sdParam.getKey());
+
                 if (diskParams.containsKey("adVN")) {
                     infoVal = diskParams.get("adVN");
                     info.setVolumeLabel(infoVal);
@@ -157,20 +160,29 @@ public final class OpticalDiscService {
         String askToken = null;
         Instant start = Instant.now();
         Duration maxWait = Duration.ofSeconds(maxWaitSecs);
-        while (askStatus.equals("unknown") && maxWait.compareTo(Duration.between(Instant.now(), start)) > 0) {
+        while ("unknown".equals(askStatus) && maxWait.compareTo(Duration.between(Instant.now(), start)) > 0) {
             try {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
-                Request wreq = new Request.Builder().url(uri.toString()).get().build();
+                Request wreq = new Request.Builder().url(newURI.toString()).get().build();
                 Response wrsp = client.newCall(wreq).execute();
                 try (Stream inStream = new JavaIOStream(wrsp.body().byteStream(), null)) {
                     Map<String, Object> plist = Plist.parse(inStream);
-                    askBusy = (boolean) plist.get("askBusy");
-                    askStatus = plist.get("askStatus") instanceof String ? (String) plist.get("askStatus") : (String) null;
-                    if (askStatus.equals("accepted")) {
-                        askToken = plist.get("askToken") instanceof String ? (String) plist.get("askToken") : (String) null;
+                    Object _askBusy = plist.get("askBusy");
+                    if (_askBusy instanceof Boolean) {
+                        askBusy = Boolean.class.cast(_askBusy);
+                    }
+                    Object _askStatus = plist.get("askStatus");
+                    if (_askStatus instanceof String) {
+                        askStatus = String.class.cast(_askStatus);
+                        if (askStatus.equals("accepted")) {
+                            Object _askToken = plist.get("askToken");
+                            if (_askToken instanceof String) {
+                                askToken = String.class.cast(_askToken);
+                            }
+                        }
                     }
                 }
             } catch (IOException e) {

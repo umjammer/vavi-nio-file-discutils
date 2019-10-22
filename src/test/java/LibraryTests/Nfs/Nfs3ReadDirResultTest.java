@@ -22,8 +22,8 @@
 
 package LibraryTests.Nfs;
 
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -49,32 +49,26 @@ public class Nfs3ReadDirResultTest {
         result.setEof(false);
         result.setCookieVerifier(1);
         Nfs3FileAttributes fileAttrs = new Nfs3FileAttributes();
-        fileAttrs.AccessTime = new Nfs3FileTime(LocalDateTime.of(2018, 1, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        fileAttrs.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        fileAttrs.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2018, 1, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        fileAttrs.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        fileAttrs.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2018, 1, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        fileAttrs.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         result.setDirAttributes(fileAttrs);
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
         entry.setCookie(2);
         Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();
-        dirAttrs.AccessTime = new Nfs3FileTime(LocalDateTime.of(2018, 2, 1, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        dirAttrs.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 2, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        dirAttrs.ChangeTime = new Nfs3FileTime(LocalDateTime.of(2018, 2, 2, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        dirAttrs.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 2, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        dirAttrs.ModifyTime = new Nfs3FileTime(LocalDateTime.of(2018, 2, 3, 0, 0, 0)
-                .atZone(ZoneId.of("UTC"))
+        dirAttrs.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 2, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         entry.setFileAttributes(dirAttrs);

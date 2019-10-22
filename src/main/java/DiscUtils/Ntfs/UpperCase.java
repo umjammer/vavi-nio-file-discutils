@@ -69,8 +69,8 @@ public final class UpperCase implements Comparator<String> {
     public int compare(byte[] x, int xOffset, int xLength, byte[] y, int yOffset, int yLength) {
         int compLen = Math.min(xLength, yLength) / 2;
         for (int i = 0; i < compLen; ++i) {
-            char xCh = (char) (x[xOffset + i * 2] | (x[xOffset + i * 2 + 1] << 8));
-            char yCh = (char) (y[yOffset + i * 2] | (y[yOffset + i * 2 + 1] << 8));
+            char xCh = (char) ((x[xOffset + i * 2] & 0xff) | (x[xOffset + i * 2 + 1] << 8));
+            char yCh = (char) ((y[yOffset + i * 2] & 0xff) | (y[yOffset + i * 2 + 1] << 8));
             int result = _table[xCh] - _table[yCh];
             if (result != 0) {
                 return result;
@@ -85,7 +85,7 @@ public final class UpperCase implements Comparator<String> {
     public static UpperCase initialize(File file) {
         byte[] buffer = new byte[(Character.MAX_VALUE + 1) * 2];
         for (int i = Character.MIN_VALUE; i <= Character.MAX_VALUE; ++i) {
-            EndianUtilities.writeBytesLittleEndian(Character.toUpperCase((char) i), buffer, i * 2);
+            EndianUtilities.writeBytesLittleEndian((short) Character.toUpperCase((char) i), buffer, i * 2);
         }
         Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite);
         try {

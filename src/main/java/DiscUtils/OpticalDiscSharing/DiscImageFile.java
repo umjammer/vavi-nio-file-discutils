@@ -35,6 +35,7 @@ import DiscUtils.Streams.Block.BlockCacheSettings;
 import DiscUtils.Streams.Block.BlockCacheStream;
 import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Util.Ownership;
+import DiscUtils.Streams.Util.Sizes;
 import moe.yo3explorer.dotnetio4j.FileAccess;
 
 
@@ -43,7 +44,11 @@ public final class DiscImageFile extends VirtualDiskLayer {
 
     public DiscImageFile(URI uri, String userName, String password) {
         __Content = new BufferStream(new DiscContentBuffer(uri, userName, password), FileAccess.Read);
+
         BlockCacheSettings cacheSettings = new BlockCacheSettings();
+        cacheSettings.setBlockSize((int) (32 * Sizes.OneKiB));
+        cacheSettings.setOptimumReadSize((int) (128 * Sizes.OneKiB));
+
         __Content = new BlockCacheStream(getContent(), Ownership.Dispose);
     }
 

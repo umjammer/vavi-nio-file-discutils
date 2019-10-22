@@ -29,6 +29,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -160,7 +161,7 @@ public class DiskTest {
             ms.read(firstSector, 0, 512);
             ms.seek(-512, SeekOrigin.End);
             ms.read(lastSector, 0, 512);
-            assertEquals(firstSector, lastSector);
+            assertArrayEquals(firstSector, lastSector);
         }
         // Check disabling AutoCommit really doesn't do the commit
 
@@ -179,7 +180,7 @@ public class DiskTest {
         ms.read(firstSector, 0, 512);
         ms.seek(-512, SeekOrigin.End);
         ms.read(lastSector, 0, 512);
-        assertEquals(firstSector, lastSector);
+        assertArrayEquals(firstSector, lastSector);
         // Finally, check default value for AutoCommit lines up with behaviour
         try (Disk disk = new Disk(ms, Ownership.None)) {
             assertTrue(disk.getAutoCommitFooter());

@@ -52,116 +52,16 @@ public final class Metadata {
         __ParentLocator = readStruct(ParentLocator.class, MetadataTable.ParentLocatorGuid, false);
     }
 
-//    private static class __MultiReader<T> implements Reader<T> {
-//        public T invoke(byte[] buffer, int offset) {
-//            List<Reader<T>> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            Reader<T> prev = null;
-//            for (Reader<T> d : copy) {
-//                if (prev != null)
-//                    prev.invoke(buffer, offset);
-//
-//                prev = d;
-//            }
-//            return prev.invoke(buffer, offset);
-//        }
-//
-//        private List<Reader<T>> _invocationList;
-//
-//        public static <T> Reader<T> combine(Reader<T> a, Reader<T> b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiReader<T> ret = new __MultiReader<>();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static <T> Reader<T> remove(Reader<T> a, Reader<T> b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<Reader<T>> aInvList = a.getInvocationList();
-//            List<Reader<T>> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiReader<T> ret = new __MultiReader<>();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<Reader<T>> getInvocationList() {
-//            return _invocationList;
-//        }
-//
-//    }
-
+    @FunctionalInterface
     private static interface Reader<T> {
+
         T invoke(byte[] buffer, int offset);
-
-//        List<Reader<T>> getInvocationList();
     }
-
-//    private static class __MultiWriter<T> implements Writer<T> {
-//        public void invoke(T val, byte[] buffer, int offset) {
-//            List<Writer<T>> copy = new ArrayList<>(), members = this.getInvocationList();
-//            synchronized (members) {
-//                copy = new LinkedList<>(members);
-//            }
-//            for (Writer<T> d : copy) {
-//                d.invoke(val, buffer, offset);
-//            }
-//        }
-//
-//        private List<Writer<T>> _invocationList;
-//
-//        public static <T> Writer<T> combine(Writer<T> a, Writer<T> b) {
-//            if (a == null)
-//                return b;
-//
-//            if (b == null)
-//                return a;
-//
-//            __MultiWriter<T> ret = new __MultiWriter<>();
-//            ret._invocationList = a.getInvocationList();
-//            ret._invocationList.addAll(b.getInvocationList());
-//            return ret;
-//        }
-//
-//        public static <T> Writer<T> remove(Writer<T> a, Writer<T> b) {
-//            if (a == null || b == null)
-//                return a;
-//
-//            List<Writer<T>> aInvList = a.getInvocationList();
-//            List<Writer<T>> newInvList = ListSupport.removeFinalStretch(aInvList, b.getInvocationList());
-//            if (aInvList == newInvList) {
-//                return a;
-//            } else {
-//                __MultiWriter<T> ret = new __MultiWriter<>();
-//                ret._invocationList = newInvList;
-//                return ret;
-//            }
-//        }
-//
-//        public List<Writer<T>> getInvocationList() {
-//            return _invocationList;
-//        }
-//
-//    }
 
     @FunctionalInterface
     private static interface Writer<T> {
-        void invoke(T val, byte[] buffer, int offset);
 
-//        List<Writer<T>> getInvocationList();
+        void invoke(T val, byte[] buffer, int offset);
     }
 
     private MetadataTable __Table;
@@ -314,7 +214,7 @@ public final class Metadata {
         MetadataEntryKey key = new MetadataEntryKey(itemId, isUser);
         if (getTable().Entries.containsKey(key)) {
             _regionStream.setPosition(getTable().Entries.get(key).Offset);
-            byte[] data = StreamUtilities.readExact(_regionStream, ReflectionHelper.sizeOf(UUID.class)); // uuid hard coded
+            byte[] data = StreamUtilities.readExact(_regionStream, ReflectionHelper.sizeOf(UUID.class)); // UUID is hard coded instead of T
             return reader.invoke(data, 0);
         }
 

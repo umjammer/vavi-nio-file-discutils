@@ -60,7 +60,7 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         _replayHandle = _nextReplayHandle.incrementAndGet();
     }
 
-    public void close() throws IOException {
+    public void close() {
         if (!_disposed && !_fileSystem.getInLockdown()) {
             long pos = _shadowPosition;
             _fileSystem.performActivity((fs, context) -> {

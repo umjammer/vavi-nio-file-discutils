@@ -23,6 +23,7 @@
 package DiscUtils.Nfs;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -32,12 +33,14 @@ public final class RpcClient implements IRpcClient {
 
     private final String _serverAddress;
 
-    private Map<Integer, RpcTcpTransport> _transports;
+    private Map<Integer, RpcTcpTransport> _transports = new HashMap<>();
+
+    private static Random random = new Random();
 
     public RpcClient(String address, RpcCredentials credential) {
         _serverAddress = address;
         __Credentials = credential;
-        _nextTransaction = new Random().nextInt();
+        _nextTransaction = random.nextInt();
         _transports.put(PortMap2.ProgramIdentifier, new RpcTcpTransport(address, 111));
     }
 

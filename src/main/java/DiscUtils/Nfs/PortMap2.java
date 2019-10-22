@@ -47,7 +47,7 @@ public final class PortMap2 extends RpcProgram {
         XdrDataWriter writer = startCallMessage(ms, null, PortMapProc2.GetPort);
         new PortMap2Mapping().write(writer);
         RpcReply reply = doSend(ms);
-        if (reply.getHeader().getIsSuccess()) {
+        if (reply.getHeader().isSuccess()) {
             @SuppressWarnings("unused")
             PortMap2Port port = new PortMap2Port(reply.getBodyReader());
             return reply.getBodyReader().readUInt32();

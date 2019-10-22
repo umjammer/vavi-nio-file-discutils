@@ -65,7 +65,7 @@ public class BiosPartitionTableTest {
         assertEquals(geom.toLogicalBlockAddress(geom.getLastSector()), table.get___idx(idx).getLastSector());
         assertEquals(geom.getLastSector(), ((BiosPartitionInfo) table.get___idx(idx)).getEnd());
         // Make sure the 'active' flag made it through...
-        assertTrue(((BiosPartitionInfo) table.get___idx(idx)).getIsActive());
+        assertTrue(((BiosPartitionInfo) table.get___idx(idx)).isActive());
         // Make sure the partition index is Zero
         assertEquals(0, ((BiosPartitionInfo) table.get___idx(idx)).getPrimaryIndex());
     }
@@ -169,8 +169,8 @@ public class BiosPartitionTableTest {
         table.create(3 * 1024 * 1024, WellKnownPartitionType.WindowsFat, false);
         table.setActivePartition(1);
         table.setActivePartition(2);
-        assertFalse(((BiosPartitionInfo) table.getPartitions().get(1)).getIsActive());
-        assertTrue(((BiosPartitionInfo) table.getPartitions().get(2)).getIsActive());
+        assertFalse(((BiosPartitionInfo) table.getPartitions().get(1)).isActive());
+        assertTrue(((BiosPartitionInfo) table.getPartitions().get(2)).isActive());
     }
 
     @Test

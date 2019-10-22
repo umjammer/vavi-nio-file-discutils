@@ -22,7 +22,6 @@
 
 package LibraryTests.Vhd;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -125,7 +124,7 @@ public class DynamicStreamTest {
         try {
             contentStream.setPosition(0);
             assertTrue(false);
-        } catch (IOException __dummyCatchVar0) {
+        } catch (IOException e) {
         }
     }
 
@@ -152,20 +151,20 @@ public class DynamicStreamTest {
             disk.getContent().setPosition(20 * 512);
             disk.getContent().write(new byte[4 * 512], 0, 4 * 512);
             // Starts before first extent, ends before end of extent
-            List<StreamExtent> extents = new ArrayList<>(disk.getContent().getExtentsInRange(0, 21 * 512));
+            List<StreamExtent> extents = disk.getContent().getExtentsInRange(0, 21 * 512);
             assertEquals(1, extents.size());
             assertEquals(20 * 512, extents.get(0).getStart());
             assertEquals(1 * 512, extents.get(0).getLength());
             // Limit to disk content length
-            extents = new ArrayList<>(disk.getContent().getExtentsInRange(21 * 512, 20 * 512));
+            extents = disk.getContent().getExtentsInRange(21 * 512, 20 * 512);
             assertEquals(1, extents.size());
             assertEquals(21 * 512, extents.get(0).getStart());
             assertEquals(3 * 512, extents.get(0).getLength());
             // Out of range
-            extents = new ArrayList<>(disk.getContent().getExtentsInRange(25 * 512, 4 * 512));
+            extents = disk.getContent().getExtentsInRange(25 * 512, 4 * 512);
             assertEquals(0, extents.size());
             // Non-sector multiples
-            extents = new ArrayList<>(disk.getContent().getExtentsInRange(21 * 512 + 10, 20 * 512));
+            extents = disk.getContent().getExtentsInRange(21 * 512 + 10, 20 * 512);
             assertEquals(1, extents.size());
             assertEquals(21 * 512 + 10, extents.get(0).getStart());
             assertEquals(3 * 512 - 10, extents.get(0).getLength());

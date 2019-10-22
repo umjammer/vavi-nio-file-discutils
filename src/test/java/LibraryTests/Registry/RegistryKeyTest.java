@@ -38,7 +38,7 @@ import moe.yo3explorer.dotnetio4j.MemoryStream;
 public class RegistryKeyTest {
     private RegistryHive hive;
 
-    public RegistryKeyTest() throws Exception {
+    public RegistryKeyTest() {
         hive = RegistryHive.create(new MemoryStream());
     }
 

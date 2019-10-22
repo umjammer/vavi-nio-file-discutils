@@ -113,7 +113,6 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             return new SidComparer();
         default:
             throw new UnsupportedOperationException();
-
         }
     }
 
@@ -153,7 +152,6 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
 
             return 0;
         }
-
     }
 
     private final static class UnsignedLongComparer implements Comparator<byte[]> {
@@ -182,7 +180,6 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
 
             return 0;
         }
-
     }
 
     private final static class MultipleUnsignedLongComparer implements Comparator<byte[]> {
@@ -209,11 +206,9 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 if (xVal > yVal) {
                     return 1;
                 }
-
             }
             return 0;
         }
-
     }
 
     private final static class FileNameComparer implements Comparator<byte[]> {
@@ -240,7 +235,6 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             byte yFnLen = y[0x40];
             return _stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2);
         }
-
     }
 
     private final static class SidComparer implements Comparator<byte[]> {

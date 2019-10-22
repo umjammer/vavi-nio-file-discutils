@@ -32,16 +32,15 @@ import moe.yo3explorer.dotnetio4j.Stream;
 
 
 /**
- * Represents a sparse stream.
- * A sparse stream is a logically contiguous stream where some parts of the
- * stream
- * aren't stored. The unstored parts are implicitly zero-byte ranges.
+ * Represents a sparse stream. A sparse stream is a logically contiguous stream
+ * where some parts of the stream aren't stored. The unstored parts are
+ * implicitly zero-byte ranges.
  */
 public abstract class SparseStream extends Stream {
 
     /**
-     * Gets the parts of the stream that are stored.
-     * This may be an empty enumeration if all bytes are zero.
+     * Gets the parts of the stream that are stored. This may be an empty
+     * enumeration if all bytes are zero.
      */
     public abstract List<StreamExtent> getExtents();
 
@@ -49,13 +48,10 @@ public abstract class SparseStream extends Stream {
      * Converts any stream into a sparse stream.
      *
      * @param stream The stream to convert.
-     * @param takeOwnership
-     *            {@code true}
-     *            to have the new stream dispose the wrapped
+     * @param takeOwnership {@code true} to have the new stream dispose the wrapped
      *            stream when it is disposed.
-     * @return A sparse stream.The returned stream has the entire wrapped stream
-     *         as a
-     *         single extent.
+     * @return A sparse stream.The returned stream has the entire wrapped stream as
+     *         a single extent.
      */
     public static SparseStream fromStream(Stream stream, Ownership takeOwnership) {
         return new SparseWrapperStream(stream, takeOwnership, null);
@@ -65,20 +61,13 @@ public abstract class SparseStream extends Stream {
      * Converts any stream into a sparse stream.
      *
      * @param stream The stream to convert.
-     * @param takeOwnership
-     *            {@code true}
-     *            to have the new stream dispose the wrapped
+     * @param takeOwnership {@code true} to have the new stream dispose the wrapped
      *            stream when it is disposed.
-     * @param extents The set of extents actually stored in
-     *            {@code stream}
-     *            .
-     * @return A sparse stream.The returned stream has the entire wrapped stream
-     *         as a
-     *         single extent.
+     * @param extents The set of extents actually stored in {@code stream} .
+     * @return A sparse stream.The returned stream has the entire wrapped stream as
+     *         a single extent.
      */
-    public static SparseStream fromStream(Stream stream,
-                                          Ownership takeOwnership,
-                                          List<StreamExtent> extents) {
+    public static SparseStream fromStream(Stream stream, Ownership takeOwnership, List<StreamExtent> extents) {
         return new SparseWrapperStream(stream, takeOwnership, extents);
     }
 
@@ -86,9 +75,8 @@ public abstract class SparseStream extends Stream {
      * Efficiently pumps data from a sparse stream to another stream.
      *
      * @param inStream The sparse stream to pump from.
-     * @param outStream The stream to pump to.
-     *            {@code outStream}
-     *            must support seeking.
+     * @param outStream The stream to pump to. {@code outStream} must support
+     *            seeking.
      */
     public static void pump(Stream inStream, Stream outStream) {
         pump(inStream, outStream, Sizes.Sector);
@@ -100,11 +88,8 @@ public abstract class SparseStream extends Stream {
      * @param inStream The stream to pump from.
      * @param outStream The stream to pump to.
      * @param chunkSize The smallest sequence of zero bytes that will be skipped
-     *            when writing to
-     *            {@code outStream}
-     *            .
-     *            {@code outStream}
-     *            must support seeking.
+     *            when writing to {@code outStream} . {@code outStream} must support
+     *            seeking.
      */
     public static void pump(Stream inStream, Stream outStream, int chunkSize) {
         StreamPump pump = new StreamPump(inStream, outStream, chunkSize);
@@ -115,10 +100,8 @@ public abstract class SparseStream extends Stream {
      * Wraps a sparse stream in a read-only wrapper, preventing modification.
      *
      * @param toWrap The stream to make read-only.
-     * @param ownership Whether to transfer responsibility for calling Dispose
-     *            on
-     *            {@code toWrap}
-     *            .
+     * @param ownership Whether to transfer responsibility for calling Dispose on
+     *            {@code toWrap} .
      * @return The read-only stream.
      */
     public static SparseStream readOnly(SparseStream toWrap, Ownership ownership) {
@@ -129,19 +112,15 @@ public abstract class SparseStream extends Stream {
      * Clears bytes from the stream.
      *
      * @param count The number of bytes (from the current position) to
-     *            clear.Logically equivalent to writing
-     *            {@code count}
-     *            null/zero bytes to the stream, some
-     *            implementations determine that some (or all) of the range
-     *            indicated is not actually
-     *            stored. There is no direct, automatic, correspondence to
-     *            clearing bytes and them
-     *            not being represented as an 'extent' - for example, the
-     *            implementation of the underlying
-     *            stream may not permit fine-grained extent storage.It is always
-     *            safe to call this method to 'zero-out' a section of a stream,
-     *            regardless of
-     *            the underlying stream implementation.
+     *            clear.Logically equivalent to writing {@code count} null/zero
+     *            bytes to the stream, some implementations determine that some (or
+     *            all) of the range indicated is not actually stored. There is no
+     *            direct, automatic, correspondence to clearing bytes and them not
+     *            being represented as an 'extent' - for example, the implementation
+     *            of the underlying stream may not permit fine-grained extent
+     *            storage.It is always safe to call this method to 'zero-out' a
+     *            section of a stream, regardless of the underlying stream
+     *            implementation.
      */
     public void clear(int count) {
         write(new byte[count], 0, count);
@@ -231,15 +210,12 @@ public abstract class SparseStream extends Stream {
 
         private Stream _wrapped;
 
-        public SparseWrapperStream(Stream wrapped,
-                Ownership ownsWrapped,
-                List<StreamExtent> extents) {
+        public SparseWrapperStream(Stream wrapped, Ownership ownsWrapped, List<StreamExtent> extents) {
             _wrapped = wrapped;
             _ownsWrapped = ownsWrapped;
             if (extents != null) {
                 _extents = extents;
             }
-
         }
 
         public boolean canRead() {

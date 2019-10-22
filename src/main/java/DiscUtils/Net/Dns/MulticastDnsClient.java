@@ -24,7 +24,6 @@ package DiscUtils.Net.Dns;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
@@ -33,6 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 
 /**
@@ -49,6 +52,8 @@ import java.util.Random;
  * not binding to port 5353.
  */
 public final class MulticastDnsClient extends DnsClient implements Closeable {
+    private static final Logger logger = Logger.getLogger(MulticastDnsClient.class.getName());
+
     private Map<String, Map<RecordType, List<ResourceRecord>>> _cache;
 
     private short _nextTransId;
@@ -57,16 +62,34 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
     private DatagramChannel _udpClient;
 
+    private ExecutorService es = Executors.newSingleThreadExecutor();
+
+    private static Random random = new Random();
+
     /**
      * Initializes a new instance of the MulticastDnsClient class.
      */
     public MulticastDnsClient() {
-        _nextTransId = (short) new Random().nextInt();
-        _transactions = new HashMap<>();
-        _udpClient = DatagramChannel.open(); // IPAddress.Any, 0
-        _udpClient.socket().bind(new InetSocketAddress(0));
-        _udpClient.beginReceive(this::receiveCallback, null);
-        _cache = new HashMap<>();
+        try {
+            _nextTransId = (short) random.nextInt();
+            _transactions = new HashMap<>();
+            _udpClient = DatagramChannel.open(); // IPAddress.Any, 0
+            _udpClient.socket().bind(new InetSocketAddress(0));
+            es.execute(() -> {
+                while (true) {
+                    try {
+                        ByteBuffer packetBytes = ByteBuffer.allocate(1800); // TODO size
+                        _udpClient.receive(packetBytes);
+                        receiveCallback(packetBytes.array());
+                    } catch (IOException e) {
+                        logger.info(e.getMessage());
+                    }
+                }
+            });
+            _cache = new HashMap<>();
+        } catch (IOException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+        }
     }
 
     /**
@@ -131,28 +154,41 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
     private ResourceRecord[] queryNetwork(String name, RecordType type) {
         short transactionId = _nextTransId++;
         String normName = normalizeDomainName(name);
+
         Transaction transaction = new Transaction();
         try {
             synchronized (_transactions) {
                 _transactions.put(transactionId, transaction);
             }
+
             PacketWriter writer = new PacketWriter(1800);
             Message msg = new Message();
             msg.setTransactionId(transactionId);
             msg.setFlags(new MessageFlags(false, OpCode.Query, false, false, false, false, ResponseCode.Success));
-            msg.getQuestions().add(new Question());
+            Question question = new Question();
+            question.setName(normName);
+            question.setType(type);
+            question.setClass(RecordClass.Internet);
+            msg.getQuestions().add(question);
+
             msg.writeTo(writer);
+
             byte[] msgBytes = writer.getBytes();
+
             InetSocketAddress mDnsAddress = new InetSocketAddress("224.0.0.251", 5353);
             synchronized (_udpClient) {
                 _udpClient.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
             }
-            transaction.getCompleteEvent().waitOne(2000);
+
+            transaction.getCompleteEvent().await(2000, TimeUnit.MILLISECONDS);
+        } catch (IOException | InterruptedException e) {
+            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         } finally {
             synchronized (_transactions) {
                 _transactions.remove(transactionId);
             }
         }
+
         return transaction.getAnswers().toArray(new ResourceRecord[0]);
     }
 
@@ -188,32 +224,28 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
         }
     }
 
-    private void receiveCallback(IAsyncResult ar) {
-        try {
-            InetSocketAddress[] sender = new InetSocketAddress[] { null };
-            byte[] packetBytes;
-            synchronized (_udpClient) {
-                packetBytes = _udpClient.EndReceive(ar, sender);
+    private void receiveCallback(byte[] packetBytes) {
+        PacketReader reader = new PacketReader(packetBytes);
+        Message msg = Message.read(reader);
+        synchronized (_transactions) {
+            Transaction transaction = _transactions.get(msg.getTransactionId());
+            for (ResourceRecord answer : msg.getAdditionalRecords()) {
+                addRecord(_cache, answer);
             }
-            PacketReader reader = new PacketReader(packetBytes);
-            Message msg = Message.read(reader);
-            synchronized (_transactions) {
-                Transaction transaction = _transactions.get(msg.getTransactionId());
-                for (ResourceRecord answer : msg.getAdditionalRecords()) {
-                    addRecord(_cache, answer);
+            for (ResourceRecord answer : msg.getAnswers()) {
+                if (transaction != null) {
+                    transaction.getAnswers().add(answer);
                 }
-                for (ResourceRecord answer : msg.getAnswers()) {
-                    if (transaction != null) {
-                        transaction.getAnswers().add(answer);
-                    }
 
-                    addRecord(_cache, answer);
-                }
+                addRecord(_cache, answer);
             }
-        } finally {
-            synchronized (_udpClient) {
-                _udpClient.beginReceive(this::receiveCallback, null);
+            if (transaction != null) {
+                transaction.getCompleteEvent().countDown();
             }
         }
+    }
+
+    protected void finalize() {
+        es.shutdown();
     }
 }

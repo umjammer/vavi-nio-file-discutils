@@ -42,7 +42,7 @@ public final class DiskTransport extends VirtualDiskTransport {
 
     private String _path;
 
-    public boolean getIsRawDisk() {
+    public boolean isRawDisk() {
         return false;
     }
 
@@ -50,7 +50,7 @@ public final class DiskTransport extends VirtualDiskTransport {
         String fsPath = uri.getPath();
         // Find the best (least specific) export
         String bestRoot = null;
-        int bestMatchLength = Integer.MAX_VALUE;
+        int bestMatchLength = 0xffffffff;
         for (String export : NfsFileSystem.getExports(uri.getHost())) {
             if (fsPath.length() >= export.length()) {
                 int matchLength = export.length();
@@ -97,7 +97,5 @@ public final class DiskTransport extends VirtualDiskTransport {
             _fileSystem.close();
             _fileSystem = null;
         }
-
-        super.close();
     }
 }

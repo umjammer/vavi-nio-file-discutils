@@ -37,7 +37,7 @@ public class DirectoryEntry {
         return __Details;
     }
 
-    public boolean getIsDirectory() {
+    public boolean isDirectory() {
         return getDetails().Flags.contains(FileAttributeFlags.Directory);
     }
 

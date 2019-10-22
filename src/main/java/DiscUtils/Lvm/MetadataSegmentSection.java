@@ -43,7 +43,7 @@ public class MetadataSegmentSection {
     public List<MetadataStripe> Stripes;
 
     public void parse(String head, Scanner data) {
-        Name = head.trim().replaceFirst("{*$", "").replaceFirst(" *$", "");
+        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while ((line = Metadata.readLine(data)) != null) {
             if (line.equals(""))

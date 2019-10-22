@@ -53,7 +53,7 @@ public enum FatAttributes {
     }
 
     public static long valueOf(EnumSet<FatAttributes> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
     }
 
     // TODO name()
@@ -64,7 +64,7 @@ public enum FatAttributes {
     // TODO name()
     public static EnumSet<FatAttributes> toEnumSet(Map<String, Object> flags) {
         return Arrays.stream(values())
-                .filter(v -> Boolean.class.cast(flags.get(v.name())))
+                .filter(v -> flags.containsKey(v.name()) && Boolean.class.cast(flags.get(v.name())))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FatAttributes.class)));
     }
 }

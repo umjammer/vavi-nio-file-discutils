@@ -93,8 +93,7 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
 
     public boolean tryGetValue(K key, D[] data) {
         byte[][] value = new byte[1][];
-        boolean boolVar___0 = _index.tryGetValue(unconvert(key), value);
-        if (boolVar___0) {
+        if (_index.tryGetValue(unconvert(key), value)) {
             data[0] = convert(valueClass, value[0]);
             return true;
         }

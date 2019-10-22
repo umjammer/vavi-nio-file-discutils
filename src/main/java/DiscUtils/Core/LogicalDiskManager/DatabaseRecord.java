@@ -80,7 +80,7 @@ public abstract class DatabaseRecord {
         int length = buffer[offset[0]];
         long result = 0;
         for (int i = 0; i < length; ++i) {
-            result = (result << 8) | buffer[offset[0] + i + 1];
+            result = (result << 8) | (buffer[offset[0] + i + 1] & 0xff);
         }
         offset[0] += length + 1;
         return result;

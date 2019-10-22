@@ -90,7 +90,7 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
     public long mapPosition(long pos) {
         long vcn = pos / _bytesPerCluster;
         int dataRunIdx = _cookedRuns.findDataRun(vcn, 0);
-        if (_cookedRuns.get___idx(dataRunIdx).getIsSparse()) {
+        if (_cookedRuns.get___idx(dataRunIdx).isSparse()) {
             return -1;
         }
 

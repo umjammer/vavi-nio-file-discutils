@@ -39,7 +39,7 @@ public class RpcMessageHeader {
         setReplyHeader(new RpcReplyHeader(reader));
     }
 
-    public boolean getIsSuccess() {
+    public boolean isSuccess() {
         return getReplyHeader() != null && getReplyHeader().Status == RpcReplyStatus.Accepted
                 && getReplyHeader().AcceptReply.AcceptStatus == RpcAcceptStatus.Success;
     }
@@ -79,12 +79,12 @@ public class RpcMessageHeader {
             return false;
         }
 
-        return other.getIsSuccess() == getIsSuccess() && other.getTransactionId() == getTransactionId()
+        return other.isSuccess() == isSuccess() && other.getTransactionId() == getTransactionId()
                 && other.getReplyHeader().equals(getReplyHeader());
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getIsSuccess(), getTransactionId(), getReplyHeader());
+        return Utilities.getCombinedHashCode(isSuccess(), getTransactionId(), getReplyHeader());
     }
 
     public static RpcMessageHeader accepted(int transactionId) {

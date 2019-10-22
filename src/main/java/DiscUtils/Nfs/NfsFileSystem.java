@@ -325,7 +325,7 @@ public class NfsFileSystem extends DiscFileSystem {
         try {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             List<String> dirs = new ArrayList<>();
-            doSearch(dirs, path, re, searchOption == "AllDirectories", true, false);
+            doSearch(dirs, path, re, "AllDirectories".equalsIgnoreCase(searchOption), true, false);
             return dirs;
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
@@ -346,7 +346,7 @@ public class NfsFileSystem extends DiscFileSystem {
         try {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             List<String> results = new ArrayList<>();
-            doSearch(results, path, re, searchOption == "AllDirectories", false, true);
+            doSearch(results, path, re, "AllDirectories".equalsIgnoreCase(searchOption), false, true);
             return results;
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
@@ -484,7 +484,7 @@ public class NfsFileSystem extends DiscFileSystem {
             } else {
                 Nfs3FileHandle handle = getFile(path);
                 EnumSet<Nfs3AccessPermissions> actualPerms = _client.access(handle, requested);
-                if (actualPerms != requested) {
+                if (!actualPerms.equals(requested)) {
                     throw new moe.yo3explorer.dotnetio4j.IOException(String
                             .format("Access denied opening '%s'. Requested permission '%s', got '%s'",
                                     path,
@@ -541,7 +541,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param newValue The new attributes of the file or directory.
      */
     public void setAttributes(String path, Map<String, Object> newValue) {
-        if (newValue != getAttributes(path)) {
+        if (!newValue.equals(getAttributes(path))) {
             throw new UnsupportedOperationException("Unable to change file attributes over NFS");
         }
     }
