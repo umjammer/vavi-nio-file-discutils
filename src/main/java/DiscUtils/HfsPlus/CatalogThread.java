@@ -33,7 +33,7 @@ public final class CatalogThread implements IByteArraySerializable {
 
     public CatalogRecordType RecordType = CatalogRecordType.None;
 
-    public long getSize() {
+    public int sizeOf() {
         return 0;
     }
 

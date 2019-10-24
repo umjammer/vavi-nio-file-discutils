@@ -1,8 +1,6 @@
 
 package DiscUtils.Udf;
 
-import java.util.Arrays;
-
 public enum CharacterSetType {
     CharacterSet0,
     CharacterSet1,
@@ -15,6 +13,6 @@ public enum CharacterSetType {
     CharacterSet8;
 
     public static CharacterSetType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

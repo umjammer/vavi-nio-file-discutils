@@ -33,9 +33,9 @@ public class AnchorVolumeDescriptorPointer extends TaggedDescriptor<AnchorVolume
 
     public int parse(byte[] buffer, int offset) {
         MainDescriptorSequence = new ExtentDescriptor();
-        MainDescriptorSequence.readFrom(buffer, offset + (int) Tag.getSize());
+        MainDescriptorSequence.readFrom(buffer, offset + Tag.sizeOf());
         ReserveDescriptorSequence = new ExtentDescriptor();
-        ReserveDescriptorSequence.readFrom(buffer, (int) (offset + Tag.getSize() + MainDescriptorSequence.getSize()));
+        ReserveDescriptorSequence.readFrom(buffer, offset + Tag.sizeOf() + MainDescriptorSequence.sizeOf());
         return 512;
     }
 }

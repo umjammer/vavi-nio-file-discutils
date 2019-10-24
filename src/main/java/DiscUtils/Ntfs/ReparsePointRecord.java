@@ -34,13 +34,13 @@ public final class ReparsePointRecord implements IByteArraySerializable, IDiagno
 
     public int Tag;
 
-    public long getSize() {
+    public int sizeOf() {
         return 8 + Content.length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        short length = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         Content = new byte[length];
         System.arraycopy(buffer, offset + 8, Content, 0, length);
         return 8 + length;

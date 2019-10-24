@@ -30,7 +30,7 @@ import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Buffer.IMappedBuffer;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {

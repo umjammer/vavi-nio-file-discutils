@@ -34,7 +34,7 @@ public class DiskArea implements IByteArraySerializable {
     /**
      *
      */
-    public long getSize() {
+    public int sizeOf() {
         return 16;
     }
 
@@ -44,7 +44,7 @@ public class DiskArea implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         Offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
         Length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

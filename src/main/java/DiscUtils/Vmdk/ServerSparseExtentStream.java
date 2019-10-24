@@ -28,7 +28,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class ServerSparseExtentStream extends CommonSparseExtentStream {
@@ -55,7 +55,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (_position + count > getLength()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to write beyond end of stream");
         }
 
         int totalWritten = 0;

@@ -29,7 +29,7 @@ import DiscUtils.Core.Compression.BlockCompressor;
 import DiscUtils.Core.Compression.CompressionResult;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public final class CompressedClusterStream extends ClusterStream {

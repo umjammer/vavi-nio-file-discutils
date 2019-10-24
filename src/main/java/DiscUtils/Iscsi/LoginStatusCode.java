@@ -22,8 +22,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
-
 public enum LoginStatusCode {
     /**
      * Reasons for iSCSI login sucess or failure.
@@ -104,6 +102,6 @@ public enum LoginStatusCode {
     OutOfResources;
 
     public static LoginStatusCode valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

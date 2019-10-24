@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import DiscUtils.Nfs.RpcMessageHeader;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class RpcMessageHeaderTest {

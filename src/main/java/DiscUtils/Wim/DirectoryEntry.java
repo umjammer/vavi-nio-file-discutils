@@ -30,7 +30,7 @@ import java.util.Map;
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.ReaderWriter.DataReader;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
+import dotnet4j.io.FileNotFoundException;
 
 
 public class DirectoryEntry {

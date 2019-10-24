@@ -40,8 +40,8 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -175,7 +175,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 try {
                     fs.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -293,7 +293,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 try {
                     s.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
         Bitmap indexBitmap = null;
@@ -423,7 +423,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     try {
                         bitmapStream.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
 
@@ -432,7 +432,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 try {
                     mftStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }

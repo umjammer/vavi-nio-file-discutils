@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 public class MirrorStream extends SparseStream {
@@ -111,7 +111,7 @@ public class MirrorStream extends SparseStream {
     public void clear(int count) {
         long pos = _wrapped.get(0).getPosition();
         if (pos + count > _length) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to clear beyond end of mirrored stream");
+            throw new dotnet4j.io.IOException("Attempt to clear beyond end of mirrored stream");
         }
 
         for (SparseStream stream : _wrapped) {
@@ -123,7 +123,7 @@ public class MirrorStream extends SparseStream {
     public void write(byte[] buffer, int offset, int count) {
         long pos = _wrapped.get(0).getPosition();
         if (pos + count > _length) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of mirrored stream");
+            throw new dotnet4j.io.IOException("Attempt to write beyond end of mirrored stream");
         }
 
         for (SparseStream stream  : _wrapped) {

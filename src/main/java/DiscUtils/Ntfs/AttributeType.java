@@ -22,8 +22,6 @@
 
 package DiscUtils.Ntfs;
 
-import java.util.Arrays;
-
 public enum AttributeType {
     /**
      * Enumeration of NTFS file attribute types.
@@ -339,6 +337,6 @@ public enum AttributeType {
     LoggedUtilityStream;
 
     public static AttributeType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

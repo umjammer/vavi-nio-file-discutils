@@ -223,7 +223,7 @@ public class DevItem extends BaseItem {
         __FsUuid = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return Length;
     }
 
@@ -242,6 +242,6 @@ public class DevItem extends BaseItem {
         setBandwidth(buffer[offset + 0x41]);
         setDeviceUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x42));
         setFsUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x52));
-        return (int) getSize();
+        return sizeOf();
     }
 }

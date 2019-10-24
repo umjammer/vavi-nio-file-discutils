@@ -27,7 +27,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import DiscUtils.Streams.Util.MathUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class IndexNode {

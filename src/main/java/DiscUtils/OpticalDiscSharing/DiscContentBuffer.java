@@ -33,8 +33,8 @@ import java.util.Map;
 
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.JavaIOStream;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -93,7 +93,7 @@ public final class DiscContentBuffer extends Buffer {
             }
             return read;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -146,7 +146,7 @@ public final class DiscContentBuffer extends Buffer {
                 String[] authMethod = new String[1];
                 Map<String, String> authParams = parseAuthenticationHeader(wresp.header("WWW-Authenticate"), authMethod);
                 if (!authMethod[0].equals("Digest")) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("status: " + wresp.code());
+                    throw new dotnet4j.io.IOException("status: " + wresp.code());
                 }
 
                 String resp = calcDigestResponse(authParams.get("nonce"),
@@ -160,13 +160,13 @@ public final class DiscContentBuffer extends Buffer {
                 try {
                     return client.newCall(wr).execute();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             } else {
-                throw new moe.yo3explorer.dotnetio4j.IOException("status: " + wresp.code());
+                throw new dotnet4j.io.IOException("status: " + wresp.code());
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

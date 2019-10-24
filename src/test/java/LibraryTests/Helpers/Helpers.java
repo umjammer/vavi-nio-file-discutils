@@ -2,12 +2,12 @@
 
 package LibraryTests.Helpers;
 
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.GZipStream;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.JavaIOStream;
+import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.compression.GZipStream;
 
 
 public class Helpers {

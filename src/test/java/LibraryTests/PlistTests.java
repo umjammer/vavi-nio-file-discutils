@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import DiscUtils.Core.Plist;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.JavaIOStream;
 
 
 public class PlistTests {

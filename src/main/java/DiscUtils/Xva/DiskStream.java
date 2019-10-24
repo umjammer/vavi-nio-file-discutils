@@ -34,8 +34,8 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.ZeroStream;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class DiskStream extends SparseStream {
@@ -58,7 +58,7 @@ public class DiskStream extends SparseStream {
         _length = length;
         _dir = dir;
         if (!archive.dirExists(_dir)) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("No such disk");
+            throw new dotnet4j.io.IOException("No such disk");
         }
 
         readChunkSkipList();
@@ -109,7 +109,7 @@ public class DiskStream extends SparseStream {
 
     public void setPosition(long value) {
         if (value > _length) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to move beyond end of stream");
         }
 
         _position = value;
@@ -124,7 +124,7 @@ public class DiskStream extends SparseStream {
         }
 
         if (_position > _length) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
         int chunk = correctChunkIndex((int) (_position / Sizes.OneMiB));
@@ -133,7 +133,7 @@ public class DiskStream extends SparseStream {
                 try {
                     _currentChunkData.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
                 _currentChunkData = null;
             }
@@ -165,7 +165,7 @@ public class DiskStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         setPosition(effectiveOffset);

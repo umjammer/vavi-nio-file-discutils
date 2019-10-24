@@ -84,7 +84,7 @@ public final class VhdxHeader implements IByteArraySerializable {
         return Checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, 4096);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return (int) (4 * Sizes.OneKiB);
     }
 
@@ -96,11 +96,11 @@ public final class VhdxHeader implements IByteArraySerializable {
         FileWriteGuid = EndianUtilities.toGuidLittleEndian(_data, 16);
         DataWriteGuid = EndianUtilities.toGuidLittleEndian(_data, 32);
         LogGuid = EndianUtilities.toGuidLittleEndian(_data, 48);
-        LogVersion = (short) EndianUtilities.toUInt16LittleEndian(_data, 64);
-        Version = (short) EndianUtilities.toUInt16LittleEndian(_data, 66);
+        LogVersion = EndianUtilities.toUInt16LittleEndian(_data, 64);
+        Version = EndianUtilities.toUInt16LittleEndian(_data, 66);
         LogLength = EndianUtilities.toUInt32LittleEndian(_data, 68);
         LogOffset = EndianUtilities.toUInt64LittleEndian(_data, 72);
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

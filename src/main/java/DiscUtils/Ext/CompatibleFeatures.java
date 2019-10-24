@@ -22,8 +22,6 @@
 
 package DiscUtils.Ext;
 
-import java.util.Arrays;
-
 public enum CompatibleFeatures {
     /**
      * Feature flags for backwards compatible features.
@@ -81,6 +79,6 @@ public enum CompatibleFeatures {
     DirectoryIndex;
 
     public static CompatibleFeatures valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -57,11 +57,11 @@ import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 /**
@@ -239,7 +239,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             if (destDirEntry != null && !destDirEntry.isDirectory()) {
                 if (overwrite) {
                     if (destDirEntry.getReference().getMftIndex() == sourceEntry.getReference().getMftIndex()) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists and is the source file");
+                        throw new dotnet4j.io.IOException("Destination file already exists and is the source file");
                     }
 
                     File oldFile = getFile(destDirEntry.getReference());
@@ -249,7 +249,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                     }
 
                 } else {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists");
+                    throw new dotnet4j.io.IOException("Destination file already exists");
                 }
             }
 
@@ -279,7 +279,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                                 try {
                                     d.close();
                                 } catch (IOException e) {
-                                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                                    throw new dotnet4j.io.IOException(e);
                                 }
                         }
                     } finally {
@@ -287,7 +287,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                             try {
                                 s.close();
                             } catch (IOException e) {
-                                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                                throw new dotnet4j.io.IOException(e);
                             }
                     }
                     break;
@@ -300,7 +300,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             addFileToDirectory(newFile, destParentDir, Utilities.getFileFromPath(destinationFile), null);
             destParentDirEntry.updateFrom(destParentDir);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -322,7 +322,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         Closeable __newVar1 = new NtfsTransaction();
         try {
             if (path == null || path.isEmpty()) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to delete root directory");
+                throw new dotnet4j.io.IOException("Unable to delete root directory");
             }
 
             String parent = Utilities.getDirectoryFromPath(path);
@@ -339,7 +339,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             Directory dir = getDirectory(dirEntry.getReference());
             if (!dir.isEmpty()) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to delete non-empty directory");
+                throw new dotnet4j.io.IOException("Unable to delete non-empty directory");
             }
 
             if (dirEntry.getDetails().getFileAttributes().containsKey("ReparsePoint")) {
@@ -355,7 +355,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 try {
                     __newVar1.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -407,7 +407,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 try {
                     __newVar2.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -433,7 +433,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 try {
                     __newVar3.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -449,7 +449,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             return dirEntry != null && !dirEntry.getDetails().getFileAttributes().containsKey("Directory");
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -470,7 +470,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             doSearch(dirs, path, re, searchOption.equals("AllDirectories"), true, false);
             return dirs;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -490,7 +490,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             doSearch(results, path, re, searchOption.equals("AllDirectories"), false, true);
             return results;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -512,7 +512,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 return Utilities.combinePaths(path, m.getDetails().FileName);
             }).collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -548,7 +548,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 try {
                     __newVar8.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -582,14 +582,14 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 Directory destParentDir = getDirectory(destParentDirEntry.getReference());
                 DirectoryEntry destDirEntry = destParentDir.getEntryByName(Utilities.getFileFromPath(destinationDirectoryName));
                 if (destDirEntry != null) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Destination directory already exists");
+                    throw new dotnet4j.io.IOException("Destination directory already exists");
                 }
 
                 removeFileFromDirectory(sourceParentDir, file, sourceEntry.getDetails().FileName);
                 addFileToDirectory(file, destParentDir, Utilities.getFileFromPath(destinationDirectoryName), null);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -625,7 +625,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             if (destDirEntry != null && !destDirEntry.isDirectory()) {
                 if (overwrite) {
                     if (destDirEntry.getReference().getMftIndex() == sourceEntry.getReference().getMftIndex()) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists and is the source file");
+                        throw new dotnet4j.io.IOException("Destination file already exists and is the source file");
                     }
 
                     File oldFile = getFile(destDirEntry.getReference());
@@ -634,14 +634,14 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                         oldFile.delete();
                     }
                 } else {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists");
+                    throw new dotnet4j.io.IOException("Destination file already exists");
                 }
             }
 
             removeFileFromDirectory(sourceParentDir, file, sourceEntry.getDetails().FileName);
             addFileToDirectory(file, destParentDir, Utilities.getFileFromPath(destinationName), null);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -677,7 +677,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 try {
                     __newVar12.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -752,7 +752,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 si._FileAttributes = FileNameRecord.setAttributes(newValue, si._FileAttributes);
             });
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -771,7 +771,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return dirEntry.getDetails().CreationTime;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -787,7 +787,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 si.CreationTime = newTime;
             });
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -806,7 +806,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return dirEntry.getDetails().LastAccessTime;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -822,7 +822,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 si.LastAccessTime = newTime;
             });
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -841,7 +841,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return dirEntry.getDetails().ModificationTime;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -857,7 +857,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 si.ModificationTime = newTime;
             });
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -894,7 +894,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return attr.getLength();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -995,7 +995,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         try (Stream s = openFile("\\$Boot", FileMode.Open)) {
             return StreamUtilities.readExact(s, (int) s.getLength());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1084,7 +1084,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             File file = getFile(dirEntry.getReference());
             return doGetSecurity(file);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1106,7 +1106,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             // Update the directory entry used to open the file
             dirEntry.updateFrom(file);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1140,7 +1140,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             ReparsePointRecord newRp = new ReparsePointRecord();
             newRp.Tag = reparsePoint.getTag();
             newRp.Content = reparsePoint.getContent();
-            byte[] contentBuffer = new byte[(int) newRp.getSize()];
+            byte[] contentBuffer = new byte[newRp.sizeOf()];
             newRp.writeTo(contentBuffer, 0);
             try (Stream contentStream = stream.open(FileAccess.ReadWrite)) {
                 contentStream.write(contentBuffer, 0, contentBuffer.length);
@@ -1160,7 +1160,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             // Add the reparse point to the index
             _context.getReparsePoints().add(newRp.Tag, dirEntry.getReference());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1188,7 +1188,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 }
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         return null;
     }
@@ -1214,7 +1214,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             // Write attribute changes back to the Master File Table
             file.updateRecordInMft();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1262,7 +1262,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return null;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1319,7 +1319,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             dir.addEntry(file, shortName, FileNameNamespace.Dos);
             parentEntry.updateFrom(dir);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1346,7 +1346,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             wfi.setFileAttributes(StandardInformation.convertFlags(si._FileAttributes, file.isDirectory()));
             return wfi;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1366,7 +1366,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 si._FileAttributes = StandardInformation.setFileAttributes(info.getFileAttributes(), si._FileAttributes);
             });
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1388,7 +1388,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return dirEntry.getReference().getValue();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1631,7 +1631,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 focusDirEntry = childDirEntry;
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1658,11 +1658,11 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
                 entry = createNewFile(dirEntryPath, options);
             } else if (mode == FileMode.CreateNew) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("File already exists");
+                throw new dotnet4j.io.IOException("File already exists");
             }
 
             if (entry.getDetails().getFileAttributes().containsKey("Directory") && attributeType[0] == AttributeType.Data) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to open directory as a file");
+                throw new dotnet4j.io.IOException("Attempt to open directory as a file");
             }
 
             File file = getFile(entry.getReference());
@@ -1682,7 +1682,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             return stream;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1705,7 +1705,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             File fileObj = getFile(entry.getReference());
             return fileObj.openStream(type, name, access);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1743,7 +1743,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             destinationDir.addEntry(file, Utilities.getFileFromPath(destinationName), FileNameNamespace.Posix);
             destinationDirSelfEntry.updateFrom(destinationDir);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1774,7 +1774,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             }
             return numHardLinks;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1944,7 +1944,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 return getDirectoryEntry(getDirectory(entry.getReference()), pathEntries, pathOffset + 1);
             }
 
-            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("%s is a file, not a directory",
+            throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory",
                                                                            pathEntries[pathOffset]));
         }
 
@@ -1981,7 +1981,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 byte[] buffer = StreamUtilities.readExact(contentStream, (int) contentStream.getLength());
                 rp.readFrom(buffer, 0);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             file.removeStream(stream);
             // Update the standard information attribute - so it reflects the actual file
@@ -2073,7 +2073,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             String dirName = Utilities.getDirectoryFromPath(path);
             return Utilities.combinePaths(dirName, fileName);
         } catch (IllegalArgumentException __dummyCatchVar0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid path: " + path);
+            throw new dotnet4j.io.IOException("Invalid path: " + path);
         }
     }
 

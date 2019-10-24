@@ -38,14 +38,14 @@ public final class SparablePartitionMap extends PartitionMap {
 
     public short VolumeSequenceNumber;
 
-    public long getSize() {
+    public int sizeOf() {
         return 64;
     }
 
     protected int parse(byte[] buffer, int offset) {
-        VolumeSequenceNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
-        PartitionNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
-        PacketLength = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 40);
+        VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
+        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
+        PacketLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 40);
         NumSparingTables = buffer[offset + 42];
         SparingTableSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
         LocationsOfSparingTables = new int[NumSparingTables];

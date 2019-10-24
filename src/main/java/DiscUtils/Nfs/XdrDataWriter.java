@@ -25,7 +25,7 @@ package DiscUtils.Nfs;
 import java.nio.charset.Charset;
 
 import DiscUtils.Streams.ReaderWriter.BigEndianDataWriter;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class XdrDataWriter extends BigEndianDataWriter {

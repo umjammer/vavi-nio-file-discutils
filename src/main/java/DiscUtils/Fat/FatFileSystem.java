@@ -48,10 +48,10 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -487,7 +487,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
         stream.setPosition(0);
         byte[] bytes = StreamUtilities.readExact(stream, 512);
-        short bpbBytesPerSec = (short) EndianUtilities.toUInt16LittleEndian(bytes, 11);
+        short bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bytes, 11);
         if (bpbBytesPerSec != 512) {
             return false;
         }
@@ -497,7 +497,7 @@ public final class FatFileSystem extends DiscFileSystem {
             return false;
         }
 
-        short bpbTotSec16 = (short) EndianUtilities.toUInt16LittleEndian(bytes, 19);
+        short bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bytes, 19);
         int bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bytes, 32);
         if (!((bpbTotSec16 == 0) ^ (bpbTotSec32 == 0))) {
             return false;
@@ -521,7 +521,7 @@ public final class FatFileSystem extends DiscFileSystem {
         try {
             entryId = getDirectoryEntry(_rootDir, path, parent);
         } catch (IllegalArgumentException __dummyCatchVar0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid path: " + path);
+            throw new dotnet4j.io.IOException("Invalid path: " + path);
         }
 
         if (parent[0] == null) {
@@ -534,7 +534,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
         DirectoryEntry dirEntry = parent[0].getEntry(entryId);
         if (dirEntry.getAttributes().contains(FatAttributes.Directory)) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to open directory as a file");
+            throw new dotnet4j.io.IOException("Attempt to open directory as a file");
         }
 
         return parent[0].openFile(dirEntry.getName(), mode, access);
@@ -831,7 +831,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
         DirectoryEntry sourceEntry = sourceDir[0].getEntry(sourceEntryId);
         if (sourceEntry.getAttributes().contains(FatAttributes.Directory)) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("The source file is a directory");
+            throw new dotnet4j.io.IOException("The source file is a directory");
         }
 
         DirectoryEntry newEntry = new DirectoryEntry(sourceEntry);
@@ -857,11 +857,11 @@ public final class FatFileSystem extends DiscFileSystem {
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Destination file is an existing directory");
+                throw new dotnet4j.io.IOException("Destination file is an existing directory");
             }
 
             if (!overwrite) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists");
+                throw new dotnet4j.io.IOException("Destination file already exists");
             }
 
             // Remove the old file
@@ -882,7 +882,7 @@ public final class FatFileSystem extends DiscFileSystem {
                 if (destStream != null)
                     destStream.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
     }
@@ -900,7 +900,7 @@ public final class FatFileSystem extends DiscFileSystem {
             try {
                 name = new FileName(pathElements[i], getFatOptions().getFileNameEncoding());
             } catch (IllegalArgumentException ae) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid path: " + path, ae);
+                throw new dotnet4j.io.IOException("Invalid path: " + path, ae);
             }
 
             Directory child = focusDir.getChildDirectory(name);
@@ -924,13 +924,13 @@ public final class FatFileSystem extends DiscFileSystem {
         }
 
         if (!dir.isEmpty()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unable to delete non-empty directory");
+            throw new dotnet4j.io.IOException("Unable to delete non-empty directory");
         }
 
         Directory[] parent = new Directory[1];
         long id = getDirectoryEntry(path, parent);
         if (parent[0] == null && id == 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unable to delete root directory");
+            throw new dotnet4j.io.IOException("Unable to delete root directory");
         }
 
         if (parent != null && id >= 0) {
@@ -1141,13 +1141,13 @@ public final class FatFileSystem extends DiscFileSystem {
         }
 
         if (destId >= 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Target directory already exists");
+            throw new dotnet4j.io.IOException("Target directory already exists");
         }
 
         Directory[] sourceParent = new Directory[1];
         long sourceId = getDirectoryEntry(sourceDirectoryName, sourceParent);
         if (sourceParent[0] == null || sourceId < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Source directory doesn't exist");
+            throw new dotnet4j.io.IOException("Source directory doesn't exist");
         }
 
         destParent[0].attachChildDirectory(FileName.fromPath(destinationDirectoryName, getFatOptions().getFileNameEncoding()),
@@ -1171,7 +1171,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
         DirectoryEntry sourceEntry = sourceDir[0].getEntry(sourceEntryId);
         if (sourceEntry.getAttributes().contains(FatAttributes.Directory)) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("The source file is a directory");
+            throw new dotnet4j.io.IOException("The source file is a directory");
         }
 
         DirectoryEntry newEntry = new DirectoryEntry(sourceEntry);
@@ -1196,11 +1196,11 @@ public final class FatFileSystem extends DiscFileSystem {
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Destination file is an existing directory");
+                throw new dotnet4j.io.IOException("Destination file is an existing directory");
             }
 
             if (!overwrite) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Destination file already exists");
+                throw new dotnet4j.io.IOException("Destination file already exists");
             }
 
             // Remove the old file
@@ -1261,14 +1261,18 @@ public final class FatFileSystem extends DiscFileSystem {
         if (index != 0 && _dirCache.containsKey(index)) {
             Directory dir = _dirCache.get(index);
             _dirCache.remove(index);
-            dir.close();
+            try {
+                dir.close();
+            } catch (IOException e) {
+                throw new dotnet4j.io.IOException(e);
+            }
         }
     }
 
     public DirectoryEntry getDirectoryEntry(String path) {
         Directory[] parent = new Directory[1];
         long id = getDirectoryEntry(_rootDir, path, parent);
-        if (parent == null || id < 0) {
+        if (parent[0] == null || id < 0) {
             return null;
         }
 
@@ -1494,27 +1498,27 @@ public final class FatFileSystem extends DiscFileSystem {
 
     private void readBPB() {
         setOemName(new String(_bootSector, 3, 8, Charset.forName("ASCII")).replaceFirst("\0*$", ""));
-        _bpbBytesPerSec = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 11);
+        _bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(_bootSector, 11);
         setSectorsPerCluster(_bootSector[13]);
-        _bpbRsvdSecCnt = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 14);
+        _bpbRsvdSecCnt = EndianUtilities.toUInt16LittleEndian(_bootSector, 14);
         setFatCount(_bootSector[16]);
-        _bpbRootEntCnt = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 17);
-        _bpbTotSec16 = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 19);
+        _bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(_bootSector, 17);
+        _bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(_bootSector, 19);
         setMedia(_bootSector[21]);
-        _bpbFATSz16 = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 22);
-        _bpbSecPerTrk = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 24);
-        _bpbNumHeads = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 26);
+        _bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(_bootSector, 22);
+        _bpbSecPerTrk = EndianUtilities.toUInt16LittleEndian(_bootSector, 24);
+        _bpbNumHeads = EndianUtilities.toUInt16LittleEndian(_bootSector, 26);
         _bpbHiddSec = EndianUtilities.toUInt32LittleEndian(_bootSector, 28);
         _bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(_bootSector, 32);
         if (getFatVariant() != FatType.Fat32) {
             readBS(36);
         } else {
             _bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(_bootSector, 36);
-            _bpbExtFlags = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 40);
-            _bpbFSVer = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 42);
+            _bpbExtFlags = EndianUtilities.toUInt16LittleEndian(_bootSector, 40);
+            _bpbFSVer = EndianUtilities.toUInt16LittleEndian(_bootSector, 42);
             _bpbRootClus = EndianUtilities.toUInt32LittleEndian(_bootSector, 44);
-            _bpbFSInfo = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 48);
-            _bpbBkBootSec = (short) EndianUtilities.toUInt16LittleEndian(_bootSector, 50);
+            _bpbFSInfo = EndianUtilities.toUInt16LittleEndian(_bootSector, 48);
+            _bpbBkBootSec = EndianUtilities.toUInt16LittleEndian(_bootSector, 50);
             readBS(64);
         }
     }
@@ -1742,7 +1746,7 @@ public final class FatFileSystem extends DiscFileSystem {
                 try {
                     partitionStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }

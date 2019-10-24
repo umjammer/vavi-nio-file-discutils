@@ -26,9 +26,9 @@ import DiscUtils.Vhdx.Disk;
 import DiscUtils.Vhdx.DiskImageFile;
 import DiscUtils.Xfs.XfsFileSystem;
 import LibraryTests.Utilities.ZipUtilities;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 public class SampleDataTests {

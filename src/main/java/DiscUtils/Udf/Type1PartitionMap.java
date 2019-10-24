@@ -30,13 +30,13 @@ public final class Type1PartitionMap extends PartitionMap {
 
     public short VolumeSequenceNumber;
 
-    public long getSize() {
+    public int sizeOf() {
         return 6;
     }
 
     protected int parse(byte[] buffer, int offset) {
-        VolumeSequenceNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        PartitionNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         return 6;
     }
 }

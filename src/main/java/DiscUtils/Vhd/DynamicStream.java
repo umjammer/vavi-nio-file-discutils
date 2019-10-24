@@ -35,8 +35,8 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class DynamicStream extends MappedStream {
@@ -215,7 +215,7 @@ public class DynamicStream extends MappedStream {
         checkDisposed();
         if (_atEof || _position > _length) {
             _atEof = true;
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of file");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
         if (_position == _length) {
@@ -293,7 +293,7 @@ public class DynamicStream extends MappedStream {
 
         _atEof = false;
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -308,11 +308,11 @@ public class DynamicStream extends MappedStream {
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write to read-only stream");
+            throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
 
         if (_position + count > _length) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of the stream");
+            throw new dotnet4j.io.IOException("Attempt to write beyond end of the stream");
         }
 
         int numWritten = 0;
@@ -523,7 +523,7 @@ public class DynamicStream extends MappedStream {
 
     private void checkDisposed() {
         if (_parentStream == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("DynamicStream: Attempt to use closed stream");
+            throw new dotnet4j.io.IOException("DynamicStream: Attempt to use closed stream");
         }
     }
 

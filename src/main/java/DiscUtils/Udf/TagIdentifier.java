@@ -1,8 +1,6 @@
 
 package DiscUtils.Udf;
 
-import java.util.Arrays;
-
 public enum TagIdentifier {
     None,
     PrimaryVolumeDescriptor,
@@ -273,6 +271,6 @@ public enum TagIdentifier {
     ExtendedFileEntry;
 
     public static TagIdentifier valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -38,9 +38,9 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -458,7 +458,7 @@ public final class CDBuilder extends StreamBuilder {
     private BuildDirectoryInfo getDirectory(String[] path, int pathLength, boolean createMissing) {
         BuildDirectoryInfo di = tryGetDirectory(path, pathLength, createMissing);
         if (di == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Directory not found");
+            throw new dotnet4j.io.FileNotFoundException("Directory not found");
         }
 
         return di;

@@ -40,7 +40,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class MonolithicSparseExtentBuilder extends StreamBuilder {

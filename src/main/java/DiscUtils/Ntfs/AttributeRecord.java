@@ -32,7 +32,7 @@ import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Range;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public abstract class AttributeRecord implements Comparable<AttributeRecord> {
@@ -163,9 +163,9 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         length[0] = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
         _nonResidentFlag = buffer[offset + 0x08];
         byte nameLength = buffer[offset + 0x09];
-        short nameOffset = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
+        short nameOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
         _flags = AttributeFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
-        _attributeId = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0E);
+        _attributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0E);
         if (nameLength != 0x00) {
             if (nameLength + nameOffset > length[0]) {
                 throw new IOException("Corrupt attribute, name outside of attribute");

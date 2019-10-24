@@ -32,8 +32,8 @@ import DiscUtils.Core.DiscFileSystemChecker;
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem & IDiagnosticTraceable, Tc extends DiscFileSystemChecker> extends SparseStream {
@@ -70,7 +70,7 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
                     forgetNativeStream(context);
                     return 0;
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             });
         }

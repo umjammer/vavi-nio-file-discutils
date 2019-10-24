@@ -22,7 +22,7 @@
 
 package DiscUtils.Core;
 
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

@@ -34,7 +34,7 @@ import DiscUtils.Core.Vfs.VfsFileSystemFactoryAttribute;
 import DiscUtils.Core.Vfs.VfsFileSystemInfo;
 import DiscUtils.Iso9660.CDReader;
 import DiscUtils.Udf.UdfReader;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 @VfsFileSystemFactoryAttribute

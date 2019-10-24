@@ -25,8 +25,8 @@ package DiscUtils.Iso9660;
 import java.nio.charset.Charset;
 
 import DiscUtils.Streams.Builder.BuilderExtent;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class FileExtent extends BuilderExtent {

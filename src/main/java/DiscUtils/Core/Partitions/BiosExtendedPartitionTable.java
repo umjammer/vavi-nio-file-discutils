@@ -28,7 +28,7 @@ import java.util.List;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class BiosExtendedPartitionTable {
@@ -48,7 +48,7 @@ public class BiosExtendedPartitionTable {
             _disk.setPosition((long) partPos * Sizes.Sector);
             byte[] sector = StreamUtilities.readExact(_disk, Sizes.Sector);
             if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid extended partition sector");
+                throw new dotnet4j.io.IOException("Invalid extended partition sector");
             }
 
             int nextPartPos = 0;
@@ -82,7 +82,7 @@ public class BiosExtendedPartitionTable {
             _disk.setPosition((long) partPos * Sizes.Sector);
             byte[] sector = StreamUtilities.readExact(_disk, Sizes.Sector);
             if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid extended partition sector");
+                throw new dotnet4j.io.IOException("Invalid extended partition sector");
             }
 
             int nextPartPos = 0;

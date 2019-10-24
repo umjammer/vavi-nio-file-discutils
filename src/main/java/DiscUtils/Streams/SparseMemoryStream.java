@@ -23,7 +23,7 @@
 package DiscUtils.Streams;
 
 import DiscUtils.Streams.Buffer.BufferStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 /**

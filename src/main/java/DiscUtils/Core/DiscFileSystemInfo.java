@@ -51,7 +51,7 @@ public class DiscFileSystemInfo {
         try {
             return FileAttributes.toEnumSet(getFileSystem().getAttributes(getPath()));
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -59,7 +59,7 @@ public class DiscFileSystemInfo {
         try {
             getFileSystem().setAttributes(getPath(), FileAttributes.toMap(value));
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -83,7 +83,7 @@ public class DiscFileSystemInfo {
         try {
             return getFileSystem().getCreationTimeUtc(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -91,7 +91,7 @@ public class DiscFileSystemInfo {
         try {
             getFileSystem().setCreationTimeUtc(getPath(), value);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -102,7 +102,7 @@ public class DiscFileSystemInfo {
         try {
             return getFileSystem().exists(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -157,7 +157,7 @@ public class DiscFileSystemInfo {
         try {
             return getFileSystem().getLastAccessTimeUtc(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -165,7 +165,7 @@ public class DiscFileSystemInfo {
         try {
             getFileSystem().setLastAccessTimeUtc(getPath(), value);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -188,7 +188,7 @@ public class DiscFileSystemInfo {
         try {
             return getFileSystem().getLastWriteTimeUtc(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -196,7 +196,7 @@ public class DiscFileSystemInfo {
         try {
             getFileSystem().setLastWriteTimeUtc(getPath(), value);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -239,7 +239,7 @@ public class DiscFileSystemInfo {
                 getFileSystem().deleteFile(getPath());
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

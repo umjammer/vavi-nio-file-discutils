@@ -54,7 +54,7 @@ public class BTreeHeaderRecord extends BTreeNodeRecord {
 
     public byte TreeType;
 
-    public long getSize() {
+    public int sizeOf() {
         return 104;
     }
 

@@ -11,17 +11,17 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import DiscUtils.Core.DiscFileSystemInfo;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Ext.ExtFileSystem;
 import LibraryTests.Helpers.Helpers;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
 
 
 public class ExtFileSystemTest {

@@ -48,18 +48,18 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
 
     public AttributeType Type = AttributeType.None;
 
-    public long getSize() {
+    public int sizeOf() {
         return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(Charset.forName("UTF-16LE")).length), 8);
     }
 
     public int readFrom(byte[] data, int offset) {
         Type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(data, offset + 0x00));
-        RecordLength = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 0x04);
+        RecordLength = EndianUtilities.toUInt16LittleEndian(data, offset + 0x04);
         NameLength = data[offset + 0x06];
         NameOffset = data[offset + 0x07];
         StartVcn = EndianUtilities.toUInt64LittleEndian(data, offset + 0x08);
         BaseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
-        AttributeId = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
+        AttributeId = EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
         if (NameLength > 0) {
             Name = new String(data, offset + NameOffset, NameLength * 2, Charset.forName("UTF-16LE"));
         } else {

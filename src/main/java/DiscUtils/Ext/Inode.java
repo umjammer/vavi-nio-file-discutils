@@ -28,7 +28,7 @@ import DiscUtils.Streams.StreamBuffer;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class Inode implements IByteArraySerializable {
@@ -86,20 +86,20 @@ public class Inode implements IByteArraySerializable {
         return UnixFileType.valueOf((Mode >>> 12) & 0xff);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Mode = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
-        UserIdLow = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        Mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
+        UserIdLow = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
         FileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         AccessTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
         CreationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         ModificationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
         DeletionTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        GroupIdLow = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        LinksCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
+        GroupIdLow = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
+        LinksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
         BlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
         Flags = InodeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 32));
         FastSymlink = null;
@@ -125,8 +125,8 @@ public class Inode implements IByteArraySerializable {
         FragAddress = EndianUtilities.toUInt32LittleEndian(buffer, offset + 112);
         Fragment = buffer[offset + 116];
         FragmentSize = buffer[offset + 117];
-        UserIdHigh = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 120);
-        GroupIdHigh = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 122);
+        UserIdHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 120);
+        GroupIdHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 122);
         return 128;
     }
 

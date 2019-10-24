@@ -46,9 +46,9 @@ public class BootInitialEntry {
     public BootInitialEntry(byte[] buffer, int offset) {
         BootIndicator = buffer[offset + 0x00];
         BootMediaType = BootDeviceEmulation.valueOf(buffer[offset + 0x01]);
-        LoadSegment = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
+        LoadSegment = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
         SystemType = buffer[offset + 0x04];
-        SectorCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06);
+        SectorCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06);
         ImageStart = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
     }
 

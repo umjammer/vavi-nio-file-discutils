@@ -197,7 +197,7 @@ public class RootItem extends BaseItem {
         __Level = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return Length;
     }
 
@@ -230,6 +230,6 @@ public class RootItem extends BaseItem {
         //363   struct btrfs_timespec   rtime   Timestamp for rtransid.
         //375   __le64[8]   reserved    Reserved for future use.
 
-        return (int) getSize();
+        return sizeOf();
     }
 }

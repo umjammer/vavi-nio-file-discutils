@@ -34,7 +34,7 @@ import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Vdi.Disk;
 import DiscUtils.Vhd.DiskBuilder;
 import DiscUtils.Vhd.FileType;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class DiskBuilderTest {

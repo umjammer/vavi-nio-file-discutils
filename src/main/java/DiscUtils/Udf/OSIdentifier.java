@@ -1,8 +1,6 @@
 
 package DiscUtils.Udf;
 
-import java.util.Arrays;
-
 public enum OSIdentifier {
     DosOrWindows3,
     Os2,
@@ -24,6 +22,6 @@ public enum OSIdentifier {
     WindowsCe;
 
     public static OSIdentifier valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

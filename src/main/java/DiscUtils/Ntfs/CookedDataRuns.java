@@ -25,7 +25,7 @@ package DiscUtils.Ntfs;
 import java.util.ArrayList;
 import java.util.List;
 
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class CookedDataRuns {

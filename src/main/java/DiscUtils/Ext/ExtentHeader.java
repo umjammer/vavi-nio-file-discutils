@@ -39,15 +39,15 @@ public class ExtentHeader implements IByteArraySerializable {
 
     public short MaxEntries;
 
-    public long getSize() {
+    public int sizeOf() {
         return 12;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Magic = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
-        Entries = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        MaxEntries = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        Depth = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        Magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
+        Entries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        MaxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        Depth = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
         Generation = (short) EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
         return 12;
     }

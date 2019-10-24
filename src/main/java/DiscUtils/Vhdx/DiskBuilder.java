@@ -22,7 +22,6 @@
 
 package DiscUtils.Vhdx;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -43,7 +42,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Vhd.ParentLocator;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 /**
@@ -163,20 +162,20 @@ public final class DiskBuilder extends DiskImageBuilder {
             RegionTable regionTable = new RegionTable();
 
             RegionEntry metadataRegion = new RegionEntry();
-            metadataRegion.Guid = RegionEntry.MetadataRegionGuid;
-            metadataRegion.FileOffset = fileEnd;
+            metadataRegion.guid = RegionEntry.MetadataRegionGuid;
+            metadataRegion.fileOffset = fileEnd;
             metadataRegion.setLength((int) Sizes.OneMiB);
-            metadataRegion.Flags = RegionFlags.Required;
-            regionTable.Regions.put(metadataRegion.Guid, metadataRegion);
+            metadataRegion.flags = RegionFlags.Required;
+            regionTable.Regions.put(metadataRegion.guid, metadataRegion);
 
             fileEnd += metadataRegion.getLength();
 
             RegionEntry batRegion = new RegionEntry();
-            batRegion.Guid = RegionEntry.BatGuid;
-            batRegion.FileOffset = fileEnd;
+            batRegion.guid = RegionEntry.BatGuid;
+            batRegion.fileOffset = fileEnd;
             batRegion.setLength((int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB));
-            batRegion.Flags = RegionFlags.Required;
-            regionTable.Regions.put(batRegion.Guid, batRegion);
+            batRegion.flags = RegionFlags.Required;
+            regionTable.Regions.put(batRegion.guid, batRegion);
 
             fileEnd += batRegion.getLength();
 
@@ -201,11 +200,11 @@ public final class DiskBuilder extends DiskImageBuilder {
                                 logicalSectorSize,
                                 physicalSectorSize,
                                 null);
-            extents.add(new BuilderBufferExtent(metadataRegion.FileOffset, metadataBuffer));
+            extents.add(new BuilderBufferExtent(metadataRegion.fileOffset, metadataBuffer));
             List<Range> presentBlocks = StreamExtent.blocks(_content.getExtents(), _blockSize);
 
             // BAT
-            BlockAllocationTableBuilderExtent batExtent = new BlockAllocationTableBuilderExtent(batRegion.FileOffset,
+            BlockAllocationTableBuilderExtent batExtent = new BlockAllocationTableBuilderExtent(batRegion.fileOffset,
                                                                                                 batRegion.getLength(),
                                                                                                 presentBlocks,
                                                                                                 fileEnd,
@@ -229,13 +228,9 @@ public final class DiskBuilder extends DiskImageBuilder {
         }
 
         private static BuilderExtent extentForStruct(IByteArraySerializable structure, long position) {
-            try {
-                byte[] buffer = new byte[(int) structure.getSize()];
-                structure.writeTo(buffer, 0);
-                return new BuilderBufferExtent(position, buffer);
-            } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
-            }
+            byte[] buffer = new byte[structure.sizeOf()];
+            structure.writeTo(buffer, 0);
+            return new BuilderBufferExtent(position, buffer);
         }
     }
 

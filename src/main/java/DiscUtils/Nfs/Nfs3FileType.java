@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
 // use ordinal()
 public enum Nfs3FileType {
     None,
@@ -36,6 +34,6 @@ public enum Nfs3FileType {
     NamedPipe;
 
     public static Nfs3FileType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

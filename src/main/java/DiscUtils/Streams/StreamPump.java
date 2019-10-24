@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 /**
  * Utility class for pumping the contents of one stream into another.

@@ -141,7 +141,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
                             try {
                                 return volume.open();
                             } catch (IOException e) {
-                                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                                throw new dotnet4j.io.IOException(e);
                             }
                         }, volume.getLength(), volume.getBiosType(), volume.getStatus());
                 result.add(lvi);

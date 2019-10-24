@@ -33,8 +33,8 @@ import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Core.VirtualDiskTypeInfo;
 import DiscUtils.Core.Partitions.BiosPartitionTable;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 /**

@@ -37,7 +37,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class VmfsSparseExtentBuilder extends StreamBuilder {
@@ -112,7 +112,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
                 try {
                     _streamView.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
                 _streamView = null;
             }
@@ -197,7 +197,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
                 try {
                     _grainTableStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
                 _grainTableStream = null;
             }

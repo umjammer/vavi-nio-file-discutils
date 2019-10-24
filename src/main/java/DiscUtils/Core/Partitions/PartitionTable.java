@@ -30,7 +30,7 @@ import java.util.UUID;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Raw.Disk;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

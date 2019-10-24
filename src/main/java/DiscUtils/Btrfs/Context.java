@@ -42,9 +42,9 @@ import DiscUtils.Core.Internal.Crc32Algorithm;
 import DiscUtils.Core.Internal.Crc32LittleEndian;
 import DiscUtils.Core.Vfs.VfsContext;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class Context extends VfsContext {

@@ -66,7 +66,7 @@ public class LeafDirectory implements IByteArraySerializable {
         __Entries = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 16 + 3 * 32;
     }
 

@@ -33,7 +33,7 @@ public final class ShortAllocationDescriptor implements IByteArraySerializable {
 
     public ShortAllocationFlags Flags = ShortAllocationFlags.RecordedAndAllocated;
 
-    public long getSize() {
+    public int sizeOf() {
         return 8;
     }
 

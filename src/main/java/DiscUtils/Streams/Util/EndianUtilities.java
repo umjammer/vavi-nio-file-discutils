@@ -54,11 +54,14 @@ public class EndianUtilities {
     }
 
     public static void writeBytesLittleEndian(UUID val, byte[] buffer, int offset) {
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]).order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]).order(ByteOrder.BIG_ENDIAN);
         bb.putLong(val.getMostSignificantBits());
         bb.putLong(val.getLeastSignificantBits());
         byte[] le = bb.array();
-        System.arraycopy(le, 0, buffer, offset, 16);
+        writeBytesLittleEndian(toInt32BigEndian(le, 0), buffer, offset + 0);
+        writeBytesLittleEndian(toInt16BigEndian(le, 4), buffer, offset + 4);
+        writeBytesLittleEndian(toInt16BigEndian(le, 6), buffer, offset + 6);
+        System.arraycopy(le, 8, buffer, offset + 8, 8);
     }
 
     public static void writeBytesBigEndian(short val, byte[] buffer, int offset) {
@@ -85,25 +88,20 @@ public class EndianUtilities {
     }
 
     public static void writeBytesBigEndian(UUID val, byte[] buffer, int offset) {
-        ByteBuffer bb = ByteBuffer.wrap(new byte[16]).order(ByteOrder.LITTLE_ENDIAN);
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]).order(ByteOrder.BIG_ENDIAN);
         bb.putLong(val.getMostSignificantBits());
         bb.putLong(val.getLeastSignificantBits());
-        byte[] le = bb.array();
-        writeBytesBigEndian(toInt32LittleEndian(le, 0), buffer, offset + 0);
-        writeBytesBigEndian(toInt16LittleEndian(le, 4), buffer, offset + 4);
-        writeBytesBigEndian(toInt16LittleEndian(le, 6), buffer, offset + 6);
-        System.arraycopy(le, 8, buffer, offset + 8, 8);
+        byte[] be = bb.array();
+        System.arraycopy(be, 0, buffer, offset, 16);
     }
 
-    public static int toUInt16LittleEndian(byte[] buffer, int offset) {
-        int val = ((buffer[offset + 1] << 8) & 0xFF00) | ((buffer[offset + 0] << 0) & 0x00FF);
-        return val;
+    public static short toUInt16LittleEndian(byte[] buffer, int offset) {
+        return (short) (((buffer[offset + 1] << 8) & 0xFF00) | ((buffer[offset + 0] << 0) & 0x00FF));
     }
 
     public static int toUInt32LittleEndian(byte[] buffer, int offset) {
-        int val = ((buffer[offset + 3] << 24) & 0xFF000000) | ((buffer[offset + 2] << 16) & 0x00FF0000) |
+        return ((buffer[offset + 3] << 24) & 0xFF000000) | ((buffer[offset + 2] << 16) & 0x00FF0000) |
                ((buffer[offset + 1] << 8) & 0x0000FF00) | ((buffer[offset + 0] << 0) & 0x000000FF);
-        return val;
     }
 
     public static long toUInt64LittleEndian(byte[] buffer, int offset) {
@@ -111,7 +109,7 @@ public class EndianUtilities {
     }
 
     public static short toInt16LittleEndian(byte[] buffer, int offset) {
-        return (short) toUInt16LittleEndian(buffer, offset);
+        return toUInt16LittleEndian(buffer, offset);
     }
 
     public static int toInt32LittleEndian(byte[] buffer, int offset) {
@@ -151,8 +149,11 @@ public class EndianUtilities {
 
     public static UUID toGuidLittleEndian(byte[] buffer, int offset) {
         byte[] temp = new byte[16];
-        System.arraycopy(buffer, offset, temp, 0, 16);
-        ByteBuffer bb = ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN);
+        writeBytesBigEndian(toInt32LittleEndian(buffer, offset + 0), temp, 0);
+        writeBytesBigEndian(toInt16LittleEndian(buffer, offset + 4), temp, 4);
+        writeBytesBigEndian(toInt16LittleEndian(buffer, offset + 6), temp, 6);
+        System.arraycopy(buffer, offset + 8, temp, 8, 8);
+        ByteBuffer bb = ByteBuffer.wrap(temp).order(ByteOrder.BIG_ENDIAN);
         long msb = bb.getLong();
         long lsb = bb.getLong();
         return new UUID(msb, lsb);
@@ -160,11 +161,8 @@ public class EndianUtilities {
 
     public static UUID toGuidBigEndian(byte[] buffer, int offset) {
         byte[] temp = new byte[16];
-        writeBytesLittleEndian(toInt32BigEndian(buffer, offset + 0), temp, 0);
-        writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 4), temp, 4);
-        writeBytesLittleEndian(toInt16BigEndian(buffer, offset + 6), temp, 6);
-        System.arraycopy(buffer, offset + 8, temp, 8, 8);
-        ByteBuffer bb = ByteBuffer.wrap(temp).order(ByteOrder.LITTLE_ENDIAN);
+        System.arraycopy(buffer, offset, temp, 0, 16);
+        ByteBuffer bb = ByteBuffer.wrap(temp).order(ByteOrder.BIG_ENDIAN);
         long msb = bb.getLong();
         long lsb = bb.getLong();
         return new UUID(msb, lsb);

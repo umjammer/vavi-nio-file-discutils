@@ -51,13 +51,13 @@ public class DirectoryRecord implements IByteArraySerializable {
         _nameEncoding = nameEncoding;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return MathUtilities.roundUp(8 + Name.length(), 4);
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Inode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        short recordLen = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        short recordLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         int nameLen = buffer[offset + 6];
         FileType = buffer[offset + 7];
         Name = new String(buffer, offset + 8, nameLen, _nameEncoding);

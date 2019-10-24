@@ -31,8 +31,8 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Block.BlockCacheSettings;
 import DiscUtils.Streams.Block.BlockCacheStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.MemoryStream;
 
 
 public class BlockCacheTest {
@@ -293,7 +293,7 @@ public class BlockCacheTest {
         cacheStream.setPosition(11);
         try {
             cacheStream.write(new byte[10], 0, 10);
-        } catch (UnsupportedOperationException __dummyCatchVar2) {
+        } catch (IOException e) {
             assertEquals(freeBefore + 2, cacheStream.getStatistics().getFreeReadBlocks());
         }
 
@@ -307,7 +307,7 @@ public class BlockCacheTest {
         return new MemoryStream(buffer, writable);
     }
 
-    private void assertSequenced(byte[] buffer, int seqOffset) throws Exception {
+    private void assertSequenced(byte[] buffer, int seqOffset) {
         assertSequenced(buffer, 0, buffer.length, seqOffset);
     }
 

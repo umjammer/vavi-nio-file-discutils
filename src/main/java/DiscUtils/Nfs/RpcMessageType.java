@@ -22,13 +22,11 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
 public enum RpcMessageType {
     Call,
     Reply;
 
     public static RpcMessageType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

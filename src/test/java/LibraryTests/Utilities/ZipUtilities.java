@@ -8,9 +8,9 @@ import java.util.zip.ZipFile;
 
 import vavi.util.StringUtil;
 
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.JavaIOStream;
 
 
 public class ZipUtilities {
@@ -25,7 +25,7 @@ public class ZipUtilities {
 //System.err.println(entry);
             MemoryStream ms = new MemoryStream();
 //System.err.println(StringUtil.getDump(zipArchive.getInputStream(entry), 128));
-            try (Stream zipFile = new JavaIOStream(zipArchive.getInputStream(entry), null)) {
+            try (Stream zipFile = new JavaIOStream(zipArchive.getInputStream(entry))) {
                 zipFile.copyTo(ms);
             }
 System.err.println(StringUtil.getDump(ms.toArray(), 128));

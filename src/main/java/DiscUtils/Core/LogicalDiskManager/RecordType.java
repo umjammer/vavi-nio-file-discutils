@@ -22,9 +22,6 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.util.Arrays;
-
-
 public enum RecordType {
     None,
     Volume,
@@ -32,7 +29,8 @@ public enum RecordType {
     Extent,
     Disk,
     DiskGroup;
+
     public static RecordType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

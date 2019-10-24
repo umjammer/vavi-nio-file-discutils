@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import DiscUtils.Core.Internal.Utilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class Directory extends File {

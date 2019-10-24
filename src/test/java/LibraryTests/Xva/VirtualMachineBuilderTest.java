@@ -35,8 +35,8 @@ import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Xva.Disk;
 import DiscUtils.Xva.VirtualMachine;
 import DiscUtils.Xva.VirtualMachineBuilder;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 public class VirtualMachineBuilderTest {

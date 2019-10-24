@@ -50,9 +50,9 @@ import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamInputStream;
-import moe.yo3explorer.dotnetio4j.StreamOutputStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.StreamInputStream;
+import dotnet4j.io.compat.StreamOutputStream;
 
 
 public class Plist {
@@ -183,7 +183,7 @@ public class Plist {
         Node focusNode = getFirstChild(xmlNode);
         while (focusNode != null) {
             if (!"key".equals(focusNode.getNodeName())) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid plist, expected dictionary key");
+                throw new dotnet4j.io.IOException("Invalid plist, expected dictionary key");
             }
 
             String key = focusNode.getTextContent();

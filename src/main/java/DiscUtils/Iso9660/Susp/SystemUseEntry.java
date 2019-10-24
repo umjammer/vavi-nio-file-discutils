@@ -78,7 +78,7 @@ public abstract class SystemUseEntry {
     }
 
     protected void checkAndSetCommonProperties(String name, byte length, byte version, byte minLength, byte maxVersion) {
-        if ((length & 0xff) < minLength) {
+        if ((length & 0xff) < (minLength & 0xff)) {
             throw new IllegalArgumentException("Invalid SUSP " + _name + " entry - too short, only " + length + " bytes");
         }
 

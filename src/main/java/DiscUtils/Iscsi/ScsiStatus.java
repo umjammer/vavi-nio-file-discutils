@@ -22,8 +22,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
-
 public enum ScsiStatus {
     /**
      * Enumeration of SCSI command status codes.
@@ -118,6 +116,6 @@ public enum ScsiStatus {
     TaskAborted;
 
     public static ScsiStatus valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -32,8 +32,8 @@ import DiscUtils.Core.Partitions.BiosPartitionedDiskBuilder;
 import DiscUtils.Core.Partitions.WellKnownPartitionType;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 public class BiosPartitionedDiskBuilderTest {

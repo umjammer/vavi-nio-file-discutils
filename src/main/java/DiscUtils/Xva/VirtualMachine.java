@@ -37,8 +37,8 @@ import org.w3c.dom.NodeList;
 
 import DiscUtils.Core.Archives.TarFile;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamInputStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.StreamInputStream;
 
 
 /**
@@ -121,13 +121,13 @@ public final class VirtualMachine implements Closeable {
             }
             return result;
         } catch (XPathExpressionException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         } finally {
             if (docStream != null)
                 try {
                     docStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }

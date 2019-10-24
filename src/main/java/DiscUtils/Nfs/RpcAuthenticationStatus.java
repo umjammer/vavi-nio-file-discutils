@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
 public enum RpcAuthenticationStatus {
     None,
     BadCredentials,
@@ -33,6 +31,6 @@ public enum RpcAuthenticationStatus {
     TooWeak;
 
     public static RpcAuthenticationStatus valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Vdi.Disk;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class DiskTest {
@@ -59,7 +59,7 @@ public class DiskTest {
 
         try (Disk disk = Disk.initializeFixed(ms, Ownership.Dispose, 8 * 1024 * 1024)) {
         }
-        assertThrows(moe.yo3explorer.dotnetio4j.IOException.class, () -> {
+        assertThrows(dotnet4j.io.IOException.class, () -> {
             return ms.readByte();
         });
     }

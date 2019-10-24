@@ -35,7 +35,7 @@ import DiscUtils.Streams.Builder.BuilderExtent;
 import DiscUtils.Streams.Builder.BuilderSparseStreamExtent;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class Inode implements IByteArraySerializable {
@@ -504,7 +504,7 @@ public class Inode implements IByteArraySerializable {
         __DataFork = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 96;
     }
 
@@ -542,7 +542,7 @@ public class Inode implements IByteArraySerializable {
             dfLength = (getForkoff() * 8);
         }
         setDataFork(EndianUtilities.toByteArray(buffer, offset + dfOffset, dfLength));
-        return (int) getSize();
+        return sizeOf();
     }
 
     private long readTimestamp(byte[] buffer, int offset) {

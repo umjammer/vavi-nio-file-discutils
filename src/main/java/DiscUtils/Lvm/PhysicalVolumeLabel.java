@@ -46,7 +46,7 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
     /**
      *
      */
-    public long getSize() {
+    public int sizeOf() {
         return PhysicalVolume.SECTOR_SIZE;
     }
 
@@ -60,7 +60,7 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
         CalculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x14, PhysicalVolume.SECTOR_SIZE - 0x14);
         Offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
         Label2 = EndianUtilities.bytesToString(buffer, offset + 0x18, 0x8);
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

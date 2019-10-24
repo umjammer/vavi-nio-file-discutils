@@ -37,13 +37,13 @@ import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.VirtualDiskClass;
 import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Core.VirtualDiskTypeInfo;
-import DiscUtils.Core.CoreCompat.Tuple;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.Tuple;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -404,7 +404,7 @@ public final class Disk extends VirtualDisk {
             LocalFileLocator locator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
             newFile = parent.createDifferencing(locator, Paths.get(path).getFileName().toString());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         return new Disk(newFile, Ownership.Dispose, parentLocator, parentFileName);
     }

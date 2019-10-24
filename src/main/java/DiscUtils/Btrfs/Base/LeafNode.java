@@ -40,7 +40,7 @@ import DiscUtils.Btrfs.Base.Items.RootItem;
 import DiscUtils.Btrfs.Base.Items.RootRef;
 import DiscUtils.Btrfs.Base.Items.XattrItem;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class LeafNode extends NodeHeader {
@@ -67,8 +67,8 @@ public class LeafNode extends NodeHeader {
         __NodeData = value;
     }
 
-    public long getSize() {
-        return (int) (super.getSize() + getItemCount() * KeyPointer.Length);
+    public int sizeOf() {
+        return super.sizeOf() + getItemCount() * KeyPointer.Length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -86,7 +86,7 @@ public class LeafNode extends NodeHeader {
                 getNodeData()[i] = createItem(getItems()[i], buffer, Length + offset);
             }
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     private BaseItem createItem(NodeItem item, byte[] buffer, int offset) {

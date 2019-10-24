@@ -88,17 +88,17 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
         return (long) FileLocation.ExtentLocation.Partition << 32 | FileLocation.ExtentLocation.LogicalBlock;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 
     public int readFrom(byte[] buffer, int offset) {
         DescriptorTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, buffer, offset);
-        FileVersionNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
+        FileVersionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
         _FileCharacteristics = FileCharacteristic.valueOf(buffer[offset + 18]);
         NameLength = buffer[offset + 19];
         FileLocation = EndianUtilities.<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 20);
-        ImplementationUseLength = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
+        ImplementationUseLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
         ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 38, ImplementationUseLength);
         Name = UdfUtilities.readDCharacters(buffer, offset + 38 + ImplementationUseLength, NameLength);
         return MathUtilities.roundUp(38 + ImplementationUseLength + NameLength, 4);

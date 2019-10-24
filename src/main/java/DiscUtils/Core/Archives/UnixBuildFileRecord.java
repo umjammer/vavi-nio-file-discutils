@@ -29,7 +29,7 @@ import DiscUtils.Streams.Builder.BuilderBufferExtentSource;
 import DiscUtils.Streams.Builder.BuilderExtent;
 import DiscUtils.Streams.Builder.BuilderExtentSource;
 import DiscUtils.Streams.Builder.BuilderStreamExtentSource;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class UnixBuildFileRecord {

@@ -88,15 +88,15 @@ public class RootRef extends BaseItem {
         __Name = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x12 + getNameLength();
     }
 
     public int readFrom(byte[] buffer, int offset) {
         setDirectoryId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setSequence(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setNameLength((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
+        setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
         setName(new String(buffer, offset + 0x12, getNameLength(), Charset.forName("UTF8")));
-        return (int) getSize();
+        return sizeOf();
     }
 }

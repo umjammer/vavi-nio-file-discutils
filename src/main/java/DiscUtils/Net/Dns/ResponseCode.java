@@ -22,9 +22,6 @@
 
 package DiscUtils.Net.Dns;
 
-import java.util.Arrays;
-
-
 public enum ResponseCode {
     Success,
     FormatError,
@@ -34,6 +31,6 @@ public enum ResponseCode {
     Refused;
 
     public static ResponseCode valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

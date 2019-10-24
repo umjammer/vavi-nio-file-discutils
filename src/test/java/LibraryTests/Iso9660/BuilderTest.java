@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import DiscUtils.Iso9660.BootDeviceEmulation;
 import DiscUtils.Iso9660.CDBuilder;
 import DiscUtils.Iso9660.CDReader;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 public class BuilderTest {
     @Test

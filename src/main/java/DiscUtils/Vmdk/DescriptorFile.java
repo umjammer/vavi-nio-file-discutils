@@ -30,8 +30,8 @@ import java.util.UUID;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamReader;
+import dotnet4j.io.Stream;
+import dotnet4j.io.StreamReader;
 
 
 public class DescriptorFile {
@@ -373,7 +373,7 @@ System.err.println(entry.getKey() + ", " + key);
 
     private void load(Stream source) {
         if (source.getLength() - source.getPosition() > MaxSize) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(String
+            throw new dotnet4j.io.IOException(String
                     .format("Invalid VMDK descriptor file, more than %s bytes in length", MaxSize));
         }
 

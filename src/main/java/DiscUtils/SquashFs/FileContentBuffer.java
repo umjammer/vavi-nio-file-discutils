@@ -44,7 +44,7 @@ public class FileContentBuffer implements IBuffer {
         _context = context;
         _inode = inode;
         context.getInodeReader().setPosition(inodeRef);
-        context.getInodeReader().skip((int) _inode.getSize());
+        context.getInodeReader().skip(_inode.sizeOf());
         int numBlocks = (int) (_inode.getFileSize() / _context.getSuperBlock().BlockSize);
         if (_inode.getFileSize() % _context.getSuperBlock().BlockSize != 0 && _inode.FragmentKey == InvalidFragmentKey) {
             ++numBlocks;

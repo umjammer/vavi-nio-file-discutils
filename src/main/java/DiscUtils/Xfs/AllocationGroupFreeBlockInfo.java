@@ -282,7 +282,7 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
 
     private int __Size;
 
-    public long getSize() {
+    public int sizeOf() {
         return __Size;
     }
 
@@ -322,7 +322,7 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
             setCrc(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x58));
         }
 
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

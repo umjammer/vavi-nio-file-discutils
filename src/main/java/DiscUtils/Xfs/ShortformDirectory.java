@@ -82,10 +82,10 @@ public class ShortformDirectory implements IByteArraySerializable {
         _context = context;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         int result = 0x6;
         for (ShortformDirectoryEntry entry : getEntries()) {
-            result += entry.getSize();
+            result += entry.sizeOf();
         }
         return result;
     }
@@ -107,10 +107,10 @@ public class ShortformDirectory implements IByteArraySerializable {
         for (int i = 0; i < count; i++) {
             ShortformDirectoryEntry entry = new ShortformDirectoryEntry(_useShortInode, _context);
             entry.readFrom(buffer, offset);
-            offset += entry.getSize();
+            offset += entry.sizeOf();
             getEntries()[i] = entry;
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

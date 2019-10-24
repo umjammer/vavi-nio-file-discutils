@@ -22,15 +22,12 @@
 
 package DiscUtils.Xfs;
 
-import java.util.Arrays;
-
-
 public enum ExtentFlag {
     Normal,
     Unwritten,
     Invalid;
 
     public static ExtentFlag valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

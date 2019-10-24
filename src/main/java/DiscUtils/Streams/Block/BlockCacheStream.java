@@ -31,7 +31,7 @@ import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -180,7 +180,7 @@ public final class BlockCacheStream extends SparseStream {
         checkDisposed();
         if (_position >= getLength()) {
             if (_atEof) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+                throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
             }
 
             _atEof = true;
@@ -307,7 +307,7 @@ public final class BlockCacheStream extends SparseStream {
 
         _atEof = false;
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -382,7 +382,7 @@ public final class BlockCacheStream extends SparseStream {
 
     private void checkDisposed() {
         if (_wrappedStream == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("it has been closed.");
+            throw new dotnet4j.io.IOException("it has been closed.");
         }
     }
 

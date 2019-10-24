@@ -22,8 +22,6 @@
 
 package DiscUtils.Net.Dns;
 
-import java.util.Arrays;
-
 public enum RecordClass {
     /**
      * Enumeration of known DNS record classes (CLASS in DNS).
@@ -303,6 +301,6 @@ public enum RecordClass {
     Any;
 
     public static RecordClass valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -31,7 +31,7 @@ import DiscUtils.Streams.Builder.BuilderBufferExtent;
 import DiscUtils.Streams.Builder.BuilderExtent;
 import DiscUtils.Streams.Builder.StreamBuilder;
 import DiscUtils.Streams.Util.MathUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

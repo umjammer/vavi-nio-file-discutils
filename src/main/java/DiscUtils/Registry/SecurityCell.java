@@ -23,8 +23,8 @@
 package DiscUtils.Registry;
 
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.AccessControlSections;
-import moe.yo3explorer.dotnetio4j.compat.RegistrySecurity;
+import dotnet4j.security.accessControl.AccessControlSections;
+import dotnet4j.security.accessControl.RegistrySecurity;
 
 
 public final class SecurityCell extends Cell {
@@ -69,7 +69,7 @@ public final class SecurityCell extends Cell {
         __SecurityDescriptor = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         int sdLen = getSecurityDescriptor().getSecurityDescriptorBinaryForm().length;
         return 0x14 + sdLen;
     }

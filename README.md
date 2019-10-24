@@ -132,7 +132,8 @@ Automated CI builds are available on Myget. Add this source to your nuget config
     * extended for
     * delegate eliminate listFoo etc.
     * Encoding
-    * substring 2nd param is index instead of length 
+    * substring 2nd param is index instead of length
+    * Array.Clear 3rd param is index instead of length 
     * Array.copy, Array.clear
     * Guid -> UUID
     * unit test (xUnit -> junit)

@@ -1,8 +1,6 @@
 
 package DiscUtils.Iso9660;
 
-import java.util.Arrays;
-
 public enum VolumeDescriptorType {
     Boot,
     Primary,
@@ -262,6 +260,6 @@ public enum VolumeDescriptorType {
     SetTerminator;
 
     public static VolumeDescriptorType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -167,14 +167,14 @@ public class SuperBlock implements IByteArraySerializable {
         return 1024 << LogBlockSize;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 1024;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Magic = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
+        Magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
         if (Magic != Ext2Magic)
-            return (int) getSize();
+            return sizeOf();
 
         InodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         BlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
@@ -189,20 +189,20 @@ public class SuperBlock implements IByteArraySerializable {
         InodesPerGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
         MountTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
         WriteTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
-        MountCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);
-        MaxMountCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 54);
-        State = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 58);
-        Errors = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 60);
-        MinorRevisionLevel = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 62);
+        MountCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);
+        MaxMountCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 54);
+        State = EndianUtilities.toUInt16LittleEndian(buffer, offset + 58);
+        Errors = EndianUtilities.toUInt16LittleEndian(buffer, offset + 60);
+        MinorRevisionLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 62);
         LastCheckTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 64);
         CheckInterval = EndianUtilities.toUInt32LittleEndian(buffer, offset + 68);
         CreatorOS = EndianUtilities.toUInt32LittleEndian(buffer, offset + 72);
         RevisionLevel = EndianUtilities.toUInt32LittleEndian(buffer, offset + 76);
-        DefaultReservedBlockUid = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 80);
-        DefaultReservedBlockGid = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 82);
+        DefaultReservedBlockUid = EndianUtilities.toUInt16LittleEndian(buffer, offset + 80);
+        DefaultReservedBlockGid = EndianUtilities.toUInt16LittleEndian(buffer, offset + 82);
         FirstInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 84);
-        InodeSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 88);
-        BlockGroupNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 90);
+        InodeSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 88);
+        BlockGroupNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 90);
         _CompatibleFeatures = CompatibleFeatures.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 92));
         _IncompatibleFeatures = IncompatibleFeatures.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 96));
         _ReadOnlyCompatibleFeatures = ReadOnlyCompatibleFeatures
@@ -224,7 +224,7 @@ public class SuperBlock implements IByteArraySerializable {
         HashSeed[2] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 244);
         HashSeed[3] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 248);
         DefaultHashVersion = buffer[offset + 252];
-        DescriptorSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 254);
+        DescriptorSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 254);
         DefaultMountOptions = EndianUtilities.toUInt32LittleEndian(buffer, offset + 256);
         FirstMetablockBlockGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 260);
         MkfsTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 264);
@@ -235,11 +235,11 @@ public class SuperBlock implements IByteArraySerializable {
         BlocksCountHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 336);
         ReservedBlocksCountHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 340);
         FreeBlocksCountHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 344);
-        MinimumExtraInodeSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 348);
-        WantExtraInodeSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 350);
+        MinimumExtraInodeSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 348);
+        WantExtraInodeSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 350);
         Flags = EndianUtilities.toUInt32LittleEndian(buffer, offset + 352);
-        RaidStride = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 356);
-        MultiMountProtectionInterval = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 358);
+        RaidStride = EndianUtilities.toUInt16LittleEndian(buffer, offset + 356);
+        MultiMountProtectionInterval = EndianUtilities.toUInt16LittleEndian(buffer, offset + 358);
         MultiMountProtectionBlock = EndianUtilities.toUInt64LittleEndian(buffer, offset + 360);
         RaidStripeWidth = EndianUtilities.toUInt32LittleEndian(buffer, offset + 368);
         LogGroupsPerFlex = buffer[offset + 372];

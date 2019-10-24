@@ -24,7 +24,7 @@ package DiscUtils.Streams;
 
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 /**

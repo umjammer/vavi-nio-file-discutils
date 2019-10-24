@@ -24,8 +24,8 @@ package LibraryTests.Partitions;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import DiscUtils.Core.ChsAddress;

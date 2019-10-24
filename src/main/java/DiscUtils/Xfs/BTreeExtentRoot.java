@@ -30,8 +30,8 @@ import java.util.Map;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class BTreeExtentRoot implements IByteArraySerializable {
@@ -85,7 +85,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
         __Children = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 4 + (0x9 * 0x16);
     }
 
@@ -102,7 +102,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
         for (int i = 0; i < getNumberOfRecords(); i++) {
             getPointer()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

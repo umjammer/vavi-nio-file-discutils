@@ -34,8 +34,8 @@ import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class DiskStream extends SparseStream {
@@ -129,7 +129,7 @@ public class DiskStream extends SparseStream {
         checkDisposed();
         if (_atEof || _position > _fileHeader.diskSize) {
             _atEof = true;
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of file");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
         if (_position == _fileHeader.diskSize) {
@@ -172,7 +172,7 @@ public class DiskStream extends SparseStream {
 
         _atEof = false;
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -187,7 +187,7 @@ public class DiskStream extends SparseStream {
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write to read-only stream");
+            throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
 
         if (count < 0) {
@@ -196,7 +196,7 @@ public class DiskStream extends SparseStream {
 
         if (_atEof || _position + count > _fileHeader.diskSize) {
             _atEof = true;
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of file");
+            throw new dotnet4j.io.IOException("Attempt to write beyond end of file");
         }
 
         // On first write, notify event listeners - they just get to find out that some
@@ -290,7 +290,7 @@ public class DiskStream extends SparseStream {
 
     private void checkDisposed() {
         if (_isDisposed) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("DiskStream: Attempt to use disposed stream");
+            throw new dotnet4j.io.IOException("DiskStream: Attempt to use disposed stream");
         }
     }
 }

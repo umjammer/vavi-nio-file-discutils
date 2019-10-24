@@ -33,9 +33,9 @@ import java.util.Map;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.NetworkStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.NetworkStream;
+import dotnet4j.io.Stream;
 
 
 class Connection implements Closeable {
@@ -69,7 +69,7 @@ class Connection implements Closeable {
             NegotiateSecurity();
             NegotiateFeatures();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

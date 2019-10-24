@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.util.Map;
 
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
 
 
 /**

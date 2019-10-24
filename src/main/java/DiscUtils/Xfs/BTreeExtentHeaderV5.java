@@ -80,8 +80,8 @@ public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
         __Crc = value;
     }
 
-    public long getSize() {
-        return super.getSize() + 48;
+    public int sizeOf() {
+        return super.sizeOf() + 48;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -91,6 +91,6 @@ public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
         setUuid(EndianUtilities.toGuidBigEndian(buffer, offset + 0x10));
         setOwner(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x20));
         setCrc(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28));
-        return (int) super.getSize() + 48;
+        return super.sizeOf() + 48;
     }
 }

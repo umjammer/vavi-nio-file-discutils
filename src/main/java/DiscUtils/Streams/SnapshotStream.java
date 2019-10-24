@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -232,7 +232,7 @@ public final class SnapshotStream extends SparseStream {
             numRead = _baseStream.read(buffer, offset, count);
         } else {
             if (_position > _diffStream.getLength()) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of file");
+                throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
             }
 
             int toRead = (int) Math.min(count, _diffStream.getLength() - _position);
@@ -281,7 +281,7 @@ public final class SnapshotStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;

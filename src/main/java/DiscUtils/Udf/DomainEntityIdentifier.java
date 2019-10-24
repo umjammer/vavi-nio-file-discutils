@@ -22,9 +22,6 @@
 
 package DiscUtils.Udf;
 
-import java.util.Arrays;
-
-
 public class DomainEntityIdentifier extends EntityIdentifier {
     public String toString() {
         String major = String.format("%02x", Suffix[1]);
@@ -39,7 +36,7 @@ public class DomainEntityIdentifier extends EntityIdentifier {
         SoftWriteProtect;
 
         public static DomainFlags valueOf(int value) {
-            return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+            return values()[value];
         }
     }
 }

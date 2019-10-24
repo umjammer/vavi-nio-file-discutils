@@ -26,8 +26,8 @@ import java.util.Map;
 
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
 
 
 /**

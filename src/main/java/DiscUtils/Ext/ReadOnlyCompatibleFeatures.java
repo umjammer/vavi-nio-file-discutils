@@ -22,8 +22,6 @@
 
 package DiscUtils.Ext;
 
-import java.util.Arrays;
-
 public enum ReadOnlyCompatibleFeatures {
     /**
      * Feature flags for features backwards compatible with read-only mounting.
@@ -60,6 +58,6 @@ public enum ReadOnlyCompatibleFeatures {
     ExtraInodeSize;
 
     public static ReadOnlyCompatibleFeatures valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

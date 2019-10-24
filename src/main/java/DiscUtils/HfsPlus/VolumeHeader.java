@@ -87,14 +87,14 @@ public final class VolumeHeader implements IByteArraySerializable {
         return Signature == HfsPlusSignature;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 512;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
         if (!isValid())
-            return (int) getSize();
+            return sizeOf();
 
         Version = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
         Attributes = VolumeAttributes.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));

@@ -33,7 +33,7 @@ import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Core.VirtualDiskParameters;
 import DiscUtils.Core.VirtualDiskTypeInfo;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 public abstract class VirtualDiskFactory {

@@ -36,9 +36,9 @@ import DiscUtils.Streams.Block.BlockCacheStream;
 import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 public final class DiskImageFile extends VirtualDiskLayer {
@@ -61,8 +61,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _udifHeader = new UdifResourceFile();
         _stream = stream;
         _ownsStream = ownsStream;
-        stream.setPosition(stream.getLength() - _udifHeader.getSize());
-        byte[] data = StreamUtilities.readExact(stream, (int) _udifHeader.getSize());
+        stream.setPosition(stream.getLength() - _udifHeader.sizeOf());
+        byte[] data = StreamUtilities.readExact(stream, _udifHeader.sizeOf());
         _udifHeader.readFrom(data, 0);
         if (_udifHeader.getSignatureValid()) {
             stream.setPosition(_udifHeader.XmlOffset);
@@ -110,7 +110,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 parentStream.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
 
@@ -132,14 +132,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     public void close() throws IOException {
-        try {
-            if (_stream != null && _ownsStream == Ownership.Dispose) {
-                _stream.close();
-            }
-
-            _stream = null;
-        } finally {
-            super.close();
+        if (_stream != null && _ownsStream == Ownership.Dispose) {
+            _stream.close();
         }
+
+        _stream = null;
     }
 }

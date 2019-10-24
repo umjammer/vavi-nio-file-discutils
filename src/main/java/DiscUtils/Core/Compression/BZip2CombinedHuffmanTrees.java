@@ -62,12 +62,12 @@ public class BZip2CombinedHuffmanTrees {
     private void initialize(int maxSymbols) {
         int numTrees = _bitstream.read(3);
         if (numTrees < 2 || numTrees > 6) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid number of tables");
+            throw new dotnet4j.io.IOException("Invalid number of tables");
         }
 
         int numSelectors = _bitstream.read(15);
         if (numSelectors < 1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid number of selectors");
+            throw new dotnet4j.io.IOException("Invalid number of selectors");
         }
 
         _selectors = new byte[numSelectors];
@@ -81,13 +81,13 @@ public class BZip2CombinedHuffmanTrees {
             int len = _bitstream.read(5);
             for (int i = 0; i < maxSymbols; ++i) {
                 if (len < 1 || len > 20) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Invalid length constructing Huffman tree");
+                    throw new dotnet4j.io.IOException("Invalid length constructing Huffman tree");
                 }
 
                 while (_bitstream.read(1) != 0) {
                     len = _bitstream.read(1) == 0 ? len + 1 : len - 1;
                     if (len < 1 || len > 20) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException("Invalid length constructing Huffman tree");
+                        throw new dotnet4j.io.IOException("Invalid length constructing Huffman tree");
                     }
 
                 }
@@ -104,7 +104,7 @@ public class BZip2CombinedHuffmanTrees {
         while (_bitstream.read(1) != 0) {
             val++;
             if (val >= max) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Exceeded max number of consecutive bits");
+                throw new dotnet4j.io.IOException("Exceeded max number of consecutive bits");
             }
 
         }

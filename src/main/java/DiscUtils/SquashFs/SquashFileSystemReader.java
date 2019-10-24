@@ -26,7 +26,7 @@ import DiscUtils.Core.IUnixFileSystem;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.Vfs.VfsFileSystemFacade;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -66,11 +66,11 @@ public class SquashFileSystemReader extends VfsFileSystemFacade implements IUnix
     public static boolean detect(Stream stream) {
         stream.setPosition(0);
         SuperBlock superBlock = new SuperBlock();
-        if (stream.getLength() < superBlock.getSize()) {
+        if (stream.getLength() < superBlock.sizeOf()) {
             return false;
         }
 
-        byte[] buffer = StreamUtilities.readExact(stream, (int) superBlock.getSize());
+        byte[] buffer = StreamUtilities.readExact(stream, superBlock.sizeOf());
         superBlock.readFrom(buffer, 0);
         return superBlock.Magic == SuperBlock.SquashFsMagic;
     }

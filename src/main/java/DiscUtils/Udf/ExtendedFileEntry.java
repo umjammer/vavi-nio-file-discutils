@@ -33,7 +33,7 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
 
     public LongAllocationDescriptor StreamDirectoryIcb;
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 
@@ -44,7 +44,7 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
         Uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
         Gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
         Permissions = FilePermissions.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
-        FileLinkCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 48);
+        FileLinkCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 48);
         RecordFormat = buffer[offset + 50];
         RecordDisplayAttributes = buffer[offset + 51];
         RecordLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);

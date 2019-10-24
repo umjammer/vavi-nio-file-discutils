@@ -22,8 +22,6 @@
 
 package DiscUtils.SquashFs;
 
-import java.util.Arrays;
-
 public enum InodeType {
     __dummyEnum__0,
     Directory,
@@ -42,6 +40,6 @@ public enum InodeType {
     ExtendedSocket;
 
     public static InodeType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

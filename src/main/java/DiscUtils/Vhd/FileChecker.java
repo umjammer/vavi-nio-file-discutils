@@ -35,7 +35,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

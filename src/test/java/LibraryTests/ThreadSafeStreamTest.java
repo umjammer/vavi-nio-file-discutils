@@ -36,10 +36,10 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.ThreadSafeStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.IOException;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 public class ThreadSafeStreamTest {
     @Test

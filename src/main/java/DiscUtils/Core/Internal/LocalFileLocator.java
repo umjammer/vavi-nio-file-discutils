@@ -28,11 +28,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.FileLocator;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.FileStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.FileStream;
+import dotnet4j.io.Stream;
 
 public final class LocalFileLocator extends FileLocator {
     private final String _dir;
@@ -75,7 +75,7 @@ public final class LocalFileLocator extends FileLocator {
         try {
             return Files.getLastModifiedTime(Paths.get(_dir, path)).toMillis();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

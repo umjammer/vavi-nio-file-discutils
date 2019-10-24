@@ -30,7 +30,7 @@ import vavi.util.win32.DateUtil;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public final class HiveHeader implements IByteArraySerializable {
@@ -72,7 +72,7 @@ public final class HiveHeader implements IByteArraySerializable {
         Guid2 = UUID.randomUUID();
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return HeaderSize;
     }
 

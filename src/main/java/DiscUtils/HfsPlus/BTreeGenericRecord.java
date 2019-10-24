@@ -31,7 +31,7 @@ public class BTreeGenericRecord extends BTreeNodeRecord {
         _size = size;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return _size;
     }
 

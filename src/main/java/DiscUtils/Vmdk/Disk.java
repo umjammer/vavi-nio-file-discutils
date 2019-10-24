@@ -38,14 +38,14 @@ import DiscUtils.Core.VirtualDiskClass;
 import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Core.VirtualDiskParameters;
 import DiscUtils.Core.VirtualDiskTypeInfo;
-import DiscUtils.Core.CoreCompat.Tuple;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.Tuple;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileStream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -437,7 +437,7 @@ public final class Disk extends VirtualDisk {
                 }
             }
             if (!foundParent) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Parent disk not found");
+                throw new dotnet4j.io.IOException("Parent disk not found");
             }
         }
     }

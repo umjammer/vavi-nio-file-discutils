@@ -27,7 +27,7 @@ import java.util.List;
 
 import DiscUtils.Core.Vfs.IVfsDirectory;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntry, File> {

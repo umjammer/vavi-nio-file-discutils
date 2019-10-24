@@ -166,7 +166,7 @@ public abstract class NodeHeader implements IByteArraySerializable {
         __Level = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return Length;
     }
 

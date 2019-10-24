@@ -30,8 +30,8 @@ import vavi.util.win32.DateUtil;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.compat.SecurityIdentifier;
-import moe.yo3explorer.dotnetio4j.compat.WellKnownSidType;
+import dotnet4j.security.principal.SecurityIdentifier;
+import dotnet4j.security.principal.WellKnownSidType;
 
 
 public final class Quotas {
@@ -93,7 +93,7 @@ public final class Quotas {
             Sid = sid;
         }
 
-        public long getSize() {
+        public int sizeOf() {
             return Sid.getBinaryLength();
         }
 
@@ -121,7 +121,7 @@ public final class Quotas {
             OwnerId = ownerId;
         }
 
-        public long getSize() {
+        public int sizeOf() {
             return 4;
         }
 
@@ -168,7 +168,7 @@ public final class Quotas {
             Sid = sid;
         }
 
-        public long getSize() {
+        public int sizeOf() {
             return 0x30 + (Sid == null ? 0 : Sid.getBinaryLength());
         }
 

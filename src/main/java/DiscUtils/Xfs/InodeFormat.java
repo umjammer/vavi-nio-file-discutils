@@ -22,8 +22,6 @@
 
 package DiscUtils.Xfs;
 
-import java.util.Arrays;
-
 public enum InodeFormat {
     /**
      * character and block devices
@@ -49,6 +47,6 @@ public enum InodeFormat {
     Uuid;
 
     public static InodeFormat valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

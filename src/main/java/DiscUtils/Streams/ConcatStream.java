@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -133,7 +133,7 @@ public class ConcatStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         setPosition(effectiveOffset);
@@ -145,7 +145,7 @@ public class ConcatStream extends SparseStream {
         long[] lastStreamOffset = new long[1];
         int lastStream = getStream(getLength(), lastStreamOffset);
         if (value < lastStreamOffset[0]) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("Unable to reduce stream length to less than %d", lastStreamOffset));
+            throw new dotnet4j.io.IOException(String.format("Unable to reduce stream length to less than %d", lastStreamOffset));
         }
 
         _streams.get(lastStream).setLength(value - lastStreamOffset[0]);
@@ -202,7 +202,7 @@ public class ConcatStream extends SparseStream {
 
     private void checkDisposed() {
         if (_streams == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("it has been closed.");
+            throw new dotnet4j.io.IOException("it has been closed.");
         }
     }
 }

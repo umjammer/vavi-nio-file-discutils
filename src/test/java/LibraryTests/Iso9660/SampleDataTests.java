@@ -15,7 +15,7 @@ import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.Iso9660.CDReader;
 import LibraryTests.Utilities.ZipUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class SampleDataTests {

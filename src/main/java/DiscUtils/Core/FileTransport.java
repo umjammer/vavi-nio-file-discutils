@@ -30,7 +30,7 @@ import java.nio.file.Paths;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskTransportAttribute(scheme = "file")
@@ -49,7 +49,7 @@ public final class FileTransport extends VirtualDiskTransport {
         _extraInfo = uri.getFragment();
         Path path = Paths.get(_path).getParent();
         if (path == null || !Files.exists(path)) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("No such file '%s'", uri.toString()));
+            throw new dotnet4j.io.FileNotFoundException(String.format("No such file '%s'", uri.toString()));
         }
     }
 

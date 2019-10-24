@@ -33,15 +33,15 @@ import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.FileOptions;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.FileStream;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.FileOptions;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.FileStream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compression.CompressionMode;
 
 
 /**
@@ -284,7 +284,7 @@ public final class SquashFileSystemBuilder {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
         }
@@ -341,7 +341,7 @@ public final class SquashFileSystemBuilder {
         superBlock.MajorVersion = 4;
         superBlock.MinorVersion = 0;
 
-        output.setPosition(superBlock.getSize());
+        output.setPosition(superBlock.sizeOf());
 
         getRoot().reset();
         getRoot().write(_context);
@@ -372,7 +372,7 @@ public final class SquashFileSystemBuilder {
 
         // Go back and write the superblock
         output.setPosition(0);
-        byte[] buffer = new byte[(int) superBlock.getSize()];
+        byte[] buffer = new byte[superBlock.sizeOf()];
         superBlock.writeTo(buffer, 0);
         output.write(buffer, 0, buffer.length);
         output.setPosition(end);
@@ -388,7 +388,7 @@ public final class SquashFileSystemBuilder {
         try (Stream destStream = locator.open(outputFile, FileMode.Create, FileAccess.Write, FileShare.None)) {
             build(destStream);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -416,7 +416,7 @@ public final class SquashFileSystemBuilder {
         try (ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true)) {
             compStream.write(buffer, offset, count);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         byte[] writeData;
         int writeOffset;

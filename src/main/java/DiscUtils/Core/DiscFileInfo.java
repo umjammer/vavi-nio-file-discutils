@@ -26,11 +26,11 @@ import java.io.IOException;
 import java.util.EnumSet;
 
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamReader;
-import moe.yo3explorer.dotnetio4j.StreamWriter;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
+import dotnet4j.io.StreamReader;
+import dotnet4j.io.StreamWriter;
 
 
 /**
@@ -62,7 +62,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             return getFileSystem().fileExists(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -90,7 +90,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             return getFileSystem().getFileLength(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -101,7 +101,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().deleteFile(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -138,7 +138,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().copyFile(getPath(), destinationFileName, overwrite);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -171,7 +171,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().moveFile(getPath(), destinationFileName);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -187,7 +187,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             return getFileSystem().openFile(getPath(), mode);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -206,7 +206,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
         try {
             return getFileSystem().openFile(getPath(), mode, access);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

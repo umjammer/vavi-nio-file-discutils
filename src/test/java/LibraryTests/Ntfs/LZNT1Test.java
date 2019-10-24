@@ -59,14 +59,13 @@ public class LZNT1Test {
         }
     }
 
-    private static <T> Object createInstance(String name) throws Exception {
-        return Class.forName(name).newInstance();
+    private static <T> T createInstance(Class<T> clazz, String name) throws Exception {
+        return (T) Class.forName(name).newInstance();
     }
 
     @Test
     public void compress() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         int[] compressedLength = new int[] {
             16 * 4096
         };
@@ -84,8 +83,7 @@ public class LZNT1Test {
 
     @Test
     public void compressMidSourceBuffer() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] inData = new byte[128 * 1024];
         System.arraycopy(_uncompressedData, 0, inData, 32 * 1024, 64 * 1024);
         int[] compressedLength = new int[] {
@@ -104,8 +102,7 @@ public class LZNT1Test {
 
     @Test
     public void compressMidDestBuffer() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         // Double-check, make sure native code round-trips
         byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
         assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
@@ -123,8 +120,7 @@ public class LZNT1Test {
 
     @Test
     public void compress1KBlockSize() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         int[] compressedLength = new int[] {
             16 * 4096
         };
@@ -148,8 +144,7 @@ public class LZNT1Test {
 
     @Test
     public void compress1KBlock() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] uncompressed1K = new byte[1024];
         System.arraycopy(_uncompressedData, 0, uncompressed1K, 0, 1024);
         int[] compressedLength = new int[] {
@@ -167,8 +162,7 @@ public class LZNT1Test {
 
     @Test
     public void compressAllZeros() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] compressed = new byte[64 * 1024];
         int[] numCompressed = new int[] {
             64 * 1024
@@ -179,8 +173,7 @@ public class LZNT1Test {
 
     @Test
     public void compressIncompressible() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         Random rng = new Random(6324);
         byte[] uncompressed = new byte[64 * 1024];
         rng.nextBytes(uncompressed);
@@ -194,8 +187,7 @@ public class LZNT1Test {
 
     @Test
     public void decompress() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
         assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
@@ -207,8 +199,7 @@ public class LZNT1Test {
 
     @Test
     public void decompressMidSourceBuffer() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
         byte[] inData = new byte[128 * 1024];
         System.arraycopy(compressed, 0, inData, 32 * 1024, compressed.length);
@@ -222,8 +213,7 @@ public class LZNT1Test {
 
     @Test
     public void decompressMidDestBuffer() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
         assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
@@ -237,8 +227,7 @@ public class LZNT1Test {
 
     @Test
     public void decompress1KBlockSize() throws Exception {
-        Object instance = createInstance("DiscUtils.Ntfs.LZNT1");
-        BlockCompressor compressor = (BlockCompressor) instance;
+        BlockCompressor compressor = createInstance(BlockCompressor.class, "DiscUtils.Ntfs.LZNT1");
         byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 1024);
         assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
         byte[] decompressed = new byte[_uncompressedData.length];

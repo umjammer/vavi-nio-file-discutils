@@ -25,7 +25,7 @@ package DiscUtils.Xfs;
 import java.util.ArrayList;
 import java.util.List;
 
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class BTreeExtentLeafV5 extends BTreeExtentHeaderV5 {
@@ -39,8 +39,8 @@ public class BTreeExtentLeafV5 extends BTreeExtentHeaderV5 {
         __Extents = value;
     }
 
-    public long getSize() {
-        return super.getSize() + (getNumberOfRecords() * 0x10);
+    public int sizeOf() {
+        return super.sizeOf() + (getNumberOfRecords() * 0x10);
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -54,7 +54,7 @@ public class BTreeExtentLeafV5 extends BTreeExtentHeaderV5 {
             offset += rec.readFrom(buffer, offset);
             __Extents.add(i, rec);
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

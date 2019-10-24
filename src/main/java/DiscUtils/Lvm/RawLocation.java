@@ -38,7 +38,7 @@ public class RawLocation implements IByteArraySerializable {
     /**
      *
      */
-    public long getSize() {
+    public int sizeOf() {
         return 0x18;
     }
 
@@ -50,7 +50,7 @@ public class RawLocation implements IByteArraySerializable {
         Length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
         Checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
         Flags = RawLocationFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14));
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

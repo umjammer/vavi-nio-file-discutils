@@ -42,18 +42,18 @@ public final class MetadataPartitionMap extends PartitionMap {
 
     public short VolumeSequenceNumber;
 
-    public long getSize() {
+    public int sizeOf() {
         return 64;
     }
 
     protected int parse(byte[] buffer, int offset) {
-        VolumeSequenceNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
-        PartitionNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
+        VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
+        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
         MetadataFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
         MetadataMirrorFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
         MetadataBitmapFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
         AllocationUnitSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 52);
-        AlignmentUnitSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
+        AlignmentUnitSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
         Flags = buffer[offset + 58];
         return 64;
     }

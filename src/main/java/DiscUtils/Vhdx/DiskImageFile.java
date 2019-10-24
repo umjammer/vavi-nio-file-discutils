@@ -50,11 +50,11 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -365,7 +365,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public Stream openRegion(UUID region) {
         RegionEntry metadataRegion = _regionTable.Regions.get(region);
-        return new SubStream(_logicalStream, metadataRegion.FileOffset, metadataRegion.getSize());
+        return new SubStream(_logicalStream, metadataRegion.fileOffset, metadataRegion.sizeOf());
     }
 
     /**
@@ -457,21 +457,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @throws IOException
      */
     public void close() throws IOException {
-        try {
-            if (_logicalStream != _fileStream && _logicalStream != null) {
-                _logicalStream.close();
-            }
-
-            _logicalStream = null;
-            if (_ownership == Ownership.Dispose && _fileStream != null) {
-                _fileStream.close();
-            }
-
-            _fileStream = null;
-
-        } finally {
-            super.close();
+        if (_logicalStream != _fileStream && _logicalStream != null) {
+            _logicalStream.close();
         }
+
+        _logicalStream = null;
+        if (_ownership == Ownership.Dispose && _fileStream != null) {
+            _fileStream.close();
+        }
+
+        _fileStream = null;
     }
 
     private static void initializeFixedInternal(Stream stream, long capacity, Geometry geometry) {
@@ -516,20 +511,20 @@ public final class DiskImageFile extends VirtualDiskLayer {
         RegionTable regionTable = new RegionTable();
 
         RegionEntry metadataRegion = new RegionEntry();
-        metadataRegion.Guid = RegionEntry.MetadataRegionGuid;
-        metadataRegion.FileOffset = fileEnd;
+        metadataRegion.guid = RegionEntry.MetadataRegionGuid;
+        metadataRegion.fileOffset = fileEnd;
         metadataRegion.setLength((int) Sizes.OneMiB);
-        metadataRegion.Flags = RegionFlags.Required;
-        regionTable.Regions.put(metadataRegion.Guid, metadataRegion);
+        metadataRegion.flags = RegionFlags.Required;
+        regionTable.Regions.put(metadataRegion.guid, metadataRegion);
 
         fileEnd += metadataRegion.getLength();
 
         RegionEntry batRegion = new RegionEntry();
-        batRegion.Guid = RegionEntry.BatGuid;
-        batRegion.FileOffset = 3 * Sizes.OneMiB;
+        batRegion.guid = RegionEntry.BatGuid;
+        batRegion.fileOffset = 3 * Sizes.OneMiB;
         batRegion.setLength((int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB));
-        batRegion.Flags = RegionFlags.Required;
-        regionTable.Regions.put(batRegion.Guid, batRegion);
+        batRegion.flags = RegionFlags.Required;
+        regionTable.Regions.put(batRegion.guid, batRegion);
 
         fileEnd += batRegion.getLength();
 
@@ -559,7 +554,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         @SuppressWarnings("unused")
         ParentLocator parentLocator = new ParentLocator();
 
-        Stream metadataStream = new SubStream(stream, metadataRegion.FileOffset, metadataRegion.getLength());
+        Stream metadataStream = new SubStream(stream, metadataRegion.fileOffset, metadataRegion.getLength());
         @SuppressWarnings("unused")
         Metadata metadata = Metadata
                 .initialize(metadataStream, fileParams, capacity, logicalSectorSize, physicalSectorSize, null);
@@ -577,7 +572,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _fileStream.setPosition(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, _fileStream);
         if (!fileHeader.isValid()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - file signature mismatch");
+            throw new dotnet4j.io.IOException("Invalid VHDX file - file signature mismatch");
         }
 
         _freeSpace = new FreeSpaceTable(_fileStream.getLength());
@@ -632,11 +627,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         LogSequence activeLogSequence = findActiveLogSequence();
         if (activeLogSequence == null || activeLogSequence.size() == 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unable to replay VHDX log, suspected corrupt VHDX file");
+            throw new dotnet4j.io.IOException("Unable to replay VHDX log, suspected corrupt VHDX file");
         }
 
         if (activeLogSequence.getHead().getFlushedFileOffset() > _logicalStream.getLength()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("truncated VHDX file found while replaying log");
+            throw new dotnet4j.io.IOException("truncated VHDX file found while replaying log");
         }
 
         if (activeLogSequence.size() > 1 || !activeLogSequence.getHead().getIsEmpty()) {
@@ -650,7 +645,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
             for (LogEntry logEntry : activeLogSequence) {
                 if (logEntry.getLogGuid() != _header.LogGuid)
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Invalid log entry in VHDX log, suspected currupt VHDX file");
+                    throw new dotnet4j.io.IOException("Invalid log entry in VHDX log, suspected currupt VHDX file");
 
                 if (logEntry.getIsEmpty())
                     continue;
@@ -693,7 +688,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             } while (currentTail > oldTail);
             return candidateActiveSequence;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -701,13 +696,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _fileStream.setPosition(192 * Sizes.OneKiB);
         _regionTable = StreamUtilities.readStruct(RegionTable.class, _fileStream);
         for (RegionEntry entry : _regionTable.Regions.values()) {
-            if (entry.Flags == RegionFlags.Required) {
-                if (!entry.Guid.equals(RegionTable.BatGuid) && !entry.Guid.equals(RegionTable.MetadataRegionGuid)) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - unrecognised required region: " + entry.Guid);
+            if (entry.flags == RegionFlags.Required) {
+                if (!entry.guid.equals(RegionTable.BatGuid) && !entry.guid.equals(RegionTable.MetadataRegionGuid)) {
+                    throw new dotnet4j.io.IOException("Invalid VHDX file - unrecognised required region: " + entry.guid);
                 }
             }
 
-            _freeSpace.reserve(entry.FileOffset, entry.getLength());
+            _freeSpace.reserve(entry.fileOffset, entry.getLength());
         }
     }
 
@@ -729,7 +724,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
 
         if (_activeHeader == 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid VHDX file - no valid VHDX headers found");
+            throw new dotnet4j.io.IOException("Invalid VHDX file - no valid VHDX headers found");
         }
     }
 
@@ -766,7 +761,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     private List<String> getParentLocations(FileLocator fileLocator) {
         if (!needsParent()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Only differencing disks contain parent locations");
+            throw new dotnet4j.io.IOException("Only differencing disks contain parent locations");
         }
 
         if (fileLocator == null) {

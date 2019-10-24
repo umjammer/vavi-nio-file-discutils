@@ -1,8 +1,6 @@
 
 package DiscUtils.Udf;
 
-import java.util.Arrays;
-
 public enum OSClass {
     None,
     Dos,
@@ -16,6 +14,6 @@ public enum OSClass {
     WindowsCe;
 
     public static OSClass valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

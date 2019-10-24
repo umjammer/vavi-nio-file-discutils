@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import DiscUtils.Registry.RegistryHive;
 import DiscUtils.Registry.RegistryKey;
 import DiscUtils.Registry.RegistryValueType;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 public class RegistryKeyTest {
     private RegistryHive hive;

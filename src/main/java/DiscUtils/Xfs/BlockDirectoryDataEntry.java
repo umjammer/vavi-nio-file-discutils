@@ -78,7 +78,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
         __FType = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         int size = 0xb + getNameLength() + (_ftype ? 1 : 0);
         int padding = size % 8;
         if (padding != 0)
@@ -107,7 +107,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
 
         offset += padding;
         setTag(EndianUtilities.toUInt16BigEndian(buffer, offset));
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

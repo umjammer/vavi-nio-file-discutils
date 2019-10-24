@@ -48,7 +48,7 @@ public class CompressedBlock implements IByteArraySerializable {
 
     public int Signature;
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 

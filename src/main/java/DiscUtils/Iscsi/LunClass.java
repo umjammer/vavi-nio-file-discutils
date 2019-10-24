@@ -1,8 +1,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
-
 public enum LunClass {
     /**
      * The known classes of SCSI device.
@@ -324,6 +322,6 @@ public enum LunClass {
     Unknown;
 
     public static LunClass valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

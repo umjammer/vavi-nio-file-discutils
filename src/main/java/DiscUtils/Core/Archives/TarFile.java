@@ -29,7 +29,7 @@ import java.util.Map;
 
 import DiscUtils.Streams.SubStream;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -87,7 +87,7 @@ public final class TarFile {
      *
      * @param path The path to the file within the archive.
      * @return A stream containing the file contents.
-     * @throws moe.yo3explorer.dotnetio4j.FileNotFoundException Thrown if the
+     * @throws dotnet4j.io.FileNotFoundException Thrown if the
      *             file is not found.
      */
     public Stream openFile(String path) {
@@ -96,7 +96,7 @@ public final class TarFile {
             return new SubStream(_fileStream, file.Start, file.Length);
         }
 
-        throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("File is not in archive: " + path);
+        throw new dotnet4j.io.FileNotFoundException("File is not in archive: " + path);
     }
 
     /**

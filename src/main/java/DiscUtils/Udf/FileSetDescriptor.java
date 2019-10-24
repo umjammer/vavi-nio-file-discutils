@@ -63,15 +63,15 @@ public class FileSetDescriptor implements IByteArraySerializable {
 
     public LongAllocationDescriptor SystemStreamDirectoryIcb;
 
-    public long getSize() {
+    public int sizeOf() {
         return 512;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         DescriptorTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, buffer, offset);
         RecordingTime = UdfUtilities.parseTimestamp(buffer, offset + 16);
-        InterchangeLevel = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
-        MaximumInterchangeLevel = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
+        InterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
+        MaximumInterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
         CharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 32);
         MaximumCharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
         FileSetNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);

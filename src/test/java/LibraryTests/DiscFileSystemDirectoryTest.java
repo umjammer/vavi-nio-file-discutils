@@ -25,6 +25,7 @@ package LibraryTests;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -37,10 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileSystem;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class DiscFileSystemDirectoryTest {

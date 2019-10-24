@@ -35,8 +35,8 @@ import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Buffer.BufferStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
 
 
 /**
@@ -287,20 +287,20 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         try {
             dirName = Utilities.getDirectoryFromPath(path);
         } catch (IllegalArgumentException __dummyCatchVar0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid path: " + path);
+            throw new dotnet4j.io.IOException("Invalid path: " + path);
         }
 
         String entryPath = Utilities.combinePaths(dirName, fileName);
         TDirEntry entry = getDirectoryEntry(entryPath);
         if (entry == null) {
             if (mode == FileMode.Open) {
-                throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file: " + path);
+                throw new dotnet4j.io.FileNotFoundException("No such file: " + path);
             }
 
             TDirectory parentDir = getDirectory(Utilities.getDirectoryFromPath(path));
             entry = parentDir.createNewFile(Utilities.getFileFromPath(path));
         } else if (mode == FileMode.CreateNew) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("File already exists");
+            throw new dotnet4j.io.IOException("File already exists");
         }
 
         if (entry.isSymlink()) {
@@ -308,7 +308,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         }
 
         if (entry.isDirectory()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to open directory as a file");
+            throw new dotnet4j.io.IOException("Attempt to open directory as a file");
         }
 
         TFile file = getFile(entry);
@@ -324,7 +324,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                     if (mode == FileMode.Create || mode == FileMode.OpenOrCreate) {
                         stream = fileStreams.createStream(attributeName);
                     } else {
-                        throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such attribute on file: " + path);
+                        throw new dotnet4j.io.FileNotFoundException("No such attribute on file: " + path);
                     }
                 }
 
@@ -352,7 +352,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("File not found: " + path);
+            throw new dotnet4j.io.FileNotFoundException("File not found: " + path);
         }
 
         if (dirEntry.hasVfsFileAttributes()) {
@@ -385,7 +385,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file or directory: " + path);
+            throw new dotnet4j.io.FileNotFoundException("No such file or directory: " + path);
         }
 
         if (dirEntry.hasVfsTimeInfo()) {
@@ -418,7 +418,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file or directory: " + path);
+            throw new dotnet4j.io.FileNotFoundException("No such file or directory: " + path);
         }
 
         if (dirEntry.hasVfsTimeInfo()) {
@@ -451,7 +451,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file or directory: " + path);
+            throw new dotnet4j.io.FileNotFoundException("No such file or directory: " + path);
         }
 
         if (dirEntry.hasVfsTimeInfo()) {
@@ -480,7 +480,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     public long getFileLength(String path) {
         TFile file = getFile(path);
         if (file == null || file.getFileAttributes().contains(FileAttributes.Directory)) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file: " + path);
+            throw new dotnet4j.io.FileNotFoundException("No such file: " + path);
         }
 
         return file.getFileLength();
@@ -508,7 +508,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         }
 
         if (dirEntry == null || !dirEntry.isDirectory()) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such directory: " + path);
+            throw new dotnet4j.io.FileNotFoundException("No such directory: " + path);
         }
 
         return (TDirectory) getFile(dirEntry);
@@ -560,7 +560,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("No such file or directory: " + path);
+            throw new dotnet4j.io.FileNotFoundException("No such file or directory: " + path);
         }
 
         return getFile(dirEntry);
@@ -610,7 +610,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                 return getDirectoryEntry((TDirectory) convertDirEntryToFile(entry), pathEntries, pathOffset + 1);
             }
 
-            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("%s is a file, not a directory",
+            throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory",
                                                                            pathEntries[pathOffset]));
         }
 
@@ -620,7 +620,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         TDirectory parentDir = getDirectory(path);
         if (parentDir == null) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("The directory '%s' was not found", path));
+            throw new dotnet4j.io.FileNotFoundException(String.format("The directory '%s' was not found", path));
         }
 
         String resultPrefixPath = path;
@@ -664,20 +664,20 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             IVfsSymlink<TDirEntry, TFile> symlink = getFile(currentEntry) instanceof IVfsSymlink ? IVfsSymlink.class
                     .cast(getFile(currentEntry)) : (IVfsSymlink<TDirEntry, TFile>) null;
             if (symlink == null) {
-                throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);
+                throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 
             currentPath = Utilities.resolvePath(currentPath.replaceFirst(Utilities.escapeForRegex("\\") + "*$", ""),
                                                 symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {
-                throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink: " + path);
+                throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 
             --resolvesLeft;
         }
         if (currentEntry.isSymlink()) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException("Unable to resolve symlink - too many links: " + path);
+            throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink - too many links: " + path);
         }
 
         return currentEntry;

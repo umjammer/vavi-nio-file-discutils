@@ -37,7 +37,7 @@ public final class SecurityDescriptorRecord implements IByteArraySerializable {
 
     public byte[] SecurityDescriptor;
 
-    public long getSize() {
+    public int sizeOf() {
         return SecurityDescriptor.length + 0x14;
     }
 
@@ -47,7 +47,7 @@ public final class SecurityDescriptorRecord implements IByteArraySerializable {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EntrySize = (int) getSize();
+        EntrySize = sizeOf();
         EndianUtilities.writeBytesLittleEndian(Hash, buffer, offset + 0x00);
         EndianUtilities.writeBytesLittleEndian(Id, buffer, offset + 0x04);
         EndianUtilities.writeBytesLittleEndian(OffsetInFile, buffer, offset + 0x08);

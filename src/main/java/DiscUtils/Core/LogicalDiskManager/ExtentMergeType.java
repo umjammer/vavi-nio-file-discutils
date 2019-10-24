@@ -22,13 +22,11 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.util.Arrays;
-
 public enum ExtentMergeType {
     None,
     Interleaved,
     Concatenated;
     public static ExtentMergeType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

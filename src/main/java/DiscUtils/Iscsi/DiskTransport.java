@@ -29,7 +29,7 @@ import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskTransportAttribute(scheme = "iscsi")

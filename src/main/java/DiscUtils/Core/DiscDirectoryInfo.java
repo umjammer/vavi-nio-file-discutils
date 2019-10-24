@@ -50,7 +50,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
         try {
             return getFileSystem().directoryExists(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -68,7 +68,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().createDirectory(getPath());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -79,7 +79,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().deleteDirectory(getPath(), false);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -93,7 +93,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().deleteDirectory(getPath(), recursive);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -106,7 +106,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
         try {
             getFileSystem().moveDirectory(getPath(), destinationDirName);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -122,7 +122,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
                     .map(p -> new DiscDirectoryInfo(getFileSystem(), p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -155,7 +155,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
                     .map(p -> new DiscDirectoryInfo(getFileSystem(), p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -171,7 +171,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
                     .map(p -> new DiscFileInfo(getFileSystem(), p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -204,7 +204,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
                     .map(p -> new DiscFileInfo(getFileSystem(), p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -220,7 +220,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
                     .map(p -> new DiscFileSystemInfo(getFileSystem(), p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -239,7 +239,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
                     .map(p -> new DiscFileSystemInfo(getFileSystem(), p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 }

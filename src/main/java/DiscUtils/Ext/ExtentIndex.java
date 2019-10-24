@@ -37,14 +37,14 @@ public class ExtentIndex implements IByteArraySerializable {
         return LeafPhysicalBlockLo | ((long) LeafPhysicalBlockHi << 32);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 12;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         FirstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         LeafPhysicalBlockLo = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        LeafPhysicalBlockHi = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        LeafPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
         return 12;
     }
 

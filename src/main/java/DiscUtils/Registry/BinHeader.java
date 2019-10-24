@@ -24,7 +24,7 @@ package DiscUtils.Registry;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public final class BinHeader implements IByteArraySerializable {
@@ -36,7 +36,7 @@ public final class BinHeader implements IByteArraySerializable {
 
     public int FileOffset;
 
-    public long getSize() {
+    public int sizeOf() {
         return HeaderSize;
     }
 

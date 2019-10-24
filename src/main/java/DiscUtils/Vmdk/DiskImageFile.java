@@ -50,10 +50,10 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -116,7 +116,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 try {
                     fileStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
         }
@@ -171,7 +171,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 _ownsMonolithicStream = Ownership.Dispose;
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         _fileLocator = fileLocator.getRelativeLocator(fileLocator.getDirectoryFromPath(file));
     }
@@ -427,7 +427,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                 type,
                                 baseDescriptor);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -457,7 +457,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             DescriptorFile baseDescriptor = createDifferencingDiskDescriptor(type, parentFile, parent);
             return doInitialize(locator, Utilities.getFileFromPath(path), parentFile.getCapacity(), type, baseDescriptor);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -476,7 +476,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 try {
                     parent.close();
                 } catch (IOException e) {
-                    new moe.yo3explorer.dotnetio4j.IOException(e);
+                    new dotnet4j.io.IOException(e);
                 }
             }
 
@@ -595,19 +595,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        try {
-            if (_contentStream != null) {
-                _contentStream.close();
-                _contentStream = null;
-            }
+        if (_contentStream != null) {
+            _contentStream.close();
+            _contentStream = null;
+        }
 
-            if (_ownsMonolithicStream == Ownership.Dispose && _monolithicStream != null) {
-                _monolithicStream.close();
-                _monolithicStream = null;
-            }
-
-        } finally {
-            super.close();
+        if (_ownsMonolithicStream == Ownership.Dispose && _monolithicStream != null) {
+            _monolithicStream.close();
+            _monolithicStream = null;
         }
     }
 
@@ -631,7 +626,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 baseDescriptor.getExtents().add(extent);
                 baseDescriptor.write(fs);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         } else {
             ExtentType extentType = createTypeToExtentType(type);
@@ -651,7 +646,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     extents.add(new ExtentDescriptor(ExtentAccess.ReadWrite, capacity / Sizes.Sector, extentType, fileName, 0));
                     totalSize = capacity;
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             } else if (type == DiskCreateType.TwoGbMaxExtentFlat || type == DiskCreateType.TwoGbMaxExtentSparse) {
                 int i = 1;
@@ -674,7 +669,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                          0));
                         totalSize += extentSize;
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
                     ++i;
                 }
@@ -686,7 +681,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 baseDescriptor.getExtents().addAll(extents);
                 baseDescriptor.write(fs);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
         return new DiskImageFile(fileLocator, file, FileAccess.ReadWrite);
@@ -867,7 +862,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 try {
                     parent.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
 
@@ -925,5 +920,4 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         }
     }
-
 }

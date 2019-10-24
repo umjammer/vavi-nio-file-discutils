@@ -127,7 +127,7 @@ public class FileContentBuffer implements IBuffer {
                 _extents.add(newExtent);
 
                 filePos += sad.ExtentLength;
-                i += sad.getSize();
+                i += sad.sizeOf();
             }
         } else if (allocType == AllocationType.Embedded) {
             // do nothing
@@ -150,7 +150,7 @@ public class FileContentBuffer implements IBuffer {
                 _extents.add(newExtent);
 
                 filePos += lad.ExtentLength;
-                i += lad.getSize();
+                i += lad.sizeOf();
             }
         } else {
             throw new UnsupportedOperationException("Allocation Type: " + _fileEntry.InformationControlBlock._AllocationType);

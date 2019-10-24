@@ -36,8 +36,8 @@ import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Buffer.IMappedBuffer;
 import DiscUtils.Streams.Util.Range;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 public class NtfsAttribute implements IDiagnosticTraceable {

@@ -28,7 +28,7 @@ import java.net.URI;
 
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 public abstract class VirtualDiskTransport implements Closeable {

@@ -42,11 +42,11 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.ZeroStream;
 import DiscUtils.Streams.ReaderWriter.LittleEndianDataReader;
 import DiscUtils.Streams.Util.MathUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 /**
@@ -123,7 +123,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         DirectoryEntry dirEntry = getEntry(path);
         ShortResourceHeader hdr = _file.locateResource(dirEntry.Hash);
         if (hdr == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("No reparse point");
+            throw new dotnet4j.io.IOException("No reparse point");
         }
 
         try (Stream s = _file.openResourceStream(hdr)) {
@@ -131,7 +131,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             s.read(buffer, 0, buffer.length);
             return new ReparsePoint(dirEntry.ReparseTag, buffer);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -392,7 +392,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
                 return new ZeroStream(0);
             }
 
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unable to locate file contents");
+            throw new dotnet4j.io.IOException("Unable to locate file contents");
         }
 
         return _file.openResourceStream(hdr);

@@ -1,8 +1,6 @@
 
 package DiscUtils.Wim;
 
-import java.util.Arrays;
-
 public enum FileFlags {
     Compression,
     ReadOnly,
@@ -15,6 +13,6 @@ public enum FileFlags {
     LzxCompression;
 
     public static FileFlags valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

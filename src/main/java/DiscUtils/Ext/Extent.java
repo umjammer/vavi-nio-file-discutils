@@ -39,14 +39,14 @@ public class Extent implements IByteArraySerializable {
         return FirstPhysicalBlockLow | ((long) FirstPhysicalBlockHi << 32);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 12;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         FirstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        NumBlocks = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        FirstPhysicalBlockHi = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        NumBlocks = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        FirstPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
         FirstPhysicalBlockLow = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
         return 12;
     }

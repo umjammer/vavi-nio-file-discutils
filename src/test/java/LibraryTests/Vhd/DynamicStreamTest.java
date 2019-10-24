@@ -32,10 +32,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Vhd.Disk;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class DynamicStreamTest {

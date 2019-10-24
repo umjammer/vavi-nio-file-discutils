@@ -28,7 +28,7 @@ import java.util.List;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class ZlibBuffer extends Buffer {

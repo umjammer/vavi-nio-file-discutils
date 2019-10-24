@@ -22,14 +22,12 @@
 
 package DiscUtils.Xfs;
 
-import java.util.Arrays;
-
 public enum Version2Features {
     /**
      * Additional version flags if
-     * {@link #VersionFlags.MOREBITSBIT}
+     * {@link VersionFlags#MOREBITSBIT}
      * is set in
-     * {@link #SuperBlock.Version}
+     * {@link SuperBlock#getVersion()}
      * .
      */
     Reserved1,
@@ -84,6 +82,6 @@ public enum Version2Features {
     FType;
 
     public static Version2Features valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -17,7 +17,7 @@ import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Vhdx.Disk;
 import DiscUtils.Vhdx.DiskImageFile;
 import LibraryTests.Utilities.ZipUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class SampleDataTests {

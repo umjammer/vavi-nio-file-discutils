@@ -35,9 +35,9 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.compression.DeflateStream;
 
 
 public class UdifBuffer extends Buffer {
@@ -221,12 +221,12 @@ public class UdifBuffer extends Buffer {
                     }
 
                 }
-                throw new moe.yo3explorer.dotnetio4j.IOException("No run for sector " + findSector + " in block starting at " +
+                throw new dotnet4j.io.IOException("No run for sector " + findSector + " in block starting at " +
                     block.FirstSector);
             }
 
         }
-        throw new moe.yo3explorer.dotnetio4j.IOException("No block for sector " + findSector);
+        throw new dotnet4j.io.IOException("No block for sector " + findSector);
     }
 
     private void loadRun(CompressedRun run) {
@@ -239,7 +239,7 @@ public class UdifBuffer extends Buffer {
             try (DeflateStream ds = new DeflateStream(_stream, CompressionMode.Decompress, true)) {
                 StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
             break;
@@ -256,7 +256,7 @@ public class UdifBuffer extends Buffer {
                                                                 Ownership.None)) {
                 StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
             break;

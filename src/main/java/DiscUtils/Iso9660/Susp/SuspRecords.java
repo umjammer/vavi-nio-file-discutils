@@ -103,7 +103,7 @@ public final class SuspRecords {
             byte[] len = new byte[1];
             SystemUseEntry entry = SystemUseEntry
                     .parse(data, pos, context.getVolumeDescriptor().CharacterEncoding, extension, len);
-            pos += len[0];
+            pos += len[0] & 0xff;
             if (entry == null) {
                 // A null entry indicates SUSP parsing must terminate.
                 // This will occur if a termination record is found,

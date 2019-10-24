@@ -31,7 +31,7 @@ public class CharacterSetSpecification implements IByteArraySerializable {
 
     public CharacterSetType Type = CharacterSetType.CharacterSet0;
 
-    public long getSize() {
+    public int sizeOf() {
         return 64;
     }
 

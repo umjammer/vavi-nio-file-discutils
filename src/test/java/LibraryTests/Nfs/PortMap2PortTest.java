@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import DiscUtils.Nfs.PortMap2Port;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class PortMap2PortTest {

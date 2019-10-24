@@ -25,7 +25,7 @@ package DiscUtils.Udf;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class DescriptorTag implements IByteArraySerializable {
@@ -43,17 +43,17 @@ public class DescriptorTag implements IByteArraySerializable {
 
     public short TagSerialNumber;
 
-    public long getSize() {
+    public int sizeOf() {
         return 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         _TagIdentifier = TagIdentifier.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset));
-        DescriptorVersion = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        DescriptorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
         TagChecksum = buffer[offset + 4];
-        TagSerialNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        DescriptorCrc = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
-        DescriptorCrcLength = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 10);
+        TagSerialNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        DescriptorCrc = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        DescriptorCrcLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 10);
         TagLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         return 16;
     }

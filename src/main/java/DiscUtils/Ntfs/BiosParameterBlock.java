@@ -163,8 +163,8 @@ public class BiosParameterBlock {
     public static BiosParameterBlock fromBytes(byte[] bytes, int offset) {
         BiosParameterBlock bpb = new BiosParameterBlock();
         bpb.OemId = EndianUtilities.bytesToString(bytes, offset + 0x03, 8);
-        bpb.BytesPerSector = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0B);
-        bpb.TotalSectors16 = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x13);
+        bpb.BytesPerSector = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0B);
+        bpb.TotalSectors16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x13);
         bpb.TotalSectors32 = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x20);
         bpb.SignatureByte = bytes[offset + 0x26];
         bpb.TotalSectors64 = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x28);
@@ -174,13 +174,13 @@ public class BiosParameterBlock {
         if (!bpb.isValid(Long.MAX_VALUE))
             return bpb;
 
-        bpb.ReservedSectors = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0E);
+        bpb.ReservedSectors = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0E);
         bpb.NumFats = bytes[offset + 0x10];
-        bpb.FatRootEntriesCount = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x11);
+        bpb.FatRootEntriesCount = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x11);
         bpb.Media = bytes[offset + 0x15];
-        bpb.FatSize16 = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x16);
-        bpb.SectorsPerTrack = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x18);
-        bpb.NumHeads = (short) EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x1A);
+        bpb.FatSize16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x16);
+        bpb.SectorsPerTrack = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x18);
+        bpb.NumHeads = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x1A);
         bpb.HiddenSectors = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x1C);
         bpb.BiosDriveNumber = bytes[offset + 0x24];
         bpb.ChkDskFlags = bytes[offset + 0x25];

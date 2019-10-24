@@ -109,7 +109,7 @@ public class Initiator {
         try (Session session = new Session(SessionType.Discovery, null, _userName, _password, Arrays.asList(address))) {
             return session.enumerateTargets();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 }

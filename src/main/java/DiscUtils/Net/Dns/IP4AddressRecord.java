@@ -26,7 +26,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 /**
  * Represents a DNS A record.

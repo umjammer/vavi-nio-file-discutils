@@ -24,7 +24,7 @@ package DiscUtils.Ext;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class JournalSuperBlock implements IByteArraySerializable {
@@ -37,7 +37,7 @@ public class JournalSuperBlock implements IByteArraySerializable {
     /**
      *
      */
-    public long getSize() {
+    public int sizeOf() {
         return 1024;
     }
 

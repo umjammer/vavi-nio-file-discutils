@@ -1,8 +1,6 @@
 
 package DiscUtils.Ntfs;
 
-import java.util.Arrays;
-
 public enum AttributeCollationRule {
     Binary,
     Filename,
@@ -26,6 +24,6 @@ public enum AttributeCollationRule {
     MultipleUnsignedLongs;
 
     public static AttributeCollationRule valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

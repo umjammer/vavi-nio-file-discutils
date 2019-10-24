@@ -22,8 +22,6 @@
 
 package DiscUtils.BootConfig;
 
-import java.util.Arrays;
-
 public enum ElementClass {
     /**
      * The known classes of element.
@@ -49,6 +47,6 @@ public enum ElementClass {
     Hidden;
 
     public static ElementClass valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -51,7 +51,7 @@ public final class BuilderDirectory extends BuilderNode {
         }
 
         if (_index.containsKey(name)) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("The directory entry '" + name + "' already exists");
+            throw new dotnet4j.io.IOException("The directory entry '" + name + "' already exists");
         }
 
         Entry newEntry = new Entry();
@@ -113,7 +113,7 @@ public final class BuilderDirectory extends BuilderNode {
             hdr.StartBlock = (int) thisBlock;
 
             hdr.writeTo(context.getIoBuffer(), 0);
-            context.getDirectoryWriter().write(context.getIoBuffer(), 0, (int) hdr.getSize());
+            context.getDirectoryWriter().write(context.getIoBuffer(), 0, hdr.sizeOf());
 
             for (int i = 0; i < count; ++i) {
                 Entry child = _children.get(currentChild + i);
@@ -124,7 +124,7 @@ public final class BuilderDirectory extends BuilderNode {
                 record.Name = child.Name;
 
                 record.writeTo(context.getIoBuffer(), 0);
-                context.getDirectoryWriter().write(context.getIoBuffer(), 0, (int) record.getSize());
+                context.getDirectoryWriter().write(context.getIoBuffer(), 0, record.sizeOf());
 
                 if (child.Node.getInode().Type == InodeType.Directory
                         || child.Node.getInode().Type == InodeType.ExtendedDirectory) {
@@ -153,7 +153,7 @@ public final class BuilderDirectory extends BuilderNode {
         _inode.Type = InodeType.Directory;
         setInodeRef(context.getInodeWriter().getPosition());
         _inode.writeTo(context.getIoBuffer(), 0);
-        context.getInodeWriter().write(context.getIoBuffer(), 0, (int) _inode.getSize());
+        context.getInodeWriter().write(context.getIoBuffer(), 0, _inode.sizeOf());
     }
 
     private static class Entry implements Comparable<Entry> {

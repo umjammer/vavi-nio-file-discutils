@@ -24,7 +24,7 @@ package DiscUtils.Nfs;
 
 import java.util.EnumSet;
 
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class Nfs3 extends RpcProgram {

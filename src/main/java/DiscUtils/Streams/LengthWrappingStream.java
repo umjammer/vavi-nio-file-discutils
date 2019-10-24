@@ -29,7 +29,7 @@ import DiscUtils.Streams.Util.Ownership;
  * Represents a stream with a specified length
  *
  * since the wrapped stream may not support
- * {@link moe.yo3explorer.dotnetio4j.Stream#getPosition()}
+ * {@link dotnet4j.io.Stream#getPosition()}
  *
  * there is no validation of the specified length
  */

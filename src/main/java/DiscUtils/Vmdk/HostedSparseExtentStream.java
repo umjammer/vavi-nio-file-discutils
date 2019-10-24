@@ -29,10 +29,10 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.compression.DeflateStream;
 
 
 /**
@@ -62,7 +62,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             headerSector = StreamUtilities.readExact(file, Sizes.Sector);
             _hostedHeader = HostedSparseExtentHeader.read(headerSector, 0);
             if (_hostedHeader.MagicNumber != HostedSparseExtentHeader.VmdkMagicNumber) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to locate valid VMDK header or footer");
+                throw new dotnet4j.io.IOException("Unable to locate valid VMDK header or footer");
             }
 
         }
@@ -85,11 +85,11 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Cannot write to this stream");
+            throw new dotnet4j.io.IOException("Cannot write to this stream");
         }
 
         if (_position + count > getLength()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to write beyond end of stream");
         }
 
         int totalWritten = 0;
@@ -128,7 +128,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             // check against expected header values...
             short header = EndianUtilities.toUInt16BigEndian(readBuffer, 0);
             if (header % 31 != 0) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid ZLib header found");
+                throw new dotnet4j.io.IOException("Invalid ZLib header found");
             }
 
             if ((header & 0x0F00) != 8 << 8) {
@@ -190,7 +190,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
 
     private void writeGrainTable() {
         if (_grainTable == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("No grain table loaded");
+            throw new dotnet4j.io.IOException("No grain table loaded");
         }
 
         _fileStream.setPosition(_globalDirectory[_currentGrainTable] * (long) Sizes.Sector);

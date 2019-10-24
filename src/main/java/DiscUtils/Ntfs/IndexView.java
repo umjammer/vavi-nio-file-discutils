@@ -22,7 +22,6 @@
 
 package DiscUtils.Ntfs;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -121,13 +120,9 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
     }
 
     private static <T extends IByteArraySerializable> byte[] unconvert(T value) {
-        try {
-            byte[] buffer = new byte[(int) value.getSize()];
-            value.writeTo(buffer, 0);
-            return buffer;
-        } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
-        }
+        byte[] buffer = new byte[value.sizeOf()];
+        value.writeTo(buffer, 0);
+        return buffer;
     }
 
     private class ComparableConverter implements Comparable<byte[]> {

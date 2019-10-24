@@ -29,8 +29,8 @@ import java.util.Map;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class BTreeExtentNode extends BTreeExtentHeader {
@@ -64,8 +64,8 @@ public class BTreeExtentNode extends BTreeExtentHeader {
         __Children = value;
     }
 
-    public long getSize() {
-        return super.getSize() + (getNumberOfRecords() * 0x8);
+    public int sizeOf() {
+        return super.sizeOf() + (getNumberOfRecords() * 0x8);
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -82,7 +82,7 @@ public class BTreeExtentNode extends BTreeExtentHeader {
         for (int i = 0; i < getNumberOfRecords(); i++) {
             getPointer()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void loadBtree(Context context) {

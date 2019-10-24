@@ -25,10 +25,10 @@ package DiscUtils.Core;
 import java.io.IOException;
 
 import DiscUtils.Core.Internal.Utilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 public final class DiscFileLocator extends FileLocator {
     private final String _basePath;

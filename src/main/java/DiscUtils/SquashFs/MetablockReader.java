@@ -124,10 +124,10 @@ public final class MetablockReader {
         if (block.getAvailable() - _currentOffset < 2) {
             byte[] buffer = new byte[2];
             read(buffer, 0, 2);
-            return (short) EndianUtilities.toUInt16LittleEndian(buffer, 0);
+            return EndianUtilities.toUInt16LittleEndian(buffer, 0);
         }
 
-        short result = (short) EndianUtilities.toUInt16LittleEndian(block.getData(), _currentOffset);
+        short result = EndianUtilities.toUInt16LittleEndian(block.getData(), _currentOffset);
         _currentOffset += 2;
         return result;
     }

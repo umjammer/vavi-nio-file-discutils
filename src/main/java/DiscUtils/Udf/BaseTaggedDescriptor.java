@@ -34,7 +34,7 @@ public abstract class BaseTaggedDescriptor implements IByteArraySerializable {
         RequiredTagIdentifier = id;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 512;
     }
 
@@ -45,7 +45,7 @@ public abstract class BaseTaggedDescriptor implements IByteArraySerializable {
 
         Tag = new DescriptorTag();
         Tag.readFrom(buffer, offset);
-        if (UdfUtilities.computeCrc(buffer, offset + (int) Tag.getSize(), Tag.DescriptorCrcLength) != Tag.DescriptorCrc) {
+        if (UdfUtilities.computeCrc(buffer, offset + Tag.sizeOf(), Tag.DescriptorCrcLength) != Tag.DescriptorCrc) {
             throw new IllegalStateException("Invalid Anchor Volume Descriptor Pointer (invalid CRC)");
         }
 

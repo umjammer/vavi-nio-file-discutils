@@ -79,7 +79,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         return convertFlags(Flags);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x42 + FileName.length() * 2;
     }
 
@@ -139,7 +139,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
             return false;
         }
 
-        return ParentDirectory.equals(other.ParentDirectory) && _FileNameNamespace.equals(other._FileNameNamespace) &&
+        return ParentDirectory.equals(other.ParentDirectory) && _FileNameNamespace == other._FileNameNamespace &&
                FileName.equals(other.FileName);
     }
 

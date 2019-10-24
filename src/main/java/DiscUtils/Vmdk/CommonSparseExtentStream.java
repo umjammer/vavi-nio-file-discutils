@@ -36,8 +36,8 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public abstract class CommonSparseExtentStream extends MappedStream {
@@ -154,12 +154,12 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         checkDisposed();
         if (_position > getLength()) {
             _atEof = true;
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
         if (_position == getLength()) {
             if (_atEof) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+                throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
             }
 
             _atEof = true;
@@ -215,7 +215,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
         _atEof = false;
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -338,7 +338,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
     protected void checkDisposed() {
         if (_fileStream == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("CommonSparseExtentStream");
+            throw new dotnet4j.io.IOException("CommonSparseExtentStream");
         }
 
     }

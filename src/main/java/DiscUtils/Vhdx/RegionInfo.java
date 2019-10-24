@@ -39,14 +39,14 @@ public final class RegionInfo {
      * Gets the file offset of this region within the VHDX file.
      */
     public long getFileOffset() {
-        return _entry.FileOffset;
+        return _entry.fileOffset;
     }
 
     /**
      * Gets the unique identifier for this region.
      */
     public UUID getGuid() {
-        return _entry.Guid;
+        return _entry.guid;
     }
 
     /**
@@ -56,7 +56,7 @@ public final class RegionInfo {
      * marked as required.
      */
     public boolean getIsRequired() {
-        return _entry.Flags == RegionFlags.Required;
+        return _entry.flags == RegionFlags.Required;
     }
 
     /**
@@ -76,11 +76,11 @@ public final class RegionInfo {
      * .
      */
     public String getWellKnownName() {
-        if (_entry.Guid.equals(RegionEntry.BatGuid)) {
+        if (_entry.guid.equals(RegionEntry.BatGuid)) {
             return "BAT";
         }
 
-        if (_entry.Guid.equals(RegionEntry.MetadataRegionGuid)) {
+        if (_entry.guid.equals(RegionEntry.MetadataRegionGuid)) {
             return "Metadata Region";
         }
 

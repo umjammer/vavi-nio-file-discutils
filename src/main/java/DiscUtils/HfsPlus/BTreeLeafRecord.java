@@ -52,7 +52,7 @@ public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRe
         __Key = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return _size;
     }
 

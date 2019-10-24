@@ -34,7 +34,7 @@ import DiscUtils.Core.VirtualDiskLayer;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -193,7 +193,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 parent.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
 
@@ -217,19 +217,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        try {
-            if (_writeOccurred && _stream != null) {
-                _header.modificationId = UUID.randomUUID();
-                _stream.setPosition(PreHeaderRecord.Size);
-                _header.write(_stream);
-            }
+        if (_writeOccurred && _stream != null) {
+            _header.modificationId = UUID.randomUUID();
+            _stream.setPosition(PreHeaderRecord.Size);
+            _header.write(_stream);
+        }
 
-            if (_ownsStream == Ownership.Dispose && _stream != null) {
-                _stream.close();
-                _stream = null;
-            }
-        } finally {
-            super.close();
+        if (_ownsStream == Ownership.Dispose && _stream != null) {
+            _stream.close();
+            _stream = null;
         }
     }
 

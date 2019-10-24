@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Core.FileSystemManager;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 public final class FileSystemManagerTest {
     @Test

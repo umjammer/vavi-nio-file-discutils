@@ -23,7 +23,7 @@
 package DiscUtils.Core.Partitions;
 
 import DiscUtils.Core.VirtualDisk;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 @PartitionTableFactoryAttribute

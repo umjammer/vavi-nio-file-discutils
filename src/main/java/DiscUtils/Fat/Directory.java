@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
 
 
 public class Directory implements Closeable {
@@ -103,10 +103,6 @@ public class Directory implements Closeable {
         return _entries.size() == 0;
     }
 
-    public void close() {
-        System.gc();
-    }
-
     public List<DirectoryEntry> getDirectories() {
         List<DirectoryEntry> dirs = new ArrayList<>(_entries.size());
         for (DirectoryEntry dirEntry : _entries.values()) {
@@ -149,7 +145,7 @@ public class Directory implements Closeable {
         long id = findEntry(name);
         if (id >= 0) {
             if (!_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("A file exists with the same name: "
+                throw new dotnet4j.io.IOException("A file exists with the same name: "
                         + name.getDisplayName(Charset.forName(System.getProperty("file.encoding"))));
             }
 
@@ -160,7 +156,7 @@ public class Directory implements Closeable {
             int[] firstCluster = new int[1];
             boolean result = !getFileSystem().getFat().tryGetFreeCluster(firstCluster);
             if (result) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Failed to allocate first cluster for new directory");
+                throw new dotnet4j.io.IOException("Failed to allocate first cluster for new directory");
             }
 
             getFileSystem().getFat().setEndOfChain(firstCluster[0]);
@@ -185,7 +181,7 @@ public class Directory implements Closeable {
     public void attachChildDirectory(FileName name, Directory newChild) {
         long id = findEntry(name);
         if (id >= 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Directory entry already exists");
+            throw new dotnet4j.io.IOException("Directory entry already exists");
         }
 
         DirectoryEntry newEntry = new DirectoryEntry(newChild.getParentsChildEntry());
@@ -226,7 +222,7 @@ public class Directory implements Closeable {
         long fileId = findEntry(name);
         boolean exists = fileId != -1;
         if (mode == FileMode.CreateNew && exists) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("File already exists");
+            throw new dotnet4j.io.IOException("File already exists");
         }
 
         if (mode == FileMode.Open && !exists) {
@@ -285,7 +281,7 @@ public class Directory implements Closeable {
 
     public void deleteEntry(long id, boolean releaseContents) {
         if (id < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to delete unknown directory entry");
+            throw new dotnet4j.io.IOException("Attempt to delete unknown directory entry");
         }
 
         try {
@@ -308,7 +304,7 @@ public class Directory implements Closeable {
 
     public void updateEntry(long id, DirectoryEntry entry) {
         if (id < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to update unknown directory entry");
+            throw new dotnet4j.io.IOException("Attempt to update unknown directory entry");
         }
 
         _dirStream.setPosition(id);
@@ -389,11 +385,11 @@ public class Directory implements Closeable {
             parentEntry.setLastWriteTime(newEntry.getLastWriteTime());
             parentEntry.writeTo(stream);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
-    public void cloase() throws IOException {
+    public void close() throws IOException {
         _dirStream.close();
     }
 
@@ -442,7 +438,7 @@ public class Directory implements Closeable {
 
     public void setParentEntry(DirectoryEntry value) {
         if (_parentEntryLocation < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("No parent entry on disk to update");
+            throw new dotnet4j.io.IOException("No parent entry on disk to update");
         }
 
         _dirStream.setPosition(_parentEntryLocation);

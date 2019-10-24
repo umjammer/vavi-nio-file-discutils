@@ -22,8 +22,6 @@
 
 package DiscUtils.HfsPlus;
 
-import java.util.Arrays;
-
 public enum CatalogRecordType {
     None,
     FolderRecord,
@@ -32,6 +30,6 @@ public enum CatalogRecordType {
     FileThreadRecord;
 
     public static CatalogRecordType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

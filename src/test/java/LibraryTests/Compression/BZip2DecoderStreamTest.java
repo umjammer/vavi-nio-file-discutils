@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Core.Compression.BZip2DecoderStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class BZip2DecoderStreamTest {

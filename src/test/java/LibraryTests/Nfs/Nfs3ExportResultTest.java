@@ -32,7 +32,7 @@ import DiscUtils.Nfs.Nfs3Export;
 import DiscUtils.Nfs.Nfs3ExportResult;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class Nfs3ExportResultTest {

@@ -41,8 +41,8 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -163,7 +163,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             }
             return result;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -198,8 +198,6 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             _bitmap.close();
             _bitmap = null;
         }
-
-        System.gc();
     }
 
     public FileRecord getBootstrapRecord() {
@@ -217,7 +215,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             try {
                 _recordStream.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
 
@@ -251,7 +249,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             s.setLength(8);
             _bitmap = new Bitmap(s, Long.MAX_VALUE);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         setRecordSize(context.getBiosParameterBlock().getMftRecordSize());
         _bytesPerSector = context.getBiosParameterBlock().BytesPerSector;
@@ -282,7 +280,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                     return r;
                 }
             }
-            throw new moe.yo3explorer.dotnetio4j.IOException("MFT too fragmented - unable to allocate MFT overflow record");
+            throw new dotnet4j.io.IOException("MFT too fragmented - unable to allocate MFT overflow record");
         }
 
         index = _bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
@@ -332,7 +330,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         if (result != null) {
             if (fileReference.getSequenceNumber() != 0 && result.getSequenceNumber() != 0) {
                 if (fileReference.getSequenceNumber() != result.getSequenceNumber()) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to get an MFT record with an old reference");
+                    throw new dotnet4j.io.IOException("Attempt to get an MFT record with an old reference");
                 }
             }
         }
@@ -370,7 +368,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
     public void writeRecord(FileRecord record) {
         int recordSize = (int) record.getSize();
         if (recordSize > getRecordSize()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempting to write over-sized MFT record");
+            throw new dotnet4j.io.IOException("Attempting to write over-sized MFT record");
         }
 
         byte[] buffer = new byte[getRecordSize()];
@@ -401,7 +399,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                     s.setPosition(record.getMasterFileTableIndex() * getRecordSize());
                     s.write(buffer, 0, getRecordSize());
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
         }

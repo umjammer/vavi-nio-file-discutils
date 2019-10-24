@@ -35,7 +35,7 @@ public class DirectoryRecord implements IByteArraySerializable {
 
     public InodeType Type/* = InodeType.Directory*/;
 
-    public long getSize() {
+    public int sizeOf() {
         return 8 + Name.length();
     }
 

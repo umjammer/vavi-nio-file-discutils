@@ -251,7 +251,7 @@ public class InodeItem extends BaseItem {
         __OTime = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return Length;
     }
 
@@ -272,6 +272,6 @@ public class InodeItem extends BaseItem {
         setCTime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 124));
         setMTime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 136));
         setOTime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 148));
-        return (int) getSize();
+        return sizeOf();
     }
 }

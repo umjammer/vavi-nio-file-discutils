@@ -27,7 +27,7 @@ package DiscUtils.Nfs;
 import java.util.ArrayList;
 import java.util.List;
 
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class Nfs3Mount extends RpcProgram {

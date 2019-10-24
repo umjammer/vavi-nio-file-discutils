@@ -236,7 +236,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
             long pos = 0;
             for (ExtentRecord extent : extents) {
                 if (extent.OffsetInVolumeLba != pos) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Volume extents are non-contiguous");
+                    throw new dotnet4j.io.IOException("Volume extents are non-contiguous");
                 }
 
                 pos += extent.SizeLba;
@@ -270,7 +270,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
         }
         if (cmpntStreams.size() < 1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Volume with no associated or healthy components");
+            throw new dotnet4j.io.IOException("Volume with no associated or healthy components");
         }
 
         if (cmpntStreams.size() == 1) {

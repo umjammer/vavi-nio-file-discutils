@@ -71,7 +71,7 @@ public class ReparsePoints {
 
         public int Tag;
 
-        public long getSize() {
+        public int sizeOf() {
             return 12;
         }
 
@@ -95,7 +95,7 @@ public class ReparsePoints {
     }
 
     public final static class Data implements IByteArraySerializable {
-        public long getSize() {
+        public int sizeOf() {
             return 0;
         }
 

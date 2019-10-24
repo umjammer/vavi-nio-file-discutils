@@ -24,8 +24,8 @@ package DiscUtils.Iso9660;
 
 import java.io.IOException;
 
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class ExtentStream extends Stream {

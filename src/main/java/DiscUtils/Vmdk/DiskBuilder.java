@@ -30,7 +30,7 @@ import DiscUtils.Core.DiskImageFileSpecification;
 import DiscUtils.Core.GenericDiskAdapterType;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Builder.PassthroughStreamBuilder;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 /**

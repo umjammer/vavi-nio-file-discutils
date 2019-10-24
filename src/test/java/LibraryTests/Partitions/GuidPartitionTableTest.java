@@ -32,7 +32,7 @@ import DiscUtils.Core.Partitions.GuidPartitionTypes;
 import DiscUtils.Core.Partitions.WellKnownPartitionType;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Vhdx.Disk;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class GuidPartitionTableTest {

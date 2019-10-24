@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Registry.RegistryHive;
 import DiscUtils.Registry.RegistryKeyFlags;
-import moe.yo3explorer.dotnetio4j.AccessControlSections;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.AccessControlSections;
 
 
 public class RegistryHiveTest {

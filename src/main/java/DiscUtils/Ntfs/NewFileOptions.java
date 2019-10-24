@@ -24,7 +24,7 @@ package DiscUtils.Ntfs;
 
 import java.util.Optional;
 
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 /**
  * Options controlling how new NTFS files are created.

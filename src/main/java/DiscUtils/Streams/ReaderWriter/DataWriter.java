@@ -22,7 +22,7 @@
 
 package DiscUtils.Streams.ReaderWriter;
 
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 public abstract class DataWriter {
     private static final int _bufferSize = 8; // sizeof(UInt64)

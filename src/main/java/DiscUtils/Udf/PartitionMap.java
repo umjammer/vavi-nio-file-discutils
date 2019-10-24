@@ -29,7 +29,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public abstract class PartitionMap implements IByteArraySerializable {
     public byte Type;
 
-    public abstract long getSize();
+    public abstract int sizeOf();
 
     public int readFrom(byte[] buffer, int offset) {
         Type = buffer[offset];

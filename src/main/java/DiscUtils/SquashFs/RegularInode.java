@@ -46,7 +46,7 @@ public class RegularInode extends Inode {
         _fileSize = (int) value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 32;
     }
 

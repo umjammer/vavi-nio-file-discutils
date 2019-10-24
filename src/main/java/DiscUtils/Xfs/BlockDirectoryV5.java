@@ -84,7 +84,7 @@ public class BlockDirectoryV5 extends BlockDirectory {
         return 4;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x30 + 3 * 32 + 4;
     }
 

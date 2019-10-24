@@ -32,7 +32,7 @@ import DiscUtils.Core.Vfs.VfsFileSystemFacade;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

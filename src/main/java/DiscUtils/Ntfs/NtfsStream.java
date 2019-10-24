@@ -32,8 +32,8 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 public class NtfsStream {
@@ -76,7 +76,7 @@ public class NtfsStream {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -87,12 +87,12 @@ public class NtfsStream {
      */
     public <T extends IByteArraySerializable & IDiagnosticTraceable> void setContent(T value) {
         try (Stream s = open(FileAccess.Write)) {
-            byte[] buffer = new byte[(int) value.getSize()];
+            byte[] buffer = new byte[value.sizeOf()];
             value.writeTo(buffer, 0);
             s.write(buffer, 0, buffer.length);
             s.setLength(buffer.length);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

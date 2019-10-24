@@ -25,7 +25,7 @@ package DiscUtils.Udf;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class MetadataPartition extends LogicalPartition {

@@ -34,8 +34,8 @@ import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public final class ContentStream extends MappedStream {
@@ -141,7 +141,7 @@ public final class ContentStream extends MappedStream {
         checkDisposed();
         if (_atEof || _position > _length) {
             _atEof = true;
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of file");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
         if (_position == _length) {
@@ -150,7 +150,7 @@ public final class ContentStream extends MappedStream {
         }
 
         if (_position % _metadata.getLogicalSectorSize() != 0 || count % _metadata.getLogicalSectorSize() != 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unaligned read");
+            throw new dotnet4j.io.IOException("Unaligned read");
         }
 
         int totalToRead = (int) Math.min(_length - _position, count);
@@ -212,7 +212,7 @@ public final class ContentStream extends MappedStream {
 
         _atEof = false;
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -227,11 +227,11 @@ public final class ContentStream extends MappedStream {
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write to read-only VHDX");
+            throw new dotnet4j.io.IOException("Attempt to write to read-only VHDX");
         }
 
         if (_position % _metadata.getLogicalSectorSize() != 0 || count % _metadata.getLogicalSectorSize() != 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unaligned read");
+            throw new dotnet4j.io.IOException("Unaligned read");
         }
 
         int totalWritten = 0;
@@ -320,7 +320,7 @@ public final class ContentStream extends MappedStream {
 
     private void checkDisposed() {
         if (_parentStream == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("ContentStream: Attempt to use closed stream");
+            throw new dotnet4j.io.IOException("ContentStream: Attempt to use closed stream");
         }
     }
 }

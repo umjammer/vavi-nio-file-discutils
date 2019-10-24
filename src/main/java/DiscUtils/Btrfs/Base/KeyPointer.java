@@ -68,7 +68,7 @@ public class KeyPointer implements IByteArraySerializable {
         __Generation = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return Length;
     }
 
@@ -77,7 +77,7 @@ public class KeyPointer implements IByteArraySerializable {
         offset += getKey().readFrom(buffer, offset);
         setBlockNumber(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

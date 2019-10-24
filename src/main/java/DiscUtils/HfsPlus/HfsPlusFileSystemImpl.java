@@ -27,8 +27,8 @@ import DiscUtils.Core.IUnixFileSystem;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.Vfs.VfsFileSystem;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
 
 
 public final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Directory, Context> implements IUnixFileSystem {

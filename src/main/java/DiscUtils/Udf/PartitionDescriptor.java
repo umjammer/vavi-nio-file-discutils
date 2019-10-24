@@ -52,8 +52,8 @@ public class PartitionDescriptor extends TaggedDescriptor<PartitionDescriptor> {
 
     public int parse(byte[] buffer, int offset) {
         VolumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        PartitionFlags = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
-        PartitionNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
+        PartitionFlags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
+        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
         PartitionContents = EndianUtilities
                 .<ApplicationEntityIdentifier> toStruct(ApplicationEntityIdentifier.class, buffer, offset + 24);
         PartitionContentsUse = EndianUtilities.toByteArray(buffer, offset + 56, 128);

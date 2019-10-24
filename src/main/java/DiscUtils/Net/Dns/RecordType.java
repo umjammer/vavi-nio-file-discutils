@@ -22,8 +22,6 @@
 
 package DiscUtils.Net.Dns;
 
-import java.util.Arrays;
-
 public enum RecordType {
     /**
      * Enumeration of the known DNS record types.
@@ -357,6 +355,6 @@ public enum RecordType {
     All;
 
     public static RecordType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

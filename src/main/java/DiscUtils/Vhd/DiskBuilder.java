@@ -34,8 +34,8 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Builder.PassthroughStreamBuilder;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 /**

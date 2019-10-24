@@ -89,7 +89,7 @@ public final class ObjectIds {
     public final static class IndexKey implements IByteArraySerializable {
         public UUID Id;
 
-        public long getSize() {
+        public int sizeOf() {
             return 16;
         }
 

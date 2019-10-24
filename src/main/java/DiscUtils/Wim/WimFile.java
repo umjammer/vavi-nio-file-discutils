@@ -35,8 +35,8 @@ import DiscUtils.Streams.SubStream;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamReader;
+import dotnet4j.io.Stream;
+import dotnet4j.io.StreamReader;
 
 
 /**
@@ -60,7 +60,7 @@ public class WimFile {
         _fileHeader = new FileHeader();
         _fileHeader.read(buffer, 0);
         if (!_fileHeader.isValid()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Not a valid WIM file");
+            throw new dotnet4j.io.IOException("Not a valid WIM file");
         }
 
         if (_fileHeader.TotalParts != 1) {
@@ -105,7 +105,7 @@ public class WimFile {
         try (StreamReader reader = new StreamReader(openResourceStream(_fileHeader.XmlDataHeader), true)) {
             return reader.readToEnd();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -138,7 +138,7 @@ public class WimFile {
                 }
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         return null;
     }
@@ -186,7 +186,7 @@ public class WimFile {
                 _resources.get(hashHash).add(info);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 }

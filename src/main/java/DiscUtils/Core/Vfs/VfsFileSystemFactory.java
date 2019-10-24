@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.VolumeInfo;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -53,7 +53,7 @@ public abstract class VfsFileSystemFactory {
         try (Stream stream = volume.open()) {
             return detect(stream, volume);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

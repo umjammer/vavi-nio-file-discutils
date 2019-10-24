@@ -80,7 +80,7 @@ public class HostedSparseExtentHeader extends CommonSparseExtentHeader {
         hdr.NonEndLineChar = buffer[offset + 0x4A];
         hdr.DoubleEndLineChar1 = buffer[offset + 0x4B];
         hdr.DoubleEndLineChar2 = buffer[offset + 0x4C];
-        hdr.CompressAlgorithm = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x4D);
+        hdr.CompressAlgorithm = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x4D);
         return hdr;
     }
 

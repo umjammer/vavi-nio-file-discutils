@@ -26,7 +26,7 @@ import java.time.Instant;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public abstract class Inode implements IByteArraySerializable {
@@ -52,13 +52,13 @@ public abstract class Inode implements IByteArraySerializable {
         throw new UnsupportedOperationException();
     }
 
-    public abstract long getSize();
+    public abstract int sizeOf();
 
     public int readFrom(byte[] buffer, int offset) {
         Type = InodeType.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0));
-        Mode = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        UidKey = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        GidKey = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        Mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        UidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        GidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
         ModificationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
         InodeNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         return 16;
@@ -81,10 +81,10 @@ public abstract class Inode implements IByteArraySerializable {
 
         InodeType type = InodeType.valueOf(EndianUtilities.toUInt16LittleEndian(typeData, 0));
         Inode inode = instantiateType(type);
-        byte[] inodeData = new byte[(int) inode.getSize()];
+        byte[] inodeData = new byte[inode.sizeOf()];
         inodeData[0] = typeData[0];
         inodeData[1] = typeData[1];
-        if (inodeReader.read(inodeData, 2, (int) inode.getSize() - 2) != (int) inode.getSize() - 2) {
+        if (inodeReader.read(inodeData, 2, inode.sizeOf() - 2) != inode.sizeOf() - 2) {
             throw new IOException("Unable to read whole Inode");
         }
 

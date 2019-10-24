@@ -37,10 +37,10 @@ import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Nfs.Nfs3Exception;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -130,7 +130,7 @@ public class NfsFileSystem extends DiscFileSystem {
                 try {
                     rpcClient.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -162,7 +162,7 @@ public class NfsFileSystem extends DiscFileSystem {
             Nfs3FileHandle destFileHandle = _client.lookup(destParent, destFileName);
             if (destFileHandle != null) {
                 if (overwrite == false) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(String.format("The destination file '%s' already exists",
+                    throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists",
                                                                                    destinationFile));
                 }
             }
@@ -193,7 +193,7 @@ public class NfsFileSystem extends DiscFileSystem {
                         try {
                             destFs.close();
                         } catch (IOException e) {
-                            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                            throw new dotnet4j.io.IOException(e);
                         }
                 }
             } finally {
@@ -201,7 +201,7 @@ public class NfsFileSystem extends DiscFileSystem {
                     try {
                         sourceFs.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
             // Set the new file's attributes based on the source file
@@ -443,7 +443,7 @@ public class NfsFileSystem extends DiscFileSystem {
 
             Nfs3FileHandle destFileHandle = _client.lookup(destParent, destFileName);
             if (destFileHandle != null && overwrite == false) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(String.format("The destination file '%s' already exists",
+                throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists",
                                                                                destinationName));
             }
 
@@ -485,7 +485,7 @@ public class NfsFileSystem extends DiscFileSystem {
                 Nfs3FileHandle handle = getFile(path);
                 EnumSet<Nfs3AccessPermissions> actualPerms = _client.access(handle, requested);
                 if (!actualPerms.equals(requested)) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(String
+                    throw new dotnet4j.io.IOException(String
                             .format("Access denied opening '%s'. Requested permission '%s', got '%s'",
                                     path,
                                     requested,
@@ -687,8 +687,8 @@ public class NfsFileSystem extends DiscFileSystem {
         super.close();
     }
 
-    private static moe.yo3explorer.dotnetio4j.IOException convertNfsException(Nfs3Exception ne) {
-        throw new moe.yo3explorer.dotnetio4j.IOException("NFS Status: " + ne.getMessage());
+    private static dotnet4j.io.IOException convertNfsException(Nfs3Exception ne) {
+        throw new dotnet4j.io.IOException("NFS Status: " + ne.getMessage());
     }
 
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {

@@ -28,11 +28,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.Internal.LocalFileLocator;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -62,7 +62,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
             _contentSize = Files.size(Paths.get(_contentPath));
             setCreationTime(Files.getLastModifiedTime(Paths.get(_contentPath)).toMillis());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -108,7 +108,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
             try {
                 s.close();
             } catch (IOException e) {
-                new moe.yo3explorer.dotnetio4j.IOException(e);
+                new dotnet4j.io.IOException(e);
             }
         }
     }

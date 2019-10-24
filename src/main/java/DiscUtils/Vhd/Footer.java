@@ -22,6 +22,8 @@
 
 package DiscUtils.Vhd;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -62,7 +64,7 @@ public class Footer {
 
     public static final int SectorsMask = 0xFF000000;
 
-    public static final long EpochUtc = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
+    public static final Instant EpochUtc = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant();
 
     public int Checksum;
 
@@ -135,9 +137,10 @@ public class Footer {
     }
 
     public boolean isValid() {
-        return (FileCookie.equals(Cookie)) && isChecksumValid()
+System.err.println(FileCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (FileFormatVersion == Version1));
+        return FileCookie.equals(Cookie) && isChecksumValid()
         // && ((Features & FeatureReservedMustBeSet) != 0)
-                && FileFormatVersion == Version1;
+            && FileFormatVersion == Version1;
     }
 
     public boolean isChecksumValid() {
@@ -156,7 +159,7 @@ public class Footer {
         copy.toBytes(asBytes, 0);
         int checksum = 0;
         for (int value : asBytes) {
-            checksum += value;
+            checksum += value & 0xff;
         }
         checksum = ~checksum;
         return checksum;
@@ -168,13 +171,15 @@ public class Footer {
         result.Features = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
         result.FileFormatVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
         result.DataOffset = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
-        result.Timestamp = EndianUtilities.toUInt32BigEndian(buffer, offset + 24);
+        result.Timestamp = EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(buffer, offset + 24)).toEpochMilli();
         result.CreatorApp = EndianUtilities.bytesToString(buffer, offset + 28, 4);
         result.CreatorVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
         result.CreatorHostOS = EndianUtilities.bytesToString(buffer, offset + 36, 4);
         result.OriginalSize = EndianUtilities.toInt64BigEndian(buffer, offset + 40);
         result.CurrentSize = EndianUtilities.toInt64BigEndian(buffer, offset + 48);
-        result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56) & 0xffff, buffer[58] & 0xff, buffer[59] & 0xff);
+        result.Geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56) & 0xffff,
+                                       buffer[58] & 0xff,
+                                       buffer[59] & 0xff);
         result.DiskType = FileType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 60));
         result.Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
         result.UniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 68);
@@ -187,7 +192,9 @@ public class Footer {
         EndianUtilities.writeBytesBigEndian(Features, buffer, offset + 8);
         EndianUtilities.writeBytesBigEndian(FileFormatVersion, buffer, offset + 12);
         EndianUtilities.writeBytesBigEndian(DataOffset, buffer, offset + 16);
-        EndianUtilities.writeBytesBigEndian((int) Timestamp, buffer, offset + 24);
+        EndianUtilities.writeBytesBigEndian((int) Duration.between(Instant.ofEpochMilli(Timestamp), EpochUtc).getSeconds(),
+                                            buffer,
+                                            offset + 24);
         EndianUtilities.stringToBytes(CreatorApp, buffer, offset + 28, 4);
         EndianUtilities.writeBytesBigEndian(CreatorVersion, buffer, offset + 32);
         EndianUtilities.stringToBytes(CreatorHostOS, buffer, offset + 36, 4);

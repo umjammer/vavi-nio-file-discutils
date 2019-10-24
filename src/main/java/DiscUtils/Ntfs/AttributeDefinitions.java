@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 public final class AttributeDefinitions {
@@ -88,7 +88,7 @@ public final class AttributeDefinitions {
 
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -107,7 +107,7 @@ public final class AttributeDefinitions {
             buffer = new byte[AttributeDefinitionRecord.Size];
             s.write(buffer, 0, buffer.length);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

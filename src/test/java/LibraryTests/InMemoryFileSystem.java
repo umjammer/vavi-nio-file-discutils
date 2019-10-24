@@ -30,10 +30,10 @@ import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Streams.SparseMemoryBuffer;
 import DiscUtils.Streams.SparseMemoryStream;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.IOException;
 
 
 /**

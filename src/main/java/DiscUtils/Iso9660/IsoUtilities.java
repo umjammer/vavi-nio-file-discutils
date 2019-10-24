@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class IsoUtilities {
@@ -46,7 +46,7 @@ public class IsoUtilities {
     }
 
     public static short toUInt16FromBoth(byte[] data, int offset) {
-        return (short) EndianUtilities.toUInt16LittleEndian(data, offset);
+        return EndianUtilities.toUInt16LittleEndian(data, offset);
     }
 
     public static void toBothFromUInt32(byte[] buffer, int offset, int value) {

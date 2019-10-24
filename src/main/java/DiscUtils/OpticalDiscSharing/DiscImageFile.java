@@ -36,7 +36,7 @@ import DiscUtils.Streams.Block.BlockCacheStream;
 import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 public final class DiscImageFile extends VirtualDiskLayer {
@@ -84,7 +84,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
             try {
                 parent.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
 
@@ -93,5 +93,10 @@ public final class DiscImageFile extends VirtualDiskLayer {
 
     public List<String> getParentLocations() {
         return Arrays.asList();
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
     }
 }

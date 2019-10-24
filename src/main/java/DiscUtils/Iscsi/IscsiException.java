@@ -22,7 +22,7 @@
 
 package DiscUtils.Iscsi;
 
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 /**
  * Base exception for any iSCSI-related failures.

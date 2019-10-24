@@ -30,9 +30,9 @@ import java.net.SocketException;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.NetworkStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.NetworkStream;
+import dotnet4j.io.Stream;
 
 
 public final class RpcTcpTransport implements IRpcTransport {
@@ -120,7 +120,7 @@ public final class RpcTcpTransport implements IRpcTransport {
                 try {
                     send(_tcpStream, message);
                     response = receive();
-                } catch (moe.yo3explorer.dotnetio4j.IOException sendReceiveException) {
+                } catch (dotnet4j.io.IOException sendReceiveException) {
                     lastException = sendReceiveException;
                     try {
                         _tcpStream.close();
@@ -128,7 +128,7 @@ public final class RpcTcpTransport implements IRpcTransport {
                         _socket.close();
                         _socket = null;
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
                 }
 
@@ -136,7 +136,7 @@ public final class RpcTcpTransport implements IRpcTransport {
             }
         }
         if (response == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(String
+            throw new dotnet4j.io.IOException(String
                     .format("Unable to send RPC message to %s:%d", _address, _port), lastException);
         }
 

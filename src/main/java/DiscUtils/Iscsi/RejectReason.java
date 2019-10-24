@@ -1,8 +1,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
-
 public enum RejectReason {
     None,
     Reserved,
@@ -19,6 +17,6 @@ public enum RejectReason {
     WaitingForLogout;
 
     public static RejectReason valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

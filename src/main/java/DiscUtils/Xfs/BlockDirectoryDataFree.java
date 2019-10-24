@@ -47,14 +47,14 @@ public class BlockDirectoryDataFree implements IByteArraySerializable {
         __Length = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x4;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         setOffset(EndianUtilities.toUInt16BigEndian(buffer, offset));
         setLength(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2));
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

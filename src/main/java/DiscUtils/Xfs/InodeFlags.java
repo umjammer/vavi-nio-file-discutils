@@ -22,8 +22,6 @@
 
 package DiscUtils.Xfs;
 
-import java.util.Arrays;
-
 public enum InodeFlags {
     None,
     /**
@@ -64,7 +62,7 @@ public enum InodeFlags {
     RtInherit,
     /**
      * For directory inodes, new inodes inherit the
-     * {@link #Inode.ProjectId}
+     * {@link Inode#getProjectId()}
      * value.
      */
     ProjInherit,
@@ -79,7 +77,7 @@ public enum InodeFlags {
     ExtentSize,
     /**
      * For directory inodes, new inodes inherit the
-     * {@link #Inode.ExtentSize}
+     * {@link Inode#getExtentSize()}
      * value.
      */
     ExtentSizeInherit,
@@ -93,6 +91,6 @@ public enum InodeFlags {
     Filestream;
 
     public static InodeFlags valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

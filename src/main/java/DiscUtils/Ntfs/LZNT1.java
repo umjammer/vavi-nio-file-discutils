@@ -186,7 +186,7 @@ public final class LZNT1 extends BlockCompressor {
         int sourceIdx = 0;
         int destIdx = 0;
         while (sourceIdx < sourceLength) {
-            short header = (short) EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
+            short header = EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
             sourceIdx += 2;
             // Look for null-terminating sub-block header
             if (header == 0) {
@@ -223,7 +223,7 @@ public final class LZNT1 extends BlockCompressor {
                         } else {
                             short lengthBits = (short) (16 - _compressionBits[destIdx - destSubBlockStart]);
                             short lengthMask = (short) ((1 << lengthBits) - 1);
-                            short phraseToken = (short) EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
+                            short phraseToken = EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
                             sourceIdx += 2;
                             int destBackAddr = destIdx - (phraseToken >>> lengthBits) - 1;
                             int length = (phraseToken & lengthMask) + 3;

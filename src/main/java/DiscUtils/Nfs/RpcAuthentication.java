@@ -23,7 +23,7 @@
 
 package DiscUtils.Nfs;
 
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class RpcAuthentication {

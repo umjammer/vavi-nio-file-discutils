@@ -55,7 +55,7 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
     /**
      *
      */
-    public long getSize() {
+    public int sizeOf() {
         return (int) Length;
     }
 
@@ -86,13 +86,13 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
 
             int checksum = PhysicalVolume.calcCrc(buffer, (int) location.Offset, (int) location.Length);
             if (location.Checksum != checksum)
-                throw new moe.yo3explorer.dotnetio4j.IOException("invalid metadata checksum");
+                throw new dotnet4j.io.IOException("invalid metadata checksum");
 
             _Metadata = EndianUtilities.bytesToString(buffer, (int) location.Offset, (int) location.Length);
             ParsedMetadata = Metadata.parse(_Metadata);
             break;
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     /**

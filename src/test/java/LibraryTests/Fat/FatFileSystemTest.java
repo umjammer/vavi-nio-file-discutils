@@ -48,12 +48,12 @@ import DiscUtils.Fat.FatFileSystem;
 import DiscUtils.Streams.SparseMemoryStream;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamWriter;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.StreamWriter;
 
 
 public class FatFileSystemTest {

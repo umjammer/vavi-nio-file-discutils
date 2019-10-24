@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import DiscUtils.Core.CoreCompat.ReflectionHelper;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 /**

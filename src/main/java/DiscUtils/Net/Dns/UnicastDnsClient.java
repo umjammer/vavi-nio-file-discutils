@@ -170,7 +170,7 @@ public final class UnicastDnsClient extends DnsClient {
 
             return null;
         } catch (InterruptedException | ExecutionException | IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -194,7 +194,7 @@ public final class UnicastDnsClient extends DnsClient {
             }
             return new ArrayList<>(addresses.keySet()).toArray(new InetSocketAddress[addresses.size()]);
         } catch (NamingException | SocketException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 }

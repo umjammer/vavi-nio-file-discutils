@@ -22,7 +22,7 @@
 
 package DiscUtils.Nfs;
 
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 /**

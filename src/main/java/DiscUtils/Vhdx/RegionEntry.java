@@ -33,38 +33,38 @@ public final class RegionEntry implements IByteArraySerializable {
 
     public static final UUID MetadataRegionGuid = UUID.fromString("8b7ca206-4790-4b9a-b8fe-575f050f886e");
 
-    public long FileOffset;
+    public long fileOffset;
 
-    public RegionFlags Flags;
+    public RegionFlags flags;
 
-    public UUID Guid;
+    public UUID guid;
 
-    private int Length;
+    private int length;
 
     public long getLength() {
-        return Length & 0xffffffffl;
+        return length & 0xffffffffl;
     }
 
     public void setLength(int value) {
-        Length = value;
+        length = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 32;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Guid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        FileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
-        Length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        Flags = RegionFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));
+        guid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+        fileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
+        length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
+        flags = RegionFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));
         return 32;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Guid, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(FileOffset, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(Length, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(Flags.ordinal(), buffer, offset + 28);
+        EndianUtilities.writeBytesLittleEndian(guid, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(fileOffset, buffer, offset + 16);
+        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 24);
+        EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 28);
     }
 }

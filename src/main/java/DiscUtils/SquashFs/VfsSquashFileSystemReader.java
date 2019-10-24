@@ -36,9 +36,9 @@ import DiscUtils.Streams.Block.BlockCache;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compression.CompressionMode;
 
 
 public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context>
@@ -60,22 +60,22 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         _context.setRawStream(stream);
         // Read superblock
         stream.setPosition(0);
-        byte[] buffer = StreamUtilities.readExact(stream, (int) _context.getSuperBlock().getSize());
+        byte[] buffer = StreamUtilities.readExact(stream, _context.getSuperBlock().sizeOf());
         _context.getSuperBlock().readFrom(buffer, 0);
         if (_context.getSuperBlock().Magic != SuperBlock.SquashFsMagic) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid SquashFS filesystem - magic mismatch");
+            throw new dotnet4j.io.IOException("Invalid SquashFS filesystem - magic mismatch");
         }
 
         if (_context.getSuperBlock().Compression != 1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported compression used");
+            throw new dotnet4j.io.IOException("Unsupported compression used");
         }
 
         if (_context.getSuperBlock().ExtendedAttrsTableStart != -1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported extended attributes present");
+            throw new dotnet4j.io.IOException("Unsupported extended attributes present");
         }
 
         if (_context.getSuperBlock().MajorVersion != 4) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unsupported file system version: " +
+            throw new dotnet4j.io.IOException("Unsupported file system version: " +
                 _context.getSuperBlock().MajorVersion + "." + _context.getSuperBlock().MinorVersion);
         }
 
@@ -238,7 +238,7 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
                 block.setAvailable(StreamUtilities
                         .readMaximum(zlibStream, block.getData(), 0, _context.getSuperBlock().BlockSize));
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         } else {
             StreamUtilities.readExact(stream, block.getData(), 0, readLen);
@@ -276,7 +276,7 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
                                                         true)) {
                 block.setAvailable(StreamUtilities.readMaximum(zlibStream, block.getData(), 0, MetadataBufferSize));
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         } else {
             block.setAvailable(StreamUtilities.readMaximum(stream, block.getData(), 0, readLen));

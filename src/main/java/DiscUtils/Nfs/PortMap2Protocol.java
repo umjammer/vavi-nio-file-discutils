@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
 public enum PortMap2Protocol {
     __dummyEnum__0,
     __dummyEnum__1,
@@ -45,6 +43,6 @@ public enum PortMap2Protocol {
     Udp;
 
     public static PortMap2Protocol valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -22,7 +22,7 @@
 
 package DiscUtils.Ntfs;
 
-import moe.yo3explorer.dotnetio4j.compat.SecurityIdentifier;
+import dotnet4j.security.principal.SecurityIdentifier;
 
 
 /**

@@ -41,7 +41,7 @@ public class BasicHeaderSegment implements IByteArraySerializable {
     public byte TotalAhsLength;
 
     // In 4-byte words!
-    public long getSize() {
+    public int sizeOf() {
         return 48;
     }
 

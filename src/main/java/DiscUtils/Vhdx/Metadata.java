@@ -22,7 +22,6 @@
 
 package DiscUtils.Vhdx;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.UUID;
@@ -32,7 +31,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class Metadata {
@@ -162,20 +161,16 @@ public final class Metadata {
                                                                          MetadataTable header,
                                                                          int dataOffset,
                                                                          Stream stream) {
-        try {
-            MetadataEntryKey key = new MetadataEntryKey(id, flags.contains(MetadataEntryFlags.IsUser));
-            MetadataEntry entry = new MetadataEntry();
-            entry.ItemId = id;
-            entry.Offset = dataOffset;
-            entry.Length = (int) data.getSize();
-            entry.Flags = flags;
-            header.Entries.put(key, entry);
-            stream.setPosition(dataOffset);
-            StreamUtilities.writeStruct(stream, data);
-            return entry.Length;
-        } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
-        }
+        MetadataEntryKey key = new MetadataEntryKey(id, flags.contains(MetadataEntryFlags.IsUser));
+        MetadataEntry entry = new MetadataEntry();
+        entry.ItemId = id;
+        entry.Offset = dataOffset;
+        entry.Length = data.sizeOf();
+        entry.Flags = flags;
+        header.Entries.put(key, entry);
+        stream.setPosition(dataOffset);
+        StreamUtilities.writeStruct(stream, data);
+        return entry.Length;
     }
 
     private static <T extends Serializable> int addEntryValue(T data,

@@ -28,13 +28,13 @@ import java.util.EnumSet;
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.AccessControlSections;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.compat.AceFlags;
-import moe.yo3explorer.dotnetio4j.compat.ControlFlags;
-import moe.yo3explorer.dotnetio4j.compat.GenericAce;
-import moe.yo3explorer.dotnetio4j.compat.RawAcl;
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.io.IOException;
+import dotnet4j.security.accessControl.AccessControlSections;
+import dotnet4j.security.accessControl.AceFlags;
+import dotnet4j.security.accessControl.ControlFlags;
+import dotnet4j.security.accessControl.GenericAce;
+import dotnet4j.security.accessControl.RawAcl;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 public final class SecurityDescriptor implements IByteArraySerializable, IDiagnosticTraceable {
@@ -55,8 +55,8 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         __Descriptor = value;
     }
 
-    public long getSize() {
-        return getDescriptor().getBinaryLength();
+    public int sizeOf() {
+        return (int) getDescriptor().getBinaryLength();
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -109,7 +109,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public int calcHash() {
-        byte[] buffer = new byte[(int)getSize()];
+        byte[] buffer = new byte[sizeOf()];
         writeTo(buffer, 0);
         int hash = 0;
         for (int i = 0; i < buffer.length / 4; ++i) {

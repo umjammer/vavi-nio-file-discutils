@@ -22,8 +22,6 @@
 
 package DiscUtils.Iso9660.RockRidge;
 
-import java.util.Arrays;
-
 import DiscUtils.Iso9660.IsoUtilities;
 import DiscUtils.Iso9660.Susp.SystemUseEntry;
 
@@ -97,7 +95,7 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         Effective;
 
         public static Timestamps valueOf(int value) {
-            return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+            return values()[value];
         }
     }
 

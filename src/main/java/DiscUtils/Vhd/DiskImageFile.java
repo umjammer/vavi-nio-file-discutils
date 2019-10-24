@@ -43,10 +43,10 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -139,7 +139,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 _fileStream.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             throw __dummyCatchVar0;
         }
@@ -415,7 +415,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 try {
                     parent.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
 
@@ -427,7 +427,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 try {
                     parent.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
 
@@ -450,16 +450,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        try {
-            if (_ownership == Ownership.Dispose && _fileStream != null) {
-                _fileStream.close();
-            }
-
-            _fileStream = null;
-
-        } finally {
-            super.close();
+        if (_ownership == Ownership.Dispose && _fileStream != null) {
+            _fileStream.close();
         }
+
+        _fileStream = null;
     }
 
     private static void initializeFixedInternal(Stream stream, long capacity, Geometry geometry) {
@@ -613,14 +608,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _footer = Footer.fromBytes(sector, 0);
         if (!_footer.isValid()) {
             if (!fallbackToFront) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Corrupt VHD file - invalid footer at end (did not check front of file)");
+                throw new dotnet4j.io.IOException("Corrupt VHD file - invalid footer at end (did not check front of file)");
             }
 
             _fileStream.setPosition(0);
             StreamUtilities.readExact(_fileStream, sector, 0, Sizes.Sector);
             _footer = Footer.fromBytes(sector, 0);
             if (!_footer.isValid()) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Failed to find a valid VHD footer at start or end of file - VHD file is corrupt");
+                throw new dotnet4j.io.IOException("Failed to find a valid VHD footer at start or end of file - VHD file is corrupt");
             }
         }
     }
@@ -634,7 +629,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 _fileStream.setPosition(pos);
                 _dynamicHeader = DynamicHeader.fromStream(_fileStream);
                 if (!_dynamicHeader.isValid()) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Invalid Dynamic Disc Header");
+                    throw new dotnet4j.io.IOException("Invalid Dynamic Disc Header");
                 }
             }
 

@@ -22,9 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
-
 public enum Nfs3FileSystemProperties {
     None,
     HardLinks,
@@ -37,6 +34,6 @@ public enum Nfs3FileSystemProperties {
     SetTime;
 
     public static Nfs3FileSystemProperties valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

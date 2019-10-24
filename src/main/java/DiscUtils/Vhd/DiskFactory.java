@@ -32,7 +32,7 @@ import DiscUtils.Core.VirtualDiskParameters;
 import DiscUtils.Core.VirtualDiskTypeInfo;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
 import DiscUtils.Core.Internal.VirtualDiskFactoryAttribute;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskFactoryAttribute(type = "VHD", fileExtensions = { ".vhd", ".avhd" })

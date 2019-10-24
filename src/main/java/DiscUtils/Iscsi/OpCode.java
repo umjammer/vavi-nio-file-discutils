@@ -25,8 +25,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
-
 public enum OpCode {
     NopOut,
     ScsiCommand,
@@ -97,6 +95,6 @@ public enum OpCode {
     Reject;
 
     public static OpCode valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

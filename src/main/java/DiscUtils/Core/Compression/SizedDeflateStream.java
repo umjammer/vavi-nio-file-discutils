@@ -22,9 +22,9 @@
 
 package DiscUtils.Core.Compression;
 
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.compression.DeflateStream;
 
 
 public class SizedDeflateStream extends DeflateStream {

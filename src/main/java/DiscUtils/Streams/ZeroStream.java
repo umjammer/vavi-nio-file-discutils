@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -84,12 +84,12 @@ public class ZeroStream extends MappedStream {
     public int read(byte[] buffer, int offset, int count) {
         if (_position > _length) {
             _atEof = true;
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
         if (_position == _length) {
             if (_atEof) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+                throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
             }
 
             _atEof = true;
@@ -112,7 +112,7 @@ public class ZeroStream extends MappedStream {
 
         _atEof = false;
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of stream");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
 
         _position = effectiveOffset;

@@ -38,7 +38,7 @@ import DiscUtils.BootConfig.InheritType;
 import DiscUtils.BootConfig.ObjectType;
 import DiscUtils.BootConfig.Store;
 import DiscUtils.Registry.RegistryHive;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class StoreTest {

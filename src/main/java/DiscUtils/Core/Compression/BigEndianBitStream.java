@@ -22,7 +22,7 @@
 
 package DiscUtils.Core.Compression;
 
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 /**
  * Converts a byte stream into a bit stream.

@@ -22,15 +22,14 @@
 
 package DiscUtils.Vdi;
 
-import java.util.Arrays;
-
 public enum ImageType {
     __dummyEnum__0,
     Dynamic,
     Fixed,
     Undo,
     Differencing;
+
     public static ImageType valueOf(int i) {
-        return Arrays.stream(values()).filter(e -> e.ordinal() == i).findFirst().get();
+        return values()[i];
     }
 }

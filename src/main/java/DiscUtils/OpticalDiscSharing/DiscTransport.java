@@ -35,8 +35,8 @@ import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileNotFoundException;
 
 
 @VirtualDiskTransportAttribute(scheme = "ods")

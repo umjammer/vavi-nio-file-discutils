@@ -1,9 +1,6 @@
 
 package DiscUtils.Core;
 
-import java.util.Arrays;
-
-
 public enum LogicalVolumeStatus {
     /**
      * Enumeration of the health status of a logical volume.
@@ -20,6 +17,6 @@ public enum LogicalVolumeStatus {
      */
     Failed;
     public static LogicalVolumeStatus valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

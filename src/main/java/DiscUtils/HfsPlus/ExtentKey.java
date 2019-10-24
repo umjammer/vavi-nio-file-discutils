@@ -53,7 +53,7 @@ public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<
         __NodeId = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 12;
     }
 

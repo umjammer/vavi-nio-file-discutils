@@ -50,9 +50,9 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, ReaderDirectory, IsoContext>

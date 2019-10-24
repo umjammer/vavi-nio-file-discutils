@@ -25,7 +25,7 @@ package DiscUtils.Xfs;
 
 import DiscUtils.Xfs.AllocationGroup;
 import DiscUtils.Xfs.BtreeHeader;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 import DiscUtils.Xfs.BTreeInodeRecord;
 
 
@@ -40,8 +40,8 @@ public class BTreeInodeLeaf extends BtreeHeader {
         __Records = value;
     }
 
-    public long getSize() {
-        return super.getSize() + (getNumberOfRecords() * 0x10);
+    public int sizeOf() {
+        return super.sizeOf() + (getNumberOfRecords() * 0x10);
     }
 
     public BTreeInodeLeaf(int superBlockVersion) {
@@ -50,7 +50,7 @@ public class BTreeInodeLeaf extends BtreeHeader {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        offset += super.getSize();
+        offset += super.sizeOf();
         if (getLevel() != 0)
             throw new IOException("invalid B+tree level - expected 1");
 
@@ -60,7 +60,7 @@ public class BTreeInodeLeaf extends BtreeHeader {
             offset += rec.readFrom(buffer, offset);
             getRecords()[i] = rec;
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void loadBtree(AllocationGroup ag) {

@@ -72,25 +72,25 @@ public class SuperBlock implements IByteArraySerializable {
 
     public long UidGidTableStart;
 
-    public long getSize() {
+    public int sizeOf() {
         return 96;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Magic = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         if (Magic != SquashFsMagic)
-            return (int) getSize();
+            return sizeOf();
 
         InodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         CreationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
         BlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         FragmentsCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        Compression = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
-        BlockSizeLog2 = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
-        Flags = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        UidGidCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
-        MajorVersion = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
-        MinorVersion = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
+        Compression = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
+        BlockSizeLog2 = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
+        Flags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
+        UidGidCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
+        MajorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
+        MinorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
         RootInode = new MetadataRef(EndianUtilities.toInt64LittleEndian(buffer, offset + 32));
         BytesUsed = EndianUtilities.toInt64LittleEndian(buffer, offset + 40);
         UidGidTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 48);
@@ -99,7 +99,7 @@ public class SuperBlock implements IByteArraySerializable {
         DirectoryTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 72);
         FragmentTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 80);
         LookupTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 88);
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

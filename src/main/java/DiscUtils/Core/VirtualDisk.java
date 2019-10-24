@@ -43,7 +43,7 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 /**
@@ -358,7 +358,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         URI uri = pathToUri(path);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("Unable to parse path '%s'", path));
+            throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());
@@ -420,7 +420,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         URI uri = pathToUri(path);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
-            throw new moe.yo3explorer.dotnetio4j.FileNotFoundException(String.format("Unable to parse path '%s'", path));
+            throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }
 
         VirtualDiskTransport transport = VirtualDiskManager.getDiskTransports().get(uri.getScheme().toUpperCase());

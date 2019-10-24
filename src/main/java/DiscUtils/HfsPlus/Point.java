@@ -30,7 +30,7 @@ public final class Point implements IByteArraySerializable {
 
     public short Vertical;
 
-    public long getSize() {
+    public int sizeOf() {
         return 4;
     }
 

@@ -32,10 +32,10 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.AccessControlSections;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.AccessControlSections;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 public final class SecurityDescriptors implements IDiagnosticTraceable {
@@ -105,7 +105,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
                 writer.println(indent + "          Value: " + secDescStr);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -134,13 +134,13 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
     public int addDescriptor(RawSecurityDescriptor newDescriptor) {
         SecurityDescriptor newDescObj = new SecurityDescriptor(newDescriptor);
         int newHash = newDescObj.calcHash();
-        byte[] newByteForm = new byte[(int) newDescObj.getSize()];
+        byte[] newByteForm = new byte[newDescObj.sizeOf()];
         newDescObj.writeTo(newByteForm, 0);
         for (Map.Entry<DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> entry : _hashIndex
                 .findAll(new HashFinder(newHash))
                 .entrySet()) {
             SecurityDescriptor stored = readDescriptor(entry.getValue());
-            byte[] storedByteForm = new byte[(int) stored.getSize()];
+            byte[] storedByteForm = new byte[stored.sizeOf()];
             stored.writeTo(storedByteForm, 0);
             if (Utilities.areEqual(newByteForm, storedByteForm)) {
                 return entry.getValue().Id;
@@ -151,13 +151,13 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         record.SecurityDescriptor = newByteForm;
         record.Hash = newHash;
         record.Id = _nextId;
-        if ((offset + record.getSize()) / BlockSize % 2 == 1) {
+        if ((offset + record.sizeOf()) / BlockSize % 2 == 1) {
             _nextSpace = MathUtilities.roundUp(offset, BlockSize * 2);
             offset = _nextSpace;
         }
 
         record.OffsetInFile = offset;
-        byte[] buffer = new byte[(int) record.getSize()];
+        byte[] buffer = new byte[record.sizeOf()];
         record.writeTo(buffer, 0);
         try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.ReadWrite)) {
             s.setPosition(_nextSpace);
@@ -165,7 +165,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             s.setPosition(BlockSize + _nextSpace);
             s.write(buffer, 0, buffer.length);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         _nextSpace = MathUtilities.roundUp(_nextSpace + buffer.length, 16);
         _nextId++;
@@ -198,11 +198,11 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             record.read(buffer, 0);
             return new SecurityDescriptor(new RawSecurityDescriptor(record.SecurityDescriptor, 0));
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
-    public abstract static class IndexData {
+    public abstract static class IndexData implements IByteArraySerializable {
         public int Hash;
 
         public int Id;
@@ -212,13 +212,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         public long SdsOffset;
 
         public String toString() {
-            try {
-                return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", Hash, Id, SdsOffset, SdsLength);
-            } catch (RuntimeException __dummyCatchVar0) {
-                throw __dummyCatchVar0;
-            } catch (Exception __dummyCatchVar0) {
-                throw new RuntimeException(__dummyCatchVar0);
-            }
+            return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", Hash, Id, SdsOffset, SdsLength);
         }
     }
 
@@ -227,7 +221,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
 
         public int Id;
 
-        public long getSize() {
+        public int sizeOf() {
             return 8;
         }
 
@@ -243,18 +237,12 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         }
 
         public String toString() {
-            try {
-                return String.format("[Key-Hash:%x,Id:%d]", Hash, Id);
-            } catch (RuntimeException __dummyCatchVar1) {
-                throw __dummyCatchVar1;
-            } catch (Exception __dummyCatchVar1) {
-                throw new RuntimeException(__dummyCatchVar1);
-            }
+            return String.format("[Key-Hash:%x,Id:%d]", Hash, Id);
         }
     }
 
     public final static class HashIndexData extends IndexData implements IByteArraySerializable {
-        public long getSize() {
+        public int sizeOf() {
             return 0x14;
         }
 
@@ -271,10 +259,10 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             EndianUtilities.writeBytesLittleEndian(Id, buffer, offset + 0x04);
             EndianUtilities.writeBytesLittleEndian(SdsOffset, buffer, offset + 0x08);
             EndianUtilities.writeBytesLittleEndian(SdsLength, buffer, offset + 0x10);
+//            System.arraycopy(new byte[] { (byte) 'I', 0, (byte) 'I', 0 }, 0, buffer, offset + 0x14, 4);
         }
     }
 
-    //System.arraycopy(new byte[] { (byte)'I', 0, (byte)'I', 0 }, 0, buffer, offset + 0x14, 4);
 
     public final static class IdIndexKey implements IByteArraySerializable {
         public int Id;
@@ -286,7 +274,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
             Id = id;
         }
 
-        public long getSize() {
+        public int sizeOf() {
             return 4;
         }
 
@@ -305,7 +293,7 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
     }
 
     public final static class IdIndexData extends IndexData implements IByteArraySerializable {
-        public long getSize() {
+        public int sizeOf() {
             return 0x14;
         }
 

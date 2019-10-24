@@ -35,8 +35,8 @@ import DiscUtils.Vmdk.Disk;
 import DiscUtils.Vmdk.DiskBuilder;
 import DiscUtils.Vmdk.DiskCreateType;
 import LibraryTests.DiskBuilderFileSystem;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.MemoryStream;
 
 
 public class DiskBuilderTest {

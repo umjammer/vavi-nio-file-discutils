@@ -31,9 +31,9 @@ import DiscUtils.Core.Internal.Crc32;
 import DiscUtils.Core.Internal.Crc32Algorithm;
 import DiscUtils.Core.Internal.Crc32BigEndian;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.BufferedStream;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.BufferedStream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -80,13 +80,13 @@ public final class BZip2DecoderStream extends Stream {
         magic[1] = (byte) _bitstream.read(8);
         magic[2] = (byte) _bitstream.read(8);
         if (magic[0] != 0x42 || magic[1] != 0x5A || magic[2] != 0x68) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Bad magic at start of stream");
+            throw new dotnet4j.io.IOException("Bad magic at start of stream");
         }
 
         // The size of the decompression blocks in multiples of 100,000
         int blockSize = _bitstream.read(8) - 0x30;
         if (blockSize < 1 || blockSize > 9) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unexpected block size in header: " + blockSize);
+            throw new dotnet4j.io.IOException("Unexpected block size in header: " + blockSize);
         }
 
         blockSize *= 100000;
@@ -171,7 +171,7 @@ public final class BZip2DecoderStream extends Stream {
         }
 
         if (_eof) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
         if (count == 0) {
@@ -183,7 +183,7 @@ public final class BZip2DecoderStream extends Stream {
             // If there was an existing block, check it's crc.
             if (_calcBlockCrc != null) {
                 if (_blockCrc != _calcBlockCrc.getValue()) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Decompression failed - block CRC mismatch");
+                    throw new dotnet4j.io.IOException("Decompression failed - block CRC mismatch");
                 }
 
                 _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >>> 31)) ^ _blockCrc;
@@ -193,7 +193,7 @@ public final class BZip2DecoderStream extends Stream {
             if (readBlock() == 0) {
                 _eof = true;
                 if (_calcCompoundCrc != _compoundCrc) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Decompression failed - compound CRC");
+                    throw new dotnet4j.io.IOException("Decompression failed - compound CRC");
                 }
 
                 return 0;
@@ -209,7 +209,7 @@ public final class BZip2DecoderStream extends Stream {
             // If there was an existing block, check it's crc.
             if (_calcBlockCrc != null) {
                 if (_blockCrc != _calcBlockCrc.getValue()) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Decompression failed - block CRC mismatch");
+                    throw new dotnet4j.io.IOException("Decompression failed - block CRC mismatch");
                 }
             }
 
@@ -217,7 +217,7 @@ public final class BZip2DecoderStream extends Stream {
             if (readBlock() == 0) {
                 _eof = true;
                 if (_calcCompoundCrc != _compoundCrc) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Decompression failed - compound CRC mismatch");
+                    throw new dotnet4j.io.IOException("Decompression failed - compound CRC mismatch");
                 }
 
                 return numRead;
@@ -289,7 +289,7 @@ public final class BZip2DecoderStream extends Stream {
             return 0;
         }
 
-        throw new moe.yo3explorer.dotnetio4j.IOException("Found invalid marker in stream");
+        throw new dotnet4j.io.IOException("Found invalid marker in stream");
     }
 
     private int readUint() {

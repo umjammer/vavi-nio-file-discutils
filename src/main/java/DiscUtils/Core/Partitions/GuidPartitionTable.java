@@ -40,7 +40,7 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.SubStream;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -234,7 +234,7 @@ public final class GuidPartitionTable extends PartitionTable {
         long end = MathUtilities.roundDown(findLastFreeSector(start, allEntries) + 1,
                                            alignment / _diskGeometry.getBytesPerSector());
         if (end <= start) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("No available space");
+            throw new dotnet4j.io.IOException("No available space");
         }
 
         return create(start, end - 1, GuidPartitionTypes.convert(type), 0, "Data Partition");
@@ -323,12 +323,12 @@ public final class GuidPartitionTable extends PartitionTable {
         BiosPartitionTable bpt;
         try {
             bpt = new BiosPartitionTable(disk, diskGeometry);
-        } catch (moe.yo3explorer.dotnetio4j.IOException ioe) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid GPT disk, protective MBR table not present or invalid");
+        } catch (dotnet4j.io.IOException ioe) {
+            throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table not present or invalid");
         }
 
         if (bpt.getCount() != 1 || bpt.get___idx(0).getBiosType() != BiosPartitionTypes.GptProtective) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid GPT disk, protective MBR table is not valid");
+            throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table is not valid");
         }
 
         _diskData = disk;
@@ -341,7 +341,7 @@ public final class GuidPartitionTable extends PartitionTable {
             disk.read(sector, 0, sector.length);
             _secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
             if (!_secondaryHeader.readFrom(sector, 0) || !readEntries(_secondaryHeader)) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("No valid GUID Partition Table found");
+                throw new dotnet4j.io.IOException("No valid GUID Partition Table found");
             }
 
             // Generate from the primary table from the secondary one
@@ -438,7 +438,7 @@ public final class GuidPartitionTable extends PartitionTable {
             startSector = MathUtilities.roundUp(entry.LastUsedLogicalBlock + 1, alignmentSectors);
         }
         if (_diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(String.format("Unable to find free space of %d sectors",
+            throw new dotnet4j.io.IOException(String.format("Unable to find free space of %d sectors",
                                                                            numSectors));
         }
 
@@ -540,7 +540,7 @@ public final class GuidPartitionTable extends PartitionTable {
             return position * _primaryHeader.PartitionEntrySize;
         }
 
-        throw new moe.yo3explorer.dotnetio4j.IOException(String.format("No such partition: %d", index));
+        throw new dotnet4j.io.IOException(String.format("No such partition: %d", index));
     }
 
     private int getEntryIndex(UUID identity) {
@@ -556,7 +556,7 @@ public final class GuidPartitionTable extends PartitionTable {
                 index++;
             }
         }
-        throw new moe.yo3explorer.dotnetio4j.IOException("No such partition");
+        throw new dotnet4j.io.IOException("No such partition");
     }
 
     private int getFreeEntryOffset() {
@@ -567,6 +567,6 @@ public final class GuidPartitionTable extends PartitionTable {
                 return i * _primaryHeader.PartitionEntrySize;
             }
         }
-        throw new moe.yo3explorer.dotnetio4j.IOException("No free partition entries available");
+        throw new dotnet4j.io.IOException("No free partition entries available");
     }
 }

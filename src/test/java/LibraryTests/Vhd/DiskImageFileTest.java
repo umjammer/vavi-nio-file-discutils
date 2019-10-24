@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,7 +38,7 @@ import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Vhd.Disk;
 import DiscUtils.Vhd.DiskImageFile;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class DiskImageFileTest {

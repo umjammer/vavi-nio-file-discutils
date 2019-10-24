@@ -26,7 +26,7 @@ import DiscUtils.Core.IUnixFileSystem;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.Vfs.VfsFileSystemFacade;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

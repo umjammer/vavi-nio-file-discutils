@@ -22,15 +22,12 @@
 
 package DiscUtils.Net.Dns;
 
-import java.util.Arrays;
-
-
 public enum OpCode {
     Query,
     InverseQuery,
     StatusRequest;
 
     public static OpCode valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

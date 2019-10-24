@@ -24,7 +24,7 @@ package DiscUtils.Core;
 
 import java.util.List;
 
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 /**

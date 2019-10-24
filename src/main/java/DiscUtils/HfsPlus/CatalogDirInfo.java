@@ -30,7 +30,7 @@ public final class CatalogDirInfo extends CommonCatalogFileInfo {
 
     public int Valence;
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 

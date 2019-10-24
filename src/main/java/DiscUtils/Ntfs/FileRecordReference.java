@@ -56,7 +56,7 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
         return (short) ((getValue() >>> 48) & 0xFFFF);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 8;
     }
 

@@ -30,12 +30,12 @@ import java.util.HashMap;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
-import moe.yo3explorer.dotnetio4j.compat.SecurityIdentifier;
-import moe.yo3explorer.dotnetio4j.compat.WellKnownSidType;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
+import dotnet4j.security.principal.SecurityIdentifier;
+import dotnet4j.security.principal.WellKnownSidType;
 
 
 public class NtfsFormatter {
@@ -145,7 +145,7 @@ public class NtfsFormatter {
             _mftCluster = mftBitmapCluster + numMftBitmapClusters;
             int numMftClusters = 8;
             if (_mftCluster + numMftClusters > _mftMirrorCluster || _bitmapCluster + numBitmapClusters >= totalClusters) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to determine initial layout of NTFS metadata - disk may be too small");
+                throw new dotnet4j.io.IOException("Unable to determine initial layout of NTFS metadata - disk may be too small");
             }
 
             createBiosParameterBlock(stream, numBootClusters * _clusterSize);
@@ -254,7 +254,7 @@ public class NtfsFormatter {
                 f.updateRecordInMft();
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         // XP-style security permissions setup
         NtfsFileSystem ntfs = new NtfsFileSystem(stream);
@@ -285,7 +285,7 @@ public class NtfsFormatter {
         ntfs.setSecurity("System Volume Information", new RawSecurityDescriptor("O:BAG:SYD:(A;OICI;FA;;;SY)"));
         try (Stream s = ntfs.openFile("System Volume Information\\MountPointManagerRemoteDatabase", FileMode.Create)) {
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         ntfs.setAttributes("System Volume Information\\MountPointManagerRemoteDatabase", new HashMap<String, Object>() {
             {

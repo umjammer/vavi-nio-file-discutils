@@ -26,8 +26,8 @@ import java.nio.charset.Charset;
 
 import DiscUtils.Streams.ReaderWriter.BigEndianDataReader;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public final class XdrDataReader extends BigEndianDataReader {

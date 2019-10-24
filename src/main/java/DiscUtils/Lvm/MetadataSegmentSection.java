@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import DiscUtils.Core.CoreCompat.Tuple;
+import dotnet4j.Tuple;
 
 
 public class MetadataSegmentSection {

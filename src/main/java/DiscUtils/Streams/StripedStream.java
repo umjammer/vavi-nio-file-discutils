@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class StripedStream extends SparseStream {
@@ -134,7 +134,7 @@ public class StripedStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of stream");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
 
         _position = effectiveOffset;
@@ -150,11 +150,11 @@ public class StripedStream extends SparseStream {
 
     public void write(byte[] buffer, int offset, int count) {
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write to read-only stream");
+            throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
 
         if (_position + count > _length) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write beyond end of stream");
+            throw new dotnet4j.io.IOException("Attempt to write beyond end of stream");
         }
 
         int totalWritten = 0;

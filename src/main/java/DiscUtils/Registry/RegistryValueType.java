@@ -22,8 +22,6 @@
 
 package DiscUtils.Registry;
 
-import java.util.Arrays;
-
 public enum RegistryValueType {
     /**
      * The types of registry values.
@@ -77,6 +75,6 @@ public enum RegistryValueType {
     QWord;
 
     public static RegistryValueType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -37,10 +37,10 @@ import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Iso9660.CDBuilder;
 import DiscUtils.Iso9660.CDReader;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
 
 
 public class IsoFileInfoTest {

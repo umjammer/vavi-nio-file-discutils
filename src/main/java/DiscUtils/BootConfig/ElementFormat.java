@@ -22,9 +22,6 @@
 
 package DiscUtils.BootConfig;
 
-import java.util.Arrays;
-
-
 public enum ElementFormat {
     /**
      * The known formats used to store BCD values.
@@ -62,6 +59,6 @@ public enum ElementFormat {
     IntegerList;
 
     public static ElementFormat valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

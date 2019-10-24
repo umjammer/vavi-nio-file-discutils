@@ -29,8 +29,8 @@ import java.util.List;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.SeekOrigin;
 
 
 public final class NtfsFileStream extends SparseStream {
@@ -88,7 +88,7 @@ public final class NtfsFileStream extends SparseStream {
         try (Closeable __newVar0 = new NtfsTransaction()) {
             _baseStream.setPosition(value);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -111,7 +111,7 @@ public final class NtfsFileStream extends SparseStream {
             _baseStream.flush();
             updateMetadata();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -122,7 +122,7 @@ public final class NtfsFileStream extends SparseStream {
         try (Closeable __newVar3 = new NtfsTransaction()) {
             return _baseStream.read(buffer, offset, count);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -132,7 +132,7 @@ public final class NtfsFileStream extends SparseStream {
         try (Closeable __newVar4 = new NtfsTransaction()) {
             return _baseStream.seek(offset, origin);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -145,7 +145,7 @@ public final class NtfsFileStream extends SparseStream {
                 _baseStream.setLength(value);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -157,7 +157,7 @@ public final class NtfsFileStream extends SparseStream {
             _isDirty = true;
             _baseStream.write(buffer, offset, count);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -168,7 +168,7 @@ public final class NtfsFileStream extends SparseStream {
             _isDirty = true;
             _baseStream.clear(count);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -192,7 +192,7 @@ public final class NtfsFileStream extends SparseStream {
 
     private void assertOpen() {
         if (_baseStream == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(_entry.getDetails().FileName + " Attempt to use closed stream");
+            throw new dotnet4j.io.IOException(_entry.getDetails().FileName + " Attempt to use closed stream");
         }
     }
 }

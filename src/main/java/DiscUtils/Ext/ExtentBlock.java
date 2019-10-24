@@ -24,7 +24,7 @@ package DiscUtils.Ext;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class ExtentBlock implements IByteArraySerializable {
@@ -34,7 +34,7 @@ public class ExtentBlock implements IByteArraySerializable {
 
     public ExtentIndex[] Index;
 
-    public long getSize() {
+    public int sizeOf() {
         return 12 + Header.MaxEntries * 12;
     }
 

@@ -27,10 +27,10 @@ import java.util.List;
 
 import DiscUtils.Streams.BuiltStream;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileStream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -63,7 +63,7 @@ public abstract class StreamBuilder {
                 numRead = src.read(buffer, 0, buffer.length);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -76,7 +76,7 @@ public abstract class StreamBuilder {
         try (Stream destStream = new FileStream(outputFile, FileMode.Create, FileAccess.Write)) {
             build(destStream);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

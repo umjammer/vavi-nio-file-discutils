@@ -22,7 +22,7 @@
 
 package DiscUtils.Core;
 
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 /**
  * Exception thrown when some invalid file system data is found, indicating

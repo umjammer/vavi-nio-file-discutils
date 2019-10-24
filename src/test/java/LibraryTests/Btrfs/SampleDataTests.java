@@ -30,9 +30,9 @@ import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Vhdx.Disk;
 import DiscUtils.Vhdx.DiskImageFile;
 import LibraryTests.Utilities.ZipUtilities;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamReader;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.StreamReader;
 
 
 public class SampleDataTests {

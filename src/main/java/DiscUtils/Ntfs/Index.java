@@ -36,8 +36,8 @@ import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 public class Index implements Closeable {
@@ -78,7 +78,7 @@ public class Index implements Closeable {
             _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable()
                     + (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
 
         if (_file.streamExists(AttributeType.IndexAllocation, _name)) {
@@ -205,7 +205,7 @@ public class Index implements Closeable {
         IndexEntry[] overflowEntry = new IndexEntry[1];
         boolean found = _rootNode.removeEntry(key, overflowEntry);
         if (overflowEntry[0] != null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Error removing entry, root overflowed");
+            throw new dotnet4j.io.IOException("Error removing entry, root overflowed");
         }
 
         return found;
@@ -395,15 +395,15 @@ public class Index implements Closeable {
 
     private void writeRootNodeToDisk() {
         _rootNode.getHeader().AllocatedSizeOfEntries = _rootNode.calcSize();
-        byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + (int) _root.getSize()];
+        byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + _root.sizeOf()];
         _root.writeTo(buffer, 0);
-        _rootNode.writeTo(buffer, (int) _root.getSize());
+        _rootNode.writeTo(buffer, _root.sizeOf());
         try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write)) {
             s.setPosition(0);
             s.write(buffer, 0, buffer.length);
             s.setLength(s.getPosition());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

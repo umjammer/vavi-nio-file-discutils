@@ -34,8 +34,8 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamBuffer;
 import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -78,7 +78,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
             } else if (stream.getLength() % Mode1SectorSize != 0 && stream.getLength() % Mode2SectorSize == 0) {
                 _format = OpticalFormat.Mode2;
             } else {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to detect optical disk format");
+                throw new dotnet4j.io.IOException("Unable to detect optical disk format");
             }
         } else {
             _format = format;
@@ -151,7 +151,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
             try {
                 parent.close();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
 
@@ -171,19 +171,14 @@ public final class DiscImageFile extends VirtualDiskLayer {
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        try {
-            if (_toDispose != null) {
-                _toDispose.close();
-                _toDispose = null;
-            }
+        if (_toDispose != null) {
+            _toDispose.close();
+            _toDispose = null;
+        }
 
-            if (getContent() != null) {
-                getContent().close();
-                setContent(null);
-            }
-
-        } finally {
-            super.close();
+        if (getContent() != null) {
+            getContent().close();
+            setContent(null);
         }
     }
 }

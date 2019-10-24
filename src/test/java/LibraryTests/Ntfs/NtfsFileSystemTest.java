@@ -48,11 +48,11 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Range;
 import LibraryTests.FileSystemSource;
-import moe.yo3explorer.dotnetio4j.AccessControlSections;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.RawSecurityDescriptor;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.AccessControlSections;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 public class NtfsFileSystemTest {

@@ -36,7 +36,7 @@ public class ScsiReadCommand extends ScsiCommand {
         _numBlocks = numBlocks;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 10;
     }
 

@@ -22,9 +22,6 @@
 
 package DiscUtils.Dmg;
 
-import java.util.Arrays;
-
-
 public enum RunType {
     None,
     Raw,
@@ -36,6 +33,6 @@ public enum RunType {
     Terminator;
 
     public static RunType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

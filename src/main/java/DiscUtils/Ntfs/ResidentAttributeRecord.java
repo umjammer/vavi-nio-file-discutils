@@ -154,10 +154,10 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     protected void read(byte[] buffer, int offset, int[] length) {
         super.read(buffer, offset, length);
         int dataLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        short dataOffset = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
+        short dataOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
         _indexedFlag = buffer[offset + 0x16];
         if (dataOffset + dataLength > length[0]) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Corrupt attribute, data outside of attribute");
+            throw new dotnet4j.io.IOException("Corrupt attribute, data outside of attribute");
         }
 
         _memoryBuffer = new SparseMemoryBuffer(1024);

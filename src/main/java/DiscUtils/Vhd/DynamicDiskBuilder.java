@@ -37,7 +37,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class DynamicDiskBuilder extends StreamBuilder {
@@ -134,7 +134,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                 try {
                     _dataStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
                 _dataStream = null;
             }
@@ -201,7 +201,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                 try {
                     _bitmapStream.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
                 _bitmapStream = null;
             }

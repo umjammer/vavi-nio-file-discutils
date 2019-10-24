@@ -14,8 +14,8 @@ import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.DiscFileSystemInfo;
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
 
 //
 // Copyright (c) 2008-2011, Kenneth Bell

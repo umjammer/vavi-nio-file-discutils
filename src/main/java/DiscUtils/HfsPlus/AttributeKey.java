@@ -62,7 +62,7 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
         __Name = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 

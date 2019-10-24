@@ -28,7 +28,7 @@ import java.util.List;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Range;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -117,7 +117,7 @@ public final class Bin {
     public boolean updateCell(Cell cell) {
         int index = cell.getIndex() - _header.FileOffset;
         int allocSize = Math.abs(EndianUtilities.toInt32LittleEndian(_buffer, index));
-        int newSize = (int) cell.getSize() + 4;
+        int newSize = cell.sizeOf() + 4;
         if (newSize > allocSize) {
             return false;
         }

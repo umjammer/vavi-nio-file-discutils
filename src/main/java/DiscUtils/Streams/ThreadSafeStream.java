@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -95,7 +95,7 @@ public class ThreadSafeStream extends SparseStream {
     private ThreadSafeStream(ThreadSafeStream toClone) {
         _common = toClone._common;
         if (_common == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("toClone");
+            throw new dotnet4j.io.IOException("toClone");
         }
     }
 
@@ -164,7 +164,7 @@ public class ThreadSafeStream extends SparseStream {
     private SparseStream getWrapped() {
         SparseStream wrapped = _common.WrappedStream;
         if (wrapped == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("no wrapped stream.");
+            throw new dotnet4j.io.IOException("no wrapped stream.");
         }
 
         return wrapped;
@@ -235,7 +235,7 @@ public class ThreadSafeStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -262,7 +262,7 @@ public class ThreadSafeStream extends SparseStream {
         synchronized (_common) {
             SparseStream wrapped = getWrapped();
             if (_position + count > wrapped.getLength()) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to extend stream");
+                throw new dotnet4j.io.IOException("Attempt to extend stream");
             }
 
             wrapped.setPosition(_position);

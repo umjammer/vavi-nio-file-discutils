@@ -22,8 +22,7 @@
 
 package DiscUtils.Vhd;
 
-import java.util.Arrays;
-
+// use ordinal()
 public enum FileType {
     /**
      * The known types of VHD disks.
@@ -45,7 +44,8 @@ public enum FileType {
      * another disk.
      */
     Differencing;
+
     public static FileType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

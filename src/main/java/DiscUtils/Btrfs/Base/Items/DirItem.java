@@ -133,18 +133,18 @@ public class DirItem extends BaseItem {
         __Data = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x1e + getNameLength() + getDataLength();
     }
 
     public int readFrom(byte[] buffer, int offset) {
         setChildLocation(EndianUtilities.<Key> toStruct(Key.class, buffer, offset));
         setTransId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x11));
-        setDataLength((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19));
-        setNameLength((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b));
+        setDataLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19));
+        setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b));
         setChildType(DirItemChildType.valueOf(buffer[offset + 0x1d]));
         setName(new String(buffer, offset + 0x1e, getNameLength(), Charset.forName("UTF8")));
         setData(EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength()));
-        return (int) getSize();
+        return sizeOf();
     }
 }

@@ -22,8 +22,6 @@
 
 package DiscUtils.Btrfs.Base;
 
-import java.util.Arrays;
-
 /**
  * All root objectids between FIRST_FREE = 256ULL and LAST_FREE = -256ULL
  * refer to file trees.
@@ -343,6 +341,6 @@ public enum ReservedObjectId {
     FirstChunkTree;
 
     public static ReservedObjectId valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

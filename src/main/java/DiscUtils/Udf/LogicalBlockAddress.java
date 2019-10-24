@@ -34,13 +34,13 @@ public class LogicalBlockAddress implements IByteArraySerializable {
 
     public short Partition;
 
-    public long getSize() {
+    public int sizeOf() {
         return 6;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         LogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        Partition = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        Partition = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         return 6;
     }
 

@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class DynamicHeader {
@@ -71,7 +71,7 @@ public class DynamicHeader {
         HeaderVersion = Version1;
         BlockSize = blockSize;
         MaxTableEntries = (int) ((diskSize + blockSize - 1) / blockSize);
-        ParentTimestamp = Footer.EpochUtc;
+        ParentTimestamp = Footer.EpochUtc.toEpochMilli();
         ParentUnicodeName = "";
         ParentLocators = new ParentLocator[8];
         ParentUniqueId = new UUID(0, 0); // TODO no initializer
@@ -137,6 +137,7 @@ public class DynamicHeader {
     }
 
     public boolean isValid() {
+System.err.println(HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (HeaderVersion == Version1));
         return HeaderCookie.equals(Cookie) && isChecksumValid() && HeaderVersion == Version1;
     }
 

@@ -44,7 +44,7 @@ public abstract class BaseItem implements IByteArraySerializable {
         __Key = value;
     }
 
-    public abstract long getSize();
+    public abstract int sizeOf();
 
     public abstract int readFrom(byte[] buffer, int offset);
 

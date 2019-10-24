@@ -36,7 +36,7 @@ public class ScsiRawCommand extends ScsiCommand {
         _length = length;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return _length;
     }
 

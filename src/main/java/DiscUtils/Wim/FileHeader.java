@@ -63,8 +63,8 @@ public class FileHeader {
         Flags = FileFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 16));
         CompressionSize = EndianUtilities.toInt32LittleEndian(buffer, 20);
         WimGuid = EndianUtilities.toGuidLittleEndian(buffer, 24);
-        PartNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, 40);
-        TotalParts = (short) EndianUtilities.toUInt16LittleEndian(buffer, 42);
+        PartNumber = EndianUtilities.toUInt16LittleEndian(buffer, 40);
+        TotalParts = EndianUtilities.toUInt16LittleEndian(buffer, 42);
         ImageCount = EndianUtilities.toUInt32LittleEndian(buffer, 44);
         OffsetTableHeader = new ShortResourceHeader();
         OffsetTableHeader.read(buffer, 48);

@@ -28,7 +28,7 @@ import DiscUtils.Core.Vfs.IVfsFile;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 import DiscUtils.Core.Vfs.VfsReadOnlyFileSystem;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -45,11 +45,11 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
         setContext(new SwapContext());
         getContext().setHeader(readSwapHeader(stream));;
         if (getContext().getHeader() == null)
-            throw new moe.yo3explorer.dotnetio4j.IOException("Swap Header missing");
+            throw new dotnet4j.io.IOException("Swap Header missing");
 
         if (!getContext().getHeader().getMagic().equals(SwapHeader.Magic1) &&
             !getContext().getHeader().getMagic().equals(SwapHeader.Magic2))
-            throw new moe.yo3explorer.dotnetio4j.IOException("Invalid Swap header");
+            throw new dotnet4j.io.IOException("Invalid Swap header");
 
     }
 

@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import DiscUtils.Streams.Util.MathUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class NonResidentAttributeBuffer extends NonResidentDataBuffer {

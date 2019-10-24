@@ -41,7 +41,7 @@ public final class BlockZero implements IByteArraySerializable {
 
     public short Signature;
 
-    public long getSize() {
+    public int sizeOf() {
         return 512;
     }
 
@@ -52,7 +52,7 @@ public final class BlockZero implements IByteArraySerializable {
         DeviceType = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
         DeviceId = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
         DriverData = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        DriverCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
+        DriverCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
         return 512;
     }
 

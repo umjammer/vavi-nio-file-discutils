@@ -28,7 +28,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class SymlinkInode extends Inode {
     public int SymlinkSize;
 
-    public long getSize() {
+    public int sizeOf() {
         return 24;
     }
 

@@ -39,9 +39,9 @@ import DiscUtils.Net.Dns.ServiceDiscoveryClient;
 import DiscUtils.Net.Dns.ServiceInstance;
 import DiscUtils.Net.Dns.ServiceInstanceEndPoint;
 import DiscUtils.Net.Dns.ServiceInstanceFields;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.compat.JavaIOStream;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.JavaIOStream;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -186,11 +186,11 @@ public final class OpticalDiscService {
                     }
                 }
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
         if (askToken == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Access not granted");
+            throw new dotnet4j.io.IOException("Access not granted");
         }
 
         return askToken;
@@ -217,7 +217,7 @@ public final class OpticalDiscService {
             }
             return askId;
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

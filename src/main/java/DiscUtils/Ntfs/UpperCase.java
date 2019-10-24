@@ -27,8 +27,8 @@ import java.util.Comparator;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 public final class UpperCase implements Comparator<String> {
@@ -47,7 +47,7 @@ public final class UpperCase implements Comparator<String> {
                 try {
                     s.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -95,7 +95,7 @@ public final class UpperCase implements Comparator<String> {
                 try {
                     s.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
         return new UpperCase(file);

@@ -88,7 +88,7 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
             });
             _cache = new HashMap<>();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -182,7 +182,7 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
             transaction.getCompleteEvent().await(2000, TimeUnit.MILLISECONDS);
         } catch (IOException | InterruptedException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         } finally {
             synchronized (_transactions) {
                 _transactions.remove(transactionId);

@@ -22,7 +22,6 @@
 
 package DiscUtils.Streams;
 
-import java.io.IOException;
 import java.io.Serializable;
 
 
@@ -33,7 +32,7 @@ public interface IByteArraySerializable extends Serializable {
     /**
      * Gets the total number of bytes the structure occupies.
      */
-    long getSize() throws IOException;
+    int sizeOf();
 
     /**
      * Reads the structure from a byte array.

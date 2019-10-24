@@ -84,7 +84,7 @@ public class LeafDirectoryV5 extends LeafDirectory {
         return 4;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x30 + 3 * 32 + getHeaderPadding();
     }
 

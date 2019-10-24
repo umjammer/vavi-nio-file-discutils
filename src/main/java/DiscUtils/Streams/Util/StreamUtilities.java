@@ -22,11 +22,9 @@
 
 package DiscUtils.Streams.Util;
 
-import java.io.IOException;
-
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Buffer.IBuffer;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class StreamUtilities {
@@ -69,8 +67,10 @@ public class StreamUtilities {
         int originalCount = count;
         while (count > 0) {
             int numRead = stream.read(buffer, offset, count);
+System.err.println(numRead + ", " + offset + ", " + count + " / " + originalCount);
             if (numRead == 0) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to complete read of " + originalCount + " bytes");
+new Exception("*** DUMMY ***").printStackTrace();
+                throw new dotnet4j.io.IOException("Unable to complete read of " + originalCount + " bytes");
             }
 
             offset += numRead;
@@ -86,7 +86,7 @@ public class StreamUtilities {
      * @return The data read from the stream.
      */
     public static byte[] readExact(Stream stream, int count) {
-        assert count > 0 : "count is negative: " + count;
+        assert count >= 0 : "count is negative: " + count;
         byte[] buffer = new byte[count];
         readExact(stream, buffer, 0, count);
         return buffer;
@@ -106,7 +106,7 @@ public class StreamUtilities {
         while (count > 0) {
             int numRead = buffer.read(pos, data, offset, count);
             if (numRead == 0) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Unable to complete read of " + originalCount + " bytes");
+                throw new dotnet4j.io.IOException("Unable to complete read of " + originalCount + " bytes");
             }
 
             pos += numRead;
@@ -209,11 +209,10 @@ public class StreamUtilities {
     public static <T extends IByteArraySerializable> T readStruct(Class<T> c, Stream stream) {
         try {
             T result = c.newInstance();
-            byte[] buffer = readExact(stream, (int) result.getSize());
+            byte[] buffer = readExact(stream, result.sizeOf()); // TODO cache sizeOf()
             result.readFrom(buffer, 0);
+System.err.println("1: " + c.getName() + ", " + buffer.length);
             return result;
-        } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
@@ -232,6 +231,7 @@ public class StreamUtilities {
             T result = c.newInstance();
             byte[] buffer = readExact(stream, length);
             result.readFrom(buffer, 0);
+System.err.println("2: " + c.getName() + ", " + buffer.length);
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
@@ -246,13 +246,10 @@ public class StreamUtilities {
      * @param obj The structure to write.
      */
     public static <T extends IByteArraySerializable> void writeStruct(Stream stream, T obj) {
-        try {
-            byte[] buffer = new byte[(int) obj.getSize()];
-            obj.writeTo(buffer, 0);
-            stream.write(buffer, 0, buffer.length);
-        } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
-        }
+        byte[] buffer = new byte[obj.sizeOf()];
+        obj.writeTo(buffer, 0);
+        stream.write(buffer, 0, buffer.length);
+System.err.println("w: " + obj.getClass().getName() + ", " + buffer.length);
     }
 
     /**
@@ -269,5 +266,4 @@ public class StreamUtilities {
             dest.write(buffer, 0, numRead);
         }
     }
-
 }

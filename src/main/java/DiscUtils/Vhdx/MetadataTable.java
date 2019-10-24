@@ -77,14 +77,14 @@ public final class MetadataTable implements IByteArraySerializable {
         return true;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return FixedSize;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         System.arraycopy(buffer, offset, _headerData, 0, 32);
         Signature = EndianUtilities.toUInt64LittleEndian(_headerData, 0);
-        EntryCount = (short) EndianUtilities.toUInt16LittleEndian(_headerData, 10);
+        EntryCount = EndianUtilities.toUInt16LittleEndian(_headerData, 10);
         Entries = new HashMap<>();
         if (getIsValid()) {
             for (int i = 0; i < EntryCount; ++i) {

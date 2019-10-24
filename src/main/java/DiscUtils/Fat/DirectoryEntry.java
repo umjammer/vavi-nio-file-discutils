@@ -29,7 +29,7 @@ import java.util.EnumSet;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class DirectoryEntry {
@@ -224,13 +224,13 @@ public class DirectoryEntry {
         setName(new FileName(data, offset));
         _attr = data[offset + 11];
         _creationTimeTenth = data[offset + 13];
-        _creationTime = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 14);
-        _creationDate = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 16);
-        _lastAccessDate = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 18);
-        _firstClusterHi = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 20);
-        _lastWriteTime = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 22);
-        _lastWriteDate = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 24);
-        _firstClusterLo = (short) EndianUtilities.toUInt16LittleEndian(data, offset + 26);
+        _creationTime = EndianUtilities.toUInt16LittleEndian(data, offset + 14);
+        _creationDate = EndianUtilities.toUInt16LittleEndian(data, offset + 16);
+        _lastAccessDate = EndianUtilities.toUInt16LittleEndian(data, offset + 18);
+        _firstClusterHi = EndianUtilities.toUInt16LittleEndian(data, offset + 20);
+        _lastWriteTime = EndianUtilities.toUInt16LittleEndian(data, offset + 22);
+        _lastWriteDate = EndianUtilities.toUInt16LittleEndian(data, offset + 24);
+        _firstClusterLo = EndianUtilities.toUInt16LittleEndian(data, offset + 26);
         _fileSize = EndianUtilities.toUInt32LittleEndian(data, offset + 28);
     }
 }

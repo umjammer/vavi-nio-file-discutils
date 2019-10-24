@@ -22,8 +22,6 @@
 
 package DiscUtils.Lvm;
 
-import java.util.Arrays;
-
 public enum RawLocationFlags {
     /**
      * The raw location descriptor should be ignored
@@ -33,6 +31,6 @@ public enum RawLocationFlags {
     None;
 
     public static RawLocationFlags valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

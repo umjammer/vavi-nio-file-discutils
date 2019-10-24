@@ -33,9 +33,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import DiscUtils.Core.UnixFilePermissions;
 import DiscUtils.SquashFs.SquashFileSystemBuilder;
 import DiscUtils.SquashFs.SquashFileSystemReader;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
 
 
 public final class SquashFileSystemBuilderTest {

@@ -38,7 +38,7 @@ import DiscUtils.Vmdk.DiskAdapterType;
 import DiscUtils.Vmdk.DiskCreateType;
 import DiscUtils.Vmdk.DiskImageFile;
 import LibraryTests.InMemoryFileSystem;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 public class DiskTest {

@@ -25,7 +25,7 @@ package DiscUtils.Streams.Builder;
 import java.io.IOException;
 
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class BuilderStreamExtent extends BuilderExtent {

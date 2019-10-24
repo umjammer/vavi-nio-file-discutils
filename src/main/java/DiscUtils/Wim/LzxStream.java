@@ -23,13 +23,12 @@
 package DiscUtils.Wim;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import DiscUtils.Core.Compression.HuffmanTree;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.BufferedStream;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.BufferedStream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -353,7 +352,7 @@ public class LzxStream extends Stream {
         Uncompressed;
 
         public static BlockType valueOf(int value) {
-            return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+            return values()[value];
         }
     }
 

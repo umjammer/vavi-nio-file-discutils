@@ -39,7 +39,7 @@ public class ResourceInfo {
     public void read(byte[] buffer, int offset) {
         Header = new ShortResourceHeader();
         Header.read(buffer, offset);
-        PartNumber = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + ShortResourceHeader.Size);
+        PartNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + ShortResourceHeader.Size);
         RefCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + ShortResourceHeader.Size + 2);
         Hash = new byte[20];
         System.arraycopy(buffer, offset + ShortResourceHeader.Size + 6, Hash, 0, 20);

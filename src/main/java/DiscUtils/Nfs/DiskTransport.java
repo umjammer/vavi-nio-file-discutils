@@ -31,7 +31,7 @@ import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskTransportAttribute(scheme = "nfs")
@@ -67,7 +67,7 @@ public final class DiskTransport extends VirtualDiskTransport {
             }
         }
         if (bestRoot == null) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(String
+            throw new dotnet4j.io.IOException(String
                     .format("Unable to find an NFS export providing access to '%s'", fsPath));
         }
 

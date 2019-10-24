@@ -26,10 +26,10 @@ import java.io.IOException;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.compression.DeflateStream;
 
 
 /**
@@ -62,7 +62,7 @@ public class ZlibStream extends Stream {
             byte[] headerBuffer = StreamUtilities.readExact(stream, 2);
             short header = EndianUtilities.toUInt16BigEndian(headerBuffer, 0);
             if (header % 31 != 0) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid Zlib header found");
+                throw new dotnet4j.io.IOException("Invalid Zlib header found");
             }
 
             if ((header & 0x0F00) != 8 << 8) {

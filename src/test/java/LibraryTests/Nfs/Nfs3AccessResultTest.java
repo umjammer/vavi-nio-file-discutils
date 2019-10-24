@@ -37,7 +37,7 @@ import DiscUtils.Nfs.Nfs3FileTime;
 import DiscUtils.Nfs.Nfs3Status;
 import DiscUtils.Nfs.XdrDataReader;
 import DiscUtils.Nfs.XdrDataWriter;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class Nfs3AccessResultTest {

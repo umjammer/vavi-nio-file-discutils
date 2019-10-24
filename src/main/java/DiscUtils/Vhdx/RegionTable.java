@@ -34,6 +34,7 @@ import DiscUtils.Streams.Util.Sizes;
 
 
 public final class RegionTable implements IByteArraySerializable {
+
     public static final int RegionTableSignature = 0x69676572;
 
     public static final int FixedSize = (int) (64 * Sizes.OneKiB);
@@ -69,7 +70,7 @@ public final class RegionTable implements IByteArraySerializable {
         return Checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, FixedSize);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return FixedSize;
     }
 
@@ -83,11 +84,11 @@ public final class RegionTable implements IByteArraySerializable {
         if (isValid()) {
             for (int i = 0; i < EntryCount; ++i) {
                 RegionEntry entry = EndianUtilities.toStruct(RegionEntry.class, _data, 16 + 32 * i);
-                Regions.put(entry.Guid, entry);
+                Regions.put(entry.guid, entry);
             }
         }
 
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

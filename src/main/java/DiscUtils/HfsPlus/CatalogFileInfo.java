@@ -34,7 +34,7 @@ public final class CatalogFileInfo extends CommonCatalogFileInfo {
 
     public ForkData ResourceFork;
 
-    public long getSize() {
+    public int sizeOf() {
         throw new UnsupportedOperationException();
     }
 

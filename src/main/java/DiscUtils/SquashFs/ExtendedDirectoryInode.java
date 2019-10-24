@@ -32,7 +32,7 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
 
     private short _indexCount;
 
-    public long getSize() {
+    public int sizeOf() {
         return 40;
     }
 
@@ -84,8 +84,8 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
         _fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         setStartBlock(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
         setParentInode(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));
-        _indexCount = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 32);
-        setOffset((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 34));
+        _indexCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 32);
+        setOffset(EndianUtilities.toUInt16LittleEndian(buffer, offset + 34));
         _extendedAttributes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
         return 40;
     }

@@ -42,9 +42,9 @@ import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
 
 
 /**

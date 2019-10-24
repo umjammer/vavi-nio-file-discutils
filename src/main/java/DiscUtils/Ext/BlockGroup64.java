@@ -44,7 +44,7 @@ public class BlockGroup64 extends BlockGroup {
         this._descriptorSize = descriptorSize;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return this._descriptorSize;
     }
 
@@ -53,9 +53,9 @@ public class BlockGroup64 extends BlockGroup {
         BlockBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
         InodeBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
         InodeTableBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
-        FreeBlocksCountHigh = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2C);
-        FreeInodesCountHigh = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2E);
-        UsedDirsCountHigh = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x30);
+        FreeBlocksCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2C);
+        FreeInodesCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2E);
+        UsedDirsCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x30);
         return this._descriptorSize;
     }
 }

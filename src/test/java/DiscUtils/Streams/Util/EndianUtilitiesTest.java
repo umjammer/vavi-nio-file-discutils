@@ -38,8 +38,8 @@ class EndianUtilitiesTest {
         assertEquals((short) 0xfedc, v);
 
         EndianUtilities.writeBytesLittleEndian((short) 0xfedc, buf, 0);
-        int i = EndianUtilities.toUInt16LittleEndian(buf, 0);
-        assertEquals(0xfedc, i);
+        v = EndianUtilities.toUInt16LittleEndian(buf, 0);
+        assertEquals((short) 0xfedc, v);
     }
 
     @Test
@@ -105,10 +105,17 @@ class EndianUtilitiesTest {
     void testGuidBE() throws Exception {
         byte[] buf = new byte[16];
         UUID uuid = UUID.randomUUID();
+        System.err.println("uuid");
 
         EndianUtilities.writeBytesBigEndian(uuid, buf, 0);
         UUID v = EndianUtilities.toGuidBigEndian(buf, 0);
+//System.err.println(uuid + ", " + v);
         assertEquals(uuid, v);
+
+        UUID uuid2 = UUID.fromString("6d7ad8eb-f061-4aac-8b7e-4da04d959d77");
+        EndianUtilities.writeBytesBigEndian(uuid2, buf, 0);
+        UUID v2 = EndianUtilities.toGuidBigEndian(buf, 0);
+        assertEquals(uuid2, v2);
     }
 
     @Test
@@ -119,6 +126,27 @@ class EndianUtilitiesTest {
         EndianUtilities.writeBytesLittleEndian(uuid, buf, 0);
         UUID v = EndianUtilities.toGuidLittleEndian(buf, 0);
         assertEquals(uuid, v);
+
+        UUID uuid2 = UUID.fromString("6d7ad8eb-f061-4aac-8b7e-4da04d959d77");
+        EndianUtilities.writeBytesLittleEndian(uuid2, buf, 0);
+        UUID v2 = EndianUtilities.toGuidLittleEndian(buf, 0);
+        assertEquals(uuid2, v2);
+    }
+
+    @Test
+    void textXXX() {
+        byte[] bytes = new byte[] {
+            0x66, 0x77, (byte) 0xC2, 0x2D, 0x23, (byte) 0xF6, 0x00, 0x42, (byte) 0x9D, 0x64, 0x11, 0x5E, (byte) 0x9B,
+            (byte) 0xFD, 0x4A, 0x08
+        };
+        UUID v = EndianUtilities.toGuidLittleEndian(bytes, 0);
+        UUID expected = UUID.fromString("2dc27766-f623-4200-9d64-115e9bfd4a08");
+//System.err.println(expected + ", " + v);
+        assertEquals(expected, v);
+
+        byte[] buf = new byte[16];
+        EndianUtilities.writeBytesLittleEndian(expected, buf, 0);
+        assertArrayEquals(bytes, buf);
     }
 }
 

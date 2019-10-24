@@ -77,7 +77,7 @@ public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolum
         PartitionMaps = new PartitionMap[NumPartitionMaps];
         for (int i = 0; i < NumPartitionMaps; ++i) {
             PartitionMaps[i] = PartitionMap.createFrom(buffer, offset + 440 + pmOffset);
-            pmOffset += PartitionMaps[i].getSize();
+            pmOffset += PartitionMaps[i].sizeOf();
         }
         return 440 + MapTableLength;
     }

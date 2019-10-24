@@ -60,7 +60,7 @@ public class BatEntry implements IByteArraySerializable {
         _value = (_value & 0xFFFFF) | value << 20;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 8;
     }
 

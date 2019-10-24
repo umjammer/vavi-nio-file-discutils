@@ -29,7 +29,7 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Block.BlockCacheStream;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class Bitmap implements Closeable {

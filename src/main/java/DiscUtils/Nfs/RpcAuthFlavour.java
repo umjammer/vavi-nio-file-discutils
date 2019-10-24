@@ -1,8 +1,6 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
 public enum RpcAuthFlavour {
     Null,
     Unix,
@@ -10,6 +8,6 @@ public enum RpcAuthFlavour {
     Des;
 
     public static RpcAuthFlavour valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

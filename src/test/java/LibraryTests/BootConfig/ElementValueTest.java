@@ -26,8 +26,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import DiscUtils.BootConfig.BcdObject;
@@ -43,7 +43,7 @@ import DiscUtils.Core.Partitions.GuidPartitionTable;
 import DiscUtils.Core.Partitions.WellKnownPartitionType;
 import DiscUtils.Registry.RegistryHive;
 import DiscUtils.Streams.SparseMemoryStream;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public class ElementValueTest {

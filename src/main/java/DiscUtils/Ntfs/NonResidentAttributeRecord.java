@@ -348,8 +348,8 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         super.read(buffer, offset, length);
         _startingVCN = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
         _lastVCN = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
-        _dataRunsOffset = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x20);
-        _compressionUnitSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x22);
+        _dataRunsOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x20);
+        _compressionUnitSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x22);
         _dataAllocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
         _dataRealSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
         _initializedDataSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x38);

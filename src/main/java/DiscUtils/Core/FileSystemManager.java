@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 import DiscUtils.Core.Vfs.VfsFileSystemFactory;
-import moe.yo3explorer.dotnetio4j.BufferedStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.BufferedStream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -49,15 +49,6 @@ public class FileSystemManager {
     }
 
     /**
-     * Registers new file systems with an instance of this class.
-     *
-     * @param factory The detector for the new file systems.
-     */
-    public static void registerFileSystems(VfsFileSystemFactory factory) {
-        _factories.add(factory);
-    }
-
-    /**
      * Detect which file systems are present on a volume.
      *
      * @param volume The volume to inspect.
@@ -67,7 +58,7 @@ public class FileSystemManager {
         try (Stream s = volume.open()) {
             return doDetect(s, volume);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

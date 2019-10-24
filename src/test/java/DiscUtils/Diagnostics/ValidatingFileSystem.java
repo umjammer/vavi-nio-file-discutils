@@ -22,9 +22,9 @@ import DiscUtils.Core.ReportLevels;
 import DiscUtils.Streams.SnapshotStream;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -243,7 +243,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 ok = false;
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
         if (ok) {
             _snapStream.thaw();
@@ -365,7 +365,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                                         _lastCheckpointReport);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -400,7 +400,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 return false;
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -512,7 +512,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 throw new IllegalStateException("File system failed verification ", _failureException);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -524,7 +524,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 throw new IllegalStateException("File system failed verification ", _failureException);
             }
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -536,7 +536,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
-                throw new moe.yo3explorer.dotnetio4j.IOException(tie.getCause());
+                throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
@@ -551,7 +551,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
-                throw new moe.yo3explorer.dotnetio4j.IOException(tie.getCause());
+                throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
@@ -596,7 +596,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.copyFile(sourceFile, destinationFile);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -615,7 +615,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.copyFile(sourceFile, destinationFile, overwrite);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -631,7 +631,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.createDirectory(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return 0;
         });
@@ -647,7 +647,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.deleteDirectory(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -663,7 +663,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.deleteFile(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -680,7 +680,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.directoryExists(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -696,7 +696,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.fileExists(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -712,7 +712,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.exists(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -728,7 +728,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getDirectories(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -746,7 +746,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getDirectories(path, searchPattern);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -766,7 +766,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getDirectories(path, searchPattern, searchOption);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -782,7 +782,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFiles(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -799,7 +799,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFiles(path, searchPattern);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -818,7 +818,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFiles(path, searchPattern, searchOption);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -834,7 +834,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFileSystemEntries(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -852,7 +852,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFileSystemEntries(path, searchPattern);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -868,7 +868,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.moveDirectory(sourceDirectoryName, destinationDirectoryName);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -885,7 +885,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.moveFile(sourceName, destinationName);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -903,7 +903,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.moveFile(sourceName, destinationName, overwrite);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -925,7 +925,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.openFile(path, mode);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
         performActivity((fs, context) -> {
@@ -934,7 +934,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 wrapper.setNativeStream(context, s);
                 return s;
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
         return wrapper;
@@ -955,7 +955,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.openFile(path, mode, access);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
         performActivity((fs, context) -> {
@@ -964,7 +964,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 wrapper.setNativeStream(context, s);
                 return s;
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
         return wrapper;
@@ -981,7 +981,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getAttributes(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }));
     }
@@ -997,7 +997,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setAttributes(path, newValue);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1014,7 +1014,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getCreationTime(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1030,7 +1030,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setCreationTime(path, newTime);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1047,7 +1047,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getCreationTimeUtc(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1063,7 +1063,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setCreationTimeUtc(path, newTime);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1080,7 +1080,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getLastAccessTime(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1096,7 +1096,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setLastAccessTime(path, newTime);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1113,7 +1113,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getLastAccessTimeUtc(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1129,7 +1129,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setLastAccessTimeUtc(path, newTime);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1146,7 +1146,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getLastWriteTime(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1162,7 +1162,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setLastWriteTime(path, newTime);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1179,7 +1179,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getLastWriteTime(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1195,7 +1195,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 fs.setLastWriteTimeUtc(path, newTime);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
             return null;
         });
@@ -1212,7 +1212,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFileLength(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1228,7 +1228,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFileInfo(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1244,7 +1244,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getDirectoryInfo(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }
@@ -1261,7 +1261,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             try {
                 return fs.getFileSystemInfo(path);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
     }

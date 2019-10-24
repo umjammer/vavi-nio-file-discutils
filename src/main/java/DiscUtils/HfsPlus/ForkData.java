@@ -37,7 +37,7 @@ public final class ForkData implements IByteArraySerializable {
 
     public int TotalBlocks;
 
-    public long getSize() {
+    public int sizeOf() {
         return StructSize;
     }
 

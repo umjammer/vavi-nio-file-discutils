@@ -22,13 +22,12 @@
 
 package DiscUtils.Vdi;
 
-import java.util.Arrays;
-
 public enum ImageFlags {
     None,
     Split2G,
     ZeroExpand;
-    public static ImageFlags valueOf(int i) {
-        return Arrays.stream(values()).filter(e -> e.ordinal() == i).findFirst().get();
+
+    public static ImageFlags valueOf(int value) {
+        return values()[value];
     }
 }

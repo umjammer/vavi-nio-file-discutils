@@ -38,7 +38,7 @@ import DiscUtils.Core.Partitions.PartitionInfo;
 import DiscUtils.Core.Partitions.PartitionTable;
 import DiscUtils.Core.Raw.Disk;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -83,7 +83,7 @@ public final class VolumeManager implements Serializable {
      *
      * @param initialDiskContent Content of the initial disk to add.
      */
-    public VolumeManager(Stream initialDiskContent) throws IOException {
+    public VolumeManager(Stream initialDiskContent) {
         this();
         addDisk(initialDiskContent);
     }
@@ -103,7 +103,7 @@ public final class VolumeManager implements Serializable {
      *         takes a disk parameter.If the disk isn't partitioned, this method
      *         returns the entire disk contents as a single volume.
      */
-    public static Collection<PhysicalVolumeInfo> getPhysicalVolumes(Stream diskContent) throws IOException {
+    public static Collection<PhysicalVolumeInfo> getPhysicalVolumes(Stream diskContent) {
         return getPhysicalVolumes(new Disk(diskContent, Ownership.None));
     }
 
@@ -114,7 +114,7 @@ public final class VolumeManager implements Serializable {
      * @return An array of volumes.If the disk isn't partitioned, this method
      *         returns the entire disk contents as a single volume.
      */
-    public static Collection<PhysicalVolumeInfo> getPhysicalVolumes(VirtualDisk disk) throws IOException {
+    public static Collection<PhysicalVolumeInfo> getPhysicalVolumes(VirtualDisk disk) {
         return new VolumeManager(disk).getPhysicalVolumes();
     }
 

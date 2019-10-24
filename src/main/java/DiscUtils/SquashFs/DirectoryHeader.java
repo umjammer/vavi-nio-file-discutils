@@ -33,7 +33,7 @@ public class DirectoryHeader implements IByteArraySerializable {
 
     public int StartBlock;
 
-    public long getSize() {
+    public int sizeOf() {
         return 12;
     }
 

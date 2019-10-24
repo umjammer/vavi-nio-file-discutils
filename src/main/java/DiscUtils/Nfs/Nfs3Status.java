@@ -3,7 +3,6 @@ package DiscUtils.Nfs;
 
 import java.util.Arrays;
 
-
 public enum Nfs3Status {
     /**
      * NFS status codes.
@@ -153,6 +152,6 @@ public enum Nfs3Status {
     }
 
     public static Nfs3Status valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
+        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().get();
     }
 }

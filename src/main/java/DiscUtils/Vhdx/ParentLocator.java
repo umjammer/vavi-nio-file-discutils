@@ -47,7 +47,7 @@ class ParentLocator implements IByteArraySerializable {
 
     private Map<String, String> Entries;
 
-    public long getSize() {
+    public int sizeOf() {
         if (Entries.size() != 0) {
             throw new UnsupportedOperationException();
         }
@@ -58,12 +58,12 @@ class ParentLocator implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         LocatorType = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
         if (LocatorType != LocatorTypeGuid) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized Parent Locator type: " + LocatorType);
+            throw new dotnet4j.io.IOException("Unrecognized Parent Locator type: " + LocatorType);
         }
 
         Entries = new HashMap<>();
 
-        Count = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
+        Count = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
         for (short i = 0; i < Count; ++i) {
             int kvOffset = offset + 20 + i * 12;
             int keyOffset = EndianUtilities.toInt32LittleEndian(buffer, kvOffset + 0);

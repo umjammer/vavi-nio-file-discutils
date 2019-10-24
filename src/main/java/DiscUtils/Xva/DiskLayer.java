@@ -98,7 +98,7 @@ public final class DiskLayer extends VirtualDiskLayer {
             try {
                 parent.close();
             } catch (IOException e) {
-                new moe.yo3explorer.dotnetio4j.IOException(e);
+                new dotnet4j.io.IOException(e);
             }
         }
 
@@ -112,5 +112,10 @@ public final class DiskLayer extends VirtualDiskLayer {
      */
     public List<String> getParentLocations() {
         return Arrays.asList();
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO Auto-generated method stub
     }
 }

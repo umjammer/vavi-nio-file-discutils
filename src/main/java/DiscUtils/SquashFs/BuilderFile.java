@@ -29,10 +29,10 @@ import java.util.List;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 
 public final class BuilderFile extends BuilderNode {
@@ -112,7 +112,7 @@ public final class BuilderFile extends BuilderNode {
                 try {
                     _source.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
         }
@@ -120,17 +120,17 @@ public final class BuilderFile extends BuilderNode {
 
     private void writeInode(BuilderContext context) {
         if (getNumLinks() != 1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Extended file records (with multiple hard links) not supported");
+            throw new dotnet4j.io.IOException("Extended file records (with multiple hard links) not supported");
         }
 
         fillCommonInodeData(context);
         _inode.Type = InodeType.File;
         setInodeRef(context.getInodeWriter().getPosition());
-        int totalSize =(int)  _inode.getSize();
+        int totalSize =_inode.sizeOf();
         _inode.writeTo(context.getIoBuffer(), 0);
         if (_lengths != null && _lengths.size() > 0) {
             for (int i = 0; i < _lengths.size(); ++i) {
-                EndianUtilities.writeBytesLittleEndian(_lengths.get(i), context.getIoBuffer(), (int) _inode.getSize() + i * 4);
+                EndianUtilities.writeBytesLittleEndian(_lengths.get(i), context.getIoBuffer(), _inode.sizeOf() + i * 4);
             }
             totalSize += _lengths.size() * 4;
         }

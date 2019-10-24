@@ -22,8 +22,6 @@
 
 package DiscUtils.HfsPlus;
 
-import java.util.Arrays;
-
 public enum BTreeNodeKind {
     LeafNode,
     IndexNode,
@@ -31,6 +29,6 @@ public enum BTreeNodeKind {
     MapNode;
 
     public static BTreeNodeKind valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

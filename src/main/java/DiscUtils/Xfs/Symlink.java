@@ -25,7 +25,7 @@ package DiscUtils.Xfs;
 import DiscUtils.Core.Vfs.IVfsSymlink;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class Symlink extends File implements IVfsSymlink<DirEntry, File> {

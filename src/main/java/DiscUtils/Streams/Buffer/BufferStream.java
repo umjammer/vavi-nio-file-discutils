@@ -28,8 +28,8 @@ import java.util.List;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -115,7 +115,7 @@ public class BufferStream extends SparseStream {
      */
     public int read(byte[] buffer, int offset, int count) {
         if (!canRead()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to read from write-only stream");
+            throw new dotnet4j.io.IOException("Attempt to read from write-only stream");
         }
 
         StreamUtilities.assertBufferParameters(buffer, offset, count);
@@ -140,7 +140,7 @@ public class BufferStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
         _position = effectiveOffset;
@@ -165,7 +165,7 @@ public class BufferStream extends SparseStream {
      */
     public void write(byte[] buffer, int offset, int count) {
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to write to read-only stream");
+            throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
 
         StreamUtilities.assertBufferParameters(buffer, offset, count);
@@ -193,7 +193,7 @@ public class BufferStream extends SparseStream {
      */
     public void clear(int count) {
         if (!canWrite()) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to erase bytes in a read-only stream");
+            throw new dotnet4j.io.IOException("Attempt to erase bytes in a read-only stream");
         }
 
         _buffer.clear(_position, count);

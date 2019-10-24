@@ -39,10 +39,10 @@ import DiscUtils.Streams.Buffer.BufferStream;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Buffer.SubBuffer;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.DeflateStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.compression.DeflateStream;
 
 
 public class File implements IVfsFileWithStreams {

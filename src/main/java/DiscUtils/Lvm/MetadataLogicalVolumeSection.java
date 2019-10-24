@@ -31,13 +31,13 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
-import DiscUtils.Core.CoreCompat.Tuple;
 import DiscUtils.Streams.ConcatStream;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.SparseStreamOpenDelegate;
 import DiscUtils.Streams.SubStream;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
+import dotnet4j.Tuple;
 
 
 public class MetadataLogicalVolumeSection {
@@ -136,12 +136,12 @@ public class MetadataLogicalVolumeSection {
 
     private SparseStream open() {
         if (!Status.contains(LogicalVolumeStatus.Read))
-            throw new moe.yo3explorer.dotnetio4j.IOException("volume is not readable");
+            throw new dotnet4j.io.IOException("volume is not readable");
 
         List<MetadataSegmentSection> segments = new ArrayList<>();
         for (MetadataSegmentSection segment : Segments) {
             if (segment.Type != SegmentType.Striped)
-                throw new moe.yo3explorer.dotnetio4j.IOException("unsupported segment type");
+                throw new dotnet4j.io.IOException("unsupported segment type");
 
             segments.add(segment);
         }
@@ -150,7 +150,7 @@ public class MetadataLogicalVolumeSection {
         long pos = 0;
         for (MetadataSegmentSection segment : segments) {
             if (segment.StartExtent != pos) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Volume extents are non-contiguous");
+                throw new dotnet4j.io.IOException("Volume extents are non-contiguous");
             }
 
             pos += segment.ExtentCount;
@@ -164,18 +164,18 @@ public class MetadataLogicalVolumeSection {
 
     private SparseStream openSegment(MetadataSegmentSection segment) {
         if (segment.Stripes.size() != 1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("invalid number of stripes");
+            throw new dotnet4j.io.IOException("invalid number of stripes");
         }
 
         MetadataStripe stripe = segment.Stripes.get(0);
         PhysicalVolume pv;
         if (!_pvs.containsKey(stripe.PhysicalVolumeName)) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("missing pv");
+            throw new dotnet4j.io.IOException("missing pv");
         }
         pv = _pvs.get(stripe.PhysicalVolumeName);
 
         if (pv.PvHeader.DiskAreas.size() != 1) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("invalid number od pv data areas");
+            throw new dotnet4j.io.IOException("invalid number od pv data areas");
         }
 
         DiskArea dataArea = pv.PvHeader.DiskAreas.get(0);

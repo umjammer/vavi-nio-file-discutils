@@ -27,10 +27,10 @@ import java.util.function.BiConsumer;
 
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Setup.FileOpenEventArgs;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 
 public abstract class FileLocator {
@@ -43,7 +43,7 @@ public abstract class FileLocator {
             try {
                 return openFile(fileName1, mode1, access1, share1);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         });
         if (openingFile != null) {
@@ -55,7 +55,7 @@ public abstract class FileLocator {
         try {
             return openFile(args.getFileName(), args.getFileMode(), args.getFileAccess(), args.getFileShare());
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 

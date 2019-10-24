@@ -109,7 +109,7 @@ public class BZip2BlockDecoder {
             } else if (symbol == numInUse + 1) {
                 return readBytes;
             } else {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Invalid symbol from Huffman table");
+                throw new dotnet4j.io.IOException("Invalid symbol from Huffman table");
             }
         }
     }

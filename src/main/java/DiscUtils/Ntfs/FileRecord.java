@@ -382,14 +382,14 @@ public class FileRecord extends FixupRecordBase {
 
     protected void read(byte[] buffer, int offset) {
         setLogFileSequenceNumber(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08));
-        setSequenceNumber((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
-        setHardLinkCount((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x12));
-        _firstAttributeOffset = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
+        setSequenceNumber(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
+        setHardLinkCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x12));
+        _firstAttributeOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
         setFlags(FileRecordFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x16)));
         setRealSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18));
         setAllocatedSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1C));
         setBaseFile(new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20)));
-        setNextAttributeId((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x28));
+        setNextAttributeId(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x28));
         if (getUpdateSequenceOffset() >= 0x30) {
             _index = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x2C);
             _haveIndex = true;

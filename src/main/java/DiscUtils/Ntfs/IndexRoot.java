@@ -73,7 +73,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
         __RawClustersPerIndexRecord = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 16;
     }
 

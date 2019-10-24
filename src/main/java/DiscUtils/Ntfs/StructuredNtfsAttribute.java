@@ -28,8 +28,8 @@ import java.io.PrintWriter;
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.Stream;
 
 
 public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnosticTraceable> extends NtfsAttribute {
@@ -66,18 +66,16 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
     public void save() {
         Stream s = open(FileAccess.Write);
         try {
-            byte[] buffer = new byte[(int) _structure.getSize()];
+            byte[] buffer = new byte[_structure.sizeOf()];
             _structure.writeTo(buffer, 0);
                 s.write(buffer, 0, buffer.length);
                 s.setLength(buffer.length);
-        } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
         } finally {
             if (s != null)
                 try {
                     s.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -115,7 +113,7 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
                     try {
                         s.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
             _initialized = true;

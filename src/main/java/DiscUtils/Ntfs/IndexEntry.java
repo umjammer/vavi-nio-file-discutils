@@ -119,10 +119,10 @@ public class IndexEntry {
 
     public void read(byte[] buffer, int offset) {
         @SuppressWarnings("unused")
-        short dataOffset = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x00);
-        short dataLength = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
-        short length = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
-        short keyLength = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
+        short dataOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x00);
+        short dataLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
+        short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
+        short keyLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
         _flags = IndexEntryFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
         if (_flags.contains(IndexEntryFlags.End)) {
             _keyBuffer = new byte[keyLength];

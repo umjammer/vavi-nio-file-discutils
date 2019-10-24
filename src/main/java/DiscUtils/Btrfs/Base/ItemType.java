@@ -22,9 +22,6 @@
 
 package DiscUtils.Btrfs.Base;
 
-import java.util.Arrays;
-
-
 public enum ItemType {
     __dummyEnum__0,
     InodeItem,
@@ -282,6 +279,6 @@ public enum ItemType {
     StringItem;
 
     public static ItemType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

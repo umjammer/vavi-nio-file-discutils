@@ -30,7 +30,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.SubStream;
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class PartitionMapEntry extends PartitionInfo implements IByteArraySerializable {
@@ -86,7 +86,7 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
         return PhysicalVolumeType.ApplePartition;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 512;
     }
 

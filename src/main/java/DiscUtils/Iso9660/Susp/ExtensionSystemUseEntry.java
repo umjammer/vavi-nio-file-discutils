@@ -38,13 +38,13 @@ public final class ExtensionSystemUseEntry extends SystemUseEntry {
 
     public ExtensionSystemUseEntry(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
         checkAndSetCommonProperties(name, length, version, (byte) 8, (byte) 1);
-        int lenId = data[offset + 4];
-        int lenDescriptor = data[offset + 5];
-        int lenSource = data[offset + 6];
+        int lenId = data[offset + 4] & 0xff;
+        int lenDescriptor = data[offset + 5] & 0xff;
+        int lenSource = data[offset + 6] & 0xff;
         ExtensionVersion = data[offset + 7];
-        if (length < 8 + lenId + lenDescriptor + lenSource) {
-            throw new IllegalArgumentException("Invalid SUSP ER entry - too short, only " + length + " bytes - expected: " +
-                                               (8 + lenId + lenDescriptor + lenSource));
+        if ((length & 0xff) < 8 + lenId + lenDescriptor + lenSource) {
+            throw new IllegalArgumentException("Invalid SUSP ER entry - too short, only " + (length & 0xff) +
+                " bytes - expected: " + (8 + lenId + lenDescriptor + lenSource));
         }
 
         ExtensionIdentifier = IsoUtilities.readChars(data, offset + 8, lenId, encoding);

@@ -35,10 +35,10 @@ import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.VirtualDiskManager;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.VolumeManager;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileStream;
+import dotnet4j.io.Stream;
 
 
 @Options

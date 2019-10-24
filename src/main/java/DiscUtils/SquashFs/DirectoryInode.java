@@ -28,7 +28,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class DirectoryInode extends Inode implements IDirectoryInode {
     private short _fileSize;
 
-    public long getSize() {
+    public int sizeOf() {
         return 32;
     }
 
@@ -78,8 +78,8 @@ public class DirectoryInode extends Inode implements IDirectoryInode {
         super.readFrom(buffer, offset);
         setStartBlock(EndianUtilities.toUInt32LittleEndian(buffer, offset + 16));
         NumLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 20);
-        _fileSize = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        setOffset((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 26));
+        _fileSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
+        setOffset(EndianUtilities.toUInt16LittleEndian(buffer, offset + 26));
         setParentInode(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));
         return 32;
     }

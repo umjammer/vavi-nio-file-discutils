@@ -38,9 +38,9 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.SeekOrigin;
 
 
 public class File {
@@ -225,7 +225,7 @@ public class File {
             }
 
         }
-        throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to determine free space for non-existent attribute");
+        throw new dotnet4j.io.IOException("Attempt to determine free space for non-existent attribute");
     }
 
     public void modified() {
@@ -908,7 +908,7 @@ public class File {
             if (_records.get(i).getMasterFileTableIndex() == fileReference.getMftIndex()) {
                 FileRecord record = _records.get(i);
                 if (record.getAttributes().size() > 0) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException("Attempting to remove non-empty MFT record");
+                    throw new dotnet4j.io.IOException("Attempting to remove non-empty MFT record");
                 }
 
                 _context.getMft().removeRecord(fileReference);

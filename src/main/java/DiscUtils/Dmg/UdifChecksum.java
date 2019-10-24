@@ -33,7 +33,7 @@ public class UdifChecksum implements IByteArraySerializable {
 
     public int Type;
 
-    public long getSize() {
+    public int sizeOf() {
         return 136;
     }
 

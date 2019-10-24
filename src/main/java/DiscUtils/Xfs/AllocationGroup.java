@@ -25,8 +25,8 @@
 package DiscUtils.Xfs;
 
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class AllocationGroup {
@@ -81,7 +81,7 @@ public class AllocationGroup {
         SuperBlock superblock = context.getSuperBlock();
         setFreeBlockInfo(new AllocationGroupFreeBlockInfo(superblock));
         data.setPosition(offset + superblock.getSectorSize());
-        byte[] agfData = StreamUtilities.readExact(data, (int) getFreeBlockInfo().getSize());
+        byte[] agfData = StreamUtilities.readExact(data, getFreeBlockInfo().sizeOf());
         getFreeBlockInfo().readFrom(agfData, 0);
         if (getFreeBlockInfo().getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
             throw new IOException("Invalid AGF magic - probably not an xfs file system");
@@ -89,7 +89,7 @@ public class AllocationGroup {
 
         setInodeBtreeInfo(new AllocationGroupInodeBtreeInfo(superblock));
         data.setPosition(offset + superblock.getSectorSize() * 2);
-        byte[] agiData = StreamUtilities.readExact(data, (int) getInodeBtreeInfo().getSize());
+        byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().sizeOf());
         getInodeBtreeInfo().readFrom(agiData, 0);
         if (getInodeBtreeInfo().getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
             throw new IOException("Invalid AGI magic - probably not an xfs file system");

@@ -165,7 +165,7 @@ public class ChunkItem extends BaseItem {
         __Stripes = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x30 + getStripeCount() * Stripe.Length;
     }
 
@@ -177,15 +177,15 @@ public class ChunkItem extends BaseItem {
         setOptimalIoAlignment(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20));
         setOptimalIoWidth(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24));
         setMinimalIoSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28));
-        setStripeCount((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2c));
-        setSubStripes((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2e));
+        setStripeCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2c));
+        setSubStripes(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2e));
         setStripes(new Stripe[getStripeCount()]);
         offset += 0x30;
         for (int i = 0; i < getStripeCount(); i++) {
             getStripes()[i] = new Stripe();
             offset += getStripes()[i].readFrom(buffer, offset);
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
 }

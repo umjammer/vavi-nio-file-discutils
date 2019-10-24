@@ -28,8 +28,8 @@ import java.util.Map;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class BTreeInodeNode extends BtreeHeader {
@@ -63,8 +63,8 @@ public class BTreeInodeNode extends BtreeHeader {
         __Children = value;
     }
 
-    public long getSize() {
-        return super.getSize() + (getNumberOfRecords() * 0x8);
+    public int sizeOf() {
+        return super.sizeOf() + (getNumberOfRecords() * 0x8);
     }
 
     public BTreeInodeNode(int superBlockVersion) {
@@ -73,7 +73,7 @@ public class BTreeInodeNode extends BtreeHeader {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        offset += super.getSize();
+        offset += super.sizeOf();
         if (getLevel() == 0)
             throw new IOException("invalid B+tree level - expected 0");
 
@@ -85,7 +85,7 @@ public class BTreeInodeNode extends BtreeHeader {
         for (int i = 0; i < getNumberOfRecords(); i++) {
             getPointer()[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void loadBtree(AllocationGroup ag) {

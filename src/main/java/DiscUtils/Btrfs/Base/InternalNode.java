@@ -27,7 +27,7 @@ import java.util.List;
 
 import DiscUtils.Btrfs.Context;
 import DiscUtils.Btrfs.Base.Items.BaseItem;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class InternalNode extends NodeHeader {
@@ -58,8 +58,8 @@ public class InternalNode extends NodeHeader {
         __Nodes = value;
     }
 
-    public long getSize() {
-        return (int) (super.getSize() + getItemCount() * KeyPointer.Length);
+    public int sizeOf() {
+        return super.sizeOf() + getItemCount() * KeyPointer.Length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -73,7 +73,7 @@ public class InternalNode extends NodeHeader {
             offset += getKeyPointers()[i].readFrom(buffer, offset);
         }
         setNodes(new NodeHeader[getItemCount()]);
-        return (int) getSize();
+        return sizeOf();
     }
 
     public List<BaseItem> find(Key key, Context context) {

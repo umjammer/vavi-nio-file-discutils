@@ -25,7 +25,7 @@ package DiscUtils.Ntfs;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public abstract class FixupRecordBase {
@@ -108,12 +108,12 @@ public abstract class FixupRecordBase {
             }
 
         }
-        setUpdateSequenceOffset((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x04));
-        setUpdateSequenceCount((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06));
-        setUpdateSequenceNumber((short) EndianUtilities.toUInt16LittleEndian(buffer, offset + getUpdateSequenceOffset()));
+        setUpdateSequenceOffset(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x04));
+        setUpdateSequenceCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06));
+        setUpdateSequenceNumber(EndianUtilities.toUInt16LittleEndian(buffer, offset + getUpdateSequenceOffset()));
         _updateSequenceArray = new short[getUpdateSequenceCount() - 1];
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
-            _updateSequenceArray[i] = (short) EndianUtilities
+            _updateSequenceArray[i] = EndianUtilities
                     .toUInt16LittleEndian(buffer, offset + getUpdateSequenceOffset() + 2 * (i + 1));
         }
         unprotectBuffer(buffer, offset);
@@ -166,7 +166,7 @@ public abstract class FixupRecordBase {
         setUpdateSequenceNumber((short) (getUpdateSequenceNumber() + 1));
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
             // Read in the bytes that are replaced by the USN
-            _updateSequenceArray[i] = (short) EndianUtilities.toUInt16LittleEndian(buffer, offset + Sizes.Sector * (i + 1) - 2);
+            _updateSequenceArray[i] = EndianUtilities.toUInt16LittleEndian(buffer, offset + Sizes.Sector * (i + 1) - 2);
         }
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
             // Overwrite the bytes that are replaced with the USN

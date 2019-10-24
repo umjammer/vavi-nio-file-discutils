@@ -23,7 +23,6 @@
 package DiscUtils.Core;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,11 +90,7 @@ public abstract class VirtualDiskLayer implements Closeable {
      * Finalizes an instance of the VirtualDiskLayer class.
      */
     protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
+        close();
     }
 
     /**
@@ -113,10 +108,4 @@ public abstract class VirtualDiskLayer implements Closeable {
      * @return Array of strings, empty if no parent.
      */
     public abstract List<String> getParentLocations();
-
-    /**
-     * Disposes of underlying resources.
-     */
-    public void close() throws IOException {
-    }
 }

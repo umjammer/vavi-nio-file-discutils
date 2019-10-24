@@ -38,11 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public class DiscFileSystemFileTest {

@@ -27,7 +27,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Scanner;
 
-import DiscUtils.Core.CoreCompat.Tuple;
+import dotnet4j.Tuple;
 
 
 public class MetadataVolumeGroupSection {

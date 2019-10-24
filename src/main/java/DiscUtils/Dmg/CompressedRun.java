@@ -37,7 +37,7 @@ public class CompressedRun implements IByteArraySerializable {
 
     public RunType Type;
 
-    public long getSize() {
+    public int sizeOf() {
         return 40;
     }
 

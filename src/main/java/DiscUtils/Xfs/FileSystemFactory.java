@@ -30,7 +30,7 @@ import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.Vfs.VfsFileSystemFactory;
 import DiscUtils.Core.Vfs.VfsFileSystemFactoryAttribute;
 import DiscUtils.Core.Vfs.VfsFileSystemInfo;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 @VfsFileSystemFactoryAttribute

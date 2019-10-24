@@ -32,8 +32,8 @@ import vavi.util.StringUtil;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
-import moe.yo3explorer.dotnetio4j.RegistryValueOptions;
-import moe.yo3explorer.dotnetio4j.compat.RegistrySecurity;
+import dotnet4j.security.accessControl.RegistrySecurity;
+import dotnet4j.win32.RegistryValueOptions;
 
 
 /**

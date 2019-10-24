@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.SeekOrigin;
 
 
 /**
@@ -67,7 +67,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         long startPos = MathUtilities.roundDown(_position, _blockSize);
         long endPos = MathUtilities.roundUp(_position + count, _blockSize);
         if (endPos - startPos > Integer.MAX_VALUE) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Oversized read, after alignment");
+            throw new dotnet4j.io.IOException("Oversized read, after alignment");
         }
 
         byte[] tempBuffer = new byte[(int) (endPos - startPos)];
@@ -88,7 +88,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         }
 
         if (effectiveOffset < 0) {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of stream");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
 
         _position = effectiveOffset;

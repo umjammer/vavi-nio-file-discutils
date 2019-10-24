@@ -71,7 +71,7 @@ public class BootValidationEntry {
     private static short calcChecksum(byte[] buffer, int offset) {
         short total = 0;
         for (int i = 0; i < 16; ++i) {
-            total += EndianUtilities.toUInt16LittleEndian(buffer, offset + i * 2);
+            total += EndianUtilities.toUInt16LittleEndian(buffer, offset + i * 2) & 0xffff;
         }
         return (short) (0 - total);
     }

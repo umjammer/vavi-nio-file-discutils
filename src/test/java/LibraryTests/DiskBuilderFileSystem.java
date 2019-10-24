@@ -30,10 +30,10 @@ import java.util.Map;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.DiskImageFileSpecification;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -121,7 +121,7 @@ public class DiskBuilderFileSystem extends DiscFileSystem {
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         if (_files.containsKey(path)) {
             if (mode == FileMode.CreateNew) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("File already exists");
+                throw new dotnet4j.io.IOException("File already exists");
             }
 
             return _files.get(path).openStream();
@@ -167,7 +167,7 @@ public class DiskBuilderFileSystem extends DiscFileSystem {
             try (Stream s = _files.get(path).openStream()){
                     return s.getLength();
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         } else {
             throw new FileNotFoundException("No such file " + path);

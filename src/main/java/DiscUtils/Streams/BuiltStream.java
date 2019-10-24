@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import DiscUtils.Streams.Builder.BuilderExtent;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 public class BuiltStream extends SparseStream {

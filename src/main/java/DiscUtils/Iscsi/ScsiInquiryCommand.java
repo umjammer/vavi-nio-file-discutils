@@ -41,7 +41,7 @@ public class ScsiInquiryCommand extends ScsiCommand {
         _expected = expected;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 6;
     }
 

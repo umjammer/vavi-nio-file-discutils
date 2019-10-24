@@ -28,7 +28,7 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Block.BlockCacheSettings;
 import DiscUtils.Streams.Block.BlockCacheStream;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class BlockCacheStreamTest {

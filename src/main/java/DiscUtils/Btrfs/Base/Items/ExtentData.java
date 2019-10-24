@@ -40,11 +40,11 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.CompressionMode;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
-import moe.yo3explorer.dotnetio4j.SeekableLzoStream;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.SeekableLzoStream;
+import dotnet4j.io.compression.CompressionMode;
 
 
 /**
@@ -187,7 +187,7 @@ public class ExtentData extends BaseItem {
         __LogicalSize = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return getType() == ExtentDataType.Inline ? getInlineData().length + 0x15 : 0x35;
     }
 
@@ -206,7 +206,7 @@ public class ExtentData extends BaseItem {
             setExtentOffset(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x25));
             setLogicalSize(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x2d));
         }
-        return (int) getSize();
+        return sizeOf();
     }
 
     public Stream getStream(Context context) {

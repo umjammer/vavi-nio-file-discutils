@@ -25,7 +25,7 @@ package DiscUtils.Streams.Builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class PassthroughStreamBuilder extends StreamBuilder {

@@ -80,7 +80,7 @@ public final class ValueCell extends Cell {
         __Name = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 0x14 + (getName() == null || getName().isEmpty() ? 0 : getName().length());
     }
 

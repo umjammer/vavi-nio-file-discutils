@@ -31,10 +31,10 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.ZeroStream;
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Streams.Util.Sizes;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 
 public final class DiskExtent extends VirtualDiskExtent {
@@ -78,7 +78,7 @@ public final class DiskExtent extends VirtualDiskExtent {
         try (Stream s = _fileLocator.open(_descriptor.getFileName(), FileMode.Open, FileAccess.Read, FileShare.Read)) {
             return s.getLength();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public final class DiskExtent extends VirtualDiskExtent {
                 try {
                     parent.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
 

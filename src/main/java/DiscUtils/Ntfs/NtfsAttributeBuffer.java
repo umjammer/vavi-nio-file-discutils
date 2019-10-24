@@ -30,7 +30,7 @@ import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Buffer.IMappedBuffer;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
@@ -98,7 +98,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
             // Partial read of uninitialized area
             Arrays.fill(buffer,
                         offset + (int) (record.getInitializedDataLength() - pos),
-                        (int) (pos + toRead - record.getInitializedDataLength()),
+                        offset + toRead,
                         (byte) 0);
             toRead = (int) (record.getInitializedDataLength() - pos);
         }

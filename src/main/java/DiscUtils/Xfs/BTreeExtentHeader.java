@@ -81,7 +81,7 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
         __RightSibling = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 24;
     }
 

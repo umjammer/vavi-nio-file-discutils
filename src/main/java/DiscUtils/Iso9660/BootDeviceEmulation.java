@@ -22,8 +22,6 @@
 
 package DiscUtils.Iso9660;
 
-import java.util.Arrays;
-
 public enum BootDeviceEmulation {
     /**
      * Enumeration of boot device emulation modes.
@@ -49,6 +47,6 @@ public enum BootDeviceEmulation {
     HardDisk;
 
     public static BootDeviceEmulation valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -25,9 +25,9 @@ package DiscUtils.Wim;
 import java.io.IOException;
 
 import DiscUtils.Core.Compression.HuffmanTree;
-import moe.yo3explorer.dotnetio4j.BufferedStream;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.BufferedStream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 
 
 /**

@@ -23,7 +23,7 @@
 package DiscUtils.Streams.ReaderWriter;
 
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
@@ -36,7 +36,7 @@ public class LittleEndianDataReader extends DataReader {
 
     public short readUInt16() {
         readToBuffer(2);
-        return (short) EndianUtilities.toUInt16LittleEndian(_buffer, 0);
+        return EndianUtilities.toUInt16LittleEndian(_buffer, 0);
     }
 
     public int readInt32() {

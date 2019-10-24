@@ -22,8 +22,6 @@
 
 package DiscUtils.Udf;
 
-import java.util.Arrays;
-
 public enum FileType {
     None,
     UnallocatedSpaceEntry,
@@ -280,6 +278,6 @@ public enum FileType {
     UdfMetadataBitmapFile;
 
     public static FileType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -22,14 +22,12 @@
 
 package DiscUtils.Nfs;
 
-import java.util.Arrays;
-
 public enum Nfs3StableHow {
     Unstable,
     DataSync,
     FileSynce;
 
     public static Nfs3StableHow valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

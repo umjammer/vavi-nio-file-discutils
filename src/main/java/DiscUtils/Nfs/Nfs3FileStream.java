@@ -28,8 +28,8 @@ import java.util.List;
 
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.SeekOrigin;
 
 
 public final class Nfs3FileStream extends SparseStream {

@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import DiscUtils.Core.CoreCompat.Tuple;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
-import moe.yo3explorer.dotnetio4j.FileAccess;
+import dotnet4j.Tuple;
+import dotnet4j.io.FileAccess;
 
 
 public class ClusterBitmap implements Closeable {
@@ -122,7 +122,7 @@ public class ClusterBitmap implements Closeable {
         }
         if (numFound < count) {
             freeClusters(result);
-            throw new moe.yo3explorer.dotnetio4j.IOException("Out of disk space");
+            throw new dotnet4j.io.IOException("Out of disk space");
         }
 
         // If we found more than two clusters, or we have a fragmented result,

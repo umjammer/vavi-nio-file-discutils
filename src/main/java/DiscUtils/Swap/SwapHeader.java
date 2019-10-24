@@ -100,14 +100,14 @@ public class SwapHeader implements IByteArraySerializable {
         __Magic = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return PageSize;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         setMagic(EndianUtilities.bytesToString(buffer, PageSize - 10, 10));
         if (!getMagic().equals(Magic1) && !getMagic().equals(Magic2))
-            return (int) getSize();
+            return sizeOf();
 
         setVersion(EndianUtilities.toUInt32LittleEndian(buffer, 0x400));
         setLastPage(EndianUtilities.toUInt32LittleEndian(buffer, 0x404));
@@ -118,7 +118,7 @@ public class SwapHeader implements IByteArraySerializable {
         if (nullIndex > 0)
             setVolume(new String(volume, 0, nullIndex, Charset.forName("UTF8")));
 
-        return (int) getSize();
+        return sizeOf();
     }
 
     public void writeTo(byte[] buffer, int offset) {

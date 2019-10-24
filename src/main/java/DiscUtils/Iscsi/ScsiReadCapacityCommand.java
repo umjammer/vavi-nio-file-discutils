@@ -32,7 +32,7 @@ public class ScsiReadCapacityCommand extends ScsiCommand {
         super(targetLun);
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return 10;
     }
 

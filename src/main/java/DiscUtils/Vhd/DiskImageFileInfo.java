@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**

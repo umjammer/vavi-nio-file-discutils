@@ -36,8 +36,8 @@ import DiscUtils.Core.IUnixFileSystem;
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.Vfs.VfsReadOnlyFileSystem;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context> implements

@@ -39,7 +39,7 @@ public final class BTreeNodeDescriptor implements IByteArraySerializable {
 
     public short Reserved;
 
-    public long getSize() {
+    public int sizeOf() {
         return 14;
     }
 

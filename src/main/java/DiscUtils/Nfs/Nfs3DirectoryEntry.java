@@ -25,7 +25,7 @@ package DiscUtils.Nfs;
 import java.io.IOException;
 
 import DiscUtils.Core.Internal.Utilities;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 
 public final class Nfs3DirectoryEntry {
@@ -142,7 +142,7 @@ public final class Nfs3DirectoryEntry {
             write(writer);
             return stream.getLength();
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 }

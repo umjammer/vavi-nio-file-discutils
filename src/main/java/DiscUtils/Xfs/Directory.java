@@ -31,7 +31,7 @@ import java.util.Map;
 import DiscUtils.Core.Vfs.IVfsDirectory;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.IOException;
+import dotnet4j.io.IOException;
 
 
 public class Directory extends File implements IVfsDirectory<DirEntry, File> {

@@ -412,14 +412,14 @@ public class SuperBlock implements IByteArraySerializable {
         __SystemChunkArray = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return Length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         setMagic(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40));
         if (getMagic() != BtrfsMagic)
-            return (int) getSize();
+            return sizeOf();
 
         setChecksum(EndianUtilities.toByteArray(buffer, offset, 0x20));
         setFsUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20));
@@ -463,10 +463,10 @@ public class SuperBlock implements IByteArraySerializable {
             ChunkItem chunkItem = new ChunkItem(key);
             offset += chunkItem.readFrom(buffer, offset);
             systemChunks.add(chunkItem);
-            n = n - (int) key.getSize() - (int) chunkItem.getSize();
+            n = n - key.sizeOf() - chunkItem.sizeOf();
         }
         setSystemChunkArray(systemChunks.toArray(new ChunkItem[0]));
-        return (int) getSize();
+        return sizeOf();
     }
 
     //32b 800 (n bytes valid) Contains (KEY, CHUNK_ITEM) pairs for all SYSTEM chunks. This is needed to bootstrap the mapping from logical addresses to physical.

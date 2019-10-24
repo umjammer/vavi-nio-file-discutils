@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class HeaderRecord {
@@ -155,7 +155,7 @@ System.err.println("getPosition: " + s.getPosition());
             }
 
         } else {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized file version: " + version);
+            throw new dotnet4j.io.IOException("Unrecognized file version: " + version);
         }
 
         return headerSize;
@@ -203,7 +203,7 @@ System.err.println("getPosition: " + s.getPosition());
             }
 
         } else {
-            throw new moe.yo3explorer.dotnetio4j.IOException("Unrecognized file version: " + fileVersion);
+            throw new dotnet4j.io.IOException("Unrecognized file version: " + fileVersion);
         }
 //System.err.println("W:\n" + StringUtil.getDump(buffer, 64));
         return headerSize;

@@ -28,7 +28,7 @@ import java.util.UUID;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
@@ -173,7 +173,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
 
     private int Size;
 
-    public long getSize() {
+    public int sizeOf() {
         return Size;
     }
 

@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import DiscUtils.Streams.Util.EndianUtilities;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class FatBuffer {

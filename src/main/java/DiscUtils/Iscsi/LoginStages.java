@@ -1,8 +1,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
-
 // use ordinal()
 public enum LoginStages {
     SecurityNegotiation,
@@ -11,6 +9,6 @@ public enum LoginStages {
     FullFeaturePhase;
 
     public static LoginStages valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

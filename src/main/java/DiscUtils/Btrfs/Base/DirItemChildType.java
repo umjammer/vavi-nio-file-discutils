@@ -22,8 +22,6 @@
 
 package DiscUtils.Btrfs.Base;
 
-import java.util.Arrays;
-
 public enum DirItemChildType {
     Unknown,
     RegularFile,
@@ -36,6 +34,6 @@ public enum DirItemChildType {
     ExtendedAttribute;
 
     public static DirItemChildType valueOf(int value) {
-        return Arrays.stream(values()).filter(v -> v.ordinal() == value).findFirst().get();
+        return values()[value];
     }
 }

@@ -56,7 +56,7 @@ public class BlockDirectoryDataUnused extends BlockDirectoryData {
         __Tag = value;
     }
 
-    public long getSize() {
+    public int sizeOf() {
         return getLength();
     }
 
@@ -64,6 +64,6 @@ public class BlockDirectoryDataUnused extends BlockDirectoryData {
         setFreetag(EndianUtilities.toUInt16BigEndian(buffer, offset));
         setLength(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2));
         setTag(EndianUtilities.toUInt16BigEndian(buffer, offset + getLength() - 0x2));
-        return (int) getSize();
+        return sizeOf();
     }
 }

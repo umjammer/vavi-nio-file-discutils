@@ -33,7 +33,7 @@ public class FragmentRecord implements IByteArraySerializable {
 
     public long StartBlock;
 
-    public long getSize() {
+    public int sizeOf() {
         return RecordSize;
     }
 

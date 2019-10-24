@@ -36,7 +36,7 @@ import DiscUtils.Core.DiscFileSystemInfo;
 import DiscUtils.Iso9660.CDBuilder;
 import DiscUtils.Iso9660.CDReader;
 import DiscUtils.Streams.SparseStream;
-import moe.yo3explorer.dotnetio4j.MemoryStream;
+import dotnet4j.io.MemoryStream;
 
 public class IsoFileSystemTest {
     @Test

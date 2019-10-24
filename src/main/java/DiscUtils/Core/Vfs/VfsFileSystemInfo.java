@@ -26,7 +26,7 @@ import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.VolumeInfo;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 /**
