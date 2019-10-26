@@ -43,8 +43,6 @@ public class IndexEntry {
     public IndexEntry(boolean isFileIndexEntry) {
         _isFileIndexEntry = isFileIndexEntry;
         _flags = EnumSet.noneOf(IndexEntryFlags.class);
-//        _keyBuffer = new byte[0]; // TODO
-//        _dataBuffer = new byte[0];
     }
 
     public IndexEntry(IndexEntry toCopy, byte[] newKey, byte[] newData) {
@@ -100,10 +98,10 @@ public class IndexEntry {
         _keyBuffer = value;
     }
 
-    public long getSize() {
+    public int getSize() {
         int size = 0x10; // start of variable data
 
-        if (_flags.contains(IndexEntryFlags.End)) {
+        if (!_flags.contains(IndexEntryFlags.End)) {
             size += _keyBuffer.length;
             size += isFileIndexEntry() ? 0 : _dataBuffer.length;
         }
@@ -123,10 +121,13 @@ public class IndexEntry {
         short dataLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
         short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
         short keyLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
+        assert dataLength >= 0 && length >=0 && keyLength >= 0;
         _flags = IndexEntryFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
-        if (_flags.contains(IndexEntryFlags.End)) {
+
+        if (!_flags.contains(IndexEntryFlags.End)) {
             _keyBuffer = new byte[keyLength];
             System.arraycopy(buffer, offset + 0x10, _keyBuffer, 0, keyLength);
+
             if (isFileIndexEntry()) {
                 // Special case, for file indexes, the MFT ref is held where the data offset & length go
                 _dataBuffer = new byte[8];
@@ -158,7 +159,7 @@ public class IndexEntry {
 
                 EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x00);
                 EndianUtilities.writeBytesLittleEndian(dataLength, buffer, offset + 0x02);
-System.err.println(_dataBuffer.length + ", " + buffer.length + ", " + offset + ", " + dataOffset);
+//Debug.println(_dataBuffer.length + ", " + buffer.length + ", " + offset + ", " + dataOffset);
                 System.arraycopy(_dataBuffer, 0, buffer, offset + dataOffset, _dataBuffer.length);
             }
             EndianUtilities.writeBytesLittleEndian(keyLength, buffer, offset + 0x0A);

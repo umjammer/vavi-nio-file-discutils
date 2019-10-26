@@ -36,7 +36,9 @@ public class ReparsePoints {
 
     public ReparsePoints(File file) {
         _file = file;
-        _index = new IndexView<>(file.getIndex("$R"));
+        _index = new IndexView<>(DiscUtils.Ntfs.ReparsePoints.Key.class,
+                                 DiscUtils.Ntfs.ReparsePoints.Data.class,
+                                 file.getIndex("$R"));
     }
 
     public void add(int tag, FileRecordReference file) {
@@ -71,7 +73,7 @@ public class ReparsePoints {
 
         public int Tag;
 
-        public int sizeOf() {
+        public int size() {
             return 12;
         }
 
@@ -95,7 +97,7 @@ public class ReparsePoints {
     }
 
     public final static class Data implements IByteArraySerializable {
-        public int sizeOf() {
+        public int size() {
             return 0;
         }
 

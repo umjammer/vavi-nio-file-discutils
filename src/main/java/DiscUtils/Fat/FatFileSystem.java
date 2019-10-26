@@ -114,8 +114,8 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Initializes a new instance of the FatFileSystem class.
      *
-     * @param data The stream containing the file system.
-     *            Local time is the effective timezone of the new instance.
+     * @param data The stream containing the file system. Local time is the
+     *            effective timezone of the new instance.
      */
     public FatFileSystem(Stream data) {
         super(new FatFileSystemOptions());
@@ -128,11 +128,9 @@ public final class FatFileSystem extends DiscFileSystem {
      * Initializes a new instance of the FatFileSystem class.
      *
      * @param data The stream containing the file system.
-     * @param ownsData Indicates if the new instance should take ownership
-     *            of
-     *            {@code data}
-     *            .
-     *            Local time is the effective timezone of the new instance.
+     * @param ownsData Indicates if the new instance should take ownership of
+     *            {@code data} . Local time is the effective timezone of the new
+     *            instance.
      */
     public FatFileSystem(Stream data, Ownership ownsData) {
         super(new FatFileSystemOptions());
@@ -160,10 +158,8 @@ public final class FatFileSystem extends DiscFileSystem {
      * Initializes a new instance of the FatFileSystem class.
      *
      * @param data The stream containing the file system.
-     * @param ownsData Indicates if the new instance should take ownership
-     *            of
-     *            {@code data}
-     *            .
+     * @param ownsData Indicates if the new instance should take ownership of
+     *            {@code data} .
      * @param timeConverter A delegate to convert to/from the file system's
      *            timezone.
      */
@@ -179,10 +175,8 @@ public final class FatFileSystem extends DiscFileSystem {
      * Initializes a new instance of the FatFileSystem class.
      *
      * @param data The stream containing the file system.
-     * @param ownsData Indicates if the new instance should take ownership
-     *            of
-     *            {@code data}
-     *            .
+     * @param ownsData Indicates if the new instance should take ownership of
+     *            {@code data} .
      * @param parameters The parameters for the file system.
      */
     public FatFileSystem(Stream data, Ownership ownsData, FileSystemParameters parameters) {
@@ -225,8 +219,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets the number of bytes per sector (as stored in the file-system meta
-     * data).
+     * Gets the number of bytes per sector (as stored in the file-system meta data).
      */
     public int getBytesPerSector() {
         return _bpbBytesPerSec;
@@ -252,8 +245,8 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets a value indicating whether the VolumeId, VolumeLabel and
-     * FileSystemType fields are valid.
+     * Gets a value indicating whether the VolumeId, VolumeLabel and FileSystemType
+     * fields are valid.
      */
     public boolean getExtendedBootSignaturePresent() {
         return _bsBootSig == 0x29;
@@ -361,8 +354,8 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets the maximum number of root directory entries (on FAT variants that
-     * have a limit).
+     * Gets the maximum number of root directory entries (on FAT variants that have
+     * a limit).
      */
     public int getMaxRootDirectoryEntries() {
         return _bpbRootEntCnt;
@@ -382,8 +375,8 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets a value indicating whether FAT changes are mirrored to all copies of
-     * the FAT.
+     * Gets a value indicating whether FAT changes are mirrored to all copies of the
+     * FAT.
      */
     public boolean getMirrorFat() {
         return (_bpbExtFlags & 0x08) == 0;
@@ -474,11 +467,8 @@ public final class FatFileSystem extends DiscFileSystem {
      * Detects if a stream contains a FAT file system.
      *
      * @param stream The stream to inspect.
-     * @return
-     *         {@code true}
-     *         if the stream appears to be a FAT file system, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the stream appears to be a FAT file system, else
+     *         {@code false} .
      */
     public static boolean detect(Stream stream) {
         if (stream.getLength() < 512) {
@@ -520,8 +510,8 @@ public final class FatFileSystem extends DiscFileSystem {
         long entryId;
         try {
             entryId = getDirectoryEntry(_rootDir, path, parent);
-        } catch (IllegalArgumentException __dummyCatchVar0) {
-            throw new dotnet4j.io.IOException("Invalid path: " + path);
+        } catch (IllegalArgumentException e) {
+            throw (dotnet4j.io.IOException) new dotnet4j.io.IOException("Invalid path: " + path).initCause(e);
         }
 
         if (parent[0] == null) {
@@ -533,10 +523,10 @@ public final class FatFileSystem extends DiscFileSystem {
         }
 
         DirectoryEntry dirEntry = parent[0].getEntry(entryId);
+
         if (dirEntry.getAttributes().contains(FatAttributes.Directory)) {
             throw new dotnet4j.io.IOException("Attempt to open directory as a file");
         }
-
         return parent[0].openFile(dirEntry.getName(), mode, access);
     }
 
@@ -584,13 +574,16 @@ public final class FatFileSystem extends DiscFileSystem {
         Directory[] parent = new Directory[1];
         long id = getDirectoryEntry(path, parent);
         DirectoryEntry dirEntry = parent[0].getEntry(id);
+
         EnumSet<FatAttributes> newFatAttr = FatAttributes.toEnumSet(newValue);
+
         if (newFatAttr.contains(FatAttributes.Directory) != dirEntry.getAttributes().contains(FatAttributes.Directory)) {
             throw new IllegalArgumentException("Attempted to change the directory attribute");
         }
 
         dirEntry.setAttributes(newFatAttr);
         parent[0].updateEntry(id, dirEntry);
+
         // For directories, need to update their 'self' entry also
         if (dirEntry.getAttributes().contains(FatAttributes.Directory)) {
             Directory dir = getDirectory(path);
@@ -815,8 +808,8 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Copies an existing file to a new file, allowing overwriting of an
-     * existing file.
+     * Copies an existing file to a new file, allowing overwriting of an existing
+     * file.
      *
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
@@ -825,11 +818,13 @@ public final class FatFileSystem extends DiscFileSystem {
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         Directory[] sourceDir = new Directory[1];
         long sourceEntryId = getDirectoryEntry(sourceFile, sourceDir);
+
         if (sourceDir[0] == null || sourceEntryId < 0) {
             throw new FileNotFoundException(String.format("The source file '%s' was not found", sourceFile));
         }
 
         DirectoryEntry sourceEntry = sourceDir[0].getEntry(sourceEntryId);
+
         if (sourceEntry.getAttributes().contains(FatAttributes.Directory)) {
             throw new dotnet4j.io.IOException("The source file is a directory");
         }
@@ -837,18 +832,22 @@ public final class FatFileSystem extends DiscFileSystem {
         DirectoryEntry newEntry = new DirectoryEntry(sourceEntry);
         newEntry.setName(FileName.fromPath(destinationFile, getFatOptions().getFileNameEncoding()));
         newEntry.setFirstCluster(0);
+
         Directory[] destDir = new Directory[1];
         long destEntryId = getDirectoryEntry(destinationFile, destDir);
+
         if (destDir[0] == null) {
             throw new FileNotFoundException(String.format("The destination directory for '%s' was not found", destinationFile));
         }
 
-        // If the destination is a directory, use the old file name to construct a full path.
+        // If the destination is a directory, use the old file name to construct a full
+        // path.
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
                 newEntry.setName(FileName.fromPath(sourceFile, getFatOptions().getFileNameEncoding()));
                 destinationFile = Utilities.combinePaths(destinationFile, Utilities.getFileFromPath(sourceFile));
+
                 destEntryId = getDirectoryEntry(destinationFile, destDir);
             }
         }
@@ -856,6 +855,7 @@ public final class FatFileSystem extends DiscFileSystem {
         // If there's an existing entry...
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
+
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
                 throw new dotnet4j.io.IOException("Destination file is an existing directory");
             }
@@ -870,20 +870,13 @@ public final class FatFileSystem extends DiscFileSystem {
 
         // Add the new file's entry
         destEntryId = destDir[0].addEntry(newEntry);
+
         // Copy the contents...
-        Stream sourceStream = new FatFileStream(this, sourceDir[0], sourceEntryId, FileAccess.Read),
-                destStream = new FatFileStream(this, destDir[0], destEntryId, FileAccess.Write);
-        try {
+        try (Stream sourceStream = new FatFileStream(this, sourceDir[0], sourceEntryId, FileAccess.Read);
+             Stream destStream = new FatFileStream(this, destDir[0], destEntryId, FileAccess.Write)) {
             StreamUtilities.pumpStreams(sourceStream, destStream);
-        } finally {
-            try {
-                if (sourceStream != null)
-                    sourceStream.close();
-                if (destStream != null)
-                    destStream.close();
-            } catch (IOException e) {
-                throw new dotnet4j.io.IOException(e);
-            }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -893,7 +886,9 @@ public final class FatFileSystem extends DiscFileSystem {
      * @param path The directory to create.
      */
     public void createDirectory(String path) {
-        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
+        String[] pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         Directory focusDir = _rootDir;
         for (int i = 0; i < pathElements.length; ++i) {
             FileName name;
@@ -991,7 +986,7 @@ public final class FatFileSystem extends DiscFileSystem {
         }
 
         DirectoryEntry dirEntry = getDirectoryEntry(path);
-        return dirEntry != null && dirEntry.getAttributes().contains(FatAttributes.Directory);
+        return dirEntry != null && !dirEntry.getAttributes().contains(FatAttributes.Directory);
     }
 
     /**
@@ -1031,8 +1026,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
      * @param path The path to search.
@@ -1064,9 +1058,8 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets the names of files in a specified directory matching a specified
-     * search pattern, using a value to determine whether to search
-     * subdirectories.
+     * Gets the names of files in a specified directory matching a specified search
+     * pattern, using a value to determine whether to search subdirectories.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -1097,9 +1090,8 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * Gets the names of files and subdirectories in a specified directory matching
+     * a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -1165,29 +1157,35 @@ public final class FatFileSystem extends DiscFileSystem {
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         Directory[] sourceDir = new Directory[1];
         long sourceEntryId = getDirectoryEntry(sourceName, sourceDir);
+
         if (sourceDir[0] == null || sourceEntryId < 0) {
             throw new FileNotFoundException(String.format("The source file '%s' was not found", sourceName));
         }
 
         DirectoryEntry sourceEntry = sourceDir[0].getEntry(sourceEntryId);
+
         if (sourceEntry.getAttributes().contains(FatAttributes.Directory)) {
             throw new dotnet4j.io.IOException("The source file is a directory");
         }
 
         DirectoryEntry newEntry = new DirectoryEntry(sourceEntry);
         newEntry.setName(FileName.fromPath(destinationName, getFatOptions().getFileNameEncoding()));
+
         Directory[] destDir = new Directory[1];
         long destEntryId = getDirectoryEntry(destinationName, destDir);
+
         if (destDir[0] == null) {
             throw new FileNotFoundException(String.format("The destination directory for '%s' was not found", destinationName));
         }
 
-        // If the destination is a directory, use the old file name to construct a full path.
+        // If the destination is a directory, use the old file name to construct a full
+        // path.
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
                 newEntry.setName(FileName.fromPath(sourceName, getFatOptions().getFileNameEncoding()));
                 destinationName = Utilities.combinePaths(destinationName, Utilities.getFileFromPath(sourceName));
+
                 destEntryId = getDirectoryEntry(destinationName, destDir);
             }
         }
@@ -1195,6 +1193,7 @@ public final class FatFileSystem extends DiscFileSystem {
         // If there's an existing entry...
         if (destEntryId >= 0) {
             DirectoryEntry destEntry = destDir[0].getEntry(destEntryId);
+
             if (destEntry.getAttributes().contains(FatAttributes.Directory)) {
                 throw new dotnet4j.io.IOException("Destination file is an existing directory");
             }
@@ -1241,8 +1240,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
         DirectoryEntry dirEntry = parent.getEntry(parentId);
         if (!dirEntry.getAttributes().contains(FatAttributes.Directory)) {
-            throw new FileNotFoundException(dirEntry.getName()
-                    .getRawName(Charset.forName(System.getProperty("file.encoding"))));
+            throw new FileNotFoundException(dirEntry.getName() + " is not a directory");
         }
 
         // If we have this one cached, return it
@@ -1312,10 +1310,8 @@ public final class FatFileSystem extends DiscFileSystem {
      *            (i.e. partition offset).
      * @param reservedSectors The number of reserved sectors before the FAT.
      * @param sectorsPerCluster The number of sectors per cluster.
-     * @param diskGeometry The geometry of the disk containing the Fat file
-     *            system.
-     * @param isFloppy Indicates if the disk is a removable media (a floppy
-     *            disk).
+     * @param diskGeometry The geometry of the disk containing the Fat file system.
+     * @param isFloppy Indicates if the disk is a removable media (a floppy disk).
      * @param volId The disk's volume Id.
      * @param label The disk's label (or null).
      */
@@ -1373,7 +1369,8 @@ public final class FatFileSystem extends DiscFileSystem {
             // Filesystem version (0.0)
             bootSector[42] = 0;
             bootSector[43] = 0;
-            // First cluster of the root directory, always 2 since we don't do bad sectors...
+            // First cluster of the root directory, always 2 since we don't do bad
+            // sectors...
             EndianUtilities.writeBytesLittleEndian(2, bootSector, 44);
             // Sector number of FSINFO
             EndianUtilities.writeBytesLittleEndian(1, bootSector, 48);
@@ -1461,7 +1458,7 @@ public final class FatFileSystem extends DiscFileSystem {
         _data = data;
         _data.setPosition(0);
         _bootSector = StreamUtilities.readSector(_data);
-//System.err.println(StringUtil.getDump(_bootSector, 64));
+//Debug.println(StringUtil.getDump(_bootSector, 64));
         setFatVariant(detectFATType(_bootSector));
         readBPB();
         loadFAT();
@@ -1532,7 +1529,9 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private long getDirectoryEntry(Directory dir, String path, Directory[] parent) {
-        String[] pathElements = Arrays.asList(path.split(Utilities.escapeForRegex("\\"))).stream().filter(s -> !s.isEmpty()).toArray(String[]::new);
+        String[] pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0, parent);
     }
 
@@ -1570,8 +1569,10 @@ public final class FatFileSystem extends DiscFileSystem {
         }
 
         List<DirectoryEntry> entries = dir.getEntries();
+
         for (DirectoryEntry de : entries) {
             boolean isDir = de.getAttributes().contains(FatAttributes.Directory);
+
             if ((isDir && dirs) || (!isDir && files)) {
                 if (regex.matcher(de.getName().getSearchName(getFatOptions().getFileNameEncoding())).find()) {
                     results.add(Utilities.combinePaths(path,
@@ -1596,6 +1597,7 @@ public final class FatFileSystem extends DiscFileSystem {
         DirectoryEntry entry = parent[0].getEntry(id);
         action.invoke(entry);
         parent[0].updateEntry(id, entry);
+
         if (entry.getAttributes().contains(FatAttributes.Directory)) {
             Directory dir = getDirectory(path);
             DirectoryEntry selfEntry = dir.getSelfEntry();
@@ -1713,7 +1715,8 @@ public final class FatFileSystem extends DiscFileSystem {
         int rootDirSectors = (224 * 32 + Sizes.Sector - 1) / Sizes.Sector;
         byte[] rootDir = new byte[rootDirSectors * Sizes.Sector];
         stream.write(rootDir, 0, rootDir.length);
-        // Write a single byte at the end of the disk to ensure the stream is at least as big
+        // Write a single byte at the end of the disk to ensure the stream is at least
+        // as big
         // as needed for this disk image.
         stream.setPosition(pos + sectors * Sizes.Sector - 1);
         stream.writeByte((byte) 0);
@@ -1728,8 +1731,8 @@ public final class FatFileSystem extends DiscFileSystem {
      * @param disk The disk containing the partition.
      * @param partitionIndex The index of the partition on the disk.
      * @param label The volume label for the partition (or null).
-     * @return An object that provides access to the newly created partition
-     *         file system.
+     * @return An object that provides access to the newly created partition file
+     *         system.
      */
     public static FatFileSystem formatPartition(VirtualDisk disk, int partitionIndex, String label) {
         Stream partitionStream = disk.getPartitions().get___idx(partitionIndex).open();
@@ -1739,7 +1742,7 @@ public final class FatFileSystem extends DiscFileSystem {
                                    disk.getGeometry(),
                                    (int) disk.getPartitions().get___idx(partitionIndex).getFirstSector(),
                                    (int) (1 + disk.getPartitions().get___idx(partitionIndex).getLastSector() -
-                                          disk.getPartitions().get___idx(partitionIndex).getFirstSector()),
+                                       disk.getPartitions().get___idx(partitionIndex).getFirstSector()),
                                    (short) 0);
         } finally {
             if (partitionStream != null)
@@ -1762,8 +1765,8 @@ public final class FatFileSystem extends DiscFileSystem {
      * @param sectorCount The number of sectors in this partition.
      * @param reservedSectors The number of reserved sectors at the start of the
      *            partition.
-     * @return An object that provides access to the newly created partition
-     *         file system.
+     * @return An object that provides access to the newly created partition file
+     *         system.
      */
     public static FatFileSystem formatPartition(Stream stream,
                                                 String label,
@@ -1854,8 +1857,9 @@ public final class FatFileSystem extends DiscFileSystem {
         }
         byte[] rootDir = new byte[rootDirSectors * Sizes.Sector];
         stream.write(rootDir, 0, rootDir.length);
-        /* Make sure the stream is at least as large as the partition
-         * requires. */
+        /*
+         * Make sure the stream is at least as large as the partition requires.
+         */
         if (stream.getLength() < pos + sectorCount * Sizes.Sector) {
             stream.setLength(pos + sectorCount * Sizes.Sector);
         }

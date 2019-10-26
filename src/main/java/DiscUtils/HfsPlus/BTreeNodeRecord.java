@@ -27,7 +27,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 
 public abstract class BTreeNodeRecord implements IByteArraySerializable {
 
-    public abstract int sizeOf();
+    public abstract int size();
 
     public abstract int readFrom(byte[] buffer, int offset);
 

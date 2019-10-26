@@ -401,7 +401,6 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             if (pos > 0) {
                 return name.substring(0, pos);
             }
-
         }
 
         return name;

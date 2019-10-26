@@ -56,7 +56,7 @@ public final class CatalogKey extends BTreeKey<CatalogKey> implements YComparabl
         __NodeId = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         throw new UnsupportedOperationException();
     }
 

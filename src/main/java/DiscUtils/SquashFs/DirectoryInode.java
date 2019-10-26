@@ -28,7 +28,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class DirectoryInode extends Inode implements IDirectoryInode {
     private short _fileSize;
 
-    public int sizeOf() {
+    public int size() {
         return 32;
     }
 

@@ -69,7 +69,7 @@ public class UdifResourceFile implements IByteArraySerializable {
         return Signature == 0x6B6F6C79;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 512;
     }
 
@@ -92,7 +92,7 @@ public class UdifResourceFile implements IByteArraySerializable {
         MasterChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 352);
         ImageVariant = EndianUtilities.toUInt32BigEndian(buffer, offset + 488);
         SectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 492);
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

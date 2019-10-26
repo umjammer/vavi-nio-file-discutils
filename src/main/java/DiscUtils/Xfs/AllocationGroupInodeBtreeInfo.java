@@ -173,7 +173,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
 
     private int Size;
 
-    public int sizeOf() {
+    public int size() {
         return Size;
     }
 

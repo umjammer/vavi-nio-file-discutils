@@ -96,7 +96,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         return _name;
     }
 
-    public abstract long getSize();
+    public abstract int getSize();
 
     public abstract long getStartVcn();
 

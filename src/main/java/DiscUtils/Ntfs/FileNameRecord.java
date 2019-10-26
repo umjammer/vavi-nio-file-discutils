@@ -79,7 +79,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         return convertFlags(Flags);
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x42 + FileName.length() * 2;
     }
 
@@ -156,9 +156,9 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
     }
 
     public static Map<String, Object> convertFlags(EnumSet<FileAttributeFlags> flags) {
-        Map<String, Object> result = FileAttributeFlags.toMap(flags); // (int) flags & 0xFFFF
+        Map<String, Object> result = FileAttributeFlags.toMap(FileAttributeFlags.and(flags, 0xFFFF));
         if (flags.contains(FileAttributeFlags.Directory)) {
-            result.put(FileAttributeFlags.Directory.name(), true);
+            result.put(FileAttributeFlags.Directory.name(), true); // TODO name()
         }
 
         return result;

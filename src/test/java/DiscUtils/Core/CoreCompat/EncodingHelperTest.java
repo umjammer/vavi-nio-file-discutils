@@ -6,9 +6,12 @@
 
 package DiscUtils.Core.CoreCompat;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import DiscUtils.Core.CoreCompat.EncodingHelper.CodePage;
 
@@ -24,7 +27,8 @@ class EncodingHelperTest {
     @Test
     void test() {
         List<CodePage> codePages = EncodingHelper.codePages;
-        codePages.forEach(System.err::println);
+//        codePages.forEach(System.err::println);
+        assertEquals(Charset.forName("IBM855"), EncodingHelper.forCodePage(855));
     }
 }
 

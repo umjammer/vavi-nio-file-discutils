@@ -89,7 +89,7 @@ public final class KeyNodeCell extends Cell {
         super(index);
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x4C + Name.length();
     }
 

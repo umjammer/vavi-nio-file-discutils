@@ -57,13 +57,13 @@ public final class LogEntryHeader implements IByteArraySerializable {
         return Signature == LogEntrySignature;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 64;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _data = new byte[sizeOf()];
-        System.arraycopy(buffer, offset, _data, 0, sizeOf());
+        _data = new byte[size()];
+        System.arraycopy(buffer, offset, _data, 0, size());
         Signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         Checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         EntryLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
@@ -74,7 +74,7 @@ public final class LogEntryHeader implements IByteArraySerializable {
         LogGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 32);
         FlushedFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
         LastFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

@@ -134,7 +134,7 @@ public class Directory implements Closeable {
             return null;
         }
 
-        if (_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
+        if (!_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
             return null;
         }
 
@@ -198,8 +198,8 @@ public class Directory implements Closeable {
             if (focus.getAttributes().contains(FatAttributes.VolumeId)) {
                 return id;
             }
-
         }
+
         return -1;
     }
 
@@ -209,8 +209,8 @@ public class Directory implements Closeable {
             if (focus.getName().equals(name) && !focus.getAttributes().contains(FatAttributes.VolumeId)) {
                 return id;
             }
-
         }
+
         return -1;
     }
 

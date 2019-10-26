@@ -108,4 +108,8 @@ public class File implements IVfsFile {
                                            _dirEntry.getRecord().InterleaveGapSize);
         return new StreamBuffer(es, Ownership.Dispose);
     }
+
+    public String toString() {
+        return getClass() + ": " + _dirEntry.getFileName() + ", " + getFileLength();
+    }
 }

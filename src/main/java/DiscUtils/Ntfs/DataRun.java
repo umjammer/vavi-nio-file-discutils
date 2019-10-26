@@ -93,7 +93,7 @@ public class DataRun {
         boolean signExtend = false;
         for (int i = 0; i < size; ++i) {
             byte b = buffer[offset + i];
-            val = val | ((long) b << (i * 8));
+            val = val | ((long) (b & 0xff) << (i * 8));
             signExtend = (b & 0x80) != 0;
         }
         if (signExtend) {

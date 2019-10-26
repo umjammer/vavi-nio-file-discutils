@@ -77,7 +77,7 @@ public final class MetadataTable implements IByteArraySerializable {
         return true;
     }
 
-    public int sizeOf() {
+    public int size() {
         return FixedSize;
     }
 

@@ -64,7 +64,7 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
         return _majorVersion << 8 | (_minorVersion & 0xff);
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x0C;
     }
 

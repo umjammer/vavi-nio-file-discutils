@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.Geometry;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
@@ -335,7 +337,7 @@ public class DescriptorFile {
     private String getHeader(String key) {
         for (DescriptorFileEntry entry : _header) {
             if (entry.getKey().equals(key)) {
-System.err.println(entry.getKey() + ", " + key);
+Debug.println(entry.getKey() + ", " + key);
                 return entry.getValue();
             }
         }

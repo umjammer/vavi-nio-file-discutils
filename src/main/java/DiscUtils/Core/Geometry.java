@@ -31,63 +31,67 @@ import DiscUtils.Streams.Util.Sizes;
  */
 public final class Geometry {
     /**
-     * Initializes a new instance of the Geometry class. The default 512 bytes per
+     * Initializes a new instance of the Geometry class. The default 512 bytes
+     * per
      * sector is assumed.
      *
-     * @param cylinders        The number of cylinders of the disk.
+     * @param cylinders The number of cylinders of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
-     * @param sectorsPerTrack  The number of sectors per track/cylinder of the disk.
+     * @param sectorsPerTrack The number of sectors per track/cylinder of the
+     *            disk.
      */
     public Geometry(int cylinders, int headsPerCylinder, int sectorsPerTrack) {
-        assert cylinders >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 : cylinders + ", " + headsPerCylinder + ", "
-                + sectorsPerTrack;
-        __Cylinders = cylinders;
-        __HeadsPerCylinder = headsPerCylinder;
-        __SectorsPerTrack = sectorsPerTrack;
-        __BytesPerSector = 512;
+        assert cylinders >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 : cylinders + ", " + headsPerCylinder + ", " +
+                                                                                 sectorsPerTrack;
+        _cylinders = cylinders;
+        _headsPerCylinder = headsPerCylinder;
+        _sectorsPerTrack = sectorsPerTrack;
+        _bytesPerSector = 512;
     }
 
     /**
      * Initializes a new instance of the Geometry class.
      *
-     * @param cylinders        The number of cylinders of the disk.
+     * @param cylinders The number of cylinders of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
-     * @param sectorsPerTrack  The number of sectors per track/cylinder of the disk.
-     * @param bytesPerSector   The number of bytes per sector of the disk.
+     * @param sectorsPerTrack The number of sectors per track/cylinder of the
+     *            disk.
+     * @param bytesPerSector The number of bytes per sector of the disk.
      */
     public Geometry(int cylinders, int headsPerCylinder, int sectorsPerTrack, int bytesPerSector) {
-        assert cylinders >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 && bytesPerSector >= 0 : cylinders + ", "
-                + headsPerCylinder + ", " + sectorsPerTrack + ", " + bytesPerSector;
-        __Cylinders = cylinders;
-        __HeadsPerCylinder = headsPerCylinder;
-        __SectorsPerTrack = sectorsPerTrack;
-        __BytesPerSector = bytesPerSector;
+        assert cylinders >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 &&
+               bytesPerSector >= 0 : cylinders + ", " + headsPerCylinder + ", " + sectorsPerTrack + ", " + bytesPerSector;
+        _cylinders = cylinders;
+        _headsPerCylinder = headsPerCylinder;
+        _sectorsPerTrack = sectorsPerTrack;
+        _bytesPerSector = bytesPerSector;
     }
 
     /**
      * Initializes a new instance of the Geometry class.
      *
-     * @param capacity         The total capacity of the disk.
+     * @param capacity The total capacity of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
-     * @param sectorsPerTrack  The number of sectors per track/cylinder of the disk.
-     * @param bytesPerSector   The number of bytes per sector of the disk.
+     * @param sectorsPerTrack The number of sectors per track/cylinder of the
+     *            disk.
+     * @param bytesPerSector The number of bytes per sector of the disk.
      */
     public Geometry(long capacity, int headsPerCylinder, int sectorsPerTrack, int bytesPerSector) {
-        assert capacity >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 && bytesPerSector >= 0 : headsPerCylinder + ", "
-                + sectorsPerTrack + ", " + bytesPerSector;
-        __Cylinders = (int) (capacity / (headsPerCylinder * (long) sectorsPerTrack * bytesPerSector));
-        __HeadsPerCylinder = headsPerCylinder;
-        __SectorsPerTrack = sectorsPerTrack;
-        __BytesPerSector = bytesPerSector;
+        assert capacity >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 &&
+               bytesPerSector >= 0 : headsPerCylinder + ", " + sectorsPerTrack + ", " + bytesPerSector;
+        _cylinders = (int) (capacity / (headsPerCylinder * (long) sectorsPerTrack * bytesPerSector));
+        _headsPerCylinder = headsPerCylinder;
+        _sectorsPerTrack = sectorsPerTrack;
+        _bytesPerSector = bytesPerSector;
     }
 
     /**
      * Gets the number of bytes in each sector.
      */
-    private int __BytesPerSector;
+    private int _bytesPerSector;
 
     public int getBytesPerSector() {
-        return __BytesPerSector;
+        return _bytesPerSector;
     }
 
     /**
@@ -100,19 +104,19 @@ public final class Geometry {
     /**
      * Gets the number of cylinders.
      */
-    private int __Cylinders;
+    private int _cylinders;
 
     public int getCylinders() {
-        return __Cylinders;
+        return _cylinders;
     }
 
     /**
      * Gets the number of heads (aka platters).
      */
-    private int __HeadsPerCylinder;
+    private int _headsPerCylinder;
 
     public int getHeadsPerCylinder() {
-        return __HeadsPerCylinder;
+        return _headsPerCylinder;
     }
 
     /**
@@ -124,7 +128,8 @@ public final class Geometry {
     }
 
     /**
-     * Gets a value indicating whether the Geometry is consistent with the values a
+     * Gets a value indicating whether the Geometry is consistent with the
+     * values a
      * BIOS can support.
      */
     public boolean isBiosSafe() {
@@ -132,7 +137,8 @@ public final class Geometry {
     }
 
     /**
-     * Gets a value indicating whether the Geometry is consistent with the values
+     * Gets a value indicating whether the Geometry is consistent with the
+     * values
      * IDE can represent.
      */
     public boolean isIdeSafe() {
@@ -147,7 +153,8 @@ public final class Geometry {
     }
 
     /**
-     * Gets a null geometry, which has 512-byte sectors but zero sectors, tracks or
+     * Gets a null geometry, which has 512-byte sectors but zero sectors, tracks
+     * or
      * cylinders.
      */
     public static Geometry getNull() {
@@ -157,24 +164,24 @@ public final class Geometry {
     /**
      * Gets the number of sectors per track.
      */
-    private int __SectorsPerTrack;
+    private int _sectorsPerTrack;
 
     public int getSectorsPerTrack() {
-        return __SectorsPerTrack;
+        return _sectorsPerTrack;
     }
 
     /**
      * Gets the total size of the disk (in sectors).
      */
     public int getTotalSectors() {
-        return getCylinders() * getHeadsPerCylinder() * getSectorsPerTrack();
+        return _cylinders * _headsPerCylinder * _sectorsPerTrack;
     }
 
     /**
      * Gets the total size of the disk (in sectors).
      */
     public long getTotalSectorsLong() {
-        return getCylinders() * (long) getHeadsPerCylinder() * getSectorsPerTrack();
+        return _cylinders * (long) _headsPerCylinder * _sectorsPerTrack;
     }
 
     /**
@@ -185,9 +192,9 @@ public final class Geometry {
      *         geometry will indicate for the disk.
      */
     public static Geometry largeBiosGeometry(Geometry ideGeometry) {
-        int cylinders = ideGeometry.getCylinders();
-        int heads = ideGeometry.getHeadsPerCylinder();
-        int sectors = ideGeometry.getSectorsPerTrack();
+        int cylinders = ideGeometry._cylinders;
+        int heads = ideGeometry._headsPerCylinder;
+        int sectors = ideGeometry._sectorsPerTrack;
         while (cylinders > 1024 && heads <= 127) {
             cylinders >>>= 1;
             heads <<= 1;
@@ -199,7 +206,8 @@ public final class Geometry {
      * Gets the 'LBA Assisted' BIOS geometry for a disk, given it's capacity.
      *
      * @param capacity The capacity of the disk.
-     * @return The geometry a BIOS using the 'LBA Assisted' method for calculating
+     * @return The geometry a BIOS using the 'LBA Assisted' method for
+     *         calculating
      *         disk geometry will indicate for the disk.
      */
     public static Geometry lbaAssistedBiosGeometry(long capacity) {
@@ -225,7 +233,8 @@ public final class Geometry {
      *
      * @param geometry The geometry to make BIOS-safe.
      * @param capacity The capacity of the disk.
-     * @return The new geometry.This method returns the LBA-Assisted geometry if the
+     * @return The new geometry.This method returns the LBA-Assisted geometry if
+     *         the
      *         given geometry isn't BIOS-safe.
      */
     public static Geometry makeBiosSafe(Geometry geometry, long capacity) {
@@ -245,10 +254,13 @@ public final class Geometry {
      * algorithm (errs under).
      *
      * @param capacity The desired capacity of the disk.
-     * @return The appropriate disk geometry.The geometry returned tends to produce
-     *         a disk with less capacity than requested (an exact capacity is not
+     * @return The appropriate disk geometry.The geometry returned tends to
+     *         produce
+     *         a disk with less capacity than requested (an exact capacity is
+     *         not
      *         always possible). The geometry returned is the IDE (aka Physical)
-     *         geometry of the disk, not necessarily the geometry used by the BIOS.
+     *         geometry of the disk, not necessarily the geometry used by the
+     *         BIOS.
      */
     public static Geometry fromCapacity(long capacity) {
         return fromCapacity(capacity, Sizes.Sector);
@@ -258,12 +270,15 @@ public final class Geometry {
      * Calculates a sensible disk geometry for a disk capacity using the VHD
      * algorithm (errs under).
      *
-     * @param capacity   The desired capacity of the disk.
+     * @param capacity The desired capacity of the disk.
      * @param sectorSize The logical sector size of the disk.
-     * @return The appropriate disk geometry.The geometry returned tends to produce
-     *         a disk with less capacity than requested (an exact capacity is not
+     * @return The appropriate disk geometry.The geometry returned tends to
+     *         produce
+     *         a disk with less capacity than requested (an exact capacity is
+     *         not
      *         always possible). The geometry returned is the IDE (aka Physical)
-     *         geometry of the disk, not necessarily the geometry used by the BIOS.
+     *         geometry of the disk, not necessarily the geometry used by the
+     *         BIOS.
      */
     public static Geometry fromCapacity(long capacity, int sectorSize) {
         int totalSectors;
@@ -325,8 +340,8 @@ public final class Geometry {
      * Address).
      *
      * @param cylinder The cylinder of the address.
-     * @param head     The head of the address.
-     * @param sector   The sector of the address.
+     * @param head The head of the address.
+     * @param sector The sector of the address.
      * @return The Logical Block Address (in sectors).
      */
     public long toLogicalBlockAddress(int cylinder, int head, int sector) {
@@ -350,7 +365,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("sector number is less than one (sectors are 1-based)");
         }
 
-        return (cylinder * (long) getHeadsPerCylinder() + head) * getSectorsPerTrack() + sector - 1;
+        return (cylinder * (long) _headsPerCylinder + head) * _sectorsPerTrack + sector - 1;
     }
 
     /**
@@ -365,15 +380,16 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("Logical Block Address is negative");
         }
 
-        int cylinder = (int) (logicalBlockAddress / (getHeadsPerCylinder() * getSectorsPerTrack()));
-        int temp = (int) (logicalBlockAddress % (getHeadsPerCylinder() * getSectorsPerTrack()));
-        int head = temp / getSectorsPerTrack();
-        int sector = temp % getSectorsPerTrack() + 1;
+        int cylinder = (int) (logicalBlockAddress / (_headsPerCylinder * _sectorsPerTrack));
+        int temp = (int) (logicalBlockAddress % (_headsPerCylinder * _sectorsPerTrack));
+        int head = temp / _sectorsPerTrack;
+        int sector = temp % _sectorsPerTrack + 1;
         return new ChsAddress(cylinder, head, sector);
     }
 
     /**
-     * Translates an IDE (aka Physical) geometry to a BIOS (aka Logical) geometry.
+     * Translates an IDE (aka Physical) geometry to a BIOS (aka Logical)
+     * geometry.
      *
      * @param translation The translation to perform.
      * @return The translated disk geometry.
@@ -383,10 +399,11 @@ public final class Geometry {
     }
 
     /**
-     * Translates an IDE (aka Physical) geometry to a BIOS (aka Logical) geometry.
+     * Translates an IDE (aka Physical) geometry to a BIOS (aka Logical)
+     * geometry.
      *
-     * @param capacity    The capacity of the disk, required if the geometry is an
-     *                        approximation on the actual disk size.
+     * @param capacity The capacity of the disk, required if the geometry is an
+     *            approximation on the actual disk size.
      * @param translation The translation to perform.
      * @return The translated disk geometry.
      */
@@ -402,7 +419,6 @@ public final class Geometry {
             if (isBiosSafe()) {
                 return this;
             }
-
             return lbaAssistedBiosGeometry(capacity);
         case Lba:
             return lbaAssistedBiosGeometry(capacity);
@@ -410,7 +426,6 @@ public final class Geometry {
             return largeBiosGeometry(this);
         default:
             throw new IllegalArgumentException(String.format("Translation mode '%s' not yet implemented", translation));
-
         }
     }
 
@@ -418,7 +433,8 @@ public final class Geometry {
      * Determines if this object is equivalent to another.
      *
      * @param obj The object to test against.
-     * @return {@code true} if the {@code obj} is equivalent, else {@code false} .
+     * @return {@code true} if the {@code obj} is equivalent, else
+     *         {@code false}.
      */
     public boolean equals(Object obj) {
         if (obj == null || obj.getClass() != getClass()) {
@@ -426,8 +442,8 @@ public final class Geometry {
         }
 
         Geometry other = (Geometry) obj;
-        return getCylinders() == other.getCylinders() && getHeadsPerCylinder() == other.getHeadsPerCylinder()
-                && getSectorsPerTrack() == other.getSectorsPerTrack() && getBytesPerSector() == other.getBytesPerSector();
+        return _cylinders == other._cylinders && _headsPerCylinder == other._headsPerCylinder &&
+               _sectorsPerTrack == other._sectorsPerTrack && _bytesPerSector == other._bytesPerSector;
     }
 
     /**
@@ -445,11 +461,10 @@ public final class Geometry {
      * @return The string representation.
      */
     public String toString() {
-        if (getBytesPerSector() == 512) {
-            return "(" + getCylinders() + "/" + getHeadsPerCylinder() + "/" + getSectorsPerTrack() + ")";
+        if (_bytesPerSector == 512) {
+            return "(" + _cylinders + "/" + _headsPerCylinder + "/" + _sectorsPerTrack + ")";
         }
 
-        return "(" + getCylinders() + "/" + getHeadsPerCylinder() + "/" + getSectorsPerTrack() + ":" + getBytesPerSector()
-                + ")";
+        return "(" + _cylinders + "/" + _headsPerCylinder + "/" + _sectorsPerTrack + ":" + _bytesPerSector + ")";
     }
 }

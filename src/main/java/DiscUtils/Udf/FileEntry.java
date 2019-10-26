@@ -75,7 +75,7 @@ public class FileEntry implements IByteArraySerializable {
 
     public long UniqueId;
 
-    public int sizeOf() {
+    public int size() {
         throw new UnsupportedOperationException();
     }
 

@@ -41,6 +41,7 @@ public class DiscFileSystemInfo {
 
         _fileSystem = fileSystem;
         _path = path.replaceAll(Utilities.escapeForRegex("(^\\*|\\*$)"), "");
+//Debug.println(_path);
     }
 
     /**

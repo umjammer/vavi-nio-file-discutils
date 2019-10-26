@@ -32,7 +32,7 @@ public interface IByteArraySerializable extends Serializable {
     /**
      * Gets the total number of bytes the structure occupies.
      */
-    int sizeOf();
+    int size();
 
     /**
      * Reads the structure from a byte array.

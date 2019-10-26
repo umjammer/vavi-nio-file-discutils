@@ -194,16 +194,19 @@ public class File {
 
     public static File createNew(INtfsContext context, EnumSet<FileRecordFlags> flags, EnumSet<FileAttributeFlags> dirFlags) {
         File newFile = context.getAllocateFile().invoke(flags);
-        EnumSet<FileAttributeFlags> fileFlags = FileRecord.convertFlags(flags);
-        fileFlags.add(FileAttributeFlags.Archive);
+
+        EnumSet<FileAttributeFlags> fileFlags = EnumSet.of(FileAttributeFlags.Archive);
+        fileFlags.addAll(FileRecord.convertFlags(flags));
         fileFlags.add(dirFlags.contains(FileAttributeFlags.Compressed) ? FileAttributeFlags.Compressed
                                                                        : FileAttributeFlags.None);
+
         EnumSet<AttributeFlags> dataAttrFlags = EnumSet.noneOf(AttributeFlags.class);
         if (dirFlags.contains(FileAttributeFlags.Compressed)) {
             dataAttrFlags.add(AttributeFlags.Compressed);
         }
 
         StandardInformation.initializeNewFile(newFile, fileFlags);
+
         if (context.getObjectIds() != null) {
             UUID newId = createNewGuid(context);
             NtfsStream stream = newFile.createStream(AttributeType.ObjectId, null);
@@ -214,7 +217,9 @@ public class File {
         }
 
         newFile.createAttribute(AttributeType.Data, dataAttrFlags);
+
         newFile.updateRecordInMft();
+
         return newFile;
     }
 
@@ -462,19 +467,11 @@ public class File {
     }
 
     public String toString() {
-        try {
-            String bestName = getBestName();
-            if (bestName == null) {
-                return "?????";
-            }
-
-            return bestName;
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
+        String bestName = getBestName();
+        if (bestName == null) {
+            return "?????";
         }
-
+        return bestName;
     }
 
     public void removeAttributeExtents(NtfsAttribute attr) {
@@ -565,11 +562,13 @@ public class File {
         //
         StandardInformation si = getStandardInformation();
         NtfsAttribute anonDataAttr = getAttribute(AttributeType.Data, null);
+
         fileName.CreationTime = si.CreationTime;
         fileName.ModificationTime = si.ModificationTime;
         fileName.MftChangedTime = si.MftChangedTime;
         fileName.LastAccessTime = si.LastAccessTime;
         fileName.Flags = si._FileAttributes;
+
         if (getMftRecordIsDirty() && NtfsTransaction.getCurrent() != null) {
             fileName.MftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
         }

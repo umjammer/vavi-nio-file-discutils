@@ -137,7 +137,7 @@ public class Footer {
     }
 
     public boolean isValid() {
-System.err.println(FileCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (FileFormatVersion == Version1));
+//Debug.println(FileCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (FileFormatVersion == Version1));
         return FileCookie.equals(Cookie) && isChecksumValid()
         // && ((Features & FeatureReservedMustBeSet) != 0)
             && FileFormatVersion == Version1;

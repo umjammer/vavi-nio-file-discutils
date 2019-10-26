@@ -108,7 +108,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
             try {
                 s.close();
             } catch (IOException e) {
-                new dotnet4j.io.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
     }

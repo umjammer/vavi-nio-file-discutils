@@ -48,7 +48,7 @@ public abstract class CommonCatalogFileInfo implements IByteArraySerializable {
 
     public int UnixSpecialField;
 
-    public abstract int sizeOf();
+    public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
         RecordType = CatalogRecordType.valueOf(EndianUtilities.toInt16BigEndian(buffer, offset + 0));

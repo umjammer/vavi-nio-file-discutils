@@ -31,7 +31,7 @@ public final class ExtentAllocationDescriptor implements IByteArraySerializable 
 
     public int ExtentLocation;
 
-    public int sizeOf() {
+    public int size() {
         return 8;
     }
 

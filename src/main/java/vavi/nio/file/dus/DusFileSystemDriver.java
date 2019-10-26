@@ -72,7 +72,7 @@ public final class DusFileSystemDriver extends UnixLikeFileSystemDriverBase {
         super(fileStore, provider);
         this.session = session;
         ignoreAppleDouble = (Boolean) ((Map<String, Object>) env).getOrDefault("ignoreAppleDouble", Boolean.FALSE);
-//System.err.println("ignoreAppleDouble: " + ignoreAppleDouble);
+//Debug.println("ignoreAppleDouble: " + ignoreAppleDouble);
     }
 
     /** */
@@ -339,7 +339,7 @@ System.out.println("SeekableByteChannelForWriting::close: scpecial: " + path);
         final DusEntry entry = cache.getEntry(dir);
 
         if (!entry.isDirectory()) {
-//System.err.println(entry.name + ", " + entry.id + ", " + entry.hashCode());
+//Debug.println(entry.name + ", " + entry.id + ", " + entry.hashCode());
             throw new NotDirectoryException(dir.toString());
         }
 
@@ -355,7 +355,7 @@ System.out.println("SeekableByteChannelForWriting::close: scpecial: " + path);
                 for (final DusEntry child : children) {
                     Path childPath = dir.resolve(child.getAbsolute());
                     list.add(childPath);
-//System.err.println("child: " + childPath.toRealPath().toString());
+//Debug.println("child: " + childPath.toRealPath().toString());
 
                     cache.putFile(childPath, child);
                 }

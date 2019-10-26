@@ -66,7 +66,7 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
     public void save() {
         Stream s = open(FileAccess.Write);
         try {
-            byte[] buffer = new byte[_structure.sizeOf()];
+            byte[] buffer = new byte[_structure.size()];
             _structure.writeTo(buffer, 0);
                 s.write(buffer, 0, buffer.length);
                 s.setLength(buffer.length);

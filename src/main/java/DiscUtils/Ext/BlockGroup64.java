@@ -44,7 +44,7 @@ public class BlockGroup64 extends BlockGroup {
         this._descriptorSize = descriptorSize;
     }
 
-    public int sizeOf() {
+    public int size() {
         return this._descriptorSize;
     }
 

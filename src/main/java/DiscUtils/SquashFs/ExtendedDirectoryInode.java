@@ -32,7 +32,7 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
 
     private short _indexCount;
 
-    public int sizeOf() {
+    public int size() {
         return 40;
     }
 

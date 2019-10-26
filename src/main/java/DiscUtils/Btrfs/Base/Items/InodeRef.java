@@ -75,7 +75,7 @@ public class InodeRef extends BaseItem {
         __Name = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0xa + getNameLength();
     }
 
@@ -83,6 +83,6 @@ public class InodeRef extends BaseItem {
         setIndex(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x8));
         setName(new String(buffer, offset + 0xa, getNameLength(), Charset.forName("UTF8")));
-        return sizeOf();
+        return size();
     }
 }

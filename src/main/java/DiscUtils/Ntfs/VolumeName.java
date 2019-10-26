@@ -47,7 +47,7 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
         __Name = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return getName().getBytes(Charset.forName("UTF-16LE")).length;
     }
 

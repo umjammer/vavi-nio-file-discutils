@@ -63,7 +63,7 @@ public class FileSetDescriptor implements IByteArraySerializable {
 
     public LongAllocationDescriptor SystemStreamDirectoryIcb;
 
-    public int sizeOf() {
+    public int size() {
         return 512;
     }
 

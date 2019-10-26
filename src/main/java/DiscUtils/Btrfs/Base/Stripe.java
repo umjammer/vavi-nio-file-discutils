@@ -73,7 +73,7 @@ public class Stripe implements IByteArraySerializable {
         __DeviceUuid = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return Length;
     }
 
@@ -85,7 +85,7 @@ public class Stripe implements IByteArraySerializable {
         setDeviceId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setOffset(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
         setDeviceUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x10));
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

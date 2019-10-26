@@ -49,14 +49,14 @@ public class IndexNode {
         _header = new IndexHeader(allocatedSize);
         setTotalSpaceAvailable(allocatedSize);
 
-        IndexEntry endEntry = new IndexEntry(_index.getIsFileIndex());
+        IndexEntry endEntry = new IndexEntry(_index.isFileIndex());
         endEntry.getFlags().add(IndexEntryFlags.End);
 
         _entries = new ArrayList<>();
         _entries.add(endEntry);
 
         getHeader()._offsetToFirstEntry = IndexHeader.Size + storeOverhead;
-        getHeader()._totalSizeOfEntries = getHeader()._offsetToFirstEntry + (int) endEntry.getSize();
+        getHeader()._totalSizeOfEntries = getHeader()._offsetToFirstEntry + endEntry.getSize();
     }
 
     public IndexNode(IndexNodeSaveFn store, int storeOverhead, Index index, boolean isRoot, byte[] buffer, int offset) {
@@ -70,7 +70,7 @@ public class IndexNode {
         _entries = new ArrayList<>();
         int pos = getHeader()._offsetToFirstEntry;
         while (pos < getHeader()._totalSizeOfEntries) {
-            IndexEntry entry = new IndexEntry(index.getIsFileIndex());
+            IndexEntry entry = new IndexEntry(index.isFileIndex());
             entry.read(buffer, offset + pos);
             _entries.add(entry);
 
@@ -112,7 +112,7 @@ public class IndexNode {
     }
 
     public void addEntry(byte[] key, byte[] data) {
-        IndexEntry overflowEntry = addEntry(new IndexEntry(key, data, _index.getIsFileIndex()));
+        IndexEntry overflowEntry = addEntry(new IndexEntry(key, data, _index.isFileIndex()));
         if (overflowEntry != null) {
             throw new IOException("Error adding entry - root overflowed");
         }
@@ -264,7 +264,6 @@ public class IndexNode {
             _store.invoke();
             return true;
         }
-
         if (entry.getFlags().contains(IndexEntryFlags.Node)) {
             IndexNode childNode = _index.getSubBlock(entry).getNode();
             IndexEntry[] newEntry = new IndexEntry[1];
@@ -298,8 +297,8 @@ public class IndexNode {
     }
 
     /**
-     * Only valid on the root node, this method moves all entries into a
-     * single child node.
+     * Only valid on the root node, this method moves all entries into a single
+     * child node.
      *
      * @return Whether any changes were made.
      */
@@ -312,14 +311,14 @@ public class IndexNode {
             return false;
         }
 
-        IndexEntry newRootEntry = new IndexEntry(_index.getIsFileIndex());
+        IndexEntry newRootEntry = new IndexEntry(_index.isFileIndex());
         newRootEntry.getFlags().add(IndexEntryFlags.End);
 
         IndexBlock newBlock = _index.allocateBlock(newRootEntry);
 
-        // Set the deposed entries into the new node.  Note we updated the parent
+        // Set the deposed entries into the new node. Note we updated the parent
         // pointers first, because it's possible SetEntries may need to further
-        // divide the entries to fit into nodes.  We mustn't overwrite any changes.
+        // divide the entries to fit into nodes. We mustn't overwrite any changes.
         newBlock.getNode().setEntries(_entries, 0, _entries.size());
 
         _entries.clear();
@@ -340,14 +339,19 @@ public class IndexNode {
             if (childNode._entries.size() == 1) {
                 long freeBlock = _entries.get(entryIndex).getChildrenVirtualCluster();
                 _entries.get(entryIndex).getFlags().remove(IndexEntryFlags.Node);
-                _entries.get(entryIndex).getFlags().add(childNode._entries.get(0).getFlags().contains(IndexEntryFlags.Node) ? IndexEntryFlags.Node : IndexEntryFlags.None);
+                _entries.get(entryIndex)
+                        .getFlags()
+                        .add(childNode._entries.get(0).getFlags().contains(IndexEntryFlags.Node) ? IndexEntryFlags.Node
+                                                                                                 : IndexEntryFlags.None);
                 _entries.get(entryIndex).setChildrenVirtualCluster(childNode._entries.get(0).getChildrenVirtualCluster());
+
                 _index.freeBlock(freeBlock);
             }
 
             if (!_entries.get(entryIndex).getFlags().containsAll(EnumSet.of(IndexEntryFlags.Node, IndexEntryFlags.End))) {
                 IndexEntry entry = _entries.get(entryIndex);
                 _entries.remove(entryIndex);
+
                 IndexNode nextNode = _index.getSubBlock(_entries.get(entryIndex)).getNode();
                 return nextNode.addEntry(entry);
             }
@@ -357,6 +361,7 @@ public class IndexNode {
     }
 
     private IndexEntry populateEnd() {
+        // (_entries.size() - 1) uses `contains` instead of `equals`, because that may include None
         if (_entries.size() > 1 && _entries.get(_entries.size() - 1).getFlags().contains(IndexEntryFlags.End) &&
             _entries.get(_entries.size() - 2).getFlags().contains(IndexEntryFlags.Node)) {
             IndexEntry old = _entries.get(_entries.size() - 2);
@@ -391,18 +396,21 @@ public class IndexNode {
         if (_entries.get(index).getFlags().contains(IndexEntryFlags.Node)) {
             IndexEntry ourNewEntry = _index.getSubBlock(_entries.get(index)).getNode().addEntry(newEntry);
             if (ourNewEntry == null) {
+                // No change to this node
                 return null;
             }
 
-            // No change to this node
             insertEntryThisNode(ourNewEntry);
         } else {
             _entries.add(index, newEntry);
         }
+
         // If there wasn't enough space, we may need to
         // divide this node
         IndexEntry newParentEntry = ensureNodeSize();
+
         _store.invoke();
+
         return newParentEntry;
     }
 
@@ -438,8 +446,8 @@ public class IndexNode {
     }
 
     /**
-     * Only valid on non-root nodes, this method divides the node in two,
-     * adding the new node to the current parent.
+     * Only valid on non-root nodes, this method divides the node in two, adding the
+     * new node to the current parent.
      *
      * @return An entry that needs to be promoted to the parent node (if any).
      */
@@ -448,7 +456,7 @@ public class IndexNode {
         IndexEntry midEntry = _entries.get(midEntryIdx);
 
         // The terminating entry (aka end) for the new node
-        IndexEntry newTerm = new IndexEntry(_index.getIsFileIndex());
+        IndexEntry newTerm = new IndexEntry(_index.isFileIndex());
         newTerm.getFlags().add(IndexEntryFlags.End);
 
         // The set of entries in the new node
@@ -468,9 +476,9 @@ public class IndexNode {
         // Set the new entries into the new node
         IndexBlock newBlock = _index.allocateBlock(midEntry);
 
-        // Set the entries into the new node.  Note we updated the parent
+        // Set the entries into the new node. Note we updated the parent
         // pointers first, because it's possible SetEntries may need to further
-        // divide the entries to fit into nodes.  We mustn't overwrite any changes.
+        // divide the entries to fit into nodes. We mustn't overwrite any changes.
         newBlock.getNode().setEntries(newEntries, 0, newEntries.size());
 
         // Forget about the entries moved into the new node, and the entry about
@@ -486,9 +494,10 @@ public class IndexNode {
         for (int i = 0; i < count; ++i) {
             _entries.add(newEntries.get(i + offset));
         }
+
         // Add an end entry, if not present
         if (count == 0 || !_entries.get(_entries.size() - 1).getFlags().contains(IndexEntryFlags.End)) {
-            IndexEntry end = new IndexEntry(_index.getIsFileIndex());
+            IndexEntry end = new IndexEntry(_index.isFileIndex());
             end.getFlags().add(IndexEntryFlags.End);
             _entries.add(end);
         }

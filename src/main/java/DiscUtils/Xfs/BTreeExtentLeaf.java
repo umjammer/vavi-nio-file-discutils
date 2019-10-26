@@ -39,8 +39,8 @@ public class BTreeExtentLeaf extends BTreeExtentHeader {
         __Extents = value;
     }
 
-    public int sizeOf() {
-        return super.sizeOf() + (getNumberOfRecords() * 0x10);
+    public int size() {
+        return super.size() + (getNumberOfRecords() * 0x10);
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -54,7 +54,7 @@ public class BTreeExtentLeaf extends BTreeExtentHeader {
             offset += rec.readFrom(buffer, offset);
             __Extents.add(i, rec);
         }
-        return sizeOf();
+        return size();
     }
 
     /**

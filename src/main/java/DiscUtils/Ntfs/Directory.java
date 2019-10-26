@@ -43,7 +43,7 @@ public class Directory extends File {
 
     private IndexView<FileNameRecord, FileRecordReference> getIndex() {
         if (_index == null && streamExists(AttributeType.IndexRoot, "$I30")) {
-            _index = new IndexView<>(getIndex("$I30"));
+            _index = new IndexView<>(FileNameRecord.class, FileRecordReference.class, getIndex("$I30"));
         }
 
         return _index;
@@ -99,16 +99,17 @@ public class Directory extends File {
 
     public DirectoryEntry getEntryByName(String name) {
         String searchName = name;
+
         int streamSepPos = name.indexOf(':');
         if (streamSepPos >= 0) {
             searchName = name.substring(0, streamSepPos);
         }
 
         Map.Entry<FileNameRecord, FileRecordReference> entry = getIndex().findFirst_(new FileNameQuery(searchName, _context.getUpperCase()));
-        if (entry.getKey() != null) {
+        if (entry != null && entry.getKey() != null) {
             return new DirectoryEntry(this, entry.getValue(), entry.getKey());
         }
-
+//Debug.println("'" + name + "' not found / " + getIndex());
         return null;
     }
 
@@ -193,11 +194,11 @@ public class Directory extends File {
         Map<FileNameRecord, FileRecordReference> entries = new HashMap<>();
         for (Map.Entry<FileNameRecord, FileRecordReference> entry : entriesIter.entrySet()) {
             // Weed out short-name entries for files and any hidden / system / metadata files.
-            if (entry.getKey().Flags.contains(FileAttributeFlags.Hidden) && _context.getOptions().getHideHiddenFiles()) {
+            if (entry.getKey().Flags.contains(FileAttributeFlags.Hidden) && _context.getOptions().hideHiddenFiles()) {
                 continue;
             }
 
-            if (entry.getKey().Flags.contains(FileAttributeFlags.System) && _context.getOptions().getHideSystemFiles()) {
+            if (entry.getKey().Flags.contains(FileAttributeFlags.System) && _context.getOptions().hideSystemFiles()) {
                 continue;
             }
 
@@ -205,7 +206,7 @@ public class Directory extends File {
                 continue;
             }
 
-            if (entry.getKey()._FileNameNamespace == FileNameNamespace.Dos && _context.getOptions().getHideDosFileNames()) {
+            if (entry.getKey()._FileNameNamespace == FileNameNamespace.Dos && _context.getOptions().hideDosFileNames()) {
                 continue;
             }
 
@@ -230,6 +231,10 @@ public class Directory extends File {
             // conversion as well.
             byte fnLen = buffer[0x40];
             return _upperCase.compare(_query, 0, _query.length, buffer, 0x42, fnLen * 2);
+        }
+
+        public String toString() {
+            return new String(_query, Charset.forName("UTF-16LE")) + ": " + _upperCase;
         }
     }
 }

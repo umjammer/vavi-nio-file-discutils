@@ -59,7 +59,7 @@ public class NodeItem implements IByteArraySerializable {
         __DataSize = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return Length;
     }
 
@@ -68,7 +68,7 @@ public class NodeItem implements IByteArraySerializable {
         offset += getKey().readFrom(buffer, offset);
         setDataOffset(EndianUtilities.toUInt32LittleEndian(buffer, offset));
         setDataSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4));
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

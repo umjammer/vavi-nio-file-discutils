@@ -791,7 +791,7 @@ public class SuperBlock implements IByteArraySerializable {
         __DirBlockSize = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         if (getSbVersion() >= 5) {
             return 264;
         }
@@ -820,7 +820,7 @@ public class SuperBlock implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
         if (getMagic() != XfsMagic)
-            return sizeOf();
+            return size();
 
         setBlocksize(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4));
         setDataBlocks(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8));
@@ -889,7 +889,7 @@ public class SuperBlock implements IByteArraySerializable {
         setRelativeInodeMask(0xffffffff >>> (32 - agOffset));
         setAgInodeMask(~getRelativeInodeMask());
         setDirBlockSize(getBlocksize() << getDirBlockLog2());
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

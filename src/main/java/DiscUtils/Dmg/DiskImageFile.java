@@ -61,8 +61,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _udifHeader = new UdifResourceFile();
         _stream = stream;
         _ownsStream = ownsStream;
-        stream.setPosition(stream.getLength() - _udifHeader.sizeOf());
-        byte[] data = StreamUtilities.readExact(stream, _udifHeader.sizeOf());
+        stream.setPosition(stream.getLength() - _udifHeader.size());
+        byte[] data = StreamUtilities.readExact(stream, _udifHeader.size());
         _udifHeader.readFrom(data, 0);
         if (_udifHeader.getSignatureValid()) {
             stream.setPosition(_udifHeader.XmlOffset);

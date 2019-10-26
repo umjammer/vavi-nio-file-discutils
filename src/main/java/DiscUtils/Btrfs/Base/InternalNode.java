@@ -58,8 +58,8 @@ public class InternalNode extends NodeHeader {
         __Nodes = value;
     }
 
-    public int sizeOf() {
-        return super.sizeOf() + getItemCount() * KeyPointer.Length;
+    public int size() {
+        return super.size() + getItemCount() * KeyPointer.Length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -73,7 +73,7 @@ public class InternalNode extends NodeHeader {
             offset += getKeyPointers()[i].readFrom(buffer, offset);
         }
         setNodes(new NodeHeader[getItemCount()]);
-        return sizeOf();
+        return size();
     }
 
     public List<BaseItem> find(Key key, Context context) {

@@ -26,6 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -154,9 +155,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     private boolean getCreateShortNames() {
-        return _context.getOptions().getShortNameCreation() == ShortFileNameOption.Enabled
-                || (_context.getOptions().getShortNameCreation() == ShortFileNameOption.UseVolumeFlag
-                        && !_volumeInfo.getFlags().contains(VolumeInformationFlags.DisableShortNameCreation));
+        return _context.getOptions().getShortNameCreation() == ShortFileNameOption.Enabled ||
+               (_context.getOptions().getShortNameCreation() == ShortFileNameOption.UseVolumeFlag &&
+                !_volumeInfo.getFlags().contains(VolumeInformationFlags.DisableShortNameCreation));
     }
 
     /**
@@ -206,12 +207,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     /**
-     * Copies an existing file to a new file, allowing overwriting of an existing
-     * file.
+     * Copies an existing file to a new file, allowing overwriting of an
+     * existing file.
      *
-     * @param sourceFile      The source file.
+     * @param sourceFile The source file.
      * @param destinationFile The destination file.
-     * @param overwrite       Whether to permit over-writing of an existing file.
+     * @param overwrite Whether to permit over-writing of an existing file.
      */
     @SuppressWarnings("incomplete-switch")
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
@@ -419,8 +420,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @return true if the directory exists.
      */
     public boolean directoryExists(String path) {
-        Closeable __newVar3 = new NtfsTransaction();
-        try {
+        try (Closeable __newVar3 = new NtfsTransaction()) {
             // Special case - root directory
             if (path == null || path.isEmpty()) {
                 return true;
@@ -428,13 +428,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             return dirEntry != null && dirEntry.getDetails().getFileAttributes().containsKey("Directory");
-        } finally {
-            if (__newVar3 != null)
-                try {
-                    __newVar3.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -458,9 +453,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
-     * @param path          The path to search.
+     * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @param searchOption  Indicates whether to search subdirectories.
+     * @param searchOption Indicates whether to search subdirectories.
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
@@ -475,12 +470,13 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     /**
-     * Gets the names of files in a specified directory matching a specified search
+     * Gets the names of files in a specified directory matching a specified
+     * search
      * pattern, using a value to determine whether to search subdirectories.
      *
-     * @param path          The path to search.
+     * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @param searchOption  Indicates whether to search subdirectories.
+     * @param searchOption Indicates whether to search subdirectories.
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
@@ -517,10 +513,11 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     /**
-     * Gets the names of files and subdirectories in a specified directory matching
+     * Gets the names of files and subdirectories in a specified directory
+     * matching
      * a specified search pattern.
      *
-     * @param path          The path to search.
+     * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @return Array of files and subdirectories matching the search pattern.
      */
@@ -556,7 +553,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Moves a directory.
      *
-     * @param sourceDirectoryName      The directory to move.
+     * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
@@ -596,10 +593,10 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Moves a file, allowing an existing file to be overwritten.
      *
-     * @param sourceName      The file to move.
+     * @param sourceName The file to move.
      * @param destinationName The target file name.
-     * @param overwrite       Whether to permit a destination file to be
-     *                            overwritten.
+     * @param overwrite Whether to permit a destination file to be
+     *            overwritten.
      */
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         try (Closeable __newVar11 = new NtfsTransaction()) {
@@ -648,8 +645,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Opens the specified file.
      *
-     * @param path   The full path of the file to open.
-     * @param mode   The file mode for the created stream.
+     * @param path The full path of the file to open.
+     * @param mode The file mode for the created stream.
      * @param access The access permissions for the returned stream.
      * @return The new stream.
      */
@@ -685,7 +682,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the attributes of a file or directory.
      *
-     * @param path     The file or directory to change.
+     * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
     public void setAttributes(String path, Map<String, Object> newValue) {
@@ -697,28 +694,29 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             Map<String, Object> oldValue = dirEntry.getDetails().getFileAttributes();
             Map<String, Object> changedAttribs = FileAttributes.xor(oldValue, newValue);
+
             if (FileAttributes.count(changedAttribs) == 0) {
+                // Abort - nothing changed
                 return;
             }
 
-            // Abort - nothing changed
             if (FileAttributes.count(FileAttributes.and(changedAttribs, NonSettableFileAttributes)) != 0) {
-                throw new IllegalArgumentException("Attempt to change attributes that are read-only");
+                throw new IllegalArgumentException("Attempt to change attributes that are read-only: " + newValue);
             }
 
             File file = getFile(dirEntry.getReference());
+
             if (changedAttribs.containsKey("SparseFile")) {
                 if (dirEntry.isDirectory()) {
-                    throw new IllegalArgumentException("Attempt to change sparse attribute on a directory");
+                    throw new IllegalArgumentException("Attempt to change sparse attribute on a directory: " + newValue);
                 }
 
-                if (newValue.containsKey("SparseFile")) {
-                    throw new IllegalArgumentException("Attempt to remove sparse attribute from file");
+                if (!newValue.containsKey("SparseFile")) {
+                    throw new IllegalArgumentException("Attempt to remove sparse attribute from file: " + newValue);
                 }
-
                 NtfsAttribute ntfsAttr = file.getAttribute(AttributeType.Data, null);
                 if (ntfsAttr.getFlags().contains(AttributeFlags.Compressed)) {
-                    throw new IllegalArgumentException("Attempt to mark compressed file as sparse");
+                    throw new IllegalArgumentException("Attempt to mark compressed file as sparse: " + newValue);
                 }
 
                 ntfsAttr.getFlags().add(AttributeFlags.Sparse);
@@ -727,14 +725,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                     ntfsAttr.setCompressionUnitSize(16);
                     ((NonResidentAttributeBuffer) ntfsAttr.getRawBuffer()).alignVirtualClusterCount();
                 }
-
             }
 
             if (changedAttribs.containsKey("Compressed") && !dirEntry.isDirectory()) {
                 if (!newValue.containsKey("Compressed")) {
                     throw new IllegalArgumentException("Attempt to remove compressed attribute from file " + "newValue");
                 }
-
                 NtfsAttribute ntfsAttr = file.getAttribute(AttributeType.Data, null);
                 if (ntfsAttr.getFlags().contains(AttributeFlags.Sparse)) {
                     throw new IllegalArgumentException("Attempt to mark sparse file as compressed");
@@ -778,7 +774,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the creation time (in UTC) of a file or directory.
      *
-     * @param path    The path of the file or directory.
+     * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setCreationTimeUtc(String path, long newTime) {
@@ -813,7 +809,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the last access time (in UTC) of a file or directory.
      *
-     * @param path    The path of the file or directory.
+     * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastAccessTimeUtc(String path, long newTime) {
@@ -848,7 +844,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the last modification time (in local time) of a file or directory.
      *
-     * @param path    The path of the file or directory.
+     * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
     public void setLastWriteTimeUtc(String path, long newTime) {
@@ -879,8 +875,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             // Ordinary file length request, use info from directory entry for efficiency -
             // if allowed
-            if (getNtfsOptions().getFileLengthFromDirectoryEntries() && attributeName[0] == null
-                    && attributeType[0] == AttributeType.Data) {
+            if (getNtfsOptions().getFileLengthFromDirectoryEntries() && attributeName[0] == null &&
+                attributeType[0] == AttributeType.Data) {
                 return dirEntry.getDetails().RealSize;
             }
 
@@ -899,7 +895,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     /**
-     * Converts a cluster (index) into an absolute byte position in the underlying
+     * Converts a cluster (index) into an absolute byte position in the
+     * underlying
      * stream.
      *
      * @param cluster The cluster to convert.
@@ -925,7 +922,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      *
      * @param path The path to inspect.
      * @return The clusters as a list of cluster ranges.Note that in some file
-     *         systems, small files may not have dedicated clusters. Only dedicated
+     *         systems, small files may not have dedicated clusters. Only
+     *         dedicated
      *         clusters will be returned.
      */
     public List<Range> pathToClusters(String path) {
@@ -951,11 +949,16 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      *
      * @param path The path to inspect.
      * @return The file extents, as absolute byte positions in the underlying
-     *         stream.Use this method with caution - NTFS supports encrypted, sparse
-     *         and compressed files where bytes are not directly stored in extents.
-     *         Small files may be entirely stored in the Master File Table, where
-     *         corruption protection algorithms mean that some bytes do not contain
-     *         the expected values. This method merely indicates where file data is
+     *         stream.Use this method with caution - NTFS supports encrypted,
+     *         sparse
+     *         and compressed files where bytes are not directly stored in
+     *         extents.
+     *         Small files may be entirely stored in the Master File Table,
+     *         where
+     *         corruption protection algorithms mean that some bytes do not
+     *         contain
+     *         the expected values. This method merely indicates where file data
+     *         is
      *         stored, not what's stored. To access the contents of a file, use
      *         OpenFile.
      */
@@ -1002,8 +1005,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Writes a diagnostic dump of key NTFS structures.
      *
-     * @param writer     The writer to receive the dump.
-     * @param linePrefix The indent to apply to the start of each line of output.
+     * @param writer The writer to receive the dump.
+     * @param linePrefix The indent to apply to the start of each line of
+     *            output.
      */
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "NTFS File System Dump");
@@ -1091,7 +1095,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the security descriptor associated with the file or directory.
      *
-     * @param path               The file or directory to change.
+     * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
     public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
@@ -1113,7 +1117,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the reparse point data on a file or directory.
      *
-     * @param path         The file to set the reparse point on.
+     * @param path The file to set the reparse point on.
      * @param reparsePoint The new reparse point.
      */
     public void setReparsePoint(String path, ReparsePoint reparsePoint) {
@@ -1140,7 +1144,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             ReparsePointRecord newRp = new ReparsePointRecord();
             newRp.Tag = reparsePoint.getTag();
             newRp.Content = reparsePoint.getContent();
-            byte[] contentBuffer = new byte[newRp.sizeOf()];
+            byte[] contentBuffer = new byte[newRp.size()];
             newRp.writeTo(contentBuffer, 0);
             try (Stream contentStream = stream.open(FileAccess.ReadWrite)) {
                 contentStream.write(contentBuffer, 0, contentBuffer.length);
@@ -1194,11 +1198,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     /**
-     * Removes a reparse point from a file or directory, without deleting the file
+     * Removes a reparse point from a file or directory, without deleting the
+     * file
      * or directory.
      *
      * @param path The path to the file or directory to remove the reparse point
-     *                 from.
+     *            from.
      */
     public void removeReparsePoint(String path) {
         try (Closeable __newVar25 = new NtfsTransaction()) {
@@ -1222,9 +1227,11 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * Gets the short name for a given path.
      *
      * @param path The path to convert.
-     * @return The short name. This method only gets the short name for the final
+     * @return The short name. This method only gets the short name for the
+     *         final
      *         part of the path, to convert a complete path, call this method
-     *         repeatedly, once for each path segment. If there is no short name for
+     *         repeatedly, once for each path segment. If there is no short name
+     *         for
      *         the given path, {@code null} is returned.
      */
     public String getShortName(String path) {
@@ -1253,8 +1260,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 File file = getFile(givenEntry.getReference());
                 for (NtfsStream stream : file.getStreams(AttributeType.FileName, null)) {
                     FileNameRecord fnr = stream.getContent(FileNameRecord.class);
-                    if (fnr.ParentDirectory.equals(givenEntry.getDetails().ParentDirectory)
-                            && fnr._FileNameNamespace == FileNameNamespace.Dos) {
+                    if (fnr.ParentDirectory.equals(givenEntry.getDetails().ParentDirectory) &&
+                        fnr._FileNameNamespace == FileNameNamespace.Dos) {
                         return fnr.FileName;
                     }
                 }
@@ -1269,7 +1276,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Sets the short name for a given file or directory.
      *
-     * @param path      The full path to the file or directory to change.
+     * @param path The full path to the file or directory to change.
      * @param shortName The shortName, which should not include a path.
      */
     public void setShortName(String path, String shortName) {
@@ -1280,7 +1287,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         try (Closeable __newVar27 = new NtfsTransaction()) {
             String parentPath = Utilities.getDirectoryFromPath(path);
             DirectoryEntry parentEntry = getDirectoryEntry(parentPath);
-            if (parentEntry == null || parentEntry.getDetails().getFileAttributes().containsKey("Directory")) {
+            if (parentEntry == null || !parentEntry.getDetails().getFileAttributes().containsKey("Directory")) {
                 throw new FileNotFoundException("Parent directory not found");
             }
 
@@ -1310,8 +1317,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             List<NtfsStream> nameStreams = new ArrayList<>(file.getStreams(AttributeType.FileName, null));
             for (NtfsStream stream : nameStreams) {
                 FileNameRecord fnr = stream.getContent(FileNameRecord.class);
-                if (fnr.ParentDirectory.equals(givenEntry.getDetails().ParentDirectory)
-                        && fnr._FileNameNamespace == FileNameNamespace.Dos) {
+                if (fnr.ParentDirectory.equals(givenEntry.getDetails().ParentDirectory) &&
+                    fnr._FileNameNamespace == FileNameNamespace.Dos) {
                     DirectoryEntry oldEntry = dir.getEntryByName(fnr.FileName);
                     dir.removeEntry(oldEntry);
                 }
@@ -1376,7 +1383,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * @param path The path to get the id of.
      * @return The file id. The returned file id includes the MFT index of the
      *         primary file record for the file. The file id can be used to
-     *         determine if two paths refer to the same actual file. The MFT index
+     *         determine if two paths refer to the same actual file. The MFT
+     *         index
      *         is held in the lower 48 bits of the id.
      */
     public long getFileId(String path) {
@@ -1396,8 +1404,10 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * Gets the names of the alternate data streams for a file.
      *
      * @param path The path to the file.
-     * @return The list of alternate data streams (or empty, if none). To access the
-     *         contents of the alternate streams, use OpenFile(path + ":" + name,
+     * @return The list of alternate data streams (or empty, if none). To access
+     *         the
+     *         contents of the alternate streams, use OpenFile(path + ":" +
+     *         name,
      *         ...).
      */
     public List<String> getAlternateDataStreams(String path) {
@@ -1419,13 +1429,14 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Initializes a new NTFS file system.
      *
-     * @param stream       The stream to write the new file system to.
-     * @param label        The label for the new file system.
+     * @param stream The stream to write the new file system to.
+     * @param label The label for the new file system.
      * @param diskGeometry The disk geometry of the disk containing the new file
-     *                         system.
-     * @param firstSector  The first sector of the new file system on the disk.
-     * @param sectorCount  The number of sectors allocated to the new file system on
-     *                         the disk.
+     *            system.
+     * @param firstSector The first sector of the new file system on the disk.
+     * @param sectorCount The number of sectors allocated to the new file system
+     *            on
+     *            the disk.
      * @return The newly-initialized file system.
      */
     public static NtfsFileSystem format(Stream stream,
@@ -1444,14 +1455,15 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Initializes a new NTFS file system.
      *
-     * @param stream       The stream to write the new file system to.
-     * @param label        The label for the new file system.
+     * @param stream The stream to write the new file system to.
+     * @param label The label for the new file system.
      * @param diskGeometry The disk geometry of the disk containing the new file
-     *                         system.
-     * @param firstSector  The first sector of the new file system on the disk.
-     * @param sectorCount  The number of sectors allocated to the new file system on
-     *                         the disk.
-     * @param bootCode     The Operating System's boot code.
+     *            system.
+     * @param firstSector The first sector of the new file system on the disk.
+     * @param sectorCount The number of sectors allocated to the new file system
+     *            on
+     *            the disk.
+     * @param bootCode The Operating System's boot code.
      * @return The newly-initialized file system.
      */
     public static NtfsFileSystem format(Stream stream,
@@ -1472,14 +1484,15 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Initializes a new NTFS file system.
      *
-     * @param stream       The stream to write the new file system to.
-     * @param label        The label for the new file system.
+     * @param stream The stream to write the new file system to.
+     * @param label The label for the new file system.
      * @param diskGeometry The disk geometry of the disk containing the new file
-     *                         system.
-     * @param firstSector  The first sector of the new file system on the disk.
-     * @param sectorCount  The number of sectors allocated to the new file system on
-     *                         the disk.
-     * @param options      The formatting options.
+     *            system.
+     * @param firstSector The first sector of the new file system on the disk.
+     * @param sectorCount The number of sectors allocated to the new file system
+     *            on
+     *            the disk.
+     * @param options The formatting options.
      * @return The newly-initialized file system.
      */
     public static NtfsFileSystem format(Stream stream,
@@ -1502,7 +1515,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      * Initializes a new NTFS file system.
      *
      * @param volume The volume to format.
-     * @param label  The label for the new file system.
+     * @param label The label for the new file system.
      * @return The newly-initialized file system.
      */
     public static NtfsFileSystem format(VolumeInfo volume, String label) {
@@ -1517,8 +1530,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Initializes a new NTFS file system.
      *
-     * @param volume   The volume to format.
-     * @param label    The label for the new file system.
+     * @param volume The volume to format.
+     * @param label The label for the new file system.
      * @param bootCode The Operating System's boot code.
      * @return The newly-initialized file system.
      */
@@ -1535,8 +1548,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Initializes a new NTFS file system.
      *
-     * @param volume  The volume to format.
-     * @param label   The label for the new file system.
+     * @param volume The volume to format.
+     * @param label The label for the new file system.
      * @param options The formatting options.
      * @return The newly-initialized file system.
      */
@@ -1571,7 +1584,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Gets the Master File Table for this file system.
      *
-     * Use the returned object to explore the internals of the file system - most
+     * Use the returned object to explore the internals of the file system -
+     * most
      * people will never need to use this.
      *
      * @return The Master File Table.
@@ -1583,15 +1597,19 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Creates a directory.
      *
-     * @param path    The path of the new directory.
+     * @param path The path of the new directory.
      * @param options Options controlling attributes of the new Director, or
-     *                    {@code null} for defaults.
+     *            {@code null} for defaults.
      */
     public void createDirectory(String path, NewFileOptions options) {
         try (Closeable __newVar31 = new NtfsTransaction()) {
-            String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
+            String[] pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+                    .filter(e -> !e.isEmpty())
+                    .toArray(String[]::new);
+
             Directory focusDir = getDirectory(MasterFileTable.RootDirIndex);
             DirectoryEntry focusDirEntry = focusDir.getDirectoryEntry();
+
             for (int i = 0; i < pathElements.length; ++i) {
                 DirectoryEntry childDirEntry = focusDir.getEntryByName(pathElements[i]);
                 if (childDirEntry == null) {
@@ -1614,11 +1632,14 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                         } else {
                             newSd = SecurityDescriptor.calcNewObjectDescriptor(parentSd, false);
                         }
+
                         doSetSecurity(childDir, newSd);
                         childDirEntry.updateFrom(childDir);
+
                         // Update the directory entry by which we found the directory we've just
                         // modified
                         focusDirEntry.updateFrom(focusDir);
+
                         focusDir = childDir;
                     } finally {
                         if (childDir.getHardLinkCount() == 0) {
@@ -1628,6 +1649,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 } else {
                     focusDir = getDirectory(childDirEntry.getReference());
                 }
+
                 focusDirEntry = childDirEntry;
             }
         } catch (IOException e) {
@@ -1638,11 +1660,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Opens the specified file.
      *
-     * @param path    The full path of the file to open.
-     * @param mode    The file mode for the created stream.
-     * @param access  The access permissions for the returned stream.
-     * @param options Options controlling attributes of a new file, or {@code null}
-     *                    for defaults (ignored if file exists).
+     * @param path The full path of the file to open.
+     * @param mode The file mode for the created stream.
+     * @param access The access permissions for the returned stream.
+     * @param options Options controlling attributes of a new file, or
+     *            {@code null}
+     *            for defaults (ignored if file exists).
      * @return The new stream.
      */
     public SparseStream openFile(String path, FileMode mode, FileAccess access, NewFileOptions options) {
@@ -1689,9 +1712,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Opens an existing file stream.
      *
-     * @param file   The file containing the stream.
-     * @param type   The type of the stream.
-     * @param name   The name of the stream.
+     * @param file The file containing the stream.
+     * @param type The type of the stream.
+     * @param name The name of the stream.
      * @param access The desired access to the stream.
      * @return A stream that can be used to access the file stream.
      */
@@ -1712,7 +1735,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     /**
      * Creates an NTFS hard link to an existing file.
      *
-     * @param sourceName      An existing name of the file.
+     * @param sourceName An existing name of the file.
      * @param destinationName The name of the new hard link to the file.
      */
     public void createHardLink(String sourceName, String destinationName) {
@@ -1724,8 +1747,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
             String destinationDirName = Utilities.getDirectoryFromPath(destinationName);
             DirectoryEntry destinationDirSelfEntry = getDirectoryEntry(destinationDirName);
-            if (destinationDirSelfEntry == null
-                    || destinationDirSelfEntry.getDetails().getFileAttributes().containsKey("Directory")) {
+            if (destinationDirSelfEntry == null ||
+                destinationDirSelfEntry.getDetails().getFileAttributes().containsKey("Directory")) {
                 throw new FileNotFoundException("Destination directory not found " + destinationDirName);
             }
 
@@ -1761,7 +1784,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             }
 
             File file = getFile(dirEntry.getReference());
-            if (!_context.getOptions().getHideDosFileNames()) {
+            if (!_context.getOptions().hideDosFileNames()) {
                 return file.getHardLinkCount();
             }
 
@@ -1779,12 +1802,14 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     /**
-     * Updates the BIOS Parameter Block (BPB) of the file system to reflect a new
+     * Updates the BIOS Parameter Block (BPB) of the file system to reflect a
+     * new
      * disk geometry.
      *
-     * @param geometry The disk's new BIOS geometry.Having an accurate geometry in
-     *                     the BPB is essential for booting some Operating Systems
-     *                     (e.g. Windows XP).
+     * @param geometry The disk's new BIOS geometry.Having an accurate geometry
+     *            in
+     *            the BPB is essential for booting some Operating Systems
+     *            (e.g. Windows XP).
      */
     public void updateBiosGeometry(Geometry geometry) {
         _context.getBiosParameterBlock().SectorsPerTrack = (short) geometry.getSectorsPerTrack();
@@ -1822,12 +1847,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     private static void removeFileFromDirectory(Directory dir, File file, String name) {
         List<String> aliases = new ArrayList<>();
         DirectoryEntry dirEntry = dir.getEntryByName(name);
-        if (dirEntry.getDetails()._FileNameNamespace == FileNameNamespace.Dos
-                || dirEntry.getDetails()._FileNameNamespace == FileNameNamespace.Win32) {
+        if (dirEntry.getDetails()._FileNameNamespace == FileNameNamespace.Dos ||
+            dirEntry.getDetails()._FileNameNamespace == FileNameNamespace.Win32) {
             for (NtfsStream fnStream : file.getStreams(AttributeType.FileName, null)) {
                 FileNameRecord fnr = fnStream.getContent(FileNameRecord.class);
-                if ((fnr._FileNameNamespace == FileNameNamespace.Win32 || fnr._FileNameNamespace == FileNameNamespace.Dos)
-                        && fnr.ParentDirectory.getValue() == dir.getMftReference().getValue()) {
+                if ((fnr._FileNameNamespace == FileNameNamespace.Win32 || fnr._FileNameNamespace == FileNameNamespace.Dos) &&
+                    fnr.ParentDirectory.getValue() == dir.getMftReference().getValue()) {
                     aliases.add(fnr.FileName);
                 }
             }
@@ -1867,6 +1892,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     private DirectoryEntry createNewFile(String path, NewFileOptions options) {
         DirectoryEntry result;
         DirectoryEntry parentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(path));
+//Debug.println(path + ", " + parentDirEntry);
         Directory parentDir = getDirectory(parentDirEntry.getReference());
         EnumSet<FileAttributeFlags> newFileAttrs = parentDir.getStandardInformation()._FileAttributes;
         if (options != null && options.getCompressed().isPresent()) {
@@ -1899,7 +1925,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     }
 
     private DirectoryEntry getDirectoryEntry(Directory dir, String path) {
-        String[] pathElements = path.split(Utilities.escapeForRegex("\\"));
+        String[] pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\"))).filter(e -> !e.isEmpty()).toArray(String[]::new);
+//Debug.println("pathElements: " + Arrays.toString(pathElements) + ", " + pathElements.length);
         return getDirectoryEntry(dir, pathElements, 0);
     }
 
@@ -1930,24 +1957,21 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
     private DirectoryEntry getDirectoryEntry(Directory dir, String[] pathEntries, int pathOffset) {
         DirectoryEntry entry;
+
         if (pathEntries.length == 0) {
             return dir.getDirectoryEntry();
         }
-
         entry = dir.getEntryByName(pathEntries[pathOffset]);
         if (entry != null) {
             if (pathOffset == pathEntries.length - 1) {
                 return entry;
             }
-
             if (entry.getDetails().getFileAttributes().containsKey("Directory")) {
                 return getDirectoryEntry(getDirectory(entry.getReference()), pathEntries, pathOffset + 1);
             }
-
-            throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory",
-                                                                           pathEntries[pathOffset]));
+            throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory", pathEntries[pathOffset]));
         }
-
+//Debug.println("'" + pathEntries[pathOffset] + "' not found: " + dir);
         return null;
     }
 
@@ -2143,6 +2167,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             } else {
                 file = new File(_context, record);
             }
+
             _fileCache.set___idx(index, file);
         }
 
@@ -2156,6 +2181,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         } else {
             result = new File(_context, _context.getMft().allocateRecord(flags, false));
         }
+
         _fileCache.set___idx(result.getMftReference().getMftIndex(), result);
         return result;
     }

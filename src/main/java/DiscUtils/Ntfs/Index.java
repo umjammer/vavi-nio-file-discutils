@@ -26,16 +26,19 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.Internal.ObjectCache;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
+import dotnet4j.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 
@@ -61,7 +64,7 @@ public class Index implements Closeable {
         _file = file;
         _name = name;
         _bpb = bpb;
-        __IsFileIndex = name.equals("$I30");
+        _isFileIndex = name.equals("$I30");
 
         _blockCache = new ObjectCache<>();
 
@@ -99,7 +102,7 @@ public class Index implements Closeable {
         _file = file;
         _name = name;
         _bpb = bpb;
-        __IsFileIndex = name.equals("$I30");
+        _isFileIndex = name.equals("$I30");
 
         _blockCache = new ObjectCache<>();
 
@@ -130,10 +133,10 @@ public class Index implements Closeable {
         return getEntries().size();
     }
 
-    public Map<byte[], byte[]> getEntries() {
-        Map<byte[], byte[]> result = new HashMap<>();
+    public List<Tuple<byte[], byte[]>> getEntries() {
+        List<Tuple<byte[], byte[]>> result = new ArrayList<>();
         for (IndexEntry entry : enumerate(_rootNode)) {
-            result.put(entry.getKeyBuffer(), entry.getDataBuffer());
+            result.add(new Tuple<>(entry.getKeyBuffer(), entry.getDataBuffer()));
         }
         return result;
     }
@@ -142,21 +145,18 @@ public class Index implements Closeable {
         return _root.getIndexAllocationSize();
     }
 
-    private boolean __IsFileIndex;
+    private boolean _isFileIndex;
 
-    public boolean getIsFileIndex() {
-        return __IsFileIndex;
+    public boolean isFileIndex() {
+        return _isFileIndex;
     }
 
     public byte[] get___idx(byte[] key) {
         byte[][] value = new byte[1][];
-        ;
-        boolean boolVar___0 = tryGetValue(key, value);
-        if (boolVar___0) {
+        if (tryGetValue(key, value)) {
             return value[0];
         }
-
-        throw new NoSuchElementException();
+        throw new NoSuchElementException(Arrays.toString(key));
     }
 
     public void set___idx(byte[] key, byte[] value) {
@@ -188,10 +188,10 @@ public class Index implements Closeable {
         idx.writeRootNodeToDisk();
     }
 
-    public Map<byte[], byte[]> findAll(Comparable<byte[]> query) {
-        Map<byte[], byte[]> result = new HashMap<>();
+    public List<Tuple<byte[], byte[]>> findAll(Comparable<byte[]> query) {
+        List<Tuple<byte[], byte[]>> result = new ArrayList<>();
         for (IndexEntry entry : findAllIn(query, _rootNode)) {
-            result.put(entry.getKeyBuffer(), entry.getDataBuffer());
+            result.add(new Tuple<>(entry.getKeyBuffer(), entry.getDataBuffer()));
         }
         return result;
     }
@@ -214,8 +214,7 @@ public class Index implements Closeable {
     public boolean tryGetValue(byte[] key, byte[][] value) {
         IndexEntry[] entry = new IndexEntry[1];
         IndexNode[] node = new IndexNode[1];
-        boolean r = _rootNode.tryFindEntry(key, entry, node);
-        if (r) {
+        if (_rootNode.tryFindEntry(key, entry, node)) {
             value[0] = entry[0].getDataBuffer();
             return true;
         }
@@ -262,10 +261,12 @@ public class Index implements Closeable {
                 dataValue.readFrom(entry.getDataBuffer(), 0);
                 return "{" + keyValue + "-->" + dataValue + "}";
             }
-        } catch (Exception __dummyCatchVar0) {
+        } catch (Exception e) {
+Debug.printStackTrace(e);
             return "{Parsing-Error}";
         }
 
+Debug.println(Level.WARNING, indexName);
         return "{Unknown-Index-Type}";
     }
 
@@ -364,6 +365,7 @@ public class Index implements Closeable {
             boolean searchChildren = true;
             boolean matches = false;
             boolean keepIterating = true;
+
             if (!focus.getFlags().contains(IndexEntryFlags.End)) {
                 int compVal = query.compareTo(focus.getKeyBuffer());
                 if (compVal == 0) {
@@ -395,9 +397,9 @@ public class Index implements Closeable {
 
     private void writeRootNodeToDisk() {
         _rootNode.getHeader().AllocatedSizeOfEntries = _rootNode.calcSize();
-        byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + _root.sizeOf()];
+        byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + _root.size()];
         _root.writeTo(buffer, 0);
-        _rootNode.writeTo(buffer, _root.sizeOf());
+        _rootNode.writeTo(buffer, _root.size());
         try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write)) {
             s.setPosition(0);
             s.write(buffer, 0, buffer.length);
@@ -422,5 +424,23 @@ public class Index implements Closeable {
                              ":i" + entry.getChildrenVirtualCluster());
             }
         }
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Index: {");
+        getEntries().forEach(e -> {
+            sb.append('"');
+            sb.append(Arrays.toString(e.getKey()));
+            sb.append('"');
+            sb.append(": ");
+            sb.append('"');
+            sb.append(Arrays.toString(e.getValue()));
+            sb.append('"');
+            sb.append(", ");
+        });
+        sb.setLength(sb.length() - 2);
+        sb.append("}");
+        return sb.toString();
     }
 }

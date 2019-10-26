@@ -170,7 +170,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         _lastVCN = value;
     }
 
-    public long getSize() {
+    public int getSize() {
         byte nameLength = 0;
         short nameOffset = (short) (getFlags().containsAll(EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) ? 0x48 : 0x40);
         if (getName() != null) {
@@ -178,16 +178,18 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         }
 
         short dataOffset = (short) MathUtilities.roundUp(nameOffset + nameLength * 2, 8);
+
         // Write out data first, since we know where it goes...
         int dataLen = 0;
         for (DataRun run : getDataRuns()) {
             dataLen += run.getSize();
         }
-        dataLen++;
+
+        dataLen++; // NULL terminator
+
         return MathUtilities.roundUp(dataOffset + dataLen, 8);
     }
 
-    // NULL terminator
     public long getStartVcn() {
         return _startingVCN;
     }

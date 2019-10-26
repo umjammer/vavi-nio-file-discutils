@@ -86,7 +86,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
         __FType = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x3 + getNameLength() + (_useShortInode ? 4 : 8) + (_ftype ? 1 : 0);
     }
 
@@ -105,7 +105,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
         } else {
             setInode(EndianUtilities.toUInt64BigEndian(buffer, offset));
         }
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

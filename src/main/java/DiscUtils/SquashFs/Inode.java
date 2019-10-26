@@ -52,7 +52,7 @@ public abstract class Inode implements IByteArraySerializable {
         throw new UnsupportedOperationException();
     }
 
-    public abstract int sizeOf();
+    public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
         Type = InodeType.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0));
@@ -81,10 +81,10 @@ public abstract class Inode implements IByteArraySerializable {
 
         InodeType type = InodeType.valueOf(EndianUtilities.toUInt16LittleEndian(typeData, 0));
         Inode inode = instantiateType(type);
-        byte[] inodeData = new byte[inode.sizeOf()];
+        byte[] inodeData = new byte[inode.size()];
         inodeData[0] = typeData[0];
         inodeData[1] = typeData[1];
-        if (inodeReader.read(inodeData, 2, inode.sizeOf() - 2) != inode.sizeOf() - 2) {
+        if (inodeReader.read(inodeData, 2, inode.size() - 2) != inode.size() - 2) {
             throw new IOException("Unable to read whole Inode");
         }
 

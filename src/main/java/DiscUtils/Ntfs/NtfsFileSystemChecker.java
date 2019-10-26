@@ -45,8 +45,7 @@ import dotnet4j.io.Stream;
 
 
 /**
- * Class that checks NTFS file system integrity.
- * Poor relation of chkdsk/fsck.
+ * Class that checks NTFS file system integrity. Poor relation of chkdsk/fsck.
  */
 public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     private final Stream _target;
@@ -78,11 +77,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
      *
      * @param reportOutput A report on issues found.
      * @param levels The amount of detail to report.
-     * @return
-     *         {@code true}
-     *         if the file system appears valid, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the file system appears valid, else {@code false} .
      */
     public boolean check(PrintWriter reportOutput, ReportLevels levels) {
         _context = new NtfsContext();
@@ -130,7 +125,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         _context.getRawStream().setPosition(0);
         byte[] bytes = StreamUtilities.readExact(_context.getRawStream(), 512);
         _context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
-        //-----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
         // MASTER FILE TABLE
         //
         // Bootstrap the Master File Table
@@ -139,44 +134,39 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         // Verify basic MFT records before initializing the Master File Table
         preVerifyMft(mftFile);
         _context.getMft().initialize(mftFile);
-        // Now the MFT is up and running, do more detailed analysis of it's contents - double-accounted clusters, etc
+        // Now the MFT is up and running, do more detailed analysis of it's contents -
+        // double-accounted clusters, etc
         verifyMft();
         _context.getMft().dump(_report, "INFO: ");
-        //-----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
         // INDEXES
         //
         // Need UpperCase in order to verify some indexes (i.e. directories).
         File ucFile = new File(_context, _context.getMft().getRecord(MasterFileTable.UpCaseIndex, false));
         _context.setUpperCase(new UpperCase(ucFile));
         selfCheckIndexes();
-        //-----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
         // DIRECTORIES
         //
         verifyDirectories();
-        //-----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
         // WELL KNOWN FILES
         //
         verifyWellKnownFilesExist();
-        //-----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
         // OBJECT IDS
         //
         verifyObjectIds();
-        //-----------------------------------------------------------------------
+        // -----------------------------------------------------------------------
         // FINISHED
         //
         // Temporary...
-        NtfsFileSystem fs = new NtfsFileSystem(_context.getRawStream());
-        try {
+        try (NtfsFileSystem fs = new NtfsFileSystem(_context.getRawStream())) {
             if ((_reportLevels.ordinal() & ReportLevels.Information.ordinal()) != 0) {
                 reportDump(fs);
             }
-        } finally {
-            if (fs != null)
-                try {
-                    fs.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -233,9 +223,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
         for (Map.Entry<UUID, ObjectIdRecord> objIdRec : _context.getObjectIds().getAll().entrySet()) {
             if (_context.getMft().getRecord(objIdRec.getValue().MftReference) == null) {
-                reportError("ObjectId %s refers to non-existant file %s",
-                            objIdRec.getKey(),
-                            objIdRec.getValue().MftReference);
+                reportError("ObjectId %s refers to non-existant file %s", objIdRec.getKey(), objIdRec.getValue().MftReference);
             }
         }
     }
@@ -249,7 +237,9 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             File f = new File(_context, fr);
             for (NtfsStream stream : f.getAllStreams()) {
                 if (stream.getAttributeType() == AttributeType.IndexRoot && stream.getName().equals("$I30")) {
-                    IndexView<FileNameRecord, FileRecordReference> dir = new IndexView<>(f.getIndex("$I30"));
+                    IndexView<FileNameRecord, FileRecordReference> dir = new IndexView<>(FileNameRecord.class,
+                                                                                         FileRecordReference.class,
+                                                                                         f.getIndex("$I30"));
                     for (Map.Entry<FileNameRecord, FileRecordReference> entry : dir.getEntries().entrySet()) {
                         FileRecord refFile = _context.getMft().getRecord(entry.getValue());
                         // Make sure each referenced file actually exists...
@@ -307,10 +297,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                         file.getBestName(),
                         file.getIndexInMft());
         } else {
-            reportInfo("Self-check of index %s in file %s (MFT:{2}) complete",
-                       name,
-                       file.getBestName(),
-                       file.getIndexInMft());
+            reportInfo("Self-check of index %s in file %s (MFT:{2}) complete", name, file.getBestName(), file.getIndexInMft());
         }
     }
 
@@ -335,10 +322,10 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             pos += entry.getSize();
 
             if (entry.getFlags().contains(IndexEntryFlags.Node)) {
-                long bitmapIdx = entry.getChildrenVirtualCluster() / MathUtilities
-                        .ceil(root.getIndexAllocationSize(),
-                              _context.getBiosParameterBlock().SectorsPerCluster *
-                                                             _context.getBiosParameterBlock().BytesPerSector);
+                long bitmapIdx = entry.getChildrenVirtualCluster() /
+                    MathUtilities.ceil(root.getIndexAllocationSize(),
+                                       _context.getBiosParameterBlock().SectorsPerCluster *
+                                           _context.getBiosParameterBlock().BytesPerSector);
                 if (!bitmap.isPresent(bitmapIdx)) {
                     reportError("Index entry %s is non-leaf, but child vcn %s is not in bitmap at index {2}",
                                 Index.entryAsString(entry, fileName, indexName),
@@ -452,7 +439,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
                         for (long cluster = range.getOffset(); cluster < range.getOffset() + range.getCount(); ++cluster) {
                             if (clusterMap.containsKey(cluster)) {
-                                reportError("Two attributes referencing cluster %s (0x{0:X16}) - %s and {2} (as MftIndex:AttrId)",
+                                reportError("Two attributes referencing cluster %1$s (0x%16X) - %2$s and %3$s (as MftIndex:AttrId)",
                                             cluster,
                                             clusterMap.get(cluster),
                                             attrKey);
@@ -466,6 +453,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
     private boolean verifyMftRecord(byte[] recordData, boolean presentInBitmap, int bytesPerSector) {
         boolean ok = true;
+
         //
         // Verify the attributes seem OK...
         //
@@ -473,6 +461,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         System.arraycopy(recordData, 0, tempBuffer, 0, tempBuffer.length);
         GenericFixupRecord genericRecord = new GenericFixupRecord(bytesPerSector);
         genericRecord.fromBytes(tempBuffer, 0);
+
         int pos = EndianUtilities.toUInt16LittleEndian(genericRecord.getContent(), 0x14);
         while (EndianUtilities.toUInt32LittleEndian(genericRecord.getContent(), pos) != 0xFFFFFFFF) {
             int[] attrLen = new int[1];
@@ -490,24 +479,28 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                         for (DataRun run : nrr.getDataRuns()) {
                             totalVcn += run.getRunLength();
                         }
+
                         if (totalVcn != nrr.getLastVcn() - nrr.getStartVcn() + 1) {
                             reportError("Declared VCNs doesn't match data runs.  AttrId=%s", ar.getAttributeId());
                             ok = false;
                         }
                     }
                 }
-            } catch (Exception __dummyCatchVar0) {
+            } catch (Exception e) {
+                e.printStackTrace();
                 reportError("Failure parsing attribute at pos=%s", pos);
                 return false;
             }
 
             pos += attrLen[0];
         }
+
         //
         // Now consider record as a whole
         //
         FileRecord record = new FileRecord(bytesPerSector);
         record.fromBytes(recordData, 0);
+
         boolean inUse = record.getFlags().contains(FileRecordFlags.InUse);
         if (inUse != presentInBitmap) {
             reportError("MFT bitmap and record in-use flag don't agree.  Mft=%s, Record=%s",
@@ -543,8 +536,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             ok = false;
         }
 
-        if ((range.getOffset() + range.getCount()) *
-            _context.getBiosParameterBlock().getBytesPerCluster() > _context.getRawStream().getLength()) {
+        if ((range.getOffset() + range.getCount()) * _context.getBiosParameterBlock().getBytesPerCluster() >
+            _context.getRawStream().getLength()) {
             reportError("Invalid cluster range %s - beyond end of disk", range);
             ok = false;
         }

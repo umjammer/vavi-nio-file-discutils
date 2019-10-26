@@ -149,17 +149,17 @@ public final class RegistryHive implements Closeable {
 
         stream.setPosition(0);
 
-        byte[] buffer = new byte[hiveHeader.sizeOf()];
+        byte[] buffer = new byte[hiveHeader.size()];
         hiveHeader.writeTo(buffer, 0);
         stream.write(buffer, 0, buffer.length);
 
-        buffer = new byte[binHeader.sizeOf()];
+        buffer = new byte[binHeader.size()];
         binHeader.writeTo(buffer, 0);
         stream.setPosition(BinStart);
         stream.write(buffer, 0, buffer.length);
 
         buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(binHeader.BinSize - binHeader.sizeOf(), buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(binHeader.BinSize - binHeader.size(), buffer, 0);
         stream.write(buffer, 0, buffer.length);
 
         // Make sure the file is initialized out to the end of the firs bin
@@ -185,7 +185,7 @@ public final class RegistryHive implements Closeable {
 
         // Ref the root cell from the hive header
         hiveHeader.RootCell = rootCell.getIndex();
-        buffer = new byte[hiveHeader.sizeOf()];
+        buffer = new byte[hiveHeader.size()];
         hiveHeader.writeTo(buffer, 0);
         stream.setPosition(0);
         stream.write(buffer, 0, buffer.length);
@@ -223,7 +223,7 @@ public final class RegistryHive implements Closeable {
 
     public int updateCell(Cell cell, boolean canRelocate) {
         if (cell.getIndex() == -1 && canRelocate) {
-            cell.setIndex(allocateRawCell(cell.sizeOf()));
+            cell.setIndex(allocateRawCell(cell.size()));
         }
 
         Bin bin = getBin(cell.getIndex());
@@ -234,7 +234,7 @@ public final class RegistryHive implements Closeable {
 
             if (canRelocate) {
                 int oldCell = cell.getIndex();
-                cell.setIndex(allocateRawCell(cell.sizeOf()));
+                cell.setIndex(allocateRawCell(cell.size()));
                 bin = getBin(cell.getIndex());
                 if (!bin.updateCell(cell)) {
                     cell.setIndex(oldCell);
@@ -313,15 +313,15 @@ public final class RegistryHive implements Closeable {
 
         BinHeader newBinHeader = new BinHeader();
         newBinHeader.FileOffset = lastBin.FileOffset + lastBin.BinSize;
-        newBinHeader.BinSize = MathUtilities.roundUp(minSize + newBinHeader.sizeOf(), 4 * (int) Sizes.OneKiB);
+        newBinHeader.BinSize = MathUtilities.roundUp(minSize + newBinHeader.size(), 4 * (int) Sizes.OneKiB);
 
-        byte[] buffer = new byte[newBinHeader.sizeOf()];
+        byte[] buffer = new byte[newBinHeader.size()];
         newBinHeader.writeTo(buffer, 0);
         _fileStream.setPosition(BinStart + newBinHeader.FileOffset);
         _fileStream.write(buffer, 0, buffer.length);
 
         byte[] cellHeader = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(newBinHeader.BinSize - newBinHeader.sizeOf(), cellHeader, 0);
+        EndianUtilities.writeBytesLittleEndian(newBinHeader.BinSize - newBinHeader.size(), cellHeader, 0);
         _fileStream.write(cellHeader, 0, 4);
 
         // Update hive with new length
@@ -330,7 +330,7 @@ public final class RegistryHive implements Closeable {
         _header.Sequence1++;
         _header.Sequence2++;
         _fileStream.setPosition(0);
-        byte[] hiveHeader = StreamUtilities.readExact(_fileStream, _header.sizeOf());
+        byte[] hiveHeader = StreamUtilities.readExact(_fileStream, _header.size());
         _header.writeTo(hiveHeader, 0);
         _fileStream.setPosition(0);
         _fileStream.write(hiveHeader, 0, hiveHeader.length);

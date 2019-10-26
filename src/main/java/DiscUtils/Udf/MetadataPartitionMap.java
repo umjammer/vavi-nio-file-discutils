@@ -42,7 +42,7 @@ public final class MetadataPartitionMap extends PartitionMap {
 
     public short VolumeSequenceNumber;
 
-    public int sizeOf() {
+    public int size() {
         return 64;
     }
 

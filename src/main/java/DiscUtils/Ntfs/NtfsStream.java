@@ -87,7 +87,7 @@ public class NtfsStream {
      */
     public <T extends IByteArraySerializable & IDiagnosticTraceable> void setContent(T value) {
         try (Stream s = open(FileAccess.Write)) {
-            byte[] buffer = new byte[value.sizeOf()];
+            byte[] buffer = new byte[value.size()];
             value.writeTo(buffer, 0);
             s.write(buffer, 0, buffer.length);
             s.setLength(buffer.length);

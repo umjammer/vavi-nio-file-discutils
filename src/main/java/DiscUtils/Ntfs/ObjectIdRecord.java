@@ -37,7 +37,7 @@ public final class ObjectIdRecord implements IByteArraySerializable {
 
     public FileRecordReference MftReference;
 
-    public int sizeOf() {
+    public int size() {
         return 0x38;
     }
 

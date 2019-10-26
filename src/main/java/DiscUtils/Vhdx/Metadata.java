@@ -165,11 +165,14 @@ public final class Metadata {
         MetadataEntry entry = new MetadataEntry();
         entry.ItemId = id;
         entry.Offset = dataOffset;
-        entry.Length = data.sizeOf();
+        entry.Length = data.size();
         entry.Flags = flags;
+
         header.Entries.put(key, entry);
+
         stream.setPosition(dataOffset);
         StreamUtilities.writeStruct(stream, data);
+
         return entry.Length;
     }
 
@@ -186,11 +189,15 @@ public final class Metadata {
         entry.Offset = dataOffset;
         entry.Length = ReflectionHelper.sizeOf(data.getClass());
         entry.Flags = flags;
+
         header.Entries.put(key, entry);
+
         stream.setPosition(dataOffset);
+
         byte[] buffer = new byte[entry.Length];
         writer.invoke(data, buffer, 0);
         stream.write(buffer, 0, buffer.length);
+
         return entry.Length;
     }
 

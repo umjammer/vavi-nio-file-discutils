@@ -48,7 +48,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
 
     public AttributeType Type = AttributeType.None;
 
-    public int sizeOf() {
+    public int size() {
         return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(Charset.forName("UTF-16LE")).length), 8);
     }
 

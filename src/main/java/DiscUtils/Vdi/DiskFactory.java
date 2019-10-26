@@ -22,8 +22,6 @@
 
 package DiscUtils.Vdi;
 
-import java.io.IOException;
-
 import DiscUtils.Core.DiskImageBuilder;
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;

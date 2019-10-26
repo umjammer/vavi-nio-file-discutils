@@ -177,7 +177,7 @@ public class Context extends VfsContext {
     }
 
     public void verifyChecksum(byte[] checksum, byte[] data, int offset, int count) {
-        if (!getOptions().getVerifyChecksums())
+        if (!getOptions().verifyChecksums())
             return;
 
         if (getSuperBlock().getChecksumType() != ChecksumType.Crc32C)

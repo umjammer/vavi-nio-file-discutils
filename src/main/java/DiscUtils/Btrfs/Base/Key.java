@@ -90,7 +90,7 @@ public class Key implements IByteArraySerializable {
         __Offset = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return Length;
     }
 
@@ -98,7 +98,7 @@ public class Key implements IByteArraySerializable {
         setObjectId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setItemType(ItemType.valueOf(buffer[offset + 0x8]));
         setOffset(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x9));
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

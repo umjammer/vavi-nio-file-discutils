@@ -22,6 +22,10 @@
 
 package DiscUtils.Registry;
 
+import java.util.logging.Level;
+
+import vavi.util.Debug;
+
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import dotnet4j.io.IOException;
@@ -36,14 +40,14 @@ public final class BinHeader implements IByteArraySerializable {
 
     public int FileOffset;
 
-    public int sizeOf() {
+    public int size() {
         return HeaderSize;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         int sig = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         if (sig != Signature) {
-System.err.printf("%x\n", sig);
+Debug.printf(Level.SEVERE, "%x\n", sig);
             throw new IOException("Invalid signature for registry bin");
         }
 

@@ -167,14 +167,14 @@ public class SuperBlock implements IByteArraySerializable {
         return 1024 << LogBlockSize;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 1024;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
         if (Magic != Ext2Magic)
-            return sizeOf();
+            return size();
 
         InodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         BlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);

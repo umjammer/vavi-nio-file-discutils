@@ -37,7 +37,7 @@ public class JournalSuperBlock implements IByteArraySerializable {
     /**
      *
      */
-    public int sizeOf() {
+    public int size() {
         return 1024;
     }
 

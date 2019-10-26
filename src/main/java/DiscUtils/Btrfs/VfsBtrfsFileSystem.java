@@ -78,7 +78,7 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
                                                            context.getSuperBlock().getRootLevel()));
         DirItem rootDir = (DirItem) context.findKey(context.getSuperBlock().getRootDirObjectid(), ItemType.DirItem);
         RootItem fsTreeLocation;
-        if (!options.getUseDefaultSubvolume()) {
+        if (!options.useDefaultSubvolume()) {
             fsTreeLocation = (RootItem) context.findKey(options.getSubvolumeId(), ItemType.RootItem);
         } else {
             fsTreeLocation = (RootItem) context.findKey(rootDir.getChildLocation().getObjectId(),

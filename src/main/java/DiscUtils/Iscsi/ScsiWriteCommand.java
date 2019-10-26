@@ -40,7 +40,7 @@ public class ScsiWriteCommand extends ScsiCommand {
         return __NumBlocks;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 10;
     }
 

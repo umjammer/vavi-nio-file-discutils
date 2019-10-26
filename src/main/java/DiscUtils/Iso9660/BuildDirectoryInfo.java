@@ -61,9 +61,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
     }
 
     /**
-     * The parent directory, or
-     * {@code null}
-     * if none.
+     * The parent directory, or {@code null} if none.
      */
     public BuildDirectoryInfo getParent() {
         return _parent;
@@ -73,12 +71,8 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
      * Gets the specified child directory or file.
      *
      * @param name The name of the file or directory to get.
-     * @param member The member found (or
-     *            {@code null}
-     *            ).
-     * @return
-     *         {@code true}
-     *         if the specified member was found.
+     * @param member The member found (or {@code null}).
+     * @return {@code true} if the specified member was found.
      */
     public boolean tryGetMember(String name, BuildDirectoryMember[] member) {
         boolean result = _members.containsKey(name);

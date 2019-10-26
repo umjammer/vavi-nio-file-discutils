@@ -88,7 +88,7 @@ public class RootRef extends BaseItem {
         __Name = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x12 + getNameLength();
     }
 
@@ -97,6 +97,6 @@ public class RootRef extends BaseItem {
         setSequence(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
         setName(new String(buffer, offset + 0x12, getNameLength(), Charset.forName("UTF8")));
-        return sizeOf();
+        return size();
     }
 }

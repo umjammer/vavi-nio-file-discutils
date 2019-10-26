@@ -476,7 +476,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 try {
                     parent.close();
                 } catch (IOException e) {
-                    new dotnet4j.io.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
             }
 

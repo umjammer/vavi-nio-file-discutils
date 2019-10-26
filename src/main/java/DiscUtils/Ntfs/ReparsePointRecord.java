@@ -34,7 +34,7 @@ public final class ReparsePointRecord implements IByteArraySerializable, IDiagno
 
     public int Tag;
 
-    public int sizeOf() {
+    public int size() {
         return 8 + Content.length;
     }
 

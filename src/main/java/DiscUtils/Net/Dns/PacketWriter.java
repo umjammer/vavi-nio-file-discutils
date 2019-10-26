@@ -23,8 +23,8 @@
 package DiscUtils.Net.Dns;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
@@ -39,7 +39,7 @@ public final class PacketWriter {
 
     public void writeName(String name) {
         // TODO: Implement compression
-        String[] labels = name.split(Utilities.escapeForRegex("\\"));
+        String[] labels = Arrays.stream(name.split("\\.")).filter(e -> !e.isEmpty()).toArray(String[]::new);
         for (String label : labels) {
             byte[] labelBytes = label.getBytes(Charset.forName("UTF8"));
             if (labelBytes.length > 63) {

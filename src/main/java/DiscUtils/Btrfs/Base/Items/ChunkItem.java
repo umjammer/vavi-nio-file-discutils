@@ -165,7 +165,7 @@ public class ChunkItem extends BaseItem {
         __Stripes = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x30 + getStripeCount() * Stripe.Length;
     }
 
@@ -185,7 +185,7 @@ public class ChunkItem extends BaseItem {
             getStripes()[i] = new Stripe();
             offset += getStripes()[i].readFrom(buffer, offset);
         }
-        return sizeOf();
+        return size();
     }
 
 }

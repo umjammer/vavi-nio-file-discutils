@@ -285,7 +285,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public boolean fileExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry != null && dirEntry.Attributes.contains(FileAttributes.Directory);
+        return dirEntry != null && !dirEntry.Attributes.contains(FileAttributes.Directory);
     }
 
     /**
@@ -619,13 +619,16 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         DirectoryEntry parentDirEntry = getEntry(path);
+
         if (parentDirEntry.SubdirOffset == 0) {
             return;
         }
 
         List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.SubdirOffset);
+
         for (DirectoryEntry de : parentDir) {
             boolean isDir = de.Attributes.contains(FileAttributes.Directory);
+
             if ((isDir && dirs) || (!isDir && files)) {
                 if (regex.matcher(de.getSearchName()).find()) {
                     results.add(Utilities.combinePaths(path, de.FileName));

@@ -72,14 +72,14 @@ public class SuperBlock implements IByteArraySerializable {
 
     public long UidGidTableStart;
 
-    public int sizeOf() {
+    public int size() {
         return 96;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         Magic = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         if (Magic != SquashFsMagic)
-            return sizeOf();
+            return size();
 
         InodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         CreationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
@@ -99,7 +99,7 @@ public class SuperBlock implements IByteArraySerializable {
         DirectoryTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 72);
         FragmentTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 80);
         LookupTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 88);
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

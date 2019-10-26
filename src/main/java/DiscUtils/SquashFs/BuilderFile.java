@@ -126,11 +126,11 @@ public final class BuilderFile extends BuilderNode {
         fillCommonInodeData(context);
         _inode.Type = InodeType.File;
         setInodeRef(context.getInodeWriter().getPosition());
-        int totalSize =_inode.sizeOf();
+        int totalSize =_inode.size();
         _inode.writeTo(context.getIoBuffer(), 0);
         if (_lengths != null && _lengths.size() > 0) {
             for (int i = 0; i < _lengths.size(); ++i) {
-                EndianUtilities.writeBytesLittleEndian(_lengths.get(i), context.getIoBuffer(), _inode.sizeOf() + i * 4);
+                EndianUtilities.writeBytesLittleEndian(_lengths.get(i), context.getIoBuffer(), _inode.size() + i * 4);
             }
             totalSize += _lengths.size() * 4;
         }

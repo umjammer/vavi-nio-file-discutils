@@ -31,7 +31,7 @@ public final class ExtentDescriptor implements IByteArraySerializable {
 
     public int StartBlock;
 
-    public int sizeOf() {
+    public int size() {
         return 8;
     }
 

@@ -133,7 +133,7 @@ public class DirItem extends BaseItem {
         __Data = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x1e + getNameLength() + getDataLength();
     }
 
@@ -145,6 +145,6 @@ public class DirItem extends BaseItem {
         setChildType(DirItemChildType.valueOf(buffer[offset + 0x1d]));
         setName(new String(buffer, offset + 0x1e, getNameLength(), Charset.forName("UTF8")));
         setData(EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength()));
-        return sizeOf();
+        return size();
     }
 }

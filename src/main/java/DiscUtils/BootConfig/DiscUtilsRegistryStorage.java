@@ -26,17 +26,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.Registry.RegistryKey;
 import DiscUtils.Registry.RegistryValueType;
 
 
 public class DiscUtilsRegistryStorage extends BaseStorage {
+    private static final UUID EMPTY = new UUID(0, 0);
 
-    private static final String ElementsPathTemplate = "Objects" + "\\" + "s%" + "\\" + "Elements";
+    private static final String ElementsPathTemplate = "Objects\\s%\\Elements";
 
-    private static final String ElementPathTemplate = "Objects" + "\\" + "%s" + "\\" + "Elements" + "\\" + "%8X";
+    private static final String ElementPathTemplate = "Objects\\%s\\Elements\\%8X";
 
-    private static final String ObjectTypePathTemplate = "Objects" + "\\" + "%s" + "\\" + "Description";
+    private static final String ObjectTypePathTemplate = "Objects\\%s\\Description";
 
     private static final String ObjectsPath = "Objects";
 
@@ -96,7 +99,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         RegistryKey descKey = _rootKey.openSubKey(path);
         Object val = descKey.getValue("Type");
-System.err.println("getObjectType: " + val);
+Debug.println("getObjectType: " + val);
         return val == null ? 0 : (Integer) val; // TODO check spec
     }
 
@@ -111,7 +114,7 @@ System.err.println("getObjectType: " + val);
     }
 
     public UUID createObject(UUID obj, int type) {
-        UUID realObj = obj.equals(new UUID(0, 0)) ? UUID.randomUUID() : obj;
+        UUID realObj = obj.equals(EMPTY) ? UUID.randomUUID() : obj;
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", realObj));
         RegistryKey key = _rootKey.createSubKey(path);
         key.setValue("Type", type, RegistryValueType.Dword);

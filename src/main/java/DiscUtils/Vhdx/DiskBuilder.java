@@ -228,7 +228,7 @@ public final class DiskBuilder extends DiskImageBuilder {
         }
 
         private static BuilderExtent extentForStruct(IByteArraySerializable structure, long position) {
-            byte[] buffer = new byte[structure.sizeOf()];
+            byte[] buffer = new byte[structure.size()];
             structure.writeTo(buffer, 0);
             return new BuilderBufferExtent(position, buffer);
         }

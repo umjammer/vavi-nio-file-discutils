@@ -29,6 +29,8 @@ package DiscUtils.BootConfig;
 
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.BootConfig.ApplicationType;
 import DiscUtils.BootConfig.BaseStorage;
 import DiscUtils.BootConfig.BooleanElementValue;
@@ -388,7 +390,7 @@ public class Element {
     }
 
     private ElementValue loadValue() {
-System.err.println("getFormat():" + getFormat());
+Debug.println("getFormat():" + getFormat());
         switch (getFormat()) {
         case Boolean:
             return new BooleanElementValue(_storage.getBinary(_obj, _identifier));

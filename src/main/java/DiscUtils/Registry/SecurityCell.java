@@ -69,7 +69,7 @@ public final class SecurityCell extends Cell {
         __SecurityDescriptor = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         int sdLen = getSecurityDescriptor().getSecurityDescriptorBinaryForm().length;
         return 0x14 + sdLen;
     }

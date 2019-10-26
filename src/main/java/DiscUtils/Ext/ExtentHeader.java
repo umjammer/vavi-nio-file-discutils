@@ -39,7 +39,7 @@ public class ExtentHeader implements IByteArraySerializable {
 
     public short MaxEntries;
 
-    public int sizeOf() {
+    public int size() {
         return 12;
     }
 

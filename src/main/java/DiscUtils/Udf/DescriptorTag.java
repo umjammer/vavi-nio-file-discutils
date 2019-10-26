@@ -43,7 +43,7 @@ public class DescriptorTag implements IByteArraySerializable {
 
     public short TagSerialNumber;
 
-    public int sizeOf() {
+    public int size() {
         return 16;
     }
 

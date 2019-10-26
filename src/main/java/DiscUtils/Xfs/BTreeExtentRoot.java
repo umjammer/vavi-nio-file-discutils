@@ -85,7 +85,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
         __Children = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 4 + (0x9 * 0x16);
     }
 
@@ -102,7 +102,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
         for (int i = 0; i < getNumberOfRecords(); i++) {
             getPointer()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
-        return sizeOf();
+        return size();
     }
 
     /**

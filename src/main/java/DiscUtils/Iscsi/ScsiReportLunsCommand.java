@@ -35,7 +35,7 @@ public class ScsiReportLunsCommand extends ScsiCommand {
         _expected = expected;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 12;
     }
 

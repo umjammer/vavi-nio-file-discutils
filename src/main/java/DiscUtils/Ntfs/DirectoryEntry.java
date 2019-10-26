@@ -60,4 +60,8 @@ public class DirectoryEntry {
         file.freshenFileName(getDetails(), true);
         _directory.updateEntry(this);
     }
+
+    public String toString() {
+        return getSearchName();
+    }
 }

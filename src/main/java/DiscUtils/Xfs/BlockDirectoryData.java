@@ -26,7 +26,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 
 
 public abstract class BlockDirectoryData implements IByteArraySerializable {
-    public abstract int sizeOf();
+    public abstract int size();
 
     public abstract int readFrom(byte[] buffer, int offset);
 

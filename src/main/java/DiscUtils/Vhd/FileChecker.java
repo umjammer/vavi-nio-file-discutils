@@ -56,7 +56,7 @@ public class FileChecker {
 
     private EnumSet<ReportLevels> _levelsDetected;
 
-    private final ReportLevels _levelsConsideredFail = ReportLevels.Errors;
+    private static final ReportLevels _levelsConsideredFail = ReportLevels.Errors;
 
     /**
      * Initializes a new instance of the FileChecker class.

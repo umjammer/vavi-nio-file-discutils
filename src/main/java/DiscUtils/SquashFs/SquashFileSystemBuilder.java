@@ -341,7 +341,7 @@ public final class SquashFileSystemBuilder {
         superBlock.MajorVersion = 4;
         superBlock.MinorVersion = 0;
 
-        output.setPosition(superBlock.sizeOf());
+        output.setPosition(superBlock.size());
 
         getRoot().reset();
         getRoot().write(_context);
@@ -372,7 +372,7 @@ public final class SquashFileSystemBuilder {
 
         // Go back and write the superblock
         output.setPosition(0);
-        byte[] buffer = new byte[superBlock.sizeOf()];
+        byte[] buffer = new byte[superBlock.size()];
         superBlock.writeTo(buffer, 0);
         output.write(buffer, 0, buffer.length);
         output.setPosition(end);
@@ -451,7 +451,7 @@ public final class SquashFileSystemBuilder {
 
     private BuilderDirectory createDirectory(String path, int user, int group, EnumSet<UnixFilePermissions> permissions) {
         BuilderDirectory currentDir = getRoot();
-        String[] elems = path.split(Utilities.escapeForRegex("\\"));
+        String[] elems = Arrays.stream(path.split(Utilities.escapeForRegex("\\"))).filter(e -> !e.isEmpty()).toArray(String[]::new);
 
         for (int i = 0; i < elems.length; ++i) {
             BuilderNode nextDirAsNode = currentDir.getChild(elems[i]);

@@ -88,7 +88,7 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
         return (long) FileLocation.ExtentLocation.Partition << 32 | FileLocation.ExtentLocation.LogicalBlock;
     }
 
-    public int sizeOf() {
+    public int size() {
         throw new UnsupportedOperationException();
     }
 

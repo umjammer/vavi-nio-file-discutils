@@ -33,7 +33,7 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
 
     public LongAllocationDescriptor StreamDirectoryIcb;
 
-    public int sizeOf() {
+    public int size() {
         throw new UnsupportedOperationException();
     }
 

@@ -38,7 +38,7 @@ public final class ObjectIds {
 
     public ObjectIds(File file) {
         _file = file;
-        _index = new IndexView<>(file.getIndex("$O"));
+        _index = new IndexView<>(DiscUtils.Ntfs.ObjectIds.IndexKey.class, ObjectIdRecord.class, file.getIndex("$O"));
     }
 
     public Map<UUID, ObjectIdRecord> getAll() {
@@ -89,7 +89,7 @@ public final class ObjectIds {
     public final static class IndexKey implements IByteArraySerializable {
         public UUID Id;
 
-        public int sizeOf() {
+        public int size() {
             return 16;
         }
 

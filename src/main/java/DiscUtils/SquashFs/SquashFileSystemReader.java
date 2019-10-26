@@ -66,11 +66,11 @@ public class SquashFileSystemReader extends VfsFileSystemFacade implements IUnix
     public static boolean detect(Stream stream) {
         stream.setPosition(0);
         SuperBlock superBlock = new SuperBlock();
-        if (stream.getLength() < superBlock.sizeOf()) {
+        if (stream.getLength() < superBlock.size()) {
             return false;
         }
 
-        byte[] buffer = StreamUtilities.readExact(stream, superBlock.sizeOf());
+        byte[] buffer = StreamUtilities.readExact(stream, superBlock.size());
         superBlock.readFrom(buffer, 0);
         return superBlock.Magic == SuperBlock.SquashFsMagic;
     }

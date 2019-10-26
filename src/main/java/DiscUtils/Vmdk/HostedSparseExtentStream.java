@@ -22,6 +22,8 @@
 
 package DiscUtils.Vmdk;
 
+import java.util.EnumSet;
+
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -37,8 +39,8 @@ import dotnet4j.io.compression.DeflateStream;
 
 /**
  * Represents and extent from a sparse disk from 'hosted' software (VMware
- * Workstation, etc).
- * Hosted disks and server disks (ESX, etc) are subtly different formats.
+ * Workstation, etc). Hosted disks and server disks (ESX, etc) are subtly
+ * different formats.
  */
 public final class HostedSparseExtentStream extends CommonSparseExtentStream {
     private HostedSparseExtentHeader _hostedHeader;
@@ -53,37 +55,42 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         _diskOffset = diskOffset;
         _parentDiskStream = parentDiskStream;
         _ownsParentDiskStream = ownsParentDiskStream;
+
         file.setPosition(0);
         byte[] headerSector = StreamUtilities.readExact(file, Sizes.Sector);
         _hostedHeader = HostedSparseExtentHeader.read(headerSector, 0);
         if (_hostedHeader.GdOffset == -1) {
-            // Fall back to secondary copy that (should) be at the end of the stream, just before the end-of-stream sector marker
+            // Fall back to secondary copy that (should) be at the end of the stream, just
+            // before the end-of-stream sector marker
             file.setPosition(file.getLength() - Sizes.OneKiB);
             headerSector = StreamUtilities.readExact(file, Sizes.Sector);
             _hostedHeader = HostedSparseExtentHeader.read(headerSector, 0);
+
             if (_hostedHeader.MagicNumber != HostedSparseExtentHeader.VmdkMagicNumber) {
                 throw new dotnet4j.io.IOException("Unable to locate valid VMDK header or footer");
             }
-
         }
 
         _header = _hostedHeader;
+
         if (_hostedHeader.CompressAlgorithm != 0 && _hostedHeader.CompressAlgorithm != 1) {
             throw new UnsupportedOperationException("Only uncompressed and DEFLATE compressed disks supported");
         }
 
         _gtCoverage = _header.NumGTEsPerGT * _header.GrainSize * Sizes.Sector;
+
         loadGlobalDirectory();
     }
 
     public boolean canWrite() {
-        return _fileStream.canWrite() && (_hostedHeader.Flags.contains(HostedSparseExtentFlags.CompressedGrains) ||
-                                        _hostedHeader.Flags.contains(HostedSparseExtentFlags.MarkersInUse));
+        // No write support for streamOptimized disks
+        return _fileStream.canWrite() && !_hostedHeader.Flags
+                .containsAll(EnumSet.of(HostedSparseExtentFlags.CompressedGrains, HostedSparseExtentFlags.MarkersInUse));
     }
 
-    // No write support for streamOptimized disks
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
+
         if (!canWrite()) {
             throw new dotnet4j.io.IOException("Cannot write to this stream");
         }
@@ -113,20 +120,21 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         _atEof = _position == getLength();
     }
 
-    protected int readGrain(byte[] buffer,
-                            int bufferOffset,
-                            long grainStart,
-                            int grainOffset,
-                            int numToRead) {
+    protected int readGrain(byte[] buffer, int bufferOffset, long grainStart, int grainOffset, int numToRead) {
         if (_hostedHeader.Flags.contains(HostedSparseExtentFlags.CompressedGrains)) {
             _fileStream.setPosition(grainStart);
+
             byte[] readBuffer = StreamUtilities.readExact(_fileStream, CompressedGrainHeader.Size);
             CompressedGrainHeader hdr = new CompressedGrainHeader();
             hdr.read(readBuffer, 0);
+
             readBuffer = StreamUtilities.readExact(_fileStream, hdr.DataSize);
-            // This is really a zlib stream, so has header and footer.  We ignore this right now, but we sanity
+
+            // This is really a zlib stream, so has header and footer. We ignore this right
+            // now, but we sanity
             // check against expected header values...
             short header = EndianUtilities.toUInt16BigEndian(readBuffer, 0);
+
             if (header % 31 != 0) {
                 throw new dotnet4j.io.IOException("Invalid ZLib header found");
             }
@@ -141,28 +149,31 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
 
             Stream readStream = new MemoryStream(readBuffer, 2, hdr.DataSize - 2, false);
             DeflateStream deflateStream = new DeflateStream(readStream, CompressionMode.Decompress);
+
             // Need to skip some bytes, but DefaultStream doesn't support seeking...
             StreamUtilities.readExact(deflateStream, grainOffset);
+
             return deflateStream.read(buffer, bufferOffset, numToRead);
         }
-
         return super.readGrain(buffer, bufferOffset, grainStart, grainOffset, numToRead);
     }
 
     protected StreamExtent mapGrain(long grainStart, int grainOffset, int numToRead) {
         if (_hostedHeader.Flags.contains(HostedSparseExtentFlags.CompressedGrains)) {
             _fileStream.setPosition(grainStart);
+
             byte[] readBuffer = StreamUtilities.readExact(_fileStream, CompressedGrainHeader.Size);
             CompressedGrainHeader hdr = new CompressedGrainHeader();
             hdr.read(readBuffer, 0);
+
             return new StreamExtent(grainStart + grainOffset, CompressedGrainHeader.Size + hdr.DataSize);
         }
-
         return super.mapGrain(grainStart, grainOffset, numToRead);
     }
 
     protected void loadGlobalDirectory() {
         super.loadGlobalDirectory();
+
         if (_hostedHeader.Flags.contains(HostedSparseExtentFlags.RedundantGrainTable)) {
             int numGTs = (int) MathUtilities.ceil(_header.Capacity * Sizes.Sector, _gtCoverage);
             _redundantGlobalDirectory = new int[numGTs];
@@ -172,14 +183,15 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
                 _redundantGlobalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
             }
         }
-
     }
 
     private void allocateGrain(int grainTable, int grain) {
         // Calculate start pos for new grain
         long grainStartPos = MathUtilities.roundUp(_fileStream.getLength(), _header.GrainSize * Sizes.Sector);
-        // Copy-on-write semantics, read the bytes from parent and write them out to this extent.
-        _parentDiskStream.setPosition(_diskOffset + (grain + _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
+        // Copy-on-write semantics, read the bytes from parent and write them out to
+        // this extent.
+        _parentDiskStream
+                .setPosition(_diskOffset + (grain + _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
         byte[] content = StreamUtilities.readExact(_parentDiskStream, (int) _header.GrainSize * Sizes.Sector);
         _fileStream.setPosition(grainStartPos);
         _fileStream.write(content, 0, content.length);

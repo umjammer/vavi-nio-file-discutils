@@ -23,10 +23,13 @@
 package DiscUtils.Core.Vfs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.DiscFileSystemOptions;
@@ -286,8 +289,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         String dirName;
         try {
             dirName = Utilities.getDirectoryFromPath(path);
-        } catch (IllegalArgumentException __dummyCatchVar0) {
-            throw new dotnet4j.io.IOException("Invalid path: " + path);
+        } catch (IllegalArgumentException e) {
+            throw (dotnet4j.io.IOException) new dotnet4j.io.IOException("Invalid path: " + path).initCause(e);
         }
 
         String entryPath = Utilities.combinePaths(dirName, fileName);
@@ -493,7 +496,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             file = convertDirEntryToFile(dirEntry);
             _fileCache.set___idx(cacheKey, file);
         }
-
+Debug.println(file);
         return file;
     }
 
@@ -590,7 +593,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     }
 
     private TDirEntry getDirectoryEntry(TDirectory dir, String path) {
-        String[] pathElements = path.replaceFirst(Utilities.escapeForRegex("^\\"), "").split(Utilities.escapeForRegex("\\"));
+        String[] pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0);
     }
 

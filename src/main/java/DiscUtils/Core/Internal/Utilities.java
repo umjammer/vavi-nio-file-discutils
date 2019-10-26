@@ -29,6 +29,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
@@ -40,9 +41,9 @@ public class Utilities {
      * Indicates if two ranges overlap. The type of the ordinals.
      *
      * @param xFirst The lowest ordinal of the first range (inclusive).
-     * @param xLast  The highest ordinal of the first range (exclusive).
+     * @param xLast The highest ordinal of the first range (exclusive).
      * @param yFirst The lowest ordinal of the second range (inclusive).
-     * @param yLast  The highest ordinal of the second range (exclusive).
+     * @param yLast The highest ordinal of the second range (exclusive).
      * @return {@code true} if the ranges overlap, else {@code false} .
      */
     public static <T extends Comparable<T>> boolean rangesOverlap(T xFirst, T xLast, T yFirst, T yLast) {
@@ -118,13 +119,11 @@ public class Utilities {
         String trimmed = path.replaceFirst(escapeForRegex("\\*$"), "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
-            return "";
+            return ""; // No directory, just a file name
         }
 
         return trimmed.substring(0, index);
     }
-
-    // No directory, just a file name
 
     /**
      * Extracts the file part of a path.
@@ -165,14 +164,16 @@ public class Utilities {
     /**
      * Resolves a relative path into an absolute one.
      *
-     * @param basePath     The base path to resolve from.
+     * @param basePath The base path to resolve from.
      * @param relativePath The relative path.
      * @return The absolute path. If no {@code basePath} is specified then
      *         relativePath is returned as-is. If {@code relativePath}
      *
-     *         contains more '..' characters than the base path contains levels of
+     *         contains more '..' characters than the base path contains levels
+     *         of
      *         directory, the resultant string be the root drive followed by the
-     *         file name. If no the basePath starts with '\' (no drive specified)
+     *         file name. If no the basePath starts with '\' (no drive
+     *         specified)
      *         then the returned path will also start with '\'. For example:
      *         (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).
      */
@@ -204,8 +205,13 @@ public class Utilities {
     }
 
     public static String makeRelativePath(String path, String basePath) {
-        List<String> pathElements = Arrays.asList(path.split(escapeForRegex("\\")));
-        List<String> basePathElements = Arrays.asList(basePath.split(escapeForRegex("\\")));
+        List<String> pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .collect(Collectors.toList());
+        List<String> basePathElements = Arrays.stream(basePath.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .collect(Collectors.toList());
+
         if (!basePath.endsWith("\\") && basePathElements.size() > 0) {
             basePathElements.remove(basePathElements.size() - 1);
         }
@@ -292,7 +298,8 @@ public class Utilities {
      * expression.
      *
      * @param pattern The wildcard pattern to convert.
-     * @return The resultant regular expression. The wildcard * (star) matches zero
+     * @return The resultant regular expression. The wildcard * (star) matches
+     *         zero
      *         or more characters (including '.'), and ? (question mark) matches
      *         precisely one character (except '.').
      */

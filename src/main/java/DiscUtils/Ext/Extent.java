@@ -39,7 +39,7 @@ public class Extent implements IByteArraySerializable {
         return FirstPhysicalBlockLow | ((long) FirstPhysicalBlockHi << 32);
     }
 
-    public int sizeOf() {
+    public int size() {
         return 12;
     }
 

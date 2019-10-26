@@ -70,7 +70,7 @@ public final class RegionTable implements IByteArraySerializable {
         return Checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, FixedSize);
     }
 
-    public int sizeOf() {
+    public int size() {
         return FixedSize;
     }
 
@@ -88,7 +88,7 @@ public final class RegionTable implements IByteArraySerializable {
             }
         }
 
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

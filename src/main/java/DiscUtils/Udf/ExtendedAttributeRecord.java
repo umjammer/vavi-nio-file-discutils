@@ -33,7 +33,7 @@ public class ExtendedAttributeRecord implements IByteArraySerializable {
 
     public int AttributeType;
 
-    public int sizeOf() {
+    public int size() {
         return 12 + AttributeData.length;
     }
 

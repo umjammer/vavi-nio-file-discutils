@@ -55,7 +55,7 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
     /**
      *
      */
-    public int sizeOf() {
+    public int size() {
         return (int) Length;
     }
 
@@ -92,7 +92,7 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
             ParsedMetadata = Metadata.parse(_Metadata);
             break;
         }
-        return sizeOf();
+        return size();
     }
 
     /**

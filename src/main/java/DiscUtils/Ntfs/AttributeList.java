@@ -40,10 +40,10 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
         _records = new ArrayList<>();
     }
 
-    public int sizeOf() {
+    public int size() {
         int total = 0;
         for (AttributeListRecord record : _records) {
-            total += record.sizeOf();
+            total += record.size();
         }
         return total;
     }
@@ -63,7 +63,7 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
         int pos = offset;
         for (AttributeListRecord record : _records) {
             record.writeTo(buffer, offset + pos);
-            pos += record.sizeOf();
+            pos += record.size();
         }
     }
 

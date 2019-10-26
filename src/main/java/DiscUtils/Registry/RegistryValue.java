@@ -174,13 +174,13 @@ public final class RegistryValue {
         case String:
         case ExpandString:
         case Link:
-            return new String(data, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
+            return new String(data, Charset.forName("UTF-16LE")).replaceAll("(^\0*|\0*$)", "");
         case Dword:
             return EndianUtilities.toInt32LittleEndian(data, 0);
         case DwordBigEndian:
             return EndianUtilities.toInt32BigEndian(data, 0);
         case MultiString:
-            String multiString = new String(data, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
+            String multiString = new String(data, Charset.forName("UTF-16LE")).replaceAll("(^\0*|\0*$)", "");
             return multiString.split("\0");
         case QWord:
             return "" + EndianUtilities.toUInt64LittleEndian(data, 0);

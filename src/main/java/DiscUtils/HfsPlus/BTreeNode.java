@@ -59,7 +59,7 @@ public abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArrayS
         return __Tree;
     }
 
-    public int sizeOf() {
+    public int size() {
         return getTree().getNodeSize();
     }
 

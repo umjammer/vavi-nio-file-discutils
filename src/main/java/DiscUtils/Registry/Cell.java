@@ -44,7 +44,7 @@ public abstract class Cell implements IByteArraySerializable {
         __Index = value;
     }
 
-    public abstract int sizeOf();
+    public abstract int size();
 
     public abstract int readFrom(byte[] buffer, int offset);
 

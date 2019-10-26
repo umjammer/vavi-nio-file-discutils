@@ -105,7 +105,6 @@ class EndianUtilitiesTest {
     void testGuidBE() throws Exception {
         byte[] buf = new byte[16];
         UUID uuid = UUID.randomUUID();
-        System.err.println("uuid");
 
         EndianUtilities.writeBytesBigEndian(uuid, buf, 0);
         UUID v = EndianUtilities.toGuidBigEndian(buf, 0);

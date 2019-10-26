@@ -37,5 +37,6 @@ public final class NullTextWriter extends PrintWriter {
     }
 
     public void write(char value) {
+//        System.err.print(value);
     }
 }

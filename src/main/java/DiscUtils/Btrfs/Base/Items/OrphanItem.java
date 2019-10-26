@@ -33,11 +33,11 @@ public class OrphanItem extends BaseItem {
         super(key);
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        return sizeOf();
+        return size();
     }
 }

@@ -168,7 +168,7 @@ public final class LogEntry {
 
         public abstract long getFileLength();
 
-        public int sizeOf() {
+        public int size() {
             return 32;
         }
 

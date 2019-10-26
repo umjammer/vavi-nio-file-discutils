@@ -33,70 +33,70 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public final class IndexRoot implements IByteArraySerializable, IDiagnosticTraceable {
     public static final int HeaderOffset = 0x10;
 
-    private int __AttributeType;
+    private int _attributeType;
 
     public int getAttributeType() {
-        return __AttributeType;
+        return _attributeType;
     }
 
     public void setAttributeType(int value) {
-        __AttributeType = value;
+        _attributeType = value;
     }
 
-    private AttributeCollationRule __CollationRule = AttributeCollationRule.Binary;
+    private AttributeCollationRule _collationRule = AttributeCollationRule.Binary;
 
     public AttributeCollationRule getCollationRule() {
-        return __CollationRule;
+        return _collationRule;
     }
 
     public void setCollationRule(AttributeCollationRule value) {
-        __CollationRule = value;
+        _collationRule = value;
     }
 
-    private int __IndexAllocationSize;
+    private int _indexAllocationSize;
 
     public int getIndexAllocationSize() {
-        return __IndexAllocationSize;
+        return _indexAllocationSize;
     }
 
     public void setIndexAllocationSize(int value) {
-        __IndexAllocationSize = value;
+        _indexAllocationSize = value;
     }
 
-    private byte __RawClustersPerIndexRecord;
+    private byte _rawClustersPerIndexRecord;
 
     public byte getRawClustersPerIndexRecord() {
-        return __RawClustersPerIndexRecord;
+        return _rawClustersPerIndexRecord;
     }
 
     public void setRawClustersPerIndexRecord(byte value) {
-        __RawClustersPerIndexRecord = value;
+        _rawClustersPerIndexRecord = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setAttributeType(EndianUtilities.toUInt32LittleEndian(buffer, 0x00));
-        setCollationRule(AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x04)));
-        setIndexAllocationSize(EndianUtilities.toUInt32LittleEndian(buffer, 0x08));
-        setRawClustersPerIndexRecord(buffer[0x0C]);
+        _attributeType = EndianUtilities.toUInt32LittleEndian(buffer, 0x00);
+        _collationRule = AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x04));
+        _indexAllocationSize = EndianUtilities.toUInt32LittleEndian(buffer, 0x08);
+        _rawClustersPerIndexRecord = buffer[0x0C];
         return 16;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(getAttributeType(), buffer, 0);
-        EndianUtilities.writeBytesLittleEndian(getCollationRule().ordinal(), buffer, 0x04);
-        EndianUtilities.writeBytesLittleEndian(getIndexAllocationSize(), buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(getRawClustersPerIndexRecord(), buffer, 0x0C);
+        EndianUtilities.writeBytesLittleEndian(_attributeType, buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(_collationRule.ordinal(), buffer, 0x04);
+        EndianUtilities.writeBytesLittleEndian(_indexAllocationSize, buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian(_rawClustersPerIndexRecord, buffer, 0x0C);
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "                Attr Type: " + getAttributeType());
-        writer.println(indent + "           Collation Rule: " + getCollationRule());
-        writer.println(indent + "         Index Alloc Size: " + getIndexAllocationSize());
-        writer.println(indent + "  Raw Clusters Per Record: " + getRawClustersPerIndexRecord());
+        writer.println(indent + "                Attr Type: " + _attributeType);
+        writer.println(indent + "           Collation Rule: " + _collationRule);
+        writer.println(indent + "         Index Alloc Size: " + _indexAllocationSize);
+        writer.println(indent + "  Raw Clusters Per Record: " + _rawClustersPerIndexRecord);
     }
 
     public Comparator<byte[]> getCollator(UpperCase upCase) {

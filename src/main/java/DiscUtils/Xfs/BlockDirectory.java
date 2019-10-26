@@ -84,7 +84,7 @@ public class BlockDirectory implements IByteArraySerializable {
         __Entries = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 16 + 3 * 32;
     }
 

@@ -20,7 +20,7 @@ public class BlockGroup implements IByteArraySerializable {
 
     public short UsedDirsCount;
 
-    public int sizeOf() {
+    public int size() {
         return DescriptorSize;
     }
 

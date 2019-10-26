@@ -37,7 +37,7 @@ public class ExtentIndex implements IByteArraySerializable {
         return LeafPhysicalBlockLo | ((long) LeafPhysicalBlockHi << 32);
     }
 
-    public int sizeOf() {
+    public int size() {
         return 12;
     }
 

@@ -86,7 +86,7 @@ public class Inode implements IByteArraySerializable {
         return UnixFileType.valueOf((Mode >>> 12) & 0xff);
     }
 
-    public int sizeOf() {
+    public int size() {
         throw new UnsupportedOperationException();
     }
 

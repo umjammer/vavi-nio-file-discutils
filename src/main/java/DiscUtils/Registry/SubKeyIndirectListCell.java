@@ -72,7 +72,7 @@ public final class SubKeyIndirectListCell extends ListCell {
         __ListType = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 4 + getCellIndexes().size() * 4;
     }
 

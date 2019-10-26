@@ -334,6 +334,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                 }
             }
         }
+//Debug.println(fileReference + ": " + result);
 
         return result;
     }
@@ -352,12 +353,14 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             if ((index + 1) * getRecordSize() <= _recordStream.getLength()) {
                 _recordStream.setPosition(index * getRecordSize());
                 byte[] recordBuffer = StreamUtilities.readExact(_recordStream, getRecordSize());
+
                 result = new FileRecord(_bytesPerSector);
                 result.fromBytes(recordBuffer, 0, ignoreMagic);
                 result.setLoadedIndex((int) index);
             } else {
                 result = new FileRecord(_bytesPerSector, getRecordSize(), (int) index);
             }
+
             _recordCache.set___idx(index, result);
             return result;
         }
@@ -412,41 +415,45 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
     public ClusterMap getClusterMap() {
         int totalClusters = (int) MathUtilities.ceil(_self.getContext().getBiosParameterBlock().TotalSectors64,
                                                      _self.getContext().getBiosParameterBlock().SectorsPerCluster);
+
         @SuppressWarnings("unchecked")
         EnumSet<ClusterRoles>[] clusterToRole = new EnumSet[totalClusters];
         Object[] clusterToFile = new Object[totalClusters];
         Map<Object, String[]> fileToPaths = new HashMap<>();
+
         for (int i = 0; i < totalClusters; ++i) {
             clusterToRole[i] = EnumSet.of(ClusterRoles.Free);
         }
+
         for (FileRecord fr : getRecords()) {
-            if (fr.getBaseFile().getValue() != 0 || fr.getFlags().contains(FileRecordFlags.InUse)) {
+            if (fr.getBaseFile().getValue() != 0 || !fr.getFlags().contains(FileRecordFlags.InUse)) {
                 continue;
             }
 
             File f = new File(_self.getContext(), fr);
+
             for (NtfsStream stream : f.getAllStreams()) {
                 String fileId;
+
                 if (stream.getAttributeType() == AttributeType.Data && stream.getName() != null &&
                     !stream.getName().isEmpty()) {
                     fileId = f.getIndexInMft() + ":" + stream.getName();
-                    fileToPaths.put(fileId, f.getNames().stream().map(n -> {
-                        return n + ":" + stream.getName();
-                    }).toArray(String[]::new));
+                    fileToPaths.put(fileId, f.getNames().stream().map(n -> n + ":" + stream.getName()).toArray(String[]::new));
                 } else {
                     fileId = String.valueOf(f.getIndexInMft());
                     fileToPaths.put(fileId, f.getNames().toArray(new String[0]));
                 }
+
                 EnumSet<ClusterRoles> roles = EnumSet.noneOf(ClusterRoles.class);
                 if (f.getIndexInMft() < FirstAvailableMftIndex) {
                     roles.add(ClusterRoles.SystemFile);
                     if (f.getIndexInMft() == BootIndex) {
                         roles.add(ClusterRoles.BootArea);
                     }
-
                 } else {
                     roles.add(ClusterRoles.DataFile);
                 }
+
                 if (stream.getAttributeType() != AttributeType.Data) {
                     roles.add(ClusterRoles.Metadata);
                 }
@@ -459,6 +466,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                 }
             }
         }
+
         return new ClusterMap(clusterToRole, clusterToFile, fileToPaths);
     }
 

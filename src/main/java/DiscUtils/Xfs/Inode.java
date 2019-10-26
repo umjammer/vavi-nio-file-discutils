@@ -504,7 +504,7 @@ public class Inode implements IByteArraySerializable {
         __DataFork = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 96;
     }
 
@@ -542,7 +542,7 @@ public class Inode implements IByteArraySerializable {
             dfLength = (getForkoff() * 8);
         }
         setDataFork(EndianUtilities.toByteArray(buffer, offset + dfOffset, dfLength));
-        return sizeOf();
+        return size();
     }
 
     private long readTimestamp(byte[] buffer, int offset) {

@@ -36,7 +36,7 @@ public final class DeviceInode extends Inode {
         __DeviceId = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 24;
     }
 

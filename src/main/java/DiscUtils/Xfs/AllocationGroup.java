@@ -81,7 +81,7 @@ public class AllocationGroup {
         SuperBlock superblock = context.getSuperBlock();
         setFreeBlockInfo(new AllocationGroupFreeBlockInfo(superblock));
         data.setPosition(offset + superblock.getSectorSize());
-        byte[] agfData = StreamUtilities.readExact(data, getFreeBlockInfo().sizeOf());
+        byte[] agfData = StreamUtilities.readExact(data, getFreeBlockInfo().size());
         getFreeBlockInfo().readFrom(agfData, 0);
         if (getFreeBlockInfo().getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
             throw new IOException("Invalid AGF magic - probably not an xfs file system");
@@ -89,7 +89,7 @@ public class AllocationGroup {
 
         setInodeBtreeInfo(new AllocationGroupInodeBtreeInfo(superblock));
         data.setPosition(offset + superblock.getSectorSize() * 2);
-        byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().sizeOf());
+        byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().size());
         getInodeBtreeInfo().readFrom(agiData, 0);
         if (getInodeBtreeInfo().getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
             throw new IOException("Invalid AGI magic - probably not an xfs file system");

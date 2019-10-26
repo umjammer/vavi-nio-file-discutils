@@ -155,6 +155,10 @@ public final class FileName {
         return val;
     }
 
+    public String toString() {
+        return getRawName(Charset.forName(System.getProperty("file.encoding")));
+    }
+
     private static int compareRawNames(FileName a, FileName b) {
         for (int i = 0; i < 11; ++i) {
             if (a._raw[i] != b._raw[i]) {

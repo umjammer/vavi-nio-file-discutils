@@ -63,8 +63,8 @@ public class BTreeInodeNode extends BtreeHeader {
         __Children = value;
     }
 
-    public int sizeOf() {
-        return super.sizeOf() + (getNumberOfRecords() * 0x8);
+    public int size() {
+        return super.size() + (getNumberOfRecords() * 0x8);
     }
 
     public BTreeInodeNode(int superBlockVersion) {
@@ -73,7 +73,7 @@ public class BTreeInodeNode extends BtreeHeader {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        offset += super.sizeOf();
+        offset += super.size();
         if (getLevel() == 0)
             throw new IOException("invalid B+tree level - expected 0");
 
@@ -85,7 +85,7 @@ public class BTreeInodeNode extends BtreeHeader {
         for (int i = 0; i < getNumberOfRecords(); i++) {
             getPointer()[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
         }
-        return sizeOf();
+        return size();
     }
 
     public void loadBtree(AllocationGroup ag) {

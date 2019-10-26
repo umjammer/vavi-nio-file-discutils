@@ -34,7 +34,7 @@ public class ExtentBlock implements IByteArraySerializable {
 
     public ExtentIndex[] Index;
 
-    public int sizeOf() {
+    public int size() {
         return 12 + Header.MaxEntries * 12;
     }
 

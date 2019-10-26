@@ -362,7 +362,7 @@ public final class BiosPartitionTable extends PartitionTable {
                                    : _diskGeometry.toLogicalBlockAddress(first, 0, 1);
         long lbaLast = _diskGeometry
                 .toLogicalBlockAddress(last, _diskGeometry.getHeadsPerCylinder() - 1, _diskGeometry.getSectorsPerTrack());
-        System.err.printf("%x, %x, %x, %s\n", first, last, lbaStart, lbaLast);
+//Debug.printf("%x, %x, %x, %s\n", first, last, lbaStart, lbaLast);
         return createPrimaryBySector(lbaStart, lbaLast, type, markActive);
     }
 
@@ -380,7 +380,7 @@ public final class BiosPartitionTable extends PartitionTable {
             throw new IllegalArgumentException("The first sector in a partition must be before the last");
         }
 
-        System.err.printf("%x, %x, %x\n", (last + 1), _diskGeometry.getBytesPerSector(), _diskData.getLength());
+//Debug.printf("%x, %x, %x\n", (last + 1), _diskGeometry.getBytesPerSector(), _diskData.getLength());
         if ((last + 1) * _diskGeometry.getBytesPerSector() > _diskData.getLength()) {
             throw new IndexOutOfBoundsException("The last sector extends beyond the end of the disk");
         }
@@ -414,7 +414,6 @@ public final class BiosPartitionTable extends PartitionTable {
             if (Utilities.rangesOverlap(first, last + 1, r.getLBAStartAbsolute(), r.getLBAStartAbsolute() + r.getLBALength())) {
                 throw new dotnet4j.io.IOException("New partition overlaps with existing partition");
             }
-
         }
         for (int i = 0; i < 4; ++i) {
             // Now look for empty partition
@@ -422,7 +421,6 @@ public final class BiosPartitionTable extends PartitionTable {
                 writeRecord(i, newRecord);
                 return i;
             }
-
         }
         throw new dotnet4j.io.IOException("No primary partition slots available");
     }
@@ -458,9 +456,7 @@ public final class BiosPartitionTable extends PartitionTable {
                     extents.addAll(new BiosExtendedPartitionTable(_diskData, (int) primaryRecord.getLBAStart())
                             .getMetadataDiskExtents());
                 }
-
             }
-
         }
         return extents;
     }
@@ -497,7 +493,6 @@ public final class BiosPartitionTable extends PartitionTable {
                 record.setEndSector((byte) newEndAddress.getSector());
                 writeRecord(i++, record);
             }
-
         }
         _diskGeometry = geometry;
     }
@@ -531,7 +526,6 @@ public final class BiosPartitionTable extends PartitionTable {
             if (size < 1023 * (long) 254 * 63 * 512) {
                 return BiosPartitionTypes.Fat32;
             }
-
             return BiosPartitionTypes.Fat32Lba;
         case WindowsNtfs:
             return BiosPartitionTypes.Ntfs;
@@ -543,7 +537,6 @@ public final class BiosPartitionTable extends PartitionTable {
             return BiosPartitionTypes.LinuxLvm;
         default:
             throw new IllegalArgumentException(String.format("Unrecognized partition type: '%s'", type));
-
         }
     }
 
@@ -558,7 +551,6 @@ public final class BiosPartitionTable extends PartitionTable {
                     newList.add(primaryRecord);
                 }
             }
-
         }
         return newList;
     }

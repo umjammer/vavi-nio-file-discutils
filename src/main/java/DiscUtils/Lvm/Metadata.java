@@ -25,6 +25,7 @@ package DiscUtils.Lvm;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -99,7 +100,9 @@ public class Metadata {
     }
 
     public static String[] parseArrayValue(String value) {
-        String[] values = value.replaceAll("(^\\[*|\\]*$)", "").split(Utilities.escapeForRegex("\\"));
+        String[] values = Arrays.stream(value.replaceAll("(^\\[*|\\]*$)", "").split(Utilities.escapeForRegex("\\")))
+                .filter(s -> !s.isEmpty())
+                .toArray(String[]::new);
         for (int i = 0; i < values.length; i++) {
             values[i] = Metadata.parseStringValue(values[i]);
         }

@@ -67,9 +67,8 @@ public class StreamUtilities {
         int originalCount = count;
         while (count > 0) {
             int numRead = stream.read(buffer, offset, count);
-System.err.println(numRead + ", " + offset + ", " + count + " / " + originalCount);
+//Debug.println(numRead + ", " + offset + ", " + count + " / " + originalCount);
             if (numRead == 0) {
-new Exception("*** DUMMY ***").printStackTrace();
                 throw new dotnet4j.io.IOException("Unable to complete read of " + originalCount + " bytes");
             }
 
@@ -199,6 +198,9 @@ new Exception("*** DUMMY ***").printStackTrace();
         return readExact(stream, Sizes.Sector);
     }
 
+static final String X = (char) 0x1b + "[" + 37 + "m";
+static final String Z = (char) 0x1b + "[" + 00 + "m";
+
     /**
      * Reads a structure from a stream.
      * The type of the structure.
@@ -209,9 +211,10 @@ new Exception("*** DUMMY ***").printStackTrace();
     public static <T extends IByteArraySerializable> T readStruct(Class<T> c, Stream stream) {
         try {
             T result = c.newInstance();
-            byte[] buffer = readExact(stream, result.sizeOf()); // TODO cache sizeOf()
+            int size = result.size();
+System.err.println("1: " + c.getName() + ", " + size + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
+            byte[] buffer = readExact(stream, size); // TODO cache sizeOf()
             result.readFrom(buffer, 0);
-System.err.println("1: " + c.getName() + ", " + buffer.length);
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
@@ -230,8 +233,8 @@ System.err.println("1: " + c.getName() + ", " + buffer.length);
         try {
             T result = c.newInstance();
             byte[] buffer = readExact(stream, length);
+System.err.println("2: " + c.getName() + ", " + buffer.length + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
             result.readFrom(buffer, 0);
-System.err.println("2: " + c.getName() + ", " + buffer.length);
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
@@ -246,10 +249,10 @@ System.err.println("2: " + c.getName() + ", " + buffer.length);
      * @param obj The structure to write.
      */
     public static <T extends IByteArraySerializable> void writeStruct(Stream stream, T obj) {
-        byte[] buffer = new byte[obj.sizeOf()];
+        byte[] buffer = new byte[obj.size()];
         obj.writeTo(buffer, 0);
         stream.write(buffer, 0, buffer.length);
-System.err.println("w: " + obj.getClass().getName() + ", " + buffer.length);
+System.err.println("w: " + obj.getClass().getName() + ", " + buffer.length + " / " + stream.getLength() + " " + X + stream + Z);
     }
 
     /**

@@ -138,7 +138,7 @@ public abstract class BtreeHeader implements IByteArraySerializable {
 
     private int __Size;
 
-    public int sizeOf() {
+    public int size() {
         return __Size;
     }
 
@@ -167,7 +167,7 @@ public abstract class BtreeHeader implements IByteArraySerializable {
             setCrc(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x34));
         }
 
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

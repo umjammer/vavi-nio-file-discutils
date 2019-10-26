@@ -29,7 +29,7 @@ public class BtrfsFileSystemOptions extends DiscFileSystemOptions {
     private long _subvolumeId;
 
     public BtrfsFileSystemOptions() {
-        setUseDefaultSubvolume(true);
+        _useDefaultSubvolume = true;
     }
 
     public long getSubvolumeId() {
@@ -41,23 +41,23 @@ public class BtrfsFileSystemOptions extends DiscFileSystemOptions {
         setUseDefaultSubvolume(false);
     }
 
-    private boolean __VerifyChecksums;
+    private boolean _verifyChecksums;
 
-    public boolean getVerifyChecksums() {
-        return __VerifyChecksums;
+    public boolean verifyChecksums() {
+        return _verifyChecksums;
     }
 
     public void setVerifyChecksums(boolean value) {
-        __VerifyChecksums = value;
+        _verifyChecksums = value;
     }
 
-    private boolean __UseDefaultSubvolume;
+    private boolean _useDefaultSubvolume;
 
-    public boolean getUseDefaultSubvolume() {
-        return __UseDefaultSubvolume;
+    public boolean useDefaultSubvolume() {
+        return _useDefaultSubvolume;
     }
 
     public void setUseDefaultSubvolume(boolean value) {
-        __UseDefaultSubvolume = value;
+        _useDefaultSubvolume = value;
     }
 }

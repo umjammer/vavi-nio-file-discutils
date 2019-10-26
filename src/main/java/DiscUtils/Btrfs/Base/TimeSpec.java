@@ -60,7 +60,7 @@ public class TimeSpec implements IByteArraySerializable {
         return Instant.ofEpochSecond(getSeconds(), getNanoseconds()).toEpochMilli();
     }
 
-    public int sizeOf() {
+    public int size() {
         return Length;
     }
 
@@ -71,7 +71,7 @@ public class TimeSpec implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         setSeconds(EndianUtilities.toInt64LittleEndian(buffer, offset));
         setNanoseconds(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8));
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

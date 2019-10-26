@@ -55,7 +55,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         __Descriptor = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return (int) getDescriptor().getBinaryLength();
     }
 
@@ -72,11 +72,14 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         buffer[offset + 0x00] = 1;
         buffer[offset + 0x01] = (byte) getDescriptor().getResourceManagerControl();
         EndianUtilities.writeBytesLittleEndian((short) ControlFlags.valueOf(controlFlags), buffer, offset + 0x02);
+
+        // Blank out offsets, will fill later
         for (int i = 0x04; i < 0x14; ++i) {
-            // Blank out offsets, will fill later
             buffer[offset + i] = 0;
         }
+
         int pos = 0x14;
+
         RawAcl discAcl = getDescriptor().getDiscretionaryAcl();
         if (controlFlags.contains(ControlFlags.DiscretionaryAclPresent) && discAcl != null) {
             EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x10);
@@ -85,6 +88,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         } else {
             EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x10);
         }
+
         RawAcl sysAcl = getDescriptor().getSystemAcl();
         if (controlFlags.contains(ControlFlags.SystemAclPresent) && sysAcl != null) {
             EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x0C);
@@ -93,12 +97,15 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         } else {
             EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x0C);
         }
+
         EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x04);
         getDescriptor().getOwner().getBinaryForm(buffer, offset + pos);
         pos += getDescriptor().getOwner().getBinaryLength();
+
         EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x08);
         getDescriptor().getGroup().getBinaryForm(buffer, offset + pos);
         pos += getDescriptor().getGroup().getBinaryLength();
+
         if (pos != getDescriptor().getBinaryLength()) {
             throw new IOException("Failed to write Security Descriptor correctly");
         }
@@ -109,7 +116,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
     }
 
     public int calcHash() {
-        byte[] buffer = new byte[sizeOf()];
+        byte[] buffer = new byte[size()];
         writeTo(buffer, 0);
         int hash = 0;
         for (int i = 0; i < buffer.length / 4; ++i) {
@@ -126,12 +133,14 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
 
     private static RawAcl inheritAcl(RawAcl parentAcl, boolean isContainer) {
         AceFlags inheritTest = isContainer ? AceFlags.ContainerInherit : AceFlags.ObjectInherit;
+
         RawAcl newAcl = null;
         if (parentAcl != null) {
             newAcl = new RawAcl(parentAcl.getRevision(), parentAcl.getCount());
             for (GenericAce ace : parentAcl) {
                 if (ace.getAceFlags().contains(inheritTest)) {
                     GenericAce newAce = (GenericAce) ace.clone();
+
                     EnumSet<AceFlags> newFlags = ace.getAceFlags();
                     if (newFlags.contains(AceFlags.NoPropagateInherit)) {
                         newFlags.remove(AceFlags.ContainerInherit);

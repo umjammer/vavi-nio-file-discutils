@@ -187,7 +187,7 @@ public class ExtentData extends BaseItem {
         __LogicalSize = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return getType() == ExtentDataType.Inline ? getInlineData().length + 0x15 : 0x35;
     }
 
@@ -206,7 +206,7 @@ public class ExtentData extends BaseItem {
             setExtentOffset(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x25));
             setLogicalSize(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x2d));
         }
-        return sizeOf();
+        return size();
     }
 
     public Stream getStream(Context context) {

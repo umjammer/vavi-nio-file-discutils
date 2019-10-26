@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import DiscUtils.Core.Archives.FileRecord;
 import DiscUtils.Core.Archives.TarFile;
@@ -39,6 +40,8 @@ import dotnet4j.io.Stream;
 
 
 public class DiskStream extends SparseStream {
+    private static final Logger logger = Logger.getLogger(DiskStream.class.getName());
+
     private final TarFile _archive;
 
     private final String _dir;
@@ -193,7 +196,7 @@ public class DiskStream extends SparseStream {
                     int index = Integer.parseInt(Utilities.getFileFromPath(path));
                     skipChunks.add(index);
                 } catch (NumberFormatException e) {
-                    System.err.println(e.getMessage());
+                    logger.warning(e.getMessage());
                 }
             }
         }

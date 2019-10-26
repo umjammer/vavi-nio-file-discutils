@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import vavi.util.Debug;
 import vavi.util.StringUtil;
 
 import DiscUtils.Core.Internal.Utilities;
@@ -75,7 +76,6 @@ public final class RegistryKey {
         if (parent != null && !parent.getFlags().contains(RegistryKeyFlags.Root)) {
             return parent.getName() + "\\" + _cell.Name;
         }
-
         return _cell.Name;
     }
 
@@ -86,7 +86,6 @@ public final class RegistryKey {
         if (!_cell.Flags.contains(RegistryKeyFlags.Root)) {
             return new RegistryKey(_hive, _hive.getCell(_cell.ParentIndex));
         }
-
         return null;
     }
 
@@ -304,7 +303,7 @@ public final class RegistryKey {
             while (i < _cell.NumValues) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell valueCell = _hive.getCell(valueIndex);
-System.err.println(valueCell.getName() + ", " + name);
+//Debug.println(valueCell.getName() + ", " + name);
                 if (Utilities.compareTo(valueCell.getName(), name, true) == 0) {
                     foundValue = true;
                     _hive.freeCell(valueIndex);
@@ -409,7 +408,7 @@ System.err.println(valueCell.getName() + ", " + name);
         }
 
         String[] split = path.split(Utilities.escapeForRegex("\\"), 2);
-System.err.println(StringUtil.paramString(split));
+Debug.println(StringUtil.paramString(split));
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             return null;
@@ -442,6 +441,7 @@ System.err.println(StringUtil.paramString(split));
         for (String child : subKeyObj.getSubKeyNames()) {
             subKeyObj.deleteSubKeyTree(child);
         }
+
         deleteSubKey(subkey);
     }
 
@@ -519,6 +519,7 @@ System.err.println(StringUtil.paramString(split));
             for (int i = 0; i < _cell.NumValues; ++i) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell cell = _hive.getCell(valueIndex);
+Debug.println(name + ", " + cell);
                 if (Utilities.compareTo(cell.getName(), name, true) == 0) {
                     return new RegistryValue(_hive, cell);
                 }
@@ -569,6 +570,7 @@ System.err.println(StringUtil.paramString(split));
         _hive.updateCell(_cell, false);
 
         // Finally, set the data in the value cell
+Debug.println(valueCell);
         return new RegistryValue(_hive, valueCell);
     }
 
@@ -576,8 +578,7 @@ System.err.println(StringUtil.paramString(split));
         if (_cell.NumSubKeys != 0) {
             ListCell listCell = _hive.getCell(_cell.SubKeysIndex);
             int cellIndex[] = new int[1];
-            boolean result = listCell.findKey(name, cellIndex) == 0;
-            if (result) {
+            if (listCell.findKey(name, cellIndex) == 0) {
                 return cellIndex[0];
             }
         }

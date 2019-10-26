@@ -60,7 +60,7 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
 
     public int Version;
 
-    public int sizeOf() {
+    public int size() {
         return _haveExtraFields ? 0x48 : 0x30;
     }
 

@@ -41,7 +41,7 @@ public final class BlockZero implements IByteArraySerializable {
 
     public short Signature;
 
-    public int sizeOf() {
+    public int size() {
         return 512;
     }
 

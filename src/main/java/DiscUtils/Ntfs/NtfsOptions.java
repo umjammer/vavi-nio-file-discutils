@@ -80,7 +80,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      */
     private boolean __HideDosFileNames;
 
-    public boolean getHideDosFileNames() {
+    public boolean hideDosFileNames() {
         return __HideDosFileNames;
     }
 
@@ -94,7 +94,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      */
     private boolean __HideHiddenFiles;
 
-    public boolean getHideHiddenFiles() {
+    public boolean hideHiddenFiles() {
         return __HideHiddenFiles;
     }
 
@@ -123,7 +123,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      */
     private boolean __HideSystemFiles;
 
-    public boolean getHideSystemFiles() {
+    public boolean hideSystemFiles() {
         return __HideSystemFiles;
     }
 

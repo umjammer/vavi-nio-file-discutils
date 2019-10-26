@@ -27,7 +27,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 
 public abstract class BTreeKey<T extends YComparable<?>> implements IByteArraySerializable, YComparable<T> {
 
-    public abstract int sizeOf();
+    public abstract int size();
 
     public abstract int readFrom(byte[] buffer, int offset);
 

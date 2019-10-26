@@ -27,19 +27,11 @@ import java.util.Comparator;
 
 
 /**
- * Provides the base class for
- * {@link BuildFileInfo}
- * and
- *
- * {@link BuildDirectoryInfo}
- * objects that will be built into an
+ * Provides the base class for {@link BuildFileInfo} and
+ * {@link BuildDirectoryInfo} objects that will be built into an
  * ISO image.
- * Instances of this class have two names, a
- * {@link #__Name}
- * ,
- * which is the full-length Joliet name and a
- * {@link #__ShortName}
- * ,
+ * Instances of this class have two names, a {@link #__Name},
+ * which is the full-length Joliet name and a {@link #__ShortName},
  * which is the strictly compliant ISO 9660 name.
  */
 public abstract class BuildDirectoryMember {
@@ -80,9 +72,7 @@ public abstract class BuildDirectoryMember {
     }
 
     /**
-     * Gets the parent directory, or
-     * {@code null}
-     * if this is the root directory.
+     * Gets the parent directory, or {@code null} if this is the root directory.
      */
     public abstract BuildDirectoryInfo getParent();
 
@@ -148,6 +138,7 @@ public abstract class BuildDirectoryMember {
                 char xChar = i >= xPad ? x.charAt(i - xPad) : padChar;
                 char yChar = i >= yPad ? y.charAt(i - yPad) : padChar;
                 if (xChar != yChar) {
+                    // Note: Version numbers are in DESCENDING order!
                     return yChar - xChar;
                 }
             }
@@ -155,5 +146,3 @@ public abstract class BuildDirectoryMember {
         }
     }
 }
-
-// Note: Version numbers are in DESCENDING order!

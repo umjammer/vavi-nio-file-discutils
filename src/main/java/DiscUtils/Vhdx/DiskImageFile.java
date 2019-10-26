@@ -212,11 +212,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
     public DiskImageFileInfo getInformation() {
         _fileStream.setPosition(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, _fileStream);
+
         _fileStream.setPosition(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, _fileStream);
+
         _fileStream.setPosition(128 * Sizes.OneKiB);
         VhdxHeader vhdxHeader2 = StreamUtilities.readStruct(VhdxHeader.class, _fileStream);
+
         LogSequence activeLogSequence = findActiveLogSequence();
+
         return new DiskImageFileInfo(fileHeader, vhdxHeader1, vhdxHeader2, _regionTable, _metadata, activeLogSequence);
     }
 
@@ -245,7 +249,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the unique id of the parent disk.
      */
     public UUID getParentUniqueId() {
-        if (_metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent)) {
+        if (!_metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent)) {
             return EMPTY;
         }
 
@@ -365,7 +369,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public Stream openRegion(UUID region) {
         RegionEntry metadataRegion = _regionTable.Regions.get(region);
-        return new SubStream(_logicalStream, metadataRegion.fileOffset, metadataRegion.sizeOf());
+        return new SubStream(_logicalStream, metadataRegion.fileOffset, metadataRegion.size());
     }
 
     /**
@@ -662,18 +666,23 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                    Ownership.Dispose)) {
             LogSequence candidateActiveSequence = new LogSequence();
             LogEntry[] logEntry = new LogEntry[1];
+
             long oldTail;
             long currentTail = 0;
+
             do {
                 oldTail = currentTail;
+
                 logStream.setPosition(currentTail);
                 LogSequence currentSequence = new LogSequence();
+
                 while (LogEntry.tryRead(logStream, logEntry) && logEntry[0].getLogGuid().equals(_header.LogGuid) &&
                        (currentSequence.size() == 0 ||
                         logEntry[0].getSequenceNumber() == currentSequence.getHead().getSequenceNumber() + 1)) {
                     currentSequence.add(logEntry[0]);
                     logEntry[0] = null;
                 }
+
                 if (currentSequence.size() > 0 && currentSequence.contains(currentSequence.getHead().getTail()) &&
                     currentSequence.higherSequenceThan(candidateActiveSequence)) {
                     candidateActiveSequence = currentSequence;
@@ -684,8 +693,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 } else {
                     currentTail = currentSequence.getHead().getPosition() + LogEntry.LogSectorSize;
                 }
+
                 currentTail = currentTail % logStream.getLength();
             } while (currentTail > oldTail);
+
             return candidateActiveSequence;
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

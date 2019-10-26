@@ -39,7 +39,7 @@ public final class MetadataInfo {
      * Gets a value indicating whether parsing this metadata is needed to open
      * the VHDX file.
      */
-    public boolean getIsRequired() {
+    public boolean isRequired() {
         return _entry.Flags.contains(MetadataEntryFlags.IsRequired);
     }
 
@@ -54,7 +54,7 @@ public final class MetadataInfo {
      * Gets a value indicating whether this is virtual disk metadata, or VHDX
      * file metadata.
      */
-    public boolean getIsVirtualDisk() {
+    public boolean isVirtualDisk() {
         return _entry.Flags.contains(MetadataEntryFlags.IsVirtualDisk);
     }
 

@@ -33,7 +33,7 @@ public class LongAllocationDescriptor implements IByteArraySerializable {
 
     public byte[] ImplementationUse;
 
-    public int sizeOf() {
+    public int size() {
         return 16;
     }
 

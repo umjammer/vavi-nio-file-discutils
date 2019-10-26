@@ -41,7 +41,7 @@ public class PvHeader implements IByteArraySerializable {
     /**
      *
      */
-    public int sizeOf() {
+    public int size() {
         return PhysicalVolume.SECTOR_SIZE;
     }
 
@@ -72,7 +72,7 @@ public class PvHeader implements IByteArraySerializable {
             areas.add(area);
         }
         MetadataDiskAreas = areas;
-        return sizeOf();
+        return size();
     }
 
     /**

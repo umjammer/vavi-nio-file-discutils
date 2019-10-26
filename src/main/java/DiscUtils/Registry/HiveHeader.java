@@ -72,7 +72,7 @@ public final class HiveHeader implements IByteArraySerializable {
         Guid2 = UUID.randomUUID();
     }
 
-    public int sizeOf() {
+    public int size() {
         return HeaderSize;
     }
 

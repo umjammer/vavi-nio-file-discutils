@@ -35,20 +35,14 @@ public final class UpperCase implements Comparator<String> {
     private final char[] _table;
 
     public UpperCase(File file) {
-        Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read);
-        try {
+        try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read)) {
             _table = new char[(int) s.getLength() / 2];
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
             for (int i = 0; i < _table.length; ++i) {
                 _table[i] = (char) EndianUtilities.toUInt16LittleEndian(buffer, i * 2);
             }
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -69,13 +63,12 @@ public final class UpperCase implements Comparator<String> {
     public int compare(byte[] x, int xOffset, int xLength, byte[] y, int yOffset, int yLength) {
         int compLen = Math.min(xLength, yLength) / 2;
         for (int i = 0; i < compLen; ++i) {
-            char xCh = (char) ((x[xOffset + i * 2] & 0xff) | (x[xOffset + i * 2 + 1] << 8));
-            char yCh = (char) ((y[yOffset + i * 2] & 0xff) | (y[yOffset + i * 2 + 1] << 8));
+            char xCh = (char) ((x[xOffset + i * 2] & 0xff) | ((x[xOffset + i * 2 + 1] & 0xff) << 8));
+            char yCh = (char) ((y[yOffset + i * 2] & 0xff) | ((y[yOffset + i * 2 + 1] & 0xff) << 8));
             int result = _table[xCh] - _table[yCh];
             if (result != 0) {
                 return result;
             }
-
         }
         return xLength - yLength;
     }
@@ -87,16 +80,11 @@ public final class UpperCase implements Comparator<String> {
         for (int i = Character.MIN_VALUE; i <= Character.MAX_VALUE; ++i) {
             EndianUtilities.writeBytesLittleEndian((short) Character.toUpperCase((char) i), buffer, i * 2);
         }
-        Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite);
-        try {
+
+        try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
             s.write(buffer, 0, buffer.length);
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
         return new UpperCase(file);
     }

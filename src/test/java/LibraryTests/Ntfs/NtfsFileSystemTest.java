@@ -23,6 +23,7 @@
 package LibraryTests.Ntfs;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -100,6 +101,16 @@ public class NtfsFileSystemTest {
         assertEquals(3, rp.getContent().length);
     }
 
+    class NullWriter extends Writer {
+        public void write(char[] cbuf, int off, int len) throws IOException {
+//            System.err.print(new String(cbuf, off, len));
+        }
+        public void flush() throws IOException {
+        }
+        public void close() throws IOException {
+        }
+    }
+
     @Test
     public void format_SmallDisk() throws Exception {
         long size = 8 * 1024 * 1024;
@@ -107,10 +118,7 @@ public class NtfsFileSystemTest {
 //        VirtualDisk disk = Vhd.Disk.initializeDynamic(partStream, Ownership.Dispose, size);
         NtfsFileSystem.format(partStream, "New Partition", Geometry.fromCapacity(size), 0, size / 512);
         try (NtfsFileSystem ntfs = new NtfsFileSystem(partStream)) {
-            ntfs.dump(new PrintWriter((Writer) null) {
-                public void write(int b) {
-                };
-            }, "");
+            ntfs.dump(new PrintWriter(new NullWriter()), "");
         }
     }
 
@@ -121,10 +129,7 @@ public class NtfsFileSystemTest {
         SparseMemoryStream partStream = new SparseMemoryStream();
         NtfsFileSystem.format(partStream, "New Partition", Geometry.fromCapacity(size), 0, size / 512);
         try (NtfsFileSystem ntfs = new NtfsFileSystem(partStream)) {
-            ntfs.dump(new PrintWriter((Writer) null) {
-                public void write(int b) {
-                };
-            }, "");
+            ntfs.dump(new PrintWriter(new NullWriter()), "");
         }
     }
 
@@ -180,9 +185,9 @@ public class NtfsFileSystemTest {
             byte[] read = new byte[100];
             ms.setPosition(extents.get(0).getStart());
             ms.read(read, 0, 100);
-            assertEquals(0xBA, read[0]);
-            assertEquals(0x82, read[1]);
-            assertEquals(0x2C, read[2]);
+            assertEquals((byte) 0xBA, read[0]);
+            assertEquals((byte) 0x82, read[1]);
+            assertEquals((byte) 0x2C, read[2]);
         }
     }
 

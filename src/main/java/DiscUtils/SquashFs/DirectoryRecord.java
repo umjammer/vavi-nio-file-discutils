@@ -35,7 +35,7 @@ public class DirectoryRecord implements IByteArraySerializable {
 
     public InodeType Type/* = InodeType.Directory*/;
 
-    public int sizeOf() {
+    public int size() {
         return 8 + Name.length();
     }
 
@@ -58,7 +58,7 @@ public class DirectoryRecord implements IByteArraySerializable {
         result.Type = InodeType.valueOf(reader.readUShort());
         short size = reader.readUShort();
         result.Name = reader.readString(size + 1);
-System.err.println(result.Name);
+//Debug.println(result.Name);
         return result;
     }
 }

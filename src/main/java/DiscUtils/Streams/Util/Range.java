@@ -84,18 +84,19 @@ public class Range {
      */
     public static List<Range> chunked(List<Range> ranges, long chunkSize) {
         List<Range> result = new ArrayList<>();
-        long chunkStart = 0;
+        long chunkStart = -1;
         long chunkLength = 0;
+
         for (Range range : ranges) {
             if (range.getCount() != 0) {
                 long rangeStart = MathUtilities.roundDown(range.getOffset(), chunkSize);
                 long rangeNext = MathUtilities.roundUp(range.getOffset() + range.getCount(), chunkSize);
-                if (chunkStart != 0 && rangeStart > chunkStart + chunkLength) {
 
+                if (chunkStart != -1 && rangeStart > chunkStart + chunkLength) {
                     // This extent is non-contiguous (in terms of blocks), so write out the last
                     // range and start new
                     chunkStart = rangeStart;
-                } else if (chunkStart == 0) {
+                } else if (chunkStart == -1) {
                     // First extent, so start first range
                     result.add(new Range(chunkStart, chunkLength));
                     chunkStart = rangeStart;
@@ -104,10 +105,10 @@ public class Range {
                 // Set the length of the current range, based on the end of this extent
                 chunkLength = rangeNext - chunkStart;
             }
-
         }
+
         // Final range (if any ranges at all) hasn't been returned yet, so do that now
-        if (chunkStart != 0) {
+        if (chunkStart != -1) {
             result.add(new Range(chunkStart, chunkLength));
         }
         return result;
@@ -119,6 +120,6 @@ public class Range {
      * @return The string representation.
      */
     public String toString() {
-        return "[" + getOffset() + ":+" + getCount() + "]";
+        return "Range: {" + getOffset() + ":+" + getCount() + "}";
     }
 }

@@ -35,7 +35,7 @@ public abstract class EntityIdentifier implements IByteArraySerializable {
 
     public byte[] Suffix;
 
-    public int sizeOf() {
+    public int size() {
         return 32;
     }
 

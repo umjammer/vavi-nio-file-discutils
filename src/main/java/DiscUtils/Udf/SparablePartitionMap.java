@@ -38,7 +38,7 @@ public final class SparablePartitionMap extends PartitionMap {
 
     public short VolumeSequenceNumber;
 
-    public int sizeOf() {
+    public int size() {
         return 64;
     }
 

@@ -113,7 +113,7 @@ public final class BuilderDirectory extends BuilderNode {
             hdr.StartBlock = (int) thisBlock;
 
             hdr.writeTo(context.getIoBuffer(), 0);
-            context.getDirectoryWriter().write(context.getIoBuffer(), 0, hdr.sizeOf());
+            context.getDirectoryWriter().write(context.getIoBuffer(), 0, hdr.size());
 
             for (int i = 0; i < count; ++i) {
                 Entry child = _children.get(currentChild + i);
@@ -124,7 +124,7 @@ public final class BuilderDirectory extends BuilderNode {
                 record.Name = child.Name;
 
                 record.writeTo(context.getIoBuffer(), 0);
-                context.getDirectoryWriter().write(context.getIoBuffer(), 0, record.sizeOf());
+                context.getDirectoryWriter().write(context.getIoBuffer(), 0, record.size());
 
                 if (child.Node.getInode().Type == InodeType.Directory
                         || child.Node.getInode().Type == InodeType.ExtendedDirectory) {
@@ -153,7 +153,7 @@ public final class BuilderDirectory extends BuilderNode {
         _inode.Type = InodeType.Directory;
         setInodeRef(context.getInodeWriter().getPosition());
         _inode.writeTo(context.getIoBuffer(), 0);
-        context.getInodeWriter().write(context.getIoBuffer(), 0, _inode.sizeOf());
+        context.getInodeWriter().write(context.getIoBuffer(), 0, _inode.size());
     }
 
     private static class Entry implements Comparable<Entry> {

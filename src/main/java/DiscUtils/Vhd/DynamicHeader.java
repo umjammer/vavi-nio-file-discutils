@@ -137,7 +137,7 @@ public class DynamicHeader {
     }
 
     public boolean isValid() {
-System.err.println(HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (HeaderVersion == Version1));
+//Debug.println(HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (HeaderVersion == Version1));
         return HeaderCookie.equals(Cookie) && isChecksumValid() && HeaderVersion == Version1;
     }
 

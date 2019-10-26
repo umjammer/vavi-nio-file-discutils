@@ -29,10 +29,10 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
 import dotnet4j.io.FileAccess;
@@ -55,7 +55,9 @@ public final class DiscTransport extends VirtualDiskTransport {
         try {
             String domain = uri.getHost();
             String[] pathParts;
-            pathParts = URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8.name()).split(Utilities.escapeForRegex("\\"));
+            pathParts = Arrays.stream(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8.name()).split("/"))
+                    .filter(e -> !e.isEmpty())
+                    .toArray(String[]::new);
             String instance = pathParts[0];
             String volName = pathParts[1];
             _odsClient = new OpticalDiscServiceClient();

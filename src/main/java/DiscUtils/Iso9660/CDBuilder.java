@@ -45,6 +45,7 @@ import dotnet4j.io.Stream;
 
 /**
  * Class that creates ISO images.
+ * 
  * <pre>
  * {@code
  * CDBuilder builder = new CDBuilder();
@@ -161,13 +162,15 @@ public final class CDBuilder extends StreamBuilder {
      * @param name The name of the directory on the ISO image.
      * @return The object representing this directory.
      *         The name is the full path to the directory, for example:
-     * <pre>
-     *         {@code
-     * builder.AddDirectory(@"DIRA\DIRB\DIRC");
-     * }
+     *
+     *         <pre>
+     * {@code builder.AddDirectory(@"DIRA\DIRB\DIRC");}
+     *         </pre>
      */
     public BuildDirectoryInfo addDirectory(String name) {
-        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
+        String[] nameElements = Arrays.stream(name.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         return getDirectory(nameElements, nameElements.length, true);
     }
 
@@ -178,17 +181,18 @@ public final class CDBuilder extends StreamBuilder {
      * @param content The contents of the file.
      * @return The object representing this file.
      *         The name is the full path to the file, for example:
-     * <pre>
-     *         {@code
-     *         builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", new byte[]{0,1,2});
-     *         }
-     * </pre>
+     *
+     *         <pre>
+     *         {@code builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", new byte[]{0,1,2}); }
+     *         </pre>
+     *
      *         Note the version number at the end of the file name is optional,
-     *         if not
-     *         specified the default of 1 will be used.
+     *         if not specified the default of 1 will be used.
      */
     public BuildFileInfo addFile(String name, byte[] content) {
-        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
+        String[] nameElements = Arrays.stream(name.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
         boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
@@ -209,17 +213,19 @@ public final class CDBuilder extends StreamBuilder {
      * @param sourcePath The name of the file on disk.
      * @return The object representing this file.
      *         The name is the full path to the file, for example:
-     * <pre>
-     *         {@code
-     * builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", @"C:\temp\tempfile.bin");
-     * }
-     * </pre>
+     *
+     *         <pre>
+     *         {@code builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", @"C:\temp\tempfile.bin"); }
+     *         </pre>
+     *
      *         Note the version number at the end of the file name is optional,
      *         if not
      *         specified the default of 1 will be used.
      */
     public BuildFileInfo addFile(String name, String sourcePath) {
-        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
+        String[] nameElements = Arrays.stream(name.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
         boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
@@ -240,21 +246,25 @@ public final class CDBuilder extends StreamBuilder {
      * @param source The contents of the file.
      * @return The object representing this file.
      *         The name is the full path to the file, for example:
-     * <pre>
+     * 
+     *         <pre>
      *         {@code
      * builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", stream);
      * }
      * </pre>
-     *         Note the version number at the end of the file name is optional,
-     *         if not
-     *         specified the default of 1 will be used.
+     * 
+     * Note the version number at the end of the file name is optional,
+     * if not
+     * specified the default of 1 will be used.
      */
     public BuildFileInfo addFile(String name, Stream source) {
         if (!source.canSeek()) {
             throw new IllegalArgumentException("source doesn't support seeking " + source);
         }
 
-        String[] nameElements = name.split(Utilities.escapeForRegex("\\"));
+        String[] nameElements = Arrays.stream(name.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
         boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);

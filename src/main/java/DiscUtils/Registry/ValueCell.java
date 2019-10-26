@@ -80,7 +80,7 @@ public final class ValueCell extends Cell {
         __Name = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x14 + (getName() == null || getName().isEmpty() ? 0 : getName().length());
     }
 
@@ -118,5 +118,9 @@ public final class ValueCell extends Cell {
         if (nameLen != 0) {
             EndianUtilities.stringToBytes(getName(), buffer, offset + 0x14, nameLen);
         }
+    }
+
+    public String toString() {
+        return "ValueCell{" + __Name + ", " + __DataType + "}";
     }
 }

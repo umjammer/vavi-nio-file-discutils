@@ -163,7 +163,7 @@ public class NfsFileSystem extends DiscFileSystem {
             if (destFileHandle != null) {
                 if (overwrite == false) {
                     throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists",
-                                                                                   destinationFile));
+                                                                    destinationFile));
                 }
             }
 
@@ -286,11 +286,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * Indicates whether a specified path exists, and refers to a directory.
      *
      * @param path The path to inspect.
-     * @return
-     *         {@code true}
-     *         if the path is a directory, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the path is a directory, else {@code false}.
      */
     public boolean directoryExists(String path) {
         return getAttributes(path).containsKey("Directory") && Boolean.class.cast(getAttributes(path).get("Directory"));
@@ -443,8 +439,7 @@ public class NfsFileSystem extends DiscFileSystem {
 
             Nfs3FileHandle destFileHandle = _client.lookup(destParent, destFileName);
             if (destFileHandle != null && overwrite == false) {
-                throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists",
-                                                                               destinationName));
+                throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists", destinationName));
             }
 
             _client.rename(sourceParent, sourceFileName, destParent, destFileName);
@@ -724,13 +719,17 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     private Nfs3FileHandle getParentDirectory(String path) {
-        String[] dirs = Utilities.getDirectoryFromPath(path).split(Utilities.escapeForRegex("\\"));
+        String[] dirs = Arrays.stream(Utilities.getDirectoryFromPath(path).split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         Nfs3FileHandle parent = getDirectory(_client.getRootHandle(), dirs);
         return parent;
     }
 
     private Nfs3FileHandle getDirectory(String path) {
-        String[] dirs = path.split(Utilities.escapeForRegex("\\"));
+        String[] dirs = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+                .filter(e -> !e.isEmpty())
+                .toArray(String[]::new);
         return getDirectory(_client.getRootHandle(), dirs);
     }
 

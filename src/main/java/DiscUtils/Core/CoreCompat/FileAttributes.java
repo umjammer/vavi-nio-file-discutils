@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 /**
  * FileAttributes.
  *
+ * TODO move to dotnet4j.io
+ *
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/10/09 umjammer initial version <br>
  */

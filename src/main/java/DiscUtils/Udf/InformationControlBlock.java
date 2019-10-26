@@ -45,7 +45,7 @@ public class InformationControlBlock implements IByteArraySerializable {
 
     public short StrategyType;
 
-    public int sizeOf() {
+    public int size() {
         return 20;
     }
 

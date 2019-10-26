@@ -60,7 +60,7 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         _context.setRawStream(stream);
         // Read superblock
         stream.setPosition(0);
-        byte[] buffer = StreamUtilities.readExact(stream, _context.getSuperBlock().sizeOf());
+        byte[] buffer = StreamUtilities.readExact(stream, _context.getSuperBlock().size());
         _context.getSuperBlock().readFrom(buffer, 0);
         if (_context.getSuperBlock().Magic != SuperBlock.SquashFsMagic) {
             throw new dotnet4j.io.IOException("Invalid SquashFS filesystem - magic mismatch");

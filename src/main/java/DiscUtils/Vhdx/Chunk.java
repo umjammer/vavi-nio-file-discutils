@@ -110,6 +110,7 @@ public final class Chunk {
 
     public PayloadBlockStatus allocateSpaceForBlock(int block) {
         boolean dataModified = false;
+
         BatEntry blockEntry = new BatEntry(_batData, block * 8);
         if (blockEntry.getFileOffsetMB() == 0) {
             blockEntry.setFileOffsetMB(allocateSpace(_fileParameters.BlockSize, false) / Sizes.OneMiB);
@@ -127,11 +128,13 @@ public final class Chunk {
             } else {
                 blockEntry.setPayloadBlockStatus(PayloadBlockStatus.FullyPresent);
             }
+
             dataModified = true;
         }
 
         if (dataModified) {
             blockEntry.writeTo(_batData, block * 8);
+
             _bat.setPosition(_chunk * (_blocksPerChunk + 1) * 8);
             _bat.write(_batData, 0, (_blocksPerChunk + 1) * 8);
         }

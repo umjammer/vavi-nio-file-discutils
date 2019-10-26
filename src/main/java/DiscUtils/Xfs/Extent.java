@@ -71,7 +71,7 @@ public class Extent implements IByteArraySerializable {
         __Flag = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 16;
     }
 
@@ -83,7 +83,7 @@ public class Extent implements IByteArraySerializable {
         setStartBlock((middle >>> 5) & 0x000FFFFFFFFFFFFFl);
         setStartOffset((upper >>> 9) & 0x003FFFFFFFFFFFFFl);
         setFlag(ExtentFlag.valueOf((buffer[offset + 0x0] >>> 6) & 0x3));
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

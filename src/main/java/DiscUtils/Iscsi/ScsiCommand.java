@@ -44,7 +44,7 @@ public abstract class ScsiCommand implements IByteArraySerializable {
         return TaskAttributes.Untagged;
     }
 
-    public abstract int sizeOf();
+    public abstract int size();
 
     public abstract int readFrom(byte[] buffer, int offset);
 

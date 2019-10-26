@@ -91,7 +91,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         throw new UnsupportedOperationException();
     }
 
-    public long getSize() {
+    public int getSize() {
         byte nameLength = 0;
         short nameOffset = 0x18;
         if (getName() != null) {

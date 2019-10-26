@@ -22,8 +22,6 @@
 
 package DiscUtils.Xfs;
 
-import java.util.Arrays;
-
 public enum VersionFlags {
     /**
      * Filesystem version number. This is a bitmask specifying the features

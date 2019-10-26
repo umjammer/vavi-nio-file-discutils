@@ -41,64 +41,52 @@ public final class ChsAddress {
      * @param sector The number of sectors per track/cylinder of the disk.
      */
     public ChsAddress(int cylinder, int head, int sector) {
-        __Cylinder = cylinder;
-        __Head = head;
-        __Sector = sector;
+        _cylinder = cylinder;
+        _head = head;
+        _sector = sector;
     }
 
     /**
      * Gets the cylinder number (zero-based).
      */
-    private int __Cylinder;
+    private int _cylinder;
 
     public int getCylinder() {
-        return __Cylinder;
+        return _cylinder;
     }
 
     /**
      * Gets the head (zero-based).
      */
-    private int __Head;
+    private int _head;
 
     public int getHead() {
-        return __Head;
+        return _head;
     }
 
     /**
      * Gets the sector number (one-based).
      */
-    private int __Sector;
+    private int _sector;
 
     public int getSector() {
-        return __Sector;
+        return _sector;
     }
 
     /**
      * Determines if this object is equivalent to another.
      *
      * @param obj The object to test against.
-     * @return
-     *         {@code true}
-     *         if the
-     *         {@code obj}
-     *         is equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the {@code obj} is equivalent, else
+     *         {@code false}.
      */
     public boolean equals(Object obj) {
-        try {
-            if (obj == null || obj.getClass() != getClass()) {
-                return false;
-            }
-
-            ChsAddress other = (ChsAddress) obj;
-            return getCylinder() == other.getCylinder() && getHead() == other.getHead() && getSector() == other.getSector();
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
+        if (obj == null || obj.getClass() != getClass()) {
+            return false;
         }
 
+        ChsAddress other = (ChsAddress) obj;
+        return _cylinder == other._cylinder && _head == other._head && _sector == other._sector;
     }
 
     /**
@@ -107,7 +95,7 @@ public final class ChsAddress {
      * @return The hash code.
      */
     public int hashCode() {
-        return getCylinder() ^ getHead() ^ getSector();
+        return _cylinder ^ _head ^ _sector;
     }
 
     /**
@@ -116,7 +104,7 @@ public final class ChsAddress {
      * @return The string representation.
      */
     public String toString() {
-        return "(" + getCylinder() + "/" + getHead() + "/" + getSector() + ")";
+        return "(" + _cylinder + "/" + _head + "/" + _sector + ")";
     }
 
 }

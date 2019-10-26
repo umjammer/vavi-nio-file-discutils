@@ -42,20 +42,23 @@ public class ExtFileSystemTest {
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
             }).iterator();
             fsis.stream().forEach(f -> i.next().accept(f));
+
             assertTrue(fs.getRoot().getDirectories("foo").get(0).getFileSystemInfos().isEmpty());
+
             fsis = fs.getRoot().getDirectories("bar").get(0).getFileSystemInfos();
             Collections.sort(fsis, (s1, s2) -> s1.getName().compareTo(s2.getName()));
             final Iterator<Consumer<DiscFileSystemInfo>> j = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("blah.txt", s.getName());
-                assertTrue(s.getAttributes().contains(FileAttributes.Directory));
+                assertTrue(!s.getAttributes().contains(FileAttributes.Directory));
             }, s -> {
                 assertEquals("testdir1", s.getName());
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
             }).iterator();
             fsis.stream().forEach(f -> j.next().accept(f));
-            byte[] tmpData = Helpers.readAll(fs.openFile("bar\\blah.txt", FileMode.Open));
 
+            byte[] tmpData = Helpers.readAll(fs.openFile("bar\\blah.txt", FileMode.Open));
             assertArrayEquals("hello world\n".getBytes(Charset.forName("ASCII")), tmpData);
+
             tmpData = Helpers.readAll(fs.openFile("bar\\testdir1\\test.txt", FileMode.Open));
             assertArrayEquals("Mon Feb 11 19:54:14 UTC 2019\n".getBytes(Charset.forName("ASCII")), tmpData);
         }

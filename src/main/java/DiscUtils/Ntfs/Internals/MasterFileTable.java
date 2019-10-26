@@ -119,7 +119,6 @@ public final class MasterFileTable {
         if (mftRecord != null) {
             return new MasterFileTableEntry(_context, mftRecord);
         }
-
         return null;
     }
 
@@ -138,6 +137,7 @@ public final class MasterFileTable {
             } else {
                 state = EntryStates.NotInUse;
             }
+
             if ((state.ordinal() & filter.ordinal()) != 0) {
                 result.add(new MasterFileTableEntry(_context, record));
             }

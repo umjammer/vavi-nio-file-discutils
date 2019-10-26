@@ -35,7 +35,7 @@ public class FileInfo implements IByteArraySerializable {
 
     public Point Point;
 
-    public int sizeOf() {
+    public int size() {
         return 16;
     }
 

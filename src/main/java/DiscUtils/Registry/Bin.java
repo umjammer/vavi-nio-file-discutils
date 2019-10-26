@@ -117,7 +117,7 @@ public final class Bin {
     public boolean updateCell(Cell cell) {
         int index = cell.getIndex() - _header.FileOffset;
         int allocSize = Math.abs(EndianUtilities.toInt32LittleEndian(_buffer, index));
-        int newSize = cell.sizeOf() + 4;
+        int newSize = cell.size() + 4;
         if (newSize > allocSize) {
             return false;
         }

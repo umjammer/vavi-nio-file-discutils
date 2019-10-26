@@ -51,7 +51,7 @@ public class DirectoryRecord implements IByteArraySerializable {
         _nameEncoding = nameEncoding;
     }
 
-    public int sizeOf() {
+    public int size() {
         return MathUtilities.roundUp(8 + Name.length(), 4);
     }
 

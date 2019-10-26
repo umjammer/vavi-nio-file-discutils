@@ -68,7 +68,7 @@ public class BTreeInodeRecord implements IByteArraySerializable {
         __Free = value;
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x10;
     }
 
@@ -76,7 +76,7 @@ public class BTreeInodeRecord implements IByteArraySerializable {
         setStartInode(EndianUtilities.toUInt32BigEndian(buffer, offset));
         setFreeCount(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4));
         setFree(BitSet.valueOf(EndianUtilities.toByteArray(buffer, offset + 0x8, 0x8)));
-        return sizeOf();
+        return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {

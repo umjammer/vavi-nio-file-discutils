@@ -40,15 +40,23 @@ public final class Quotas {
     private final IndexView<DiscUtils.Ntfs.Quotas.OwnerRecord, DiscUtils.Ntfs.Quotas.QuotaRecord> _quotaIndex;
 
     public Quotas(File file) {
-        _ownerIndex = new IndexView<>(file.getIndex("$O"));
-        _quotaIndex = new IndexView<>(file.getIndex("$Q"));
+        _ownerIndex = new IndexView<>(DiscUtils.Ntfs.Quotas.OwnerKey.class,
+                                      DiscUtils.Ntfs.Quotas.OwnerRecord.class,
+                                      file.getIndex("$O"));
+        _quotaIndex = new IndexView<>(DiscUtils.Ntfs.Quotas.OwnerRecord.class,
+                                      DiscUtils.Ntfs.Quotas.QuotaRecord.class,
+                                      file.getIndex("$Q"));
     }
 
     public static Quotas initialize(File file) {
         Index ownerIndex = file.createIndex("$O", null, AttributeCollationRule.Sid);
         Index quotaIndox = file.createIndex("$Q", null, AttributeCollationRule.UnsignedLong);
-        IndexView<DiscUtils.Ntfs.Quotas.OwnerKey, DiscUtils.Ntfs.Quotas.OwnerRecord> ownerIndexView = new IndexView<>(ownerIndex);
-        IndexView<DiscUtils.Ntfs.Quotas.OwnerRecord, DiscUtils.Ntfs.Quotas.QuotaRecord> quotaIndexView = new IndexView<>(quotaIndox);
+        IndexView<DiscUtils.Ntfs.Quotas.OwnerKey, DiscUtils.Ntfs.Quotas.OwnerRecord> ownerIndexView = new IndexView<>(DiscUtils.Ntfs.Quotas.OwnerKey.class,
+                                                                                                                      DiscUtils.Ntfs.Quotas.OwnerRecord.class,
+                                                                                                                      ownerIndex);
+        IndexView<DiscUtils.Ntfs.Quotas.OwnerRecord, DiscUtils.Ntfs.Quotas.QuotaRecord> quotaIndexView = new IndexView<>(DiscUtils.Ntfs.Quotas.OwnerRecord.class,
+                                                                                                                         DiscUtils.Ntfs.Quotas.QuotaRecord.class,
+                                                                                                                         quotaIndox);
         DiscUtils.Ntfs.Quotas.OwnerKey adminSid = new DiscUtils.Ntfs.Quotas.OwnerKey(new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid,
                                                                                                             null));
         DiscUtils.Ntfs.Quotas.OwnerRecord adminOwnerId = new DiscUtils.Ntfs.Quotas.OwnerRecord(256);
@@ -93,7 +101,7 @@ public final class Quotas {
             Sid = sid;
         }
 
-        public int sizeOf() {
+        public int size() {
             return Sid.getBinaryLength();
         }
 
@@ -121,7 +129,7 @@ public final class Quotas {
             OwnerId = ownerId;
         }
 
-        public int sizeOf() {
+        public int size() {
             return 4;
         }
 
@@ -168,7 +176,7 @@ public final class Quotas {
             Sid = sid;
         }
 
-        public int sizeOf() {
+        public int size() {
             return 0x30 + (Sid == null ? 0 : Sid.getBinaryLength());
         }
 
@@ -204,8 +212,8 @@ public final class Quotas {
         }
 
         public String toString() {
-            return "[V:" + Version + ",F:" + Flags + ",BU:" + BytesUsed + ",CT:" + ChangeTime + ",WL:" + WarningLimit + ",HL:"
-                    + HardLimit + ",ET:" + ExceededTime + ",SID:" + Sid + "]";
+            return "[V:" + Version + ",F:" + Flags + ",BU:" + BytesUsed + ",CT:" + ChangeTime + ",WL:" + WarningLimit + ",HL:" +
+                HardLimit + ",ET:" + ExceededTime + ",SID:" + Sid + "]";
         }
     }
 }

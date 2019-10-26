@@ -123,7 +123,7 @@ public final class DiskImageFileInfo {
      * Gets a value indicating whether the VHDX file has a parent file (i.e. is
      * a differencing file).
      */
-    public boolean getHasParent()  {
+    public boolean hasParent()  {
         return _metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent);
     }
 
@@ -131,7 +131,7 @@ public final class DiskImageFileInfo {
      * Gets a value indicating whether blocks should be left allocated within
      * the file.
      */
-    public boolean getLeaveBlocksAllocated() {
+    public boolean leaveBlocksAllocated() {
         return _metadata.getFileParameters().Flags.contains(FileParametersFlags.LeaveBlocksAllocated);
     }
 

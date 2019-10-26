@@ -59,7 +59,7 @@ public final class SubKeyHashedListCell extends ListCell {
         return _subKeyIndexes.size();
     }
 
-    public int sizeOf() {
+    public int size() {
         return 0x4 + _numElements * 0x8;
     }
 

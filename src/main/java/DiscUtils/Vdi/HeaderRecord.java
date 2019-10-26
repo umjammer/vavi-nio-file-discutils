@@ -24,6 +24,8 @@ package DiscUtils.Vdi;
 
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
 import dotnet4j.io.Stream;
@@ -100,14 +102,14 @@ public class HeaderRecord {
             headerSize = 348;
         } else {
             long savedPos = s.getPosition();
-System.err.println("savedPos: " + savedPos);
+//Debug.println("savedPos: " + savedPos);
             headerSize = EndianUtilities.toInt32LittleEndian(StreamUtilities.readExact(s, 4), 0);
-System.err.printf("headerSize: %1$8x, %1$d\n", headerSize);
+//Debug.printf("headerSize: %1$8x, %1$d\n", headerSize);
             s.setPosition(savedPos);
-System.err.println("getPosition: " + s.getPosition());
+//Debug.println("getPosition: " + s.getPosition());
         }
         byte[] buffer = StreamUtilities.readExact(s, headerSize);
-//System.err.println("R:\n" + StringUtil.getDump(buffer, 64));
+//Debug.println("R:\n" + StringUtil.getDump(buffer, 64));
         read(version, buffer, 0);
     }
 
@@ -205,7 +207,7 @@ System.err.println("getPosition: " + s.getPosition());
         } else {
             throw new dotnet4j.io.IOException("Unrecognized file version: " + fileVersion);
         }
-//System.err.println("W:\n" + StringUtil.getDump(buffer, 64));
+//Debug.println("W:\n" + StringUtil.getDump(buffer, 64));
         return headerSize;
     }
 }
