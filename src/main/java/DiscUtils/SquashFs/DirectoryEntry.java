@@ -26,7 +26,6 @@ import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
 
@@ -46,7 +45,7 @@ public class DirectoryEntry extends VfsDirEntry {
 
     public EnumSet<FileAttributes> getFileAttributes() {
         UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(_record.Type);
-        return Utilities.fileAttributesFromUnixFileType(fileType);
+        return UnixFileType.toFileAttributes(fileType);
     }
 
     public String getFileName() {

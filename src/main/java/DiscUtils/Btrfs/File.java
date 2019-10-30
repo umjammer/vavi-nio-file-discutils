@@ -25,7 +25,6 @@ package DiscUtils.Btrfs;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 
 import DiscUtils.Btrfs.Base.ItemType;
 import DiscUtils.Btrfs.Base.Key;
@@ -63,7 +62,7 @@ public class File implements IVfsFile {
         return DirEntry.getFileAttributes();
     }
 
-    public void setFileAttributes(Map<String, Object> value) {
+    public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 

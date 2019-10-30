@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/15 9:43:07
-//
-
-package DiscUtils.Ntfs;
-
-import DiscUtils.Streams.Util.EndianUtilities;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,13 +19,23 @@ import DiscUtils.Streams.Util.EndianUtilities;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public class IndexHeader
-{
+
+package DiscUtils.Ntfs;
+
+import DiscUtils.Streams.Util.EndianUtilities;
+
+
+public class IndexHeader {
     public static final int Size = 0x10;
+
     public int AllocatedSizeOfEntries;
+
     public byte _hasChildNodes;
+
     public int _offsetToFirstEntry;
+
     public int _totalSizeOfEntries;
+
     public IndexHeader(int allocatedSize) {
         AllocatedSizeOfEntries = allocatedSize;
     }
@@ -56,5 +58,3 @@ public class IndexHeader
     }
 
 }
-
-

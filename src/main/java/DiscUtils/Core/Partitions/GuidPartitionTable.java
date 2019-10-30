@@ -47,8 +47,6 @@ import dotnet4j.io.Stream;
  * Represents a GUID Partition Table.
  */
 public final class GuidPartitionTable extends PartitionTable {
-    private static final UUID EMPTY = new UUID(0L, 0L);
-
     private Stream _diskData;
 
     private Geometry _diskGeometry;
@@ -324,7 +322,7 @@ public final class GuidPartitionTable extends PartitionTable {
         try {
             bpt = new BiosPartitionTable(disk, diskGeometry);
         } catch (dotnet4j.io.IOException ioe) {
-            throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table not present or invalid");
+            throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table not present or invalid", ioe);
         }
 
         if (bpt.getCount() != 1 || bpt.get___idx(0).getBiosType() != BiosPartitionTypes.GptProtective) {

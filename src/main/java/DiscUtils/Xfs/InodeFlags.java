@@ -22,8 +22,14 @@
 
 package DiscUtils.Xfs;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 public enum InodeFlags {
-    None,
+//    None,
     /**
      * The inode's data is located on the real-time device.
      */
@@ -90,7 +96,23 @@ public enum InodeFlags {
      */
     Filestream;
 
-    public static InodeFlags valueOf(int value) {
-        return values()[value];
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<InodeFlags> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(InodeFlags.class)));
+    }
+
+    public static long valueOf(EnumSet<InodeFlags> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

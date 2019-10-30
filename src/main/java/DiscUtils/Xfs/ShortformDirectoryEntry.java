@@ -33,7 +33,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
 
     public ShortformDirectoryEntry(boolean useShortInode, Context context) {
         _useShortInode = useShortInode;
-        _ftype = context.getSuperBlock().getHasFType();
+        _ftype = context.getSuperBlock().hasFType();
     }
 
     private byte __NameLength;

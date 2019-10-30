@@ -27,28 +27,28 @@ public class DirectoryEntry {
 
     public DirectoryEntry(Directory directory, FileRecordReference fileReference, FileNameRecord fileDetails) {
         _directory = directory;
-        __Reference = fileReference;
-        __Details = fileDetails;
+        _reference = fileReference;
+        _details = fileDetails;
     }
 
-    private FileNameRecord __Details;
+    private FileNameRecord _details;
 
     public FileNameRecord getDetails() {
-        return __Details;
+        return _details;
     }
 
     public boolean isDirectory() {
         return getDetails().Flags.contains(FileAttributeFlags.Directory);
     }
 
-    private FileRecordReference __Reference;
+    private FileRecordReference _reference;
 
     public FileRecordReference getReference() {
-        return __Reference;
+        return _reference;
     }
 
     public String getSearchName() {
-        String fileName = getDetails().FileName;
+        String fileName = _details.FileName;
         if (fileName.indexOf('.') == -1) {
             return fileName + ".";
         }
@@ -57,11 +57,11 @@ public class DirectoryEntry {
     }
 
     public void updateFrom(File file) {
-        file.freshenFileName(getDetails(), true);
+        file.freshenFileName(_details, true);
         _directory.updateEntry(this);
     }
 
     public String toString() {
-        return getSearchName();
+        return _details.FileName;
     }
 }

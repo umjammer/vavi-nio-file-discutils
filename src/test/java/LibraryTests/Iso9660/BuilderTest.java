@@ -26,12 +26,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Iso9660.BootDeviceEmulation;
 import DiscUtils.Iso9660.CDBuilder;
 import DiscUtils.Iso9660.CDReader;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+
 
 public class BuilderTest {
     @Test
@@ -60,21 +62,14 @@ public class BuilderTest {
         builder.setBootImage(new MemoryStream(memoryStream), BootDeviceEmulation.HardDisk, 0x543);
         CDReader fs = new CDReader(builder.build(), false);
         assertTrue(fs.hasBootImage());
-        Stream bootImg = fs.openBootImage();
-        try {
-            {
-                assertEquals(memoryStream.length, bootImg.getLength());
-                for (int i = 0; i < bootImg.getLength(); ++i) {
-                    if (memoryStream[i] != bootImg.readByte()) {
-                        assertTrue(false, "Boot image corrupted");
-                    }
 
+        try (Stream bootImg = fs.openBootImage()) {
+            assertEquals(memoryStream.length, bootImg.getLength());
+            for (int i = 0; i < bootImg.getLength(); ++i) {
+                if ((memoryStream[i] & 0xff) != bootImg.readByte()) {
+                    fail("Boot image corrupted");
                 }
             }
-        } finally {
-            if (bootImg != null)
-                bootImg.close();
-
         }
         assertEquals(BootDeviceEmulation.HardDisk, fs.getBootEmulation());
         assertEquals(0x543, fs.getBootLoadSegment());

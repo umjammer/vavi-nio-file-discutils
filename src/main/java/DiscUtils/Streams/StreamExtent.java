@@ -33,11 +33,10 @@ import DiscUtils.Streams.Util.Range;
 
 
 /**
- * Represents a range of bytes in a stream.
- * This is normally used to represent regions of a SparseStream that
- * are actually stored in the underlying storage medium (rather than implied
- * zero bytes). Extents are stored as a zero-based byte offset (from the
- * beginning of the stream), and a byte length.
+ * Represents a range of bytes in a stream. This is normally used to represent
+ * regions of a SparseStream that are actually stored in the underlying storage
+ * medium (rather than implied zero bytes). Extents are stored as a zero-based
+ * byte offset (from the beginning of the stream), and a byte length.
  */
 public final class StreamExtent implements Comparable<StreamExtent> {
     /**
@@ -73,18 +72,16 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * Compares this stream extent to another.
      *
      * @param other The extent to compare.
-     * @return Value greater than zero if this extent starts after
-     *
-     *         {@code other}
-     *         , zero if they start at the same position, else
-     *         a value less than zero.
+     * @return Value greater than zero if this extent starts after {@code other}
+     *         , zero if they start at the same position, else a value less than
+     *         zero.
      */
     public int compareTo(StreamExtent other) {
-        if (getStart() > other.getStart()) {
+        if (start > other.start) {
             return 1;
         }
 
-        if (getStart() == other.getStart()) {
+        if (start == other.start) {
             return 0;
         }
 
@@ -95,18 +92,14 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * Indicates if this StreamExtent is equal to another.
      *
      * @param other The extent to compare.
-     * @return
-     *         {@code true}
-     *         if the extents are equal, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the extents are equal, else {@code false} .
      */
     public boolean equals(StreamExtent other) {
         if (other == null) {
             return false;
         }
 
-        return getStart() == other.getStart() && getLength() == other.getLength();
+        return start == other.start && length == other.length;
     }
 
     public static List<StreamExtent> union() {
@@ -134,8 +127,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      *
      * @param streams The stream extents.
      * @return The union of the extents from multiple streams.A typical use of
-     *         this method is to calculate the combined set of
-     *         stored extents from a number of overlayed sparse streams.
+     *         this method is to calculate the combined set of stored extents
+     *         from a number of overlayed sparse streams.
      */
     @SafeVarargs
     public static List<StreamExtent> union(List<StreamExtent>... streams) {
@@ -231,8 +224,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      *
      * @param streams The stream extents.
      * @return The intersection of the extents from multiple streams.A typical
-     *         use of this method is to calculate the extents in a
-     *         region of a stream..
+     *         use of this method is to calculate the extents in a region of a
+     *         stream..
      */
     @SafeVarargs
     public static List<StreamExtent> intersect(List<StreamExtent>... streams) {
@@ -245,7 +238,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
         for (int i = 0; i < streams.length; ++i) {
             enums[i] = streams[i].iterator();
             if (!enums[i].hasNext()) {
-                // Gone past end of one stream (in practice was empty), so no intersections
+                // Gone past end of one stream (in practice was empty), so no
+                // intersections
                 return result;
             }
             current[i] = enums[i].next();
@@ -253,18 +247,22 @@ public final class StreamExtent implements Comparable<StreamExtent> {
 
         int overlapsFound = 0;
         while (true) {
-            // We keep cycling round the streams, until we get streams.length continuous overlaps
+            // We keep cycling round the streams, until we get streams.length
+            // continuous overlaps
             for (int i = 0; i < streams.length; ++i) {
-                // Move stream on past all extents that are earlier than our candidate start point
+                // Move stream on past all extents that are earlier than our
+                // candidate start point
                 while (current[i].getLength() == 0 || current[i].getStart() + current[i].getLength() <= extentStart) {
                     if (!enums[i].hasNext()) {
-                        // Gone past end of this stream, no more intersections possible
+                        // Gone past end of this stream, no more intersections
+                        // possible
                         return result;
                     }
                     current[i] = enums[i].next();
                 }
 
-                // If this stream has an extent that spans over the candidate start point
+                // If this stream has an extent that spans over the candidate
+                // start point
                 if (current[i].getStart() <= extentStart) {
                     extentEnd = Math.min(extentEnd, current[i].getStart() + current[i].getLength());
                     overlapsFound++;
@@ -273,7 +271,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
                     extentEnd = extentStart + current[i].getLength();
                     overlapsFound = 1;
                 }
-                // We've just done a complete loop of all streams, they overlapped this start position
+                // We've just done a complete loop of all streams, they
+                // overlapped this start position
                 // and we've cut the extent's end down to the shortest run.
                 if (overlapsFound == streams.length) {
                     result.add(new StreamExtent(extentStart, extentEnd - extentStart));
@@ -290,11 +289,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      *
      * @param extents The stream extents.
      * @param other The extent to subtract.
-     * @return The subtraction of
-     *         {@code other}
-     *         from
-     *         {@code extents}
-     *         .
+     * @return The subtraction of {@code other} from {@code extents} .
      */
     public static List<StreamExtent> subtract(List<StreamExtent> extents, StreamExtent other) {
         return subtract(extents, Arrays.asList(other));
@@ -315,17 +310,12 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * Calculates the inverse of the extents of a stream.
      *
      * @param extents The stream extents to inverse.
-     * @return The inverted extents.
-     *         This method assumes a logical stream addressable from
-     *         {@code 0}
-     *         to
-     *         {@code Long.MAX_VALUE}
-     *         , and is undefined
-     *         should any stream extent start at less than 0. To constrain the
-     *         extents to a specific range, use the
+     * @return The inverted extents. This method assumes a logical stream
+     *         addressable from {@code 0} to {@code Long.MAX_VALUE} , and is
+     *         undefined should any stream extent start at less than 0. To
+     *         constrain the extents to a specific range, use the
      *
-     *         {@code Intersect}
-     *         method.
+     *         {@code Intersect} method.
      */
     public static List<StreamExtent> invert(List<StreamExtent> extents) {
         List<StreamExtent> result = new ArrayList<>();
@@ -371,9 +361,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @param stream The stream extents.
      * @param blockSize The size of each block.
      * @return The number of blocks containing stream data.This method logically
-     *         divides the stream into blocks of a specified
-     *         size, then indicates how many of those blocks contain actual
-     *         stream data.
+     *         divides the stream into blocks of a specified size, then
+     *         indicates how many of those blocks contain actual stream data.
      */
     public static long blockCount(List<StreamExtent> stream, long blockSize) {
         long totalBlocks = 0;
@@ -403,8 +392,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @param stream The stream extents.
      * @param blockSize The size of each block.
      * @return Ranges of blocks, as block indexes.This method logically divides
-     *         the stream into blocks of a specified
-     *         size, then indicates ranges of blocks that contain stream data.
+     *         the stream into blocks of a specified size, then indicates ranges
+     *         of blocks that contain stream data.
      */
     public static List<Range> blocks(List<StreamExtent> stream, long blockSize) {
         List<Range> result = new ArrayList<>();
@@ -416,18 +405,21 @@ public final class StreamExtent implements Comparable<StreamExtent> {
                 long extentNextBlock = MathUtilities.ceil(extent.getStart() + extent.getLength(), blockSize);
                 if (rangeStart != null && extentStartBlock > rangeStart + rangeLength) {
 
-                    // This extent is non-contiguous (in terms of blocks), so write out the last range and start new
+                    // This extent is non-contiguous (in terms of blocks), so
+                    // write out the last range and start new
                     result.add(new Range(rangeStart, rangeLength));
                     rangeStart = extentStartBlock;
                 } else if (rangeStart == null) {
                     // First extent, so start first range
                     rangeStart = extentStartBlock;
                 }
-                // Set the length of the current range, based on the end of this extent
+                // Set the length of the current range, based on the end of this
+                // extent
                 rangeLength = extentNextBlock - rangeStart;
             }
         }
-        // Final range (if any ranges at all) hasn't been returned yet, so do that now
+        // Final range (if any ranges at all) hasn't been returned yet, so do
+        // that now
         if (rangeStart != null) {
             result.add(new Range(rangeStart, rangeLength));
         }
@@ -479,13 +471,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * Indicates if this stream extent is equal to another object.
      *
      * @param obj The object to test.
-     * @return
-     *         {@code true}
-     *         if
-     *         {@code obj}
-     *         is equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if {@code obj} is equivalent, else {@code false} .
      */
     public boolean equals(Object obj) {
         return equals(obj instanceof StreamExtent ? (StreamExtent) obj : (StreamExtent) null);

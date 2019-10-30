@@ -193,7 +193,7 @@ public final class Nfs3FileSystemStat {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getTotalSizeBytes(),
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getTotalSizeBytes(),
                                              getFreeSpaceBytes(),
                                              getAvailableFreeSpaceBytes(),
                                              getFileSlotCount(),

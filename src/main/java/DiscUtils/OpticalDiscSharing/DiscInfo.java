@@ -1,11 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:10:14
-//
-
-package DiscUtils.OpticalDiscSharing;
-
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26,15 +19,19 @@ package DiscUtils.OpticalDiscSharing;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.OpticalDiscSharing;
+
 /**
-* Information about a shared Optical Disc.
-*/
-public final class DiscInfo
-{
+ * Information about a shared Optical Disc.
+ */
+public final class DiscInfo {
     /**
-    * Gets or sets the name of the disc (unique within an instance of OpticalDiscService).
-    */
+     * Gets or sets the name of the disc (unique within an instance of
+     * OpticalDiscService).
+     */
     private String __Name;
+
     public String getName() {
         return __Name;
     }
@@ -44,9 +41,10 @@ public final class DiscInfo
     }
 
     /**
-    * Gets or sets the displayable volume label for the disc.
-    */
+     * Gets or sets the displayable volume label for the disc.
+     */
     private String __VolumeLabel;
+
     public String getVolumeLabel() {
         return __VolumeLabel;
     }
@@ -56,9 +54,10 @@ public final class DiscInfo
     }
 
     /**
-    * Gets or sets the volume type of the disc.
-    */
+     * Gets or sets the volume type of the disc.
+     */
     private String __VolumeType;
+
     public String getVolumeType() {
         return __VolumeType;
     }
@@ -68,5 +67,3 @@ public final class DiscInfo
     }
 
 }
-
-

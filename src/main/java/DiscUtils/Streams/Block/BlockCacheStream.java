@@ -333,17 +333,20 @@ public final class BlockCacheStream extends SparseStream {
      */
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
+
         _stats.setTotalWritesIn(_stats.getTotalWritesIn() + 1);
+
         int blockSize = _settings.getBlockSize();
         long firstBlock = _position / blockSize;
         long endBlock = MathUtilities.ceil(Math.min(_position + count, getLength()), blockSize);
         int numBlocks = (int) (endBlock - firstBlock);
+
         try {
             _wrappedStream.setPosition(_position);
             _wrappedStream.write(buffer, offset, count);
-        } catch (Exception __dummyCatchVar0) {
+        } catch (Exception e) {
             invalidateBlocks(firstBlock, numBlocks);
-            throw __dummyCatchVar0;
+            throw e;
         }
 
         int offsetInNextBlock = (int) (_position % blockSize);
@@ -356,9 +359,9 @@ public final class BlockCacheStream extends SparseStream {
         for (int i = 0; i < numBlocks; ++i) {
             int bufferPos = offset + bytesProcessed;
             int bytesThisBlock = Math.min(count - bytesProcessed, blockSize - offsetInNextBlock);
+
             Block[] block = new Block[1];
-            boolean boolVar___0 = _cache.tryGetBlock(firstBlock + i, block);
-            if (boolVar___0) {
+            if (_cache.tryGetBlock(firstBlock + i, block)) {
                 System.arraycopy(buffer, bufferPos, block[0].getData(), offsetInNextBlock, bytesThisBlock);
                 block[0].setAvailable(Math.max(block[0].getAvailable(), offsetInNextBlock + bytesThisBlock));
             }

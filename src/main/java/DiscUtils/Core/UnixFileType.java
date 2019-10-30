@@ -22,6 +22,10 @@
 
 package DiscUtils.Core;
 
+import java.util.EnumSet;
+
+import DiscUtils.Core.CoreCompat.FileAttributes;
+
 public enum UnixFileType {
     /**
      * Standard Unix-style file type.
@@ -65,5 +69,26 @@ public enum UnixFileType {
 
     public static UnixFileType valueOf(int value) {
         return values()[value];
+    }
+
+    public static EnumSet<FileAttributes> toFileAttributes(UnixFileType fileType) {
+        switch (fileType) {
+        case Fifo:
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
+        case Character:
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
+        case Directory:
+            return EnumSet.of(FileAttributes.Directory);
+        case Block:
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
+        case Regular:
+            return EnumSet.of(FileAttributes.Normal);
+        case Link:
+            return EnumSet.of(FileAttributes.ReparsePoint);
+        case Socket:
+            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
+        default:
+            return EnumSet.noneOf(FileAttributes.class);
+        }
     }
 }

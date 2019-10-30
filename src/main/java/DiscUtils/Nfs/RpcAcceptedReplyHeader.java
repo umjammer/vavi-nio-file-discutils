@@ -63,11 +63,11 @@ public class RpcAcceptedReplyHeader {
             return false;
         }
 
-        return Utilities.equals(other.Verifier, Verifier) && other.AcceptStatus == AcceptStatus
-                && Utilities.equals(other.MismatchInfo, MismatchInfo);
+        return dotnet4j.io.compat.Utilities.equals(other.Verifier, Verifier) && other.AcceptStatus == AcceptStatus
+                && dotnet4j.io.compat.Utilities.equals(other.MismatchInfo, MismatchInfo);
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(Verifier, AcceptStatus, MismatchInfo);
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(Verifier, AcceptStatus, MismatchInfo);
     }
 }

@@ -77,7 +77,6 @@ public class CookedDataRuns {
                 if (run.getStartVcn() + run.getLength() > vcn) {
                     return numRuns - 1;
                 }
-
                 throw new IOException("Looking for VCN outside of data runs");
             }
 
@@ -122,7 +121,7 @@ public class CookedDataRuns {
             throw new IllegalArgumentException("Run is already sparse");
         }
 
-        _runs.add(index,
+        _runs.set(index,
                   new CookedDataRun(new DataRun(0, run.getLength(), true),
                                     run.getStartVcn(),
                                     prevLcn,

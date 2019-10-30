@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:06:24
-//
-
-package DiscUtils.HfsPlus;
-
-import DiscUtils.Streams.Util.EndianUtilities;
-
-//
 // Copyright (c) 2014, Quamotion
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,9 +19,15 @@ import DiscUtils.Streams.Util.EndianUtilities;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public class CompressionResourceBlock
-{
+
+package DiscUtils.HfsPlus;
+
+import DiscUtils.Streams.Util.EndianUtilities;
+
+
+public class CompressionResourceBlock {
     private int __DataSize;
+
     public int getDataSize() {
         return __DataSize;
     }
@@ -39,6 +37,7 @@ public class CompressionResourceBlock
     }
 
     private int __Offset;
+
     public int getOffset() {
         return __Offset;
     }
@@ -56,7 +55,4 @@ public class CompressionResourceBlock
         setDataSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
         return getSize();
     }
-
 }
-
-

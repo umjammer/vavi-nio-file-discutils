@@ -33,20 +33,19 @@ public final class NtfsTransaction implements Closeable {
     public NtfsTransaction() {
         if (_instance == null) {
             _instance = this;
-            __Timestamp = System.currentTimeMillis();
+            _timestamp = System.currentTimeMillis();
             _ownRecord = true;
         }
-
     }
 
     public static NtfsTransaction getCurrent() {
         return _instance;
     }
 
-    private long __Timestamp;
+    private long _timestamp;
 
     public long getTimestamp() {
-        return __Timestamp;
+        return _timestamp;
     }
 
     public void close() {

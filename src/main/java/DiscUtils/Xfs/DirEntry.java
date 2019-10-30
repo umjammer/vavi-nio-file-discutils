@@ -27,7 +27,6 @@ import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
 
@@ -102,7 +101,7 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return Utilities.fileAttributesFromUnixFileType(getInode().getFileType());
+        return UnixFileType.toFileAttributes(getInode().getFileType());
     }
 
     public long getUniqueCacheId() {

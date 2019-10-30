@@ -52,7 +52,7 @@ public class BTreeExtentLeafV5 extends BTreeExtentHeaderV5 {
         for (int i = 0; i < getNumberOfRecords(); i++) {
             Extent rec = new Extent();
             offset += rec.readFrom(buffer, offset);
-            __Extents.add(i, rec);
+            __Extents.set(i, rec);
         }
         return size();
     }

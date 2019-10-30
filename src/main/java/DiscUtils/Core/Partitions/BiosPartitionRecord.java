@@ -36,132 +36,132 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         setStatus(data[offset]);
         setStartHead(data[offset + 1]);
         setStartSector((byte) (data[offset + 2] & 0x3F));
-        setStartCylinder((short) (data[offset + 3] | ((data[offset + 2] & 0xC0) << 2)));
+        setStartCylinder((short) ((data[offset + 3] & 0xff) | ((data[offset + 2] & 0xC0) << 2)));
         setPartitionType(data[offset + 4]);
         setEndHead(data[offset + 5]);
         setEndSector((byte) (data[offset + 6] & 0x3F));
-        setEndCylinder((short) (data[offset + 7] | ((data[offset + 6] & 0xC0) << 2)));
+        setEndCylinder((short) ((data[offset + 7] & 0xff)  | ((data[offset + 6] & 0xC0) << 2)));
         setLBAStart(EndianUtilities.toUInt32LittleEndian(data, offset + 8));
         setLBALength(EndianUtilities.toUInt32LittleEndian(data, offset + 12));
-        __Index = index;
+        _index = index;
     }
 
-    private short __EndCylinder;
+    private short _endCylinder;
 
     public int getEndCylinder() {
-        return __EndCylinder & 0xffff;
+        return _endCylinder & 0xffff;
     }
 
     public void setEndCylinder(short value) {
-        __EndCylinder = value;
+        _endCylinder = value;
     }
 
-    private byte __EndHead;
+    private byte _endHead;
 
     public int getEndHead() {
-        return __EndHead & 0xff;
+        return _endHead & 0xff;
     }
 
     public void setEndHead(byte value) {
-        __EndHead = value;
+        _endHead = value;
     }
 
-    private byte __EndSector;
+    private byte _endSector;
 
     public byte getEndSector() {
-        return __EndSector;
+        return _endSector;
     }
 
     public void setEndSector(byte value) {
-        __EndSector = value;
+        _endSector = value;
     }
 
     public String getFriendlyPartitionType() {
         return BiosPartitionTypes.toString(getPartitionType());
     }
 
-    private int __Index;
+    private int _index;
 
     public int getIndex() {
-        return __Index;
+        return _index;
     }
 
     public boolean isValid() {
-        return __EndHead != 0 || __EndSector != 0 || __EndCylinder != 0 || __LBALength != 0;
+        return _endHead != 0 || _endSector != 0 || _endCylinder != 0 || _lbaLength != 0;
     }
 
-    private int __LBALength;
+    private int _lbaLength;
 
     public long getLBALength() {
-        return __LBALength & 0xffffffffl;
+        return _lbaLength & 0xffffffffl;
     }
 
     public void setLBALength(int value) {
-        __LBALength = value;
+        _lbaLength = value;
     }
 
-    private int __LBAStart;
+    private int _lbaStart;
 
     public long getLBAStart() {
-        return __LBAStart & 0xffffffffl;
+        return _lbaStart & 0xffffffffl;
     }
 
     public void setLBAStart(int value) {
-        __LBAStart = value;
+        _lbaStart = value;
     }
 
     public long getLBAStartAbsolute() {
         return getLBAStart() + _lbaOffset;
     }
 
-    private byte __PartitionType;
+    private byte _partitionType;
 
     public byte getPartitionType() {
-        return __PartitionType;
+        return _partitionType;
     }
 
     public void setPartitionType(byte value) {
-        __PartitionType = value;
+        _partitionType = value;
     }
 
-    private short __StartCylinder;
+    private short _startCylinder;
 
     public int getStartCylinder() {
-        return __StartCylinder & 0xffff;
+        return _startCylinder & 0xffff;
     }
 
     public void setStartCylinder(short value) {
-        __StartCylinder = value;
+        _startCylinder = value;
     }
 
-    private byte __StartHead;
+    private byte _startHead;
 
     public int getStartHead() {
-        return __StartHead & 0xff;
+        return _startHead & 0xff;
     }
 
     public void setStartHead(byte value) {
-        __StartHead = value;
+        _startHead = value;
     }
 
-    private byte __StartSector;
+    private byte _startSector;
 
-    public byte getStartSector() {
-        return __StartSector;
+    public int getStartSector() {
+        return _startSector & 0xff;
     }
 
     public void setStartSector(byte value) {
-        __StartSector = value;
+        _startSector = value;
     }
 
-    private byte __Status;
+    private byte _status;
 
     public byte getStatus() {
-        return __Status;
+        return _status;
     }
 
     public void setStatus(byte value) {
-        __Status = value;
+        _status = value;
     }
 
     public int compareTo(BiosPartitionRecord other) {
@@ -169,15 +169,15 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        buffer[offset] = __Status;
-        buffer[offset + 1] = __StartHead;
-        buffer[offset + 2] = (byte) ((__StartSector & 0x3F) | ((__StartCylinder >>> 2) & 0xC0));
-        buffer[offset + 3] = (byte) __StartCylinder;
-        buffer[offset + 4] = __PartitionType;
-        buffer[offset + 5] = __EndHead;
-        buffer[offset + 6] = (byte) ((__EndSector & 0x3F) | ((__EndCylinder >>> 2) & 0xC0));
-        buffer[offset + 7] = (byte) __EndCylinder;
-        EndianUtilities.writeBytesLittleEndian(__LBAStart, buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(__LBALength, buffer, offset + 12);
+        buffer[offset] = _status;
+        buffer[offset + 1] = _startHead;
+        buffer[offset + 2] = (byte) ((_startSector & 0x3F) | ((_startCylinder >>> 2) & 0xC0));
+        buffer[offset + 3] = (byte) _startCylinder;
+        buffer[offset + 4] = _partitionType;
+        buffer[offset + 5] = _endHead;
+        buffer[offset + 6] = (byte) ((_endSector & 0x3F) | ((_endCylinder >>> 2) & 0xC0));
+        buffer[offset + 7] = (byte) _endCylinder;
+        EndianUtilities.writeBytesLittleEndian(_lbaStart, buffer, offset + 8);
+        EndianUtilities.writeBytesLittleEndian(_lbaLength, buffer, offset + 12);
     }
 }

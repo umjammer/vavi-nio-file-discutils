@@ -372,7 +372,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         List<String> valueNames = key.getValueNames();
         for (int i = 0; i < valueNames.size(); ++i) {
             if (valueNames.get(i) == null || valueNames.get(i).isEmpty()) {
-                valueNames.add(i, DefaultValueName);
+                valueNames.set(i, DefaultValueName);
             }
         }
         psObj.Properties.add(new PSNoteProperty("Property", valueNames));

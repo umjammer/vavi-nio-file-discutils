@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:06:24
-//
-
-package DiscUtils.HfsPlus;
-
-import DiscUtils.Streams.Util.EndianUtilities;
-
-//
 // Copyright (c) 2014, Quamotion
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,9 +19,15 @@ import DiscUtils.Streams.Util.EndianUtilities;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public class CompressionResourceHeader
-{
+
+package DiscUtils.HfsPlus;
+
+import DiscUtils.Streams.Util.EndianUtilities;
+
+
+public class CompressionResourceHeader {
     private int __DataSize;
+
     public int getDataSize() {
         return __DataSize;
     }
@@ -39,6 +37,7 @@ public class CompressionResourceHeader
     }
 
     private int __Flags;
+
     public int getFlags() {
         return __Flags;
     }
@@ -48,6 +47,7 @@ public class CompressionResourceHeader
     }
 
     private int __HeaderSize;
+
     public int getHeaderSize() {
         return __HeaderSize;
     }
@@ -61,6 +61,7 @@ public class CompressionResourceHeader
     }
 
     private int __TotalSize;
+
     public int getTotalSize() {
         return __TotalSize;
     }
@@ -76,7 +77,4 @@ public class CompressionResourceHeader
         setFlags(EndianUtilities.toUInt32BigEndian(buffer, offset + 12));
         return getSize();
     }
-
 }
-
-

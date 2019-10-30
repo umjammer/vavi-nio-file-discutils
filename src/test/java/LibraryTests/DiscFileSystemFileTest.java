@@ -295,9 +295,11 @@ public class DiscFileSystemFileTest {
 
         try (Stream s = fs.openFile("foo.txt", FileMode.Create)) {
         }
-        assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTimeUtc());
-        assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt")
-                .getCreationTimeUtc());
+        assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTimeUtc(),
+                   Instant.now() + " >= " + Instant.ofEpochMilli(fs.getFileInfo("foo.txt").getCreationTimeUtc()));
+        assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTimeUtc(),
+                   Instant.now().minus(Duration.ofSeconds(10)) + " <= " + Instant
+                           .ofEpochMilli(fs.getFileInfo("foo.txt").getCreationTimeUtc()));
     }
 
     @ParameterizedTest
@@ -307,7 +309,8 @@ public class DiscFileSystemFileTest {
 
         try (Stream s = fs.openFile("foo.txt", FileMode.Create)) {
         }
-        assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTime());
+        assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTime(),
+                   Instant.now() + " >= " + Instant.ofEpochMilli(fs.getFileInfo("foo.txt").getCreationTime()));
         assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTime());
     }
 
@@ -323,7 +326,7 @@ public class DiscFileSystemFileTest {
 
         try (Stream s = fs.openFile("foo.txt", FileMode.Open, FileAccess.Read)) {
         }
-        assertTrue(baseTime < fi.getLastAccessTime());
+        assertTrue(baseTime < fi.getLastAccessTime(), baseTime + " < " + fi.getLastAccessTime());
     }
 
     @ParameterizedTest
@@ -339,7 +342,7 @@ public class DiscFileSystemFileTest {
         try (Stream s = fs.openFile("foo.txt", FileMode.Open)) {
             s.writeByte((byte) 1);
         }
-        assertTrue(baseTime < fi.getLastWriteTime());
+        assertTrue(baseTime < fi.getLastWriteTime(), baseTime + " < " + fi.getLastWriteTime());
     }
 
     @ParameterizedTest

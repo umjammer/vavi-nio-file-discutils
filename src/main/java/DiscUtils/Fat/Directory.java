@@ -26,6 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -60,12 +61,12 @@ public class Directory implements Closeable {
     private long _selfEntryLocation;
 
     /**
-     * Initializes a new instance of the Directory class. Use this constructor to
-     * represent non-root directories.
+     * Initializes a new instance of the Directory class. Use this constructor
+     * to represent non-root directories.
      *
-     * @param parent   The parent directory.
-     * @param parentId The identity of the entry representing this directory in the
-     *                     parent.
+     * @param parent The parent directory.
+     * @param parentId The identity of the entry representing this directory in
+     *            the parent.
      */
     public Directory(Directory parent, long parentId) {
         __FileSystem = parent.getFileSystem();
@@ -77,11 +78,11 @@ public class Directory implements Closeable {
     }
 
     /**
-     * Initializes a new instance of the Directory class. Use this constructor to
-     * represent the root directory.
+     * Initializes a new instance of the Directory class. Use this constructor
+     * to represent the root directory.
      *
      * @param fileSystem The file system.
-     * @param dirStream  The stream containing the directory info.
+     * @param dirStream The stream containing the directory info.
      */
     public Directory(FatFileSystem fileSystem, Stream dirStream) {
         __FileSystem = fileSystem;
@@ -117,7 +118,7 @@ public class Directory implements Closeable {
     public List<DirectoryEntry> getFiles() {
         List<DirectoryEntry> files = new ArrayList<>(_entries.size());
         for (DirectoryEntry dirEntry : _entries.values()) {
-            if (dirEntry.getAttributes().containsAll(EnumSet.of(FatAttributes.Directory, FatAttributes.VolumeId))) {
+            if (Collections.disjoint(dirEntry.getAttributes(), EnumSet.of(FatAttributes.Directory, FatAttributes.VolumeId))) {
                 files.add(dirEntry);
             }
         }
@@ -141,12 +142,12 @@ public class Directory implements Closeable {
         return getFileSystem().getDirectory(this, id);
     }
 
-    public Directory createChildDirectory(FileName name) {
+    Directory createChildDirectory(FileName name) {
         long id = findEntry(name);
         if (id >= 0) {
             if (!_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
-                throw new dotnet4j.io.IOException("A file exists with the same name: "
-                        + name.getDisplayName(Charset.forName(System.getProperty("file.encoding"))));
+                throw new dotnet4j.io.IOException("A file exists with the same name: " +
+                                                  name.getDisplayName(Charset.forName(System.getProperty("file.encoding"))));
             }
 
             return getFileSystem().getDirectory(this, id);
@@ -178,7 +179,7 @@ public class Directory implements Closeable {
         }
     }
 
-    public void attachChildDirectory(FileName name, Directory newChild) {
+    void attachChildDirectory(FileName name, Directory newChild) {
         long id = findEntry(name);
         if (id >= 0) {
             throw new dotnet4j.io.IOException("Directory entry already exists");
@@ -192,7 +193,7 @@ public class Directory implements Closeable {
         newChild.setParentEntry(newParentEntry);
     }
 
-    public long findVolumeId() {
+    long findVolumeId() {
         for (long id : _entries.keySet()) {
             DirectoryEntry focus = _entries.get(id);
             if (focus.getAttributes().contains(FatAttributes.VolumeId)) {
@@ -203,7 +204,7 @@ public class Directory implements Closeable {
         return -1;
     }
 
-    public long findEntry(FileName name) {
+    long findEntry(FileName name) {
         for (long id : _entries.keySet()) {
             DirectoryEntry focus = _entries.get(id);
             if (focus.getName().equals(name) && !focus.getAttributes().contains(FatAttributes.VolumeId)) {
@@ -214,7 +215,7 @@ public class Directory implements Closeable {
         return -1;
     }
 
-    public SparseStream openFile(FileName name, FileMode mode, FileAccess fileAccess) {
+    SparseStream openFile(FileName name, FileMode mode, FileAccess fileAccess) {
         if (mode == FileMode.Append || mode == FileMode.Truncate) {
             throw new UnsupportedOperationException();
         }
@@ -226,8 +227,8 @@ public class Directory implements Closeable {
         }
 
         if (mode == FileMode.Open && !exists) {
-            throw new FileNotFoundException("File not found "
-                    + name.getDisplayName(getFileSystem().getFatOptions().getFileNameEncoding()));
+            throw new FileNotFoundException("File not found " +
+                                            name.getDisplayName(getFileSystem().getFatOptions().getFileNameEncoding()));
         }
 
         if ((mode == FileMode.Open || mode == FileMode.OpenOrCreate || mode == FileMode.Create) && exists) {
@@ -258,7 +259,7 @@ public class Directory implements Closeable {
     }
 
     // Should never get here...
-    public long addEntry(DirectoryEntry newEntry) {
+    long addEntry(DirectoryEntry newEntry) {
         // Unlink an entry from the free list (or add to the end of the existing
         // directory)
         long pos;
@@ -279,7 +280,7 @@ public class Directory implements Closeable {
         return pos;
     }
 
-    public void deleteEntry(long id, boolean releaseContents) {
+    void deleteEntry(long id, boolean releaseContents) {
         if (id < 0) {
             throw new dotnet4j.io.IOException("Attempt to delete unknown directory entry");
         }
@@ -302,7 +303,7 @@ public class Directory implements Closeable {
         }
     }
 
-    public void updateEntry(long id, DirectoryEntry entry) {
+    void updateEntry(long id, DirectoryEntry entry) {
         if (id < 0) {
             throw new dotnet4j.io.IOException("Attempt to update unknown directory entry");
         }
@@ -325,8 +326,8 @@ public class Directory implements Closeable {
             if (entry.getAttributes()
                     .containsAll(EnumSet
                             .of(FatAttributes.ReadOnly, FatAttributes.Hidden, FatAttributes.System, FatAttributes.VolumeId))) {
-            } else // Long File Name entry
-            if (entry.getName().isDeleted()) {
+                // Long File Name entry
+            } else if (entry.getName().isDeleted()) {
                 // E5 = Free Entry
                 _freeEntries.add(streamPos);
             } else if (entry.getName().equals(FileName.SelfEntryName)) {

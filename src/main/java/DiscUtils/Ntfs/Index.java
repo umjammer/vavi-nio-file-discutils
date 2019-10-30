@@ -163,8 +163,8 @@ public class Index implements Closeable {
         IndexEntry[] oldEntry = new IndexEntry[1];
         IndexNode[] node = new IndexNode[1];
         _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
-        boolean r = _rootNode.tryFindEntry(key, oldEntry, node);
-        if (r) {
+
+        if (_rootNode.tryFindEntry(key, oldEntry, node)) {
             node[0].updateEntry(key, value);
         } else {
             _rootNode.addEntry(key, value);
@@ -335,6 +335,7 @@ Debug.println(Level.WARNING, indexName);
     }
 
     public int compare(byte[] x, byte[] y) {
+//Debug.println(_comparer.getClass() + ": " + _comparer.compare(x, y));
         return _comparer.compare(x, y);
     }
 

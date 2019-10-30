@@ -39,18 +39,17 @@ public class XfsTests {
         assertEquals("init.d", symlink.getTargetPath());
     }
 
-    @Test
     private byte[] getInodeBuffer() throws Exception {
         byte[] inodeBuffer = new byte[0x70];
         inodeBuffer[0x5] = (byte) InodeFormat.Local.ordinal();
         inodeBuffer[0x3F] = 6; // Length (di_size)
         inodeBuffer[0x52] = 0; // Forkoff
-        inodeBuffer[0X64] = (byte) 'i';
-        inodeBuffer[0X65] = (byte) 'n';
-        inodeBuffer[0X66] = (byte) 'i';
-        inodeBuffer[0X67] = (byte) 't';
-        inodeBuffer[0X68] = (byte) '.';
-        inodeBuffer[0X69] = (byte) 'd';
+        inodeBuffer[0x64] = (byte) 'i';
+        inodeBuffer[0x65] = (byte) 'n';
+        inodeBuffer[0x66] = (byte) 'i';
+        inodeBuffer[0x67] = (byte) 't';
+        inodeBuffer[0x68] = (byte) '.';
+        inodeBuffer[0x69] = (byte) 'd';
 
         return inodeBuffer;
     }

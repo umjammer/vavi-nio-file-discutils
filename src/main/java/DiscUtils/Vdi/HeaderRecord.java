@@ -24,8 +24,6 @@ package DiscUtils.Vdi;
 
 import java.util.UUID;
 
-import vavi.util.Debug;
-
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
 import dotnet4j.io.Stream;

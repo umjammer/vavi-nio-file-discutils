@@ -22,10 +22,10 @@
 
 package DiscUtils.Core;
 
+
 /**
  * Class whose instances represent a CHS (Cylinder, Head, Sector) address on a
- * disk.
- * Instances of this class are immutable.
+ * disk. Instances of this class are immutable.
  */
 public final class ChsAddress {
     /**
@@ -41,9 +41,11 @@ public final class ChsAddress {
      * @param sector The number of sectors per track/cylinder of the disk.
      */
     public ChsAddress(int cylinder, int head, int sector) {
+        assert cylinder >= 0 && head >= 0 && sector >= 0;
         _cylinder = cylinder;
         _head = head;
         _sector = sector;
+//Debug.print(this);
     }
 
     /**
@@ -106,5 +108,4 @@ public final class ChsAddress {
     public String toString() {
         return "(" + _cylinder + "/" + _head + "/" + _sector + ")";
     }
-
 }

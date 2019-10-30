@@ -50,7 +50,10 @@ public class Database {
         buffer = StreamUtilities.readExact(stream, _vmdb.BlockSize * _vmdb.NumVBlks);
         _records = new HashMap<>();
         for (int i = 0; i < _vmdb.NumVBlks; ++i) {
-            DatabaseRecord rec = DatabaseRecord.readFrom(buffer, new int[] { i * _vmdb.BlockSize });
+            DatabaseRecord rec = DatabaseRecord.readFrom(buffer,
+                                                         new int[] {
+                                                             i * _vmdb.BlockSize
+                                                         });
             if (rec != null) {
                 _records.put(rec.Id, rec);
             }
@@ -58,15 +61,23 @@ public class Database {
     }
 
     public List<DiskRecord> getDisks() {
-        return _records.values().stream().filter(r -> r._RecordType == RecordType.Disk).map(r -> DiskRecord.class.cast(r)).collect(Collectors.toList());
+        return _records.values()
+                .stream()
+                .filter(r -> r._RecordType == RecordType.Disk)
+                .map(r -> DiskRecord.class.cast(r))
+                .collect(Collectors.toList());
     }
 
     public List<VolumeRecord> getVolumes() {
-        return _records.values().stream().filter(r -> r._RecordType == RecordType.Volume).map(r -> VolumeRecord.class.cast(r)).collect(Collectors.toList());
+        return _records.values()
+                .stream()
+                .filter(r -> r._RecordType == RecordType.Volume)
+                .map(r -> VolumeRecord.class.cast(r))
+                .collect(Collectors.toList());
     }
 
     public DiskGroupRecord getDiskGroup(UUID guid) {
-        for (DatabaseRecord record  : _records.values()) {
+        for (DatabaseRecord record : _records.values()) {
             if (record._RecordType == RecordType.DiskGroup) {
                 DiskGroupRecord dgRecord = (DiskGroupRecord) record;
                 if (UUID.fromString(dgRecord.GroupGuidString).equals(guid) || guid.equals(new UUID(0L, 0L))) {
@@ -118,7 +129,7 @@ public class Database {
     }
 
     public <T extends DatabaseRecord> T findRecord(Predicate<T> pred, RecordType typeId) {
-        for (DatabaseRecord record: _records.values()) {
+        for (DatabaseRecord record : _records.values()) {
             if (record._RecordType == typeId) {
                 T t = (T) record;
                 if (pred.test(t)) {

@@ -94,18 +94,24 @@ public class DirectoryEntry {
         _attr = (byte) FatAttributes.valueOf(value);
     }
 
+    /**
+     * @return epoch millis at system default zone
+     */
     public long getCreationTime() {
         return fileTimeToDateTime(_creationDate, _creationTime, _creationTimeTenth);
     }
 
+    /**
+     * @param value epoch millis at utc
+     */
     public void setCreationTime(long value) {
-        short[] refVar___0 = new short[1];
-        short[] refVar___1 = new short[1];
-        byte[] refVar___2 = new byte[1];
-        dateTimeToFileTime(value, refVar___0, refVar___1, refVar___2);
-        _creationDate = refVar___0[0];
-        _creationTime = refVar___1[0];
-        _creationTimeTenth = refVar___2[0];
+        short[] creationDate = new short[1];
+        short[] creationTime = new short[1];
+        byte[] creationTimeTenth = new byte[1];
+        dateTimeToFileTime(value, creationDate, creationTime, creationTimeTenth);
+        _creationDate = creationDate[0];
+        _creationTime = creationTime[0];
+        _creationTimeTenth = creationTimeTenth[0];
     }
 
     public int getFileSize() {
@@ -132,20 +138,32 @@ public class DirectoryEntry {
         _firstClusterLo = (short) (value & 0xFFFF);
     }
 
+    /**
+     * @return epoch millis at system default zone
+     */
     public long getLastAccessTime() {
         return fileTimeToDateTime(_lastAccessDate, (short) 0, (byte) 0);
     }
 
+    /**
+     * @param value epoch millis at utc
+     */
     public void setLastAccessTime(long value) {
         short[] date = new short[1];
         dateTimeToFileTime(value, date);
         _lastAccessDate = date[0];
     }
 
+    /**
+     * @return epoch millis at system default zone
+     */
     public long getLastWriteTime() {
         return fileTimeToDateTime(_lastWriteDate, _lastWriteTime, (byte) 0);
     }
 
+    /**
+     * @param value epoch millis at utc
+     */
     public void setLastWriteTime(long value) {
         short[] date = new short[1];
         short[] time = new short[1];
@@ -154,14 +172,14 @@ public class DirectoryEntry {
         _lastWriteTime = time[0];
     }
 
-    private FileName __Name;
+    private FileName _name;
 
     public FileName getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(FileName value) {
-        __Name = value;
+        _name = value;
     }
 
     public void writeTo(Stream stream) {
@@ -180,6 +198,9 @@ public class DirectoryEntry {
         stream.write(buffer, 0, buffer.length);
     }
 
+    /**
+     * @return epoch millis at system default zone
+     */
     private static long fileTimeToDateTime(short date, short time, byte tenths) {
         if (date == 0 || date == 0xFFFF) {
             return FatFileSystem.Epoch;
@@ -191,26 +212,41 @@ public class DirectoryEntry {
         int day = date & 0x001F;
         int hour = (time & 0xF800) >>> 11;
         int minute = (time & 0x07E0) >>> 5;
-        int second = (time & 0x001F) * 2 + tenths / 100;
-        int millis = tenths % 100 * 10;
-        return ZonedDateTime.of(year, month, day, hour, minute, second, millis * 1000, ZoneId.of("UTC")).toInstant().toEpochMilli();
+        int second = (time & 0x001F) * 2 + (tenths & 0xff) / 100;
+        int millis = (tenths & 0xff) % 100 * 10;
+        return ZonedDateTime.of(year, month, day, hour, minute, second, millis, ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
+    /**
+     * @param value epoch millis at utc
+     * @param date {@cs out}
+     */
     private static void dateTimeToFileTime(long value, short[] date) {
         short[] time = new short[1];
         byte[] tenths = new byte[1];
         dateTimeToFileTime(value, date, time, tenths);
     }
 
+    /**
+     * @param value epoch millis at utc
+     * @param date {@cs out}
+     * @param time {@cs out}
+     */
     private static void dateTimeToFileTime(long value, short[] date, short[] time) {
         byte[] tenths = new byte[1];
         dateTimeToFileTime(value, date, time, tenths);
     }
 
+    /**
+     * @param value_ epoch millis at utc
+     * @param date {@cs out}
+     * @param time {@cs out}
+     * @param tenths {@cs out}
+     */
     private static void dateTimeToFileTime(long value_, short[] date, short[] time, byte[] tenths) {
-        ZonedDateTime value = Instant.ofEpochMilli(value_).atZone(ZoneId.of("UTC"));
+        ZonedDateTime value = Instant.ofEpochMilli(value_).atZone(ZoneId.systemDefault());
         if (value.getYear() < 1980) {
-            value = Instant.EPOCH.atZone(ZoneId.of("UTC"));
+            value = Instant.ofEpochMilli(FatFileSystem.Epoch).atZone(ZoneId.systemDefault());
         }
 
         date[0] = (short) ((((value.getYear() - 1980) << 9) & 0xFE00) | ((value.getMonthValue() << 5) & 0x01E0) |

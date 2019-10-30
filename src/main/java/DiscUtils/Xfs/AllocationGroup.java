@@ -24,6 +24,8 @@
 
 package DiscUtils.Xfs;
 
+import vavi.util.Debug;
+
 import DiscUtils.Streams.Util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
@@ -34,84 +36,84 @@ public class AllocationGroup {
 
     public static final int IbtCrcMagic = 0x49414233;
 
-    private long __Offset;
+    private long _offset;
 
     public long getOffset() {
-        return __Offset;
+        return _offset;
     }
 
     public void setOffset(long value) {
-        __Offset = value;
+        _offset = value;
     }
 
-    private AllocationGroupFreeBlockInfo __FreeBlockInfo;
+    private AllocationGroupFreeBlockInfo _freeBlockInfo;
 
     public AllocationGroupFreeBlockInfo getFreeBlockInfo() {
-        return __FreeBlockInfo;
+        return _freeBlockInfo;
     }
 
     public void setFreeBlockInfo(AllocationGroupFreeBlockInfo value) {
-        __FreeBlockInfo = value;
+        _freeBlockInfo = value;
     }
 
-    private AllocationGroupInodeBtreeInfo __InodeBtreeInfo;
+    private AllocationGroupInodeBtreeInfo _inodeBtreeInfo;
 
     public AllocationGroupInodeBtreeInfo getInodeBtreeInfo() {
-        return __InodeBtreeInfo;
+        return _inodeBtreeInfo;
     }
 
     public void setInodeBtreeInfo(AllocationGroupInodeBtreeInfo value) {
-        __InodeBtreeInfo = value;
+        _inodeBtreeInfo = value;
     }
 
-    private Context __Context;
+    private Context _context;
 
     public Context getContext() {
-        return __Context;
+        return _context;
     }
 
     public void setContext(Context value) {
-        __Context = value;
+        _context = value;
     }
 
     public AllocationGroup(Context context, long offset) {
-        setOffset(offset);
-        setContext(context);
+        _offset = offset;
+        _context = context;
         Stream data = context.getRawStream();
-        SuperBlock superblock = context.getSuperBlock();
-        setFreeBlockInfo(new AllocationGroupFreeBlockInfo(superblock));
+        SuperBlock superblock = _context.getSuperBlock();
+        _freeBlockInfo = new AllocationGroupFreeBlockInfo(superblock);
         data.setPosition(offset + superblock.getSectorSize());
-        byte[] agfData = StreamUtilities.readExact(data, getFreeBlockInfo().size());
-        getFreeBlockInfo().readFrom(agfData, 0);
-        if (getFreeBlockInfo().getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
+        byte[] agfData = StreamUtilities.readExact(data, _freeBlockInfo.size());
+        _freeBlockInfo.readFrom(agfData, 0);
+        if (_freeBlockInfo.getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
             throw new IOException("Invalid AGF magic - probably not an xfs file system");
         }
 
-        setInodeBtreeInfo(new AllocationGroupInodeBtreeInfo(superblock));
+        _inodeBtreeInfo = new AllocationGroupInodeBtreeInfo(superblock);
         data.setPosition(offset + superblock.getSectorSize() * 2);
         byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().size());
-        getInodeBtreeInfo().readFrom(agiData, 0);
-        if (getInodeBtreeInfo().getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
+        _inodeBtreeInfo.readFrom(agiData, 0);
+        if (_inodeBtreeInfo.getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
             throw new IOException("Invalid AGI magic - probably not an xfs file system");
         }
 
-        getInodeBtreeInfo().loadBtree(context, offset);
-        if (superblock.getSbVersion() < 5 && getInodeBtreeInfo().getRootInodeBtree().getMagic() != IbtMagic ||
-            superblock.getSbVersion() >= 5 && getInodeBtreeInfo().getRootInodeBtree().getMagic() != IbtCrcMagic) {
+        _inodeBtreeInfo.loadBtree(context, offset);
+        if (superblock.getSbVersion() < 5 && _inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtMagic ||
+            superblock.getSbVersion() >= 5 && _inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtCrcMagic) {
+Debug.printf("%d, %x\n", superblock.getSbVersion(), _inodeBtreeInfo.getRootInodeBtree().getMagic());
             throw new IOException("Invalid IBT magic - probably not an xfs file system");
         }
 
-        if (getInodeBtreeInfo().getSequenceNumber() != getFreeBlockInfo().getSequenceNumber()) {
+        if (_inodeBtreeInfo.getSequenceNumber() != _freeBlockInfo.getSequenceNumber()) {
             throw new IOException("inconsistent AG sequence numbers");
         }
-
     }
 
     public void loadInode(Inode inode) {
-        long offset = getOffset() + ((long) inode.getAgBlock() * getContext().getSuperBlock().getBlocksize()) +
-                      ((long) inode.getBlockOffset() * getContext().getSuperBlock().getInodeSize());
-        getContext().getRawStream().setPosition(offset);
-        byte[] data = StreamUtilities.readExact(getContext().getRawStream(), getContext().getSuperBlock().getInodeSize());
+        long offset = _offset + ((long) inode.getAgBlock() * _context.getSuperBlock().getBlocksize()) +
+                      ((long) inode.getBlockOffset() * _context.getSuperBlock().getInodeSize());
+        _context.getRawStream().setPosition(offset);
+        byte[] data = StreamUtilities.readExact(_context.getRawStream(), _context.getSuperBlock().getInodeSize());
         inode.readFrom(data, 0);
     }
 }

@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:11:06
-//
-
-package DiscUtils.SquashFs;
-
-import DiscUtils.Streams.Block.Block;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,9 +19,15 @@ import DiscUtils.Streams.Block.Block;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public final class Metablock  extends Block
-{
+
+package DiscUtils.SquashFs;
+
+import DiscUtils.Streams.Block.Block;
+
+
+public final class Metablock extends Block {
     private long __NextBlockStart;
+
     public long getNextBlockStart() {
         return __NextBlockStart;
     }
@@ -39,5 +37,3 @@ public final class Metablock  extends Block
     }
 
 }
-
-

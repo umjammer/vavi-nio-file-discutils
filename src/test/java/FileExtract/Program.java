@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
 
+import DiscUtils.Common.HexDump;
 import DiscUtils.Common.ProgramBase;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemManager;
@@ -92,10 +93,9 @@ System.err.println("file: " +_diskFile);
                 }
                 if (_hexDump) {
                     source.setPosition(0);
-//                    System.out.print(StringUtil.getDump(source));
+                    HexDump.generate(source, System.out);
                 }
             }
-
         }
     }
 

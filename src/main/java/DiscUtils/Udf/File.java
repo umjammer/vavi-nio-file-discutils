@@ -24,7 +24,6 @@ package DiscUtils.Udf;
 
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
 
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.IVfsFile;
@@ -122,7 +121,7 @@ public class File implements IVfsFile {
         return attribs;
     }
 
-    public void setFileAttributes(Map<String, Object> value) {
+    public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 

@@ -15,7 +15,11 @@
           <target>1.8</target>
           <encoding>utf-8</encoding>
           <excludes>vavi/**</excludes>
-          <testExcludes>DiscUtils/PowerShell/**</testExcludes>
+          <testExcludes>
+            <testExclude>DiscUtils/PowerShell/**</testExclude>
+            <testExclude>DiskClone/**</testExclude>
+            <testExclude>MSBuildTask/**</testExclude>
+          </testExcludes>
         </configuration>
       </plugin>
       <plugin>

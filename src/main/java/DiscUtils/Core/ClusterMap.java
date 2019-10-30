@@ -22,6 +22,7 @@
 
 package DiscUtils.Core;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -68,7 +69,7 @@ public final class ClusterMap {
      *         entries.
      */
     public String[] clusterToPaths(int cluster) {
-        if (getRole(cluster).containsAll(EnumSet.of(ClusterRoles.DataFile, ClusterRoles.SystemFile))) {
+        if (!Collections.disjoint(getRole(cluster), EnumSet.of(ClusterRoles.DataFile, ClusterRoles.SystemFile))) {
             Object fileId = _clusterToFileId[cluster];
             return _fileIdToPaths.get(fileId);
         }

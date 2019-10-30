@@ -1,10 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/15 9:43:07
-//
-
-package DiscUtils.Ntfs;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25,15 +19,19 @@ package DiscUtils.Ntfs;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public final class GenericFixupRecord  extends FixupRecordBase
-{
+
+package DiscUtils.Ntfs;
+
+public final class GenericFixupRecord extends FixupRecordBase {
     private final int _bytesPerSector;
+
     public GenericFixupRecord(int bytesPerSector) {
         super(null, bytesPerSector);
         _bytesPerSector = bytesPerSector;
     }
 
     private byte[] __Content;
+
     public byte[] getContent() {
         return __Content;
     }
@@ -54,7 +52,4 @@ public final class GenericFixupRecord  extends FixupRecordBase
     protected int calcSize() {
         throw new UnsupportedOperationException();
     }
-
 }
-
-

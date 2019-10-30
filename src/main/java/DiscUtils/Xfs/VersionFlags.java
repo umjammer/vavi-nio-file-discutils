@@ -22,26 +22,22 @@
 
 package DiscUtils.Xfs;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+
+/**
+ * Filesystem version number. This is a bitmask specifying the features
+ * enabled when creating the filesystem.
+ * Any disk checking tools or drivers that do not recognize any set bits
+ * must not operate upon the filesystem.
+ * Most of the flags indicate features introduced over time.
+ */
 public enum VersionFlags {
-    /**
-     * Filesystem version number. This is a bitmask specifying the features
-     * enabled when creating the filesystem.
-     * Any disk checking tools or drivers that do not recognize any set bits
-     * must not operate upon the filesystem.
-     * Most of the flags indicate features introduced over time.
-     */
-    None,
-    Version1,
-    /* 5.3, 6.0.1, 6.1 */
-    Version2,
-    /* 6.2 - attributes */
-    Version3,
-    /* 6.2 - new inode version */
-    Version4,
-    /* 6.2+ - bitmask version */
-    Version5,
-    /* CRC enabled filesystem */
-    NumberFlag,
+//    None(0),
     /**
      * Set if any inode have extended attributes. If this bit is
      * set; the XFS_SB_VERSION2_ATTR2BIT is not
@@ -49,55 +45,94 @@ public enum VersionFlags {
      * di_forkoff inode field will not be dynamically
      * adjusted.
      */
-    ExtendedAttributes,
+    ExtendedAttributes(0x0010),
     /**
      * Set if any inodes use 32-bit di_nlink values.
      */
-    NLink,
+    NLink(0x0020),
     /**
      * Quotas are enabled on the filesystem. This also
      * brings in the various quota fields in the superblock.
      */
-    Quota,
+    Quota(0x0040),
     /**
      * Set if sb_inoalignmt is used.
      */
-    Alignment,
+    Alignment(0x0080),
     /**
      * Set if sb_unit and sb_width are used.
      */
-    DAlignment,
+    DAlignment(0x0100),
     /**
      * Set if sb_shared_vn is used.
      */
-    Shared,
+    Shared(0x0200),
     /**
      * Version 2 journaling logs are used.
      */
-    LogV2,
+    LogV2(0x0400),
     /**
      * Set if sb_sectsize is not 512.
      */
-    Sector,
+    Sector(0x0800),
     /**
      * Unwritten extents are used. This is always set.
      */
-    ExtentFlag,
+    ExtentFlag(0x1000),
     /**
      * Version 2 directories are used. This is always set.
      */
-    DirV2,
+    DirV2(0x2000),
     /**
      * ASCII only case-insens.
      */
-    Borg,
+    Borg(0x4000),
     /**
      * Set if the sb_features2 field in the superblock
      * contains more flags.
      */
-    Features2;
+    Features2(0x8000);
 
-    public static VersionFlags valueOf(int value) {
-        return values()[value];
+    /** 5.3, 6.0.1, 6.1 */
+    public static final int Version1 = 1;
+    /** 6.2 - attributes */
+    public static final int Version2 = 2;
+    /** 6.2 - new inode version */
+    public static final int Version3 = 3;
+    /** 6.2+ - bitmask version */
+    public static final int Version4 = 4;
+    /** CRC enabled filesystem */
+    public static final int Version5 = 5;
+
+    public static final int NumberFlag = 0x000f;
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private VersionFlags(int value) {
+        this.value = value;
+    }
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return this::getValue;
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<VersionFlags> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(VersionFlags.class)));
+    }
+
+    public static long valueOf(EnumSet<VersionFlags> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

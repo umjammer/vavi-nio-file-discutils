@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 
 public class ReflectionHelper {
     @Deprecated
@@ -56,21 +58,22 @@ public class ReflectionHelper {
 
     public static <T extends Serializable> int sizeOf(Class<T> c) {
         try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            if (Long.class.equals(c)) {
-                oos.writeObject(Long.valueOf(0));
-            } else if (Integer.class.equals(c)) {
-                oos.writeObject(Integer.valueOf(0));
-            } else if (UUID.class.equals(c)) {
-                oos.writeObject(new UUID(0, 0));
+            if (Integer.class == c || Integer.TYPE == c) {
+                return Integer.BYTES;
+            } else if (Long.class == c || Long.TYPE == c) {
+                return Long.BYTES;
+            } else if (UUID.class == c) {
+                return Long.BYTES * 2;
             } else {
+Debug.println(c);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(c.newInstance());
+                oos.flush();
+                oos.close();
+                return baos.size();
             }
-            oos.flush();
-            oos.close();
-            return baos.size();
-        } catch(InstantiationException | IllegalAccessException | IOException e) {
+        } catch (InstantiationException | IllegalAccessException | IOException e) {
             throw new IllegalStateException(e);
         }
     }

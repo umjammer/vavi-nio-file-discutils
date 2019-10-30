@@ -29,126 +29,122 @@ public final class BlockCacheStatistics {
     /**
      * Gets the number of free blocks in the read cache.
      */
-    private int __FreeReadBlocks;
+    private int _freeReadBlocks;
 
     public int getFreeReadBlocks() {
-        return __FreeReadBlocks;
+        return _freeReadBlocks;
     }
 
     public void setFreeReadBlocks(int value) {
-        __FreeReadBlocks = value;
+        _freeReadBlocks = value;
     }
 
     /**
      * Gets the number of requested 'large' reads, as defined by the
      * LargeReadSize setting.
      */
-    private long __LargeReadsIn;
+    private long _largeReadsIn;
 
     public long getLargeReadsIn() {
-        return __LargeReadsIn;
+        return _largeReadsIn;
     }
 
     public void setLargeReadsIn(long value) {
-        __LargeReadsIn = value;
+        _largeReadsIn = value;
     }
 
     /**
      * Gets the number of times a read request was serviced (in part or whole)
      * from the cache.
      */
-    private long __ReadCacheHits;
+    private long _readCacheHits;
 
     public long getReadCacheHits() {
-        return __ReadCacheHits;
+        return _readCacheHits;
     }
 
     public void setReadCacheHits(long value) {
-        __ReadCacheHits = value;
+        _readCacheHits = value;
     }
 
     /**
      * Gets the number of time a read request was serviced (in part or whole)
      * from the wrapped stream.
      */
-    private long __ReadCacheMisses;
+    private long _readCacheMisses;
 
     public long getReadCacheMisses() {
-        return __ReadCacheMisses;
+        return _readCacheMisses;
     }
 
     public void setReadCacheMisses(long value) {
-        __ReadCacheMisses = value;
+        _readCacheMisses = value;
     }
 
     /**
      * Gets the total number of requested reads.
      */
-    private long __TotalReadsIn;
+    private long _totalReadsIn;
 
     public long getTotalReadsIn() {
-        return __TotalReadsIn;
+        return _totalReadsIn;
     }
 
     public void setTotalReadsIn(long value) {
-        __TotalReadsIn = value;
+        _totalReadsIn = value;
     }
 
     /**
      * Gets the total number of reads passed on by the cache.
      */
-    private long __TotalReadsOut;
+    private long _totalReadsOut;
 
     public long getTotalReadsOut() {
-        return __TotalReadsOut;
+        return _totalReadsOut;
     }
 
     public void setTotalReadsOut(long value) {
-        __TotalReadsOut = value;
+        _totalReadsOut = value;
     }
 
     /**
      * Gets the total number of requested writes.
      */
-    private long __TotalWritesIn;
+    private long _totalWritesIn;
 
     public long getTotalWritesIn() {
-        return __TotalWritesIn;
+        return _totalWritesIn;
     }
 
     public void setTotalWritesIn(long value) {
-        __TotalWritesIn = value;
+        _totalWritesIn = value;
     }
 
     /**
-     * Gets the number of requested unaligned reads.
-     * Unaligned reads are reads where the read doesn't start on a multiple of
-     * the block size.
+     * Gets the number of requested unaligned reads. Unaligned reads are reads
+     * where the read doesn't start on a multiple of the block size.
      */
-    private long __UnalignedReadsIn;
+    private long _unalignedReadsIn;
 
     public long getUnalignedReadsIn() {
-        return __UnalignedReadsIn;
+        return _unalignedReadsIn;
     }
 
     public void setUnalignedReadsIn(long value) {
-        __UnalignedReadsIn = value;
+        _unalignedReadsIn = value;
     }
 
     /**
-     * Gets the number of requested unaligned writes.
-     * Unaligned writes are writes where the write doesn't start on a multiple
-     * of
-     * the block size.
+     * Gets the number of requested unaligned writes. Unaligned writes are
+     * writes where the write doesn't start on a multiple of the block size.
      */
-    private long __UnalignedWritesIn;
+    private long _unalignedWritesIn;
 
     public long getUnalignedWritesIn() {
-        return __UnalignedWritesIn;
+        return _unalignedWritesIn;
     }
 
     public void setUnalignedWritesIn(long value) {
-        __UnalignedWritesIn = value;
+        _unalignedWritesIn = value;
     }
-
 }

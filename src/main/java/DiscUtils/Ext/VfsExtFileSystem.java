@@ -22,6 +22,7 @@
 
 package DiscUtils.Ext;
 
+import java.util.Collections;
 import java.util.EnumSet;
 
 import DiscUtils.Core.FileSystemParameters;
@@ -65,7 +66,7 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
             throw new IOException("Old ext revision - not supported");
         }
 
-        if (!superblock._IncompatibleFeatures.containsAll(SupportedIncompatibleFeatures)) {
+        if (Collections.disjoint(superblock._IncompatibleFeatures, SupportedIncompatibleFeatures)) {
             throw new IOException("Incompatible ext features present: " + superblock._IncompatibleFeatures);
         }
 

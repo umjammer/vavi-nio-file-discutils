@@ -101,12 +101,12 @@ public class Nfs3CreateResult extends Nfs3CallResult {
         }
 
         return other.getStatus() == getStatus() && other.getFileHandle().equals(getFileHandle()) &&
-               Utilities.equals(other.getFileAttributes(), getFileAttributes()) &&
+               dotnet4j.io.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes()) &&
                other.getCacheConsistency().equals(getCacheConsistency());
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(),
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(),
                                          getFileHandle(),
                                          getFileAttributes(),
                                          getCacheConsistency());

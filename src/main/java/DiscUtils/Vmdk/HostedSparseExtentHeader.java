@@ -88,7 +88,7 @@ public class HostedSparseExtentHeader extends CommonSparseExtentHeader {
         byte[] buffer = new byte[Sizes.Sector];
         EndianUtilities.writeBytesLittleEndian(MagicNumber, buffer, 0x00);
         EndianUtilities.writeBytesLittleEndian(Version, buffer, 0x04);
-        EndianUtilities.writeBytesLittleEndian(HostedSparseExtentFlags.valueOf(Flags), buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian((int) HostedSparseExtentFlags.valueOf(Flags), buffer, 0x08);
         EndianUtilities.writeBytesLittleEndian(Capacity, buffer, 0x0C);
         EndianUtilities.writeBytesLittleEndian(GrainSize, buffer, 0x14);
         EndianUtilities.writeBytesLittleEndian(DescriptorOffset, buffer, 0x1C);
@@ -105,5 +105,4 @@ public class HostedSparseExtentHeader extends CommonSparseExtentHeader {
         EndianUtilities.writeBytesLittleEndian(CompressAlgorithm, buffer, 0x4D);
         return buffer;
     }
-
 }

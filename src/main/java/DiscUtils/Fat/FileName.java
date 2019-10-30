@@ -59,20 +59,22 @@ public final class FileName {
     public FileName(String name, Charset encoding) {
         _raw = new byte[11];
         byte[] bytes = name.toUpperCase().getBytes(encoding);
+
         int nameIdx = 0;
         int rawIdx = 0;
         while (nameIdx < bytes.length && bytes[nameIdx] != '.' && rawIdx < _raw.length) {
             byte b = bytes[nameIdx++];
             if ((b & 0xff) < 0x20 || contains(InvalidBytes, b)) {
-                throw new IllegalArgumentException("Invalid character in file name '" + (char) b + "', 0x" + Integer.toHexString(b & 0xff));
+//Debug.println(name + ", " + encoding + ", " + Arrays.toString(bytes));
+                throw new IllegalArgumentException(String.format("Invalid character in file name '%1$c', %1$02x: %s", b, name));
             }
 
             _raw[rawIdx++] = b;
         }
+
         if (rawIdx > 8) {
             throw new IllegalArgumentException("File name too long '" + name + "'");
         }
-
         if (rawIdx == 0) {
             throw new IllegalArgumentException("File name too short '" + name + "'");
         }
@@ -80,6 +82,7 @@ public final class FileName {
         while (rawIdx < 8) {
             _raw[rawIdx++] = SpaceByte;
         }
+
         if (nameIdx < bytes.length && bytes[nameIdx] == '.') {
             ++nameIdx;
         }
@@ -87,25 +90,27 @@ public final class FileName {
         while (nameIdx < bytes.length && rawIdx < _raw.length) {
             byte b = bytes[nameIdx++];
             if (b < 0x20 || contains(InvalidBytes, b)) {
-                throw new IllegalArgumentException("Invalid character in file extension '" + (char) b + "'");
+                throw new IllegalArgumentException("Invalid character in file extension '" + (char) b + "': " + name);
             }
 
             _raw[rawIdx++] = b;
         }
+
         while (rawIdx < 11) {
             _raw[rawIdx++] = SpaceByte;
         }
+
         if (nameIdx != bytes.length) {
-            throw new IllegalArgumentException("File extension too long '" + name + "'");
+            throw new IllegalArgumentException("File extension too long '" + name + "': " + name);
         }
     }
 
     public boolean equals(FileName other) {
-            if (other == null) {
-                return false;
-            }
+        if (other == null) {
+            return false;
+        }
 
-            return compareRawNames(this, other) == 0;
+        return compareRawNames(this, other) == 0;
     }
 
     public static FileName fromPath(String path, Charset encoding) {
@@ -117,7 +122,8 @@ public final class FileName {
     }
 
     public String getSearchName(Charset encoding) {
-        return new String(_raw, 0, 8, encoding).replaceFirst(" *$", "") + "." + new String(_raw, 8, 3, encoding).replaceFirst(" *$", "");
+        return new String(_raw, 0, 8, encoding).replaceFirst(" *$", "") + "." +
+               new String(_raw, 8, 3, encoding).replaceFirst(" *$", "");
     }
 
     public String getRawName(Charset encoding) {

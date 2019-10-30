@@ -66,26 +66,37 @@ public class FatFileSystemTest {
     @Test
     public void cyrillic() throws Exception {
 //        SetupHelper.RegisterAssembly(FatFileSystem.class.getTypeInfo().Assembly);
+
         String lowerDE = "\u0434";
         String upperDE = "\u0414";
+
         MemoryStream ms = new MemoryStream();
         try (FatFileSystem fs = FatFileSystem.formatFloppy(ms, FloppyDiskType.HighDensity, "KBFLOPPY   ")) {
             fs.getFatOptions().setFileNameEncoding(EncodingHelper.forCodePage(855));
+
             String name = lowerDE;
             fs.createDirectory(name);
+
             List<String> dirs = fs.getDirectories("");
             assertEquals(1, dirs.size());
-            assertEquals(upperDE, dirs.get(0));
-            // Uppercase
+            assertEquals(upperDE, dirs.get(0)); // Uppercase
+
             assertTrue(fs.directoryExists(lowerDE));
             assertTrue(fs.directoryExists(upperDE));
+
             fs.createDirectory(lowerDE + lowerDE + lowerDE);
             assertEquals(2, fs.getDirectories("").size());
+
             fs.deleteDirectory(lowerDE + lowerDE + lowerDE);
             assertEquals(1, fs.getDirectories("").size());
         }
+
         List<FileSystemInfo> detectDefaultFileSystems = FileSystemManager.detectFileSystems(ms);
-        DiscFileSystem fs2 = detectDefaultFileSystems.get(0).open(ms, new FileSystemParameters());
+
+        FileSystemParameters parameters = new FileSystemParameters();
+        parameters.setFileNameEncoding(EncodingHelper.forCodePage(855));
+        DiscFileSystem fs2 = detectDefaultFileSystems.get(0).open(ms, parameters);
+
         assertTrue(fs2.directoryExists(lowerDE));
         assertTrue(fs2.directoryExists(upperDE));
         assertEquals(1, fs2.getDirectories("").size());
@@ -94,24 +105,30 @@ public class FatFileSystemTest {
     @Test
     public void defaultCodepage() throws Exception {
         String graphicChar = "\u255D";
+
         MemoryStream ms = new MemoryStream();
         FatFileSystem fs = FatFileSystem.formatFloppy(ms, FloppyDiskType.HighDensity, "KBFLOPPY   ");
         fs.getFatOptions().setFileNameEncoding(EncodingHelper.forCodePage(855));
+
         String name = graphicChar;
         fs.createDirectory(name);
+
         List<String> dirs = fs.getDirectories("");
         assertEquals(1, dirs.size());
-        assertEquals(graphicChar, dirs.get(0));
-        // Uppercase
+        assertEquals(graphicChar, dirs.get(0)); // Uppercase
+
         assertTrue(fs.directoryExists(graphicChar));
     }
 
     @Test
     public void formatPartition() throws Exception {
         MemoryStream ms = new MemoryStream();
+
         Geometry g = Geometry.fromCapacity(1024 * 1024 * 32);
         FatFileSystem fs = FatFileSystem.formatPartition(ms, "KBPARTITION", g, 0, (int) g.getTotalSectorsLong(), (short) 13);
+
         fs.createDirectory("DIRB\\DIRC");
+
         FatFileSystem fs2 = new FatFileSystem(ms);
         assertEquals(1, fs2.getRoot().getDirectories().size());
     }
@@ -119,10 +136,13 @@ public class FatFileSystemTest {
     @Test
     public void createDirectory() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
+
         fs.createDirectory("UnItTeSt");
         assertEquals("UNITTEST", fs.getRoot().getDirectories("UNITTEST").get(0).getName());
+
         fs.createDirectory("folder\\subflder");
         assertEquals("FOLDER", fs.getRoot().getDirectories("FOLDER").get(0).getName());
+
         fs.createDirectory("folder\\subflder");
         assertEquals("SUBFLDER", fs.getRoot().getDirectories("FOLDER").get(0).getDirectories("SUBFLDER").get(0).getName());
     }
@@ -137,6 +157,7 @@ public class FatFileSystemTest {
     public void label() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
         assertEquals("FLOPPY_IMG ", fs.getVolumeLabel());
+
         fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, null);
         assertEquals("NO NAME    ", fs.getVolumeLabel());
     }
@@ -174,22 +195,24 @@ public class FatFileSystemTest {
     @Test
     public void openFileAsDir() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
+
         try (Stream s = fs.openFile("FOO.TXT", FileMode.Create, FileAccess.ReadWrite)) {
             StreamWriter w = new StreamWriter(s);
             w.writeLine("FOO - some sample text");
             w.flush();
         }
-        assertThrows(FileNotFoundException.class, () -> {
-            fs.getFiles("FOO.TXT");
-        });
+
+        assertThrows(FileNotFoundException.class, () -> fs.getFiles("FOO.TXT"));
     }
 
     @Test
     public void honoursReadOnly() throws Exception {
         SparseMemoryStream diskStream = new SparseMemoryStream();
         FatFileSystem fs = FatFileSystem.formatFloppy(diskStream, FloppyDiskType.HighDensity, "FLOPPY_IMG ");
+
         fs.createDirectory("AAA");
         fs.createDirectory("BAR");
+
         try (Stream t = fs.openFile("BAR\\AAA.TXT", FileMode.Create, FileAccess.ReadWrite)) {
         }
         try (Stream s = fs.openFile("BAR\\FOO.TXT", FileMode.Create, FileAccess.ReadWrite)) {
@@ -200,6 +223,7 @@ public class FatFileSystemTest {
         fs.setLastAccessTimeUtc("BAR", ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli());
         fs.setLastAccessTimeUtc("BAR\\FOO.TXT",
                                 ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli());
+
         // Check we can access a file without any errors
         SparseStream roDiskStream = SparseStream.readOnly(diskStream, Ownership.None);
         FatFileSystem fatFs = new FatFileSystem(roDiskStream);

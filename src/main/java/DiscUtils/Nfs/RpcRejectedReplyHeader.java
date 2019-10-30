@@ -66,6 +66,6 @@ public class RpcRejectedReplyHeader {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(Status, MismatchInfo, AuthenticationStatus);
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(Status, MismatchInfo, AuthenticationStatus);
     }
 }

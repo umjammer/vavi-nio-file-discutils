@@ -72,6 +72,7 @@ public final class RawClusterStream extends ClusterStream {
     public List<Range> getStoredClusters() {
         Range lastVcnRange = null;
         List<Range> ranges = new ArrayList<>();
+
         int runCount = _cookedRuns.getCount();
         for (int i = 0; i < runCount; i++) {
             CookedDataRun cookedRun = _cookedRuns.get___idx(i);
@@ -79,7 +80,7 @@ public final class RawClusterStream extends ClusterStream {
                 long startPos = cookedRun.getStartVcn();
                 if (lastVcnRange != null && lastVcnRange.getOffset() + lastVcnRange.getCount() == startPos) {
                     lastVcnRange = new Range(lastVcnRange.getOffset(), lastVcnRange.getCount() + cookedRun.getLength());
-                    ranges.add(ranges.size() - 1, lastVcnRange);
+                    ranges.set(ranges.size() - 1, lastVcnRange);
                 } else {
                     lastVcnRange = new Range(cookedRun.getStartVcn(), cookedRun.getLength());
                     ranges.add(lastVcnRange);

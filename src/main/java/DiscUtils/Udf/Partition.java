@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:13:06
-//
-
-package DiscUtils.Udf;
-
-import DiscUtils.Streams.Buffer.IBuffer;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,10 +19,13 @@ import DiscUtils.Streams.Buffer.IBuffer;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public abstract class Partition
-{
+
+package DiscUtils.Udf;
+
+import DiscUtils.Streams.Buffer.IBuffer;
+
+
+public abstract class Partition {
     public abstract IBuffer getContent();
 
 }
-
-

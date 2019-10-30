@@ -24,7 +24,6 @@ package DiscUtils.Vhd;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -98,8 +97,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a new instance of the DiskImageFile class.
      *
      * @param stream The stream to interpret.
-     * @param ownership Indicates if the new instance should control the lifetime of
-     *            the stream.
+     * @param ownership Indicates if the new instance should control the
+     *            lifetime of the stream.
      */
     public DiskImageFile(Stream stream, Ownership ownership) {
         _fileStream = stream;
@@ -115,9 +114,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param access Controls how the file can be accessed.
      */
     public DiskImageFile(String path, FileAccess access) throws IOException {
-        this(new LocalFileLocator(Paths.get(path).getParent() == null ? "" : Paths.get(path).getParent().toString()),
-             Paths.get(path).getFileName().toString(),
-             access);
+        this(new LocalFileLocator(Utilities.getDirectoryFromPath(path)), Utilities.getFileFromPath(path), access);
     }
 
     public DiskImageFile(FileLocator locator, String path, Stream stream, Ownership ownsStream) {
@@ -135,15 +132,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
             _fileName = locator.getFileFromPath(path);
             readFooter(true);
             readHeaders();
-        } catch (Exception __dummyCatchVar0) {
-            try {
-                _fileStream.close();
-            } catch (IOException e) {
-                throw new dotnet4j.io.IOException(e);
-            }
-            throw __dummyCatchVar0;
+        } finally {
+            _fileStream.close();
         }
-
     }
 
     public long getCapacity() {
@@ -231,8 +222,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a fixed-sized VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @return An object that accesses the stream as a VHD file.
      */
@@ -244,8 +235,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a fixed-sized VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or {@code null} for
      *            default.
@@ -260,8 +251,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a dynamically-sized VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @return An object that accesses the stream as a VHD file.
      */
@@ -273,8 +264,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a dynamically-sized VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or {@code null} for
      *            default.
@@ -288,8 +279,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a dynamically-sized VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @param blockSize The size of each block (unit of allocation).
      * @return An object that accesses the stream as a VHD file.
@@ -302,8 +293,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a dynamically-sized VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or {@code null} for
      *            default.
@@ -323,12 +314,12 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Initializes a stream as a differencing disk VHD file.
      *
      * @param stream The stream to initialize.
-     * @param ownsStream Indicates if the new instance controls the lifetime of the
-     *            stream.
+     * @param ownsStream Indicates if the new instance controls the lifetime of
+     *            the stream.
      * @param parent The disk this file is a different from.
      * @param parentAbsolutePath The full path to the parent disk.
-     * @param parentRelativePath The relative path from the new disk to the parent
-     *            disk.
+     * @param parentRelativePath The relative path from the new disk to the
+     *            parent disk.
      * @param parentModificationTimeUtc The time the parent disk's file was last
      *            modified (from file system).
      * @return An object that accesses the stream as a VHD file.
@@ -374,8 +365,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return getParentLocations(new LocalFileLocator(basePath));
     }
 
-    public static DiskImageFile initializeFixed(FileLocator locator, String path, long capacity, Geometry geometry)
-            throws IOException {
+    public static DiskImageFile initializeFixed(FileLocator locator,
+                                                String path,
+                                                long capacity,
+                                                Geometry geometry) throws IOException {
         DiskImageFile result = null;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
@@ -389,8 +382,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                   String path,
                                                   long capacity,
                                                   Geometry geometry,
-                                                  long blockSize)
-            throws IOException {
+                                                  long blockSize) throws IOException {
         DiskImageFile result = null;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {

@@ -99,7 +99,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         Path parent = Paths.get(path).getParent();
         _fileLocator = new LocalFileLocator(parent == null ? "" : parent.toString());
         try {
-            fileStream = _fileLocator.open(Paths.get(path).getFileName().toString(), FileMode.Open, fileAccess, fileShare);
+            fileStream = _fileLocator.open(Utilities.getFileFromPath(path), FileMode.Open, fileAccess, fileShare);
             loadDescriptor(fileStream);
             // For monolithic disks, keep hold of the stream - we won't try to use the file name
             // from the embedded descriptor because the file may have been renamed, making the
@@ -110,14 +110,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 _ownsMonolithicStream = Ownership.Dispose;
                 fileStream = null;
             }
-
         } finally {
             if (fileStream != null) {
-                try {
-                    fileStream.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+                fileStream.close();
             }
         }
     }
@@ -280,9 +275,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The newly created disk image.
      */
     public static DiskImageFile initialize(String path, DiskParameters parameters) {
-        Path parent = Paths.get(path).getParent();
-        FileLocator locator = new LocalFileLocator(parent == null ? "" : parent.toString());
-        return initialize(locator, Paths.get(path).getFileName().toString(), parameters);
+        FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
+        return initialize(locator, Utilities.getFileFromPath(path), parameters);
     }
 
     /**
@@ -419,10 +413,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         try (DiskImageFile parentFile = new DiskImageFile(parent, FileAccess.Read)) {
             DescriptorFile baseDescriptor = createDifferencingDiskDescriptor(type, parentFile, parent);
-            Path _parent = Paths.get(path).getParent();
-            FileLocator locator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
+            FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
             return doInitialize(locator,
-                                Paths.get(path).getFileName().toString(),
+                                Utilities.getFileFromPath(path),
                                 parentFile.getCapacity(),
                                 type,
                                 baseDescriptor);

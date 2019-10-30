@@ -56,6 +56,6 @@ public class RpcMismatchInfo {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(High, Low);
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(High, Low);
     }
 }

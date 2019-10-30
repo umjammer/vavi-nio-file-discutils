@@ -24,13 +24,12 @@ package DiscUtils.HfsPlus;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.Map;
 
+import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.Compression.SizedDeflateStream;
 import DiscUtils.Core.Compression.ZlibBuffer;
 import DiscUtils.Core.Compression.ZlibStream;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.IVfsFileWithStreams;
 import DiscUtils.Streams.ConcatStream;
 import DiscUtils.Streams.SparseStream;
@@ -97,10 +96,10 @@ public class File implements IVfsFileWithStreams {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return Utilities.fileAttributesFromUnixFileType(_catalogInfo.FileSystemInfo.getFileType());
+        return UnixFileType.toFileAttributes(_catalogInfo.FileSystemInfo.getFileType());
     }
 
-    public void setFileAttributes(Map<String, Object> value) {
+    public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 

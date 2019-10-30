@@ -109,87 +109,87 @@ public class BiosPartitionTypes {
      * @return The string representation.
      */
     public static String toString(byte type) {
-        if (type == (byte) 0x00) {
+        switch (type) {
+        case 0x00:
             return "Unused";
-        } else if (type == (byte) 0x01) {
+        case 0x01:
             return "FAT12";
-        } else if (type == (byte) 0x02) {
+        case 0x02:
             return "XENIX root";
-        } else if (type == (byte) 0x03) {
+        case 0x03:
             return "XENIX /usr";
-        } else if (type == (byte) 0x04) {
+        case 0x04:
             return "FAT16 (<32M)";
-        } else if (type == (byte) 0x05) {
+        case 0x05:
             return "Extended (non-LBA)";
-        } else if (type == (byte) 0x06) {
+        case 0x06:
             return "FAT16 (>32M)";
-        } else if (type == (byte) 0x07) {
+        case 0x07:
             return "IFS (NTFS or HPFS)";
-        } else if (type == (byte) 0x0B) {
+        case 0x0B:
             return "FAT32 (non-LBA)";
-        } else if (type == (byte) 0x0C) {
+        case 0x0C:
             return "FAT32 (LBA)";
-        } else if (type == (byte) 0x0E) {
+        case 0x0E:
             return "FAT16 (LBA)";
-        } else if (type == (byte) 0x0F) {
+        case 0x0F:
             return "Extended (LBA)";
-        } else if (type == (byte) 0x11) {
+        case 0x11:
             return "Hidden FAT12";
-        } else if (type == (byte) 0x12) {
+        case 0x12:
             return "Vendor Config/Recovery/Diagnostics";
-        } else if (type == (byte) 0x14) {
+        case 0x14:
             return "Hidden FAT16 (<32M)";
-        } else if (type == (byte) 0x16) {
+        case 0x16:
             return "Hidden FAT16 (>32M)";
-        } else if (type == (byte) 0x17) {
+        case 0x17:
             return "Hidden IFS (NTFS or HPFS)";
-        } else if (type == (byte) 0x1B) {
+        case 0x1B:
             return "Hidden FAT32 (non-LBA)";
-        } else if (type == (byte) 0x1C) {
+        case 0x1C:
             return "Hidden FAT32 (LBA)";
-        } else if (type == (byte) 0x1E) {
+        case 0x1E:
             return "Hidden FAT16 (LBA)";
-        } else if (type == (byte) 0x27) {
+        case 0x27:
             return "Windows Recovery Environment";
-        } else if (type == (byte) 0x42) {
+        case 0x42:
             return "Windows Dynamic Volume";
-        } else if (type == (byte) 0x80) {
+        case (byte) 0x80:
             return "Minix v1.1 - v1.4a";
-        } else if (type == (byte) 0x81) {
+        case (byte) 0x81:
             return "Minix / Early Linux";
-        } else if (type == (byte) 0x82) {
+        case (byte) 0x82:
             return "Linux Swap";
-        } else if (type == (byte) 0x83) {
+        case (byte) 0x83:
             return "Linux Native";
-        } else if (type == (byte) 0x84) {
+        case (byte) 0x84:
             return "Hibernation";
-        } else if (type == (byte) 0x8E) {
+        case (byte) 0x8E:
             return "Linux LVM";
-        } else if (type == (byte) 0xA0) {
+        case (byte) 0xA0:
             return "Laptop Hibernation";
-        } else if (type == (byte) 0xA8) {
+        case (byte) 0xA8:
             return "Mac OS-X";
-        } else if (type == (byte) 0xAB) {
+        case(byte)  0xAB:
             return "Mac OS-X Boot";
-        } else if (type == (byte) 0xAF) {
+        case (byte) 0xAF:
             return "Mac OS-X HFS";
-        } else if (type == (byte) 0xC0) {
+        case (byte) 0xC0:
             return "NTFT";
-        } else if (type == (byte) 0xDE) {
+        case (byte) 0xDE:
             return "Dell OEM";
-        } else if (type == (byte) 0xEE) {
+        case (byte) 0xEE:
             return "GPT Protective";
-        } else if (type == (byte) 0xEF) {
+        case (byte) 0xEF:
             return "EFI";
-        } else if (type == (byte) 0xFB) {
+        case (byte) 0xFB:
             return "VMware File System";
-        } else if (type == (byte) 0xFC) {
+        case (byte) 0xFC:
             return "VMware Swap";
-        } else if (type == (byte) 0xFE) {
+        case (byte) 0xFE:
             return "IBM OEM";
-        } else {
+        default:
             return "Unknown";
         }
     }
-
 }

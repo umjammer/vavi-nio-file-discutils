@@ -211,18 +211,18 @@ public class NtfsFormatter {
             upcaseFile.updateRecordInMft();
             File objIdFile = File.createNew(_context,
                                             EnumSet.of(FileRecordFlags.IsMetaFile, FileRecordFlags.HasViewIndex),
-                                            EnumSet.of(FileAttributeFlags.None));
+                                            EnumSet.noneOf(FileAttributeFlags.class));
             objIdFile.removeStream(objIdFile.getStream(AttributeType.Data, null));
             objIdFile.createIndex("$O", null, AttributeCollationRule.MultipleUnsignedLongs);
             objIdFile.updateRecordInMft();
             File reparseFile = File.createNew(_context,
                                               EnumSet.of(FileRecordFlags.IsMetaFile, FileRecordFlags.HasViewIndex),
-                                              EnumSet.of(FileAttributeFlags.None));
+                                              EnumSet.noneOf(FileAttributeFlags.class));
             reparseFile.createIndex("$R", null, AttributeCollationRule.MultipleUnsignedLongs);
             reparseFile.updateRecordInMft();
             File quotaFile = File.createNew(_context,
                                             EnumSet.of(FileRecordFlags.IsMetaFile, FileRecordFlags.HasViewIndex),
-                                            EnumSet.of(FileAttributeFlags.None));
+                                            EnumSet.noneOf(FileAttributeFlags.class));
             Quotas.initialize(quotaFile);
             Directory extendDir = createSystemDirectory(MasterFileTable.ExtendIndex);
             extendDir.addEntry(objIdFile, "$ObjId", FileNameNamespace.Win32AndDos);

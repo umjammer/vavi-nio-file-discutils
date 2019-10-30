@@ -299,7 +299,7 @@ public class ClusterStream extends Stream {
         } else {
             _fat.setNext(_knownClusters.get(_knownClusters.size() - 2), cluster[0]);
         }
-        _knownClusters.add(_knownClusters.size() - 1, cluster[0]);
+        _knownClusters.set(_knownClusters.size() - 1, cluster[0]);
         _knownClusters.add(_fat.getNext(cluster[0]));
         return cluster[0];
     }

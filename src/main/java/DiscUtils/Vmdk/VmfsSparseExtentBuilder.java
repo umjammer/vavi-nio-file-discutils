@@ -49,10 +49,13 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
 
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
+
         ServerSparseExtentHeader header = DiskImageFile.createServerSparseExtentHeader(_content.getLength());
         GlobalDirectoryExtent gdExtent = new GlobalDirectoryExtent(header);
+
         long grainTableStart = header.GdOffset * Sizes.Sector + gdExtent.getLength();
         long grainTableCoverage = header.NumGTEsPerGT * header.GrainSize * Sizes.Sector;
+
         for (Range grainTableRange : StreamExtent.blocks(_content.getExtents(), grainTableCoverage)) {
             for (int i = 0; i < grainTableRange.getCount(); ++i) {
                 long grainTable = grainTableRange.getOffset() + i;
@@ -65,14 +68,20 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
                                                                  header);
                 extents.add(gtExtent);
                 gdExtent.setEntry((int) grainTable, (int) (grainTableStart / Sizes.Sector));
+
                 grainTableStart += gtExtent.getLength();
             }
         }
+
         extents.add(0, gdExtent);
+
         header.FreeSector = (int) (grainTableStart / Sizes.Sector);
+
         byte[] buffer = header.getBytes();
         extents.add(0, new BuilderBufferExtent(0, buffer));
+
         totalLength[0] = grainTableStart;
+
         return extents;
     }
 

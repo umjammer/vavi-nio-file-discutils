@@ -60,10 +60,10 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && Utilities.equals(other.getAttributes(), getAttributes());
+        return other.getStatus() == getStatus() && dotnet4j.io.compat.Utilities.equals(other.getAttributes(), getAttributes());
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getAttributes());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getAttributes());
     }
 }

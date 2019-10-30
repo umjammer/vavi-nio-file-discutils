@@ -122,7 +122,7 @@ public class NewVolumeCommand extends PSCmdlet {
             newIndex = disk.getPartitions().create(getType(), getActive());
         } else {
             long size;
-            RefSupport<Long> refVar___0 = new RefSupport<Long>();
+            Long[] refVar___0 = new Long[1];
             boolean boolVar___0 = !DiscUtils.Common.Utilities.tryParseDiskSize(getSize(), refVar___0);
             size = refVar___0.getValue();
             if (boolVar___0) {

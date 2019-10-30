@@ -23,8 +23,6 @@
 package DiscUtils.Vhdx;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -363,15 +361,13 @@ public final class Disk extends VirtualDisk {
      * @return An object that accesses the new file as a Disk.
      */
     public static Disk initializeDifferencing(String path, String parentPath) {
-        Path _parent = Paths.get(parentPath).getParent();
-        LocalFileLocator parentLocator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
-        String parentFileName = Paths.get(parentPath).getFileName().toString();
+        LocalFileLocator parentLocator = new LocalFileLocator(Utilities.getDirectoryFromPath(parentPath));
+        String parentFileName = Utilities.getFileFromPath(parentPath);
         DiskImageFile newFile;
 
         try (DiskImageFile parent = new DiskImageFile(parentLocator, parentFileName, FileAccess.Read)) {
-            _parent = Paths.get(path).getParent();
-            LocalFileLocator locator = new LocalFileLocator(_parent == null ? "" : _parent.toString());
-            newFile = parent.createDifferencing(locator, Paths.get(path).getFileName().toString());
+            LocalFileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
+            newFile = parent.createDifferencing(locator, Utilities.getFileFromPath(path));
             return new Disk(newFile, Ownership.Dispose, parentLocator, parentFileName);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -434,9 +430,8 @@ public final class Disk extends VirtualDisk {
      * @return The newly created disk.
      */
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
-        Path parent = Paths.get(path).getParent();
-        FileLocator locator = new LocalFileLocator(parent == null ? "" : parent.toString());
-        DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Paths.get(path).getFileName().toString());
+        FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
+        DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
     }
 

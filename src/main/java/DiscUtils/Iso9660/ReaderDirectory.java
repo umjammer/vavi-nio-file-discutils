@@ -61,7 +61,7 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
                         _records.add(childDirEntry);
                     }
                 } else if (dr[0].FileIdentifier.equals("\0")) {
-                    __Self = new ReaderDirEntry(_context, dr[0]);
+                    _self = new ReaderDirEntry(_context, dr[0]);
                 }
 
                 pos += length;
@@ -77,10 +77,10 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
         return _records;
     }
 
-    private ReaderDirEntry __Self;
+    private ReaderDirEntry _self;
 
     public ReaderDirEntry getSelf() {
-        return __Self;
+        return _self;
     }
 
     public ReaderDirEntry getEntryByName(String name) {

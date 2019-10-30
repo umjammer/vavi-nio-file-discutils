@@ -24,8 +24,8 @@ package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.EnumSet;
-import java.util.Map;
 
 import vavi.util.win32.DateUtil;
 
@@ -75,7 +75,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         FileName = toCopy.FileName;
     }
 
-    public Map<String, Object> getFileAttributes() {
+    public EnumSet<FileAttributes> getFileAttributes() {
         return convertFlags(Flags);
     }
 
@@ -101,10 +101,10 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(ParentDirectory.getValue(), buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(CreationTime, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(ModificationTime, buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(MftChangedTime, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(LastAccessTime, buffer, offset + 0x20);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(CreationTime)), buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(ModificationTime)), buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(MftChangedTime)), buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(LastAccessTime)), buffer, offset + 0x20);
         EndianUtilities.writeBytesLittleEndian(AllocatedSize, buffer, offset + 0x28);
         EndianUtilities.writeBytesLittleEndian(RealSize, buffer, offset + 0x30);
         EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(Flags), buffer, offset + 0x38);
@@ -147,18 +147,20 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         return FileName;
     }
 
-    public static EnumSet<FileAttributeFlags> setAttributes(Map<String, Object> attrs, EnumSet<FileAttributeFlags> flags) {
-        Map<String, Object> attrMask = FileAttributes.all();
-        FileAttributes.not(attrMask, FileAttributes.Directory);
-        EnumSet<FileAttributeFlags> newFlags = FileAttributeFlags.and(flags, 0xFFFF0000);
-        newFlags.addAll(FileAttributeFlags.and(attrs, attrMask));
+    public static EnumSet<FileAttributeFlags> setAttributes(EnumSet<FileAttributes> attrs, EnumSet<FileAttributeFlags> flags) {
+        EnumSet<FileAttributes> attrMask = EnumSet.allOf(FileAttributes.class);
+        attrMask.remove(FileAttributes.Directory);
+        EnumSet<FileAttributeFlags> newFlags = FileAttributeFlags.and(flags, FileAttributeFlags.valueOf(0xFFFF0000));
+        newFlags.addAll(FileAttributes.cast(FileAttributeFlags.class, FileAttributes.and(attrs, attrMask)));
         return newFlags;
     }
 
-    public static Map<String, Object> convertFlags(EnumSet<FileAttributeFlags> flags) {
-        Map<String, Object> result = FileAttributeFlags.toMap(FileAttributeFlags.and(flags, 0xFFFF));
+    public static EnumSet<FileAttributes> convertFlags(EnumSet<FileAttributeFlags> flags) {
+        EnumSet<FileAttributes> result = FileAttributeFlags
+                .cast(FileAttributes.class, FileAttributeFlags.and(flags, FileAttributeFlags.valueOf(0xFFFF)));
+
         if (flags.contains(FileAttributeFlags.Directory)) {
-            result.put(FileAttributeFlags.Directory.name(), true); // TODO name()
+            result.add(FileAttributes.Directory);
         }
 
         return result;

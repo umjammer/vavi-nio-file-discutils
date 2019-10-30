@@ -132,9 +132,9 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
 
         alloc_set_aside = 4 + (superblock.getAgCount() * XFS_ALLOC_AGFL_RESERVE);
 
-        if ((superblock.getReadOnlyCompatibleFeatures().ordinal() & ReadOnlyCompatibleFeatures.RMAPBT.ordinal()) != 0) {
+        if (superblock.getReadOnlyCompatibleFeatures().contains(ReadOnlyCompatibleFeatures.RMAPBT)) {
             int rmapMaxlevels = 9;
-            if ((superblock.getReadOnlyCompatibleFeatures().ordinal() & ReadOnlyCompatibleFeatures.REFLINK.ordinal()) != 0) {
+            if (superblock.getReadOnlyCompatibleFeatures().contains(ReadOnlyCompatibleFeatures.REFLINK)) {
                 rmapMaxlevels = superblock.xfs_btree_compute_maxlevels();
             }
 

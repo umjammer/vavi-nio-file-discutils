@@ -158,15 +158,14 @@ public final class SubKeyIndirectListCell extends ListCell {
             for (int i = 0; i < getCellIndexes().size() - 1; ++i) {
                 ListCell cell = _hive.<ListCell> getCell(getCellIndexes().get(i));
                 int[] tempIndex = new int[1];
-                boolean result = cell.findKey(name, tempIndex) <= 0;
-                if (result) {
-                    getCellIndexes().add(i, cell.linkSubKey(name, cellIndex));
+                if (cell.findKey(name, tempIndex) <= 0) {
+                    getCellIndexes().set(i, cell.linkSubKey(name, cellIndex));
                     return _hive.updateCell(this, false);
                 }
 
             }
             ListCell lastCell = _hive.<ListCell> getCell(getCellIndexes().get(getCellIndexes().size() - 1));
-            getCellIndexes().add(getCellIndexes().size() - 1, lastCell.linkSubKey(name, cellIndex));
+            getCellIndexes().set(getCellIndexes().size() - 1, lastCell.linkSubKey(name, cellIndex));
             return _hive.updateCell(this, false);
         }
 
@@ -193,7 +192,7 @@ public final class SubKeyIndirectListCell extends ListCell {
                 int[] tempIndex = new int[1];
                 boolean result = cell.findKey(name, tempIndex) <= 0;
                 if (result) {
-                    getCellIndexes().add(i, cell.unlinkSubKey(name));
+                    getCellIndexes().set(i, cell.unlinkSubKey(name));
                     if (cell.getCount() == 0) {
                         _hive.freeCell(getCellIndexes().get(i));
                         getCellIndexes().remove(i);

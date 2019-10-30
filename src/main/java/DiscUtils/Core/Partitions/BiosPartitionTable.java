@@ -90,7 +90,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * {@code null} ).
      */
     public UUID getDiskGuid() {
-        return null;
+        return EMPTY;
     }
 
     /**
@@ -362,7 +362,7 @@ public final class BiosPartitionTable extends PartitionTable {
                                    : _diskGeometry.toLogicalBlockAddress(first, 0, 1);
         long lbaLast = _diskGeometry
                 .toLogicalBlockAddress(last, _diskGeometry.getHeadsPerCylinder() - 1, _diskGeometry.getSectorsPerTrack());
-//Debug.printf("%x, %x, %x, %s\n", first, last, lbaStart, lbaLast);
+
         return createPrimaryBySector(lbaStart, lbaLast, type, markActive);
     }
 
@@ -380,15 +380,16 @@ public final class BiosPartitionTable extends PartitionTable {
             throw new IllegalArgumentException("The first sector in a partition must be before the last");
         }
 
-//Debug.printf("%x, %x, %x\n", (last + 1), _diskGeometry.getBytesPerSector(), _diskData.getLength());
         if ((last + 1) * _diskGeometry.getBytesPerSector() > _diskData.getLength()) {
             throw new IndexOutOfBoundsException("The last sector extends beyond the end of the disk");
         }
 
         List<BiosPartitionRecord> existing = getPrimaryRecords();
+
         BiosPartitionRecord newRecord = new BiosPartitionRecord();
         ChsAddress startAddr = _diskGeometry.toChsAddress(first);
         ChsAddress endAddr = _diskGeometry.toChsAddress(last);
+
         // Because C/H/S addresses can max out at lower values than the LBA values,
         // the special tuple (1023, 254, 63) is used.
         if (startAddr.getCylinder() > 1023) {
@@ -409,19 +410,22 @@ public final class BiosPartitionTable extends PartitionTable {
         newRecord.setLBALength((int) (last - first + 1));
         newRecord.setPartitionType(type);
         newRecord.setStatus((byte) (markActive ? 0x80 : 0x00));
+
+        // First check for overlap with existing partition...
         for (BiosPartitionRecord r : existing) {
-            // First check for overlap with existing partition...
             if (Utilities.rangesOverlap(first, last + 1, r.getLBAStartAbsolute(), r.getLBAStartAbsolute() + r.getLBALength())) {
                 throw new dotnet4j.io.IOException("New partition overlaps with existing partition");
             }
         }
+
+        // Now look for empty partition
         for (int i = 0; i < 4; ++i) {
-            // Now look for empty partition
             if (!existing.get(i).isValid()) {
                 writeRecord(i, newRecord);
                 return i;
             }
         }
+
         throw new dotnet4j.io.IOException("No primary partition slots available");
     }
 
@@ -497,7 +501,7 @@ public final class BiosPartitionTable extends PartitionTable {
         _diskGeometry = geometry;
     }
 
-    public SparseStream open(BiosPartitionRecord record) {
+    SparseStream open(BiosPartitionRecord record) {
         return new SubStream(_diskData,
                              Ownership.None,
                              record.getLBAStartAbsolute() * _diskGeometry.getBytesPerSector(),
@@ -576,10 +580,12 @@ public final class BiosPartitionTable extends PartitionTable {
     private int findCylinderGap(int numCylinders) {
         List<BiosPartitionRecord> list = getPrimaryRecords().stream().filter(r -> r.isValid()).collect(Collectors.toList());
         Collections.sort(list);
+
         int startCylinder = 0;
         for (BiosPartitionRecord r : list) {
             int existingStart = r.getStartCylinder();
             int existingEnd = r.getEndCylinder();
+
             // LBA can represent bigger disk locations than CHS, so assume the LBA to be
             // definitive in the case where it
             // appears the CHS address has been truncated.
@@ -596,9 +602,9 @@ public final class BiosPartitionTable extends PartitionTable {
             if (!Utilities.rangesOverlap(startCylinder, startCylinder + numCylinders - 1, existingStart, existingEnd)) {
                 break;
             }
-
             startCylinder = existingEnd + 1;
         }
+
         return startCylinder;
     }
 

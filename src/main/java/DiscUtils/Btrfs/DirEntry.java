@@ -31,7 +31,6 @@ import DiscUtils.Btrfs.Base.Items.DirIndex;
 import DiscUtils.Btrfs.Base.Items.InodeItem;
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
 
@@ -44,7 +43,7 @@ public class DirEntry extends VfsDirEntry {
 
     public DirEntry(long treeId, long objectId) {
         _treeId = treeId;
-        setObjectId(objectId);
+        _objectId = objectId;
     }
 
     public DirEntry(long treeId, DirIndex item, InodeItem inode) {
@@ -100,7 +99,7 @@ public class DirEntry extends VfsDirEntry {
             unixFileType = UnixFileType.None;
             break;
         }
-        EnumSet<FileAttributes> result = Utilities.fileAttributesFromUnixFileType(unixFileType);
+        EnumSet<FileAttributes> result = UnixFileType.toFileAttributes(unixFileType);
         if (_inode != null && _inode.getFlags().contains(InodeFlag.Readonly))
             result.add(FileAttributes.ReadOnly);
 
@@ -130,28 +129,28 @@ public class DirEntry extends VfsDirEntry {
         return result;
     }
 
-    private Directory __CachedDirectory;
+    private Directory _cachedDirectory;
 
     public Directory getCachedDirectory() {
-        return __CachedDirectory;
+        return _cachedDirectory;
     }
 
     public void setCachedDirectory(Directory value) {
-        __CachedDirectory = value;
+        _cachedDirectory = value;
     }
 
     public DirItemChildType getType() {
         return _item.getChildType();
     }
 
-    private long __ObjectId;
+    private long _objectId;
 
     public long getObjectId() {
-        return __ObjectId;
+        return _objectId;
     }
 
     public void setObjectId(long value) {
-        __ObjectId = value;
+        _objectId = value;
     }
 
     public long getTreeId() {

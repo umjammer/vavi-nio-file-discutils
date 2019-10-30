@@ -22,19 +22,19 @@
 
 package DiscUtils.Core.Internal;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import DiscUtils.Core.UnixFileType;
-import DiscUtils.Core.CoreCompat.FileAttributes;
+import dotnet4j.io.compat.StringUtilities;
 
 
+/**
+ * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
+ */
 public class Utilities {
 
     /**
@@ -116,7 +116,7 @@ public class Utilities {
      * @return The directory part.
      */
     public static String getDirectoryFromPath(String path) {
-        String trimmed = path.replaceFirst(escapeForRegex("\\*$"), "");
+        String trimmed = path.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
             return ""; // No directory, just a file name
@@ -132,7 +132,7 @@ public class Utilities {
      * @return The file part of the path.
      */
     public static String getFileFromPath(String path) {
-        String trimmed = path.replaceFirst(escapeForRegex("\\*$"), "");
+        String trimmed = path.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "");
         int index = trimmed.lastIndexOf('\\');
         if (index < 0) {
             return trimmed;
@@ -158,7 +158,8 @@ public class Utilities {
             return a;
         }
 
-        return a.replaceFirst(escapeForRegex("\\*$"), "") + '\\' + b.replaceFirst(escapeForRegex("^\\*"), "");
+        return a.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "") + '\\' +
+               b.replaceFirst(StringUtilities.escapeForRegex("^\\*"), "");
     }
 
     /**
@@ -170,12 +171,10 @@ public class Utilities {
      *         relativePath is returned as-is. If {@code relativePath}
      *
      *         contains more '..' characters than the base path contains levels
-     *         of
-     *         directory, the resultant string be the root drive followed by the
-     *         file name. If no the basePath starts with '\' (no drive
-     *         specified)
-     *         then the returned path will also start with '\'. For example:
-     *         (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).
+     *         of directory, the resultant string be the root drive followed by
+     *         the file name. If no the basePath starts with '\' (no drive
+     *         specified) then the returned path will also start with '\'. For
+     *         example: (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).
      */
     public static String resolveRelativePath(String basePath, String relativePath) {
         if (Objects.isNull(basePath) || basePath.isEmpty()) {
@@ -183,11 +182,13 @@ public class Utilities {
         }
 
         if (!basePath.endsWith("\\")) {
-            Path parent = Paths.get(basePath).getParent();
-            basePath = parent != null ? parent.toString() : "\\"; // TODO check
+            basePath = getDirectoryFromPath(basePath);
         }
 
-        String merged = Paths.get(basePath, relativePath).toAbsolutePath().toString();
+        String merged = Paths.get(combinePaths(basePath, relativePath).replace("\\", "/"))
+                .normalize()
+                .toString()
+                .replace("/", "\\");
 
         if (basePath.startsWith("\\") && merged.length() > 2 && merged.charAt(1) == ':') {
             return merged.substring(2);
@@ -205,10 +206,10 @@ public class Utilities {
     }
 
     public static String makeRelativePath(String path, String basePath) {
-        List<String> pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+        List<String> pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .collect(Collectors.toList());
-        List<String> basePathElements = Arrays.stream(basePath.split(Utilities.escapeForRegex("\\")))
+        List<String> basePathElements = Arrays.stream(basePath.split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .collect(Collectors.toList());
 
@@ -299,117 +300,16 @@ public class Utilities {
      *
      * @param pattern The wildcard pattern to convert.
      * @return The resultant regular expression. The wildcard * (star) matches
-     *         zero
-     *         or more characters (including '.'), and ? (question mark) matches
-     *         precisely one character (except '.').
+     *         zero or more characters (including '.'), and ? (question mark)
+     *         matches precisely one character (except '.').
      */
     public static Pattern convertWildcardsToRegEx(String pattern) {
         if (!pattern.contains(".")) {
             pattern += ".";
         }
+        pattern = pattern.replace(".", "\\.");
 
         String query = "^" + pattern.replaceAll("\\*", ".*").replaceAll("\\?", "[^.]") + "$";
         return Pattern.compile(query, Pattern.CASE_INSENSITIVE);
-    }
-
-    public static EnumSet<FileAttributes> fileAttributesFromUnixFileType(UnixFileType fileType) {
-        switch (fileType) {
-        case Fifo:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        case Character:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        case Directory:
-            return EnumSet.of(FileAttributes.Directory);
-        case Block:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        case Regular:
-            return EnumSet.of(FileAttributes.Normal);
-        case Link:
-            return EnumSet.of(FileAttributes.ReparsePoint);
-        case Socket:
-            return EnumSet.of(FileAttributes.Device, FileAttributes.System);
-        default:
-            return EnumSet.noneOf(FileAttributes.class);
-        }
-    }
-
-    public static int getCombinedHashCode(Object... objs) {
-        int result = 0;
-        assert objs.length > 1;
-        int hash = combineHashCode(toHashCode(objs[0]), toHashCode(objs[1]));
-        for (int i = 2; i < objs.length; i++) {
-            result = combineHashCode(hash, toHashCode(objs[i]));
-            hash = result;
-        }
-        return result;
-    }
-
-    private static int toHashCode(Object o) {
-        if (Integer.TYPE.isInstance(o)) {
-            return Integer.TYPE.cast(o);
-        } else if (Integer.class.isInstance(o)) {
-            return Integer.class.cast(o);
-        } else if (Byte.TYPE.isInstance(o)) {
-            return Byte.hashCode(Byte.TYPE.cast(o));
-        } else if (Byte.class.isInstance(o)) {
-            return Byte.hashCode(Byte.class.cast(o));
-        } else if (Character.TYPE.isInstance(o)) {
-            return Character.hashCode(Character.TYPE.cast(o));
-        } else if (Character.class.isInstance(o)) {
-            return Character.hashCode(Character.class.cast(o));
-        } else if (Short.TYPE.isInstance(o)) {
-            return Short.hashCode(Short.TYPE.cast(o));
-        } else if (Short.class.isInstance(o)) {
-            return Short.hashCode(Short.class.cast(o));
-        } else if (Long.TYPE.isInstance(o)) {
-            return Long.hashCode(Long.TYPE.cast(o));
-        } else if (Long.class.isInstance(o)) {
-            return Long.hashCode(Long.class.cast(o));
-        } else {
-            return o.hashCode();
-        }
-    }
-
-    private static int combineHashCode(int a, int b) {
-        return 997 * a ^ 991 * b;
-    }
-
-    /** currently only '\' is replaced */
-    public static String escapeForRegex(String separator) {
-        return separator.replace("\\", "\\\\");
-    }
-
-    /**
-     * @param s1 nullable
-     * @param s2 nullable
-     */
-    public static int compareTo(String s1, String s2, boolean ignoreCase) {
-        if (s1 == null) {
-            if (s2 == null) {
-                return 0;
-            } else {
-                return -1;
-            }
-        }
-        if (s2 == null) {
-            return 1;
-        }
-        if (ignoreCase) {
-            return s1.compareToIgnoreCase(s2);
-        } else {
-            return s1.compareTo(s2);
-        }
-    }
-
-    /**
-     * @param obj1 nullable
-     * @param obj2 nullable
-     */
-    public static boolean equals(Object obj1, Object obj2) {
-        if (obj1 == null) {
-            return obj2 == null;
-        } else {
-            return obj1.equals(obj2);
-        }
     }
 }

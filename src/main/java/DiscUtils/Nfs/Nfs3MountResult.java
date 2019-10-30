@@ -91,6 +91,6 @@ public final class Nfs3MountResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getFileHandle(), getAuthFlavours());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getFileHandle(), getAuthFlavours());
     }
 }

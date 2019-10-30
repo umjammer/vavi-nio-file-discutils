@@ -29,6 +29,7 @@ import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
+import dotnet4j.io.compat.StringUtilities;
 
 
 public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySerializable, Comparable<AttributeListRecord> {
@@ -97,7 +98,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
             return val;
         }
 
-        val = Name.compareTo(other.Name);
+        val = StringUtilities.compare(Name, other.Name, true);
         if (val != 0) {
             return val;
         }

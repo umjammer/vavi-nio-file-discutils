@@ -1,6 +1,8 @@
 
 package DiscUtils.Core;
 
+import java.util.EnumSet;
+
 public enum ReportLevels {
     /**
      * Flags for the amount of detail to include in a report.
@@ -20,11 +22,9 @@ public enum ReportLevels {
     /**
      * Report error level items.
      */
-    Errors,
-    __dummyEnum__1,
-    __dummyEnum__2,
+    Errors;
     /**
      * Report all items.
      */
-    All
+    public static final EnumSet<ReportLevels> All = EnumSet.of(Information, Warnings, Errors);
 }

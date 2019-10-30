@@ -107,7 +107,6 @@ public final class Bitmap implements Closeable {
         if (index < _nextAvailable) {
             _nextAvailable = index;
         }
-
     }
 
     public void markAbsentRange(long index, long count) {
@@ -137,7 +136,6 @@ public final class Bitmap implements Closeable {
         if (index < _nextAvailable) {
             _nextAvailable = index;
         }
-
     }
 
     public long allocateFirstAvailable(long minValue) {

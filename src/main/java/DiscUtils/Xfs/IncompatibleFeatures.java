@@ -22,18 +22,24 @@
 
 package DiscUtils.Xfs;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+/**
+ * Read-write incompatible feature flags.
+ */
 public enum IncompatibleFeatures {
-    /**
-     * Read-write incompatible feature flags.
-     */
-    None,
+    None(0),
     /**
      * Directory file type. Each directory entry tracks the
      * type of the inode to which the entry points. This is a
      * performance optimization to remove the need to
      * load every inode into memory to iterate a directory.
      */
-    FType,
+    FType(1 << 0),
     /**
      * Sparse inodes. This feature relaxes the requirement
      * to allocate inodes in chunks of 64. When the free
@@ -45,7 +51,7 @@ public enum IncompatibleFeatures {
      * Unused space in the inode B+tree records are used to
      * track which parts of the inode chunk are not inodes.
      */
-    SparseInodes,
+    SparseInodes(1 << 1),
     /**
      * Metadata UUID. The UUID stamped into each
      * metadata block must match the value in
@@ -53,10 +59,37 @@ public enum IncompatibleFeatures {
      * change sb_uuid at will without having to rewrite
      * the entire filesystem.
      */
-    MetaUUID,
-    Supported;
+    MetaUUID(1 << 2);
 
-    public static IncompatibleFeatures valueOf(int value) {
-        return values()[value];
+    public static final EnumSet<IncompatibleFeatures > Supported = EnumSet.of(FType);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private IncompatibleFeatures(int value) {
+        this.value = value;
+    }
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return this::getValue;
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<IncompatibleFeatures> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(IncompatibleFeatures.class)));
+    }
+
+    public static long valueOf(EnumSet<IncompatibleFeatures> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

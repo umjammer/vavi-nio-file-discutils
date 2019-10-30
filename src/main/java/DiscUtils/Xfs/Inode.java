@@ -24,6 +24,7 @@ package DiscUtils.Xfs;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import DiscUtils.Core.UnixFileType;
@@ -57,44 +58,44 @@ public class Inode implements IByteArraySerializable {
         setRelativeInodeNumber(relInode);
     }
 
-    private int __AllocationGroup;
+    private int _allocationGroup;
 
     public int getAllocationGroup() {
-        return __AllocationGroup;
+        return _allocationGroup;
     }
 
     public void setAllocationGroup(int value) {
-        __AllocationGroup = value;
+        _allocationGroup = value;
     }
 
-    private int __RelativeInodeNumber;
+    private int _relativeInodeNumber;
 
     public int getRelativeInodeNumber() {
-        return __RelativeInodeNumber;
+        return _relativeInodeNumber;
     }
 
     public void setRelativeInodeNumber(int value) {
-        __RelativeInodeNumber = value;
+        _relativeInodeNumber = value;
     }
 
-    private int __AgBlock;
+    private int _agBlock;
 
     public int getAgBlock() {
-        return __AgBlock;
+        return _agBlock;
     }
 
     public void setAgBlock(int value) {
-        __AgBlock = value;
+        _agBlock = value;
     }
 
-    private int __BlockOffset;
+    private int _blockOffset;
 
     public int getBlockOffset() {
-        return __BlockOffset;
+        return _blockOffset;
     }
 
     public void setBlockOffset(int value) {
-        __BlockOffset = value;
+        _blockOffset = value;
     }
 
     public static final short InodeMagic = 0x494e;
@@ -102,28 +103,28 @@ public class Inode implements IByteArraySerializable {
     /**
      * The inode signature where these two bytes are 0x494e, or "IN" in ASCII.
      */
-    private short __Magic;
+    private short _magic;
 
     public short getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(short value) {
-        __Magic = value;
+        _magic = value;
     }
 
     /**
      * Specifies the mode access bits and type of file using the standard S_Ixxx
      * values defined in stat.h.
      */
-    private short __Mode;
+    private short _mode;
 
     public short getMode() {
-        return __Mode;
+        return _mode;
     }
 
     public void setMode(short value) {
-        __Mode = value;
+        _mode = value;
     }
 
     /**
@@ -133,14 +134,14 @@ public class Inode implements IByteArraySerializable {
      * core.Initially, inodes
      * are created as v1 but can be converted on the fly to v2 when required.
      */
-    private byte __Version;
+    private byte _version;
 
     public byte getVersion() {
-        return __Version;
+        return _version;
     }
 
     public void setVersion(byte value) {
-        __Version = value;
+        _version = value;
     }
 
     /**
@@ -158,14 +159,14 @@ public class Inode implements IByteArraySerializable {
      * inode. "dev" is
      * used for character and block devices while "uuid" is currently not used.
      */
-    private InodeFormat __Format = InodeFormat.Dev;
+    private InodeFormat _format = InodeFormat.Dev;
 
     public InodeFormat getFormat() {
-        return __Format;
+        return _format;
     }
 
     public void setFormat(InodeFormat value) {
-        __Format = value;
+        _format = value;
     }
 
     /**
@@ -174,40 +175,40 @@ public class Inode implements IByteArraySerializable {
      * exceeds 65535, the inode is converted to v2 and the link count is stored
      * in di_nlink.
      */
-    private short __Onlink;
+    private short _onlink;
 
     public short getOnlink() {
-        return __Onlink;
+        return _onlink;
     }
 
     public void setOnlink(short value) {
-        __Onlink = value;
+        _onlink = value;
     }
 
     /**
      * Specifies the owner's UID of the inode.
      */
-    private int __UserId;
+    private int _userId;
 
     public int getUserId() {
-        return __UserId;
+        return _userId;
     }
 
     public void setUserId(int value) {
-        __UserId = value;
+        _userId = value;
     }
 
     /**
      * Specifies the owner's GID of the inode.
      */
-    private int __GroupId;
+    private int _groupId;
 
     public int getGroupId() {
-        return __GroupId;
+        return _groupId;
     }
 
     public void setGroupId(int value) {
-        __GroupId = value;
+        _groupId = value;
     }
 
     /**
@@ -217,17 +218,17 @@ public class Inode implements IByteArraySerializable {
      * v2 inodes, and
      * therefore this value was never updated and was classed as reserved space
      * (part of
-     * {@link #Padding}
+     * {@link #_padding}
      * ).
      */
-    private int __Nlink;
+    private int _nlink;
 
     public int getNlink() {
-        return __Nlink;
+        return _nlink;
     }
 
     public void setNlink(int value) {
-        __Nlink = value;
+        _nlink = value;
     }
 
     /**
@@ -235,40 +236,40 @@ public class Inode implements IByteArraySerializable {
      * v2 if the project ID is set.
      * This value must be zero for v1 inodes.
      */
-    private short __ProjectId;
+    private short _projectId;
 
     public short getProjectId() {
-        return __ProjectId;
+        return _projectId;
     }
 
     public void setProjectId(short value) {
-        __ProjectId = value;
+        _projectId = value;
     }
 
     /**
      * Reserved, must be zero.
      */
-    private byte[] __Padding;
+    private byte[] _padding;
 
     public byte[] getPadding() {
-        return __Padding;
+        return _padding;
     }
 
     public void setPadding(byte[] value) {
-        __Padding = value;
+        _padding = value;
     }
 
     /**
      * Incremented on flush.
      */
-    private short __FlushIterator;
+    private short _flushIterator;
 
     public short getFlushIterator() {
-        return __FlushIterator;
+        return _flushIterator;
     }
 
     public void setFlushIterator(short value) {
-        __FlushIterator = value;
+        _flushIterator = value;
     }
 
     /**
@@ -277,40 +278,40 @@ public class Inode implements IByteArraySerializable {
      * This value maybe undefined if the filesystem is mounted with the
      * "noatime" option.
      */
-    private long __AccessTime;
+    private long _accessTime;
 
     public long getAccessTime() {
-        return __AccessTime;
+        return _accessTime;
     }
 
     public void setAccessTime(long value) {
-        __AccessTime = value;
+        _accessTime = value;
     }
 
     /**
      * Specifies the last time the file was modified.
      */
-    private long __ModificationTime;
+    private long _modificationTime;
 
     public long getModificationTime() {
-        return __ModificationTime;
+        return _modificationTime;
     }
 
     public void setModificationTime(long value) {
-        __ModificationTime = value;
+        _modificationTime = value;
     }
 
     /**
      * Specifies when the inode's status was last changed.
      */
-    private long __CreationTime;
+    private long _creationTime;
 
     public long getCreationTime() {
-        return __CreationTime;
+        return _creationTime;
     }
 
     public void setCreationTime(long value) {
-        __CreationTime = value;
+        _creationTime = value;
     }
 
     /**
@@ -321,14 +322,14 @@ public class Inode implements IByteArraySerializable {
      * directories, the space taken by directory entries and for links, the
      * length of the symlink.
      */
-    private long __Length;
+    private long _length;
 
     public long getLength() {
-        return __Length;
+        return _length;
     }
 
     public void setLength(long value) {
-        __Length = value;
+        _length = value;
     }
 
     /**
@@ -337,14 +338,14 @@ public class Inode implements IByteArraySerializable {
      * metadata like B+trees.This does not include blocks used for extended
      * attributes.
      */
-    private long __BlockCount;
+    private long _blockCount;
 
     public long getBlockCount() {
-        return __BlockCount;
+        return _blockCount;
     }
 
     public void setBlockCount(long value) {
-        __BlockCount = value;
+        _blockCount = value;
     }
 
     /**
@@ -359,41 +360,41 @@ public class Inode implements IByteArraySerializable {
      * space, XFS will attempt to allocate additional disk space based on this
      * value.
      */
-    private int __ExtentSize;
+    private int _extentSize;
 
     public int getExtentSize() {
-        return __ExtentSize;
+        return _extentSize;
     }
 
     public void setExtentSize(int value) {
-        __ExtentSize = value;
+        _extentSize = value;
     }
 
     /**
      * Specifies the number of data extents associated with this inode.
      */
-    private int __Extents;
+    private int _extents;
 
     public int getExtents() {
-        return __Extents;
+        return _extents;
     }
 
     public void setExtents(int value) {
-        __Extents = value;
+        _extents = value;
     }
 
     /**
      * Specifies the number of extended attribute extents associated with this
      * inode.
      */
-    private short __AttributeExtents;
+    private short _attributeExtents;
 
     public short getAttributeExtents() {
-        return __AttributeExtents;
+        return _attributeExtents;
     }
 
     public void setAttributeExtents(short value) {
-        __AttributeExtents = value;
+        _attributeExtents = value;
     }
 
     /**
@@ -408,14 +409,14 @@ public class Inode implements IByteArraySerializable {
      * di_forkoff depends on the XFS_SB_VERSION2_ATTR2BIT flag in the
      * superblock.
      */
-    private byte __Forkoff;
+    private byte _forkoff;
 
     public byte getForkoff() {
-        return __Forkoff;
+        return _forkoff;
     }
 
     public void setForkoff(byte value) {
-        __Forkoff = value;
+        _forkoff = value;
     }
 
     /**
@@ -424,53 +425,53 @@ public class Inode implements IByteArraySerializable {
      * restricted to "local", "extents" and "btree" formats for extended
      * attribute data.
      */
-    private byte __AttributeFormat;
+    private byte _attributeFormat;
 
     public byte getAttributeFormat() {
-        return __AttributeFormat;
+        return _attributeFormat;
     }
 
     public void setAttributeFormat(byte value) {
-        __AttributeFormat = value;
+        _attributeFormat = value;
     }
 
     /**
      * DMAPI event mask.
      */
-    private int __DmApiEventMask;
+    private int _dmApiEventMask;
 
     public int getDmApiEventMask() {
-        return __DmApiEventMask;
+        return _dmApiEventMask;
     }
 
     public void setDmApiEventMask(int value) {
-        __DmApiEventMask = value;
+        _dmApiEventMask = value;
     }
 
     /**
      * DMAPI state.
      */
-    private short __DmState;
+    private short _dmState;
 
     public short getDmState() {
-        return __DmState;
+        return _dmState;
     }
 
     public void setDmState(short value) {
-        __DmState = value;
+        _dmState = value;
     }
 
     /**
      * Specifies flags associated with the inode.
      */
-    private InodeFlags __Flags = InodeFlags.None;
+    private EnumSet<InodeFlags> _flags;
 
-    public InodeFlags getFlags() {
-        return __Flags;
+    public EnumSet<InodeFlags> getFlags() {
+        return _flags;
     }
 
-    public void setFlags(InodeFlags value) {
-        __Flags = value;
+    public void setFlags(EnumSet<InodeFlags> value) {
+        _flags = value;
     }
 
     /**
@@ -480,28 +481,28 @@ public class Inode implements IByteArraySerializable {
      * by unlinking and
      * creating a new file that reuses the inode.
      */
-    private int __Generation;
+    private int _generation;
 
     public int getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(int value) {
-        __Generation = value;
+        _generation = value;
     }
 
     public UnixFileType getFileType() {
         return UnixFileType.valueOf((getMode() >>> 12) & 0xF);
     }
 
-    private byte[] __DataFork;
+    private byte[] _dataFork;
 
     public byte[] getDataFork() {
-        return __DataFork;
+        return _dataFork;
     }
 
     public void setDataFork(byte[] value) {
-        __DataFork = value;
+        _dataFork = value;
     }
 
     public int size() {
@@ -548,7 +549,7 @@ public class Inode implements IByteArraySerializable {
     private long readTimestamp(byte[] buffer, int offset) {
         long seconds = EndianUtilities.toUInt32BigEndian(buffer, offset);
         long nanoSeconds = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
-        return Instant.ofEpochSecond(seconds, nanoSeconds / 100).toEpochMilli();
+        return Instant.ofEpochSecond(seconds, nanoSeconds).toEpochMilli();
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -561,7 +562,7 @@ public class Inode implements IByteArraySerializable {
         for (int i = 0; i < getExtents(); i++) {
             Extent extent = new Extent();
             offset += extent.readFrom(getDataFork(), offset);
-            result.add(i, extent);
+            result.set(i, extent);
         }
         return result;
     }

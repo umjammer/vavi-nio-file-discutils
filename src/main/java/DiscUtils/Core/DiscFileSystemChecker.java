@@ -23,25 +23,23 @@
 package DiscUtils.Core;
 
 import java.io.PrintWriter;
+import java.util.EnumSet;
 
 
 /**
- * Base class for objects that validate file system integrity.
- * Instances of this class do not offer the ability to fix/correct
- * file system issues, just to perform a limited number of checks on
- * integrity of the file system.
+ * Base class for objects that validate file system integrity. Instances of this
+ * class do not offer the ability to fix/correct file system issues, just to
+ * perform a limited number of checks on integrity of the file system.
  */
 public abstract class DiscFileSystemChecker {
+
     /**
      * Checks the integrity of a file system held in a stream.
      *
      * @param reportOutput A report on issues found.
      * @param levels The amount of detail to report.
-     * @return
-     *         {@code true}
-     *         if the file system appears valid, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the file system appears valid, else
+     *         {@code false}.
      */
-    public abstract boolean check(PrintWriter reportOutput, ReportLevels levels);
+    public abstract boolean check(PrintWriter reportOutput, EnumSet<ReportLevels> levels);
 }

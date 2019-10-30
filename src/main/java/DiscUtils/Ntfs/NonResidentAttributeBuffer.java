@@ -23,6 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,18 +39,18 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
 
     public NonResidentAttributeBuffer(File file, NtfsAttribute attribute) {
         super(file.getContext(), cookRuns(attribute), file.getIndexInMft() == MasterFileTable.MftIndex);
+
         _file = file;
         _attribute = attribute;
-        if (attribute.getFlags().containsAll(EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
-            if (attribute.getFlags().contains(AttributeFlags.Sparse)) {
-                _activeStream = new SparseClusterStream(_attribute, _rawStream);
-            } else if (attribute.getFlags().contains( AttributeFlags.Compressed)) {
-                _activeStream = new CompressedClusterStream(_context, _attribute, _rawStream);
-            } else if (attribute.getFlags().contains( AttributeFlags.None)) {
-                _activeStream = _rawStream;
-            } else {
-                throw new UnsupportedOperationException("Unhandled attribute type '" + attribute.getFlags() + "'");
-            }
+
+        if (attribute.getFlags().contains(AttributeFlags.Sparse)) {
+            _activeStream = new SparseClusterStream(_attribute, _rawStream);
+        } else if (attribute.getFlags().contains(AttributeFlags.Compressed)) {
+            _activeStream = new CompressedClusterStream(_context, _attribute, _rawStream);
+        } else if (attribute.getFlags().contains(AttributeFlags.None) || attribute.getFlags().isEmpty()) {
+            _activeStream = _rawStream;
+        } else {
+            throw new UnsupportedOperationException("Unhandled attribute type '" + attribute.getFlags() + "'");
         }
     }
 
@@ -113,7 +114,8 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             setCapacity(pos + count);
         }
 
-        // Write zeros from end of current initialized data to the start of the new write
+        // Write zeros from end of current initialized data to the start of the
+        // new write
         if (pos > getPrimaryAttributeRecord().getInitializedDataLength()) {
             initializeData(pos);
         }
@@ -148,7 +150,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             getPrimaryAttributeRecord().setDataLength(pos + count);
         }
 
-        if (_attribute.getFlags().containsAll(EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
+        if (!Collections.disjoint(_attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             getPrimaryAttributeRecord().setCompressedDataSize(getPrimaryAttributeRecord().getCompressedDataSize() +
                                                               allocatedClusters * _bytesPerCluster);
         }
@@ -170,20 +172,25 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         }
 
         _file.markMftRecordDirty();
-        // Write zeros from end of current initialized data to the start of the new write
+
+        // Write zeros from end of current initialized data to the start of the
+        // new write
         if (pos > getPrimaryAttributeRecord().getInitializedDataLength()) {
             initializeData(pos);
         }
 
         int releasedClusters = 0;
+
         long focusPos = pos;
         while (focusPos < pos + count) {
             long vcn = focusPos / _bytesPerCluster;
             long remaining = pos + count - focusPos;
             long clusterOffset = focusPos - vcn * _bytesPerCluster;
+
             if (vcn * _bytesPerCluster != focusPos || remaining < _bytesPerCluster) {
                 // Unaligned or short write
                 int toClear = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
+
                 if (_activeStream.isClusterStored(vcn)) {
                     _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
                     Arrays.fill(_ioBuffer, (int) clusterOffset, (int) clusterOffset + toClear, (byte) 0);
@@ -195,9 +202,11 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
                 // Aligned, full cluster clears...
                 int fullClusters = (int) (remaining / _bytesPerCluster);
                 releasedClusters += _activeStream.clearClusters(vcn, fullClusters);
+
                 focusPos += fullClusters * _bytesPerCluster;
             }
         }
+
         if (pos + count > getPrimaryAttributeRecord().getInitializedDataLength()) {
             getPrimaryAttributeRecord().setInitializedDataLength(pos + count);
         }
@@ -206,7 +215,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             getPrimaryAttributeRecord().setDataLength(pos + count);
         }
 
-        if (_attribute.getFlags().containsAll(EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
+        if (!Collections.disjoint(_attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             getPrimaryAttributeRecord().setCompressedDataSize(getPrimaryAttributeRecord().getCompressedDataSize() -
                                                               releasedClusters * _bytesPerCluster);
         }
@@ -230,12 +239,15 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
     private void initializeData(long pos) {
         long initDataLen = getPrimaryAttributeRecord().getInitializedDataLength();
         _file.markMftRecordDirty();
+
         int clustersAllocated = 0;
+
         while (initDataLen < pos) {
             long vcn = initDataLen / _bytesPerCluster;
             if (initDataLen % _bytesPerCluster != 0 || pos - initDataLen < _bytesPerCluster) {
                 int clusterOffset = (int) (initDataLen - vcn * _bytesPerCluster);
                 int toClear = (int) Math.min(_bytesPerCluster - clusterOffset, pos - initDataLen);
+
                 if (_activeStream.isClusterStored(vcn)) {
                     _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
                     Arrays.fill(_ioBuffer, clusterOffset, clusterOffset + toClear, (byte) 0);
@@ -246,15 +258,17 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             } else {
                 int numClusters = (int) (pos / _bytesPerCluster - vcn);
                 clustersAllocated -= _activeStream.clearClusters(vcn, numClusters);
+
                 initDataLen += numClusters * _bytesPerCluster;
             }
         }
+
         getPrimaryAttributeRecord().setInitializedDataLength(pos);
-        if (_attribute.getFlags().containsAll(EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
+
+        if (!Collections.disjoint(_attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             getPrimaryAttributeRecord().setCompressedDataSize(getPrimaryAttributeRecord().getCompressedDataSize() +
                                                               clustersAllocated * _bytesPerCluster);
         }
-
     }
 
     private void truncate(long value) {

@@ -1,10 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:13:06
-//
-
-package DiscUtils.Udf;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25,24 +19,12 @@ package DiscUtils.Udf;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public class ApplicationEntityIdentifier  extends EntityIdentifier
-{
+
+package DiscUtils.Udf;
+
+public class ApplicationEntityIdentifier extends EntityIdentifier {
+
     public String toString() {
-        try
-        {
-            return Identifier;
-        }
-        catch (RuntimeException __dummyCatchVar0)
-        {
-            throw __dummyCatchVar0;
-        }
-        catch (Exception __dummyCatchVar0)
-        {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return Identifier;
     }
-
 }
-
-

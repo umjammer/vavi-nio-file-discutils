@@ -25,8 +25,11 @@ package DiscUtils.Core;
 import java.io.IOException;
 import java.util.EnumSet;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.Utilities;
+import dotnet4j.io.compat.StringUtilities;
 
 
 /**
@@ -40,7 +43,7 @@ public class DiscFileSystemInfo {
         }
 
         _fileSystem = fileSystem;
-        _path = path.replaceAll(Utilities.escapeForRegex("(^\\*|\\*$)"), "");
+        _path = path.replaceAll(StringUtilities.escapeForRegex("(^\\*|\\*$)"), "");
 //Debug.println(_path);
     }
 

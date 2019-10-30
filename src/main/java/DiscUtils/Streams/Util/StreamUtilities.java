@@ -198,8 +198,8 @@ public class StreamUtilities {
         return readExact(stream, Sizes.Sector);
     }
 
-static final String X = (char) 0x1b + "[" + 37 + "m";
-static final String Z = (char) 0x1b + "[" + 00 + "m";
+//static final String X = (char) 0x1b + "[" + 37 + "m";
+//static final String Z = (char) 0x1b + "[" + 00 + "m";
 
     /**
      * Reads a structure from a stream.
@@ -212,7 +212,7 @@ static final String Z = (char) 0x1b + "[" + 00 + "m";
         try {
             T result = c.newInstance();
             int size = result.size();
-System.err.println("1: " + c.getName() + ", " + size + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
+//System.err.println("1: " + c.getName() + ", " + size + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
             byte[] buffer = readExact(stream, size); // TODO cache sizeOf()
             result.readFrom(buffer, 0);
             return result;
@@ -233,7 +233,7 @@ System.err.println("1: " + c.getName() + ", " + size + " | " + stream.getLength(
         try {
             T result = c.newInstance();
             byte[] buffer = readExact(stream, length);
-System.err.println("2: " + c.getName() + ", " + buffer.length + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
+//System.err.println("2: " + c.getName() + ", " + buffer.length + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
             result.readFrom(buffer, 0);
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
@@ -252,7 +252,7 @@ System.err.println("2: " + c.getName() + ", " + buffer.length + " | " + stream.g
         byte[] buffer = new byte[obj.size()];
         obj.writeTo(buffer, 0);
         stream.write(buffer, 0, buffer.length);
-System.err.println("w: " + obj.getClass().getName() + ", " + buffer.length + " / " + stream.getLength() + " " + X + stream + Z);
+//System.err.println("w: " + obj.getClass().getName() + ", " + buffer.length + " / " + stream.getLength() + " " + X + stream + Z);
     }
 
     /**

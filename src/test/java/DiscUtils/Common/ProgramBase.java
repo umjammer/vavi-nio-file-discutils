@@ -136,7 +136,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
     boolean _time;
 
     @Option(option = "of", argName = "_outFormat", args = 1,
-            description = "Mandatory - the type of disk to output, one of ...")
+            description = "Mandatory - the type of disk to output, one of ..." + " or " + ".")
     String _outFormat;
 
     protected void run(String[] args) throws IOException {

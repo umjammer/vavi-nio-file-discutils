@@ -22,6 +22,7 @@
 
 package DiscUtils.Vmdk;
 
+import java.util.Collections;
 import java.util.EnumSet;
 
 import DiscUtils.Streams.SparseStream;
@@ -60,7 +61,8 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         byte[] headerSector = StreamUtilities.readExact(file, Sizes.Sector);
         _hostedHeader = HostedSparseExtentHeader.read(headerSector, 0);
         if (_hostedHeader.GdOffset == -1) {
-            // Fall back to secondary copy that (should) be at the end of the stream, just
+            // Fall back to secondary copy that (should) be at the end of the
+            // stream, just
             // before the end-of-stream sector marker
             file.setPosition(file.getLength() - Sizes.OneKiB);
             headerSector = StreamUtilities.readExact(file, Sizes.Sector);
@@ -84,8 +86,9 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
 
     public boolean canWrite() {
         // No write support for streamOptimized disks
-        return _fileStream.canWrite() && !_hostedHeader.Flags
-                .containsAll(EnumSet.of(HostedSparseExtentFlags.CompressedGrains, HostedSparseExtentFlags.MarkersInUse));
+        return _fileStream.canWrite() &&
+               Collections.disjoint(_hostedHeader.Flags,
+                                    EnumSet.of(HostedSparseExtentFlags.CompressedGrains, HostedSparseExtentFlags.MarkersInUse));
     }
 
     public void write(byte[] buffer, int offset, int count) {
@@ -130,7 +133,8 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
 
             readBuffer = StreamUtilities.readExact(_fileStream, hdr.DataSize);
 
-            // This is really a zlib stream, so has header and footer. We ignore this right
+            // This is really a zlib stream, so has header and footer. We ignore
+            // this right
             // now, but we sanity
             // check against expected header values...
             short header = EndianUtilities.toUInt16BigEndian(readBuffer, 0);
@@ -150,7 +154,8 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             Stream readStream = new MemoryStream(readBuffer, 2, hdr.DataSize - 2, false);
             DeflateStream deflateStream = new DeflateStream(readStream, CompressionMode.Decompress);
 
-            // Need to skip some bytes, but DefaultStream doesn't support seeking...
+            // Need to skip some bytes, but DefaultStream doesn't support
+            // seeking...
             StreamUtilities.readExact(deflateStream, grainOffset);
 
             return deflateStream.read(buffer, bufferOffset, numToRead);
@@ -188,7 +193,8 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
     private void allocateGrain(int grainTable, int grain) {
         // Calculate start pos for new grain
         long grainStartPos = MathUtilities.roundUp(_fileStream.getLength(), _header.GrainSize * Sizes.Sector);
-        // Copy-on-write semantics, read the bytes from parent and write them out to
+        // Copy-on-write semantics, read the bytes from parent and write them
+        // out to
         // this extent.
         _parentDiskStream
                 .setPosition(_diskOffset + (grain + _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);

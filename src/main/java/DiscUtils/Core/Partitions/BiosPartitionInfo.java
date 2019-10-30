@@ -1,16 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/11 18:18:07
-//
-
-package DiscUtils.Core.Partitions;
-
-import java.util.UUID;
-
-import DiscUtils.Core.ChsAddress;
-import DiscUtils.Core.PhysicalVolumeType;
-import DiscUtils.Streams.SparseStream;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31,88 +19,99 @@ import DiscUtils.Streams.SparseStream;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Core.Partitions;
+
+import java.util.UUID;
+
+import DiscUtils.Core.ChsAddress;
+import DiscUtils.Core.PhysicalVolumeType;
+import DiscUtils.Streams.SparseStream;
+
+
 /**
-* Provides access to partition records in a BIOS (MBR) partition table.
-*/
-public final class BiosPartitionInfo  extends PartitionInfo
-{
+ * Provides access to partition records in a BIOS (MBR) partition table.
+ */
+public final class BiosPartitionInfo extends PartitionInfo {
     private final BiosPartitionRecord _record;
+
     private final BiosPartitionTable _table;
+
     public BiosPartitionInfo(BiosPartitionTable table, BiosPartitionRecord record) {
         _table = table;
         _record = record;
     }
 
     /**
-    * Gets the type of the partition.
-    */
+     * Gets the type of the partition.
+     */
     public byte getBiosType() {
         return _record.getPartitionType();
     }
 
     /**
-    * Gets the end (inclusive) of the partition as a CHS address.
-    */
+     * Gets the end (inclusive) of the partition as a CHS address.
+     */
     public ChsAddress getEnd() {
         return new ChsAddress(_record.getEndCylinder(), _record.getEndHead(), _record.getEndSector());
     }
 
     /**
-    * Gets the first sector of the partion (relative to start of disk) as a Logical Block Address.
-    */
+     * Gets the first sector of the partion (relative to start of disk) as a
+     * Logical Block Address.
+     */
     public long getFirstSector() {
         return _record.getLBAStartAbsolute();
     }
 
     /**
-    * Always returns
-    *  {@link UUID}
-    *  empty.
-    */
+     * Always returns {@link UUID} empty.
+     */
     public UUID getGuidType() {
         return new UUID(0L, 0L);
     }
 
     /**
-    * Gets a value indicating whether this partition is active (bootable).
-    */
+     * Gets a value indicating whether this partition is active (bootable).
+     */
     public boolean isActive() {
         return _record.getStatus() != 0;
     }
 
     /**
-    * Gets a value indicating whether the partition is a primary (rather than extended) partition.
-    */
+     * Gets a value indicating whether the partition is a primary (rather than
+     * extended) partition.
+     */
     public boolean isPrimary() {
         return getPrimaryIndex() >= 0;
     }
 
     /**
-    * Gets the last sector of the partion (relative to start of disk) as a Logical Block Address (inclusive).
-    */
+     * Gets the last sector of the partion (relative to start of disk) as a
+     * Logical Block Address (inclusive).
+     */
     public long getLastSector() {
         return _record.getLBAStartAbsolute() + _record.getLBALength() - 1;
     }
 
     /**
-    * Gets the index of the partition in the primary partition table, or
-    *  {@code -1}
-    *  if not a primary partition.
-    */
+     * Gets the index of the partition in the primary partition table, or
+     * {@code -1} if not a primary partition.
+     */
     public int getPrimaryIndex() {
         return _record.getIndex();
     }
 
     /**
-    * Gets the start of the partition as a CHS address.
-    */
+     * Gets the start of the partition as a CHS address.
+     */
     public ChsAddress getStart() {
         return new ChsAddress(_record.getStartCylinder(), _record.getStartHead(), _record.getStartSector());
     }
 
     /**
-    * Gets the type of the partition as a string.
-    */
+     * Gets the type of the partition as a string.
+     */
     public String getTypeAsString() {
         return _record.getFriendlyPartitionType();
     }
@@ -122,13 +121,11 @@ public final class BiosPartitionInfo  extends PartitionInfo
     }
 
     /**
-    * Opens a stream to access the content of the partition.
-    *
-    *  @return The new stream.
-    */
+     * Opens a stream to access the content of the partition.
+     *
+     * @return The new stream.
+     */
     public SparseStream open() {
         return _table.open(_record);
     }
 }
-
-

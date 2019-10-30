@@ -1,16 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:11:07
-//
-
-package DiscUtils.SquashFs;
-
-import java.time.Instant;
-
-import DiscUtils.Streams.IByteArraySerializable;
-import DiscUtils.Streams.Util.EndianUtilities;
-
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31,6 +19,15 @@ import DiscUtils.Streams.Util.EndianUtilities;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.SquashFs;
+
+import java.time.Instant;
+
+import DiscUtils.Streams.IByteArraySerializable;
+import DiscUtils.Streams.Util.EndianUtilities;
+
+
 public class SuperBlock implements IByteArraySerializable {
     public static final int SquashFsMagic = 0x73717368;
 

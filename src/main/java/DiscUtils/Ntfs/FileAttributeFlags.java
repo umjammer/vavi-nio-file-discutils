@@ -2,8 +2,8 @@
 package DiscUtils.Ntfs;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.EnumSet;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -12,7 +12,7 @@ import DiscUtils.Core.CoreCompat.EnumSettable;
 
 
 public enum FileAttributeFlags implements EnumSettable {
-    None(0x00000000),
+//    None(0x00000000),
     ReadOnly(0x00000001),
     Hidden(0x00000002),
     System(0x00000004),
@@ -61,39 +61,30 @@ public enum FileAttributeFlags implements EnumSettable {
 
     // TODO
     public static <E extends Enum<E> & EnumSettable> EnumSet<E> cast(Class<E> clazz, EnumSet<FileAttributeFlags> flags) {
-        return cast(clazz, (int) valueOf(flags));
-    }
-
-    // TODO
-    public static <E extends Enum<E> & EnumSettable> EnumSet<E> cast(Class<E> clazz, int value) {
+        int value = (int) valueOf(flags);
         return Arrays.stream(clazz.getEnumConstants())
                 .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(clazz)));
     }
 
-    // TODO using name()
-    public static Map<String, Object> toMap(EnumSet<FileAttributeFlags> flags) {
-        return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
+    /** */
+    private static BitSet toBitSet(EnumSet<FileAttributeFlags> flags) {
+        BitSet bs = new BitSet(values().length);
+        flags.forEach(e -> bs.set(e.ordinal()));
+        return bs;
     }
 
     // TODO using name(), loop flags is fewer than loop all enums
-    public static EnumSet<FileAttributeFlags> toEnumSet(Map<String, Object> flags) {
+    private static EnumSet<FileAttributeFlags> toEnumSet(BitSet flags) {
         return Arrays.stream(values())
-                .filter(v -> Boolean.class.cast(flags.get(v.name())))
+                .filter(e -> flags.get(e.ordinal()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributeFlags.class)));
     }
 
-    /** TODO using name() */
-    public static EnumSet<FileAttributeFlags> and(Map<String, Object> attrs, Map<String, Object> mask) {
-        return mask.entrySet()
-                .stream()
-                .filter(e -> attrs.containsKey(e.getKey()) && attrs.get(e.getKey()) == e.getValue())
-                .map(e -> valueOf(e.getKey()))
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributeFlags.class)));
-    }
-
-    /** TODO */
-    public static EnumSet<FileAttributeFlags> and(EnumSet<FileAttributeFlags> flags, int mask) {
-        return and(toMap(flags), toMap(valueOf(mask)));
+    /** */
+    public static EnumSet<FileAttributeFlags> and(EnumSet<FileAttributeFlags> flags1, EnumSet<FileAttributeFlags> flags2) {
+        BitSet bs = toBitSet(flags1);
+        bs.and(toBitSet(flags2));
+        return toEnumSet(bs);
     }
 }

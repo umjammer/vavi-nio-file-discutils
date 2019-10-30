@@ -41,6 +41,7 @@ import dotnet4j.io.FileShare;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+import dotnet4j.io.compat.StringUtilities;
 import dotnet4j.io.compression.CompressionMode;
 
 
@@ -451,7 +452,7 @@ public final class SquashFileSystemBuilder {
 
     private BuilderDirectory createDirectory(String path, int user, int group, EnumSet<UnixFilePermissions> permissions) {
         BuilderDirectory currentDir = getRoot();
-        String[] elems = Arrays.stream(path.split(Utilities.escapeForRegex("\\"))).filter(e -> !e.isEmpty()).toArray(String[]::new);
+        String[] elems = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\"))).filter(e -> !e.isEmpty()).toArray(String[]::new);
 
         for (int i = 0; i < elems.length; ++i) {
             BuilderNode nextDirAsNode = currentDir.getChild(elems[i]);

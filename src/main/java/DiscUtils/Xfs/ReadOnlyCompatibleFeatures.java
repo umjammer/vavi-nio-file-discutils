@@ -22,31 +22,66 @@
 
 package DiscUtils.Xfs;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+
+/**
+ * Feature flags for features backwards compatible with read-only mounting.
+ */
 public enum ReadOnlyCompatibleFeatures {
     /**
-     * Feature flags for features backwards compatible with read-only mounting.
-     *
      * Free inode B+tree. Each allocation group contains a
      * B+tree to track inode chunks containing free inodes.
      * This is a performance optimization to reduce the
      * time required to allocate inodes.
      */
-    FINOBT,
+    FINOBT(1 << 0),
     /**
      * Reverse mapping B+tree. Each allocation group
      * contains a B+tree containing records mapping AG
      * blocks to their owners.
      */
-    RMAPBT,
+    RMAPBT(1 << 1),
     /**
      * Reference count B+tree. Each allocation group
      * contains a B+tree to track the reference counts of AG
      * blocks. This enables files to share data blocks safely.
      */
-    REFLINK,
-    ALL;
+    REFLINK(1 << 2);
 
-    public static ReadOnlyCompatibleFeatures valueOf(int value) {
-        return values()[value];
+    public static final EnumSet<ReadOnlyCompatibleFeatures> ALL = EnumSet.of(FINOBT, RMAPBT, REFLINK);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private ReadOnlyCompatibleFeatures(int value) {
+        this.value = value;
+    }
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return this::getValue;
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<ReadOnlyCompatibleFeatures> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(ReadOnlyCompatibleFeatures.class)));
+    }
+
+    public static long valueOf(EnumSet<Version2Features> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

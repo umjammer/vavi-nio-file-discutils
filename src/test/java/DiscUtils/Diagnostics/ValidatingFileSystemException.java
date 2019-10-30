@@ -1,11 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/30 1:38:17
-//
-
-package DiscUtils.Diagnostics;
-
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26,36 +19,35 @@ package DiscUtils.Diagnostics;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Diagnostics;
+
 /**
-* Exception thrown when file system corruption is detected during verification.
-*/
-public final class ValidatingFileSystemException  extends Exception
-{
+ * Exception thrown when file system corruption is detected during verification.
+ */
+public final class ValidatingFileSystemException extends Exception {
     /**
-    * Creates a new instance.
-    */
+     * Creates a new instance.
+     */
     public ValidatingFileSystemException() {
     }
 
     /**
-    * Creates a new instance.
-    *
-    *  @param message The exception message.
-    */
+     * Creates a new instance.
+     *
+     * @param message The exception message.
+     */
     public ValidatingFileSystemException(String message) {
         super(message);
     }
 
     /**
-    * Creates a new instance.
-    *
-    *  @param message The exception message
-    *  @param innerException The inner exception
-    */
+     * Creates a new instance.
+     *
+     * @param message The exception message
+     * @param innerException The inner exception
+     */
     public ValidatingFileSystemException(String message, Exception innerException) {
         super(message, innerException);
     }
-
 }
-
-

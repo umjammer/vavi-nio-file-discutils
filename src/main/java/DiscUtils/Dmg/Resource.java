@@ -35,7 +35,7 @@ public abstract class Resource {
                 int id = Integer.parseInt(idStr);
                 setId(id);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid ID field");
+                throw new IllegalArgumentException("Invalid ID field", e);
             }
         }
 
@@ -51,7 +51,7 @@ public abstract class Resource {
                 int attributes = Integer.parseInt(attrString, style);
                 setAttributes(attributes);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid Attributes field");
+                throw new IllegalArgumentException("Invalid Attributes field", e);
             }
         }
     }

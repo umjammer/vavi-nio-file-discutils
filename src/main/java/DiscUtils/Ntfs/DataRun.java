@@ -27,63 +27,64 @@ public class DataRun {
     }
 
     public DataRun(long offset, long length, boolean isSparse) {
-        setRunOffset(offset);
-        setRunLength(length);
-        setIsSparse(isSparse);
+        _runOffset = offset;
+        _runLength = length;
+        _isSparse = isSparse;
     }
 
-    private boolean __IsSparse;
+    private boolean _isSparse;
 
     public boolean isSparse() {
-        return __IsSparse;
+        return _isSparse;
     }
 
     public void setIsSparse(boolean value) {
-        __IsSparse = value;
+        _isSparse = value;
     }
 
-    private long __RunLength;
+    private long _runLength;
 
     public long getRunLength() {
-        return __RunLength;
+        return _runLength;
     }
 
     public void setRunLength(long value) {
-        __RunLength = value;
+        _runLength = value;
     }
 
-    private long __RunOffset;
+    private long _runOffset;
 
     public long getRunOffset() {
-        return __RunOffset;
+        return _runOffset;
     }
 
     public void setRunOffset(long value) {
-        __RunOffset = value;
+        _runOffset = value;
     }
 
+    // TODO cache?
     public long getSize() {
-        int runLengthSize = varLongSize(getRunLength());
-        int runOffsetSize = varLongSize(getRunOffset());
+        int runLengthSize = varLongSize(_runLength);
+        int runOffsetSize = varLongSize(_runOffset);
         return 1 + runLengthSize + runOffsetSize;
     }
 
     public int read(byte[] buffer, int offset) {
         int runOffsetSize = (buffer[offset] >>> 4) & 0x0F;
         int runLengthSize = buffer[offset] & 0x0F;
-        setRunLength(readVarLong(buffer, offset + 1, runLengthSize));
-        setRunOffset(readVarLong(buffer, offset + 1 + runLengthSize, runOffsetSize));
-        setIsSparse(runOffsetSize == 0);
+        _runLength = readVarLong(buffer, offset + 1, runLengthSize);
+        _runOffset = readVarLong(buffer, offset + 1 + runLengthSize, runOffsetSize);
+        _isSparse = runOffsetSize == 0;
         return 1 + runLengthSize + runOffsetSize;
     }
 
     public String toString() {
-        return String.format("%-2d[+%sd]", getRunOffset(), getRunLength());
+        return String.format("%-2d[+%d]", _runOffset, _runLength);
     }
 
     public int write(byte[] buffer, int offset) {
-        int runLengthSize = writeVarLong(buffer, offset + 1, getRunLength());
-        int runOffsetSize = isSparse() ? 0 : writeVarLong(buffer, offset + 1 + runLengthSize, getRunOffset());
+        int runLengthSize = writeVarLong(buffer, offset + 1, _runLength);
+        int runOffsetSize = _isSparse ? 0 : writeVarLong(buffer, offset + 1 + runLengthSize, _runOffset);
         buffer[offset] = (byte) ((runLengthSize & 0x0F) | ((runOffsetSize << 4) & 0xF0));
         return 1 + runLengthSize + runOffsetSize;
     }

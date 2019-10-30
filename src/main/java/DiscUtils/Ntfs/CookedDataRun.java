@@ -24,10 +24,10 @@ package DiscUtils.Ntfs;
 
 public class CookedDataRun {
     public CookedDataRun(DataRun raw, long startVcn, long prevLcn, NonResidentAttributeRecord attributeExtent) {
-        __DataRun = raw;
-        __StartVcn = startVcn;
-        setStartLcn(prevLcn + raw.getRunOffset());
-        __AttributeExtent = attributeExtent;
+        _dataRun = raw;
+        _startVcn = startVcn;
+        _startLcn = prevLcn + raw.getRunOffset();
+        _attributeExtent = attributeExtent;
         if (startVcn < 0) {
             throw new IndexOutOfBoundsException("VCN must be >= 0");
         }
@@ -37,43 +37,43 @@ public class CookedDataRun {
         }
     }
 
-    private NonResidentAttributeRecord __AttributeExtent;
+    private NonResidentAttributeRecord _attributeExtent;
 
     public NonResidentAttributeRecord getAttributeExtent() {
-        return __AttributeExtent;
+        return _attributeExtent;
     }
 
-    private DataRun __DataRun;
+    private DataRun _dataRun;
 
     public DataRun getDataRun() {
-        return __DataRun;
+        return _dataRun;
     }
 
     public boolean isSparse() {
-        return getDataRun().isSparse();
+        return _dataRun.isSparse();
     }
 
     public long getLength() {
-        return getDataRun().getRunLength();
+        return _dataRun.getRunLength();
     }
 
     public void setLength(long value) {
-        getDataRun().setRunLength(value);
+        _dataRun.setRunLength(value);
     }
 
-    private long __StartLcn;
+    private long _startLcn;
 
     public long getStartLcn() {
-        return __StartLcn;
+        return _startLcn;
     }
 
     public void setStartLcn(long value) {
-        __StartLcn = value;
+        _startLcn = value;
     }
 
-    private long __StartVcn;
+    private long _startVcn;
 
     public long getStartVcn() {
-        return __StartVcn;
+        return _startVcn;
     }
 }

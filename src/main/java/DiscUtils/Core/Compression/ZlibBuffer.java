@@ -77,5 +77,4 @@ public class ZlibBuffer extends Buffer {
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         return Arrays.asList(new StreamExtent(0, _stream.getLength()));
     }
-
 }

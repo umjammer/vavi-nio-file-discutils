@@ -23,6 +23,8 @@
 package DiscUtils.Streams;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
@@ -143,7 +145,6 @@ public abstract class SparseStream extends Stream {
         private SparseStream _wrapped;
 
         public SparseReadOnlyWrapperStream(SparseStream wrapped, Ownership ownsWrapped) {
-            super();
             _wrapped = wrapped;
             _ownsWrapped = ownsWrapped;
         }
@@ -214,7 +215,7 @@ public abstract class SparseStream extends Stream {
             _wrapped = wrapped;
             _ownsWrapped = ownsWrapped;
             if (extents != null) {
-                _extents = extents;
+                _extents = new ArrayList<>(extents);
             }
         }
 
@@ -234,12 +235,10 @@ public abstract class SparseStream extends Stream {
             if (_extents != null) {
                 return _extents;
             }
-
             if (SparseStream.class.isInstance(_wrapped)) {
                 return SparseStream.class.cast(_wrapped).getExtents();
             }
-
-            return null;
+            return Arrays.asList(new StreamExtent(0, _wrapped.getLength()));
         }
 
         public long getLength() {

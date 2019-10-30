@@ -128,6 +128,6 @@ public final class Nfs3ReadDirPlusResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getDirAttributes(), getCookieVerifier(), getDirEntries());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getDirAttributes(), getCookieVerifier(), getDirEntries());
     }
 }

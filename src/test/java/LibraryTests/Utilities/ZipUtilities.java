@@ -6,8 +6,6 @@ import java.io.File;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import vavi.util.StringUtil;
-
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compat.JavaIOStream;
@@ -28,7 +26,7 @@ public class ZipUtilities {
             try (Stream zipFile = new JavaIOStream(zipArchive.getInputStream(entry))) {
                 zipFile.copyTo(ms);
             }
-System.err.println(StringUtil.getDump(ms.toArray(), 128));
+//System.err.println(StringUtil.getDump(ms.toArray(), 128));
             return ms;
         }
     }

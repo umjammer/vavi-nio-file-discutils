@@ -35,54 +35,54 @@ import dotnet4j.io.Stream;
 
 
 public class BTreeExtentRoot implements IByteArraySerializable {
-    private short __Level;
+    private short _level;
 
     public short getLevel() {
-        return __Level;
+        return _level;
     }
 
     public void setLevel(short value) {
-        __Level = value;
+        _level = value;
     }
 
-    private short __NumberOfRecords;
+    private short _numberOfRecords;
 
     public short getNumberOfRecords() {
-        return __NumberOfRecords;
+        return _numberOfRecords;
     }
 
     public void setNumberOfRecords(short value) {
-        __NumberOfRecords = value;
+        _numberOfRecords = value;
     }
 
-    private long[] __Keys;
+    private long[] _keys;
 
     public long[] getKeys() {
-        return __Keys;
+        return _keys;
     }
 
     public void setKeys(long[] value) {
-        __Keys = value;
+        _keys = value;
     }
 
-    private long[] __Pointer;
+    private long[] _pointer;
 
     public long[] getPointer() {
-        return __Pointer;
+        return _pointer;
     }
 
     public void setPointer(long[] value) {
-        __Pointer = value;
+        _pointer = value;
     }
 
-    private Map<Long, BTreeExtentHeader> __Children;
+    private Map<Long, BTreeExtentHeader> _children;
 
     public Map<Long, BTreeExtentHeader> getChildren() {
-        return __Children;
+        return _children;
     }
 
     public void setChildren(Map<Long, BTreeExtentHeader> value) {
-        __Children = value;
+        _children = value;
     }
 
     public int size() {
@@ -143,7 +143,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
 
     public List<Extent> getExtents() {
         List<Extent> result = new ArrayList<>();
-        for (Map.Entry<Long, BTreeExtentHeader> child : getChildren().entrySet()) {
+        for (Map.Entry<Long, BTreeExtentHeader> child : _children.entrySet()) {
             result.addAll(child.getValue().getExtents());
         }
         return result;

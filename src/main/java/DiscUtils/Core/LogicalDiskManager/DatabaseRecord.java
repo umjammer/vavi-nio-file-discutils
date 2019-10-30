@@ -76,6 +76,9 @@ public abstract class DatabaseRecord {
         return result;
     }
 
+    /**
+     * @param offset {@cs out}
+     */
     protected static long readVarULong(byte[] buffer, int[] offset) {
         int length = buffer[offset[0]];
         long result = 0;

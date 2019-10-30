@@ -281,10 +281,14 @@ public class DiscFileSystemDirectoryTest {
     public void creationTimeUtc(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("DIR");
-        assertTrue(Instant.now().toEpochMilli() >= fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc());
+        assertTrue(Instant.now().toEpochMilli() >= fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc(),
+                   Instant.now() + " >= " + Instant
+                           .ofEpochMilli(fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc()));
         assertTrue(Instant.now()
                 .minus(Duration.ofSeconds(10))
-                .toEpochMilli() <= fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc());
+                .toEpochMilli() <= fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc(),
+                   Instant.now().minus(Duration.ofSeconds(10)) + " <= " + Instant
+                           .ofEpochMilli(fs.getRoot().getDirectories("DIR").get(0).getCreationTimeUtc()));
     }
 
     @ParameterizedTest
@@ -292,7 +296,8 @@ public class DiscFileSystemDirectoryTest {
     public void creationTime(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("DIR");
-        assertTrue(Instant.now().toEpochMilli() >= fs.getRoot().getDirectories("DIR").get(0).getCreationTime());
+        assertTrue(Instant.now().toEpochMilli() >= fs.getRoot().getDirectories("DIR").get(0).getCreationTime(),
+                   Instant.now() + " >= " + Instant.ofEpochMilli(fs.getRoot().getDirectories("DIR").get(0).getCreationTime()));
         assertTrue(Instant.now()
                 .minus(Duration.ofSeconds(10))
                 .toEpochMilli() <= fs.getRoot().getDirectories("DIR").get(0).getCreationTime());
@@ -333,7 +338,8 @@ public class DiscFileSystemDirectoryTest {
     @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void rootBehaviour(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
-        // Not all file systems can modify the root directory, so we just make sure 'get' and 'no-op' change work.
+        // Not all file systems can modify the root directory, so we just make
+        // sure 'get' and 'no-op' change work.
         fs.getRoot().setAttributes(fs.getRoot().getAttributes());
         fs.getRoot().setCreationTimeUtc(fs.getRoot().getCreationTimeUtc());
         fs.getRoot().setLastAccessTimeUtc(fs.getRoot().getLastAccessTimeUtc());

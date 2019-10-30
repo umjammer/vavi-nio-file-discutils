@@ -43,7 +43,7 @@ import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.SeekOrigin;
 
 
-public class File {
+class File {
     private final List<NtfsAttribute> _attributes;
 
     protected INtfsContext _context;
@@ -67,7 +67,7 @@ public class File {
     /**
      * Gets an enumeration of all the attributes.
      */
-    public List<NtfsAttribute> getAllAttributes() {
+    List<NtfsAttribute> getAllAttributes() {
         return _attributes;
     }
 
@@ -95,7 +95,7 @@ public class File {
         return bestName;
     }
 
-    public INtfsContext getContext() {
+    INtfsContext getContext() {
         return _context;
     }
 
@@ -197,8 +197,9 @@ public class File {
 
         EnumSet<FileAttributeFlags> fileFlags = EnumSet.of(FileAttributeFlags.Archive);
         fileFlags.addAll(FileRecord.convertFlags(flags));
-        fileFlags.add(dirFlags.contains(FileAttributeFlags.Compressed) ? FileAttributeFlags.Compressed
-                                                                       : FileAttributeFlags.None);
+        if (dirFlags.contains(FileAttributeFlags.Compressed)) {
+            fileFlags.add(FileAttributeFlags.Compressed);
+        }
 
         EnumSet<AttributeFlags> dataAttrFlags = EnumSet.noneOf(AttributeFlags.class);
         if (dirFlags.contains(FileAttributeFlags.Compressed)) {
@@ -268,11 +269,14 @@ public class File {
             boolean fixesApplied = true;
             while (fixesApplied) {
                 fixesApplied = false;
+
                 for (int i = 0; i < _records.size(); ++i) {
                     FileRecord record = _records.get(i);
+
                     boolean fixedAttribute = true;
                     while (record.getSize() > _mft.getRecordSize() && fixedAttribute) {
                         fixedAttribute = false;
+
                         if (!fixedAttribute && !record.getIsMftRecord()) {
                             for (AttributeRecord attr : record.getAttributes()) {
                                 if (!attr.isNonResident()
@@ -283,7 +287,6 @@ public class File {
                                     fixedAttribute = true;
                                     break;
                                 }
-
                             }
                         }
 
@@ -293,7 +296,6 @@ public class File {
                                     fixedAttribute = true;
                                     break;
                                 }
-
                             }
                         }
 
@@ -313,12 +315,12 @@ public class File {
                     }
                 }
             }
+
             setMftRecordIsDirty(false);
             for (FileRecord record : _records) {
                 _mft.writeRecord(record);
             }
         }
-
     }
 
     public Index createIndex(String name, AttributeType attrType, AttributeCollationRule collRule) {
@@ -393,7 +395,7 @@ public class File {
     public List<NtfsStream> getStreams(AttributeType attrType, String name) {
         List<NtfsStream> result = new ArrayList<>();
         for (NtfsAttribute attr : _attributes) {
-            if (attr.getType() == attrType && Utilities.equals(attr.getName(), name)) {
+            if (attr.getType() == attrType && dotnet4j.io.compat.Utilities.equals(attr.getName(), name)) {
                 result.add(new NtfsStream(this, attr));
             }
         }
@@ -474,14 +476,14 @@ public class File {
         return bestName;
     }
 
-    public void removeAttributeExtents(NtfsAttribute attr) {
+    void removeAttributeExtents(NtfsAttribute attr) {
         attr.getDataBuffer().setCapacity(0);
         for (AttributeReference extentRef : attr.getExtents().keySet()) {
             removeAttributeExtent(extentRef);
         }
     }
 
-    public void removeAttributeExtent(AttributeReference extentRef) {
+    void removeAttributeExtent(AttributeReference extentRef) {
         FileRecord fileRec = getFileRecord(extentRef.getFile());
         if (fileRec != null) {
             fileRec.removeAttribute(extentRef.getAttributeId());
@@ -498,7 +500,7 @@ public class File {
      * @param attrRef Reference to the attribute.
      * @return The attribute.
      */
-    public NtfsAttribute getAttribute(AttributeReference attrRef) {
+    NtfsAttribute getAttribute(AttributeReference attrRef) {
         for (NtfsAttribute attr : _attributes) {
             if (attr.getReference().equals(attrRef)) {
                 return attr;
@@ -514,9 +516,9 @@ public class File {
      * @param name The attribute's name.
      * @return The attribute of {@code null} .
      */
-    public NtfsAttribute getAttribute(AttributeType type, String name) {
+    NtfsAttribute getAttribute(AttributeType type, String name) {
         for (NtfsAttribute attr : _attributes) {
-            if (attr.getPrimaryRecord().getAttributeType() == type && Utilities.equals(attr.getName(), name)) {
+            if (attr.getPrimaryRecord().getAttributeType() == type && dotnet4j.io.compat.Utilities.equals(attr.getName(), name)) {
                 return attr;
             }
         }
@@ -529,7 +531,7 @@ public class File {
      * @param type The attribute type.
      * @return The attributes.
      */
-    public List<NtfsAttribute> getAttributes(AttributeType type) {
+    List<NtfsAttribute> getAttributes(AttributeType type) {
         List<NtfsAttribute> matches = new ArrayList<>();
         for (NtfsAttribute attr : _attributes) {
             if (attr.getPrimaryRecord().getAttributeType() == type && (attr.getName() == null || attr.getName().isEmpty())) {
@@ -540,9 +542,9 @@ public class File {
         return matches;
     }
 
-    public void makeAttributeNonResident(AttributeReference attrRef, int maxData) {
+    void makeAttributeNonResident(AttributeReference attrRef, int maxData) {
         NtfsAttribute attr = getAttribute(attrRef);
-        if (attr.getIsNonResident()) {
+        if (attr.isNonResident()) {
             throw new UnsupportedOperationException("Attribute is already non-resident");
         }
 
@@ -556,7 +558,7 @@ public class File {
         updateAttributeList();
     }
 
-    public void freshenFileName(FileNameRecord fileName, boolean updateMftRecord) {
+    void freshenFileName(FileNameRecord fileName, boolean updateMftRecord) {
         //
         // Freshen the record from the definitive info in the other attributes
         //
@@ -596,7 +598,7 @@ public class File {
         }
     }
 
-    public long getAttributeOffset(AttributeReference attrRef) {
+    long getAttributeOffset(AttributeReference attrRef) {
         long recordOffset = _mft.getRecordOffset(attrRef.getFile());
         FileRecord frs = getFileRecord(attrRef.getFile());
         return recordOffset + frs.getAttributeOffset(attrRef.getAttributeId());
@@ -874,7 +876,7 @@ public class File {
 
     private void makeAttributeResident(AttributeReference attrRef, int maxData) {
         NtfsAttribute attr = getAttribute(attrRef);
-        if (!attr.getIsNonResident()) {
+        if (!attr.isNonResident()) {
             throw new UnsupportedOperationException("Attribute is already resident");
         }
 
@@ -1022,9 +1024,9 @@ public class File {
                 return;
             }
 
-            if (!_attr.getIsNonResident() && value >= _file.getMaxMftRecordSize()) {
+            if (!_attr.isNonResident() && value >= _file.getMaxMftRecordSize()) {
                 _file.makeAttributeNonResident(_attr.getReference(), (int) Math.min(value, _wrapped.getLength()));
-            } else if (_attr.getIsNonResident() && value <= _file.getMaxMftRecordSize() / 4) {
+            } else if (_attr.isNonResident() && value <= _file.getMaxMftRecordSize() / 4) {
                 // Use of 1/4 of record size here is just a heuristic - the important thing is
                 // not to end up with
                 // zero-length non-resident attributes

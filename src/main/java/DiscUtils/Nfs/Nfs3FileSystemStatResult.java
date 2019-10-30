@@ -81,11 +81,11 @@ public class Nfs3FileSystemStatResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && Utilities.equals(other.getPostOpAttributes(), getPostOpAttributes()) &&
-               Utilities.equals(other.getFileSystemStat(), getFileSystemStat());
+        return other.getStatus() == getStatus() && dotnet4j.io.compat.Utilities.equals(other.getPostOpAttributes(), getPostOpAttributes()) &&
+               dotnet4j.io.compat.Utilities.equals(other.getFileSystemStat(), getFileSystemStat());
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getPostOpAttributes(), getFileSystemStat());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getPostOpAttributes(), getFileSystemStat());
     }
 }

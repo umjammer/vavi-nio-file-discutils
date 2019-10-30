@@ -165,7 +165,7 @@ public class NtfsAttribute implements IDiagnosticTraceable {
         return _primaryRecord.getAttributeId();
     }
 
-    public boolean getIsNonResident() {
+    public boolean isNonResident() {
         return _primaryRecord.isNonResident();
     }
 

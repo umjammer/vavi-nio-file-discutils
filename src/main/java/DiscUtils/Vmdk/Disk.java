@@ -23,7 +23,6 @@
 package DiscUtils.Vmdk;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,9 +74,7 @@ public final class Disk extends VirtualDisk {
      * @param access The access requested to the disk.
      */
     public Disk(String path, FileAccess access) throws IOException {
-        this(new LocalFileLocator(Paths.get(path).getParent() == null ? "" : Paths.get(path).getParent().toString()),
-             path,
-             access);
+        this(new LocalFileLocator(Utilities.getDirectoryFromPath(path)), path, access);
     }
 
     /**
@@ -99,8 +96,8 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Initializes a new instance of the Disk class. Only monolithic sparse streams
-     * are supported.
+     * Initializes a new instance of the Disk class. Only monolithic sparse
+     * streams are supported.
      *
      * @param stream The stream containing the VMDK file.
      * @param ownsStream Indicates if the new instances owns the stream.
@@ -149,11 +146,11 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets the contents of this disk as a stream. Note the returned stream is not
-     * guaranteed to be at any particular position. The actual position will depend
-     * on the last partition table/file system activity, since all access to the
-     * disk contents pass through a single stream instance. Set the stream position
-     * before accessing the stream.
+     * Gets the contents of this disk as a stream. Note the returned stream is
+     * not guaranteed to be at any particular position. The actual position will
+     * depend on the last partition table/file system activity, since all access
+     * to the disk contents pass through a single stream instance. Set the
+     * stream position before accessing the stream.
      */
     public SparseStream getContent() {
         if (_content == null) {
@@ -205,8 +202,8 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets the parameters of the disk. Most of the parameters are also available
-     * individually, such as DiskType and Capacity.
+     * Gets the parameters of the disk. Most of the parameters are also
+     * available individually, such as DiskType and Capacity.
      */
     public VirtualDiskParameters getParameters() {
         DiskImageFile file = (DiskImageFile) _files.get(_files.size() - 1).Item1;
@@ -271,8 +268,10 @@ public final class Disk extends VirtualDisk {
      * @param type The type of virtual disk to create.
      * @return The newly created disk image.
      */
-    public static Disk initialize(DiscFileSystem fileSystem, String path, long capacity, DiskCreateType type)
-            throws IOException {
+    public static Disk initialize(DiscFileSystem fileSystem,
+                                  String path,
+                                  long capacity,
+                                  DiskCreateType type) throws IOException {
         return new Disk(DiskImageFile.initialize(fileSystem, path, capacity, type), Ownership.Dispose);
     }
 
@@ -285,8 +284,10 @@ public final class Disk extends VirtualDisk {
      * @param adapterType The type of virtual disk adapter.
      * @return The newly created disk image.
      */
-    public static Disk initialize(String path, long capacity, DiskCreateType type, DiskAdapterType adapterType)
-            throws IOException {
+    public static Disk initialize(String path,
+                                  long capacity,
+                                  DiskCreateType type,
+                                  DiskAdapterType adapterType) throws IOException {
         return initialize(path, capacity, null, type, adapterType);
     }
 
@@ -305,8 +306,7 @@ public final class Disk extends VirtualDisk {
                                   long capacity,
                                   Geometry geometry,
                                   DiskCreateType type,
-                                  DiskAdapterType adapterType)
-            throws IOException {
+                                  DiskAdapterType adapterType) throws IOException {
         return new Disk(DiskImageFile.initialize(path, capacity, geometry, type, adapterType), Ownership.Dispose);
     }
 
@@ -324,8 +324,7 @@ public final class Disk extends VirtualDisk {
                                   String path,
                                   long capacity,
                                   DiskCreateType type,
-                                  DiskAdapterType adapterType)
-            throws IOException {
+                                  DiskAdapterType adapterType) throws IOException {
         return new Disk(DiskImageFile.initialize(fileSystem, path, capacity, type, adapterType), Ownership.Dispose);
     }
 
@@ -350,8 +349,10 @@ public final class Disk extends VirtualDisk {
      * @param parentPath The path to the parent disk.
      * @return The new disk.
      */
-    public static Disk initializeDifferencing(DiscFileSystem fileSystem, String path, DiskCreateType type, String parentPath)
-            throws IOException {
+    public static Disk initializeDifferencing(DiscFileSystem fileSystem,
+                                              String path,
+                                              DiskCreateType type,
+                                              String parentPath) throws IOException {
         return new Disk(DiskImageFile.initializeDifferencing(fileSystem, path, type, parentPath), Ownership.Dispose);
     }
 

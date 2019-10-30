@@ -24,12 +24,12 @@ package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
 import java.time.Instant;
-import java.util.Map;
 
 import vavi.util.win32.DateUtil;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
+import dotnet4j.Tuple;
 import dotnet4j.security.principal.SecurityIdentifier;
 import dotnet4j.security.principal.WellKnownSidType;
 
@@ -69,15 +69,13 @@ public final class Quotas {
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "QUOTAS");
         writer.println(indent + "  OWNER INDEX");
-        for (Map.Entry<DiscUtils.Ntfs.Quotas.OwnerKey, DiscUtils.Ntfs.Quotas.OwnerRecord> entry : _ownerIndex.getEntries()
-                .entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.Quotas.OwnerKey, DiscUtils.Ntfs.Quotas.OwnerRecord> entry : _ownerIndex.getEntries()) {
             writer.println(indent + "    OWNER INDEX ENTRY");
             writer.println(indent + "            SID: " + entry.getKey().Sid);
             writer.println(indent + "       Owner Id: " + entry.getValue().OwnerId);
         }
         writer.println(indent + "  QUOTA INDEX");
-        for (Map.Entry<DiscUtils.Ntfs.Quotas.OwnerRecord, DiscUtils.Ntfs.Quotas.QuotaRecord> entry : _quotaIndex.getEntries()
-                .entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.Quotas.OwnerRecord, DiscUtils.Ntfs.Quotas.QuotaRecord> entry : _quotaIndex.getEntries()) {
             writer.println(indent + "    QUOTA INDEX ENTRY");
             writer.println(indent + "           Owner Id: " + entry.getKey().OwnerId);
             writer.println(indent + "           User SID: " + entry.getValue().Sid);
@@ -213,7 +211,7 @@ public final class Quotas {
 
         public String toString() {
             return "[V:" + Version + ",F:" + Flags + ",BU:" + BytesUsed + ",CT:" + ChangeTime + ",WL:" + WarningLimit + ",HL:" +
-                HardLimit + ",ET:" + ExceededTime + ",SID:" + Sid + "]";
+                   HardLimit + ",ET:" + ExceededTime + ",SID:" + Sid + "]";
         }
     }
 }

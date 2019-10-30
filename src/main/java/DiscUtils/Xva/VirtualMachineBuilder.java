@@ -48,18 +48,21 @@ import dotnet4j.io.Stream;
 
 
 /**
- * A class that can be used to create Xen Virtual Appliance (XVA) files.
- * This class is not intended to be a general purpose XVA generator,
- * the options to control the VM properties are strictly limited. The class
- * generates a minimal VM really as a wrapper for one or more disk images,
- * making them easy to import into XenServer.
+ * A class that can be used to create Xen Virtual Appliance (XVA) files. This
+ * class is not intended to be a general purpose XVA generator, the options to
+ * control the VM properties are strictly limited. The class generates a minimal
+ * VM really as a wrapper for one or more disk images, making them easy to
+ * import into XenServer.
  */
 public final class VirtualMachineBuilder extends StreamBuilder implements Closeable {
 
     class DiskRecord {
         String Item1;
+
         SparseStream Item2;
+
         Ownership Item3;
+
         public DiskRecord(String label, SparseStream stream, Ownership ownership) {
             this.Item1 = label;
             this.Item2 = stream;
@@ -164,13 +167,13 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                             hash = hashAlgDotnet.digest();
                             String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
                             byte[] hashStringAscii = hashString.getBytes(Charset.forName("ASCII"));
-                            tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], i),
-                                               hashStringAscii);
+                            tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], i), hashStringAscii);
                             lastChunkAdded = i;
                         }
                     }
                 }
-                // Make sure the last chunk is present, filled with zero's if necessary
+                // Make sure the last chunk is present, filled with zero's if
+                // necessary
                 int lastActualChunk = (int) ((diskStream.getLength() - 1) / Sizes.OneMiB);
                 if (lastChunkAdded < lastActualChunk) {
                     Stream chunkStream = new ZeroStream(Sizes.OneMiB);
@@ -237,8 +240,12 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         StringBuilder objectsString = new StringBuilder();
         objectsString.append(String.format(StaticStrings.XVA_ova_vm, "Ref:" + vmId, vmGuid, vmName, vbdRefs));
         for (int i = 0; i < _disks.size(); ++i) {
-            objectsString.append(String
-                    .format(StaticStrings.XVA_ova_vbd, "Ref:" + vbdIds[i], vbdGuids[i], "Ref:" + vmId, "Ref:" + vdiIds[i], i));
+            objectsString.append(String.format(StaticStrings.XVA_ova_vbd,
+                                               "Ref:" + vbdIds[i],
+                                               vbdGuids[i],
+                                               "Ref:" + vmId,
+                                               "Ref:" + vdiIds[i],
+                                               i));
         }
         for (int i = 0; i < _disks.size(); ++i) {
             objectsString.append(String.format(StaticStrings.XVA_ova_vdi,
@@ -247,7 +254,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                                                vdiNames[i],
                                                "Ref:" + srId,
                                                "Ref:" + vbdIds[i],
-                                               vdiSizes[i]));
+                                               String.valueOf(vdiSizes[i])));
         }
         objectsString.append(String.format(StaticStrings.XVA_ova_sr, "Ref:" + srId, srGuid, srName, vdiRefs));
         diskIds[0] = vdiIds;

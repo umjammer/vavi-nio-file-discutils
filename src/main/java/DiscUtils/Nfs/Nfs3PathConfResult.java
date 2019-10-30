@@ -174,7 +174,7 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(),
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(),
                                 getLinkMax(),
                                 getNameMax(),
                                 getNoTrunc(),

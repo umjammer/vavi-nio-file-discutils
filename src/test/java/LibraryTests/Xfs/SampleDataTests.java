@@ -82,13 +82,12 @@ public class SampleDataTests {
         }
     }
 
-    @Test
     private void validateContent(DiscFileSystem xfs) throws Exception {
         assertTrue(xfs.directoryExists(""));
         assertTrue(xfs.fileExists("folder\\nested\\file"));
         assertEquals(0, xfs.getFileSystemEntries("empty").size());
         for (int i = 1; i <= 1000; i++) {
-            assertTrue(xfs.fileExists("folder\\file.{i}"), "File file.{i} not found");
+            assertTrue(xfs.fileExists(String.format("folder\\file.%d", i)), String.format("File file.%d not found", i));
         }
 
         try (Stream file = xfs.openFile("folder\\file.100", FileMode.Open); MemoryStream ms = new MemoryStream()) {

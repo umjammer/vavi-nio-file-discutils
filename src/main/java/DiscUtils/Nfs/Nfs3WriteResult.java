@@ -104,6 +104,6 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getCacheConsistency(), getCount(), getWriteVerifier(), getHowCommitted());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getCacheConsistency(), getCount(), getWriteVerifier(), getHowCommitted());
     }
 }

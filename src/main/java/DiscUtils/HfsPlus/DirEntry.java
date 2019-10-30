@@ -24,8 +24,8 @@ package DiscUtils.HfsPlus;
 
 import java.util.EnumSet;
 
+import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -47,7 +47,7 @@ public final class DirEntry extends VfsDirEntry {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return Utilities.fileAttributesFromUnixFileType(getCatalogFileInfo().FileSystemInfo.getFileType());
+        return UnixFileType.toFileAttributes(getCatalogFileInfo().FileSystemInfo.getFileType());
     }
 
     private String __FileName;

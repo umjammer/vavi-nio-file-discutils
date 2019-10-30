@@ -62,11 +62,11 @@ public class RpcReplyHeader {
             return false;
         }
 
-        return other.Status == Status && Utilities.equals(other.AcceptReply, AcceptReply)
-                && Utilities.equals(other.RejectedReply, RejectedReply);
+        return other.Status == Status && dotnet4j.io.compat.Utilities.equals(other.AcceptReply, AcceptReply)
+                && dotnet4j.io.compat.Utilities.equals(other.RejectedReply, RejectedReply);
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(Status, AcceptReply, RejectedReply);
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(Status, AcceptReply, RejectedReply);
     }
 }

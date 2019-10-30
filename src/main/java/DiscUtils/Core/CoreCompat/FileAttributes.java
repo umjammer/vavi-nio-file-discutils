@@ -7,6 +7,7 @@
 package DiscUtils.Core.CoreCompat;
 
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Function;
@@ -50,6 +51,7 @@ public enum FileAttributes implements EnumSettable {
     private FileAttributes(int value) {
         this.value = value;
     }
+
     // TODO
     public Supplier<Integer> supplier() {
         return this::getValue;
@@ -70,6 +72,14 @@ public enum FileAttributes implements EnumSettable {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 
+    // TODO
+    public static <E extends Enum<E> & EnumSettable> EnumSet<E> cast(Class<E> clazz, EnumSet<FileAttributes> flags) {
+        int value = (int) valueOf(flags);
+        return Arrays.stream(clazz.getEnumConstants())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(clazz)));
+    }
+
     /** */
     public static Map<String, Object> toMap(EnumSet<FileAttributes> flags) {
         return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
@@ -82,45 +92,32 @@ public enum FileAttributes implements EnumSettable {
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributes.class)));
     }
 
-    // TODO EnumMap?
-    public static Map<String, Object> all() {
-        return Arrays.stream(values()).collect(Collectors.toMap(f -> f.name(), f -> true));
+    /** */
+    private static BitSet toBitSet(EnumSet<FileAttributes> flags) {
+        BitSet bs = new BitSet(values().length);
+        flags.forEach(e -> bs.set(e.ordinal()));
+        return bs;
     }
 
-    public static Map<String, Object> not(Map<String, Object> attrs, FileAttributes key) {
-        attrs.entrySet().stream().filter(e -> e.getKey().equals(key.name())).forEach(e -> attrs.put(key.name(), false));
-        return attrs;
-    }
-
-    public static Map<String, Object> or(Map<String, Object> attrs, FileAttributes key) {
-        attrs.entrySet().stream().filter(e -> e.getKey().equals(key.name())).forEach(e -> attrs.put(key.name(), true));
-        return attrs;
+    // TODO using name(), loop flags is fewer than loop all enums
+    private static EnumSet<FileAttributes> toEnumSet(BitSet flags) {
+        return Arrays.stream(values())
+                .filter(e -> flags.get(e.ordinal()))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributes.class)));
     }
 
     /** TODO should not filter? */
-    public static Map<String, Object> xor(Map<String, Object> attrs1, Map<String, Object> attrs2) {
-        attrs2.entrySet().stream().forEach(e2 -> {
-            attrs1.entrySet()
-                    .stream()
-                    .filter(e1 -> e1.getKey().equals(e2.getKey()))
-                    .forEach(e1 -> attrs1.put(e1.getKey(),
-                                              Boolean.class.cast(e1.getValue()) ^ Boolean.class.cast(e2.getValue())));
-        });
-        return attrs1;
-    }
-
-    /** TODO using name() */
-    public static Map<String, Object> and(Map<String, Object> attrs, Map<String, Object> mask) {
-        return mask.entrySet()
-                .stream()
-                .filter(e -> attrs.containsKey(e.getKey())
-                        && (Boolean.class.cast(attrs.get(e.getKey())) && Boolean.class.cast(e.getValue())))
-                .collect(Collectors.toMap(e -> e.getKey(), e -> true));
+    public static EnumSet<FileAttributes> xor(EnumSet<FileAttributes> flags1, EnumSet<FileAttributes> flags2) {
+        BitSet bs = toBitSet(flags1);
+        bs.xor(toBitSet(flags2));
+        return toEnumSet(bs);
     }
 
     /** */
-    public static int count(Map<String, Object> attrs) {
-        return (int) attrs.entrySet().stream().filter(e -> Boolean.class.cast(e.getValue())).count();
+    public static EnumSet<FileAttributes> and(EnumSet<FileAttributes> flags1, EnumSet<FileAttributes> flags2) {
+        BitSet bs = toBitSet(flags1);
+        bs.and(toBitSet(flags2));
+        return toEnumSet(bs);
     }
 }
 

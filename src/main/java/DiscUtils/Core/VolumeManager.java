@@ -49,6 +49,8 @@ import dotnet4j.io.Stream;
  * redundancy or other purposes.
  */
 public final class VolumeManager implements Serializable {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private static ServiceLoader<LogicalVolumeFactory> s_logicalVolumeFactories;
 
     private final List<VirtualDisk> _disks;
@@ -261,7 +263,7 @@ public final class VolumeManager implements Serializable {
         VirtualDisk disk = _disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
-            if (!guid.equals(new UUID(0L, 0L))) {
+            if (!guid.equals(EMPTY)) {
                 return "DG" + String.format("{%s}", guid);
             }
         }

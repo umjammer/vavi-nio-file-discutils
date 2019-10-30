@@ -1,11 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:13:44
-//
-
-package DiscUtils.Xfs;
-
-
-//
 // Copyright (c) 2016, Bianco Veigel
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26,12 +19,12 @@ package DiscUtils.Xfs;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public interface IDirectoryEntry
-{
+
+package DiscUtils.Xfs;
+
+public interface IDirectoryEntry {
     byte[] getName();
 
     long getInode();
 
 }
-
-

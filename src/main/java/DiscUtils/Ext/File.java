@@ -23,11 +23,9 @@
 package DiscUtils.Ext;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.IVfsFile;
 import DiscUtils.Streams.Buffer.IBuffer;
 
@@ -87,7 +85,7 @@ public class File implements IVfsFile {
         return fromMode(getInode().Mode);
     }
 
-    public void setFileAttributes(Map<String, Object> value) {
+    public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
@@ -104,6 +102,6 @@ public class File implements IVfsFile {
     }
 
     private static EnumSet<FileAttributes> fromMode(int mode) {
-        return Utilities.fileAttributesFromUnixFileType(UnixFileType.valueOf((mode >>> 12) & 0xF));
+        return UnixFileType.toFileAttributes(UnixFileType.valueOf((mode >>> 12) & 0xF));
     }
 }

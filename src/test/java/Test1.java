@@ -6,6 +6,7 @@
 
 import java.nio.ByteBuffer;
 import java.time.Instant;
+import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -34,7 +35,6 @@ public class Test1 {
     @Test
     public void test1() throws Exception {
         EnumSet<FileAttributeFlags> set = FileAttributeFlags.valueOf(7);
-        assertFalse(set.contains(FileAttributeFlags.None)); // ordinal 0 is not filtered
         assertTrue(set.contains(FileAttributeFlags.ReadOnly));
         assertTrue(set.contains(FileAttributeFlags.Hidden));
         assertTrue(set.contains(FileAttributeFlags.System));
@@ -46,7 +46,7 @@ public class Test1 {
 
     @Test
     public void test2() throws Exception {
-        EnumSet<NtfsFileAttributes> set = FileAttributeFlags.cast(NtfsFileAttributes.class, 7);
+        EnumSet<NtfsFileAttributes> set = FileAttributeFlags.cast(NtfsFileAttributes.class, FileAttributeFlags.valueOf(7));
 //System.err.println(set);
         assertEquals(7, NtfsFileAttributes.valueOf(set));
     }
@@ -111,6 +111,11 @@ public class Test1 {
 
         assertEquals("doubleQuoteStriped", "\"doubleQuoteStriped\"".replaceAll("(^\"*|\"*$)", ""));
         assertEquals("parenthesesStriped", "[parenthesesStriped]".replaceAll("(^\\[*|\\]*$)", ""));
+
+        int n = 12345;
+        BitSet bs = BitSet.valueOf(new long[]{ n });
+System.err.printf("%s, %x\n", bs, n);
+        assertEquals(n, bs.toLongArray()[0]);
     }
 }
 

@@ -88,7 +88,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
     }
 
     public BlockDirectoryDataEntry(Context context) {
-        _ftype = context.getSuperBlock().getHasFType();
+        _ftype = context.getSuperBlock().hasFType();
     }
 
     public int readFrom(byte[] buffer, int offset) {

@@ -41,6 +41,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.compat.StringUtilities;
 
 
 /**
@@ -719,7 +720,7 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     private Nfs3FileHandle getParentDirectory(String path) {
-        String[] dirs = Arrays.stream(Utilities.getDirectoryFromPath(path).split(Utilities.escapeForRegex("\\")))
+        String[] dirs = Arrays.stream(Utilities.getDirectoryFromPath(path).split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         Nfs3FileHandle parent = getDirectory(_client.getRootHandle(), dirs);
@@ -727,7 +728,7 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     private Nfs3FileHandle getDirectory(String path) {
-        String[] dirs = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+        String[] dirs = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         return getDirectory(_client.getRootHandle(), dirs);

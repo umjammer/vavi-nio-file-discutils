@@ -22,8 +22,8 @@
 
 package DiscUtils.Ntfs;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import dotnet4j.Tuple;
@@ -46,14 +46,15 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
         return _index.getCount();
     }
 
-    public Map<K, D> getEntries() {
-        Map<K, D> result = new HashMap<>();
+    public List<Tuple<K, D>> getEntries() {
+        List<Tuple<K, D>> result = new ArrayList<>();
         for (Tuple<byte[], byte[]> entry : _index.getEntries()) {
-            result.put(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue()));
+            result.add(new Tuple<>(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue())));
         }
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public D get___idx(K key) {
         return (D) convert(keyClass, _index.get___idx(unconvert(key)));
     }
@@ -62,31 +63,31 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
         _index.set___idx(unconvert(key), unconvert(value));
     }
 
-    public Map<K, D> findAll_(Comparable<byte[]> query) {
-        Map<K, D> result = new HashMap<>();
+    public List<Tuple<K, D>> findAll_(Comparable<byte[]> query) {
+        List<Tuple<K, D>> result = new ArrayList<>();
         for (Tuple<byte[], byte[]> entry : _index.findAll(query)) {
-            result.put(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue()));
+            result.add(new Tuple<>(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue())));
         }
         return result;
     }
 
-    public Map.Entry<K, D> findFirst_(Comparable<byte[]> query) {
-        for (Map.Entry<K, D> entry : findAll_(query).entrySet()) {
+    public Tuple<K, D> findFirst_(Comparable<byte[]> query) {
+        for (Tuple<K, D> entry : findAll_(query)) {
             return entry;
         }
         return null;
     }
 
-    public Map<K, D> findAll(Comparable<K> query) {
-        Map<K, D> result = new HashMap<>();
+    public List<Tuple<K, D>> findAll(Comparable<K> query) {
+        List<Tuple<K, D>> result = new ArrayList<>();
         for (Tuple<byte[], byte[]> entry : _index.findAll(new ComparableConverter(query))) {
-            result.put(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue()));
+            result.add(new Tuple<>(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue())));
         }
         return result;
     }
 
-    public Map.Entry<K, D> findFirst(Comparable<K> query) {
-        for (Map.Entry<K, D> entry : findAll(query).entrySet()) {
+    public Tuple<K, D> findFirst(Comparable<K> query) {
+        for (Tuple<K, D> entry : findAll(query)) {
             return entry;
         }
         return null;
@@ -142,7 +143,7 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("IndexVIew: {");
-        getEntries().entrySet().forEach(e -> {
+        getEntries().forEach(e -> {
             sb.append('"');
             sb.append(e.getKey());
             sb.append('"');

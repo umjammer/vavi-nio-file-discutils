@@ -49,13 +49,18 @@ public final class PartitionMap extends PartitionTable {
      */
     public PartitionMap(Stream stream) {
         _stream = stream;
-        stream.setPosition(0);
-        byte[] initialBytes = StreamUtilities.readExact(stream, 1024);
+
+        _stream.setPosition(0);
+        byte[] initialBytes = StreamUtilities.readExact(_stream, 1024);
+
         BlockZero b0 = new BlockZero();
         b0.readFrom(initialBytes, 0);
+
         PartitionMapEntry initialPart = new PartitionMapEntry(_stream);
         initialPart.readFrom(initialBytes, 512);
-        byte[] partTableData = StreamUtilities.readExact(stream, (initialPart.MapEntries - 1) * 512);
+
+        byte[] partTableData = StreamUtilities.readExact(_stream, (initialPart.MapEntries - 1) * 512);
+
         _partitions = new ArrayList<>(initialPart.MapEntries - 1);
         for (int i = 0; i < initialPart.MapEntries - 1; ++i) {
             PartitionMapEntry partitionMapEntry = new PartitionMapEntry(_stream);
@@ -68,7 +73,7 @@ public final class PartitionMap extends PartitionTable {
      * Gets the GUID of the disk, always returns UUID.Empty.
      */
     public UUID getDiskGuid() {
-        return new UUID(0L, 0L);
+        return EMPTY;
     }
 
     /**

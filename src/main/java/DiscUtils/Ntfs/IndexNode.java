@@ -23,8 +23,11 @@
 package DiscUtils.Ntfs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
+
+import vavi.util.Debug;
 
 import DiscUtils.Streams.Util.MathUtilities;
 import dotnet4j.io.IOException;
@@ -103,11 +106,11 @@ public class IndexNode {
 
     private long __TotalSpaceAvailable;
 
-    public long getTotalSpaceAvailable() {
+    long getTotalSpaceAvailable() {
         return __TotalSpaceAvailable;
     }
 
-    public void setTotalSpaceAvailable(long value) {
+    void setTotalSpaceAvailable(long value) {
         __TotalSpaceAvailable = value;
     }
 
@@ -128,7 +131,7 @@ public class IndexNode {
                     throw new UnsupportedOperationException("Changing index entry sizes");
                 }
 
-                _entries.add(i, newEntry);
+                _entries.set(i, newEntry);
                 _store.invoke();
                 return;
             }
@@ -145,8 +148,7 @@ public class IndexNode {
             if (focus.getFlags().contains(IndexEntryFlags.End)) {
                 if (focus.getFlags().contains(IndexEntryFlags.Node)) {
                     IndexBlock subNode = _index.getSubBlock(focus);
-                    boolean r = subNode.getNode().tryFindEntry(key, entry, node);
-                    return r;
+                    return subNode.getNode().tryFindEntry(key, entry, node);
                 }
 
                 break;
@@ -157,10 +159,9 @@ public class IndexNode {
                 node[0] = this;
                 return true;
             }
-            if (compVal < 0 && focus.getFlags().containsAll(EnumSet.of(IndexEntryFlags.End, IndexEntryFlags.Node))) {
+            if (compVal < 0 && !Collections.disjoint(focus.getFlags(), EnumSet.of(IndexEntryFlags.End, IndexEntryFlags.Node))) {
                 IndexBlock subNode = _index.getSubBlock(focus);
-                boolean r = subNode.getNode().tryFindEntry(key, entry, node);
-                return r;
+                return subNode.getNode().tryFindEntry(key, entry, node);
             }
         }
 
@@ -221,6 +222,9 @@ public class IndexNode {
         throw new IOException("Corrupt index node - no End entry");
     }
 
+    /**
+     * @param newParentEntry {@cs out}
+     */
     public boolean removeEntry(byte[] key, IndexEntry[] newParentEntry) {
         boolean[] exactMatch = new boolean[1];
         int entryIndex = getEntry(key, exactMatch);
@@ -244,12 +248,12 @@ public class IndexNode {
                 }
 
                 newEntry[0] = liftNode(entryIndex);
-                if (newEntry != null) {
+                if (newEntry[0] != null) {
                     insertEntryThisNode(newEntry[0]);
                 }
 
                 newEntry[0] = populateEnd();
-                if (newEntry != null) {
+                if (newEntry[0] != null) {
                     insertEntryThisNode(newEntry[0]);
                 }
 
@@ -302,7 +306,7 @@ public class IndexNode {
      *
      * @return Whether any changes were made.
      */
-    public boolean depose() {
+    boolean depose() {
         if (!_isRoot) {
             throw new UnsupportedOperationException("Only valid on root node");
         }
@@ -339,16 +343,15 @@ public class IndexNode {
             if (childNode._entries.size() == 1) {
                 long freeBlock = _entries.get(entryIndex).getChildrenVirtualCluster();
                 _entries.get(entryIndex).getFlags().remove(IndexEntryFlags.Node);
-                _entries.get(entryIndex)
-                        .getFlags()
-                        .add(childNode._entries.get(0).getFlags().contains(IndexEntryFlags.Node) ? IndexEntryFlags.Node
-                                                                                                 : IndexEntryFlags.None);
+                if (childNode._entries.get(0).getFlags().contains(IndexEntryFlags.Node)) {
+                    _entries.get(entryIndex).getFlags().add(IndexEntryFlags.Node);
+                }
                 _entries.get(entryIndex).setChildrenVirtualCluster(childNode._entries.get(0).getChildrenVirtualCluster());
 
                 _index.freeBlock(freeBlock);
             }
 
-            if (!_entries.get(entryIndex).getFlags().containsAll(EnumSet.of(IndexEntryFlags.Node, IndexEntryFlags.End))) {
+            if (Collections.disjoint(_entries.get(entryIndex).getFlags(), EnumSet.of(IndexEntryFlags.Node, IndexEntryFlags.End))) {
                 IndexEntry entry = _entries.get(entryIndex);
                 _entries.remove(entryIndex);
 
@@ -361,15 +364,14 @@ public class IndexNode {
     }
 
     private IndexEntry populateEnd() {
-        // (_entries.size() - 1) uses `contains` instead of `equals`, because that may include None
-        if (_entries.size() > 1 && _entries.get(_entries.size() - 1).getFlags().contains(IndexEntryFlags.End) &&
+        if (_entries.size() > 1 && _entries.get(_entries.size() - 1).getFlags().equals(EnumSet.of(IndexEntryFlags.End)) &&
             _entries.get(_entries.size() - 2).getFlags().contains(IndexEntryFlags.Node)) {
             IndexEntry old = _entries.get(_entries.size() - 2);
             _entries.remove(_entries.size() - 2);
             _entries.get(_entries.size() - 1).setChildrenVirtualCluster(old.getChildrenVirtualCluster());
             _entries.get(_entries.size() - 1).getFlags().add(IndexEntryFlags.Node);
             old.setChildrenVirtualCluster(0);
-            old.setFlags(EnumSet.of(IndexEntryFlags.None));
+            old.setFlags(EnumSet.noneOf(IndexEntryFlags.class));
             return _index.getSubBlock(_entries.get(_entries.size() - 1)).getNode().addEntry(old);
         }
 
@@ -380,7 +382,7 @@ public class IndexNode {
         boolean[] exactMatch = new boolean[1];
         int index = getEntry(newEntry.getKeyBuffer(), exactMatch);
         if (exactMatch[0]) {
-            throw new UnsupportedOperationException("Entry already exists");
+            throw new IOException("Entry already exists");
         }
 
         _entries.add(index, newEntry);
@@ -389,8 +391,10 @@ public class IndexNode {
     private IndexEntry addEntry(IndexEntry newEntry) {
         boolean[] exactMatch = new boolean[1];
         int index = getEntry(newEntry.getKeyBuffer(), exactMatch);
+
         if (exactMatch[0]) {
-            throw new UnsupportedOperationException("Entry already exists");
+Debug.println(newEntry + " / " + _entries);
+            throw new IOException("Entry already exists");
         }
 
         if (_entries.get(index).getFlags().contains(IndexEntryFlags.Node)) {

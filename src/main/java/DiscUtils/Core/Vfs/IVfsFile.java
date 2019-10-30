@@ -23,7 +23,6 @@
 package DiscUtils.Core.Vfs;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Streams.Buffer.IBuffer;
@@ -51,7 +50,7 @@ public interface IVfsFile {
      */
     EnumSet<FileAttributes> getFileAttributes();
 
-    void setFileAttributes(Map<String, Object> value);
+    void setFileAttributes(EnumSet<FileAttributes> value);
 
     /**
      * Gets a buffer to access the file's contents.

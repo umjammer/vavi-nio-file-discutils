@@ -349,7 +349,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("cylinder number is negative");
         }
 
-        if (head >= getHeadsPerCylinder()) {
+        if (head >= _headsPerCylinder) {
             throw new IndexOutOfBoundsException("head number is larger than disk geometry");
         }
 
@@ -357,7 +357,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("head number is negative");
         }
 
-        if (sector > getSectorsPerTrack()) {
+        if (sector > _sectorsPerTrack) {
             throw new IndexOutOfBoundsException("sector number is larger than disk geometry");
         }
 
@@ -365,7 +365,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("sector number is less than one (sectors are 1-based)");
         }
 
-        return (cylinder * (long) _headsPerCylinder + head) * _sectorsPerTrack + sector - 1;
+        return (cylinder * (_headsPerCylinder & 0xffffffffl) + head) * _sectorsPerTrack + sector - 1;
     }
 
     /**

@@ -62,7 +62,7 @@ public final class MasterFileTable {
     /**
      * Index of the Root Directory.
      */
-    public static final long RootDirIndex = 5;
+    public static final long RootDirectoryIndex = 5;
 
     /**
      * Index of the Bitmap file.

@@ -38,26 +38,26 @@ public class Range {
      * @param count The size of the range.
      */
     public Range(long offset, long count) {
-        __Offset = offset;
-        __Count = count;
+        _offset = offset;
+        _count = count;
     }
 
     /**
      * Gets the size of the range.
      */
-    private long __Count;
+    private long _count;
 
     public long getCount() {
-        return __Count;
+        return _count;
     }
 
     /**
      * Gets the offset (i.e. start) of the range.
      */
-    private long __Offset;
+    private long _offset;
 
     public long getOffset() {
-        return __Offset;
+        return _offset;
     }
 
     /**
@@ -71,7 +71,7 @@ public class Range {
             return false;
         }
 
-        return getOffset() == other.getOffset() && getCount() == other.getCount();
+        return _offset == other._offset && _count == other._count;
     }
 
     /**
@@ -107,7 +107,8 @@ public class Range {
             }
         }
 
-        // Final range (if any ranges at all) hasn't been returned yet, so do that now
+        // Final range (if any ranges at all) hasn't been returned yet, so do
+        // that now
         if (chunkStart != -1) {
             result.add(new Range(chunkStart, chunkLength));
         }
@@ -120,6 +121,6 @@ public class Range {
      * @return The string representation.
      */
     public String toString() {
-        return "Range: {" + getOffset() + ":+" + getCount() + "}";
+        return "Range: {" + _offset + ":+" + _count + "}";
     }
 }

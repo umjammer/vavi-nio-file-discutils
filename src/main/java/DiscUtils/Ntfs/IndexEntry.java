@@ -22,6 +22,7 @@
 
 package DiscUtils.Ntfs;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -121,7 +122,7 @@ public class IndexEntry {
         short dataLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
         short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
         short keyLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
-        assert dataLength >= 0 && length >=0 && keyLength >= 0;
+//        assert dataLength >= 0 && length >=0 && keyLength >= 0;
         _flags = IndexEntryFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
 
         if (!_flags.contains(IndexEntryFlags.End)) {
@@ -144,25 +145,24 @@ public class IndexEntry {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        assert buffer.length > offset : buffer.length + ", " + offset;
-
-        short length = (short) getSize();
+        int length = getSize();
 
         if (!_flags.contains(IndexEntryFlags.End)) {
-            short keyLength = (short) _keyBuffer.length;
+            int keyLength = _keyBuffer.length;
 
             if (isFileIndexEntry()) {
                 System.arraycopy(_dataBuffer, 0, buffer, offset + 0x00, 8);
             } else {
-                short dataOffset = (short) (isFileIndexEntry() ? 0 : 0x10 + keyLength);
-                short dataLength = (short) _dataBuffer.length;
+                int dataOffset = isFileIndexEntry() ? 0 : 0x10 + keyLength;
+                int dataLength = _dataBuffer.length;
 
-                EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x00);
-                EndianUtilities.writeBytesLittleEndian(dataLength, buffer, offset + 0x02);
-//Debug.println(_dataBuffer.length + ", " + buffer.length + ", " + offset + ", " + dataOffset);
+                EndianUtilities.writeBytesLittleEndian((short) dataOffset, buffer, offset + 0x00);
+                EndianUtilities.writeBytesLittleEndian((short) dataLength, buffer, offset + 0x02);
                 System.arraycopy(_dataBuffer, 0, buffer, offset + dataOffset, _dataBuffer.length);
             }
-            EndianUtilities.writeBytesLittleEndian(keyLength, buffer, offset + 0x0A);
+            EndianUtilities.writeBytesLittleEndian((short) keyLength, buffer, offset + 0x0A);
+//Debug.println(_keyBuffer.length + " | " + buffer.length + ", " + (offset + 0x10));
+            assert buffer.length > offset  + 0x10 + _keyBuffer.length : buffer.length + ", " + (offset + 0x10) + ", " + _keyBuffer.length;
             System.arraycopy(_keyBuffer, 0, buffer, offset + 0x10, _keyBuffer.length);
         } else {
             EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x00); // dataOffset
@@ -170,10 +170,20 @@ public class IndexEntry {
             EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0A); // keyLength
         }
 
-        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian((short) length, buffer, offset + 0x08);
         EndianUtilities.writeBytesLittleEndian((short) IndexEntryFlags.valueOf(_flags), buffer, offset + 0x0C);
         if (_flags.contains(IndexEntryFlags.Node)) {
             EndianUtilities.writeBytesLittleEndian(_vcn, buffer, offset + length - 8);
+        }
+    }
+
+    public String toString() {
+        try {
+            return (_keyBuffer != null ? new String(_keyBuffer) : "null") + ": " +
+                   (_dataBuffer != null ? Arrays.toString(_dataBuffer) : "null");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return super.toString();
         }
     }
 }

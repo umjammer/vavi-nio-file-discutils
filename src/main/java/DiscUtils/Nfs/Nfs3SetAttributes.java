@@ -241,8 +241,8 @@ public final class Nfs3SetAttributes {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(
-                                          Utilities.getCombinedHashCode(getSetMode(),
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(
+                                          dotnet4j.io.compat.Utilities.getCombinedHashCode(getSetMode(),
                                                                      getModifyTime(),
                                                                      getSetUid(),
                                                                      getUid(),

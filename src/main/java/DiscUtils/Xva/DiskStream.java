@@ -81,24 +81,28 @@ public class DiskStream extends SparseStream {
 
     public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
+
         long chunkSize = Sizes.OneMiB;
         int i = 0;
         int numChunks = (int) ((_length + chunkSize - 1) / chunkSize);
         while (i < numChunks) {
+            // Find next stored block
             while (i < numChunks && !chunkExists(i)) {
-                // Find next stored block
                 ++i;
             }
+
             int start = i;
+
+            // Find next absent block
             while (i < numChunks && chunkExists(i)) {
-                // Find next absent block
                 ++i;
             }
+
             if (start != i) {
                 extents.add(new StreamExtent(start * chunkSize, (i - start) * chunkSize));
             }
-
         }
+
         return extents;
     }
 

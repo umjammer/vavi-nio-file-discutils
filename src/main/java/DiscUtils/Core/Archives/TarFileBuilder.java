@@ -107,6 +107,9 @@ public final class TarFileBuilder extends StreamBuilder {
         _files.add(new UnixBuildFileRecord(name, stream, fileMode, ownerId, groupId, modificationTime));
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> result = new ArrayList<>(_files.size() * 2 + 2);
         long pos = 0;
@@ -128,5 +131,4 @@ public final class TarFileBuilder extends StreamBuilder {
         totalLength[0] = pos + 1024;
         return result;
     }
-
 }

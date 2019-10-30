@@ -110,8 +110,8 @@ public final class Nfs3FileAttributes {
     }
 
     public int hashCode() {
-        return Utilities
-                .getCombinedHashCode(Utilities.getCombinedHashCode(Type, Mode, LinkCount, Uid, Gid, Size, BytesUsed, RdevMajor),
+        return dotnet4j.io.compat.Utilities
+                .getCombinedHashCode(dotnet4j.io.compat.Utilities.getCombinedHashCode(Type, Mode, LinkCount, Uid, Gid, Size, BytesUsed, RdevMajor),
                                   RdevMinor,
                                   FileSystemId,
                                   FileId,

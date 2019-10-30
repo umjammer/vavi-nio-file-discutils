@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +71,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     private TracingStream _globalTrace;
 
     /**
-     * The random number generator used to generate seeds for checkpoint-specific
-     * generators.
+     * The random number generator used to generate seeds for
+     * checkpoint-specific generators.
      */
     private Random _masterRng;
 
@@ -188,16 +189,18 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param readOnly Whether to fail changes to the stream.
      * @return The new stream, the caller must dispose.Always use this method to
      *         access the stream, rather than keeping a reference to the stream
-     *         passed to the constructor. This method never lets changes through to
-     *         the underlying stream, so ensures the integrity of the underlying
-     *         stream. Any changes made to the returned stream are held as a private
-     *         delta and discarded when the stream is disposed.
+     *         passed to the constructor. This method never lets changes through
+     *         to the underlying stream, so ensures the integrity of the
+     *         underlying stream. Any changes made to the returned stream are
+     *         held as a private delta and discarded when the stream is
+     *         disposed.
      */
     public Stream openStreamView(StreamView view, boolean readOnly) {
         // Prevent further changes.
         _lockdown = true;
         Stream s;
-        // Perversely, the snap stream has the current view (squirrelled away in it's
+        // Perversely, the snap stream has the current view (squirrelled away in
+        // it's
         // delta). The base stream is actually the stream state back at the last
         // checkpoint.
         if (view == StreamView.Current) {
@@ -205,7 +208,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } else {
             s = _baseStream;
         }
-        // Return a protective wrapping stream, so the original stream is preserved.
+        // Return a protective wrapping stream, so the original stream is
+        // preserved.
         SnapshotStream snapStream = new SnapshotStream(s, Ownership.None);
         snapStream.snapshot();
         if (readOnly) {
@@ -220,23 +224,25 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param reportOutput The destination for the verification report, or
      *            {@code null}
-     *
      * @param levels The amount of detail to include in the report (if not
      *            {@code null} )
      * @return {@code true} if the file system is OK, else {@code false} .This
      *         method may place this object into "lock-down", where no further
-     *         changes are permitted (if corruption is detected). Unlike Checkpoint,
-     *         this method doesn't cause the snapshot to be re-taken.
+     *         changes are permitted (if corruption is detected). Unlike
+     *         Checkpoint, this method doesn't cause the snapshot to be
+     *         re-taken.
      */
-    public boolean verify(PrintWriter reportOutput, ReportLevels levels) {
+    public boolean verify(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         boolean ok = true;
         _snapStream.freeze();
-        // Note the trace stream means that we can guarantee no further stream access
-        // after the file system object is disposed - when we dispose it, it forcibly
+        // Note the trace stream means that we can guarantee no further stream
+        // access
+        // after the file system object is disposed - when we dispose it, it
+        // forcibly
         // severes the connection to the snapshot stream.
         try (TracingStream traceStream = new TracingStream(_snapStream, Ownership.None)) {
             try {
-Debug.println(checkerClass);
+//Debug.println(checkerClass);
                 if (!doVerify(checkerClass, traceStream, reportOutput, levels)) {
                     ok = false;
                 }
@@ -269,11 +275,11 @@ Debug.println(checkerClass);
      *            {@code null}
      *
      * @param levels The amount of detail to include in the report (if not
-     *            {@code null} )This method is automatically invoked according to
-     *            the CheckpointInterval property, but can be called manually as
-     *            well.
+     *            {@code null} )This method is automatically invoked according
+     *            to the CheckpointInterval property, but can be called manually
+     *            as well.
      */
-    public boolean checkpoint(PrintWriter reportOutput, ReportLevels levels) {
+    public boolean checkpoint(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         if (!verify(reportOutput, levels)) {
             return false;
         }
@@ -285,7 +291,8 @@ Debug.println(checkerClass);
         // Set the file system's RNG to a known, but unpredictable, state.
         _checkpointRngSeed = _masterRng.nextInt();
         _liveTarget.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
-        // Reset the global trace stream - no longer interested in what it captured.
+        // Reset the global trace stream - no longer interested in what it
+        // captured.
         if (_runGlobalTrace) {
             _globalTrace.reset(_runGlobalTrace);
         }
@@ -294,8 +301,8 @@ Debug.println(checkerClass);
     }
 
     /**
-     * Generates a diagnostic report by replaying file system activities since the
-     * last checkpoint.
+     * Generates a diagnostic report by replaying file system activities since
+     * the last checkpoint.
      */
     public ReplayReport replayFromLastCheckpoint() {
         if (!doReplayAndVerify(0)) {
@@ -328,7 +335,8 @@ Debug.println(checkerClass);
                 try (StringWriter preVerificationReport = new StringWriter()) {
                     TFileSystem replayFs = createFileSystem(fileSystemClass, ts);
                     try {
-                        // Re-init the RNG to it's state when the checkpoint started, so we get
+                        // Re-init the RNG to it's state when the checkpoint
+                        // started, so we get
                         // reproducibility.
                         replayFs.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
                         Map<String, Object> replayContext = new HashMap<>();
@@ -389,14 +397,15 @@ Debug.println(checkerClass);
             replayCapture.snapshot();
             try {
                 try (TFileSystem replayFs = createFileSystem(fileSystemClass, replayCapture)) {
-                    // Re-init the RNG to it's state when the checkpoint started, so we get
+                    // Re-init the RNG to it's state when the checkpoint
+                    // started, so we get
                     // reproducibility.
                     replayFs.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
                     Map<String, Object> replayContext = new HashMap<>();
                     for (int i = 0; i < activityCount; ++i) {
                         _checkpointBuffer.get(i).invoke(replayFs, replayContext);
                     }
-                    return doVerify(checkerClass, replayCapture, null, ReportLevels.None);
+                    return doVerify(checkerClass, replayCapture, null, EnumSet.of(ReportLevels.None));
                 }
             } catch (Exception __dummyCatchVar0) {
                 return false;
@@ -407,16 +416,16 @@ Debug.println(checkerClass);
     }
 
     /**
-     * Used to perform filesystem activities that are exposed in addition to those
-     * in the DiscFileSystem class.
+     * Used to perform filesystem activities that are exposed in addition to
+     * those in the DiscFileSystem class.
      * 
      * @param activity The activity to perform, as a delegate
      * 
-     * @return The value returned from the activity delegateThe supplied activity
-     *         may be executed multiple times, against multiple instances of the
-     *         file system if a replay is requested. Always drive the file system
-     *         object supplied as a parameter and do not persist references to that
-     *         object.
+     * @return The value returned from the activity delegateThe supplied
+     *         activity may be executed multiple times, against multiple
+     *         instances of the file system if a replay is requested. Always
+     *         drive the file system object supplied as a parameter and do not
+     *         persist references to that object.
      */
     public Object performActivity(Activity<TFileSystem> activity) {
         if (_lockdown) {
@@ -442,11 +451,14 @@ Debug.println(checkerClass);
                     _globalTrace.writeToFile(String.format("C:\\temp\\working\\trace%3X.log", _numScheduledCheckpoints++));
                 }
 
-                // We only do a full checkpoint, if the activity didn't throw an exception.
+                // We only do a full checkpoint, if the activity didn't throw an
+                // exception.
                 // Otherwise,
-                // we'll discard all replay info just when the caller might want it. Instead,
+                // we'll discard all replay info just when the caller might want
+                // it. Instead,
                 // just do a
-                // verify until (and unless), an activity that doesn't throw an exception
+                // verify until (and unless), an activity that doesn't throw an
+                // exception
                 // happens.
                 if (doCheckpoint) {
                     checkpointAndThrow();
@@ -483,7 +495,8 @@ Debug.println(checkerClass);
         // (above) is not significant...
         _snapStream.snapshot();
         _initialized = true;
-        // Preliminary test, lets make sure we think the file system's good before we
+        // Preliminary test, lets make sure we think the file system's good
+        // before we
         // start...
         verifyAndThrow();
     }
@@ -491,23 +504,24 @@ Debug.println(checkerClass);
     private static <TChecker extends DiscFileSystemChecker> boolean doVerify(Class<TChecker> clazz,
                                                                              Stream s,
                                                                              PrintWriter w,
-                                                                             ReportLevels levels) {
+                                                                             EnumSet<ReportLevels> levels) {
         TChecker checker = createChecker(clazz, s);
         if (w != null) {
             return checker.check(w, levels);
         } else {
             try (NullTextWriter nullWriter = new NullTextWriter()) {
-                return checker.check(nullWriter, ReportLevels.None);
+                return checker.check(nullWriter, EnumSet.of(ReportLevels.None));
             }
         }
     }
 
     private void checkpointAndThrow() {
         try (StringWriter writer = new StringWriter()) {
-            boolean passed = checkpoint(new PrintWriter(writer), ReportLevels.Errors);
+            boolean passed = checkpoint(new PrintWriter(writer), EnumSet.of(ReportLevels.Errors));
             _lastCheckpointReport = writer.getBuffer().toString();
             if (!passed) {
-                throw new IllegalStateException("File system failed verification:\n" + _lastCheckpointReport, _failureException);
+                throw new IllegalStateException("File system failed verification:\n" + _lastCheckpointReport,
+                                                _failureException);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -516,7 +530,7 @@ Debug.println(checkerClass);
 
     private void verifyAndThrow() {
         try (StringWriter writer = new StringWriter()) {
-            boolean passed = verify(new PrintWriter(writer), ReportLevels.Errors);
+            boolean passed = verify(new PrintWriter(writer), EnumSet.of(ReportLevels.Errors));
             _lastCheckpointReport = writer.getBuffer().toString();
             if (!passed) {
                 throw new IllegalStateException("File system failed verification ", _failureException);
@@ -530,7 +544,7 @@ Debug.println(checkerClass);
         try {
             return clazz.getConstructor(Stream.class).newInstance(stream);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
-                 NoSuchMethodException | SecurityException tie) {
+                NoSuchMethodException | SecurityException tie) {
             try {
                 Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
@@ -545,7 +559,7 @@ Debug.println(checkerClass);
         try {
             return clazz.getConstructor(Stream.class).newInstance(stream);
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
-                 NoSuchMethodException | SecurityException tie) {
+                NoSuchMethodException | SecurityException tie) {
             try {
                 Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
@@ -601,8 +615,8 @@ Debug.println(checkerClass);
     }
 
     /**
-     * Copies an existing file to a new file, allowing overwriting of an existing
-     * file.
+     * Copies an existing file to a new file, allowing overwriting of an
+     * existing file.
      *
      * @param sourceFile The source file
      * @param destinationFile The destination file
@@ -803,8 +817,9 @@ Debug.println(checkerClass);
     }
 
     /**
-     * Gets the names of files in a specified directory matching a specified search
-     * pattern, using a value to determine whether to search subdirectories.
+     * Gets the names of files in a specified directory matching a specified
+     * search pattern, using a value to determine whether to search
+     * subdirectories.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -838,8 +853,8 @@ Debug.println(checkerClass);
     }
 
     /**
-     * Gets the names of files and subdirectories in a specified directory matching
-     * a specified search pattern.
+     * Gets the names of files and subdirectories in a specified directory
+     * matching a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -917,7 +932,8 @@ Debug.println(checkerClass);
      * @return The new stream.
      */
     public SparseStream openFile(String path, FileMode mode) {
-        // This delegate can be used at any time the wrapper needs it, if it's in a
+        // This delegate can be used at any time the wrapper needs it, if it's
+        // in a
         // 'replay' but the real file open isn't.
         ValidatingFileSystemWrapperStream<TFileSystem, TChecker> wrapper = new ValidatingFileSystemWrapperStream<>(this, fs -> {
             try {
@@ -947,7 +963,8 @@ Debug.println(checkerClass);
      * @return The new stream.
      */
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
-        // This delegate can be used at any time the wrapper needs it, if it's in a
+        // This delegate can be used at any time the wrapper needs it, if it's
+        // in a
         // 'replay' but the real file open isn't.
         ValidatingFileSystemWrapperStream<TFileSystem, TChecker> wrapper = new ValidatingFileSystemWrapperStream<>(this, fs -> {
             try {
@@ -1252,7 +1269,8 @@ Debug.println(checkerClass);
      * directory).
      *
      * @param path The file system path
-     * @return The representing objectThe file system object does not need to exist
+     * @return The representing objectThe file system object does not need to
+     *         exist
      */
     public DiscFileSystemInfo getFileSystemInfo(String path) {
         return (DiscFileSystemInfo) performActivity((fs, context) -> {

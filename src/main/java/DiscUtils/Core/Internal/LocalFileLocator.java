@@ -24,7 +24,6 @@ package DiscUtils.Core.Internal;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.FileLocator;
@@ -42,33 +41,32 @@ public final class LocalFileLocator extends FileLocator {
     }
 
     public boolean exists(String fileName) {
-        return Files.exists(Paths.get(_dir, fileName));
+        return Files.exists(Paths.get(Utilities.combinePaths(_dir, fileName)));
     }
 
     protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
-        return new FileStream(Paths.get(_dir, fileName).toString(), mode);
+        return new FileStream(Utilities.combinePaths(_dir, fileName), mode);
     }
 
     public FileLocator getRelativeLocator(String path) {
-        return new LocalFileLocator(Paths.get(_dir, path).toString());
+        return new LocalFileLocator(Utilities.combinePaths(_dir, path));
     }
 
     public String getFullPath(String path) {
-        String combinedPath = Paths.get(_dir, path).toString();
+        String combinedPath = Utilities.combinePaths(_dir, path);
         if (combinedPath.isEmpty()) {
-            return System.getenv("PWD");
+            return System.getProperty("user.dir").replace("/", "\\");
         }
 
-        return Paths.get(combinedPath).toAbsolutePath().toString();
+        return Paths.get(combinedPath).toAbsolutePath().toString().replace("/", "\\");
     }
 
     public String getDirectoryFromPath(String path) {
-        Path parant = Paths.get(path).getParent();
-        return parant == null ? null : parant.toString();
+        return Utilities.getDirectoryFromPath(path);
     }
 
     public String getFileFromPath(String path) {
-        return Paths.get(path).getFileName().toString();
+        return Utilities.getFileFromPath(path);
     }
 
     public long getLastWriteTimeUtc(String path) {

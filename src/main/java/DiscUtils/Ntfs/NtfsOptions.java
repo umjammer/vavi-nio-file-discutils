@@ -109,7 +109,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      */
     private boolean __HideMetafiles;
 
-    public boolean getHideMetafiles() {
+    public boolean hideMetafiles() {
         return __HideMetafiles;
     }
 

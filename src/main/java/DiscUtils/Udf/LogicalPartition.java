@@ -1,10 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:13:06
-//
-
-package DiscUtils.Udf;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25,10 +19,14 @@ package DiscUtils.Udf;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public abstract class LogicalPartition  extends Partition
-{
+
+package DiscUtils.Udf;
+
+public abstract class LogicalPartition extends Partition {
     protected UdfContext _context;
+
     protected LogicalVolumeDescriptor _volumeDescriptor;
+
     protected LogicalPartition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor) {
         _context = context;
         _volumeDescriptor = volumeDescriptor;
@@ -40,21 +38,18 @@ public abstract class LogicalPartition  extends Partition
 
     public static LogicalPartition fromDescriptor(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, int index) {
         PartitionMap map = volumeDescriptor.PartitionMaps[index];
-        Type1PartitionMap asType1 = map instanceof Type1PartitionMap ? (Type1PartitionMap)map : (Type1PartitionMap)null;
-        if (asType1 != null)
-        {
-            return new Type1Partition(context,volumeDescriptor,asType1);
+        Type1PartitionMap asType1 = map instanceof Type1PartitionMap ? (Type1PartitionMap) map : (Type1PartitionMap) null;
+        if (asType1 != null) {
+            return new Type1Partition(context, volumeDescriptor, asType1);
         }
 
-        MetadataPartitionMap asMetadata = map instanceof MetadataPartitionMap ? (MetadataPartitionMap)map : (MetadataPartitionMap)null;
-        if (asMetadata != null)
-        {
-            return new MetadataPartition(context,volumeDescriptor,asMetadata);
+        MetadataPartitionMap asMetadata = map instanceof MetadataPartitionMap ? (MetadataPartitionMap) map
+                                                                              : (MetadataPartitionMap) null;
+        if (asMetadata != null) {
+            return new MetadataPartition(context, volumeDescriptor, asMetadata);
         }
 
         throw new UnsupportedOperationException("Unrecognized partition map type");
     }
 
 }
-
-

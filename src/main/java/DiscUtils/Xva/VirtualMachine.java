@@ -35,6 +35,8 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.xml.sax.InputSource;
+
 import DiscUtils.Core.Archives.TarFile;
 import DiscUtils.Streams.Util.Ownership;
 import dotnet4j.io.Stream;
@@ -43,11 +45,9 @@ import dotnet4j.io.compat.StreamInputStream;
 
 /**
  * Class representing the virtual machine stored in a Xen Virtual Appliance
- * (XVA)
- * file.
- * XVA is a VM archive, not just a disk archive. It can contain multiple
- * disk images. This class provides access to all of the disk images within the
- * XVA file.
+ * (XVA) file. XVA is a VM archive, not just a disk archive. It can contain
+ * multiple disk images. This class provides access to all of the disk images
+ * within the XVA file.
  */
 public final class VirtualMachine implements Closeable {
 
@@ -68,8 +68,8 @@ public final class VirtualMachine implements Closeable {
     /**
      * Initializes a new instance of the VirtualMachine class.
      *
-     * @param fileStream The stream containing the .XVA file.
-     *            Ownership of the stream is not transfered.
+     * @param fileStream The stream containing the .XVA file. Ownership of the
+     *            stream is not transfered.
      */
     public VirtualMachine(Stream fileStream) {
         this(fileStream, Ownership.None);
@@ -79,21 +79,20 @@ public final class VirtualMachine implements Closeable {
      * Initializes a new instance of the VirtualMachine class.
      *
      * @param fileStream The stream containing the .XVA file.
-     * @param ownership Whether to transfer ownership of
-     *            {@code fileStream}
-     *            to the new instance.
+     * @param ownership Whether to transfer ownership of {@code fileStream} to
+     *            the new instance.
      */
     public VirtualMachine(Stream fileStream, Ownership ownership) {
         _fileStream = fileStream;
         _ownership = ownership;
         _fileStream.setPosition(0);
-        __Archive = new TarFile(fileStream);
+        _archive = new TarFile(fileStream);
     }
 
-    private TarFile __Archive;
+    private TarFile _archive;
 
     public TarFile getArchive() {
-        return __Archive;
+        return _archive;
     }
 
     /**
@@ -103,32 +102,28 @@ public final class VirtualMachine implements Closeable {
      */
     public List<Disk> getDisks() {
         List<Disk> result = new ArrayList<>();
-        Stream docStream = getArchive().openFile("ova.xml");
-        try {
-            StreamInputStream ovaDoc = new StreamInputStream(docStream);
+        try (Stream docStream = getArchive().openFile("ova.xml")) {
+            InputSource ovaDoc = new InputSource(new StreamInputStream(docStream));
             XPath nav = XPathFactory.newInstance().newXPath();
             NodeList nodeList = NodeList.class.cast(nav.evaluate(FindVDIsExpression, ovaDoc, XPathConstants.NODESET));
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 Node idNode = Node.class.cast(nav.evaluate(GetDiskId, node, XPathConstants.NODE));
+
                 // Skip disks which are only referenced, not present
-                if (getArchive().dirExists(idNode.toString())) {
+                if (getArchive().dirExists(idNode.getTextContent())) {
                     Node uuidNode = Node.class.cast(nav.evaluate(GetDiskUuid, node, XPathConstants.NODE));
                     Node nameLabelNode = Node.class.cast(nav.evaluate(GetDiskNameLabel, node, XPathConstants.NODE));
-                    long capacity = Long.parseLong(Node.class.cast(nav.evaluate(GetDiskCapacity, node, XPathConstants.NODE)).toString());
-                    result.add(new Disk(this, uuidNode.toString(), nameLabelNode.toString(), idNode.toString(), capacity));
+                    long capacity = Long
+                            .parseLong(Node.class.cast(nav.evaluate(GetDiskCapacity, node, XPathConstants.NODE)).getTextContent());
+                    result.add(new Disk(this, uuidNode.toString(), nameLabelNode.toString(), idNode.getTextContent(), capacity));
                 }
             }
             return result;
         } catch (XPathExpressionException e) {
+            throw new IllegalStateException(e);
+        } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
-        } finally {
-            if (docStream != null)
-                try {
-                    docStream.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
         }
     }
 

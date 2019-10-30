@@ -233,6 +233,9 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
 
             byte xFnLen = x[0x40];
             byte yFnLen = y[0x40];
+//if (_stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2) == 0) {
+// Debug.println(new String(x, 0, 0x42, xFnLen * 2) + ",  " + new String(y, 0, 0x42, yFnLen * 2));
+//}
             return _stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2);
         }
     }

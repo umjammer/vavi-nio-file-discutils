@@ -28,11 +28,11 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Range;
 import dotnet4j.io.IOException;
+import dotnet4j.io.compat.StringUtilities;
 
 
 public abstract class AttributeRecord implements Comparable<AttributeRecord> {
@@ -106,7 +106,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
             return val;
         }
 
-        val = Utilities.compareTo(_name, other._name, true);
+        val = StringUtilities.compare(_name, other._name, true);
         if (val != 0) {
             return val;
         }

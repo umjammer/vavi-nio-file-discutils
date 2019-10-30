@@ -280,10 +280,11 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                     return r;
                 }
             }
+
             throw new dotnet4j.io.IOException("MFT too fragmented - unable to allocate MFT overflow record");
         }
-
         index = _bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
+
         if (index * getRecordSize() >= _recordStream.getLength()) {
             // Note: 64 is significant, since bitmap extends by 8 bytes (=64 bits) at a
             // time.
@@ -297,11 +298,15 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
         FileRecord newRecord = getRecord(index, true);
         newRecord.reInitialize(_bytesPerSector, getRecordSize(), (int) index);
+
         _recordCache.set___idx(index, newRecord);
+
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
+
         writeRecord(newRecord);
         _self.updateRecordInMft();
+
         return newRecord;
     }
 
@@ -376,9 +381,11 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
         byte[] buffer = new byte[getRecordSize()];
         record.toBytes(buffer, 0);
+
         _recordStream.setPosition(record.getMasterFileTableIndex() * getRecordSize());
         _recordStream.write(buffer, 0, getRecordSize());
         _recordStream.flush();
+
         // We may have modified our own meta-data by extending the data stream, so
         // make sure our records are up-to-date.
         if (_self.getMftRecordIsDirty()) {
@@ -397,7 +404,6 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         if (record.getMasterFileTableIndex() < 4 && _self.getContext().getGetFileByIndex() != null) {
             File mftMirror = _self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
             if (mftMirror != null) {
-
                 try (Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
                     s.setPosition(record.getMasterFileTableIndex() * getRecordSize());
                     s.write(buffer, 0, getRecordSize());

@@ -29,8 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-import DiscUtils.Core.Internal.Utilities;
 import dotnet4j.Tuple;
+import dotnet4j.io.compat.StringUtilities;
 
 
 public class Metadata {
@@ -100,7 +100,7 @@ public class Metadata {
     }
 
     public static String[] parseArrayValue(String value) {
-        String[] values = Arrays.stream(value.replaceAll("(^\\[*|\\]*$)", "").split(Utilities.escapeForRegex("\\")))
+        String[] values = Arrays.stream(value.replaceAll("(^\\[*|\\]*$)", "").split(StringUtilities.escapeForRegex("\\")))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         for (int i = 0; i < values.length; i++) {

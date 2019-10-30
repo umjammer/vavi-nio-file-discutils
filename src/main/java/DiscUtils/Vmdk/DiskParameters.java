@@ -64,7 +64,6 @@ public final class DiskParameters {
                 if (getAdapterType() == DiskAdapterType.Ide) {
                     setAdapterType(DiskAdapterType.LsiLogicScsi);
                 }
-
             } else {
                 setAdapterType(DiskAdapterType.LsiLogicScsi);
             }
@@ -74,66 +73,66 @@ public final class DiskParameters {
     /**
      * Gets or sets the type of emulated disk adapter.
      */
-    private DiskAdapterType __AdapterType = DiskAdapterType.None;
+    private DiskAdapterType _adapterType = DiskAdapterType.None;
 
     public DiskAdapterType getAdapterType() {
-        return __AdapterType;
+        return _adapterType;
     }
 
     public void setAdapterType(DiskAdapterType value) {
-        __AdapterType = value;
+        _adapterType = value;
     }
 
     /**
      * Gets or sets the BIOS Geometry of the virtual disk.
      */
-    private Geometry __BiosGeometry;
+    private Geometry _biosGeometry;
 
     public Geometry getBiosGeometry() {
-        return __BiosGeometry;
+        return _biosGeometry;
     }
 
     public void setBiosGeometry(Geometry value) {
-        __BiosGeometry = value;
+        _biosGeometry = value;
     }
 
     /**
      * Gets or sets the capacity of the virtual disk.
      */
-    private long __Capacity;
+    private long _capacity;
 
     public long getCapacity() {
-        return __Capacity;
+        return _capacity;
     }
 
     public void setCapacity(long value) {
-        __Capacity = value;
+        _capacity = value;
     }
 
     /**
      * Gets or sets the type of VMDK file to create.
      */
-    private DiskCreateType __CreateType = DiskCreateType.None;
+    private DiskCreateType _createType = DiskCreateType.None;
 
     public DiskCreateType getCreateType() {
-        return __CreateType;
+        return _createType;
     }
 
     public void setCreateType(DiskCreateType value) {
-        __CreateType = value;
+        _createType = value;
     }
 
     /**
      * Gets or sets the Physical Geometry of the virtual disk.
      */
-    private Geometry __Geometry;
+    private Geometry _geometry;
 
     public Geometry getGeometry() {
-        return __Geometry;
+        return _geometry;
     }
 
     public void setGeometry(Geometry value) {
-        __Geometry = value;
+        _geometry = value;
     }
 
 }

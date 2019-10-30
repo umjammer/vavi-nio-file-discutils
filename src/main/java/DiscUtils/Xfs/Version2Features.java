@@ -22,6 +22,14 @@
 
 package DiscUtils.Xfs;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import DiscUtils.Ntfs.FileAttributeFlags;
+
 public enum Version2Features {
     /**
      * Additional version flags if
@@ -30,7 +38,7 @@ public enum Version2Features {
      * {@link SuperBlock#getVersion()}
      * .
      */
-    Reserved1,
+    Reserved1(0x001),
     /**
      * Lazy global counters. Making a filesystem with this
      * bit set can improve performance. The global free
@@ -38,8 +46,8 @@ public enum Version2Features {
      * primary superblock when the filesystem is cleanly
      * unmounted.
      */
-    LazySbBitCount,
-    Reserved4,
+    LazySbBitCount(0x002),
+    Reserved4(0x004),
     /**
      * Extended attributes version 2. Making a filesystem
      * with this optimises the inode layout of extended
@@ -47,14 +55,14 @@ public enum Version2Features {
      * flag is not specified, the di_forkoff inode field
      * will be dynamically adjusted.
      */
-    ExtendedAttributeVersion2,
+    ExtendedAttributeVersion2(0x008),
     /**
      * Parent pointers. All inodes must have an extended
      * attribute that points back to its parent inode. The
      * primary purpose for this information is in backup
      * systems.
      */
-    Parent,
+    Parent(0x010),
     /**
      * 32-bit Project ID. Inodes can be associated with a
      * project ID number, which can be used to enforce disk
@@ -62,7 +70,7 @@ public enum Version2Features {
      * directories. This flag indicates that project IDs can be
      * 32 bits in size.
      */
-    ProjectId32Bit,
+    ProjectId32Bit(0x0080),
     /**
      * Metadata checksumming. All metadata blocks have
      * an extended header containing the block checksum,
@@ -72,16 +80,42 @@ public enum Version2Features {
      * feature must be and can only be set if the lowest
      * nibble of sb_versionnum is set to 5.
      */
-    Crc,
+    Crc(0x0100),
     /**
      * Directory file type. Each directory entry records the
      * type of the inode to which the entry points. This
      * speeds up directory iteration by removing the need
      * to load every inode into memory.
      */
-    FType;
+    FType(0x0200);
 
-    public static Version2Features valueOf(int value) {
-        return values()[value];
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private Version2Features(int value) {
+        this.value = value;
+    }
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return this::getValue;
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<Version2Features> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Version2Features.class)));
+    }
+
+    public static long valueOf(EnumSet<Version2Features> flags) {
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

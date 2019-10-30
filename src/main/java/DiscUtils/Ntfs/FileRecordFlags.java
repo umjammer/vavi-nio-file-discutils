@@ -36,21 +36,17 @@ public enum FileRecordFlags implements EnumSettable {
 
     public static EnumSet<FileRecordFlags> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileRecordFlags.class)));
     }
 
     public static long valueOf(EnumSet<FileRecordFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 
     // TODO
     public static <E extends Enum<E> & EnumSettable> EnumSet<E> cast(Class<E> clazz, EnumSet<FileRecordFlags> flags) {
-        return cast(clazz, (int) valueOf(flags));
-    }
-
-    // TODO
-    public static <E extends Enum<E> & EnumSettable> EnumSet<E> cast(Class<E> clazz, int value) {
+        int value = (int) valueOf(flags);
         return Arrays.stream(clazz.getEnumConstants())
                 .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(clazz)));

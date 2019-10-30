@@ -24,6 +24,8 @@
 
 package DiscUtils.Xfs;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.UUID;
 
 import DiscUtils.Streams.IByteArraySerializable;
@@ -36,759 +38,757 @@ public class SuperBlock implements IByteArraySerializable {
     /**
      * magic number == XFS_SB_MAGIC
      */
-    private int __Magic;
+    private int _magic;
 
     public int getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(int value) {
-        __Magic = value;
+        _magic = value;
     }
 
     /**
      * logical block size, bytes
      */
-    private int __Blocksize;
+    private int _blocksize;
 
     public int getBlocksize() {
-        return __Blocksize;
+        return _blocksize;
     }
 
     public void setBlocksize(int value) {
-        __Blocksize = value;
+        _blocksize = value;
     }
 
     /**
      * number of data blocks
      */
-    private long __DataBlocks;
+    private long _dataBlocks;
 
     public long getDataBlocks() {
-        return __DataBlocks;
+        return _dataBlocks;
     }
 
     public void setDataBlocks(long value) {
-        __DataBlocks = value;
+        _dataBlocks = value;
     }
 
     /**
      * number of realtime blocks
      */
-    private long __RealtimeBlocks;
+    private long _realtimeBlocks;
 
     public long getRealtimeBlocks() {
-        return __RealtimeBlocks;
+        return _realtimeBlocks;
     }
 
     public void setRealtimeBlocks(long value) {
-        __RealtimeBlocks = value;
+        _realtimeBlocks = value;
     }
 
     /**
      * number of realtime extents
      */
-    private long __RealtimeExtents;
+    private long _realtimeExtents;
 
     public long getRealtimeExtents() {
-        return __RealtimeExtents;
+        return _realtimeExtents;
     }
 
     public void setRealtimeExtents(long value) {
-        __RealtimeExtents = value;
+        _realtimeExtents = value;
     }
 
     /**
      * user-visible file system unique id
      */
-    private UUID __UniqueId;
+    private UUID _uniqueId;
 
     public UUID getUniqueId() {
-        return __UniqueId;
+        return _uniqueId;
     }
 
     public void setUniqueId(UUID value) {
-        __UniqueId = value;
+        _uniqueId = value;
     }
 
     /**
      * starting block of log if internal
      */
-    private long __Logstart;
+    private long _logstart;
 
     public long getLogstart() {
-        return __Logstart;
+        return _logstart;
     }
 
     public void setLogstart(long value) {
-        __Logstart = value;
+        _logstart = value;
     }
 
     /**
      * root inode number
      */
-    private long __RootInode;
+    private long _rootInode;
 
     public long getRootInode() {
-        return __RootInode;
+        return _rootInode;
     }
 
     public void setRootInode(long value) {
-        __RootInode = value;
+        _rootInode = value;
     }
 
     /**
      * bitmap inode for realtime extents
      */
-    private long __RealtimeBitmapInode;
+    private long _realtimeBitmapInode;
 
     public long getRealtimeBitmapInode() {
-        return __RealtimeBitmapInode;
+        return _realtimeBitmapInode;
     }
 
     public void setRealtimeBitmapInode(long value) {
-        __RealtimeBitmapInode = value;
+        _realtimeBitmapInode = value;
     }
 
     /**
      * summary inode for rt bitmap
      */
-    private long __RealtimeSummaryInode;
+    private long _realtimeSummaryInode;
 
     public long getRealtimeSummaryInode() {
-        return __RealtimeSummaryInode;
+        return _realtimeSummaryInode;
     }
 
     public void setRealtimeSummaryInode(long value) {
-        __RealtimeSummaryInode = value;
+        _realtimeSummaryInode = value;
     }
 
     /**
      * realtime extent size, blocks
      */
-    private int __RealtimeExtentSize;
+    private int _realtimeExtentSize;
 
     public int getRealtimeExtentSize() {
-        return __RealtimeExtentSize;
+        return _realtimeExtentSize;
     }
 
     public void setRealtimeExtentSize(int value) {
-        __RealtimeExtentSize = value;
+        _realtimeExtentSize = value;
     }
 
     /**
      * size of an allocation group
      */
-    private int __AgBlocks;
+    private int _agBlocks;
 
     public int getAgBlocks() {
-        return __AgBlocks;
+        return _agBlocks;
     }
 
     public void setAgBlocks(int value) {
-        __AgBlocks = value;
+        _agBlocks = value;
     }
 
     /**
      * number of allocation groups
      */
-    private int __AgCount;
+    private int _agCount;
 
     public int getAgCount() {
-        return __AgCount;
+        return _agCount;
     }
 
     public void setAgCount(int value) {
-        __AgCount = value;
+        _agCount = value;
     }
 
     /**
      * number of rt bitmap blocks
      */
-    private int __RealtimeBitmapBlocks;
+    private int _realtimeBitmapBlocks;
 
     public int getRealtimeBitmapBlocks() {
-        return __RealtimeBitmapBlocks;
+        return _realtimeBitmapBlocks;
     }
 
     public void setRealtimeBitmapBlocks(int value) {
-        __RealtimeBitmapBlocks = value;
+        _realtimeBitmapBlocks = value;
     }
 
     /**
      * number of log blocks
      */
-    private int __LogBlocks;
+    private int _logBlocks;
 
     public int getLogBlocks() {
-        return __LogBlocks;
+        return _logBlocks;
     }
 
     public void setLogBlocks(int value) {
-        __LogBlocks = value;
+        _logBlocks = value;
     }
+
+    private int _version;
 
     /**
      * header version == XFS_SB_VERSION
      */
-    private VersionFlags __Version = VersionFlags.None;
+    private EnumSet<VersionFlags> _versionFlags;
 
-    public VersionFlags getVersion() {
-        return __Version;
+    public EnumSet<VersionFlags> getVersion() {
+        return _versionFlags;
     }
 
-    public void setVersion(VersionFlags value) {
-        __Version = value;
+    public void setVersion(EnumSet<VersionFlags> value) {
+        _versionFlags = value;
     }
 
     /**
      * volume sector size, bytes
      */
-    private short __SectorSize;
+    private short _sectorSize;
 
     public short getSectorSize() {
-        return __SectorSize;
+        return _sectorSize;
     }
 
     public void setSectorSize(short value) {
-        __SectorSize = value;
+        _sectorSize = value;
     }
 
     /**
      * inode size, bytes
      */
-    private short __InodeSize;
+    private short _inodeSize;
 
     public short getInodeSize() {
-        return __InodeSize;
+        return _inodeSize;
     }
 
     public void setInodeSize(short value) {
-        __InodeSize = value;
+        _inodeSize = value;
     }
 
     /**
      * inodes per block
      */
-    private short __InodesPerBlock;
+    private short _inodesPerBlock;
 
     public short getInodesPerBlock() {
-        return __InodesPerBlock;
+        return _inodesPerBlock;
     }
 
     public void setInodesPerBlock(short value) {
-        __InodesPerBlock = value;
+        _inodesPerBlock = value;
     }
 
     /**
      * file system name
      */
-    private String __FilesystemName;
+    private String _filesystemName;
 
     public String getFilesystemName() {
-        return __FilesystemName;
+        return _filesystemName;
     }
 
     public void setFilesystemName(String value) {
-        __FilesystemName = value;
+        _filesystemName = value;
     }
 
     /**
-     * log2 of
-     * {@link #Blocksize}
+     * log2 of {@link #_blocksize}
      */
-    private byte __BlocksizeLog2;
+    private byte _blocksizeLog2;
 
     public byte getBlocksizeLog2() {
-        return __BlocksizeLog2;
+        return _blocksizeLog2;
     }
 
     public void setBlocksizeLog2(byte value) {
-        __BlocksizeLog2 = value;
+        _blocksizeLog2 = value;
     }
 
     /**
-     * log2 of
-     * {@link #SectorSize}
+     * log2 of {@link #_sectorSize}
      */
-    private byte __SectorSizeLog2;
+    private byte _sectorSizeLog2;
 
     public byte getSectorSizeLog2() {
-        return __SectorSizeLog2;
+        return _sectorSizeLog2;
     }
 
     public void setSectorSizeLog2(byte value) {
-        __SectorSizeLog2 = value;
+        _sectorSizeLog2 = value;
     }
 
     /**
-     * log2 of
-     * {@link #InodeSize}
+     * log2 of {@link #_inodeSize}
      */
-    private byte __InodeSizeLog2;
+    private byte _inodeSizeLog2;
 
     public byte getInodeSizeLog2() {
-        return __InodeSizeLog2;
+        return _inodeSizeLog2;
     }
 
     public void setInodeSizeLog2(byte value) {
-        __InodeSizeLog2 = value;
+        _inodeSizeLog2 = value;
     }
 
     /**
-     * log2 of
-     * {@link #InodesPerBlock}
+     * log2 of {@link #_inodesPerBlock}
      */
-    private byte __InodesPerBlockLog2;
+    private byte _inodesPerBlockLog2;
 
     public byte getInodesPerBlockLog2() {
-        return __InodesPerBlockLog2;
+        return _inodesPerBlockLog2;
     }
 
     public void setInodesPerBlockLog2(byte value) {
-        __InodesPerBlockLog2 = value;
+        _inodesPerBlockLog2 = value;
     }
 
     /**
-     * log2 of
-     * {@link #AgBlocks}
-     * (rounded up)
+     * log2 of {@link #_agBlocks} (rounded up)
      */
-    private byte __AgBlocksLog2;
+    private byte _agBlocksLog2;
 
     public byte getAgBlocksLog2() {
-        return __AgBlocksLog2;
+        return _agBlocksLog2;
     }
 
     public void setAgBlocksLog2(byte value) {
-        __AgBlocksLog2 = value;
+        _agBlocksLog2 = value;
     }
 
     /**
-     * log2 of
-     * {@link #RealtimeExtents}
+     * log2 of {@link #_realtimeExtents}
      */
-    private byte __RealtimeExtentsLog2;
+    private byte _realtimeExtentsLog2;
 
     public byte getRealtimeExtentsLog2() {
-        return __RealtimeExtentsLog2;
+        return _realtimeExtentsLog2;
     }
 
     public void setRealtimeExtentsLog2(byte value) {
-        __RealtimeExtentsLog2 = value;
+        _realtimeExtentsLog2 = value;
     }
 
     /**
      * mkfs is in progress, don't mount
      */
-    private byte __InProgress;
+    private byte _inProgress;
 
     public byte getInProgress() {
-        return __InProgress;
+        return _inProgress;
     }
 
     public void setInProgress(byte value) {
-        __InProgress = value;
+        _inProgress = value;
     }
 
     /**
      * max % of fs for inode space
      */
-    private byte __InodesMaxPercent;
+    private byte _inodesMaxPercent;
 
     public byte getInodesMaxPercent() {
-        return __InodesMaxPercent;
+        return _inodesMaxPercent;
     }
 
     public void setInodesMaxPercent(byte value) {
-        __InodesMaxPercent = value;
+        _inodesMaxPercent = value;
     }
 
-    /* These fields must remain contiguous. If you really
-     * want to change their layout, make sure you fix the
-     * code in xfs_trans_apply_sb_deltas(). */
+    // These fields must remain contiguous. If you really
+    // want to change their layout, make sure you fix the
+    // code in xfs_trans_apply_sb_deltas().
+
     /**
      * allocated inodes
      */
-    private long __AllocatedInodes;
+    private long _allocatedInodes;
 
     public long getAllocatedInodes() {
-        return __AllocatedInodes;
+        return _allocatedInodes;
     }
 
     public void setAllocatedInodes(long value) {
-        __AllocatedInodes = value;
+        _allocatedInodes = value;
     }
 
     /**
      * free inodes
      */
-    private long __FreeInodes;
+    private long _freeInodes;
 
     public long getFreeInodes() {
-        return __FreeInodes;
+        return _freeInodes;
     }
 
     public void setFreeInodes(long value) {
-        __FreeInodes = value;
+        _freeInodes = value;
     }
 
     /**
      * free data blocks
      */
-    private long __FreeDataBlocks;
+    private long _freeDataBlocks;
 
     public long getFreeDataBlocks() {
-        return __FreeDataBlocks;
+        return _freeDataBlocks;
     }
 
     public void setFreeDataBlocks(long value) {
-        __FreeDataBlocks = value;
+        _freeDataBlocks = value;
     }
 
     /**
      * free realtime extents
      */
-    private long __FreeRealtimeExtents;
+    private long _freeRealtimeExtents;
 
     public long getFreeRealtimeExtents() {
-        return __FreeRealtimeExtents;
+        return _freeRealtimeExtents;
     }
 
     public void setFreeRealtimeExtents(long value) {
-        __FreeRealtimeExtents = value;
+        _freeRealtimeExtents = value;
     }
 
     /**
      * user quota inode
      */
-    private long __UserQuotaInode;
+    private long _userQuotaInode;
 
     public long getUserQuotaInode() {
-        return __UserQuotaInode;
+        return _userQuotaInode;
     }
 
     public void setUserQuotaInode(long value) {
-        __UserQuotaInode = value;
+        _userQuotaInode = value;
     }
 
     /**
      * group quota inode
      */
-    private long __GroupQuotaInode;
+    private long _groupQuotaInode;
 
     public long getGroupQuotaInode() {
-        return __GroupQuotaInode;
+        return _groupQuotaInode;
     }
 
     public void setGroupQuotaInode(long value) {
-        __GroupQuotaInode = value;
+        _groupQuotaInode = value;
     }
 
     /**
      * quota flags
      */
-    private short __QuotaFlags;
+    private short _quotaFlags;
 
     public short getQuotaFlags() {
-        return __QuotaFlags;
+        return _quotaFlags;
     }
 
     public void setQuotaFlags(short value) {
-        __QuotaFlags = value;
+        _quotaFlags = value;
     }
 
     /**
      * misc. flags
      */
-    private byte __Flags;
+    private byte _flags;
 
     public byte getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(byte value) {
-        __Flags = value;
+        _flags = value;
     }
 
     /**
      * shared version number
      */
-    private byte __SharedVersionNumber;
+    private byte _sharedVersionNumber;
 
     public byte getSharedVersionNumber() {
-        return __SharedVersionNumber;
+        return _sharedVersionNumber;
     }
 
     public void setSharedVersionNumber(byte value) {
-        __SharedVersionNumber = value;
+        _sharedVersionNumber = value;
     }
 
     /**
      * inode chunk alignment, fsblocks
      */
-    private int __InodeChunkAlignment;
+    private int _inodeChunkAlignment;
 
     public int getInodeChunkAlignment() {
-        return __InodeChunkAlignment;
+        return _inodeChunkAlignment;
     }
 
     public void setInodeChunkAlignment(int value) {
-        __InodeChunkAlignment = value;
+        _inodeChunkAlignment = value;
     }
 
     /**
      * stripe or raid unit
      */
-    private int __Unit;
+    private int _unit;
 
     public int getUnit() {
-        return __Unit;
+        return _unit;
     }
 
     public void setUnit(int value) {
-        __Unit = value;
+        _unit = value;
     }
 
     /**
      * stripe or raid width
      */
-    private int __Width;
+    private int _width;
 
     public int getWidth() {
-        return __Width;
+        return _width;
     }
 
     public void setWidth(int value) {
-        __Width = value;
+        _width = value;
     }
 
     /**
      * log2 of dir block size (fsbs)
      */
-    private byte __DirBlockLog2;
+    private byte _dirBlockLog2;
 
     public byte getDirBlockLog2() {
-        return __DirBlockLog2;
+        return _dirBlockLog2;
     }
 
     public void setDirBlockLog2(byte value) {
-        __DirBlockLog2 = value;
+        _dirBlockLog2 = value;
     }
 
     /**
      * log2 of the log sector size
      */
-    private byte __LogSectorSizeLog2;
+    private byte _logSectorSizeLog2;
 
     public byte getLogSectorSizeLog2() {
-        return __LogSectorSizeLog2;
+        return _logSectorSizeLog2;
     }
 
     public void setLogSectorSizeLog2(byte value) {
-        __LogSectorSizeLog2 = value;
+        _logSectorSizeLog2 = value;
     }
 
     /**
      * sector size for the log, bytes
      */
-    private short __LogSectorSize;
+    private short _logSectorSize;
 
     public short getLogSectorSize() {
-        return __LogSectorSize;
+        return _logSectorSize;
     }
 
     public void setLogSectorSize(short value) {
-        __LogSectorSize = value;
+        _logSectorSize = value;
     }
 
     /**
      * stripe unit size for the log
      */
-    private int __LogUnitSize;
+    private int _logUnitSize;
 
     public int getLogUnitSize() {
-        return __LogUnitSize;
+        return _logUnitSize;
     }
 
     public void setLogUnitSize(int value) {
-        __LogUnitSize = value;
+        _logUnitSize = value;
     }
 
     /**
      * additional feature bits
      */
-    private Version2Features __Features2 = Version2Features.Reserved1;
+    private EnumSet<Version2Features> _features2;
 
-    public Version2Features getFeatures2() {
-        return __Features2;
+    public EnumSet<Version2Features> getFeatures2() {
+        return _features2;
     }
 
-    public void setFeatures2(Version2Features value) {
-        __Features2 = value;
+    public void setFeatures2(EnumSet<Version2Features> value) {
+        _features2 = value;
     }
 
-    /* bad features2 field as a result of failing to pad the sb structure to
-     * 64 bits. Some machines will be using this field for features2 bits.
-     * Easiest just to mark it bad and not use it for anything else.
-     * This is not kept up to date in memory; it is always overwritten by
-     * the value in sb_features2 when formatting the incore superblock to
-     * the disk buffer. */
+    // bad features2 field as a result of failing to pad the sb structure to
+    // 64 bits. Some machines will be using this field for features2 bits.
+    // Easiest just to mark it bad and not use it for anything else.
+    // This is not kept up to date in memory; it is always overwritten by
+    // the value in sb_features2 when formatting the incore superblock to
+    // the disk buffer.
+
     /**
-     * bad features2 field as a result of failing to pad the sb structure to
-     * 64 bits. Some machines will be using this field for features2 bits.
-     * Easiest just to mark it bad and not use it for anything else.
+     * bad features2 field as a result of failing to pad the sb structure to 64
+     * bits. Some machines will be using this field for features2 bits. Easiest
+     * just to mark it bad and not use it for anything else.
      *
-     * This is not kept up to date in memory; it is always overwritten by
-     * the value in sb_features2 when formatting the incore superblock to
-     * the disk buffer.
+     * This is not kept up to date in memory; it is always overwritten by the
+     * value in sb_features2 when formatting the incore superblock to the disk
+     * buffer.
      */
-    private int __BadFeatures2;
+    private int _badFeatures2;
 
     public int getBadFeatures2() {
-        return __BadFeatures2;
+        return _badFeatures2;
     }
 
     public void setBadFeatures2(int value) {
-        __BadFeatures2 = value;
+        _badFeatures2 = value;
     }
 
-    /* version 5 superblock fields start here */
+    // version 5 superblock fields start here
+
     /* feature masks */
-    private int __CompatibleFeatures;
+    private int _compatibleFeatures;
 
     public int getCompatibleFeatures() {
-        return __CompatibleFeatures;
+        return _compatibleFeatures;
     }
 
     public void setCompatibleFeatures(int value) {
-        __CompatibleFeatures = value;
+        _compatibleFeatures = value;
     }
 
-    private ReadOnlyCompatibleFeatures __ReadOnlyCompatibleFeatures = ReadOnlyCompatibleFeatures.FINOBT;
+    private EnumSet<ReadOnlyCompatibleFeatures> _readOnlyCompatibleFeatures;
 
-    public ReadOnlyCompatibleFeatures getReadOnlyCompatibleFeatures() {
-        return __ReadOnlyCompatibleFeatures;
+    public EnumSet<ReadOnlyCompatibleFeatures> getReadOnlyCompatibleFeatures() {
+        return _readOnlyCompatibleFeatures;
     }
 
-    public void setReadOnlyCompatibleFeatures(ReadOnlyCompatibleFeatures value) {
-        __ReadOnlyCompatibleFeatures = value;
+    public void setReadOnlyCompatibleFeatures(EnumSet<ReadOnlyCompatibleFeatures> value) {
+        _readOnlyCompatibleFeatures = value;
     }
 
-    private IncompatibleFeatures __IncompatibleFeatures = IncompatibleFeatures.None;
+    private EnumSet<IncompatibleFeatures> _incompatibleFeatures;
 
-    public IncompatibleFeatures getIncompatibleFeatures() {
-        return __IncompatibleFeatures;
+    public EnumSet<IncompatibleFeatures> getIncompatibleFeatures() {
+        return _incompatibleFeatures;
     }
 
-    public void setIncompatibleFeatures(IncompatibleFeatures value) {
-        __IncompatibleFeatures = value;
+    public void setIncompatibleFeatures(EnumSet<IncompatibleFeatures> value) {
+        _incompatibleFeatures = value;
     }
 
-    private int __LogIncompatibleFeatures;
+    private int _logIncompatibleFeatures;
 
     public int getLogIncompatibleFeatures() {
-        return __LogIncompatibleFeatures;
+        return _logIncompatibleFeatures;
     }
 
     public void setLogIncompatibleFeatures(int value) {
-        __LogIncompatibleFeatures = value;
+        _logIncompatibleFeatures = value;
     }
 
     /**
      * superblock crc
      */
-    private int __Crc;
+    private int _crc;
 
     public int getCrc() {
-        return __Crc;
+        return _crc;
     }
 
     public void setCrc(int value) {
-        __Crc = value;
+        _crc = value;
     }
 
     /**
      * sparse inode chunk alignment
      */
-    private int __SparseInodeAlignment;
+    private int _sparseInodeAlignment;
 
     public int getSparseInodeAlignment() {
-        return __SparseInodeAlignment;
+        return _sparseInodeAlignment;
     }
 
     public void setSparseInodeAlignment(int value) {
-        __SparseInodeAlignment = value;
+        _sparseInodeAlignment = value;
     }
 
     /**
      * project quota inode
      */
-    private long __ProjectQuotaInode;
+    private long _projectQuotaInode;
 
     public long getProjectQuotaInode() {
-        return __ProjectQuotaInode;
+        return _projectQuotaInode;
     }
 
     public void setProjectQuotaInode(long value) {
-        __ProjectQuotaInode = value;
+        _projectQuotaInode = value;
     }
 
     /**
      * last write sequence
      */
-    private long __Lsn;
+    private long _lsn;
 
     public long getLsn() {
-        return __Lsn;
+        return _lsn;
     }
 
     public void setLsn(long value) {
-        __Lsn = value;
+        _lsn = value;
     }
 
     /**
      * metadata file system unique id
      */
-    private UUID __MetaUuid;
+    private UUID _metaUuid;
 
     public UUID getMetaUuid() {
-        return __MetaUuid;
+        return _metaUuid;
     }
 
     public void setMetaUuid(UUID value) {
-        __MetaUuid = value;
+        _metaUuid = value;
     }
 
     /* must be padded to 64 bit alignment */
-    private int __RelativeInodeMask;
+    private int _relativeInodeMask;
 
     public int getRelativeInodeMask() {
-        return __RelativeInodeMask;
+        return _relativeInodeMask;
     }
 
     public void setRelativeInodeMask(int value) {
-        __RelativeInodeMask = value;
+        _relativeInodeMask = value;
     }
 
-    private int __AgInodeMask;
+    private int _agInodeMask;
 
     public int getAgInodeMask() {
-        return __AgInodeMask;
+        return _agInodeMask;
     }
 
     public void setAgInodeMask(int value) {
-        __AgInodeMask = value;
+        _agInodeMask = value;
     }
 
-    private int __DirBlockSize;
+    private int _dirBlockSize;
 
     public int getDirBlockSize() {
-        return __DirBlockSize;
+        return _dirBlockSize;
     }
 
     public void setDirBlockSize(int value) {
-        __DirBlockSize = value;
+        _dirBlockSize = value;
     }
 
     public int size() {
@@ -799,22 +799,17 @@ public class SuperBlock implements IByteArraySerializable {
         return 208;
     }
 
-    public short getSbVersion() {
-        return (short) (getVersion().ordinal() & VersionFlags.NumberFlag.ordinal());
+    public int getSbVersion() {
+        return _version;
     }
 
     public boolean getSbVersionHasMoreBits() {
-        return (getVersion().ordinal() & VersionFlags.Features2.ordinal()) == VersionFlags.Features2.ordinal();
+        return _versionFlags.contains(VersionFlags.Features2);
     }
 
-    public boolean getHasFType() {
-        getIncompatibleFeatures();
-        getIncompatibleFeatures();
-        return getSbVersion() == 5 &&
-               ((getIncompatibleFeatures().ordinal() & IncompatibleFeatures.FType.ordinal()) == IncompatibleFeatures.FType
-                       .ordinal()) ||
-               getSbVersionHasMoreBits() && ((getFeatures2().ordinal() &
-                                              Version2Features.FType.ordinal()) == Version2Features.FType.ordinal());
+    public boolean hasFType() {
+        return getSbVersion() == 5 && _incompatibleFeatures.contains(IncompatibleFeatures.FType) ||
+               getSbVersionHasMoreBits() && _features2.contains(Version2Features.FType);
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -836,7 +831,9 @@ public class SuperBlock implements IByteArraySerializable {
         setAgCount(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x58));
         setRealtimeBitmapBlocks(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x5C));
         setLogBlocks(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x60));
-        setVersion(VersionFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x64)));
+        short versionFlags = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x64);
+        _version = versionFlags & VersionFlags.NumberFlag;
+        setVersion(VersionFlags.valueOf(versionFlags & ~VersionFlags.NumberFlag));
         setSectorSize(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x66));
         setInodeSize(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x68));
         setInodesPerBlock(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6A));
@@ -867,7 +864,8 @@ public class SuperBlock implements IByteArraySerializable {
         setLogUnitSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC4));
         setFeatures2(Version2Features.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC8)));
         setBadFeatures2(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xCC));
-        if (getSbVersion() >= (short) VersionFlags.Version5.ordinal()) {
+
+        if (getSbVersion() >= (short) VersionFlags.Version5) {
             setCompatibleFeatures(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD0));
             setReadOnlyCompatibleFeatures(ReadOnlyCompatibleFeatures
                     .valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD4)));
@@ -880,14 +878,14 @@ public class SuperBlock implements IByteArraySerializable {
             setMetaUuid(EndianUtilities.toGuidBigEndian(buffer, offset + 0xF8));
             getIncompatibleFeatures();
             getIncompatibleFeatures();
-            if ((getIncompatibleFeatures().ordinal() &
-                 IncompatibleFeatures.Supported.ordinal()) != IncompatibleFeatures.Supported.ordinal())
+            if (Collections.disjoint(_incompatibleFeatures, IncompatibleFeatures.Supported))
                 throw new UnsupportedOperationException("XFS Features not supported");
         }
 
         long agOffset = getAgBlocksLog2() + getInodesPerBlockLog2();
         setRelativeInodeMask(0xffffffff >>> (32 - agOffset));
         setAgInodeMask(~getRelativeInodeMask());
+
         setDirBlockSize(getBlocksize() << getDirBlockLog2());
         return size();
     }
@@ -897,7 +895,7 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     public int xfs_btree_compute_maxlevels() {
-        int len = getAgBlocks();
+        int len = _agBlocks;
         int level;
         int[] limits = new int[] {
             xfs_rmapbt_maxrecs(false), xfs_rmapbt_maxrecs(true)
@@ -909,7 +907,7 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     private int xfs_rmapbt_maxrecs(boolean leaf) {
-        int blocklen = getBlocksize() - 56;
+        int blocklen = _blocksize - 56;
         if (leaf)
             return blocklen / 24;
 

@@ -23,10 +23,10 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.util.Map;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
+import dotnet4j.Tuple;
 
 
 public class ReparsePoints {
@@ -60,8 +60,7 @@ public class ReparsePoints {
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "REPARSE POINT INDEX");
-        for (Map.Entry<DiscUtils.Ntfs.ReparsePoints.Key, DiscUtils.Ntfs.ReparsePoints.Data> entry : _index.getEntries()
-                .entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.ReparsePoints.Key, DiscUtils.Ntfs.ReparsePoints.Data> entry : _index.getEntries()) {
             writer.println(indent + "  REPARSE POINT INDEX ENTRY");
             writer.println(indent + "            Tag: " + String.format("%02x", entry.getKey().Tag));
             writer.println(indent + "  MFT Reference: " + entry.getKey().File);

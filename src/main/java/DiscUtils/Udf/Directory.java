@@ -23,6 +23,7 @@
 package DiscUtils.Udf;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -35,17 +36,21 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
 
     public Directory(UdfContext context, LogicalPartition partition, FileEntry fileEntry) {
         super(context, partition, fileEntry, (int) partition.getLogicalBlockSize());
+
         if (getFileContent().getCapacity() > Integer.MAX_VALUE) {
             throw new UnsupportedOperationException("Very large directory");
         }
 
         _entries = new ArrayList<>();
+
         byte[] contentBytes = StreamUtilities.readExact(getFileContent(), 0, (int) getFileContent().getCapacity());
+
         int pos = 0;
         while (pos < contentBytes.length) {
             FileIdentifier id = new FileIdentifier();
             int size = id.readFrom(contentBytes, pos);
-            if (!id._FileCharacteristics.containsAll(EnumSet.of(FileCharacteristic.Deleted, FileCharacteristic.Parent))) {
+
+            if (Collections.disjoint(id._FileCharacteristics, EnumSet.of(FileCharacteristic.Deleted, FileCharacteristic.Parent))) {
                 _entries.add(id);
             }
 
@@ -71,6 +76,7 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
                 return entry;
             }
         }
+
         return null;
     }
 }

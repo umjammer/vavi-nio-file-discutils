@@ -29,6 +29,7 @@ import java.util.UUID;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
+import dotnet4j.Tuple;
 
 
 public final class ObjectIds {
@@ -43,7 +44,7 @@ public final class ObjectIds {
 
     public Map<UUID, ObjectIdRecord> getAll() {
         Map<UUID, ObjectIdRecord> result = new HashMap<>();
-        for (Map.Entry<DiscUtils.Ntfs.ObjectIds.IndexKey, ObjectIdRecord> record : _index.getEntries().entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.ObjectIds.IndexKey, ObjectIdRecord> record : _index.getEntries()) {
             result.put(record.getKey().Id, record.getValue());
         }
         return result;
@@ -76,7 +77,7 @@ public final class ObjectIds {
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "OBJECT ID INDEX");
-        for (Map.Entry<DiscUtils.Ntfs.ObjectIds.IndexKey, ObjectIdRecord> entry : _index.getEntries().entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.ObjectIds.IndexKey, ObjectIdRecord> entry : _index.getEntries()) {
             writer.println(indent + "  OBJECT ID INDEX ENTRY");
             writer.println(indent + "             Id: " + entry.getKey().Id);
             writer.println(indent + "  MFT Reference: " + entry.getValue().MftReference);

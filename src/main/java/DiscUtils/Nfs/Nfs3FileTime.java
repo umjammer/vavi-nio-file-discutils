@@ -83,7 +83,7 @@ public final class Nfs3FileTime {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(_seconds, _nseconds);
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(_seconds, _nseconds);
     }
 
     public String toString() {

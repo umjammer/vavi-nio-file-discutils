@@ -22,38 +22,39 @@
 
 package DiscUtils.Streams.Block;
 
+
 public class Block {
-    private int __Available;
+    private int _available;
 
     public int getAvailable() {
-        return __Available;
+        return _available;
     }
 
     public void setAvailable(int value) {
-        __Available = value;
+        _available = value;
     }
 
-    private byte[] __Data;
+    private byte[] _data;
 
     public byte[] getData() {
-        return __Data;
+        return _data;
     }
 
     public void setData(byte[] value) {
-        __Data = value;
+        _data = value;
     }
 
-    private long __Position;
+    private long _position;
 
     public long getPosition() {
-        return __Position;
+        return _position;
     }
 
     public void setPosition(long value) {
-        __Position = value;
+        _position = value;
     }
 
     public boolean equals(Block other) {
-        return getPosition() == other.getPosition();
+        return _position == other._position;
     }
 }

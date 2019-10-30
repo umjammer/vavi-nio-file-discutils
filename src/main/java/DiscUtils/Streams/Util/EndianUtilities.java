@@ -105,7 +105,8 @@ public class EndianUtilities {
     }
 
     public static long toUInt64LittleEndian(byte[] buffer, int offset) {
-        return ((long) toUInt32LittleEndian(buffer, offset + 4) << 32) | toUInt32LittleEndian(buffer, offset + 0);
+        return ((toUInt32LittleEndian(buffer, offset + 4) & 0xffffffffl) << 32) |
+               (toUInt32LittleEndian(buffer, offset + 0) & 0xffffffffl);
     }
 
     public static short toInt16LittleEndian(byte[] buffer, int offset) {
@@ -132,7 +133,8 @@ public class EndianUtilities {
     }
 
     public static long toUInt64BigEndian(byte[] buffer, int offset) {
-        return ((long) toUInt32BigEndian(buffer, offset + 0) << 32) | toUInt32BigEndian(buffer, offset + 4);
+        return ((toUInt32BigEndian(buffer, offset + 0) & 0xffffffffl) << 32) |
+               (toUInt32BigEndian(buffer, offset + 4) & 0xffffffffl);
     }
 
     public static short toInt16BigEndian(byte[] buffer, int offset) {
@@ -192,9 +194,9 @@ public class EndianUtilities {
      * @param dest The buffer to fill.
      * @param offset The start of the string in the buffer.
      * @param count The number of characters to convert.The built-in
-     *            ASCIICharset converts characters of codepoint > 127 to ?,
-     *            this preserves those code points by removing the top 16 bits
-     *            of each character.
+     *            ASCIICharset converts characters of codepoint > 127 to ?, this
+     *            preserves those code points by removing the top 16 bits of
+     *            each character.
      */
     public static void stringToBytes(String value, byte[] dest, int offset, int count) {
         char[] chars = value.substring(0, Math.min(value.length(), count)).toCharArray();
@@ -217,8 +219,7 @@ public class EndianUtilities {
      * @param offset The first byte to convert.
      * @param count The number of bytes to convert.
      * @return The string.The built-in ASCIICharset converts characters of
-     *         codepoint > 127 to ?,
-     *         this preserves those code points.
+     *         codepoint > 127 to ?, this preserves those code points.
      */
     public static String bytesToString(byte[] data, int offset, int count) {
         char[] result = new char[count];
@@ -236,8 +237,7 @@ public class EndianUtilities {
      * @param offset The first byte to convert.
      * @param count The number of bytes to convert.
      * @return The string.The built-in ASCIICharset converts characters of
-     *         codepoint > 127 to ?,
-     *         this preserves those code points.
+     *         codepoint > 127 to ?, this preserves those code points.
      */
     public static String bytesToZString(byte[] data, int offset, int count) {
         char[] result = new char[count];

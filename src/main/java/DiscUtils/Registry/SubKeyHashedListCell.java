@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
+import dotnet4j.io.compat.StringUtilities;
 
 
 public final class SubKeyHashedListCell extends ListCell {
@@ -210,7 +210,7 @@ public final class SubKeyHashedListCell extends ListCell {
         }
 
         cellIndex[0] = _subKeyIndexes.get(listIndex);
-        return Utilities.compareTo(name, ((KeyNodeCell) cell).Name, true);
+        return StringUtilities.compare(name, ((KeyNodeCell) cell).Name, true);
     }
 
     private List<Integer> find(String name, int start) {
@@ -276,7 +276,7 @@ public final class SubKeyHashedListCell extends ListCell {
         public int compare(Integer x, Integer y) {
             // TODO: Be more efficient at ruling out no-hopes by using the hash values
             KeyNodeCell cell = _hive.getCell(x);
-            int result = Utilities.compareTo(cell.Name, _searchName, true); // TODO cell can be null
+            int result = StringUtilities.compare(cell.Name, _searchName, true); // TODO cell can be null
             if (result == 0) {
                 setCellIndex(x);
             }

@@ -61,6 +61,6 @@ public final class Nfs3ModifyResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getCacheConsistency());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getCacheConsistency());
     }
 }

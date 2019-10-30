@@ -1,11 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/30 1:38:17
-//
-
-package DiscUtils.PowerShell.VirtualDiskProvider;
-
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -26,9 +19,12 @@ package DiscUtils.PowerShell.VirtualDiskProvider;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public class NewHardLinkDynamicParameters
-{
+
+package DiscUtils.PowerShell.VirtualDiskProvider;
+
+public class NewHardLinkDynamicParameters {
     private String __SourcePath;
+
     public String getSourcePath() {
         return __SourcePath;
     }
@@ -38,5 +34,3 @@ public class NewHardLinkDynamicParameters
     }
 
 }
-
-

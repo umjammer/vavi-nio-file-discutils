@@ -27,7 +27,6 @@ import java.util.List;
 
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Core.CoreCompat.FileAttributes;
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 import DiscUtils.Iso9660.RockRidge.ChildLinkSystemUseEntry;
 import DiscUtils.Iso9660.RockRidge.FileTimeSystemUseEntry;
@@ -115,7 +114,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
         if (_context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty()) {
             PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "PX");
             if (pfi != null) {
-                attrs = Utilities.fileAttributesFromUnixFileType(UnixFileType.valueOf((pfi.FileMode >>> 12) & 0xF));
+                attrs = UnixFileType.toFileAttributes(UnixFileType.valueOf((pfi.FileMode >>> 12) & 0xF));
             }
 
             if (_fileName.startsWith(".")) {

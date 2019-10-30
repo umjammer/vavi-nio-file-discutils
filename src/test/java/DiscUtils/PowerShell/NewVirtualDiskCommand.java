@@ -108,7 +108,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         }
 
         long size;
-        RefSupport<Long> refVar___0 = new RefSupport<Long>();
+        Long[] refVar___0 = new Long[1];
         boolean boolVar___0 = !DiscUtils.Common.Utilities.tryParseDiskSize(getSize(), refVar___0);
         size = refVar___0.getValue();
         if (boolVar___0) {
@@ -122,7 +122,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         String type = typeAndVariant[0];
         String variant = typeAndVariant.length > 1 ? typeAndVariant[1] : null;
         String child;
-        RefSupport<String> refVar___1 = new RefSupport<String>();
+        String[] refVar___1 = new String[1];
         PSObject parentObj = resolveNewDiskPath(refVar___1);
         child = refVar___1.getValue();
         VirtualDisk disk = null;
@@ -159,7 +159,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
 
     private void createDiffDisk() {
         String child;
-        RefSupport<String> refVar___2 = new RefSupport<String>();
+        String[] refVar___2 = new String[1];
         PSObject parentObj = resolveNewDiskPath(refVar___2);
         child = refVar___2.getValue();
         PSObject baseDiskObj = SessionState.InvokeProvider.Item.get(new String[] {

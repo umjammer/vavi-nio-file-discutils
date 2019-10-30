@@ -57,8 +57,7 @@ public final class MetadataEntry implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(ItemId, buffer, offset + 0);
         EndianUtilities.writeBytesLittleEndian(Offset, buffer, offset + 16);
         EndianUtilities.writeBytesLittleEndian(Length, buffer, offset + 20);
-        EndianUtilities.writeBytesLittleEndian(MetadataEntryFlags.valueOf(Flags), buffer, offset + 24);
+        EndianUtilities.writeBytesLittleEndian((int) MetadataEntryFlags.valueOf(Flags), buffer, offset + 24);
         EndianUtilities.writeBytesLittleEndian(Reserved, buffer, offset + 28);
     }
-
 }

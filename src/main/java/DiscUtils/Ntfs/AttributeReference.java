@@ -138,6 +138,6 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @return The hash code.
      */
     public int hashCode() {
-        return Utilities.getCombinedHashCode(_fileReference, getAttributeId());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(_fileReference, getAttributeId());
     }
 }

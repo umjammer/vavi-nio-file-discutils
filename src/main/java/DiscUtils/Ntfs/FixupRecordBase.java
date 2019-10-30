@@ -42,48 +42,49 @@ public abstract class FixupRecordBase {
         initialize(magic, sectorSize, recordLength);
     }
 
-    private String __Magic;
+    private String _magic;
 
     public String getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(String value) {
-        __Magic = value;
+        _magic = value;
     }
 
     public long getSize() {
         return calcSize();
     }
 
-    private short __UpdateSequenceCount;
+    private short _updateSequenceCount;
 
     public short getUpdateSequenceCount() {
-        return __UpdateSequenceCount;
+        return _updateSequenceCount;
     }
 
     public void setUpdateSequenceCount(short value) {
-        __UpdateSequenceCount = value;
+        _updateSequenceCount = value;
     }
 
-    private short __UpdateSequenceNumber;
+    private short _updateSequenceNumber;
 
     public short getUpdateSequenceNumber() {
-        return __UpdateSequenceNumber;
+        return _updateSequenceNumber;
     }
 
     public void setUpdateSequenceNumber(short value) {
-        __UpdateSequenceNumber = value;
+        _updateSequenceNumber = value;
     }
 
-    private short __UpdateSequenceOffset;
+    private short _updateSequenceOffset;
 
     public short getUpdateSequenceOffset() {
-        return __UpdateSequenceOffset;
+        return _updateSequenceOffset;
     }
 
     public void setUpdateSequenceOffset(short value) {
-        __UpdateSequenceOffset = value;
+        assert value >= 0;
+        _updateSequenceOffset = value;
     }
 
     public int getUpdateSequenceSize() {
@@ -106,7 +107,6 @@ public abstract class FixupRecordBase {
             if (!diskMagic.equals(getMagic())) {
                 throw new IOException("Corrupt record");
             }
-
         }
         setUpdateSequenceOffset(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x04));
         setUpdateSequenceCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06));

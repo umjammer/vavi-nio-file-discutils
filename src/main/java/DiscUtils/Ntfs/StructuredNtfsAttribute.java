@@ -64,32 +64,19 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
     }
 
     public void save() {
-        Stream s = open(FileAccess.Write);
-        try {
+        try (Stream s = open(FileAccess.Write)) {
             byte[] buffer = new byte[_structure.size()];
             _structure.writeTo(buffer, 0);
-                s.write(buffer, 0, buffer.length);
-                s.setLength(buffer.length);
-        } finally {
-            if (s != null)
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+            s.write(buffer, 0, buffer.length);
+            s.setLength(buffer.length);
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
     public String toString() {
-        try {
-            initialize();
-            return _structure.toString();
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        initialize();
+        return _structure.toString();
     }
 
     public void dump(PrintWriter writer, String indent) {
@@ -101,20 +88,14 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
 
     private void initialize() {
         if (!_initialized) {
-            Stream s = open(FileAccess.Read);
-            try {
+            try (Stream s = open(FileAccess.Read)) {
                 {
                     byte[] buffer = StreamUtilities.readExact(s, (int) getLength());
                     _structure.readFrom(buffer, 0);
                     _hasContent = s.getLength() != 0;
                 }
-            } finally {
-                if (s != null)
-                    try {
-                        s.close();
-                    } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
-                    }
+            } catch (IOException e) {
+                throw new dotnet4j.io.IOException(e);
             }
             _initialized = true;
         }

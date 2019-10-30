@@ -34,14 +34,14 @@ import dotnet4j.io.Stream;
 
 
 /**
- * Base class for classes which represent a disk partitioning scheme.
- * After modifying the table, by creating or deleting a partition assume that
- * any
+ * Base class for classes which represent a disk partitioning scheme. After
+ * modifying the table, by creating or deleting a partition assume that any
  * previously stored partition indexes of higher value are no longer valid.
- * Re-enumerate
- * the partitions to discover the next index-to-partition mapping.
+ * Re-enumerate the partitions to discover the next index-to-partition mapping.
  */
 public abstract class PartitionTable {
+    protected static final UUID EMPTY = new UUID(0L, 0L);
+
     private static List<PartitionTableFactory> _factories;
 
     /**
@@ -53,9 +53,7 @@ public abstract class PartitionTable {
 
     /**
      * Gets the GUID that uniquely identifies this disk, if supported (else
-     * returns
-     * {@code null}
-     * ).
+     * returns {@code null} ).
      */
     public abstract UUID getDiskGuid();
 
@@ -91,11 +89,7 @@ public abstract class PartitionTable {
      * Determines if a disk is partitioned with a known partitioning scheme.
      *
      * @param content The content of the disk to check.
-     * @return
-     *         {@code true}
-     *         if the disk is partitioned, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the disk is partitioned, else {@code false} .
      */
     public static boolean isPartitioned(Stream content) {
         for (PartitionTableFactory partTableFactory : getFactories()) {
@@ -110,11 +104,7 @@ public abstract class PartitionTable {
      * Determines if a disk is partitioned with a known partitioning scheme.
      *
      * @param disk The disk to check.
-     * @return
-     *         {@code true}
-     *         if the disk is partitioned, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the disk is partitioned, else {@code false} .
      */
     public static boolean isPartitioned(VirtualDisk disk) {
         return isPartitioned(disk.getContent());
@@ -125,8 +115,7 @@ public abstract class PartitionTable {
      *
      * @param disk The disk to inspect.
      * @return It is rare for a disk to have multiple partition tables, but
-     *         theoretically
-     *         possible.
+     *         theoretically possible.
      */
     public static List<PartitionTable> getPartitionTables(VirtualDisk disk) {
         List<PartitionTable> tables = new ArrayList<>();
@@ -145,8 +134,7 @@ public abstract class PartitionTable {
      *
      * @param contentStream The content of the disk to inspect.
      * @return It is rare for a disk to have multiple partition tables, but
-     *         theoretically
-     *         possible.
+     *         theoretically possible.
      */
     public static List<PartitionTable> getPartitionTables(Stream contentStream) {
         return getPartitionTables(new Disk(contentStream, Ownership.None));
@@ -158,8 +146,7 @@ public abstract class PartitionTable {
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.The partition table must be empty
-     *         before this method is called,
-     *         otherwise IOException is thrown.
+     *         before this method is called, otherwise IOException is thrown.
      */
     public abstract int create(WellKnownPartitionType type, boolean active);
 
@@ -180,13 +167,11 @@ public abstract class PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in byte).
      * @return The index of the partition.The partition table must be empty
-     *         before this method is called,
-     *         otherwise IOException is thrown.
+     *         before this method is called, otherwise IOException is thrown.
      *         Traditionally partitions were aligned to the physical structure
-     *         of the underlying disk,
-     *         however with modern storage greater efficiency is acheived by
-     *         aligning partitions on
-     *         large values that are a power of two.
+     *         of the underlying disk, however with modern storage greater
+     *         efficiency is acheived by aligning partitions on large values
+     *         that are a power of two.
      */
     public abstract int createAligned(WellKnownPartitionType type, boolean active, int alignment);
 
@@ -197,12 +182,10 @@ public abstract class PartitionTable {
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in byte).
-     * @return The index of the new partition.
-     *         Traditionally partitions were aligned to the physical structure
-     *         of the underlying disk,
-     *         however with modern storage greater efficiency is achieved by
-     *         aligning partitions on
-     *         large values that are a power of two.
+     * @return The index of the new partition. Traditionally partitions were
+     *         aligned to the physical structure of the underlying disk, however
+     *         with modern storage greater efficiency is achieved by aligning
+     *         partitions on large values that are a power of two.
      */
     public abstract int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment);
 
@@ -212,5 +195,4 @@ public abstract class PartitionTable {
      * @param index The index of the partition.
      */
     public abstract void delete(int index);
-
 }

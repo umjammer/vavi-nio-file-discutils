@@ -56,7 +56,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
     }
 
     public long mapPosition(long pos) {
-        if (_attribute.getIsNonResident()) {
+        if (_attribute.isNonResident()) {
             return ((IMappedBuffer) _attribute.getRawBuffer()).mapPosition(pos);
         }
 

@@ -1,12 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:11:07
-//
-
-package DiscUtils.SquashFs;
-
-import DiscUtils.Core.Vfs.IVfsSymlink;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,8 +19,13 @@ import DiscUtils.Core.Vfs.IVfsSymlink;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public class Symlink  extends File implements IVfsSymlink<DirectoryEntry, File>
-{
+
+package DiscUtils.SquashFs;
+
+import DiscUtils.Core.Vfs.IVfsSymlink;
+
+
+public class Symlink extends File implements IVfsSymlink<DirectoryEntry, File> {
     public Symlink(Context context, Inode inode, MetadataRef inodeRef) {
         super(context, inode, inodeRef);
     }
@@ -38,5 +35,3 @@ public class Symlink  extends File implements IVfsSymlink<DirectoryEntry, File>
     }
 
 }
-
-

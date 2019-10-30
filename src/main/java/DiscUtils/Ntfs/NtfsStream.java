@@ -107,7 +107,7 @@ public class NtfsStream {
     public List<StreamExtent> getAbsoluteExtents() {
         List<StreamExtent> result = new ArrayList<>();
         long clusterSize = _file.getContext().getBiosParameterBlock().getBytesPerCluster();
-        if (getAttribute().getIsNonResident()) {
+        if (getAttribute().isNonResident()) {
             List<Range> clusters = getAttribute().getClusters();
             for (Range clusterRange : clusters) {
                 result.add(new StreamExtent(clusterRange.getOffset() * clusterSize, clusterRange.getCount() * clusterSize));

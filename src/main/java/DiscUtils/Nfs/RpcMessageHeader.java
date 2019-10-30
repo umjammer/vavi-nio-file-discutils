@@ -84,7 +84,7 @@ public class RpcMessageHeader {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(isSuccess(), getTransactionId(), getReplyHeader());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(isSuccess(), getTransactionId(), getReplyHeader());
     }
 
     public static RpcMessageHeader accepted(int transactionId) {

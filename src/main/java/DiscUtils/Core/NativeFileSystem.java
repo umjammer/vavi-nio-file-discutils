@@ -754,7 +754,7 @@ public class NativeFileSystem extends DiscFileSystem {
     private List<String> cleanItems(List<String> dirtyItems) {
         List<String> cleanList = new ArrayList<>(dirtyItems.size());
         for (int x = 0; x < dirtyItems.size(); x++) {
-            cleanList.add(x, dirtyItems.get(x).substring(getBasePath().length() - 1));
+            cleanList.set(x, dirtyItems.get(x).substring(getBasePath().length() - 1));
         }
         return cleanList;
     }

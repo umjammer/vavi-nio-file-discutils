@@ -24,10 +24,10 @@ package DiscUtils.Core;
 
 import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.Internal.LocalFileLocator;
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
 import DiscUtils.Core.Internal.VirtualDiskTransportAttribute;
 import dotnet4j.io.FileAccess;
@@ -47,8 +47,8 @@ public final class FileTransport extends VirtualDiskTransport {
     public void connect(URI uri, String username, String password) {
         _path = uri.getPath();
         _extraInfo = uri.getFragment();
-        Path path = Paths.get(_path).getParent();
-        if (path == null || !Files.exists(path)) {
+        String path = Utilities.getDirectoryFromPath(_path);
+        if (path == null || !Files.exists(Paths.get(path))) {
             throw new dotnet4j.io.FileNotFoundException(String.format("No such file '%s'", uri.toString()));
         }
     }
@@ -58,11 +58,11 @@ public final class FileTransport extends VirtualDiskTransport {
     }
 
     public FileLocator getFileLocator() {
-        return new LocalFileLocator(Paths.get(_path).getParent() + "\\");
+        return new LocalFileLocator(Utilities.getDirectoryFromPath(_path) + "\\");
     }
 
     public String getFileName() {
-        return Paths.get(_path).getFileName().toString();
+        return Utilities.getFileFromPath(_path);
     }
 
     public String getExtraInfo() {

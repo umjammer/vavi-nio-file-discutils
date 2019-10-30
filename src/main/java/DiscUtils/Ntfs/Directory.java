@@ -26,11 +26,10 @@ import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import DiscUtils.Core.Internal.Utilities;
+import dotnet4j.Tuple;
 import dotnet4j.io.IOException;
 
 
@@ -55,8 +54,8 @@ public class Directory extends File {
 
     public List<DirectoryEntry> getAllEntries(boolean filter) {
         List<DirectoryEntry> result = new ArrayList<>();
-        Map<FileNameRecord, FileRecordReference> entries = filter ? filterEntries(getIndex().getEntries()) : getIndex().getEntries();
-        for (Map.Entry<FileNameRecord, FileRecordReference> entry : entries.entrySet()) {
+        List<Tuple<FileNameRecord, FileRecordReference>> entries = filter ? filterEntries(getIndex().getEntries()) : getIndex().getEntries();
+        for (Tuple<FileNameRecord, FileRecordReference> entry : entries) {
             result.add(new DirectoryEntry(this, entry.getValue(), entry.getKey()));
         }
         return result;
@@ -71,7 +70,7 @@ public class Directory extends File {
         writer.println(indent + "DIRECTORY (" + super.toString() + ")");
         writer.println(indent + "  File Number: " + getIndexInMft());
         if (getIndex() != null) {
-            for (Map.Entry<FileNameRecord, FileRecordReference> entry : getIndex().getEntries().entrySet()) {
+            for (Tuple<FileNameRecord, FileRecordReference> entry : getIndex().getEntries()) {
                 writer.println(indent + "  DIRECTORY ENTRY (" + entry.getKey().FileName + ")");
                 writer.println(indent + "    MFT Ref: " + entry.getValue());
                 entry.getKey().dump(writer, indent + "    ");
@@ -85,12 +84,11 @@ public class Directory extends File {
 
     public static Directory createNew(INtfsContext context, EnumSet<FileAttributeFlags> parentDirFlags) {
         Directory dir = (Directory) context.getAllocateFile().invoke(EnumSet.of(FileRecordFlags.IsDirectory));
-        StandardInformation
-                .initializeNewFile(dir,
-                                   EnumSet.of(FileAttributeFlags.Archive,
-                                              parentDirFlags
-                                                      .contains(FileAttributeFlags.Compressed) ? FileAttributeFlags.Compressed
-                                                                                               : FileAttributeFlags.None));
+        EnumSet<FileAttributeFlags> flags = EnumSet.of(FileAttributeFlags.Archive);
+        if (parentDirFlags.contains(FileAttributeFlags.Compressed)) {
+            flags.add(FileAttributeFlags.Compressed);
+        }
+        StandardInformation.initializeNewFile(dir, flags);
         // Create the index root attribute by instantiating a new index
         dir.createIndex("$I30", AttributeType.FileName, AttributeCollationRule.Filename);
         dir.updateRecordInMft();
@@ -105,7 +103,7 @@ public class Directory extends File {
             searchName = name.substring(0, streamSepPos);
         }
 
-        Map.Entry<FileNameRecord, FileRecordReference> entry = getIndex().findFirst_(new FileNameQuery(searchName, _context.getUpperCase()));
+        Tuple<FileNameRecord, FileRecordReference> entry = getIndex().findFirst_(new FileNameQuery(searchName, _context.getUpperCase()));
         if (entry != null && entry.getKey() != null) {
             return new DirectoryEntry(this, entry.getValue(), entry.getKey());
         }
@@ -126,13 +124,18 @@ public class Directory extends File {
         newNameRecord._FileNameNamespace = nameNamespace;
         newNameRecord.FileName = name;
         newNameRecord.ParentDirectory = getMftReference();
+
         NtfsStream nameStream = file.createStream(AttributeType.FileName, null);
         nameStream.setContent(newNameRecord);
+
         file.setHardLinkCount((short) (file.getHardLinkCount() + 1));
         file.updateRecordInMft();
+
         getIndex().set___idx(newNameRecord, file.getMftReference());
+
         modified();
         updateRecordInMft();
+
         return new DirectoryEntry(this, file.getMftReference(), newNameRecord);
     }
 
@@ -190,9 +193,9 @@ public class Directory extends File {
         return candidate;
     }
 
-    private Map<FileNameRecord, FileRecordReference> filterEntries(Map<FileNameRecord, FileRecordReference> entriesIter) {
-        Map<FileNameRecord, FileRecordReference> entries = new HashMap<>();
-        for (Map.Entry<FileNameRecord, FileRecordReference> entry : entriesIter.entrySet()) {
+    private List<Tuple<FileNameRecord, FileRecordReference>> filterEntries(List<Tuple<FileNameRecord, FileRecordReference>> entriesIter) {
+        List<Tuple<FileNameRecord, FileRecordReference>> entries = new ArrayList<>();
+        for (Tuple<FileNameRecord, FileRecordReference> entry : entriesIter) {
             // Weed out short-name entries for files and any hidden / system / metadata files.
             if (entry.getKey().Flags.contains(FileAttributeFlags.Hidden) && _context.getOptions().hideHiddenFiles()) {
                 continue;
@@ -202,7 +205,7 @@ public class Directory extends File {
                 continue;
             }
 
-            if (entry.getValue().getMftIndex() < 24 && _context.getOptions().getHideMetafiles()) {
+            if (entry.getValue().getMftIndex() < 24 && _context.getOptions().hideMetafiles()) {
                 continue;
             }
 
@@ -210,7 +213,7 @@ public class Directory extends File {
                 continue;
             }
 
-            entries.put(entry.getKey(), entry.getValue());
+            entries.add(entry);
         }
         return entries;
     }

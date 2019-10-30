@@ -40,6 +40,7 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Buffer.BufferStream;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
+import dotnet4j.io.compat.StringUtilities;
 
 
 /**
@@ -207,7 +208,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     public List<String> getFileSystemEntries(String path) {
         String fullPath = path;
         if (!fullPath.startsWith("\\")) {
-            fullPath = '\\' + fullPath;
+            fullPath = "\\" + fullPath;
         }
 
         String _fullPath = fullPath;
@@ -228,7 +229,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      */
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
+
         TDirectory parentDir = getDirectory(path);
+
         List<String> result = new ArrayList<>();
         for (TDirEntry dirEntry : parentDir.getAllEntries()) {
             if (re.matcher(dirEntry.getSearchName()).find()) {
@@ -593,7 +596,7 @@ Debug.println(file);
     }
 
     private TDirEntry getDirectoryEntry(TDirectory dir, String path) {
-        String[] pathElements = Arrays.stream(path.split(Utilities.escapeForRegex("\\")))
+        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0);
@@ -672,7 +675,7 @@ Debug.println(file);
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 
-            currentPath = Utilities.resolvePath(currentPath.replaceFirst(Utilities.escapeForRegex("\\") + "*$", ""),
+            currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex("\\") + "*$", ""),
                                                 symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {

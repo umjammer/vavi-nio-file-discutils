@@ -23,7 +23,6 @@
 package DiscUtils.Iso9660;
 
 import java.util.EnumSet;
-import java.util.Map;
 
 import DiscUtils.Core.UnixFileSystemInfo;
 import DiscUtils.Core.CoreCompat.FileAttributes;
@@ -92,7 +91,7 @@ public class File implements IVfsFile {
         return _dirEntry.getFileAttributes();
     }
 
-    public void setFileAttributes(Map<String, Object> value) {
+    public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 

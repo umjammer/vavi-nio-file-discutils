@@ -184,11 +184,17 @@ public class ConcatStream extends SparseStream {
         }
     }
 
+    /**
+     * @param startPos {@cs out}
+     */
     private int getActiveStream(long[] startPos) {
         startPos[0] = getStream(_position, startPos);
         return (int) startPos[0];
     }
 
+    /**
+     * @param streamStartPos {@cs out}
+     */
     private int getStream(long targetPos, long[] streamStartPos) {
         // Find the stream that _position is within
         streamStartPos[0] = 0;

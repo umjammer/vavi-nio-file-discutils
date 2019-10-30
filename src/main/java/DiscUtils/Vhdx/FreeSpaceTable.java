@@ -89,7 +89,7 @@ public final class FreeSpaceTable {
             }
 
             if (extent.getLength() > length) {
-                _freeExtents.add(i, new StreamExtent(extent.getStart() + length, extent.getLength() - length));
+                _freeExtents.set(i, new StreamExtent(extent.getStart() + length, extent.getLength() - length));
                 start[0] = extent.getStart();
                 return true;
             }

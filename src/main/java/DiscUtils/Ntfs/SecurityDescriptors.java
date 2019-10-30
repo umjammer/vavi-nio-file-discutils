@@ -24,7 +24,6 @@ package DiscUtils.Ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Core.Internal.Utilities;
@@ -32,6 +31,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
+import dotnet4j.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 import dotnet4j.security.accessControl.AccessControlSections;
@@ -61,9 +61,8 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         _idIndex = new IndexView<>(DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey.class,
                                    DiscUtils.Ntfs.SecurityDescriptors.IdIndexData.class,
                                    file.getIndex("$SII"));
-        for (Map.Entry<DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey, DiscUtils.Ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
-                .getEntries()
-                .entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey, DiscUtils.Ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
+                .getEntries()) {
             if (entry.getKey().Id > _nextId) {
                 _nextId = entry.getKey().Id;
             }
@@ -86,9 +85,8 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         writer.println(indent + "SECURITY DESCRIPTORS");
         try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
-            for (Map.Entry<DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey, DiscUtils.Ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
-                    .getEntries()
-                    .entrySet()) {
+            for (Tuple<DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey, DiscUtils.Ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
+                    .getEntries()) {
                 int pos = (int) entry.getValue().SdsOffset;
                 SecurityDescriptorRecord rec = new SecurityDescriptorRecord();
                 if (!rec.read(buffer, pos)) {
@@ -140,9 +138,8 @@ public final class SecurityDescriptors implements IDiagnosticTraceable {
         int newHash = newDescObj.calcHash();
         byte[] newByteForm = new byte[newDescObj.size()];
         newDescObj.writeTo(newByteForm, 0);
-        for (Map.Entry<DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> entry : _hashIndex
-                .findAll(new HashFinder(newHash))
-                .entrySet()) {
+        for (Tuple<DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> entry : _hashIndex
+                .findAll(new HashFinder(newHash))) {
             SecurityDescriptor stored = readDescriptor(entry.getValue());
             byte[] storedByteForm = new byte[stored.size()];
             stored.writeTo(storedByteForm, 0);

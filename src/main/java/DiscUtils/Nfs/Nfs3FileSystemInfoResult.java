@@ -86,6 +86,6 @@ public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return Utilities.getCombinedHashCode(getStatus(), getPostOpAttributes(), getStatus(), getFileSystemInfo());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getPostOpAttributes(), getStatus(), getFileSystemInfo());
     }
 }

@@ -1,19 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/07/15 9:43:07
-//
-
-package DiscUtils.Ntfs.Internals;
-
-import java.util.EnumSet;
-
-import DiscUtils.Ntfs.AttributeRecord;
-import DiscUtils.Ntfs.FileAttributeFlags;
-import DiscUtils.Ntfs.FileNameNamespace;
-import DiscUtils.Ntfs.FileNameRecord;
-import DiscUtils.Ntfs.INtfsContext;
-import DiscUtils.Streams.Util.StreamUtilities;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -34,19 +19,32 @@ import DiscUtils.Streams.Util.StreamUtilities;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
+package DiscUtils.Ntfs.Internals;
+
+import java.util.EnumSet;
+
+import DiscUtils.Ntfs.AttributeRecord;
+import DiscUtils.Ntfs.FileAttributeFlags;
+import DiscUtils.Ntfs.FileNameNamespace;
+import DiscUtils.Ntfs.FileNameRecord;
+import DiscUtils.Ntfs.INtfsContext;
+import DiscUtils.Streams.Util.StreamUtilities;
+
+
 /**
-* Representation of an NTFS File Name attribute.
-*
-* Each Master File Table entry (MFT Entry) has one of these attributes for each
-* hard link.  Files with a long name and a short name will have at least two of
-* these attributes.
-* The details in this attribute may be inconsistent with similar information in
-* the StandardInformationAttribute for a file.  The StandardInformation is
-* definitive, this attribute holds a 'cache' of the information.
-*/
-public final class FileNameAttribute  extends GenericAttribute
-{
+ * Representation of an NTFS File Name attribute.
+ *
+ * Each Master File Table entry (MFT Entry) has one of these attributes for each
+ * hard link. Files with a long name and a short name will have at least two of
+ * these attributes. The details in this attribute may be inconsistent with
+ * similar information in the StandardInformationAttribute for a file. The
+ * StandardInformation is definitive, this attribute holds a 'cache' of the
+ * information.
+ */
+public final class FileNameAttribute extends GenericAttribute {
     private final FileNameRecord _fnr;
+
     public FileNameAttribute(INtfsContext context, AttributeRecord record) {
         super(context, record);
         byte[] content = StreamUtilities.readAll(getContent());
@@ -55,85 +53,84 @@ public final class FileNameAttribute  extends GenericAttribute
     }
 
     /**
-    * Gets the amount of disk space allocated for the file.
-    */
+     * Gets the amount of disk space allocated for the file.
+     */
     public long getAllocatedSize() {
         return _fnr.AllocatedSize;
     }
 
     /**
-    * Gets the creation time of the file.
-    */
+     * Gets the creation time of the file.
+     */
     public long getCreationTime() {
         return _fnr.CreationTime;
     }
 
     /**
-    * Gets the extended attributes size, or a reparse tag, depending on the nature of the file.
-    */
+     * Gets the extended attributes size, or a reparse tag, depending on the
+     * nature of the file.
+     */
     public long getExtendedAttributesSizeOrReparsePointTag() {
         return _fnr.EASizeOrReparsePointTag;
     }
 
     /**
-    * Gets the attributes of the file, as stored by NTFS.
-    */
+     * Gets the attributes of the file, as stored by NTFS.
+     */
     public EnumSet<NtfsFileAttributes> getFileAttributes() {
         return FileAttributeFlags.cast(NtfsFileAttributes.class, _fnr.Flags);
     }
 
     /**
-    * Gets the name of the file within the parent directory.
-    */
+     * Gets the name of the file within the parent directory.
+     */
     public String getFileName() {
         return _fnr.FileName;
     }
 
     /**
-    * Gets the namespace of the FileName property.
-    */
+     * Gets the namespace of the FileName property.
+     */
     public NtfsNamespace getFileNameNamespace() {
         return FileNameNamespace.cast(NtfsNamespace.class, _fnr._FileNameNamespace);
     }
 
     /**
-    * Gets the last access time of the file.
-    */
+     * Gets the last access time of the file.
+     */
     public long getLastAccessTime() {
         return _fnr.LastAccessTime;
     }
 
     /**
-    * Gets the last time the Master File Table entry for the file was changed.
-    */
+     * Gets the last time the Master File Table entry for the file was changed.
+     */
     public long getMasterFileTableChangedTime() {
         return _fnr.MftChangedTime;
     }
 
     /**
-    * Gets the modification time of the file.
-    */
+     * Gets the modification time of the file.
+     */
     public long getModificationTime() {
         return _fnr.ModificationTime;
     }
 
     /**
-    * Gets the reference to the parent directory.
-    *
-    * This attribute stores the name of a file within a directory, this field
-    * provides the link back to the directory.
-    */
+     * Gets the reference to the parent directory.
+     *
+     * This attribute stores the name of a file within a directory, this field
+     * provides the link back to the directory.
+     */
     public MasterFileTableReference getParentDirectory() {
         return new MasterFileTableReference(_fnr.ParentDirectory);
     }
 
     /**
-    * Gets the amount of data stored in the file.
-    */
+     * Gets the amount of data stored in the file.
+     */
     public long getRealSize() {
         return _fnr.RealSize;
     }
 
 }
-
-

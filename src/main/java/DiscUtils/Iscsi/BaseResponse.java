@@ -1,10 +1,4 @@
 //
-// Translated by CS2J (http://www.cs2j.com): 2019/10/02 7:07:26
-//
-
-package DiscUtils.Iscsi;
-
-//
 // Copyright (c) 2008-2011, Kenneth Bell
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25,14 +19,17 @@ package DiscUtils.Iscsi;
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-public abstract class BaseResponse
-{
+
+package DiscUtils.Iscsi;
+
+public abstract class BaseResponse {
     public int ExpectedCommandSequenceNumber;
+
     public int MaxCommandSequenceNumber;
+
     public boolean StatusPresent;
+
     public int StatusSequenceNumber;
+
     public abstract void parse(ProtocolDataUnit pdu);
-
 }
-
-

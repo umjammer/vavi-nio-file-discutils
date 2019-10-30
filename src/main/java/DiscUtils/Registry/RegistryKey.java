@@ -30,9 +30,9 @@ import java.util.List;
 import vavi.util.Debug;
 import vavi.util.StringUtil;
 
-import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
+import dotnet4j.io.compat.StringUtilities;
 import dotnet4j.security.accessControl.RegistrySecurity;
 import dotnet4j.win32.RegistryValueOptions;
 
@@ -304,7 +304,7 @@ public final class RegistryKey {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell valueCell = _hive.getCell(valueIndex);
 //Debug.println(valueCell.getName() + ", " + name);
-                if (Utilities.compareTo(valueCell.getName(), name, true) == 0) {
+                if (StringUtilities.compare(valueCell.getName(), name, true) == 0) {
                     foundValue = true;
                     _hive.freeCell(valueIndex);
                     _cell.NumValues--;
@@ -373,7 +373,7 @@ public final class RegistryKey {
             return this;
         }
 
-        String[] split = subkey.split(Utilities.escapeForRegex("\\"), 2);
+        String[] split = subkey.split(StringUtilities.escapeForRegex("\\"), 2);
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             KeyNodeCell newKeyCell = new KeyNodeCell(split[0], _cell.getIndex());
@@ -407,7 +407,7 @@ public final class RegistryKey {
             return this;
         }
 
-        String[] split = path.split(Utilities.escapeForRegex("\\"), 2);
+        String[] split = path.split(StringUtilities.escapeForRegex("\\"), 2);
 Debug.println(StringUtil.paramString(split));
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
@@ -466,7 +466,7 @@ Debug.println(StringUtil.paramString(split));
             throw new IllegalArgumentException("Invalid SubKey");
         }
 
-        String[] split = subkey.split(Utilities.escapeForRegex("\\"), 2);
+        String[] split = subkey.split(StringUtilities.escapeForRegex("\\"), 2);
         int subkeyCellIndex = findSubKeyCell(split[0]);
         if (subkeyCellIndex < 0) {
             if (throwOnMissingSubKey) {
@@ -520,7 +520,7 @@ Debug.println(StringUtil.paramString(split));
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell cell = _hive.getCell(valueIndex);
 Debug.println(name + ", " + cell);
-                if (Utilities.compareTo(cell.getName(), name, true) == 0) {
+                if (StringUtilities.compare(cell.getName(), name, true) == 0) {
                     return new RegistryValue(_hive, cell);
                 }
             }
@@ -539,7 +539,7 @@ Debug.println(name + ", " + cell);
         while (insertIdx < _cell.NumValues) {
             int valueCellIndex = EndianUtilities.toInt32LittleEndian(valueList, insertIdx * 4);
             ValueCell cell = _hive.getCell(valueCellIndex);
-            if (Utilities.compareTo(name, cell.getName(), true) < 0) {
+            if (StringUtilities.compare(name, cell.getName(), true) < 0) {
                 break;
             }
 

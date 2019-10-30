@@ -56,8 +56,8 @@ public class ZeroStream extends MappedStream {
         return false;
     }
 
-    // The stream is entirely sparse
     public List<StreamExtent> getExtents() {
+        // The stream is entirely sparse
         return Collections.EMPTY_LIST;
     }
 
@@ -75,7 +75,7 @@ public class ZeroStream extends MappedStream {
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
-        return Arrays.asList();
+        return Collections.EMPTY_LIST;
     }
 
     public void flush() {

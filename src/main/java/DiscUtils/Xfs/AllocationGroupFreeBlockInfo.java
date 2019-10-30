@@ -39,84 +39,84 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
     /**
      * Specifies the magic number for the AGF sector: "XAGF" (0x58414746).
      */
-    private int __Magic;
+    private int _magic;
 
     public int getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(int value) {
-        __Magic = value;
+        _magic = value;
     }
 
     /**
      * Set to XFS_AGF_VERSION which is currently 1.
      */
-    private int __Version;
+    private int _version;
 
     public int getVersion() {
-        return __Version;
+        return _version;
     }
 
     public void setVersion(int value) {
-        __Version = value;
+        _version = value;
     }
 
     /**
      * Specifies the AG number for the sector.
      */
-    private int __SequenceNumber;
+    private int _sequenceNumber;
 
     public int getSequenceNumber() {
-        return __SequenceNumber;
+        return _sequenceNumber;
     }
 
     public void setSequenceNumber(int value) {
-        __SequenceNumber = value;
+        _sequenceNumber = value;
     }
 
     /**
      * Specifies the size of the AG in filesystem blocks. For all AGs except the
      * last, this must be equal
      * to the superblock's
-     * {@link #SuperBlock.AgBlocks}
+     * {@link SuperBlock#_agBlocks}
      * value. For the last AG, this could be less than the
      *
-     * {@link #SuperBlock.AgBlocks}
+     * {@link SuperBlock#_agBlocks}
      * value. It is this value that should be used to determine the size of the
      * AG.
      */
-    private int __Length;
+    private int _length;
 
     public int getLength() {
-        return __Length;
+        return _length;
     }
 
     public void setLength(int value) {
-        __Length = value;
+        _length = value;
     }
 
     /**
      * Specifies the block number for the root of the two free space B+trees.
      */
-    private int[] __RootBlockNumbers;
+    private int[] _rootBlockNumbers;
 
     public int[] getRootBlockNumbers() {
-        return __RootBlockNumbers;
+        return _rootBlockNumbers;
     }
 
     public void setRootBlockNumbers(int[] value) {
-        __RootBlockNumbers = value;
+        _rootBlockNumbers = value;
     }
 
-    private int __Spare0;
+    private int _spare0;
 
     public int getSpare0() {
-        return __Spare0;
+        return _spare0;
     }
 
     public void setSpare0(int value) {
-        __Spare0 = value;
+        _spare0 = value;
     }
 
     /**
@@ -126,175 +126,175 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
      */
     public int[] Levels;
 
-    private int __Spare1;
+    private int _spare1;
 
     public int getSpare1() {
-        return __Spare1;
+        return _spare1;
     }
 
     public void setSpare1(int value) {
-        __Spare1 = value;
+        _spare1 = value;
     }
 
     /**
      * Specifies the index of the first "free list" block.
      */
-    private int __FreeListFirst;
+    private int _freeListFirst;
 
     public int getFreeListFirst() {
-        return __FreeListFirst;
+        return _freeListFirst;
     }
 
     public void setFreeListFirst(int value) {
-        __FreeListFirst = value;
+        _freeListFirst = value;
     }
 
     /**
      * Specifies the index of the last "free list" block.
      */
-    private int __FreeListLast;
+    private int _freeListLast;
 
     public int getFreeListLast() {
-        return __FreeListLast;
+        return _freeListLast;
     }
 
     public void setFreeListLast(int value) {
-        __FreeListLast = value;
+        _freeListLast = value;
     }
 
     /**
      * Specifies the number of blocks in the "free list".
      */
-    private int __FreeListCount;
+    private int _freeListCount;
 
     public int getFreeListCount() {
-        return __FreeListCount;
+        return _freeListCount;
     }
 
     public void setFreeListCount(int value) {
-        __FreeListCount = value;
+        _freeListCount = value;
     }
 
     /**
      * Specifies the current number of free blocks in the AG.
      */
-    private int __FreeBlocks;
+    private int _freeBlocks;
 
     public int getFreeBlocks() {
-        return __FreeBlocks;
+        return _freeBlocks;
     }
 
     public void setFreeBlocks(int value) {
-        __FreeBlocks = value;
+        _freeBlocks = value;
     }
 
     /**
      * Specifies the number of blocks of longest contiguous free space in the
      * AG.
      */
-    private int __Longest;
+    private int _longest;
 
     public int getLongest() {
-        return __Longest;
+        return _longest;
     }
 
     public void setLongest(int value) {
-        __Longest = value;
+        _longest = value;
     }
 
     /**
      * Specifies the number of blocks used for the free space B+trees. This is
      * only used if the
      * XFS_SB_VERSION2_LAZYSBCOUNTBIT bit is set in
-     * {@link #SuperBlock.Features2}
+     * {@link SuperBlock#_features2}
      * .
      */
-    private int __BTreeBlocks;
+    private int _bTreeBlocks;
 
     public int getBTreeBlocks() {
-        return __BTreeBlocks;
+        return _bTreeBlocks;
     }
 
     public void setBTreeBlocks(int value) {
-        __BTreeBlocks = value;
+        _bTreeBlocks = value;
     }
 
     /**
      * stores a sorted array of block offset and block counts in the leaves of
      * the B+tree, sorted by the offset
      */
-    private BtreeHeader __FreeSpaceOffset;
+    private BtreeHeader _freeSpaceOffset;
 
     public BtreeHeader getFreeSpaceOffset() {
-        return __FreeSpaceOffset;
+        return _freeSpaceOffset;
     }
 
     public void setFreeSpaceOffset(BtreeHeader value) {
-        __FreeSpaceOffset = value;
+        _freeSpaceOffset = value;
     }
 
     /**
      * stores a sorted array of block offset and block counts in the leaves of
      * the B+tree, sorted by the count or size
      */
-    private BtreeHeader __FreeSpaceCount;
+    private BtreeHeader _freeSpaceCount;
 
     public BtreeHeader getFreeSpaceCount() {
-        return __FreeSpaceCount;
+        return _freeSpaceCount;
     }
 
     public void setFreeSpaceCount(BtreeHeader value) {
-        __FreeSpaceCount = value;
+        _freeSpaceCount = value;
     }
 
-    private UUID __UniqueId;
+    private UUID _uniqueId;
 
     public UUID getUniqueId() {
-        return __UniqueId;
+        return _uniqueId;
     }
 
     public void setUniqueId(UUID value) {
-        __UniqueId = value;
+        _uniqueId = value;
     }
 
     /**
      * last write sequence
      */
-    private long __Lsn;
+    private long _lsn;
 
     public long getLsn() {
-        return __Lsn;
+        return _lsn;
     }
 
     public void setLsn(long value) {
-        __Lsn = value;
+        _lsn = value;
     }
 
-    private int __Crc;
+    private int _crc;
 
     public int getCrc() {
-        return __Crc;
+        return _crc;
     }
 
     public void setCrc(int value) {
-        __Crc = value;
+        _crc = value;
     }
 
-    private int __Size;
+    private int _size;
 
     public int size() {
-        return __Size;
+        return _size;
     }
 
-    private int __SbVersion;
+    private int _sbVersion;
 
     private int getSbVersion() {
-        return __SbVersion;
+        return _sbVersion;
     }
 
     public AllocationGroupFreeBlockInfo(SuperBlock superBlock) {
-        __SbVersion = superBlock.getSbVersion();
-        __Size = getSbVersion() >= 5 ? 92 : 64;
+        _sbVersion = superBlock.getSbVersion();
+        _size = getSbVersion() >= 5 ? 92 : 64;
     }
 
     public int readFrom(byte[] buffer, int offset) {
