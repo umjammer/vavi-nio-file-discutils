@@ -140,10 +140,11 @@ public class Footer {
 //Debug.println(FileCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (FileFormatVersion == Version1));
         return FileCookie.equals(Cookie) && isChecksumValid()
         // && ((Features & FeatureReservedMustBeSet) != 0)
-            && FileFormatVersion == Version1;
+               && FileFormatVersion == Version1;
     }
 
     public boolean isChecksumValid() {
+//Debug.printf("%x, %x\n", Checksum, calculateChecksum());
         return Checksum == calculateChecksum();
     }
 
@@ -158,7 +159,7 @@ public class Footer {
         byte[] asBytes = new byte[512];
         copy.toBytes(asBytes, 0);
         int checksum = 0;
-        for (int value : asBytes) {
+        for (byte value : asBytes) {
             checksum += value & 0xff;
         }
         checksum = ~checksum;
@@ -184,6 +185,7 @@ public class Footer {
         result.Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
         result.UniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 68);
         result.SavedState = buffer[84];
+
         return result;
     }
 
@@ -192,7 +194,7 @@ public class Footer {
         EndianUtilities.writeBytesBigEndian(Features, buffer, offset + 8);
         EndianUtilities.writeBytesBigEndian(FileFormatVersion, buffer, offset + 12);
         EndianUtilities.writeBytesBigEndian(DataOffset, buffer, offset + 16);
-        EndianUtilities.writeBytesBigEndian((int) Duration.between(Instant.ofEpochMilli(Timestamp), EpochUtc).getSeconds(),
+        EndianUtilities.writeBytesBigEndian((int) Duration.between(EpochUtc, Instant.ofEpochMilli(Timestamp)).getSeconds(),
                                             buffer,
                                             offset + 24);
         EndianUtilities.stringToBytes(CreatorApp, buffer, offset + 28, 4);
@@ -208,5 +210,6 @@ public class Footer {
         EndianUtilities.writeBytesBigEndian(UniqueId, buffer, offset + 68);
         buffer[84] = SavedState;
         Arrays.fill(buffer, 85, 85 + 427, (byte) 0);
+//Debug.println("\n" + StringUtil.getDump(buffer));
     }
 }

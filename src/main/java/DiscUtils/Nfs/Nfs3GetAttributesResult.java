@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 public class Nfs3GetAttributesResult extends Nfs3CallResult {
     public Nfs3GetAttributesResult() {
     }

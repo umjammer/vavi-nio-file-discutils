@@ -63,6 +63,7 @@ public class EncodingHelper {
     }
 
     // TODO check error
+    // @see Charset#newEncoder().maxBytesPerChar()
     public static boolean isSingleByte(String encoding) {
         return codePages.stream()
                 .filter(cp -> cp.identifierAndName.toLowerCase().equals(encoding.toLowerCase()))

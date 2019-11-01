@@ -49,7 +49,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param chunkSize The size of each allocation chunk.
      */
     public SparseMemoryBuffer(int chunkSize) {
-        __ChunkSize = chunkSize;
+        _chunkSize = chunkSize;
         _buffers = new HashMap<>();
     }
 
@@ -98,10 +98,10 @@ public final class SparseMemoryBuffer extends Buffer {
     /**
      * Gets the size of each allocation chunk.
      */
-    private int __ChunkSize;
+    private int _chunkSize;
 
     public int getChunkSize() {
-        return __ChunkSize;
+        return _chunkSize;
     }
 
     /**
@@ -242,5 +242,4 @@ public final class SparseMemoryBuffer extends Buffer {
             return new StreamExtent(extentStart, Math.min(chunkEnd, end) - extentStart);
         }).collect(Collectors.toList());
     }
-
 }

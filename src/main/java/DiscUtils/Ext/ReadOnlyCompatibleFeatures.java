@@ -22,20 +22,26 @@
 
 package DiscUtils.Ext;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+
+/**
+ * Feature flags for features backwards compatible with read-only mounting.
+ */
 public enum ReadOnlyCompatibleFeatures {
     /**
-     * Feature flags for features backwards compatible with read-only mounting.
-     *
      * Indicates that not all block groups contain a backup superblock.
      */
-    __dummyEnum__0,
     SparseSuperblock,
     /**
      * Indicates file system contains files greater than 0x7FFFFFFF in size
      * (limit of unsigned uints).
      */
     LargeFiles,
-    __dummyEnum__1,
     /**
      * Indicates BTree-style directories present (not used in mainline?).
      */
@@ -57,7 +63,19 @@ public enum ReadOnlyCompatibleFeatures {
      */
     ExtraInodeSize;
 
-    public static ReadOnlyCompatibleFeatures valueOf(int value) {
-        return values()[value];
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<ReadOnlyCompatibleFeatures> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(ReadOnlyCompatibleFeatures.class)));
     }
 }

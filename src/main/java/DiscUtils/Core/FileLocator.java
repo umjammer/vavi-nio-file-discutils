@@ -36,6 +36,13 @@ import dotnet4j.io.Stream;
 public abstract class FileLocator {
     public abstract boolean exists(String fileName) throws IOException;
 
+    /**
+     * Allows intercepting any file open operation
+     *
+     * Can be used to wrap the opened file for special use cases,
+     * modify the parameters for opening files, validate file names 
+     * and many more.
+     */
     public static BiConsumer<Object, FileOpenEventArgs> openingFile;
 
     public Stream open(String fileName, FileMode mode, FileAccess access, FileShare share) {

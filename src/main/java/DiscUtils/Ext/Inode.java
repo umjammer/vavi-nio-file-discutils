@@ -22,6 +22,8 @@
 
 package DiscUtils.Ext;
 
+import java.util.EnumSet;
+
 import DiscUtils.Core.UnixFileType;
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.StreamBuffer;
@@ -56,7 +58,7 @@ public class Inode implements IByteArraySerializable {
 
     public int FileVersion;
 
-    public InodeFlags Flags = InodeFlags.SecureDelete;
+    public EnumSet<InodeFlags> Flags = EnumSet.noneOf(InodeFlags.class);
 
     public int FragAddress;
 
@@ -83,7 +85,7 @@ public class Inode implements IByteArraySerializable {
     public short UserIdLow;
 
     public UnixFileType getFileType() {
-        return UnixFileType.valueOf((Mode >>> 12) & 0xff);
+        return UnixFileType.valueOf(((Mode & 0xffff) >>> 12) & 0xff);
     }
 
     public int size() {
@@ -102,23 +104,26 @@ public class Inode implements IByteArraySerializable {
         LinksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
         BlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
         Flags = InodeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 32));
+
         FastSymlink = null;
         Extents = null;
         DirectBlocks = null;
         if (getFileType() == UnixFileType.Link && BlocksCount == 0) {
             FastSymlink = new byte[60];
             System.arraycopy(buffer, offset + 40, FastSymlink, 0, 60);
-        } else if ((Flags.ordinal() & InodeFlags.ExtentsUsed.ordinal()) != 0) {
+        } else if (Flags.contains(InodeFlags.ExtentsUsed)) {
             Extents = EndianUtilities.<ExtentBlock> toStruct(ExtentBlock.class, buffer, offset + 40);
         } else {
             DirectBlocks = new int[12];
             for (int i = 0; i < 12; ++i) {
                 DirectBlocks[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40 + i * 4);
             }
+
             IndirectBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 88);
             DoubleIndirectBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 92);
             TripleIndirectBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 96);
         }
+
         FileVersion = EndianUtilities.toUInt32LittleEndian(buffer, offset + 100);
         FileAcl = EndianUtilities.toUInt32LittleEndian(buffer, offset + 104);
         DirAcl = EndianUtilities.toUInt32LittleEndian(buffer, offset + 108);
@@ -127,6 +132,7 @@ public class Inode implements IByteArraySerializable {
         FragmentSize = buffer[offset + 117];
         UserIdHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 120);
         GroupIdHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 122);
+
         return 128;
     }
 
@@ -138,11 +144,9 @@ public class Inode implements IByteArraySerializable {
         if (FastSymlink != null) {
             return new StreamBuffer(new MemoryStream(FastSymlink, false), Ownership.Dispose);
         }
-
-        if ((Flags.ordinal() & InodeFlags.ExtentsUsed.ordinal()) != 0) {
+        if (Flags.contains(InodeFlags.ExtentsUsed)) {
             return new ExtentsFileBuffer(context, this);
         }
-
         return new FileBuffer(context, this);
     }
 }

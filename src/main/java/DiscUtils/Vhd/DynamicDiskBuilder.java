@@ -53,15 +53,23 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         _blockSize = blockSize;
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         final int FooterSize = 512;
         final int DynHeaderSize = 1024;
+
         List<BuilderExtent> extents = new ArrayList<>();
+
         _footer.DataOffset = FooterSize;
+
         DynamicHeader dynHeader = new DynamicHeader(-1, FooterSize + DynHeaderSize, _blockSize, _footer.CurrentSize);
+
         BlockAllocationTableExtent batExtent = new BlockAllocationTableExtent(FooterSize + DynHeaderSize,
                                                                               dynHeader.MaxTableEntries);
         long streamPos = batExtent.getStart() + batExtent.getLength();
+
         for (Range blockRange : StreamExtent.blocks(_content.getExtents(), _blockSize)) {
             for (int i = 0; i < blockRange.getCount(); ++i) {
                 long block = blockRange.getOffset() + i;
@@ -72,22 +80,30 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                                                                                Math.min(_blockSize,
                                                                                         _content.getLength() - blockStart)));
                 extents.add(dataExtent);
+
                 batExtent.setEntry((int) block, (int) (streamPos / Sizes.Sector));
+
                 streamPos += dataExtent.getLength();
             }
         }
+
         _footer.updateChecksum();
         dynHeader.updateChecksum();
+
         byte[] footerBuffer = new byte[FooterSize];
         _footer.toBytes(footerBuffer, 0);
+
         byte[] dynHeaderBuffer = new byte[DynHeaderSize];
         dynHeader.toBytes(dynHeaderBuffer, 0);
+
         // Add footer (to end)
         extents.add(new BuilderBufferExtent(streamPos, footerBuffer));
         totalLength[0] = streamPos + FooterSize;
+
         extents.add(0, batExtent);
         extents.add(0, new BuilderBufferExtent(FooterSize, dynHeaderBuffer));
         extents.add(0, new BuilderBufferExtent(0, footerBuffer));
+
         return extents;
     }
 
@@ -98,6 +114,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
 
         public BlockAllocationTableExtent(long start, int maxEntries) {
             super(start, MathUtilities.roundUp(maxEntries * 4, 512));
+
             _entries = new int[(int) (getLength() / 4)];
             for (int i = 0; i < _entries.length; ++i) {
                 _entries[i] = 0xFFFFFFFF;
@@ -109,7 +126,6 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                 _dataStream.close();
                 _dataStream = null;
             }
-
         }
 
         public void setEntry(int index, int fileSector) {
@@ -118,9 +134,11 @@ public final class DynamicDiskBuilder extends StreamBuilder {
 
         public void prepareForRead() {
             byte[] buffer = new byte[(int) getLength()];
+
             for (int i = 0; i < _entries.length; ++i) {
                 EndianUtilities.writeBytesBigEndian(_entries[i], buffer, i * 4);
             }
+
             _dataStream = new MemoryStream(buffer, false);
         }
 
@@ -170,18 +188,19 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                 _bitmapStream.close();
                 _bitmapStream = null;
             }
-
         }
 
         public void prepareForRead() {
             byte[] bitmap = new byte[(int) MathUtilities.roundUp(MathUtilities.ceil(_content.getLength(), Sizes.Sector) / 8,
                                                                  Sizes.Sector)];
+
             for (Range range: StreamExtent.blocks(_content.getExtents(), Sizes.Sector)) {
                 for (int i = 0; i < range.getCount(); ++i) {
-                    byte mask = (byte) (1 << (7 - (int) (range.getOffset() + i) % 8));
-                    bitmap[(int) (range.getOffset() + i) / 8] |= mask;
+                    byte mask = (byte) (1 << (7 - (int) ((range.getOffset() + i) % 8)));
+                    bitmap[(int) ((range.getOffset() + i) / 8)] |= mask;
                 }
             }
+
             _bitmapStream = new MemoryStream(bitmap, false);
         }
 
@@ -191,7 +210,6 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                 _bitmapStream.setPosition(position);
                 return _bitmapStream.read(block, offset, count);
             }
-
             _content.setPosition(position - _bitmapStream.getLength());
             return _content.read(block, offset, count);
         }

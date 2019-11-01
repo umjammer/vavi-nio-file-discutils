@@ -80,12 +80,12 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         long blockDescStart = (superblock.FirstDataBlock + 1) * (long) superblock.getBlockSize();
 
         stream.setPosition(blockDescStart);
-        int bgDescSize = superblock.getHas64Bit() ? superblock.DescriptorSize : BlockGroup.DescriptorSize;
+        int bgDescSize = superblock.has64Bit() ? superblock.DescriptorSize : BlockGroup.DescriptorSize;
         byte[] blockDescData = StreamUtilities.readExact(stream, numGroups * bgDescSize);
 
         _blockGroups = new BlockGroup[numGroups];
         for (int i = 0; i < numGroups; ++i) {
-            BlockGroup bg = superblock.getHas64Bit() ? new BlockGroup64(bgDescSize) : new BlockGroup();
+            BlockGroup bg = superblock.has64Bit() ? new BlockGroup64(bgDescSize) : new BlockGroup();
             bg.readFrom(blockDescData, i * bgDescSize);
             _blockGroups[i] = bg;
         }
@@ -203,7 +203,7 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      */
     public long getAvailableSpace() {
         SuperBlock superBlock = getContext().getSuperBlock();
-        if (superBlock.getHas64Bit()) {
+        if (superBlock.has64Bit()) {
             long free = 0;
             for (BlockGroup blockGroup : _blockGroups) {
                 // ext4 64Bit Feature

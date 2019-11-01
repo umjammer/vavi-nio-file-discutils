@@ -74,12 +74,11 @@ public final class DiscFileLocator extends FileLocator {
             return false;
         }
 
+        // Common root if the same file system instance.
         return otherDiscLocator._fileSystem == _fileSystem;
     }
 
-    // Common root if the same file system instance.
     public String resolveRelativePath(String path) {
         return Utilities.resolveRelativePath(_basePath, path);
     }
-
 }

@@ -100,7 +100,7 @@ public class PartitionRecord extends DeviceRecord {
 
             UUID diskGuid = EndianUtilities.toGuidLittleEndian(getDiskIdentity(), 0);
             UUID partitionGuid = EndianUtilities.toGuidLittleEndian(getPartitionIdentity(), 0);
-            return String.format("(disk:%s partition:%d)", diskGuid, partitionGuid);
+            return String.format("(disk:%s partition:%s)", diskGuid, partitionGuid);
         }
 
         if (getType() == 8) {

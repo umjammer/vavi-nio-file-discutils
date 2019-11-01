@@ -35,13 +35,13 @@ public class DiscFileSystemOptions {
      * option when you need to finely control the filesystem for reproducibility of
      * behaviour (for example in a test harness).
      */
-    private Random __RandomNumberGenerator;
+    private Random _randomNumberGenerator;
 
     public Random getRandomNumberGenerator() {
-        return __RandomNumberGenerator;
+        return _randomNumberGenerator;
     }
 
     public void setRandomNumberGenerator(Random value) {
-        __RandomNumberGenerator = value;
+        _randomNumberGenerator = value;
     }
 }

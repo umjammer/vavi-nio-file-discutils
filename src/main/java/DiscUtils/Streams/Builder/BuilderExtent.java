@@ -32,20 +32,20 @@ import DiscUtils.Streams.StreamExtent;
 
 public abstract class BuilderExtent implements Closeable {
     public BuilderExtent(long start, long length) {
-        __Start = start;
-        __Length = length;
+        _start = start;
+        _length = length;
     }
 
-    private long __Length;
+    private long _length;
 
     public long getLength() {
-        return __Length;
+        return _length;
     }
 
-    private long __Start;
+    private long _start;
 
     public long getStart() {
-        return __Start;
+        return _start;
     }
 
     /**
@@ -53,7 +53,7 @@ public abstract class BuilderExtent implements Closeable {
      * This may be an empty enumeration if all bytes are zero.
      */
     public List<StreamExtent> getStreamExtents() {
-        return Arrays.asList(new StreamExtent(__Start, __Length));
+        return Arrays.asList(new StreamExtent(_start, _length));
     }
 
     public abstract void close() throws IOException;

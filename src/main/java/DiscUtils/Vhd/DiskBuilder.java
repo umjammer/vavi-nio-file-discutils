@@ -23,7 +23,6 @@
 package DiscUtils.Vhd;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Core.DiskImageBuilder;
@@ -49,14 +48,14 @@ public class DiskBuilder extends DiskImageBuilder {
      * Gets or sets the type of VHD file to build.
      */
     public FileType getDiskType() {
-        return DiskType;
+        return _diskType;
     }
 
     public void setDiskType(FileType fileType) {
-        DiskType = fileType;
+        _diskType = fileType;
     }
 
-    private FileType DiskType = FileType.Dynamic;
+    private FileType _diskType = FileType.Dynamic;
 
     /**
      * Initiates the build process.
@@ -64,8 +63,8 @@ public class DiskBuilder extends DiskImageBuilder {
      * @param baseName The base name for the VHD, for example 'foo' to create
      *            'foo.vhd'.
      * @returns A set of one or more logical files that constitute the VHD. The
-     *          first file is
-     *          the 'primary' file that is normally attached to VMs.
+     *          first file is the 'primary' file that is normally attached to
+     *          VMs.
      */
     @Override
     public List<DiskImageFileSpecification> build(String baseName) {
@@ -81,18 +80,18 @@ public class DiskBuilder extends DiskImageBuilder {
 
         Geometry geometry = Geometry.fromCapacity(getContent().getLength());
 
-        Footer footer = new Footer(geometry, getContent().getLength(), DiskType);
+        Footer footer = new Footer(geometry, getContent().getLength(), _diskType);
 
-        if (DiskType == FileType.Fixed) {
+        if (_diskType == FileType.Fixed) {
             footer.updateChecksum();
 
             byte[] footerSector = new byte[Sizes.Sector];
             footer.toBytes(footerSector, 0);
 
             SparseStream footerStream = SparseStream.fromStream(new MemoryStream(footerSector, false), Ownership.None);
-            Stream imageStream = new ConcatStream(Ownership.None, Arrays.asList(getContent(), footerStream));
+            Stream imageStream = new ConcatStream(Ownership.None, getContent(), footerStream);
             fileSpecs.add(new DiskImageFileSpecification(baseName + ".vhd", new PassthroughStreamBuilder(imageStream)));
-        } else if (DiskType == FileType.Dynamic) {
+        } else if (_diskType == FileType.Dynamic) {
             fileSpecs.add(new DiskImageFileSpecification(baseName + ".vhd",
                                                          new DynamicDiskBuilder(getContent(), footer, (int) Sizes.OneMiB * 2)));
         } else {

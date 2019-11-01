@@ -35,76 +35,76 @@ public class FileOpenEventArgs /* extends EventArgs */ {
     private FileOpenDelegate _opener;
 
     public FileOpenEventArgs(String fileName, FileMode mode, FileAccess access, FileShare share, FileOpenDelegate opener) {
-        setFileName(fileName);
-        setFileMode(mode);
-        setFileAccess(access);
-        setFileShare(share);
+        _fileName = fileName;
+        _fileMode = mode;
+        _fileAccess = access;
+        _fileShare = share;
         _opener = opener;
     }
 
-    private String __FileName;
+    private String _fileName;
 
     public String getFileName() {
-        return __FileName;
+        return _fileName;
     }
 
     public void setFileName(String value) {
-        __FileName = value;
+        _fileName = value;
     }
 
-    private FileMode __FileMode;
+    private FileMode _fileMode;
 
     /**
      * Gets or sets the {@link FileMode}
      */
     public FileMode getFileMode() {
-        return __FileMode;
+        return _fileMode;
     }
 
     public void setFileMode(FileMode value) {
-        __FileMode = value;
+        _fileMode = value;
     }
 
-    private FileAccess __FileAccess;
+    private FileAccess _fileAccess;
 
     /**
      * Gets or sets the {@link FileAccess}
      */
     public FileAccess getFileAccess() {
-        return __FileAccess;
+        return _fileAccess;
     }
 
     public void setFileAccess(FileAccess value) {
-        __FileAccess = value;
+        _fileAccess = value;
     }
 
-    private FileShare __FileShare;
+    private FileShare _fileShare;
 
     /**
      * Gets or sets the {@link FileShare}
      */
     public FileShare getFileShare() {
-        return __FileShare;
+        return _fileShare;
     }
 
     public void setFileShare(FileShare value) {
-        __FileShare = value;
+        _fileShare = value;
     }
 
-    private Stream __Result;
+    private Stream _result;
 
     /**
      * The resulting stream.
      *
      * If this is set to a non null value, this stream is used instead of opening
-     * the supplied {@link #__FileName}
+     * the supplied {@link #_fileName}
      */
     public Stream getResult() {
-        return __Result;
+        return _result;
     }
 
     public void setResult(Stream value) {
-        __Result = value;
+        _result = value;
     }
 
     /**
@@ -113,6 +113,6 @@ public class FileOpenEventArgs /* extends EventArgs */ {
      * @return
      */
     public Stream getFileStream() {
-        return _opener.invoke(getFileName(), getFileMode(), getFileAccess(), getFileShare());
+        return _opener.invoke(_fileName, _fileMode, _fileAccess, _fileShare);
     }
 }

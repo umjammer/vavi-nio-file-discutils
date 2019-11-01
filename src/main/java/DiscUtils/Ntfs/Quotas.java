@@ -23,7 +23,6 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.time.Instant;
 
 import vavi.util.win32.DateUtil;
 
@@ -182,7 +181,7 @@ public final class Quotas {
             Version = EndianUtilities.toInt32LittleEndian(buffer, offset);
             Flags = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
             BytesUsed = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-            ChangeTime = DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x10));
+            ChangeTime = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x10));
             WarningLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x18);
             HardLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x20);
             ExceededTime = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x28);
@@ -199,7 +198,7 @@ public final class Quotas {
             EndianUtilities.writeBytesLittleEndian(Flags, buffer, offset + 0x04);
             EndianUtilities.writeBytesLittleEndian(BytesUsed, buffer, offset + 0x08);
             EndianUtilities
-                    .writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(ChangeTime)), buffer, offset + 0x10);
+                    .writeBytesLittleEndian(DateUtil.toFileTime(ChangeTime), buffer, offset + 0x10);
             EndianUtilities.writeBytesLittleEndian(WarningLimit, buffer, offset + 0x18);
             EndianUtilities.writeBytesLittleEndian(HardLimit, buffer, offset + 0x20);
             EndianUtilities.writeBytesLittleEndian(ExceededTime, buffer, offset + 0x28);

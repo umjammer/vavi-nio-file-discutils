@@ -27,20 +27,20 @@ public class FileVersion {
     }
 
     public FileVersion(int value) {
-        __Value = value;
+        _value = value;
     }
 
     public int getMajor() {
-        return getValue() >>> 16;
+        return _value >>> 16;
     }
 
     public int getMinor() {
-        return getValue() & 0xFFFF;
+        return _value & 0xFFFF;
     }
 
-    private int __Value;
+    private int _value;
 
     public int getValue() {
-        return __Value;
+        return _value;
     }
 }

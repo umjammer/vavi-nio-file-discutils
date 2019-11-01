@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
     public Nfs3FileSystemInfoResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));

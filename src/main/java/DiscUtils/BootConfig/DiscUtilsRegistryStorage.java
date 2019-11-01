@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import vavi.util.Debug;
-
 import DiscUtils.Registry.RegistryKey;
 import DiscUtils.Registry.RegistryValueType;
 
@@ -99,7 +97,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         RegistryKey descKey = _rootKey.openSubKey(path);
         Object val = descKey.getValue("Type");
-Debug.println("getObjectType: " + val);
+//Debug.println("getObjectType: " + val);
         return val == null ? 0 : (Integer) val; // TODO check spec
     }
 
@@ -139,6 +137,7 @@ Debug.println("getObjectType: " + val);
     private Object getValue(UUID obj, int element) {
         String path = String.format(ElementPathTemplate, String.format("{%s}", obj), element);
         RegistryKey key = _rootKey.openSubKey(path);
+//Debug.println("key: " + key);
         return key.getValue("Element");
     }
 

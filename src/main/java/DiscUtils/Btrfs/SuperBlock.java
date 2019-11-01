@@ -26,9 +26,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import DiscUtils.Btrfs.Base.ChecksumType;
 import DiscUtils.Btrfs.Base.Key;
@@ -51,365 +52,365 @@ public class SuperBlock implements IByteArraySerializable {
     /**
      * Checksum of everything past this field (from 20 to 1000)
      */
-    private byte[] __Checksum;
+    private byte[] _checksum;
 
     public byte[] getChecksum() {
-        return __Checksum;
+        return _checksum;
     }
 
     public void setChecksum(byte[] value) {
-        __Checksum = value;
+        _checksum = value;
     }
 
     /**
      * FS UUID
      */
-    private UUID __FsUuid;
+    private UUID _fsUuid;
 
     public UUID getFsUuid() {
-        return __FsUuid;
+        return _fsUuid;
     }
 
     public void setFsUuid(UUID value) {
-        __FsUuid = value;
+        _fsUuid = value;
     }
 
     /**
      * physical address of this block (different for mirrors)
      */
-    private long __PhysicalAddress;
+    private long _physicalAddress;
 
     public long getPhysicalAddress() {
-        return __PhysicalAddress;
+        return _physicalAddress;
     }
 
     public void setPhysicalAddress(long value) {
-        __PhysicalAddress = value;
+        _physicalAddress = value;
     }
 
     /**
      * flags
      */
-    private long __Flags;
+    private long _flags;
 
     public long getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(long value) {
-        __Flags = value;
+        _flags = value;
     }
 
     /**
      * magic ("_BHRfS_M")
      */
-    private long __Magic;
+    private long _magic;
 
     public long getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(long value) {
-        __Magic = value;
+        _magic = value;
     }
 
     /**
      * generation
      */
-    private long __Generation;
+    private long _generation;
 
     public long getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        _generation = value;
     }
 
     /**
      * logical address of the root tree root
      */
-    private long __Root;
+    private long _root;
 
     public long getRoot() {
-        return __Root;
+        return _root;
     }
 
     public void setRoot(long value) {
-        __Root = value;
+        _root = value;
     }
 
     /**
      * logical address of the chunk tree root
      */
-    private long __ChunkRoot;
+    private long _chunkRoot;
 
     public long getChunkRoot() {
-        return __ChunkRoot;
+        return _chunkRoot;
     }
 
     public void setChunkRoot(long value) {
-        __ChunkRoot = value;
+        _chunkRoot = value;
     }
 
     /**
      * logical address of the log tree root
      */
-    private long __LogRoot;
+    private long _logRoot;
 
     public long getLogRoot() {
-        return __LogRoot;
+        return _logRoot;
     }
 
     public void setLogRoot(long value) {
-        __LogRoot = value;
+        _logRoot = value;
     }
 
     /**
      * log_root_transid
      */
-    private long __LogRootTransId;
+    private long _logRootTransId;
 
     public long getLogRootTransId() {
-        return __LogRootTransId;
+        return _logRootTransId;
     }
 
     public void setLogRootTransId(long value) {
-        __LogRootTransId = value;
+        _logRootTransId = value;
     }
 
     /**
      * total_bytes
      */
-    private long __TotalBytes;
+    private long _totalBytes;
 
     public long getTotalBytes() {
-        return __TotalBytes;
+        return _totalBytes;
     }
 
     public void setTotalBytes(long value) {
-        __TotalBytes = value;
+        _totalBytes = value;
     }
 
     /**
      * bytes_used
      */
-    private long __BytesUsed;
+    private long _bytesUsed;
 
     public long getBytesUsed() {
-        return __BytesUsed;
+        return _bytesUsed;
     }
 
     public void setBytesUsed(long value) {
-        __BytesUsed = value;
+        _bytesUsed = value;
     }
 
     /**
      * root_dir_objectid (usually 6)
      */
-    private long __RootDirObjectid;
+    private long _rootDirObjectid;
 
     public long getRootDirObjectid() {
-        return __RootDirObjectid;
+        return _rootDirObjectid;
     }
 
     public void setRootDirObjectid(long value) {
-        __RootDirObjectid = value;
+        _rootDirObjectid = value;
     }
 
     /**
      * num_devices
      */
-    private long __NumDevices;
+    private long _numDevices;
 
     public long getNumDevices() {
-        return __NumDevices;
+        return _numDevices;
     }
 
     public void setNumDevices(long value) {
-        __NumDevices = value;
+        _numDevices = value;
     }
 
     /**
      * sectorsize
      */
-    private int __SectorSize;
+    private int _sectorSize;
 
     public int getSectorSize() {
-        return __SectorSize;
+        return _sectorSize;
     }
 
     public void setSectorSize(int value) {
-        __SectorSize = value;
+        _sectorSize = value;
     }
 
     /**
      * nodesize
      */
-    private int __NodeSize;
+    private int _nodeSize;
 
     public int getNodeSize() {
-        return __NodeSize;
+        return _nodeSize;
     }
 
     public void setNodeSize(int value) {
-        __NodeSize = value;
+        _nodeSize = value;
     }
 
     /**
      * leafsize
      */
-    private int __LeafSize;
+    private int _leafSize;
 
     public int getLeafSize() {
-        return __LeafSize;
+        return _leafSize;
     }
 
     public void setLeafSize(int value) {
-        __LeafSize = value;
+        _leafSize = value;
     }
 
     /**
      * stripesize
      */
-    private int __StripeSize;
+    private int _stripeSize;
 
     public int getStripeSize() {
-        return __StripeSize;
+        return _stripeSize;
     }
 
     public void setStripeSize(int value) {
-        __StripeSize = value;
+        _stripeSize = value;
     }
 
     /**
      * chunk_root_generation
      */
-    private long __ChunkRootGeneration;
+    private long _chunkRootGeneration;
 
     public long getChunkRootGeneration() {
-        return __ChunkRootGeneration;
+        return _chunkRootGeneration;
     }
 
     public void setChunkRootGeneration(long value) {
-        __ChunkRootGeneration = value;
+        _chunkRootGeneration = value;
     }
 
     /**
      * compat_flags
      */
-    private long __CompatFlags;
+    private long _compatFlags;
 
     public long getCompatFlags() {
-        return __CompatFlags;
+        return _compatFlags;
     }
 
     public void setCompatFlags(long value) {
-        __CompatFlags = value;
+        _compatFlags = value;
     }
 
     /**
      * compat_ro_flags - only implementations that support the flags can write
      * to the filesystem
      */
-    private long __CompatRoFlags;
+    private long _compatRoFlags;
 
     public long getCompatRoFlags() {
-        return __CompatRoFlags;
+        return _compatRoFlags;
     }
 
     public void setCompatRoFlags(long value) {
-        __CompatRoFlags = value;
+        _compatRoFlags = value;
     }
 
     /**
      * incompat_flags - only implementations that support the flags can use the
      * filesystem
      */
-    private long __IncompatFlags;
+    private long _incompatFlags;
 
     public long getIncompatFlags() {
-        return __IncompatFlags;
+        return _incompatFlags;
     }
 
     public void setIncompatFlags(long value) {
-        __IncompatFlags = value;
+        _incompatFlags = value;
     }
 
     /**
      * csum_type - Btrfs currently uses the CRC32c little-endian hash function
      * with seed -1.
      */
-    private ChecksumType __ChecksumType = ChecksumType.Crc32C;
+    private ChecksumType _checksumType = ChecksumType.Crc32C;
 
     public ChecksumType getChecksumType() {
-        return __ChecksumType;
+        return _checksumType;
     }
 
     public void setChecksumType(ChecksumType value) {
-        __ChecksumType = value;
+        _checksumType = value;
     }
 
     /**
      * root_level
      */
-    private byte __RootLevel;
+    private byte _rootLevel;
 
     public byte getRootLevel() {
-        return __RootLevel;
+        return _rootLevel;
     }
 
     public void setRootLevel(byte value) {
-        __RootLevel = value;
+        _rootLevel = value;
     }
 
     /**
      * chunk_root_level
      */
-    private byte __ChunkRootLevel;
+    private byte _chunkRootLevel;
 
     public byte getChunkRootLevel() {
-        return __ChunkRootLevel;
+        return _chunkRootLevel;
     }
 
     public void setChunkRootLevel(byte value) {
-        __ChunkRootLevel = value;
+        _chunkRootLevel = value;
     }
 
     /**
      * log_root_level
      */
-    private byte __LogRootLevel;
+    private byte _logRootLevel;
 
     public byte getLogRootLevel() {
-        return __LogRootLevel;
+        return _logRootLevel;
     }
 
     public void setLogRootLevel(byte value) {
-        __LogRootLevel = value;
+        _logRootLevel = value;
     }
 
     /**
      * label (may not contain '\\')
      */
-    private String __Label;
+    private String _label;
 
     public String getLabel() {
-        return __Label;
+        return _label;
     }
 
     public void setLabel(String value) {
-        __Label = value;
+        _label = value;
     }
 
-    private ChunkItem[] __SystemChunkArray;
+    private ChunkItem[] _systemChunkArray;
 
     public ChunkItem[] getSystemChunkArray() {
-        return __SystemChunkArray;
+        return _systemChunkArray;
     }
 
     public void setSystemChunkArray(ChunkItem[] value) {
-        __SystemChunkArray = value;
+        _systemChunkArray = value;
     }
 
     public int size() {
@@ -446,14 +447,14 @@ public class SuperBlock implements IByteArraySerializable {
         setRootLevel(buffer[offset + 0xc6]);
         setChunkRootLevel(buffer[offset + 0xc7]);
         setLogRootLevel(buffer[offset + 0xc8]);
-        //c9 62 DEV_ITEM data for this device
+        // c9 62 DEV_ITEM data for this device
         byte[] labelData = EndianUtilities.toByteArray(buffer, offset + 0x12b, 0x100);
-        int eos = Arrays.binarySearch(labelData, (byte) 0);
-        if (eos != -1) {
-            setLabel(new String(labelData, 0, eos, Charset.forName("UTF8")));
+        OptionalInt eos = IntStream.range(0, labelData.length).filter(i -> labelData[i] == (byte) 0).findFirst();
+        if (eos.isPresent()) {
+            setLabel(new String(labelData, 0, eos.getAsInt(), Charset.forName("UTF8")));
         }
 
-        //22b 100 reserved
+        // 22b 100 reserved
         int n = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0xa0);
         offset += 0x32b;
         List<ChunkItem> systemChunks = new ArrayList<>();
@@ -466,11 +467,13 @@ public class SuperBlock implements IByteArraySerializable {
             n = n - key.size() - chunkItem.size();
         }
         setSystemChunkArray(systemChunks.toArray(new ChunkItem[0]));
+        // 32b 800 (n bytes valid) Contains (KEY, CHUNK_ITEM) pairs for all
+        //         SYSTEM chunks. This is needed to bootstrap the mapping from logical
+        //         addresses to physical.
+        // b2b 4d5 Currently unused
         return size();
     }
 
-    //32b 800 (n bytes valid) Contains (KEY, CHUNK_ITEM) pairs for all SYSTEM chunks. This is needed to bootstrap the mapping from logical addresses to physical.
-    //b2b 4d5 Currently unused
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

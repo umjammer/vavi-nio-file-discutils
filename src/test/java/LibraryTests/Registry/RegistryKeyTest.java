@@ -71,7 +71,7 @@ public class RegistryKeyTest {
         hive.getRoot().setValue("bigvalue", buffer);
         byte[] readVal = (byte[]) hive.getRoot().getValue("bigvalue");
         assertEquals(buffer.length, readVal.length);
-        assertEquals(0xAD, readVal[5232]);
+        assertEquals((byte) 0xAD, readVal[5232]);
     }
 
     @Test
@@ -120,9 +120,9 @@ public class RegistryKeyTest {
         hive.getRoot().setValue("value", "string", RegistryValueType.ExpandString);
         assertEquals(RegistryValueType.ExpandString, hive.getRoot().getValueType("value"));
         assertEquals("string", hive.getRoot().getValue("value"));
-        hive.getRoot().setValue("value", "str%windir%ing", RegistryValueType.ExpandString);
+        hive.getRoot().setValue("value", "str%HOME%ing", RegistryValueType.ExpandString);
         assertEquals(RegistryValueType.ExpandString, hive.getRoot().getValueType("value"));
-        assertEquals("str" + System.getenv("windir") + "ing", hive.getRoot().getValue("value"));
+        assertEquals("str" + System.getenv("HOME") + "ing", hive.getRoot().getValue("value"));
         hive.getRoot().setValue("emptyvalue", "", RegistryValueType.ExpandString);
         assertEquals(RegistryValueType.ExpandString, hive.getRoot().getValueType("emptyvalue"));
         assertEquals("", hive.getRoot().getValue("emptyvalue"));

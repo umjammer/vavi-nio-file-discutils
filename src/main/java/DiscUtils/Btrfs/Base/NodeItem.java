@@ -29,34 +29,34 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class NodeItem implements IByteArraySerializable {
     public static final int Length = Key.Length + 0x8;
 
-    private Key __Key;
+    private Key _key;
 
     public Key getKey() {
-        return __Key;
+        return _key;
     }
 
     public void setKey(Key value) {
-        __Key = value;
+        _key = value;
     }
 
-    private int __DataOffset;
+    private int _dataOffset;
 
     public int getDataOffset() {
-        return __DataOffset;
+        return _dataOffset;
     }
 
     public void setDataOffset(int value) {
-        __DataOffset = value;
+        _dataOffset = value;
     }
 
-    private int __DataSize;
+    private int _dataSize;
 
     public int getDataSize() {
-        return __DataSize;
+        return _dataSize;
     }
 
     public void setDataSize(int value) {
-        __DataSize = value;
+        _dataSize = value;
     }
 
     public int size() {

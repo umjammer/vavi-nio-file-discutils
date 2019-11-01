@@ -24,7 +24,6 @@ package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.time.Instant;
 import java.util.EnumSet;
 
 import vavi.util.win32.DateUtil;
@@ -101,10 +100,10 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(ParentDirectory.getValue(), buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(CreationTime)), buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(ModificationTime)), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(MftChangedTime)), buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(LastAccessTime)), buffer, offset + 0x20);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(CreationTime), buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(ModificationTime), buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(MftChangedTime), buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(LastAccessTime), buffer, offset + 0x20);
         EndianUtilities.writeBytesLittleEndian(AllocatedSize, buffer, offset + 0x28);
         EndianUtilities.writeBytesLittleEndian(RealSize, buffer, offset + 0x30);
         EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(Flags), buffer, offset + 0x38);
@@ -168,6 +167,6 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
 
     /** @return epoch millis */
     private static long readDateTime(byte[] buffer, int offset) {
-        return DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset));
+        return DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset));
     }
 }

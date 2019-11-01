@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 public final class Nfs3ModifyResult extends Nfs3CallResult {
     public Nfs3ModifyResult() {
     }

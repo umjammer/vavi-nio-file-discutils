@@ -24,7 +24,10 @@ package DiscUtils.Registry;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 
 public enum ValueFlags {
     Named,
@@ -44,13 +47,23 @@ public enum ValueFlags {
     Unknown4000,
     Unknown8000;
 
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
     public static EnumSet<ValueFlags> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(ValueFlags.class)));
     }
 
     public static long valueOf(EnumSet<ValueFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

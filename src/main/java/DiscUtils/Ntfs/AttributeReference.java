@@ -22,8 +22,6 @@
 
 package DiscUtils.Ntfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 /**
  * Fully-qualified reference to an attribute.
  */

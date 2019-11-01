@@ -29,14 +29,14 @@ import dotnet4j.io.IOException;
 
 
 public class BTreeExtentLeafV5 extends BTreeExtentHeaderV5 {
-    private List<Extent> __Extents;
+    private List<Extent> _extents;
 
     public List<Extent> getExtents() {
-        return __Extents;
+        return _extents;
     }
 
     public void setExtents(List<Extent> value) {
-        __Extents = value;
+        _extents = value;
     }
 
     public int size() {
@@ -48,11 +48,11 @@ public class BTreeExtentLeafV5 extends BTreeExtentHeaderV5 {
         if (getLevel() != 0)
             throw new IOException("invalid B+tree level - expected 0");
 
-        __Extents = new ArrayList<>(getNumberOfRecords());
+        _extents = new ArrayList<>(getNumberOfRecords());
         for (int i = 0; i < getNumberOfRecords(); i++) {
             Extent rec = new Extent();
             offset += rec.readFrom(buffer, offset);
-            __Extents.set(i, rec);
+            _extents.add(rec);
         }
         return size();
     }

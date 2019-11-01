@@ -160,14 +160,18 @@ public class DynamicStream extends MappedStream {
         long position = start;
         int maxToRead = (int) Math.min(length, _length - position);
         int numRead = 0;
+
         while (numRead < maxToRead) {
             long block = position / _dynamicHeader.BlockSize;
             int offsetInBlock = (int) (position % _dynamicHeader.BlockSize);
+
             if (populateBlockBitmap(block)) {
                 int sectorInBlock = offsetInBlock / Sizes.Sector;
                 int offsetInSector = offsetInBlock % Sizes.Sector;
                 int toRead = Math.min(maxToRead - numRead, _dynamicHeader.BlockSize - offsetInBlock);
+
                 // 512 - offsetInSector);
+
                 if (offsetInSector != 0 || toRead < Sizes.Sector) {
                     byte mask = (byte) (1 << (7 - sectorInBlock % 8));
                     if ((_blockBitmaps[(int) block][sectorInBlock / 8] & mask) != 0) {
@@ -181,8 +185,10 @@ public class DynamicStream extends MappedStream {
                 } else {
                     // Processing at least one whole sector, read as many as possible
                     int toReadSectors = toRead / Sizes.Sector;
+
                     byte mask = (byte) (1 << (7 - sectorInBlock % 8));
                     boolean readFromParent = (_blockBitmaps[(int) block][sectorInBlock / 8] & mask) == 0;
+
                     int numSectors = 1;
                     while (numSectors < toReadSectors) {
                         mask = (byte) (1 << (7 - (sectorInBlock + numSectors) % 8));
@@ -192,7 +198,9 @@ public class DynamicStream extends MappedStream {
 
                         ++numSectors;
                     }
+
                     toRead = numSectors * Sizes.Sector;
+
                     if (!readFromParent) {
                         long extentStart = (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
                                            _blockBitmapSize;
@@ -388,7 +396,7 @@ public class DynamicStream extends MappedStream {
 
         List<StreamExtent> parentExtents = _parentStream.getExtentsInRange(start, maxCount);
         List<StreamExtent> result = StreamExtent.union(layerExtents(start, maxCount), parentExtents);
-        result = StreamExtent.intersect(result);
+        result = StreamExtent.intersect(result, Arrays.asList(new StreamExtent(start, maxCount)));
         return result;
     }
 

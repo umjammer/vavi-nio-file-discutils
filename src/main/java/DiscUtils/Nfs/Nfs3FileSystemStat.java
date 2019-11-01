@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 
 public final class Nfs3FileSystemStat {
     public Nfs3FileSystemStat() {

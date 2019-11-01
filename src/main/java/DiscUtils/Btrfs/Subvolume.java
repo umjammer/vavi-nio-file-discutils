@@ -23,23 +23,23 @@
 package DiscUtils.Btrfs;
 
 public class Subvolume {
-    private long __Id;
+    private long _id;
 
     public long getId() {
-        return __Id;
+        return _id;
     }
 
     public void setId(long value) {
-        __Id = value;
+        _id = value;
     }
 
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 }

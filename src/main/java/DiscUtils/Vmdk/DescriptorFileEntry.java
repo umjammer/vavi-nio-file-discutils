@@ -26,25 +26,25 @@ public class DescriptorFileEntry {
     private final DescriptorFileEntryType _type;
 
     public DescriptorFileEntry(String key, String value, DescriptorFileEntryType type) {
-        __Key = key;
-        setValue(value);
+        _key = key;
+        _value = value;
         _type = type;
     }
 
-    private String __Key;
+    private String _key;
 
     public String getKey() {
-        return __Key;
+        return _key;
     }
 
-    private String __Value;
+    private String _value;
 
     public String getValue() {
-        return __Value;
+        return _value;
     }
 
     public void setValue(String value) {
-        __Value = value;
+        _value = value;
     }
 
     public static DescriptorFileEntry parse(String value) {

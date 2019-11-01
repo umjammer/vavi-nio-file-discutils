@@ -35,6 +35,9 @@ public class PassthroughStreamBuilder extends StreamBuilder {
         _stream = stream;
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         _stream.setPosition(0);
         List<BuilderExtent> result = new ArrayList<>();

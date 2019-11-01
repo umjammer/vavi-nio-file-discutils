@@ -60,13 +60,14 @@ public final class RegistryValue {
      * The mapping from registry type of .NET type is as follows:
      * <pre>
      * Value Type: .NET type
-     * String: string
-     * ExpandString: string
-     * Link: string
-     * DWord: uint
+     *
+     * String:         string
+     * ExpandString:   string
+     * Link:           string
+     * DWord:          uint
      * DWordBigEndian: uint
-     * MultiString: string[]
-     * QWord: ulong
+     * MultiString:    string[]
+     * QWord:          ulong
      * </pre>
      */
     public Object getValue() {
@@ -159,14 +160,7 @@ public final class RegistryValue {
      * @return The registry value as a string.
      */
     public String toString() {
-        try {
-            return getName() + ":" + getDataType() + ":" + dataAsString();
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return getName() + ":" + getDataType() + ":" + dataAsString();
     }
 
     private static Object convertToObject(byte[] data, RegistryValueType type) {

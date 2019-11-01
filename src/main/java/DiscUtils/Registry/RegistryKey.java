@@ -27,9 +27,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import vavi.util.Debug;
-import vavi.util.StringUtil;
-
+import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import dotnet4j.io.compat.StringUtilities;
@@ -243,8 +241,8 @@ public final class RegistryKey {
         RegistryValue regVal = getRegistryValue(name);
         if (regVal != null) {
             if (regVal.getDataType() == RegistryValueType.ExpandString &&
-                options == RegistryValueOptions.DoNotExpandEnvironmentNames) {
-                return System.getenv((String) regVal.getValue());
+                options != RegistryValueOptions.DoNotExpandEnvironmentNames) {
+                return Utilities.expandEnvironmentVariables(String.class.cast(regVal.getValue()));
             }
 
             return regVal.getValue();
@@ -408,7 +406,7 @@ public final class RegistryKey {
         }
 
         String[] split = path.split(StringUtilities.escapeForRegex("\\"), 2);
-Debug.println(StringUtil.paramString(split));
+//Debug.println(StringUtil.paramString(split));
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             return null;
@@ -519,7 +517,7 @@ Debug.println(StringUtil.paramString(split));
             for (int i = 0; i < _cell.NumValues; ++i) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
                 ValueCell cell = _hive.getCell(valueIndex);
-Debug.println(name + ", " + cell);
+//Debug.println(name + ", " + cell);
                 if (StringUtilities.compare(cell.getName(), name, true) == 0) {
                     return new RegistryValue(_hive, cell);
                 }
@@ -570,7 +568,7 @@ Debug.println(name + ", " + cell);
         _hive.updateCell(_cell, false);
 
         // Finally, set the data in the value cell
-Debug.println(valueCell);
+//Debug.println(valueCell);
         return new RegistryValue(_hive, valueCell);
     }
 
@@ -668,5 +666,9 @@ Debug.println(valueCell);
         }
 
         _hive.freeCell(list.getIndex());
+    }
+
+    public String toString() {
+        return _cell.toString();
     }
 }

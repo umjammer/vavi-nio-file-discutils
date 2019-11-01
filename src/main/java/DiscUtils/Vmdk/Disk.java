@@ -111,13 +111,13 @@ public final class Disk extends VirtualDisk {
         _files.add(new Tuple<VirtualDiskLayer, Ownership>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
     }
 
-    public Disk(DiskImageFile file, Ownership ownsStream) throws IOException {
+    Disk(DiskImageFile file, Ownership ownsStream) throws IOException {
         _files = new ArrayList<>();
         _files.add(new Tuple<VirtualDiskLayer, Ownership>(file, ownsStream));
         resolveFileChain();
     }
 
-    public Disk(FileLocator layerLocator, String path, FileAccess access) throws IOException {
+    Disk(FileLocator layerLocator, String path, FileAccess access) throws IOException {
         _path = path;
         _files = new ArrayList<>();
         _files.add(new Tuple<VirtualDiskLayer, Ownership>(new DiskImageFile(layerLocator, path, access), Ownership.Dispose));
@@ -129,13 +129,12 @@ public final class Disk extends VirtualDisk {
      * represent it.
      */
     public Geometry getBiosGeometry() {
-        DiskImageFile file = _files.get(_files.size() - 1).Item1 instanceof DiskImageFile
-                                                                                          ? (DiskImageFile) _files
-                                                                                                  .get(_files.size() - 1).Item1
-                                                                                          : (DiskImageFile) null;
-        Geometry result = file != null ? file.getBiosGeometry() : null;
-        return result != null ? result
-                              : Geometry.makeBiosSafe(_files.get(_files.size() - 1).Item1.getGeometry(), getCapacity());
+        VirtualDiskLayer item1 = _files.get(_files.size() - 1).Item1;
+        if (DiskImageFile.class.isInstance(item1)) {
+            return DiskImageFile.class.cast(item1).getBiosGeometry();
+        } else {
+            return Geometry.makeBiosSafe(item1.getGeometry(), getCapacity());
+        }
     }
 
     /**
@@ -158,6 +157,7 @@ public final class Disk extends VirtualDisk {
             for (int i = _files.size() - 1; i >= 0; --i) {
                 stream = _files.get(i).Item1.openContent(stream, Ownership.Dispose);
             }
+
             _content = stream;
         }
 
@@ -380,7 +380,7 @@ public final class Disk extends VirtualDisk {
                                       firstLayer.getRelativeFileLocator().getFullPath(_path));
     }
 
-    public static Disk initialize(FileLocator fileLocator, String path, DiskParameters parameters) throws IOException {
+    static Disk initialize(FileLocator fileLocator, String path, DiskParameters parameters) throws IOException {
         return new Disk(DiskImageFile.initialize(fileLocator, path, parameters), Ownership.Dispose);
     }
 
@@ -426,9 +426,11 @@ public final class Disk extends VirtualDisk {
 
     private void resolveFileChain() throws IOException {
         VirtualDiskLayer file = _files.get(_files.size() - 1).Item1;
+
         while (file.needsParent()) {
             boolean foundParent = false;
             FileLocator locator = file.getRelativeFileLocator();
+
             for (String posParent : file.getParentLocations()) {
                 if (locator.exists(posParent)) {
                     file = openDiskLayer(file.getRelativeFileLocator(), posParent, FileAccess.Read);
@@ -437,6 +439,7 @@ public final class Disk extends VirtualDisk {
                     break;
                 }
             }
+
             if (!foundParent) {
                 throw new dotnet4j.io.IOException("Parent disk not found");
             }

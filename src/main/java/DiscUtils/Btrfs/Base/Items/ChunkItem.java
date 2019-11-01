@@ -41,53 +41,53 @@ public class ChunkItem extends BaseItem {
     /**
      * size of chunk (bytes)
      */
-    private long __ChunkSize;
+    private long _chunkSize;
 
     public long getChunkSize() {
-        return __ChunkSize;
+        return _chunkSize;
     }
 
     public void setChunkSize(long value) {
-        __ChunkSize = value;
+        _chunkSize = value;
     }
 
     /**
      * root referencing this chunk (2)
      */
-    private long __ObjectId;
+    private long _objectId;
 
     public long getObjectId() {
-        return __ObjectId;
+        return _objectId;
     }
 
     public void setObjectId(long value) {
-        __ObjectId = value;
+        _objectId = value;
     }
 
     /**
      * stripe length
      */
-    private long __StripeLength;
+    private long _stripeLength;
 
     public long getStripeLength() {
-        return __StripeLength;
+        return _stripeLength;
     }
 
     public void setStripeLength(long value) {
-        __StripeLength = value;
+        _stripeLength = value;
     }
 
     /**
      * type (same as flags for block group?)
      */
-    private EnumSet<BlockGroupFlag> __Type;
+    private EnumSet<BlockGroupFlag> _type;
 
     public EnumSet<BlockGroupFlag> getType() {
-        return __Type;
+        return _type;
     }
 
     public void setType(EnumSet<BlockGroupFlag> value) {
-        __Type = value;
+        _type = value;
     }
 
     /**
@@ -106,63 +106,63 @@ public class ChunkItem extends BaseItem {
     /**
      * optimal io width
      */
-    private int __OptimalIoWidth;
+    private int _optimalIoWidth;
 
     public int getOptimalIoWidth() {
-        return __OptimalIoWidth;
+        return _optimalIoWidth;
     }
 
     public void setOptimalIoWidth(int value) {
-        __OptimalIoWidth = value;
+        _optimalIoWidth = value;
     }
 
     /**
      * minimal io size (sector size)
      */
-    private int __MinimalIoSize;
+    private int _minimalIoSize;
 
     public int getMinimalIoSize() {
-        return __MinimalIoSize;
+        return _minimalIoSize;
     }
 
     public void setMinimalIoSize(int value) {
-        __MinimalIoSize = value;
+        _minimalIoSize = value;
     }
 
     /**
      * number of stripes
      */
-    private short __StripeCount;
+    private short _stripeCount;
 
     public short getStripeCount() {
-        return __StripeCount;
+        return _stripeCount;
     }
 
     public void setStripeCount(short value) {
-        __StripeCount = value;
+        _stripeCount = value;
     }
 
     /**
      * sub stripes
      */
-    private short __SubStripes;
+    private short _subStripes;
 
     public short getSubStripes() {
-        return __SubStripes;
+        return _subStripes;
     }
 
     public void setSubStripes(short value) {
-        __SubStripes = value;
+        _subStripes = value;
     }
 
-    private Stripe[] __Stripes;
+    private Stripe[] _stripes;
 
     public Stripe[] getStripes() {
-        return __Stripes;
+        return _stripes;
     }
 
     public void setStripes(Stripe[] value) {
-        __Stripes = value;
+        _stripes = value;
     }
 
     public int size() {
@@ -187,5 +187,4 @@ public class ChunkItem extends BaseItem {
         }
         return size();
     }
-
 }

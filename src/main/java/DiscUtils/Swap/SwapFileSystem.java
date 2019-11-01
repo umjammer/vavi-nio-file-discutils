@@ -42,15 +42,14 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
      */
     public SwapFileSystem(Stream stream) {
         super(new DiscFileSystemOptions());
+
         setContext(new SwapContext());
-        getContext().setHeader(readSwapHeader(stream));;
+        getContext().setHeader(readSwapHeader(stream));
         if (getContext().getHeader() == null)
             throw new dotnet4j.io.IOException("Swap Header missing");
-
         if (!getContext().getHeader().getMagic().equals(SwapHeader.Magic1) &&
             !getContext().getHeader().getMagic().equals(SwapHeader.Magic2))
             throw new dotnet4j.io.IOException("Invalid Swap header");
-
     }
 
     /**
@@ -71,16 +70,12 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
      * Detects if a stream contains a Swap file system.
      *
      * @param stream The stream to inspect.
-     * @return
-     *         {@code true}
-     *         if the stream appears to be a Swap file system, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the stream appears to be a Swap file system, else
+     *         {@code false} .
      */
     public static boolean detect(Stream stream) {
         SwapHeader header = readSwapHeader(stream);
-        return header != null && (header.getMagic().equals(SwapHeader.Magic1) ||
-                                  header.getMagic().equals(SwapHeader.Magic2));
+        return header != null && (header.getMagic().equals(SwapHeader.Magic1) || header.getMagic().equals(SwapHeader.Magic2));
     }
 
     private static SwapHeader readSwapHeader(Stream stream) {
@@ -119,5 +114,4 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
     protected IVfsFile convertDirEntryToFile(VfsDirEntry dirEntry) {
         throw new UnsupportedOperationException();
     }
-
 }

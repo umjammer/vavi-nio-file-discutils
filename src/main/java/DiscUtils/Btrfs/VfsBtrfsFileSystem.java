@@ -129,7 +129,10 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
                 .find(RootRef.class, new Key(ReservedObjectId.FsTree, ItemType.RootRef), getContext());
         List<Subvolume> result = new ArrayList<>();
         for (RootRef volume : volumes) {
-            result.add(new Subvolume());
+            Subvolume subvolume = new Subvolume();
+            subvolume.setId(volume.getKey().getOffset());
+            subvolume.setName(volume.getName());
+            result.add(subvolume);
         }
         return result.toArray(new Subvolume[0]);
     }

@@ -22,10 +22,14 @@
 
 package DiscUtils.Vmdk;
 
+
+/**
+ * Enumeration of VMDK disk types.
+ *
+ * use ordinal
+ */
 public enum DiskCreateType {
     /**
-     * Enumeration of VMDK disk types.
-     *
      * None - do not use.
      */
     None,

@@ -22,63 +22,56 @@
 
 package DiscUtils.Ext;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+
+/**
+ * Feature flags for backwards compatible features.
+ */
 public enum CompatibleFeatures {
     /**
-     * Feature flags for backwards compatible features.
-     *
      * Indicates pre-allocation hints are present.
      */
-    __dummyEnum__0,
     DirectoryPreallocation,
     /**
      * AFS support in inodex.
      */
     IMagicInodes,
-    __dummyEnum__1,
     /**
      * Indicates an EXT3-style journal is present.
      */
     HasJournal,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
     /**
      * Indicates extended attributes (e.g. FileACLs) are present.
      */
     ExtendedAttributes,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    __dummyEnum__11,
     /**
      * Indicates space is reserved through a special inode to enable the file
      * system to be resized dynamically.
      */
     ResizeInode,
-    __dummyEnum__12,
-    __dummyEnum__13,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    __dummyEnum__17,
-    __dummyEnum__18,
-    __dummyEnum__19,
-    __dummyEnum__20,
-    __dummyEnum__21,
-    __dummyEnum__22,
-    __dummyEnum__23,
-    __dummyEnum__24,
-    __dummyEnum__25,
-    __dummyEnum__26,
     /**
      * Indicates that directory indexes are present (not used in mainline?).
      */
     DirectoryIndex;
 
-    public static CompatibleFeatures valueOf(int value) {
-        return values()[value];
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<CompatibleFeatures> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(CompatibleFeatures.class)));
     }
 }

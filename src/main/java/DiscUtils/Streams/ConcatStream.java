@@ -24,6 +24,7 @@ package DiscUtils.Streams;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
@@ -42,9 +43,14 @@ public class ConcatStream extends SparseStream {
 
     private List<SparseStream> _streams;
 
+    public ConcatStream(Ownership ownsStreams, SparseStream... streams) {
+        this(ownsStreams, Arrays.asList(streams));
+    }
+
     public ConcatStream(Ownership ownsStreams, List<SparseStream> streams) {
         _ownsStreams = ownsStreams;
         _streams = streams;
+
         // Only allow writes if all streams can be written
         _canWrite = true;
         for (SparseStream stream : streams) {
@@ -72,11 +78,13 @@ public class ConcatStream extends SparseStream {
     public List<StreamExtent> getExtents() {
         checkDisposed();
         List<StreamExtent> extents = new ArrayList<>();
+
         long pos = 0;
         for (int i = 0; i < _streams.size(); ++i) {
             for (StreamExtent extent : _streams.get(i).getExtents()) {
                 extents.add(new StreamExtent(extent.getStart() + pos, extent.getLength()));
             }
+
             pos += _streams.get(i).getLength();
         }
         return extents;
@@ -88,6 +96,7 @@ public class ConcatStream extends SparseStream {
         for (int i = 0; i < _streams.size(); ++i) {
             length += _streams.get(i).getLength();
         }
+
         return length;
     }
 
@@ -110,21 +119,28 @@ public class ConcatStream extends SparseStream {
 
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
+
         int totalRead = 0;
         int numRead = 0;
+
         do {
             long[] activeStreamStartPos = new long[1];
             int activeStream = getActiveStream(activeStreamStartPos);
+
             _streams.get(activeStream).setPosition(_position - activeStreamStartPos[0]);
+
             numRead = _streams.get(activeStream).read(buffer, offset + totalRead, count - totalRead);
+
             totalRead += numRead;
             _position += numRead;
         } while (numRead != 0);
+
         return totalRead;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
+
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += _position;
@@ -135,13 +151,13 @@ public class ConcatStream extends SparseStream {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-
         setPosition(effectiveOffset);
         return getPosition();
     }
 
     public void setLength(long value) {
         checkDisposed();
+
         long[] lastStreamOffset = new long[1];
         int lastStream = getStream(getLength(), lastStreamOffset);
         if (value < lastStreamOffset[0]) {
@@ -153,14 +169,17 @@ public class ConcatStream extends SparseStream {
 
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
+
         int totalWritten = 0;
         while (totalWritten != count) {
             // Offset of the stream = streamOffset
             long[] streamOffset = new long[1];
             int streamIdx = getActiveStream(streamOffset);
+
             // Offset within the stream = streamPos
             long streamPos = _position - streamOffset[0];
             _streams.get(streamIdx).setPosition(streamPos);
+
             // Write (limited to the stream's length), except for final stream - that may be
             // extendable
             int numToWrite;
@@ -169,7 +188,9 @@ public class ConcatStream extends SparseStream {
             } else {
                 numToWrite = (int) Math.min(count - totalWritten, _streams.get(streamIdx).getLength() - streamPos);
             }
+
             _streams.get(streamIdx).write(buffer, offset + totalWritten, numToWrite);
+
             totalWritten += numToWrite;
             _position += numToWrite;
         }
@@ -203,6 +224,7 @@ public class ConcatStream extends SparseStream {
             streamStartPos[0] = streamStartPos[0] + _streams.get(focusStream).getLength();
             focusStream++;
         }
+
         return focusStream;
     }
 

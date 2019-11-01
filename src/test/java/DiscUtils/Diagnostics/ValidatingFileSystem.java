@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.Core.DiscFileSystem;

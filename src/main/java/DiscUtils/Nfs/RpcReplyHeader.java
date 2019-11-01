@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 
 public class RpcReplyHeader {
     public RpcAcceptedReplyHeader AcceptReply;

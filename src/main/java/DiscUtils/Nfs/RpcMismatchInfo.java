@@ -23,8 +23,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 public class RpcMismatchInfo {
     public int High;
 

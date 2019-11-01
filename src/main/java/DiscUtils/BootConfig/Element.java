@@ -29,21 +29,6 @@ package DiscUtils.BootConfig;
 
 import java.util.UUID;
 
-import vavi.util.Debug;
-
-import DiscUtils.BootConfig.ApplicationType;
-import DiscUtils.BootConfig.BaseStorage;
-import DiscUtils.BootConfig.BooleanElementValue;
-import DiscUtils.BootConfig.DeviceElementValue;
-import DiscUtils.BootConfig.ElementClass;
-import DiscUtils.BootConfig.ElementFormat;
-import DiscUtils.BootConfig.ElementValue;
-import DiscUtils.BootConfig.GuidElementValue;
-import DiscUtils.BootConfig.GuidListElementValue;
-import DiscUtils.BootConfig.IntegerElementValue;
-import DiscUtils.BootConfig.IntegerListElementValue;
-import DiscUtils.BootConfig.StringElementValue;
-
 
 /**
  * Represents an element in a Boot Configuration Database object.
@@ -390,7 +375,7 @@ public class Element {
     }
 
     private ElementValue loadValue() {
-Debug.println("getFormat():" + getFormat());
+//Debug.println("getFormat():" + getFormat());
         switch (getFormat()) {
         case Boolean:
             return new BooleanElementValue(_storage.getBinary(_obj, _identifier));

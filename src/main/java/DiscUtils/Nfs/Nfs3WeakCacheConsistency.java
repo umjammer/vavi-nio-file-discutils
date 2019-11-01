@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 public final class Nfs3WeakCacheConsistency {
     public Nfs3WeakCacheConsistency(XdrDataReader reader) {
         if (reader.readBool()) {

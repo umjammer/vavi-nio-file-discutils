@@ -22,13 +22,17 @@
 
 package DiscUtils.Xfs;
 
+
+/**
+ * Inode type
+ *
+ * use ordinal
+ */
 public enum DirectoryFType {
+    __dummyEnum__0,
     /**
-     * Inode type
-     *
      * Entry points to a file.
      */
-    __dummyEnum__0,
     File,
     /**
      * Entry points to another directory.

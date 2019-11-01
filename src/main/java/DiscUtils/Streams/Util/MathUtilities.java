@@ -97,5 +97,4 @@ public class MathUtilities {
 
         throw new IllegalArgumentException("Input is not a power of Two");
     }
-
 }

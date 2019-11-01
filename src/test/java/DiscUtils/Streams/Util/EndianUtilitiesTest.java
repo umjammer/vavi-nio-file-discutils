@@ -147,6 +147,14 @@ class EndianUtilitiesTest {
         EndianUtilities.writeBytesLittleEndian(expected, buf, 0);
         assertArrayEquals(bytes, buf);
     }
+
+    @Test
+    void testString() {
+        String s = new String(new char[] { 'á', 'â', 'ã' });
+        byte[] bytes = new byte[s.length()];
+        EndianUtilities.stringToBytes(s, bytes, 0, bytes.length);
+        assertEquals(s, EndianUtilities.bytesToString(bytes, 0, bytes.length));
+    }
 }
 
 /* */

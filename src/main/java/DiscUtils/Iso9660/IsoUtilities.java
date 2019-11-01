@@ -107,7 +107,8 @@ public class IsoUtilities {
 
     public static String readChars(byte[] buffer, int offset, int numBytes, Charset enc) {
         char[] chars;
-        // Special handling for 'magic' names '\x00' and '\x01', which indicate root and
+        // Special handling for 'magic' names '\x00' and '\x01', which indicate
+        // root and
         // parent, respectively
         if (numBytes == 1) {
             chars = new char[1];
@@ -143,8 +144,8 @@ public class IsoUtilities {
     public static boolean isValidAString(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!((str.charAt(i) >= ' ' && str.charAt(i) <= '\"') || (str.charAt(i) >= '%' && str.charAt(i) <= '/') ||
-                (str.charAt(i) >= ':' && str.charAt(i) <= '?') || (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
-                (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') || (str.charAt(i) == '_'))) {
+                  (str.charAt(i) >= ':' && str.charAt(i) <= '?') || (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
+                  (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') || (str.charAt(i) == '_'))) {
                 return false;
             }
         }
@@ -167,7 +168,7 @@ public class IsoUtilities {
     public static boolean isValidFileName(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
-                (str.charAt(i) == '_') || (str.charAt(i) == '.') || (str.charAt(i) == ';'))) {
+                  (str.charAt(i) == '_') || (str.charAt(i) == '.') || (str.charAt(i) == ';'))) {
                 return false;
             }
         }
@@ -231,20 +232,19 @@ public class IsoUtilities {
      * @return The time in UTC.
      */
     public static long toUTCDateTimeFromDirectoryTime(byte[] data, int offset) {
-        Instant relTime = ZonedDateTime
-                .of(1900 + data[offset],
-                    data[offset + 1],
-                    data[offset + 2],
-                    data[offset + 3],
-                    data[offset + 4],
-                    data[offset + 5],
-                    0,
-                    ZoneId.of("UTC"))
-                .toInstant();
-        return relTime.minus(Duration.ofMinutes(15 * data[offset + 6])).toEpochMilli();
+        ZonedDateTime relTime = ZonedDateTime.of(1900 + data[offset],
+                                                 data[offset + 1],
+                                                 data[offset + 2],
+                                                 data[offset + 3],
+                                                 data[offset + 4],
+                                                 data[offset + 5],
+                                                 0,
+                                                 ZoneId.of("UTC"));
+        return relTime.minus(Duration.ofMinutes(15 * data[offset + 6])).toInstant().toEpochMilli();
     }
 
-    // In case the ISO has a bad date encoded, we'll just fall back to using a fixed
+    // In case the ISO has a bad date encoded, we'll just fall back to using a
+    // fixed
     // date
     public static void toDirectoryTimeFromUTC(byte[] data, int offset, long dateTime_) {
         if (dateTime_ == Long.MIN_VALUE) {
@@ -279,7 +279,8 @@ public class IsoUtilities {
         }
 
         String strForm = new String(data, offset, 16, Charset.forName("ASCII"));
-        // Work around bugs in burning software that may use zero bytes (rather than '0'
+        // Work around bugs in burning software that may use zero bytes (rather
+        // than '0'
         // characters)
         strForm = strForm.replace('\0', '0');
         int year = safeParseInt(1, 9999, strForm.substring(0, 4));
@@ -290,8 +291,8 @@ public class IsoUtilities {
         int sec = safeParseInt(0, 59, strForm.substring(12, 12 + 2));
         int hundredths = safeParseInt(0, 99, strForm.substring(14, 14 + 2));
         try {
-            Instant time = ZonedDateTime.of(year, month, day, hour, min, sec, hundredths * 10, ZoneId.of("UTC")).toInstant();
-            return time.minus(Duration.ofMinutes(15 * data[offset + 16])).toEpochMilli();
+            ZonedDateTime time = ZonedDateTime.of(year, month, day, hour, min, sec, hundredths * 10, ZoneId.of("UTC"));
+            return time.minus(Duration.ofMinutes(15 * data[offset + 16])).toInstant().toEpochMilli();
         } catch (DateTimeException e) {
             logger.warning(e.getMessage());
             return Long.MIN_VALUE;

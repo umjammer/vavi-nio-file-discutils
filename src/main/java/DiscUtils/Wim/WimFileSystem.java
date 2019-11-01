@@ -161,15 +161,10 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * Gets the short name for a given path.
      *
      * @param path The path to convert.
-     * @return The short name.
-     *         This method only gets the short name for the final part of the
-     *         path, to
-     *         convert a complete path, call this method repeatedly, once for
-     *         each path
-     *         segment. If there is no short name for the given path,
-     *         {@code null}
-     *         is
-     *         returned.
+     * @return The short name. This method only gets the short name for the
+     *         final part of the path, to convert a complete path, call this
+     *         method repeatedly, once for each path segment. If there is no
+     *         short name for the given path, {@code null} is returned.
      */
     public String getShortName(String path) {
         DirectoryEntry dirEntry = getEntry(path);
@@ -195,10 +190,11 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     public WindowsFileInformation getFileStandardInformation(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         WindowsFileInformation wfi = new WindowsFileInformation();
-        wfi.setCreationTime(DateUtil.fromFileTime(dirEntry.CreationTime).toEpochMilli());
-        wfi.setLastAccessTime(DateUtil.fromFileTime(dirEntry.LastAccessTime).toEpochMilli());
-        wfi.setChangeTime(DateUtil.fromFileTime(Math.max(dirEntry.LastWriteTime, Math.max(dirEntry.CreationTime, dirEntry.LastAccessTime))).toEpochMilli());
-        wfi.setLastWriteTime(DateUtil.fromFileTime(dirEntry.LastWriteTime).toEpochMilli());
+        wfi.setCreationTime(DateUtil.fromFileTime(dirEntry.CreationTime));
+        wfi.setLastAccessTime(DateUtil.fromFileTime(dirEntry.LastAccessTime));
+        wfi.setChangeTime(DateUtil
+                .fromFileTime(Math.max(dirEntry.LastWriteTime, Math.max(dirEntry.CreationTime, dirEntry.LastAccessTime))));
+        wfi.setLastWriteTime(DateUtil.fromFileTime(dirEntry.LastWriteTime));
         wfi.setFileAttributes(dirEntry.Attributes);
         return wfi;
     }
@@ -217,10 +213,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * Gets the names of the alternate data streams for a file.
      *
      * @param path The path to the file.
-     * @return
-     *         The list of alternate data streams (or empty, if none). To access
-     *         the contents
-     *         of the alternate streams, use OpenFile(path + ":" + name, ...).
+     * @return The list of alternate data streams (or empty, if none). To access
+     *         the contents of the alternate streams, use OpenFile(path + ":" +
+     *         name, ...).
      */
     public List<String> getAlternateDataStreams(String path) {
         DirectoryEntry dirEntry = getEntry(path);
@@ -240,12 +235,10 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * Gets the file id for a given path.
      *
      * @param path The path to get the id of.
-     * @return The file id, or -1.
-     *         The returned file id uniquely identifies the file, and is shared
-     *         by all hard
-     *         links to the same file. The value -1 indicates no unique
-     *         identifier is
-     *         available, and so it can be assumed the file has no hard links.
+     * @return The file id, or -1. The returned file id uniquely identifies the
+     *         file, and is shared by all hard links to the same file. The value
+     *         -1 indicates no unique identifier is available, and so it can be
+     *         assumed the file has no hard links.
      */
     public long getFileId(String path) {
         DirectoryEntry dirEntry = getEntry(path);
@@ -256,11 +249,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * Indicates whether the file is known by other names.
      *
      * @param path The file to inspect.
-     * @return
-     *         {@code true}
-     *         if the file has other names, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the file has other names, else {@code false} .
      */
     public boolean hasHardLinks(String path) {
         DirectoryEntry dirEntry = getEntry(path);
@@ -291,8 +280,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
      * @param path The path to search.
@@ -344,8 +332,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     /**
      * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * matching a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -482,12 +469,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      *
      * @param path The path to the file.
      * @return The 160-bit hash.The WIM file format internally stores the SHA-1
-     *         hash of files.
-     *         This method provides access to the stored hash. Callers can use
-     *         this
-     *         value to compare against the actual hash of the byte stream to
-     *         validate
-     *         the integrity of the file contents.
+     *         hash of files. This method provides access to the stored hash.
+     *         Callers can use this value to compare against the actual hash of
+     *         the byte stream to validate the integrity of the file contents.
      */
     public byte[] getFileHash(String path) {
         String[] filePart = new String[1];

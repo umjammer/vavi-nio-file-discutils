@@ -27,6 +27,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,11 +57,8 @@ public final class DiscContentBuffer extends Buffer {
         _userName = userName;
         _password = password;
         client = new OkHttpClient().newBuilder().followRedirects(false).followSslRedirects(false).build();
-        Response response = sendRequest(() -> {
-            Request wr = new Request.Builder().url(uri.toString()).head().build();
-            return wr;
-        });
-        __Capacity = response.body().contentLength();
+        Response response = sendRequest(() -> new Request.Builder().url(uri.toString()).head().build());
+        _capacity = response.body().contentLength();
     }
 
     public boolean canRead() {
@@ -71,20 +69,17 @@ public final class DiscContentBuffer extends Buffer {
         return false;
     }
 
-    private long __Capacity;
+    private long _capacity;
 
     public long getCapacity() {
-        return __Capacity;
+        return _capacity;
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        Response response = sendRequest(() -> {
-            Request wr = new Request.Builder().url(_uri.toString())
-                    .get()
-                    .addHeader("Range", String.format("bytes=%d-%d", (int) pos, (int) (pos + count - 1)))
-                    .build();
-            return wr;
-        });
+        Response response = sendRequest(() -> new Request.Builder().url(_uri.toString())
+                .get()
+                .addHeader("Range", String.format("bytes=%d-%d", (int) pos, (int) (pos + count - 1)))
+                .build());
         try (Stream s = new JavaIOStream(response.body().byteStream(), null)) {
             int total = (int) response.body().contentLength();
             int read = 0;
@@ -106,7 +101,8 @@ public final class DiscContentBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect();
+        return StreamExtent.intersect(Arrays.asList(new StreamExtent(0, _capacity)),
+                                      Arrays.asList(new StreamExtent(start, count)));
     }
 
     private static String toHexString(byte[] p) {
@@ -153,8 +149,8 @@ public final class DiscContentBuffer extends Buffer {
                                                  wr.url().uri().getPath(),
                                                  wr.method(),
                                                  authParams.get("realm"));
-                _authHeader = "Digest username=\"" + _userName + "\", realm=\"ODS\", nonce=\"" + authParams.get("nonce")
-                        + "\", uri=\"" + wr.url().uri().getPath() + "\", response=\"" + resp + "\"";
+                _authHeader = "Digest username=\"" + _userName + "\", realm=\"ODS\", nonce=\"" + authParams.get("nonce") +
+                              "\", uri=\"" + wr.url().uri().getPath() + "\", response=\"" + resp + "\"";
                 wr = wrc.invoke();
                 wr = wr.newBuilder().addHeader("Authorization", _authHeader).build();
                 try {

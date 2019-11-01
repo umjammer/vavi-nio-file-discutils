@@ -68,7 +68,7 @@ public class VirtualDiskManager {
             if (annotation != null) {
                 typeMap.put(annotation.type(), factory);
                 for (String extension : annotation.fileExtensions()) {
-                    extensionMap.put(extension.toUpperCase(), factory);
+                    extensionMap.put(extension.replace(".", "").toUpperCase(), factory);
                 }
             }
         }

@@ -38,132 +38,132 @@ public abstract class NodeHeader implements IByteArraySerializable {
     /**
      * Checksum of everything past this field (from 20 to the end of the node)
      */
-    private byte[] __Checksum;
+    private byte[] _checksum;
 
     public byte[] getChecksum() {
-        return __Checksum;
+        return _checksum;
     }
 
     public void setChecksum(byte[] value) {
-        __Checksum = value;
+        _checksum = value;
     }
 
     /**
      * FS UUID
      */
-    private UUID __FsUuid;
+    private UUID _fsUuid;
 
     public UUID getFsUuid() {
-        return __FsUuid;
+        return _fsUuid;
     }
 
     public void setFsUuid(UUID value) {
-        __FsUuid = value;
+        _fsUuid = value;
     }
 
     /**
      * Logical address of this node
      */
-    private long __LogicalAddress;
+    private long _logicalAddress;
 
     public long getLogicalAddress() {
-        return __LogicalAddress;
+        return _logicalAddress;
     }
 
     public void setLogicalAddress(long value) {
-        __LogicalAddress = value;
+        _logicalAddress = value;
     }
 
     /**
      * Flags
      */
-    private long __Flags;
+    private long _flags;
 
     public long getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(long value) {
-        __Flags = value;
+        _flags = value;
     }
 
     /**
      * Backref. Rev.: always 1 (MIXED) for new filesystems; 0 (OLD) indicates an
      * old filesystem.
      */
-    private byte __BackrefRevision;
+    private byte _backrefRevision;
 
     public byte getBackrefRevision() {
-        return __BackrefRevision;
+        return _backrefRevision;
     }
 
     public void setBackrefRevision(byte value) {
-        __BackrefRevision = value;
+        _backrefRevision = value;
     }
 
     /**
      * Chunk tree UUID
      */
-    private UUID __ChunkTreeUuid;
+    private UUID _chunkTreeUuid;
 
     public UUID getChunkTreeUuid() {
-        return __ChunkTreeUuid;
+        return _chunkTreeUuid;
     }
 
     public void setChunkTreeUuid(UUID value) {
-        __ChunkTreeUuid = value;
+        _chunkTreeUuid = value;
     }
 
     /**
      * Logical address of this node
      */
-    private long __Generation;
+    private long _generation;
 
     public long getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        _generation = value;
     }
 
     /**
      * The ID of the tree that contains this node
      */
-    private long __TreeId;
+    private long _treeId;
 
     public long getTreeId() {
-        return __TreeId;
+        return _treeId;
     }
 
     public void setTreeId(long value) {
-        __TreeId = value;
+        _treeId = value;
     }
 
     /**
      * Number of items
      */
-    private int __ItemCount;
+    private int _itemCount;
 
     public int getItemCount() {
-        return __ItemCount;
+        return _itemCount;
     }
 
     public void setItemCount(int value) {
-        __ItemCount = value;
+        _itemCount = value;
     }
 
     /**
      * Level (0 for leaf nodes)
      */
-    private byte __Level;
+    private byte _level;
 
     public byte getLevel() {
-        return __Level;
+        return _level;
     }
 
     public void setLevel(byte value) {
-        __Level = value;
+        _level = value;
     }
 
     public int size() {
@@ -219,7 +219,7 @@ public abstract class NodeHeader implements IByteArraySerializable {
     public <T extends BaseItem> List<T> find(Class<T> clazz, Key key, Context context) {
         List<T> result = new ArrayList<>();
         for (BaseItem item : find(key, context)) {
-            T typed = clazz.isInstance(item) ? (T) item : (T) null;
+            T typed = clazz.isInstance(item) ? clazz.cast(item) : null;
             if (typed != null)
                 result.add(typed);
         }

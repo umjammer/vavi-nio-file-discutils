@@ -28,7 +28,6 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 import java.util.UUID;
@@ -151,10 +150,8 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                             long diskBytesLeft = diskStream.getLength() - i * Sizes.OneMiB;
                             if (diskBytesLeft < Sizes.OneMiB) {
                                 chunkStream = new ConcatStream(Ownership.Dispose,
-                                                               Arrays.asList(new SubStream(diskStream,
-                                                                                           i * Sizes.OneMiB,
-                                                                                           diskBytesLeft),
-                                                                             new ZeroStream(Sizes.OneMiB - diskBytesLeft)));
+                                                               new SubStream(diskStream, i * Sizes.OneMiB, diskBytesLeft),
+                                                               new ZeroStream(Sizes.OneMiB - diskBytesLeft));
                             } else {
                                 chunkStream = new SubStream(diskStream, i * Sizes.OneMiB, Sizes.OneMiB);
                             }
@@ -240,12 +237,8 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         StringBuilder objectsString = new StringBuilder();
         objectsString.append(String.format(StaticStrings.XVA_ova_vm, "Ref:" + vmId, vmGuid, vmName, vbdRefs));
         for (int i = 0; i < _disks.size(); ++i) {
-            objectsString.append(String.format(StaticStrings.XVA_ova_vbd,
-                                               "Ref:" + vbdIds[i],
-                                               vbdGuids[i],
-                                               "Ref:" + vmId,
-                                               "Ref:" + vdiIds[i],
-                                               i));
+            objectsString.append(String
+                    .format(StaticStrings.XVA_ova_vbd, "Ref:" + vbdIds[i], vbdGuids[i], "Ref:" + vmId, "Ref:" + vdiIds[i], i));
         }
         for (int i = 0; i < _disks.size(); ++i) {
             objectsString.append(String.format(StaticStrings.XVA_ova_vdi,

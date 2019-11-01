@@ -33,17 +33,17 @@ public final class DiskImageFileSpecification {
     private final StreamBuilder _builder;
 
     public DiskImageFileSpecification(String name, StreamBuilder builder) {
-        __Name = name;
+        _name = name;
         _builder = builder;
     }
 
     /**
      * Gets name of the file.
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     /**

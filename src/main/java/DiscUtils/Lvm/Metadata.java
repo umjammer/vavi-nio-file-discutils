@@ -24,6 +24,8 @@ package DiscUtils.Lvm;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,9 +48,9 @@ public class Metadata {
 
     public List<MetadataVolumeGroupSection> VolumeGroupSections;
 
-    private static final Instant DOTNET_MAX = Instant.parse("9999-12-31T23:59:59.999999900Z");
+    private static final ZonedDateTime DOTNET_MAX = Instant.parse("9999-12-31T23:59:59.999999900Z").atZone(ZoneId.of("UTC"));
 
-    private static final long _maxSeconds = Duration.between(DOTNET_MAX, Instant.EPOCH).getSeconds();
+    private static final long _maxSeconds = Duration.between(Instant.EPOCH, DOTNET_MAX).getSeconds();
 
     public static Metadata parse(String metadata) {
         try (Scanner reader = new Scanner(metadata)) {
@@ -118,7 +120,7 @@ public class Metadata {
         if (numeric > _maxSeconds)
             return Long.MAX_VALUE;
 
-        return Instant.EPOCH.plus(Duration.ofSeconds(numeric)).toEpochMilli();
+        return Instant.EPOCH.plusSeconds(numeric).toEpochMilli();
     }
 
     public static long parseNumericValue(String value) {

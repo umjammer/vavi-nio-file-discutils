@@ -23,7 +23,6 @@
 package DiscUtils.Registry;
 
 import java.nio.charset.Charset;
-import java.time.Instant;
 import java.util.UUID;
 
 import vavi.util.win32.DateUtil;
@@ -84,7 +83,7 @@ public final class HiveHeader implements IByteArraySerializable {
 
         Sequence1 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0004);
         Sequence2 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0008);
-        Timestamp = DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x000C));
+        Timestamp = DateUtil.toFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x000C));
         MajorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0014);
         MinorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0018);
         @SuppressWarnings("unused")
@@ -110,7 +109,7 @@ public final class HiveHeader implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset);
         EndianUtilities.writeBytesLittleEndian(Sequence1, buffer, offset + 0x0004);
         EndianUtilities.writeBytesLittleEndian(Sequence2, buffer, offset + 0x0008);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(Timestamp)), buffer, offset + 0x000C);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Timestamp), buffer, offset + 0x000C);
         EndianUtilities.writeBytesLittleEndian(MajorVersion, buffer, offset + 0x0014);
         EndianUtilities.writeBytesLittleEndian(MinorVersion, buffer, offset + 0x0018);
         EndianUtilities.writeBytesLittleEndian(1, buffer, offset + 0x0020);

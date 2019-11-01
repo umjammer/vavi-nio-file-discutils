@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import vavi.util.Debug;
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
@@ -541,7 +542,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         if (VirtualDiskManager.getExtensionMap().containsKey(extension)) {
             return VirtualDiskManager.getExtensionMap().get(extension).openDiskLayer(locator, path, access);
         }
-
+Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
         return null;
     }
 

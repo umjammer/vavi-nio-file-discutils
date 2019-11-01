@@ -28,7 +28,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public final class ValueCell extends Cell {
-    private EnumSet<ValueFlags> _flags;
+    private EnumSet<ValueFlags> _flags = EnumSet.noneOf(ValueFlags.class);
 
     public ValueCell(String name) {
         this(-1);
@@ -40,44 +40,44 @@ public final class ValueCell extends Cell {
         setDataIndex(-1);
     }
 
-    private int __DataIndex;
+    private int _dataIndex;
 
     public int getDataIndex() {
-        return __DataIndex;
+        return _dataIndex;
     }
 
     public void setDataIndex(int value) {
-        __DataIndex = value;
+        _dataIndex = value;
     }
 
-    private int __DataLength;
+    private int _dataLength;
 
     public int getDataLength() {
-        return __DataLength;
+        return _dataLength;
     }
 
     public void setDataLength(int value) {
-        __DataLength = value;
+        _dataLength = value;
     }
 
-    private RegistryValueType __DataType = RegistryValueType.None;
+    private RegistryValueType _dataType = RegistryValueType.None;
 
     public RegistryValueType getDataType() {
-        return __DataType;
+        return _dataType;
     }
 
     public void setDataType(RegistryValueType value) {
-        __DataType = value;
+        _dataType = value;
     }
 
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
     public int size() {
@@ -99,9 +99,6 @@ public final class ValueCell extends Cell {
 
     public void writeTo(byte[] buffer, int offset) {
         int nameLen;
-        if (_flags == null) { // TODO no initializer
-            _flags = EnumSet.noneOf(ValueFlags.class);
-        }
         if (getName() == null || getName().isEmpty()) {
             _flags.remove(ValueFlags.Named);
             nameLen = 0;
@@ -121,6 +118,6 @@ public final class ValueCell extends Cell {
     }
 
     public String toString() {
-        return "ValueCell{" + __Name + ", " + __DataType + "}";
+        return "ValueCell{" + _name + ", " + _dataType + "}";
     }
 }

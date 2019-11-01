@@ -115,7 +115,6 @@ public final class SnapshotStream extends SparseStream {
         if (SparseStream.class.isInstance(_baseStream)) {
             return StreamExtent.union(SparseStream.class.cast(_baseStream).getExtents(), _diffExtents);
         }
-
         return Arrays.asList(new StreamExtent(0, getLength()));
     }
 
@@ -227,6 +226,7 @@ public final class SnapshotStream extends SparseStream {
      */
     public int read(byte[] buffer, int offset, int count) {
         int numRead;
+
         if (_diffStream == null) {
             _baseStream.setPosition(_position);
             numRead = _baseStream.read(buffer, offset, count);
@@ -236,11 +236,13 @@ public final class SnapshotStream extends SparseStream {
             }
 
             int toRead = (int) Math.min(count, _diffStream.getLength() - _position);
+
             // If the read is within the base stream's range, then touch it first to get the
             // (potentially) stale data.
             if (_position < _baseStream.getLength()) {
                 int baseToRead = (int) Math.min(toRead, _baseStream.getLength() - _position);
                 _baseStream.setPosition(_position);
+
                 int totalBaseRead = 0;
                 while (totalBaseRead < baseToRead) {
                     totalBaseRead += _baseStream.read(buffer, offset + totalBaseRead, baseToRead - totalBaseRead);
@@ -258,9 +260,12 @@ public final class SnapshotStream extends SparseStream {
                                                        (int) (extent.getLength() - overlayNumRead));
                 }
             }
+
             numRead = toRead;
         }
+
         _position += numRead;
+
         return numRead;
     }
 
@@ -311,12 +316,15 @@ public final class SnapshotStream extends SparseStream {
      */
     public void write(byte[] buffer, int offset, int count) {
         checkFrozen();
+
         if (_diffStream != null) {
             _diffStream.setPosition(_position);
             _diffStream.write(buffer, offset, count);
+
             // Beware of Linq's delayed model - force execution now by placing into a list.
             // Without this, large execution chains can build up (v. slow) and potential for stack overflow.
             _diffExtents = new ArrayList<>(StreamExtent.union(_diffExtents, new StreamExtent(_position, count)));
+
             _position += count;
         } else {
             _baseStream.setPosition(_position);
@@ -345,7 +353,5 @@ public final class SnapshotStream extends SparseStream {
         if (_frozen) {
             throw new UnsupportedOperationException("The stream is frozen");
         }
-
     }
-
 }

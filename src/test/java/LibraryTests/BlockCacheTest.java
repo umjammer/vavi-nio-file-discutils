@@ -224,8 +224,8 @@ public class BlockCacheTest {
         BlockCacheSettings settings = new BlockCacheSettings();
         settings.setBlockSize(10);
         settings.setOptimumReadSize(20);
-        settings.setReadCacheSize(100);
-        settings.setLargeReadSize(30);
+        settings.setReadCacheSize(50);
+        settings.setLargeReadSize(100);
         BlockCacheStream cacheStream = new BlockCacheStream(SparseStream.fromStream(ms, Ownership.Dispose),
                                                             Ownership.Dispose,
                                                             settings);

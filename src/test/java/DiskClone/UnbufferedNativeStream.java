@@ -168,9 +168,6 @@ public class UnbufferedNativeStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return new StreamExtent[] {
-            new StreamExtent(0, getLength())
-        };
+        return ArrayList(new StreamExtent(0, getLength()));
     }
-
 }

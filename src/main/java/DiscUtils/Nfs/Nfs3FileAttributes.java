@@ -25,7 +25,6 @@ package DiscUtils.Nfs;
 import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFilePermissions;
-import DiscUtils.Core.Internal.Utilities;
 
 
 public final class Nfs3FileAttributes {

@@ -562,7 +562,7 @@ public class Inode implements IByteArraySerializable {
         for (int i = 0; i < getExtents(); i++) {
             Extent extent = new Extent();
             offset += extent.readFrom(getDataFork(), offset);
-            result.set(i, extent);
+            result.add(extent);
         }
         return result;
     }

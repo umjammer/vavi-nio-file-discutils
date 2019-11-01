@@ -665,7 +665,7 @@ public class SuperBlock implements IByteArraySerializable {
         _compatibleFeatures = value;
     }
 
-    private EnumSet<ReadOnlyCompatibleFeatures> _readOnlyCompatibleFeatures;
+    private EnumSet<ReadOnlyCompatibleFeatures> _readOnlyCompatibleFeatures = EnumSet.noneOf(ReadOnlyCompatibleFeatures.class);
 
     public EnumSet<ReadOnlyCompatibleFeatures> getReadOnlyCompatibleFeatures() {
         return _readOnlyCompatibleFeatures;
@@ -675,7 +675,7 @@ public class SuperBlock implements IByteArraySerializable {
         _readOnlyCompatibleFeatures = value;
     }
 
-    private EnumSet<IncompatibleFeatures> _incompatibleFeatures;
+    private EnumSet<IncompatibleFeatures> _incompatibleFeatures = EnumSet.noneOf(IncompatibleFeatures.class);
 
     public EnumSet<IncompatibleFeatures> getIncompatibleFeatures() {
         return _incompatibleFeatures;

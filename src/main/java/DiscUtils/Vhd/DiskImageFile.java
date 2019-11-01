@@ -117,13 +117,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
         this(new LocalFileLocator(Utilities.getDirectoryFromPath(path)), Utilities.getFileFromPath(path), access);
     }
 
-    public DiskImageFile(FileLocator locator, String path, Stream stream, Ownership ownsStream) {
+    DiskImageFile(FileLocator locator, String path, Stream stream, Ownership ownsStream) {
         this(stream, ownsStream);
         _fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
         _fileName = locator.getFileFromPath(path);
     }
 
-    public DiskImageFile(FileLocator locator, String path, FileAccess access) throws IOException {
+    DiskImageFile(FileLocator locator, String path, FileAccess access) throws IOException {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         _fileStream = locator.open(path, FileMode.Open, access, share);
         _ownership = Ownership.Dispose;
@@ -360,12 +360,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *
      * @param basePath The full path to this file.
      * @return Array of candidate file locations.
+     * @deprecated Use {@link #getParentLocations()} by preference
      */
     public List<String> getParentLocations(String basePath) {
         return getParentLocations(new LocalFileLocator(basePath));
     }
 
-    public static DiskImageFile initializeFixed(FileLocator locator,
+    static DiskImageFile initializeFixed(FileLocator locator,
                                                 String path,
                                                 long capacity,
                                                 Geometry geometry) throws IOException {
@@ -378,7 +379,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return result;
     }
 
-    public static DiskImageFile initializeDynamic(FileLocator locator,
+    static DiskImageFile initializeDynamic(FileLocator locator,
                                                   String path,
                                                   long capacity,
                                                   Geometry geometry,
@@ -392,7 +393,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return result;
     }
 
-    public DiskImageFile createDifferencing(FileLocator fileLocator, String path) throws IOException {
+    DiskImageFile createDifferencing(FileLocator fileLocator, String path) throws IOException {
         Stream stream = fileLocator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
         String fullPath = _fileLocator.getFullPath(_fileName);
         String relativePath = fileLocator.makeRelativePath(_fileLocator, _fileName);
@@ -401,7 +402,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return new DiskImageFile(fileLocator, path, stream, Ownership.Dispose);
     }
 
-    public MappedStream doOpenContent(SparseStream parent, Ownership ownsParent) {
+    MappedStream doOpenContent(SparseStream parent, Ownership ownsParent) {
         if (_footer.DiskType == FileType.Fixed) {
             if (parent != null && ownsParent == Ownership.Dispose) {
                 try {
@@ -531,11 +532,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
         dynamicHeader.toBytes(dynamicHeaderBlock, 0);
 
         byte[] platformLocator1 = new byte[512];
-        System.arraycopy(parentAbsolutePath
-                .getBytes(Charset.forName("UTF-16LE")), 0, platformLocator1, 0, parentAbsolutePath.length());
+        byte[] bytes = parentAbsolutePath.getBytes(Charset.forName("UTF-16LE"));
+        System.arraycopy(bytes, 0, platformLocator1, 0, bytes.length);
         byte[] platformLocator2 = new byte[512];
-        System.arraycopy(parentRelativePath
-                .getBytes(Charset.forName("UTF-16LE")), 0, platformLocator2, 0, parentRelativePath.length());
+        bytes = parentRelativePath.getBytes(Charset.forName("UTF-16LE"));
+        System.arraycopy(bytes, 0, platformLocator2, 0, bytes.length);
 
         byte[] bat = new byte[batSize];
         for (int i = 0; i < bat.length; ++i) {
@@ -575,6 +576,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 _fileStream.setPosition(pl.PlatformDataOffset);
                 byte[] buffer = StreamUtilities.readExact(_fileStream, pl.PlatformDataLength);
                 String locationVal = new String(buffer, Charset.forName("UTF-16LE"));
+//Debug.println(locationVal + ", " + pl.PlatformCode + ", "+ StringUtil.getDump(locationVal));
                 if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.PlatformCode)) {
                     absPaths.add(locationVal);
                 } else {
@@ -582,10 +584,12 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 }
             }
         }
+
         // Order the paths to put absolute paths first
         List<String> paths = new ArrayList<>(absPaths.size() + relPaths.size() + 1);
         paths.addAll(absPaths);
         paths.addAll(relPaths);
+
         // As a back-up, try to infer from the parent name...
         if (paths.size() == 0) {
             paths.add(fileLocator.resolveRelativePath(_dynamicHeader.ParentUnicodeName));
@@ -597,7 +601,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
     private void readFooter(boolean fallbackToFront) {
         _fileStream.setPosition(_fileStream.getLength() - Sizes.Sector);
         byte[] sector = StreamUtilities.readExact(_fileStream, Sizes.Sector);
+
         _footer = Footer.fromBytes(sector, 0);
+
         if (!_footer.isValid()) {
             if (!fallbackToFront) {
                 throw new dotnet4j.io.IOException("Corrupt VHD file - invalid footer at end (did not check front of file)");
@@ -605,6 +611,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
             _fileStream.setPosition(0);
             StreamUtilities.readExact(_fileStream, sector, 0, Sizes.Sector);
+
             _footer = Footer.fromBytes(sector, 0);
             if (!_footer.isValid()) {
                 throw new dotnet4j.io.IOException("Failed to find a valid VHD footer at start or end of file - VHD file is corrupt");

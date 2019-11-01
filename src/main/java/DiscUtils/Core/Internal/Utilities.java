@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -311,5 +312,17 @@ public class Utilities {
 
         String query = "^" + pattern.replaceAll("\\*", ".*").replaceAll("\\?", "[^.]") + "$";
         return Pattern.compile(query, Pattern.CASE_INSENSITIVE);
+    }
+
+    private static final Pattern envPattern = Pattern.compile("%(\\w+)%");
+
+    // Environment#
+    public static String expandEnvironmentVariables(String value) {
+        Matcher matcher = envPattern.matcher(value);
+        while (matcher.find()) {
+            String envKey = matcher.group(1);
+            value = value.replace(matcher.group(0), System.getenv(matcher.group(1)));
+        }
+        return value;
     }
 }

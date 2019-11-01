@@ -1,33 +1,35 @@
 //
+// Copyright (c) 2017, Bianco Veigel
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
 
 package DiscUtils.Btrfs.Base;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+
 public enum InodeFlag {
-    //
-    // Copyright (c) 2017, Bianco Veigel
-    //
-    // Permission is hereby granted, free of charge, to any person obtaining a
-    // copy of this software and associated documentation files (the "Software"),
-    // to deal in the Software without restriction, including without limitation
-    // the rights to use, copy, modify, merge, publish, distribute, sublicense,
-    // and/or sell copies of the Software, and to permit persons to whom the
-    // Software is furnished to do so, subject to the following conditions:
-    //
-    // The above copyright notice and this permission notice shall be included in
-    // all copies or substantial portions of the Software.
-    //
-    // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-    // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-    // DEALINGS IN THE SOFTWARE.
-    //
     /**
      * Do not perform checksum operations on this inode.
      */
@@ -47,11 +49,10 @@ public enum InodeFlag {
     /**
      * Do not compress this inode.
      * 
-     * This flag may be changed by the kernel as compression ratios change.
-     * If the compression ratio for data associated with an inode becomes
-     * undesirable,
-     * this flag will be set. It may be cleared if the data changes and the
-     * compression ratio is favorable again.
+     * This flag may be changed by the kernel as compression ratios change. If
+     * the compression ratio for data associated with an inode becomes
+     * undesirable, this flag will be set. It may be cleared if the data changes
+     * and the compression ratio is favorable again.
      */
     NoCompress,
     /**
@@ -60,9 +61,8 @@ public enum InodeFlag {
      */
     Prealloc,
     /**
-     * Operations on this inode will be performed synchronously.
-     * This flag is converted to a VFS-level inode flag but is not handled
-     * anywhere.
+     * Operations on this inode will be performed synchronously. This flag is
+     * converted to a VFS-level inode flag but is not handled anywhere.
      */
     Sync,
     /**
@@ -96,13 +96,24 @@ public enum InodeFlag {
      */
     Compress;
 
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+
     public static EnumSet<InodeFlag> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(InodeFlag.class)));
     }
 
     public static long valueOf(EnumSet<InodeFlag> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

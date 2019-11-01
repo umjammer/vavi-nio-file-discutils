@@ -33,8 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import vavi.util.Debug;
-
 
 /**
  * Represents a Boot Configuration Database object (application, device or
@@ -263,7 +261,7 @@ public class BcdObject {
      * @return The element object.
      */
     public Element getElement(int id) {
-Debug.println(id + ", " + hasElement(id));
+//Debug.println(id + ", " + hasElement(id));
         if (hasElement(id)) {
             return new Element(_storage, _id, getApplicationType(), id);
         }

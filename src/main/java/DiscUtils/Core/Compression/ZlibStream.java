@@ -137,6 +137,7 @@ public class ZlibStream extends Stream {
                 _stream.seek(-4, SeekOrigin.End);
                 byte[] footerBuffer = StreamUtilities.readExact(_stream, 4);
                 if (EndianUtilities.toInt32BigEndian(footerBuffer, 0) != _adler32.getValue()) {
+//Debug.printf("%x, %x\n", EndianUtilities.toInt32BigEndian(footerBuffer, 0), _adler32.getValue());
                     throw new IOException("Corrupt decompressed data detected");
                 }
             }

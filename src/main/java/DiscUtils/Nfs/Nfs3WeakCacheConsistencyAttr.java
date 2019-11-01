@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Core.Internal.Utilities;
-
 public final class Nfs3WeakCacheConsistencyAttr {
     public Nfs3WeakCacheConsistencyAttr(XdrDataReader reader) {
         setSize(reader.readInt64());

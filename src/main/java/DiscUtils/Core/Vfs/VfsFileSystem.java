@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Core.CoreCompat.FileAttributes;
@@ -499,7 +497,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             file = convertDirEntryToFile(dirEntry);
             _fileCache.set___idx(cacheKey, file);
         }
-Debug.println(file);
+//Debug.println(file);
         return file;
     }
 

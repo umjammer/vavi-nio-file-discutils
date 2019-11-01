@@ -42,7 +42,7 @@ public class BooleanElementValue extends ElementValue {
     }
 
     public String toString() {
-        return _value ? "True" : "False";
+        return _value ? Boolean.TRUE.toString() : Boolean.FALSE.toString();
     }
 
     public byte[] getBytes() {

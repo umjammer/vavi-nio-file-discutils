@@ -79,7 +79,6 @@ public class SampleDataTests {
         }
     }
 
-    @Test
     private static void isAllZero(String path, IFileSystem fs) throws Exception {
         DiscFileInfo fileInfo = fs.getFileInfo(path);
         byte[] buffer = new byte[4 * (int) Sizes.OneKiB];
@@ -91,7 +90,6 @@ public class SampleDataTests {
         }
     }
 
-    @Test
     private static String getFileContent(String path, IFileSystem fs) throws Exception {
         DiscFileInfo fileInfo = fs.getFileInfo(path);
 
@@ -100,7 +98,6 @@ public class SampleDataTests {
         }
     }
 
-    @Test
     private static String getFileChecksum(String path, IFileSystem fs) throws Exception {
         DiscFileInfo fileInfo = fs.getFileInfo(path);
         MessageDigest md5 = MessageDigest.getInstance("MD5");

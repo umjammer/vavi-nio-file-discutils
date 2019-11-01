@@ -28,6 +28,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,7 +161,7 @@ public final class OpticalDiscService {
         String askToken = null;
         Instant start = Instant.now();
         Duration maxWait = Duration.ofSeconds(maxWaitSecs);
-        while ("unknown".equals(askStatus) && maxWait.compareTo(Duration.between(Instant.now(), start)) > 0) {
+        while ("unknown".equals(askStatus) && maxWait.compareTo(Duration.between(start, Instant.now().atZone(ZoneId.of("UTC")))) > 0) {
             try {
                 try {
                     Thread.sleep(1000);

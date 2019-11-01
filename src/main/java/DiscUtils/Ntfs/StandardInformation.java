@@ -23,7 +23,6 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.time.Instant;
 import java.util.EnumSet;
 
 import vavi.util.win32.DateUtil;
@@ -88,10 +87,10 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(CreationTime)), buffer, 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(ModificationTime)), buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(MftChangedTime)), buffer, 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(LastAccessTime)), buffer, 0x18);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(CreationTime), buffer, 0x00);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(ModificationTime), buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(MftChangedTime), buffer, 0x10);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(LastAccessTime), buffer, 0x18);
         EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(_FileAttributes), buffer, 0x20);
         EndianUtilities.writeBytesLittleEndian(MaxVersions, buffer, 0x24);
         EndianUtilities.writeBytesLittleEndian(Version, buffer, 0x28);
@@ -148,6 +147,6 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
     }
 
     private static long readDateTime(byte[] buffer, int offset) {
-        return DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset));
+        return DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset));
     }
 }

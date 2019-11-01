@@ -136,7 +136,7 @@ public abstract class SparseStream extends Stream {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(getExtents());
+        return StreamExtent.intersect(getExtents(), Arrays.asList(new StreamExtent(start, count)));
     }
 
     private static class SparseReadOnlyWrapperStream extends SparseStream {

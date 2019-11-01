@@ -28,11 +28,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 import DiscUtils.Core.ClusterMap;
 import DiscUtils.Core.DiscFileSystemChecker;
 import DiscUtils.Core.IDiagnosticTraceable;

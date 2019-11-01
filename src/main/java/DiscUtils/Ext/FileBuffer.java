@@ -123,7 +123,6 @@ public class FileBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(Arrays.asList(new StreamExtent(start, count)));
+        return StreamExtent.intersect(Arrays.asList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
     }
-
 }

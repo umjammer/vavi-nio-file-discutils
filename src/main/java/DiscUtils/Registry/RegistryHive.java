@@ -207,15 +207,16 @@ public final class RegistryHive implements Closeable {
 
     public <K extends Cell> K getCell(int index) {
         Bin bin = getBin(index);
+
         if (bin != null) {
             return (K) bin.tryGetCell(index);
         }
-
         return null;
     }
 
     public void freeCell(int index) {
         Bin bin = getBin(index);
+
         if (bin != null) {
             bin.freeCell(index);
         }
@@ -227,11 +228,11 @@ public final class RegistryHive implements Closeable {
         }
 
         Bin bin = getBin(cell.getIndex());
+
         if (bin != null) {
             if (bin.updateCell(cell)) {
                 return cell.getIndex();
             }
-
             if (canRelocate) {
                 int oldCell = cell.getIndex();
                 cell.setIndex(allocateRawCell(cell.size()));
@@ -244,42 +245,43 @@ public final class RegistryHive implements Closeable {
                 freeCell(oldCell);
                 return cell.getIndex();
             }
-
             throw new IllegalArgumentException("Can't update cell, needs relocation but relocation disabled");
         }
-
         throw new IllegalArgumentException("No bin found containing index: " + cell.getIndex());
     }
 
     public byte[] rawCellData(int index, int maxBytes) {
         Bin bin = getBin(index);
+
         if (bin != null) {
             return bin.readRawCellData(index, maxBytes);
         }
-
         return null;
     }
 
     public boolean writeRawCellData(int index, byte[] data, int offset, int count) {
         Bin bin = getBin(index);
+
         if (bin != null) {
             return bin.writeRawCellData(index, data, offset, count);
         }
-
         throw new IllegalArgumentException("No bin found containing index: " + index);
     }
 
     public int allocateRawCell(int capacity) {
+        // Allow for size header and ensure multiple of 8
         int minSize = MathUtilities.roundUp(capacity + 4, 8);
+
+        // Incredibly inefficient algorithm...
         for (BinHeader binHeader : _bins) {
-            // Allow for size header and ensure multiple of 8
-            // Incredibly inefficient algorithm...
             Bin bin = loadBin(binHeader);
             int cellIndex = bin.allocateCell(minSize);
+
             if (cellIndex >= 0) {
                 return cellIndex;
             }
         }
+
         BinHeader newBinHeader = allocateBin(minSize);
         Bin newBin = loadBin(newBinHeader);
         return newBin.allocateCell(minSize);
@@ -354,11 +356,9 @@ public final class RegistryHive implements Closeable {
             if (x.FileOffset + x.BinSize < _index) {
                 return -1;
             }
-
             if (x.FileOffset > _index) {
                 return 1;
             }
-
             return 0;
         }
     }

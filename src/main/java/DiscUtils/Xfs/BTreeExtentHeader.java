@@ -31,54 +31,55 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public abstract class BTreeExtentHeader implements IByteArraySerializable {
     public static final int BtreeMagic = 0x424d4150;
 
-    private int __Magic;
+    private int _magic;
 
     public int getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(int value) {
-        __Magic = value;
+        _magic = value;
     }
 
-    private short __Level;
+    private short _level;
 
     public short getLevel() {
-        return __Level;
+        return _level;
     }
 
     public void setLevel(short value) {
-        __Level = value;
+        _level = value;
     }
 
-    private short __NumberOfRecords;
+    private short _numberOfRecords;
 
     public short getNumberOfRecords() {
-        return __NumberOfRecords;
+        assert _numberOfRecords >= 0;
+        return _numberOfRecords;
     }
 
     public void setNumberOfRecords(short value) {
-        __NumberOfRecords = value;
+        _numberOfRecords = value;
     }
 
-    private long __LeftSibling;
+    private long _leftSibling;
 
     public long getLeftSibling() {
-        return __LeftSibling;
+        return _leftSibling;
     }
 
     public void setLeftSibling(long value) {
-        __LeftSibling = value;
+        _leftSibling = value;
     }
 
-    private long __RightSibling;
+    private long _rightSibling;
 
     public long getRightSibling() {
-        return __RightSibling;
+        return _rightSibling;
     }
 
     public void setRightSibling(long value) {
-        __RightSibling = value;
+        _rightSibling = value;
     }
 
     public int size() {

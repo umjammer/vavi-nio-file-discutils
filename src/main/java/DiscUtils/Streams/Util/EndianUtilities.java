@@ -190,21 +190,24 @@ public class EndianUtilities {
      * Primitive conversion from Unicode to ASCII that preserves special
      * characters.
      *
+     * The built-in ASCIIEncoding converts characters of codepoint > 127 to ?,
+     * this preserves those code points by removing the top 16 bits of each
+     * character.
+     *
      * @param value The string to convert.
      * @param dest The buffer to fill.
      * @param offset The start of the string in the buffer.
-     * @param count The number of characters to convert.The built-in
-     *            ASCIICharset converts characters of codepoint > 127 to ?, this
-     *            preserves those code points by removing the top 16 bits of
-     *            each character.
+     * @param count The number of characters to convert.
      */
     public static void stringToBytes(String value, byte[] dest, int offset, int count) {
         char[] chars = value.substring(0, Math.min(value.length(), count)).toCharArray();
+
         int i = 0;
         while (i < chars.length && i < count) {
             dest[i + offset] = (byte) chars[i];
             ++i;
         }
+
         while (i < count) {
             dest[i + offset] = 0;
             ++i;
@@ -215,17 +218,21 @@ public class EndianUtilities {
      * Primitive conversion from ASCII to Unicode that preserves special
      * characters.
      *
+     * The built-in ASCIIEncoding converts characters of codepoint > 127 to ?,
+     * this preserves those code points.
+     *
      * @param data The data to convert.
      * @param offset The first byte to convert.
      * @param count The number of bytes to convert.
-     * @return The string.The built-in ASCIICharset converts characters of
-     *         codepoint > 127 to ?, this preserves those code points.
+     * @return The string.
      */
     public static String bytesToString(byte[] data, int offset, int count) {
         char[] result = new char[count];
+
         for (int i = 0; i < count; ++i) {
-            result[i] = (char) data[i + offset];
+            result[i] = (char) (data[i + offset] & 0xff);
         }
+
         return new String(result);
     }
 
@@ -233,22 +240,26 @@ public class EndianUtilities {
      * Primitive conversion from ASCII to Unicode that stops at a
      * null-terminator.
      *
+     * The built-in ASCIIEncoding converts characters of codepoint > 127 to ?,
+     * this preserves those code points.
+     *
      * @param data The data to convert.
      * @param offset The first byte to convert.
      * @param count The number of bytes to convert.
-     * @return The string.The built-in ASCIICharset converts characters of
-     *         codepoint > 127 to ?, this preserves those code points.
+     * @return The string.
      */
     public static String bytesToZString(byte[] data, int offset, int count) {
         char[] result = new char[count];
+
         for (int i = 0; i < count; ++i) {
             byte ch = data[i + offset];
             if (ch == 0) {
                 return new String(result, 0, i);
             }
 
-            result[i] = (char) ch;
+            result[i] = (char) (ch & 0xff);
         }
+
         return new String(result);
     }
 }

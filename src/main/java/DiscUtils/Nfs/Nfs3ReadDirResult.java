@@ -25,8 +25,6 @@ package DiscUtils.Nfs;
 import java.util.ArrayList;
 import java.util.List;
 
-import DiscUtils.Core.Internal.Utilities;
-
 
 public class Nfs3ReadDirResult extends Nfs3CallResult {
     public Nfs3ReadDirResult() {

@@ -22,7 +22,6 @@
 
 package DiscUtils.HfsPlus;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFileType;
@@ -126,6 +125,7 @@ public class File implements IVfsFileWithStreams {
                     .find(new AttributeKey(_catalogInfo.FileId, "com.apple.decmpfs"));
             CompressionAttribute compressionAttribute = new CompressionAttribute();
             compressionAttribute.readFrom(compressionAttributeData, 0);
+
             // There are three possibilities:
             // - The file is very small and embedded "as is" in the compression attribute
             // - The file is small and is embedded as a compressed stream in the compression attribute
@@ -139,7 +139,6 @@ public class File implements IVfsFileWithStreams {
                                                        false);
                 return new StreamBuffer(stream, Ownership.Dispose);
             }
-
             if (compressionAttribute.getCompressionType() == 3) {
                 // Inline, but we must decompress
                 MemoryStream stream = new MemoryStream(compressionAttributeData,
@@ -151,7 +150,6 @@ public class File implements IVfsFileWithStreams {
                 ZlibStream compressedStream = new ZlibStream(stream, CompressionMode.Decompress, false);
                 return new ZlibBuffer(compressedStream, Ownership.Dispose);
             }
-
             if (compressionAttribute.getCompressionType() == 4) {
                 // The data is stored in the resource fork.
                 FileBuffer buffer = new FileBuffer(getContext(), fileInfo.ResourceFork, fileInfo.FileId);
@@ -159,6 +157,7 @@ public class File implements IVfsFileWithStreams {
                 byte[] compressionForkData = new byte[CompressionResourceHeader.getSize()];
                 buffer.read(0, compressionForkData, 0, CompressionResourceHeader.getSize());
                 compressionFork.readFrom(compressionForkData, 0);
+
                 // The data is compressed in a number of blocks. Each block originally accounted for
                 // 0x10000 bytes (that's 64 KB) of data. The compressed size may vary.
                 // The data in each block can be read using a SparseStream. The first block contains
@@ -168,9 +167,11 @@ public class File implements IVfsFileWithStreams {
                 byte[] blockHeaderData = new byte[CompressionResourceBlockHead.getSize()];
                 buffer.read(compressionFork.getHeaderSize(), blockHeaderData, 0, CompressionResourceBlockHead.getSize());
                 blockHeader.readFrom(blockHeaderData, 0);
+
                 int blockCount = blockHeader.getNumBlocks();
                 CompressionResourceBlock[] blocks = new CompressionResourceBlock[blockCount];
                 SparseStream[] streams = new SparseStream[blockCount];
+
                 for (int i = 0; i < blockCount; i++) {
                     // Read the block data, first into a buffer and the into the class.
                     blocks[i] = new CompressionResourceBlock();
@@ -181,29 +182,33 @@ public class File implements IVfsFileWithStreams {
                                 0,
                                 blockData.length);
                     blocks[i].readFrom(blockData, 0);
+
                     // Create a SubBuffer which points to the data window that corresponds to the block.
                     SubBuffer subBuffer = new SubBuffer(buffer,
                                                         compressionFork.getHeaderSize() + blocks[i].getOffset() + 6,
                                                         blocks[i].getDataSize());
+
                     // ... convert it to a stream
                     BufferStream stream = new BufferStream(subBuffer, FileAccess.Read);
+
                     // ... and create a deflate stream. Because we will concatenate the streams, the streams
                     // must report on their size. We know the size (0x10000) so we pass it as a parameter.
                     DeflateStream s = new SizedDeflateStream(stream, CompressionMode.Decompress, false, 0x10000);
                     streams[i] = SparseStream.fromStream(s, Ownership.Dispose);
                 }
+
                 // Finally, concatenate the streams together and that's about it.
-                ConcatStream concatStream = new ConcatStream(Ownership.Dispose, Arrays.asList(streams));
+                ConcatStream concatStream = new ConcatStream(Ownership.Dispose, streams);
                 return new ZlibBuffer(concatStream, Ownership.Dispose);
             }
 
+            // Fall back to the default behavior.
             return new FileBuffer(getContext(), fileInfo.DataFork, fileInfo.FileId);
         }
 
         return new FileBuffer(getContext(), fileInfo.DataFork, fileInfo.FileId);
     }
 
-    // Fall back to the default behavior.
     public SparseStream createStream(String name) {
         throw new UnsupportedOperationException();
     }

@@ -30,7 +30,7 @@ public enum FileType {
      * Unknown type.
      */
     None,
-    __dummyEnum__0,
+    __dummyEnum__1,
     /**
      * Fixed-size disk, with space allocated up-front.
      */

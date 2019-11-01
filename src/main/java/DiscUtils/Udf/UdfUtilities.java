@@ -23,7 +23,6 @@
 package DiscUtils.Udf;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -91,8 +90,8 @@ public class UdfUtilities {
         int hmsec = forceRange((short) 0, (short) 99, buffer[offset + 10]);
         int msec = forceRange((short) 0, (short) 99, buffer[offset + 11]);
         try {
-            Instant baseTime = ZonedDateTime.of(year, month, day, hour, min, sec, 10 * csec + hmsec / 10, ZoneId.of("UTC")).toInstant();
-            return baseTime.minus(Duration.ofMinutes(minutesWest)).toEpochMilli();
+            ZonedDateTime baseTime = ZonedDateTime.of(year, month, day, hour, min, sec, 10 * csec + hmsec / 10, ZoneId.of("UTC"));
+            return baseTime.minus(Duration.ofMinutes(minutesWest)).toInstant().toEpochMilli();
         } catch (IndexOutOfBoundsException __dummyCatchVar0) {
             return Long.MIN_VALUE;
         }

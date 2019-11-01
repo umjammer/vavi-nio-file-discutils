@@ -26,10 +26,14 @@ import java.util.EnumSet;
 
 import DiscUtils.Core.CoreCompat.FileAttributes;
 
+
+/**
+ * Standard Unix-style file type.
+ *
+ * use ordinal
+ */
 public enum UnixFileType {
     /**
-     * Standard Unix-style file type.
-     *
      * No type specified.
      */
     None,

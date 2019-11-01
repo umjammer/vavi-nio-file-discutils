@@ -70,12 +70,11 @@ public class Adler32 {
         while (processed < count) {
             int innerEnd = Math.min(count, processed + 2000);
             while (processed < innerEnd) {
-                _a += buffer[processed++];
+                _a += buffer[processed++] & 0xff;
                 _b += _a;
             }
             _a %= 65521;
             _b %= 65521;
         }
     }
-
 }

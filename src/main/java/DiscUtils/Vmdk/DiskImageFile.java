@@ -146,7 +146,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param file The file name.
      * @param access The type of access desired.
      */
-    public DiskImageFile(FileLocator fileLocator, String file, FileAccess access) {
+    DiskImageFile(FileLocator fileLocator, String file, FileAccess access) {
         _access = access;
         FileAccess fileAccess = FileAccess.Read;
         FileShare fileShare = FileShare.Read;
@@ -174,14 +174,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the IDE/SCSI adapter type of the disk.
      */
-    public DiskAdapterType getAdapterType() {
+    DiskAdapterType getAdapterType() {
         return _descriptor.getAdapterType();
     }
 
     /**
      * Gets the BIOS geometry of this disk.
      */
-    public Geometry getBiosGeometry() {
+    Geometry getBiosGeometry() {
         return _descriptor.getBiosGeometry();
     }
 
@@ -196,14 +196,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return result;
     }
 
-    public int getContentId() {
+    int getContentId() {
         return _descriptor.getContentId();
     }
 
     /**
      * Gets the 'CreateType' of this disk.
      */
-    public DiskCreateType getCreateType() {
+    DiskCreateType getCreateType() {
         return _descriptor.getCreateType();
     }
 
@@ -519,7 +519,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param parameters The desired parameters for the new disk.
      * @return The newly created disk image.
      */
-    public static DiskImageFile initialize(FileLocator fileLocator, String path, DiskParameters parameters) {
+    static DiskImageFile initialize(FileLocator fileLocator, String path, DiskParameters parameters) {
         if (parameters.getCapacity() <= 0) {
             throw new IllegalArgumentException("Capacity must be greater than zero");
         }
@@ -540,7 +540,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return doInitialize(fileLocator, path, parameters.getCapacity(), createType, baseDescriptor);
     }
 
-    public static Geometry defaultGeometry(long diskSize) {
+    static Geometry defaultGeometry(long diskSize) {
         int heads;
         int sectors;
         if (diskSize < Sizes.OneGiB) {
@@ -557,7 +557,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return new Geometry(cylinders, heads, sectors);
     }
 
-    public static DescriptorFile createSimpleDiskDescriptor(Geometry geometry,
+    static DescriptorFile createSimpleDiskDescriptor(Geometry geometry,
                                                             Geometry biosGeometery,
                                                             DiskCreateType createType,
                                                             DiskAdapterType adapterType) {
@@ -572,7 +572,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return baseDescriptor;
     }
 
-    public static ServerSparseExtentHeader createServerSparseExtentHeader(long size) {
+    static ServerSparseExtentHeader createServerSparseExtentHeader(long size) {
         int numSectors = (int) MathUtilities.ceil(size, Sizes.Sector);
         int numGDEntries = (int) MathUtilities.ceil(numSectors * (long) Sizes.Sector, 2 * Sizes.OneMiB);
         ServerSparseExtentHeader header = new ServerSparseExtentHeader();
@@ -606,7 +606,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                               DescriptorFile baseDescriptor) {
         if (type == DiskCreateType.MonolithicSparse) {
             // MonolithicSparse is a special case, the descriptor is embedded in the file itself...
-
             try (Stream fs = fileLocator.open(file, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
                 long[] descriptorStart = new long[1];
                 createExtent(fs, capacity, ExtentType.Sparse, 10 * Sizes.OneKiB, descriptorStart);
@@ -650,6 +649,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     } else {
                         adornment = String.format("%6x", i);
                     }
+
                     String fileName = adornFileName(file, adornment);
 
                     try (Stream fs = fileLocator.open(fileName, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
@@ -664,6 +664,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     } catch (IOException e) {
                         throw new dotnet4j.io.IOException(e);
                     }
+
                     ++i;
                 }
             } else {
@@ -677,6 +678,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 throw new dotnet4j.io.IOException(e);
             }
         }
+
         return new DiskImageFile(fileLocator, file, FileAccess.ReadWrite);
     }
 

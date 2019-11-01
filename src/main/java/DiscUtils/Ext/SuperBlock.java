@@ -47,7 +47,7 @@ public class SuperBlock implements IByteArraySerializable {
 
     public int CheckInterval;
 
-    public CompatibleFeatures _CompatibleFeatures = CompatibleFeatures.DirectoryPreallocation;
+    public EnumSet<CompatibleFeatures> _CompatibleFeatures = EnumSet.noneOf(CompatibleFeatures.class);
 
     public int CompressionAlgorithmUsageBitmap;
 
@@ -87,7 +87,7 @@ public class SuperBlock implements IByteArraySerializable {
 
     public int[] HashSeed;
 
-    public EnumSet<IncompatibleFeatures> _IncompatibleFeatures = EnumSet.of(IncompatibleFeatures.Compression);
+    public EnumSet<IncompatibleFeatures> _IncompatibleFeatures = EnumSet.noneOf(IncompatibleFeatures.class);
 
     public int InodesCount;
 
@@ -141,7 +141,7 @@ public class SuperBlock implements IByteArraySerializable {
 
     public int RaidStripeWidth;
 
-    public ReadOnlyCompatibleFeatures _ReadOnlyCompatibleFeatures = ReadOnlyCompatibleFeatures.SparseSuperblock;
+    public EnumSet<ReadOnlyCompatibleFeatures> _ReadOnlyCompatibleFeatures = EnumSet.noneOf(ReadOnlyCompatibleFeatures.class);
 
     public int ReservedBlocksCount;
 
@@ -159,7 +159,7 @@ public class SuperBlock implements IByteArraySerializable {
 
     public int WriteTime;
 
-    public boolean getHas64Bit() {
+    public boolean has64Bit() {
         return _IncompatibleFeatures.contains(DiscUtils.Ext.IncompatibleFeatures.SixtyFourBit) && DescriptorSize >= 64;
     }
 

@@ -24,7 +24,6 @@ package DiscUtils.Nfs;
 
 import java.io.IOException;
 
-import DiscUtils.Core.Internal.Utilities;
 import dotnet4j.io.MemoryStream;
 
 

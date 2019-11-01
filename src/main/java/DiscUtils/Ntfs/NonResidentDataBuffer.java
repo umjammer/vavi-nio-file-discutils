@@ -80,6 +80,7 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         for (Range range : _activeStream.getStoredClusters()) {
             extents.add(new StreamExtent(range.getOffset() * _bytesPerCluster, range.getCount() * _bytesPerCluster));
         }
+
         return StreamExtent.intersect(extents, new StreamExtent(0, getCapacity()));
     }
 

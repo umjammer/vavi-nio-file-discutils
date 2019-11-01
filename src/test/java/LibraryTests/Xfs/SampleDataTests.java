@@ -110,7 +110,7 @@ public class SampleDataTests {
                                  .collect(Collectors.joining()));
         }
         for (int i = 1; i <= 999; i++) {
-            assertTrue(xfs.fileExists("huge\\{i}"), "File huge/{i} not found");
+            assertTrue(xfs.fileExists(String.format("huge\\%d", i)), String.format("File huge/%d not found", i));
         }
     }
 }

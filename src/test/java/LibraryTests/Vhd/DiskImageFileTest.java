@@ -114,11 +114,14 @@ public class DiskImageFileTest {
         // Simulates a partial failure extending the file, that the file footer is corrupt - should read start of the file instead.
         //
         Geometry geometry;
+
         MemoryStream stream = new MemoryStream();
         try (DiskImageFile file = DiskImageFile.initializeDynamic(stream, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             geometry = file.getGeometry();
         }
+
         stream.setLength(stream.getLength() - 512);
+
         try (DiskImageFile file = new DiskImageFile(stream)) {
             assertEquals(geometry, file.getGeometry());
         }

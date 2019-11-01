@@ -85,7 +85,9 @@ public class StreamUtilities {
      * @return The data read from the stream.
      */
     public static byte[] readExact(Stream stream, int count) {
-        assert count >= 0 : "count is negative: " + count;
+if (count < 0) {
+    new Exception("*** DUMMY ***").printStackTrace();
+}
         byte[] buffer = new byte[count];
         readExact(stream, buffer, 0, count);
         return buffer;

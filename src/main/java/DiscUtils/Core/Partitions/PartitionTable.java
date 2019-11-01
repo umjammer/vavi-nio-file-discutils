@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Raw.Disk;
 import DiscUtils.Streams.Util.Ownership;
@@ -42,7 +44,7 @@ import dotnet4j.io.Stream;
 public abstract class PartitionTable {
     protected static final UUID EMPTY = new UUID(0L, 0L);
 
-    private static List<PartitionTableFactory> _factories;
+    private static ServiceLoader<PartitionTableFactory> _factories;
 
     /**
      * Gets the number of User partitions on the disk.
@@ -57,16 +59,8 @@ public abstract class PartitionTable {
      */
     public abstract UUID getDiskGuid();
 
-    private static List<PartitionTableFactory> getFactories() {
-        if (_factories == null) {
-            List<PartitionTableFactory> factories = new ArrayList<>();
-            for (PartitionTableFactory type : ServiceLoader.load(PartitionTableFactory.class)) {
-                factories.add(type);
-            }
-            _factories = factories;
-        }
-
-        return _factories;
+    static {
+        _factories = ServiceLoader.load(PartitionTableFactory.class);
     }
 
     /**
@@ -92,7 +86,8 @@ public abstract class PartitionTable {
      * @return {@code true} if the disk is partitioned, else {@code false} .
      */
     public static boolean isPartitioned(Stream content) {
-        for (PartitionTableFactory partTableFactory : getFactories()) {
+        for (PartitionTableFactory partTableFactory : _factories) {
+Debug.println(partTableFactory + ": " + partTableFactory.detectIsPartitioned(content));
             if (partTableFactory.detectIsPartitioned(content)) {
                 return true;
             }
@@ -119,12 +114,11 @@ public abstract class PartitionTable {
      */
     public static List<PartitionTable> getPartitionTables(VirtualDisk disk) {
         List<PartitionTable> tables = new ArrayList<>();
-        for (PartitionTableFactory factory : getFactories()) {
+        for (PartitionTableFactory factory : _factories) {
             PartitionTable table = factory.detectPartitionTable(disk);
             if (table != null) {
                 tables.add(table);
             }
-
         }
         return tables;
     }

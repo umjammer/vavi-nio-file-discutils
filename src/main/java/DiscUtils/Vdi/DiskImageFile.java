@@ -189,8 +189,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (parent != null && ownsParent == Ownership.Dispose) {
-            // Not needed until differencing disks supported.
             try {
+                // Not needed until differencing disks supported.
                 parent.close();
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
@@ -208,10 +208,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return Array of strings, empty if no parent.
      */
     public List<String> getParentLocations() {
+        // Until diff/undo supported
         return Arrays.asList();
     }
-
-    // Until diff/undo supported
 
     /**
      * Disposes of underlying resources.

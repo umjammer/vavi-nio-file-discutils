@@ -38,54 +38,54 @@ public class ExtentDescriptor {
         setOffset(offset);
     }
 
-    private ExtentAccess __Access = ExtentAccess.None;
+    private ExtentAccess _access = ExtentAccess.None;
 
     public ExtentAccess getAccess() {
-        return __Access;
+        return _access;
     }
 
     public void setAccess(ExtentAccess value) {
-        __Access = value;
+        _access = value;
     }
 
-    private String __FileName;
+    private String _fileName;
 
     public String getFileName() {
-        return __FileName;
+        return _fileName;
     }
 
     public void setFileName(String value) {
-        __FileName = value;
+        _fileName = value;
     }
 
-    private long __Offset;
+    private long _offset;
 
     public long getOffset() {
-        return __Offset;
+        return _offset;
     }
 
     public void setOffset(long value) {
-        __Offset = value;
+        _offset = value;
     }
 
-    private long __SizeInSectors;
+    private long _sizeInSectors;
 
     public long getSizeInSectors() {
-        return __SizeInSectors;
+        return _sizeInSectors;
     }
 
     public void setSizeInSectors(long value) {
-        __SizeInSectors = value;
+        _sizeInSectors = value;
     }
 
-    private ExtentType __Type = ExtentType.Flat;
+    private ExtentType _type = ExtentType.Flat;
 
     public ExtentType getType() {
-        return __Type;
+        return _type;
     }
 
     public void setType(ExtentType value) {
-        __Type = value;
+        _type = value;
     }
 
     public static ExtentDescriptor parse(String descriptor) {

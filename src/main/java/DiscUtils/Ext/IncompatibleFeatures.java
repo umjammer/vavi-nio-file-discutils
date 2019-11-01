@@ -24,12 +24,16 @@ package DiscUtils.Ext;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+
+/**
+ * Feature flags for features backwards compatible with read-only mounting.
+ */
 public enum IncompatibleFeatures {
     /**
-     * Feature flags for features backwards compatible with read-only mounting.
-     *
      * File compression used (not used in mainline?).
      */
     Compression,
@@ -66,13 +70,19 @@ public enum IncompatibleFeatures {
      */
     FlexBlockGroups;
 
-    public static EnumSet<IncompatibleFeatures> valueOf(int value) {
-        return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(IncompatibleFeatures.class)));
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
     }
 
-    public static long valueOf(EnumSet<IncompatibleFeatures> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<IncompatibleFeatures> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(IncompatibleFeatures.class)));
     }
 }

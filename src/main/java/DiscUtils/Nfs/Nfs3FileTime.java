@@ -25,8 +25,6 @@ package DiscUtils.Nfs;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import DiscUtils.Core.Internal.Utilities;
-
 
 public final class Nfs3FileTime {
     private static final long TicksPerSec = 10 * 1000 * 1000;

@@ -5,7 +5,9 @@
  */
 
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.UUID;
@@ -22,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 import DiscUtils.Fat.FatAttributes;
 import DiscUtils.Ntfs.FileAttributeFlags;
 import DiscUtils.Ntfs.Internals.NtfsFileAttributes;
+import DiscUtils.Streams.Util.EndianUtilities;
+import DiscUtils.Vhd.Footer;
 
 
 /**
@@ -58,7 +62,8 @@ public class Test1 {
         assertFalse(set.contains(FatAttributes.Archive));
     }
 
-    // @see "https://stackoverflow.com/questions/2685537/how-can-i-implement-comparable-more-than-once"
+    // @see
+    // "https://stackoverflow.com/questions/2685537/how-can-i-implement-comparable-more-than-once"
 
     interface FooComparable<T extends FooComparable<?>> extends Comparable<T> {
     }
@@ -92,9 +97,7 @@ public class Test1 {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         buffer.putInt(0xcafebabe);
         byte[] b = buffer.array();
-        String hex = IntStream.range(0, b.length)
-                .mapToObj(i -> String.format("%02x", b[i]))
-                .collect(Collectors.joining());
+        String hex = IntStream.range(0, b.length).mapToObj(i -> String.format("%02x", b[i])).collect(Collectors.joining());
         assertEquals("cafebabe", hex);
     }
 
@@ -102,20 +105,47 @@ public class Test1 {
     void test5() throws Exception {
         byte b = (byte) 0xaa;
         assertTrue((b & 0xff) == 0xaa);
+    }
 
+    @Test
+    void test5_1() throws Exception {
         UUID uuid1 = new UUID(0L, 0L);
         UUID uuid2 = new UUID(0L, 0L);
         assertTrue(uuid1.equals(uuid2));
 
-        System.err.printf("%s:%s\n", uuid1, uuid2);
+//System.err.printf("%s:%s\n", uuid1, uuid2);
+    }
 
+    @Test
+    void test5_2() throws Exception {
         assertEquals("doubleQuoteStriped", "\"doubleQuoteStriped\"".replaceAll("(^\"*|\"*$)", ""));
         assertEquals("parenthesesStriped", "[parenthesesStriped]".replaceAll("(^\\[*|\\]*$)", ""));
+    }
 
+    @Test
+    void test5_3() throws Exception {
         int n = 12345;
-        BitSet bs = BitSet.valueOf(new long[]{ n });
-System.err.printf("%s, %x\n", bs, n);
+        BitSet bs = BitSet.valueOf(new long[] {
+            n
+        });
+//System.err.printf("%s, %x\n", bs, n);
         assertEquals(n, bs.toLongArray()[0]);
+    }
+
+    @Test
+    public void test6() {
+        long t = Footer.EpochUtc.plusSeconds(123456789).toEpochMilli();
+//Debug.println(t);
+        byte[] bytes = new byte[4];
+        EndianUtilities
+                .writeBytesBigEndian((int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(t))
+                        .getSeconds(), bytes, 0);
+        assertEquals(t, Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(bytes, 0)).toEpochMilli());
+    }
+
+    @Test
+    public void test7() {
+        assertEquals(Instant.now().toEpochMilli(), Instant.now().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
     }
 }
 

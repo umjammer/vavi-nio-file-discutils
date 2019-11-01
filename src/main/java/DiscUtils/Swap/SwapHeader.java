@@ -23,8 +23,9 @@
 package DiscUtils.Swap;
 
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.OptionalInt;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -40,64 +41,64 @@ public class SwapHeader implements IByteArraySerializable {
 
     public static final int PageSize = 1 << PageShift;
 
-    private int __Version;
+    private int _version;
 
     public int getVersion() {
-        return __Version;
+        return _version;
     }
 
     public void setVersion(int value) {
-        __Version = value;
+        _version = value;
     }
 
-    private int __LastPage;
+    private int _lastPage;
 
-    public int getLastPage() {
-        return __LastPage;
+    public long getLastPage() {
+        return _lastPage & 0xffffffffl;
     }
 
     public void setLastPage(int value) {
-        __LastPage = value;
+        _lastPage = value;
     }
 
-    private int __BadPages;
+    private int _badPages;
 
     public int getBadPages() {
-        return __BadPages;
+        return _badPages;
     }
 
     public void setBadPages(int value) {
-        __BadPages = value;
+        _badPages = value;
     }
 
-    private UUID __Uuid;
+    private UUID _uuid;
 
     public UUID getUuid() {
-        return __Uuid;
+        return _uuid;
     }
 
     public void setUuid(UUID value) {
-        __Uuid = value;
+        _uuid = value;
     }
 
-    private String __Volume;
+    private String _volume;
 
     public String getVolume() {
-        return __Volume;
+        return _volume;
     }
 
     public void setVolume(String value) {
-        __Volume = value;
+        _volume = value;
     }
 
-    private String __Magic;
+    private String _magic;
 
     public String getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(String value) {
-        __Magic = value;
+        _magic = value;
     }
 
     public int size() {
@@ -109,14 +110,14 @@ public class SwapHeader implements IByteArraySerializable {
         if (!getMagic().equals(Magic1) && !getMagic().equals(Magic2))
             return size();
 
-        setVersion(EndianUtilities.toUInt32LittleEndian(buffer, 0x400));
-        setLastPage(EndianUtilities.toUInt32LittleEndian(buffer, 0x404));
-        setBadPages(EndianUtilities.toUInt32LittleEndian(buffer, 0x408));
-        setUuid(EndianUtilities.toGuidLittleEndian(buffer, 0x40c));
+        _version = EndianUtilities.toUInt32LittleEndian(buffer, 0x400);
+        _lastPage = EndianUtilities.toUInt32LittleEndian(buffer, 0x404);
+        _badPages = EndianUtilities.toUInt32LittleEndian(buffer, 0x408);
+        _uuid = EndianUtilities.toGuidLittleEndian(buffer, 0x40c);
         byte[] volume = EndianUtilities.toByteArray(buffer, 0x41c, 16);
-        int nullIndex = Arrays.binarySearch(volume, (byte) 0);
-        if (nullIndex > 0)
-            setVolume(new String(volume, 0, nullIndex, Charset.forName("UTF8")));
+        OptionalInt nullIndex = IntStream.range(0, volume.length).filter(i -> volume[i] == (byte) 0).findFirst();
+        if (nullIndex.isPresent())
+            setVolume(new String(volume, 0, nullIndex.getAsInt(), Charset.forName("UTF8")));
 
         return size();
     }

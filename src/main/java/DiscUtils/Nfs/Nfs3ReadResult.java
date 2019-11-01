@@ -24,8 +24,6 @@ package DiscUtils.Nfs;
 
 import java.util.Arrays;
 
-import DiscUtils.Core.Internal.Utilities;
-
 
 public final class Nfs3ReadResult extends Nfs3CallResult {
     public Nfs3ReadResult(XdrDataReader reader) {

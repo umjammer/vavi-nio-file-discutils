@@ -79,7 +79,6 @@ public class SubStream extends MappedStream {
         if (SparseStream.class.isInstance(_parent)) {
             return offsetExtents(SparseStream.class.cast(_parent).getExtentsInRange(_first, _length));
         }
-
         return Arrays.asList(new StreamExtent(0, _length));
     }
 

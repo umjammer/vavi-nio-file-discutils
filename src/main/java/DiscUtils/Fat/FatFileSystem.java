@@ -35,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.FloppyDiskType;
@@ -238,14 +236,14 @@ public final class FatFileSystem extends DiscFileSystem {
         return _data.canWrite();
     }
 
-    private ClusterReader __ClusterReader;
+    private ClusterReader _clusterReader;
 
     public ClusterReader getClusterReader() {
-        return __ClusterReader;
+        return _clusterReader;
     }
 
     public void setClusterReader(ClusterReader value) {
-        __ClusterReader = value;
+        _clusterReader = value;
     }
 
     /**
@@ -256,27 +254,27 @@ public final class FatFileSystem extends DiscFileSystem {
         return _bsBootSig == 0x29;
     }
 
-    private FileAllocationTable __Fat;
+    private FileAllocationTable _fat;
 
     public FileAllocationTable getFat() {
-        return __Fat;
+        return _fat;
     }
 
     public void setFat(FileAllocationTable value) {
-        __Fat = value;
+        _fat = value;
     }
 
     /**
      * Gets the number of FATs present.
      */
-    private byte __FatCount;
+    private byte _fatCount;
 
     public byte getFatCount() {
-        return __FatCount;
+        return _fatCount;
     }
 
     public void setFatCount(byte value) {
-        __FatCount = value;
+        _fatCount = value;
     }
 
     /**
@@ -296,27 +294,27 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Gets the FAT variant of the file system.
      */
-    private FatType __FatVariant = FatType.None;
+    private FatType _fatVariant = FatType.None;
 
     public FatType getFatVariant() {
-        return __FatVariant;
+        return _fatVariant;
     }
 
     public void setFatVariant(FatType value) {
-        __FatVariant = value;
+        _fatVariant = value;
     }
 
     /**
      * Gets the (informational only) file system type recorded in the meta-data.
      */
-    private String __FileSystemType;
+    private String _fileSystemType;
 
     public String getFileSystemType() {
-        return __FileSystemType;
+        return _fileSystemType;
     }
 
     public void setFileSystemType(String value) {
-        __FileSystemType = value;
+        _fileSystemType = value;
     }
 
     /**
@@ -368,14 +366,14 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Gets the Media marker byte, which indicates fixed or removable media.
      */
-    private byte __Media;
+    private byte _media;
 
     public byte getMedia() {
-        return __Media;
+        return _media;
     }
 
     public void setMedia(byte value) {
-        __Media = value;
+        _media = value;
     }
 
     /**
@@ -389,14 +387,14 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Gets the OEM name from the file system.
      */
-    private String __OemName;
+    private String _oemName;
 
     public String getOemName() {
-        return __OemName;
+        return _oemName;
     }
 
     public void setOemName(String value) {
-        __OemName = value;
+        _oemName = value;
     }
 
     /**
@@ -417,14 +415,14 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Gets the number of contiguous sectors that make up one cluster.
      */
-    private byte __SectorsPerCluster;
+    private byte _sectorsPerCluster;
 
     public byte getSectorsPerCluster() {
-        return __SectorsPerCluster;
+        return _sectorsPerCluster;
     }
 
     public void setSectorsPerCluster(byte value) {
-        __SectorsPerCluster = value;
+        _sectorsPerCluster = value;
     }
 
     /**
@@ -543,11 +541,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public Map<String, Object> getAttributes(String path) {
         // Simulate a root directory entry - doesn't really exist though
         if (isRootPath(path)) {
-            return new HashMap<String, Object>() {
-                {
-                    put(FatAttributes.Directory.name(), true);
-                }
-            };
+            return FatAttributes.toMap(EnumSet.of(FatAttributes.Directory));
         }
 
         DirectoryEntry dirEntry = getDirectoryEntry(path);
@@ -555,10 +549,9 @@ public final class FatFileSystem extends DiscFileSystem {
             throw new FileNotFoundException("No such file " + path);
         }
 
+        // Luckily, FAT and .NET Map<String, Object> match, bit-for-bit
         return FatAttributes.toMap(dirEntry.getAttributes());
     }
-
-    // Luckily, FAT and .NET Map<String, Object> match, bit-for-bit
 
     /**
      * Sets the attributes of a file or directory.

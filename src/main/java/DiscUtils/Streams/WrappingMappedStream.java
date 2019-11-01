@@ -68,11 +68,9 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         if (_extents != null) {
             return _extents;
         }
-
         if (SparseStream.class.isInstance(getWrappedStream())) {
             return SparseStream.class.cast(getWrappedStream()).getExtents();
         }
-
         return Arrays.asList(new StreamExtent(0, getWrappedStream().getLength()));
     }
 
@@ -100,9 +98,8 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
 
     public List<StreamExtent> mapContent(long start, long length) {
         if (MappedStream.class.isInstance(getWrappedStream())) {
-            return MappedStream.class.cast(getWrappedStream()).getExtents();
+            return MappedStream.class.cast(getWrappedStream()).mapContent(start, length);
         }
-
         return Arrays.asList(new StreamExtent(start, length));
     }
 

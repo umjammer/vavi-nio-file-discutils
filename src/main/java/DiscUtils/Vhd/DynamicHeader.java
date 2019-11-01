@@ -23,6 +23,7 @@
 package DiscUtils.Vhd;
 
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.UUID;
@@ -71,10 +72,10 @@ public class DynamicHeader {
         HeaderVersion = Version1;
         BlockSize = blockSize;
         MaxTableEntries = (int) ((diskSize + blockSize - 1) / blockSize);
+        ParentUniqueId = new UUID(0, 0); // TODO no initializer
         ParentTimestamp = Footer.EpochUtc.toEpochMilli();
         ParentUnicodeName = "";
         ParentLocators = new ParentLocator[8];
-        ParentUniqueId = new UUID(0, 0); // TODO no initializer
         for (int i = 0; i < 8; ++i) {
             ParentLocators[i] = new ParentLocator();
         }
@@ -107,12 +108,15 @@ public class DynamicHeader {
         result.BlockSize = EndianUtilities.toUInt32BigEndian(data, offset + 32);
         result.Checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
         result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
-        result.ParentTimestamp = Instant.EPOCH.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56)).toEpochMilli();
+        result.ParentTimestamp = Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56))
+                .toEpochMilli();
         result.ParentUnicodeName = new String(data, offset + 64, 512, Charset.forName("UTF-16BE")).replaceFirst("\0*$", "");
+
         result.ParentLocators = new ParentLocator[8];
         for (int i = 0; i < 8; ++i) {
             result.ParentLocators[i] = ParentLocator.fromBytes(data, offset + 576 + i * 24);
         }
+
         return result;
     }
 
@@ -125,14 +129,20 @@ public class DynamicHeader {
         EndianUtilities.writeBytesBigEndian(BlockSize, data, offset + 32);
         EndianUtilities.writeBytesBigEndian(Checksum, data, offset + 36);
         EndianUtilities.writeBytesBigEndian(ParentUniqueId, data, offset + 40);
-        EndianUtilities.writeBytesBigEndian((int) Instant.ofEpochMilli(ParentTimestamp).getEpochSecond(), data, offset + 56);
+        EndianUtilities.writeBytesBigEndian(
+                                            (int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(ParentTimestamp))
+                                                    .getSeconds(),
+                                            data,
+                                            offset + 56);
         EndianUtilities.writeBytesBigEndian(0, data, offset + 60);
         Arrays.fill(data, offset + 64, offset + 64 + 512, (byte) 0);
         byte[] bytes = ParentUnicodeName.getBytes(Charset.forName("UTF-16BE"));
         System.arraycopy(bytes, 0, data, offset + 64, bytes.length);
+
         for (int i = 0; i < 8; ++i) {
             ParentLocators[i].toBytes(data, offset + 576 + i * 24);
         }
+
         Arrays.fill(data, offset + 1024 - 256, offset + 1024, (byte) 0);
     }
 
@@ -142,6 +152,7 @@ public class DynamicHeader {
     }
 
     public boolean isChecksumValid() {
+//Debug.println(Checksum == calculateChecksum());
         return Checksum == calculateChecksum();
     }
 
@@ -160,7 +171,7 @@ public class DynamicHeader {
         byte[] asBytes = new byte[1024];
         copy.toBytes(asBytes, 0);
         int checksum = 0;
-        for (int value : asBytes) {
+        for (byte value : asBytes) {
             checksum += value & 0xff;
         }
         checksum = ~checksum;

@@ -30,9 +30,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import vavi.util.Debug;
-import vavi.util.StringUtil;
-
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;

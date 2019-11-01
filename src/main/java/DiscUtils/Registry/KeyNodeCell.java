@@ -22,7 +22,6 @@
 
 package DiscUtils.Registry;
 
-import java.time.Instant;
 import java.util.EnumSet;
 
 import vavi.util.win32.DateUtil;
@@ -95,7 +94,7 @@ public final class KeyNodeCell extends Cell {
 
     public int readFrom(byte[] buffer, int offset) {
         Flags = RegistryKeyFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02));
-        Timestamp = DateUtil.filetimeToLong(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x04));
+        Timestamp = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x04));
         ParentIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
         NumSubKeys = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x14);
         SubKeysIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x1C);
@@ -116,7 +115,7 @@ public final class KeyNodeCell extends Cell {
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes("nk", buffer, offset, 2);
         EndianUtilities.writeBytesLittleEndian((short) RegistryKeyFlags.valueOf(Flags), buffer, offset + 0x02);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Instant.ofEpochMilli(Timestamp)), buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Timestamp), buffer, offset + 0x04);
         EndianUtilities.writeBytesLittleEndian(ParentIndex, buffer, offset + 0x10);
         EndianUtilities.writeBytesLittleEndian(NumSubKeys, buffer, offset + 0x14);
         EndianUtilities.writeBytesLittleEndian(SubKeysIndex, buffer, offset + 0x1C);
@@ -131,6 +130,6 @@ public final class KeyNodeCell extends Cell {
     }
 
     public String toString() {
-        return "Key:" + Name + "[" + Flags + "] <" + Timestamp + ">";
+        return "Key:" + Name + " " + Flags + " <" + Timestamp + ">";
     }
 }
