@@ -174,7 +174,7 @@ public abstract class NodeHeader implements IByteArraySerializable {
         setChecksum(EndianUtilities.toByteArray(buffer, offset, 0x20));
         setFsUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20));
         setLogicalAddress(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30));
-        //todo validate shift
+        // TODO: validate shift
         setFlags(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38) >>> 8);
         setBackrefRevision(buffer[offset + 0x3f]);
         setChunkTreeUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x40));
@@ -219,9 +219,8 @@ public abstract class NodeHeader implements IByteArraySerializable {
     public <T extends BaseItem> List<T> find(Class<T> clazz, Key key, Context context) {
         List<T> result = new ArrayList<>();
         for (BaseItem item : find(key, context)) {
-            T typed = clazz.isInstance(item) ? clazz.cast(item) : null;
-            if (typed != null)
-                result.add(typed);
+            if (clazz.isInstance(item))
+                result.add(clazz.cast(item));
         }
         return result;
     }

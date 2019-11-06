@@ -25,6 +25,8 @@ package DiscUtils.Core.LogicalDiskManager;
 import java.util.List;
 import java.util.Map;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.PhysicalVolumeInfo;
 import DiscUtils.Core.VirtualDisk;
@@ -46,6 +48,7 @@ public class DynamicDiskManagerFactory extends LogicalVolumeFactory {
         }
         for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {
             result.put(vol.getIdentity(), vol);
+Debug.println("Ld: " + vol.getIdentity());
         }
     }
 }

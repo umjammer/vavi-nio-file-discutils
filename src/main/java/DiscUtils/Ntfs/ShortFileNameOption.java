@@ -22,10 +22,11 @@
 
 package DiscUtils.Ntfs;
 
+/**
+ * Controls whether short file names are created automatically.
+ */
 public enum ShortFileNameOption {
     /**
-     * Controls whether short file names are created automatically.
-     *
      * Creates short file names, unless they've been disabled in NTFS.
      */
     UseVolumeFlag,

@@ -29,46 +29,46 @@ import java.time.Instant;
  */
 public class ResourceRecord {
     public ResourceRecord(String name, RecordType type, RecordClass rClass, long expiry) {
-        __Name = name;
-        __RecordType = type;
-        __Class = rClass;
-        __Expiry = expiry;
+        _name = name;
+        _recordType = type;
+        _class = rClass;
+        _expiry = expiry;
     }
 
     /**
      * Gets the class of record.
      */
-    private RecordClass __Class;
+    private RecordClass _class;
 
     public RecordClass getClass_() {
-        return __Class;
+        return _class;
     }
 
     /**
      * Gets the expiry time of the record.
      */
-    private long __Expiry;
+    private long _expiry;
 
     public long getExpiry() {
-        return __Expiry;
+        return _expiry;
     }
 
     /**
      * Gets the name of the resource (domain).
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     /**
      * Gets the type of record.
      */
-    private RecordType __RecordType;
+    private RecordType _recordType;
 
     public RecordType getRecordType() {
-        return __RecordType;
+        return _recordType;
     }
 
     public static ResourceRecord readFrom(PacketReader reader) {

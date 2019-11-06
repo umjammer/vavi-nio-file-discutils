@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.io.IOException;
 import java.util.UUID;
 
 import DiscUtils.Core.LogicalVolumeStatus;
@@ -35,17 +34,17 @@ public class DynamicVolume {
 
     public DynamicVolume(DynamicDiskGroup group, UUID volumeId) {
         _group = group;
-        __Identity = volumeId;
+        _identity = volumeId;
     }
 
     public byte getBiosType() {
         return getRecord().BiosType;
     }
 
-    private UUID __Identity;
+    private UUID _identity;
 
     public UUID getIdentity() {
-        return __Identity;
+        return _identity;
     }
 
     public long getLength() {
@@ -60,12 +59,11 @@ public class DynamicVolume {
         return _group.getVolumeStatus(getRecord().Id);
     }
 
-    public SparseStream open() throws IOException {
+    public SparseStream open() {
         if (getStatus() == LogicalVolumeStatus.Failed) {
-            throw new IOException("Attempt to open 'failed' volume");
+            throw new dotnet4j.io.IOException("Attempt to open 'failed' volume");
         }
 
         return _group.openVolume(getRecord().Id);
     }
-
 }

@@ -94,8 +94,8 @@ public class NativeFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets a value indicating whether the file system is thread-safe.
-     * The Native File System is thread safe.
+     * Gets a value indicating whether the file system is thread-safe. The
+     * Native File System is thread safe.
      */
     public boolean isThreadSafe() {
         return true;
@@ -275,8 +275,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern.
+     * specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -288,8 +287,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
      * @param path The path to search.
@@ -303,7 +301,10 @@ public class NativeFileSystem extends DiscFileSystem {
         }
 
         try {
-            return cleanItems(Files.list(Paths.get(getBasePath(), path)/*, searchPattern, searchOption*/).map(p -> p.toString()).collect(Collectors.toList()));
+            return cleanItems(Files.list(Paths
+                    .get(getBasePath(), path)/* , searchPattern, searchOption */)
+                    .map(p -> p.toString())
+                    .collect(Collectors.toList()));
         } catch (IOException __dummyCatchVar0) {
             return Arrays.asList();
         }
@@ -346,7 +347,10 @@ public class NativeFileSystem extends DiscFileSystem {
         }
 
         try {
-            return cleanItems(Files.list(Paths.get(getBasePath(), path)/*, searchPattern, searchOption*/).map(p -> p.toString()).collect(Collectors.toList()));
+            return cleanItems(Files.list(Paths
+                    .get(getBasePath(), path)/* , searchPattern, searchOption */)
+                    .map(p -> p.toString())
+                    .collect(Collectors.toList()));
         } catch (IOException __dummyCatchVar2) {
             return Arrays.asList();
         }
@@ -364,8 +368,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
     /**
      * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * matching a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -377,7 +380,10 @@ public class NativeFileSystem extends DiscFileSystem {
         }
 
         try {
-            return cleanItems(Files.list(Paths.get(getBasePath(), path)/*, searchPattern*/).map(p -> p.toString()).collect(Collectors.toList()));
+            return cleanItems(Files
+                    .list(Paths.get(getBasePath(), path)/* , searchPattern */)
+                    .map(p -> p.toString())
+                    .collect(Collectors.toList()));
         } catch (IOException __dummyCatchVar4) {
             return Collections.EMPTY_LIST;
         }
@@ -699,8 +705,10 @@ public class NativeFileSystem extends DiscFileSystem {
     /**
      * Gets an object representing a possible file.
      *
+     * The file does not need to exist.
+     *
      * @param path The file path.
-     * @return The representing object.The file does not need to exist.
+     * @return The representing object.
      */
     public DiscFileInfo getFileInfo(String path) {
         return new DiscFileInfo(this, path);
@@ -709,8 +717,10 @@ public class NativeFileSystem extends DiscFileSystem {
     /**
      * Gets an object representing a possible directory.
      *
+     * The directory does not need to exist.
+     *
      * @param path The directory path.
-     * @return The representing object.The directory does not need to exist.
+     * @return The representing object.
      */
     public DiscDirectoryInfo getDirectoryInfo(String path) {
         return new DiscDirectoryInfo(this, path);
@@ -720,9 +730,10 @@ public class NativeFileSystem extends DiscFileSystem {
      * Gets an object representing a possible file system object (file or
      * directory).
      *
+     * The file system object does not need to exist.
+     *
      * @param path The file system path.
-     * @return The representing object.The file system object does not need to
-     *         exist.
+     * @return The representing object.
      */
     public DiscFileSystemInfo getFileSystemInfo(String path) {
         return new DiscFileSystemInfo(this, path);

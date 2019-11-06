@@ -25,6 +25,8 @@ package DiscUtils.Ntfs;
 import java.util.ArrayList;
 import java.util.List;
 
+import vavi.util.Debug;
+
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Buffer.IMappedBuffer;
@@ -53,8 +55,10 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
     public NonResidentDataBuffer(INtfsContext context, CookedDataRuns cookedRuns, boolean isMft) {
         _context = context;
         _cookedRuns = cookedRuns;
+
         _rawStream = new RawClusterStream(_context, _cookedRuns, isMft);
         _activeStream = _rawStream;
+
         _bytesPerCluster = _context.getBiosParameterBlock().getBytesPerCluster();
         _ioBuffer = new byte[(int) _bytesPerCluster];
     }
@@ -80,21 +84,22 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         for (Range range : _activeStream.getStoredClusters()) {
             extents.add(new StreamExtent(range.getOffset() * _bytesPerCluster, range.getCount() * _bytesPerCluster));
         }
-
+Debug.println(extents + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(extents, new StreamExtent(0, getCapacity()));
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
+Debug.println(getExtents() + ", " + new StreamExtent(start, count));
         return StreamExtent.intersect(getExtents(), new StreamExtent(start, count));
     }
 
     public long mapPosition(long pos) {
         long vcn = pos / _bytesPerCluster;
         int dataRunIdx = _cookedRuns.findDataRun(vcn, 0);
+
         if (_cookedRuns.get___idx(dataRunIdx).isSparse()) {
             return -1;
         }
-
         return _cookedRuns.get___idx(dataRunIdx).getStartLcn() * _bytesPerCluster +
                (pos - _cookedRuns.get___idx(dataRunIdx).getStartVcn() * _bytesPerCluster);
     }
@@ -105,6 +110,7 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         }
 
         StreamUtilities.assertBufferParameters(buffer, offset, count);
+
         // Limit read to length of attribute
         int totalToRead = (int) Math.min(count, getCapacity() - pos);
         if (totalToRead <= 0) {
@@ -116,19 +122,25 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
             long vcn = focusPos / _bytesPerCluster;
             long remaining = pos + totalToRead - focusPos;
             long clusterOffset = focusPos - vcn * _bytesPerCluster;
+
             if (vcn * _bytesPerCluster != focusPos || remaining < _bytesPerCluster) {
                 // Unaligned or short read
                 _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
+
                 int toRead = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
+
                 System.arraycopy(_ioBuffer, (int) clusterOffset, buffer, (int) (offset + (focusPos - pos)), toRead);
+
                 focusPos += toRead;
             } else {
                 // Aligned, full cluster reads...
                 int fullClusters = (int) (remaining / _bytesPerCluster);
                 _activeStream.readClusters(vcn, fullClusters, buffer, (int) (offset + (focusPos - pos)));
+
                 focusPos += fullClusters * _bytesPerCluster;
             }
         }
+
         return totalToRead;
     }
 
@@ -139,5 +151,4 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
     public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
-
 }

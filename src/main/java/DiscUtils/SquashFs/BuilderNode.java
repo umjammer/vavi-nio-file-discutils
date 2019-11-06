@@ -113,12 +113,12 @@ public abstract class BuilderNode {
     public abstract void write(BuilderContext context);
 
     protected void fillCommonInodeData(BuilderContext context) {
-        getInode().Mode = (short) UnixFilePermissions.valueOf(getMode());
-        getInode().UidKey = context.getAllocateId().invoke(getUserId());
-        getInode().GidKey = context.getAllocateId().invoke(getGroupId());
-        getInode().ModificationTime = getModificationTime();
+        getInode()._mode = (short) UnixFilePermissions.valueOf(getMode());
+        getInode()._uidKey = context.getAllocateId().invoke(getUserId());
+        getInode()._gidKey = context.getAllocateId().invoke(getGroupId());
+        getInode()._modificationTime = getModificationTime();
         setInodeNumber(context.getAllocateInode().invoke());
-        getInode().InodeNumber = getInodeNumber();
-        getInode().NumLinks = getNumLinks();
+        getInode()._inodeNumber = getInodeNumber();
+        getInode()._numLinks = getNumLinks();
     }
 }

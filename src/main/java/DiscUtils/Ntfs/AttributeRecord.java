@@ -101,7 +101,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
     public abstract long getStartVcn();
 
     public int compareTo(AttributeRecord other) {
-        int val = Enum.class.cast(_type).ordinal() - Enum.class.cast(other._type).ordinal();
+        int val = _type.getValue() - other._type.getValue();
         if (val != 0) {
             return val;
         }
@@ -114,18 +114,18 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         return _attributeId - other._attributeId;
     }
 
+    /**
+     * @param length {@cs out}
+     */
     public static AttributeRecord fromBytes(byte[] buffer, int offset, int[] length) {
         if (EndianUtilities.toUInt32LittleEndian(buffer, offset) == 0xFFFFFFFF) {
             length[0] = 0;
             return null;
         }
-
         if (buffer[offset + 0x08] != 0x00) {
             return new NonResidentAttributeRecord(buffer, offset, length);
         }
-
-        ResidentAttributeRecord result = new ResidentAttributeRecord(buffer, offset, length);
-        return result;
+        return new ResidentAttributeRecord(buffer, offset, length);
     }
 
     public static Comparator<AttributeRecord> compareStartVcns = new Comparator<AttributeRecord>() {
@@ -134,11 +134,9 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
             if (x.getStartVcn() < y.getStartVcn()) {
                 return -1;
             }
-
             if (x.getStartVcn() == y.getStartVcn()) {
                 return 0;
             }
-
             return 1;
         }
     };
@@ -158,14 +156,19 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         writer.println(indent + "     AttributeId: " + _attributeId);
     }
 
+    /**
+     * @param length {@cs out}
+     */
     protected void read(byte[] buffer, int offset, int[] length) {
         _type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00));
         length[0] = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
+
         _nonResidentFlag = buffer[offset + 0x08];
-        byte nameLength = buffer[offset + 0x09];
-        short nameOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
+        int nameLength = buffer[offset + 0x09] & 0xff;
+        int nameOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A) & 0xffff;
         _flags = AttributeFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
         _attributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0E);
+
         if (nameLength != 0x00) {
             if (nameLength + nameOffset > length[0]) {
                 throw new IOException("Corrupt attribute, name outside of attribute");

@@ -29,6 +29,7 @@ import dotnet4j.io.IOException;
 
 
 public abstract class FixupRecordBase {
+    @SuppressWarnings("unused")
     private int _sectorSize;
 
     private short[] _updateSequenceArray;

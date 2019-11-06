@@ -58,7 +58,8 @@ public class MetadataVolumeGroupSection {
     public void parse(String head, Scanner data) {
         Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
-        while ((line = Metadata.readLine(data)) != null) {
+        while (data.hasNextLine()) {
+            line = Metadata.readLine(data);
             if (line.equals(""))
                 continue;
 
@@ -82,7 +83,7 @@ public class MetadataVolumeGroupSection {
                         } else if (statusValue.equals("resizeable")) {
                             Status.add(VolumeGroupStatus.Resizeable);
                         } else {
-                            throw new IndexOutOfBoundsException("Unexpected status in volume group metadata");
+                            throw new IllegalArgumentException("Unexpected status in volume group metadata: " + statusValue);
                         }
                     }
                 } else if (paramValue.equals("flags")) {
@@ -96,7 +97,7 @@ public class MetadataVolumeGroupSection {
                 } else if (paramValue.equals("metadata_copies")) {
                     MetadataCopies = Metadata.parseNumericValue(parameter.getValue());
                 } else {
-                    throw new IndexOutOfBoundsException("Unexpected parameter in volume group metadata");
+                    throw new IllegalArgumentException("Unexpected parameter in volume group metadata: " + parameter.getKey());
                 }
             } else if (line.endsWith("{")) {
                 String sectionName = line.replaceFirst("\\{*$", "").replaceFirst(" *$", "").toLowerCase();
@@ -105,7 +106,7 @@ public class MetadataVolumeGroupSection {
                 } else if (sectionName.equals("logical_volumes")) {
                     LogicalVolumes = parseLogicalVolumeSection(data);
                 } else {
-                    throw new IndexOutOfBoundsException(sectionName + " Unexpected section in volume group metadata");
+                    throw new IllegalArgumentException("Unexpected section in volume group metadata: " + sectionName);
                 }
             } else if (line.endsWith("}")) {
                 break;
@@ -116,10 +117,10 @@ public class MetadataVolumeGroupSection {
     private List<MetadataLogicalVolumeSection> parseLogicalVolumeSection(Scanner data) {
         List<MetadataLogicalVolumeSection> result = new ArrayList<>();
         String line;
-        while ((line = Metadata.readLine(data)) != null) {
+        while (data.hasNextLine()) {
+            line = Metadata.readLine(data);
             if (line.equals(""))
                 continue;
-
             if (line.endsWith("{")) {
                 MetadataLogicalVolumeSection pv = new MetadataLogicalVolumeSection();
                 pv.parse(line, data);
@@ -134,10 +135,10 @@ public class MetadataVolumeGroupSection {
     private List<MetadataPhysicalVolumeSection> parsePhysicalVolumeSection(Scanner data) {
         List<MetadataPhysicalVolumeSection> result = new ArrayList<>();
         String line;
-        while ((line = Metadata.readLine(data)) != null) {
+        while (data.hasNextLine()) {
+            line = Metadata.readLine(data);
             if (line.equals(""))
                 continue;
-
             if (line.endsWith("{")) {
                 MetadataPhysicalVolumeSection pv = new MetadataPhysicalVolumeSection();
                 pv.parse(line, data);
@@ -147,5 +148,22 @@ public class MetadataVolumeGroupSection {
             }
         }
         return result;
+    }
+}
+
+enum VolumeGroupStatus {
+    None(0x0),
+    Read(0x1),
+    Write(0x2),
+    Resizeable(0x4);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private VolumeGroupStatus(int value) {
+        this.value = value;
     }
 }

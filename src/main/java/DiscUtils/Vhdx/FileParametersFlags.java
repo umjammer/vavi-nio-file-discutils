@@ -27,6 +27,7 @@ import java.util.EnumSet;
 import java.util.stream.Collectors;
 
 
+// use ordinal
 public enum FileParametersFlags {
     None,
     LeaveBlocksAllocated,

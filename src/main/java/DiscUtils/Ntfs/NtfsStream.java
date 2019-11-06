@@ -41,13 +41,13 @@ public class NtfsStream {
 
     public NtfsStream(File file, NtfsAttribute attr) {
         _file = file;
-        __Attribute = attr;
+        _attribute = attr;
     }
 
-    private NtfsAttribute __Attribute;
+    private NtfsAttribute _attribute;
 
     public NtfsAttribute getAttribute() {
-        return __Attribute;
+        return _attribute;
     }
 
     public AttributeType getAttributeType() {

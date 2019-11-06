@@ -86,31 +86,31 @@ public class Context extends VfsContext {
 
     private NodeHeader _chunkTreeRoot;
 
-    public NodeHeader getChunkTreeRoot() {
+    NodeHeader getChunkTreeRoot() {
         return _chunkTreeRoot;
     }
 
-    public void setChunkTreeRoot(NodeHeader value) {
+    void setChunkTreeRoot(NodeHeader value) {
         _chunkTreeRoot = value;
     }
 
     private NodeHeader _rootTreeRoot;
 
-    public NodeHeader getRootTreeRoot() {
+    NodeHeader getRootTreeRoot() {
         return _rootTreeRoot;
     }
 
-    public void setRootTreeRoot(NodeHeader value) {
+    void setRootTreeRoot(NodeHeader value) {
         _rootTreeRoot = value;
     }
 
     private Map<Long, NodeHeader> _fsTrees;
 
-    public Map<Long, NodeHeader> getFsTrees() {
+    Map<Long, NodeHeader> getFsTrees() {
         return _fsTrees;
     }
 
-    public NodeHeader getFsTree(long treeId) {
+    NodeHeader getFsTree(long treeId) {
         NodeHeader tree;
         if (_fsTrees.containsKey(treeId)) {
             return _fsTrees.get(treeId);
@@ -130,36 +130,28 @@ public class Context extends VfsContext {
             for (ChunkItem chunk : nodes) {
                 if (chunk.getKey().getItemType() != ItemType.ChunkItem)
                     continue;
-
                 if (chunk.getKey().getOffset() > logical)
                     continue;
-
                 if (chunk.getKey().getOffset() + chunk.getChunkSize() < logical)
                     continue;
-
                 checkStriping(chunk.getType());
                 if (chunk.getStripeCount() < 1)
                     throw new IOException("Invalid stripe count in ChunkItem");
-
                 Stripe stripe = chunk.getStripes()[0];
                 return stripe.getOffset() + (logical - chunk.getKey().getOffset());
             }
         }
-
         for (ChunkItem chunk : _superBlock.getSystemChunkArray()) {
             if (chunk.getKey().getItemType() != ItemType.ChunkItem)
                 continue;
-
             if (chunk.getKey().getOffset() > logical)
                 continue;
-
             if (chunk.getKey().getOffset() + chunk.getChunkSize() < logical)
                 continue;
 
             checkStriping(chunk.getType());
             if (chunk.getStripeCount() < 1)
                 throw new IOException("Invalid stripe count in ChunkItem");
-
             Stripe stripe = chunk.getStripes()[0];
             return stripe.getOffset() + (logical - chunk.getKey().getOffset());
         }
@@ -177,13 +169,11 @@ public class Context extends VfsContext {
         return result;
     }
 
-    public void verifyChecksum(byte[] checksum, byte[] data, int offset, int count) {
+    void verifyChecksum(byte[] checksum, byte[] data, int offset, int count) {
         if (!getOptions().verifyChecksums())
             return;
-
         if (_superBlock.getChecksumType() != ChecksumType.Crc32C)
             throw new IllegalArgumentException("Unsupported ChecksumType {SuperBlock.ChecksumType}");
-
         Crc32LittleEndian crc = new Crc32LittleEndian(Crc32Algorithm.Castagnoli);
         crc.process(data, offset, count);
         byte[] calculated = new byte[4];
@@ -208,16 +198,16 @@ public class Context extends VfsContext {
             throw new IOException("Raid6 not supported");
     }
 
-    public BaseItem findKey(ReservedObjectId objectId, ItemType type) {
+    BaseItem findKey(ReservedObjectId objectId, ItemType type) {
         return findKey(objectId.ordinal(), type);
     }
 
-    public BaseItem findKey(long objectId, ItemType type) {
+    BaseItem findKey(long objectId, ItemType type) {
         Key key = new Key(objectId, type);
         return findKey(key);
     }
 
-    public BaseItem findKey(Key key) {
+    BaseItem findKey(Key key) {
         switch (key.getItemType()) {
         case RootItem:
             return _rootTreeRoot.findFirst(key, this);
@@ -228,7 +218,7 @@ public class Context extends VfsContext {
         }
     }
 
-    public List<BaseItem> findKey_(long treeId, Key key) {
+    List<BaseItem> findKey_(long treeId, Key key) {
         NodeHeader tree = getFsTree(treeId);
         switch (key.getItemType()) {
         case DirItem:
@@ -238,7 +228,7 @@ public class Context extends VfsContext {
         }
     }
 
-    public <T extends BaseItem> List<T> findKey__(long treeId, Key key) {
+    <T extends BaseItem> List<T> findKey(long treeId, Key key) {
         NodeHeader tree = getFsTree(treeId);
         switch (key.getItemType()) {
         case DirItem:

@@ -48,8 +48,8 @@ public abstract class Buffer implements Serializable, IBuffer {
     public abstract long getCapacity();
 
     /**
-     * Gets the parts of the stream that are stored.
-     * This may be an empty enumeration if all bytes are zero.
+     * Gets the parts of the stream that are stored. This may be an empty
+     * enumeration if all bytes are zero.
      */
     public List<StreamExtent> getExtents() {
         return getExtentsInRange(0, getCapacity());
@@ -79,28 +79,25 @@ public abstract class Buffer implements Serializable, IBuffer {
     /**
      * Clears bytes from the buffer.
      *
+     * Logically equivalent to writing {@code count} null/zero bytes to the
+     * buffer, some implementations determine that some (or all) of the range
+     * indicated is not actually stored. There is no direct, automatic,
+     * correspondence to clearing bytes and them not being represented as an
+     * 'extent' - for example, the implementation of the underlying stream may
+     * not permit fine-grained extent storage.It is always safe to call this
+     * method to 'zero-out' a section of a buffer, regardless of the underlying
+     * buffer implementation.
+     *
      * @param pos The start offset within the buffer.
-     * @param count The number of bytes to clear.Logically equivalent to writing
-     *            {@code count}
-     *            null/zero bytes to the buffer, some
-     *            implementations determine that some (or all) of the range
-     *            indicated is not actually
-     *            stored. There is no direct, automatic, correspondence to
-     *            clearing bytes and them
-     *            not being represented as an 'extent' - for example, the
-     *            implementation of the underlying
-     *            stream may not permit fine-grained extent storage.It is always
-     *            safe to call this method to 'zero-out' a section of a buffer,
-     *            regardless of
-     *            the underlying buffer implementation.
+     * @param count The number of bytes to clear.
      */
     public void clear(long pos, int count) {
         write(pos, new byte[count], 0, count);
     }
 
     /**
-     * Flushes all data to the underlying storage.
-     * The default behaviour, implemented by this class, is to take no action.
+     * Flushes all data to the underlying storage. The default behaviour,
+     * implemented by this class, is to take no action.
      */
     public void flush() {
     }

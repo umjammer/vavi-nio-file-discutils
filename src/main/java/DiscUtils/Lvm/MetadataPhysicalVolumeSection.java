@@ -92,3 +92,20 @@ public class MetadataPhysicalVolumeSection {
         }
     }
 }
+
+enum PhysicalVolumeStatus {
+    None(0x0),
+    Read(0x1),
+    Write(0x4),
+    Allocatable(0x8);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private PhysicalVolumeStatus(int value) {
+        this.value = value;
+    }
+}

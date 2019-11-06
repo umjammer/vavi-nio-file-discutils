@@ -94,6 +94,9 @@ public final class SubKeyIndirectListCell extends ListCell {
         }
     }
 
+    /**
+     * @param cellIndex {@cs out}
+     */
     public int findKey(String name, int[] cellIndex) {
         if (getCellIndexes().size() <= 0) {
             cellIndex[0] = 0;
@@ -212,6 +215,9 @@ public final class SubKeyIndirectListCell extends ListCell {
         return getIndex();
     }
 
+    /**
+     * @param cellIndex {@cs out}
+     */
     private int doFindKey(String name, int listIndex, int[] cellIndex) {
         Cell cell = _hive.<Cell> getCell(getCellIndexes().get(listIndex));
         ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;

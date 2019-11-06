@@ -68,7 +68,7 @@ public class FileResourceStream extends SparseStream {
         _header = header;
         _lzxCompression = lzxCompression;
         _chunkSize = chunkSize;
-        if (baseStream.getLength() > Integer.MAX_VALUE) {
+        if (baseStream.getLength() > 0xffff_ffffl) {
             throw new UnsupportedOperationException("Large files >4GB");
         }
 

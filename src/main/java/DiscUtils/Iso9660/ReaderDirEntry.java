@@ -49,9 +49,11 @@ public final class ReaderDirEntry extends VfsDirEntry {
         _context = context;
         _record = dirRecord;
         _fileName = _record.FileIdentifier;
+
         boolean rockRidge = _context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty();
+
         if (context.getSuspDetected() && _record.SystemUseData != null) {
-            __SuspRecords = new SuspRecords(_context, _record.SystemUseData, 0);
+            _suspRecords = new SuspRecords(_context, _record.SystemUseData, 0);
         }
 
         if (rockRidge && getSuspRecords() != null) {
@@ -62,6 +64,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
                 for (SystemUseEntry nameEntry : nameEntries) {
                     rrName.append(PosixNameSystemUseEntry.class.cast(nameEntry).NameData);
                 }
+
                 _fileName = rrName.toString();
             }
 
@@ -73,45 +76,49 @@ public final class ReaderDirEntry extends VfsDirEntry {
                         .setPosition(clEntry.ChildDirLocation * _context.getVolumeDescriptor().LogicalBlockSize);
                 byte[] firstSector = StreamUtilities.readExact(_context.getDataStream(),
                                                                _context.getVolumeDescriptor().LogicalBlockSize);
-                // If Rock Ridge PX info is present, derive the attributes from the RR info.
+
                 DirectoryRecord[] _record = new DirectoryRecord[1];
                 DirectoryRecord.readFrom(firstSector, 0, _context.getVolumeDescriptor().CharacterEncoding, _record);
                 if (_record[0].SystemUseData != null) {
-                    __SuspRecords = new SuspRecords(_context, _record[0].SystemUseData, 0);
+                    _suspRecords = new SuspRecords(_context, _record[0].SystemUseData, 0);
                 }
             }
         }
 
-        __LastAccessTimeUtc = _record.RecordingDateAndTime;
-        __LastWriteTimeUtc = _record.RecordingDateAndTime;
-        __CreationTimeUtc = _record.RecordingDateAndTime;
+        _lastAccessTimeUtc = _record.RecordingDateAndTime;
+        _lastWriteTimeUtc = _record.RecordingDateAndTime;
+        _creationTimeUtc = _record.RecordingDateAndTime;
+
         if (rockRidge && getSuspRecords() != null) {
             FileTimeSystemUseEntry tfEntry = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "TF");
+
             if (tfEntry != null) {
-                if ((tfEntry.TimestampsPresent.ordinal() & Timestamps.Access.ordinal()) != 0) {
-                    __LastAccessTimeUtc = tfEntry.AccessTime;
+                if (tfEntry.TimestampsPresent.contains(Timestamps.Access)) {
+                    _lastAccessTimeUtc = tfEntry.AccessTime;
                 }
 
-                if ((tfEntry.TimestampsPresent.ordinal() & Timestamps.Modify.ordinal()) != 0) {
-                    __LastWriteTimeUtc = tfEntry.ModifyTime;
+                if (tfEntry.TimestampsPresent.contains(Timestamps.Modify)) {
+                    _lastWriteTimeUtc = tfEntry.ModifyTime;
                 }
 
-                if ((tfEntry.TimestampsPresent.ordinal() & Timestamps.Creation.ordinal()) != 0) {
-                    __CreationTimeUtc = tfEntry.CreationTime;
+                if (tfEntry.TimestampsPresent.contains(Timestamps.Creation)) {
+                    _creationTimeUtc = tfEntry.CreationTime;
                 }
             }
         }
     }
 
-    private long __CreationTimeUtc;
+    private long _creationTimeUtc;
 
     public long getCreationTimeUtc() {
-        return __CreationTimeUtc;
+        return _creationTimeUtc;
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
         EnumSet<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
+
         if (_context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty()) {
+            // If Rock Ridge PX info is present, derive the attributes from the RR info.
             PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "PX");
             if (pfi != null) {
                 attrs = UnixFileType.toFileAttributes(UnixFileType.valueOf((pfi.FileMode >>> 12) & 0xF));
@@ -123,6 +130,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
         }
 
         attrs.add(FileAttributes.ReadOnly);
+
         if (_record.Flags.contains(FileFlags.Directory)) {
             attrs.add(FileAttributes.Directory);
         }
@@ -154,30 +162,30 @@ public final class ReaderDirEntry extends VfsDirEntry {
         return false;
     }
 
-    private long __LastAccessTimeUtc;
+    private long _lastAccessTimeUtc;
 
     public long getLastAccessTimeUtc() {
-        return __LastAccessTimeUtc;
+        return _lastAccessTimeUtc;
     }
 
-    private long __LastWriteTimeUtc;
+    private long _lastWriteTimeUtc;
 
     public long getLastWriteTimeUtc() {
-        return __LastWriteTimeUtc;
+        return _lastWriteTimeUtc;
     }
 
     public DirectoryRecord getRecord() {
         return _record;
     }
 
-    private SuspRecords __SuspRecords;
+    private SuspRecords _suspRecords;
 
     public SuspRecords getSuspRecords() {
-        return __SuspRecords;
+        return _suspRecords;
     }
 
     public long getUniqueCacheId() {
-        return ((long) _record.LocationOfExtent << 32) | _record.DataLength;
+        return ((_record.LocationOfExtent & 0xffffffffl) << 32) | _record.DataLength;
     }
 
     public String toString() {

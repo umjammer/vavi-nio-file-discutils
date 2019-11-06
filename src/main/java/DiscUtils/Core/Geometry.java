@@ -32,8 +32,7 @@ import DiscUtils.Streams.Util.Sizes;
 public final class Geometry {
     /**
      * Initializes a new instance of the Geometry class. The default 512 bytes
-     * per
-     * sector is assumed.
+     * per sector is assumed.
      *
      * @param cylinders The number of cylinders of the disk.
      * @param headsPerCylinder The number of heads (aka platters) of the disk.
@@ -129,8 +128,7 @@ public final class Geometry {
 
     /**
      * Gets a value indicating whether the Geometry is consistent with the
-     * values a
-     * BIOS can support.
+     * values a BIOS can support.
      */
     public boolean isBiosSafe() {
         return getCylinders() <= 1024 && getHeadsPerCylinder() <= 255 && getSectorsPerTrack() <= 63;
@@ -138,8 +136,7 @@ public final class Geometry {
 
     /**
      * Gets a value indicating whether the Geometry is consistent with the
-     * values
-     * IDE can represent.
+     * values IDE can represent.
      */
     public boolean isIdeSafe() {
         return getCylinders() <= 65536 && getHeadsPerCylinder() <= 16 && getSectorsPerTrack() <= 255;
@@ -154,8 +151,7 @@ public final class Geometry {
 
     /**
      * Gets a null geometry, which has 512-byte sectors but zero sectors, tracks
-     * or
-     * cylinders.
+     * or cylinders.
      */
     public static Geometry getNull() {
         return new Geometry(0, 0, 0, 512);
@@ -207,8 +203,7 @@ public final class Geometry {
      *
      * @param capacity The capacity of the disk.
      * @return The geometry a BIOS using the 'LBA Assisted' method for
-     *         calculating
-     *         disk geometry will indicate for the disk.
+     *         calculating disk geometry will indicate for the disk.
      */
     public static Geometry lbaAssistedBiosGeometry(long capacity) {
         int heads;
@@ -231,11 +226,12 @@ public final class Geometry {
     /**
      * Converts a geometry into one that is BIOS-safe, if not already.
      *
+     * This method returns the LBA-Assisted geometry if the given geometry isn't
+     * BIOS-safe.
+     *
      * @param geometry The geometry to make BIOS-safe.
      * @param capacity The capacity of the disk.
-     * @return The new geometry.This method returns the LBA-Assisted geometry if
-     *         the
-     *         given geometry isn't BIOS-safe.
+     * @return The new geometry.
      */
     public static Geometry makeBiosSafe(Geometry geometry, long capacity) {
         if (geometry == null) {
@@ -253,14 +249,13 @@ public final class Geometry {
      * Calculates a sensible disk geometry for a disk capacity using the VHD
      * algorithm (errs under).
      *
+     * The geometry returned tends to produce a disk with less capacity than
+     * requested (an exact capacity is not always possible). The geometry
+     * returned is the IDE (aka Physical) geometry of the disk, not necessarily
+     * the geometry used by the BIOS.
+     * 
      * @param capacity The desired capacity of the disk.
-     * @return The appropriate disk geometry.The geometry returned tends to
-     *         produce
-     *         a disk with less capacity than requested (an exact capacity is
-     *         not
-     *         always possible). The geometry returned is the IDE (aka Physical)
-     *         geometry of the disk, not necessarily the geometry used by the
-     *         BIOS.
+     * @return The appropriate disk geometry.
      */
     public static Geometry fromCapacity(long capacity) {
         return fromCapacity(capacity, Sizes.Sector);
@@ -270,15 +265,14 @@ public final class Geometry {
      * Calculates a sensible disk geometry for a disk capacity using the VHD
      * algorithm (errs under).
      *
+     * The geometry returned tends to produce a disk with less capacity than
+     * requested (an exact capacity is not always possible). The geometry
+     * returned is the IDE (aka Physical) geometry of the disk, not necessarily
+     * the geometry used by the BIOS.
+     *
      * @param capacity The desired capacity of the disk.
      * @param sectorSize The logical sector size of the disk.
-     * @return The appropriate disk geometry.The geometry returned tends to
-     *         produce
-     *         a disk with less capacity than requested (an exact capacity is
-     *         not
-     *         always possible). The geometry returned is the IDE (aka Physical)
-     *         geometry of the disk, not necessarily the geometry used by the
-     *         BIOS.
+     * @return The appropriate disk geometry.
      */
     public static Geometry fromCapacity(long capacity, int sectorSize) {
         int totalSectors;
@@ -306,7 +300,8 @@ public final class Geometry {
                 headsPerCylinder = 4;
             }
 
-            // If we need more than 1023 cylinders, or 16 heads, try more sectors per track
+            // If we need more than 1023 cylinders, or 16 heads, try more
+            // sectors per track
             if (cylindersTimesHeads >= headsPerCylinder * 1024 || headsPerCylinder > 16) {
                 sectorsPerTrack = 31;
                 headsPerCylinder = 16;

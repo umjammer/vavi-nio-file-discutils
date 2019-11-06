@@ -75,6 +75,9 @@ public final class FreeSpaceTable {
         _freeExtents = StreamExtent.subtract(_freeExtents, extents);
     }
 
+    /**
+     * @param start {@cs out}
+     */
     public boolean tryAllocate(long length, long[] start) {
         if (length % Sizes.OneMiB != 0) {
             throw new IllegalArgumentException("VHDX free space must be managed on 1MB boundaries");

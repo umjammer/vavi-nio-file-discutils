@@ -76,7 +76,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
     }
 
     /**
-     * Always throws UnsupportedOperationException .
+     * Always throws {@link UnsupportedOperationException}.
      *
      * @param item The item to add.
      */
@@ -85,7 +85,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
     }
 
     /**
-     * Always throws UnsupportedOperationException .
+     * Always throws {@link UnsupportedOperationException}.
      */
     public void clear() {
         throw new UnsupportedOperationException();
@@ -94,12 +94,10 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
     /**
      * Determines if the specified region is present already.
      *
+     * The comparison is based on the region identity.
+     *
      * @param item The item to look for.
-     * @return
-     *         {@code true}
-     *         if present, else
-     *         {@code false}
-     *         .The comparison is based on the region identity.
+     * @return {@code true} if present, else {@code false}.
      */
     public boolean contains(RegionInfo item) {
         for (Map.Entry<UUID, RegionEntry> entry : _table.Regions.entrySet()) {
@@ -128,13 +126,10 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
     /**
      * Removes an item from the table.
      *
+     * Always throws {@link UnsupportedOperationException }as the table is read-only.
+     *
      * @param item The item to remove.
-     * @return
-     *         {@code true}
-     *         if the item was removed, else
-     *         {@code false}
-     *         .Always throws UnsupportedOperationException  as the table is
-     *         read-only.
+     * @return {@code true} if the item was removed, else {@code false}.
      */
     public boolean remove(RegionInfo item) {
         throw new UnsupportedOperationException();

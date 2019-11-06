@@ -80,30 +80,35 @@ public final class ContentStream extends MappedStream {
         _length = length;
         _parentStream = parentStream;
         _ownsParent = ownsParent;
+
         _chunks = new ObjectCache<>();
     }
 
     public boolean canRead() {
         checkDisposed();
+
         return true;
     }
 
     public boolean canSeek() {
         checkDisposed();
+
         return true;
     }
 
     public boolean canWrite() {
         checkDisposed();
-        return _canWrite ? _canWrite : _fileStream.canWrite();
+
+        return _canWrite /* ?? _fileStream.canWrite() */;
     }
 
     public List<StreamExtent> getExtents() {
         checkDisposed();
+
+        // For now, report the complete file contents
         return getExtentsInRange(0, getLength());
     }
 
-    // For now, report the complete file contents
     public long getLength() {
         checkDisposed();
         return _length;
@@ -122,16 +127,19 @@ public final class ContentStream extends MappedStream {
 
     public void flush() {
         checkDisposed();
+
         throw new UnsupportedOperationException();
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
         checkDisposed();
+
         throw new UnsupportedOperationException();
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
+
         return StreamExtent
                 .intersect(StreamExtent.union(getExtentsRaw(start, count), _parentStream.getExtentsInRange(start, count)),
                            new StreamExtent(start, count));
@@ -139,6 +147,7 @@ public final class ContentStream extends MappedStream {
 
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
+
         if (_atEof || _position > _length) {
             _atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
@@ -155,13 +164,16 @@ public final class ContentStream extends MappedStream {
 
         int totalToRead = (int) Math.min(_length - _position, count);
         int totalRead = 0;
+
         while (totalRead < totalToRead) {
             int[] chunkIndex = new int[1];
             int[] blockIndex = new int[1];
             int[] sectorIndex = new int[1];
             Chunk chunk = getChunk(_position + totalRead, chunkIndex, blockIndex, sectorIndex);
+
             int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
             int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
+
             PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus == PayloadBlockStatus.FullyPresent) {
                 _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
@@ -169,13 +181,16 @@ public final class ContentStream extends MappedStream {
                                                        buffer,
                                                        offset + totalRead,
                                                        Math.min(blockBytesRemaining, totalToRead - totalRead));
+
                 totalRead += read;
             } else if (blockStatus == PayloadBlockStatus.PartiallyPresent) {
                 BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex[0]);
+
                 boolean[] present = new boolean[1];
                 int numSectors = bitmap.contiguousSectors(sectorIndex[0], present);
                 int toRead = Math.min(numSectors * _metadata.getLogicalSectorSize(), totalToRead - totalRead);
                 int read;
+
                 if (present[0]) {
                     _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                     read = StreamUtilities.readMaximum(_fileStream, buffer, offset + totalRead, toRead);
@@ -190,6 +205,7 @@ public final class ContentStream extends MappedStream {
                                                        buffer,
                                                        offset + totalRead,
                                                        Math.min(blockBytesRemaining, totalToRead - totalRead));
+
                 totalRead += read;
             } else {
                 int zeroed = Math.min(blockBytesRemaining, totalToRead - totalRead);
@@ -197,12 +213,14 @@ public final class ContentStream extends MappedStream {
                 totalRead += zeroed;
             }
         }
+
         _position += totalRead;
         return totalRead;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
+
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += _position;
@@ -211,21 +229,23 @@ public final class ContentStream extends MappedStream {
         }
 
         _atEof = false;
+
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-
         _position = effectiveOffset;
         return _position;
     }
 
     public void setLength(long value) {
         checkDisposed();
+
         throw new UnsupportedOperationException();
     }
 
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
+
         if (!canWrite()) {
             throw new dotnet4j.io.IOException("Attempt to write to read-only VHDX");
         }
@@ -235,13 +255,16 @@ public final class ContentStream extends MappedStream {
         }
 
         int totalWritten = 0;
+
         while (totalWritten < count) {
             int[] chunkIndex = new int[1];
             int[] blockIndex = new int[1];
             int[] sectorIndex = new int[1];
             Chunk chunk = getChunk(_position + totalWritten, chunkIndex, blockIndex, sectorIndex);
+
             int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
             int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
+
             PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus != PayloadBlockStatus.FullyPresent && blockStatus != PayloadBlockStatus.PartiallyPresent) {
                 blockStatus = chunk.allocateSpaceForBlock(blockIndex[0]);
@@ -250,9 +273,11 @@ public final class ContentStream extends MappedStream {
             int toWrite = Math.min(blockBytesRemaining, count - totalWritten);
             _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
             _fileStream.write(buffer, offset + totalWritten, toWrite);
+
             if (blockStatus == PayloadBlockStatus.PartiallyPresent) {
                 BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex[0]);
                 boolean changed = bitmap.markSectorsPresent(sectorIndex[0], toWrite / _metadata.getLogicalSectorSize());
+
                 if (changed) {
                     chunk.writeBlockBitmap(blockIndex[0]);
                 }
@@ -260,6 +285,7 @@ public final class ContentStream extends MappedStream {
 
             totalWritten += toWrite;
         }
+
         _position += totalWritten;
     }
 
@@ -277,12 +303,16 @@ public final class ContentStream extends MappedStream {
         List<StreamExtent> result = new ArrayList<>();
         long chunkSize = (1L << 23) * _metadata.getLogicalSectorSize();
         int chunkRatio = (int) (chunkSize / _metadata.getFileParameters().BlockSize);
+
         long pos = MathUtilities.roundDown(start, chunkSize);
+
         while (pos < start + count) {
             int[] chunkIndex = new int[1];
             int[] blockIndex = new int[1];
             int[] sectorIndex = new int[1];
+
             Chunk chunk = getChunk(pos, chunkIndex, blockIndex, sectorIndex);
+
             for (int i = 0; i < chunkRatio; ++i) {
                 switch (chunk.getBlockStatus(i)) {
                 case NotPresent:
@@ -296,19 +326,30 @@ public final class ContentStream extends MappedStream {
                     break;
                 }
             }
+
             pos += chunkSize;
         }
+
         return result;
     }
 
+    /**
+     * @param chunk {@cs out}
+     * @param block {@cs out}
+     * @param sector {@cs out}
+     */
     private Chunk getChunk(long position, int[] chunk, int[] block, int[] sector) {
         long chunkSize = (1L << 23) * _metadata.getLogicalSectorSize();
         int chunkRatio = (int) (chunkSize / _metadata.getFileParameters().BlockSize);
+
         chunk[0] = (int) (position / chunkSize);
         long chunkOffset = position % chunkSize;
+
         block[0] = (int) (chunkOffset / _fileParameters.BlockSize);
         int blockOffset = (int) (chunkOffset % _fileParameters.BlockSize);
+
         sector[0] = blockOffset / _metadata.getLogicalSectorSize();
+
         Chunk result = _chunks.get___idx(chunk[0]);
         if (result == null) {
             result = new Chunk(_batStream, _fileStream, _freeSpaceTable, _fileParameters, chunk[0], chunkRatio);

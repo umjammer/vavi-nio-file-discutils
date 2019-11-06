@@ -67,9 +67,10 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
             long numClusters,
             int bytesPerCluster) {
         super(type, name, id, flags);
+
         _nonResidentFlag = 1;
-        setDataRuns(new ArrayList<DataRun>());
-        getDataRuns().add(new DataRun(firstCluster, numClusters, false));
+        _dataRuns = new ArrayList<>();
+        _dataRuns.add(new DataRun(firstCluster, numClusters, false));
         _lastVCN = numClusters - 1;
         _dataAllocatedSize = bytesPerCluster * numClusters;
         _dataRealSize = bytesPerCluster * numClusters;
@@ -87,8 +88,9 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
             long startVcn,
             List<DataRun> dataRuns) {
         super(type, name, id, flags);
+
         _nonResidentFlag = 1;
-        setDataRuns(dataRuns);
+        _dataRuns = dataRuns;
         _startingVCN = startVcn;
 
         if (!Collections.disjoint(flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
@@ -100,6 +102,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
             for (DataRun run : dataRuns) {
                 _lastVCN += run.getRunLength();
             }
+
             _lastVCN -= 1;
         }
     }
@@ -127,7 +130,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
      * Gets or sets the size of a compression unit (in clusters).
      */
     public int getCompressionUnitSize() {
-        return 1 << _compressionUnitSize;
+        return 1 << _compressionUnitSize & 0xffff;
     }
 
     public void setCompressionUnitSize(int value) {
@@ -145,14 +148,14 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         _dataRealSize = value;
     }
 
-    private List<DataRun> __DataRuns;
+    private List<DataRun> _dataRuns;
 
     public List<DataRun> getDataRuns() {
-        return __DataRuns;
+        return _dataRuns;
     }
 
     public void setDataRuns(List<DataRun> value) {
-        __DataRuns = value;
+        _dataRuns = value;
     }
 
     /**
@@ -175,17 +178,17 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
     }
 
     public int getSize() {
-        byte nameLength = 0;
-        short nameOffset = (short) (!Collections.disjoint(getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) ? 0x48 : 0x40);
-        if (getName() != null) {
-            nameLength = (byte) getName().length();
+        int nameLength = 0;
+        int nameOffset = !Collections.disjoint(_flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) ? 0x48 : 0x40;
+        if (_name != null) {
+            nameLength = _name.length();
         }
 
-        short dataOffset = (short) MathUtilities.roundUp(nameOffset + nameLength * 2, 8);
+        int dataOffset = MathUtilities.roundUp(nameOffset + nameLength * 2, 8);
 
         // Write out data first, since we know where it goes...
         int dataLen = 0;
-        for (DataRun run : getDataRuns()) {
+        for (DataRun run : _dataRuns) {
             dataLen += run.getSize();
         }
 
@@ -199,53 +202,54 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
     }
 
     public void replaceRun(DataRun oldRun, DataRun newRun) {
-        int idx = getDataRuns().indexOf(oldRun);
+        int idx = _dataRuns.indexOf(oldRun);
         if (idx < 0) {
             throw new NoSuchElementException("Attempt to replace non-existant run: " + oldRun);
         }
 
-        getDataRuns().set(idx, newRun);
+        _dataRuns.set(idx, newRun);
 //Debug.println("~~[" + idx + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
     }
 
     public int removeRun(DataRun run) {
-        int idx = getDataRuns().indexOf(run);
+        int idx = _dataRuns.indexOf(run);
         if (idx < 0) {
 //Debug.println("-x: " + run + " / " + StringUtil.paramString(getDataRuns()));
             throw new NoSuchElementException("Attempt to remove non-existant run: " + run);
         }
 
-        getDataRuns().remove(idx);
+        _dataRuns.remove(idx);
 //Debug.println("--[" + idx + "]: " + run + " / " + StringUtil.paramString(getDataRuns()));
         return idx;
     }
 
     public void insertRun(DataRun existingRun, DataRun newRun) {
-        int idx = getDataRuns().indexOf(existingRun);
+        int idx = _dataRuns.indexOf(existingRun);
         if (idx < 0) {
             throw new NoSuchElementException("Attempt to replace non-existant run: " + existingRun);
         }
 
-        getDataRuns().add(idx + 1, newRun);
+        _dataRuns.add(idx + 1, newRun);
 //Debug.println("+2[" + (idx + 1) + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
     }
 
     public void insertRun(int index, DataRun newRun) {
-        getDataRuns().add(index, newRun);
+        _dataRuns.add(index, newRun);
 //Debug.println("+1[" + index + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
     }
 
     public List<Range> getClusters() {
-        List<DataRun> cookedRuns = getDataRuns();
+        List<DataRun> cookedRuns = _dataRuns;
+
         long start = 0;
-        List<Range> result = new ArrayList<>(getDataRuns().size());
+        List<Range> result = new ArrayList<>(_dataRuns.size());
         for (DataRun run : cookedRuns) {
             if (!run.isSparse()) {
                 start += run.getRunOffset();
                 result.add(new Range(start, run.getRunLength()));
             }
-
         }
+
         return result;
     }
 
@@ -254,19 +258,18 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
     }
 
     public int write(byte[] buffer, int offset) {
-        short headerLength = 0x40;
+        int headerLength = 0x40;
         if (!Collections.disjoint(getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             headerLength += 0x08;
         }
 
-        byte nameLength = 0;
-        short nameOffset = headerLength;
+        int nameLength = 0;
+        int nameOffset = headerLength;
         if (getName() != null) {
-            nameLength = (byte) getName().length();
+            nameLength = getName().length();
         }
 
-        assert nameLength >= 0 : String.valueOf(nameLength);
-        short dataOffset = (short) MathUtilities.roundUp(headerLength + nameLength * 2, 8);
+        int dataOffset = MathUtilities.roundUp(headerLength + nameLength * 2, 8);
 
         // Write out data first, since we know where it goes...
         int dataLen = 0;
@@ -279,17 +282,17 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
 
         int length = MathUtilities.roundUp(dataOffset + dataLen, 8);
 
-        EndianUtilities.writeBytesLittleEndian(_type.ordinal(), buffer, offset + 0x00);
+        EndianUtilities.writeBytesLittleEndian(_type.getValue(), buffer, offset + 0x00);
         EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x04);
         buffer[offset + 0x08] = _nonResidentFlag;
-        buffer[offset + 0x09] = nameLength;
-        EndianUtilities.writeBytesLittleEndian(nameOffset, buffer, offset + 0x0A);
+        buffer[offset + 0x09] = (byte) nameLength;
+        EndianUtilities.writeBytesLittleEndian((short) nameOffset, buffer, offset + 0x0A);
         EndianUtilities.writeBytesLittleEndian((short) AttributeFlags.valueOf(_flags), buffer, offset + 0x0C);
         EndianUtilities.writeBytesLittleEndian(_attributeId, buffer, offset + 0x0E);
 
         EndianUtilities.writeBytesLittleEndian(_startingVCN, buffer, offset + 0x10);
         EndianUtilities.writeBytesLittleEndian(_lastVCN, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x20);
+        EndianUtilities.writeBytesLittleEndian((short) dataOffset, buffer, offset + 0x20);
         EndianUtilities.writeBytesLittleEndian(_compressionUnitSize, buffer, offset + 0x22);
         EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x24); // Padding
         EndianUtilities.writeBytesLittleEndian(_dataAllocatedSize, buffer, offset + 0x28);
@@ -308,34 +311,39 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
 
     public AttributeRecord split(int suggestedSplitIdx) {
         int splitIdx;
-        if (suggestedSplitIdx <= 0 || suggestedSplitIdx >= getDataRuns().size()) {
-            splitIdx = getDataRuns().size() / 2;
+        if (suggestedSplitIdx <= 0 || suggestedSplitIdx >= _dataRuns.size()) {
+            splitIdx = _dataRuns.size() / 2;
         } else {
             splitIdx = suggestedSplitIdx;
         }
+
         long splitVcn = _startingVCN;
         long splitLcn = 0;
         for (int i = 0; i < splitIdx; ++i) {
             splitVcn += getDataRuns().get(i).getRunLength();
             splitLcn += getDataRuns().get(i).getRunOffset();
         }
+
         List<DataRun> newRecordRuns = new ArrayList<>();
         while (getDataRuns().size() > splitIdx) {
             DataRun run = getDataRuns().get(splitIdx);
+
             getDataRuns().remove(splitIdx);
             newRecordRuns.add(run);
         }
+
+        // Each extent has implicit start LCN=0, so have to make stored runs match reality.
+        // However, take care not to stomp on 'sparse' runs that may be at the start of the
+        // new extent (indicated by Zero run offset).
         for (int i = 0; i < newRecordRuns.size(); ++i) {
-            // Each extent has implicit start LCN=0, so have to make stored runs match reality.
-            // However, take care not to stomp on 'sparse' runs that may be at the start of the
-            // new extent (indicated by Zero run offset).
             if (!newRecordRuns.get(i).isSparse()) {
                 newRecordRuns.get(i).setRunOffset(newRecordRuns.get(i).getRunOffset() + splitLcn);;
                 break;
             }
-
         }
+
         _lastVCN = splitVcn - 1;
+
         return new NonResidentAttributeRecord(_type, _name, (short) 0, _flags, splitVcn, newRecordRuns);
     }
 
@@ -352,7 +360,8 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         }
 
         String runStr = "";
-        for (DataRun run : getDataRuns()) {
+
+        for (DataRun run : _dataRuns) {
             runStr += " " + run;
         }
 
@@ -360,7 +369,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
     }
 
     protected void read(byte[] buffer, int offset, int[] length) {
-        setDataRuns(null);
+        _dataRuns = null;
 
         super.read(buffer, offset, length);
 
@@ -371,11 +380,11 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         _dataAllocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
         _dataRealSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
         _initializedDataSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x38);
-        if (!Collections.disjoint(getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) && _dataRunsOffset > 0x40) {
+        if (!Collections.disjoint(_flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) && _dataRunsOffset > 0x40) {
             _compressedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
         }
 
-        setDataRuns(new ArrayList<DataRun>());
+        _dataRuns = new ArrayList<>();
         int pos = _dataRunsOffset;
         while (pos < length[0]) {
             DataRun run = new DataRun();
@@ -386,7 +395,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
                 break;
             }
 
-            getDataRuns().add(run);
+            _dataRuns.add(run);
             pos += len;
         }
     }

@@ -169,21 +169,22 @@ public final class RegistryKey {
     /**
      * Gets a named value stored within this key.
      *
-     * @param name The name of the value to retrieve.
-     * @return The value as a .NET object.The mapping from registry type of .NET
-     *         type is as follows:
-     * 
-     *         <pre>
-     *         Value Type: .NET type
+     * The mapping from registry type of .NET type is as follows:
      *
-     *         String: string
-     *         ExpandString: string
-     *         Link: string
-     *         DWord: uint
-     *         DWordBigEndian: uint
-     *         MultiString: string[]
-     *         QWord: ulong
-     *         </pre>
+     * <pre>
+     * Value Type:     .NET type
+     *
+     * String:         string
+     * ExpandString:   string
+     * Link:           string
+     * DWord:          uint
+     * DWordBigEndian: uint
+     * MultiString:    string[]
+     * QWord:          ulong
+     * </pre>
+     *
+     * @param name The name of the value to retrieve.
+     * @return The value as a .NET object.
      */
     public Object getValue(String name) {
         return getValue(name, null, RegistryValueOptions.None);
@@ -192,23 +193,24 @@ public final class RegistryKey {
     /**
      * Gets a named value stored within this key.
      *
+     * The mapping from registry type of .NET type is as follows:
+     *
+     * <pre>
+     * Value Type:     .NET type
+     *
+     * String:         string
+     * ExpandString:   string
+     * Link:           string
+     * DWord:          uint
+     * DWordBigEndian: uint
+     * MultiString:    string[]
+     * QWord:          ulong
+     * </pre>
+     *
      * @param name The name of the value to retrieve.
      * @param defaultValue The default value to return, if no existing value is
      *            stored.
-     * @return The value as a .NET object.The mapping from registry type of .NET
-     *         type is as follows:
-     * 
-     *         <pre>
-     *         Value Type: .NET type
-     *
-     *         String: string
-     *         ExpandString: string
-     *         Link: string
-     *         DWord: uint
-     *         DWordBigEndian: uint
-     *         MultiString: string[]
-     *         QWord: ulong
-     *         </pre>
+     * @return The value as a .NET object.
      */
     public Object getValue(String name, Object defaultValue) {
         return getValue(name, defaultValue, RegistryValueOptions.None);
@@ -217,25 +219,26 @@ public final class RegistryKey {
     /**
      * Gets a named value stored within this key.
      *
+     * The mapping from registry type of .NET type is as follows:
+     *
+     * <pre>
+     * Value Type:     .NET type
+     *
+     * String:         string
+     * ExpandString:   string
+     * Link:           string
+     * DWord:          uint
+     * DWordBigEndian: uint
+     * MultiString:    string[]
+     * QWord:          ulong
+     * </pre>
+     *
      * @param name The name of the value to retrieve.
      * @param defaultValue The default value to return, if no existing value is
      *            stored.
      * @param options Flags controlling how the value is processed before it's
      *            returned.
-     * @return The value as a .NET object.The mapping from registry type of .NET
-     *         type is as follows:
-     * 
-     *         <pre>
-     *         Value Type: .NET type
-     *
-     *         String: string
-     *         ExpandString: string
-     *         Link: string
-     *         DWord: uint
-     *         DWordBigEndian: uint
-     *         MultiString: string[]
-     *         QWord: ulong
-     *         </pre>
+     * @return The value as a .NET object.
      */
     public Object getValue(String name, Object defaultValue, RegistryValueOptions options) {
         RegistryValue regVal = getRegistryValue(name);
@@ -290,8 +293,8 @@ public final class RegistryKey {
      * Deletes a named value stored within this key.
      *
      * @param name The name of the value to delete.
-     * @param throwOnMissingValue Throws ArgumentException if {@code name} doesn't
-     *            exist.
+     * @param throwOnMissingValue Throws ArgumentException if {@code name}
+     *            doesn't exist.
      */
     public void deleteValue(String name, boolean throwOnMissingValue) {
         boolean foundValue = false;
@@ -322,7 +325,8 @@ public final class RegistryKey {
                 _hive.writeRawCellData(_cell.ValueListIndex, valueList, 0, _cell.NumValues * 4);
             }
 
-            // TODO: Update maxbytes for value name and value content if this was the
+            // TODO: Update maxbytes for value name and value content if this
+            // was the
             // largest value for either.
             // Windows seems to repair this info, if not accurate, though.
         }
@@ -421,8 +425,8 @@ public final class RegistryKey {
     }
 
     /**
-     * Deletes a subkey and any child subkeys recursively. The string subkey is not
-     * case-sensitive.
+     * Deletes a subkey and any child subkeys recursively. The string subkey is
+     * not case-sensitive.
      *
      * @param subkey The subkey to delete.
      */
@@ -456,8 +460,8 @@ public final class RegistryKey {
      * Deletes the specified subkey. The string subkey is not case-sensitive.
      *
      * @param subkey The subkey to delete.
-     * @param throwOnMissingSubKey {@code true} to throw an argument exception if
-     *            {@code subkey} doesn't exist.
+     * @param throwOnMissingSubKey {@code true} to throw an argument exception
+     *            if {@code subkey} doesn't exist.
      */
     public void deleteSubKey(String subkey, boolean throwOnMissingSubKey) {
         if (subkey == null || subkey.isEmpty()) {
@@ -543,7 +547,8 @@ public final class RegistryKey {
 
             ++insertIdx;
         }
-        // Allocate a new value cell (note _hive.UpdateCell does actual allocation).
+        // Allocate a new value cell (note _hive.UpdateCell does actual
+        // allocation).
         ValueCell valueCell = new ValueCell(name);
         _hive.updateCell(valueCell, true);
 
@@ -657,7 +662,7 @@ public final class RegistryKey {
 
         Cell list = _hive.getCell(subkeyCell.SubKeysIndex);
         if (list instanceof SubKeyIndirectListCell) {
-            SubKeyIndirectListCell indirectList =  SubKeyIndirectListCell.class.cast(list);
+            SubKeyIndirectListCell indirectList = SubKeyIndirectListCell.class.cast(list);
             // foreach (int listIndex in indirectList.CellIndexes)
             for (int i = 0; i < indirectList.getCellIndexes().size(); ++i) {
                 int listIndex = indirectList.getCellIndexes().get(i);

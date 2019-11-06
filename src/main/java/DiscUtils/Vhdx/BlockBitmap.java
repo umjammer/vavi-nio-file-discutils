@@ -35,6 +35,9 @@ public final class BlockBitmap {
         _length = length;
     }
 
+    /**
+     * @param state {@cs out}
+     */
     public int contiguousSectors(int first, boolean[] state) {
         int matched = 0;
         int bitPos = first % 8;

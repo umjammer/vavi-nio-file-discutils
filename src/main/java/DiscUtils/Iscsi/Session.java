@@ -56,7 +56,7 @@ public final class Session implements Closeable {
     }
 
     public Session(SessionType type, String targetName, String userName, String password, List<TargetAddress> addresses) {
-        __InitiatorSessionId = _nextInitiatorSessionId.incrementAndGet();
+        _initiatorSessionId = _nextInitiatorSessionId.incrementAndGet();
         _addresses = addresses;
         setSessionType(type);
         setTargetName(targetName);
@@ -89,50 +89,50 @@ public final class Session implements Closeable {
         }
     }
 
-    private Connection __ActiveConnection;
+    private Connection _activeConnection;
 
     public Connection getActiveConnection() {
-        return __ActiveConnection;
+        return _activeConnection;
     }
 
     public void setActiveConnection(Connection value) {
-        __ActiveConnection = value;
+        _activeConnection = value;
     }
 
-    private int __CommandSequenceNumber;
+    private int _commandSequenceNumber;
 
     public int getCommandSequenceNumber() {
-        return __CommandSequenceNumber;
+        return _commandSequenceNumber;
     }
 
     public void setCommandSequenceNumber(int value) {
-        __CommandSequenceNumber = value;
+        _commandSequenceNumber = value;
     }
 
-    private int __CurrentTaskTag;
+    private int _currentTaskTag;
 
     public int getCurrentTaskTag() {
-        return __CurrentTaskTag;
+        return _currentTaskTag;
     }
 
     public void setCurrentTaskTag(int value) {
-        __CurrentTaskTag = value;
+        _currentTaskTag = value;
     }
 
-    private int __InitiatorSessionId;
+    private int _initiatorSessionId;
 
     public int getInitiatorSessionId() {
-        return __InitiatorSessionId;
+        return _initiatorSessionId;
     }
 
-    private short __TargetSessionId;
+    private short _targetSessionId;
 
     public short getTargetSessionId() {
-        return __TargetSessionId;
+        return _targetSessionId;
     }
 
     public void setTargetSessionId(short value) {
-        __TargetSessionId = value;
+        _targetSessionId = value;
     }
 
     /**
@@ -150,8 +150,7 @@ public final class Session implements Closeable {
      * Enumerates all of the Targets.
      *
      * @return The list of Targets.In practice, for an established session, this
-     *         just returns details of
-     *         the connected Target.
+     *         just returns details of the connected Target.
      */
     public TargetInfo[] enumerateTargets() {
         return getActiveConnection().EnumerateTargets();
@@ -164,7 +163,12 @@ public final class Session implements Closeable {
      */
     public LunInfo[] getLuns() {
         ScsiReportLunsCommand cmd = new ScsiReportLunsCommand(ScsiReportLunsCommand.InitialResponseSize);
-        ScsiReportLunsResponse resp = send(ScsiReportLunsResponse.class, cmd, null, 0, 0, ScsiReportLunsCommand.InitialResponseSize);
+        ScsiReportLunsResponse resp = send(ScsiReportLunsResponse.class,
+                                           cmd,
+                                           null,
+                                           0,
+                                           0,
+                                           ScsiReportLunsCommand.InitialResponseSize);
         if (resp.getTruncated()) {
             cmd = new ScsiReportLunsCommand(resp.getNeededDataLength());
             resp = send(ScsiReportLunsResponse.class, cmd, null, 0, 0, resp.getNeededDataLength());
@@ -204,7 +208,12 @@ public final class Session implements Closeable {
      */
     public LunInfo getInfo(long lun) {
         ScsiInquiryCommand cmd = new ScsiInquiryCommand(lun, ScsiInquiryCommand.InitialResponseDataLength);
-        ScsiInquiryStandardResponse resp = send(ScsiInquiryStandardResponse.class, cmd, null, 0, 0, ScsiInquiryCommand.InitialResponseDataLength);
+        ScsiInquiryStandardResponse resp = send(ScsiInquiryStandardResponse.class,
+                                                cmd,
+                                                null,
+                                                0,
+                                                0,
+                                                ScsiInquiryCommand.InitialResponseDataLength);
         TargetInfo targetInfo = new TargetInfo(getTargetName(), _addresses);
         return new LunInfo(targetInfo,
                            lun,
@@ -223,7 +232,12 @@ public final class Session implements Closeable {
      */
     public LunCapacity getCapacity(long lun) {
         ScsiReadCapacityCommand cmd = new ScsiReadCapacityCommand(lun);
-        ScsiReadCapacityResponse resp = send(ScsiReadCapacityResponse.class, cmd, null, 0, 0, ScsiReadCapacityCommand.ResponseDataLength);
+        ScsiReadCapacityResponse resp = send(ScsiReadCapacityResponse.class,
+                                             cmd,
+                                             null,
+                                             0,
+                                             0,
+                                             ScsiReadCapacityCommand.ResponseDataLength);
         if (resp.getTruncated()) {
             throw new IllegalArgumentException("Truncated response");
         }
@@ -286,22 +300,22 @@ public final class Session implements Closeable {
     /**
      * Performs a raw SCSI command.
      *
+     * This method permits the caller to send raw SCSI commands to a LUN.The
+     * command .
+     *
      * @param lun The target LUN for the command.
      * @param command The command (a SCSI Command Descriptor Block, aka CDB).
      * @param outBuffer Buffer of data to send with the command (or
-     *            {@code null}
-     *            ).
+     *            {@code null}).
      * @param outBufferOffset Offset of first byte of data to send with the
      *            command.
      * @param outBufferLength Amount of data to send with the command.
      * @param inBuffer Buffer to receive data from the command (or
-     *            {@code null}
-     *            ).
+     *            {@code null}).
      * @param inBufferOffset Offset of the first byte position to fill with
      *            received data.
      * @param inBufferLength The expected amount of data to receive.
-     * @return The number of bytes of data received.This method permits the
-     *         caller to send raw SCSI commands to a LUN.The command .
+     * @return The number of bytes of data received.
      */
     public int rawCommand(long lun,
                           byte[] command,
@@ -343,7 +357,11 @@ public final class Session implements Closeable {
                 ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
                 if (attr != null) {
                     Object value = propInfo.get(this);
-                    if (ProtocolKeyAttribute.Util.shouldTransmit(attr, value, propInfo.getType(), phase, getSessionType() == SessionType.Discovery)) {
+                    if (ProtocolKeyAttribute.Util.shouldTransmit(attr,
+                                                                 value,
+                                                                 propInfo.getType(),
+                                                                 phase,
+                                                                 getSessionType() == SessionType.Discovery)) {
                         parameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
                         _negotiatedParameters.put(attr.name(), "");
                     }
@@ -361,13 +379,14 @@ public final class Session implements Closeable {
                 if (attr != null) {
                     if (inParameters.get___idx(attr.name()) != null) {
                         Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get___idx(attr.name()),
-                                                                             propInfo.getType());
+                                                                                  propInfo.getType());
                         propInfo.set(this, value);
                         inParameters.remove(attr.name());
 
                         if (attr.type() == KeyType.Negotiated && !_negotiatedParameters.containsKey(attr.name())) {
                             value = propInfo.get(this);
-                            outParameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
+                            outParameters.add(attr.name(),
+                                              ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
                             _negotiatedParameters.put(attr.name(), "");
                         }
                     }
@@ -669,7 +688,12 @@ public final class Session implements Closeable {
                 .send(cmd, outBuffer, outBufferOffset, outBufferCount, inBuffer, inBufferOffset, inBufferMax);
     }
 
-    private <T extends ScsiResponse> T send(Class<T> clazz, ScsiCommand cmd, byte[] buffer, int offset, int count, int expected) {
+    private <T extends ScsiResponse> T send(Class<T> clazz,
+                                            ScsiCommand cmd,
+                                            byte[] buffer,
+                                            int offset,
+                                            int count,
+                                            int expected) {
         return getActiveConnection().send(clazz, cmd, buffer, offset, count, expected);
     }
 }

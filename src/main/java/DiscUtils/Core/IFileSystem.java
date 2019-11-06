@@ -134,8 +134,7 @@ public interface IFileSystem {
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern.
+     * specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -145,8 +144,7 @@ public interface IFileSystem {
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
      * @param path The path to search.
@@ -195,8 +193,7 @@ public interface IFileSystem {
 
     /**
      * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * matching a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -371,16 +368,20 @@ public interface IFileSystem {
     /**
      * Gets an object representing a possible file.
      *
+     * The file does not need to exist.
+     *
      * @param path The file path.
-     * @return The representing object.The file does not need to exist.
+     * @return The representing object.
      */
     DiscFileInfo getFileInfo(String path) throws IOException;
 
     /**
      * Gets an object representing a possible directory.
      *
+     * The directory does not need to exist.
+     *
      * @param path The directory path.
-     * @return The representing object.The directory does not need to exist.
+     * @return The representing object.
      */
     DiscDirectoryInfo getDirectoryInfo(String path) throws IOException;
 
@@ -388,18 +389,17 @@ public interface IFileSystem {
      * Gets an object representing a possible file system object (file or
      * directory).
      *
+     * The file system object does not need to exist.
+     *
      * @param path The file system path.
-     * @return The representing object.The file system object does not need to
-     *         exist.
+     * @return The representing object.
      */
     DiscFileSystemInfo getFileSystemInfo(String path) throws IOException;
 
     /**
      * Reads the boot code of the file system into a byte array.
      *
-     * @return The boot code, or
-     *         {@code null}
-     *         if not available.
+     * @return The boot code, or {@code null} if not available.
      */
     byte[] readBootCode() throws IOException;
 

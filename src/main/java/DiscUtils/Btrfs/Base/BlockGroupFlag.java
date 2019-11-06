@@ -24,62 +24,63 @@ package DiscUtils.Btrfs.Base;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
 
 public enum BlockGroupFlag {
     /**
      * The type of storage this block group offers. SYSTEM chunks cannot be
      * mixed, but DATA and METADATA chunks can be mixed.
      */
-    Data(0x01),
+    Data,
     /**
      * The type of storage this block group offers. SYSTEM chunks cannot be
      * mixed, but DATA and METADATA chunks can be mixed.
      */
-    System(0x02),
+    System,
     /**
      * The type of storage this block group offers. SYSTEM chunks cannot be
      * mixed, but DATA and METADATA chunks can be mixed.
      */
-    Metadata(0x04),
+    Metadata,
     /**
      * Striping
      */
-    Raid0(0x08),
+    Raid0,
     /**
      * Mirror on a separate device
      */
-    Raid1(0x10),
+    Raid1,
     /**
      * Mirror on a single device
      */
-    Dup(0x20),
+    Dup,
     /**
      * Striping and mirroring
      */
-    Raid10(0x40),
+    Raid10,
     /**
      * Parity striping with single-disk fault tolerance
      */
-    Raid5(0x80),
+    Raid5,
     /**
      * Parity striping with double-disk fault tolerance
      */
-    Raid6(0x100);
+    Raid6;
 
-    private int value;
-
-    public int getValue() {
-        return value;
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
     }
 
-    private BlockGroupFlag(int value) {
-        this.value = value;
-    }
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
 
     public static EnumSet<BlockGroupFlag> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (v.getValue() & value) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(BlockGroupFlag.class)));
     }
 }

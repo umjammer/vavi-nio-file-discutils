@@ -54,7 +54,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastAccessTimeUtc() {
-        return getInode().ModificationTime;
+        return getInode()._modificationTime;
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -62,7 +62,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return getInode().ModificationTime;
+        return getInode()._modificationTime;
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -70,7 +70,7 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return getInode().ModificationTime;
+        return getInode()._modificationTime;
     }
 
     public void setCreationTimeUtc(long value) {
@@ -78,7 +78,7 @@ public class File implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(getInode().Type);
+        UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(getInode()._type);
         return UnixFileType.toFileAttributes(fileType);
     }
 

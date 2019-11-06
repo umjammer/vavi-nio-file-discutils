@@ -33,27 +33,27 @@ public class TimeSpec implements IByteArraySerializable {
     /**
     * Number of seconds since 1970-01-01T00:00:00Z.
     */
-    private long __Seconds;
+    private long _seconds;
 
     public long getSeconds() {
-        return __Seconds;
+        return _seconds;
     }
 
     public void setSeconds(long value) {
-        __Seconds = value;
+        _seconds = value;
     }
 
     /**
      * Number of nanoseconds since the beginning of the second.
      */
-    private int __Nanoseconds;
+    private int _nanoseconds;
 
     public int getNanoseconds() {
-        return __Nanoseconds;
+        return _nanoseconds;
     }
 
     public void setNanoseconds(int value) {
-        __Nanoseconds = value;
+        _nanoseconds = value;
     }
 
     public long getValue() {

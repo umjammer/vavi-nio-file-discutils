@@ -23,34 +23,34 @@
 package DiscUtils.Core.LogicalDiskManager;
 
 public final class ComponentRecord extends DatabaseRecord {
+    // Identical on mirrors
     public int LinkId;
 
-    // Identical on mirrors
+    // (02 Spanned, Simple, Mirrored)  (01 on striped)
     public ExtentMergeType MergeType = ExtentMergeType.None;
 
-    // (02 Spanned, Simple, Mirrored)  (01 on striped)
+    // Could be num disks
     public long NumExtents;
 
-    // Could be num disks
     public String StatusString;
 
     public long StripeSizeSectors;
 
+    // aka num partitions
     public long StripeStride;
 
-    // aka num partitions
+    // Zero
     public int Unknown1;
 
     // Zero
     public int Unknown2;
 
-    // Zero
+    // 00 .. 00
     public long Unknown3;
 
-    // 00 .. 00
+    // ??
     public long Unknown4;
 
-    // ??
     public long VolumeId;
 
     protected void doReadFrom(byte[] buffer, int offset) {
@@ -60,16 +60,13 @@ public final class ComponentRecord extends DatabaseRecord {
         Name = readVarString(buffer, pos);
         StatusString = readVarString(buffer, pos);
         MergeType = ExtentMergeType.valueOf(readByte(buffer, pos));
-        Unknown1 = readUInt(buffer, pos);
-        // Zero
+        Unknown1 = readUInt(buffer, pos); // Zero
         NumExtents = readVarULong(buffer, pos);
         Unknown2 = readUInt(buffer, pos);
         LinkId = readUInt(buffer, pos);
-        Unknown3 = readULong(buffer, pos);
-        // Zero
+        Unknown3 = readULong(buffer, pos); // Zero
         VolumeId = readVarULong(buffer, pos);
-        Unknown4 = readVarULong(buffer, pos);
-        // Zero
+        Unknown4 = readVarULong(buffer, pos); // Zero
         if ((Flags & 0x1000) != 0) {
             StripeSizeSectors = readVarLong(buffer, pos);
             StripeStride = readVarLong(buffer, pos);

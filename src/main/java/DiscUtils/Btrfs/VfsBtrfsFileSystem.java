@@ -40,7 +40,7 @@ import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
 
 
-public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context> implements
+final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context> implements
                                       IUnixFileSystem {
     public VfsBtrfsFileSystem(Stream stream) {
         this(stream, new BtrfsFileSystemOptions());
@@ -48,6 +48,7 @@ public final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, Fi
 
     public VfsBtrfsFileSystem(Stream stream, BtrfsFileSystemOptions options) {
         super(options);
+
         Context context = new Context(options);
         context.setRawStream(stream);
         setContext(context);

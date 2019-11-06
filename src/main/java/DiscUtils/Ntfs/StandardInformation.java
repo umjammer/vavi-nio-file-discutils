@@ -120,7 +120,7 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
 
     public static StandardInformation initializeNewFile(File file, EnumSet<FileAttributeFlags> flags) {
         long now = System.currentTimeMillis();
-        NtfsStream siStream = file.createStream(AttributeType.StandardInformation,null);
+        NtfsStream siStream = file.createStream(AttributeType.StandardInformation, null);
         StandardInformation si = new StandardInformation();
         si.CreationTime = now;
         si.ModificationTime = now;
@@ -140,10 +140,11 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
         return result;
     }
 
-    public static EnumSet<FileAttributeFlags> setFileAttributes(EnumSet<FileAttributes> newAttributes, EnumSet<FileAttributeFlags> existing) {
+    public static EnumSet<FileAttributeFlags> setFileAttributes(EnumSet<FileAttributes> newAttributes,
+                                                                EnumSet<FileAttributeFlags> existing) {
         int _newAttributes = (int) FileAttributes.valueOf(newAttributes);
         int _existing = (int) FileAttributeFlags.valueOf(existing);
-        return FileAttributeFlags.valueOf((_existing & 0xFFFF0000) | ( _newAttributes & 0xFFFF));
+        return FileAttributeFlags.valueOf((_existing & 0xFFFF0000) | (_newAttributes & 0xFFFF));
     }
 
     private static long readDateTime(byte[] buffer, int offset) {

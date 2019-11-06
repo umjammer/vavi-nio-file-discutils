@@ -30,31 +30,27 @@ public abstract class BlockCompressor {
      * Gets or sets the block size parameter to the algorithm.
      *
      * Some algorithms may use this to control both compression and
-     * decompression, others may
-     * only use it to control compression. Some may ignore it entirely.
+     * decompression, others may only use it to control compression. Some may
+     * ignore it entirely.
      */
-    private int __BlockSize;
+    private int _blockSize;
 
     public int getBlockSize() {
-        return __BlockSize;
+        return _blockSize;
     }
 
     public void setBlockSize(int value) {
-        __BlockSize = value;
+        _blockSize = value;
     }
 
     /**
      * Compresses some data.
      *
      * @param source The uncompressed input.
-     * @param sourceOffset Offset of the input data in
-     *            {@code source}
-     *            .
+     * @param sourceOffset Offset of the input data in {@code source} .
      * @param sourceLength The amount of uncompressed data.
      * @param compressed The destination for the output compressed data.
-     * @param compressedOffset Offset for the output data in
-     *            {@code compressed}
-     *            .
+     * @param compressedOffset Offset for the output data in {@code compressed}.
      * @param compressedLength The maximum size of the compressed data on input,
      *            and the actual size on output.
      * @return Indication of success, or indication the data could not compress
@@ -71,14 +67,11 @@ public abstract class BlockCompressor {
      * Decompresses some data.
      *
      * @param source The compressed input.
-     * @param sourceOffset Offset of the input data in
-     *            {@code source}
-     *            .
+     * @param sourceOffset Offset of the input data in {@code source} .
      * @param sourceLength The amount of compressed data.
      * @param decompressed The destination for the output decompressed data.
      * @param decompressedOffset Offset for the output data in
-     *            {@code decompressed}
-     *            .
+     *            {@code decompressed} .
      * @return The amount of decompressed data.
      */
     public abstract int decompress(byte[] source,
@@ -86,5 +79,4 @@ public abstract class BlockCompressor {
                                    int sourceLength,
                                    byte[] decompressed,
                                    int decompressedOffset);
-
 }

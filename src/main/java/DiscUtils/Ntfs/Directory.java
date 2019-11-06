@@ -71,7 +71,7 @@ public class Directory extends File {
         writer.println(indent + "  File Number: " + getIndexInMft());
         if (getIndex() != null) {
             for (Tuple<FileNameRecord, FileRecordReference> entry : getIndex().getEntries()) {
-                writer.println(indent + "  DIRECTORY ENTRY (" + entry.getKey().FileName + ")");
+                writer.println(indent + "  DIRECTORY ENTRY (" + entry.getKey()._fileName + ")");
                 writer.println(indent + "    MFT Ref: " + entry.getValue());
                 entry.getKey().dump(writer, indent + "    ");
             }
@@ -107,7 +107,7 @@ public class Directory extends File {
         if (entry != null && entry.getKey() != null) {
             return new DirectoryEntry(this, entry.getValue(), entry.getKey());
         }
-//Debug.println("'" + name + "' not found / " + getIndex());
+
         return null;
     }
 
@@ -121,9 +121,9 @@ public class Directory extends File {
         }
 
         FileNameRecord newNameRecord = file.getFileNameRecord(null, true);
-        newNameRecord._FileNameNamespace = nameNamespace;
-        newNameRecord.FileName = name;
-        newNameRecord.ParentDirectory = getMftReference();
+        newNameRecord._fileNameNamespace = nameNamespace;
+        newNameRecord._fileName = name;
+        newNameRecord._parentDirectory = getMftReference();
 
         NtfsStream nameStream = file.createStream(AttributeType.FileName, null);
         nameStream.setContent(newNameRecord);
@@ -197,11 +197,11 @@ public class Directory extends File {
         List<Tuple<FileNameRecord, FileRecordReference>> entries = new ArrayList<>();
         for (Tuple<FileNameRecord, FileRecordReference> entry : entriesIter) {
             // Weed out short-name entries for files and any hidden / system / metadata files.
-            if (entry.getKey().Flags.contains(FileAttributeFlags.Hidden) && _context.getOptions().hideHiddenFiles()) {
+            if (entry.getKey()._flags.contains(FileAttributeFlags.Hidden) && _context.getOptions().hideHiddenFiles()) {
                 continue;
             }
 
-            if (entry.getKey().Flags.contains(FileAttributeFlags.System) && _context.getOptions().hideSystemFiles()) {
+            if (entry.getKey()._flags.contains(FileAttributeFlags.System) && _context.getOptions().hideSystemFiles()) {
                 continue;
             }
 
@@ -209,7 +209,7 @@ public class Directory extends File {
                 continue;
             }
 
-            if (entry.getKey()._FileNameNamespace == FileNameNamespace.Dos && _context.getOptions().hideDosFileNames()) {
+            if (entry.getKey()._fileNameNamespace == FileNameNamespace.Dos && _context.getOptions().hideDosFileNames()) {
                 continue;
             }
 

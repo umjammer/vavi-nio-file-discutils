@@ -89,7 +89,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public DiskImageFile(Stream stream) {
         _fileStream = stream;
+
         readFooter(true);
+
         readHeaders();
     }
 
@@ -103,7 +105,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
     public DiskImageFile(Stream stream, Ownership ownership) {
         _fileStream = stream;
         _ownership = ownership;
+
         readFooter(true);
+
         readHeaders();
     }
 
@@ -113,27 +117,35 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param path The file path to open.
      * @param access Controls how the file can be accessed.
      */
-    public DiskImageFile(String path, FileAccess access) throws IOException {
+    public DiskImageFile(String path, FileAccess access) {
         this(new LocalFileLocator(Utilities.getDirectoryFromPath(path)), Utilities.getFileFromPath(path), access);
     }
 
     DiskImageFile(FileLocator locator, String path, Stream stream, Ownership ownsStream) {
         this(stream, ownsStream);
+
         _fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
         _fileName = locator.getFileFromPath(path);
     }
 
-    DiskImageFile(FileLocator locator, String path, FileAccess access) throws IOException {
+    DiskImageFile(FileLocator locator, String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         _fileStream = locator.open(path, FileMode.Open, access, share);
         _ownership = Ownership.Dispose;
+
         try {
             _fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
             _fileName = locator.getFileFromPath(path);
+
             readFooter(true);
+
             readHeaders();
         } finally {
-            _fileStream.close();
+            try {
+                _fileStream.close();
+            } catch (IOException e) {
+                throw new dotnet4j.io.IOException(e);
+            }
         }
     }
 
@@ -207,7 +219,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return _fileLocator;
     }
 
-    public long getStoredSize() {
+    long getStoredSize() {
         return _fileStream.getLength();
     }
 
@@ -366,34 +378,31 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return getParentLocations(new LocalFileLocator(basePath));
     }
 
-    static DiskImageFile initializeFixed(FileLocator locator,
-                                                String path,
-                                                long capacity,
-                                                Geometry geometry) throws IOException {
+    static DiskImageFile initializeFixed(FileLocator locator, String path, long capacity, Geometry geometry) {
         DiskImageFile result = null;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeFixedInternal(stream, capacity, geometry);
             result = new DiskImageFile(locator, path, stream, Ownership.Dispose);
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
         return result;
     }
 
-    static DiskImageFile initializeDynamic(FileLocator locator,
-                                                  String path,
-                                                  long capacity,
-                                                  Geometry geometry,
-                                                  long blockSize) throws IOException {
+    static DiskImageFile initializeDynamic(FileLocator locator, String path, long capacity, Geometry geometry, long blockSize) {
         DiskImageFile result = null;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeDynamicInternal(stream, capacity, geometry, blockSize);
             result = new DiskImageFile(locator, path, stream, Ownership.Dispose);
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
         return result;
     }
 
-    DiskImageFile createDifferencing(FileLocator fileLocator, String path) throws IOException {
+    DiskImageFile createDifferencing(FileLocator fileLocator, String path) {
         Stream stream = fileLocator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
         String fullPath = _fileLocator.getFullPath(_fileName);
         String relativePath = fileLocator.makeRelativePath(_fileLocator, _fileName);

@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,11 +73,8 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      * Determines if a physical volume contains LDM data.
      *
      * @param volumeInfo The volume to inspect.
-     * @return
-     *         {@code true}
-     *         if the physical volume contains LDM data, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the physical volume contains LDM data, else
+     *         {@code false} .
      */
     public static boolean handlesPhysicalVolume(PhysicalVolumeInfo volumeInfo) {
         PartitionInfo pi = volumeInfo.getPartition();
@@ -93,10 +89,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      * Determines if a disk is 'dynamic' (i.e. contains LDM volumes).
      *
      * @param disk The disk to inspect.
-     * @return
-     *         {@code true}
-     *         if the disk contains LDM volumes, else
-     *         {@code false}
+     * @return {@code true} if the disk contains LDM volumes, else {@code false}
      *         .
      */
     public static boolean isDynamicDisk(VirtualDisk disk) {
@@ -137,13 +130,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
         for (DynamicDiskGroup group : _groups.values()) {
             for (DynamicVolume volume : group.getVolumes()) {
                 LogicalVolumeInfo lvi = new LogicalVolumeInfo(volume
-                        .getIdentity(), null, () -> {
-                            try {
-                                return volume.open();
-                            } catch (IOException e) {
-                                throw new dotnet4j.io.IOException(e);
-                            }
-                        }, volume.getLength(), volume.getBiosType(), volume.getStatus());
+                        .getIdentity(), null, volume::open, volume.getLength(), volume.getBiosType(), volume.getStatus());
                 result.add(lvi);
             }
         }

@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import vavi.util.Debug;
+import vavi.util.StringUtil;
+
 import DiscUtils.Core.ChsAddress;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.VirtualDisk;
@@ -125,13 +128,12 @@ public final class BiosPartitionTable extends PartitionTable {
                     maxHead = (byte) Math.max(maxHead, record.getEndHead());
                     maxSector = (byte) Math.max(maxSector, record.getEndSector());
                 }
+
                 if (maxHead > 0 && maxSector > 0) {
                     int cylSize = (maxHead + 1) * maxSector * 512;
                     return new Geometry((int) MathUtilities.ceil(disk.getLength(), cylSize), maxHead + 1, maxSector);
                 }
-
             }
-
         }
 
         return Geometry.fromCapacity(disk.getLength());
@@ -141,8 +143,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * Indicates if a stream contains a valid partition table.
      *
      * @param disk The stream to inspect.
-     * @return {@code true} if the partition table is valid, else {@code false}
-     *         .
+     * @return {@code true} if the partition table is valid, else {@code false}.
      */
     public static boolean isValid(Stream disk) {
         if (disk.getLength() < Sizes.Sector) {
@@ -152,7 +153,7 @@ public final class BiosPartitionTable extends PartitionTable {
         disk.setPosition(0);
         byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
 
-//Debug.println("\n" + StringUtil.getDump(bootSector));
+Debug.println(disk + ", " + disk.getPosition() + "\n" + StringUtil.getDump(bootSector));
         // Check for the 'bootable sector' marker
         if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
             return false;
@@ -217,6 +218,7 @@ public final class BiosPartitionTable extends PartitionTable {
      */
     public static BiosPartitionTable initialize(Stream disk, Geometry diskGeometry) {
         Stream data = disk;
+
         byte[] bootSector;
         if (data.getLength() >= Sizes.Sector) {
             data.setPosition(0);
@@ -224,33 +226,42 @@ public final class BiosPartitionTable extends PartitionTable {
         } else {
             bootSector = new byte[Sizes.Sector];
         }
+
         // Wipe all four 16-byte partition table entries
         Arrays.fill(bootSector, 0x01BE, 0x01BE + 16 * 4, (byte) 0);
+
         // Marker bytes
         bootSector[510] = 0x55;
         bootSector[511] = (byte) 0xAA;
+
         data.setPosition(0);
         data.write(bootSector, 0, bootSector.length);
+
         return new BiosPartitionTable(disk, diskGeometry);
     }
 
     /**
      * Creates a new partition that encompasses the entire disk.
      *
+     * The partition table must be empty before this method is called, otherwise
+     * IOException is thrown.
+     * 
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
-     * @return The index of the partition.The partition table must be empty
-     *         before this method is called, otherwise IOException is thrown.
+     * @return The index of the partition.
      */
     public int create(WellKnownPartitionType type, boolean active) {
         Geometry allocationGeometry = new Geometry(_diskData.getLength(),
                                                    _diskGeometry.getHeadsPerCylinder(),
                                                    _diskGeometry.getSectorsPerTrack(),
                                                    _diskGeometry.getBytesPerSector());
+
         ChsAddress start = new ChsAddress(0, 1, 1);
         ChsAddress last = allocationGeometry.getLastSector();
+
         long startLba = allocationGeometry.toLogicalBlockAddress(start);
         long lastLba = allocationGeometry.toLogicalBlockAddress(last);
+
         return createPrimaryByCylinder(0,
                                        allocationGeometry.getCylinders() - 1,
                                        convertType(type, (lastLba - startLba) * Sizes.Sector),
@@ -269,33 +280,40 @@ public final class BiosPartitionTable extends PartitionTable {
         int cylinderCapacity = _diskGeometry.getSectorsPerTrack() * _diskGeometry.getHeadsPerCylinder() *
                                _diskGeometry.getBytesPerSector();
         int numCylinders = (int) (size / cylinderCapacity);
+
         int startCylinder = findCylinderGap(numCylinders);
+
         return createPrimaryByCylinder(startCylinder, startCylinder + numCylinders - 1, convertType(type, size), active);
     }
 
     /**
      * Creates a new aligned partition that encompasses the entire disk.
      *
+     * The partition table must be empty before this method is called, otherwise
+     * IOException is thrown.
+     *
+     * Traditionally partitions were aligned to the physical structure of the
+     * underlying disk, however with modern storage greater efficiency is
+     * achieved by aligning partitions on large values that are a power of two.
+     * 
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in bytes).
-     * @return The index of the partition.The partition table must be empty
-     *         before this method is called, otherwise IOException is thrown.
-     *         Traditionally partitions were aligned to the physical structure
-     *         of the underlying disk, however with modern storage greater
-     *         efficiency is acheived by aligning partitions on large values
-     *         that are a power of two.
+     * @return The index of the partition.
      */
     public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
         Geometry allocationGeometry = new Geometry(_diskData.getLength(),
                                                    _diskGeometry.getHeadsPerCylinder(),
                                                    _diskGeometry.getSectorsPerTrack(),
                                                    _diskGeometry.getBytesPerSector());
+
         ChsAddress start = new ChsAddress(0, 1, 1);
+
         long startLba = MathUtilities.roundUp(allocationGeometry.toLogicalBlockAddress(start),
                                               alignment / _diskGeometry.getBytesPerSector());
         long lastLba = MathUtilities.roundDown(_diskData.getLength() / _diskGeometry.getBytesPerSector(),
                                                alignment / _diskGeometry.getBytesPerSector());
+
         return createPrimaryBySector(startLba,
                                      lastLba - 1,
                                      convertType(type, (lastLba - startLba) * _diskGeometry.getBytesPerSector()),
@@ -305,14 +323,15 @@ public final class BiosPartitionTable extends PartitionTable {
     /**
      * Creates a new aligned partition with a target size.
      *
+     * Traditionally partitions were aligned to the physical structure of the
+     * underlying disk, however with modern storage greater efficiency is
+     * achieved by aligning partitions on large values that are a power of two.
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in bytes).
-     * @return The index of the new partition. Traditionally partitions were
-     *         aligned to the physical structure of the underlying disk, however
-     *         with modern storage greater efficiency is achieved by aligning
-     *         partitions on large values that are a power of two.
+     * @return The index of the new partition.
      */
     public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
         if (size < _diskGeometry.getBytesPerSector()) {
@@ -329,6 +348,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
         long sectorLength = size / _diskGeometry.getBytesPerSector();
         long start = findGap(size / _diskGeometry.getBytesPerSector(), alignment / _diskGeometry.getBytesPerSector());
+
         return createPrimaryBySector(start, start + sectorLength - 1, convertType(type, sectorLength * Sizes.Sector), active);
     }
 
@@ -345,13 +365,14 @@ public final class BiosPartitionTable extends PartitionTable {
      * Creates a new Primary Partition that occupies whole cylinders, for best
      * compatibility.
      *
+     * If the cylinder 0 is given, the first track will not be used, to reserve
+     * space for the meta-data at the start of the disk.
+     *
      * @param first The first cylinder to include in the partition (inclusive).
      * @param last The last cylinder to include in the partition (inclusive).
      * @param type The BIOS (MBR) type of the new partition.
      * @param markActive Whether to mark the partition active (bootable).
-     * @return The index of the new partition.If the cylinder 0 is given, the
-     *         first track will not be used, to reserve space for the meta-data
-     *         at the start of the disk.
+     * @return The index of the new partition.
      */
     public int createPrimaryByCylinder(int first, int last, byte type, boolean markActive) {
         if (first < 0) {
@@ -388,7 +409,7 @@ public final class BiosPartitionTable extends PartitionTable {
             throw new IndexOutOfBoundsException("The last sector extends beyond the end of the disk");
         }
 
-        List<BiosPartitionRecord> existing = getPrimaryRecords();
+        BiosPartitionRecord[] existing = getPrimaryRecords();
 
         BiosPartitionRecord newRecord = new BiosPartitionRecord();
         ChsAddress startAddr = _diskGeometry.toChsAddress(first);
@@ -425,7 +446,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
         // Now look for empty partition
         for (int i = 0; i < 4; ++i) {
-            if (!existing.get(i).isValid()) {
+            if (!existing[i].isValid()) {
                 writeRecord(i, newRecord);
                 return i;
             }
@@ -437,13 +458,15 @@ public final class BiosPartitionTable extends PartitionTable {
     /**
      * Sets the active partition.
      *
+     * The supplied index is the index within the primary partition, see
+     * {@code PrimaryIndex} on {@code BiosPartitionInfo} .
+     *
      * @param index The index of the primary partition to mark bootable, or
-     *            {@code -1} for none.The supplied index is the index within the
-     *            primary partition, see {@code PrimaryIndex} on
-     *            {@code BiosPartitionInfo} .
+     *            {@code -1} for none.
      */
     public void setActivePartition(int index) {
-        List<BiosPartitionRecord> records = new ArrayList<>(getPrimaryRecords());
+        List<BiosPartitionRecord> records = Arrays.asList(getPrimaryRecords());
+
         for (int i = 0; i < records.size(); ++i) {
             records.get(i).setStatus(i == index ? (byte) 0x80 : (byte) 0x00);
             writeRecord(i, records.get(i));
@@ -458,7 +481,9 @@ public final class BiosPartitionTable extends PartitionTable {
      */
     public List<StreamExtent> getMetadataDiskExtents() {
         List<StreamExtent> extents = new ArrayList<>();
+
         extents.add(new StreamExtent(0, Sizes.Sector));
+
         for (BiosPartitionRecord primaryRecord : getPrimaryRecords()) {
             if (primaryRecord.isValid()) {
                 if (isExtendedPartition(primaryRecord)) {
@@ -467,6 +492,7 @@ public final class BiosPartitionTable extends PartitionTable {
                 }
             }
         }
+
         return extents;
     }
 
@@ -474,14 +500,16 @@ public final class BiosPartitionTable extends PartitionTable {
      * Updates the CHS fields in partition records to reflect a new BIOS
      * geometry.
      *
-     * @param geometry The disk's new BIOS geometry.The partitions are not
-     *            relocated to a cylinder boundary, just the CHS fields are
-     *            updated on the assumption the LBA fields are definitive.
+     * The partitions are not relocated to a cylinder boundary, just the CHS
+     * fields are updated on the assumption the LBA fields are definitive.
+     *
+     * @param geometry The disk's new BIOS geometry.
      */
     public void updateBiosGeometry(Geometry geometry) {
         _diskData.setPosition(0);
         byte[] bootSector = StreamUtilities.readExact(_diskData, Sizes.Sector);
-        List<BiosPartitionRecord> records = readPrimaryRecords(bootSector);
+
+        BiosPartitionRecord[] records = readPrimaryRecords(bootSector);
         int i = 0;
         for (BiosPartitionRecord record : records) {
             if (record.isValid()) {
@@ -501,6 +529,7 @@ public final class BiosPartitionTable extends PartitionTable {
                 record.setEndCylinder((short) newEndAddress.getCylinder());
                 record.setEndHead((byte) newEndAddress.getHead());
                 record.setEndSector((byte) newEndAddress.getSector());
+
                 writeRecord(i++, record);
             }
         }
@@ -514,12 +543,13 @@ public final class BiosPartitionTable extends PartitionTable {
                              record.getLBALength() * _diskGeometry.getBytesPerSector());
     }
 
-    private static List<BiosPartitionRecord> readPrimaryRecords(byte[] bootSector) {
+    private static BiosPartitionRecord[] readPrimaryRecords(byte[] bootSector) {
         BiosPartitionRecord[] records = new BiosPartitionRecord[4];
         for (int i = 0; i < 4; ++i) {
             records[i] = new BiosPartitionRecord(bootSector, 0x01BE + i * 0x10, 0, i);
         }
-        return Arrays.asList(records);
+
+        return records;
     }
 
     private static boolean isExtendedPartition(BiosPartitionRecord r) {
@@ -565,7 +595,7 @@ public final class BiosPartitionTable extends PartitionTable {
         return newList;
     }
 
-    private List<BiosPartitionRecord> getPrimaryRecords() {
+    private BiosPartitionRecord[] getPrimaryRecords() {
         _diskData.setPosition(0);
         byte[] bootSector = StreamUtilities.readExact(_diskData, Sizes.Sector);
         return readPrimaryRecords(bootSector);
@@ -584,7 +614,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private int findCylinderGap(int numCylinders) {
-        List<BiosPartitionRecord> list = getPrimaryRecords().stream().filter(r -> r.isValid()).collect(Collectors.toList());
+        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(r -> r.isValid()).collect(Collectors.toList());
         Collections.sort(list);
 
         int startCylinder = 0;
@@ -616,7 +646,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private long findGap(long numSectors, long alignmentSectors) {
-        List<BiosPartitionRecord> list = getPrimaryRecords().stream().filter(r -> r.isValid()).collect(Collectors.toList());
+        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(r -> r.isValid()).collect(Collectors.toList());
         Collections.sort(list);
         long startSector = MathUtilities.roundUp(_diskGeometry.toLogicalBlockAddress(0, 1, 1), alignmentSectors);
         int idx = 0;

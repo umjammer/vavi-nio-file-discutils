@@ -87,7 +87,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(_attributeType, buffer, 0);
-        EndianUtilities.writeBytesLittleEndian(_collationRule.ordinal(), buffer, 0x04);
+        EndianUtilities.writeBytesLittleEndian(_collationRule.getValue(), buffer, 0x04);
         EndianUtilities.writeBytesLittleEndian(_indexAllocationSize, buffer, 0x08);
         EndianUtilities.writeBytesLittleEndian(_rawClustersPerIndexRecord, buffer, 0x0C);
     }
@@ -121,31 +121,29 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             if (x == null && y == null) {
                 return 0;
             }
-
             if (y == null) {
                 return -1;
             }
-
             if (x == null) {
                 return 1;
             }
 
-            int xHash = EndianUtilities.toUInt32LittleEndian(x, 0);
-            int yHash = EndianUtilities.toUInt32LittleEndian(y, 0);
+            long xHash = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffl;
+            long yHash = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffl;
+
             if (xHash < yHash) {
                 return -1;
             }
-
             if (xHash > yHash) {
                 return 1;
             }
 
-            int xId = EndianUtilities.toUInt32LittleEndian(x, 4);
-            int yId = EndianUtilities.toUInt32LittleEndian(y, 4);
+            long xId = EndianUtilities.toUInt32LittleEndian(x, 4) & 0xffffffffl;
+            long yId = EndianUtilities.toUInt32LittleEndian(y, 4) & 0xffffffffl;
+
             if (xId < yId) {
                 return -1;
             }
-
             if (xId > yId) {
                 return 1;
             }
@@ -159,21 +157,19 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             if (x == null && y == null) {
                 return 0;
             }
-
             if (y == null) {
                 return -1;
             }
-
             if (x == null) {
                 return 1;
             }
 
-            int xVal = EndianUtilities.toUInt32LittleEndian(x, 0);
-            int yVal = EndianUtilities.toUInt32LittleEndian(y, 0);
+            long xVal = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffl;
+            long yVal = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffl;
+
             if (xVal < yVal) {
                 return -1;
             }
-
             if (xVal > yVal) {
                 return 1;
             }
@@ -187,26 +183,25 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             if (x == null && y == null) {
                 return 0;
             }
-
             if (y == null) {
                 return -1;
             }
-
             if (x == null) {
                 return 1;
             }
 
             for (int i = 0; i < x.length / 4; ++i) {
-                int xVal = EndianUtilities.toUInt32LittleEndian(x, i * 4);
-                int yVal = EndianUtilities.toUInt32LittleEndian(y, i * 4);
+                long xVal = EndianUtilities.toUInt32LittleEndian(x, i * 4) & 0xffffffffl;
+                long yVal = EndianUtilities.toUInt32LittleEndian(y, i * 4) & 0xffffffffl;
+
                 if (xVal < yVal) {
                     return -1;
                 }
-
                 if (xVal > yVal) {
                     return 1;
                 }
             }
+
             return 0;
         }
     }
@@ -222,20 +217,16 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             if (x == null && y == null) {
                 return 0;
             }
-
             if (y == null) {
                 return -1;
             }
-
             if (x == null) {
                 return 1;
             }
 
-            byte xFnLen = x[0x40];
-            byte yFnLen = y[0x40];
-//if (_stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2) == 0) {
-// Debug.println(new String(x, 0, 0x42, xFnLen * 2) + ",  " + new String(y, 0, 0x42, yFnLen * 2));
-//}
+            int xFnLen = x[0x40] & 0xff;
+            int yFnLen = y[0x40] & 0xff;
+
             return _stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2);
         }
     }
@@ -245,11 +236,9 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             if (x == null && y == null) {
                 return 0;
             }
-
             if (y == null) {
                 return -1;
             }
-
             if (x == null) {
                 return 1;
             }
@@ -260,12 +249,11 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 if (val != 0) {
                     return val;
                 }
-
             }
+
             if (x.length < y.length) {
                 return -1;
             }
-
             if (x.length > y.length) {
                 return 1;
             }

@@ -80,7 +80,7 @@ public final class Disk extends VirtualDisk {
      *
      * @param path The path to the disk image.
      */
-    public Disk(String path) throws IOException {
+    public Disk(String path) {
         DiskImageFile file = new DiskImageFile(path, FileAccess.ReadWrite);
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, Ownership.Dispose));
@@ -94,7 +94,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path to the disk image.
      * @param access The access requested to the disk.
      */
-    public Disk(String path, FileAccess access) throws IOException {
+    public Disk(String path, FileAccess access) {
         DiskImageFile file = new DiskImageFile(path, access);
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, Ownership.Dispose));
@@ -109,7 +109,7 @@ public final class Disk extends VirtualDisk {
      * @param path The file system relative path to the disk.
      * @param access The access requested to the disk.
      */
-    public Disk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
+    public Disk(DiscFileSystem fileSystem, String path, FileAccess access) {
         FileLocator fileLocator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
         DiskImageFile file = new DiskImageFile(fileLocator, Utilities.getFileFromPath(path), access);
         _files = new ArrayList<>();
@@ -120,11 +120,12 @@ public final class Disk extends VirtualDisk {
     /**
      * Initializes a new instance of the Disk class.
      *
+     * The disks should be ordered with the first file referencing the second,
+     * etc. The final file must not require any parent.
+     *
      * @param files The set of image files.
      * @param ownsFiles Indicates if the new instance controls the lifetime of
-     *            the image files.The disks should be ordered with the first
-     *            file referencing the second, etc. The final
-     *            file must not require any parent.
+     *            the image files.
      */
     public Disk(List<DiskImageFile> files, Ownership ownsFiles) {
         if (files == null || files.size() == 0) {
@@ -160,7 +161,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path to the disk image.
      * @param access The access requested to the disk.
      */
-    public Disk(FileLocator locator, String path, FileAccess access) throws IOException {
+    Disk(FileLocator locator, String path, FileAccess access) {
         DiskImageFile file = new DiskImageFile(locator, path, access);
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, Ownership.Dispose));
@@ -175,7 +176,7 @@ public final class Disk extends VirtualDisk {
      * @param ownsFile Indicates if the new instance should control the lifetime
      *            of the file.
      */
-    private Disk(DiskImageFile file, Ownership ownsFile) throws IOException {
+    private Disk(DiskImageFile file, Ownership ownsFile) {
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, ownsFile));
         resolveFileChain();
@@ -191,14 +192,13 @@ public final class Disk extends VirtualDisk {
      * @param parentLocator Object used to locate the parent disk.
      * @param parentPath Path to the parent disk (if required).
      */
-    private Disk(DiskImageFile file, Ownership ownsFile, FileLocator parentLocator, String parentPath) throws IOException {
+    private Disk(DiskImageFile file, Ownership ownsFile, FileLocator parentLocator, String parentPath) {
         _files = new ArrayList<>();
         _files.add(new Tuple<>(file, ownsFile));
         if (file.needsParent()) {
             _files.add(new Tuple<>(new DiskImageFile(parentLocator, parentPath, FileAccess.Read), Ownership.Dispose));
             resolveFileChain();
         }
-
     }
 
     /**
@@ -240,13 +240,11 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets the content of the disk as a stream.
-     * Note the returned stream is not guaranteed to be at any particular
-     * position. The actual position
-     * will depend on the last partition table/file system activity, since all
-     * access to the disk contents pass
-     * through a single stream instance. Set the stream position before
-     * accessing the stream.
+     * Gets the content of the disk as a stream. Note the returned stream is not
+     * guaranteed to be at any particular position. The actual position will
+     * depend on the last partition table/file system activity, since all access
+     * to the disk contents pass through a single stream instance. Set the
+     * stream position before accessing the stream.
      */
     public SparseStream getContent() {
         if (_content == null) {
@@ -254,6 +252,7 @@ public final class Disk extends VirtualDisk {
             for (int i = _files.size() - 1; i >= 0; --i) {
                 stream = _files.get(i).Item1.openContent(stream, Ownership.Dispose);
             }
+
             _content = stream;
         }
 
@@ -268,10 +267,9 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets information about the type of disk.
-     * This property provides access to meta-data about the disk format, for
-     * example whether the
-     * BIOS geometry is preserved in the disk file.
+     * Gets information about the type of disk. This property provides access to
+     * meta-data about the disk format, for example whether the BIOS geometry is
+     * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo(_files.get(_files.size() - 1).Item1.isSparse() ? "dynamic" : "fixed");
@@ -311,15 +309,14 @@ public final class Disk extends VirtualDisk {
      * @param ownsStream Indicates if the new instance controls the lifetime of
      *            the stream.
      * @param capacity The desired capacity of the new disk.
-     * @param geometry The desired geometry of the new disk, or
-     *            {@code null}
-     *            for default.
+     * @param geometry The desired geometry of the new disk, or {@code null} for
+     *            default.
      * @return An object that accesses the stream as a VHDX file.
      */
     public static Disk initializeFixed(Stream stream,
                                        Ownership ownsStream,
                                        long capacity,
-                                       Geometry geometry) throws IOException {
+                                       Geometry geometry) {
         return new Disk(DiskImageFile.initializeFixed(stream, ownsStream, capacity, geometry), Ownership.Dispose);
     }
 
@@ -332,7 +329,7 @@ public final class Disk extends VirtualDisk {
      * @param capacity The desired capacity of the new disk.
      * @return An object that accesses the stream as a VHDX file.
      */
-    public static Disk initializeDynamic(Stream stream, Ownership ownsStream, long capacity) throws IOException {
+    public static Disk initializeDynamic(Stream stream, Ownership ownsStream, long capacity) {
         return new Disk(DiskImageFile.initializeDynamic(stream, ownsStream, capacity), Ownership.Dispose);
     }
 
@@ -349,7 +346,7 @@ public final class Disk extends VirtualDisk {
     public static Disk initializeDynamic(Stream stream,
                                          Ownership ownsStream,
                                          long capacity,
-                                         long blockSize) throws IOException {
+                                         long blockSize) {
         return new Disk(DiskImageFile.initializeDynamic(stream, ownsStream, capacity, blockSize), Ownership.Dispose);
     }
 
@@ -379,14 +376,10 @@ public final class Disk extends VirtualDisk {
      *
      * @param stream The stream to initialize.
      * @param ownsStream Indicates if the new instance controls the lifetime of
-     *            the
-     *            {@code stream}
-     *            .
+     *            the {@code stream} .
      * @param parent The disk this file is a different from.
      * @param ownsParent Indicates if the new instance controls the lifetime of
-     *            the
-     *            {@code parent}
-     *            file.
+     *            the {@code parent} file.
      * @param parentAbsolutePath The full path to the parent disk.
      * @param parentRelativePath The relative path from the new disk to the
      *            parent disk.
@@ -417,7 +410,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
-    public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
+    public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         FileLocator locator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
         DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
@@ -429,23 +422,23 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
-    public VirtualDisk createDifferencingDisk(String path) throws IOException {
+    public VirtualDisk createDifferencingDisk(String path) {
         FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
         DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
     }
 
-    public static Disk initializeFixed(FileLocator fileLocator,
+    static Disk initializeFixed(FileLocator fileLocator,
                                        String path,
                                        long capacity,
-                                       Geometry geometry) throws IOException {
+                                       Geometry geometry) {
         return new Disk(DiskImageFile.initializeFixed(fileLocator, path, capacity, geometry), Ownership.Dispose);
     }
 
-    public static Disk initializeDynamic(FileLocator fileLocator,
+    static Disk initializeDynamic(FileLocator fileLocator,
                                          String path,
                                          long capacity,
-                                         long blockSize) throws IOException {
+                                         long blockSize) {
         return new Disk(DiskImageFile.initializeDynamic(fileLocator, path, capacity, blockSize), Ownership.Dispose);
     }
 
@@ -472,7 +465,7 @@ public final class Disk extends VirtualDisk {
         }
     }
 
-    private void resolveFileChain() throws IOException {
+    private void resolveFileChain() {
         DiskImageFile file = _files.get(_files.size() - 1).Item1;
         while (file.needsParent()) {
             FileLocator fileLocator = file.getRelativeFileLocator();
@@ -481,8 +474,8 @@ public final class Disk extends VirtualDisk {
                 if (fileLocator.exists(testPath)) {
                     DiskImageFile newFile = new DiskImageFile(fileLocator, testPath, FileAccess.Read);
                     if (newFile.getUniqueId() != file.getParentUniqueId()) {
-                        throw new IOException(String
-                                .format("Invalid disk chain found looking for parent with id %d, found %s with id %d",
+                        throw new dotnet4j.io.IOException(String
+                                .format("Invalid disk chain found looking for parent with id %s, found %s with id %s",
                                         file.getParentUniqueId(),
                                         newFile.getFullPath(),
                                         newFile.getUniqueId()));
@@ -495,7 +488,7 @@ public final class Disk extends VirtualDisk {
                 }
             }
             if (!found) {
-                throw new IOException(String.format("Failed to find parent for disk '%s'", file.getFullPath()));
+                throw new dotnet4j.io.IOException(String.format("Failed to find parent for disk '%s'", file.getFullPath()));
             }
         }
     }

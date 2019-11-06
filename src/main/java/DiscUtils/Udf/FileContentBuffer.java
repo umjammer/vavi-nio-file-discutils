@@ -121,7 +121,7 @@ public class FileContentBuffer implements IBuffer {
 
                 CookedExtent newExtent = new CookedExtent();
                 newExtent.FileContentOffset = filePos;
-                newExtent.Partition = 0xffffffff;
+                newExtent.Partition = Integer.MAX_VALUE;
                 newExtent.StartPos = sad.ExtentLocation * (long)_blockSize;
                 newExtent.Length = sad.ExtentLength;
                 _extents.add(newExtent);
@@ -165,7 +165,7 @@ public class FileContentBuffer implements IBuffer {
             long extentOffset = pos + totalRead - extent.FileContentOffset;
             int toRead = (int) Math.min(totalToRead - totalRead, extent.Length - extentOffset);
             Partition part;
-            if (extent.Partition != 0xffffffff) {
+            if (extent.Partition != Integer.MAX_VALUE) {
                 part = _context.LogicalPartitions.get(extent.Partition);
             } else {
                 part = _partition;

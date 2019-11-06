@@ -45,14 +45,14 @@ public final class ObjectIds {
     public Map<UUID, ObjectIdRecord> getAll() {
         Map<UUID, ObjectIdRecord> result = new HashMap<>();
         for (Tuple<DiscUtils.Ntfs.ObjectIds.IndexKey, ObjectIdRecord> record : _index.getEntries()) {
-            result.put(record.getKey().Id, record.getValue());
+            result.put(record.getKey()._id, record.getValue());
         }
         return result;
     }
 
     public void add(UUID objId, FileRecordReference mftRef, UUID birthId, UUID birthVolumeId, UUID birthDomainId) {
         DiscUtils.Ntfs.ObjectIds.IndexKey newKey = new DiscUtils.Ntfs.ObjectIds.IndexKey();
-        newKey.Id = objId;
+        newKey._id = objId;
         ObjectIdRecord newData = new ObjectIdRecord();
         newData.MftReference = mftRef;
         newData.BirthObjectId = birthId;
@@ -64,14 +64,14 @@ public final class ObjectIds {
 
     public void remove(UUID objId) {
         DiscUtils.Ntfs.ObjectIds.IndexKey key = new DiscUtils.Ntfs.ObjectIds.IndexKey();
-        key.Id = objId;
+        key._id = objId;
         _index.remove(key);
         _file.updateRecordInMft();
     }
 
     public boolean tryGetValue(UUID objId, ObjectIdRecord[] value) {
         DiscUtils.Ntfs.ObjectIds.IndexKey key = new DiscUtils.Ntfs.ObjectIds.IndexKey();
-        key.Id = objId;
+        key._id = objId;
         return _index.tryGetValue(key, value);
     }
 
@@ -79,7 +79,7 @@ public final class ObjectIds {
         writer.println(indent + "OBJECT ID INDEX");
         for (Tuple<DiscUtils.Ntfs.ObjectIds.IndexKey, ObjectIdRecord> entry : _index.getEntries()) {
             writer.println(indent + "  OBJECT ID INDEX ENTRY");
-            writer.println(indent + "             Id: " + entry.getKey().Id);
+            writer.println(indent + "             Id: " + entry.getKey()._id);
             writer.println(indent + "  MFT Reference: " + entry.getValue().MftReference);
             writer.println(indent + "   Birth Volume: " + entry.getValue().BirthVolumeId);
             writer.println(indent + "       Birth Id: " + entry.getValue().BirthObjectId);
@@ -88,23 +88,23 @@ public final class ObjectIds {
     }
 
     public final static class IndexKey implements IByteArraySerializable {
-        public UUID Id;
+        public UUID _id;
 
         public int size() {
             return 16;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            Id = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+            _id = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
             return 16;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(Id, buffer, offset + 0);
+            EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 0);
         }
 
         public String toString() {
-            return String.format("[Key-Id:%s]", Id);
+            return String.format("[Key-Id:%s]", _id);
         }
     }
 }

@@ -33,8 +33,8 @@ import dotnet4j.io.compression.DeflateStream;
 
 
 /**
- * Implementation of the Zlib compression algorithm.
- * Only decompression is currently implemented.
+ * Implementation of the Zlib compression algorithm. Only decompression is
+ * currently implemented.
  */
 public class ZlibStream extends Stream {
     private final Adler32 _adler32;
@@ -50,8 +50,7 @@ public class ZlibStream extends Stream {
      *
      * @param stream The stream to compress of decompress.
      * @param mode Whether to compress or decompress.
-     * @param leaveOpen Whether closing this stream should leave
-     *            {@code stream}
+     * @param leaveOpen Whether closing this stream should leave {@code stream}
      *            open.
      */
     public ZlibStream(Stream stream, CompressionMode mode, boolean leaveOpen) {
@@ -72,17 +71,17 @@ public class ZlibStream extends Stream {
             if ((header & 0x0020) != 0) {
                 throw new UnsupportedOperationException("Zlib compression using preset dictionary");
             }
-
         } else {
-            short header = (8 << 8) | (7 << 12) | 0x80;
-            // DEFLATE
-            // 32K window size
-            // Default algorithm
+            short header = (8 << 8) | // DEFLATE
+                           (7 << 12) | // 32K window size
+                           0x80; // Default algorithm
             header |= (short) (31 - header % 31);
+
             byte[] headerBuffer = new byte[2];
             EndianUtilities.writeBytesBigEndian(header, headerBuffer, 0);
             stream.write(headerBuffer, 0, 2);
         }
+
         _deflateStream = new DeflateStream(stream, mode, leaveOpen);
         _adler32 = new Adler32();
     }
@@ -131,8 +130,9 @@ public class ZlibStream extends Stream {
      */
     public void close() throws IOException {
         if (_mode == CompressionMode.Decompress) {
-            // Can only check Adler checksum on seekable streams.  Since DeflateStream
-            // aggresively caches input, it normally has already consumed the footer.
+            // Can only check Adler checksum on seekable streams. Since
+            // DeflateStream aggresively caches input, it normally has already
+            // consumed the footer.
             if (_stream.canSeek()) {
                 _stream.seek(-4, SeekOrigin.End);
                 byte[] footerBuffer = StreamUtilities.readExact(_stream, 4);
@@ -145,6 +145,7 @@ public class ZlibStream extends Stream {
             _deflateStream.close();
         } else {
             _deflateStream.close();
+
             byte[] footerBuffer = new byte[4];
             EndianUtilities.writeBytesBigEndian(_adler32.getValue(), footerBuffer, 0);
             _stream.write(footerBuffer, 0, 4);
@@ -168,6 +169,7 @@ public class ZlibStream extends Stream {
      */
     public int read(byte[] buffer, int offset, int count) {
         checkParams(buffer, offset, count);
+
         int numRead = _deflateStream.read(buffer, offset, count);
         _adler32.process(buffer, offset, numRead);
         return numRead;
@@ -202,6 +204,7 @@ public class ZlibStream extends Stream {
      */
     public void write(byte[] buffer, int offset, int count) {
         checkParams(buffer, offset, count);
+
         _adler32.process(buffer, offset, count);
         _deflateStream.write(buffer, offset, count);
     }

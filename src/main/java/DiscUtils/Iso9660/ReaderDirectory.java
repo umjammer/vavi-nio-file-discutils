@@ -37,20 +37,27 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
         super(context, dirEntry);
         byte[] buffer = new byte[IsoUtilities.SectorSize];
         Stream extent = new ExtentStream(_context
-                .getDataStream(), dirEntry.getRecord().LocationOfExtent, Integer.MAX_VALUE, (byte) 0, (byte) 0);
+                .getDataStream(), dirEntry.getRecord().LocationOfExtent, 0xffff_ffffl, (byte) 0, (byte) 0);
+
         _records = new ArrayList<>();
+
         int totalLength = dirEntry.getRecord().DataLength;
         int totalRead = 0;
+
         while (totalRead < totalLength) {
             int bytesRead = Math.min(buffer.length, totalLength - totalRead);
+
             StreamUtilities.readExact(extent, buffer, 0, bytesRead);
             totalRead += bytesRead;
+
             int pos = 0;
             while (pos < bytesRead && buffer[pos] != 0) {
                 DirectoryRecord[] dr = new DirectoryRecord[1];
                 int length = DirectoryRecord.readFrom(buffer, pos, context.getVolumeDescriptor().CharacterEncoding, dr);
+
                 if (!IsoUtilities.isSpecialDirectory(dr[0])) {
                     ReaderDirEntry childDirEntry = new ReaderDirEntry(_context, dr[0]);
+
                     if (context.getSuspDetected() && context.getRockRidgeIdentifier() != null &&
                         !context.getRockRidgeIdentifier().isEmpty()) {
                         if (childDirEntry.getSuspRecords() == null ||
@@ -95,7 +102,6 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
             if (!anyVerMatch && toComp.equals(normName)) {
                 return r;
             }
-
             if (anyVerMatch && toComp.startsWith(normName)) {
                 return r;
             }

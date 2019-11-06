@@ -43,55 +43,55 @@ public abstract class DiskImageBuilder {
      * Gets or sets the geometry of this disk, as reported by the BIOS, will be
      * implied from the content stream if not set.
      */
-    private Geometry __BiosGeometry;
+    private Geometry _biosGeometry;
 
     public Geometry getBiosGeometry() {
-        return __BiosGeometry;
+        return _biosGeometry;
     }
 
     public void setBiosGeometry(Geometry value) {
-        __BiosGeometry = value;
+        _biosGeometry = value;
     }
 
     /**
      * Gets or sets the content for this disk, implying the size of the disk.
      */
-    private SparseStream __Content;
+    private SparseStream _content;
 
     public SparseStream getContent() {
-        return __Content;
+        return _content;
     }
 
     public void setContent(SparseStream value) {
-        __Content = value;
+        _content = value;
     }
 
     /**
-     * Gets or sets the adapter type for created virtual disk, for file formats that
-     * encode this information.
+     * Gets or sets the adapter type for created virtual disk, for file formats
+     * that encode this information.
      */
-    private GenericDiskAdapterType __GenericAdapterType = GenericDiskAdapterType.Ide;
+    private GenericDiskAdapterType _genericAdapterType = GenericDiskAdapterType.Ide;
 
     public GenericDiskAdapterType getGenericAdapterType() {
-        return __GenericAdapterType;
+        return _genericAdapterType;
     }
 
     public void setGenericAdapterType(GenericDiskAdapterType value) {
-        __GenericAdapterType = value;
+        _genericAdapterType = value;
     }
 
     /**
      * Gets or sets the geometry of this disk, will be implied from the content
      * stream if not set.
      */
-    private Geometry __Geometry;
+    private Geometry _geometry;
 
     public Geometry getGeometry() {
-        return __Geometry;
+        return _geometry;
     }
 
     public void setGeometry(Geometry value) {
-        __Geometry = value;
+        _geometry = value;
     }
 
     /**
@@ -107,11 +107,12 @@ public abstract class DiskImageBuilder {
     }
 
     /**
-     * Gets an instance that constructs the specified type (and variant) of virtual
-     * disk image.
+     * Gets an instance that constructs the specified type (and variant) of
+     * virtual disk image.
      *
-     * @param type    The type of image to build (VHD, VMDK, etc).
-     * @param variant The variant type (differencing/dynamic, fixed/static, etc).
+     * @param type The type of image to build (VHD, VMDK, etc).
+     * @param variant The variant type (differencing/dynamic, fixed/static,
+     *            etc).
      * @return The builder instance.
      */
     public static DiskImageBuilder getBuilder(String type, String variant) {
@@ -125,14 +126,16 @@ public abstract class DiskImageBuilder {
     /**
      * Initiates the construction of the disk image.
      *
+     * The supplied {@code baseName} is the start of the file name, with no file
+     * extension. The set of file specifications will indicate the actual name
+     * corresponding to each logical file that comprises the disk image. For
+     * example, given a base name 'foo', the files 'foo.vmdk' and
+     * 'foo-flat.vmdk' could be returned.
+     * 
      * @param baseName The base name for the disk images.
-     * @return A set of one or more logical files that constitute the disk image.
-     *         The first file is the 'primary' file that is normally attached to
-     *         VMs.The supplied {@code baseName} is the start of the file name, with
-     *         no file extension. The set of file specifications will indicate the
-     *         actual name corresponding to each logical file that comprises the
-     *         disk image. For example, given a base name 'foo', the files
-     *         'foo.vmdk' and 'foo-flat.vmdk' could be returned.
+     * @return A set of one or more logical files that constitute the disk
+     *         image. The first file is the 'primary' file that is normally
+     *         attached to VMs.
      */
     public abstract List<DiskImageFileSpecification> build(String baseName);
 

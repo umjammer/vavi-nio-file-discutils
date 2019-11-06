@@ -130,11 +130,11 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
     public MasterFileTable(INtfsContext context) {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
         _recordCache = new ObjectCache<>();
-        setRecordSize(bpb.getMftRecordSize());
-        _bytesPerSector = bpb.BytesPerSector;
+        _recordSize = bpb.getMftRecordSize();
+        _bytesPerSector = bpb._bytesPerSector;
         // Temporary record stream - until we've bootstrapped the MFT properly
         _recordStream = new SubStream(context.getRawStream(),
-                                      bpb.MftCluster * bpb.SectorsPerCluster * bpb.BytesPerSector,
+                                      bpb._mftCluster * bpb._sectorsPerCluster * bpb._bytesPerSector,
                                       24 * getRecordSize());
     }
 
@@ -167,19 +167,19 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         }
     }
 
-    private int __RecordSize;
+    private int _recordSize;
 
     public int getRecordSize() {
-        return __RecordSize;
+        return _recordSize;
     }
 
     public void setRecordSize(int value) {
-        __RecordSize = value;
+        _recordSize = value;
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "MASTER FILE TABLE");
-        writer.println(indent + "  Record Length: " + getRecordSize());
+        writer.println(indent + "  Record Length: " + _recordSize);
         for (FileRecord record : getRecords()) {
             record.dump(writer, indent + "  ");
             for (AttributeRecord attr : record.getAttributes()) {
@@ -202,7 +202,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public FileRecord getBootstrapRecord() {
         _recordStream.setPosition(0);
-        byte[] mftSelfRecordData = StreamUtilities.readExact(_recordStream, getRecordSize());
+        byte[] mftSelfRecordData = StreamUtilities.readExact(_recordStream, _recordSize);
         FileRecord mftSelfRecord = new FileRecord(_bytesPerSector);
         mftSelfRecord.fromBytes(mftSelfRecordData, 0);
         _recordCache.set___idx(MftIndex, mftSelfRecord);
@@ -231,7 +231,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                               long firstRecordsCluster,
                               long numRecordsClusters) {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
-        FileRecord fileRec = new FileRecord(bpb.BytesPerSector, bpb.getMftRecordSize(), (int) MftIndex);
+        FileRecord fileRec = new FileRecord(bpb._bytesPerSector, bpb.getMftRecordSize(), (int) MftIndex);
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse));
         fileRec.setSequenceNumber((short) 1);
         _recordCache.set___idx(MftIndex, fileRec);
@@ -252,13 +252,13 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             throw new dotnet4j.io.IOException(e);
         }
         setRecordSize(context.getBiosParameterBlock().getMftRecordSize());
-        _bytesPerSector = context.getBiosParameterBlock().BytesPerSector;
+        _bytesPerSector = context.getBiosParameterBlock()._bytesPerSector;
         _bitmap.markPresentRange(0, 1);
         // Write the MFT's own record to itself
-        byte[] buffer = new byte[getRecordSize()];
+        byte[] buffer = new byte[_recordSize];
         fileRec.toBytes(buffer, 0);
         _recordStream.setPosition(0);
-        _recordStream.write(buffer, 0, getRecordSize());
+        _recordStream.write(buffer, 0, _recordSize);
         _recordStream.flush();
         return _self;
     }
@@ -267,11 +267,10 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         long index;
         if (isMft) {
             for (int i = 15; i > 11; --i) {
-                // Have to take a lot of care extending the MFT itself, to ensure we never end
-                // up unable to
-                // bootstrap the file system via the MFT itself - hence why special records are
-                // reserved
-                // for MFT's own MFT record overflow.
+                // Have to take a lot of care extending the MFT itself, to
+                // ensure we never end up unable to bootstrap the file system
+                // via the MFT itself - hence why special records are
+                // reserved for MFT's own MFT record overflow.
                 FileRecord r = getRecord(i, false);
                 if (r.getBaseFile().getSequenceNumber() == 0) {
                     r.reset();
@@ -285,19 +284,19 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         }
         index = _bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
 
-        if (index * getRecordSize() >= _recordStream.getLength()) {
-            // Note: 64 is significant, since bitmap extends by 8 bytes (=64 bits) at a
-            // time.
+        if (index * _recordSize >= _recordStream.getLength()) {
+            // Note: 64 is significant, since bitmap extends by 8 bytes (=64
+            // bits) at a time.
             long newEndIndex = MathUtilities.roundUp(index + 1, 64);
-            _recordStream.setLength(newEndIndex * getRecordSize());
+            _recordStream.setLength(newEndIndex * _recordSize);
             for (long i = index; i < newEndIndex; ++i) {
-                FileRecord record = new FileRecord(_bytesPerSector, getRecordSize(), (int) i);
+                FileRecord record = new FileRecord(_bytesPerSector, _recordSize, (int) i);
                 writeRecord(record);
             }
         }
 
         FileRecord newRecord = getRecord(index, true);
-        newRecord.reInitialize(_bytesPerSector, getRecordSize(), (int) index);
+        newRecord.reInitialize(_bytesPerSector, _recordSize, (int) index);
 
         _recordCache.set___idx(index, newRecord);
 
@@ -312,7 +311,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public FileRecord allocateRecord(long index, EnumSet<FileRecordFlags> flags) {
         _bitmap.markPresent(index);
-        FileRecord newRecord = new FileRecord(_bytesPerSector, getRecordSize(), (int) index);
+        FileRecord newRecord = new FileRecord(_bytesPerSector, _recordSize, (int) index);
         _recordCache.set___idx(index, newRecord);
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
@@ -339,7 +338,6 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                 }
             }
         }
-//Debug.println(fileReference + ": " + result);
 
         return result;
     }
@@ -355,15 +353,15 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                 return result;
             }
 
-            if ((index + 1) * getRecordSize() <= _recordStream.getLength()) {
-                _recordStream.setPosition(index * getRecordSize());
-                byte[] recordBuffer = StreamUtilities.readExact(_recordStream, getRecordSize());
+            if ((index + 1) * _recordSize <= _recordStream.getLength()) {
+                _recordStream.setPosition(index * _recordSize);
+                byte[] recordBuffer = StreamUtilities.readExact(_recordStream, _recordSize);
 
                 result = new FileRecord(_bytesPerSector);
                 result.fromBytes(recordBuffer, 0, ignoreMagic);
                 result.setLoadedIndex((int) index);
             } else {
-                result = new FileRecord(_bytesPerSector, getRecordSize(), (int) index);
+                result = new FileRecord(_bytesPerSector, _recordSize, (int) index);
             }
 
             _recordCache.set___idx(index, result);
@@ -375,19 +373,19 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public void writeRecord(FileRecord record) {
         int recordSize = (int) record.getSize();
-        if (recordSize > getRecordSize()) {
+        if (recordSize > _recordSize) {
             throw new dotnet4j.io.IOException("Attempting to write over-sized MFT record");
         }
 
-        byte[] buffer = new byte[getRecordSize()];
+        byte[] buffer = new byte[_recordSize];
         record.toBytes(buffer, 0);
 
-        _recordStream.setPosition(record.getMasterFileTableIndex() * getRecordSize());
-        _recordStream.write(buffer, 0, getRecordSize());
+        _recordStream.setPosition(record.getMasterFileTableIndex() * _recordSize);
+        _recordStream.write(buffer, 0, _recordSize);
         _recordStream.flush();
 
-        // We may have modified our own meta-data by extending the data stream, so
-        // make sure our records are up-to-date.
+        // We may have modified our own meta-data by extending the data stream,
+        // so make sure our records are up-to-date.
         if (_self.getMftRecordIsDirty()) {
             DirectoryEntry dirEntry = _self.getDirectoryEntry();
             if (dirEntry != null) {
@@ -397,16 +395,15 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             _self.updateRecordInMft();
         }
 
-        // Need to update Mirror. OpenRaw is OK because this is short duration, and we
-        // don't
-        // extend or otherwise modify any meta-data, just the content of the Data
-        // stream.
+        // Need to update Mirror. OpenRaw is OK because this is short duration,
+        // and we don't extend or otherwise modify any meta-data, just the
+        // content of the Data stream.
         if (record.getMasterFileTableIndex() < 4 && _self.getContext().getGetFileByIndex() != null) {
             File mftMirror = _self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
             if (mftMirror != null) {
                 try (Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
-                    s.setPosition(record.getMasterFileTableIndex() * getRecordSize());
-                    s.write(buffer, 0, getRecordSize());
+                    s.setPosition(record.getMasterFileTableIndex() * _recordSize);
+                    s.write(buffer, 0, _recordSize);
                 } catch (IOException e) {
                     throw new dotnet4j.io.IOException(e);
                 }
@@ -415,12 +412,12 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
     }
 
     public long getRecordOffset(FileRecordReference fileReference) {
-        return fileReference.getMftIndex() * getRecordSize();
+        return fileReference.getMftIndex() * _recordSize;
     }
 
     public ClusterMap getClusterMap() {
-        int totalClusters = (int) MathUtilities.ceil(_self.getContext().getBiosParameterBlock().TotalSectors64,
-                                                     _self.getContext().getBiosParameterBlock().SectorsPerCluster);
+        int totalClusters = (int) MathUtilities.ceil(_self.getContext().getBiosParameterBlock()._totalSectors64,
+                                                     _self.getContext().getBiosParameterBlock()._sectorsPerCluster);
 
         @SuppressWarnings("unchecked")
         EnumSet<ClusterRoles>[] clusterToRole = new EnumSet[totalClusters];

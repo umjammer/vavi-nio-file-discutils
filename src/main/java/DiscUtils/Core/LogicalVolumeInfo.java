@@ -48,8 +48,8 @@ public final class LogicalVolumeInfo extends VolumeInfo {
         _guid = guid;
         _physicalVol = physicalVolume;
         _opener = opener;
-        __Length = length;
-        __BiosType = biosType;
+        _length = length;
+        _biosType = biosType;
         __Status = status;
     }
 
@@ -64,10 +64,10 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the one-byte BIOS type for this volume, which indicates the content.
      */
-    private byte __BiosType;
+    private byte _biosType;
 
     public byte getBiosType() {
-        return __BiosType;
+        return _biosType;
     }
 
     /**
@@ -90,10 +90,10 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the length of the volume (in bytes).
      */
-    private long __Length;
+    private long _length;
 
     public long getLength() {
-        return __Length;
+        return _length;
     }
 
     /**

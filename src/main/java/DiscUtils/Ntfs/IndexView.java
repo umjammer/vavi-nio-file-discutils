@@ -90,16 +90,19 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
         for (Tuple<K, D> entry : findAll(query)) {
             return entry;
         }
+
         return null;
     }
 
+    /**
+     * @param data {@cs out}
+     */
     public boolean tryGetValue(K key, D[] data) {
         byte[][] value = new byte[1][];
         if (_index.tryGetValue(unconvert(key), value)) {
             data[0] = convert(valueClass, value[0]);
             return true;
         }
-
         data[0] = null;
         return false;
     }

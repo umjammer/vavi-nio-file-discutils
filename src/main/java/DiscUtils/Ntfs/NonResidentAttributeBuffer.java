@@ -47,7 +47,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             _activeStream = new SparseClusterStream(_attribute, _rawStream);
         } else if (attribute.getFlags().contains(AttributeFlags.Compressed)) {
             _activeStream = new CompressedClusterStream(_context, _attribute, _rawStream);
-        } else if (attribute.getFlags().contains(AttributeFlags.None) || attribute.getFlags().isEmpty()) {
+        } else if (attribute.getFlags().isEmpty()) {
             _activeStream = _rawStream;
         } else {
             throw new UnsupportedOperationException("Unhandled attribute type '" + attribute.getFlags() + "'");

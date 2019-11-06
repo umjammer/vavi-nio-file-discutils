@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Streams.Util.Ownership;
 import DiscUtils.Xva.Disk;
@@ -72,8 +72,8 @@ public class VirtualMachineBuilderTest {
         Stream diskContent = disks.get(0).getContent();
         for (int i = 0; i < 1024 * 1024; ++i) {
             diskContent.setPosition(i * 10);
-            if ((byte) (i ^ (i >>> 8) ^ (i >>> 16) ^ (i >>> 24)) != diskContent.readByte()) {
-                assertTrue(false, "Mismatch at offset " + i);
+            if ((byte) (i ^ (i >>> 8) ^ (i >>> 16) ^ (i >>> 24)) != (byte) diskContent.readByte()) {
+                fail("Mismatch at offset " + i);
             }
         }
     }

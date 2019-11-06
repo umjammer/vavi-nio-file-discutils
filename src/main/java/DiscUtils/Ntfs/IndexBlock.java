@@ -35,9 +35,9 @@ public class IndexBlock extends FixupRecordBase {
 
     private final Index _index;
 
+    // Virtual Cluster Number (maybe in sectors sometimes...?)
     private long _indexBlockVcn;
 
-    // Virtual Cluster Number (maybe in sectors sometimes...?)
     private final boolean _isRoot;
 
     private long _logSequenceNumber;
@@ -45,7 +45,7 @@ public class IndexBlock extends FixupRecordBase {
     private final long _streamPosition;
 
     public IndexBlock(Index index, boolean isRoot, IndexEntry parentEntry, BiosParameterBlock bpb) {
-        super("INDX", bpb.BytesPerSector);
+        super("INDX", bpb._bytesPerSector);
         _index = index;
         _isRoot = isRoot;
         Stream stream = index.getAllocationStream();
@@ -56,23 +56,23 @@ public class IndexBlock extends FixupRecordBase {
     }
 
     private IndexBlock(Index index, boolean isRoot, long vcn, BiosParameterBlock bpb) {
-        super("INDX", bpb.BytesPerSector, bpb.getIndexBufferSize());
+        super("INDX", bpb._bytesPerSector, bpb.getIndexBufferSize());
         _index = index;
         _isRoot = isRoot;
         _indexBlockVcn = vcn;
-        _streamPosition = vcn * bpb.BytesPerSector * bpb.SectorsPerCluster;
+        _streamPosition = vcn * bpb._bytesPerSector * bpb._sectorsPerCluster;
         setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), _index, isRoot, bpb.getIndexBufferSize() - FieldSize));
         writeToDisk();
     }
 
-    private IndexNode __Node;
+    private IndexNode _node;
 
     public IndexNode getNode() {
-        return __Node;
+        return _node;
     }
 
     public void setNode(IndexNode value) {
-        __Node = value;
+        _node = value;
     }
 
     public static IndexBlock initialize(Index index, boolean isRoot, IndexEntry parentEntry, BiosParameterBlock bpb) {

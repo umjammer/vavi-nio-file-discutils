@@ -209,7 +209,6 @@ public class LzxStream extends Stream {
         if ((numRead & 1) != 0) {
             _bitStream.readBytes(1);
         }
-
     }
 
     private void decodeCompressedBlock(BlockType blockType, int blockSize) {

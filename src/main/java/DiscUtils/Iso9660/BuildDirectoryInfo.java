@@ -47,17 +47,17 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
 
     private List<BuildDirectoryMember> _sortedMembers;
 
-    public BuildDirectoryInfo(String name, BuildDirectoryInfo parent) {
+    BuildDirectoryInfo(String name, BuildDirectoryInfo parent) {
         super(name, makeShortDirName(name, parent));
         _parent = parent == null ? this : parent;
-        __HierarchyDepth = parent == null ? 0 : parent.getHierarchyDepth() + 1;
+        _hierarchyDepth = parent == null ? 0 : parent.getHierarchyDepth() + 1;
         _members = new HashMap<>();
     }
 
-    private int __HierarchyDepth;
+    private int _hierarchyDepth;
 
     public int getHierarchyDepth() {
-        return __HierarchyDepth;
+        return _hierarchyDepth;
     }
 
     /**
@@ -71,26 +71,28 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
      * Gets the specified child directory or file.
      *
      * @param name The name of the file or directory to get.
-     * @param member The member found (or {@code null}).
+     * @param member {@cs out} The member found (or {@code null}).
      * @return {@code true} if the specified member was found.
      */
-    public boolean tryGetMember(String name, BuildDirectoryMember[] member) {
+    boolean tryGetMember(String name, BuildDirectoryMember[] member) {
         boolean result = _members.containsKey(name);
         member[0] = _members.get(name);
         return result;
     }
 
-    public void add(BuildDirectoryMember member) {
+    void add(BuildDirectoryMember member) {
         _members.put(member.getName(), member);
         _sortedMembers = null;
     }
 
-    public long getDataSize(Charset enc) {
+    long getDataSize(Charset enc) {
         List<BuildDirectoryMember> sorted = getSortedMembers();
-        long total = 34 * 2;
+
+        long total = 34 * 2; // Two pseudo entries (self & parent)
+
         for (BuildDirectoryMember m : sorted) {
-            // Two pseudo entries (self & parent)
             int recordSize = m.getDirectoryRecordSize(enc);
+
             // If this record would span a sector boundary, then the current sector is
             // zero-padded, and the record goes at the start of the next sector.
             if (total % IsoUtilities.SectorSize + recordSize > IsoUtilities.SectorSize) {
@@ -100,22 +102,27 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
 
             total += recordSize;
         }
+
         return MathUtilities.roundUp(total, IsoUtilities.SectorSize);
     }
 
-    public int getPathTableEntrySize(Charset enc) {
+    int getPathTableEntrySize(Charset enc) {
         int nameBytes = pickName(null, enc).getBytes(enc).length;
+
         return 8 + nameBytes + ((nameBytes & 0x1) == 1 ? 1 : 0);
     }
 
-    public int write(byte[] buffer, int offset, Map<BuildDirectoryMember, Integer> locationTable, Charset enc) {
+    int write(byte[] buffer, int offset, Map<BuildDirectoryMember, Integer> locationTable, Charset enc) {
         int pos = 0;
+
         List<BuildDirectoryMember> sorted = getSortedMembers();
+
         // Two pseudo entries, effectively '.' and '..'
         pos += writeMember(this, "\0", Charset.forName("ASCII"), buffer, offset + pos, locationTable, enc);
-        pos += writeMember(_parent, "\u0001", Charset.forName("ASCII"), buffer, offset + pos, locationTable, enc);
+        pos += writeMember(_parent, "\01", Charset.forName("ASCII"), buffer, offset + pos, locationTable, enc);
         for (BuildDirectoryMember m : sorted) {
             int recordSize = m.getDirectoryRecordSize(enc);
+
             if (pos % IsoUtilities.SectorSize + recordSize > IsoUtilities.SectorSize) {
                 int padLength = IsoUtilities.SectorSize - pos % IsoUtilities.SectorSize;
                 Arrays.fill(buffer, offset + pos, offset + pos + padLength, (byte) 0);
@@ -124,9 +131,11 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
 
             pos += writeMember(m, null, enc, buffer, offset + pos, locationTable, enc);
         }
+
         // Ensure final padding data is zero'd
         int finalPadLength = MathUtilities.roundUp(pos, IsoUtilities.SectorSize) - pos;
         Arrays.fill(buffer, offset + pos, offset + pos + finalPadLength, (byte) 0);
+
         return pos + finalPadLength;
     }
 
@@ -142,7 +151,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
         dr.LocationOfExtent = locationTable.get(m);
         dr.DataLength = (int) m.getDataSize(dataEnc);
         dr.RecordingDateAndTime = m.getCreationTime();
-        dr.Flags = EnumSet.of(m instanceof BuildDirectoryInfo ? FileFlags.Directory : FileFlags.None);
+        dr.Flags = m instanceof BuildDirectoryInfo ? EnumSet.of(FileFlags.Directory) : EnumSet.noneOf(FileFlags.class);
         return dr.writeTo(buffer, offset, nameEnc);
     }
 
@@ -157,6 +166,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
                 shortNameChars[i] = '_';
             }
         }
+
         return new String(shortNameChars);
     }
 
@@ -188,10 +198,12 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
             for (int i = 0; i < max; ++i) {
                 char xChar = i < x.length() ? x.charAt(i) : padChar;
                 char yChar = i < y.length() ? y.charAt(i) : padChar;
+
                 if (xChar != yChar) {
                     return xChar - yChar;
                 }
             }
+
             return 0;
         }
     }

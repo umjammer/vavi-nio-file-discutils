@@ -58,7 +58,5 @@ public final class CircularStream extends WrappingStream {
         if (pos >= length) {
             setPosition(pos % length);
         }
-
     }
-
 }

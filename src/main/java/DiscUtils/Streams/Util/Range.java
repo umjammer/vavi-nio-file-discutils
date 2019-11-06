@@ -27,8 +27,7 @@ import java.util.List;
 
 
 /**
- * Represents a range of values. The type of the offset element.The type of the
- * size element.
+ * Represents a range of values.
  */
 public class Range {
     /**
@@ -38,26 +37,26 @@ public class Range {
      * @param count The size of the range.
      */
     public Range(long offset, long count) {
-        _offset = offset;
-        _count = count;
+        this.offset = offset;
+        this.count = count;
     }
+
+    private long count;
 
     /**
      * Gets the size of the range.
      */
-    private long _count;
-
     public long getCount() {
-        return _count;
+        return count;
     }
+
+    private long offset;
 
     /**
      * Gets the offset (i.e. start) of the range.
      */
-    private long _offset;
-
     public long getOffset() {
-        return _offset;
+        return offset;
     }
 
     /**
@@ -71,7 +70,7 @@ public class Range {
             return false;
         }
 
-        return _offset == other._offset && _count == other._count;
+        return offset == other.offset && count == other.count;
     }
 
     /**
@@ -79,8 +78,7 @@ public class Range {
      *
      * @param ranges The ranges to merge.
      * @param chunkSize The size of each chunk.
-     * @return Ranges combined into larger chunks.The type of the offset and count
-     *         in the ranges.
+     * @return Ranges combined into larger chunks.
      */
     public static List<Range> chunked(List<Range> ranges, long chunkSize) {
         List<Range> result = new ArrayList<>();
@@ -121,6 +119,6 @@ public class Range {
      * @return The string representation.
      */
     public String toString() {
-        return "Range: {" + _offset + ":+" + _count + "}";
+        return "Range: {" + offset + ":+" + count + "}";
     }
 }

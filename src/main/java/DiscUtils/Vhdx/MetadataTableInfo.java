@@ -86,13 +86,10 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
     /**
      * Determines if the specified metadata item is present already.
      *
+     * The comparison is based on the metadata item identity, not the value.
+     *
      * @param item The item to look for.
-     * @return
-     *         {@code true}
-     *         if present, else
-     *         {@code false}
-     *         .The comparison is based on the metadata item identity, not the
-     *         value.
+     * @return {@code true} if present, else {@code false} .
      */
     public boolean contains(MetadataInfo item) {
         for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : _table.Entries.entrySet()) {
@@ -121,13 +118,10 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
     /**
      * Removes an item from the table.
      *
+     * Always throws UnsupportedOperationException as the table is read-only.
+     *
      * @param item The item to remove.
-     * @return
-     *         {@code true}
-     *         if the item was removed, else
-     *         {@code false}
-     *         .Always throws UnsupportedOperationException  as the table is
-     *         read-only.
+     * @return {@code true} if the item was removed, else {@code false} .
      */
     public boolean remove(MetadataInfo item) {
         throw new UnsupportedOperationException();

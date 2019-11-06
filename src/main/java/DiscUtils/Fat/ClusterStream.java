@@ -225,7 +225,8 @@ public class ClusterStream extends Stream {
                     cluster[0] = extendChain();
                     _reader.wipeCluster(cluster[0]);
                 }
-                // Fill this cluster with as much data as we can (WriteToCluster preserves existing cluster
+                // Fill this cluster with as much data as we can (WriteToCluster
+                // preserves existing cluster
                 // data, if necessary)
                 int numWritten = writeToCluster(cluster[0],
                                                 (int) (_position % _reader.getClusterSize()),
@@ -245,8 +246,7 @@ public class ClusterStream extends Stream {
 
     /**
      * Writes up to the next cluster boundary, making sure to preserve existing
-     * data in the cluster
-     * that falls outside of the updated range.
+     * data in the cluster that falls outside of the updated range.
      *
      * @param cluster The cluster to write to.
      * @param pos The file position of the write (within the cluster).
@@ -254,8 +254,7 @@ public class ClusterStream extends Stream {
      * @param offset Offset into buffer of the first byte to write.
      * @param count The maximum number of bytes to write.
      * @return The number of bytes written - either count, or the number that
-     *         fit up to
-     *         the cluster boundary.
+     *         fit up to the cluster boundary.
      */
     private int writeToCluster(int cluster, int pos, byte[] buffer, int offset, int count) {
         if (pos == 0 && count >= _reader.getClusterSize()) {
@@ -277,9 +276,10 @@ public class ClusterStream extends Stream {
      * Adds a new cluster to the end of the existing chain, by allocating a free
      * cluster.
      *
-     * @return The cluster allocated.This method does not initialize the data in
-     *         the cluster, the caller should
-     *         perform a write to ensure the cluster data is in known state.
+     * This method does not initialize the data in the cluster, the caller
+     * should perform a write to ensure the cluster data is in known state.
+     *
+     * @return The cluster allocated.
      */
     private int extendChain() {
         // Sanity check - make sure the final known cluster is the EOC marker
@@ -343,6 +343,9 @@ public class ClusterStream extends Stream {
         _reader.writeCluster(_currentCluster, _clusterBuffer, 0);
     }
 
+    /**
+     * @param cluster {@cs out}
+     */
     private boolean tryGetClusterByPosition(long pos, int[] cluster) {
         int index = (int) (pos / _reader.getClusterSize());
         if (_knownClusters.size() <= index) {
@@ -359,7 +362,8 @@ public class ClusterStream extends Stream {
         }
 
         cluster[0] = _knownClusters.get(index);
-        // This is the 'special' End-of-chain cluster identifer, so the stream position
+        // This is the 'special' End-of-chain cluster identifer, so the stream
+        // position
         // is greater than the actual file length.
         if (_fat.isEndOfChain(cluster[0])) {
             return false;

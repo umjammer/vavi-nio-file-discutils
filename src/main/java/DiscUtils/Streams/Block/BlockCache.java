@@ -45,26 +45,31 @@ public class BlockCache<T extends Block> {
     public BlockCache(int blockSize, int blockCount) {
         _blockSize = blockSize;
         _totalBlocks = blockCount;
+
         _blocks = new HashMap<>();
         _lru = new LinkedList<>();
         _freeBlocks = new ArrayList<>(_totalBlocks);
-        setFreeBlockCount(_totalBlocks);
+
+        _freeBlockCount = _totalBlocks;
     }
 
-    private int __FreeBlockCount;
+    private int _freeBlockCount;
 
     public int getFreeBlockCount() {
-        return __FreeBlockCount;
+        return _freeBlockCount;
     }
 
     public void setFreeBlockCount(int value) {
-        __FreeBlockCount = value;
+        _freeBlockCount = value;
     }
 
     public boolean containsBlock(long position) {
         return _blocks.containsKey(position);
     }
 
+    /**
+     * @param block {@cs out}
+     */
     public boolean tryGetBlock(long position, T[] block) {
         if (_blocks.containsKey(position)) {
             block[0] = _blocks.get(position);
@@ -78,6 +83,7 @@ public class BlockCache<T extends Block> {
 
     public T getBlock(long position, Class<T> c) {
         T result;
+
         if (containsBlock(position)) {
             result = getBlock(position, c);
             return result;
@@ -87,6 +93,7 @@ public class BlockCache<T extends Block> {
         result.setPosition(position);
         result.setAvailable(-1);
         storeBlock(result);
+
         return result;
     }
 
@@ -96,9 +103,8 @@ public class BlockCache<T extends Block> {
             _blocks.remove(position);
             _lru.remove(block);
             _freeBlocks.add(block);
-            setFreeBlockCount(getFreeBlockCount() + 1);
+            _freeBlockCount++;
         }
-
     }
 
     private void storeBlock(T block) {
@@ -108,17 +114,18 @@ public class BlockCache<T extends Block> {
 
     private T getFreeBlock(Class<T> c) {
         T block;
+
         if (_freeBlocks.size() > 0) {
             int idx = _freeBlocks.size() - 1;
             block = _freeBlocks.get(idx);
             _freeBlocks.remove(idx);
-            setFreeBlockCount(getFreeBlockCount() - 1);
+            _freeBlockCount--;
         } else if (_blocksCreated < _totalBlocks) {
             try {
                 block = c.newInstance();
                 block.setData(new byte[_blockSize]);
                 _blocksCreated++;
-                setFreeBlockCount(getFreeBlockCount() - 1);
+                _freeBlockCount--;
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
@@ -127,7 +134,7 @@ public class BlockCache<T extends Block> {
             _lru.removeLast();
             _blocks.remove(block.getPosition());
         }
+
         return block;
     }
-
 }

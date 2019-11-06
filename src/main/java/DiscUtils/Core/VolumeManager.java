@@ -33,6 +33,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.Internal.LogicalVolumeFactory;
 import DiscUtils.Core.Partitions.PartitionInfo;
 import DiscUtils.Core.Partitions.PartitionTable;
@@ -199,7 +201,9 @@ public final class VolumeManager implements Serializable {
                                                           physicalVol.getLength(),
                                                           physicalVol.getBiosType(),
                                                           LogicalVolumeStatus.Healthy);
+
             result.put(lvi.getIdentity(), lvi);
+//Debug.println("Lp: " + lvi.getIdentity());
         }
     }
 
@@ -209,14 +213,17 @@ public final class VolumeManager implements Serializable {
     private void scan() {
         SortedMap<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
         SortedMap<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
+
         _physicalVolumes = newPhysicalVolumes;
         _logicalVolumes = newLogicalVolumes;
+
         _needScan = false;
     }
 
     private SortedMap<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) {
         List<PhysicalVolumeInfo> unhandledPhysical = new ArrayList<>();
         SortedMap<String, LogicalVolumeInfo> result = new TreeMap<>();
+
         for (PhysicalVolumeInfo pvi : physicalVols) {
             boolean handled = false;
             for (LogicalVolumeFactory volFactory : s_logicalVolumeFactories) {
@@ -224,31 +231,36 @@ public final class VolumeManager implements Serializable {
                     handled = true;
                     break;
                 }
-
             }
+
             if (!handled) {
                 unhandledPhysical.add(pvi);
             }
-
         }
+
         mapPhysicalVolumes(unhandledPhysical, result);
+
         for (LogicalVolumeFactory volFactory : s_logicalVolumeFactories) {
             volFactory.mapDisks(_disks, result);
         }
+
         return result;
     }
 
     private SortedMap<String, PhysicalVolumeInfo> scanForPhysicalVolumes() {
         SortedMap<String, PhysicalVolumeInfo> result = new TreeMap<>();
+
         for (int i = 0; i < _disks.size(); ++i) {
             // First scan physical volumes
             VirtualDisk disk = _disks.get(i);
             String diskId = getDiskId(i);
+
             if (PartitionTable.isPartitioned(disk.getContent())) {
                 for (PartitionTable table : PartitionTable.getPartitionTables(disk)) {
                     for (PartitionInfo part : table.getPartitions()) {
                         PhysicalVolumeInfo pvi = new PhysicalVolumeInfo(diskId, disk, part);
                         result.put(pvi.getIdentity(), pvi);
+//Debug.println("P: " + pvi.getIdentity());
                     }
                 }
             } else {
@@ -256,6 +268,7 @@ public final class VolumeManager implements Serializable {
                 result.put(pvi.getIdentity(), pvi);
             }
         }
+
         return result;
     }
 
@@ -270,7 +283,7 @@ public final class VolumeManager implements Serializable {
 
         int sig = disk.getSignature();
         if (sig != 0) {
-            return "DS" + String.format("%8x", sig);
+            return "DS" + String.format("%8X", sig);
         }
 
         return "DO" + ordinal;

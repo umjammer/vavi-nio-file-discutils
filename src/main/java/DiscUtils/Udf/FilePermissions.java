@@ -24,16 +24,19 @@ package DiscUtils.Udf;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
+/**
+ * Standard Unix-style file system permissions.
+ */
 public enum FilePermissions {
     /**
-     * Standard Unix-style file system permissions.
-     *
      * No permissions.
      */
-    None,
+//    None,
     /**
      * Any user execute permission.
      */
@@ -95,14 +98,23 @@ public enum FilePermissions {
      */
     OwnerDelete;
 
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
     public static EnumSet<FilePermissions> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FilePermissions.class)));
     }
 
     public static long valueOf(EnumSet<FilePermissions> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
-
 }

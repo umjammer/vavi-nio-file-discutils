@@ -34,24 +34,24 @@ public class PhysicalVolume {
 
     private static final int INITIAL_CRC = 0xf597a6cf;
 
-    public final PhysicalVolumeLabel _PhysicalVolumeLabel;
+    public final PhysicalVolumeLabel _physicalVolumeLabel;
 
     public final PvHeader PvHeader;
 
     public VolumeGroupMetadata VgMetadata;
 
-    private Stream __Content;
+    private Stream _content;
 
     public Stream getContent() {
-        return __Content;
+        return _content;
     }
 
     public void setContent(Stream value) {
-        __Content = value;
+        _content = value;
     }
 
     public PhysicalVolume(PhysicalVolumeLabel physicalVolumeLabel, Stream content) {
-        _PhysicalVolumeLabel = physicalVolumeLabel;
+        _physicalVolumeLabel = physicalVolumeLabel;
         PvHeader = new PvHeader();
         content.setPosition(physicalVolumeLabel.Sector * SECTOR_SIZE);
         byte[] buffer = StreamUtilities.readExact(content, SECTOR_SIZE);
@@ -73,6 +73,9 @@ public class PhysicalVolume {
         return tryOpen(content, pv);
     }
 
+    /**
+     * @param pv {@cs out}
+     */
     public static boolean tryOpen(Stream content, PhysicalVolume[] pv) {
         PhysicalVolumeLabel[] label = new PhysicalVolumeLabel[1];
         pv[0] = null;
@@ -84,6 +87,9 @@ public class PhysicalVolume {
         return true;
     }
 
+    /**
+     * @param pvLabel {@cs out}
+     */
     private static boolean searchLabel(Stream content, PhysicalVolumeLabel[] pvLabel) {
         pvLabel[0] = null;
         content.setPosition(0);
@@ -127,9 +133,9 @@ public class PhysicalVolume {
         };
         int i = offset;
         while (i < offset + length) {
-            crc ^= buffer[i];
-            crc = (crc >>> 4) ^ crctab[(int) crc & 0xf];
-            crc = (crc >>> 4) ^ crctab[(int) crc & 0xf];
+            crc ^= (buffer[i] & 0xff);
+            crc = ((crc & 0xffffffffl) >>> 4) ^ crctab[(int) crc & 0xf];
+            crc = ((crc & 0xffffffffl) >>> 4) ^ crctab[(int) crc & 0xf];
             i++;
         }
         return (int) crc;

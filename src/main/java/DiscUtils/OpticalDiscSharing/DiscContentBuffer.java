@@ -116,14 +116,21 @@ public final class DiscContentBuffer extends Buffer {
         return result.toString();
     }
 
+    /**
+     * @param authMethod {@cs out}
+     */
     private static Map<String, String> parseAuthenticationHeader(String header, String[] authMethod) {
         Map<String, String> result = new HashMap<>();
+
         String[] elements = header.split(" ");
+
         authMethod[0] = elements[0];
+
         for (int i = 1; i < elements.length; ++i) {
             String[] nvPair = elements[i].split("=", 2);
             result.put(nvPair[0], nvPair[1].replaceAll("(^\"*|\"*$)", ""));
         }
+
         return result;
     }
 

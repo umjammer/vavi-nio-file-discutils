@@ -37,7 +37,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      * Initializes a new instance of the DiscDirectoryInfo class.
      *
      * @param fileSystem The file system the directory info relates to.
-     * @param path       The path within the file system of the directory.
+     * @param path The path within the file system of the directory.
      */
     public DiscDirectoryInfo(DiscFileSystem fileSystem, String path) {
         super(fileSystem, path);
@@ -86,8 +86,8 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Deletes a directory, with the caller choosing whether to recurse.
      *
-     * @param recursive {@code true} to delete all child node, {@code false} to fail
-     *                      if the directory is not empty.
+     * @param recursive {@code true} to delete all child node, {@code false} to
+     *            fail if the directory is not empty.
      */
     public void delete(boolean recursive) {
         try {
@@ -129,10 +129,11 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all child directories matching a search pattern.
      *
+     * The search pattern can include the wildcards * (matching 0 or more
+     * characters) and ? (matching 1 character).
+     *
      * @param pattern The search pattern.
-     * @return An array of child directories, or empty if none match.The search
-     *         pattern can include the wildcards * (matching 0 or more characters)
-     *         and ? (matching 1 character).
+     * @return An array of child directories, or empty if none match.
      */
     public List<DiscDirectoryInfo> getDirectories(String pattern) {
         return getDirectories(pattern, "TopDirectoryOnly");
@@ -141,12 +142,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all descendant directories matching a search pattern.
      *
-     * @param pattern      The search pattern.
-     * @param searchOption Whether to search just this directory, or all children.
-     * @return An array of descendant directories, or empty if none match.The search
-     *         pattern can include the wildcards * (matching 0 or more characters)
-     *         and ? (matching 1 character). The option parameter determines whether
-     *         only immediate children, or all children are returned.
+     * The search pattern can include the wildcards * (matching 0 or more
+     * characters) and ? (matching 1 character). The option parameter determines
+     * whether only immediate children, or all children are returned.
+     *
+     * @param pattern The search pattern.
+     * @param searchOption Whether to search just this directory, or all
+     *            children.
+     * @return An array of descendant directories, or empty if none match.
      */
     public List<DiscDirectoryInfo> getDirectories(String pattern, String searchOption) {
         try {
@@ -178,10 +181,11 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all files matching a search pattern.
      *
+     * The search pattern can include the wildcards * (matching 0 or more
+     * characters) and ? (matching 1 character).
+     *
      * @param pattern The search pattern.
-     * @return An array of files, or empty if none match.The search pattern can
-     *         include the wildcards * (matching 0 or more characters) and ?
-     *         (matching 1 character).
+     * @return An array of files, or empty if none match.
      */
     public List<DiscFileInfo> getFiles(String pattern) {
         return getFiles(pattern, "TopDirectoryOnly");
@@ -190,12 +194,14 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all descendant files matching a search pattern.
      *
-     * @param pattern      The search pattern.
-     * @param searchOption Whether to search just this directory, or all children.
-     * @return An array of descendant files, or empty if none match.The search
-     *         pattern can include the wildcards * (matching 0 or more characters)
-     *         and ? (matching 1 character). The option parameter determines whether
-     *         only immediate children, or all children are returned.
+     * The search pattern can include the wildcards * (matching 0 or more
+     * characters) and ? (matching 1 character). The option parameter determines
+     * whether only immediate children, or all children are returned.
+     *
+     * @param pattern The search pattern.
+     * @param searchOption Whether to search just this directory, or all
+     *            children.
+     * @return An array of descendant files, or empty if none match.
      */
     public List<DiscFileInfo> getFiles(String pattern, String searchOption) {
         try {
@@ -227,10 +233,11 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets all files and directories in this directory.
      *
+     * The search pattern can include the wildcards * (matching 0 or more
+     * characters) and ? (matching 1 character).
+     *
      * @param pattern The search pattern.
-     * @return An array of files and directories.The search pattern can include the
-     *         wildcards * (matching 0 or more characters) and ? (matching 1
-     *         character).
+     * @return An array of files and directories.
      */
     public List<DiscFileSystemInfo> getFileSystemInfos(String pattern) {
         try {

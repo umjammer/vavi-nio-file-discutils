@@ -120,14 +120,14 @@ public final class BuilderDirectory extends BuilderNode {
                 DirectoryRecord record = new DirectoryRecord();
                 record.Offset = (short) child.Node.getInodeRef().getOffset();
                 record.InodeNumber = (short) (child.Node.getInodeNumber() - firstInode);
-                record.Type = child.Node.getInode().Type;
+                record.Type = child.Node.getInode()._type;
                 record.Name = child.Name;
 
                 record.writeTo(context.getIoBuffer(), 0);
                 context.getDirectoryWriter().write(context.getIoBuffer(), 0, record.size());
 
-                if (child.Node.getInode().Type == InodeType.Directory
-                        || child.Node.getInode().Type == InodeType.ExtendedDirectory) {
+                if (child.Node.getInode()._type == InodeType.Directory
+                        || child.Node.getInode()._type == InodeType.ExtendedDirectory) {
                     ++numDirs;
                 }
             }
@@ -150,7 +150,7 @@ public final class BuilderDirectory extends BuilderNode {
     // For some reason, always +3
     private void writeInode(BuilderContext context) {
         fillCommonInodeData(context);
-        _inode.Type = InodeType.Directory;
+        _inode._type = InodeType.Directory;
         setInodeRef(context.getInodeWriter().getPosition());
         _inode.writeTo(context.getIoBuffer(), 0);
         context.getInodeWriter().write(context.getIoBuffer(), 0, _inode.size());

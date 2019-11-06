@@ -79,9 +79,7 @@ public class DiscFileSystemDirectoryTest {
     public void createInvalid_Long(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo(new String(new char[256]).replace('\0', 'X'));
-        assertThrows(IOException.class, () -> {
-            dirInfo.create();
-        });
+        assertThrows(IOException.class, dirInfo::create);
     }
 
     @ParameterizedTest
@@ -89,9 +87,7 @@ public class DiscFileSystemDirectoryTest {
     public void createInvalid_Characters(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         DiscDirectoryInfo dirInfo = fs.getDirectoryInfo("SOME\0DIR");
-        assertThrows(IOException.class, () -> {
-            dirInfo.create();
-        });
+        assertThrows(IOException.class, dirInfo::create);
     }
 
     @ParameterizedTest

@@ -78,5 +78,4 @@ public final class DiskFactory extends VirtualDiskFactory {
     public static VirtualDiskTypeInfo makeDiskTypeInfo() {
         return new VirtualDiskTypeInfo();
     }
-
 }

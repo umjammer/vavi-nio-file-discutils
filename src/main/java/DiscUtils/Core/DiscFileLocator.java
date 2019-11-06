@@ -40,12 +40,20 @@ public final class DiscFileLocator extends FileLocator {
         _basePath = basePath;
     }
 
-    public boolean exists(String fileName) throws IOException {
-        return _fileSystem.fileExists(Utilities.combinePaths(_basePath, fileName));
+    public boolean exists(String fileName) {
+        try {
+            return _fileSystem.fileExists(Utilities.combinePaths(_basePath, fileName));
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
+        }
     }
 
-    protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) throws IOException {
-        return _fileSystem.openFile(Utilities.combinePaths(_basePath, fileName), mode, access);
+    protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
+        try {
+            return _fileSystem.openFile(Utilities.combinePaths(_basePath, fileName), mode, access);
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
+        }
     }
 
     public FileLocator getRelativeLocator(String path) {
@@ -64,8 +72,12 @@ public final class DiscFileLocator extends FileLocator {
         return Utilities.getFileFromPath(path);
     }
 
-    public long getLastWriteTimeUtc(String path) throws IOException {
-        return _fileSystem.getLastWriteTimeUtc(Utilities.combinePaths(_basePath, path));
+    public long getLastWriteTimeUtc(String path) {
+        try {
+            return _fileSystem.getLastWriteTimeUtc(Utilities.combinePaths(_basePath, path));
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
+        }
     }
 
     public boolean hasCommonRoot(FileLocator other) {

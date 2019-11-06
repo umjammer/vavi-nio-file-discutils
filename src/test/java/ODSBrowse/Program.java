@@ -86,8 +86,9 @@ public class Program extends ProgramBase {
             System.err.println("  Disk: " + disk.getVolumeLabel());
             System.err.println("    Name: " + disk.getName());
             System.err.println("    Type: " + disk.getVolumeType());
-            System.err.println("     Url: " + URLEncoder
-                    .encode("ods://local/" + service.getDisplayName() + "/" + disk.getVolumeLabel(), "UTF-8"));
+            System.err.println("     Url: " +
+                               URLEncoder.encode("ods://local/" + service.getDisplayName() + "/" + disk.getVolumeLabel(),
+                                                 StandardCharsets.UTF_8.name()));
         }
         if (!foundDisk) {
             System.err.println("  [No disks found - try specifying host to connect for full list]");

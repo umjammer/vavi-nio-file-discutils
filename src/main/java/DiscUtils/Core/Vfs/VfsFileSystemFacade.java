@@ -486,8 +486,10 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets an object representing a possible file.
      *
+     * The file does not need to exist.
+     *
      * @param path The file path.
-     * @return The representing object.The file does not need to exist.
+     * @return The representing object.
      */
     public DiscFileInfo getFileInfo(String path) {
         return new DiscFileInfo(this, path);
@@ -496,8 +498,10 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets an object representing a possible directory.
      *
+     * The directory does not need to exist.
+     *
      * @param path The directory path.
-     * @return The representing object.The directory does not need to exist.
+     * @return The representing object.
      */
     public DiscDirectoryInfo getDirectoryInfo(String path) {
         return new DiscDirectoryInfo(this, path);
@@ -507,9 +511,10 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * Gets an object representing a possible file system object (file or
      * directory).
      *
+     * The file system object does not need to exist.
+     *
      * @param path The file system path.
-     * @return The representing object.The file system object does not need to
-     *         exist.
+     * @return The representing object.
      */
     public DiscFileSystemInfo getFileSystemInfo(String path) {
         return new DiscFileSystemInfo(this, path);
@@ -537,11 +542,12 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     }
 
     /**
-     * Provides access to the actual file system implementation. The concrete
-     * type representing directory entries.The concrete type representing
-     * files.The concrete type representing directories.The concrete type
-     * holding global state.
-     * 
+     * Provides access to the actual file system implementation.
+     *
+     * @param <TDirEntry> The concrete type representing directory entries.
+     * @param <TFile> The concrete type representing files.
+     * @param <TDirectory> The concrete type representing directories.
+     * @param <TContext> The concrete type holding global state.
      * @return The actual file system instance.
      */
     protected <TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> VfsFileSystem<TDirEntry, TFile, TDirectory, TContext> getRealFileSystem() {

@@ -22,7 +22,7 @@
 
 package DiscUtils.Ntfs;
 
-public class DataRun {
+class DataRun {
     public DataRun() {
     }
 
@@ -63,7 +63,7 @@ public class DataRun {
     }
 
     // TODO cache?
-    public long getSize() {
+    long getSize() {
         int runLengthSize = varLongSize(_runLength);
         int runOffsetSize = varLongSize(_runOffset);
         return 1 + runLengthSize + runOffsetSize;
@@ -72,9 +72,11 @@ public class DataRun {
     public int read(byte[] buffer, int offset) {
         int runOffsetSize = (buffer[offset] >>> 4) & 0x0F;
         int runLengthSize = buffer[offset] & 0x0F;
+
         _runLength = readVarLong(buffer, offset + 1, runLengthSize);
         _runOffset = readVarLong(buffer, offset + 1 + runLengthSize, runOffsetSize);
         _isSparse = runOffsetSize == 0;
+
         return 1 + runLengthSize + runOffsetSize;
     }
 
@@ -82,21 +84,25 @@ public class DataRun {
         return String.format("%-2d[+%d]", _runOffset, _runLength);
     }
 
-    public int write(byte[] buffer, int offset) {
+    int write(byte[] buffer, int offset) {
         int runLengthSize = writeVarLong(buffer, offset + 1, _runLength);
         int runOffsetSize = _isSparse ? 0 : writeVarLong(buffer, offset + 1 + runLengthSize, _runOffset);
+
         buffer[offset] = (byte) ((runLengthSize & 0x0F) | ((runOffsetSize << 4) & 0xF0));
+
         return 1 + runLengthSize + runOffsetSize;
     }
 
     private static long readVarLong(byte[] buffer, int offset, int size) {
         long val = 0;
         boolean signExtend = false;
+
         for (int i = 0; i < size; ++i) {
             byte b = buffer[offset + i];
             val = val | ((long) (b & 0xff) << (i * 8));
             signExtend = (b & 0x80) != 0;
         }
+
         if (signExtend) {
             for (int i = size; i < 8; ++i) {
                 val = val | ((long) 0xFF << (i * 8));
@@ -108,12 +114,14 @@ public class DataRun {
 
     private static int writeVarLong(byte[] buffer, int offset, long val) {
         boolean isPositive = val >= 0;
+
         int pos = 0;
         do {
             buffer[offset + pos] = (byte) (val & 0xFF);
             val >>>= 8;
             pos++;
         } while (val != 0 && val != -1);
+
         // Avoid appearing to have a negative number that is actually positive,
         // record an extra empty byte if needed.
         if (isPositive && (buffer[offset + pos - 1] & 0x80) != 0) {
@@ -130,12 +138,14 @@ public class DataRun {
     private static int varLongSize(long val) {
         boolean isPositive = val >= 0;
         boolean lastByteHighBitSet = false;
+
         int len = 0;
         do {
             lastByteHighBitSet = (val & 0x80) != 0;
             val >>>= 8;
             len++;
         } while (val != 0 && val != -1);
+
         if ((isPositive && lastByteHighBitSet) || (!isPositive && !lastByteHighBitSet)) {
             len++;
         }

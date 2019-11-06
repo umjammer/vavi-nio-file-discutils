@@ -67,7 +67,7 @@ public class File implements IVfsFile {
     }
 
     public IBuffer getFileContent() {
-        List<ExtentData> extents = Context.findKey__(DirEntry.getTreeId(), new Key(DirEntry.getObjectId(), ItemType.ExtentData));
+        List<ExtentData> extents = Context.findKey(DirEntry.getTreeId(), new Key(DirEntry.getObjectId(), ItemType.ExtentData));
         return bufferFromExtentList(extents);
     }
 

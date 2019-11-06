@@ -44,10 +44,9 @@ import DiscUtils.Streams.Util.StreamUtilities;
 /**
  * Builds a stream with the contents of a BIOS partitioned disk.
  *
- * This class assembles a disk image dynamically in memory. The
- * constructed stream will read data from the partition content
- * streams only when a client of this class tries to read from
- * that partition.
+ * This class assembles a disk image dynamically in memory. The constructed
+ * stream will read data from the partition content streams only when a client
+ * of this class tries to read from that partition.
  */
 public class BiosPartitionedDiskBuilder extends StreamBuilder {
     private Geometry _biosGeometry;
@@ -109,7 +108,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
         _biosGeometry = sourceDisk.getBiosGeometry();
         _bootSectors = new SparseMemoryStream();
         _bootSectors.setLength(_capacity);
-        for (StreamExtent extent: (new BiosPartitionTable(sourceDisk)).getMetadataDiskExtents()) {
+        for (StreamExtent extent : (new BiosPartitionTable(sourceDisk)).getMetadataDiskExtents()) {
             sourceDisk.getContent().setPosition(extent.getStart());
             byte[] buffer = StreamUtilities.readExact(sourceDisk.getContent(), (int) extent.getLength());
             _bootSectors.setPosition(extent.getStart());
@@ -146,16 +145,19 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
      * Updates the CHS fields in partition records to reflect a new BIOS
      * geometry.
      *
-     * @param geometry The disk's new BIOS geometry.The partitions are not
-     *            relocated to a cylinder boundary, just the CHS fields are
-     *            updated on the
-     *            assumption the LBA fields are definitive.
+     * The partitions are not relocated to a cylinder boundary, just the CHS
+     * fields are updated on the assumption the LBA fields are definitive.
+     *
+     * @param geometry The disk's new BIOS geometry.
      */
     public void updateBiosGeometry(Geometry geometry) {
         getPartitionTable().updateBiosGeometry(geometry);
         _biosGeometry = geometry;
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         totalLength[0] = _capacity;
         List<BuilderExtent> extents = new ArrayList<>();
@@ -167,5 +169,4 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
         extents.addAll(_partitionContents.values());
         return extents;
     }
-
 }

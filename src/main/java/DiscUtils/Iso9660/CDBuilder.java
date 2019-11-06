@@ -79,6 +79,7 @@ public final class CDBuilder extends StreamBuilder {
         _dirs = new ArrayList<>();
         _rootDirectory = new BuildDirectoryInfo("\0", null);
         _dirs.add(_rootDirectory);
+
         _buildParams = new BuildParameters();
         _buildParams.setUseJoliet(true);
     }
@@ -91,14 +92,14 @@ public final class CDBuilder extends StreamBuilder {
      * verifies the CD has been loaded correctly by the BIOS. This table needs
      * to be updated to match the actual ISO.
      */
-    private boolean __UpdateIsolinuxBootTable;
+    private boolean _updateIsolinuxBootTable;
 
     public boolean getUpdateIsolinuxBootTable() {
-        return __UpdateIsolinuxBootTable;
+        return _updateIsolinuxBootTable;
     }
 
     public void setUpdateIsolinuxBootTable(boolean value) {
-        __UpdateIsolinuxBootTable = value;
+        _updateIsolinuxBootTable = value;
     }
 
     /**
@@ -127,7 +128,6 @@ public final class CDBuilder extends StreamBuilder {
         if (value.length() > 32) {
             throw new IllegalArgumentException("Not a valid volume identifier");
         }
-
         _buildParams.setVolumeIdentifier(value);
     }
 
@@ -154,14 +154,15 @@ public final class CDBuilder extends StreamBuilder {
 
     /**
      * Adds a directory to the ISO image.
+     * <p>
+     * The name is the full path to the directory, for example:
+     *
+     * <pre>
+     * {@code builder.addDirectory("DIRA\\DIRB\\DIRC");}
+     * </pre>
      *
      * @param name The name of the directory on the ISO image.
-     * @return The object representing this directory. The name is the full path
-     *         to the directory, for example:
-     *
-     *         <pre>
-     * {@code builder.AddDirectory(@"DIRA\DIRB\DIRC");}
-     *         </pre>
+     * @return The object representing this directory.
      */
     public BuildDirectoryInfo addDirectory(String name) {
         String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
@@ -172,30 +173,30 @@ public final class CDBuilder extends StreamBuilder {
 
     /**
      * Adds a byte array to the ISO image as a file.
+     * <p>
+     * The name is the full path to the file, for example:
+     *
+     * <pre>
+     * {@code builder.addFile("DIRA\\DIRB\\FILE.TXT;1", new byte[] { 0, 1, 2 }); }
+     * </pre>
+     *
+     * Note the version number at the end of the file name is optional, if not
+     * specified the default of 1 will be used.
      *
      * @param name The name of the file on the ISO image.
      * @param content The contents of the file.
-     * @return The object representing this file. The name is the full path to
-     *         the file, for example:
-     *
-     *         <pre>
-     *         {@code builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", new byte[]{0,1,2}); }
-     *         </pre>
-     *
-     *         Note the version number at the end of the file name is optional,
-     *         if not specified the default of 1 will be used.
+     * @return The object representing this file.
      */
     public BuildFileInfo addFile(String name, byte[] content) {
         String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
+
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
-        boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
-        if (r) {
+        if (dir.tryGetMember(nameElements[nameElements.length - 1], existing)) {
             throw new IOException("File already exists");
         }
-
         BuildFileInfo fi = new BuildFileInfo(nameElements[nameElements.length - 1], dir, content);
         _files.add(fi);
         dir.add(fi);
@@ -204,30 +205,30 @@ public final class CDBuilder extends StreamBuilder {
 
     /**
      * Adds a disk file to the ISO image as a file.
+     * <p>
+     * The name is the full path to the file, for example:
+     *
+     * <pre>
+     * {@code builder.addFile("DIRA\\DIRB\\FILE.TXT;1", "C:\\temp\\tempfile.bin"); }
+     * </pre>
+     *
+     * Note the version number at the end of the file name is optional, if not
+     * specified the default of 1 will be used.
      *
      * @param name The name of the file on the ISO image.
      * @param sourcePath The name of the file on disk.
-     * @return The object representing this file. The name is the full path to
-     *         the file, for example:
-     *
-     *         <pre>
-     *         {@code builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", @"C:\temp\tempfile.bin"); }
-     *         </pre>
-     *
-     *         Note the version number at the end of the file name is optional,
-     *         if not specified the default of 1 will be used.
+     * @return The object representing this file.
      */
     public BuildFileInfo addFile(String name, String sourcePath) {
         String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
+
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
-        boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
-        if (r) {
+        if (dir.tryGetMember(nameElements[nameElements.length - 1], existing)) {
             throw new IOException("File already exists");
         }
-
         BuildFileInfo fi = new BuildFileInfo(nameElements[nameElements.length - 1], dir, sourcePath);
         _files.add(fi);
         dir.add(fi);
@@ -236,20 +237,19 @@ public final class CDBuilder extends StreamBuilder {
 
     /**
      * Adds a stream to the ISO image as a file.
+     * <p>
+     * The name is the full path to the file, for example:
      *
-     * @param name The name of the file on the ISO image.
-     * @param source The contents of the file.
-     * @return The object representing this file. The name is the full path to
-     *         the file, for example:
-     * 
-     *         <pre>
-     *         {@code
-     * builder.AddFile(@"DIRA\DIRB\FILE.TXT;1", stream);
-     * }
+     * <pre>
+     * {@code builder.addFile("DIRA\\DIRB\\FILE.TXT;1", stream); }
      * </pre>
      * 
      * Note the version number at the end of the file name is optional, if not
      * specified the default of 1 will be used.
+     *
+     * @param name The name of the file on the ISO image.
+     * @param source The contents of the file.
+     * @return The object representing this file.
      */
     public BuildFileInfo addFile(String name, Stream source) {
         if (!source.canSeek()) {
@@ -260,18 +260,20 @@ public final class CDBuilder extends StreamBuilder {
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
+
         BuildDirectoryMember[] existing = new BuildDirectoryMember[1];
-        boolean r = dir.tryGetMember(nameElements[nameElements.length - 1], existing);
-        if (r) {
+        if (dir.tryGetMember(nameElements[nameElements.length - 1], existing)) {
             throw new IOException("File already exists");
         }
-
         BuildFileInfo fi = new BuildFileInfo(nameElements[nameElements.length - 1], dir, source);
         _files.add(fi);
         dir.add(fi);
         return fi;
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> fixedRegions = new ArrayList<>();
 
@@ -460,20 +462,25 @@ public final class CDBuilder extends StreamBuilder {
         }
 
         byte[] bootData = StreamUtilities.readExact(bootImage, (int) bootImage.getLength());
+
         Arrays.fill(bootData, 8, 8 + 56, (byte) 0);
+
         int checkSum = 0;
         for (int i = 64; i < bootData.length; i += 4) {
             checkSum += EndianUtilities.toUInt32LittleEndian(bootData, i);
         }
+
         EndianUtilities.writeBytesLittleEndian(pvdLba, bootData, 8);
         EndianUtilities.writeBytesLittleEndian(bootImageLba, bootData, 12);
         EndianUtilities.writeBytesLittleEndian(bootData.length, bootData, 16);
         EndianUtilities.writeBytesLittleEndian(checkSum, bootData, 20);
+
         return new MemoryStream(bootData, false);
     }
 
     private BuildDirectoryInfo getDirectory(String[] path, int pathLength, boolean createMissing) {
         BuildDirectoryInfo di = tryGetDirectory(path, pathLength, createMissing);
+
         if (di == null) {
             throw new dotnet4j.io.FileNotFoundException("Directory not found");
         }
@@ -483,10 +490,10 @@ public final class CDBuilder extends StreamBuilder {
 
     private BuildDirectoryInfo tryGetDirectory(String[] path, int pathLength, boolean createMissing) {
         BuildDirectoryInfo focus = _rootDirectory;
+
         for (int i = 0; i < pathLength; ++i) {
             BuildDirectoryMember[] next = new BuildDirectoryMember[1];
-            boolean r = !focus.tryGetMember(path[i], next);
-            if (r) {
+            if (!focus.tryGetMember(path[i], next)) {
                 if (createMissing) {
                     // This directory doesn't exist, create it...
                     BuildDirectoryInfo di = new BuildDirectoryInfo(path[i], focus);
@@ -497,15 +504,14 @@ public final class CDBuilder extends StreamBuilder {
                     return null;
                 }
             } else {
-                BuildDirectoryInfo nextAsBuildDirectoryInfo = next[0] instanceof BuildDirectoryInfo ? (BuildDirectoryInfo) next[0]
-                                                                                                    : (BuildDirectoryInfo) null;
-                if (nextAsBuildDirectoryInfo == null) {
+                if (!BuildDirectoryInfo.class.isInstance(next[0])) {
                     throw new IOException("File with conflicting name exists");
                 }
-
+                BuildDirectoryInfo nextAsBuildDirectoryInfo = BuildDirectoryInfo.class.cast(next[0]);
                 focus = nextAsBuildDirectoryInfo;
             }
         }
+
         return focus;
     }
 }

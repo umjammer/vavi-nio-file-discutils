@@ -107,6 +107,9 @@ public final class SubKeyHashedListCell extends ListCell {
         return _numElements++;
     }
 
+    /**
+     * @param cellIndex {@cs out}
+     */
     public int findKey(String name, int[] cellIndex) {
         // Check first and last, to early abort if the name is outside the range of this list
         int[] found = new int[1];
@@ -197,6 +200,9 @@ public final class SubKeyHashedListCell extends ListCell {
         return hash;
     }
 
+    /**
+     * @param cellIndex {@cs out}
+     */
     private int findKeyAt(String name, int listIndex, int[] cellIndex) {
         Cell cell = _hive.<Cell> getCell(_subKeyIndexes.get(listIndex));
         if (cell == null) {
@@ -276,7 +282,7 @@ public final class SubKeyHashedListCell extends ListCell {
         public int compare(Integer x, Integer y) {
             // TODO: Be more efficient at ruling out no-hopes by using the hash values
             KeyNodeCell cell = _hive.getCell(x);
-            int result = StringUtilities.compare(cell.Name, _searchName, true); // TODO cell can be null
+            int result = StringUtilities.compare(cell.Name, _searchName, true);
             if (result == 0) {
                 setCellIndex(x);
             }

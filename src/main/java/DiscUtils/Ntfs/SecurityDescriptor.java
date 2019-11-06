@@ -45,14 +45,14 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         setDescriptor(secDesc);
     }
 
-    private RawSecurityDescriptor __Descriptor;
+    private RawSecurityDescriptor _descriptor;
 
     public RawSecurityDescriptor getDescriptor() {
-        return __Descriptor;
+        return _descriptor;
     }
 
     public void setDescriptor(RawSecurityDescriptor value) {
-        __Descriptor = value;
+        _descriptor = value;
     }
 
     public int size() {

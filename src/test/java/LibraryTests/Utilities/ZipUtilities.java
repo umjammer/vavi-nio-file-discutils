@@ -26,7 +26,7 @@ public class ZipUtilities {
             try (Stream zipFile = new JavaIOStream(zipArchive.getInputStream(entry))) {
                 zipFile.copyTo(ms);
             }
-//System.err.println(StringUtil.getDump(ms.toArray(), 128));
+//System.err.println(StringUtil.getDump(ms.toArray(), 512));
             return ms;
         }
     }

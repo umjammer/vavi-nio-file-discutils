@@ -32,21 +32,20 @@ import dotnet4j.io.Stream;
  * Base class for streams that are essentially a mapping onto a parent stream.
  *
  * This class provides access to the mapping underlying the stream, enabling
- * callers to convert a byte range in this stream into one or more ranges in
- * the parent stream.
+ * callers to convert a byte range in this stream into one or more ranges in the
+ * parent stream.
  */
 public abstract class MappedStream extends SparseStream {
     /**
      * Converts any stream into a non-linear stream.
+     * <p>
+     * The wrapped stream is assumed to be a linear stream (such that any byte
+     * range maps directly onto the parent stream).
      *
      * @param stream The stream to convert.
-     * @param takeOwnership
-     *            {@code true}
-     *            to have the new stream dispose the wrapped
-     *            stream when it is disposed.
-     * @return A sparse stream.The wrapped stream is assumed to be a linear
-     *         stream (such that any byte range
-     *         maps directly onto the parent stream).
+     * @param takeOwnership {@code true} to have the new stream dispose the
+     *            wrapped stream when it is disposed.
+     * @return A sparse stream.
      */
     public static MappedStream fromStream(Stream stream, Ownership takeOwnership) {
         return new WrappingMappedStream<>(stream, takeOwnership, null);
@@ -54,41 +53,33 @@ public abstract class MappedStream extends SparseStream {
 
     /**
      * Converts any stream into a non-linear stream.
+     * <p>
+     * The wrapped stream is assumed to be a linear stream (such that any byte
+     * range maps directly onto the parent stream).
      *
      * @param stream The stream to convert.
-     * @param takeOwnership
-     *            {@code true}
-     *            to have the new stream dispose the wrapped
-     *            stream when it is disposed.
-     * @param extents The set of extents actually stored in
-     *            {@code stream}
-     *            .
-     * @return A sparse stream.The wrapped stream is assumed to be a linear
-     *         stream (such that any byte range
-     *         maps directly onto the parent stream).
+     * @param takeOwnership {@code true} to have the new stream dispose the
+     *            wrapped stream when it is disposed.
+     * @param extents The set of extents actually stored in {@code stream} .
+     * @return A sparse stream.
      */
-    public static MappedStream fromStream(Stream stream,
-                                          Ownership takeOwnership,
-                                          List<StreamExtent> extents) {
+    public static MappedStream fromStream(Stream stream, Ownership takeOwnership, List<StreamExtent> extents) {
         return new WrappingMappedStream<>(stream, takeOwnership, extents);
     }
 
     /**
      * Maps a logical range down to storage locations.
+     * <p>
+     * As far as possible, the stream extents are returned in logical disk order
+     * - however, due to the nature of non-linear streams, not all of the range
+     * may actually be stored, or some or all of the range may be compressed -
+     * thus reading the returned stream extents is not equivalent to reading the
+     * logical disk range.
      *
      * @param start The first logical range to map.
      * @param length The length of the range to map.
      * @return One or more stream extents specifying the storage locations that
-     *         correspond
-     *         to the identified logical extent range.As far as possible, the
-     *         stream extents are returned in logical disk order -
-     *         however, due to the nature of non-linear streams, not all of the
-     *         range may actually
-     *         be stored, or some or all of the range may be compressed - thus
-     *         reading the
-     *         returned stream extents is not equivalent to reading the logical
-     *         disk range.
+     *         correspond to the identified logical extent range.
      */
     public abstract List<StreamExtent> mapContent(long start, long length);
-
 }

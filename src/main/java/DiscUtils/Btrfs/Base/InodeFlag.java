@@ -41,14 +41,14 @@ public enum InodeFlag {
     NoDataCow,
     /**
      * Inode is read-only regardless of UNIX permissions or ownership.
-     * 
+     *
      * This bit is still checked and returns EACCES but there is no way to set
      * it. That suggests that it has been superseded by IMMUTABLE.
      */
     Readonly,
     /**
      * Do not compress this inode.
-     * 
+     *
      * This flag may be changed by the kernel as compression ratios change. If
      * the compression ratio for data associated with an inode becomes
      * undesirable, this flag will be set. It may be cleared if the data changes
@@ -76,7 +76,7 @@ public enum InodeFlag {
     Append,
     /**
      * This inode is not a candidate for dumping using the dump(8) program.
-     * 
+     *
      * This flag will be accepted on all kernels but is not implemented
      */
     NoDump,
@@ -86,7 +86,7 @@ public enum InodeFlag {
     NoATime,
     /**
      * Operations on directory operations will be performed synchronously.
-     * 
+     *
      * This flag is converted to a VFS-level inode flag but is not handled
      * anywhere.
      */
@@ -105,7 +105,6 @@ public enum InodeFlag {
     public Function<Integer, Boolean> function() {
         return v -> (v & supplier().get()) != 0;
     };
-
 
     public static EnumSet<InodeFlag> valueOf(int value) {
         return Arrays.stream(values())

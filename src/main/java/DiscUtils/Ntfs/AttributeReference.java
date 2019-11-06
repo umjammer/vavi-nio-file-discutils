@@ -36,16 +36,16 @@ public class AttributeReference implements Comparable<AttributeReference> {
      */
     public AttributeReference(FileRecordReference fileReference, short attributeId) {
         _fileReference = fileReference;
-        __AttributeId = attributeId;
+        _attributeId = attributeId;
     }
 
     /**
      * Gets the identity of the attribute within the file record.
      */
-    private short __AttributeId;
+    private short _attributeId;
 
     public short getAttributeId() {
-        return __AttributeId;
+        return _attributeId;
     }
 
     /**
@@ -67,26 +67,17 @@ public class AttributeReference implements Comparable<AttributeReference> {
             return refDiff;
         }
 
-        return getAttributeId() - other.getAttributeId();
+        return _attributeId - other._attributeId;
     }
 
     /**
      * Indicates if two references are equivalent.
      *
      * @param other The attribute reference to compare.
-     * @return
-     *         {@code true}
-     *         if the references are equivalent.
+     * @return {@code true} if the references are equivalent.
      */
     public boolean equals(AttributeReference other) {
-        try {
-            return compareTo(other) == 0;
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return compareTo(other) == 0;
     }
 
     /**
@@ -95,39 +86,23 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @return String representing the attribute.
      */
     public String toString() {
-        try {
-            return _fileReference + ".attr[" + getAttributeId() + "]";
-        } catch (RuntimeException __dummyCatchVar1) {
-            throw __dummyCatchVar1;
-        } catch (Exception __dummyCatchVar1) {
-            throw new RuntimeException(__dummyCatchVar1);
-        }
-
+        return _fileReference + ".attr[" + _attributeId + "]";
     }
 
     /**
      * Indicates if this reference is equivalent to another object.
      *
      * @param obj The object to compare.
-     * @return
-     *         {@code true}
-     *         if obj is an equivalent attribute reference.
+     * @return {@code true} if obj is an equivalent attribute reference.
      */
     public boolean equals(Object obj) {
-        try {
-            AttributeReference objAsAttrRef = obj instanceof AttributeReference ? (AttributeReference) obj
-                                                                                : (AttributeReference) null;
-            if (objAsAttrRef == null) {
-                return false;
-            }
-
-            return equals(objAsAttrRef);
-        } catch (RuntimeException __dummyCatchVar2) {
-            throw __dummyCatchVar2;
-        } catch (Exception __dummyCatchVar2) {
-            throw new RuntimeException(__dummyCatchVar2);
+        AttributeReference objAsAttrRef = obj instanceof AttributeReference ? (AttributeReference) obj
+                                                                            : (AttributeReference) null;
+        if (objAsAttrRef == null) {
+            return false;
         }
 
+        return equals(objAsAttrRef);
     }
 
     /**

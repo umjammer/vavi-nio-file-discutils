@@ -74,12 +74,11 @@ public class Index implements Closeable {
         try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Read)) {
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
             _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
-            // Give the attribute some room to breathe, so long as it doesn't squeeze others
-            // out
-            // BROKEN, BROKEN, BROKEN - how to figure this out? Query at the point of adding
-            // entries to the root node?
-            _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable()
-                    + (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
+            // Give the attribute some room to breathe, so long as it doesn't
+            // squeeze others out BROKEN, BROKEN, BROKEN - how to figure this
+            // out? Query at the point of adding entries to the root node?
+            _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable() +
+                                             (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -112,7 +111,7 @@ public class Index implements Closeable {
         _root.setAttributeType(attrType != null ? attrType.ordinal() : 0);
         _root.setCollationRule(collationRule);
         _root.setIndexAllocationSize(bpb.getIndexBufferSize());
-        _root.setRawClustersPerIndexRecord(bpb.RawIndexBufferSize);
+        _root.setRawClustersPerIndexRecord(bpb._rawIndexBufferSize);
 
         _comparer = _root.getCollator(upCase);
 
@@ -211,9 +210,13 @@ public class Index implements Closeable {
         return found;
     }
 
+    /**
+     * @param value {@cs out}
+     */
     public boolean tryGetValue(byte[] key, byte[][] value) {
         IndexEntry[] entry = new IndexEntry[1];
         IndexNode[] node = new IndexNode[1];
+
         if (_rootNode.tryFindEntry(key, entry, node)) {
             value[0] = entry[0].getDataBuffer();
             return true;
@@ -226,7 +229,8 @@ public class Index implements Closeable {
     public static String entryAsString(IndexEntry entry, String fileName, String indexName) {
         IByteArraySerializable keyValue = null;
         IByteArraySerializable dataValue = null;
-        // Try to guess the type of data in the key and data fields from the filename
+        // Try to guess the type of data in the key and data fields from the
+        // filename
         // and index name
         if (indexName.equals("$I30")) {
             keyValue = new FileNameRecord();
@@ -262,18 +266,18 @@ public class Index implements Closeable {
                 return "{" + keyValue + "-->" + dataValue + "}";
             }
         } catch (Exception e) {
-Debug.printStackTrace(e);
+            Debug.printStackTrace(e);
             return "{Parsing-Error}";
         }
 
-Debug.println(Level.WARNING, indexName);
+        Debug.println(Level.WARNING, indexName);
         return "{Unknown-Index-Type}";
     }
 
     public long indexBlockVcnToPosition(long vcn) {
         if (vcn % _root.getRawClustersPerIndexRecord() != 0) {
-            throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn
-                    + " rcpir=" + _root.getRawClustersPerIndexRecord());
+            throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn +
+                                                    " rcpir=" + _root.getRawClustersPerIndexRecord());
         }
 
         if (_bpb.getBytesPerCluster() <= _root.getIndexAllocationSize()) {
@@ -281,8 +285,8 @@ Debug.println(Level.WARNING, indexName);
         }
 
         if (_root.getRawClustersPerIndexRecord() != 8) {
-            throw new UnsupportedOperationException("Unexpected RawClustersPerIndexRecord (multiple index blocks per cluster): "
-                    + _root.getRawClustersPerIndexRecord());
+            throw new UnsupportedOperationException("Unexpected RawClustersPerIndexRecord (multiple index blocks per cluster): " +
+                                                    _root.getRawClustersPerIndexRecord());
         }
 
         return vcn / _root.getRawClustersPerIndexRecord() * _root.getIndexAllocationSize();
@@ -320,8 +324,8 @@ Debug.println(Level.WARNING, indexName);
         }
 
         long idx = _indexBitmap.allocateFirstAvailable(0);
-        parentEntry.setChildrenVirtualCluster(idx
-                * MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.SectorsPerCluster * _bpb.BytesPerSector));
+        parentEntry.setChildrenVirtualCluster(idx * MathUtilities.ceil(_bpb.getIndexBufferSize(),
+                                                                       _bpb._sectorsPerCluster * _bpb._bytesPerSector));
         parentEntry.getFlags().add(IndexEntryFlags.Node);
         IndexBlock block = IndexBlock.initialize(this, false, parentEntry, _bpb);
         _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
@@ -329,7 +333,7 @@ Debug.println(Level.WARNING, indexName);
     }
 
     public void freeBlock(long vcn) {
-        long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.SectorsPerCluster * _bpb.BytesPerSector);
+        long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb._sectorsPerCluster * _bpb._bytesPerSector);
         _indexBitmap.markAbsent(idx);
         _blockCache.remove(vcn);
     }
@@ -397,8 +401,8 @@ Debug.println(Level.WARNING, indexName);
     }
 
     private void writeRootNodeToDisk() {
-        _rootNode.getHeader().AllocatedSizeOfEntries = _rootNode.calcSize();
-        byte[] buffer = new byte[_rootNode.getHeader().AllocatedSizeOfEntries + _root.size()];
+        _rootNode.getHeader()._allocatedSizeOfEntries = _rootNode.calcSize();
+        byte[] buffer = new byte[_rootNode.getHeader()._allocatedSizeOfEntries + _root.size()];
         _root.writeTo(buffer, 0);
         _rootNode.writeTo(buffer, _root.size());
         try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write)) {

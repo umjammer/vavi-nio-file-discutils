@@ -47,6 +47,9 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
         _content = content;
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
 

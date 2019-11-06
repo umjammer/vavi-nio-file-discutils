@@ -37,14 +37,14 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
         setName(name);
     }
 
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
     public int size() {
@@ -62,6 +62,6 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "  Volume Name: " + getName());
+        writer.println(indent + "  Volume Name: " + _name);
     }
 }

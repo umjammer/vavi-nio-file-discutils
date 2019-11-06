@@ -48,7 +48,6 @@ public class BuilderStreamExtent extends BuilderExtent {
             _source.close();
             _source = null;
         }
-
     }
 
     public void prepareForRead() {
@@ -61,5 +60,4 @@ public class BuilderStreamExtent extends BuilderExtent {
 
     public void disposeReadState() {
     }
-
 }

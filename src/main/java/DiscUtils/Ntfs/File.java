@@ -113,10 +113,10 @@ class File {
         // Root dir is stored without root directory flag set in FileNameRecord,
         // simulate it.
         if (_records.get(0).getMasterFileTableIndex() == MasterFileTable.RootDirIndex) {
-            record.Flags.add(FileAttributeFlags.Directory);
+            record._flags.add(FileAttributeFlags.Directory);
         }
 
-        return new DirectoryEntry(_context.getGetDirectoryByRef().invoke(record.ParentDirectory), getMftReference(), record);
+        return new DirectoryEntry(_context.getGetDirectoryByRef().invoke(record._parentDirectory), getMftReference(), record);
     }
 
     public short getHardLinkCount() {
@@ -131,10 +131,9 @@ class File {
         for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
             StructuredNtfsAttribute<FileNameRecord> attr = StructuredNtfsAttribute.class.cast(_attr);
             FileNameRecord fnr = attr.getContent();
-            if (fnr._FileNameNamespace != FileNameNamespace.Posix) {
+            if (fnr._fileNameNamespace != FileNameNamespace.Posix) {
                 return true;
             }
-
         }
         return false;
     }
@@ -151,14 +150,14 @@ class File {
         return _records.get(0).getAllocatedSize();
     }
 
-    private boolean __MftRecordIsDirty;
+    private boolean _mftRecordIsDirty;
 
     public boolean getMftRecordIsDirty() {
-        return __MftRecordIsDirty;
+        return _mftRecordIsDirty;
     }
 
     public void setMftRecordIsDirty(boolean value) {
-        __MftRecordIsDirty = value;
+        _mftRecordIsDirty = value;
     }
 
     public FileRecordReference getMftReference() {
@@ -172,8 +171,8 @@ class File {
         } else {
             for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
                 StructuredNtfsAttribute<FileNameRecord> attr = StructuredNtfsAttribute.class.cast(_attr);
-                String name = attr.getContent().FileName;
-                Directory parentDir = _context.getGetDirectoryByRef().invoke(attr.getContent().ParentDirectory);
+                String name = attr.getContent()._fileName;
+                Directory parentDir = _context.getGetDirectoryByRef().invoke(attr.getContent()._parentDirectory);
                 if (parentDir != null) {
                     for (String dirName : parentDir.getNames()) {
                         result.add(Utilities.combinePaths(dirName, name));
@@ -189,7 +188,7 @@ class File {
     }
 
     public static File createNew(INtfsContext context, EnumSet<FileAttributeFlags> dirFlags) {
-        return createNew(context, EnumSet.of(FileRecordFlags.None), dirFlags);
+        return createNew(context, EnumSet.noneOf(FileRecordFlags.class), dirFlags);
     }
 
     public static File createNew(INtfsContext context, EnumSet<FileRecordFlags> flags, EnumSet<FileAttributeFlags> dirFlags) {
@@ -229,7 +228,6 @@ class File {
             if (record.getAttribute(attrType, attrName) != null) {
                 return _mft.getRecordSize() - (int) record.getSize();
             }
-
         }
         throw new dotnet4j.io.IOException("Attempt to determine free space for non-existent attribute");
     }
@@ -403,7 +401,7 @@ class File {
     }
 
     public NtfsStream createStream(AttributeType attrType, String name) {
-        return new NtfsStream(this, createAttribute(attrType, name, EnumSet.of(AttributeFlags.None)));
+        return new NtfsStream(this, createAttribute(attrType, name, EnumSet.noneOf(AttributeFlags.class)));
     }
 
     public NtfsStream createStream(AttributeType attrType,
@@ -414,7 +412,7 @@ class File {
         return new NtfsStream(this,
                               createAttribute(attrType,
                                               name,
-                                              EnumSet.of(AttributeFlags.None),
+                                              EnumSet.noneOf(AttributeFlags.class),
                                               firstCluster,
                                               numClusters,
                                               bytesPerCluster));
@@ -443,7 +441,7 @@ class File {
         } else {
             for (Object _a : attrs) { // need cast
                 StructuredNtfsAttribute<FileNameRecord> a = StructuredNtfsAttribute.class.cast(_a);
-                if (_context.getUpperCase().compare(a.getContent().FileName, name) == 0) {
+                if (_context.getUpperCase().compare(a.getContent()._fileName, name) == 0) {
                     attr = a;
                 }
             }
@@ -565,25 +563,25 @@ class File {
         StandardInformation si = getStandardInformation();
         NtfsAttribute anonDataAttr = getAttribute(AttributeType.Data, null);
 
-        fileName.CreationTime = si.CreationTime;
-        fileName.ModificationTime = si.ModificationTime;
-        fileName.MftChangedTime = si.MftChangedTime;
-        fileName.LastAccessTime = si.LastAccessTime;
-        fileName.Flags = si._FileAttributes;
+        fileName._creationTime = si.CreationTime;
+        fileName._modificationTime = si.ModificationTime;
+        fileName._mftChangedTime = si.MftChangedTime;
+        fileName._lastAccessTime = si.LastAccessTime;
+        fileName._flags = si._FileAttributes;
 
         if (getMftRecordIsDirty() && NtfsTransaction.getCurrent() != null) {
-            fileName.MftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
+            fileName._mftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
         }
 
         // Directories don't have directory flag set in StandardInformation, so set from
         // MFT record
         if (_records.get(0).getFlags().contains(FileRecordFlags.IsDirectory)) {
-            fileName.Flags.add(FileAttributeFlags.Directory);
+            fileName._flags.add(FileAttributeFlags.Directory);
         }
 
         if (anonDataAttr != null) {
-            fileName.RealSize = anonDataAttr.getPrimaryRecord().getDataLength();
-            fileName.AllocatedSize = anonDataAttr.getPrimaryRecord().getAllocatedLength();
+            fileName._realSize = anonDataAttr.getPrimaryRecord().getDataLength();
+            fileName._allocatedSize = anonDataAttr.getPrimaryRecord().getAllocatedLength();
         }
 
         if (updateMftRecord) {
@@ -591,7 +589,7 @@ class File {
                 FileNameRecord fnr = stream.getContent(FileNameRecord.class);
                 if (fnr.equals(fileName)) {
                     fnr = new FileNameRecord(fileName);
-                    fnr.Flags.remove(FileAttributeFlags.ReparsePoint);
+                    fnr._flags.remove(FileAttributeFlags.ReparsePoint);
                     stream.setContent(fnr);
                 }
             }
@@ -743,7 +741,7 @@ class File {
                             return true;
                         }
                     }
-                    FileRecord newFileRecord = _mft.allocateRecord(EnumSet.of(FileRecordFlags.None), record.getIsMftRecord());
+                    FileRecord newFileRecord = _mft.allocateRecord(EnumSet.noneOf(FileRecordFlags.class), record.getIsMftRecord());
                     newFileRecord.setBaseFile(record.getReference());
                     _records.add(newFileRecord);
                     moveAttribute(record, attr, newFileRecord);
@@ -766,7 +764,7 @@ class File {
     }
 
     private void createAttributeList() {
-        short id = _records.get(0).createAttribute(AttributeType.AttributeList, null, false, EnumSet.of(AttributeFlags.None));
+        short id = _records.get(0).createAttribute(AttributeType.AttributeList, null, false, EnumSet.noneOf(AttributeFlags.class));
         StructuredNtfsAttribute<AttributeList> newAttr = StructuredNtfsAttribute.class
                 .cast(NtfsAttribute.fromRecord(this, getMftReference(), _records.get(0).getAttribute(id)));
         _attributes.add(newAttr);

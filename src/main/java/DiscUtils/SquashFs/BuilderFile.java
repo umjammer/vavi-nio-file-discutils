@@ -124,7 +124,7 @@ public final class BuilderFile extends BuilderNode {
         }
 
         fillCommonInodeData(context);
-        _inode.Type = InodeType.File;
+        _inode._type = InodeType.File;
         setInodeRef(context.getInodeWriter().getPosition());
         int totalSize =_inode.size();
         _inode.writeTo(context.getIoBuffer(), 0);

@@ -24,7 +24,6 @@ package DiscUtils.Ntfs.Internals;
 
 import java.util.EnumSet;
 
-import DiscUtils.Ntfs.AttributeFlags;
 import DiscUtils.Ntfs.AttributeRecord;
 import DiscUtils.Ntfs.AttributeType;
 import DiscUtils.Ntfs.INtfsContext;
@@ -73,7 +72,7 @@ public abstract class GenericAttribute {
      * Gets the flags indicating how the content of the attribute is stored.
      */
     public EnumSet<AttributeFlags> getFlags() {
-        return _record.getFlags();
+        return AttributeFlags.valueOf((int) DiscUtils.Ntfs.AttributeFlags.valueOf(_record.getFlags()));
     }
 
     /**
@@ -108,7 +107,6 @@ public abstract class GenericAttribute {
             return new StandardInformationAttribute(context, record);
         default:
             return new UnknownAttribute(context, record);
-
         }
     }
 }

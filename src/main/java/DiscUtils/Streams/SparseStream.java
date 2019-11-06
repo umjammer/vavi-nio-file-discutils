@@ -49,11 +49,12 @@ public abstract class SparseStream extends Stream {
     /**
      * Converts any stream into a sparse stream.
      *
+     * The returned stream has the entire wrapped stream as a single extent.
+     *
      * @param stream The stream to convert.
-     * @param takeOwnership {@code true} to have the new stream dispose the wrapped
-     *            stream when it is disposed.
-     * @return A sparse stream.The returned stream has the entire wrapped stream as
-     *         a single extent.
+     * @param takeOwnership {@code true} to have the new stream dispose the
+     *            wrapped stream when it is disposed.
+     * @return A sparse stream.
      */
     public static SparseStream fromStream(Stream stream, Ownership takeOwnership) {
         return new SparseWrapperStream(stream, takeOwnership, null);
@@ -62,12 +63,13 @@ public abstract class SparseStream extends Stream {
     /**
      * Converts any stream into a sparse stream.
      *
+     * The returned stream has the entire wrapped stream as a single extent.
+     *
      * @param stream The stream to convert.
-     * @param takeOwnership {@code true} to have the new stream dispose the wrapped
-     *            stream when it is disposed.
+     * @param takeOwnership {@code true} to have the new stream dispose the
+     *            wrapped stream when it is disposed.
      * @param extents The set of extents actually stored in {@code stream} .
-     * @return A sparse stream.The returned stream has the entire wrapped stream as
-     *         a single extent.
+     * @return A sparse stream.
      */
     public static SparseStream fromStream(Stream stream, Ownership takeOwnership, List<StreamExtent> extents) {
         return new SparseWrapperStream(stream, takeOwnership, extents);
@@ -87,11 +89,12 @@ public abstract class SparseStream extends Stream {
     /**
      * Efficiently pumps data from a sparse stream to another stream.
      *
+     * {@code outStream} must support seeking.
+     * 
      * @param inStream The stream to pump from.
      * @param outStream The stream to pump to.
      * @param chunkSize The smallest sequence of zero bytes that will be skipped
-     *            when writing to {@code outStream} . {@code outStream} must support
-     *            seeking.
+     *            when writing to {@code outStream} .
      */
     public static void pump(Stream inStream, Stream outStream, int chunkSize) {
         StreamPump pump = new StreamPump(inStream, outStream, chunkSize);
@@ -102,8 +105,8 @@ public abstract class SparseStream extends Stream {
      * Wraps a sparse stream in a read-only wrapper, preventing modification.
      *
      * @param toWrap The stream to make read-only.
-     * @param ownership Whether to transfer responsibility for calling Dispose on
-     *            {@code toWrap} .
+     * @param ownership Whether to transfer responsibility for calling Dispose
+     *            on {@code toWrap} .
      * @return The read-only stream.
      */
     public static SparseStream readOnly(SparseStream toWrap, Ownership ownership) {
@@ -113,16 +116,17 @@ public abstract class SparseStream extends Stream {
     /**
      * Clears bytes from the stream.
      *
-     * @param count The number of bytes (from the current position) to
-     *            clear.Logically equivalent to writing {@code count} null/zero
-     *            bytes to the stream, some implementations determine that some (or
-     *            all) of the range indicated is not actually stored. There is no
-     *            direct, automatic, correspondence to clearing bytes and them not
-     *            being represented as an 'extent' - for example, the implementation
-     *            of the underlying stream may not permit fine-grained extent
-     *            storage.It is always safe to call this method to 'zero-out' a
-     *            section of a stream, regardless of the underlying stream
-     *            implementation.
+     * Logically equivalent to writing {@code count} null/zero bytes to the
+     * stream, some implementations determine that some (or all) of the range
+     * indicated is not actually stored. There is no direct, automatic,
+     * correspondence to clearing bytes and them not being represented as an
+     * 'extent' - for example, the implementation of the underlying stream may
+     * not permit fine-grained extent storage.
+     *
+     * It is always safe to call this method to 'zero-out' a section of a
+     * stream, regardless of the underlying stream implementation.
+     * 
+     * @param count The number of bytes (from the current position) to clear.
      */
     public void clear(int count) {
         write(new byte[count], 0, count);

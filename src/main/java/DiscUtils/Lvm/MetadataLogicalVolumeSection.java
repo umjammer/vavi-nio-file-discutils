@@ -196,3 +196,20 @@ public class MetadataLogicalVolumeSection {
         }
     };
 }
+
+enum LogicalVolumeStatus {
+    None(0x0),
+    Read(0x1),
+    Write(0x2),
+    Visible(0x4);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private LogicalVolumeStatus(int value) {
+        this.value = value;
+    }
+}

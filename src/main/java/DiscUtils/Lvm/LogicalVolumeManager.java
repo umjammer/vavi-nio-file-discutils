@@ -57,15 +57,13 @@ public class LogicalVolumeManager {
             if (disk.isPartitioned()) {
                 for (PartitionInfo partition : disk.getPartitions().getPartitions()) {
                     PhysicalVolume[] pv = new PhysicalVolume[1];
-                    boolean r = PhysicalVolume.tryOpen(partition, pv);
-                    if (r) {
+                    if (PhysicalVolume.tryOpen(partition, pv)) {
                         _devices.add(pv[0]);
                     }
                 }
             } else {
                 PhysicalVolume[] pv = new PhysicalVolume[1];
-                boolean r = PhysicalVolume.tryOpen(disk.getContent(), pv);
-                if (r) {
+                if (PhysicalVolume.tryOpen(disk.getContent(), pv)) {
                     _devices.add(pv[0]);
                 }
             }
@@ -74,6 +72,7 @@ public class LogicalVolumeManager {
             for (MetadataVolumeGroupSection vg : device.VgMetadata.ParsedMetadata.VolumeGroupSections) {
                 if (Collections.binarySearch(_volumeGroups, vg, (x, y) -> x.Id.compareTo(y.Id)) == -1) {
                     _volumeGroups.add(vg);
+//Debug.println("Lg: " + vg.Id);
                 }
             }
         }
@@ -83,18 +82,15 @@ public class LogicalVolumeManager {
      * Determines if a physical volume contains LVM data.
      *
      * @param volumeInfo The volume to inspect.
-     * @return
-     *         {@code true}
-     *         if the physical volume contains LVM data, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the physical volume contains LVM data, else
+     *         {@code false} .
      */
     public static boolean handlesPhysicalVolume(PhysicalVolumeInfo volumeInfo) {
         PartitionInfo partition = volumeInfo.getPartition();
         if (partition == null)
             return false;
 
-        return partition.getBiosType() == BiosPartitionTypes.LinuxLvm || partition.getGuidType() == GuidPartitionTypes.LinuxLvm;
+        return partition.getBiosType() == BiosPartitionTypes.LinuxLvm || partition.getGuidType().equals(GuidPartitionTypes.LinuxLvm);
     }
 
     /**
@@ -112,7 +108,6 @@ public class LogicalVolumeManager {
                 for (MetadataSegmentSection segment : lv.Segments) {
                     if (segment.Type != SegmentType.Striped)
                         segmentTypesSupported = false;
-
                     for (MetadataStripe stripe : segment.Stripes) {
                         String pvAlias = stripe.PhysicalVolumeName;
                         if (!pvs.containsKey(pvAlias)) {
@@ -121,20 +116,16 @@ public class LogicalVolumeManager {
                                 allPvsAvailable = false;
                                 break;
                             }
-
                             PhysicalVolume pv = getPhysicalVolume(pvm.Id);
                             if (pv == null) {
                                 allPvsAvailable = false;
                                 break;
                             }
-
                             pvs.put(pvm.Name, pv);
                         }
-
                     }
                     if (!allPvsAvailable || !segmentTypesSupported)
                         break;
-
                 }
                 if (allPvsAvailable && segmentTypesSupported) {
                     LogicalVolumeInfo lvi = new LogicalVolumeInfo(lv.Identity,
@@ -145,8 +136,8 @@ public class LogicalVolumeManager {
                                                                   (byte) 0,
                                                                   DiscUtils.Core.LogicalVolumeStatus.Healthy);
                     result.add(lvi);
+//Debug.println("Lv: " + lvi.getIdentity());
                 }
-
             }
         }
         return result;
@@ -156,7 +147,6 @@ public class LogicalVolumeManager {
         for (PhysicalVolume pv : _devices) {
             if (pv.PvHeader.Uuid.equals(id))
                 return pv;
-
         }
         return null;
     }

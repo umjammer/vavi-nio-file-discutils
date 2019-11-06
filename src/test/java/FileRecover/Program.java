@@ -163,7 +163,6 @@ public class Program extends ProgramBase {
             if (attr.getAttributeType() == AttributeType.Data) {
                 return attr.getContent();
             }
-
         }
         return null;
     }
@@ -174,7 +173,6 @@ public class Program extends ProgramBase {
             if (fna != null) {
                 return fna.getRealSize();
             }
-
         }
         return 0;
     }

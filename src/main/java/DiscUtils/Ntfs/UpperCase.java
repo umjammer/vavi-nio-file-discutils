@@ -53,13 +53,13 @@ public final class UpperCase implements Comparator<String> {
             if (result != 0) {
                 return result;
             }
-
         }
+
+        // Identical out to the shortest string, so length is now the
+        // determining factor.
         return x.length() - y.length();
     }
 
-    // Identical out to the shortest string, so length is now the
-    // determining factor.
     public int compare(byte[] x, int xOffset, int xLength, byte[] y, int yOffset, int yLength) {
         int compLen = Math.min(xLength, yLength) / 2;
         for (int i = 0; i < compLen; ++i) {
@@ -70,11 +70,12 @@ public final class UpperCase implements Comparator<String> {
                 return result;
             }
         }
+
+        // Identical out to the shortest string, so length is now the
+        // determining factor.
         return xLength - yLength;
     }
 
-    // Identical out to the shortest string, so length is now the
-    // determining factor.
     public static UpperCase initialize(File file) {
         byte[] buffer = new byte[(Character.MAX_VALUE + 1) * 2];
         for (int i = Character.MIN_VALUE; i <= Character.MAX_VALUE; ++i) {
@@ -86,6 +87,7 @@ public final class UpperCase implements Comparator<String> {
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
+
         return new UpperCase(file);
     }
 }

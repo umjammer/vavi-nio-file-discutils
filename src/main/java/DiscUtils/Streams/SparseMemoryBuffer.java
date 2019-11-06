@@ -34,9 +34,9 @@ import DiscUtils.Streams.Buffer.Buffer;
 
 
 /**
- * A sparse in-memory buffer.
- * This class is useful for storing large sparse buffers in memory, unused
- * chunks of the buffer are not stored (assumed to be zero).
+ * A sparse in-memory buffer. This class is useful for storing large sparse
+ * buffers in memory, unused chunks of the buffer are not stored (assumed to be
+ * zero).
  */
 public final class SparseMemoryBuffer extends Buffer {
     private final Map<Integer, byte[]> _buffers;
@@ -56,12 +56,12 @@ public final class SparseMemoryBuffer extends Buffer {
     /**
      * Gets the (sorted) list of allocated chunks, as chunk indexes.
      *
-     * @return An enumeration of chunk indexes.This method returns chunks as an
-     *         index rather than absolute stream position.
-     *         For example, if ChunkSize is 16KB, and the first 32KB of the
-     *         buffer is actually stored,
-     *         this method will return 0 and 1. This indicates the first and
-     *         second chunks are stored.
+     * This method returns chunks as an index rather than absolute stream
+     * position. For example, if ChunkSize is 16KB, and the first 32KB of the
+     * buffer is actually stored, this method will return 0 and 1. This
+     * indicates the first and second chunks are stored.
+     *
+     * @return An enumeration of chunk indexes.
      */
     public List<Integer> getAllocatedChunks() {
         List<Integer> keys = new ArrayList<>(_buffers.keySet());
@@ -70,18 +70,14 @@ public final class SparseMemoryBuffer extends Buffer {
     }
 
     /**
-     * Indicates this stream can be read (always
-     * {@code true}
-     * ).
+     * Indicates this stream can be read (always {@code true} ).
      */
     public boolean canRead() {
         return true;
     }
 
     /**
-     * Indicates this stream can be written (always
-     * {@code true}
-     * ).
+     * Indicates this stream can be written (always {@code true} ).
      */
     public boolean canWrite() {
         return true;
@@ -212,11 +208,11 @@ public final class SparseMemoryBuffer extends Buffer {
     /**
      * Sets the capacity of the sparse buffer, truncating if appropriate.
      *
-     * @param value The desired capacity of the buffer.This method does not
-     *            allocate any chunks, it merely records the logical
-     *            capacity of the sparse buffer. Writes beyond the specified
-     *            capacity will increase
-     *            the capacity.
+     * This method does not allocate any chunks, it merely records the logical
+     * capacity of the sparse buffer. Writes beyond the specified capacity will
+     * increase the capacity.
+     * 
+     * @param value The desired capacity of the buffer.
      */
     public void setCapacity(long value) {
         _capacity = value;

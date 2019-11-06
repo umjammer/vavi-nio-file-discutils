@@ -61,6 +61,9 @@ public final class FragmentWriter {
         }
     }
 
+    /**
+     * @param offset {@cs out}
+     */
     public int writeFragment(int length, int[] offset) {
         if (_currentBlock.length - _currentOffset < length) {
             nextBlock();

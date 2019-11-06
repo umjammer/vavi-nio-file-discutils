@@ -50,7 +50,7 @@ public final class DiskTransport extends VirtualDiskTransport {
         String fsPath = uri.getPath();
         // Find the best (least specific) export
         String bestRoot = null;
-        int bestMatchLength = 0xffffffff;
+        int bestMatchLength = Integer.MAX_VALUE;
         for (String export : NfsFileSystem.getExports(uri.getHost())) {
             if (fsPath.length() >= export.length()) {
                 int matchLength = export.length();

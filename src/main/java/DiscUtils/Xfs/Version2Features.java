@@ -36,7 +36,7 @@ public enum Version2Features {
      * {@link SuperBlock#getVersion()}
      * .
      */
-    Reserved1(0x001),
+    Reserved1,
     /**
      * Lazy global counters. Making a filesystem with this
      * bit set can improve performance. The global free
@@ -44,8 +44,8 @@ public enum Version2Features {
      * primary superblock when the filesystem is cleanly
      * unmounted.
      */
-    LazySbBitCount(0x002),
-    Reserved4(0x004),
+    LazySbBitCount,
+    Reserved4,
     /**
      * Extended attributes version 2. Making a filesystem
      * with this optimises the inode layout of extended
@@ -53,14 +53,16 @@ public enum Version2Features {
      * flag is not specified, the di_forkoff inode field
      * will be dynamically adjusted.
      */
-    ExtendedAttributeVersion2(0x008),
+    ExtendedAttributeVersion2,
     /**
      * Parent pointers. All inodes must have an extended
      * attribute that points back to its parent inode. The
      * primary purpose for this information is in backup
      * systems.
      */
-    Parent(0x010),
+    Parent,
+    _dummy_0020,
+    _dummy_0040,
     /**
      * 32-bit Project ID. Inodes can be associated with a
      * project ID number, which can be used to enforce disk
@@ -68,7 +70,7 @@ public enum Version2Features {
      * directories. This flag indicates that project IDs can be
      * 32 bits in size.
      */
-    ProjectId32Bit(0x0080),
+    ProjectId32Bit,
     /**
      * Metadata checksumming. All metadata blocks have
      * an extended header containing the block checksum,
@@ -78,28 +80,18 @@ public enum Version2Features {
      * feature must be and can only be set if the lowest
      * nibble of sb_versionnum is set to 5.
      */
-    Crc(0x0100),
+    Crc,
     /**
      * Directory file type. Each directory entry records the
      * type of the inode to which the entry points. This
      * speeds up directory iteration by removing the need
      * to load every inode into memory.
      */
-    FType(0x0200);
-
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private Version2Features(int value) {
-        this.value = value;
-    }
+    FType;
 
     // TODO
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     // TODO

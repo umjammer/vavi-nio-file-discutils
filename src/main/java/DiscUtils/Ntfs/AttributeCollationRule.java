@@ -1,29 +1,28 @@
 
 package DiscUtils.Ntfs;
 
+import java.util.Arrays;
+
 public enum AttributeCollationRule {
-    Binary,
-    Filename,
-    UnicodeString,
-    __dummyEnum__0,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    __dummyEnum__11,
-    __dummyEnum__12,
-    UnsignedLong,
-    Sid,
-    SecurityHash,
-    MultipleUnsignedLongs;
+    Binary(0x00000000),
+    Filename(0x00000001),
+    UnicodeString(0x00000002),
+    UnsignedLong(0x00000010),
+    Sid(0x00000011),
+    SecurityHash(0x00000012),
+    MultipleUnsignedLongs(0x00000013);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private AttributeCollationRule(int value) {
+        this.value = value;
+    }
 
     public static AttributeCollationRule valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().get();
     }
 }

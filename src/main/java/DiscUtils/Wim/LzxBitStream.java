@@ -128,7 +128,7 @@ public final class LzxBitStream extends BitStream {
             _readBuffer[0] = 0;
             _readBuffer[1] = 0;
             _byteStream.read(_readBuffer, 0, 2);
-            _buffer = _buffer << 16 | _readBuffer[1] << 8 | _readBuffer[0];
+            _buffer = _buffer << 16 | (_readBuffer[1] & 0xff) << 8 | (_readBuffer[0] & 0xff);
             _bufferAvailable += 16;
         }
     }

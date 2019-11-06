@@ -31,7 +31,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public final class ObjectId implements IByteArraySerializable, IDiagnosticTraceable {
-    public UUID Id /* = UUID.randomUUID() TODO remove */;
+    public UUID Id;
 
     public int size() {
         return 16;

@@ -137,10 +137,12 @@ Debug.println(partTableFactory + ": " + partTableFactory.detectIsPartitioned(con
     /**
      * Creates a new partition that encompasses the entire disk.
      *
+     * The partition table must be empty before this method is called, otherwise
+     * IOException is thrown.
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
-     * @return The index of the partition.The partition table must be empty
-     *         before this method is called, otherwise IOException is thrown.
+     * @return The index of the partition.
      */
     public abstract int create(WellKnownPartitionType type, boolean active);
 
@@ -157,29 +159,32 @@ Debug.println(partTableFactory + ": " + partTableFactory.detectIsPartitioned(con
     /**
      * Creates a new aligned partition that encompasses the entire disk.
      *
+     * The partition table must be empty before this method is called, otherwise
+     * IOException is thrown.
+     *
+     * Traditionally partitions were aligned to the physical structure of the
+     * underlying disk, however with modern storage greater efficiency is
+     * acheived by aligning partitions on large values that are a power of two.
+     *
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in byte).
-     * @return The index of the partition.The partition table must be empty
-     *         before this method is called, otherwise IOException is thrown.
-     *         Traditionally partitions were aligned to the physical structure
-     *         of the underlying disk, however with modern storage greater
-     *         efficiency is acheived by aligning partitions on large values
-     *         that are a power of two.
+     * @return The index of the partition.
      */
     public abstract int createAligned(WellKnownPartitionType type, boolean active, int alignment);
 
     /**
      * Creates a new aligned partition with a target size.
      *
+     * Traditionally partitions were aligned to the physical structure of the
+     * underlying disk, however with modern storage greater efficiency is
+     * achieved by aligning partitions on large values that are a power of two.
+     *
      * @param size The target size (in bytes).
      * @param type The partition type.
      * @param active Whether the partition is active (bootable).
      * @param alignment The alignment (in byte).
-     * @return The index of the new partition. Traditionally partitions were
-     *         aligned to the physical structure of the underlying disk, however
-     *         with modern storage greater efficiency is achieved by aligning
-     *         partitions on large values that are a power of two.
+     * @return The index of the new partition.
      */
     public abstract int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment);
 

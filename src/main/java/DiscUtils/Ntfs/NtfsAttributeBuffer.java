@@ -25,6 +25,8 @@ package DiscUtils.Ntfs;
 import java.util.Arrays;
 import java.util.List;
 
+import vavi.util.Debug;
+
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Buffer.IBuffer;
@@ -165,8 +167,8 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
+Debug.println(count + ", " + _attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(_attribute.getRawBuffer().getExtentsInRange(start, count),
                                       new StreamExtent(0, getCapacity()));
     }
-
 }

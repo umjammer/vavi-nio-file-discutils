@@ -1,3 +1,24 @@
+//
+// Copyright (c) 2008-2011, Kenneth Bell
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation
+// the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+// DEALINGS IN THE SOFTWARE.
+//
 
 package DiscUtils.Diagnostics;
 
@@ -28,10 +49,44 @@ import dotnet4j.io.FileMode;
 import dotnet4j.io.Stream;
 
 
+@FunctionalInterface
+interface Activity<TFileSystem extends DiscFileSystem & IDiagnosticTraceable> {
+
+    /**
+     * Delegate that represents an individual (replayable) activity.
+     *
+     * The {@code context} information is reset (i.e. empty) at the start of a
+     * particular replay. It's purpose is to enable multiple activites that
+     * operate in sequence to co-ordinate.
+     *
+     * @param fs The file system instance to perform the activity on
+     * @param context Contextual information shared by all activities during a
+     *            'run'The concrete type of the file system the action is
+     *            performed on.
+     * @return A return value that is made available after the activity is run
+     */
+    Object invoke(TFileSystem fs, Map<String, Object> context);
+}
+
+/**
+ * Enumeration of stream views that can be requested.
+ */
+enum StreamView {
+    /**
+     * The current state of the stream under test.
+     */
+    Current,
+    /**
+     * The state of the stream at the last good checkpoint.
+     */
+    LastCheckpoint
+}
+
 /**
  * Class that wraps a {@link DiscFileSystem}, validating file system integrity.
- * The concrete type of file system to validate.The concrete type of the file
- * system checker.
+ *
+ * @param <TFileSystem> The concrete type of file system to validate.
+ * @param <TChecker> The concrete type of the file system checker.
  */
 public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnosticTraceable, TChecker extends DiscFileSystemChecker> extends DiscFileSystem {
 
@@ -307,7 +362,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             throw new IllegalStateException("Previous checkpoint now shows as invalid, the underlying storage stream may be broken");
         }
 
-        // TODO - do full replay, check for failure - is this reproducible?
+        // TODO: do full replay, check for failure - is this reproducible?
         // Binary chop for activity that causes failure
         int lowPoint = 0;
         int highPoint = _checkpointBuffer.size();
@@ -380,13 +435,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Indicates if we're in lock-down (i.e. corruption has been detected).
      */
-    public boolean getInLockdown() {
+    boolean getInLockdown() {
         return _lockdown;
     }
 
     /**
      * Replays a specified number of activities.
-     * 
+     *
      * @param activityCount Number of activities to replay
      */
     private boolean doReplayAndVerify(int activityCount) {
@@ -405,7 +460,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                     }
                     return doVerify(checkerClass, replayCapture, null, EnumSet.of(ReportLevels.None));
                 }
-            } catch (Exception __dummyCatchVar0) {
+            } catch (Exception e) {
                 return false;
             }
         } catch (IOException e) {
@@ -417,13 +472,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Used to perform filesystem activities that are exposed in addition to
      * those in the DiscFileSystem class.
      * 
+     * The supplied activity may be executed multiple times, against multiple
+     * instances of the file system if a replay is requested. Always drive the
+     * file system object supplied as a parameter and do not persist references
+     * to that object.
+     *
      * @param activity The activity to perform, as a delegate
-     * 
-     * @return The value returned from the activity delegateThe supplied
-     *         activity may be executed multiple times, against multiple
-     *         instances of the file system if a replay is requested. Always
-     *         drive the file system object supplied as a parameter and do not
-     *         persist references to that object.
+     * @return The value returned from the activity delegate
      */
     public Object performActivity(Activity<TFileSystem> activity) {
         if (_lockdown) {
@@ -450,13 +505,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 }
 
                 // We only do a full checkpoint, if the activity didn't throw an
-                // exception.
-                // Otherwise,
-                // we'll discard all replay info just when the caller might want
-                // it. Instead,
-                // just do a
-                // verify until (and unless), an activity that doesn't throw an
-                // exception
+                // exception. Otherwise, we'll discard all replay info just when
+                // the caller might want it. Instead, just do a verify until
+                // (and unless), an activity that doesn't throw an exception
                 // happens.
                 if (doCheckpoint) {
                     checkpointAndThrow();
@@ -494,8 +545,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         _snapStream.snapshot();
         _initialized = true;
         // Preliminary test, lets make sure we think the file system's good
-        // before we
-        // start...
+        // before we start...
         verifyAndThrow();
     }
 

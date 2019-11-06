@@ -42,72 +42,96 @@ public class MetadataSegmentSection {
 
     public List<MetadataStripe> Stripes;
 
-    public void parse(String head, Scanner data) {
+    void parse(String head, Scanner data) {
         Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
-        while ((line = Metadata.readLine(data)) != null) {
+        while (data.hasNextLine()) {
+            line = Metadata.readLine(data);
             if (line.equals(""))
                 continue;
-
             if (line.contains("=")) {
                 Tuple<String, String> parameter = Metadata.parseParameter(line);
-                String key = parameter.getKey().trim().toLowerCase();
-                if (key.equals("start_extent")) {
+                switch(parameter.getKey().trim().toLowerCase()) {
+                case "start_extent":
                     StartExtent = Metadata.parseNumericValue(parameter.getValue());
-                } else if (key.equals("extent_count")) {
+                    break;
+                case "extent_count":
                     ExtentCount = Metadata.parseNumericValue(parameter.getValue());
-                } else if (key.equals("type")) {
+                    break;
+                case "type":
                     String value = Metadata.parseStringValue(parameter.getValue());
-                    if (value.equals("striped")) {
+                    switch (value) {
+                    case "striped":
                         Type = SegmentType.Striped;
-                    } else if (value.equals("zero")) {
+                        break;
+                    case "zero":
                         Type = SegmentType.Zero;
-                    } else if (value.equals("error")) {
+                        break;
+                    case "error":
                         Type = SegmentType.Error;
-                    } else if (value.equals("free")) {
+                        break;
+                    case "free":
                         Type = SegmentType.Free;
-                    } else if (value.equals("snapshot")) {
+                        break;
+                    case "snapshot":
                         Type = SegmentType.Snapshot;
-                    } else if (value.equals("mirror")) {
+                        break;
+                    case "mirror":
                         Type = SegmentType.Mirror;
-                    } else if (value.equals("raid1")) {
+                        break;
+                    case "raid1":
                         Type = SegmentType.Raid1;
-                    } else if (value.equals("raid10")) {
+                        break;
+                    case "raid10":
                         Type = SegmentType.Raid10;
-                    } else if (value.equals("raid4")) {
+                        break;
+                    case "raid4":
                         Type = SegmentType.Raid4;
-                    } else if (value.equals("raid5")) {
+                        break;
+                    case "raid5":
                         Type = SegmentType.Raid5;
-                    } else if (value.equals("raid5_la")) {
+                        break;
+                    case "raid5_la":
                         Type = SegmentType.Raid5La;
-                    } else if (value.equals("raid5_ra")) {
+                        break;
+                    case "raid5_ra":
                         Type = SegmentType.Raid5Ra;
-                    } else if (value.equals("raid5_ls")) {
+                        break;
+                    case "raid5_ls":
                         Type = SegmentType.Raid5Ls;
-                    } else if (value.equals("raid5_rs")) {
+                        break;
+                    case "raid5_rs":
                         Type = SegmentType.Raid5Rs;
-                    } else if (value.equals("raid6")) {
+                        break;
+                    case "raid6":
                         Type = SegmentType.Raid6;
-                    } else if (value.equals("raid6_zr")) {
+                        break;
+                    case "raid6_zr":
                         Type = SegmentType.Raid6Zr;
-                    } else if (value.equals("raid6_nr")) {
+                        break;
+                    case "raid6_nr":
                         Type = SegmentType.Raid6Nr;
-                    } else if (value.equals("raid6_nc")) {
+                        break;
+                    case "raid6_nc":
                         Type = SegmentType.Raid6Nc;
-                    } else if (value.equals("thin-pool")) {
+                        break;
+                    case "thin-pool":
                         Type = SegmentType.ThinPool;
-                    } else if (value.equals("thin")) {
+                        break;
+                    case "thin":
                         Type = SegmentType.Thin;
+                        break;
                     }
-
-                } else if (key.equals("stripe_count")) {
+                    break;
+                case "stripe_count":
                     StripeCount = Metadata.parseNumericValue(parameter.getValue());
-                } else if (key.equals("stripes")) {
+                    break;
+                case "stripes":
                     if (parameter.getValue().trim().equals("[")) {
                         Stripes = parseStripesSection(data);
                     }
-
-                } else {
+                    break;
+                default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata: " + parameter.getKey());
                 }
             } else if (line.endsWith("}")) {
@@ -121,18 +145,42 @@ public class MetadataSegmentSection {
     private List<MetadataStripe> parseStripesSection(Scanner data) {
         List<MetadataStripe> result = new ArrayList<>();
         String line;
-        while ((line = Metadata.readLine(data)) != null) {
+        while (data.hasNextLine()) {
+            line = Metadata.readLine(data);
             if (line.equals(""))
                 continue;
-
             if (line.endsWith("]")) {
                 return result;
             }
-
             MetadataStripe pv = new MetadataStripe();
             pv.parse(line);
             result.add(pv);
         }
         return result;
     }
+}
+
+enum SegmentType {
+    //$ lvm segtypes, man(8) lvm
+    None,
+    Striped,
+    Zero,
+    Error,
+    Free,
+    Snapshot,
+    Mirror,
+    Raid1,
+    Raid10,
+    Raid4,
+    Raid5,
+    Raid5La,
+    Raid5Ra,
+    Raid5Ls,
+    Raid5Rs,
+    Raid6,
+    Raid6Zr,
+    Raid6Nr,
+    Raid6Nc,
+    ThinPool,
+    Thin
 }

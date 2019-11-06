@@ -299,7 +299,7 @@ public class DescriptorFile {
 
     private static UUID parseUuid(String value) {
         byte[] data = new byte[16];
-        String[] bytesAsHex = value.split(" -");
+        String[] bytesAsHex = value.split("[ -]");
         if (bytesAsHex.length != 16) {
             throw new IllegalArgumentException("Invalid UUID");
         }

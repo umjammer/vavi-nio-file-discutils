@@ -237,6 +237,9 @@ public class HfsPlusUtilities {
         return result;
     }
 
+    /**
+     * @param special {@cs out}
+     */
     public static UnixFileSystemInfo readBsdInfo(byte[] buffer, int offset, int[] special) {
         UnixFileSystemInfo result = new UnixFileSystemInfo();
         result.setUserId(EndianUtilities.toInt32BigEndian(buffer, offset + 0));

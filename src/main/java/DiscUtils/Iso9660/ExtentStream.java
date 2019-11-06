@@ -29,7 +29,7 @@ import dotnet4j.io.Stream;
 
 
 public class ExtentStream extends Stream {
-    private final int _dataLength;
+    private final long _dataLength;
 
     private final byte _fileUnitSize;
 
@@ -41,7 +41,7 @@ public class ExtentStream extends Stream {
 
     private final int _startBlock;
 
-    public ExtentStream(Stream isoStream, int startBlock, int dataLength, byte fileUnitSize, byte interleaveGapSize) {
+    public ExtentStream(Stream isoStream, int startBlock, long dataLength, byte fileUnitSize, byte interleaveGapSize) {
         _isoStream = isoStream;
         _startBlock = startBlock;
         _dataLength = dataLength;

@@ -106,11 +106,8 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     }
 
     /**
-     * Creates a
-     * {@link StreamWriter}
-     * that appends text to the file represented by this
-     * {@link #DiscFileInfo}
-     * .
+     * Creates a {@link StreamWriter} that appends text to the file represented
+     * by this {@link #DiscFileInfo} .
      *
      * @return The newly created writer.
      */
@@ -152,9 +149,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     }
 
     /**
-     * Creates a new
-     * {@link StreamWriter}
-     * that writes a new text file.
+     * Creates a new {@link StreamWriter} that writes a new text file.
      *
      * @return A new stream writer that can write to the file contents.
      */
@@ -180,8 +175,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      *
      * @param mode The file mode for the created stream.
      * @return The newly created stream.read-only file systems only support
-     *         {@code FileMode.Open}
-     *         .
+     *         {@code FileMode.Open} .
      */
     public Stream open(FileMode mode) {
         try {
@@ -197,10 +191,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      * @param mode The file mode for the created stream.
      * @param access The access permissions for the created stream.
      * @return The newly created stream.read-only file systems only support
-     *         {@code FileMode.Open}
-     *         and
-     *         {@code FileAccess.Read}
-     *         .
+     *         {@code FileMode.Open} and {@code FileAccess.Read} .
      */
     public Stream open(FileMode mode, FileAccess access) {
         try {

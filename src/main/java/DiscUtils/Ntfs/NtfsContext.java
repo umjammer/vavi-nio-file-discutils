@@ -26,183 +26,183 @@ import dotnet4j.io.Stream;
 
 
 public final class NtfsContext implements INtfsContext {
-    private Stream __RawStream;
+    private Stream _rawStream;
 
     public Stream getRawStream() {
-        return __RawStream;
+        return _rawStream;
     }
 
     public void setRawStream(Stream value) {
-        __RawStream = value;
+        _rawStream = value;
     }
 
-    private AttributeDefinitions __AttributeDefinitions;
+    private AttributeDefinitions _attributeDefinitions;
 
     public AttributeDefinitions getAttributeDefinitions() {
-        return __AttributeDefinitions;
+        return _attributeDefinitions;
     }
 
     public void setAttributeDefinitions(AttributeDefinitions value) {
-        __AttributeDefinitions = value;
+        _attributeDefinitions = value;
     }
 
-    private UpperCase __UpperCase;
+    private UpperCase _upperCase;
 
     public UpperCase getUpperCase() {
-        return __UpperCase;
+        return _upperCase;
     }
 
     public void setUpperCase(UpperCase value) {
-        __UpperCase = value;
+        _upperCase = value;
     }
 
-    private BiosParameterBlock __BiosParameterBlock;
+    private BiosParameterBlock _biosParameterBlock;
 
     public BiosParameterBlock getBiosParameterBlock() {
-        return __BiosParameterBlock;
+        return _biosParameterBlock;
     }
 
     public void setBiosParameterBlock(BiosParameterBlock value) {
-        __BiosParameterBlock = value;
+        _biosParameterBlock = value;
     }
 
-    private MasterFileTable __Mft;
+    private MasterFileTable _mft;
 
     public MasterFileTable getMft() {
-        return __Mft;
+        return _mft;
     }
 
     public void setMft(MasterFileTable value) {
-        __Mft = value;
+        _mft = value;
     }
 
-    private ClusterBitmap __ClusterBitmap;
+    private ClusterBitmap _clusterBitmap;
 
     public ClusterBitmap getClusterBitmap() {
-        return __ClusterBitmap;
+        return _clusterBitmap;
     }
 
     public void setClusterBitmap(ClusterBitmap value) {
-        __ClusterBitmap = value;
+        _clusterBitmap = value;
     }
 
-    private SecurityDescriptors __SecurityDescriptors;
+    private SecurityDescriptors _securityDescriptors;
 
     public SecurityDescriptors getSecurityDescriptors() {
-        return __SecurityDescriptors;
+        return _securityDescriptors;
     }
 
     public void setSecurityDescriptors(SecurityDescriptors value) {
-        __SecurityDescriptors = value;
+        _securityDescriptors = value;
     }
 
-    private ObjectIds __ObjectIds;
+    private ObjectIds _objectIds;
 
     public ObjectIds getObjectIds() {
-        return __ObjectIds;
+        return _objectIds;
     }
 
     public void setObjectIds(ObjectIds value) {
-        __ObjectIds = value;
+        _objectIds = value;
     }
 
-    private ReparsePoints __ReparsePoints;
+    private ReparsePoints _reparsePoints;
 
     public ReparsePoints getReparsePoints() {
-        return __ReparsePoints;
+        return _reparsePoints;
     }
 
     public void setReparsePoints(ReparsePoints value) {
-        __ReparsePoints = value;
+        _reparsePoints = value;
     }
 
-    private Quotas __Quotas;
+    private Quotas _quotas;
 
     public Quotas getQuotas() {
-        return __Quotas;
+        return _quotas;
     }
 
     public void setQuotas(Quotas value) {
-        __Quotas = value;
+        _quotas = value;
     }
 
-    private NtfsOptions __Options;
+    private NtfsOptions _options;
 
     public NtfsOptions getOptions() {
-        return __Options;
+        return _options;
     }
 
     public void setOptions(NtfsOptions value) {
-        __Options = value;
+        _options = value;
     }
 
-    private GetFileByIndexFn __GetFileByIndex;
+    private GetFileByIndexFn _getFileByIndex;
 
     public GetFileByIndexFn getGetFileByIndex() {
-        return __GetFileByIndex;
+        return _getFileByIndex;
     }
 
     public void setGetFileByIndex(GetFileByIndexFn value) {
-        __GetFileByIndex = value;
+        _getFileByIndex = value;
     }
 
-    private GetFileByRefFn __GetFileByRef;
+    private GetFileByRefFn _getFileByRef;
 
     public GetFileByRefFn getGetFileByRef() {
-        return __GetFileByRef;
+        return _getFileByRef;
     }
 
     public void setGetFileByRef(GetFileByRefFn value) {
-        __GetFileByRef = value;
+        _getFileByRef = value;
     }
 
-    private GetDirectoryByIndexFn __GetDirectoryByIndex;
+    private GetDirectoryByIndexFn _getDirectoryByIndex;
 
     public GetDirectoryByIndexFn getGetDirectoryByIndex() {
-        return __GetDirectoryByIndex;
+        return _getDirectoryByIndex;
     }
 
     public void setGetDirectoryByIndex(GetDirectoryByIndexFn value) {
-        __GetDirectoryByIndex = value;
+        _getDirectoryByIndex = value;
     }
 
-    private GetDirectoryByRefFn __GetDirectoryByRef;
+    private GetDirectoryByRefFn _getDirectoryByRef;
 
     public GetDirectoryByRefFn getGetDirectoryByRef() {
-        return __GetDirectoryByRef;
+        return _getDirectoryByRef;
     }
 
     public void setGetDirectoryByRef(GetDirectoryByRefFn value) {
-        __GetDirectoryByRef = value;
+        _getDirectoryByRef = value;
     }
 
-    private AllocateFileFn __AllocateFile;
+    private AllocateFileFn _allocateFile;
 
     public AllocateFileFn getAllocateFile() {
-        return __AllocateFile;
+        return _allocateFile;
     }
 
     public void setAllocateFile(AllocateFileFn value) {
-        __AllocateFile = value;
+        _allocateFile = value;
     }
 
-    private ForgetFileFn __ForgetFile;
+    private ForgetFileFn _forgetFile;
 
     public ForgetFileFn getForgetFile() {
-        return __ForgetFile;
+        return _forgetFile;
     }
 
     public void setForgetFile(ForgetFileFn value) {
-        __ForgetFile = value;
+        _forgetFile = value;
     }
 
-    private boolean __ReadOnly;
+    private boolean _readOnly;
 
     public boolean getReadOnly() {
-        return __ReadOnly;
+        return _readOnly;
     }
 
     public void setReadOnly(boolean value) {
-        __ReadOnly = value;
+        _readOnly = value;
     }
 }

@@ -83,7 +83,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
             NameLength = (byte) bytes.length;
         }
         RecordLength = (short) MathUtilities.roundUp(NameOffset + NameLength * 2, 8);
-        EndianUtilities.writeBytesLittleEndian(Type.ordinal(), buffer, offset);
+        EndianUtilities.writeBytesLittleEndian(Type.getValue(), buffer, offset);
         EndianUtilities.writeBytesLittleEndian(RecordLength, buffer, offset + 0x04);
         buffer[offset + 0x06] = NameLength;
         buffer[offset + 0x07] = NameOffset;

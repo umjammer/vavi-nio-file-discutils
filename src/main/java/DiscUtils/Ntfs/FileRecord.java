@@ -49,125 +49,126 @@ public class FileRecord extends FixupRecordBase {
         reInitialize(sectorSize, recordLength, index);
     }
 
-    private int __AllocatedSize;
+    private int _allocatedSize;
 
     public int getAllocatedSize() {
-        return __AllocatedSize;
+        return _allocatedSize;
     }
 
     public void setAllocatedSize(int value) {
-        __AllocatedSize = value;
+        _allocatedSize = value;
     }
 
-    private List<AttributeRecord> __Attributes;
+    private List<AttributeRecord> _attributes;
 
     public List<AttributeRecord> getAttributes() {
-        return __Attributes;
+        return _attributes;
     }
 
     public void setAttributes(List<AttributeRecord> value) {
-        __Attributes = value;
+        _attributes = value;
     }
 
-    private FileRecordReference __BaseFile;
+    private FileRecordReference _baseFile;
 
     public FileRecordReference getBaseFile() {
-        return __BaseFile;
+        return _baseFile;
     }
 
     public void setBaseFile(FileRecordReference value) {
-        __BaseFile = value;
+        _baseFile = value;
     }
 
     public AttributeRecord getFirstAttribute() {
-        return getAttributes().size() > 0 ? getAttributes().get(0) : null;
+        return _attributes.size() > 0 ? _attributes.get(0) : null;
     }
 
-    private EnumSet<FileRecordFlags> __Flags;
+    private EnumSet<FileRecordFlags> _flags;
 
     public EnumSet<FileRecordFlags> getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(EnumSet<FileRecordFlags> value) {
-        __Flags = value;
+        _flags = value;
     }
 
-    private short __HardLinkCount;
+    private short _hardLinkCount;
 
     public short getHardLinkCount() {
-        return __HardLinkCount;
+        return _hardLinkCount;
     }
 
     public void setHardLinkCount(short value) {
-        __HardLinkCount = value;
+        _hardLinkCount = value;
     }
 
     public boolean getIsMftRecord() {
         return getMasterFileTableIndex() == MasterFileTable.MftIndex ||
-               (getBaseFile().getMftIndex() == MasterFileTable.MftIndex && getBaseFile().getSequenceNumber() != 0);
+               (_baseFile.getMftIndex() == MasterFileTable.MftIndex && _baseFile.getSequenceNumber() != 0);
     }
 
-    private int __LoadedIndex;
+    private int _loadedIndex;
 
     public int getLoadedIndex() {
-        return __LoadedIndex;
+        return _loadedIndex;
     }
 
     public void setLoadedIndex(int value) {
-        __LoadedIndex = value;
+        _loadedIndex = value;
     }
 
-    private long __LogFileSequenceNumber;
+    private long _logFileSequenceNumber;
 
     public long getLogFileSequenceNumber() {
-        return __LogFileSequenceNumber;
+        return _logFileSequenceNumber;
     }
 
     public void setLogFileSequenceNumber(long value) {
-        __LogFileSequenceNumber = value;
+        _logFileSequenceNumber = value;
     }
 
     public int getMasterFileTableIndex() {
-        return _haveIndex ? _index : getLoadedIndex();
+        return _haveIndex ? _index : _loadedIndex;
     }
 
-    private short __NextAttributeId;
+    private short _nextAttributeId;
 
     public short getNextAttributeId() {
-        return __NextAttributeId;
+        return _nextAttributeId;
     }
 
     public void setNextAttributeId(short value) {
-        __NextAttributeId = value;
+        _nextAttributeId = value;
     }
 
-    private int __RealSize;
+    private int _realSize;
 
     public int getRealSize() {
-        return __RealSize;
+        return _realSize;
     }
 
     public void setRealSize(int value) {
-        __RealSize = value;
+        _realSize = value;
     }
 
     public FileRecordReference getReference() {
-        return new FileRecordReference(getMasterFileTableIndex(), getSequenceNumber());
+        return new FileRecordReference(getMasterFileTableIndex(), _sequenceNumber);
     }
 
-    private short __SequenceNumber;
+    private short _sequenceNumber;
 
     public short getSequenceNumber() {
-        return __SequenceNumber;
+        return _sequenceNumber;
     }
 
     public void setSequenceNumber(short value) {
-        __SequenceNumber = value;
+        _sequenceNumber = value;
     }
 
-    public static EnumSet<FileAttributeFlags> convertFlags(EnumSet<FileRecordFlags> source) {
+    static EnumSet<FileAttributeFlags> convertFlags(EnumSet<FileRecordFlags> source) {
         EnumSet<FileAttributeFlags> result = EnumSet.noneOf(FileAttributeFlags.class);
+
         if (source.contains(FileRecordFlags.IsDirectory)) {
             result.add(FileAttributeFlags.Directory);
         }
@@ -185,14 +186,15 @@ public class FileRecord extends FixupRecordBase {
 
     public void reInitialize(int sectorSize, int recordLength, int index) {
         initialize("FILE", sectorSize, recordLength);
-        setSequenceNumber((short) (getSequenceNumber() + 1));
-        setFlags(EnumSet.noneOf(FileRecordFlags.class));
-        setAllocatedSize(recordLength);
-        setNextAttributeId((short) 0);
+        _sequenceNumber++;
+        _flags = EnumSet.noneOf(FileRecordFlags.class);
+        _allocatedSize = recordLength;
+        _nextAttributeId = 0;
         _index = index;
-        setHardLinkCount((short) 0);
-        setBaseFile(new FileRecordReference(0));
-        setAttributes(new ArrayList<>());
+        _hardLinkCount = 0;
+        _baseFile = new FileRecordReference(0);
+
+        _attributes = new ArrayList<>();
         _haveIndex = true;
     }
 
@@ -200,9 +202,7 @@ public class FileRecord extends FixupRecordBase {
      * Gets an attribute by it's id.
      *
      * @param id The attribute's id.
-     * @return The attribute, or
-     *         {@code null}
-     *         .
+     * @return The attribute, or {@code null} .
      */
     public AttributeRecord getAttribute(short id) {
         for (AttributeRecord attrRec : getAttributes()) {
@@ -210,6 +210,7 @@ public class FileRecord extends FixupRecordBase {
                 return attrRec;
             }
         }
+
         return null;
     }
 
@@ -217,9 +218,7 @@ public class FileRecord extends FixupRecordBase {
      * Gets an unnamed attribute.
      *
      * @param type The attribute type.
-     * @return The attribute, or
-     *         {@code null}
-     *         .
+     * @return The attribute, or {@code null} .
      */
     public AttributeRecord getAttribute(AttributeType type) {
         return getAttribute(type, null);
@@ -230,9 +229,7 @@ public class FileRecord extends FixupRecordBase {
      *
      * @param type The attribute type.
      * @param name The name of the attribute.
-     * @return The attribute, or
-     *         {@code null}
-     *         .
+     * @return The attribute, or {@code null} .
      */
     public AttributeRecord getAttribute(AttributeType type, String name) {
         for (AttributeRecord attrRec : getAttributes()) {
@@ -240,6 +237,7 @@ public class FileRecord extends FixupRecordBase {
                 return attrRec;
             }
         }
+
         return null;
     }
 
@@ -248,9 +246,10 @@ public class FileRecord extends FixupRecordBase {
             if (attr.getAttributeType() == AttributeType.FileName) {
                 StructuredNtfsAttribute<FileNameRecord> fnAttr = StructuredNtfsAttribute.class
                         .cast(NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr));
-                return fnAttr.getContent().FileName;
+                return fnAttr.getContent()._fileName;
             }
         }
+
         return "No Name";
     }
 
@@ -264,10 +263,9 @@ public class FileRecord extends FixupRecordBase {
      * @return The id of the new attribute.
      */
     public short createAttribute(AttributeType type, String name, boolean indexed, EnumSet<AttributeFlags> flags) {
-        setNextAttributeId((short) (getNextAttributeId() + 1));
-        short id = getNextAttributeId();
-        getAttributes().add(new ResidentAttributeRecord(type, name, id, indexed, flags));
-        Collections.sort(getAttributes());
+        short id = _nextAttributeId++;
+        _attributes.add(new ResidentAttributeRecord(type, name, id, indexed, flags));
+        Collections.sort(_attributes);
         return id;
     }
 
@@ -280,10 +278,9 @@ public class FileRecord extends FixupRecordBase {
      * @return The id of the new attribute.
      */
     public short createNonResidentAttribute(AttributeType type, String name, EnumSet<AttributeFlags> flags) {
-        setNextAttributeId((short) (getNextAttributeId() + 1));
-        short id = getNextAttributeId();
-        getAttributes().add(new NonResidentAttributeRecord(type, name, id, flags, 0, new ArrayList<>()));
-        Collections.sort(getAttributes());
+        short id = _nextAttributeId++;
+        _attributes.add(new NonResidentAttributeRecord(type, name, id, flags, 0, new ArrayList<>()));
+        Collections.sort(_attributes);
         return id;
     }
 
@@ -305,25 +302,24 @@ public class FileRecord extends FixupRecordBase {
                                             long firstCluster,
                                             long numClusters,
                                             int bytesPerCluster) {
-        setNextAttributeId((short) (getNextAttributeId() + 1));
-        short id = getNextAttributeId();
-        getAttributes().add(new NonResidentAttributeRecord(type, name, id, flags, firstCluster, numClusters, bytesPerCluster));
-        Collections.sort(getAttributes());
+        short id = _nextAttributeId++;
+        _attributes.add(new NonResidentAttributeRecord(type, name, id, flags, firstCluster, numClusters, bytesPerCluster));
+        Collections.sort(_attributes);
         return id;
     }
 
     /**
      * Adds an existing attribute.
      *
+     * This method is used to move an attribute between different MFT records.
+     *
      * @param attrRec The attribute to add.
-     * @return The new Id of the attribute.This method is used to move an
-     *         attribute between different MFT records.
+     * @return The new Id of the attribute.
      */
     public short addAttribute(AttributeRecord attrRec) {
-        setNextAttributeId((short) (getNextAttributeId() + 1));
-        attrRec.setAttributeId(getNextAttributeId());
-        getAttributes().add(attrRec);
-        Collections.sort(getAttributes());
+        attrRec.setAttributeId(_nextAttributeId++);
+        _attributes.add(attrRec);
+        Collections.sort(_attributes);
         return attrRec.getAttributeId();
     }
 
@@ -333,36 +329,38 @@ public class FileRecord extends FixupRecordBase {
      * @param id The attribute's id.
      */
     public void removeAttribute(short id) {
-        for (int i = 0; i < getAttributes().size(); ++i) {
-            if (getAttributes().get(i).getAttributeId() == id) {
-                getAttributes().remove(i);
+        for (int i = 0; i < _attributes.size(); ++i) {
+            if (_attributes.get(i).getAttributeId() == id) {
+                _attributes.remove(i);
                 break;
             }
         }
     }
 
     public void reset() {
-        getAttributes().clear();
-        setFlags(EnumSet.noneOf(FileRecordFlags.class));
-        setHardLinkCount((short) 0);
-        setNextAttributeId((short) 0);
-        setRealSize(0);
+        _attributes.clear();
+        _flags = EnumSet.noneOf(FileRecordFlags.class);
+        _hardLinkCount = 0;
+        _nextAttributeId = 0;
+        _realSize = 0;
     }
 
-    public long getAttributeOffset(short id) {
+    long getAttributeOffset(short id) {
         int firstAttrPos = (short) MathUtilities.roundUp((_haveIndex ? 0x30 : 0x2A) + getUpdateSequenceSize(), 8);
+
         int offset = firstAttrPos;
-        for (AttributeRecord attr : getAttributes()) {
+        for (AttributeRecord attr : _attributes) {
             if (attr.getAttributeId() == id) {
                 return offset;
             }
 
             offset += attr.getSize();
         }
+
         return -1;
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    void dump(PrintWriter writer, String indent) {
         writer.println(indent + "FILE RECORD (" + toString() + ")");
         writer.println(indent + "              Magic: " + getMagic());
         writer.println(indent + "  Update Seq Offset: " + getUpdateSequenceOffset());
@@ -374,28 +372,29 @@ public class FileRecord extends FixupRecordBase {
         writer.println(indent + "              Flags: " + getFlags());
         writer.println(indent + "   Record Real Size: " + getRealSize());
         writer.println(indent + "  Record Alloc Size: " + getAllocatedSize());
-        writer.println(indent + "          Base File: " + getBaseFile());
-        writer.println(indent + "  Next Attribute Id: " + getNextAttributeId());
-        writer.println(indent + "    Attribute Count: " + getAttributes().size());
+        writer.println(indent + "          Base File: " + _baseFile);
+        writer.println(indent + "  Next Attribute Id: " + _nextAttributeId);
+        writer.println(indent + "    Attribute Count: " + _attributes.size());
         writer.println(indent + "   Index (Self Ref): " + _index);
     }
 
     protected void read(byte[] buffer, int offset) {
-        setLogFileSequenceNumber(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08));
-        setSequenceNumber(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
-        setHardLinkCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x12));
+        _logFileSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
+        _sequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10);
+        _hardLinkCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x12);
         _firstAttributeOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
-        setFlags(FileRecordFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x16)));
-        setRealSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18));
-        setAllocatedSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1C));
-        setBaseFile(new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20)));
-        setNextAttributeId(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x28));
+        _flags = FileRecordFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x16));
+        _realSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18);
+        _allocatedSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1C);
+        _baseFile = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20));
+        _nextAttributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x28);
+
         if (getUpdateSequenceOffset() >= 0x30) {
             _index = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x2C);
             _haveIndex = true;
         }
 
-        setAttributes(new ArrayList<>());
+        _attributes = new ArrayList<>();
         int focus = _firstAttributeOffset;
         while (true) {
             int[] length = new int[1];
@@ -404,7 +403,7 @@ public class FileRecord extends FixupRecordBase {
                 break;
             }
 
-            getAttributes().add(attr);
+            _attributes.add(attr);
             focus += length[0];
         }
     }
@@ -413,24 +412,25 @@ public class FileRecord extends FixupRecordBase {
         short headerEnd = (short) (_haveIndex ? 0x30 : 0x2A);
 
         _firstAttributeOffset = (short) MathUtilities.roundUp(headerEnd + getUpdateSequenceSize(), 0x08);
-        setRealSize(calcSize());
+        _realSize = calcSize();
 
-        EndianUtilities.writeBytesLittleEndian(getLogFileSequenceNumber(), buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(getSequenceNumber(), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(getHardLinkCount(), buffer, offset + 0x12);
+        EndianUtilities.writeBytesLittleEndian(_logFileSequenceNumber, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(_sequenceNumber, buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(_hardLinkCount, buffer, offset + 0x12);
         EndianUtilities.writeBytesLittleEndian(_firstAttributeOffset, buffer, offset + 0x14);
-        EndianUtilities.writeBytesLittleEndian((short) FileRecordFlags.valueOf(getFlags()), buffer, offset + 0x16);
-        EndianUtilities.writeBytesLittleEndian(getRealSize(), buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(getAllocatedSize(), buffer, offset + 0x1C);
-        EndianUtilities.writeBytesLittleEndian(getBaseFile().getValue(), buffer, offset + 0x20);
-        EndianUtilities.writeBytesLittleEndian(getNextAttributeId(), buffer, offset + 0x28);
+        EndianUtilities.writeBytesLittleEndian((short) FileRecordFlags.valueOf(_flags), buffer, offset + 0x16);
+        EndianUtilities.writeBytesLittleEndian(_realSize, buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(_allocatedSize, buffer, offset + 0x1C);
+        EndianUtilities.writeBytesLittleEndian(_baseFile.getValue(), buffer, offset + 0x20);
+        EndianUtilities.writeBytesLittleEndian(_nextAttributeId, buffer, offset + 0x28);
 
         if (_haveIndex) {
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A); // Alignment field
+            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A); // Alignment
+                                                                                      // field
             EndianUtilities.writeBytesLittleEndian(_index, buffer, offset + 0x2C);
         }
 
-        int pos = _firstAttributeOffset;
+        int pos = _firstAttributeOffset & 0xffff;
         for (AttributeRecord attr : getAttributes()) {
             pos += attr.write(buffer, offset + pos);
         }
@@ -448,7 +448,7 @@ public class FileRecord extends FixupRecordBase {
             size += attr.getSize();
         }
 
-        return MathUtilities.roundUp(size + 4, 8); // 0xFFFFFFFF terminator on attributes
+        return MathUtilities.roundUp(size + 4, 8); // 0xFFFFFFFF terminator on
+                                                   // attributes
     }
 }
-

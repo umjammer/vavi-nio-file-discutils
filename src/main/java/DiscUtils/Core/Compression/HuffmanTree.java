@@ -22,19 +22,14 @@
 
 package DiscUtils.Core.Compression;
 
-
 /**
  * A canonical Huffman tree implementation.
  *
  * A lookup table is created that will take any bit sequence (max tree depth in
- * length),
- * indicating the output symbol. In WIM files, in practice, no chunk exceeds
- * 32768 bytes
- * in length, so we often end up generating a bigger lookup table than the data
- * it's
- * encoding. This makes for exceptionally fast symbol lookups O(1), but is
- * inefficient
- * overall.
+ * length), indicating the output symbol. In WIM files, in practice, no chunk
+ * exceeds 32768 bytes in length, so we often end up generating a bigger lookup
+ * table than the data it's encoding. This makes for exceptionally fast symbol
+ * lookups O(1), but is inefficient overall.
  */
 public final class HuffmanTree {
     private final int[] _buffer;

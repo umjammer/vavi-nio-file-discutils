@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.UUID;
 
@@ -50,7 +49,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
         __Database = new Database(_disk.getContent());
     }
 
-    public SparseStream getContent() throws IOException {
+    public SparseStream getContent() {
         return _disk.getContent();
     }
 

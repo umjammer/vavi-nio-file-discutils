@@ -124,7 +124,8 @@ public final class ResidentAttributeRecord extends AttributeRecord {
 
         short dataOffset = (short) MathUtilities.roundUp(0x18 + nameLength * 2, 8);
         int length = (int) MathUtilities.roundUp(dataOffset + _memoryBuffer.getCapacity(), 8);
-        EndianUtilities.writeBytesLittleEndian(_type.ordinal(), buffer, offset + 0x00);
+
+        EndianUtilities.writeBytesLittleEndian(_type.getValue(), buffer, offset + 0x00);
         EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x04);
         buffer[offset + 0x08] = _nonResidentFlag;
         buffer[offset + 0x09] = nameLength;
@@ -134,14 +135,15 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         EndianUtilities.writeBytesLittleEndian((int) _memoryBuffer.getCapacity(), buffer, offset + 0x10);
         EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x14);
         buffer[offset + 0x16] = _indexedFlag;
-        buffer[offset + 0x17] = 0;
-        // Padding
+        buffer[offset + 0x17] = 0; // Padding
+
         if (getName() != null) {
             byte[] bytes = getName().getBytes(Charset.forName("UTF-16LE"));
             System.arraycopy(bytes, 0, buffer, offset + nameOffset, bytes.length);
         }
 
         _memoryBuffer.read(0, buffer, offset + dataOffset, (int) _memoryBuffer.getCapacity());
+
         return length;
     }
 
@@ -153,9 +155,11 @@ public final class ResidentAttributeRecord extends AttributeRecord {
 
     protected void read(byte[] buffer, int offset, int[] length) {
         super.read(buffer, offset, length);
+
         int dataLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
         short dataOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
         _indexedFlag = buffer[offset + 0x16];
+
         if (dataOffset + dataLength > length[0]) {
             throw new dotnet4j.io.IOException("Corrupt attribute, data outside of attribute");
         }

@@ -24,75 +24,67 @@ package DiscUtils.Core;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
+/**
+ * Standard Unix-style file system permissions.
+ */
 public enum UnixFilePermissions {
     /**
-     * Standard Unix-style file system permissions.
-     *
      * No permissions.
      */
-    None(0),
+//    None,
     /**
      * Any user execute permission.
      */
-    OthersExecute(0x001),
+    OthersExecute,
     /**
      * Any user write permission.
      */
-    OthersWrite(0x002),
+    OthersWrite,
     /**
      * Any user read permission.
      */
-    OthersRead(0x004),
+    OthersRead,
     /**
      * Group execute permission.
      */
-    GroupExecute(0x008),
+    GroupExecute,
     /**
      * Group write permission.
      */
-    GroupWrite(0x010),
+    GroupWrite,
     /**
      * Group read permission.
      */
-    GroupRead(0x020),
+    GroupRead,
     /**
      * Owner execute permission.
      */
-    OwnerExecute(0x040),
+    OwnerExecute,
     /**
      * Owner write permission.
      */
-    OwnerWrite(0x080),
+    OwnerWrite,
     /**
      * Owner read permission.
      */
-    OwnerRead(0x100),
+    OwnerRead,
     /**
      * Sticky bit (meaning ill-defined).
      */
-    Sticky(0x200),
+    Sticky,
     /**
      * Set GUID on execute.
      */
-    SetGroupId(0x400),
+    SetGroupId,
     /**
      * Set UID on execute.
      */
-    SetUserId(0x800);
-
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private UnixFilePermissions(int value) {
-        this.value = value;
-    }
-
+    SetUserId;
 
     /**
      * Any user all permissions.
@@ -109,13 +101,23 @@ public enum UnixFilePermissions {
      */
     public static final EnumSet<UnixFilePermissions> OwnerAll = EnumSet.of(OthersExecute, OthersWrite, OthersRead);
 
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
     public static EnumSet<UnixFilePermissions> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.getValue()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(UnixFilePermissions.class)));
     }
 
     public static long valueOf(EnumSet<UnixFilePermissions> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

@@ -47,24 +47,24 @@ public class LeafNode extends NodeHeader {
     /**
      * key pointers
      */
-    private NodeItem[] __Items;
+    private NodeItem[] _items;
 
     public NodeItem[] getItems() {
-        return __Items;
+        return _items;
     }
 
     public void setItems(NodeItem[] value) {
-        __Items = value;
+        _items = value;
     }
 
-    private BaseItem[] __NodeData;
+    private BaseItem[] _nodeData;
 
     public BaseItem[] getNodeData() {
-        return __NodeData;
+        return _nodeData;
     }
 
     public void setNodeData(BaseItem[] value) {
-        __NodeData = value;
+        _nodeData = value;
     }
 
     public int size() {
@@ -131,7 +131,6 @@ public class LeafNode extends NodeHeader {
             break;
         default:
             throw new IOException("Unsupported item type {item.Key.ItemType}");
-
         }
         result.readFrom(data, 0);
         return result;
@@ -149,5 +148,4 @@ public class LeafNode extends NodeHeader {
         }
         return result;
     }
-
 }

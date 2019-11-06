@@ -682,6 +682,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return new DiskImageFile(fileLocator, file, FileAccess.ReadWrite);
     }
 
+    /**
+     * @param descriptorStart {@cs out}
+     */
     private static void createSparseExtent(Stream extentStream,
                                            long size,
                                            long descriptorLength,
@@ -771,6 +774,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         createExtent(extentStream, size, type, 0, descriptorStart);
     }
 
+    /**
+     * @param descriptorStart {@cs out}
+     */
     private static void createExtent(Stream extentStream,
                                      long size,
                                      ExtentType type,

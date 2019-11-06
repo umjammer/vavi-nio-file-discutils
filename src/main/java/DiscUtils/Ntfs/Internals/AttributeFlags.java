@@ -22,23 +22,60 @@
 
 package DiscUtils.Ntfs.Internals;
 
-//public enum AttributeFlags {
-//    /**
-//     * Flags indicating how an attribute's content is stored on disk.
-//     *
-//     * The data is stored in linear form.
-//     */
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+
+/**
+ * Flags indicating how an attribute's content is stored on disk.
+ */
+public enum AttributeFlags {
+    /**
+     * The data is stored in linear form.
+     */
 //    None,
-//    /**
-//     * The data is compressed.
-//     */
-//    Compressed,
-//    /**
-//     * The data is encrypted.
-//     */
-//    Encrypted,
-//    /**
-//     * The data is stored in sparse form.
-//     */
-//    Sparse
-//}
+    /**
+     * The data is compressed.
+     */
+    Compressed,
+    _dummy_2,
+    _dummy_4,
+    _dummy_8,
+    _dummy_10,
+    _dummy_20,
+    _dummy_40,
+    _dummy_80,
+    _dummy_100,
+    _dummy_200,
+    _dummy_400,
+    _dummy_800,
+    _dummy_1000,
+    _dummy_2000,
+    /**
+     * The data is encrypted.
+     */
+    Encrypted,
+    /**
+     * The data is stored in sparse form.
+     */
+    Sparse;
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<AttributeFlags> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(AttributeFlags.class)));
+    }
+}

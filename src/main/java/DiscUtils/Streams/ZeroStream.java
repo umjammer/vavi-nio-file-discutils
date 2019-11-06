@@ -99,6 +99,7 @@ public class ZeroStream extends MappedStream {
         int numToClear = (int) Math.min(count, _length - _position);
         Arrays.fill(buffer, offset, offset + numToClear, (byte) 0);
         _position += numToClear;
+
         return numToClear;
     }
 
@@ -111,10 +112,10 @@ public class ZeroStream extends MappedStream {
         }
 
         _atEof = false;
+
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
-
         _position = effectiveOffset;
         return _position;
     }

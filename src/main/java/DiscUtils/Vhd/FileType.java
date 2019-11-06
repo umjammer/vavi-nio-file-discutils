@@ -46,6 +46,6 @@ public enum FileType {
     Differencing;
 
     public static FileType valueOf(int value) {
-        return values()[value];
+        return value == -1 ? __dummyEnum__1 : values()[value]; // TODO cs accepts -1
     }
 }

@@ -32,26 +32,26 @@ import DiscUtils.Core.Compression.BlockCompressor;
  */
 public final class NtfsOptions extends DiscFileSystemOptions {
     public NtfsOptions() {
-        setHideMetafiles(true);
-        setHideHiddenFiles(true);
-        setHideSystemFiles(true);
-        setHideDosFileNames(true);
-        setCompressor(new LZNT1());
-        setReadCacheEnabled(true);
-        setFileLengthFromDirectoryEntries(true);
+        _hideMetafiles = true;
+        _hideHiddenFiles = true;
+        _hideSystemFiles = true;
+        _hideDosFileNames = true;
+        _compressor = new LZNT1();
+        _readCacheEnabled = true;
+        _fileLengthFromDirectoryEntries = true;
     }
 
     /**
      * Gets or sets the compression algorithm used for compressing files.
      */
-    private BlockCompressor __Compressor;
+    private BlockCompressor _compressor;
 
     public BlockCompressor getCompressor() {
-        return __Compressor;
+        return _compressor;
     }
 
     public void setCompressor(BlockCompressor value) {
-        __Compressor = value;
+        _compressor = value;
     }
 
     /**
@@ -64,42 +64,42 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      * retrieve the latest information from the underlying NTFS attribute
      * information, which reflects the true size of the file.
      */
-    private boolean __FileLengthFromDirectoryEntries;
+    private boolean _fileLengthFromDirectoryEntries;
 
     public boolean getFileLengthFromDirectoryEntries() {
-        return __FileLengthFromDirectoryEntries;
+        return _fileLengthFromDirectoryEntries;
     }
 
     public void setFileLengthFromDirectoryEntries(boolean value) {
-        __FileLengthFromDirectoryEntries = value;
+        _fileLengthFromDirectoryEntries = value;
     }
 
     /**
      * Gets or sets a value indicating whether to hide DOS (8.3-style) file names
      * when enumerating directories.
      */
-    private boolean __HideDosFileNames;
+    private boolean _hideDosFileNames;
 
     public boolean hideDosFileNames() {
-        return __HideDosFileNames;
+        return _hideDosFileNames;
     }
 
     public void setHideDosFileNames(boolean value) {
-        __HideDosFileNames = value;
+        _hideDosFileNames = value;
     }
 
     /**
      * Gets or sets a value indicating whether to include hidden files when
      * enumerating directories.
      */
-    private boolean __HideHiddenFiles;
+    private boolean _hideHiddenFiles;
 
     public boolean hideHiddenFiles() {
-        return __HideHiddenFiles;
+        return _hideHiddenFiles;
     }
 
     public void setHideHiddenFiles(boolean value) {
-        __HideHiddenFiles = value;
+        _hideHiddenFiles = value;
     }
 
     /**
@@ -107,55 +107,55 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      * when enumerating directories. Meta-files are those with an MFT (Master File
      * Table) index less than 24.
      */
-    private boolean __HideMetafiles;
+    private boolean _hideMetafiles;
 
     public boolean hideMetafiles() {
-        return __HideMetafiles;
+        return _hideMetafiles;
     }
 
     public void setHideMetafiles(boolean value) {
-        __HideMetafiles = value;
+        _hideMetafiles = value;
     }
 
     /**
      * Gets or sets a value indicating whether to include system files when
      * enumerating directories.
      */
-    private boolean __HideSystemFiles;
+    private boolean _hideSystemFiles;
 
     public boolean hideSystemFiles() {
-        return __HideSystemFiles;
+        return _hideSystemFiles;
     }
 
     public void setHideSystemFiles(boolean value) {
-        __HideSystemFiles = value;
+        _hideSystemFiles = value;
     }
 
     /**
      * Gets or sets a value indicating whether NTFS-level read caching is used.
      */
-    private boolean __ReadCacheEnabled;
+    private boolean _readCacheEnabled;
 
     public boolean getReadCacheEnabled() {
-        return __ReadCacheEnabled;
+        return _readCacheEnabled;
     }
 
     public void setReadCacheEnabled(boolean value) {
-        __ReadCacheEnabled = value;
+        _readCacheEnabled = value;
     }
 
     /**
      * Gets or sets a value indicating whether short (8.3) file names are created
      * automatically.
      */
-    private ShortFileNameOption __ShortNameCreation = ShortFileNameOption.UseVolumeFlag;
+    private ShortFileNameOption _shortNameCreation = ShortFileNameOption.UseVolumeFlag;
 
     public ShortFileNameOption getShortNameCreation() {
-        return __ShortNameCreation;
+        return _shortNameCreation;
     }
 
     public void setShortNameCreation(ShortFileNameOption value) {
-        __ShortNameCreation = value;
+        _shortNameCreation = value;
     }
 
     /**
@@ -164,7 +164,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      * @return A string of the form Show: XX XX XX.
      */
     public String toString() {
-        return "Show: Normal " + (__HideMetafiles ? "" : "Meta ") + (__HideHiddenFiles ? "" : "Hidden ")
-                + (__HideSystemFiles ? "" : "System ") + (__HideDosFileNames ? "" : "ShortNames ");
+        return "Show: Normal " + (_hideMetafiles ? "" : "Meta ") + (_hideHiddenFiles ? "" : "Hidden ")
+                + (_hideSystemFiles ? "" : "System ") + (_hideDosFileNames ? "" : "ShortNames ");
     }
 }

@@ -34,28 +34,27 @@ public class InternalNode extends NodeHeader {
     /**
      * key pointers
      */
-    private KeyPointer[] __KeyPointers;
+    private KeyPointer[] _keyPointers;
 
     public KeyPointer[] getKeyPointers() {
-        return __KeyPointers;
+        return _keyPointers;
     }
 
     public void setKeyPointers(KeyPointer[] value) {
-        __KeyPointers = value;
+        _keyPointers = value;
     }
 
     /**
-     * data at
-     * {@link #KeyPointers}
+     * data at {@link #_keyPointers}
      */
-    private NodeHeader[] __Nodes;
+    private NodeHeader[] _nodes;
 
     public NodeHeader[] getNodes() {
-        return __Nodes;
+        return _nodes;
     }
 
     public void setNodes(NodeHeader[] value) {
-        __Nodes = value;
+        _nodes = value;
     }
 
     public int size() {

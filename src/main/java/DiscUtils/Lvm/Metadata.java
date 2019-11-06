@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import dotnet4j.Tuple;
-import dotnet4j.io.compat.StringUtilities;
 
 
 public class Metadata {
@@ -63,7 +62,8 @@ public class Metadata {
     private void parse(Scanner data) {
         String line;
         List<MetadataVolumeGroupSection> vgSection = new ArrayList<>();
-        while ((line = readLine(data)) != null) {
+        while (data.hasNextLine()) {
+            line = readLine(data);
             if (line.equals(""))
                 continue;
 
@@ -81,28 +81,24 @@ public class Metadata {
                 } else if (paramValue.equals("creation_time")) {
                     CreationTime = parseDateTimeValue(parameter.getValue());
                 } else {
-                    throw new IndexOutOfBoundsException("Unexpected parameter in global metadata");
+                    throw new IndexOutOfBoundsException("Unexpected parameter in global metadata: " + parameter.getKey());
                 }
             } else if (line.endsWith("{")) {
                 MetadataVolumeGroupSection vg = new MetadataVolumeGroupSection();
                 vg.parse(line, data);
                 vgSection.add(vg);
             }
-
         }
         VolumeGroupSections = vgSection;
     }
 
     public static String readLine(Scanner data) {
         String line = data.nextLine();
-        if (line == null)
-            return null;
-
         return removeComment(line).trim();
     }
 
     public static String[] parseArrayValue(String value) {
-        String[] values = Arrays.stream(value.replaceAll("(^\\[*|\\]*$)", "").split(StringUtilities.escapeForRegex("\\")))
+        String[] values = Arrays.stream(value.replaceAll("[\\[\\]]", "").split(","))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         for (int i = 0; i < values.length; i++) {
@@ -112,7 +108,7 @@ public class Metadata {
     }
 
     public static String parseStringValue(String value) {
-        return value.trim().replaceAll("(^\"*|\"*$)", "");
+        return value.trim().replaceAll("\"", "");
     }
 
     public static long parseDateTimeValue(String value) {
@@ -130,8 +126,7 @@ public class Metadata {
     public static Tuple<String, String> parseParameter(String line) {
         int index = line.indexOf("=");
         if (index < 0)
-            throw new IllegalArgumentException("invalid parameter line " + line);
-
+            throw new IllegalArgumentException("invalid parameter line: " + line);
         return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1, line.length()).trim());
     }
 
@@ -139,7 +134,6 @@ public class Metadata {
         int index = line.indexOf("#");
         if (index < 0)
             return line;
-
         return line.substring(0, index);
     }
 }

@@ -33,7 +33,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 import dotnet4j.io.IOException;
 
 
-public class IndexNode {
+class IndexNode {
     private final List<IndexEntry> _entries;
 
     private final Index _index;
@@ -50,7 +50,7 @@ public class IndexNode {
         _index = index;
         _isRoot = isRoot;
         _header = new IndexHeader(allocatedSize);
-        setTotalSpaceAvailable(allocatedSize);
+        _totalSpaceAvailable = allocatedSize;
 
         IndexEntry endEntry = new IndexEntry(_index.isFileIndex());
         endEntry.getFlags().add(IndexEntryFlags.End);
@@ -58,8 +58,8 @@ public class IndexNode {
         _entries = new ArrayList<>();
         _entries.add(endEntry);
 
-        getHeader()._offsetToFirstEntry = IndexHeader.Size + storeOverhead;
-        getHeader()._totalSizeOfEntries = getHeader()._offsetToFirstEntry + endEntry.getSize();
+        _header._offsetToFirstEntry = IndexHeader.Size + storeOverhead;
+        _header._totalSizeOfEntries = _header._offsetToFirstEntry + endEntry.getSize();
     }
 
     public IndexNode(IndexNodeSaveFn store, int storeOverhead, Index index, boolean isRoot, byte[] buffer, int offset) {
@@ -68,11 +68,11 @@ public class IndexNode {
         _index = index;
         _isRoot = isRoot;
         _header = new IndexHeader(buffer, offset + 0);
-        setTotalSpaceAvailable(getHeader().AllocatedSizeOfEntries);
+        setTotalSpaceAvailable(_header._allocatedSizeOfEntries);
 
         _entries = new ArrayList<>();
-        int pos = getHeader()._offsetToFirstEntry;
-        while (pos < getHeader()._totalSizeOfEntries) {
+        int pos = _header._offsetToFirstEntry;
+        while (pos < _header._totalSizeOfEntries) {
             IndexEntry entry = new IndexEntry(index.isFileIndex());
             entry.read(buffer, offset + pos);
             _entries.add(entry);
@@ -101,17 +101,17 @@ public class IndexNode {
             entriesTotal += _entries.get(i).getSize();
         }
         int firstEntryOffset = MathUtilities.roundUp(IndexHeader.Size + _storageOverhead, 8);
-        return getTotalSpaceAvailable() - (entriesTotal + firstEntryOffset);
+        return _totalSpaceAvailable - (entriesTotal + firstEntryOffset);
     }
 
-    private long __TotalSpaceAvailable;
+    private long _totalSpaceAvailable;
 
     long getTotalSpaceAvailable() {
-        return __TotalSpaceAvailable;
+        return _totalSpaceAvailable;
     }
 
     void setTotalSpaceAvailable(long value) {
-        __TotalSpaceAvailable = value;
+        _totalSpaceAvailable = value;
     }
 
     public void addEntry(byte[] key, byte[] data) {
@@ -140,8 +140,8 @@ public class IndexNode {
     }
 
     /**
-     * @param entry out
-     * @param node out
+     * @param entry {@cs out}
+     * @param node {@cs out}
      */
     public boolean tryFindEntry(byte[] key, IndexEntry[] entry, IndexNode[] node) {
         for (IndexEntry focus : _entries) {
@@ -204,6 +204,9 @@ public class IndexNode {
         return firstEntryOffset + calcEntriesSize();
     }
 
+    /**
+     * @param exactMatch {@cs out}
+     */
     public int getEntry(byte[] key, boolean[] exactMatch) {
         for (int i = 0; i < _entries.size(); ++i) {
             IndexEntry focus = _entries.get(i);

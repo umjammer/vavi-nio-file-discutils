@@ -39,8 +39,8 @@ public class RegularInode extends Inode {
     }
 
     public void setFileSize(long value) {
-        if (value > 0xffffffffl) {
-            throw new IndexOutOfBoundsException("File size greater than " + 0xffffffffl);
+        if (value > 0xffff_ffffl) {
+            throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffl);
         }
 
         _fileSize = (int) value;
@@ -52,7 +52,7 @@ public class RegularInode extends Inode {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        NumLinks = 1;
+        _numLinks = 1;
         StartBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
         FragmentKey = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         FragmentOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);

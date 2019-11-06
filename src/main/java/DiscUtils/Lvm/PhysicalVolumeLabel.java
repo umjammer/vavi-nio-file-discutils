@@ -43,16 +43,12 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
 
     public String Label2;
 
-    /**
-     *
-     */
+    /* */
     public int size() {
         return PhysicalVolume.SECTOR_SIZE;
     }
 
-    /**
-     *
-     */
+    /* */
     public int readFrom(byte[] buffer, int offset) {
         Label = EndianUtilities.bytesToString(buffer, offset, 0x8);
         Sector = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
@@ -63,9 +59,7 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
         return size();
     }
 
-    /**
-     *
-     */
+    /* */
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

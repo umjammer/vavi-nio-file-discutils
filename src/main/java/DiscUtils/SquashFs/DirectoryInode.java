@@ -77,7 +77,7 @@ public class DirectoryInode extends Inode implements IDirectoryInode {
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
         setStartBlock(EndianUtilities.toUInt32LittleEndian(buffer, offset + 16));
-        NumLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 20);
+        _numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 20);
         _fileSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
         setOffset(EndianUtilities.toUInt16LittleEndian(buffer, offset + 26));
         setParentInode(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));
@@ -87,7 +87,7 @@ public class DirectoryInode extends Inode implements IDirectoryInode {
     public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
         EndianUtilities.writeBytesLittleEndian(getStartBlock(), buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(NumLinks, buffer, offset + 20);
+        EndianUtilities.writeBytesLittleEndian(_numLinks, buffer, offset + 20);
         EndianUtilities.writeBytesLittleEndian(_fileSize, buffer, offset + 24);
         EndianUtilities.writeBytesLittleEndian(getOffset(), buffer, offset + 26);
         EndianUtilities.writeBytesLittleEndian(getParentInode(), buffer, offset + 28);

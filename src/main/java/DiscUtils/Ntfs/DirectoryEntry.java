@@ -38,7 +38,7 @@ public class DirectoryEntry {
     }
 
     public boolean isDirectory() {
-        return getDetails().Flags.contains(FileAttributeFlags.Directory);
+        return getDetails()._flags.contains(FileAttributeFlags.Directory);
     }
 
     private FileRecordReference _reference;
@@ -48,7 +48,7 @@ public class DirectoryEntry {
     }
 
     public String getSearchName() {
-        String fileName = _details.FileName;
+        String fileName = _details._fileName;
         if (fileName.indexOf('.') == -1) {
             return fileName + ".";
         }
@@ -62,6 +62,6 @@ public class DirectoryEntry {
     }
 
     public String toString() {
-        return _details.FileName;
+        return _details._fileName;
     }
 }

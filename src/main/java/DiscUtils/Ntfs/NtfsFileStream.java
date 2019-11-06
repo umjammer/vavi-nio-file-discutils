@@ -85,7 +85,7 @@ public final class NtfsFileStream extends SparseStream {
     public void setPosition(long value) {
         assertOpen();
 
-        try (Closeable __newVar0 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             _baseStream.setPosition(value);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -97,7 +97,7 @@ public final class NtfsFileStream extends SparseStream {
             return;
         }
 
-        try (Closeable __newVar1 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             _baseStream.close();
             updateMetadata();
             _baseStream = null;
@@ -107,7 +107,7 @@ public final class NtfsFileStream extends SparseStream {
     public void flush() {
         assertOpen();
 
-        try (Closeable __newVar2 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             _baseStream.flush();
             updateMetadata();
         } catch (IOException e) {
@@ -119,7 +119,7 @@ public final class NtfsFileStream extends SparseStream {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
-        try (Closeable __newVar3 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             return _baseStream.read(buffer, offset, count);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -129,7 +129,7 @@ public final class NtfsFileStream extends SparseStream {
     public long seek(long offset, SeekOrigin origin) {
         assertOpen();
 
-        try (Closeable __newVar4 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             return _baseStream.seek(offset, origin);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -139,7 +139,7 @@ public final class NtfsFileStream extends SparseStream {
     public void setLength(long value) {
         assertOpen();
 
-        try (Closeable __newVar5 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             if (value != getLength()) {
                 _isDirty = true;
                 _baseStream.setLength(value);
@@ -153,7 +153,7 @@ public final class NtfsFileStream extends SparseStream {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
-        try (Closeable __newVar6 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             _isDirty = true;
             _baseStream.write(buffer, offset, count);
         } catch (IOException e) {
@@ -164,7 +164,7 @@ public final class NtfsFileStream extends SparseStream {
     public void clear(int count) {
         assertOpen();
 
-        try (Closeable __newVar7 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             _isDirty = true;
             _baseStream.clear(count);
         } catch (IOException e) {
@@ -187,12 +187,11 @@ public final class NtfsFileStream extends SparseStream {
             _file.updateRecordInMft();
             _isDirty = false;
         }
-
     }
 
     private void assertOpen() {
         if (_baseStream == null) {
-            throw new dotnet4j.io.IOException(_entry.getDetails().FileName + " Attempt to use closed stream");
+            throw new dotnet4j.io.IOException(_entry.getDetails()._fileName + " Attempt to use closed stream");
         }
     }
 }

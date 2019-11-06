@@ -39,35 +39,25 @@ public enum ReadOnlyCompatibleFeatures {
      * This is a performance optimization to reduce the
      * time required to allocate inodes.
      */
-    FINOBT(1 << 0),
+    FINOBT,
     /**
      * Reverse mapping B+tree. Each allocation group
      * contains a B+tree containing records mapping AG
      * blocks to their owners.
      */
-    RMAPBT(1 << 1),
+    RMAPBT,
     /**
      * Reference count B+tree. Each allocation group
      * contains a B+tree to track the reference counts of AG
      * blocks. This enables files to share data blocks safely.
      */
-    REFLINK(1 << 2);
+    REFLINK;
 
     public static final EnumSet<ReadOnlyCompatibleFeatures> ALL = EnumSet.of(FINOBT, RMAPBT, REFLINK);
 
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private ReadOnlyCompatibleFeatures(int value) {
-        this.value = value;
-    }
-
     // TODO
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     // TODO

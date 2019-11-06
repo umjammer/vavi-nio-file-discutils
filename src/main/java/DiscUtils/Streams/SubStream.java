@@ -94,7 +94,7 @@ public class SubStream extends MappedStream {
         if (value <= _length) {
             _position = value;
         } else {
-            throw new IndexOutOfBoundsException("Attempt to move beyond end of stream");
+            throw new IllegalArgumentException("value: Attempt to move beyond end of stream");
         }
     }
 
@@ -108,7 +108,7 @@ public class SubStream extends MappedStream {
 
     public int read(byte[] buffer, int offset, int count) {
         if (count < 0) {
-            throw new IndexOutOfBoundsException("Attempt to read negative bytes");
+            throw new IllegalArgumentException("count: Attempt to read negative bytes");
         }
 
         if (_position > _length) {
@@ -130,7 +130,7 @@ public class SubStream extends MappedStream {
         }
 
         if (absNewPos < 0) {
-            throw new IndexOutOfBoundsException("Attempt to move before start of stream");
+            throw new IllegalArgumentException("offset: Attempt to move before start of stream");
         }
 
         _position = absNewPos;
@@ -143,11 +143,11 @@ public class SubStream extends MappedStream {
 
     public void write(byte[] buffer, int offset, int count) {
         if (count < 0) {
-            throw new IndexOutOfBoundsException("Attempt to write negative bytes");
+            throw new IllegalArgumentException("count: Attempt to write negative bytes");
         }
 
         if (_position + count > _length) {
-            throw new IndexOutOfBoundsException("Attempt to write beyond end of substream");
+            throw new IllegalArgumentException("count: Attempt to write beyond end of substream");
         }
 
         _parent.setPosition(_first + _position);

@@ -77,6 +77,9 @@ public class DescriptorTag implements IByteArraySerializable {
         return checkSum == buffer[offset + 4];
     }
 
+    /**
+     * @param result {@cs out}
+     */
     public static boolean tryFromStream(Stream stream, DescriptorTag[] result) {
         byte[] next = StreamUtilities.readExact(stream, 512);
         if (!isValid(next, 0)) {

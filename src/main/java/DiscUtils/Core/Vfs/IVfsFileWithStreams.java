@@ -20,10 +20,11 @@ public interface IVfsFileWithStreams extends IVfsFile {
     /**
      * Opens an existing stream.
      *
+     * The implementation must not implicitly create the stream if it doesn't
+     * already exist.
+     *
      * @param name The name of the stream.
-     * @return An object representing the stream.The implementation must not
-     *         implicitly create the stream if it doesn't already
-     *         exist.
+     * @return An object representing the stream.
      */
     SparseStream openExistingStream(String name);
 }

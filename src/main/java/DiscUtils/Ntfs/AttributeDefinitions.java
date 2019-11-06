@@ -55,7 +55,7 @@ public final class AttributeDefinitions {
         add(AttributeType.SecurityDescriptor, "$SECURITY_DESCRIPTOR", EnumSet.of(AttributeTypeFlags.CanBeNonResident), 0x0, -1);
         add(AttributeType.VolumeName, "$VOLUME_NAME", EnumSet.of(AttributeTypeFlags.MustBeResident), 0x2, 0x100);
         add(AttributeType.VolumeInformation, "$VOLUME_INFORMATION", EnumSet.of(AttributeTypeFlags.MustBeResident), 0xC, 0xC);
-        add(AttributeType.Data, "$DATA", EnumSet.of(AttributeTypeFlags.None), 0, -1);
+        add(AttributeType.Data, "$DATA", EnumSet.noneOf(AttributeTypeFlags.class), 0, -1);
         add(AttributeType.IndexRoot, "$INDEX_ROOT", EnumSet.of(AttributeTypeFlags.MustBeResident), 0, -1);
         add(AttributeType.IndexAllocation, "$INDEX_ALLOCATION", EnumSet.of(AttributeTypeFlags.CanBeNonResident), 0, -1);
         add(AttributeType.Bitmap, "$BITMAP", EnumSet.of(AttributeTypeFlags.CanBeNonResident), 0, -1);
@@ -65,7 +65,7 @@ public final class AttributeDefinitions {
             EnumSet.of(AttributeTypeFlags.MustBeResident),
             0x8,
             0x8);
-        add(AttributeType.ExtendedAttributes, "$EA", EnumSet.of(AttributeTypeFlags.None), 0, 0x10000);
+        add(AttributeType.ExtendedAttributes, "$EA", EnumSet.noneOf(AttributeTypeFlags.class), 0, 0x10000);
         add(AttributeType.LoggedUtilityStream,
             "$LOGGED_UTILITY_STREAM",
             EnumSet.of(AttributeTypeFlags.CanBeNonResident),
@@ -82,8 +82,8 @@ public final class AttributeDefinitions {
                 AttributeDefinitionRecord record = new AttributeDefinitionRecord();
                 record.read(buffer, 0);
                 // NULL terminator record
-                if (record.Type != AttributeType.None) {
-                    _attrDefs.put(record.Type, record);
+                if (record._type != AttributeType.None) {
+                    _attrDefs.put(record._type, record);
                 }
 
             }
@@ -113,7 +113,7 @@ public final class AttributeDefinitions {
 
     public AttributeDefinitionRecord lookup(String name) {
         for (AttributeDefinitionRecord record : _attrDefs.values()) {
-            if (name.compareTo(record.Name) == 0) {
+            if (name.compareTo(record._name) == 0) {
                 return record;
             }
         }
@@ -123,7 +123,7 @@ public final class AttributeDefinitions {
     public boolean mustBeResident(AttributeType attributeType) {
         if (_attrDefs.containsKey(attributeType)) {
             AttributeDefinitionRecord record = _attrDefs.get(attributeType);
-            return record.Flags.contains(AttributeTypeFlags.MustBeResident);
+            return record._flags.contains(AttributeTypeFlags.MustBeResident);
         }
 
         return false;
@@ -132,7 +132,7 @@ public final class AttributeDefinitions {
     public boolean isIndexed(AttributeType attributeType) {
         if (_attrDefs.containsKey(attributeType)) {
             AttributeDefinitionRecord record = _attrDefs.get(attributeType);
-            return record.Flags.contains(AttributeTypeFlags.Indexed);
+            return record._flags.contains(AttributeTypeFlags.Indexed);
         }
 
         return false;
@@ -144,11 +144,11 @@ public final class AttributeDefinitions {
                      int minSize,
                      int maxSize) {
         AttributeDefinitionRecord adr = new AttributeDefinitionRecord();
-        adr.Type = attributeType;
-        adr.Name = name;
-        adr.Flags = attributeTypeFlags;
-        adr.MinSize = minSize;
-        adr.MaxSize = maxSize;
+        adr._type = attributeType;
+        adr._name = name;
+        adr._flags = attributeTypeFlags;
+        adr._minSize = minSize;
+        adr._maxSize = maxSize;
         _attrDefs.put(attributeType, adr);
     }
 }

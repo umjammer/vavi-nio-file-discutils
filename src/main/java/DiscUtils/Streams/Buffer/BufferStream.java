@@ -176,20 +176,16 @@ public class BufferStream extends SparseStream {
     /**
      * Clears bytes from the stream.
      *
-     * @param count The number of bytes (from the current position) to
-     *            clear.Logically equivalent to writing
-     *            {@code count}
-     *            null/zero bytes to the stream, some
-     *            implementations determine that some (or all) of the range
-     *            indicated is not actually
-     *            stored. There is no direct, automatic, correspondence to
-     *            clearing bytes and them
-     *            not being represented as an 'extent' - for example, the
-     *            implementation of the underlying
-     *            stream may not permit fine-grained extent storage.It is always
-     *            safe to call this method to 'zero-out' a section of a stream,
-     *            regardless of
-     *            the underlying stream implementation.
+     * Logically equivalent to writing {@code count} null/zero bytes to the
+     * stream, some implementations determine that some (or all) of the range
+     * indicated is not actually stored. There is no direct, automatic,
+     * correspondence to clearing bytes and them not being represented as an
+     * 'extent' - for example, the implementation of the underlying stream may
+     * not permit fine-grained extent storage.It is always safe to call this
+     * method to 'zero-out' a section of a stream, regardless of the underlying
+     * stream implementation.
+     * 
+     * @param count The number of bytes (from the current position) to clear.
      */
     public void clear(int count) {
         if (!canWrite()) {

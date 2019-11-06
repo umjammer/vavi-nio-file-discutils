@@ -147,7 +147,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param path The file path to open.
      * @param access Controls how the file can be accessed.
      */
-    public DiskImageFile(String path, FileAccess access) throws IOException {
+    public DiskImageFile(String path, FileAccess access) {
         this(new LocalFileLocator(Utilities.getDirectoryFromPath(path)), Utilities.getFileFromPath(path), access);
     }
 
@@ -157,7 +157,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _fileName = locator.getFileFromPath(path);
     }
 
-    DiskImageFile(FileLocator locator, String path, FileAccess access) throws IOException {
+    DiskImageFile(FileLocator locator, String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         _fileStream = locator.open(path, FileMode.Open, access, share);
         _ownership = Ownership.Dispose;
@@ -166,7 +166,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
             _fileName = locator.getFileFromPath(path);
             initialize();
         } finally {
-            _fileStream.close();
+            try {
+                _fileStream.close();
+            } catch (IOException e) {
+                throw new dotnet4j.io.IOException(e);
+            }
         }
     }
 
@@ -266,7 +270,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the unique id of this file.
      */
-    UUID getUniqueId() {
+    public UUID getUniqueId() {
         return _header.DataWriteGuid;
     }
 
@@ -396,31 +400,31 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return getParentLocations(new LocalFileLocator(basePath));
     }
 
-    static DiskImageFile initializeFixed(FileLocator locator,
-                                                String path,
-                                                long capacity,
-                                                Geometry geometry) throws IOException {
+    static DiskImageFile initializeFixed(FileLocator locator, String path, long capacity, Geometry geometry) {
         DiskImageFile result = null;
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeFixedInternal(stream, capacity, geometry);
             result = new DiskImageFile(locator, path, stream, Ownership.Dispose);
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
+
         return result;
     }
 
-    static DiskImageFile initializeDynamic(FileLocator locator,
-                                                  String path,
-                                                  long capacity,
-                                                  long blockSize) throws IOException {
+    static DiskImageFile initializeDynamic(FileLocator locator, String path, long capacity, long blockSize) {
         DiskImageFile result = null;
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeDynamicInternal(stream, capacity, blockSize);
             result = new DiskImageFile(locator, path, stream, Ownership.Dispose);
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
+
         return result;
     }
 
-    DiskImageFile createDifferencing(FileLocator fileLocator, String path) throws IOException {
+    DiskImageFile createDifferencing(FileLocator fileLocator, String path) {
         Stream stream = fileLocator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
         String fullPath = _fileLocator.getFullPath(_fileName);
         String relativePath = fileLocator.makeRelativePath(_fileLocator, _fileName);
@@ -432,6 +436,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     MappedStream doOpenContent(SparseStream parent, Ownership ownsParent) {
         SparseStream theParent = parent;
         Ownership theOwnership = ownsParent;
+
         if (parent == null) {
             theParent = new ZeroStream(getCapacity());
             theOwnership = Ownership.Dispose;
@@ -573,12 +578,18 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
 
         _freeSpace = new FreeSpaceTable(_fileStream.getLength());
+
         readHeaders();
+
         replayLog();
+
         readRegionTable();
+
         readMetadata();
+
         _batStream = openRegion(RegionTable.BatGuid);
         _freeSpace.reserve(batControlledFileExtents());
+
         // Indicate the file is open for modification
         if (_fileStream.canWrite()) {
             _header.FileWriteGuid = UUID.randomUUID();
@@ -595,7 +606,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         List<StreamExtent> extents = new ArrayList<>();
         for (int i = 0; i < batData.length; i += 8) {
             long entry = EndianUtilities.toUInt64LittleEndian(batData, i);
-            long filePos = ((entry >>> 20) & 0xFFFFFFFFFFFl) * Sizes.OneMiB;
+            long filePos = ((entry >>> 20) & 0xFFF_FFFF_FFFFl) * Sizes.OneMiB;
             if (filePos != 0) {
                 if (i % ((chunkRatio + 1) * 8) == chunkRatio * 8) {
                     // This is a sector bitmap block (always 1MB in size)
@@ -633,8 +644,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         if (activeLogSequence.size() > 1 || !activeLogSequence.getHead().getIsEmpty()) {
             // However, have seen VHDX with a non-empty log with no data to
-            // replay. These are
-            // 'safe' to open.
+            // replay. These are 'safe' to open.
             if (!_fileStream.canWrite()) {
                 SnapshotStream replayStream = new SnapshotStream(_fileStream, Ownership.None);
                 replayStream.snapshot();

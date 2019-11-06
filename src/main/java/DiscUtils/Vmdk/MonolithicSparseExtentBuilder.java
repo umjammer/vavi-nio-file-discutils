@@ -53,6 +53,9 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
         _descriptor = descriptor;
     }
 
+    /**
+     * @param totalLength {@cs out}
+     */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
         MemoryStream descriptorStream = new MemoryStream();

@@ -112,9 +112,11 @@ public class WimFile {
     /**
      * Gets a particular image within the file (zero-based index).
      *
+     * The XML manifest file uses a one-based index, whereas this method is
+     * zero-based.
+     *
      * @param index The index of the image to retrieve.
-     * @return The image as a file system.The XML manifest file uses a one-based
-     *         index, whereas this method is zero-based.
+     * @return The image as a file system.
      */
     public WimFileSystem getImage(int index) {
         return new WimFileSystem(this, index);

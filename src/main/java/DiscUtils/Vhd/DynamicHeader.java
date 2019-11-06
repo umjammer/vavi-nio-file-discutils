@@ -34,6 +34,8 @@ import dotnet4j.io.Stream;
 
 
 public class DynamicHeader {
+    public static final UUID EMPTY = new UUID(0, 0);
+
     public static final String HeaderCookie = "cxsparse";
 
     public static final int Version1 = 0x00010000;
@@ -58,7 +60,7 @@ public class DynamicHeader {
 
     public String ParentUnicodeName;
 
-    public UUID ParentUniqueId;
+    public UUID ParentUniqueId = EMPTY;
 
     public long TableOffset;
 
@@ -72,7 +74,6 @@ public class DynamicHeader {
         HeaderVersion = Version1;
         BlockSize = blockSize;
         MaxTableEntries = (int) ((diskSize + blockSize - 1) / blockSize);
-        ParentUniqueId = new UUID(0, 0); // TODO no initializer
         ParentTimestamp = Footer.EpochUtc.toEpochMilli();
         ParentUnicodeName = "";
         ParentLocators = new ParentLocator[8];

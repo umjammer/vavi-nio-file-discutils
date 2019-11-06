@@ -25,35 +25,37 @@ package DiscUtils.Fat;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
 public enum FatAttributes {
-    ReadOnly(0x01),
-    Hidden(0x02),
-    System(0x04),
-    VolumeId(0x08),
-    Directory(0x10),
-    Archive(0x20);
+    ReadOnly,
+    Hidden,
+    System,
+    VolumeId,
+    Directory,
+    Archive;
 
-    private int value;
-
-    public int getValue() {
-        return value;
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << this.ordinal();
     }
 
-    private FatAttributes(int value) {
-        this.value = value;
-    }
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
 
     public static EnumSet<FatAttributes> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.getValue()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FatAttributes.class)));
     }
 
     public static long valueOf(EnumSet<FatAttributes> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 
     // TODO name()

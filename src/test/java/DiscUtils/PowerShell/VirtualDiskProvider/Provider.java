@@ -536,6 +536,9 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         this.SessionState.PSVariable.set(varName, Boolean.TRUE.toString());
     }
 
+    /**
+     * @param dispose {@cs out}
+     */
     private DiscFileSystem getFileSystem(VolumeInfo volInfo, boolean[] dispose) {
         if (getDriveInfo() != null) {
             dispose[0] = false;

@@ -72,20 +72,19 @@ public final class DiskFactory extends VirtualDiskFactory {
         }
     }
 
-    public VirtualDisk openDisk(String path, FileAccess access) throws IOException {
+    public VirtualDisk openDisk(String path, FileAccess access) {
         return new Disk(path, access);
     }
 
-    public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) throws IOException {
+    public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
         return new Disk(locator, path, access);
     }
 
-    public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) throws IOException {
+    public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) {
         return new DiskImageFile(locator, path, access);
     }
 
     public static VirtualDiskTypeInfo makeDiskTypeInfo(String variant) {
         return new VirtualDiskTypeInfo();
     }
-
 }

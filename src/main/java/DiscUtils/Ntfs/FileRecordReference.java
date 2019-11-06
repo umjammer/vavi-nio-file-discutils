@@ -35,25 +35,25 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public FileRecordReference(long mftIndex, short sequenceNumber) {
-        setValue(mftIndex & 0x0000FFFFFFFFFFFFL | ((long) sequenceNumber << 48 & 0xFFFF000000000000L));
+        setValue(mftIndex & 0x0000_FFFF_FFFF_FFFFL | ((long) sequenceNumber << 48 & 0xFFFF_0000_0000_0000L));
     }
 
-    private long __Value;
+    private long _value;
 
     public long getValue() {
-        return __Value;
+        return _value;
     }
 
     public void setValue(long value) {
-        __Value = value;
+        _value = value;
     }
 
     public long getMftIndex() {
-        return getValue() & 0x0000FFFFFFFFFFFFL;
+        return _value & 0x0000_FFFF_FFFF_FFFFL;
     }
 
     public short getSequenceNumber() {
-        return (short) ((getValue() >>> 48) & 0xFFFF);
+        return (short) ((_value >>> 48) & 0xFFFF);
     }
 
     public int size() {
@@ -70,7 +70,7 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(getValue(), buffer, offset);
+        EndianUtilities.writeBytesLittleEndian(_value, buffer, offset);
     }
 
     public boolean equals(Object obj) {
@@ -78,19 +78,19 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
             return false;
         }
 
-        return getValue() == ((FileRecordReference) obj).getValue();
+        return _value == ((FileRecordReference) obj)._value;
     }
 
     public int hashCode() {
-        return Long.hashCode(getValue());
+        return Long.hashCode(_value);
     }
 
     public int compareTo(FileRecordReference other) {
-        if (getValue() < other.getValue()) {
+        if (_value < other._value) {
             return -1;
         }
 
-        if (getValue() > other.getValue()) {
+        if (_value > other._value) {
             return 1;
         }
 

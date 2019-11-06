@@ -48,6 +48,7 @@ public class BuiltStream extends SparseStream {
         _baseStream = new ZeroStream(length);
         _length = length;
         _extents = extents;
+
         // Make sure the extents are sorted, so binary searches will work.
         Collections.sort(_extents, new ExtentStartComparer());
     }
@@ -65,7 +66,7 @@ public class BuiltStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return _extents.stream().flatMap(b -> b.getStreamExtents().stream()).collect(Collectors.toList());
+        return _extents.stream().flatMap(extent -> extent.getStreamExtents().stream()).collect(Collectors.toList());
     }
 
     public long getLength() {
@@ -103,7 +104,6 @@ public class BuiltStream extends SparseStream {
 
             // If we need to find a new region, look for it
             if (_currentExtent == null) {
-
                 try (SearchExtent searchExtent = new SearchExtent(_position)) {
                     int idx = Collections.binarySearch(_extents, searchExtent, new ExtentRangeComparer());
                     if (idx >= 0) {
@@ -115,6 +115,7 @@ public class BuiltStream extends SparseStream {
             }
 
             int numRead = 0;
+
             // If the block is outside any known extent, defer to base stream.
             if (_currentExtent == null) {
                 _baseStream.setPosition(_position);
@@ -129,12 +130,13 @@ public class BuiltStream extends SparseStream {
             } else {
                 numRead = _currentExtent.read(_position, buffer, offset + totalRead, count - totalRead);
             }
+
             _position += numRead;
             totalRead += numRead;
             if (numRead == 0)
                 break;
-
         }
+
         return totalRead;
     }
 
@@ -173,6 +175,7 @@ public class BuiltStream extends SparseStream {
     private BuilderExtent findNext(long pos) {
         int min = 0;
         int max = _extents.size() - 1;
+
         if (_extents.size() == 0 ||
             _extents.get(_extents.size() - 1).getStart() + _extents.get(_extents.size() - 1).getLength() <= pos) {
             return null;
@@ -203,21 +206,21 @@ public class BuiltStream extends SparseStream {
         }
 
         public void prepareForRead() {
+            // Not valid to use this 'dummy' extent for actual construction
             throw new UnsupportedOperationException();
         }
 
-        // Not valid to use this 'dummy' extent for actual construction
         public int read(long diskOffset, byte[] block, int offset, int count) {
+            // Not valid to use this 'dummy' extent for actual construction
             throw new UnsupportedOperationException();
         }
 
-        // Not valid to use this 'dummy' extent for actual construction
         public void disposeReadState() {
+            // Not valid to use this 'dummy' extent for actual construction
             throw new UnsupportedOperationException();
         }
     }
 
-    // Not valid to use this 'dummy' extent for actual construction
     private static class ExtentRangeComparer implements Comparator<BuilderExtent> {
         public int compare(BuilderExtent x, BuilderExtent y) {
             if (x == null) {
@@ -229,20 +232,20 @@ public class BuiltStream extends SparseStream {
             }
 
             if (x.getStart() + x.getLength() <= y.getStart()) {
+                // x < y, with no intersection
                 return -1;
             }
 
-            // x < y, with no intersection
             if (x.getStart() >= y.getStart() + y.getLength()) {
+                // x > y, with no intersection
                 return 1;
             }
 
+            // x intersects y
             return 0;
         }
     }
 
-    // x > y, with no intersection
-    // x intersects y
     private static class ExtentStartComparer implements Comparator<BuilderExtent> {
         public int compare(BuilderExtent x, BuilderExtent y) {
             if (x == null) {
@@ -257,11 +260,9 @@ public class BuiltStream extends SparseStream {
             if (val < 0) {
                 return -1;
             }
-
             if (val > 0) {
                 return 1;
             }
-
             return 0;
         }
     }

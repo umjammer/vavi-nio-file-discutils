@@ -92,6 +92,9 @@ public final class FileBuffer extends Buffer {
         return Arrays.asList(new StreamExtent(start, Math.min(start + count, getCapacity()) - start));
     }
 
+    /**
+     * @param extentLogicalStart {@cs out}
+     */
     private ExtentDescriptor findExtent(long pos, long[] extentLogicalStart) {
         int blocksSeen = 0;
         int block = (int) (pos / _context.getVolumeHeader().BlockSize);

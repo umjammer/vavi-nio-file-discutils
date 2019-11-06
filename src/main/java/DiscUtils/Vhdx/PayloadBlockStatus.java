@@ -27,8 +27,8 @@ public enum PayloadBlockStatus {
     Undefined,
     Zero,
     Unmapped,
-    __dummyEnum__0,
-    __dummyEnum__1,
+    __dummyEnum__4,
+    __dummyEnum__5,
     FullyPresent,
     PartiallyPresent;
 

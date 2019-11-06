@@ -32,14 +32,14 @@ import java.util.stream.Collectors;
  * Read-write incompatible feature flags.
  */
 public enum IncompatibleFeatures {
-    None(0),
+//    None,
     /**
      * Directory file type. Each directory entry tracks the
      * type of the inode to which the entry points. This is a
      * performance optimization to remove the need to
      * load every inode into memory to iterate a directory.
      */
-    FType(1 << 0),
+    FType,
     /**
      * Sparse inodes. This feature relaxes the requirement
      * to allocate inodes in chunks of 64. When the free
@@ -51,7 +51,7 @@ public enum IncompatibleFeatures {
      * Unused space in the inode B+tree records are used to
      * track which parts of the inode chunk are not inodes.
      */
-    SparseInodes(1 << 1),
+    SparseInodes,
     /**
      * Metadata UUID. The UUID stamped into each
      * metadata block must match the value in
@@ -59,23 +59,13 @@ public enum IncompatibleFeatures {
      * change sb_uuid at will without having to rewrite
      * the entire filesystem.
      */
-    MetaUUID(1 << 2);
+    MetaUUID;
 
     public static final EnumSet<IncompatibleFeatures > Supported = EnumSet.of(FType);
 
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private IncompatibleFeatures(int value) {
-        this.value = value;
-    }
-
     // TODO
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     // TODO

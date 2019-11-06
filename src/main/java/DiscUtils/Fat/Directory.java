@@ -68,7 +68,7 @@ public class Directory implements Closeable {
      * @param parentId The identity of the entry representing this directory in
      *            the parent.
      */
-    public Directory(Directory parent, long parentId) {
+    Directory(Directory parent, long parentId) {
         __FileSystem = parent.getFileSystem();
         _parent = parent;
         _parentId = parentId;
@@ -84,7 +84,7 @@ public class Directory implements Closeable {
      * @param fileSystem The file system.
      * @param dirStream The stream containing the directory info.
      */
-    public Directory(FatFileSystem fileSystem, Stream dirStream) {
+    Directory(FatFileSystem fileSystem, Stream dirStream) {
         __FileSystem = fileSystem;
         _dirStream = dirStream;
         loadEntries();
@@ -394,7 +394,7 @@ public class Directory implements Closeable {
         _dirStream.close();
     }
 
-    public DirectoryEntry getParentsChildEntry() {
+    DirectoryEntry getParentsChildEntry() {
         if (_parent == null) {
             return new DirectoryEntry(getFileSystem().getFatOptions(),
                                       FileName.ParentEntryName,
@@ -405,15 +405,17 @@ public class Directory implements Closeable {
         return _parent.getEntry(_parentId);
     }
 
-    public void setParentsChildEntry(DirectoryEntry value) {
+    void setParentsChildEntry(DirectoryEntry value) {
         if (_parent != null) {
             _parent.updateEntry(_parentId, value);
         }
 
     }
 
-    public DirectoryEntry getSelfEntry() {
+    DirectoryEntry getSelfEntry() {
         if (_parent == null) {
+            // If we're the root directory, simulate the parent entry with a
+            // dummy record
             return new DirectoryEntry(getFileSystem().getFatOptions(),
                                       FileName.Null,
                                       EnumSet.of(FatAttributes.Directory),
@@ -423,9 +425,7 @@ public class Directory implements Closeable {
         return _selfEntry;
     }
 
-    // If we're the root directory, simulate the parent entry with a dummy
-    // record
-    public void setSelfEntry(DirectoryEntry value) {
+    void setSelfEntry(DirectoryEntry value) {
         if (_selfEntryLocation >= 0) {
             _dirStream.setPosition(_selfEntryLocation);
             value.writeTo(_dirStream);
@@ -433,11 +433,11 @@ public class Directory implements Closeable {
         }
     }
 
-    public DirectoryEntry getParentEntry() {
+    DirectoryEntry getParentEntry() {
         return _parentEntry;
     }
 
-    public void setParentEntry(DirectoryEntry value) {
+    void setParentEntry(DirectoryEntry value) {
         if (_parentEntryLocation < 0) {
             throw new dotnet4j.io.IOException("No parent entry on disk to update");
         }

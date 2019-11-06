@@ -1,6 +1,7 @@
 
 package DiscUtils.Ntfs;
 
+// use ordinal
 public enum FileNameNamespace {
     Posix,
     Win32,

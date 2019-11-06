@@ -25,8 +25,8 @@ package DiscUtils.Core.Compression;
 /**
  * Base class for bit streams.
  *
- * The rules for conversion of a byte stream to a bit stream vary
- * between implementations.
+ * The rules for conversion of a byte stream to a bit stream vary between
+ * implementations.
  */
 public abstract class BitStream {
     /**
@@ -45,9 +45,10 @@ public abstract class BitStream {
     /**
      * Queries data from the stream.
      *
+     * This method does not consume the bits (i.e. move the file pointer).
+     * 
      * @param count The number of bits to query.
-     * @return The bits as a UInt32.This method does not consume the bits (i.e.
-     *         move the file pointer).
+     * @return The bits as a UInt32.
      */
     public abstract int peek(int count);
 
@@ -57,5 +58,4 @@ public abstract class BitStream {
      * @param count The number of bits to consume.
      */
     public abstract void consume(int count);
-
 }

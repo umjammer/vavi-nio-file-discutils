@@ -26,10 +26,12 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
+    @SuppressWarnings("unused")
     private int _extendedAttributes;
 
     private int _fileSize;
 
+    @SuppressWarnings("unused")
     private short _indexCount;
 
     public int size() {
@@ -41,46 +43,46 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
     }
 
     public void setFileSize(long value) {
-        if (value > 0xffffffffl) {
-            throw new IndexOutOfBoundsException("File size greater than " + 0xffffffffl);
+        if (value > 0xffff_ffffl) {
+            throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffl);
         }
 
         _fileSize = (int) value;
     }
 
-    private int __StartBlock;
+    private int _startBlock;
 
     public int getStartBlock() {
-        return __StartBlock;
+        return _startBlock;
     }
 
     public void setStartBlock(int value) {
-        __StartBlock = value;
+        _startBlock = value;
     }
 
-    private int __ParentInode;
+    private int _parentInode;
 
     public int getParentInode() {
-        return __ParentInode;
+        return _parentInode;
     }
 
     public void setParentInode(int value) {
-        __ParentInode = value;
+        _parentInode = value;
     }
 
-    private short __Offset;
+    private short _offset;
 
     public short getOffset() {
-        return __Offset;
+        return _offset;
     }
 
     public void setOffset(short value) {
-        __Offset = value;
+        _offset = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        NumLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
+        _numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
         _fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         setStartBlock(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
         setParentInode(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));

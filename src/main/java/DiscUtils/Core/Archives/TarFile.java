@@ -64,7 +64,7 @@ public final class TarFile {
      * Tries to open a file contained in the archive, if it exists.
      *
      * @param path The path to the file within the archive.
-     * @param stream A stream containing the file contents, or null.
+     * @param stream {@cs out} A stream containing the file contents, or null.
      * @return {@code true} if the file could be opened, else {@code false} .
      */
     public boolean tryOpenFile(String path, Stream[] stream) {

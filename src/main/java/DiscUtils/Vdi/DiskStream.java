@@ -41,7 +41,7 @@ import dotnet4j.io.Stream;
 public class DiskStream extends SparseStream {
     private static final int BlockFree = 0xffffffff;
 
-    private static final int BlockZero = 0;
+    private static final int BlockZero = 0xfffffffe;
 
     private boolean _atEof;
 
@@ -104,8 +104,8 @@ public class DiskStream extends SparseStream {
             if (start != i) {
                 extents.add(new StreamExtent(start * blockSize, (i - start) * blockSize));
             }
-
         }
+
         return extents;
     }
 
@@ -159,8 +159,7 @@ public class DiskStream extends SparseStream {
             } else if (_blockTable[block] == BlockZero) {
                 Arrays.fill(buffer, offset + numRead, offset + numRead + toRead, (byte) 0);
             } else {
-                // TODO _blockTable[block] got negative
-                long blockOffset = _blockTable[block] * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
+                long blockOffset = (_blockTable[block] & 0xffffffffl) * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
                 long filePos = _fileHeader.dataOffset + _fileHeader.blockExtraSize + blockOffset + offsetInBlock;
                 _fileStream.setPosition(filePos);
                 StreamUtilities.readExact(_fileStream, buffer, offset + numRead, toRead);
@@ -183,10 +182,10 @@ public class DiskStream extends SparseStream {
         }
 
         _atEof = false;
+
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-
         _position = effectiveOffset;
         return _position;
     }
@@ -255,6 +254,7 @@ public class DiskStream extends SparseStream {
 
                 _fileStream.setPosition(filePos);
                 _fileStream.write(writeBuffer, writeBufferOffset, _fileHeader.blockSize);
+
                 _blockTable[block] = _fileHeader.blocksAllocated;
 
                 // Update the file header on disk, to indicate where the next free block is
@@ -266,7 +266,7 @@ public class DiskStream extends SparseStream {
                 writeBlockTableEntry(block);
             } else {
                 // Existing block, simply overwrite the existing data
-                long blockOffset = _blockTable[block] * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
+                long blockOffset = (_blockTable[block] & 0xfffffffl) * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
                 long filePos = _fileHeader.dataOffset + _fileHeader.blockExtraSize + blockOffset + offsetInBlock;
                 _fileStream.setPosition(filePos);
                 _fileStream.write(buffer, offset + numWritten, toWrite);

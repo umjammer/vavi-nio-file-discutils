@@ -47,48 +47,46 @@ public final class BuildFileInfo extends BuildDirectoryMember {
 
     private Stream _contentStream;
 
-    public BuildFileInfo(String name, BuildDirectoryInfo parent, byte[] content) {
+    BuildFileInfo(String name, BuildDirectoryInfo parent, byte[] content) {
         super(IsoUtilities.normalizeFileName(name), makeShortFileName(name, parent));
-        __Parent = parent;
+        _parent = parent;
         _contentData = content;
         _contentSize = content.length;
     }
 
-    public BuildFileInfo(String name, BuildDirectoryInfo parent, String content) {
+    BuildFileInfo(String name, BuildDirectoryInfo parent, String content) {
         super(IsoUtilities.normalizeFileName(name), makeShortFileName(name, parent));
-        __Parent = parent;
+        _parent = parent;
         _contentPath = content;
         try {
             _contentSize = Files.size(Paths.get(_contentPath));
-            setCreationTime(Files.getLastModifiedTime(Paths.get(_contentPath)).toMillis());
+            _creationTime = Files.getLastModifiedTime(Paths.get(_contentPath)).toMillis();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
     }
 
-    public BuildFileInfo(String name, BuildDirectoryInfo parent, Stream source) {
+    BuildFileInfo(String name, BuildDirectoryInfo parent, Stream source) {
         super(IsoUtilities.normalizeFileName(name), makeShortFileName(name, parent));
-        __Parent = parent;
+        _parent = parent;
         _contentStream = source;
         _contentSize = _contentStream.getLength();
     }
 
     /**
-     * The parent directory, or
-     * {@code null}
-     * if none.
+     * The parent directory, or {@code null} if none.
      */
-    private BuildDirectoryInfo __Parent;
+    private BuildDirectoryInfo _parent;
 
     public BuildDirectoryInfo getParent() {
-        return __Parent;
+        return _parent;
     }
 
-    public long getDataSize(Charset enc) {
+    long getDataSize(Charset enc) {
         return _contentSize;
     }
 
-    public Stream openStream() {
+    Stream openStream() {
         if (_contentData != null) {
             return new MemoryStream(_contentData, false);
         }
@@ -101,9 +99,9 @@ public final class BuildFileInfo extends BuildDirectoryMember {
         return _contentStream;
     }
 
-    public void closeStream(Stream s) {
-        // Close and dispose the stream, unless it's one we were given to stream in
-        // from (we might need it again).
+    void closeStream(Stream s) {
+        // Close and dispose the stream, unless it's one we were given to stream
+        // in from (we might need it again).
         if (_contentStream != s) {
             try {
                 s.close();
@@ -123,9 +121,10 @@ public final class BuildFileInfo extends BuildDirectoryMember {
             if (!IsoUtilities.isValidDChar(shortNameChars[i]) && shortNameChars[i] != '.' && shortNameChars[i] != ';') {
                 shortNameChars[i] = '_';
             }
-
         }
+
         String[] parts = IsoUtilities.splitFileName(new String(shortNameChars));
+
         if (parts[0].length() + parts[1].length() > 30) {
             parts[1] = parts[1].substring(0, Math.min(parts[1].length(), 3));
         }
@@ -138,5 +137,9 @@ public final class BuildFileInfo extends BuildDirectoryMember {
 
         // TODO: Make unique
         return candidate;
+    }
+
+    public String toString() {
+        return getName();
     }
 }

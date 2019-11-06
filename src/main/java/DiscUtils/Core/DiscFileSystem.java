@@ -41,7 +41,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Initializes a new instance of the DiscFileSystem class.
      */
     protected DiscFileSystem() {
-        __Options = new DiscFileSystemOptions();
+        _options = new DiscFileSystemOptions();
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *            instance.
      */
     protected DiscFileSystem(DiscFileSystemOptions defaultOptions) {
-        __Options = defaultOptions;
+        _options = defaultOptions;
     }
 
     /**
@@ -68,10 +68,10 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets the file system options, which can be modified.
      */
-    private DiscFileSystemOptions __Options;
+    private DiscFileSystemOptions _options;
 
     public DiscFileSystemOptions getOptions() {
-        return __Options;
+        return _options;
     }
 
     /**
@@ -206,8 +206,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern.
+     * specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -219,8 +218,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
      * @param path The path to search.
@@ -273,8 +271,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
 
     /**
      * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * matching a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -465,8 +462,10 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets an object representing a possible file.
      *
+     * The file does not need to exist.
+     * 
      * @param path The file path.
-     * @return The representing object.The file does not need to exist.
+     * @return The representing object.
      */
     public DiscFileInfo getFileInfo(String path) throws IOException {
         return new DiscFileInfo(this, path);
@@ -475,8 +474,10 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets an object representing a possible directory.
      *
+     * The directory does not need to exist.
+     * 
      * @param path The directory path.
-     * @return The representing object.The directory does not need to exist.
+     * @return The representing object.
      */
     public DiscDirectoryInfo getDirectoryInfo(String path) throws IOException {
         return new DiscDirectoryInfo(this, path);
@@ -486,9 +487,10 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Gets an object representing a possible file system object (file or
      * directory).
      *
+     * The file system object does not need to exist.
+     * 
      * @param path The file system path.
-     * @return The representing object.The file system object does not need to
-     *         exist.
+     * @return The representing object.
      */
     public DiscFileSystemInfo getFileSystemInfo(String path) throws IOException {
         return new DiscFileSystemInfo(this, path);
@@ -497,9 +499,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Reads the boot code of the file system into a byte array.
      *
-     * @return The boot code, or
-     *         {@code null}
-     *         if not available.
+     * @return The boot code, or {@code null} if not available.
      */
     public byte[] readBootCode() throws IOException {
         return null;

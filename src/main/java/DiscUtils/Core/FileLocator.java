@@ -22,7 +22,6 @@
 
 package DiscUtils.Core;
 
-import java.io.IOException;
 import java.util.function.BiConsumer;
 
 import DiscUtils.Core.Internal.Utilities;
@@ -34,39 +33,35 @@ import dotnet4j.io.Stream;
 
 
 public abstract class FileLocator {
-    public abstract boolean exists(String fileName) throws IOException;
+    public abstract boolean exists(String fileName);
 
     /**
      * Allows intercepting any file open operation
      *
-     * Can be used to wrap the opened file for special use cases,
-     * modify the parameters for opening files, validate file names 
-     * and many more.
+     * Can be used to wrap the opened file for special use cases, modify the
+     * parameters for opening files, validate file names and many more.
      */
     public static BiConsumer<Object, FileOpenEventArgs> openingFile;
 
     public Stream open(String fileName, FileMode mode, FileAccess access, FileShare share) {
-        FileOpenEventArgs args = new FileOpenEventArgs(fileName, mode, access, share, (fileName1, mode1, access1, share1) -> {
-            try {
-                return openFile(fileName1, mode1, access1, share1);
-            } catch (IOException e) {
-                throw new dotnet4j.io.IOException(e);
-            }
-        });
+        FileOpenEventArgs args = new FileOpenEventArgs(fileName,
+                                                       mode,
+                                                       access,
+                                                       share,
+                                                       (fileName1, mode1, access1, share1) -> openFile(fileName1,
+                                                                                                       mode1,
+                                                                                                       access1,
+                                                                                                       share1));
         if (openingFile != null) {
             openingFile.accept(this, args);
         }
         if (args.getResult() != null)
             return args.getResult();
 
-        try {
-            return openFile(args.getFileName(), args.getFileMode(), args.getFileAccess(), args.getFileShare());
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
-        }
+        return openFile(args.getFileName(), args.getFileMode(), args.getFileAccess(), args.getFileShare());
     }
 
-    protected abstract Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) throws IOException;
+    protected abstract Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share);
 
     public abstract FileLocator getRelativeLocator(String path);
 
@@ -76,7 +71,7 @@ public abstract class FileLocator {
 
     public abstract String getFileFromPath(String path);
 
-    public abstract long getLastWriteTimeUtc(String path) throws IOException;
+    public abstract long getLastWriteTimeUtc(String path);
 
     public abstract boolean hasCommonRoot(FileLocator other);
 

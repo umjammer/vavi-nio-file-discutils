@@ -43,6 +43,7 @@ public class LogicalVolumeManagerFactory extends LogicalVolumeFactory {
         LogicalVolumeManager mgr = new LogicalVolumeManager(disks);
         for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {
             result.put(vol.getIdentity(), vol);
+//Debug.println("Ll: " + vol.getIdentity());
         }
     }
 }

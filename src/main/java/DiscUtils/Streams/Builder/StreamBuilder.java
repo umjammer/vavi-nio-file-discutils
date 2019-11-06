@@ -54,7 +54,6 @@ public abstract class StreamBuilder {
      * @param output The stream to write to.
      */
     public void build(Stream output) {
-
         try (Stream src = build()) {
             byte[] buffer = new byte[64 * 1024];
             int numRead = src.read(buffer, 0, buffer.length);

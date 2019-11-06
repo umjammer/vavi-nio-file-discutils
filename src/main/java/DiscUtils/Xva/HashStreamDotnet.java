@@ -79,8 +79,10 @@ public class HashStreamDotnet extends Stream {
         }
 
         int numRead = _wrapped.read(buffer, offset, count);
+
         _hashAlg.update(buffer, offset, numRead);
         _hashPos += numRead;
+
         return numRead;
     }
 

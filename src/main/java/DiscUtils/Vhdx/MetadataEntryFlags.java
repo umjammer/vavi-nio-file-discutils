@@ -24,23 +24,34 @@ package DiscUtils.Vhdx;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
 public enum MetadataEntryFlags {
-    None,
+//    None,
     IsUser,
     IsVirtualDisk,
-    __dummyEnum__0,
     IsRequired;
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
 
     public static EnumSet<MetadataEntryFlags> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.ordinal()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(MetadataEntryFlags.class)));
     }
 
     public static long valueOf(EnumSet<MetadataEntryFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

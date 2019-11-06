@@ -22,80 +22,42 @@
 
 package DiscUtils.Iso9660.RockRidge;
 
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import DiscUtils.Iso9660.IsoUtilities;
 import DiscUtils.Iso9660.Susp.SystemUseEntry;
 
 
 public final class FileTimeSystemUseEntry extends SystemUseEntry {
     public enum Timestamps {
-        None,
+//        None,
         Creation,
         Modify,
-        __dummyEnum__0,
         Access,
-        __dummyEnum__1,
-        __dummyEnum__2,
-        __dummyEnum__3,
         Attributes,
-        __dummyEnum__4,
-        __dummyEnum__5,
-        __dummyEnum__6,
-        __dummyEnum__7,
-        __dummyEnum__8,
-        __dummyEnum__9,
-        __dummyEnum__10,
         Backup,
-        __dummyEnum__11,
-        __dummyEnum__12,
-        __dummyEnum__13,
-        __dummyEnum__14,
-        __dummyEnum__15,
-        __dummyEnum__16,
-        __dummyEnum__17,
-        __dummyEnum__18,
-        __dummyEnum__19,
-        __dummyEnum__20,
-        __dummyEnum__21,
-        __dummyEnum__22,
-        __dummyEnum__23,
-        __dummyEnum__24,
-        __dummyEnum__25,
         Expiration,
-        __dummyEnum__26,
-        __dummyEnum__27,
-        __dummyEnum__28,
-        __dummyEnum__29,
-        __dummyEnum__30,
-        __dummyEnum__31,
-        __dummyEnum__32,
-        __dummyEnum__33,
-        __dummyEnum__34,
-        __dummyEnum__35,
-        __dummyEnum__36,
-        __dummyEnum__37,
-        __dummyEnum__38,
-        __dummyEnum__39,
-        __dummyEnum__40,
-        __dummyEnum__41,
-        __dummyEnum__42,
-        __dummyEnum__43,
-        __dummyEnum__44,
-        __dummyEnum__45,
-        __dummyEnum__46,
-        __dummyEnum__47,
-        __dummyEnum__48,
-        __dummyEnum__49,
-        __dummyEnum__50,
-        __dummyEnum__51,
-        __dummyEnum__52,
-        __dummyEnum__53,
-        __dummyEnum__54,
-        __dummyEnum__55,
-        __dummyEnum__56,
         Effective;
 
-        public static Timestamps valueOf(int value) {
-            return values()[value];
+        // TODO
+        public Supplier<Integer> supplier() {
+            return () -> 1 << ordinal();
+        }
+
+        // TODO
+        public Function<Integer, Boolean> function() {
+            return v -> (v & supplier().get()) != 0;
+        };
+
+
+        public static EnumSet<Timestamps> valueOf(int value) {
+            return Arrays.stream(values())
+                    .filter(v -> v.function().apply(value))
+                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(Timestamps.class)));
         }
     }
 
@@ -113,7 +75,7 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
 
     public long ModifyTime;
 
-    public Timestamps TimestampsPresent = Timestamps.None;
+    public EnumSet<Timestamps> TimestampsPresent = EnumSet.noneOf(Timestamps.class);
 
     public FileTimeSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);
@@ -134,9 +96,12 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         EffectiveTime = readTimestamp(Timestamps.Effective, data, longForm, pos);
     }
 
+    /**
+     * @param pos {@cs out}
+     */
     private long readTimestamp(Timestamps timestamp, byte[] data, boolean longForm, int[] pos) {
         long result = Long.MIN_VALUE;
-        if ((TimestampsPresent.ordinal() & timestamp.ordinal()) != 0) {
+        if (TimestampsPresent.contains(timestamp)) {
             if (longForm) {
                 result = IsoUtilities.toDateTimeFromVolumeDescriptorTime(data, pos[0]);
                 pos[0] = pos[0] + 17;

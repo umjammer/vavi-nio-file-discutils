@@ -36,8 +36,8 @@ public final class Nfs3FileSystemStat {
         setAvailableFreeFileSlotCount(reader.readUInt64());
         int invarsec = reader.readUInt32();
         if (invarsec == 0xffffffff) {
-            setInvariant(0xffffffffffffffffl);
-            setInvariantUntil(0xffffffffffffffffl);
+            setInvariant(0xffff_ffff_ffff_ffffl);
+            setInvariantUntil(0xffff_ffff_ffff_ffffl);
         } else {
             setInvariant(invarsec);
             setInvariantUntil(System.currentTimeMillis() + getInvariant());
@@ -167,8 +167,8 @@ public final class Nfs3FileSystemStat {
         writer.write(getFileSlotCount());
         writer.write(getFreeFileSlotCount());
         writer.write(getAvailableFreeFileSlotCount());
-        if (getInvariant() == 0xffffffffffffffffl) {
-            writer.write(0xffffffff);
+        if (getInvariant() == 0xffff_ffff_ffff_ffffl) {
+            writer.write(0xffff_ffff);
         } else {
             writer.write((int) getInvariant());
         }

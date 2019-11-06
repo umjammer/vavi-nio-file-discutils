@@ -22,6 +22,7 @@
 
 package DiscUtils.SquashFs;
 
+// use ordinal
 public enum InodeType {
     __dummyEnum__0,
     Directory,

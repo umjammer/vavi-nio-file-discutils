@@ -56,14 +56,14 @@ public final class FileNameAttribute extends GenericAttribute {
      * Gets the amount of disk space allocated for the file.
      */
     public long getAllocatedSize() {
-        return _fnr.AllocatedSize;
+        return _fnr._allocatedSize;
     }
 
     /**
      * Gets the creation time of the file.
      */
     public long getCreationTime() {
-        return _fnr.CreationTime;
+        return _fnr._creationTime;
     }
 
     /**
@@ -71,49 +71,49 @@ public final class FileNameAttribute extends GenericAttribute {
      * nature of the file.
      */
     public long getExtendedAttributesSizeOrReparsePointTag() {
-        return _fnr.EASizeOrReparsePointTag;
+        return _fnr._eaSizeOrReparsePointTag;
     }
 
     /**
      * Gets the attributes of the file, as stored by NTFS.
      */
     public EnumSet<NtfsFileAttributes> getFileAttributes() {
-        return FileAttributeFlags.cast(NtfsFileAttributes.class, _fnr.Flags);
+        return FileAttributeFlags.cast(NtfsFileAttributes.class, _fnr._flags);
     }
 
     /**
      * Gets the name of the file within the parent directory.
      */
     public String getFileName() {
-        return _fnr.FileName;
+        return _fnr._fileName;
     }
 
     /**
      * Gets the namespace of the FileName property.
      */
     public NtfsNamespace getFileNameNamespace() {
-        return FileNameNamespace.cast(NtfsNamespace.class, _fnr._FileNameNamespace);
+        return FileNameNamespace.cast(NtfsNamespace.class, _fnr._fileNameNamespace);
     }
 
     /**
      * Gets the last access time of the file.
      */
     public long getLastAccessTime() {
-        return _fnr.LastAccessTime;
+        return _fnr._lastAccessTime;
     }
 
     /**
      * Gets the last time the Master File Table entry for the file was changed.
      */
     public long getMasterFileTableChangedTime() {
-        return _fnr.MftChangedTime;
+        return _fnr._mftChangedTime;
     }
 
     /**
      * Gets the modification time of the file.
      */
     public long getModificationTime() {
-        return _fnr.ModificationTime;
+        return _fnr._modificationTime;
     }
 
     /**
@@ -123,14 +123,14 @@ public final class FileNameAttribute extends GenericAttribute {
      * provides the link back to the directory.
      */
     public MasterFileTableReference getParentDirectory() {
-        return new MasterFileTableReference(_fnr.ParentDirectory);
+        return new MasterFileTableReference(_fnr._parentDirectory);
     }
 
     /**
      * Gets the amount of data stored in the file.
      */
     public long getRealSize() {
-        return _fnr.RealSize;
+        return _fnr._realSize;
     }
 
 }

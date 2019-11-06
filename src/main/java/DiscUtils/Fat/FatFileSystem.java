@@ -916,7 +916,7 @@ public final class FatFileSystem extends DiscFileSystem {
             throw new dotnet4j.io.IOException("Unable to delete root directory");
         }
 
-        if (parent != null && id >= 0) {
+        if (parent[0] != null && id >= 0) {
             DirectoryEntry deadEntry = parent[0].getEntry(id);
             parent[0].deleteEntry(id, true);
             forgetDirectory(deadEntry);
@@ -1342,7 +1342,7 @@ public final class FatFileSystem extends DiscFileSystem {
         bootSector[21] = (byte) (isFloppy ? 0xF0 : 0xF8);
         // FAT size (FAT12/FAT16)
         EndianUtilities
-                .writeBytesLittleEndian((short) (fatType.ordinal() < FatType.Fat32.ordinal() ? fatSectors : 0), bootSector, 22);
+                .writeBytesLittleEndian((short) (fatType.getValue() < FatType.Fat32.getValue() ? fatSectors : 0), bootSector, 22);
         // Sectors Per Track
         EndianUtilities.writeBytesLittleEndian((short) diskGeometry.getSectorsPerTrack(), bootSector, 24);
         // Heads Per Cylinder
@@ -1351,7 +1351,7 @@ public final class FatFileSystem extends DiscFileSystem {
         EndianUtilities.writeBytesLittleEndian(hiddenSectors, bootSector, 28);
         // Total number of sectors (large)
         EndianUtilities.writeBytesLittleEndian(sectors >= 0x10000 ? sectors : 0, bootSector, 32);
-        if (fatType.ordinal() < FatType.Fat32.ordinal()) {
+        if (fatType.getValue() < FatType.Fat32.getValue()) {
             writeBS(bootSector, 36, isFloppy, volId, label, fatType);
         } else {
             // FAT size (FAT32)
@@ -1838,7 +1838,7 @@ public final class FatFileSystem extends DiscFileSystem {
         FatBuffer fatBuffer = new FatBuffer(fatType, fat);
         fatBuffer.setNext(0, 0xFFFFFFF8);
         fatBuffer.setEndOfChain(1);
-        if (fatType.ordinal() >= FatType.Fat32.ordinal()) {
+        if (fatType.getValue() >= FatType.Fat32.getValue()) {
             // Mark cluster 2 as End-of-chain (i.e. root directory
             // is a single cluster in length)
             fatBuffer.setEndOfChain(2);
@@ -1848,7 +1848,7 @@ public final class FatFileSystem extends DiscFileSystem {
         stream.write(fat, 0, fat.length);
         /* Write the (empty) root directory */
         int rootDirSectors;
-        if (fatType.ordinal() < FatType.Fat32.ordinal()) {
+        if (fatType.getValue() < FatType.Fat32.getValue()) {
             rootDirSectors = (maxRootEntries * 32 + Sizes.Sector - 1) / Sizes.Sector;
         } else {
             rootDirSectors = sectorsPerCluster;

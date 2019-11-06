@@ -64,7 +64,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     private List<RawSecurityDescriptor> _securityDescriptors;
 
-    public WimFileSystem(WimFile file, int index) {
+    WimFileSystem(WimFile file, int index) {
         _file = file;
         ShortResourceHeader metaDataFileInfo = _file.locateImage(index);
         if (metaDataFileInfo == null) {
@@ -467,11 +467,13 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     /**
      * Gets the SHA-1 hash of a file's contents.
      *
+     * The WIM file format internally stores the SHA-1 hash of files. This
+     * method provides access to the stored hash. Callers can use this value to
+     * compare against the actual hash of the byte stream to validate the
+     * integrity of the file contents.
+     *
      * @param path The path to the file.
-     * @return The 160-bit hash.The WIM file format internally stores the SHA-1
-     *         hash of files. This method provides access to the stored hash.
-     *         Callers can use this value to compare against the actual hash of
-     *         the byte stream to validate the integrity of the file contents.
+     * @return The 160-bit hash.
      */
     public byte[] getFileHash(String path) {
         String[] filePart = new String[1];
@@ -519,6 +521,10 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         }
     }
 
+    /**
+     * @param filePart {@cs out}
+     * @param altStreamPart {@cs out}
+     */
     private static void splitFileName(String path, String[] filePart, String[] altStreamPart) {
         int streamSepPos = path.indexOf(":");
         if (streamSepPos >= 0) {

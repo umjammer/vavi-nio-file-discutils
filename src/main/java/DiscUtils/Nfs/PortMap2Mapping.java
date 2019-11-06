@@ -25,10 +25,9 @@ package DiscUtils.Nfs;
 /**
  * A mapping of(program, version, network ID) to address
  *
- * The network identifier(r_netid):
- * This is a string that represents a local identification for a
- * network.This is defined by a system administrator based on local
- * conventions, and cannot be depended on to have the same value on
+ * The network identifier(r_netid): This is a string that represents a local
+ * identification for a network. This is defined by a system administrator based
+ * on local conventions, and cannot be depended on to have the same value on
  * every system.
  */
 public class PortMap2Mapping {
@@ -42,44 +41,44 @@ public class PortMap2Mapping {
         setPort(reader.readUInt32());
     }
 
-    private int __Program;
+    private int _program;
 
     public int getProgram() {
-        return __Program;
+        return _program;
     }
 
     public void setProgram(int value) {
-        __Program = value;
+        _program = value;
     }
 
-    private int __Version;
+    private int _version;
 
     public int getVersion() {
-        return __Version;
+        return _version;
     }
 
     public void setVersion(int value) {
-        __Version = value;
+        _version = value;
     }
 
-    private PortMap2Protocol __Protocol = PortMap2Protocol.Tcp;
+    private PortMap2Protocol _protocol = PortMap2Protocol.Tcp;
 
     public PortMap2Protocol getProtocol() {
-        return __Protocol;
+        return _protocol;
     }
 
     public void setProtocol(PortMap2Protocol value) {
-        __Protocol = value;
+        _protocol = value;
     }
 
-    private int __Port;
+    private int _port;
 
     public int getPort() {
-        return __Port;
+        return _port;
     }
 
     public void setPort(int value) {
-        __Port = value;
+        _port = value;
     }
 
     public void write(XdrDataWriter writer) {

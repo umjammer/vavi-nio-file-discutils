@@ -122,6 +122,9 @@ public final class DiskBuilder extends DiskImageBuilder {
             _blockSize = blockSize;
         }
 
+        /**
+         * @param totalLength {@cs out}
+         */
         protected List<BuilderExtent> fixExtents(long[] totalLength) {
             if (_diskType != DiskType.Dynamic) {
                 throw new UnsupportedOperationException("Creation of only dynamic disks currently implemented");

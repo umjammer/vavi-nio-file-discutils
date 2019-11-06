@@ -53,64 +53,64 @@ public class NtfsFormatter {
 
     private int _mftRecordSize;
 
-    private byte[] __BootCode;
+    private byte[] _bootCode;
 
     public byte[] getBootCode() {
-        return __BootCode;
+        return _bootCode;
     }
 
     public void setBootCode(byte[] value) {
-        __BootCode = value;
+        _bootCode = value;
     }
 
-    private SecurityIdentifier __ComputerAccount;
+    private SecurityIdentifier _computerAccount;
 
     public SecurityIdentifier getComputerAccount() {
-        return __ComputerAccount;
+        return _computerAccount;
     }
 
     public void setComputerAccount(SecurityIdentifier value) {
-        __ComputerAccount = value;
+        _computerAccount = value;
     }
 
-    private Geometry __DiskGeometry;
+    private Geometry _diskGeometry;
 
     public Geometry getDiskGeometry() {
-        return __DiskGeometry;
+        return _diskGeometry;
     }
 
     public void setDiskGeometry(Geometry value) {
-        __DiskGeometry = value;
+        _diskGeometry = value;
     }
 
-    private long __FirstSector;
+    private long _firstSector;
 
     public long getFirstSector() {
-        return __FirstSector;
+        return _firstSector;
     }
 
     public void setFirstSector(long value) {
-        __FirstSector = value;
+        _firstSector = value;
     }
 
-    private String __Label;
+    private String _label;
 
     public String getLabel() {
-        return __Label;
+        return _label;
     }
 
     public void setLabel(String value) {
-        __Label = value;
+        _label = value;
     }
 
-    private long __SectorCount;
+    private long _sectorCount;
 
     public long getSectorCount() {
-        return __SectorCount;
+        return _sectorCount;
     }
 
     public void setSectorCount(long value) {
-        __SectorCount = value;
+        _sectorCount = value;
     }
 
     public NtfsFileSystem format(Stream stream) {
@@ -122,7 +122,7 @@ public class NtfsFormatter {
                                                                : (new SecurityIdentifier(WellKnownSidType.AccountAdministratorSid,
                                                                                          getComputerAccount())).toString();
 
-        try (Closeable __newVar0 = new NtfsTransaction()) {
+        try (Closeable c = new NtfsTransaction()) {
             _clusterSize = 4096;
             _mftRecordSize = 1024;
             _indexBufferSize = 4096;
@@ -183,7 +183,7 @@ public class NtfsFormatter {
             NtfsStream volNameStream = volumeFile.createStream(AttributeType.VolumeName, null);
             volNameStream.setContent(new VolumeName(getLabel() != null ? getLabel() : "New Volume"));
             NtfsStream volInfoStream = volumeFile.createStream(AttributeType.VolumeInformation, null);
-            volInfoStream.setContent(new VolumeInformation((byte) 3, (byte) 1, EnumSet.of(VolumeInformationFlags.None)));
+            volInfoStream.setContent(new VolumeInformation((byte) 3, (byte) 1, EnumSet.noneOf(VolumeInformationFlags.class)));
             setSecurityAttribute(volumeFile, "O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)");
             volumeFile.updateRecordInMft();
             _context.setGetFileByIndex(index-> {
@@ -316,7 +316,7 @@ public class NtfsFormatter {
             }
         }
 
-        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, EnumSet.of(FileRecordFlags.None));
+        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse));
         fileRec.setSequenceNumber((short) mftIndex);
         File file = new File(_context, fileRec);
@@ -331,7 +331,7 @@ public class NtfsFormatter {
     }
 
     private File createSystemFile(long mftIndex) {
-        return createSystemFile(mftIndex, EnumSet.of(FileRecordFlags.None));
+        return createSystemFile(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
     }
 
     private File createSystemFile(long mftIndex, EnumSet<FileRecordFlags> flags) {
@@ -348,7 +348,7 @@ public class NtfsFormatter {
     }
 
     private Directory createSystemDirectory(long mftIndex) {
-        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, EnumSet.of(FileRecordFlags.None));
+        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse, FileRecordFlags.IsDirectory));
         fileRec.setSequenceNumber((short) mftIndex);
         Directory dir = new Directory(_context, fileRec);
@@ -370,8 +370,8 @@ public class NtfsFormatter {
                                                                 getSectorCount(),
                                                                 _mftRecordSize,
                                                                 _indexBufferSize);
-        bpb.MftCluster = _mftCluster;
-        bpb.MftMirrorCluster = _mftMirrorCluster;
+        bpb._mftCluster = _mftCluster;
+        bpb._mftMirrorCluster = _mftMirrorCluster;
         bpb.toBytes(bootSectors, 0);
         // Primary goes at the start of the partition
         stream.setPosition(0);

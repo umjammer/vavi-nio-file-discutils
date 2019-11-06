@@ -266,6 +266,9 @@ public class Program extends ProgramBase {
         return (val & mask) != 0;
     }
 
+    /**
+     * @param diskNumber {@cs out}
+     */
     private List<CloneVolume> gatherVolumes(String[] sourceVolume, int[] diskNumber) throws IOException {
         diskNumber[0] = 0xffffffff;
         List<CloneVolume> cloneVolumes = new ArrayList<>(sourceVolume.length);

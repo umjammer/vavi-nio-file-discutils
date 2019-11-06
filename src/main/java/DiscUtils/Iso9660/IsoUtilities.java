@@ -45,29 +45,29 @@ public class IsoUtilities {
         return EndianUtilities.toUInt32LittleEndian(data, offset);
     }
 
-    public static short toUInt16FromBoth(byte[] data, int offset) {
+    static short toUInt16FromBoth(byte[] data, int offset) {
         return EndianUtilities.toUInt16LittleEndian(data, offset);
     }
 
-    public static void toBothFromUInt32(byte[] buffer, int offset, int value) {
+    static void toBothFromUInt32(byte[] buffer, int offset, int value) {
         EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
         EndianUtilities.writeBytesBigEndian(value, buffer, offset + 4);
     }
 
-    public static void toBothFromUInt16(byte[] buffer, int offset, short value) {
+    static void toBothFromUInt16(byte[] buffer, int offset, short value) {
         EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
         EndianUtilities.writeBytesBigEndian(value, buffer, offset + 2);
     }
 
-    public static void toBytesFromUInt32(byte[] buffer, int offset, int value) {
+    static void toBytesFromUInt32(byte[] buffer, int offset, int value) {
         EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
     }
 
-    public static void toBytesFromUInt16(byte[] buffer, int offset, short value) {
+    static void toBytesFromUInt16(byte[] buffer, int offset, short value) {
         EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
     }
 
-    public static void writeAChars(byte[] buffer, int offset, int numBytes, String str) {
+    static void writeAChars(byte[] buffer, int offset, int numBytes, String str) {
         // Validate string
         if (!isValidAString(str)) {
             throw new IOException("Attempt to write string with invalid a-characters");
@@ -77,7 +77,7 @@ public class IsoUtilities {
         writeString(buffer, offset, numBytes, true, str, Charset.forName("ASCII"));
     }
 
-    public static void writeDChars(byte[] buffer, int offset, int numBytes, String str) {
+    static void writeDChars(byte[] buffer, int offset, int numBytes, String str) {
         // Validate string
         if (!isValidDString(str)) {
             throw new IOException("Attempt to write string with invalid d-characters");
@@ -87,7 +87,7 @@ public class IsoUtilities {
         writeString(buffer, offset, numBytes, true, str, Charset.forName("ASCII"));
     }
 
-    public static void writeA1Chars(byte[] buffer, int offset, int numBytes, String str, Charset enc) {
+    static void writeA1Chars(byte[] buffer, int offset, int numBytes, String str, Charset enc) {
         // Validate string
         if (!isValidAString(str)) {
             throw new IOException("Attempt to write string with invalid a-characters");
@@ -96,7 +96,7 @@ public class IsoUtilities {
         writeString(buffer, offset, numBytes, true, str, enc);
     }
 
-    public static void writeD1Chars(byte[] buffer, int offset, int numBytes, String str, Charset enc) {
+    static void writeD1Chars(byte[] buffer, int offset, int numBytes, String str, Charset enc) {
         // Validate string
         if (!isValidDString(str)) {
             throw new IOException("Attempt to write string with invalid d-characters");
@@ -107,23 +107,23 @@ public class IsoUtilities {
 
     public static String readChars(byte[] buffer, int offset, int numBytes, Charset enc) {
         char[] chars;
-        // Special handling for 'magic' names '\x00' and '\x01', which indicate
-        // root and
-        // parent, respectively
+
+        // Special handling for 'magic' names '\00' and '\01', which indicate
+        // root and parent, respectively
         if (numBytes == 1) {
             chars = new char[1];
-            chars[0] = (char) buffer[offset];
+            chars[0] = (char) (buffer[offset] & 0xff);
         } else {
             chars = new String(buffer, offset, numBytes, enc).toCharArray();
         }
         return new String(chars).replaceFirst(" *$", "");
     }
 
-    public static int writeString(byte[] buffer, int offset, int numBytes, boolean pad, String str, Charset enc) {
+    static int writeString(byte[] buffer, int offset, int numBytes, boolean pad, String str, Charset enc) {
         return writeString(buffer, offset, numBytes, pad, str, enc, false);
     }
 
-    public static int writeString(byte[] buffer,
+    static int writeString(byte[] buffer,
                                   int offset,
                                   int numBytes,
                                   boolean pad,
@@ -131,7 +131,9 @@ public class IsoUtilities {
                                   Charset enc,
                                   boolean canTruncate) {
         String paddedString = pad ? str + new String(new char[numBytes]).replace('\0', ' ') : str;
+
         // Assumption: never less than one byte per character
+
         byte[] bytes = paddedString.substring(0, str.length()).getBytes(enc);
         if (!canTruncate && numBytes < bytes.length) {
             throw new IOException("Failed to write entire string");
@@ -141,7 +143,7 @@ public class IsoUtilities {
         return bytes.length;
     }
 
-    public static boolean isValidAString(String str) {
+    static boolean isValidAString(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!((str.charAt(i) >= ' ' && str.charAt(i) <= '\"') || (str.charAt(i) >= '%' && str.charAt(i) <= '/') ||
                   (str.charAt(i) >= ':' && str.charAt(i) <= '?') || (str.charAt(i) >= '0' && str.charAt(i) <= '9') ||
@@ -149,49 +151,53 @@ public class IsoUtilities {
                 return false;
             }
         }
+
         return true;
     }
 
-    public static boolean isValidDString(String str) {
+    static boolean isValidDString(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!isValidDChar(str.charAt(i))) {
                 return false;
             }
         }
+
         return true;
     }
 
-    public static boolean isValidDChar(char ch) {
+    static boolean isValidDChar(char ch) {
         return (ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z') || (ch == '_');
     }
 
-    public static boolean isValidFileName(String str) {
+    static boolean isValidFileName(String str) {
         for (int i = 0; i < str.length(); ++i) {
             if (!((str.charAt(i) >= '0' && str.charAt(i) <= '9') || (str.charAt(i) >= 'A' && str.charAt(i) <= 'Z') ||
                   (str.charAt(i) == '_') || (str.charAt(i) == '.') || (str.charAt(i) == ';'))) {
                 return false;
             }
         }
+
         return true;
     }
 
-    public static boolean isValidDirectoryName(String str) {
+    static boolean isValidDirectoryName(String str) {
         if (str.length() == 1 && (str.charAt(0) == 0 || str.charAt(0) == 1)) {
             return true;
         }
-
         return isValidDString(str);
     }
 
-    public static String normalizeFileName(String name) {
+    static String normalizeFileName(String name) {
         String[] parts = splitFileName(name);
+//Debug.println("@: " + parts[0] + '.' + parts[1] + ';' + parts[2]);
         return parts[0] + '.' + parts[1] + ';' + parts[2];
     }
 
-    public static String[] splitFileName(String name) {
+    static String[] splitFileName(String name) {
         String[] parts = new String[] {
             name, "", "1"
         };
+
         if (name.contains(".")) {
             int endOfFilePart = name.indexOf('.');
             parts[0] = name.substring(0, endOfFilePart);
@@ -208,8 +214,8 @@ public class IsoUtilities {
                 parts[0] = name.substring(0, verSep);
                 parts[2] = name.substring(verSep + 1);
             }
-
         }
+
         short ver;
         try {
             ver = Short.parseShort(parts[2]);
@@ -217,10 +223,12 @@ public class IsoUtilities {
                 ver = 1;
             }
         } catch (NumberFormatException e) {
+e.printStackTrace();
             ver = 1;
         }
 
         parts[2] = String.format("%d", ver);
+
         return parts;
     }
 
@@ -232,21 +240,24 @@ public class IsoUtilities {
      * @return The time in UTC.
      */
     public static long toUTCDateTimeFromDirectoryTime(byte[] data, int offset) {
-        ZonedDateTime relTime = ZonedDateTime.of(1900 + data[offset],
-                                                 data[offset + 1],
-                                                 data[offset + 2],
-                                                 data[offset + 3],
-                                                 data[offset + 4],
-                                                 data[offset + 5],
-                                                 0,
-                                                 ZoneId.of("UTC"));
-        return relTime.minus(Duration.ofMinutes(15 * data[offset + 6])).toInstant().toEpochMilli();
+        try {
+            ZonedDateTime relTime = ZonedDateTime.of(1900 + (data[offset] & 0xff),
+                                                     (data[offset + 1] & 0xff),
+                                                     (data[offset + 2] & 0xff),
+                                                     (data[offset + 3] & 0xff),
+                                                     (data[offset + 4] & 0xff),
+                                                     (data[offset + 5] & 0xff),
+                                                     0,
+                                                     ZoneId.of("UTC"));
+            return relTime.minus(Duration.ofMinutes(15 * (data[offset + 6] & 0xff))).toInstant().toEpochMilli();
+        } catch (DateTimeException e) {
+            // In case the ISO has a bad date encoded, we'll just fall back to using a
+            // fixed date
+            return Long.MIN_VALUE;
+        }
     }
 
-    // In case the ISO has a bad date encoded, we'll just fall back to using a
-    // fixed
-    // date
-    public static void toDirectoryTimeFromUTC(byte[] data, int offset, long dateTime_) {
+    static void toDirectoryTimeFromUTC(byte[] data, int offset, long dateTime_) {
         if (dateTime_ == Long.MIN_VALUE) {
             Arrays.fill(data, offset, offset + 7, (byte) 0);
         } else {
@@ -272,17 +283,18 @@ public class IsoUtilities {
                 allNull = false;
                 break;
             }
-
         }
+
         if (allNull) {
             return Long.MIN_VALUE;
         }
 
         String strForm = new String(data, offset, 16, Charset.forName("ASCII"));
+
         // Work around bugs in burning software that may use zero bytes (rather
-        // than '0'
-        // characters)
+        // than '0' characters)
         strForm = strForm.replace('\0', '0');
+
         int year = safeParseInt(1, 9999, strForm.substring(0, 4));
         int month = safeParseInt(1, 12, strForm.substring(4, 4 + 2));
         int day = safeParseInt(1, 31, strForm.substring(6, 6 + 2));
@@ -290,20 +302,22 @@ public class IsoUtilities {
         int min = safeParseInt(0, 59, strForm.substring(10, 10 + 2));
         int sec = safeParseInt(0, 59, strForm.substring(12, 12 + 2));
         int hundredths = safeParseInt(0, 99, strForm.substring(14, 14 + 2));
+
         try {
             ZonedDateTime time = ZonedDateTime.of(year, month, day, hour, min, sec, hundredths * 10, ZoneId.of("UTC"));
-            return time.minus(Duration.ofMinutes(15 * data[offset + 16])).toInstant().toEpochMilli();
+            return time.minus(Duration.ofMinutes(15 * (data[offset + 16] & 0xff))).toInstant().toEpochMilli();
         } catch (DateTimeException e) {
             logger.warning(e.getMessage());
             return Long.MIN_VALUE;
         }
     }
 
-    public static void toVolumeDescriptorTimeFromUTC(byte[] buffer, int offset, long dateTime) {
+    static void toVolumeDescriptorTimeFromUTC(byte[] buffer, int offset, long dateTime) {
         if (dateTime == Long.MIN_VALUE) {
             for (int i = offset; i < offset + 16; ++i) {
                 buffer[i] = (byte) '0';
             }
+
             buffer[offset + 16] = 0;
             return;
         }
@@ -313,7 +327,7 @@ public class IsoUtilities {
         buffer[offset + 16] = 0;
     }
 
-    public static void encodingToBytes(Charset enc, byte[] data, int offset) {
+    static void encodingToBytes(Charset enc, byte[] data, int offset) {
         Arrays.fill(data, offset, offset + 32, (byte) 0);
         if (enc.equals(Charset.forName("ASCII"))) {
             // Nothing to do
@@ -326,7 +340,7 @@ public class IsoUtilities {
         }
     }
 
-    public static Charset encodingFromBytes(byte[] data, int offset) {
+    static Charset encodingFromBytes(byte[] data, int offset) {
         Charset enc = Charset.forName("ASCII");
         if (data[offset + 0] == 0x25 && data[offset + 1] == 0x2F &&
             (data[offset + 2] == 0x40 || data[offset + 2] == 0x43 || data[offset + 2] == 0x45)) {
@@ -337,8 +351,8 @@ public class IsoUtilities {
         return enc;
     }
 
-    public static boolean isSpecialDirectory(DirectoryRecord r) {
-        return r.FileIdentifier.equals("\0") || r.FileIdentifier.equals("\u0001");
+    static boolean isSpecialDirectory(DirectoryRecord r) {
+        return r.FileIdentifier.equals("\0") || r.FileIdentifier.equals("\01");
     }
 
     private static int safeParseInt(int minVal, int maxVal, String str) {
@@ -352,11 +366,9 @@ public class IsoUtilities {
         if (val < minVal) {
             return minVal;
         }
-
         if (val > maxVal) {
             return maxVal;
         }
-
         return val;
     }
 }

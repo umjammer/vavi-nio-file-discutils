@@ -24,6 +24,8 @@ package LibraryTests.Vdi;
 
 import org.junit.jupiter.api.Test;
 
+import vavi.util.StringUtil;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,14 +101,12 @@ public class StreamTest {
             for (int i = 0; i < content.length; ++i) {
                 content[i] = (byte) i;
             }
-//System.err.println(StringUtil.getDump(content, 128));
             Stream s = disk.getContent();
             s.setPosition(10);
             s.write(content, 0, content.length);
             byte[] buffer = new byte[content.length];
             s.setPosition(10);
             s.read(buffer, 0, buffer.length);
-//System.err.println(StringUtil.getDump(buffer, 128));
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
                     fail(String.format("Corrupt stream contents: %d, %02x, %02x", i, buffer[i], content[i]));

@@ -50,18 +50,18 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
         setFlags(flags);
     }
 
-    private EnumSet<VolumeInformationFlags> __Flags;
+    private EnumSet<VolumeInformationFlags> _flags;
 
     public EnumSet<VolumeInformationFlags> getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(EnumSet<VolumeInformationFlags> value) {
-        __Flags = value;
+        _flags = value;
     }
 
     public int getVersion() {
-        return _majorVersion << 8 | (_minorVersion & 0xff);
+        return (_majorVersion & 0xff) << 8 | (_minorVersion & 0xff);
     }
 
     public int size() {
@@ -84,6 +84,6 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "  Version: " + _majorVersion + "." + _minorVersion);
-        writer.println(indent + "    Flags: " + getFlags());
+        writer.println(indent + "    Flags: " + _flags);
     }
 }

@@ -10,24 +10,14 @@ import java.util.stream.Collectors;
 import DiscUtils.Core.CoreCompat.EnumSettable;
 
 public enum FileRecordFlags implements EnumSettable {
-    None(0x0000),
-    InUse(0x0001),
-    IsDirectory(0x0002),
-    IsMetaFile(0x0004),
-    HasViewIndex(0x0008);
-
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private FileRecordFlags(int value) {
-        this.value = value;
-    }
+//    None,
+    InUse,
+    IsDirectory,
+    IsMetaFile,
+    HasViewIndex;
 
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     public Function<Integer, Boolean> function() {

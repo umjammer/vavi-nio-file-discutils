@@ -26,11 +26,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+
+import vavi.util.Debug;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,6 +58,7 @@ import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 public class NtfsFileSystemTest {
+
     @Test
     public void aclInheritance() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
@@ -413,7 +415,8 @@ public class NtfsFileSystemTest {
         }
         try (SparseStream s = ntfs.openFile("file.bin", FileMode.Open)) {
             assertEquals(fileSize + 64 * 1024, s.getLength());
-            List<StreamExtent> extents = new ArrayList<>(s.getExtents());
+            List<StreamExtent> extents = s.getExtents();
+Debug.println(extents);
             assertEquals(2, extents.size());
             assertEquals(0, extents.get(0).getStart());
             assertEquals(64 * 1024, extents.get(0).getLength());

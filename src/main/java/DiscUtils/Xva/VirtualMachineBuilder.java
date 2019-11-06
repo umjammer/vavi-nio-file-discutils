@@ -196,10 +196,13 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
     }
 
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
+        // Not required - deferred to TarFileBuilder
         throw new UnsupportedOperationException();
     }
 
-    // Not required - deferred to TarFileBuilder
+    /**
+     * @param diskIds {@cs out}
+     */
     private String generateOvaXml(int[][] diskIds) {
         int id = 0;
         UUID vmGuid = UUID.randomUUID();

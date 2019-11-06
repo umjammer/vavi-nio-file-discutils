@@ -32,9 +32,11 @@ import dotnet4j.io.FileMode;
 
 /**
  * Base class for read-only file system implementations.
- * The concrete type representing directory entries.The concrete type
- * representing files.The concrete type representing directories.The concrete
- * type holding global state.
+ *
+ * @param <TDirEntry> The concrete type representing directory entries.
+ * @param <TFile> The concrete type representing files.
+ * @param <TDirectory> The concrete type representing directories.
+ * @param <TContext> The concrete type holding global state.
  */
 public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> extends VfsFileSystem<TDirEntry, TFile, TDirectory, TContext> {
     /**

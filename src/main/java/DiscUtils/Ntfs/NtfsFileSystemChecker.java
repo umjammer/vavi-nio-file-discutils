@@ -264,9 +264,9 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
                         File referencedFile = new File(_context, refFile);
                         StandardInformation si = referencedFile.getStandardInformation();
-                        if (si.CreationTime != entry.getKey().CreationTime ||
-                            si.MftChangedTime != entry.getKey().MftChangedTime ||
-                            si.ModificationTime != entry.getKey().ModificationTime) {
+                        if (si.CreationTime != entry.getKey()._creationTime ||
+                            si.MftChangedTime != entry.getKey()._mftChangedTime ||
+                            si.ModificationTime != entry.getKey()._modificationTime) {
                             reportInfo("Directory entry %s in %s is out of date", entry.getKey(), f);
                         }
                     }
@@ -339,8 +339,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             if (entry.getFlags().contains(IndexEntryFlags.Node)) {
                 long bitmapIdx = entry.getChildrenVirtualCluster() / MathUtilities
                         .ceil(root.getIndexAllocationSize(),
-                              _context.getBiosParameterBlock().SectorsPerCluster *
-                                                             _context.getBiosParameterBlock().BytesPerSector);
+                              _context.getBiosParameterBlock()._sectorsPerCluster *
+                                                             _context.getBiosParameterBlock()._bytesPerSector);
                 if (!bitmap.isPresent(bitmapIdx)) {
                     reportError("Index entry %s is non-leaf, but child vcn %s is not in bitmap at index {2}",
                                 Index.entryAsString(entry, fileName, indexName),
@@ -372,7 +372,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
     private void preVerifyMft(File file) {
         int recordLength = _context.getBiosParameterBlock().getMftRecordSize();
-        int bytesPerSector = _context.getBiosParameterBlock().BytesPerSector;
+        int bytesPerSector = _context.getBiosParameterBlock()._bytesPerSector;
 
         // Check out the MFT's clusters
         for (Range range : file.getAttribute(AttributeType.Data, null).getClusters()) {

@@ -47,6 +47,9 @@ public class DirectoryRecord {
 
     public short VolumeSequenceNumber;
 
+    /**
+     * @param record {@cs out}
+     */
     public static int readFrom(byte[] src, int offset, Charset enc, DirectoryRecord[] record) {
         int length = src[offset + 0] & 0xff;
         record[0] = new DirectoryRecord();

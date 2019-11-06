@@ -96,6 +96,9 @@ public final class LogEntry {
         }
     }
 
+    /**
+     * @param entry {@cs out}
+     */
     public static boolean tryRead(Stream logStream, LogEntry[] entry) {
         long position = logStream.getPosition();
         byte[] sectorBuffer = new byte[LogSectorSize];

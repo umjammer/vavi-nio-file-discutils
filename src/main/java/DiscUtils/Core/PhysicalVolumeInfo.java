@@ -37,6 +37,8 @@ import DiscUtils.Streams.Util.Ownership;
  * entire disk.
  */
 public final class PhysicalVolumeInfo extends VolumeInfo {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private final VirtualDisk _disk;
 
     private final String _diskId;
@@ -51,14 +53,12 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * @param partitionInfo Information about the partition.Use this constructor
      *            to represent a (BIOS or GPT) partition.
      */
-    public PhysicalVolumeInfo(String diskId, VirtualDisk disk, PartitionInfo partitionInfo) {
+    PhysicalVolumeInfo(String diskId, VirtualDisk disk, PartitionInfo partitionInfo) {
         _diskId = diskId;
         _disk = disk;
-        _streamOpener = () -> {
-            return partitionInfo.open();
-        };
-        __VolumeType = partitionInfo.getVolumeType();
-        __Partition = partitionInfo;
+        _streamOpener = partitionInfo::open;
+        _volumeType = partitionInfo.getVolumeType();
+        _partition = partitionInfo;
     }
 
     /**
@@ -68,13 +68,11 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * @param disk The disk itself.Use this constructor to represent an entire
      *            disk as a single volume.
      */
-    public PhysicalVolumeInfo(String diskId, VirtualDisk disk) {
+    PhysicalVolumeInfo(String diskId, VirtualDisk disk) {
         _diskId = diskId;
         _disk = disk;
-        _streamOpener = () -> {
-            return new SubStream(disk.getContent(), Ownership.None, 0, disk.getCapacity());
-        };
-        __VolumeType = PhysicalVolumeType.EntireDisk;
+        _streamOpener = () -> new SubStream(disk.getContent(), Ownership.None, 0, disk.getCapacity());
+        _volumeType = PhysicalVolumeType.EntireDisk;
     }
 
     /**
@@ -89,14 +87,14 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * Gets the one-byte BIOS type for this volume, which indicates the content.
      */
     public byte getBiosType() {
-        return getPartition() == null ? (byte) 0 : getPartition().getBiosType();
+        return _partition == null ? (byte) 0 : _partition.getBiosType();
     }
 
     /**
      * Gets the unique identity of the disk containing the volume, if known.
      */
     public UUID getDiskIdentity() {
-        return getVolumeType() != PhysicalVolumeType.EntireDisk ? _disk.getPartitions().getDiskGuid() : new UUID(0L, 0L);
+        return _volumeType != PhysicalVolumeType.EntireDisk ? _disk.getPartitions().getDiskGuid() : EMPTY;
     }
 
     /**
@@ -104,37 +102,35 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * partition-type volumes).
      */
     public int getDiskSignature() {
-        return getVolumeType() != PhysicalVolumeType.EntireDisk ? _disk.getSignature() : 0;
+        return _volumeType != PhysicalVolumeType.EntireDisk ? _disk.getSignature() : 0;
     }
 
     /**
      * Gets the stable identity for this physical volume.
-     * The stability of the identity depends the disk structure.
-     * In some cases the identity may include a simple index, when no other
-     * information
-     * is available. Best practice is to add disks to the Volume Manager in a
-     * stable
-     * order, if the stability of this identity is paramount.
+     * <p>
+     * The stability of the identity depends the disk structure. In some cases
+     * the identity may include a simple index, when no other information is
+     * available. Best practice is to add disks to the Volume Manager in a
+     * stable order, if the stability of this identity is paramount.
      */
     public String getIdentity() {
-        if (getVolumeType() == PhysicalVolumeType.GptPartition) {
-            return "VPG" + getPartitionIdentity().toString(); // Path.Combine
+        if (_volumeType == PhysicalVolumeType.GptPartition) {
+            return "VPG" + String.format("{%s}", getPartitionIdentity());
         }
-
         String partId;
-        switch (getVolumeType()) {
+        switch (_volumeType) {
         case EntireDisk:
             partId = "PD";
             break;
         case BiosPartition:
         case ApplePartition:
-            partId = "PO" + Long.toHexString(getPartition().getFirstSector() * _disk.getSectorSize());
+            partId = "PO" + Long.toHexString(_partition.getFirstSector() * _disk.getSectorSize());
             break;
         default:
             partId = "P*";
             break;
-
         }
+
         return "VPD:" + _diskId + ":" + partId;
     }
 
@@ -142,29 +138,27 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * Gets the size of the volume, in bytes.
      */
     public long getLength() {
-        return getPartition() == null ? _disk.getCapacity() : getPartition().getSectorCount() * _disk.getSectorSize();
+        return _partition == null ? _disk.getCapacity() : _partition.getSectorCount() * _disk.getSectorSize();
     }
+
+    private PartitionInfo _partition;
 
     /**
      * Gets the underlying partition (if any).
      */
-    private PartitionInfo __Partition;
-
     public PartitionInfo getPartition() {
-        return __Partition;
+        return _partition;
     }
 
     /**
      * Gets the unique identity of the physical partition, if known.
      */
     public UUID getPartitionIdentity() {
-        GuidPartitionInfo gpi = getPartition() instanceof GuidPartitionInfo ? (GuidPartitionInfo) getPartition()
-                                                                            : (GuidPartitionInfo) null;
-        if (gpi != null) {
-            return gpi.getIdentity();
+        if (GuidPartitionInfo.class.isInstance(_partition)) {
+            return GuidPartitionInfo.class.cast(_partition).getIdentity();
         }
 
-        return new UUID(0L, 0L);
+        return EMPTY;
     }
 
     /**
@@ -180,16 +174,16 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * (may be Zero).
      */
     public long getPhysicalStartSector() {
-        return getVolumeType() == PhysicalVolumeType.EntireDisk ? 0 : getPartition().getFirstSector();
+        return _volumeType == PhysicalVolumeType.EntireDisk ? 0 : _partition.getFirstSector();
     }
 
     /**
      * Gets the type of the volume.
      */
-    private PhysicalVolumeType __VolumeType = PhysicalVolumeType.None;
+    private PhysicalVolumeType _volumeType = PhysicalVolumeType.None;
 
     public PhysicalVolumeType getVolumeType() {
-        return __VolumeType;
+        return _volumeType;
     }
 
     /**
@@ -200,5 +194,4 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
     public SparseStream open() {
         return _streamOpener.invoke();
     }
-
 }

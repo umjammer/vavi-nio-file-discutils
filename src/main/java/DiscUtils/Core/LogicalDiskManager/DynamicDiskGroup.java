@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -145,7 +144,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         return getVolumeStatus(_database.getVolume(volumeId));
     }
 
-    public SparseStream openVolume(long volumeId) throws IOException {
+    public SparseStream openVolume(long volumeId) {
         return openVolume(_database.getVolume(volumeId));
     }
 
@@ -219,7 +218,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         return status;
     }
 
-    private SparseStream openExtent(ExtentRecord extent) throws IOException {
+    private SparseStream openExtent(ExtentRecord extent) {
         DiskRecord disk = _database.getDisk(extent.DiskId);
         DynamicDisk diskObj = _disks.get(UUID.fromString(disk.DiskGuidString));
         return new SubStream(diskObj.getContent(),
@@ -228,7 +227,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
                              extent.SizeLba * Sizes.Sector);
     }
 
-    private SparseStream openComponent(ComponentRecord component) throws IOException {
+    private SparseStream openComponent(ComponentRecord component) {
         if (component.MergeType == ExtentMergeType.Concatenated) {
             List<ExtentRecord> extents = new ArrayList<>(_database.getComponentExtents(component.Id));
             Collections.sort(extents, ExtentOffsets);
@@ -261,7 +260,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         throw new UnsupportedOperationException("Unknown component mode: " + component.MergeType);
     }
 
-    private SparseStream openVolume(VolumeRecord volume) throws IOException {
+    private SparseStream openVolume(VolumeRecord volume) {
         List<SparseStream> cmpntStreams = new ArrayList<>();
         for (ComponentRecord component : _database.getVolumeComponents(volume.Id)) {
             if (getComponentStatus(component) == LogicalVolumeStatus.Healthy) {
@@ -279,5 +278,4 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
         return new MirrorStream(Ownership.Dispose, cmpntStreams);
     }
-
 }

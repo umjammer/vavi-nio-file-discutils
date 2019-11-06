@@ -32,9 +32,7 @@ public class StreamUtilities {
      * Validates standard buffer, offset, count parameters to a method.
      *
      * @param buffer The byte array to read from / write to.
-     * @param offset The starting offset in
-     *            {@code buffer}
-     *            .
+     * @param offset The starting offset in {@code buffer} .
      * @param count The number of bytes to read / write.
      */
     public static void assertBufferParameters(byte[] buffer, int offset, int count) {
@@ -56,7 +54,7 @@ public class StreamUtilities {
     }
 
     /**
-     * Read bytes until buffer filled or throw @link{moe.yo3explorer.dotnetio4j.IOException}.
+     * Read bytes until buffer filled or throw {@link dotnet4j.io.IOException}.
      *
      * @param stream The stream to read.
      * @param buffer The buffer to populate.
@@ -78,7 +76,7 @@ public class StreamUtilities {
     }
 
     /**
-     * Read bytes until buffer filled or throw @link{moe.yo3explorer.dotnetio4j.IOException}.
+     * Read bytes until buffer filled or throw {@link dotnet4j.io.IOException}.
      *
      * @param stream The stream to read.
      * @param count The number of bytes to read.
@@ -86,7 +84,7 @@ public class StreamUtilities {
      */
     public static byte[] readExact(Stream stream, int count) {
 if (count < 0) {
-    new Exception("*** DUMMY ***").printStackTrace();
+ new Exception("*** DUMMY ***").printStackTrace();
 }
         byte[] buffer = new byte[count];
         readExact(stream, buffer, 0, count);
@@ -94,7 +92,7 @@ if (count < 0) {
     }
 
     /**
-     * Read bytes until buffer filled or throw @link{moe.yo3explorer.dotnetio4j.IOException}.
+     * Read bytes until buffer filled or throw {@link dotnet4j.io.IOException}.
      *
      * @param buffer The stream to read.
      * @param pos The position in buffer to read from.
@@ -200,12 +198,8 @@ if (count < 0) {
         return readExact(stream, Sizes.Sector);
     }
 
-//static final String X = (char) 0x1b + "[" + 37 + "m";
-//static final String Z = (char) 0x1b + "[" + 00 + "m";
-
     /**
-     * Reads a structure from a stream.
-     * The type of the structure.
+     * Reads a structure from a stream. The type of the structure.
      *
      * @param stream The stream to read.
      * @return The structure.
@@ -214,8 +208,7 @@ if (count < 0) {
         try {
             T result = c.newInstance();
             int size = result.size();
-//System.err.println("1: " + c.getName() + ", " + size + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
-            byte[] buffer = readExact(stream, size); // TODO cache sizeOf()
+            byte[] buffer = readExact(stream, size);
             result.readFrom(buffer, 0);
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
@@ -224,8 +217,7 @@ if (count < 0) {
     }
 
     /**
-     * Reads a structure from a stream.
-     * The type of the structure.
+     * Reads a structure from a stream. The type of the structure.
      *
      * @param stream The stream to read.
      * @param length The number of bytes to read.
@@ -235,7 +227,6 @@ if (count < 0) {
         try {
             T result = c.newInstance();
             byte[] buffer = readExact(stream, length);
-//System.err.println("2: " + c.getName() + ", " + buffer.length + " | " + stream.getLength() + " / " + stream.getPosition() + " " + X + stream + Z);
             result.readFrom(buffer, 0);
             return result;
         } catch (InstantiationException | IllegalAccessException e) {
@@ -244,8 +235,7 @@ if (count < 0) {
     }
 
     /**
-     * Writes a structure to a stream.
-     * The type of the structure.
+     * Writes a structure to a stream. The type of the structure.
      *
      * @param stream The stream to write to.
      * @param obj The structure to write.
@@ -254,7 +244,6 @@ if (count < 0) {
         byte[] buffer = new byte[obj.size()];
         obj.writeTo(buffer, 0);
         stream.write(buffer, 0, buffer.length);
-//System.err.println("w: " + obj.getClass().getName() + ", " + buffer.length + " / " + stream.getLength() + " " + X + stream + Z);
     }
 
     /**

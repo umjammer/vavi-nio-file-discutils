@@ -119,12 +119,12 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         DeviceInode devInod = inode instanceof DeviceInode ? (DeviceInode) inode : (DeviceInode) null;
 
         UnixFileSystemInfo info = new UnixFileSystemInfo();
-        info.setFileType(fileTypeFromInodeType(inode.Type));
-        info.setUserId(getId(inode.UidKey));
-        info.setGroupId(getId(inode.GidKey));
-        info.setPermissions(UnixFilePermissions.valueOf(inode.Mode));
-        info.setInode(inode.InodeNumber);
-        info.setLinkCount(inode.NumLinks);
+        info.setFileType(fileTypeFromInodeType(inode._type));
+        info.setUserId(getId(inode._uidKey));
+        info.setGroupId(getId(inode._gidKey));
+        info.setPermissions(UnixFilePermissions.valueOf(inode._mode));
+        info.setInode(inode._inodeNumber);
+        info.setLinkCount(inode._numLinks);
         info.setDeviceId(devInod == null ? 0 : devInod.getDeviceId());
 
         return info;

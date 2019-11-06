@@ -32,7 +32,7 @@ import DiscUtils.Streams.Util.Ownership;
 import dotnet4j.io.Stream;
 
 
-public final class Bitmap implements Closeable {
+final class Bitmap implements Closeable {
     private BlockCacheStream _bitmap;
 
     private final long _maxIndex;
@@ -63,6 +63,7 @@ public final class Bitmap implements Closeable {
     public void markPresent(long index) {
         long byteIdx = index / 8;
         byte mask = (byte) (1 << (byte) (index % 8));
+
         if (byteIdx >= _bitmap.getLength()) {
             _bitmap.setPosition(MathUtilities.roundUp(byteIdx + 1, 8) - 1);
             _bitmap.writeByte((byte) 0);
@@ -78,6 +79,7 @@ public final class Bitmap implements Closeable {
 
         long firstByte = index / 8;
         long lastByte = (index + count - 1) / 8;
+
         if (lastByte >= _bitmap.getLength()) {
             _bitmap.setPosition(MathUtilities.roundUp(lastByte + 1, 8) - 1);
             _bitmap.writeByte((byte) 0);
@@ -94,12 +96,14 @@ public final class Bitmap implements Closeable {
             byte mask = (byte) (1 << (byte) (i % 8));
             buffer[(int) byteIdx] |= mask;
         }
+
         setBytes(firstByte, buffer);
     }
 
     public void markAbsent(long index) {
         long byteIdx = index / 8;
         byte mask = (byte) (1 << (byte) (index % 8));
+
         if (byteIdx < _stream.getLength()) {
             setByte(byteIdx, (byte) (getByte(byteIdx) & ~mask));
         }
@@ -109,7 +113,7 @@ public final class Bitmap implements Closeable {
         }
     }
 
-    public void markAbsentRange(long index, long count) {
+    void markAbsentRange(long index, long count) {
         if (count <= 0) {
             return;
         }
@@ -130,39 +134,42 @@ public final class Bitmap implements Closeable {
         for (long i = index; i < index + count; ++i) {
             long byteIdx = i / 8 - firstByte;
             byte mask = (byte) (1 << (byte) (i % 8));
+
             buffer[(int) byteIdx] &= (byte) ~mask;
         }
+
         setBytes(firstByte, buffer);
+
         if (index < _nextAvailable) {
             _nextAvailable = index;
         }
     }
 
-    public long allocateFirstAvailable(long minValue) {
+    long allocateFirstAvailable(long minValue) {
         long i = Math.max(minValue, _nextAvailable);
         while (isPresent(i) && i < _maxIndex) {
             ++i;
         }
+
         if (i < _maxIndex) {
             markPresent(i);
             _nextAvailable = i + 1;
             return i;
         }
-
         return -1;
     }
 
-    public long setTotalEntries(long numEntries) {
+    long setTotalEntries(long numEntries) {
         long length = MathUtilities.roundUp(MathUtilities.ceil(numEntries, 8), 8);
         _stream.setLength(length);
         return length * 8;
     }
 
-    public long getSize() {
+    long getSize() {
         return _bitmap.getLength();
     }
 
-    public byte getByte(long index) {
+    byte getByte(long index) {
         if (index >= _bitmap.getLength()) {
             return 0;
         }
@@ -176,13 +183,11 @@ public final class Bitmap implements Closeable {
         return 0;
     }
 
-    public int getBytes(long index, byte[] buffer, int offset, int count) {
+    int getBytes(long index, byte[] buffer, int offset, int count) {
         if (index + count >= _bitmap.getLength())
             count = (int) (_bitmap.getLength() - index);
-
         if (count <= 0)
             return 0;
-
         _bitmap.setPosition(index);
         return _bitmap.read(buffer, offset, count);
     }

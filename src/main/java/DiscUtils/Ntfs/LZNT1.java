@@ -60,6 +60,9 @@ public final class LZNT1 extends BlockCompressor {
         setBlockSize(4096);
     }
 
+    /**
+     * @param compressedLength {@cs out}
+     */
     public CompressionResult compress(byte[] source,
                                       int sourceOffset,
                                       int sourceLength,

@@ -30,7 +30,6 @@ public enum PortMap2Protocol {
     __dummyEnum__4,
     __dummyEnum__5,
     Tcp,
-    __dummyEnum__6,
     __dummyEnum__7,
     __dummyEnum__8,
     __dummyEnum__9,
@@ -40,6 +39,7 @@ public enum PortMap2Protocol {
     __dummyEnum__13,
     __dummyEnum__14,
     __dummyEnum__15,
+    __dummyEnum__16,
     Udp;
 
     public static PortMap2Protocol valueOf(int value) {

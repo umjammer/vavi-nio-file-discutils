@@ -33,16 +33,23 @@ import dotnet4j.Tuple;
 
 /**
  * Caches objects.
- * The type of the object key.The type of the objects to cache.
+ *
  * Can be use for two purposes - to ensure there is only one instance of a given
- * object,
- * and to prevent the need to recreate objects that are expensive to create.
+ * object, and to prevent the need to recreate objects that are expensive to
+ * create.
+ *
+ * @param <K> The type of the object key.
+ * @param <V> The type of the objects to cache.
  */
 public class ObjectCache<K, V> {
     private static final int MostRecentListSize = 20;
+
     private static final int PruneGap = 500;
+
     private final Map<K, WeakReference<V>> _entries;
+
     private int _nextPruneCount;
+
     private final List<Tuple<K, V>> _recent;
 
     public ObjectCache() {
@@ -57,7 +64,6 @@ public class ObjectCache<K, V> {
                 makeMostRecent(i);
                 return recentEntry.getValue();
             }
-
         }
         if (_entries.containsKey(key)) {
             V val = _entries.get(key).get();
@@ -83,7 +89,6 @@ public class ObjectCache<K, V> {
                 _recent.remove(i);
                 break;
             }
-
         }
         _entries.remove(key);
     }
@@ -96,14 +101,12 @@ public class ObjectCache<K, V> {
                 if (!entry.getValue().isEnqueued()) {
                     toPrune.add(entry.getKey());
                 }
-
             }
             for (K key : toPrune) {
                 _entries.remove(key);
             }
             _nextPruneCount = 0;
         }
-
     }
 
     private void makeMostRecent(int i) {
@@ -122,5 +125,4 @@ public class ObjectCache<K, V> {
         }
         _recent.add(0, new Tuple<>(key, val));
     }
-
 }

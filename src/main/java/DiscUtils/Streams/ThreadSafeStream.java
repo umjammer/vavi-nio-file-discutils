@@ -31,25 +31,28 @@ import dotnet4j.io.SeekOrigin;
 
 /**
  * Provides a thread-safe wrapping around a sparse stream.
+ * <p>
  * Streams are inherently not thread-safe (because read/write is not atomic
- * w.r.t. Position).
- * This method enables multiple 'views' of a stream to be created (each with
- * their own Position), and ensures
- * only a single operation is executing on the wrapped stream at any time.This
- * example shows the pattern of use:
+ * w.r.t. Position). This method enables multiple 'views' of a stream to be
+ * created (each with their own Position), and ensures only a single operation
+ * is executing on the wrapped stream at any time.
+ *
+ * This example shows the pattern of use:
+ *
+ * <pre>
  * {@code
-* SparseStream baseStream = ...;
-* ThreadSafeStream tss = new ThreadSafeStream(baseStream);
-* for(int i = 0; i < 10; ++i)
-* {
-* SparseStream streamForThread = tss.OpenView();
+ *  SparseStream baseStream = ...;
+ *  ThreadSafeStream tss = new ThreadSafeStream(baseStream);
+ *  for (int i = 0; i < 10; ++i) {
+ *    SparseStream streamForThread = tss.OpenView();
+ *  }
  * }
- * }
+ * </pre>
+ *
  * This results in 11 streams that can be used in different streams -
- * {@code tss}
- * and ten 'views' created from
- * {@code tss}
- * .Note, the stream length cannot be changed.
+ * {@code tss} and ten 'views' created from {@code tss} .
+ * <p>
+ * Note, the stream length cannot be changed.
  */
 public class ThreadSafeStream extends SparseStream {
     private CommonState _common;
@@ -61,10 +64,10 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Initializes a new instance of the ThreadSafeStream class.
      *
-     * @param toWrap The stream to wrap.Do not directly modify
-     *            {@code toWrap}
-     *            after wrapping it, unless the thread-safe views
-     *            will no longer be used.
+     * Do not directly modify {@code toWrap} after wrapping it, unless the
+     * thread-safe views will no longer be used.
+     *
+     * @param toWrap The stream to wrap.
      */
     public ThreadSafeStream(SparseStream toWrap) {
         this(toWrap, Ownership.None);
@@ -73,13 +76,12 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Initializes a new instance of the ThreadSafeStream class.
      *
+     * Do not directly modify {@code toWrap} after wrapping it, unless the
+     * thread-safe views will no longer be used.
+     *
      * @param toWrap The stream to wrap.
-     * @param ownership Whether to transfer ownership of
-     *            {@code toWrap}
-     *            to the new instance.Do not directly modify
-     *            {@code toWrap}
-     *            after wrapping it, unless the thread-safe views
-     *            will no longer be used.
+     * @param ownership Whether to transfer ownership of {@code toWrap} to the
+     *            new instance.
      */
     public ThreadSafeStream(SparseStream toWrap, Ownership ownership) {
         if (!toWrap.canSeek()) {
@@ -104,9 +106,7 @@ public class ThreadSafeStream extends SparseStream {
      */
     public boolean canRead() {
         synchronized (_common) {
-            {
-                return getWrapped().canRead();
-            }
+            return getWrapped().canRead();
         }
     }
 
@@ -123,21 +123,17 @@ public class ThreadSafeStream extends SparseStream {
      */
     public boolean canWrite() {
         synchronized (_common) {
-            {
-                return getWrapped().canWrite();
-            }
+            return getWrapped().canWrite();
         }
     }
 
     /**
-     * Gets the parts of the stream that are stored.
-     * This may be an empty enumeration if all bytes are zero.
+     * Gets the parts of the stream that are stored. This may be an empty
+     * enumeration if all bytes are zero.
      */
     public List<StreamExtent> getExtents() {
         synchronized (_common) {
-            {
-                return getWrapped().getExtents();
-            }
+            return getWrapped().getExtents();
         }
     }
 

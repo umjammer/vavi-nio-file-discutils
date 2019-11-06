@@ -37,7 +37,11 @@ import java.util.stream.Collectors;
  * Most of the flags indicate features introduced over time.
  */
 public enum VersionFlags {
-//    None(0),
+//    None,
+    _dummy_0001,
+    _dummy_0002,
+    _dummy_0004,
+    _dummy_0008,
     /**
      * Set if any inode have extended attributes. If this bit is
      * set; the XFS_SB_VERSION2_ATTR2BIT is not
@@ -45,53 +49,53 @@ public enum VersionFlags {
      * di_forkoff inode field will not be dynamically
      * adjusted.
      */
-    ExtendedAttributes(0x0010),
+    ExtendedAttributes,
     /**
      * Set if any inodes use 32-bit di_nlink values.
      */
-    NLink(0x0020),
+    NLink,
     /**
      * Quotas are enabled on the filesystem. This also
      * brings in the various quota fields in the superblock.
      */
-    Quota(0x0040),
+    Quota,
     /**
      * Set if sb_inoalignmt is used.
      */
-    Alignment(0x0080),
+    Alignment,
     /**
      * Set if sb_unit and sb_width are used.
      */
-    DAlignment(0x0100),
+    DAlignment,
     /**
      * Set if sb_shared_vn is used.
      */
-    Shared(0x0200),
+    Shared,
     /**
      * Version 2 journaling logs are used.
      */
-    LogV2(0x0400),
+    LogV2,
     /**
      * Set if sb_sectsize is not 512.
      */
-    Sector(0x0800),
+    Sector,
     /**
      * Unwritten extents are used. This is always set.
      */
-    ExtentFlag(0x1000),
+    ExtentFlag,
     /**
      * Version 2 directories are used. This is always set.
      */
-    DirV2(0x2000),
+    DirV2,
     /**
      * ASCII only case-insens.
      */
-    Borg(0x4000),
+    Borg,
     /**
      * Set if the sb_features2 field in the superblock
      * contains more flags.
      */
-    Features2(0x8000);
+    Features2;
 
     /** 5.3, 6.0.1, 6.1 */
     public static final int Version1 = 1;
@@ -106,19 +110,9 @@ public enum VersionFlags {
 
     public static final int NumberFlag = 0x000f;
 
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private VersionFlags(int value) {
-        this.value = value;
-    }
-
     // TODO
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     // TODO

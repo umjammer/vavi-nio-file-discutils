@@ -24,37 +24,28 @@ import java.util.stream.Collectors;
  * @version 0.00 2019/10/09 umjammer initial version <br>
  */
 public enum FileAttributes implements EnumSettable {
-
-    ReadOnly(0x1),
-    Hidden(0x2),
-    System(0x4),
-    Directory(0x10),
-    Archive(0x20),
-    Device(0x40),
-    Normal(0x80),
-    Temporary(0x100),
-    SparseFile(0x200),
-    ReparsePoint(0x400),
-    Compressed(0x800),
-    Offline(0x1000),
-    NotContentIndexed(0x2000),
-    Encrypted(0x4000),
-    IntegrityStream(0x8000),
-    NoScrubData(0x20000);
-
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private FileAttributes(int value) {
-        this.value = value;
-    }
+    ReadOnly,
+    Hidden,
+    System,
+    _dummy_00008,
+    Directory,
+    Archive,
+    Device,
+    Normal,
+    Temporary,
+    SparseFile,
+    ReparsePoint,
+    Compressed,
+    Offline,
+    NotContentIndexed,
+    Encrypted,
+    IntegrityStream,
+    _dummy_10000,
+    NoScrubData;
 
     // TODO
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     // TODO

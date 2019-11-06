@@ -61,5 +61,4 @@ public final class ReparsePointRecord implements IByteArraySerializable, IDiagno
         }
         writer.println(linePrefix + "               Data:" + hex + (Content.length > 32 ? "..." : ""));
     }
-
 }

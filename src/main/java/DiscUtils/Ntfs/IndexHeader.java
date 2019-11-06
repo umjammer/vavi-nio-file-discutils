@@ -28,7 +28,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class IndexHeader {
     public static final int Size = 0x10;
 
-    public int AllocatedSizeOfEntries;
+    public int _allocatedSizeOfEntries;
 
     public byte _hasChildNodes;
 
@@ -37,24 +37,23 @@ public class IndexHeader {
     public int _totalSizeOfEntries;
 
     public IndexHeader(int allocatedSize) {
-        AllocatedSizeOfEntries = allocatedSize;
+        _allocatedSizeOfEntries = allocatedSize;
     }
 
     public IndexHeader(byte[] data, int offset) {
         _offsetToFirstEntry = EndianUtilities.toUInt32LittleEndian(data, offset + 0x00);
         _totalSizeOfEntries = EndianUtilities.toUInt32LittleEndian(data, offset + 0x04);
-        AllocatedSizeOfEntries = EndianUtilities.toUInt32LittleEndian(data, offset + 0x08);
+        _allocatedSizeOfEntries = EndianUtilities.toUInt32LittleEndian(data, offset + 0x08);
         _hasChildNodes = data[offset + 0x0C];
     }
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(_offsetToFirstEntry, buffer, offset + 0x00);
         EndianUtilities.writeBytesLittleEndian(_totalSizeOfEntries, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(AllocatedSizeOfEntries, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(_allocatedSizeOfEntries, buffer, offset + 0x08);
         buffer[offset + 0x0C] = _hasChildNodes;
         buffer[offset + 0x0D] = 0;
         buffer[offset + 0x0E] = 0;
         buffer[offset + 0x0F] = 0;
     }
-
 }

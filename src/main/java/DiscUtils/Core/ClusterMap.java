@@ -53,7 +53,7 @@ public final class ClusterMap {
      */
     public EnumSet<ClusterRoles> getRole(int cluster) {
         if (_clusterToRole == null || _clusterToRole.length < cluster) {
-            return EnumSet.of(ClusterRoles.None);
+            return EnumSet.noneOf(ClusterRoles.class);
         }
 
         return _clusterToRole[cluster];

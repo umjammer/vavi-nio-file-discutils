@@ -36,7 +36,6 @@ public class MoveToFront {
                 _buffer[i] = i;
             }
         }
-
     }
 
     public byte getHead() {
@@ -55,5 +54,4 @@ public class MoveToFront {
         _buffer[0] = val;
         return val;
     }
-
 }

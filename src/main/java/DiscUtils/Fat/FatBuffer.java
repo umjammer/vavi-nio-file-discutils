@@ -180,6 +180,9 @@ public class FatBuffer {
         }
     }
 
+    /**
+     * @param cluster {@cs out}
+     */
     public boolean tryGetFreeCluster(int[] cluster) {
         // Simple scan - don't hold a free list...
         int numEntries = getNumEntries();

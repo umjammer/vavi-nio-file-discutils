@@ -22,52 +22,41 @@
 
 package DiscUtils.Fat;
 
+import java.util.Arrays;
+
+
+/**
+ * Enumeration of known FAT types.
+ */
 public enum FatType {
     /**
-     * Enumeration of known FAT types.
-     *
      * Represents no known FAT type.
      */
-    None,
-    __dummyEnum__0,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
+    None(0),
     /**
      * Represents a 12-bit FAT.
      */
-    Fat12,
-    __dummyEnum__11,
-    __dummyEnum__12,
-    __dummyEnum__13,
+    Fat12(12),
     /**
      * Represents a 16-bit FAT.
      */
-    Fat16,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    __dummyEnum__17,
-    __dummyEnum__18,
-    __dummyEnum__19,
-    __dummyEnum__20,
-    __dummyEnum__21,
-    __dummyEnum__22,
-    __dummyEnum__23,
-    __dummyEnum__24,
-    __dummyEnum__25,
-    __dummyEnum__26,
-    __dummyEnum__27,
-    __dummyEnum__28,
+    Fat16(16),
     /**
      * Represents a 32-bit FAT.
      */
-    Fat32
+    Fat32(32);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private FatType(int value) {
+        this.value = value;
+    }
+
+    public static FatType valueOf(int value) {
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
+    }
 }

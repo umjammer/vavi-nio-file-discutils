@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.EnumSet;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -146,6 +148,29 @@ public class Test1 {
     @Test
     public void test7() {
         assertEquals(Instant.now().toEpochMilli(), Instant.now().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+    }
+
+    @Test
+    public void test8() {
+        // formatter:off
+        String aa[][] = {
+            { "a1", "a2", "a3", "a4" },
+            { "b1", "b2", "b3" },
+            { "c1", "c2" },
+        };
+        String x[] = { "a1", "a2", "a3", "a4", "b1", "b2", "b3", "c1", "c2" };
+        String[] r = Arrays.stream(aa).flatMap(a -> Arrays.stream(a)).toArray(String[]::new);
+        assertArrayEquals(x, r);
+        // formatter:on
+    }
+
+    @Test
+    public void test9() {
+        byte b = (byte) 0x80;
+        char c = (char) (b & 0xff);
+        assertEquals((char) 0x80, c);
+
+        assertEquals(1, "\01".length());
     }
 }
 
