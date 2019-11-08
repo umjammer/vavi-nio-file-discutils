@@ -365,7 +365,7 @@ public final class SquashFileSystemBuilder {
         superBlock.RootInode = getRoot().getInodeRef();
         superBlock.InodesCount = _nextInode - 1;
         superBlock.FragmentsCount = fragWriter.getFragmentCount();
-        superBlock.UidGidCount = (short) idWriter.getIdCount();
+        superBlock.setUidGidCount((short) idWriter.getIdCount());
 
         superBlock.InodeTableStart = output.getPosition();
         inodeWriter.persist(output);

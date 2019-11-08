@@ -22,6 +22,7 @@
 
 package DiscUtils.Vdi;
 
+/** use ordinal */
 public enum ImageType {
     __dummyEnum__0,
     Dynamic,

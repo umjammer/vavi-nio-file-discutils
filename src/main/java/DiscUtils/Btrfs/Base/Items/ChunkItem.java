@@ -93,14 +93,14 @@ public class ChunkItem extends BaseItem {
     /**
      * optimal io alignment
      */
-    private int __OptimalIoAlignment;
+    private int _optimalIoAlignment;
 
     public int getOptimalIoAlignment() {
-        return __OptimalIoAlignment;
+        return _optimalIoAlignment;
     }
 
     public void setOptimalIoAlignment(int value) {
-        __OptimalIoAlignment = value;
+        _optimalIoAlignment = value;
     }
 
     /**
@@ -134,8 +134,8 @@ public class ChunkItem extends BaseItem {
      */
     private short _stripeCount;
 
-    public short getStripeCount() {
-        return _stripeCount;
+    public int getStripeCount() {
+        return _stripeCount & 0xffff;
     }
 
     public void setStripeCount(short value) {
@@ -147,8 +147,8 @@ public class ChunkItem extends BaseItem {
      */
     private short _subStripes;
 
-    public short getSubStripes() {
-        return _subStripes;
+    public int getSubStripes() {
+        return _subStripes & 0xffff;
     }
 
     public void setSubStripes(short value) {

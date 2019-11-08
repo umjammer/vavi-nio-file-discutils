@@ -28,7 +28,11 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public final class SparablePartitionMap extends PartitionMap {
     public int[] LocationsOfSparingTables;
 
-    public byte NumSparingTables;
+    private byte numSparingTables;
+
+    public int getNumSparingTables() {
+        return numSparingTables & 0xff;
+    }
 
     public short PacketLength;
 
@@ -46,10 +50,10 @@ public final class SparablePartitionMap extends PartitionMap {
         VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
         PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
         PacketLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 40);
-        NumSparingTables = buffer[offset + 42];
+        numSparingTables = buffer[offset + 42];
         SparingTableSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        LocationsOfSparingTables = new int[NumSparingTables];
-        for (int i = 0; i < NumSparingTables; ++i) {
+        LocationsOfSparingTables = new int[getNumSparingTables()];
+        for (int i = 0; i < getNumSparingTables(); ++i) {
             LocationsOfSparingTables[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48 + 4 * i);
         }
         return 64;

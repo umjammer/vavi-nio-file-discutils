@@ -298,7 +298,7 @@ public final class Disk extends VirtualDisk {
      * @param capacity The desired capacity of the new disk.
      * @return An object that accesses the stream as a VHDX file.
      */
-    public static Disk initializeFixed(Stream stream, Ownership ownsStream, long capacity) throws IOException {
+    public static Disk initializeFixed(Stream stream, Ownership ownsStream, long capacity) {
         return initializeFixed(stream, ownsStream, capacity, null);
     }
 

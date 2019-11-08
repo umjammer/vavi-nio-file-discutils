@@ -45,6 +45,7 @@ public class BZip2CombinedHuffmanTrees {
 
     public BZip2CombinedHuffmanTrees(BitStream bitstream, int maxSymbols) {
         _bitstream = bitstream;
+
         initialize(maxSymbols);
     }
 
@@ -56,6 +57,7 @@ public class BZip2CombinedHuffmanTrees {
         }
 
         _symbolsToNextSelector--;
+
         return _activeTree.nextSymbol(_bitstream);
     }
 
@@ -75,9 +77,11 @@ public class BZip2CombinedHuffmanTrees {
         for (int i = 0; i < numSelectors; ++i) {
             _selectors[i] = mtf.getAndMove(countSetBits(numTrees));
         }
+
         _trees = new HuffmanTree[numTrees];
         for (int t = 0; t < numTrees; ++t) {
             int[] lengths = new int[maxSymbols];
+
             int len = _bitstream.read(5);
             for (int i = 0; i < maxSymbols; ++i) {
                 if (len < 1 || len > 20) {
@@ -91,10 +95,13 @@ public class BZip2CombinedHuffmanTrees {
                     }
 
                 }
+
                 lengths[i] = len;
             }
+
             _trees[t] = new HuffmanTree(lengths);
         }
+
         _symbolsToNextSelector = 0;
         _nextSelector = 0;
     }
@@ -106,9 +113,8 @@ public class BZip2CombinedHuffmanTrees {
             if (val >= max) {
                 throw new dotnet4j.io.IOException("Exceeded max number of consecutive bits");
             }
-
         }
+
         return val;
     }
-
 }

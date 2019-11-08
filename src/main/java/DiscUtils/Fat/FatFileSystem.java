@@ -62,7 +62,9 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * The Epoch for FAT file systems (1st Jan, 1980) at system default zone.
      */
-    public static final long Epoch = ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant().toEpochMilli();
+    public static final long Epoch = ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli();
 
     private final Map<Integer, Directory> _dirCache;
 
@@ -203,20 +205,20 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the Sector location of the backup boot sector (FAT32 only).
      */
     public int getBackupBootSector() {
-        return _bpbBkBootSec;
+        return _bpbBkBootSec & 0xffff;
     }
 
     /**
      * Gets the BIOS drive number for BIOS Int 13h calls.
      */
-    private byte __BiosDriveNumber;
+    private byte _biosDriveNumber;
 
-    public byte getBiosDriveNumber() {
-        return __BiosDriveNumber;
+    public int getBiosDriveNumber() {
+        return _biosDriveNumber & 0xff;
     }
 
     public void setBiosDriveNumber(byte value) {
-        __BiosDriveNumber = value;
+        _biosDriveNumber = value;
     }
 
     /**
@@ -224,7 +226,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * data).
      */
     public int getBytesPerSector() {
-        return _bpbBytesPerSec;
+        return _bpbBytesPerSec & 0xffff;
     }
 
     /**
@@ -238,11 +240,11 @@ public final class FatFileSystem extends DiscFileSystem {
 
     private ClusterReader _clusterReader;
 
-    public ClusterReader getClusterReader() {
+    ClusterReader getClusterReader() {
         return _clusterReader;
     }
 
-    public void setClusterReader(ClusterReader value) {
+    void setClusterReader(ClusterReader value) {
         _clusterReader = value;
     }
 
@@ -256,11 +258,11 @@ public final class FatFileSystem extends DiscFileSystem {
 
     private FileAllocationTable _fat;
 
-    public FileAllocationTable getFat() {
+    FileAllocationTable getFat() {
         return _fat;
     }
 
-    public void setFat(FileAllocationTable value) {
+    void setFat(FileAllocationTable value) {
         _fat = value;
     }
 
@@ -269,8 +271,8 @@ public final class FatFileSystem extends DiscFileSystem {
      */
     private byte _fatCount;
 
-    public byte getFatCount() {
-        return _fatCount;
+    public int getFatCount() {
+        return _fatCount & 0xff;
     }
 
     public void setFatCount(byte value) {
@@ -288,7 +290,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the size of a single FAT, in sectors.
      */
     public long getFatSize() {
-        return _bpbFATSz16 != 0 ? _bpbFATSz16 : _bpbFATSz32;
+        return _bpbFATSz16 != 0 ? _bpbFATSz16 & 0xffff : _bpbFATSz32 & 0xffff_ffffl;
     }
 
     /**
@@ -345,7 +347,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the number of logical heads.
      */
     public int getHeads() {
-        return _bpbNumHeads;
+        return _bpbNumHeads & 0xffff;
     }
 
     /**
@@ -360,7 +362,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * have a limit).
      */
     public int getMaxRootDirectoryEntries() {
-        return _bpbRootEntCnt;
+        return _bpbRootEntCnt & 0xffff;
     }
 
     /**
@@ -401,7 +403,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the number of reserved sectors at the start of the disk.
      */
     public int getReservedSectorCount() {
-        return _bpbRsvdSecCnt;
+        return _bpbRsvdSecCnt & 0xffff;
     }
 
     /**
@@ -417,8 +419,8 @@ public final class FatFileSystem extends DiscFileSystem {
      */
     private byte _sectorsPerCluster;
 
-    public byte getSectorsPerCluster() {
-        return _sectorsPerCluster;
+    public int getSectorsPerCluster() {
+        return _sectorsPerCluster & 0xff;
     }
 
     public void setSectorsPerCluster(byte value) {
@@ -429,14 +431,14 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the number of sectors per logical track.
      */
     public int getSectorsPerTrack() {
-        return _bpbSecPerTrk;
+        return _bpbSecPerTrk & 0xffff;
     }
 
     /**
      * Gets the total number of sectors on the disk.
      */
     public long getTotalSectors() {
-        return _bpbTotSec16 != 0 ? _bpbTotSec16 : _bpbTotSec32;
+        return _bpbTotSec16 != 0 ? _bpbTotSec16 & 0xffff : _bpbTotSec32 & 0xffff_ffffl;
     }
 
     /**
@@ -1202,15 +1204,15 @@ public final class FatFileSystem extends DiscFileSystem {
         sourceDir[0].deleteEntry(sourceEntryId, false);
     }
 
-    public long convertToUtc(long dateTime) {
+    long convertToUtc(long dateTime) {
         return _timeConverter.invoke(dateTime, true);
     }
 
-    public long convertFromUtc(long dateTime) {
+    long convertFromUtc(long dateTime) {
         return _timeConverter.invoke(dateTime, false);
     }
 
-    public Directory getDirectory(String path) {
+    Directory getDirectory(String path) {
         Directory[] parent = new Directory[1];
         if (path == null || path.isEmpty() || path.equals("\\")) {
             return _rootDir;
@@ -1224,7 +1226,7 @@ public final class FatFileSystem extends DiscFileSystem {
         return null;
     }
 
-    public Directory getDirectory(Directory parent, long parentId) {
+    Directory getDirectory(Directory parent, long parentId) {
         if (parent == null) {
             return _rootDir;
         }
@@ -1245,7 +1247,7 @@ public final class FatFileSystem extends DiscFileSystem {
         return result;
     }
 
-    public void forgetDirectory(DirectoryEntry entry) {
+    void forgetDirectory(DirectoryEntry entry) {
         int index = entry.getFirstCluster();
         if (index != 0 && _dirCache.containsKey(index)) {
             Directory dir = _dirCache.get(index);
@@ -1258,7 +1260,7 @@ public final class FatFileSystem extends DiscFileSystem {
         }
     }
 
-    public DirectoryEntry getDirectoryEntry(String path) {
+    DirectoryEntry getDirectoryEntry(String path) {
         Directory[] parent = new Directory[1];
         long id = getDirectoryEntry(_rootDir, path, parent);
         if (parent[0] == null || id < 0) {
@@ -1268,7 +1270,7 @@ public final class FatFileSystem extends DiscFileSystem {
         return parent[0].getEntry(id);
     }
 
-    public long getDirectoryEntry(String path, Directory[] parent) {
+    long getDirectoryEntry(String path, Directory[] parent) {
         return getDirectoryEntry(_rootDir, path, parent);
     }
 
@@ -1341,8 +1343,9 @@ public final class FatFileSystem extends DiscFileSystem {
         // Media
         bootSector[21] = (byte) (isFloppy ? 0xF0 : 0xF8);
         // FAT size (FAT12/FAT16)
-        EndianUtilities
-                .writeBytesLittleEndian((short) (fatType.getValue() < FatType.Fat32.getValue() ? fatSectors : 0), bootSector, 22);
+        EndianUtilities.writeBytesLittleEndian((short) (fatType.getValue() < FatType.Fat32.getValue() ? fatSectors : 0),
+                                               bootSector,
+                                               22);
         // Sectors Per Track
         EndianUtilities.writeBytesLittleEndian((short) diskGeometry.getSectorsPerTrack(), bootSector, 24);
         // Heads Per Cylinder
@@ -1462,17 +1465,18 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private void loadClusterReader() {
-        int rootDirSectors = (_bpbRootEntCnt * 32 + (_bpbBytesPerSec - 1)) / _bpbBytesPerSec;
-        int firstDataSector = (int) (_bpbRsvdSecCnt + getFatCount() * getFatSize() + rootDirSectors);
-        setClusterReader(new ClusterReader(_data, firstDataSector, getSectorsPerCluster(), _bpbBytesPerSec));
+        int rootDirSectors = ((_bpbRootEntCnt & 0xffff) * 32 + ((_bpbBytesPerSec & 0xffff) - 1)) / (_bpbBytesPerSec & 0xffff);
+        int firstDataSector = (int) ((_bpbRsvdSecCnt & 0xffff) + getFatCount() * getFatSize() + rootDirSectors);
+        setClusterReader(new ClusterReader(_data, firstDataSector, getSectorsPerCluster(), _bpbBytesPerSec & 0xffff));
     }
 
     private void loadRootDirectory() {
         Stream fatStream;
         if (getFatVariant() != FatType.Fat32) {
             fatStream = new SubStream(_data,
-                                      (_bpbRsvdSecCnt + getFatCount() * _bpbFATSz16) * _bpbBytesPerSec,
-                                      _bpbRootEntCnt * 32);
+                                      ((_bpbRsvdSecCnt & 0xffff) + getFatCount() * (_bpbFATSz16 & 0xffff)) *
+                                             (_bpbBytesPerSec & 0xffff),
+                                      (_bpbRootEntCnt & 0xffff) * 32);
         } else {
             fatStream = new ClusterStream(this, FileAccess.ReadWrite, _bpbRootClus, 0xffffffff);
         }
@@ -1482,7 +1486,7 @@ public final class FatFileSystem extends DiscFileSystem {
     private void loadFAT() {
         setFat(new FileAllocationTable(getFatVariant(),
                                        _data,
-                                       _bpbRsvdSecCnt,
+                                       _bpbRsvdSecCnt & 0xffff,
                                        (int) getFatSize(),
                                        getFatCount(),
                                        getActiveFat()));
@@ -1648,8 +1652,10 @@ public final class FatFileSystem extends DiscFileSystem {
      */
     public static FatFileSystem formatFloppy(Stream stream, FloppyDiskType type, String label) {
         long pos = stream.getPosition();
+
         long ticks = System.currentTimeMillis();
         int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
+
         // Write the BIOS Parameter Block (BPB) - a single sector
         byte[] bpb = new byte[512];
         int sectors;
@@ -1699,7 +1705,9 @@ public final class FatFileSystem extends DiscFileSystem {
         default:
             throw new IllegalArgumentException("Unrecognised Floppy Disk type");
         }
+
         stream.write(bpb, 0, bpb.length);
+
         // Write both FAT copies
         int fatSize = calcFatSize(sectors, FatType.Fat12, (byte) 1);
         byte[] fat = new byte[fatSize * Sizes.Sector];
@@ -1708,16 +1716,17 @@ public final class FatFileSystem extends DiscFileSystem {
         fatBuffer.setEndOfChain(1);
         stream.write(fat, 0, fat.length);
         stream.write(fat, 0, fat.length);
+
         // Write the (empty) root directory
         int rootDirSectors = (224 * 32 + Sizes.Sector - 1) / Sizes.Sector;
         byte[] rootDir = new byte[rootDirSectors * Sizes.Sector];
         stream.write(rootDir, 0, rootDir.length);
+
         // Write a single byte at the end of the disk to ensure the stream is at
-        // least
-        // as big
-        // as needed for this disk image.
+        // least as big as needed for this disk image.
         stream.setPosition(pos + sectors * Sizes.Sector - 1);
         stream.writeByte((byte) 0);
+
         // Give the caller access to the new file system
         stream.setPosition(pos);
         return new FatFileSystem(stream);
@@ -1733,8 +1742,7 @@ public final class FatFileSystem extends DiscFileSystem {
      *         file system.
      */
     public static FatFileSystem formatPartition(VirtualDisk disk, int partitionIndex, String label) {
-        Stream partitionStream = disk.getPartitions().get___idx(partitionIndex).open();
-        try {
+        try (Stream partitionStream = disk.getPartitions().get___idx(partitionIndex).open()) {
             return formatPartition(partitionStream,
                                    label,
                                    disk.getGeometry(),
@@ -1742,13 +1750,8 @@ public final class FatFileSystem extends DiscFileSystem {
                                    (int) (1 + disk.getPartitions().get___idx(partitionIndex).getLastSector() -
                                           disk.getPartitions().get___idx(partitionIndex).getFirstSector()),
                                    (short) 0);
-        } finally {
-            if (partitionStream != null)
-                try {
-                    partitionStream.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1773,17 +1776,20 @@ public final class FatFileSystem extends DiscFileSystem {
                                                 int sectorCount,
                                                 short reservedSectors) {
         long pos = stream.getPosition();
+
         long ticks = System.currentTimeMillis();
         int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
+
         byte sectorsPerCluster;
         FatType fatType = FatType.None;
         short maxRootEntries;
-        /* Write the BIOS Parameter Block (BPB) - a single sector */
+
+        // Write the BIOS Parameter Block (BPB) - a single sector
+
         byte[] bpb = new byte[512];
         if (sectorCount <= 8400) {
             throw new IllegalArgumentException("Requested size is too small for a partition");
         }
-
         if (sectorCount < 1024 * 1024) {
             fatType = FatType.Fat16;
             maxRootEntries = 512;
@@ -1799,7 +1805,6 @@ public final class FatFileSystem extends DiscFileSystem {
             if (reservedSectors < 1) {
                 reservedSectors = 1;
             }
-
         } else {
             fatType = FatType.Fat32;
             maxRootEntries = 0;
@@ -1817,8 +1822,8 @@ public final class FatFileSystem extends DiscFileSystem {
             if (reservedSectors < 32) {
                 reservedSectors = 32;
             }
-
         }
+
         writeBPB(bpb,
                  sectorCount,
                  fatType,
@@ -1831,9 +1836,13 @@ public final class FatFileSystem extends DiscFileSystem {
                  volId,
                  label);
         stream.write(bpb, 0, bpb.length);
-        /* Skip the reserved sectors */
+
+        // Skip the reserved sectors
+
         stream.setPosition(pos + reservedSectors * Sizes.Sector);
-        /* Write both FAT copies */
+
+        // Write both FAT copies
+
         byte[] fat = new byte[calcFatSize(sectorCount, fatType, sectorsPerCluster) * Sizes.Sector];
         FatBuffer fatBuffer = new FatBuffer(fatType, fat);
         fatBuffer.setNext(0, 0xFFFFFFF8);
@@ -1846,23 +1855,27 @@ public final class FatFileSystem extends DiscFileSystem {
 
         stream.write(fat, 0, fat.length);
         stream.write(fat, 0, fat.length);
-        /* Write the (empty) root directory */
+
+        // Write the (empty) root directory
+
         int rootDirSectors;
         if (fatType.getValue() < FatType.Fat32.getValue()) {
             rootDirSectors = (maxRootEntries * 32 + Sizes.Sector - 1) / Sizes.Sector;
         } else {
             rootDirSectors = sectorsPerCluster;
         }
+
         byte[] rootDir = new byte[rootDirSectors * Sizes.Sector];
         stream.write(rootDir, 0, rootDir.length);
-        /*
-         * Make sure the stream is at least as large as the partition requires.
-         */
+
+        // Make sure the stream is at least as large as the partition requires.
+
         if (stream.getLength() < pos + sectorCount * Sizes.Sector) {
             stream.setLength(pos + sectorCount * Sizes.Sector);
         }
 
-        /* Give the caller access to the new file system */
+        // Give the caller access to the new file system
+
         stream.setPosition(pos);
         return new FatFileSystem(stream);
     }

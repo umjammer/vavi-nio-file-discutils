@@ -130,7 +130,7 @@ public class File implements IVfsFile {
     }
 
     public static File fromDescriptor(UdfContext context, LongAllocationDescriptor icb) {
-        LogicalPartition partition = context.LogicalPartitions.get(icb.ExtentLocation.Partition);
+        LogicalPartition partition = context.LogicalPartitions.get(icb.ExtentLocation.getPartition());
         byte[] rootDirData = UdfUtilities.readExtent(context, icb);
         DescriptorTag rootDirTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, rootDirData, 0);
         if (rootDirTag._TagIdentifier == TagIdentifier.ExtendedFileEntry) {

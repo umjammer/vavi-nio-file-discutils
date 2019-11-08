@@ -22,6 +22,7 @@
 
 package DiscUtils.Vdi;
 
+/** use ordinal */
 public enum ImageFlags {
     None,
     Split2G,

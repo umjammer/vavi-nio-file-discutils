@@ -36,13 +36,13 @@ public abstract class BuilderExtent implements Closeable {
         _length = length;
     }
 
-    private long _length;
+    protected long _length;
 
     public long getLength() {
         return _length;
     }
 
-    private long _start;
+    protected long _start;
 
     public long getStart() {
         return _start;
@@ -64,4 +64,7 @@ public abstract class BuilderExtent implements Closeable {
 
     public abstract void disposeReadState();
 
+    public String toString() {
+        return getClass().getSimpleName() + "@" + hashCode() + ": {start: " + _start + ", length: " + _length + "}";
+    }
 }

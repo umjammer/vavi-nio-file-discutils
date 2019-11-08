@@ -26,72 +26,72 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public class DatabaseHeader {
+    // 00 00 00 80
     public int BlockSize;
 
-    // 00 00 00 80
+    // 0xA
     public long CommittedSequence;
 
-    // 0xA
     public String DiskGroupId;
 
     public String GroupName;
 
+    // 00 00 02 00
     public int HeaderSize;
 
-    // 00 00 02 00
+    // 00 00 17 24
     public int NumVBlks;
 
-    // 00 00 17 24
+    // 0xA
     public long PendingSequence;
 
-    // 0xA
+    // VMDB
     public String Signature;
 
-    // VMDB
     public long Timestamp;
 
+    // 00 01
     public short Unknown1;
 
-    // 00 01
+    // 1
     public int Unknown2;
 
     // 1
     public int Unknown3;
 
-    // 1
+    // 3
     public int Unknown4;
 
     // 3
     public int Unknown5;
 
-    // 3
+    // 0
     public long Unknown6;
 
-    // 0
+    // 1
     public long Unknown7;
 
     // 1
     public int Unknown8;
 
-    // 1
+    // 3
     public int Unknown9;
 
     // 3
     public int UnknownA;
 
-    // 3
+    // 0
     public long UnknownB;
 
     // 0
     public int UnknownC;
 
-    // 0
+    // 00 0a
     public short VersionDenom;
 
-    // 00 0a
+    // 00 04
     public short VersionNum;
 
-    // 00 04
     public void readFrom(byte[] buffer, int offset) {
         Signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
         NumVBlks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
@@ -118,5 +118,4 @@ public class DatabaseHeader {
         UnknownC = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB9);
         Timestamp = EndianUtilities.toInt64BigEndian(buffer, offset + 0xBD);
     }
-
 }

@@ -38,7 +38,7 @@ public class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
     }
 
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
-        int totalRecords = getDescriptor().NumRecords;
+        int totalRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
         int headerRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 2);
         int userDataRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 4);

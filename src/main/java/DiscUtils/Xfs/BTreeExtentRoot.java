@@ -47,8 +47,8 @@ public class BTreeExtentRoot implements IByteArraySerializable {
 
     private short _numberOfRecords;
 
-    public short getNumberOfRecords() {
-        return _numberOfRecords;
+    public int getNumberOfRecords() {
+        return _numberOfRecords & 0xffff;
     }
 
     public void setNumberOfRecords(short value) {
@@ -90,24 +90,22 @@ public class BTreeExtentRoot implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setLevel(EndianUtilities.toUInt16BigEndian(buffer, offset));
-        setNumberOfRecords(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2));
+        _level = EndianUtilities.toUInt16BigEndian(buffer, offset);
+        _numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
         offset += 0x4;
-        setKeys(new long[getNumberOfRecords()]);
-        setPointer(new long[getNumberOfRecords()]);
+        _keys = new long[getNumberOfRecords()];
+        _pointer = new long[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            getKeys()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            _keys[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
         offset += ((buffer.length - offset) / 16) * 8;
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            getPointer()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            _pointer[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
         return size();
     }
 
-    /**
-     *
-     */
+    /* */
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

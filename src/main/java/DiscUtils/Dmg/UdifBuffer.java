@@ -57,16 +57,16 @@ public class UdifBuffer extends Buffer {
         _stream = stream;
         _resources = resources;
         _sectorCount = sectorCount;
-        __Blocks = new ArrayList<>();
+        _blocks = new ArrayList<>();
         for (Resource resource : _resources.getAllResources("blkx")) {
-            getBlocks().add(((BlkxResource) resource).getBlock());
+            _blocks.add(((BlkxResource) resource).getBlock());
         }
     }
 
-    private List<CompressedBlock> __Blocks;
+    private List<CompressedBlock> _blocks;
 
     public List<CompressedBlock> getBlocks() {
-        return __Blocks;
+        return _blocks;
     }
 
     public boolean canRead() {

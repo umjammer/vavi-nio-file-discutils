@@ -23,7 +23,11 @@
 package DiscUtils.Iso9660.Susp;
 
 public final class SharingProtocolSystemUseEntry extends SystemUseEntry {
-    public byte SystemAreaSkip;
+    private byte systemAreaSkip;
+
+    public int getSystemAreaSkip() {
+        return systemAreaSkip;
+    }
 
     public SharingProtocolSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 7, (byte) 1);
@@ -31,6 +35,6 @@ public final class SharingProtocolSystemUseEntry extends SystemUseEntry {
             throw new IllegalArgumentException("Invalid SUSP SP entry - invalid checksum bytes");
         }
 
-        SystemAreaSkip = data[offset + 6];
+        systemAreaSkip = data[offset + 6];
     }
 }

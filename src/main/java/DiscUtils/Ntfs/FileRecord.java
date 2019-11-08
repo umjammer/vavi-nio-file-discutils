@@ -37,9 +37,9 @@ public class FileRecord extends FixupRecordBase {
 
     private boolean _haveIndex;
 
+    // Self-reference (on XP+)
     private int _index;
 
-    // Self-reference (on XP+)
     public FileRecord(int sectorSize) {
         super("FILE", sectorSize);
     }
@@ -95,8 +95,8 @@ public class FileRecord extends FixupRecordBase {
 
     private short _hardLinkCount;
 
-    public short getHardLinkCount() {
-        return _hardLinkCount;
+    public int getHardLinkCount() {
+        return _hardLinkCount & 0xffff;
     }
 
     public void setHardLinkCount(short value) {
@@ -134,8 +134,8 @@ public class FileRecord extends FixupRecordBase {
 
     private short _nextAttributeId;
 
-    public short getNextAttributeId() {
-        return _nextAttributeId;
+    public int getNextAttributeId() {
+        return _nextAttributeId & 0xffff;
     }
 
     public void setNextAttributeId(short value) {
@@ -158,8 +158,8 @@ public class FileRecord extends FixupRecordBase {
 
     private short _sequenceNumber;
 
-    public short getSequenceNumber() {
-        return _sequenceNumber;
+    public int getSequenceNumber() {
+        return _sequenceNumber & 0xffff;
     }
 
     public void setSequenceNumber(short value) {
@@ -186,7 +186,7 @@ public class FileRecord extends FixupRecordBase {
 
     public void reInitialize(int sectorSize, int recordLength, int index) {
         initialize("FILE", sectorSize, recordLength);
-        _sequenceNumber++;
+        _sequenceNumber++; // TODO
         _flags = EnumSet.noneOf(FileRecordFlags.class);
         _allocatedSize = recordLength;
         _nextAttributeId = 0;
@@ -395,7 +395,7 @@ public class FileRecord extends FixupRecordBase {
         }
 
         _attributes = new ArrayList<>();
-        int focus = _firstAttributeOffset;
+        int focus = _firstAttributeOffset & 0xffff;
         while (true) {
             int[] length = new int[1];
             AttributeRecord attr = AttributeRecord.fromBytes(buffer, focus, length);
@@ -425,8 +425,7 @@ public class FileRecord extends FixupRecordBase {
         EndianUtilities.writeBytesLittleEndian(_nextAttributeId, buffer, offset + 0x28);
 
         if (_haveIndex) {
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A); // Alignment
-                                                                                      // field
+            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A); // Alignment field
             EndianUtilities.writeBytesLittleEndian(_index, buffer, offset + 0x2C);
         }
 
@@ -435,7 +434,7 @@ public class FileRecord extends FixupRecordBase {
             pos += attr.write(buffer, offset + pos);
         }
 
-        EndianUtilities.writeBytesLittleEndian(0xffffffff, buffer, offset + pos);
+        EndianUtilities.writeBytesLittleEndian(0xffff_ffff, buffer, offset + pos);
 
         return headerEnd;
     }
@@ -448,7 +447,6 @@ public class FileRecord extends FixupRecordBase {
             size += attr.getSize();
         }
 
-        return MathUtilities.roundUp(size + 4, 8); // 0xFFFFFFFF terminator on
-                                                   // attributes
+        return MathUtilities.roundUp(size + 4, 8); // 0xFFFFFFFF terminator on attributes
     }
 }

@@ -80,7 +80,7 @@ public class ExtentsFileBuffer extends Buffer {
                 long physicalBlock = logicalBlock - extent.FirstLogicalBlock + extent.getFirstPhysicalBlock();
                 int toRead = (int) Math
                         .min(totalBytesRemaining,
-                             (extent.NumBlocks - (logicalBlock - extent.FirstLogicalBlock)) * blockSize - blockOffset);
+                             (extent.getNumBlocks() - (logicalBlock - extent.FirstLogicalBlock)) * blockSize - blockOffset);
                 _context.getRawStream().setPosition(physicalBlock * blockSize + blockOffset);
                 numRead = _context.getRawStream().read(buffer, offset + totalRead, toRead);
             }

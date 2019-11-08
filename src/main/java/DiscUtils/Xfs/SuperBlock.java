@@ -250,8 +250,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private short _sectorSize;
 
-    public short getSectorSize() {
-        return _sectorSize;
+    public int getSectorSize() {
+        return _sectorSize & 0xffff;
     }
 
     public void setSectorSize(short value) {
@@ -263,8 +263,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private short _inodeSize;
 
-    public short getInodeSize() {
-        return _inodeSize;
+    public int getInodeSize() {
+        return _inodeSize & 0xffff;
     }
 
     public void setInodeSize(short value) {
@@ -276,8 +276,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private short _inodesPerBlock;
 
-    public short getInodesPerBlock() {
-        return _inodesPerBlock;
+    public int getInodesPerBlock() {
+        return _inodesPerBlock & 0xffff;
     }
 
     public void setInodesPerBlock(short value) {
@@ -302,8 +302,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _blocksizeLog2;
 
-    public byte getBlocksizeLog2() {
-        return _blocksizeLog2;
+    public int getBlocksizeLog2() {
+        return _blocksizeLog2 & 0xff;
     }
 
     public void setBlocksizeLog2(byte value) {
@@ -315,8 +315,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _sectorSizeLog2;
 
-    public byte getSectorSizeLog2() {
-        return _sectorSizeLog2;
+    public int getSectorSizeLog2() {
+        return _sectorSizeLog2 & 0xff;
     }
 
     public void setSectorSizeLog2(byte value) {
@@ -328,8 +328,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _inodeSizeLog2;
 
-    public byte getInodeSizeLog2() {
-        return _inodeSizeLog2;
+    public int getInodeSizeLog2() {
+        return _inodeSizeLog2 & 0xff;
     }
 
     public void setInodeSizeLog2(byte value) {
@@ -341,8 +341,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _inodesPerBlockLog2;
 
-    public byte getInodesPerBlockLog2() {
-        return _inodesPerBlockLog2;
+    public int getInodesPerBlockLog2() {
+        return _inodesPerBlockLog2 & 0xff;
     }
 
     public void setInodesPerBlockLog2(byte value) {
@@ -354,8 +354,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _agBlocksLog2;
 
-    public byte getAgBlocksLog2() {
-        return _agBlocksLog2;
+    public int getAgBlocksLog2() {
+        return _agBlocksLog2 & 0xff;
     }
 
     public void setAgBlocksLog2(byte value) {
@@ -367,8 +367,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _realtimeExtentsLog2;
 
-    public byte getRealtimeExtentsLog2() {
-        return _realtimeExtentsLog2;
+    public int getRealtimeExtentsLog2() {
+        return _realtimeExtentsLog2 & 0xff;
     }
 
     public void setRealtimeExtentsLog2(byte value) {
@@ -380,8 +380,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _inProgress;
 
-    public byte getInProgress() {
-        return _inProgress;
+    public int getInProgress() {
+        return _inProgress & 0xff;
     }
 
     public void setInProgress(byte value) {
@@ -393,8 +393,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _inodesMaxPercent;
 
-    public byte getInodesMaxPercent() {
-        return _inodesMaxPercent;
+    public int getInodesMaxPercent() {
+        return _inodesMaxPercent & 0xff;
     }
 
     public void setInodesMaxPercent(byte value) {
@@ -514,8 +514,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _sharedVersionNumber;
 
-    public byte getSharedVersionNumber() {
-        return _sharedVersionNumber;
+    public int getSharedVersionNumber() {
+        return _sharedVersionNumber & 0xff;
     }
 
     public void setSharedVersionNumber(byte value) {
@@ -566,8 +566,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _dirBlockLog2;
 
-    public byte getDirBlockLog2() {
-        return _dirBlockLog2;
+    public int getDirBlockLog2() {
+        return _dirBlockLog2 & 0xff;
     }
 
     public void setDirBlockLog2(byte value) {
@@ -579,8 +579,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _logSectorSizeLog2;
 
-    public byte getLogSectorSizeLog2() {
-        return _logSectorSizeLog2;
+    public int getLogSectorSizeLog2() {
+        return _logSectorSizeLog2 & 0xff;
     }
 
     public void setLogSectorSizeLog2(byte value) {
@@ -592,8 +592,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private short _logSectorSize;
 
-    public short getLogSectorSize() {
-        return _logSectorSize;
+    public int getLogSectorSize() {
+        return _logSectorSize & 0xffff;
     }
 
     public void setLogSectorSize(short value) {
@@ -894,7 +894,8 @@ public class SuperBlock implements IByteArraySerializable {
         throw new UnsupportedOperationException();
     }
 
-    public int xfs_btree_compute_maxlevels() {
+    // xfs_btree_compute_maxlevels
+    public int computeBtreeMaxlevels() {
         int len = _agBlocks;
         int level;
         int[] limits = new int[] {

@@ -30,127 +30,127 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public abstract class BtreeHeader implements IByteArraySerializable {
-    private int __Magic;
+    private int _magic;
 
     public int getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(int value) {
-        __Magic = value;
+        _magic = value;
     }
 
-    private short __Level;
+    private short _level;
 
     public short getLevel() {
-        return __Level;
+        return _level;
     }
 
     public void setLevel(short value) {
-        __Level = value;
+        _level = value;
     }
 
-    private short __NumberOfRecords;
+    private short _numberOfRecords;
 
-    public short getNumberOfRecords() {
-        return __NumberOfRecords;
+    public int getNumberOfRecords() {
+        return _numberOfRecords & 0xffff;
     }
 
     public void setNumberOfRecords(short value) {
-        __NumberOfRecords = value;
+        _numberOfRecords = value;
     }
 
-    private int __LeftSibling;
+    private int _leftSibling;
 
     public int getLeftSibling() {
-        return __LeftSibling;
+        return _leftSibling;
     }
 
     public void setLeftSibling(int value) {
-        __LeftSibling = value;
+        _leftSibling = value;
     }
 
-    private int __RightSibling;
+    private int _rightSibling;
 
     public int getRightSibling() {
-        return __RightSibling;
+        return _rightSibling;
     }
 
     public void setRightSibling(int value) {
-        __RightSibling = value;
+        _rightSibling = value;
     }
 
     /**
      * location on disk
      */
-    private long __Bno;
+    private long _bno;
 
     public long getBno() {
-        return __Bno;
+        return _bno;
     }
 
     public void setBno(long value) {
-        __Bno = value;
+        _bno = value;
     }
 
     /**
      * last write sequence
      */
-    private long __Lsn;
+    private long _lsn;
 
     public long getLsn() {
-        return __Lsn;
+        return _lsn;
     }
 
     public void setLsn(long value) {
-        __Lsn = value;
+        _lsn = value;
     }
 
-    private UUID __UniqueId;
+    private UUID _uniqueId;
 
     public UUID getUniqueId() {
-        return __UniqueId;
+        return _uniqueId;
     }
 
     public void setUniqueId(UUID value) {
-        __UniqueId = value;
+        _uniqueId = value;
     }
 
-    private int __Owner;
+    private int _owner;
 
     public int getOwner() {
-        return __Owner;
+        return _owner;
     }
 
     public void setOwner(int value) {
-        __Owner = value;
+        _owner = value;
     }
 
-    private int __Crc;
+    private int _crc;
 
     public int getCrc() {
-        return __Crc;
+        return _crc;
     }
 
     public void setCrc(int value) {
-        __Crc = value;
+        _crc = value;
     }
 
-    private int __Size;
+    private int _size;
 
     public int size() {
-        return __Size;
+        return _size;
     }
 
-    private int __SbVersion;
+    private int _sbVersion;
 
     protected int getSbVersion() {
-        return __SbVersion;
+        return _sbVersion;
     }
 
     public BtreeHeader(int superBlockVersion) {
-        __SbVersion = superBlockVersion;
-        __Size = getSbVersion() >= 5 ? 56 : 16;
+        _sbVersion = superBlockVersion;
+        _size = getSbVersion() >= 5 ? 56 : 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {

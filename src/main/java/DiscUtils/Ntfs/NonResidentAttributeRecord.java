@@ -130,7 +130,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
      * Gets or sets the size of a compression unit (in clusters).
      */
     public int getCompressionUnitSize() {
-        return 1 << _compressionUnitSize & 0xffff;
+        return 1 << (_compressionUnitSize & 0xffff);
     }
 
     public void setCompressionUnitSize(int value) {
@@ -380,12 +380,13 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         _dataAllocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
         _dataRealSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
         _initializedDataSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x38);
-        if (!Collections.disjoint(_flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) && _dataRunsOffset > 0x40) {
+        if (!Collections.disjoint(_flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) &&
+            (_dataRunsOffset & 0xffff) > 0x40) {
             _compressedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
         }
 
         _dataRuns = new ArrayList<>();
-        int pos = _dataRunsOffset;
+        int pos = _dataRunsOffset & 0xffff;
         while (pos < length[0]) {
             DataRun run = new DataRun();
             int len = run.read(buffer, offset + pos);

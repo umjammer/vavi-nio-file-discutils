@@ -169,9 +169,8 @@ public class Program extends ProgramBase {
 
     static long getSize(MasterFileTableEntry entry) {
         for (GenericAttribute attr : entry.getAttributes()) {
-            FileNameAttribute fna = attr instanceof FileNameAttribute ? (FileNameAttribute) attr : (FileNameAttribute) null;
-            if (fna != null) {
-                return fna.getRealSize();
+            if (FileNameAttribute.class.isInstance(attr)) {
+                return FileNameAttribute.class.cast(attr).getRealSize();
             }
         }
         return 0;

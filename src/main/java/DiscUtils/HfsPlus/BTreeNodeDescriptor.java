@@ -35,7 +35,11 @@ public final class BTreeNodeDescriptor implements IByteArraySerializable {
 
     public BTreeNodeKind Kind = BTreeNodeKind.LeafNode;
 
-    public short NumRecords;
+    private short NumRecords;
+
+    public int getNumRecords() {
+        return NumRecords & 0xffff;
+    }
 
     public short Reserved;
 

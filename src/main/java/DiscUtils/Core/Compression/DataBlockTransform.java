@@ -37,14 +37,16 @@ public abstract class DataBlockTransform {
 
         if (getBuffersMustNotOverlap()) {
             int maxOut = maxOutputCount(inputCount);
+
             if (Arrays.areEqual(input, output) && (inputOffset + (long) inputCount > outputOffset) &&
                 (inputOffset <= outputOffset + (long) maxOut)) {
                 byte[] tempBuffer = new byte[maxOut];
+
                 int outCount = doProcess(input, inputOffset, inputCount, tempBuffer, 0);
                 System.arraycopy(tempBuffer, 0, output, outputOffset, outCount);
+
                 return outCount;
             }
-
         }
 
         return doProcess(input, inputOffset, inputCount, output, outputOffset);
@@ -59,5 +61,4 @@ public abstract class DataBlockTransform {
     protected abstract int maxOutputCount(int inputCount);
 
     protected abstract int minOutputCount(int inputCount);
-
 }

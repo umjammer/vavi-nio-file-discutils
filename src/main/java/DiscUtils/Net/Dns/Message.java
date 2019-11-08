@@ -28,54 +28,54 @@ import java.util.List;
 
 public class Message {
     public Message() {
-        __Questions = new ArrayList<>();
-        __Answers = new ArrayList<>();
-        __AuthorityRecords = new ArrayList<>();
-        __AdditionalRecords = new ArrayList<>();
+        _questions = new ArrayList<>();
+        _answers = new ArrayList<>();
+        _authorityRecords = new ArrayList<>();
+        _additionalRecords = new ArrayList<>();
     }
 
-    private List<ResourceRecord> __AdditionalRecords;
+    private List<ResourceRecord> _additionalRecords;
 
     public List<ResourceRecord> getAdditionalRecords() {
-        return __AdditionalRecords;
+        return _additionalRecords;
     }
 
-    private List<ResourceRecord> __Answers;
+    private List<ResourceRecord> _answers;
 
     public List<ResourceRecord> getAnswers() {
-        return __Answers;
+        return _answers;
     }
 
-    private List<ResourceRecord> __AuthorityRecords;
+    private List<ResourceRecord> _authorityRecords;
 
     public List<ResourceRecord> getAuthorityRecords() {
-        return __AuthorityRecords;
+        return _authorityRecords;
     }
 
-    private MessageFlags __Flags;
+    private MessageFlags _flags;
 
     public MessageFlags getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(MessageFlags value) {
-        __Flags = value;
+        _flags = value;
     }
 
-    private List<Question> __Questions;
+    private List<Question> _questions;
 
     public List<Question> getQuestions() {
-        return __Questions;
+        return _questions;
     }
 
-    private short __TransactionId;
+    private short _transactionId;
 
     public short getTransactionId() {
-        return __TransactionId;
+        return _transactionId;
     }
 
     public void setTransactionId(short value) {
-        __TransactionId = value;
+        _transactionId = value;
     }
 
     public static Message read(PacketReader reader) {

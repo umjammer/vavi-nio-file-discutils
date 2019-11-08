@@ -60,7 +60,7 @@ public final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNod
     }
 
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
-        int numRecords = getDescriptor().NumRecords;
+        int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
         _records = new ArrayList<>(numRecords);
         int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);

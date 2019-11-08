@@ -119,7 +119,7 @@ class File {
         return new DirectoryEntry(_context.getGetDirectoryByRef().invoke(record._parentDirectory), getMftReference(), record);
     }
 
-    public short getHardLinkCount() {
+    public int getHardLinkCount() {
         return _records.get(0).getHardLinkCount();
     }
 
@@ -693,7 +693,7 @@ class File {
         if (newAttrHome == null) {
             _records.get(0).getFlags().remove(FileRecordFlags.InUse);
             newAttrHome = _mft.allocateRecord(_records.get(0).getFlags(), record.getIsMftRecord());
-            newAttrHome.setBaseFile(record.getBaseFile().getIsNull() ? record.getReference() : record.getBaseFile());
+            newAttrHome.setBaseFile(record.getBaseFile().isNull() ? record.getReference() : record.getBaseFile());
             _records.add(newAttrHome);
             newAttrHome.addAttribute(newAttr);
         }

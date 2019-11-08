@@ -30,6 +30,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.VirtualDiskExtent;
@@ -366,6 +368,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public Stream openRegion(UUID region) {
         RegionEntry metadataRegion = _regionTable.Regions.get(region);
+Debug.println(_logicalStream + ", " + metadataRegion);
         return new SubStream(_logicalStream, metadataRegion.fileOffset, metadataRegion.getLength());
     }
 
@@ -455,7 +458,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     /**
      * Disposes of underlying resources.
-     * 
+     *
      * @throws IOException
      */
     public void close() throws IOException {
@@ -600,9 +603,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
     private List<StreamExtent> batControlledFileExtents() {
         _batStream.setPosition(0);
         byte[] batData = StreamUtilities.readExact(_batStream, (int) _batStream.getLength());
+
         int blockSize = _metadata.getFileParameters().BlockSize;
         long chunkSize = (1L << 23) * _metadata.getLogicalSectorSize();
         int chunkRatio = (int) (chunkSize / _metadata.getFileParameters().BlockSize);
+
         List<StreamExtent> extents = new ArrayList<>();
         for (int i = 0; i < batData.length; i += 8) {
             long entry = EndianUtilities.toUInt64LittleEndian(batData, i);
@@ -616,7 +621,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 }
             }
         }
+
         Collections.sort(extents);
+
         return extents;
     }
 
@@ -627,13 +634,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     private void replayLog() {
         _freeSpace.reserve(_header.LogOffset, _header.LogLength);
+
         _logicalStream = _fileStream;
+
         // If log is empty, skip.
         if (_header.LogGuid.equals(EMPTY)) {
             return;
         }
 
         LogSequence activeLogSequence = findActiveLogSequence();
+
         if (activeLogSequence == null || activeLogSequence.size() == 0) {
             throw new dotnet4j.io.IOException("Unable to replay VHDX log, suspected corrupt VHDX file");
         }
@@ -642,7 +652,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             throw new dotnet4j.io.IOException("truncated VHDX file found while replaying log");
         }
 
-        if (activeLogSequence.size() > 1 || !activeLogSequence.getHead().getIsEmpty()) {
+        if (activeLogSequence.size() > 1 || !activeLogSequence.getHead().isEmpty()) {
             // However, have seen VHDX with a non-empty log with no data to
             // replay. These are 'safe' to open.
             if (!_fileStream.canWrite()) {
@@ -650,14 +660,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 replayStream.snapshot();
                 _logicalStream = replayStream;
             }
-
             for (LogEntry logEntry : activeLogSequence) {
-                if (logEntry.getLogGuid() != _header.LogGuid)
+                if (!logEntry.getLogGuid().equals(_header.LogGuid))
                     throw new dotnet4j.io.IOException("Invalid log entry in VHDX log, suspected currupt VHDX file");
-
-                if (logEntry.getIsEmpty())
+                if (logEntry.isEmpty())
                     continue;
-
                 logEntry.replay(_logicalStream);
             }
             _logicalStream.seek(activeLogSequence.getHead().getLastFileOffset(), SeekOrigin.Begin);
@@ -665,7 +672,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private LogSequence findActiveLogSequence() {
-
         try (Stream logStream = new CircularStream(new SubStream(_fileStream, _header.LogOffset, _header.LogLength),
                                                    Ownership.Dispose)) {
             LogSequence candidateActiveSequence = new LogSequence();
@@ -723,7 +729,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     private void readHeaders() {
         _freeSpace.reserve(0, Sizes.OneMiB);
+
         _activeHeader = 0;
+
         _fileStream.setPosition(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, _fileStream);
         if (vhdxHeader1.isValid()) {
@@ -785,7 +793,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
 
         List<String> paths = new ArrayList<>();
+
         ParentLocator locator = _metadata.getParentLocator();
+
         if (locator.getEntries().containsKey("relative_path")) {
             paths.add(fileLocator.resolveRelativePath(locator.getEntries().get("relative_path")));
         }

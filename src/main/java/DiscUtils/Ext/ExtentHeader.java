@@ -31,13 +31,21 @@ public class ExtentHeader implements IByteArraySerializable {
 
     public short Depth;
 
-    public short Entries;
+    private short Entries;
+
+    public int getEntries() {
+        return Entries & 0xffff;
+    }
 
     public int Generation;
 
     public short Magic;
 
-    public short MaxEntries;
+    private short MaxEntries;
+
+    public int getMaxEntries() {
+        return MaxEntries & 0xffff;
+    }
 
     public int size() {
         return 12;

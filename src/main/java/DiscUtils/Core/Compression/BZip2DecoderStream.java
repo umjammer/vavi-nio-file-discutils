@@ -73,7 +73,9 @@ public final class BZip2DecoderStream extends Stream {
     public BZip2DecoderStream(Stream stream, Ownership ownsStream) {
         _compressedStream = stream;
         _ownsCompressed = ownsStream;
+
         _bitstream = new BigEndianBitStream(new BufferedStream(stream));
+
         // The Magic BZh
         byte[] magic = new byte[3];
         magic[0] = (byte) _bitstream.read(8);
@@ -90,13 +92,14 @@ public final class BZip2DecoderStream extends Stream {
         }
 
         blockSize *= 100000;
+
         _rleStream = new BZip2RleStream();
         _blockDecoder = new BZip2BlockDecoder(blockSize);
         _blockBuffer = new byte[blockSize];
+
         if (readBlock() == 0) {
             _eof = true;
         }
-
     }
 
     /**
@@ -268,6 +271,7 @@ public final class BZip2DecoderStream extends Stream {
         }
 
         _compressedStream = null;
+
         if (_rleStream != null) {
             _rleStream.close();
             _rleStream = null;
@@ -283,28 +287,30 @@ public final class BZip2DecoderStream extends Stream {
             _calcBlockCrc = new Crc32BigEndian(Crc32Algorithm.Common);
             return blockSize;
         }
-
         if (marker == 0x177245385090l) {
             _compoundCrc = readUint();
             return 0;
         }
-
         throw new dotnet4j.io.IOException("Found invalid marker in stream");
     }
 
     private int readUint() {
         int val = 0;
+
         for (int i = 0; i < 4; ++i) {
             val = (val << 8) | _bitstream.read(8);
         }
+
         return val;
     }
 
     private long readMarker() {
         long marker = 0;
+
         for (int i = 0; i < 6; ++i) {
             marker = (marker << 8) | _bitstream.read(8);
         }
+
         return marker;
     }
 

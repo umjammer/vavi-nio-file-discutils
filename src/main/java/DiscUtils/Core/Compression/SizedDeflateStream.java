@@ -49,7 +49,6 @@ public class SizedDeflateStream extends DeflateStream {
         if (value != getPosition()) {
             throw new UnsupportedOperationException();
         }
-
     }
 
     public int read(byte[] array, int offset, int count) {
@@ -57,5 +56,4 @@ public class SizedDeflateStream extends DeflateStream {
         _position += read;
         return read;
     }
-
 }

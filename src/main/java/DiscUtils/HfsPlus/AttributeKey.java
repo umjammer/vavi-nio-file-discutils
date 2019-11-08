@@ -38,28 +38,28 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
     }
 
     public AttributeKey(CatalogNodeId nodeId, String name) {
-        setFileId(nodeId);
-        setName(name);
+        _fileId = nodeId;
+        _name = name;
     }
 
-    private CatalogNodeId __FileId;
+    private CatalogNodeId _fileId;
 
     public CatalogNodeId getFileId() {
-        return __FileId;
+        return _fileId;
     }
 
     public void setFileId(CatalogNodeId value) {
-        __FileId = value;
+        _fileId = value;
     }
 
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
     public int size() {
@@ -69,9 +69,9 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
     public int readFrom(byte[] buffer, int offset) {
         _keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
         _pad = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        setFileId(new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4)));
+        _fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         _startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        setName(HfsPlusUtilities.readUniStr255(buffer, offset + 12));
+        _name = HfsPlusUtilities.readUniStr255(buffer, offset + 12);
         return _keyLength + 2;
     }
 
@@ -96,12 +96,6 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
     }
 
     public String toString() {
-        try {
-            return getName() + " (" + getFileId() + ")";
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
+        return _name + " (" + _fileId + ")";
     }
 }

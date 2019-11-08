@@ -45,8 +45,7 @@ public class ScsiReadCommand extends ScsiCommand {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        buffer[offset + 0] = 0x28;
-        // OpCode: READ(10)
+        buffer[offset + 0] = 0x28; // OpCode: READ(10)
         buffer[offset + 1] = 0;
         EndianUtilities.writeBytesBigEndian(_logicalBlockAddress, buffer, offset + 2);
         buffer[offset + 6] = 0;

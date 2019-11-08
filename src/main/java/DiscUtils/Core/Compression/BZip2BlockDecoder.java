@@ -32,14 +32,14 @@ public class BZip2BlockDecoder {
         _inverseBurrowsWheeler = new InverseBurrowsWheeler(blockSize);
     }
 
-    private int __Crc;
+    private int _crc;
 
     public int getCrc() {
-        return __Crc;
+        return _crc;
     }
 
     public void setCrc(int value) {
-        __Crc = value;
+        _crc = value;
     }
 
     public int process(BitStream bitstream, byte[] outputBuffer, int outputBufferOffset) {
@@ -47,11 +47,15 @@ public class BZip2BlockDecoder {
         for (int i = 0; i < 4; ++i) {
             setCrc((getCrc() << 8) | bitstream.read(8));
         }
+
         boolean rand = bitstream.read(1) != 0;
         int origPtr = bitstream.read(24);
+
         int thisBlockSize = readBuffer(bitstream, outputBuffer, outputBufferOffset);
+
         _inverseBurrowsWheeler.setOriginalIndex(origPtr);
         _inverseBurrowsWheeler.process(outputBuffer, outputBufferOffset, thisBlockSize, outputBuffer, outputBufferOffset);
+
         if (rand) {
             BZip2Randomizer randomizer = new BZip2Randomizer();
             randomizer.process(outputBuffer, outputBufferOffset, thisBlockSize, outputBuffer, outputBufferOffset);
@@ -68,22 +72,24 @@ public class BZip2BlockDecoder {
         for (int i = 0; i < 16; ++i) {
             inUseGroups[i] = bitstream.read(1) != 0;
         }
+
         for (int i = 0; i < 256; ++i) {
             if (inUseGroups[i / 16]) {
                 if (bitstream.read(1) != 0) {
                     moveFrontTransform.set(numInUse, (byte) i);
                     numInUse++;
                 }
-
             }
-
         }
+
         // Initialize 'virtual' Huffman tree from bitstream
         BZip2CombinedHuffmanTrees huffmanTree = new BZip2CombinedHuffmanTrees(bitstream, numInUse + 2);
+
         // Main loop reading data
         int readBytes = 0;
         while (true) {
             int symbol = huffmanTree.nextSymbol();
+
             if (symbol < 2) {
                 // RLE, with length stored in a binary-style format
                 int runLength = 0;
@@ -93,6 +99,7 @@ public class BZip2BlockDecoder {
                     bitShift++;
                     symbol = huffmanTree.nextSymbol();
                 }
+
                 byte b = moveFrontTransform.getHead();
                 while (runLength > 0) {
                     buffer[offset + readBytes] = b;
@@ -107,11 +114,11 @@ public class BZip2BlockDecoder {
                 buffer[offset + readBytes] = b;
                 ++readBytes;
             } else if (symbol == numInUse + 1) {
+                // End of block marker
                 return readBytes;
             } else {
                 throw new dotnet4j.io.IOException("Invalid symbol from Huffman table");
             }
         }
     }
-
 }

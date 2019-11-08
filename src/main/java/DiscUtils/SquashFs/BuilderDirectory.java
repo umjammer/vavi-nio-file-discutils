@@ -118,7 +118,7 @@ public final class BuilderDirectory extends BuilderNode {
             for (int i = 0; i < count; ++i) {
                 Entry child = _children.get(currentChild + i);
                 DirectoryRecord record = new DirectoryRecord();
-                record.Offset = (short) child.Node.getInodeRef().getOffset();
+                record.setOffset((short) child.Node.getInodeRef().getOffset());
                 record.InodeNumber = (short) (child.Node.getInodeNumber() - firstInode);
                 record.Type = child.Node.getInode()._type;
                 record.Name = child.Name;

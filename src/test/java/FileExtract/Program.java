@@ -22,7 +22,6 @@
 
 package FileExtract;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.klab.commons.cli.Option;
@@ -45,7 +44,7 @@ import dotnet4j.io.Stream;
 @Options
 public class Program extends ProgramBase {
     @Option(option = "f", argName = "_diskFile", description = "The disks to inspect.", args = 1, required = false)
-    private File _diskFile;
+    private String _diskFile;
 
     @Option(option = "d", argName = "_inFilePath", description = "The path of the file to extract.", args = 1, required = false)
     private String _inFilePath;
@@ -53,8 +52,7 @@ public class Program extends ProgramBase {
     @Option(option = "o", argName = "_outFilePath", description = "The output file to be written.", args = 1, required = false)
     private String _outFilePath;
 
-    @Option(option = "dt", argName = "_diskType",
-            description = "Force the type of disk - use a file extension (one of )")
+    @Option(option = "dt", argName = "_diskType", description = "Force the type of disk - use a file extension (one of )")
     private String _diskType;
 
     @Option(option = "hd",
@@ -63,7 +61,7 @@ public class Program extends ProgramBase {
     private boolean _hexDump;
 
     public static void main(String[] args) throws Exception {
-System.err.println("SupportedDiskTypes: " + String.join(", ", VirtualDiskManager.getSupportedDiskTypes()));
+        System.err.println("SupportedDiskTypes: " + String.join(", ", VirtualDiskManager.getSupportedDiskTypes()));
         Program program = new Program();
         Options.Util.bind(args, program);
         program.doRun();
@@ -71,9 +69,9 @@ System.err.println("SupportedDiskTypes: " + String.join(", ", VirtualDiskManager
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
-System.err.println("file: " +_diskFile);
+        System.err.println("file: " + _diskFile);
         volMgr.addDisk(VirtualDisk.openDisk(_diskFile
-                .getPath(), _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
+                .replace("/", "\\"), _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
         VolumeInfo volInfo = null;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             volInfo = volMgr.getVolume(getVolumeId());

@@ -119,8 +119,8 @@ public class Inode implements IByteArraySerializable {
      */
     private short _mode;
 
-    public short getMode() {
-        return _mode;
+    public int getMode() {
+        return _mode & 0xffff;
     }
 
     public void setMode(short value) {
@@ -172,8 +172,8 @@ public class Inode implements IByteArraySerializable {
      */
     private short _onlink;
 
-    public short getOnlink() {
-        return _onlink;
+    public int getOnlink() {
+        return _onlink & 0xffff;
     }
 
     public void setOnlink(short value) {
@@ -255,8 +255,8 @@ public class Inode implements IByteArraySerializable {
      */
     private short _flushIterator;
 
-    public short getFlushIterator() {
-        return _flushIterator;
+    public int getFlushIterator() {
+        return _flushIterator & 0xffff;
     }
 
     public void setFlushIterator(short value) {
@@ -375,8 +375,8 @@ public class Inode implements IByteArraySerializable {
      */
     private short _attributeExtents;
 
-    public short getAttributeExtents() {
-        return _attributeExtents;
+    public int getAttributeExtents() {
+        return _attributeExtents & 0xffff;
     }
 
     public void setAttributeExtents(short value) {
@@ -394,8 +394,8 @@ public class Inode implements IByteArraySerializable {
      */
     private byte _forkoff;
 
-    public byte getForkoff() {
-        return _forkoff;
+    public int getForkoff() {
+        return _forkoff & 0xff;
     }
 
     public void setForkoff(byte value) {

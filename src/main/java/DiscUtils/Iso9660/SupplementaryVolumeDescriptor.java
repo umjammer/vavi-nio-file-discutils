@@ -71,11 +71,10 @@ public class SupplementaryVolumeDescriptor extends CommonVolumeDescriptor {
         IsoUtilities.writeA1Chars(buffer, offset + 318, 129, PublisherIdentifier, CharacterEncoding);
         IsoUtilities.writeA1Chars(buffer, offset + 446, 129, DataPreparerIdentifier, CharacterEncoding);
         IsoUtilities.writeA1Chars(buffer, offset + 574, 129, ApplicationIdentifier, CharacterEncoding);
-        IsoUtilities.writeD1Chars(buffer, offset + 702, 37, CopyrightFileIdentifier, CharacterEncoding);
-        // FIXME!!
-        IsoUtilities.writeD1Chars(buffer, offset + 739, 37, AbstractFileIdentifier, CharacterEncoding);
-        // FIXME!!
+        IsoUtilities.writeD1Chars(buffer, offset + 702, 37, CopyrightFileIdentifier, CharacterEncoding); // FIXME!!
+        IsoUtilities.writeD1Chars(buffer, offset + 739, 37, AbstractFileIdentifier, CharacterEncoding); // FIXME!!
         IsoUtilities.writeD1Chars(buffer, offset + 776, 37, BibliographicFileIdentifier, CharacterEncoding);
+
         // FIXME!!
         IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 813, CreationDateAndTime);
         IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 830, ModificationDateAndTime);

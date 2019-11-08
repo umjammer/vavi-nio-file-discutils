@@ -22,8 +22,6 @@
 
 package DiscUtils.Vhdx;
 
-import java.io.IOException;
-
 import DiscUtils.Core.DiskImageBuilder;
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
@@ -47,12 +45,14 @@ public final class DiskFactory extends VirtualDiskFactory {
 
     public DiskImageBuilder getImageBuilder(String variant) {
         DiskBuilder builder = new DiskBuilder();
-        String __dummyScrutVar0 = variant;
-        if (__dummyScrutVar0.equals("fixed")) {
+        switch (variant) {
+        case "fixed":
             builder.setDiskType(DiskType.Fixed);
-        } else if (__dummyScrutVar0.equals("dynamic")) {
+            break;
+        case "dynamic":
             builder.setDiskType(DiskType.Dynamic);
-        } else {
+            break;
+        default:
             throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
         }
         return builder;
@@ -61,13 +61,13 @@ public final class DiskFactory extends VirtualDiskFactory {
     public VirtualDisk createDisk(FileLocator locator,
                                   String variant,
                                   String path,
-                                  VirtualDiskParameters diskParameters) throws IOException {
-        String __dummyScrutVar1 = variant;
-        if (__dummyScrutVar1.equals("fixed")) {
+                                  VirtualDiskParameters diskParameters) {
+        switch (variant) {
+        case "fixed":
             return Disk.initializeFixed(locator, path, diskParameters.getCapacity(), diskParameters.getGeometry());
-        } else if (__dummyScrutVar1.equals("dynamic")) {
+        case "dynamic":
             return Disk.initializeDynamic(locator, path, diskParameters.getCapacity(), FileParameters.DefaultDynamicBlockSize);
-        } else {
+        default:
             throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
         }
     }

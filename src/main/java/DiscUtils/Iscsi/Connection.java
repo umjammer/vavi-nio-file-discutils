@@ -50,14 +50,14 @@ class Connection implements Closeable {
 
     public Connection(Session session, TargetAddress address, Authenticator[] authenticators) {
         try {
-            Session = session;
+            this.session = session;
             _authenticators = authenticators;
 
             Socket client = new Socket(address.getNetworkAddress(), address.getNetworkPort());
             client.setTcpNoDelay(true);
             _stream = new NetworkStream(client);
 
-            Id = session.nextConnectionId();
+            id = session.nextConnectionId();
 
             // Default negotiated values
             HeaderDigest = Digest.None;
@@ -73,26 +73,26 @@ class Connection implements Closeable {
         }
     }
 
-    private LoginStages CurrentLoginStage = LoginStages.SecurityNegotiation;
+    private LoginStages currentLoginStage = LoginStages.SecurityNegotiation;
 
-    public LoginStages getCurrentLoginStage() {
-        return CurrentLoginStage;
+    LoginStages getCurrentLoginStage() {
+        return currentLoginStage;
     }
 
-    private int ExpectedStatusSequenceNumber = 1;
+    private int expectedStatusSequenceNumber = 1;
 
-    public int getExpectedStatusSequenceNumber() {
-        return ExpectedStatusSequenceNumber;
+    int getExpectedStatusSequenceNumber() {
+        return expectedStatusSequenceNumber;
     }
 
-    private short Id;
+    private short id;
 
-    public short getId() {
-        return Id;
+    short getId() {
+        return id;
     }
 
-    public LoginStages getNextLoginStage() {
-        switch (CurrentLoginStage) {
+    LoginStages getNextLoginStage() {
+        switch (currentLoginStage) {
         case SecurityNegotiation:
             return LoginStages.LoginOperationalNegotiation;
         case LoginOperationalNegotiation:
@@ -102,10 +102,10 @@ class Connection implements Closeable {
         }
     }
 
-    private Session Session;
+    private Session session;
 
-    public Session getSession() {
-        return Session;
+    Session getSession() {
+        return session;
     }
 
     public void close() throws IOException {
@@ -139,7 +139,7 @@ class Connection implements Closeable {
     public int send(ScsiCommand cmd, byte[] outBuffer, int outBufferOffset, int outBufferCount, byte[] inBuffer, int inBufferOffset, int inBufferMax) {
         CommandRequest req = new CommandRequest(this, cmd.getTargetLun());
 
-        int toSend = Math.min(Math.min(outBufferCount, Session.getImmediateData() ? Session.getFirstBurstLength() : 0), MaxTargetReceiveDataSegmentLength);
+        int toSend = Math.min(Math.min(outBufferCount, session.getImmediateData() ? session.getFirstBurstLength() : 0), MaxTargetReceiveDataSegmentLength);
         byte[] packet = req.getBytes(cmd, outBuffer, outBufferOffset, toSend, true, inBufferMax != 0, outBufferCount != 0, outBufferCount != 0 ? outBufferCount : inBufferMax);
         _stream.write(packet, 0, packet.length);
         _stream.flush();
@@ -202,8 +202,8 @@ class Connection implements Closeable {
             }
         }
 
-        Session.nextTaskTag();
-        Session.nextCommandSequenceNumber();
+        session.nextTaskTag();
+        session.nextCommandSequenceNumber();
 
         return numRead;
     }
@@ -271,23 +271,23 @@ class Connection implements Closeable {
     }
 
     void SeenStatusSequenceNumber(int number) {
-        if (number != 0 && number != ExpectedStatusSequenceNumber) {
-            throw new InvalidProtocolException("Unexpected status sequence number " + number + ", expected " + ExpectedStatusSequenceNumber);
+        if (number != 0 && number != expectedStatusSequenceNumber) {
+            throw new InvalidProtocolException("Unexpected status sequence number " + number + ", expected " + expectedStatusSequenceNumber);
         }
 
-        ExpectedStatusSequenceNumber = number + 1;
+        expectedStatusSequenceNumber = number + 1;
     }
 
     private void NegotiateSecurity() {
-        CurrentLoginStage = LoginStages.SecurityNegotiation;
+        currentLoginStage = LoginStages.SecurityNegotiation;
 
         //
         // Establish the contents of the request
         //
         TextBuffer parameters = new TextBuffer();
 
-        getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, Session.getSessionType());
-        Session.getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation);
+        getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, session.getSessionType());
+        session.getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation);
 
         String authParam = _authenticators[0].getIdentifier();
         for (int i = 1; i < _authenticators.length; ++i) {
@@ -404,7 +404,7 @@ class Connection implements Closeable {
             throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + getNextLoginStage() + ")");
         }
 
-        CurrentLoginStage = resp.NextStage;
+        currentLoginStage = resp.NextStage;
     }
 
     private void NegotiateFeatures() {
@@ -412,8 +412,8 @@ class Connection implements Closeable {
         // Send the request...
         //
         TextBuffer parameters = new TextBuffer();
-        getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, Session.getSessionType());
-        Session.getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation);
+        getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, session.getSessionType());
+        session.getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation);
 
         byte[] paramBuffer = new byte[(int) parameters.getSize()];
         parameters.writeTo(paramBuffer, 0);
@@ -502,7 +502,7 @@ class Connection implements Closeable {
             throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + getNextLoginStage() + ")");
         }
 
-        CurrentLoginStage = resp.NextStage;
+        currentLoginStage = resp.NextStage;
     }
 
     private ProtocolDataUnit ReadPdu() {
@@ -556,7 +556,7 @@ class Connection implements Closeable {
                 }
             }
 
-            Session.consumeParameters(inParameters, outParameters);
+            session.consumeParameters(inParameters, outParameters);
 
             for (Map.Entry<String, String> param : inParameters.getLines().entrySet()) {
                 outParameters.add(param.getKey(), "NotUnderstood");

@@ -22,58 +22,57 @@
 
 package DiscUtils.Nfs;
 
-
 public class Nfs3CreateResult extends Nfs3CallResult {
     public Nfs3CreateResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
         if (getStatus() == Nfs3Status.Ok) {
             if (reader.readBool()) {
-                setFileHandle(new Nfs3FileHandle(reader));
+                _fileHandle = new Nfs3FileHandle(reader);
             }
 
             if (reader.readBool()) {
-                setFileAttributes(new Nfs3FileAttributes(reader));
+                _fileAttributes = new Nfs3FileAttributes(reader);
             }
         }
 
-        setCacheConsistency(new Nfs3WeakCacheConsistency(reader));
+        _cacheConsistency = new Nfs3WeakCacheConsistency(reader);
     }
 
     public Nfs3CreateResult() {
     }
 
-    private Nfs3WeakCacheConsistency __CacheConsistency;
+    private Nfs3WeakCacheConsistency _cacheConsistency;
 
     public Nfs3WeakCacheConsistency getCacheConsistency() {
-        return __CacheConsistency;
+        return _cacheConsistency;
     }
 
     public void setCacheConsistency(Nfs3WeakCacheConsistency value) {
-        __CacheConsistency = value;
+        _cacheConsistency = value;
     }
 
-    private Nfs3FileAttributes __FileAttributes;
+    private Nfs3FileAttributes _fileAttributes;
 
     public Nfs3FileAttributes getFileAttributes() {
-        return __FileAttributes;
+        return _fileAttributes;
     }
 
     public void setFileAttributes(Nfs3FileAttributes value) {
-        __FileAttributes = value;
+        _fileAttributes = value;
     }
 
-    private Nfs3FileHandle __FileHandle;
+    private Nfs3FileHandle _fileHandle;
 
     public Nfs3FileHandle getFileHandle() {
-        return __FileHandle;
+        return _fileHandle;
     }
 
     public void setFileHandle(Nfs3FileHandle value) {
-        __FileHandle = value;
+        _fileHandle = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(_status.getValue());
         if (getStatus() == Nfs3Status.Ok) {
             writer.write(getFileHandle() != null);
             if (getFileHandle() != null) {
@@ -104,9 +103,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(),
-                                         getFileHandle(),
-                                         getFileAttributes(),
-                                         getCacheConsistency());
+        return dotnet4j.io.compat.Utilities
+                .getCombinedHashCode(getStatus(), getFileHandle(), getFileAttributes(), getCacheConsistency());
     }
 }

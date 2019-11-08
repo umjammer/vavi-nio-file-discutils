@@ -33,23 +33,23 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     public BiosPartitionRecord(byte[] data, int offset, int lbaOffset, int index) {
         _lbaOffset = lbaOffset;
-        setStatus(data[offset]);
-        setStartHead(data[offset + 1]);
-        setStartSector((byte) (data[offset + 2] & 0x3F));
-        setStartCylinder((short) ((data[offset + 3] & 0xff) | ((data[offset + 2] & 0xC0) << 2)));
-        setPartitionType(data[offset + 4]);
-        setEndHead(data[offset + 5]);
-        setEndSector((byte) (data[offset + 6] & 0x3F));
-        setEndCylinder((short) ((data[offset + 7] & 0xff)  | ((data[offset + 6] & 0xC0) << 2)));
-        setLBAStart(EndianUtilities.toUInt32LittleEndian(data, offset + 8));
-        setLBALength(EndianUtilities.toUInt32LittleEndian(data, offset + 12));
+        _status = data[offset];
+        _startHead = data[offset + 1];
+        _startSector = (byte) (data[offset + 2] & 0x3F);
+        _startCylinder = (data[offset + 3] & 0xff) | ((data[offset + 2] & 0xC0) << 2);
+        _partitionType = data[offset + 4];
+        _endHead = data[offset + 5];
+        _endSector = (byte) (data[offset + 6] & 0x3F);
+        _endCylinder = (data[offset + 7] & 0xff)  | ((data[offset + 6] & 0xC0) << 2);
+        _lbaStart = EndianUtilities.toUInt32LittleEndian(data, offset + 8);
+        _lbaLength = EndianUtilities.toUInt32LittleEndian(data, offset + 12);
         _index = index;
     }
 
-    private short _endCylinder;
+    private int _endCylinder;
 
     public int getEndCylinder() {
-        return _endCylinder & 0xffff;
+        return _endCylinder;
     }
 
     public void setEndCylinder(short value) {
@@ -68,8 +68,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
 
     private byte _endSector;
 
-    public byte getEndSector() {
-        return _endSector;
+    public int getEndSector() {
+        return _endSector & 0xff;
     }
 
     public void setEndSector(byte value) {
@@ -124,10 +124,10 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         _partitionType = value;
     }
 
-    private short _startCylinder;
+    private int _startCylinder;
 
     public int getStartCylinder() {
-        return _startCylinder & 0xffff;
+        return _startCylinder;
     }
 
     public void setStartCylinder(short value) {

@@ -32,7 +32,7 @@ import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 
 
-public final class MetablockWriter implements Closeable {
+final class MetablockWriter implements Closeable {
     private MemoryStream _buffer;
 
     private final byte[] _currentBlock;
@@ -71,7 +71,7 @@ public final class MetablockWriter implements Closeable {
         }
     }
 
-    public void persist(Stream output) {
+    void persist(Stream output) {
         if (_currentOffset > 0) {
             nextBlock();
         }
@@ -79,32 +79,34 @@ public final class MetablockWriter implements Closeable {
         output.write(_buffer.toArray(), 0, (int) _buffer.getLength());
     }
 
-    public long distanceFrom(MetadataRef startPos) {
+    long distanceFrom(MetadataRef startPos) {
         return (_currentBlockNum - startPos.getBlock()) * VfsSquashFileSystemReader.MetadataBufferSize +
             (_currentOffset - startPos.getOffset());
     }
 
     private void nextBlock() {
         MemoryStream compressed = new MemoryStream();
-
         try (ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true)) {
             compStream.write(_currentBlock, 0, _currentOffset);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
+
         byte[] writeData;
-        short writeLen;
+        int writeLen;
         if (compressed.getLength() < _currentOffset) {
             writeData = compressed.toArray();
-            writeLen = (short) compressed.getLength();
+            writeLen = (int) (compressed.getLength() & 0xffff);
         } else {
             writeData = _currentBlock;
-            writeLen = (short) (_currentOffset | 0x8000);
+            writeLen = _currentOffset | 0x8000;
         }
+
         byte[] header = new byte[2];
-        EndianUtilities.writeBytesLittleEndian(writeLen, header, 0);
+        EndianUtilities.writeBytesLittleEndian((short) writeLen, header, 0);
         _buffer.write(header, 0, 2);
         _buffer.write(writeData, 0, writeLen & 0x7FFF);
+
         ++_currentBlockNum;
     }
 }

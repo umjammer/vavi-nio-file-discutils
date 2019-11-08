@@ -30,7 +30,7 @@ import java.util.List;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class SubKeyIndirectListCell extends ListCell {
+final class SubKeyIndirectListCell extends ListCell {
     private final RegistryHive _hive;
 
     public SubKeyIndirectListCell(RegistryHive hive, int index) {
@@ -48,7 +48,7 @@ public final class SubKeyIndirectListCell extends ListCell {
         __CellIndexes = value;
     }
 
-    public int getCount() {
+    int getCount() {
         int total = 0;
         for (int cellIndex : getCellIndexes()) {
             Cell cell = _hive.getCell(cellIndex);
@@ -97,7 +97,7 @@ public final class SubKeyIndirectListCell extends ListCell {
     /**
      * @param cellIndex {@cs out}
      */
-    public int findKey(String name, int[] cellIndex) {
+    int findKey(String name, int[] cellIndex) {
         if (getCellIndexes().size() <= 0) {
             cellIndex[0] = 0;
             return -1;
@@ -118,12 +118,12 @@ public final class SubKeyIndirectListCell extends ListCell {
         }
 
         KeyFinder finder = new KeyFinder(_hive, name);
-        int idx = Collections.binarySearch(getCellIndexes(), null, finder); // , -1 reverse ???
+        int idx = Collections.binarySearch(getCellIndexes(), -1, finder);
         cellIndex[0] = finder.getCellIndex();
         return idx < 0 ? -1 : 0;
     }
 
-    public void enumerateKeys(List<String> names) {
+    void enumerateKeys(List<String> names) {
         for (int i = 0; i < getCellIndexes().size(); ++i) {
             Cell cell = _hive.<Cell> getCell(getCellIndexes().get(i));
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
@@ -135,7 +135,7 @@ public final class SubKeyIndirectListCell extends ListCell {
         }
     }
 
-    public List<KeyNodeCell> enumerateKeys() {
+    List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
         for (int i = 0; i < getCellIndexes().size(); ++i) {
             Cell cell = _hive.<Cell> getCell(getCellIndexes().get(i));
@@ -151,7 +151,7 @@ public final class SubKeyIndirectListCell extends ListCell {
         return result;
     }
 
-    public int linkSubKey(String name, int cellIndex) {
+    int linkSubKey(String name, int cellIndex) {
         // Look for the first sublist that has a subkey name greater than name
         if (getListType().equals("ri")) {
             if (getCellIndexes().size() == 0) {
@@ -184,7 +184,7 @@ public final class SubKeyIndirectListCell extends ListCell {
         return _hive.updateCell(this, true);
     }
 
-    public int unlinkSubKey(String name) {
+    int unlinkSubKey(String name) {
         if (getListType().equals("ri")) {
             if (getCellIndexes().size() == 0) {
                 throw new UnsupportedOperationException("Empty indirect list");

@@ -39,7 +39,7 @@ public final class SuspRecords {
         ContinuationSystemUseEntry contEntry = parse(context, data, offset + context.getSuspSkipBytes());
         while (contEntry != null) {
             context.getDataStream()
-                    .setPosition(contEntry.Block * (long) context.getVolumeDescriptor().LogicalBlockSize +
+                    .setPosition(contEntry.Block * (long) context.getVolumeDescriptor().getLogicalBlockSize() +
                         contEntry.BlockOffset);
             byte[] contData = StreamUtilities.readExact(context.getDataStream(), contEntry.Length);
             contEntry = parse(context, contData, 0);
@@ -117,7 +117,7 @@ public final class SuspRecords {
                 break;
             case "ES":
                 ExtensionSelectSystemUseEntry esEntry = (ExtensionSelectSystemUseEntry) entry;
-                extension = context.getSuspExtensions().get(esEntry.SelectedExtension);
+                extension = context.getSuspExtensions().get(esEntry.getSelectedExtension());
                 break;
             case "PD":
                 break;

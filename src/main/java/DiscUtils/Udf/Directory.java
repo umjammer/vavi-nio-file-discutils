@@ -50,7 +50,7 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
             FileIdentifier id = new FileIdentifier();
             int size = id.readFrom(contentBytes, pos);
 
-            if (Collections.disjoint(id._FileCharacteristics, EnumSet.of(FileCharacteristic.Deleted, FileCharacteristic.Parent))) {
+            if (Collections.disjoint(id._fileCharacteristics, EnumSet.of(FileCharacteristic.Deleted, FileCharacteristic.Parent))) {
                 _entries.add(id);
             }
 

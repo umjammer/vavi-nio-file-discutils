@@ -60,9 +60,9 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param readOnly Only permit 'read' activities.
      */
     public NativeFileSystem(String basePath, boolean readOnly) {
-        __BasePath = basePath;
-        if (!getBasePath().endsWith("\\")) {
-            __BasePath += "\\";
+        _basePath = basePath;
+        if (!_basePath.endsWith("\\")) {
+            _basePath += "\\";
         }
 
         _readOnly = readOnly;
@@ -71,10 +71,10 @@ public class NativeFileSystem extends DiscFileSystem {
     /**
      * Gets the base path used to create the file system.
      */
-    private String __BasePath;
+    private String _basePath;
 
     public String getBasePath() {
-        return __BasePath;
+        return _basePath;
     }
 
     /**
@@ -302,7 +302,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
         try {
             return cleanItems(Files.list(Paths
-                    .get(getBasePath(), path)/* , searchPattern, searchOption */)
+                    .get(getBasePath(), path)/* , searchPattern, searchOption */) // TODO impl
                     .map(p -> p.toString())
                     .collect(Collectors.toList()));
         } catch (IOException __dummyCatchVar0) {
@@ -348,7 +348,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
         try {
             return cleanItems(Files.list(Paths
-                    .get(getBasePath(), path)/* , searchPattern, searchOption */)
+                    .get(getBasePath(), path)/* , searchPattern, searchOption */) // TODO impl
                     .map(p -> p.toString())
                     .collect(Collectors.toList()));
         } catch (IOException __dummyCatchVar2) {
@@ -381,7 +381,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
         try {
             return cleanItems(Files
-                    .list(Paths.get(getBasePath(), path)/* , searchPattern */)
+                    .list(Paths.get(getBasePath(), path)/* , searchPattern */) // TODO impl
                     .map(p -> p.toString())
                     .collect(Collectors.toList()));
         } catch (IOException __dummyCatchVar4) {
@@ -769,5 +769,4 @@ public class NativeFileSystem extends DiscFileSystem {
         }
         return cleanList;
     }
-
 }

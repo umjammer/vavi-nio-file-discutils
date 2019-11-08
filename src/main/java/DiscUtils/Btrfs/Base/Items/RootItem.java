@@ -41,160 +41,160 @@ public class RootItem extends BaseItem {
      * generation=1, size=3,nlink=1, nbytes=leafsize, mode=040755
      * flags depends on kernel version.
      */
-    private InodeItem __Inode;
+    private InodeItem _inode;
 
     public InodeItem getInode() {
-        return __Inode;
+        return _inode;
     }
 
     public void setInode(InodeItem value) {
-        __Inode = value;
+        _inode = value;
     }
 
     /**
      * transid of the transaction that created this root.
      */
-    private long __Generation;
+    private long _generation;
 
     public long getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        _generation = value;
     }
 
     /**
      * For file trees, the objectid of the root directory in this tree (always
      * 256). Otherwise, 0.
      */
-    private long __RootDirId;
+    private long _rootDirId;
 
     public long getRootDirId() {
-        return __RootDirId;
+        return _rootDirId;
     }
 
     public void setRootDirId(long value) {
-        __RootDirId = value;
+        _rootDirId = value;
     }
 
     /**
      * The disk offset in bytes for the root node of this tree.
      */
-    private long __ByteNr;
+    private long _byteNr;
 
     public long getByteNr() {
-        return __ByteNr;
+        return _byteNr;
     }
 
     public void setByteNr(long value) {
-        __ByteNr = value;
+        _byteNr = value;
     }
 
     /**
      * Unused. Always 0.
      */
-    private long __ByteLimit;
+    private long _byteLimit;
 
     public long getByteLimit() {
-        return __ByteLimit;
+        return _byteLimit;
     }
 
     public void setByteLimit(long value) {
-        __ByteLimit = value;
+        _byteLimit = value;
     }
 
     /**
      * Unused
      */
-    private long __BytesUsed;
+    private long _bytesUsed;
 
     public long getBytesUsed() {
-        return __BytesUsed;
+        return _bytesUsed;
     }
 
     public void setBytesUsed(long value) {
-        __BytesUsed = value;
+        _bytesUsed = value;
     }
 
     /**
      * The last transid of the transaction that created a snapshot of this root.
      */
-    private long __LastSnapshot;
+    private long _lastSnapshot;
 
     public long getLastSnapshot() {
-        return __LastSnapshot;
+        return _lastSnapshot;
     }
 
     public void setLastSnapshot(long value) {
-        __LastSnapshot = value;
+        _lastSnapshot = value;
     }
 
     /**
      * flags
      */
-    private long __Flags;
+    private long _flags;
 
     public long getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(long value) {
-        __Flags = value;
+        _flags = value;
     }
 
     /**
      * Originally indicated a reference count. In modern usage, it is only 0 or
      * 1.
      */
-    private int __Refs;
+    private int _refs;
 
     public int getRefs() {
-        return __Refs;
+        return _refs;
     }
 
     public void setRefs(int value) {
-        __Refs = value;
+        _refs = value;
     }
 
     /**
      * Contains key of last dropped item during subvolume removal or relocation.
      * Zeroed otherwise.
      */
-    private Key __DropProgress;
+    private Key _dropProgress;
 
     public Key getDropProgress() {
-        return __DropProgress;
+        return _dropProgress;
     }
 
     public void setDropProgress(Key value) {
-        __DropProgress = value;
+        _dropProgress = value;
     }
 
     /**
      * The tree level of the node described in drop_progress.
      */
-    private byte __DropLevel;
+    private byte _dropLevel;
 
     public byte getDropLevel() {
-        return __DropLevel;
+        return _dropLevel;
     }
 
     public void setDropLevel(byte value) {
-        __DropLevel = value;
+        _dropLevel = value;
     }
 
     /**
      * The height of the tree rooted at bytenr.
      */
-    private byte __Level;
+    private byte _level;
 
-    public byte getLevel() {
-        return __Level;
+    public int getLevel() {
+        return _level & 0xff;
     }
 
     public void setLevel(byte value) {
-        __Level = value;
+        _level = value;
     }
 
     public int size() {

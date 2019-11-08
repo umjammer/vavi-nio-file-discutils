@@ -31,7 +31,11 @@ import dotnet4j.io.Stream;
 public class DescriptorTag implements IByteArraySerializable {
     public short DescriptorCrc;
 
-    public short DescriptorCrcLength;
+    private short DescriptorCrcLength;
+
+    public int getDescriptorCrcLength() {
+        return DescriptorCrcLength;
+    }
 
     public short DescriptorVersion;
 

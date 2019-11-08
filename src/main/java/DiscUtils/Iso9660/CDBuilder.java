@@ -107,7 +107,7 @@ public final class CDBuilder extends StreamBuilder {
      * should be used.
      */
     public boolean useJoliet() {
-        return _buildParams.getUseJoliet();
+        return _buildParams.useJoliet();
     }
 
     public void setUseJoliet(boolean value) {
@@ -147,7 +147,7 @@ public final class CDBuilder extends StreamBuilder {
         _bootEntry = new BootInitialEntry();
         _bootEntry.BootIndicator = (byte) 0x88;
         _bootEntry.BootMediaType = emulation;
-        _bootEntry.LoadSegment = (short) loadSegment;
+        _bootEntry.setLoadSegment((short) loadSegment);
         _bootEntry.SystemType = 0;
         _bootImage = image;
     }
@@ -279,7 +279,7 @@ public final class CDBuilder extends StreamBuilder {
 
         long buildTime = System.currentTimeMillis();
 
-        Charset suppEncoding = _buildParams.getUseJoliet() ? Charset.forName("UTF-16BE") : Charset.forName("ASCII");
+        Charset suppEncoding = _buildParams.useJoliet() ? Charset.forName("UTF-16BE") : Charset.forName("ASCII");
 
         Map<BuildDirectoryMember, Integer> primaryLocationTable = new HashMap<>();
         Map<BuildDirectoryMember, Integer> supplementaryLocationTable = new HashMap<>();
@@ -308,7 +308,7 @@ public final class CDBuilder extends StreamBuilder {
             BootValidationEntry bve = new BootValidationEntry();
             bve.writeTo(bootCatalog, 0x00);
             _bootEntry.ImageStart = (int) MathUtilities.ceil(bootImagePos, IsoUtilities.SectorSize);
-            _bootEntry.SectorCount = (short) MathUtilities.ceil(_bootImage.getLength(), Sizes.Sector);
+            _bootEntry.setSectorCount((short) MathUtilities.ceil(_bootImage.getLength(), Sizes.Sector));
             _bootEntry.writeTo(bootCatalog, 0x20);
             fixedRegions.add(new BuilderBufferExtent(bootCatalogPos, bootCatalog));
             focus += IsoUtilities.SectorSize;

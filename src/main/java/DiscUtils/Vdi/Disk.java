@@ -40,6 +40,7 @@ import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
 
+
 /**
  * Represents a disk stored in VirtualBox (Sun xVM) format.
  */
@@ -85,8 +86,7 @@ public final class Disk extends VirtualDisk {
      *
      * @param stream The stream to read.
      * @param ownsStream Indicates if the new disk should take ownership of
-     *            {@code stream}
-     *            lifetime.
+     *            {@code stream} lifetime.
      */
     public Disk(Stream stream, Ownership ownsStream) {
         _diskImage = new DiskImageFile(stream, ownsStream);
@@ -101,10 +101,10 @@ public final class Disk extends VirtualDisk {
 
     /**
      * Gets the content of the disk as a stream.
+     * 
      * Note the returned stream is not guaranteed to be at any particular
-     * position. The actual position
-     * will depend on the last partition table/file system activity, since all
-     * access to the disk contents pass
+     * position. The actual position will depend on the last partition
+     * table/file system activity, since all access to the disk contents pass
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
@@ -124,10 +124,9 @@ public final class Disk extends VirtualDisk {
     }
 
     /**
-     * Gets information about the type of disk.
-     * This property provides access to meta-data about the disk format, for
-     * example whether the
-     * BIOS geometry is preserved in the disk file.
+     * Gets information about the type of disk. This property provides access to
+     * meta-data about the disk format, for example whether the BIOS geometry is
+     * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo(_diskImage.isSparse() ? "dynamic" : "fixed");

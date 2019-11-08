@@ -57,11 +57,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Finalizes an instance of the VirtualDisk class.
      */
     protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
+        close();
     }
 
     /**
@@ -562,11 +558,11 @@ Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
             throw new IllegalArgumentException("Path must not be null or empty " + path);
         }
 
-        if (path.indexOf("://") > -1) {
+        if (path.contains("://")) {
             return URI.create(path);
         }
 
-        path = Paths.get(path).toAbsolutePath().toString();
+        path = Paths.get(path.replace("\\", "/")).normalize().toString().replace("/", "\\");
 
         // Built-in Uri class does cope well with query params on file Uris, so do some
         // parsing ourselves...
@@ -585,6 +581,6 @@ Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
             return builder;
         }
 
-        return URI.create("file://" + path); // TODO "file:" added
+        return URI.create(path);
     }
 }

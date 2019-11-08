@@ -31,78 +31,77 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
     }
 
     public Nfs3ReadDirResult(XdrDataReader reader) {
-        setStatus(Nfs3Status.valueOf(reader.readInt32()));
+        _status = Nfs3Status.valueOf(reader.readInt32());
         if (reader.readBool()) {
-            setDirAttributes(new Nfs3FileAttributes(reader));
+            _dirAttributes = new Nfs3FileAttributes(reader);
         }
 
-        setDirEntries(new ArrayList<Nfs3DirectoryEntry>());
-        if (getStatus() == Nfs3Status.Ok) {
-            setCookieVerifier(reader.readUInt64());
+        _dirEntries = new ArrayList<>();
+        if (_status == Nfs3Status.Ok) {
+            _cookieVerifier = reader.readUInt64();
             while (reader.readBool()) {
-                getDirEntries().add(new Nfs3DirectoryEntry(reader));
+                _dirEntries.add(new Nfs3DirectoryEntry(reader));
             }
-            setEof(reader.readBool());
+            _eof = reader.readBool();
         }
     }
 
-    private Nfs3FileAttributes __DirAttributes;
+    private Nfs3FileAttributes _dirAttributes;
 
     public Nfs3FileAttributes getDirAttributes() {
-        return __DirAttributes;
+        return _dirAttributes;
     }
 
     public void setDirAttributes(Nfs3FileAttributes value) {
-        __DirAttributes = value;
+        _dirAttributes = value;
     }
 
-    private List<Nfs3DirectoryEntry> __DirEntries;
+    private List<Nfs3DirectoryEntry> _dirEntries;
 
     public List<Nfs3DirectoryEntry> getDirEntries() {
-        return __DirEntries;
+        return _dirEntries;
     }
 
     public void setDirEntries(List<Nfs3DirectoryEntry> value) {
-        __DirEntries = value;
+        _dirEntries = value;
     }
 
-    private long __CookieVerifier;
+    private long _cookieVerifier;
 
     public long getCookieVerifier() {
-        return __CookieVerifier;
+        return _cookieVerifier;
     }
 
     public void setCookieVerifier(long value) {
-        __CookieVerifier = value;
+        _cookieVerifier = value;
     }
 
-    private boolean __Eof;
+    private boolean _eof;
 
     public boolean getEof() {
-        return __Eof;
+        return _eof;
     }
 
     public void setEof(boolean value) {
-        __Eof = value;
+        _eof = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
-        writer.write(getDirAttributes() != null);
-        if (getDirAttributes() != null) {
-            getDirAttributes().write(writer);
+        writer.write(_status.getValue());
+        writer.write(_dirAttributes != null);
+        if (_dirAttributes != null) {
+            _dirAttributes.write(writer);
         }
 
-        if (getStatus() == Nfs3Status.Ok) {
-            writer.write(getCookieVerifier());
-            for (Nfs3DirectoryEntry entry : getDirEntries()) {
+        if (_status == Nfs3Status.Ok) {
+            writer.write(_cookieVerifier);
+            for (Nfs3DirectoryEntry entry : _dirEntries) {
                 writer.write(true);
                 entry.write(writer);
             }
             writer.write(false);
-            writer.write(getEof());
+            writer.write(_eof);
         }
-
     }
 
     public boolean equals(Object obj) {
@@ -114,12 +113,12 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getDirAttributes().equals(getDirAttributes()) &&
-               other.getCookieVerifier() == getCookieVerifier() && other.getDirEntries().equals(getDirEntries()) &&
-               other.getEof() == getEof();
+        return other._status == _status && other._dirAttributes.equals(_dirAttributes) &&
+               other._cookieVerifier == _cookieVerifier && other._dirEntries.equals(_dirEntries) &&
+               other._eof == _eof;
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getDirAttributes(), getCookieVerifier(), getDirEntries(), getEof());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(_status, _dirAttributes, _cookieVerifier, _dirEntries, _eof);
     }
 }

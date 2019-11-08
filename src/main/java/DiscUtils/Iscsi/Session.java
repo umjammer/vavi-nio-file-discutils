@@ -51,11 +51,11 @@ public final class Session implements Closeable {
 
     private short _nextConnectionId;
 
-    public Session(SessionType type, String targetName, List<TargetAddress> addresses) {
+    Session(SessionType type, String targetName, List<TargetAddress> addresses) {
         this(type, targetName, null, null, addresses);
     }
 
-    public Session(SessionType type, String targetName, String userName, String password, List<TargetAddress> addresses) {
+    Session(SessionType type, String targetName, String userName, String password, List<TargetAddress> addresses) {
         _initiatorSessionId = _nextInitiatorSessionId.incrementAndGet();
         _addresses = addresses;
         setSessionType(type);
@@ -91,47 +91,47 @@ public final class Session implements Closeable {
 
     private Connection _activeConnection;
 
-    public Connection getActiveConnection() {
+    Connection getActiveConnection() {
         return _activeConnection;
     }
 
-    public void setActiveConnection(Connection value) {
+    void setActiveConnection(Connection value) {
         _activeConnection = value;
     }
 
     private int _commandSequenceNumber;
 
-    public int getCommandSequenceNumber() {
+    int getCommandSequenceNumber() {
         return _commandSequenceNumber;
     }
 
-    public void setCommandSequenceNumber(int value) {
+    void setCommandSequenceNumber(int value) {
         _commandSequenceNumber = value;
     }
 
     private int _currentTaskTag;
 
-    public int getCurrentTaskTag() {
+    int getCurrentTaskTag() {
         return _currentTaskTag;
     }
 
-    public void setCurrentTaskTag(int value) {
+    void setCurrentTaskTag(int value) {
         _currentTaskTag = value;
     }
 
     private int _initiatorSessionId;
 
-    public int getInitiatorSessionId() {
+    int getInitiatorSessionId() {
         return _initiatorSessionId;
     }
 
     private short _targetSessionId;
 
-    public short getTargetSessionId() {
+    short getTargetSessionId() {
         return _targetSessionId;
     }
 
-    public void setTargetSessionId(short value) {
+    void setTargetSessionId(short value) {
         _targetSessionId = value;
     }
 
@@ -337,21 +337,19 @@ public final class Session implements Closeable {
         return send(cmd, outBuffer, outBufferOffset, outBufferLength, inBuffer, inBufferOffset, inBufferLength);
     }
 
-    public int nextCommandSequenceNumber() {
-        setCommandSequenceNumber(getCommandSequenceNumber() + 1);
-        return getCommandSequenceNumber();
+    int nextCommandSequenceNumber() {
+        return ++_commandSequenceNumber;
     }
 
-    public int nextTaskTag() {
-        setCurrentTaskTag(getCurrentTaskTag() + 1);
-        return getCurrentTaskTag();
+    int nextTaskTag() {
+        return ++_currentTaskTag;
     }
 
-    public short nextConnectionId() {
+    short nextConnectionId() {
         return ++_nextConnectionId;
     }
 
-    public void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase) {
+    void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
                 ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
@@ -372,7 +370,7 @@ public final class Session implements Closeable {
         }
     }
 
-    public void consumeParameters(TextBuffer inParameters, TextBuffer outParameters) {
+    void consumeParameters(TextBuffer inParameters, TextBuffer outParameters) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
                 ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
@@ -405,14 +403,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative,
                           usedForDiscovery = true)
-    private String __TargetName;
+    private String _targetName;
 
     public String getTargetName() {
-        return __TargetName;
+        return _targetName;
     }
 
     public void setTargetName(String value) {
-        __TargetName = value;
+        _targetName = value;
     }
 
     /**
@@ -435,14 +433,14 @@ public final class Session implements Closeable {
                           phase = KeyUsagePhase.All,
                           sender = KeySender.Target,
                           type = KeyType.Declarative)
-    private String __TargetAlias;
+    private String _targetAlias;
 
     public String getTargetAlias() {
-        return __TargetAlias;
+        return _targetAlias;
     }
 
     public void setTargetAlias(String value) {
-        __TargetAlias = value;
+        _targetAlias = value;
     }
 
     @ProtocolKeyAttribute(name = "SessionType",
@@ -450,14 +448,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative,
                           usedForDiscovery = true)
-    private SessionType __SessionType = SessionType.Discovery;
+    private SessionType _sessionType = SessionType.Discovery;
 
-    public SessionType getSessionType() {
-        return __SessionType;
+    SessionType getSessionType() {
+        return _sessionType;
     }
 
-    public void setSessionType(SessionType value) {
-        __SessionType = value;
+    void setSessionType(SessionType value) {
+        _sessionType = value;
     }
 
     @ProtocolKeyAttribute(name = "MaxConnections",
@@ -466,14 +464,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private int __MaxConnections;
+    private int _maxConnections;
 
-    public int getMaxConnections() {
-        return __MaxConnections;
+    int getMaxConnections() {
+        return _maxConnections;
     }
 
-    public void setMaxConnections(int value) {
-        __MaxConnections = value;
+    void setMaxConnections(int value) {
+        _maxConnections = value;
     }
 
     @ProtocolKeyAttribute(name = "InitiatorAlias",
@@ -481,28 +479,28 @@ public final class Session implements Closeable {
                           phase = KeyUsagePhase.All,
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative)
-    private String __InitiatorAlias;
+    private String _initiatorAlias;
 
-    public String getInitiatorAlias() {
-        return __InitiatorAlias;
+    String getInitiatorAlias() {
+        return _initiatorAlias;
     }
 
-    public void setInitiatorAlias(String value) {
-        __InitiatorAlias = value;
+    void setInitiatorAlias(String value) {
+        _initiatorAlias = value;
     }
 
     @ProtocolKeyAttribute(name = "TargetPortalGroupTag",
                           phase = KeyUsagePhase.SecurityNegotiation,
                           sender = KeySender.Target,
                           type = KeyType.Declarative)
-    private int __TargetPortalGroupTag;
+    private int _targetPortalGroupTag;
 
-    public int getTargetPortalGroupTag() {
-        return __TargetPortalGroupTag;
+    int getTargetPortalGroupTag() {
+        return _targetPortalGroupTag;
     }
 
-    public void setTargetPortalGroupTag(int value) {
-        __TargetPortalGroupTag = value;
+    void setTargetPortalGroupTag(int value) {
+        _targetPortalGroupTag = value;
     }
 
     @ProtocolKeyAttribute(name = "InitialR2T",
@@ -511,14 +509,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private boolean __InitialR2T;
+    private boolean _initialR2T;
 
-    public boolean getInitialR2T() {
-        return __InitialR2T;
+    boolean getInitialR2T() {
+        return _initialR2T;
     }
 
-    public void setInitialR2T(boolean value) {
-        __InitialR2T = value;
+    void setInitialR2T(boolean value) {
+        _initialR2T = value;
     }
 
     @ProtocolKeyAttribute(name = "ImmediateData",
@@ -527,14 +525,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private boolean __ImmediateData;
+    private boolean _immediateData;
 
-    public boolean getImmediateData() {
-        return __ImmediateData;
+    boolean getImmediateData() {
+        return _immediateData;
     }
 
-    public void setImmediateData(boolean value) {
-        __ImmediateData = value;
+    void setImmediateData(boolean value) {
+        _immediateData = value;
     }
 
     @ProtocolKeyAttribute(name = "MaxBurstLength",
@@ -543,14 +541,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private int __MaxBurstLength;
+    private int _maxBurstLength;
 
-    public int getMaxBurstLength() {
-        return __MaxBurstLength;
+    int getMaxBurstLength() {
+        return _maxBurstLength;
     }
 
-    public void setMaxBurstLength(int value) {
-        __MaxBurstLength = value;
+    void setMaxBurstLength(int value) {
+        _maxBurstLength = value;
     }
 
     @ProtocolKeyAttribute(name = "FirstBurstLength",
@@ -559,14 +557,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private int __FirstBurstLength;
+    private int _firstBurstLength;
 
-    public int getFirstBurstLength() {
-        return __FirstBurstLength;
+    int getFirstBurstLength() {
+        return _firstBurstLength;
     }
 
-    public void setFirstBurstLength(int value) {
-        __FirstBurstLength = value;
+    void setFirstBurstLength(int value) {
+        _firstBurstLength = value;
     }
 
     @ProtocolKeyAttribute(name = "DefaultTime2Wait",
@@ -575,14 +573,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private int __DefaultTime2Wait;
+    private int _defaultTime2Wait;
 
-    public int getDefaultTime2Wait() {
-        return __DefaultTime2Wait;
+    int getDefaultTime2Wait() {
+        return _defaultTime2Wait;
     }
 
-    public void setDefaultTime2Wait(int value) {
-        __DefaultTime2Wait = value;
+    void setDefaultTime2Wait(int value) {
+        _defaultTime2Wait = value;
     }
 
     @ProtocolKeyAttribute(name = "DefaultTime2Retain",
@@ -591,14 +589,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private int __DefaultTime2Retain;
+    private int _defaultTime2Retain;
 
-    public int getDefaultTime2Retain() {
-        return __DefaultTime2Retain;
+    int getDefaultTime2Retain() {
+        return _defaultTime2Retain;
     }
 
-    public void setDefaultTime2Retain(int value) {
-        __DefaultTime2Retain = value;
+    void setDefaultTime2Retain(int value) {
+        _defaultTime2Retain = value;
     }
 
     @ProtocolKeyAttribute(name = "MaxOutstandingR2T",
@@ -609,11 +607,11 @@ public final class Session implements Closeable {
                           leadingConnectionOnly = true)
     private int __MaxOutstandingR2T;
 
-    public int getMaxOutstandingR2T() {
+    int getMaxOutstandingR2T() {
         return __MaxOutstandingR2T;
     }
 
-    public void setMaxOutstandingR2T(int value) {
+    void setMaxOutstandingR2T(int value) {
         __MaxOutstandingR2T = value;
     }
 
@@ -623,14 +621,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private boolean __DataPDUInOrder;
+    private boolean _dataPDUInOrder;
 
-    public boolean getDataPDUInOrder() {
-        return __DataPDUInOrder;
+    boolean getDataPDUInOrder() {
+        return _dataPDUInOrder;
     }
 
-    public void setDataPDUInOrder(boolean value) {
-        __DataPDUInOrder = value;
+    void setDataPDUInOrder(boolean value) {
+        _dataPDUInOrder = value;
     }
 
     @ProtocolKeyAttribute(name = "DataSequenceInOrder",
@@ -639,14 +637,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private boolean __DataSequenceInOrder;
+    private boolean _dataSequenceInOrder;
 
-    public boolean getDataSequenceInOrder() {
-        return __DataSequenceInOrder;
+    boolean getDataSequenceInOrder() {
+        return _dataSequenceInOrder;
     }
 
-    public void setDataSequenceInOrder(boolean value) {
-        __DataSequenceInOrder = value;
+    void setDataSequenceInOrder(boolean value) {
+        _dataSequenceInOrder = value;
     }
 
     @ProtocolKeyAttribute(name = "ErrorRecoveryLevel",
@@ -655,14 +653,14 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    private int __ErrorRecoveryLevel;
+    private int _errorRecoveryLevel;
 
-    public int getErrorRecoveryLevel() {
-        return __ErrorRecoveryLevel;
+    int getErrorRecoveryLevel() {
+        return _errorRecoveryLevel;
     }
 
-    public void setErrorRecoveryLevel(int value) {
-        __ErrorRecoveryLevel = value;
+    void setErrorRecoveryLevel(int value) {
+        _errorRecoveryLevel = value;
     }
 
     /**

@@ -22,10 +22,13 @@
 
 package DiscUtils.Core;
 
+/**
+ * Well known hard disk adaptor types.
+ *
+ * use ordinal
+ */
 public enum GenericDiskAdapterType {
     /**
-     * Well known hard disk adaptor types.
-     *
      * IDE adaptor.
      */
     Ide,

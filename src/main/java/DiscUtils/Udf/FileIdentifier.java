@@ -34,7 +34,7 @@ import DiscUtils.Streams.Util.MathUtilities;
 public class FileIdentifier extends VfsDirEntry implements IByteArraySerializable {
     public DescriptorTag DescriptorTag;
 
-    public EnumSet<FileCharacteristic> _FileCharacteristics;
+    public EnumSet<FileCharacteristic> _fileCharacteristics;
 
     public LongAllocationDescriptor FileLocation;
 
@@ -46,7 +46,11 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
 
     public String Name;
 
-    public byte NameLength;
+    private byte nameLength;
+
+    public int getNameLength() {
+        return nameLength & 0xff;
+    }
 
     public long getCreationTimeUtc() {
         throw new UnsupportedOperationException();
@@ -69,7 +73,7 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
     }
 
     public boolean isDirectory() {
-        return _FileCharacteristics.contains(FileCharacteristic.Directory);
+        return _fileCharacteristics.contains(FileCharacteristic.Directory);
     }
 
     public boolean isSymlink() {
@@ -85,7 +89,7 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
     }
 
     public long getUniqueCacheId() {
-        return (long) FileLocation.ExtentLocation.Partition << 32 | FileLocation.ExtentLocation.LogicalBlock;
+        return ((long) FileLocation.ExtentLocation.getPartition()) << 32 | FileLocation.ExtentLocation.LogicalBlock;
     }
 
     public int size() {
@@ -95,13 +99,13 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
     public int readFrom(byte[] buffer, int offset) {
         DescriptorTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, buffer, offset);
         FileVersionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
-        _FileCharacteristics = FileCharacteristic.valueOf(buffer[offset + 18]);
-        NameLength = buffer[offset + 19];
+        _fileCharacteristics = FileCharacteristic.valueOf(buffer[offset + 18]);
+        nameLength = buffer[offset + 19];
         FileLocation = EndianUtilities.<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 20);
         ImplementationUseLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
         ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 38, ImplementationUseLength);
-        Name = UdfUtilities.readDCharacters(buffer, offset + 38 + ImplementationUseLength, NameLength);
-        return MathUtilities.roundUp(38 + ImplementationUseLength + NameLength, 4);
+        Name = UdfUtilities.readDCharacters(buffer, offset + 38 + ImplementationUseLength, getNameLength());
+        return MathUtilities.roundUp(38 + ImplementationUseLength + getNameLength(), 4);
     }
 
     public void writeTo(byte[] buffer, int offset) {

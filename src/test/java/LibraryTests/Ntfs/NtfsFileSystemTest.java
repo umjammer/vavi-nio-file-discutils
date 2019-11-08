@@ -70,7 +70,7 @@ public class NtfsFileSystemTest {
         assertNotNull(inheritedSd);
         assertEquals("O:BAG:BAD:(A;ID;GA;;;BA)", inheritedSd.getSddlForm(AccessControlSections.All));
 
-        try (Closeable __newVar0 = ntfs.openFile("dir\\subdir\\file", FileMode.Create, FileAccess.ReadWrite)) {
+        try (Closeable c = ntfs.openFile("dir\\subdir\\file", FileMode.Create, FileAccess.ReadWrite)) {
         }
         inheritedSd = ntfs.getSecurity("dir\\subdir\\file");
         assertNotNull(inheritedSd);

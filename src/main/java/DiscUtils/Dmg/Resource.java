@@ -28,7 +28,7 @@ import java.util.Map;
 public abstract class Resource {
     protected Resource(String type, Map<String, Object> parts) {
         _type = type;
-        setName(parts.get("Name") instanceof String ? (String) parts.get("Name") : (String) null);
+        _name = parts.get("Name") instanceof String ? (String) parts.get("Name") : (String) null;
         String idStr = parts.get("ID") instanceof String ? (String) parts.get("ID") : (String) null;
         if (idStr != null && !idStr.isEmpty()) {
             try {

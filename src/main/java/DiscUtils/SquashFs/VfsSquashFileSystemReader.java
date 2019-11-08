@@ -41,7 +41,7 @@ import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 
 
-public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context>
+class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context>
     implements IUnixFileSystem {
     public static final int MetadataBufferSize = 8 * 1024;
 
@@ -95,7 +95,7 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
 
         if (_context.getSuperBlock().UidGidTableStart != -1) {
             _context.setUidGidTableReaders(loadIndirectReaders(_context.getSuperBlock().UidGidTableStart,
-                                                               _context.getSuperBlock().UidGidCount,
+                                                               _context.getSuperBlock().getUidGidCount(),
                                                                4));
         }
 
@@ -122,7 +122,7 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         info.setFileType(fileTypeFromInodeType(inode._type));
         info.setUserId(getId(inode._uidKey));
         info.setGroupId(getId(inode._gidKey));
-        info.setPermissions(UnixFilePermissions.valueOf(inode._mode));
+        info.setPermissions(UnixFilePermissions.valueOf(inode._mode & 0xffff));
         info.setInode(inode._inodeNumber);
         info.setLinkCount(inode._numLinks);
         info.setDeviceId(devInod == null ? 0 : devInod.getDeviceId());
@@ -151,7 +151,7 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
-    public static UnixFileType fileTypeFromInodeType(InodeType inodeType) {
+    static UnixFileType fileTypeFromInodeType(InodeType inodeType) {
         switch (inodeType) {
         case BlockDevice:
         case ExtendedBlockDevice:
@@ -208,8 +208,9 @@ public class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEn
 
     private int getId(short idKey) {
         int recordsPerBlock = MetadataBufferSize / 4;
-        int block = idKey / recordsPerBlock;
-        int offset = idKey % recordsPerBlock;
+        int block = (idKey & 0xffff) / recordsPerBlock;
+        int offset = (idKey & 0xffff) % recordsPerBlock;
+
         MetablockReader reader = _context.getUidGidTableReaders()[block];
         reader.setPosition(0, offset * 4);
         return reader.readInt();

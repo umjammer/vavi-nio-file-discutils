@@ -144,7 +144,7 @@ public class FileContentBuffer implements IBuffer {
 
                 CookedExtent newExtent = new CookedExtent();
                 newExtent.FileContentOffset = filePos;
-                newExtent.Partition = lad.ExtentLocation.Partition;
+                newExtent.Partition = lad.ExtentLocation.getPartition();
                 newExtent.StartPos = lad.ExtentLocation.LogicalBlock * (long)_blockSize;
                 newExtent.Length = lad.ExtentLength;
                 _extents.add(newExtent);

@@ -39,53 +39,53 @@ public class RootRef extends BaseItem {
     /**
      * ID of directory in [tree id] that contains the subtree
      */
-    private long __DirectoryId;
+    private long _directoryId;
 
     public long getDirectoryId() {
-        return __DirectoryId;
+        return _directoryId;
     }
 
     public void setDirectoryId(long value) {
-        __DirectoryId = value;
+        _directoryId = value;
     }
 
     /**
      * Sequence (index in tree) (even, starting at 2?)
      */
-    private long __Sequence;
+    private long _sequence;
 
     public long getSequence() {
-        return __Sequence;
+        return _sequence;
     }
 
     public void setSequence(long value) {
-        __Sequence = value;
+        _sequence = value;
     }
 
     /**
      * (n)
      */
-    private short __NameLength;
+    private short _nameLength;
 
-    public short getNameLength() {
-        return __NameLength;
+    public int getNameLength() {
+        return _nameLength & 0xffff;
     }
 
     public void setNameLength(short value) {
-        __NameLength = value;
+        _nameLength = value;
     }
 
     /**
      * name
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
     public int size() {

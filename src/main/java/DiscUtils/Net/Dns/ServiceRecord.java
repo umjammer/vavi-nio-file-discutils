@@ -39,7 +39,7 @@ public final class ServiceRecord extends ResourceRecord {
         _priority = reader.readUShort();
         _weight = reader.readUShort();
         _port = reader.readUShort();
-        __Target = reader.readName();
+        _target = reader.readName();
         reader.setPosition(pos + dataLen);
     }
 
@@ -47,7 +47,7 @@ public final class ServiceRecord extends ResourceRecord {
      * Gets the network port at which the service can be accessed.
      */
     public int getPort() {
-        return _port;
+        return _port & 0xffff;
     }
 
     /**
@@ -55,16 +55,16 @@ public final class ServiceRecord extends ResourceRecord {
      * higher priority).
      */
     public int getPriority() {
-        return _priority;
+        return _priority & 0xffff;
     }
 
     /**
      * Gets the DNS name at which the service can be accessed.
      */
-    private String __Target;
+    private String _target;
 
     public String getTarget() {
-        return __Target;
+        return _target;
     }
 
     /**

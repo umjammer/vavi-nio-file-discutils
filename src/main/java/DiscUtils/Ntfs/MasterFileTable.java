@@ -131,10 +131,10 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
         _recordCache = new ObjectCache<>();
         _recordSize = bpb.getMftRecordSize();
-        _bytesPerSector = bpb._bytesPerSector;
+        _bytesPerSector = bpb.getBytesPerSector();
         // Temporary record stream - until we've bootstrapped the MFT properly
         _recordStream = new SubStream(context.getRawStream(),
-                                      bpb._mftCluster * bpb._sectorsPerCluster * bpb._bytesPerSector,
+                                      bpb._mftCluster * bpb.getSectorsPerCluster() * bpb.getBytesPerSector(),
                                       24 * getRecordSize());
     }
 
@@ -231,16 +231,21 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                               long firstRecordsCluster,
                               long numRecordsClusters) {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
-        FileRecord fileRec = new FileRecord(bpb._bytesPerSector, bpb.getMftRecordSize(), (int) MftIndex);
+
+        FileRecord fileRec = new FileRecord(bpb.getBytesPerSector(), bpb.getMftRecordSize(), (int) MftIndex);
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse));
         fileRec.setSequenceNumber((short) 1);
         _recordCache.set___idx(MftIndex, fileRec);
+
         _self = new File(context, fileRec);
+
         StandardInformation.initializeNewFile(_self, EnumSet.of(FileAttributeFlags.Hidden, FileAttributeFlags.System));
+
         NtfsStream recordsStream = _self
                 .createStream(AttributeType.Data, null, firstRecordsCluster, numRecordsClusters, bpb.getBytesPerCluster());
         _recordStream = recordsStream.open(FileAccess.ReadWrite);
         wipe(_recordStream);
+
         NtfsStream bitmapStream = _self
                 .createStream(AttributeType.Bitmap, null, firstBitmapCluster, numBitmapClusters, bpb.getBytesPerCluster());
 
@@ -251,15 +256,19 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
+
         setRecordSize(context.getBiosParameterBlock().getMftRecordSize());
-        _bytesPerSector = context.getBiosParameterBlock()._bytesPerSector;
+        _bytesPerSector = context.getBiosParameterBlock().getBytesPerSector();
+
         _bitmap.markPresentRange(0, 1);
+
         // Write the MFT's own record to itself
         byte[] buffer = new byte[_recordSize];
         fileRec.toBytes(buffer, 0);
         _recordStream.setPosition(0);
         _recordStream.write(buffer, 0, _recordSize);
         _recordStream.flush();
+
         return _self;
     }
 
@@ -417,7 +426,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public ClusterMap getClusterMap() {
         int totalClusters = (int) MathUtilities.ceil(_self.getContext().getBiosParameterBlock()._totalSectors64,
-                                                     _self.getContext().getBiosParameterBlock()._sectorsPerCluster);
+                                                     _self.getContext().getBiosParameterBlock().getSectorsPerCluster());
 
         @SuppressWarnings("unchecked")
         EnumSet<ClusterRoles>[] clusterToRole = new EnumSet[totalClusters];

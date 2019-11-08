@@ -321,7 +321,7 @@ public class Utilities {
         Matcher matcher = envPattern.matcher(value);
         while (matcher.find()) {
             String envKey = matcher.group(1);
-            value = value.replace(matcher.group(0), System.getenv(matcher.group(1)));
+            value = value.replace(matcher.group(0), System.getenv(envKey));
         }
         return value;
     }

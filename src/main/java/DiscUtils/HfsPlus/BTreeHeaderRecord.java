@@ -40,7 +40,11 @@ public class BTreeHeaderRecord extends BTreeNodeRecord {
 
     public short MaxKeyLength;
 
-    public short NodeSize;
+    private short NodeSize;
+
+    public int getNodeSize() {
+        return NodeSize & 0xffff;
+    }
 
     public int NumLeafRecords;
 

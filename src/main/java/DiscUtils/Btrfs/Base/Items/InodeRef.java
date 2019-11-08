@@ -39,40 +39,40 @@ public class InodeRef extends BaseItem {
     /**
      * index in the directory
      */
-    private long __Index;
+    private long _index;
 
     public long getIndex() {
-        return __Index;
+        return _index;
     }
 
     public void setIndex(long value) {
-        __Index = value;
+        _index = value;
     }
 
     /**
      * (n)
      */
-    private short __NameLength;
+    private short _nameLength;
 
-    public short getNameLength() {
-        return __NameLength;
+    public int getNameLength() {
+        return _nameLength & 0xffff;
     }
 
     public void setNameLength(short value) {
-        __NameLength = value;
+        _nameLength = value;
     }
 
     /**
      * name in the directory
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
     public int size() {

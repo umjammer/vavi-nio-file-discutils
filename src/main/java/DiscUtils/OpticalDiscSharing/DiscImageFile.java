@@ -43,23 +43,23 @@ public final class DiscImageFile extends VirtualDiskLayer {
     public static final int Mode1SectorSize = 2048;
 
     public DiscImageFile(URI uri, String userName, String password) {
-        __Content = new BufferStream(new DiscContentBuffer(uri, userName, password), FileAccess.Read);
+        _content = new BufferStream(new DiscContentBuffer(uri, userName, password), FileAccess.Read);
 
         BlockCacheSettings cacheSettings = new BlockCacheSettings();
         cacheSettings.setBlockSize((int) (32 * Sizes.OneKiB));
         cacheSettings.setOptimumReadSize((int) (128 * Sizes.OneKiB));
 
-        __Content = new BlockCacheStream(getContent(), Ownership.Dispose);
+        _content = new BlockCacheStream(getContent(), Ownership.Dispose);
     }
 
     public long getCapacity() {
         return getContent().getLength();
     }
 
-    private SparseStream __Content;
+    private SparseStream _content;
 
     public SparseStream getContent() {
-        return __Content;
+        return _content;
     }
 
     // Note external sector size is always 2048

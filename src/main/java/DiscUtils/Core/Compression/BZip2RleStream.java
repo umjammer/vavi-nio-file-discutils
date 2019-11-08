@@ -96,6 +96,7 @@ public class BZip2RleStream extends Stream {
             for (int i = 0; i < runCount; ++i) {
                 buffer[offset + numRead] = _lastByte;
             }
+
             _runBytesOutstanding -= runCount;
             numRead += runCount;
         }
@@ -103,12 +104,14 @@ public class BZip2RleStream extends Stream {
             byte b = _blockBuffer[_blockOffset];
             ++_blockOffset;
             --_blockRemaining;
+
             if (_numSame == 4) {
                 int runCount = Math.min(b, count - numRead);
                 for (int i = 0; i < runCount; ++i) {
                     buffer[offset + numRead] = _lastByte;
                     numRead++;
                 }
+
                 _runBytesOutstanding = b - runCount;
                 _numSame = 0;
             } else {
@@ -122,6 +125,7 @@ public class BZip2RleStream extends Stream {
                 _numSame++;
             }
         }
+
         _position += numRead;
         return numRead;
     }

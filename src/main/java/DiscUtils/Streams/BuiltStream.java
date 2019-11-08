@@ -108,6 +108,7 @@ public class BuiltStream extends SparseStream {
                     int idx = Collections.binarySearch(_extents, searchExtent, new ExtentRangeComparer());
                     if (idx >= 0) {
                         BuilderExtent extent = _extents.get(idx);
+//Debug.println(getPosition() + ", " + offset + ", " + extent);
                         extent.prepareForRead();
                         _currentExtent = extent;
                     }
@@ -129,6 +130,7 @@ public class BuiltStream extends SparseStream {
                 }
             } else {
                 numRead = _currentExtent.read(_position, buffer, offset + totalRead, count - totalRead);
+//Debug.println(_currentExtent + ", " + _position + ", " + numRead + ", " + count + "\n" + StringUtil.getDump(buffer, offset + totalRead, 64));
             }
 
             _position += numRead;
@@ -224,11 +226,11 @@ public class BuiltStream extends SparseStream {
     private static class ExtentRangeComparer implements Comparator<BuilderExtent> {
         public int compare(BuilderExtent x, BuilderExtent y) {
             if (x == null) {
-                throw new IllegalArgumentException("x");
+                throw new NullPointerException("x");
             }
 
             if (y == null) {
-                throw new IllegalArgumentException("y");
+                throw new NullPointerException("y");
             }
 
             if (x.getStart() + x.getLength() <= y.getStart()) {
@@ -249,11 +251,11 @@ public class BuiltStream extends SparseStream {
     private static class ExtentStartComparer implements Comparator<BuilderExtent> {
         public int compare(BuilderExtent x, BuilderExtent y) {
             if (x == null) {
-                throw new IllegalArgumentException("x");
+                throw new NullPointerException("x");
             }
 
             if (y == null) {
-                throw new IllegalArgumentException("y");
+                throw new NullPointerException("y");
             }
 
             long val = x.getStart() - y.getStart();

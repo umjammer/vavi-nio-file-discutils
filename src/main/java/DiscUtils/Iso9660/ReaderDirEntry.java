@@ -73,9 +73,9 @@ public final class ReaderDirEntry extends VfsDirEntry {
             ChildLinkSystemUseEntry clEntry = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "CL");
             if (clEntry != null) {
                 _context.getDataStream()
-                        .setPosition(clEntry.ChildDirLocation * _context.getVolumeDescriptor().LogicalBlockSize);
+                        .setPosition(clEntry.ChildDirLocation * _context.getVolumeDescriptor().getLogicalBlockSize());
                 byte[] firstSector = StreamUtilities.readExact(_context.getDataStream(),
-                                                               _context.getVolumeDescriptor().LogicalBlockSize);
+                                                               _context.getVolumeDescriptor().getLogicalBlockSize());
 
                 DirectoryRecord[] _record = new DirectoryRecord[1];
                 DirectoryRecord.readFrom(firstSector, 0, _context.getVolumeDescriptor().CharacterEncoding, _record);

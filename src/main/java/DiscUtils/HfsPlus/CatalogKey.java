@@ -36,24 +36,24 @@ public final class CatalogKey extends BTreeKey<CatalogKey> implements YComparabl
         setName(name);
     }
 
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
-    private CatalogNodeId __NodeId;
+    private CatalogNodeId _nodeId;
 
     public CatalogNodeId getNodeId() {
-        return __NodeId;
+        return _nodeId;
     }
 
     public void setNodeId(CatalogNodeId value) {
-        __NodeId = value;
+        _nodeId = value;
     }
 
     public int size() {
@@ -65,18 +65,18 @@ public final class CatalogKey extends BTreeKey<CatalogKey> implements YComparabl
             throw new NullPointerException("other");
         }
 
-        if (getNodeId() != other.getNodeId()) {
-            return getNodeId().getId() < other.getNodeId().getId() ? -1 : 1;
+        if (_nodeId != other._nodeId) {
+            return _nodeId.getId() < other._nodeId.getId() ? -1 : 1;
         }
 
-        return HfsPlusUtilities.fastUnicodeCompare(getName(), other.getName());
+        return HfsPlusUtilities.fastUnicodeCompare(_name, other._name);
     }
 
     public int readFrom(byte[] buffer, int offset) {
         _keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        setNodeId(new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 2)));
-        setName(HfsPlusUtilities.readUniStr255(buffer, offset + 6));
-        return _keyLength + 2;
+        _nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 2));
+        _name = HfsPlusUtilities.readUniStr255(buffer, offset + 6);
+        return (_keyLength & 0xffff) + 2;
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -88,6 +88,6 @@ public final class CatalogKey extends BTreeKey<CatalogKey> implements YComparabl
     }
 
     public String toString() {
-        return getName() + " (" + getNodeId() + ")";
+        return _name + " (" + _nodeId + ")";
     }
 }

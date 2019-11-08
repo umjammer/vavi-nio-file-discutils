@@ -35,7 +35,7 @@ public abstract class FixupRecordBase {
     private short[] _updateSequenceArray;
 
     public FixupRecordBase(String magic, int sectorSize) {
-        setMagic(magic);
+        _magic = magic;
         _sectorSize = sectorSize;
     }
 
@@ -59,8 +59,8 @@ public abstract class FixupRecordBase {
 
     private short _updateSequenceCount;
 
-    public short getUpdateSequenceCount() {
-        return _updateSequenceCount;
+    public int getUpdateSequenceCount() {
+        return _updateSequenceCount & 0xffff;
     }
 
     public void setUpdateSequenceCount(short value) {
@@ -69,8 +69,8 @@ public abstract class FixupRecordBase {
 
     private short _updateSequenceNumber;
 
-    public short getUpdateSequenceNumber() {
-        return _updateSequenceNumber;
+    public int getUpdateSequenceNumber() {
+        return _updateSequenceNumber & 0xffff;
     }
 
     public void setUpdateSequenceNumber(short value) {
@@ -79,12 +79,11 @@ public abstract class FixupRecordBase {
 
     private short _updateSequenceOffset;
 
-    public short getUpdateSequenceOffset() {
-        return _updateSequenceOffset;
+    public int getUpdateSequenceOffset() {
+        return _updateSequenceOffset & 0xffff;
     }
 
     public void setUpdateSequenceOffset(short value) {
-        assert value >= 0;
         _updateSequenceOffset = value;
     }
 
@@ -109,25 +108,32 @@ public abstract class FixupRecordBase {
                 throw new IOException("Corrupt record");
             }
         }
+
         setUpdateSequenceOffset(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x04));
         setUpdateSequenceCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06));
+
         setUpdateSequenceNumber(EndianUtilities.toUInt16LittleEndian(buffer, offset + getUpdateSequenceOffset()));
         _updateSequenceArray = new short[getUpdateSequenceCount() - 1];
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
-            _updateSequenceArray[i] = EndianUtilities
-                    .toUInt16LittleEndian(buffer, offset + getUpdateSequenceOffset() + 2 * (i + 1));
+            _updateSequenceArray[i] = EndianUtilities.toUInt16LittleEndian(buffer,
+                                                                           offset + getUpdateSequenceOffset() + 2 * (i + 1));
         }
+
         unprotectBuffer(buffer, offset);
+
         read(buffer, offset);
     }
 
     public void toBytes(byte[] buffer, int offset) {
         setUpdateSequenceOffset(write(buffer, offset));
+
         protectBuffer(buffer, offset);
+
         EndianUtilities.stringToBytes(getMagic(), buffer, offset + 0x00, 4);
-        EndianUtilities.writeBytesLittleEndian(getUpdateSequenceOffset(), buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(getUpdateSequenceCount(), buffer, offset + 0x06);
-        EndianUtilities.writeBytesLittleEndian(getUpdateSequenceNumber(), buffer, offset + getUpdateSequenceOffset());
+        EndianUtilities.writeBytesLittleEndian(_updateSequenceOffset, buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(_updateSequenceCount, buffer, offset + 0x06);
+
+        EndianUtilities.writeBytesLittleEndian(_updateSequenceNumber, buffer, offset + getUpdateSequenceOffset());
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
             EndianUtilities
                     .writeBytesLittleEndian(_updateSequenceArray[i], buffer, offset + getUpdateSequenceOffset() + 2 * (i + 1));
@@ -149,29 +155,30 @@ public abstract class FixupRecordBase {
     protected abstract int calcSize();
 
     private void unprotectBuffer(byte[] buffer, int offset) {
+        // First do validation check - make sure the USN matches on all sectors)
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
-            // First do validation check - make sure the USN matches on all sectors)
-            if (getUpdateSequenceNumber() != EndianUtilities.toUInt16LittleEndian(buffer,
-                                                                                  offset + Sizes.Sector * (i + 1) - 2)) {
+            if (_updateSequenceNumber != EndianUtilities.toUInt16LittleEndian(buffer, offset + Sizes.Sector * (i + 1) - 2)) {
                 throw new IOException("Corrupt file system record found");
             }
-
         }
+
+        // Now replace the USNs with the actual data from the sequence array
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
-            // Now replace the USNs with the actual data from the sequence array
             EndianUtilities.writeBytesLittleEndian(_updateSequenceArray[i], buffer, offset + Sizes.Sector * (i + 1) - 2);
         }
     }
 
     private void protectBuffer(byte[] buffer, int offset) {
         setUpdateSequenceNumber((short) (getUpdateSequenceNumber() + 1));
+
+        // Read in the bytes that are replaced by the USN
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
-            // Read in the bytes that are replaced by the USN
             _updateSequenceArray[i] = EndianUtilities.toUInt16LittleEndian(buffer, offset + Sizes.Sector * (i + 1) - 2);
         }
+
+        // Overwrite the bytes that are replaced with the USN
         for (int i = 0; i < _updateSequenceArray.length; ++i) {
-            // Overwrite the bytes that are replaced with the USN
-            EndianUtilities.writeBytesLittleEndian(getUpdateSequenceNumber(), buffer, offset + Sizes.Sector * (i + 1) - 2);
+            EndianUtilities.writeBytesLittleEndian(_updateSequenceNumber, buffer, offset + Sizes.Sector * (i + 1) - 2);
         }
     }
 }

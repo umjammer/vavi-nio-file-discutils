@@ -28,72 +28,72 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class ScsiInquiryStandardResponse extends ScsiResponse {
     private boolean _truncated;
 
-    private LunClass __DeviceType = LunClass.BlockStorage;
+    private LunClass _deviceType = LunClass.BlockStorage;
 
     public LunClass getDeviceType() {
-        return __DeviceType;
+        return _deviceType;
     }
 
     public void setDeviceType(LunClass value) {
-        __DeviceType = value;
+        _deviceType = value;
     }
 
     public int getNeededDataLength() {
         return 36;
     }
 
-    private String __ProductId;
+    private String _productId;
 
     public String getProductId() {
-        return __ProductId;
+        return _productId;
     }
 
     public void setProductId(String value) {
-        __ProductId = value;
+        _productId = value;
     }
 
-    private String __ProductRevision;
+    private String _productRevision;
 
     public String getProductRevision() {
-        return __ProductRevision;
+        return _productRevision;
     }
 
     public void setProductRevision(String value) {
-        __ProductRevision = value;
+        _productRevision = value;
     }
 
-    private boolean __Removable;
+    private boolean _removable;
 
     public boolean getRemovable() {
-        return __Removable;
+        return _removable;
     }
 
     public void setRemovable(boolean value) {
-        __Removable = value;
+        _removable = value;
     }
 
-    private byte __SpecificationVersion;
+    private byte _specificationVersion;
 
     public byte getSpecificationVersion() {
-        return __SpecificationVersion;
+        return _specificationVersion;
     }
 
     public void setSpecificationVersion(byte value) {
-        __SpecificationVersion = value;
+        _specificationVersion = value;
     }
 
     public boolean getTruncated() {
         return _truncated;
     }
 
-    private String __VendorId;
+    private String _vendorId;
 
     public String getVendorId() {
-        return __VendorId;
+        return _vendorId;
     }
 
     public void setVendorId(String value) {
-        __VendorId = value;
+        _vendorId = value;
     }
 
     public void readFrom(byte[] buffer, int offset, int count) {

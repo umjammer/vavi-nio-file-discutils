@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.UUID;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Raw.Disk;
 import DiscUtils.Streams.Util.Ownership;
@@ -87,7 +85,6 @@ public abstract class PartitionTable {
      */
     public static boolean isPartitioned(Stream content) {
         for (PartitionTableFactory partTableFactory : _factories) {
-Debug.println(partTableFactory + ": " + partTableFactory.detectIsPartitioned(content));
             if (partTableFactory.detectIsPartitioned(content)) {
                 return true;
             }

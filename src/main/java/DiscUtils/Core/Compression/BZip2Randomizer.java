@@ -64,6 +64,7 @@ public class BZip2Randomizer extends DataBlockTransform {
 
         int randIndex = 1;
         int nextByte = RandomVals[0] - 2;
+
         while (nextByte < inputCount) {
             output[nextByte] ^= 1;
             nextByte += RandomVals[randIndex++];
@@ -79,5 +80,4 @@ public class BZip2Randomizer extends DataBlockTransform {
     protected int minOutputCount(int inputCount) {
         return inputCount;
     }
-
 }

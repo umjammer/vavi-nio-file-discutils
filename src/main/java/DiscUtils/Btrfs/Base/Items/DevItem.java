@@ -43,184 +43,184 @@ public class DevItem extends BaseItem {
     /**
      * the internal btrfs device id
      */
-    private long __DeviceId;
+    private long _deviceId;
 
     public long getDeviceId() {
-        return __DeviceId;
+        return _deviceId;
     }
 
     public void setDeviceId(long value) {
-        __DeviceId = value;
+        _deviceId = value;
     }
 
     /**
      * size of the device
      */
-    private long __DeviceSize;
+    private long _deviceSize;
 
     public long getDeviceSize() {
-        return __DeviceSize;
+        return _deviceSize;
     }
 
     public void setDeviceSize(long value) {
-        __DeviceSize = value;
+        _deviceSize = value;
     }
 
     /**
      * number of bytes used
      */
-    private long __DeviceSizeUsed;
+    private long _deviceSizeUsed;
 
     public long getDeviceSizeUsed() {
-        return __DeviceSizeUsed;
+        return _deviceSizeUsed;
     }
 
     public void setDeviceSizeUsed(long value) {
-        __DeviceSizeUsed = value;
+        _deviceSizeUsed = value;
     }
 
     /**
      * optimal io alignment
      */
-    private int __OptimalIoAlignment;
+    private int _optimalIoAlignment;
 
     public int getOptimalIoAlignment() {
-        return __OptimalIoAlignment;
+        return _optimalIoAlignment;
     }
 
     public void setOptimalIoAlignment(int value) {
-        __OptimalIoAlignment = value;
+        _optimalIoAlignment = value;
     }
 
     /**
      * optimal io width
      */
-    private int __OptimalIoWidth;
+    private int _optimalIoWidth;
 
     public int getOptimalIoWidth() {
-        return __OptimalIoWidth;
+        return _optimalIoWidth;
     }
 
     public void setOptimalIoWidth(int value) {
-        __OptimalIoWidth = value;
+        _optimalIoWidth = value;
     }
 
     /**
      * minimal io size (sector size)
      */
-    private int __MinimalIoSize;
+    private int _minimalIoSize;
 
     public int getMinimalIoSize() {
-        return __MinimalIoSize;
+        return _minimalIoSize;
     }
 
     public void setMinimalIoSize(int value) {
-        __MinimalIoSize = value;
+        _minimalIoSize = value;
     }
 
     /**
      * type and info about this device
      */
-    private EnumSet<BlockGroupFlag> __Type;
+    private EnumSet<BlockGroupFlag> _type;
 
     public EnumSet<BlockGroupFlag> getType() {
-        return __Type;
+        return _type;
     }
 
     public void setType(EnumSet<BlockGroupFlag> value) {
-        __Type = value;
+        _type = value;
     }
 
     /**
      * expected generation for this device
      */
-    private long __Generation;
+    private long _generation;
 
     public long getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        _generation = value;
     }
 
     /**
      * starting byte of this partition on the device,
      * to allow for stripe alignment in the future
      */
-    private long __StartOffset;
+    private long _startOffset;
 
     public long getStartOffset() {
-        return __StartOffset;
+        return _startOffset;
     }
 
     public void setStartOffset(long value) {
-        __StartOffset = value;
+        _startOffset = value;
     }
 
     /**
      * grouping information for allocation decisions
      */
-    private int __DevGroup;
+    private int _devGroup;
 
     public int getDevGroup() {
-        return __DevGroup;
+        return _devGroup;
     }
 
     public void setDevGroup(int value) {
-        __DevGroup = value;
+        _devGroup = value;
     }
 
     /**
     * seek speed 0-100 where 100 is fastest
     */
-    private byte __SeekSpeed;
+    private byte _seekSpeed;
 
     public byte getSeekSpeed() {
-        return __SeekSpeed;
+        return _seekSpeed;
     }
 
     public void setSeekSpeed(byte value) {
-        __SeekSpeed = value;
+        _seekSpeed = value;
     }
 
     /**
     * bandwidth 0-100 where 100 is fastest
     */
-    private byte __Bandwidth;
+    private byte _bandwidth;
 
     public byte getBandwidth() {
-        return __Bandwidth;
+        return _bandwidth;
     }
 
     public void setBandwidth(byte value) {
-        __Bandwidth = value;
+        _bandwidth = value;
     }
 
     /**
      * btrfs generated uuid for this device
      */
-    private UUID __DeviceUuid;
+    private UUID _deviceUuid;
 
     public UUID getDeviceUuid() {
-        return __DeviceUuid;
+        return _deviceUuid;
     }
 
     public void setDeviceUuid(UUID value) {
-        __DeviceUuid = value;
+        _deviceUuid = value;
     }
 
     /**
      * uuid of FS who owns this device
      */
-    private UUID __FsUuid;
+    private UUID _fsUuid;
 
     public UUID getFsUuid() {
-        return __FsUuid;
+        return _fsUuid;
     }
 
     public void setFsUuid(UUID value) {
-        __FsUuid = value;
+        _fsUuid = value;
     }
 
     public int size() {

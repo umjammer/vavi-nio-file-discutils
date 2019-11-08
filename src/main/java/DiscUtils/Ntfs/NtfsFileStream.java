@@ -33,7 +33,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.SeekOrigin;
 
 
-public final class NtfsFileStream extends SparseStream {
+final class NtfsFileStream extends SparseStream {
     private SparseStream _baseStream;
 
     private final DirectoryEntry _entry;

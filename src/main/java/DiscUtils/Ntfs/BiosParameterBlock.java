@@ -36,7 +36,11 @@ public class BiosParameterBlock {
     // Value: 0x80 (first hard disk)
     public byte _biosDriveNumber;
 
-    public short _bytesPerSector;
+    private short _bytesPerSector;
+
+    public int getBytesPerSector() {
+        return _bytesPerSector & 0xffff;
+    }
 
     // Value: 0x00
     public byte _chkDskFlags;
@@ -75,7 +79,11 @@ public class BiosParameterBlock {
     // Must be 0
     public short _reservedSectors;
 
-    public byte _sectorsPerCluster;
+    private byte _sectorsPerCluster;
+
+    public int getSectorsPerCluster() {
+        return _sectorsPerCluster & 0xff;
+    }
 
     // Value: 0x3F 0x00
     public short _sectorsPerTrack;
@@ -94,7 +102,7 @@ public class BiosParameterBlock {
     public long _volumeSerialNumber;
 
     public int getBytesPerCluster() {
-        return _bytesPerSector * _sectorsPerCluster;
+        return getBytesPerSector() * getSectorsPerCluster();
     }
 
     public int getIndexBufferSize() {
@@ -138,7 +146,7 @@ public class BiosParameterBlock {
         BiosParameterBlock bpb = new BiosParameterBlock();
         bpb._oemId = NTFS_OEM_ID;
         bpb._bytesPerSector = Sizes.Sector;
-        bpb._sectorsPerCluster = (byte) (clusterSize / bpb._bytesPerSector);
+        bpb._sectorsPerCluster = (byte) (clusterSize / bpb.getBytesPerSector());
         bpb._reservedSectors = 0;
         bpb._numFats = 0;
         bpb._fatRootEntriesCount = 0;
@@ -224,7 +232,7 @@ public class BiosParameterBlock {
             return 1 << -rawSize;
         }
 
-        return rawSize * _sectorsPerCluster * _bytesPerSector;
+        return rawSize * getSectorsPerCluster() * getBytesPerSector();
     }
 
     boolean isValidOemId() {
@@ -242,8 +250,8 @@ public class BiosParameterBlock {
             return false;
         }
 
-        long mftPos = _mftCluster * _sectorsPerCluster * _bytesPerSector;
-        return mftPos < _totalSectors64 * _bytesPerSector && mftPos < volumeSize;
+        long mftPos = _mftCluster * getSectorsPerCluster() * getBytesPerSector();
+        return mftPos < _totalSectors64 * getBytesPerSector() && mftPos < volumeSize;
     }
 
     private static long genSerialNumber() {

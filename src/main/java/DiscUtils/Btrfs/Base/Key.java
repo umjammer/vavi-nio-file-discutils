@@ -44,7 +44,7 @@ public class Key implements IByteArraySerializable {
     }
 
     public Key(ReservedObjectId objectId, ItemType type) {
-        this(objectId.ordinal(), type);
+        this(objectId.getValue(), type);
     }
 
     /**

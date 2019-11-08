@@ -28,16 +28,16 @@ import java.util.Map;
 public class GenericResource extends Resource {
     public GenericResource(String type, Map<String, Object> parts) {
         super(type, parts);
-        setData(parts.get("Data") instanceof byte[] ? (byte[]) parts.get("Data") : (byte[]) null);
+        _data = parts.get("Data") instanceof byte[] ? (byte[]) parts.get("Data") : null;
     }
 
-    private byte[] __Data;
+    private byte[] _data;
 
     public byte[] getData() {
-        return __Data;
+        return _data;
     }
 
     public void setData(byte[] value) {
-        __Data = value;
+        _data = value;
     }
 }

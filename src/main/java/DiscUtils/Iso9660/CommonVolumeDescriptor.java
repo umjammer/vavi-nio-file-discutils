@@ -50,7 +50,11 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
 
     public byte FileStructureVersion;
 
-    public short LogicalBlockSize;
+    protected short LogicalBlockSize;
+
+    public int getLogicalBlockSize() {
+        return LogicalBlockSize;
+    }
 
     public long ModificationDateAndTime;
 

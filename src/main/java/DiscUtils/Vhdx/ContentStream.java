@@ -174,7 +174,7 @@ public final class ContentStream extends MappedStream {
             int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
             int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
 
-            PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
+            PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]); // TODO test:replyLog return NotPresent
             if (blockStatus == PayloadBlockStatus.FullyPresent) {
                 _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                 int read = StreamUtilities.readMaximum(_fileStream,

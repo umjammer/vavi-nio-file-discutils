@@ -58,7 +58,7 @@ public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(_status.getValue());
         writer.write(getPostOpAttributes() != null);
         if (getPostOpAttributes() != null) {
             getPostOpAttributes().write(writer);

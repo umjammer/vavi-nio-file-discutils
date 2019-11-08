@@ -252,11 +252,10 @@ public class DiscFileSystemInfo {
      * @return {@code true} if {@code obj} is equivalent, else {@code false} .
      */
     public boolean equals(Object obj) {
-        DiscFileSystemInfo asInfo = obj instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) obj : (DiscFileSystemInfo) null;
-        if (obj == null) {
+        if (!DiscFileSystemInfo.class.isInstance(obj)) {
             return false;
         }
-
+        DiscFileSystemInfo asInfo = DiscFileSystemInfo.class.cast(obj);
         return getPath().equals(asInfo.getPath()) && getFileSystem().equals(asInfo.getFileSystem());
     }
 

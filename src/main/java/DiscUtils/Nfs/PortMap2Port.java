@@ -27,21 +27,21 @@ public class PortMap2Port implements IRpcObject {
     }
 
     public PortMap2Port(XdrDataReader reader) {
-        setPort(reader.readUInt32());
+        _port = reader.readUInt32();
     }
 
-    private int __Port;
+    private int _port;
 
     public int getPort() {
-        return __Port;
+        return _port;
     }
 
     public void setPort(int value) {
-        __Port = value;
+        _port = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getPort());
+        writer.write(_port);
     }
 
     public boolean equals(Object obj) {
@@ -53,10 +53,10 @@ public class PortMap2Port implements IRpcObject {
             return false;
         }
 
-        return other.getPort() == getPort();
+        return other._port == _port;
     }
 
     public int hashCode() {
-        return getPort();
+        return _port;
     }
 }

@@ -512,7 +512,7 @@ public final class Disk extends VirtualDisk {
                     DiskImageFile newFile = new DiskImageFile(fileLocator, testPath, FileAccess.Read);
 
                     if (!newFile.getUniqueId().equals(file.getParentUniqueId())) {
-                        newFile.close();
+                        newFile.close(); // TODO check
                         throw new IOException(String
                                 .format("Invalid disk chain found looking for parent with id %s, found %s with id %s",
                                         file.getParentUniqueId(),

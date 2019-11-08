@@ -45,11 +45,11 @@ public final class FileTransport extends VirtualDiskTransport {
     }
 
     public void connect(URI uri, String username, String password) {
-        _path = uri.getPath();
+        _path = uri.getPath().replace("/", "\\");
         _extraInfo = uri.getFragment();
         String path = Utilities.getDirectoryFromPath(_path);
-        if (path == null || !Files.exists(Paths.get(path))) {
-            throw new dotnet4j.io.FileNotFoundException(String.format("No such file '%s'", uri.toString()));
+        if (path == null || !Files.exists(Paths.get(path.replace("\\", "/")))) {
+            throw new dotnet4j.io.FileNotFoundException(String.format("No such file '%s'", uri));
         }
     }
 

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import DiscUtils.Core.DiskImageFileSpecification;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
-import DiscUtils.Vdi.Disk;
+import DiscUtils.Vhd.Disk;
 import DiscUtils.Vhd.DiskBuilder;
 import DiscUtils.Vhd.FileType;
 import dotnet4j.io.MemoryStream;
@@ -47,8 +47,10 @@ public class DiskBuilderTest {
             baseFile.getContent().setPosition(i);
             baseFile.getContent().writeByte((byte) i);
         }
+
         baseFile.getContent().setPosition(15 * 1024 * 1024);
         baseFile.getContent().writeByte((byte) 0xFF);
+
         diskContent = baseFile.getContent();
     }
 
@@ -57,14 +59,17 @@ public class DiskBuilderTest {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(FileType.Fixed);
         builder.setContent(diskContent);
+
         List<DiskImageFileSpecification> fileSpecs = builder.build("foo");
         assertEquals(1, fileSpecs.size());
         assertEquals("foo.vhd", fileSpecs.get(0).getName());
+
         try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
             for (int i = 0; i < 8; i += 1024 * 1024) {
                 disk.getContent().setPosition(i);
                 assertEquals(i, disk.getContent().readByte());
             }
+
             disk.getContent().setPosition(15 * 1024 * 1024);
             assertEquals(0xFF, disk.getContent().readByte());
         }
@@ -75,14 +80,17 @@ public class DiskBuilderTest {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(FileType.Dynamic);
         builder.setContent(diskContent);
+
         List<DiskImageFileSpecification> fileSpecs = builder.build("foo");
         assertEquals(1, fileSpecs.size());
         assertEquals("foo.vhd", fileSpecs.get(0).getName());
+
         try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
             for (int i = 0; i < 8; i += 1024 * 1024) {
                 disk.getContent().setPosition(i);
                 assertEquals(i, disk.getContent().readByte());
             }
+
             disk.getContent().setPosition(15 * 1024 * 1024);
             assertEquals(0xFF, disk.getContent().readByte());
         }

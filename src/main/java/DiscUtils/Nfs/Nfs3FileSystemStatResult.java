@@ -29,36 +29,36 @@ public class Nfs3FileSystemStatResult extends Nfs3CallResult {
     public Nfs3FileSystemStatResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
         if (reader.readBool()) {
-            setPostOpAttributes(new Nfs3FileAttributes(reader));
+            _postOpAttributes = new Nfs3FileAttributes(reader);
         }
 
         if (getStatus() == Nfs3Status.Ok) {
-            setFileSystemStat(new Nfs3FileSystemStat(reader));
+            _fileSystemStat = new Nfs3FileSystemStat(reader);
         }
     }
 
-    private Nfs3FileAttributes __PostOpAttributes;
+    private Nfs3FileAttributes _postOpAttributes;
 
     public Nfs3FileAttributes getPostOpAttributes() {
-        return __PostOpAttributes;
+        return _postOpAttributes;
     }
 
     public void setPostOpAttributes(Nfs3FileAttributes value) {
-        __PostOpAttributes = value;
+        _postOpAttributes = value;
     }
 
-    private Nfs3FileSystemStat __FileSystemStat;
+    private Nfs3FileSystemStat _fileSystemStat;
 
     public Nfs3FileSystemStat getFileSystemStat() {
-        return __FileSystemStat;
+        return _fileSystemStat;
     }
 
     public void setFileSystemStat(Nfs3FileSystemStat value) {
-        __FileSystemStat = value;
+        _fileSystemStat = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(_status.getValue());
         writer.write(getPostOpAttributes() != null);
         if (getPostOpAttributes() != null) {
             getPostOpAttributes().write(writer);

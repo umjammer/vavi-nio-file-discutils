@@ -135,7 +135,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         if (superblock.getReadOnlyCompatibleFeatures().contains(ReadOnlyCompatibleFeatures.RMAPBT)) {
             int rmapMaxlevels = 9;
             if (superblock.getReadOnlyCompatibleFeatures().contains(ReadOnlyCompatibleFeatures.REFLINK)) {
-                rmapMaxlevels = superblock.xfs_btree_compute_maxlevels();
+                rmapMaxlevels = superblock.computeBtreeMaxlevels();
             }
 
             alloc_set_aside += superblock.getAgCount() * rmapMaxlevels;
@@ -149,6 +149,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
 
     /**
      * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L832
+     * XFS_AG_DADDR
      */
     private long xFS_AG_DADDR(SuperBlock sb, int agno, long d) {
         return xFS_AGB_TO_DADDR(sb, agno, 0) + d;
@@ -156,20 +157,23 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
 
     /**
      * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L829
+     * XFS_AGB_TO_DADDR
      */
     private long xFS_AGB_TO_DADDR(SuperBlock sb, int agno, int agbno) {
-        return xFS_FSB_TO_BB(sb, agno * sb.getAgBlocks()) + agbno;
+        return fsbToBb(sb, agno * sb.getAgBlocks()) + agbno;
     }
 
     /**
      * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L587
+     * XFS_FSB_TO_BB
      */
-    private long xFS_FSB_TO_BB(SuperBlock sb, long fsbno) {
+    private long fsbToBb(SuperBlock sb, long fsbno) {
         return fsbno << (sb.getBlocksizeLog2() - BBSHIFT);
     }
 
     /**
      * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L716
+     * XFS_AGF_DADDR
      */
     private long xFS_AGF_DADDR(SuperBlock sb) {
         return 1 << (sb.getSectorSizeLog2() - BBSHIFT);

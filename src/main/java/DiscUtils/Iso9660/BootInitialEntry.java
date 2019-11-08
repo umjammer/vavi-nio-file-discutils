@@ -34,9 +34,25 @@ public class BootInitialEntry {
 
     public int ImageStart;
 
-    public short LoadSegment;
+    private short loadSegment;
 
-    public short SectorCount;
+    public int getLoadSegment() {
+        return loadSegment & 0xffff;
+    }
+
+    public void setLoadSegment(short value) {
+        loadSegment = value;
+    }
+
+    private short sectorCount;
+
+    public int getSectorCount() {
+        return sectorCount;
+    }
+
+    public void setSectorCount(short value) {
+        sectorCount = value;
+    }
 
     public byte SystemType;
 
@@ -46,9 +62,9 @@ public class BootInitialEntry {
     public BootInitialEntry(byte[] buffer, int offset) {
         BootIndicator = buffer[offset + 0x00];
         BootMediaType = BootDeviceEmulation.valueOf(buffer[offset + 0x01]);
-        LoadSegment = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
+        loadSegment = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
         SystemType = buffer[offset + 0x04];
-        SectorCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06);
+        sectorCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06);
         ImageStart = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
     }
 
@@ -56,9 +72,9 @@ public class BootInitialEntry {
         Arrays.fill(buffer, offset, offset + 0x20, (byte) 0);
         buffer[offset + 0x00] = BootIndicator;
         buffer[offset + 0x01] = (byte) BootMediaType.ordinal();
-        EndianUtilities.writeBytesLittleEndian(LoadSegment, buffer, offset + 0x02);
+        EndianUtilities.writeBytesLittleEndian(loadSegment, buffer, offset + 0x02);
         buffer[offset + 0x04] = SystemType;
-        EndianUtilities.writeBytesLittleEndian(SectorCount, buffer, offset + 0x06);
+        EndianUtilities.writeBytesLittleEndian(sectorCount, buffer, offset + 0x06);
         EndianUtilities.writeBytesLittleEndian(ImageStart, buffer, offset + 0x08);
     }
 }

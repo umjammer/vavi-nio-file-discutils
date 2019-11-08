@@ -10,7 +10,11 @@ public class BlockGroup implements IByteArraySerializable {
 
     public int BlockBitmapBlock;
 
-    public short FreeBlocksCount;
+    private short freeBlocksCount;
+
+    public int getFreeBlocksCount() {
+        return freeBlocksCount & 0xffff;
+    }
 
     public short FreeInodesCount;
 
@@ -28,7 +32,7 @@ public class BlockGroup implements IByteArraySerializable {
         BlockBitmapBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         InodeBitmapBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         InodeTableBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        FreeBlocksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 12);
+        freeBlocksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 12);
         FreeInodesCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 14);
         UsedDirsCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
         return DescriptorSize;

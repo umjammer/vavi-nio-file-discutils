@@ -356,8 +356,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _rootLevel;
 
-    public byte getRootLevel() {
-        return _rootLevel;
+    public int getRootLevel() {
+        return _rootLevel & 0xff;
     }
 
     public void setRootLevel(byte value) {
@@ -369,8 +369,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _chunkRootLevel;
 
-    public byte getChunkRootLevel() {
-        return _chunkRootLevel;
+    public int getChunkRootLevel() {
+        return _chunkRootLevel & 0xff;
     }
 
     public void setChunkRootLevel(byte value) {
@@ -382,8 +382,8 @@ public class SuperBlock implements IByteArraySerializable {
      */
     private byte _logRootLevel;
 
-    public byte getLogRootLevel() {
-        return _logRootLevel;
+    public int getLogRootLevel() {
+        return _logRootLevel & 0xff;
     }
 
     public void setLogRootLevel(byte value) {

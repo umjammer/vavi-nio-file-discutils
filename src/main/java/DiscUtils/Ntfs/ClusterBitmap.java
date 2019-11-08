@@ -46,7 +46,7 @@ class ClusterBitmap implements Closeable {
         _file = file;
         _bitmap = new Bitmap(_file.openStream(AttributeType.Data, null, FileAccess.ReadWrite),
                              MathUtilities.ceil(file.getContext().getBiosParameterBlock()._totalSectors64,
-                                                file.getContext().getBiosParameterBlock()._sectorsPerCluster));
+                                                file.getContext().getBiosParameterBlock().getSectorsPerCluster()));
     }
 
     Bitmap getBitmap() {

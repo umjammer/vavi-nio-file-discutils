@@ -53,7 +53,7 @@ public final class LogEntryInfo {
      * (or zero) descriptors.
      */
     public boolean getIsEmpty() {
-        return _entry.getIsEmpty();
+        return _entry.isEmpty();
     }
 
     /**

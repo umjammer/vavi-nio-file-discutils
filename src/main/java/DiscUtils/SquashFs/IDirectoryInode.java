@@ -25,7 +25,7 @@ package DiscUtils.SquashFs;
 public interface IDirectoryInode {
     long getFileSize();
 
-    short getOffset();
+    int getOffset();
 
     int getParentInode();
 

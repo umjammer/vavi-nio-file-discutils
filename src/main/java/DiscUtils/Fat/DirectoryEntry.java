@@ -67,14 +67,14 @@ public class DirectoryEntry {
     public DirectoryEntry(FatFileSystemOptions options, FileName name, EnumSet<FatAttributes> attrs, FatType fatVariant) {
         _options = options;
         _fatVariant = fatVariant;
-        setName(name);
+        _name = name;
         _attr = (byte) (FatAttributes.valueOf(attrs) & 0xff);
     }
 
     public DirectoryEntry(DirectoryEntry toCopy) {
         _options = toCopy._options;
         _fatVariant = toCopy._fatVariant;
-        setName(toCopy.getName());
+        _name = toCopy.getName();
         _attr = toCopy._attr;
         _creationTimeTenth = toCopy._creationTimeTenth;
         _creationTime = toCopy._creationTime;
@@ -124,7 +124,7 @@ public class DirectoryEntry {
 
     public int getFirstCluster() {
         if (_fatVariant == FatType.Fat32) {
-            return _firstClusterHi << 16 | _firstClusterLo;
+            return (_firstClusterHi & 0xffff) << 16 | (_firstClusterLo & 0xffff);
         }
 
         return _firstClusterLo;
@@ -257,7 +257,7 @@ public class DirectoryEntry {
     }
 
     private void load(byte[] data, int offset) {
-        setName(new FileName(data, offset));
+        _name = new FileName(data, offset);
         _attr = data[offset + 11];
         _creationTimeTenth = data[offset + 13];
         _creationTime = EndianUtilities.toUInt16LittleEndian(data, offset + 14);

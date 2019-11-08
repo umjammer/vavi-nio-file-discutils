@@ -31,14 +31,14 @@ import dotnet4j.io.MemoryStream;
  * Base class for all NFS result structures.
  */
 public abstract class Nfs3CallResult implements IRpcObject {
-    private Nfs3Status __Status = Nfs3Status.Ok;
+    protected Nfs3Status _status = Nfs3Status.Ok;
 
     public Nfs3Status getStatus() {
-        return __Status;
+        return _status;
     }
 
     public void setStatus(Nfs3Status value) {
-        __Status = value;
+        _status = value;
     }
 
     public void write(XdrDataWriter writer) {

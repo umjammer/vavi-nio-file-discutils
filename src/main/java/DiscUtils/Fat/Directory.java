@@ -69,7 +69,7 @@ public class Directory implements Closeable {
      *            the parent.
      */
     Directory(Directory parent, long parentId) {
-        __FileSystem = parent.getFileSystem();
+        _fileSystem = parent.getFileSystem();
         _parent = parent;
         _parentId = parentId;
         DirectoryEntry dirEntry = getParentsChildEntry();
@@ -85,7 +85,7 @@ public class Directory implements Closeable {
      * @param dirStream The stream containing the directory info.
      */
     Directory(FatFileSystem fileSystem, Stream dirStream) {
-        __FileSystem = fileSystem;
+        _fileSystem = fileSystem;
         _dirStream = dirStream;
         loadEntries();
     }
@@ -94,10 +94,10 @@ public class Directory implements Closeable {
         return new ArrayList<>(_entries.values());
     }
 
-    private FatFileSystem __FileSystem;
+    private FatFileSystem _fileSystem;
 
     public FatFileSystem getFileSystem() {
-        return __FileSystem;
+        return _fileSystem;
     }
 
     public boolean isEmpty() {

@@ -32,7 +32,7 @@ public class CookedDataRun {
             throw new IndexOutOfBoundsException("VCN must be >= 0");
         }
 
-        if (getStartLcn() < 0) {
+        if (_startLcn < 0) {
             throw new IndexOutOfBoundsException("LCN must be >= 0");
         }
     }

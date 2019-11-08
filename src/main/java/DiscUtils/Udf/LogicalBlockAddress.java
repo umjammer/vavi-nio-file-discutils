@@ -32,7 +32,11 @@ public class LogicalBlockAddress implements IByteArraySerializable {
 
     public int LogicalBlock;
 
-    public short Partition;
+    private short Partition;
+
+    public int getPartition() {
+        return Partition;
+    }
 
     public int size() {
         return 6;

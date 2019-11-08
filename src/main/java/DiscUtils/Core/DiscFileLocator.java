@@ -81,13 +81,12 @@ public final class DiscFileLocator extends FileLocator {
     }
 
     public boolean hasCommonRoot(FileLocator other) {
-        DiscFileLocator otherDiscLocator = other instanceof DiscFileLocator ? (DiscFileLocator) other : (DiscFileLocator) null;
-        if (otherDiscLocator == null) {
+        if (!DiscFileLocator.class.isInstance(other)) {
             return false;
         }
 
         // Common root if the same file system instance.
-        return otherDiscLocator._fileSystem == _fileSystem;
+        return DiscFileLocator.class.cast(other)._fileSystem == _fileSystem;
     }
 
     public String resolveRelativePath(String path) {

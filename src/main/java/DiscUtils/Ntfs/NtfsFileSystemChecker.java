@@ -339,8 +339,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             if (entry.getFlags().contains(IndexEntryFlags.Node)) {
                 long bitmapIdx = entry.getChildrenVirtualCluster() / MathUtilities
                         .ceil(root.getIndexAllocationSize(),
-                              _context.getBiosParameterBlock()._sectorsPerCluster *
-                                                             _context.getBiosParameterBlock()._bytesPerSector);
+                              _context.getBiosParameterBlock().getSectorsPerCluster() *
+                                                             _context.getBiosParameterBlock().getBytesPerSector());
                 if (!bitmap.isPresent(bitmapIdx)) {
                     reportError("Index entry %s is non-leaf, but child vcn %s is not in bitmap at index {2}",
                                 Index.entryAsString(entry, fileName, indexName),
@@ -372,7 +372,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
     private void preVerifyMft(File file) {
         int recordLength = _context.getBiosParameterBlock().getMftRecordSize();
-        int bytesPerSector = _context.getBiosParameterBlock()._bytesPerSector;
+        int bytesPerSector = _context.getBiosParameterBlock().getBytesPerSector();
 
         // Check out the MFT's clusters
         for (Range range : file.getAttribute(AttributeType.Data, null).getClusters()) {
@@ -390,8 +390,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
 
         try (Stream mftStream = file.openStream(AttributeType.Data, null, FileAccess.Read);
-                Stream bitmapStream = file.openStream(AttributeType.Bitmap, null, FileAccess.Read)) {
-            Bitmap bitmap = new Bitmap(bitmapStream, Long.MAX_VALUE);
+             Stream bitmapStream = file.openStream(AttributeType.Bitmap, null, FileAccess.Read);
+             Bitmap bitmap = new Bitmap(bitmapStream, Long.MAX_VALUE)) {
 
             long index = 0;
             while (mftStream.getPosition() < mftStream.getLength()) {
@@ -566,7 +566,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     private void reportError(String str, Object... args) {
         _levelsDetected = ReportLevels.Errors;
         if (_reportLevels.contains(ReportLevels.Errors)) {
-            _report.printf("ERROR: " + str + "\n", Arrays.stream(args).filter(a -> !Throwable.class.isInstance(a)).toArray(Object[]::new));
+            _report.printf("ERROR: " + str + "\n",
+                           Arrays.stream(args).filter(a -> !Throwable.class.isInstance(a)).toArray(Object[]::new));
             Arrays.stream(args)
                     .filter(a -> Throwable.class.isInstance(a))
                     .map(a -> Throwable.class.cast(a))

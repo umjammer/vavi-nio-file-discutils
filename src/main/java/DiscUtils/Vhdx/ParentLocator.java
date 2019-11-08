@@ -35,20 +35,20 @@ class ParentLocator implements IByteArraySerializable {
 
     private static final UUID LocatorTypeGuid = UUID.fromString("B04AEFB7-D19E-4A81-B789-25B8E9445913");
 
-    public short Count;
+    public short count;
 
-    public UUID LocatorType = LocatorTypeGuid;
+    public UUID locatorType = LocatorTypeGuid;
 
-    public short Reserved = 0;
+    public short reserved = 0;
 
     public Map<String, String> getEntries() {
-        return Entries;
+        return entries;
     }
 
-    private Map<String, String> Entries;
+    private Map<String, String> entries;
 
     public int size() {
-        if (Entries.size() != 0) {
+        if (entries.size() != 0) {
             throw new UnsupportedOperationException();
         }
 
@@ -56,15 +56,15 @@ class ParentLocator implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        LocatorType = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        if (LocatorType != LocatorTypeGuid) {
-            throw new dotnet4j.io.IOException("Unrecognized Parent Locator type: " + LocatorType);
+        locatorType = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+        if (locatorType != LocatorTypeGuid) {
+            throw new dotnet4j.io.IOException("Unrecognized Parent Locator type: " + locatorType);
         }
 
-        Entries = new HashMap<>();
+        entries = new HashMap<>();
 
-        Count = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
-        for (short i = 0; i < Count; ++i) {
+        count = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
+        for (short i = 0; i < (count & 0xffff); ++i) {
             int kvOffset = offset + 20 + i * 12;
             int keyOffset = EndianUtilities.toInt32LittleEndian(buffer, kvOffset + 0);
             int valueOffset = EndianUtilities.toInt32LittleEndian(buffer, kvOffset + 4);
@@ -74,21 +74,21 @@ class ParentLocator implements IByteArraySerializable {
             String key = new String(buffer, keyOffset, keyLength, Charset.forName("UTF-16LE"));
             String value = new String(buffer, valueOffset, valueLength, Charset.forName("UTF-16LE"));
 
-            Entries.put(key, value);
+            entries.put(key, value);
         }
 
         return 0;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        if (Entries.size() != 0) {
+        if (entries.size() != 0) {
             throw new UnsupportedOperationException();
         }
 
-        Count = (short) Entries.size();
+        count = (short) entries.size();
 
-        EndianUtilities.writeBytesLittleEndian(LocatorType, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(Reserved, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(Count, buffer, offset + 18);
+        EndianUtilities.writeBytesLittleEndian(locatorType, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(reserved, buffer, offset + 16);
+        EndianUtilities.writeBytesLittleEndian(count, buffer, offset + 18);
     }
 }

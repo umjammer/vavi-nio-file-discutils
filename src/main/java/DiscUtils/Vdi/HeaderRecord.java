@@ -24,8 +24,6 @@ package DiscUtils.Vdi;
 
 import java.util.UUID;
 
-import vavi.util.Debug;
-
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
 import dotnet4j.io.Stream;
@@ -96,19 +94,19 @@ public class HeaderRecord {
 
     public void read(FileVersion version, Stream s) {
         int headerSize;
+
         fileVersion = version;
+
         // Determine header size...
         if (version.getMajor() == 0) {
             headerSize = 348;
         } else {
             long savedPos = s.getPosition();
-Debug.printf("savedPos: %d\n", savedPos);
             headerSize = EndianUtilities.toInt32LittleEndian(StreamUtilities.readExact(s, 4), 0);
-Debug.printf("headerSize: %1$8x, %1$d\n", headerSize);
             s.setPosition(savedPos);
         }
+
         byte[] buffer = StreamUtilities.readExact(s, headerSize);
-//Debug.println("R:\n" + StringUtil.getDump(buffer, 64));
         read(version, buffer, 0);
     }
 
@@ -165,6 +163,7 @@ Debug.printf("headerSize: %1$8x, %1$d\n", headerSize);
     public void write(Stream s) {
         byte[] buffer = new byte[headerSize];
         write(buffer, 0);
+//Debug.println(s.getPosition());
         s.write(buffer, 0, buffer.length);
     }
 
@@ -183,7 +182,7 @@ Debug.printf("headerSize: %1$8x, %1$d\n", headerSize);
             EndianUtilities.writeBytesLittleEndian(parentId, buffer, offset + 332);
         } else if (fileVersion.getMajor() == 1 && fileVersion.getMinor() == 1) {
             EndianUtilities.writeBytesLittleEndian(headerSize, buffer, offset + 0);
-Debug.println(headerSize);
+//Debug.println(headerSize);
             EndianUtilities.writeBytesLittleEndian(imageType.ordinal(), buffer, offset + 4);
             EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 8);
             EndianUtilities.stringToBytes(comment, buffer, offset + 12, 256);

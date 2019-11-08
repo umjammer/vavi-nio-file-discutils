@@ -31,17 +31,17 @@ import DiscUtils.Streams.IByteArraySerializable;
  */
 public abstract class BaseItem implements IByteArraySerializable {
     public BaseItem(Key key) {
-        __Key = key;
+        _key = key;
     }
 
-    private Key __Key;
+    private Key _key;
 
     public Key getKey() {
-        return __Key;
+        return _key;
     }
 
     public void setKey(Key value) {
-        __Key = value;
+        _key = value;
     }
 
     public abstract int size();

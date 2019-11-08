@@ -65,7 +65,15 @@ public class SuperBlock implements IByteArraySerializable {
 
     public MetadataRef RootInode;
 
-    public short UidGidCount;
+    private short uidGidCount;
+
+    public int getUidGidCount() {
+        return uidGidCount & 0xffff;
+    }
+
+    public void setUidGidCount(short value) {
+        uidGidCount = value;
+    }
 
     public long UidGidTableStart;
 
@@ -85,7 +93,7 @@ public class SuperBlock implements IByteArraySerializable {
         Compression = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
         BlockSizeLog2 = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
         Flags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        UidGidCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
+        uidGidCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
         MajorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
         MinorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
         RootInode = new MetadataRef(EndianUtilities.toInt64LittleEndian(buffer, offset + 32));
@@ -108,7 +116,7 @@ public class SuperBlock implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(Compression, buffer, offset + 20);
         EndianUtilities.writeBytesLittleEndian(BlockSizeLog2, buffer, offset + 22);
         EndianUtilities.writeBytesLittleEndian(Flags, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(UidGidCount, buffer, offset + 26);
+        EndianUtilities.writeBytesLittleEndian(uidGidCount, buffer, offset + 26);
         EndianUtilities.writeBytesLittleEndian(MajorVersion, buffer, offset + 28);
         EndianUtilities.writeBytesLittleEndian(MinorVersion, buffer, offset + 30);
         EndianUtilities.writeBytesLittleEndian(RootInode.getValue(), buffer, offset + 32);

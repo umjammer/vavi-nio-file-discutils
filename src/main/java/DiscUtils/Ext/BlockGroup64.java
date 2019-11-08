@@ -34,7 +34,11 @@ public class BlockGroup64 extends BlockGroup {
 
     public int InodeTableBlockHigh;
 
-    public short FreeBlocksCountHigh;
+    public short freeBlocksCountHigh;
+
+    public int getFreeBlocksCountHigh() {
+        return freeBlocksCountHigh & 0xffff;
+    }
 
     public short FreeInodesCountHigh;
 
@@ -53,7 +57,7 @@ public class BlockGroup64 extends BlockGroup {
         BlockBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
         InodeBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
         InodeTableBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
-        FreeBlocksCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2C);
+        freeBlocksCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2C);
         FreeInodesCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2E);
         UsedDirsCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x30);
         return this._descriptorSize;

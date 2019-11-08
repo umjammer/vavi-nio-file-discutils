@@ -41,6 +41,7 @@ public final class FreeSpaceTable {
         //     "the only restriction being that all objects have 1 MB alignment within the file"
         // Which does not mean the file size has to be multiple of 1MiB.
         // (The last extent can be less than 1MiB and still all extent have 1 MiB alignment.)
+
         _freeExtents = new ArrayList<>();
         _freeExtents.add(new StreamExtent(0, fileSize));
         _fileSize = fileSize;
@@ -56,6 +57,7 @@ public final class FreeSpaceTable {
         }
 
         _fileSize = fileSize;
+
         if (isFree) {
             _freeExtents = StreamExtent.union(_freeExtents, new StreamExtent(_fileSize, fileSize - _fileSize));
         }
@@ -96,8 +98,8 @@ public final class FreeSpaceTable {
                 start[0] = extent.getStart();
                 return true;
             }
-
         }
+
         start[0] = 0;
         return false;
     }

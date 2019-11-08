@@ -71,7 +71,7 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(this.getStatus().ordinal());
+        writer.write(this._status.getValue());
         if (getStatus() == Nfs3Status.Ok) {
             getObjectHandle().write(writer);
             writer.write(getObjectAttributes() != null);

@@ -91,6 +91,7 @@ public final class Chunk {
     }
 
     public PayloadBlockStatus getBlockStatus(int block) {
+        // TODO _batData are all zero
         return new BatEntry(_batData, block * 8).getPayloadBlockStatus();
     }
 

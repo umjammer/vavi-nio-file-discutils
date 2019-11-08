@@ -74,10 +74,8 @@ public class LoginRequest {
         byte[] buffer = new byte[MathUtilities.roundUp(48 + count, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] = packState();
-        buffer[2] = 0;
-        // Max Version
-        buffer[3] = 0;
-        // Min Version
+        buffer[2] = 0; // Max Version
+        buffer[3] = 0; // Min Version
         EndianUtilities.writeBytesBigEndian(_connection.getSession().getInitiatorSessionId(), buffer, 8);
         EndianUtilities.writeBytesBigEndian(IsidQualifier, buffer, 12);
         EndianUtilities.writeBytesBigEndian(_connection.getSession().getTargetSessionId(), buffer, 14);

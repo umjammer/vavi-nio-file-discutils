@@ -88,7 +88,7 @@ public final class Nfs3ReadDirPlusResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(_status.getValue());
         writer.write(getDirAttributes() != null);
         if (getDirAttributes() != null) {
             getDirAttributes().write(writer);

@@ -30,13 +30,13 @@ import dotnet4j.io.Stream;
 public class FileAllocationTable {
     private final FatBuffer _buffer;
 
-    private final short _firstFatSector;
+    private final int _firstFatSector;
 
-    private final byte _numFats;
+    private final int _numFats;
 
     private final Stream _stream;
 
-    public FileAllocationTable(FatType type, Stream stream, short firstFatSector, int fatSize, byte numFats, byte activeFat) {
+    public FileAllocationTable(FatType type, Stream stream, int firstFatSector, int fatSize, int numFats, byte activeFat) {
         _stream = stream;
         _firstFatSector = firstFatSector;
         _numFats = numFats;

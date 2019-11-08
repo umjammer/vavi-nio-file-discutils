@@ -41,7 +41,7 @@ public class PlistTests {
         try (Stream stream = new JavaIOStream(getClass().getResourceAsStream("/plist.xml"), null)) {
             Map<String, Object> plist = Plist.parse(stream);
             assertNotNull(plist);
-            assertEquals(4, plist.keySet().size());
+            assertEquals(4, plist.size()); // plist.keySet().size()
             assertEquals("valueA", plist.get("keyA"));
             assertEquals("value&B", plist.get("key&B"));
         }

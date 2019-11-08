@@ -23,10 +23,14 @@
 package DiscUtils.Iso9660.Susp;
 
 public final class ExtensionSelectSystemUseEntry extends SystemUseEntry {
-    public byte SelectedExtension;
+    private byte selectedExtension;
+
+    public int getSelectedExtension() {
+        return selectedExtension;
+    }
 
     public ExtensionSelectSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);
-        SelectedExtension = data[offset + 4];
+        selectedExtension = data[offset + 4];
     }
 }

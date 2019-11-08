@@ -65,7 +65,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(_status.getValue());
         if (getStatus() == Nfs3Status.Ok) {
             getFileHandle().write(writer);
             writer.write(getAuthFlavours().size());

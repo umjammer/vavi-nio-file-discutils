@@ -38,7 +38,9 @@ public final class PartitionMapFactory implements PartitionTableFactory {
         }
 
         s.setPosition(0);
+
         byte[] initialBytes = StreamUtilities.readExact(s, 1024);
+
         BlockZero b0 = new BlockZero();
         b0.readFrom(initialBytes, 0);
         if (b0.Signature != 0x4552) {
@@ -47,6 +49,7 @@ public final class PartitionMapFactory implements PartitionTableFactory {
 
         PartitionMapEntry initialPart = new PartitionMapEntry(s);
         initialPart.readFrom(initialBytes, 512);
+
         return initialPart.Signature == 0x504d;
     }
 

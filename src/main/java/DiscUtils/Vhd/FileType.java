@@ -22,11 +22,13 @@
 
 package DiscUtils.Vhd;
 
-// use ordinal()
+/**
+ * The known types of VHD disks.
+ *
+ * use ordinal
+ */
 public enum FileType {
     /**
-     * The known types of VHD disks.
-     *
      * Unknown type.
      */
     None,

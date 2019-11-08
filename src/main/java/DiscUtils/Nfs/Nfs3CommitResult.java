@@ -47,7 +47,7 @@ public class Nfs3CommitResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getStatus().ordinal());
+        writer.write(_status.getValue());
         getCacheConsistency().write(writer);
         if (getStatus() == Nfs3Status.Ok) {
             writer.write(getWriteVerifier());

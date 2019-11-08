@@ -27,7 +27,7 @@ public class MessageFlags {
     }
 
     public MessageFlags(short value) {
-        __Value = value;
+        _value = value;
     }
 
     public MessageFlags(boolean isResponse,
@@ -45,40 +45,40 @@ public class MessageFlags {
         val |= recursionDesired ? 0x0100 : 0x0000;
         val |= recursionAvailable ? 0x0080 : 0x0000;
         val |= responseCode.ordinal() & 0xF;
-        __Value = (short) val;
+        _value = (short) val;
     }
 
-    private short __Value;
+    private short _value;
 
     public short getValue() {
-        return __Value;
+        return _value;
     }
 
     public boolean isResponse() {
-        return (getValue() & 0x8000) != 0;
+        return (_value & 0x8000) != 0;
     }
 
     public OpCode getOpCode() {
-        return OpCode.valueOf((getValue() >>> 11) & 0xF);
+        return OpCode.valueOf((_value >>> 11) & 0xF);
     }
 
     public boolean isAuthorative() {
-        return (getValue() & 0x0400) != 0;
+        return (_value & 0x0400) != 0;
     }
 
     public boolean isTruncated() {
-        return (getValue() & 0x0200) != 0;
+        return (_value & 0x0200) != 0;
     }
 
     public boolean getRecursionDesired() {
-        return (getValue() & 0x0100) != 0;
+        return (_value & 0x0100) != 0;
     }
 
     public boolean getRecursionAvailable() {
-        return (getValue() & 0x0080) != 0;
+        return (_value & 0x0080) != 0;
     }
 
     public ResponseCode getResponseCode() {
-        return ResponseCode.valueOf(getValue() & 0x000F);
+        return ResponseCode.valueOf(_value & 0x000F);
     }
 }

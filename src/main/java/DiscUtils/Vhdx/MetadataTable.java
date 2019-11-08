@@ -63,7 +63,7 @@ public final class MetadataTable implements IByteArraySerializable {
             return false;
         }
 
-        if (EntryCount > 2047) {
+        if ((EntryCount & 0xffff) > 2047) {
             return false;
         }
 

@@ -31,9 +31,17 @@ public class DirectoryRecord implements IByteArraySerializable {
 
     public String Name;
 
-    public short Offset;
+    private short offset;
 
-    public InodeType Type/* = InodeType.Directory*/;
+    public int getOffset() {
+        return offset & 0xffff;
+    }
+
+    public void setOffset(short value) {
+        offset = value;
+    }
+
+    public InodeType Type;
 
     public int size() {
         return 8 + Name.length();
@@ -44,7 +52,7 @@ public class DirectoryRecord implements IByteArraySerializable {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Offset, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(this.offset, buffer, offset + 0);
         EndianUtilities.writeBytesLittleEndian(InodeNumber, buffer, offset + 2);
         EndianUtilities.writeBytesLittleEndian((short) Type.ordinal(), buffer, offset + 4);
         EndianUtilities.writeBytesLittleEndian((short) (Name.length() - 1), buffer, offset + 6);
@@ -53,7 +61,7 @@ public class DirectoryRecord implements IByteArraySerializable {
 
     public static DirectoryRecord readFrom(MetablockReader reader) {
         DirectoryRecord result = new DirectoryRecord();
-        result.Offset = reader.readUShort();
+        result.offset = reader.readUShort();
         result.InodeNumber = reader.readShort();
         result.Type = InodeType.valueOf(reader.readUShort());
         short size = reader.readUShort();

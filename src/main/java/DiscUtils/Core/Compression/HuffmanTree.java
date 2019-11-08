@@ -34,56 +34,62 @@ package DiscUtils.Core.Compression;
 public final class HuffmanTree {
     private final int[] _buffer;
 
+    // Max bits per symbol
     private final int _numBits;
 
-    // Max bits per symbol
+    // Max symbols
     private final int _numSymbols;
 
-    // Max symbols
     public HuffmanTree(int[] lengths) {
-        __Lengths = lengths;
+        _lengths = lengths;
         _numSymbols = lengths.length;
+
         int maxLength = 0;
         for (int i = 0; i < getLengths().length; ++i) {
             if (getLengths()[i] > maxLength) {
                 maxLength = getLengths()[i];
             }
-
         }
+
         _numBits = maxLength;
         _buffer = new int[1 << _numBits];
+
         build();
     }
 
-    private int[] __Lengths;
+    private int[] _lengths;
 
     public int[] getLengths() {
-        return __Lengths;
+        return _lengths;
     }
 
     public int nextSymbol(BitStream bitStream) {
         int symbol = _buffer[bitStream.peek(_numBits)];
+
         // We may have over-read, reset bitstream position
         bitStream.consume(getLengths()[symbol]);
+
         return symbol;
     }
 
     private void build() {
         int position = 0;
+
+        // For each bit-length...
         for (int i = 1; i <= _numBits; ++i) {
+            // Check each symbol
             for (int symbol = 0; symbol < _numSymbols; ++symbol) {
-                // For each bit-length...
-                // Check each symbol
                 if (getLengths()[symbol] == i) {
                     int numToFill = 1 << (_numBits - i);
                     for (int n = 0; n < numToFill; ++n) {
                         _buffer[position + n] = symbol;
                     }
+
                     position += numToFill;
                 }
-
             }
         }
+
         for (int i = position; i < _buffer.length; ++i) {
             _buffer[i] = 0xffffffff;
         }

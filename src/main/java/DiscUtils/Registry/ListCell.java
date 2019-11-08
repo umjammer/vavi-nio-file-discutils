@@ -32,7 +32,7 @@ public abstract class ListCell extends Cell {
     /**
      * Gets the number of subkeys in this list.
      */
-    public abstract int getCount();
+    abstract int getCount();
 
     /**
      * Searches for a key with a given name.
@@ -41,21 +41,21 @@ public abstract class ListCell extends Cell {
      * @param cellIndex The index of the cell, if found.
      * @return The search result.
      */
-    public abstract int findKey(String name, int[] cellIndex);
+    abstract int findKey(String name, int[] cellIndex);
 
     /**
      * Enumerates all of the keys in the list.
      *
      * @param names The list to populate.
      */
-    public abstract void enumerateKeys(List<String> names);
+    abstract void enumerateKeys(List<String> names);
 
     /**
      * Enumerates all of the keys in the list.
      *
      * @return Enumeration of key cells.
      */
-    public abstract List<KeyNodeCell> enumerateKeys();
+    abstract List<KeyNodeCell> enumerateKeys();
 
     /**
      * Adds a subkey to this list.
@@ -64,7 +64,7 @@ public abstract class ListCell extends Cell {
      * @param cellIndex The cell index of the subkey.
      * @return The new cell index of the list, which may have changed.
      */
-    public abstract int linkSubKey(String name, int cellIndex);
+    abstract int linkSubKey(String name, int cellIndex);
 
     /**
      * Removes a subkey from this list.
@@ -72,5 +72,5 @@ public abstract class ListCell extends Cell {
      * @param name The name of the subkey.
      * @return The new cell index of the list, which may have changed.
      */
-    public abstract int unlinkSubKey(String name);
+    abstract int unlinkSubKey(String name);
 }

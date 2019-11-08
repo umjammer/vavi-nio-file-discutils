@@ -102,6 +102,7 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
         Flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 88);
         BootBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 92);
         BootBytes = EndianUtilities.toUInt32BigEndian(buffer, offset + 96);
+
         return 512;
     }
 

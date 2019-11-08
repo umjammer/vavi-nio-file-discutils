@@ -27,24 +27,26 @@ import DiscUtils.Streams.Buffer.SubBuffer;
 
 
 public class PhysicalPartition extends Partition {
+    @SuppressWarnings("unused")
     private PartitionDescriptor _descriptor;
 
     private final IBuffer _parentBuffer;
 
+    @SuppressWarnings("unused")
     private short _partitionNumber;
 
     public PhysicalPartition(PartitionDescriptor descriptor, IBuffer buffer, int sectorSize) {
         _partitionNumber = descriptor.PartitionNumber;
         _parentBuffer = buffer;
-        __Content = new SubBuffer(_parentBuffer,
+        _content = new SubBuffer(_parentBuffer,
                                   descriptor.PartitionStartingLocation * (long) sectorSize,
                                   descriptor.PartitionLength * (long) sectorSize);
         _descriptor = descriptor;
     }
 
-    private IBuffer __Content;
+    private IBuffer _content;
 
     public IBuffer getContent() {
-        return __Content;
+        return _content;
     }
 }

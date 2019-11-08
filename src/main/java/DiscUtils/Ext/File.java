@@ -34,27 +34,27 @@ public class File implements IVfsFile {
     private IBuffer _content;
 
     public File(Context context, int inodeNum, Inode inode) {
-        __Context = context;
-        __InodeNumber = inodeNum;
-        __Inode = inode;
+        _context = context;
+        _inodeNumber = inodeNum;
+        _inode = inode;
     }
 
-    private Context __Context;
+    private Context _context;
 
     protected Context getContext() {
-        return __Context;
+        return _context;
     }
 
-    private Inode __Inode;
+    private Inode _inode;
 
     public Inode getInode() {
-        return __Inode;
+        return _inode;
     }
 
-    private int __InodeNumber;
+    private int _inodeNumber;
 
     public int getInodeNumber() {
-        return __InodeNumber;
+        return _inodeNumber;
     }
 
     public long getLastAccessTimeUtc() {

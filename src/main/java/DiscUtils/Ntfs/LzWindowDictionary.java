@@ -46,34 +46,34 @@ public final class LzWindowDictionary {
         }
     }
 
-    private int __BlockSize;
+    private int _blockSize;
 
     private int getBlockSize() {
-        return __BlockSize;
+        return _blockSize;
     }
 
     private void setBlockSize(int value) {
-        __BlockSize = value;
+        _blockSize = value;
     }
 
-    private int __MaxMatchAmount;
+    private int _maxMatchAmount;
 
     public int getMaxMatchAmount() {
-        return __MaxMatchAmount;
+        return _maxMatchAmount;
     }
 
     public void setMaxMatchAmount(int value) {
-        __MaxMatchAmount = value;
+        _maxMatchAmount = value;
     }
 
-    private int __MinMatchAmount;
+    private int _minMatchAmount;
 
     public int getMinMatchAmount() {
-        return __MinMatchAmount;
+        return _minMatchAmount;
     }
 
     public void setMinMatchAmount(int value) {
-        __MinMatchAmount = value;
+        _minMatchAmount = value;
     }
 
     public void reset() {

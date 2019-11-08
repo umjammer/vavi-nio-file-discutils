@@ -35,7 +35,7 @@ public class ExtentBlock implements IByteArraySerializable {
     public ExtentIndex[] Index;
 
     public int size() {
-        return 12 + Header.MaxEntries * 12;
+        return 12 + Header.getMaxEntries() * 12;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -46,18 +46,18 @@ public class ExtentBlock implements IByteArraySerializable {
 
         if (Header.Depth == 0) {
             Index = null;
-            Extents = new Extent[Header.Entries];
+            Extents = new Extent[Header.getEntries()];
             for (int i = 0; i < Extents.length; ++i) {
                 Extents[i] = EndianUtilities.<Extent> toStruct(Extent.class, buffer, offset + 12 + i * 12);
             }
         } else {
             Extents = null;
-            Index = new ExtentIndex[Header.Entries];
+            Index = new ExtentIndex[Header.getEntries()];
             for (int i = 0; i < Index.length; ++i) {
                 Index[i] = EndianUtilities.<ExtentIndex> toStruct(ExtentIndex.class, buffer, offset + 12 + i * 12);
             }
         }
-        return 12 + Header.MaxEntries * 12;
+        return 12 + Header.getMaxEntries() * 12;
     }
 
     public void writeTo(byte[] buffer, int offset) {

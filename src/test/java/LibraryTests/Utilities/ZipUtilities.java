@@ -21,11 +21,14 @@ public class ZipUtilities {
             else
                 entry = zipArchive.getEntry(name);
 //System.err.println(entry);
+//System.err.println(StringUtil.getDump(zipArchive.getInputStream(entry), 0x300000, 128));
             MemoryStream ms = new MemoryStream();
-//System.err.println(StringUtil.getDump(zipArchive.getInputStream(entry), 128));
             try (Stream zipFile = new JavaIOStream(zipArchive.getInputStream(entry))) {
                 zipFile.copyTo(ms);
             }
+//long c1 = Checksum.getChecksum(zipArchive.getInputStream(entry));
+//long c2 = Checksum.getChecksum(new ByteArrayInputStream(ms.toArray()));
+//assertEquals(c1, c2);
 //System.err.println(StringUtil.getDump(ms.toArray(), 512));
             return ms;
         }

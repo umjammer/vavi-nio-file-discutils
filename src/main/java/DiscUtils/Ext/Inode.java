@@ -72,7 +72,11 @@ public class Inode implements IByteArraySerializable {
 
     public int IndirectBlock;
 
-    public short LinksCount;
+    private short linksCount;
+
+    public int getLinksCount() {
+        return linksCount & 0xffff;
+    }
 
     public short Mode;
 
@@ -101,7 +105,7 @@ public class Inode implements IByteArraySerializable {
         ModificationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
         DeletionTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         GroupIdLow = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        LinksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
+        linksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
         BlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
         Flags = InodeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 32));
 

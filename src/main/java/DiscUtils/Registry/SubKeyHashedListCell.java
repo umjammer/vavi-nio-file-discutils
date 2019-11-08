@@ -55,7 +55,7 @@ public final class SubKeyHashedListCell extends ListCell {
         _hive = hive;
     }
 
-    public int getCount() {
+    int getCount() {
         return _subKeyIndexes.size();
     }
 
@@ -110,7 +110,7 @@ public final class SubKeyHashedListCell extends ListCell {
     /**
      * @param cellIndex {@cs out}
      */
-    public int findKey(String name, int[] cellIndex) {
+    int findKey(String name, int[] cellIndex) {
         // Check first and last, to early abort if the name is outside the range of this list
         int[] found = new int[1];
         int result = findKeyAt(name, 0, found);
@@ -131,13 +131,13 @@ public final class SubKeyHashedListCell extends ListCell {
         return idx < 0 ? -1 : 0;
     }
 
-    public void enumerateKeys(List<String> names) {
+    void enumerateKeys(List<String> names) {
         for (int i = 0; i < _subKeyIndexes.size(); ++i) {
             names.add(_hive.<KeyNodeCell> getCell(_subKeyIndexes.get(i)).Name);
         }
     }
 
-    public List<KeyNodeCell> enumerateKeys() {
+    List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
         for (int i = 0; i < _subKeyIndexes.size(); ++i) {
             result.add(_hive.<KeyNodeCell> getCell(_subKeyIndexes.get(i)));
@@ -145,12 +145,12 @@ public final class SubKeyHashedListCell extends ListCell {
         return result;
     }
 
-    public int linkSubKey(String name, int cellIndex) {
+    int linkSubKey(String name, int cellIndex) {
         add(name, cellIndex);
         return _hive.updateCell(this, true);
     }
 
-    public int unlinkSubKey(String name) {
+    int unlinkSubKey(String name) {
         int index = indexOf(name);
         if (index >= 0) {
             removeAt(index);

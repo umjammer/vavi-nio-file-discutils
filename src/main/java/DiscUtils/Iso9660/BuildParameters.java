@@ -24,27 +24,27 @@ package DiscUtils.Iso9660;
 
 public class BuildParameters {
     public BuildParameters() {
-        setVolumeIdentifier("");
-        setUseJoliet(true);
+        _volumeIdentifier = "";
+        _useJoliet = true;
     }
 
-    private boolean __UseJoliet;
+    private boolean _useJoliet;
 
-    public boolean getUseJoliet() {
-        return __UseJoliet;
+    public boolean useJoliet() {
+        return _useJoliet;
     }
 
     public void setUseJoliet(boolean value) {
-        __UseJoliet = value;
+        _useJoliet = value;
     }
 
-    private String __VolumeIdentifier;
+    private String _volumeIdentifier;
 
     public String getVolumeIdentifier() {
-        return __VolumeIdentifier;
+        return _volumeIdentifier;
     }
 
     public void setVolumeIdentifier(String value) {
-        __VolumeIdentifier = value;
+        _volumeIdentifier = value;
     }
 }

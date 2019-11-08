@@ -91,7 +91,11 @@ public class SuperBlock implements IByteArraySerializable {
 
     public int InodesCount;
 
-    public short InodeSize;
+    private short InodeSize;
+
+    public int getInodeSize() {
+        return InodeSize & 0xffff;
+    }
 
     public int InodesPerGroup;
 

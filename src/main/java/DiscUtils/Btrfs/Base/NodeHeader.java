@@ -158,8 +158,8 @@ public abstract class NodeHeader implements IByteArraySerializable {
      */
     private byte _level;
 
-    public byte getLevel() {
-        return _level;
+    public int getLevel() {
+        return _level & 0xff;
     }
 
     public void setLevel(byte value) {

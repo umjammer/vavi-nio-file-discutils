@@ -26,9 +26,9 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentKey> {
+    // 0 is data, 0xff is rsrc
     private byte _forkType;
 
-    // 0 is data, 0xff is rsrc
     private short _keyLength;
 
     private int _startBlock;
@@ -43,14 +43,14 @@ public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<
         _forkType = (byte) (resource_fork ? 0xff : 0x00);
     }
 
-    private CatalogNodeId __NodeId;
+    private CatalogNodeId _nodeId;
 
     public CatalogNodeId getNodeId() {
-        return __NodeId;
+        return _nodeId;
     }
 
     public void setNodeId(CatalogNodeId value) {
-        __NodeId = value;
+        _nodeId = value;
     }
 
     public int size() {
@@ -63,8 +63,8 @@ public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<
         }
 
         // Sort by file id, fork type, then starting block
-        if (getNodeId() != other.getNodeId()) {
-            return getNodeId().getId() < other.getNodeId().getId() ? -1 : 1;
+        if (_nodeId != other._nodeId) {
+            return _nodeId.getId() < other._nodeId.getId() ? -1 : 1;
         }
 
         if (_forkType != other._forkType) {
@@ -81,9 +81,9 @@ public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<
     public int readFrom(byte[] buffer, int offset) {
         _keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
         _forkType = buffer[offset + 2];
-        setNodeId(new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4)));
+        _nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         _startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        return _keyLength + 2;
+        return (_keyLength & 0xffff) + 2;
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -95,6 +95,6 @@ public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<
     }
 
     public String toString() {
-        return "ExtentKey (" + getNodeId() + " - " + _startBlock + ")";
+        return "ExtentKey (" + _nodeId + " - " + _startBlock + ")";
     }
 }

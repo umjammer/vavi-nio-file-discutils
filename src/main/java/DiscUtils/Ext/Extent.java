@@ -29,14 +29,26 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class Extent implements IByteArraySerializable {
     public int FirstLogicalBlock;
 
-    public short FirstPhysicalBlockHi;
+    private short firstPhysicalBlockHi;
 
-    public int FirstPhysicalBlockLow;
+    public int getFirstPhysicalBlockHi() {
+        return firstPhysicalBlockHi & 0xffff;
+    }
 
-    public short NumBlocks;
+    private int firstPhysicalBlockLow;
+
+    public long getFirstPhysicalBlockLow() {
+        return firstPhysicalBlockLow & 0xffff_ffffl;
+    }
+
+    private short numBlocks;
+
+    public int getNumBlocks() {
+        return numBlocks & 0xffff;
+    }
 
     public long getFirstPhysicalBlock() {
-        return FirstPhysicalBlockLow | ((long) FirstPhysicalBlockHi << 32);
+        return getFirstPhysicalBlockLow() | ((long) getFirstPhysicalBlockHi() << 32);
     }
 
     public int size() {
@@ -45,14 +57,13 @@ public class Extent implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         FirstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        NumBlocks = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        FirstPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        FirstPhysicalBlockLow = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
+        numBlocks = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        firstPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        firstPhysicalBlockLow = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
         return 12;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
-
 }

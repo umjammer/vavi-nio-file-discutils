@@ -38,99 +38,96 @@ public class DirItem extends BaseItem {
     }
 
     /**
-     * Key for the
-     * {@link InodeItem}
-     * or
-     * {@link RootItem}
-     * associated with this entry.
-     * Unused and zeroed out when the entry describes an extended attribute.
+     * Key for the {@link InodeItem} or {@link RootItem} associated with this
+     * entry. Unused and zeroed out when the entry describes an extended
+     * attribute.
      */
-    private Key __ChildLocation;
+    private Key _childLocation;
 
     public Key getChildLocation() {
-        return __ChildLocation;
+        return _childLocation;
     }
 
     public void setChildLocation(Key value) {
-        __ChildLocation = value;
+        _childLocation = value;
     }
 
     /**
      * transid
      */
-    private long __TransId;
+    private long _transId;
 
     public long getTransId() {
-        return __TransId;
+        return _transId;
     }
 
     public void setTransId(long value) {
-        __TransId = value;
+        _transId = value;
     }
 
     /**
      * (m)
      */
-    private short __DataLength;
+    private short _dataLength;
 
-    public short getDataLength() {
-        return __DataLength;
+    public int getDataLength() {
+        return _dataLength & 0xffff;
     }
 
     public void setDataLength(short value) {
-        __DataLength = value;
+        _dataLength = value;
     }
 
     /**
      * (n)
      */
-    private short __NameLength;
+    private short _nameLength;
 
-    public short getNameLength() {
-        return __NameLength;
+    public int getNameLength() {
+        return _nameLength & 0xffff;
     }
 
     public void setNameLength(short value) {
-        __NameLength = value;
+        _nameLength = value;
     }
 
     /**
      * type of child
      */
-    private DirItemChildType __ChildType = DirItemChildType.Unknown;
+    private DirItemChildType _childType = DirItemChildType.Unknown;
 
     public DirItemChildType getChildType() {
-        return __ChildType;
+        return _childType;
     }
 
     public void setChildType(DirItemChildType value) {
-        __ChildType = value;
+        _childType = value;
     }
 
     /**
      * name of item in directory
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        _name = value;
     }
 
     /**
      * data of item in directory (empty for normal directory items)
      */
-    private byte[] __Data;
+    private byte[] _data;
 
     public byte[] getData() {
-        return __Data;
+        return _data;
     }
 
     public void setData(byte[] value) {
-        __Data = value;
+        _data = value;
     }
 
     public int size() {

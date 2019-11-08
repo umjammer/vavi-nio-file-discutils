@@ -67,4 +67,8 @@ public final class RegionEntry implements IByteArraySerializable {
         EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 24);
         EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 28);
     }
+
+    public String toString() {
+        return getClass().getSimpleName() + "@" + hashCode() + ": {offset: " + fileOffset + ", length: " + getLength() + "}";
+    }
 }

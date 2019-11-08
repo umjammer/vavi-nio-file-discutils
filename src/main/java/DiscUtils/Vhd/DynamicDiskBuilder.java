@@ -103,7 +103,13 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         extents.add(0, batExtent);
         extents.add(0, new BuilderBufferExtent(FooterSize, dynHeaderBuffer));
         extents.add(0, new BuilderBufferExtent(0, footerBuffer));
-
+//Debug.println(extents);
+//extents.forEach(e -> {
+//    e.prepareForRead();
+//    byte[] b = new byte[128];
+//    int r = e.read(e.getStart(), b, 0, 64);
+//    Debug.println(e + "\n" + StringUtil.getDump(b, 0, r));
+//});
         return extents;
     }
 

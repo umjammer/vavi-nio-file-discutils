@@ -31,11 +31,11 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public FileRecordReference(long val) {
-        setValue(val);
+        _value = val;
     }
 
     public FileRecordReference(long mftIndex, short sequenceNumber) {
-        setValue(mftIndex & 0x0000_FFFF_FFFF_FFFFL | ((long) sequenceNumber << 48 & 0xFFFF_0000_0000_0000L));
+        this(mftIndex & 0x0000_FFFF_FFFF_FFFFL | ((long) sequenceNumber << 48 & 0xFFFF_0000_0000_0000L));
     }
 
     private long _value;
@@ -52,15 +52,15 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
         return _value & 0x0000_FFFF_FFFF_FFFFL;
     }
 
-    public short getSequenceNumber() {
-        return (short) ((_value >>> 48) & 0xFFFF);
+    public int getSequenceNumber() {
+        return (int) (_value >>> 48) & 0xFFFF;
     }
 
     public int size() {
         return 8;
     }
 
-    public boolean getIsNull() {
+    public boolean isNull() {
         return getSequenceNumber() == 0;
     }
 

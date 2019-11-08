@@ -158,7 +158,7 @@ public class Context extends VfsContext {
         throw new IOException("no matching ChunkItem found");
     }
 
-    public NodeHeader readTree(long logical, byte level) {
+    public NodeHeader readTree(long logical, int level) {
         long physical = mapToPhysical(logical);
         _rawStream.seek(physical, SeekOrigin.Begin);
         int dataSize = level > 0 ? _superBlock.getNodeSize() : _superBlock.getLeafSize();
@@ -199,7 +199,7 @@ public class Context extends VfsContext {
     }
 
     BaseItem findKey(ReservedObjectId objectId, ItemType type) {
-        return findKey(objectId.ordinal(), type);
+        return findKey(objectId.getValue(), type);
     }
 
     BaseItem findKey(long objectId, ItemType type) {

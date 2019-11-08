@@ -45,12 +45,11 @@ public class BuilderBufferExtent extends BuilderExtent {
         if (!_fixedBuffer) {
             _buffer = getBuffer();
         }
-
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        int startOffset = (int) (diskOffset - getStart());
-        int numBytes = (int) Math.min(getLength() - startOffset, count);
+        int startOffset = (int) (diskOffset - _start);
+        int numBytes = (int) Math.min(_length - startOffset, count);
         System.arraycopy(_buffer, startOffset, block, offset, numBytes);
         return numBytes;
     }
@@ -59,11 +58,9 @@ public class BuilderBufferExtent extends BuilderExtent {
         if (!_fixedBuffer) {
             _buffer = null;
         }
-
     }
 
     protected byte[] getBuffer() {
         throw new UnsupportedOperationException("Derived class should implement");
     }
-
 }

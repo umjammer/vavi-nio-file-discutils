@@ -39,23 +39,25 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
         return true;
     }
 
-    private int __OriginalIndex;
+    private int _originalIndex;
 
     public int getOriginalIndex() {
-        return __OriginalIndex;
+        return _originalIndex;
     }
 
     public void setOriginalIndex(int value) {
-        __OriginalIndex = value;
+        _originalIndex = value;
     }
 
     protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
         int outputCount = inputCount;
+
         // First find the frequency of each value
         Arrays.fill(_nextPos, 0, _nextPos.length, 0);
         for (int i = inputOffset; i < inputOffset + inputCount; ++i) {
             _nextPos[input[i]]++;
         }
+
         // We know they're 'sorted' in the first column, so now can figure
         // out the position of the first instance of each.
         int sum = 0;
@@ -64,19 +66,23 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
             sum += _nextPos[i];
             _nextPos[i] = tempSum;
         }
+
+        // For each value in the final column, put a pointer to to the
+        // 'next' character in the first (sorted) column.
         for (int i = 0; i < inputCount; ++i) {
-            // For each value in the final column, put a pointer to to the
-            // 'next' character in the first (sorted) column.
             _pointers[_nextPos[input[inputOffset + i]]++] = i;
         }
+
         // The 'next' character after the end of the original string is the
         // first character of the original string.
         int focus = _pointers[getOriginalIndex()];
+
+        // We can now just walk the pointers to reconstruct the original string
         for (int i = 0; i < outputCount; ++i) {
-            // We can now just walk the pointers to reconstruct the original string
             output[outputOffset + i] = input[inputOffset + focus];
             focus = _pointers[focus];
         }
+
         return outputCount;
     }
 
@@ -87,5 +93,4 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
     protected int minOutputCount(int inputCount) {
         return inputCount;
     }
-
 }

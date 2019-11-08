@@ -29,12 +29,20 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class ExtentIndex implements IByteArraySerializable {
     public int FirstLogicalBlock;
 
-    public short LeafPhysicalBlockHi;
+    private short LeafPhysicalBlockHi;
 
-    public int LeafPhysicalBlockLo;
+    public int getLeafPhysicalBlockHi() {
+        return LeafPhysicalBlockHi & 0xffff;
+    }
+
+    private int LeafPhysicalBlockLo;
+
+    public long getLeafPhysicalBlockLo() {
+        return LeafPhysicalBlockLo & 0xffff_ffffl;
+    }
 
     public long getLeafPhysicalBlock() {
-        return LeafPhysicalBlockLo | ((long) LeafPhysicalBlockHi << 32);
+        return getLeafPhysicalBlockLo() | ((long) getLeafPhysicalBlockHi() << 32);
     }
 
     public int size() {

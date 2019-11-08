@@ -31,13 +31,13 @@ public class ScsiWriteCommand extends ScsiCommand {
     public ScsiWriteCommand(long targetLun, int logicalBlockAddress, short numBlocks) {
         super(targetLun);
         _logicalBlockAddress = logicalBlockAddress;
-        __NumBlocks = numBlocks;
+        _numBlocks = numBlocks;
     }
 
-    private short __NumBlocks;
+    private short _numBlocks;
 
-    public short getNumBlocks() {
-        return __NumBlocks;
+    public int getNumBlocks() {
+        return _numBlocks & 0xffff;
     }
 
     public int size() {
@@ -57,7 +57,7 @@ public class ScsiWriteCommand extends ScsiCommand {
         buffer[offset + 1] = 0;
         EndianUtilities.writeBytesBigEndian(_logicalBlockAddress, buffer, offset + 2);
         buffer[offset + 6] = 0;
-        EndianUtilities.writeBytesBigEndian(getNumBlocks(), buffer, offset + 7);
+        EndianUtilities.writeBytesBigEndian(_numBlocks, buffer, offset + 7);
         buffer[offset + 9] = 0;
     }
 }

@@ -39,9 +39,17 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
 
     public String Name;
 
-    public byte NameLength;
+    private byte nameLength;
 
-    public byte NameOffset;
+    public int getNameLength() {
+        return nameLength & 0xff;
+    }
+
+    private byte nameOffset;
+
+    public int getNameOffset() {
+        return nameOffset & 0xff;
+    }
 
     public short RecordLength;
 
@@ -56,13 +64,13 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
     public int readFrom(byte[] data, int offset) {
         Type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(data, offset + 0x00));
         RecordLength = EndianUtilities.toUInt16LittleEndian(data, offset + 0x04);
-        NameLength = data[offset + 0x06];
-        NameOffset = data[offset + 0x07];
+        nameLength = data[offset + 0x06];
+        nameOffset = data[offset + 0x07];
         StartVcn = EndianUtilities.toUInt64LittleEndian(data, offset + 0x08);
         BaseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
         AttributeId = EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
-        if (NameLength > 0) {
-            Name = new String(data, offset + NameOffset, NameLength * 2, Charset.forName("UTF-16LE"));
+        if (getNameLength() > 0) {
+            Name = new String(data, offset + getNameOffset(), getNameLength() * 2, Charset.forName("UTF-16LE"));
         } else {
             Name = null;
         }
@@ -74,19 +82,19 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        NameOffset = 0x20;
+        nameOffset = 0x20;
         if (Name == null || Name.isEmpty()) {
-            NameLength = 0;
+            nameLength = 0;
         } else {
             byte[] bytes = Name.getBytes(Charset.forName("UTF-16LE"));
-            System.arraycopy(bytes, 0, buffer, offset + NameOffset, bytes.length);
-            NameLength = (byte) bytes.length;
+            System.arraycopy(bytes, 0, buffer, offset + getNameOffset(), bytes.length);
+            nameLength = (byte) bytes.length;
         }
-        RecordLength = (short) MathUtilities.roundUp(NameOffset + NameLength * 2, 8);
+        RecordLength = (short) MathUtilities.roundUp(getNameOffset() + getNameLength() * 2, 8);
         EndianUtilities.writeBytesLittleEndian(Type.getValue(), buffer, offset);
         EndianUtilities.writeBytesLittleEndian(RecordLength, buffer, offset + 0x04);
-        buffer[offset + 0x06] = NameLength;
-        buffer[offset + 0x07] = NameOffset;
+        buffer[offset + 0x06] = nameLength;
+        buffer[offset + 0x07] = nameOffset;
         EndianUtilities.writeBytesLittleEndian(StartVcn, buffer, offset + 0x08);
         EndianUtilities.writeBytesLittleEndian(BaseFileReference.getValue(), buffer, offset + 0x10);
         EndianUtilities.writeBytesLittleEndian(AttributeId, buffer, offset + 0x18);

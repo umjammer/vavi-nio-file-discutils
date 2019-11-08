@@ -153,9 +153,9 @@ public final class BiosPartitionTable extends PartitionTable {
         disk.setPosition(0);
         byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
 
-Debug.println(disk + ", " + disk.getPosition() + "\n" + StringUtil.getDump(bootSector));
         // Check for the 'bootable sector' marker
         if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
+Debug.println(disk + ", " + disk.getPosition() + "\n" + StringUtil.getDump(bootSector));
             return false;
         }
 

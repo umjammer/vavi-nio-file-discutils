@@ -65,8 +65,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
 
     private byte _rawClustersPerIndexRecord;
 
-    public byte getRawClustersPerIndexRecord() {
-        return _rawClustersPerIndexRecord;
+    public int getRawClustersPerIndexRecord() {
+        return _rawClustersPerIndexRecord & 0xff;
     }
 
     public void setRawClustersPerIndexRecord(byte value) {

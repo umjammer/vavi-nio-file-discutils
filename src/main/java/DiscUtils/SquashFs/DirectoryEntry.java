@@ -61,7 +61,7 @@ public class DirectoryEntry extends VfsDirEntry {
     }
 
     public MetadataRef getInodeReference() {
-        return new MetadataRef(_header.StartBlock, _record.Offset);
+        return new MetadataRef(_header.StartBlock, _record.getOffset());
     }
 
     public boolean isDirectory() {

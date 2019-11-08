@@ -34,20 +34,21 @@ public final class VolumeRecord extends DatabaseRecord {
 
     public long ComponentCount;
 
+    // ??Seen once after adding 'foreign disk', from broken mirror (identical links(P/V/C))
     public long DupCount;
 
-    // ??Seen once after adding 'foreign disk', from broken mirror (identical links(P/V/C))
     public String GenString;
 
     public String MountHint;
 
+    // 8000000000000000 sometimes...
     public String NumberString;
 
-    // 8000000000000000 sometimes...
     public int PartitionComponentLink;
 
     public long Size;
 
+    // Zero
     public long Unknown1;
 
     // Zero
@@ -56,23 +57,22 @@ public final class VolumeRecord extends DatabaseRecord {
     // Zero
     public long UnknownA;
 
-    // Zero
+    // 00 .. 03
     public long UnknownB;
 
-    // 00 .. 03
+    // 00 00 00 11
     public int UnknownC;
 
-    // 00 00 00 11
+    // Zero
     public int UnknownD;
 
-    // Zero
-    public UUID VolumeGuid = UUID.randomUUID();
+    public UUID VolumeGuid;
 
     protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
-        int[] pos = new int[] {
-            offset + 0x18
-        };
+
+        int[] pos = new int[] { offset + 0x18 };
+
         Id = readVarULong(buffer, pos);
         Name = readVarString(buffer, pos);
         GenString = readVarString(buffer, pos);
@@ -91,6 +91,7 @@ public final class VolumeRecord extends DatabaseRecord {
         BiosType = readByte(buffer, pos);
         VolumeGuid = EndianUtilities.toGuidBigEndian(buffer, pos[0]);
         pos[0] += 16;
+
         if ((Flags & 0x0200) != 0) {
             MountHint = readVarString(buffer, pos);
         }

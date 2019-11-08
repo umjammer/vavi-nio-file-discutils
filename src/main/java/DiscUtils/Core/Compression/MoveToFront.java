@@ -31,6 +31,7 @@ public class MoveToFront {
 
     public MoveToFront(int size, boolean autoInit) {
         _buffer = new byte[size];
+
         if (autoInit) {
             for (byte i = 0; i < size; ++i) {
                 _buffer[i] = i;
@@ -48,9 +49,11 @@ public class MoveToFront {
 
     public byte getAndMove(int pos) {
         byte val = _buffer[pos];
+
         for (int i = pos; i > 0; --i) {
             _buffer[i] = _buffer[i - 1];
         }
+
         _buffer[0] = val;
         return val;
     }

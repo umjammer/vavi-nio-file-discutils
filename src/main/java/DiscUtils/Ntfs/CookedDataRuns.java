@@ -25,6 +25,8 @@ package DiscUtils.Ntfs;
 import java.util.ArrayList;
 import java.util.List;
 
+import vavi.util.Debug;
+
 import dotnet4j.io.IOException;
 
 
@@ -77,6 +79,7 @@ public class CookedDataRuns {
                 if (run.getStartVcn() + run.getLength() > vcn) {
                     return numRuns - 1;
                 }
+Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
                 throw new IOException("Looking for VCN outside of data runs");
             }
 
@@ -194,7 +197,7 @@ public class CookedDataRuns {
         CookedDataRun run = _runs.get(runIdx);
 
         if (run.getStartVcn() >= vcn || run.getStartVcn() + run.getLength() <= vcn) {
-            throw new IllegalArgumentException("Attempt to split run outside of it's range");
+            throw new IllegalArgumentException("vcn: Attempt to split run outside of it's range");
         }
 
         long distance = vcn - run.getStartVcn();

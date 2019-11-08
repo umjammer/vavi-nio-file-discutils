@@ -45,7 +45,7 @@ public class IndexBlock extends FixupRecordBase {
     private final long _streamPosition;
 
     public IndexBlock(Index index, boolean isRoot, IndexEntry parentEntry, BiosParameterBlock bpb) {
-        super("INDX", bpb._bytesPerSector);
+        super("INDX", bpb.getBytesPerSector());
         _index = index;
         _isRoot = isRoot;
         Stream stream = index.getAllocationStream();
@@ -56,11 +56,11 @@ public class IndexBlock extends FixupRecordBase {
     }
 
     private IndexBlock(Index index, boolean isRoot, long vcn, BiosParameterBlock bpb) {
-        super("INDX", bpb._bytesPerSector, bpb.getIndexBufferSize());
+        super("INDX", bpb.getBytesPerSector(), bpb.getIndexBufferSize());
         _index = index;
         _isRoot = isRoot;
         _indexBlockVcn = vcn;
-        _streamPosition = vcn * bpb._bytesPerSector * bpb._sectorsPerCluster;
+        _streamPosition = vcn * bpb.getBytesPerSector() * bpb.getSectorsPerCluster();
         setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), _index, isRoot, bpb.getIndexBufferSize() - FieldSize));
         writeToDisk();
     }

@@ -65,7 +65,7 @@ public class PhysicalVolume {
             VgMetadata = metadata;
         }
 
-        setContent(content);
+        _content = content;
     }
 
     public static boolean tryOpen(PartitionInfo volumeInfo, PhysicalVolume[] pv) {

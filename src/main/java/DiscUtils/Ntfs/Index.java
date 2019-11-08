@@ -325,7 +325,7 @@ public class Index implements Closeable {
 
         long idx = _indexBitmap.allocateFirstAvailable(0);
         parentEntry.setChildrenVirtualCluster(idx * MathUtilities.ceil(_bpb.getIndexBufferSize(),
-                                                                       _bpb._sectorsPerCluster * _bpb._bytesPerSector));
+                                                                       _bpb.getSectorsPerCluster() * _bpb.getBytesPerSector()));
         parentEntry.getFlags().add(IndexEntryFlags.Node);
         IndexBlock block = IndexBlock.initialize(this, false, parentEntry, _bpb);
         _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
@@ -333,7 +333,7 @@ public class Index implements Closeable {
     }
 
     public void freeBlock(long vcn) {
-        long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb._sectorsPerCluster * _bpb._bytesPerSector);
+        long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.getSectorsPerCluster() * _bpb.getBytesPerSector());
         _indexBitmap.markAbsent(idx);
         _blockCache.remove(vcn);
     }

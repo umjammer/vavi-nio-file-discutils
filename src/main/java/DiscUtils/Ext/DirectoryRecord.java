@@ -61,7 +61,9 @@ public class DirectoryRecord implements IByteArraySerializable {
         int nameLen = buffer[offset + 6];
         FileType = buffer[offset + 7];
         Name = new String(buffer, offset + 8, nameLen, _nameEncoding);
+
         Name = Name.replace('\\', '/');
+
         return recordLen;
     }
 

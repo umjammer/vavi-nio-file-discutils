@@ -25,6 +25,7 @@ package DiscUtils.Btrfs.Base;
 import java.util.Arrays;
 
 public enum ItemType {
+    None(0x00),
     InodeItem(0x01),
     InodeRef(0x0c),
     InodeExtRef(0x0d),
@@ -63,6 +64,7 @@ public enum ItemType {
     }
 
     public static ItemType valueOf(int value) {
+//Debug.printf("%x", value);
         return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

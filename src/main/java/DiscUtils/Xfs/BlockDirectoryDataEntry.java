@@ -28,54 +28,54 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDirectoryEntry {
     private final boolean _ftype;
 
-    private long __Inode;
+    private long _inode;
 
     public long getInode() {
-        return __Inode;
+        return _inode;
     }
 
     public void setInode(long value) {
-        __Inode = value;
+        _inode = value;
     }
 
-    private byte __NameLength;
+    private byte _nameLength;
 
-    public byte getNameLength() {
-        return __NameLength;
+    public int getNameLength() {
+        return _nameLength & 0xff;
     }
 
     public void setNameLength(byte value) {
-        __NameLength = value;
+        _nameLength = value;
     }
 
-    private byte[] __Name;
+    private byte[] _name;
 
     public byte[] getName() {
-        return __Name;
+        return _name;
     }
 
     public void setName(byte[] value) {
-        __Name = value;
+        _name = value;
     }
 
-    private short __Tag;
+    private short _tag;
 
     public short getTag() {
-        return __Tag;
+        return _tag;
     }
 
     public void setTag(short value) {
-        __Tag = value;
+        _tag = value;
     }
 
-    private DirectoryFType __FType = DirectoryFType.File;
+    private DirectoryFType _fType = DirectoryFType.File;
 
     public DirectoryFType getFType() {
-        return __FType;
+        return _fType;
     }
 
     public void setFType(DirectoryFType value) {
-        __FType = value;
+        _fType = value;
     }
 
     public int size() {
@@ -114,6 +114,6 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
      *
      */
     public String toString() {
-        return String.format("%d : %s", __Inode, EndianUtilities.bytesToString(__Name, 0, __NameLength));
+        return String.format("%d : %s", _inode, EndianUtilities.bytesToString(_name, 0, _nameLength));
     }
 }

@@ -132,7 +132,7 @@ public class UdfUtilities {
     }
 
     public static byte[] readExtent(UdfContext context, LongAllocationDescriptor extent) {
-        LogicalPartition partition = context.LogicalPartitions.get(extent.ExtentLocation.Partition);
+        LogicalPartition partition = context.LogicalPartitions.get(extent.ExtentLocation.getPartition());
         long pos = extent.ExtentLocation.LogicalBlock * partition.getLogicalBlockSize();
         return StreamUtilities.readExact(partition.getContent(), pos, extent.ExtentLength);
     }

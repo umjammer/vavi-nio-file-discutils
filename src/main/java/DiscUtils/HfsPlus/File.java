@@ -51,23 +51,22 @@ public class File implements IVfsFileWithStreams {
     private final boolean _hasCompressionAttribute;
 
     public File(Context context, CatalogNodeId nodeId, CommonCatalogFileInfo catalogInfo) {
-        __Context = context;
-        __NodeId = nodeId;
+        _context = context;
+        _nodeId = nodeId;
         _catalogInfo = catalogInfo;
-        _hasCompressionAttribute = getContext().getAttributes()
-                .find(new AttributeKey(getNodeId(), CompressionAttributeName)) != null;
+        _hasCompressionAttribute = _context.getAttributes().find(new AttributeKey(_nodeId, CompressionAttributeName)) != null;
     }
 
-    private Context __Context;
+    private Context _context;
 
     protected Context getContext() {
-        return __Context;
+        return _context;
     }
 
-    private CatalogNodeId __NodeId;
+    private CatalogNodeId _nodeId;
 
     protected CatalogNodeId getNodeId() {
-        return __NodeId;
+        return _nodeId;
     }
 
     public long getLastAccessTimeUtc() {
@@ -127,9 +126,12 @@ public class File implements IVfsFileWithStreams {
             compressionAttribute.readFrom(compressionAttributeData, 0);
 
             // There are three possibilities:
-            // - The file is very small and embedded "as is" in the compression attribute
-            // - The file is small and is embedded as a compressed stream in the compression attribute
-            // - The file is large and is embedded as a compressed stream in the resource fork
+            // - The file is very small and embedded "as is" in the compression
+            // attribute
+            // - The file is small and is embedded as a compressed stream in the
+            // compression attribute
+            // - The file is large and is embedded as a compressed stream in the
+            // resource fork
             if (compressionAttribute.getCompressionType() == 3 &&
                 compressionAttribute.getUncompressedSize() == compressionAttribute.getAttrSize() - 0x11) {
                 // Inline, no compression, very small file
@@ -145,8 +147,9 @@ public class File implements IVfsFileWithStreams {
                                                        CompressionAttribute.getSize(),
                                                        compressionAttributeData.length - CompressionAttribute.getSize(),
                                                        false);
-                // The usage upstream will want to seek or set the position, the ZlibBuffer
-                // wraps around a zlibstream and allows for this (in a limited fashion).
+                // The usage upstream will want to seek or set the position, the
+                // ZlibBuffer wraps around a zlibstream and allows for this (in
+                // a limited fashion).
                 ZlibStream compressedStream = new ZlibStream(stream, CompressionMode.Decompress, false);
                 return new ZlibBuffer(compressedStream, Ownership.Dispose);
             }
@@ -158,11 +161,14 @@ public class File implements IVfsFileWithStreams {
                 buffer.read(0, compressionForkData, 0, CompressionResourceHeader.getSize());
                 compressionFork.readFrom(compressionForkData, 0);
 
-                // The data is compressed in a number of blocks. Each block originally accounted for
-                // 0x10000 bytes (that's 64 KB) of data. The compressed size may vary.
-                // The data in each block can be read using a SparseStream. The first block contains
-                // the zlib header but the others don't, so we read them directly as deflate streams.
-                // For each block, we create a separate stream which we later aggregate.
+                // The data is compressed in a number of blocks. Each block
+                // originally accounted for 0x10000 bytes (that's 64 KB) of
+                // data. The compressed size may vary.
+                // The data in each block can be read using a SparseStream. The
+                // first block contains the zlib header but the others don't, so
+                // we read them directly as deflate streams.
+                // For each block, we create a separate stream which we later
+                // aggregate.
                 CompressionResourceBlockHead blockHeader = new CompressionResourceBlockHead();
                 byte[] blockHeaderData = new byte[CompressionResourceBlockHead.getSize()];
                 buffer.read(compressionFork.getHeaderSize(), blockHeaderData, 0, CompressionResourceBlockHead.getSize());
@@ -173,7 +179,8 @@ public class File implements IVfsFileWithStreams {
                 SparseStream[] streams = new SparseStream[blockCount];
 
                 for (int i = 0; i < blockCount; i++) {
-                    // Read the block data, first into a buffer and the into the class.
+                    // Read the block data, first into a buffer and the into the
+                    // class.
                     blocks[i] = new CompressionResourceBlock();
                     byte[] blockData = new byte[CompressionResourceBlock.getSize()];
                     buffer.read(compressionFork.getHeaderSize() + CompressionResourceBlockHead.getSize() +
@@ -183,7 +190,8 @@ public class File implements IVfsFileWithStreams {
                                 blockData.length);
                     blocks[i].readFrom(blockData, 0);
 
-                    // Create a SubBuffer which points to the data window that corresponds to the block.
+                    // Create a SubBuffer which points to the data window that
+                    // corresponds to the block.
                     SubBuffer subBuffer = new SubBuffer(buffer,
                                                         compressionFork.getHeaderSize() + blocks[i].getOffset() + 6,
                                                         blocks[i].getDataSize());
@@ -191,13 +199,16 @@ public class File implements IVfsFileWithStreams {
                     // ... convert it to a stream
                     BufferStream stream = new BufferStream(subBuffer, FileAccess.Read);
 
-                    // ... and create a deflate stream. Because we will concatenate the streams, the streams
-                    // must report on their size. We know the size (0x10000) so we pass it as a parameter.
+                    // ... and create a deflate stream. Because we will
+                    // concatenate the streams, the streams
+                    // must report on their size. We know the size (0x10000) so
+                    // we pass it as a parameter.
                     DeflateStream s = new SizedDeflateStream(stream, CompressionMode.Decompress, false, 0x10000);
                     streams[i] = SparseStream.fromStream(s, Ownership.Dispose);
                 }
 
-                // Finally, concatenate the streams together and that's about it.
+                // Finally, concatenate the streams together and that's about
+                // it.
                 ConcatStream concatStream = new ConcatStream(Ownership.Dispose, streams);
                 return new ZlibBuffer(concatStream, Ownership.Dispose);
             }

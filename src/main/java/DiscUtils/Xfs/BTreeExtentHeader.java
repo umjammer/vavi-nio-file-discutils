@@ -53,9 +53,8 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
 
     private short _numberOfRecords;
 
-    public short getNumberOfRecords() {
-        assert _numberOfRecords >= 0;
-        return _numberOfRecords;
+    public int getNumberOfRecords() {
+        return _numberOfRecords & 0xffff;
     }
 
     public void setNumberOfRecords(short value) {
@@ -87,11 +86,11 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        setLevel(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4));
-        setNumberOfRecords(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6));
-        setLeftSibling(EndianUtilities.toInt64BigEndian(buffer, offset + 0x8));
-        setRightSibling(EndianUtilities.toInt64BigEndian(buffer, offset + 0xC));
+        _magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        _level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
+        _numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
+        _leftSibling = EndianUtilities.toInt64BigEndian(buffer, offset + 0x8);
+        _rightSibling = EndianUtilities.toInt64BigEndian(buffer, offset + 0xC);
         return 24;
     }
 

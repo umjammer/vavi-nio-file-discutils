@@ -70,7 +70,7 @@ public class LogicalVolumeManager {
         }
         for (PhysicalVolume device : _devices) {
             for (MetadataVolumeGroupSection vg : device.VgMetadata.ParsedMetadata.VolumeGroupSections) {
-                if (Collections.binarySearch(_volumeGroups, vg, (x, y) -> x.Id.compareTo(y.Id)) == -1) {
+                if (Collections.binarySearch(_volumeGroups, vg, (x, y) -> x.Id.compareTo(y.Id)) < 0) {
                     _volumeGroups.add(vg);
 //Debug.println("Lg: " + vg.Id);
                 }

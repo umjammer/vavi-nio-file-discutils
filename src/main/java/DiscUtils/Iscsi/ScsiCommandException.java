@@ -130,7 +130,7 @@ public class ScsiCommandException extends IscsiException {
      */
 //    public void getObjectData(SerializationInfo info, StreamingContext context) {
 //        super.GetObjectData(info, context);
-//        info.addValue("status", (byte) getStatus().ordinal());
+//        info.addValue("status", (byte) _status.getValue());
 //        info.addValue("senseData", _senseData);
 //    }
 
