@@ -22,10 +22,11 @@
 
 package DiscUtils.Core;
 
+/**
+ * The supported Floppy Disk logical formats.
+ */
 public enum FloppyDiskType {
     /**
-     * The supported Floppy Disk logical formats.
-     *
      * 720KiB capacity disk.
      */
     DoubleDensity,

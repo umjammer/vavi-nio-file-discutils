@@ -6,8 +6,4 @@ public enum RpcAuthFlavour {
     Unix,
     Short,
     Des;
-
-    public static RpcAuthFlavour valueOf(int value) {
-        return values()[value];
-    }
 }

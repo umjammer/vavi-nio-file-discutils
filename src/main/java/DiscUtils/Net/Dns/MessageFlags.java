@@ -59,7 +59,7 @@ public class MessageFlags {
     }
 
     public OpCode getOpCode() {
-        return OpCode.valueOf((_value >>> 11) & 0xF);
+        return OpCode.values()[(_value >>> 11) & 0xF];
     }
 
     public boolean isAuthorative() {
@@ -79,6 +79,6 @@ public class MessageFlags {
     }
 
     public ResponseCode getResponseCode() {
-        return ResponseCode.valueOf(_value & 0x000F);
+        return ResponseCode.values()[_value & 0x000F];
     }
 }

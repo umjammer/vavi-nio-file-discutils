@@ -32,16 +32,16 @@ public final class PointerRecord extends ResourceRecord {
         super(name, type, rClass, expiry);
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
-        __TargetName = reader.readName();
+        _targetName = reader.readName();
         reader.setPosition(pos + dataLen);
     }
 
     /**
      * Gets the DNS name pointed to.
      */
-    private String __TargetName;
+    private String _targetName;
 
     public String getTargetName() {
-        return __TargetName;
+        return _targetName;
     }
 }

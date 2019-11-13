@@ -24,37 +24,39 @@ package DiscUtils.Nfs;
 
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
 public enum Nfs3AccessPermissions {
-    None(0x00),
-    Read(0x01),
-    Lookup(0x02),
-    Modify(0x04),
-    Extend(0x08),
-    Delete(0x10),
-    Execute(0x20);
+//    None,
+    Read,
+    Lookup,
+    Modify,
+    Extend,
+    Delete,
+    Execute;
 
     public static final EnumSet<Nfs3AccessPermissions> All = EnumSet.of(Read, Lookup, Modify, Extend, Delete, Execute);
 
-    private int value;
-
-    public int getValue() {
-        return value;
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
     }
 
-    private Nfs3AccessPermissions(int value) {
-        this.value = value;
-    }
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
 
     public static EnumSet<Nfs3AccessPermissions> valueOf(int value) {
         return Arrays.stream(values())
-                .filter(v -> (value & v.getValue()) != 0)
+                .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Nfs3AccessPermissions.class)));
     }
 
     public static long valueOf(EnumSet<Nfs3AccessPermissions> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.getValue())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
     }
 }

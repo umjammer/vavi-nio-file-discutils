@@ -473,7 +473,7 @@ public class Inode implements IByteArraySerializable {
     }
 
     public UnixFileType getFileType() {
-        return UnixFileType.valueOf((getMode() >>> 12) & 0xF);
+        return UnixFileType.values()[(getMode() >>> 12) & 0xF];
     }
 
     private byte[] _dataFork;
@@ -494,7 +494,7 @@ public class Inode implements IByteArraySerializable {
         setMagic(EndianUtilities.toUInt16BigEndian(buffer, offset));
         setMode(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2));
         setVersion(buffer[offset + 0x4]);
-        setFormat(InodeFormat.valueOf(buffer[offset + 0x5]));
+        setFormat(InodeFormat.values()[buffer[offset + 0x5]]);
         setOnlink(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6));
         setUserId(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8));
         setGroupId(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC));

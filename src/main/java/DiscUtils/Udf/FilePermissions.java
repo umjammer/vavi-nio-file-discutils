@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Standard Unix-style file system permissions.
  */
-public enum FilePermissions {
+enum FilePermissions {
     /**
      * No permissions.
      */

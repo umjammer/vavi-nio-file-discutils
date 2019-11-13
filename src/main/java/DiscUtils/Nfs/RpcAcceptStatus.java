@@ -28,8 +28,4 @@ public enum RpcAcceptStatus {
     ProgramVersionMismatch,
     ProcedureUnavailable,
     GarbageArguments;
-
-    public static RpcAcceptStatus valueOf(int value) {
-        return values()[value];
-    }
 }

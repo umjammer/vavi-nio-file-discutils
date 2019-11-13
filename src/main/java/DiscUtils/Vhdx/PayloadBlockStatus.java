@@ -22,7 +22,7 @@
 
 package DiscUtils.Vhdx;
 
-public enum PayloadBlockStatus {
+enum PayloadBlockStatus {
     NotPresent,
     Undefined,
     Zero,
@@ -31,8 +31,4 @@ public enum PayloadBlockStatus {
     __dummyEnum__5,
     FullyPresent,
     PartiallyPresent;
-
-    public static PayloadBlockStatus valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -22,8 +22,21 @@
 
 package DiscUtils.HfsPlus;
 
-public enum VolumeAttributes {
-    None,
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+enum VolumeAttributes {
+//    None,
+    _dummy_00000001,
+    _dummy_00000002,
+    _dummy_00000004,
+    _dummy_00000008,
+    _dummy_00000010,
+    _dummy_00000020,
+    _dummy_00000040,
     VolumeHardwareLock,
     VolumeUnmounted,
     VolumeSparedBlocks,
@@ -31,9 +44,22 @@ public enum VolumeAttributes {
     BootVolumeInconsistent,
     CatalogNodeIdsReused,
     VolumeJournaled,
+    _dummy_00004000,
     VolumeSoftwareLock;
 
-    public static VolumeAttributes valueOf(int value) {
-        return values()[value];
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<VolumeAttributes> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(VolumeAttributes.class)));
     }
 }

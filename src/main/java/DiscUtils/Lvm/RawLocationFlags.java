@@ -22,15 +22,10 @@
 
 package DiscUtils.Lvm;
 
-public enum RawLocationFlags {
+enum RawLocationFlags {
+    None,
     /**
      * The raw location descriptor should be ignored
      */
-    __dummyEnum__0,
-    Ignored,
-    None;
-
-    public static RawLocationFlags valueOf(int value) {
-        return values()[value];
-    }
+    Ignored;
 }

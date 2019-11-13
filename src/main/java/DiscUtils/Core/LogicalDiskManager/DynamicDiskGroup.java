@@ -177,7 +177,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
     };
 
     private static LogicalVolumeStatus worstOf(LogicalVolumeStatus x, LogicalVolumeStatus y) {
-        return LogicalVolumeStatus.valueOf(Math.max(x.ordinal(), y.ordinal()));
+        return LogicalVolumeStatus.values()[Math.max(x.ordinal(), y.ordinal())];
     }
 
     private LogicalVolumeStatus getVolumeStatus(VolumeRecord volume) {

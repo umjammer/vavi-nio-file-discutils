@@ -33,7 +33,7 @@ import java.util.Map;
 public final class TextRecord extends ResourceRecord {
     public TextRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
-        __Values = new HashMap<>();
+        _values = new HashMap<>();
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
         while (reader.getPosition() < pos + dataLen) {
@@ -48,10 +48,10 @@ public final class TextRecord extends ResourceRecord {
      * For data fidelity, the data is returned in byte form - typically
      * the encoded data is actually ASCII or UTF-8.
      */
-    private Map<String, byte[]> __Values;
+    private Map<String, byte[]> _values;
 
     public Map<String, byte[]> getValues() {
-        return __Values;
+        return _values;
     }
 
     private void storeValue(byte[] value) {

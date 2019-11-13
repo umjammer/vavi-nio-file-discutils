@@ -22,15 +22,11 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-public enum RecordType {
+enum RecordType {
     None,
     Volume,
     Component,
     Extent,
     Disk,
     DiskGroup;
-
-    public static RecordType valueOf(int value) {
-        return values()[value];
-    }
 }

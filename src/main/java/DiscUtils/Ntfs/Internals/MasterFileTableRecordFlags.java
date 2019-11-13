@@ -23,13 +23,9 @@
 package DiscUtils.Ntfs.Internals;
 
 public enum MasterFileTableRecordFlags {
-    None,
-    InUse,
-    IsDirectory,
-    __dummyEnum__0,
-    IsMetaFile,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    HasViewIndex
+//    None,
+    InUse, // 0x0001
+    IsDirectory, // 0x0002
+    IsMetaFile, // 0x0004
+    HasViewIndex // 0x0008
 }

@@ -26,8 +26,4 @@ public enum ExtentDataType {
     Inline,
     Regular,
     PreAlloc;
-
-    public static ExtentDataType valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -22,100 +22,56 @@
 
 package DiscUtils.Iscsi;
 
+import java.util.Arrays;
+
+/**
+ * Enumeration of SCSI command status codes.
+ */
 public enum ScsiStatus {
     /**
-     * Enumeration of SCSI command status codes.
-     *
      * Indicates that the command completed without error.
      */
-    Good,
-    __dummyEnum__0,
+    Good(0x00),
     /**
      * An unsupported condition occured.
      */
-    CheckCondition,
-    __dummyEnum__1,
+    CheckCondition(0x02),
     /**
      * For some commands only - indicates the specified condition was met.
      */
-    ConditionMet,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
+    ConditionMet(0x04),
     /**
      * The device is busy.
      */
-    Busy,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    __dummyEnum__11,
-    __dummyEnum__12,
-    __dummyEnum__13,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    __dummyEnum__17,
-    __dummyEnum__18,
-    __dummyEnum__19,
+    Busy(0x08),
     /**
      * Delivered command conflicts with an existing reservation.
      */
-    ReservationConflict,
-    __dummyEnum__20,
-    __dummyEnum__21,
-    __dummyEnum__22,
-    __dummyEnum__23,
-    __dummyEnum__24,
-    __dummyEnum__25,
-    __dummyEnum__26,
-    __dummyEnum__27,
-    __dummyEnum__28,
-    __dummyEnum__29,
-    __dummyEnum__30,
-    __dummyEnum__31,
-    __dummyEnum__32,
-    __dummyEnum__33,
-    __dummyEnum__34,
+    ReservationConflict(0x18),
     /**
      * The buffer of outstanding commands is full.
      */
-    TaskSetFull,
-    __dummyEnum__35,
-    __dummyEnum__36,
-    __dummyEnum__37,
-    __dummyEnum__38,
-    __dummyEnum__39,
-    __dummyEnum__40,
-    __dummyEnum__41,
+    TaskSetFull(0x28),
     /**
      * An ACA condition exists.
      */
-    AcaActive,
-    __dummyEnum__42,
-    __dummyEnum__43,
-    __dummyEnum__44,
-    __dummyEnum__45,
-    __dummyEnum__46,
-    __dummyEnum__47,
-    __dummyEnum__48,
-    __dummyEnum__49,
-    __dummyEnum__50,
-    __dummyEnum__51,
-    __dummyEnum__52,
-    __dummyEnum__53,
-    __dummyEnum__54,
-    __dummyEnum__55,
-    __dummyEnum__56,
+    AcaActive(0x30),
     /**
      * The command was aborted.
      */
-    TaskAborted;
+    TaskAborted(0x40);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private ScsiStatus(int value) {
+        this.value = value;
+    }
 
     public static ScsiStatus valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

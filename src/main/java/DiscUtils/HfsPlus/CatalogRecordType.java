@@ -28,8 +28,4 @@ public enum CatalogRecordType {
     FileRecord,
     FolderThreadRecord,
     FileThreadRecord;
-
-    public static CatalogRecordType valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -1,7 +1,7 @@
 
 package DiscUtils.Vmdk;
 
-public enum ExtentAccess {
+enum ExtentAccess {
     None,
     ReadOnly,
     ReadWrite

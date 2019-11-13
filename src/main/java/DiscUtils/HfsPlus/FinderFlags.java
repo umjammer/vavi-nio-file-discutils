@@ -22,13 +22,24 @@
 
 package DiscUtils.HfsPlus;
 
-public enum FinderFlags {
-    None,
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+enum FinderFlags {
+//    None,
     IsOnDesk,
-    Color,
+    _dummy_0002,
+    _dummy_0004,
+    _dummy_0008,
+    _dummy_0010,
+    _dummy_0020,
     IsShared,
     HasNoInits,
     HasBeenInitied,
+    _dummy_0200,
     HasCustomIcon,
     IsStationary,
     NameLocked,
@@ -36,7 +47,21 @@ public enum FinderFlags {
     IsInvisible,
     IsAlias;
 
-    public static FinderFlags valueOf(int value) {
-        return values()[value];
+    public static final int Color = 0x000e;
+
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<FinderFlags> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(FinderFlags.class)));
     }
 }

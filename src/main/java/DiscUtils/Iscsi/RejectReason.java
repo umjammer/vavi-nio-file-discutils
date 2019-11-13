@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum RejectReason {
+enum RejectReason {
     None,
     Reserved,
     DataDigestError,
@@ -15,8 +15,4 @@ public enum RejectReason {
     LongOperationReject,
     NegotiationReset,
     WaitingForLogout;
-
-    public static RejectReason valueOf(int value) {
-        return values()[value];
-    }
 }

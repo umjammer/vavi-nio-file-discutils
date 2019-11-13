@@ -1,7 +1,7 @@
 
 package DiscUtils.Vmdk;
 
-public enum ExtentType {
+enum ExtentType {
     Flat,
     Sparse,
     Zero,

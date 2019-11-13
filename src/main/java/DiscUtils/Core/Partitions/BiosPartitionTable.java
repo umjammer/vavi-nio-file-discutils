@@ -29,9 +29,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-import vavi.util.StringUtil;
-
 import DiscUtils.Core.ChsAddress;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.VirtualDisk;
@@ -155,7 +152,6 @@ public final class BiosPartitionTable extends PartitionTable {
 
         // Check for the 'bootable sector' marker
         if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
-Debug.println(disk + ", " + disk.getPosition() + "\n" + StringUtil.getDump(bootSector));
             return false;
         }
 

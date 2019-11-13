@@ -90,14 +90,14 @@ public enum FileAttributes implements EnumSettable {
         return bs;
     }
 
-    // TODO using name(), loop flags is fewer than loop all enums
+    // TODO loop flags is fewer than loop all enums
     private static EnumSet<FileAttributes> toEnumSet(BitSet flags) {
         return Arrays.stream(values())
                 .filter(e -> flags.get(e.ordinal()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributes.class)));
     }
 
-    /** TODO should not filter? */
+    /** */
     public static EnumSet<FileAttributes> xor(EnumSet<FileAttributes> flags1, EnumSet<FileAttributes> flags2) {
         BitSet bs = toBitSet(flags1);
         bs.xor(toBitSet(flags2));

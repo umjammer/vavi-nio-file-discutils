@@ -112,8 +112,8 @@ public class HeaderRecord {
 
     public int read(FileVersion version, byte[] buffer, int offset) {
         if (version.getMajor() == 0) {
-            imageType = ImageType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0));
-            flags = ImageFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
+            imageType = ImageType.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 0)];
+            flags = ImageFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 4)];
             comment = EndianUtilities.bytesToString(buffer, offset + 8, 256).replaceFirst("\0*$", "");
             legacyGeometry = new GeometryRecord();
             legacyGeometry.read(buffer, offset + 264);
@@ -131,8 +131,8 @@ public class HeaderRecord {
             parentModificationId = new UUID(0L, 0L);
         } else if (version.getMajor() == 1 && version.getMinor() == 1) {
             headerSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-            imageType = ImageType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
-            flags = ImageFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8));
+            imageType = ImageType.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 4)];
+            flags = ImageFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)];
             comment = EndianUtilities.bytesToString(buffer, offset + 12, 256).replaceFirst("\0*$", "");
             blocksOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
             dataOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 272);

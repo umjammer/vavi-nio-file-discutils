@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Feature flags for features backwards compatible with read-only mounting.
  */
-public enum ReadOnlyCompatibleFeatures {
+enum ReadOnlyCompatibleFeatures {
     /**
      * Free inode B+tree. Each allocation group contains a
      * B+tree to track inode chunks containing free inodes.

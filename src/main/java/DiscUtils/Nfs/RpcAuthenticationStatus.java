@@ -29,8 +29,4 @@ public enum RpcAuthenticationStatus {
     BadVerifier,
     RejectedVerifier,
     TooWeak;
-
-    public static RpcAuthenticationStatus valueOf(int value) {
-        return values()[value];
-    }
 }

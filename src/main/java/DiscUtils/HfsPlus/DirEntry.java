@@ -32,14 +32,14 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 public final class DirEntry extends VfsDirEntry {
     public DirEntry(String name, byte[] dirEntryData) {
-        __FileName = name;
-        __CatalogFileInfo = parseDirEntryData(dirEntryData);
+        _fileName = name;
+        _catalogFileInfo = parseDirEntryData(dirEntryData);
     }
 
-    private CommonCatalogFileInfo __CatalogFileInfo;
+    private CommonCatalogFileInfo _catalogFileInfo;
 
     public CommonCatalogFileInfo getCatalogFileInfo() {
-        return __CatalogFileInfo;
+        return _catalogFileInfo;
     }
 
     public long getCreationTimeUtc() {
@@ -50,10 +50,10 @@ public final class DirEntry extends VfsDirEntry {
         return UnixFileType.toFileAttributes(getCatalogFileInfo().FileSystemInfo.getFileType());
     }
 
-    private String __FileName;
+    private String _fileName;
 
     public String getFileName() {
-        return __FileName;
+        return _fileName;
     }
 
     public boolean hasVfsFileAttributes() {
@@ -90,12 +90,12 @@ public final class DirEntry extends VfsDirEntry {
     }
 
     public static boolean isFileOrDirectory(byte[] dirEntryData) {
-        CatalogRecordType type = CatalogRecordType.valueOf(EndianUtilities.toInt16BigEndian(dirEntryData, 0));
+        CatalogRecordType type = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(dirEntryData, 0)];
         return type == CatalogRecordType.FolderRecord || type == CatalogRecordType.FileRecord;
     }
 
     private static CommonCatalogFileInfo parseDirEntryData(byte[] dirEntryData) {
-        CatalogRecordType type = CatalogRecordType.valueOf(EndianUtilities.toInt16BigEndian(dirEntryData, 0));
+        CatalogRecordType type = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(dirEntryData, 0)];
         CommonCatalogFileInfo result = null;
         switch (type) {
         case FolderRecord:

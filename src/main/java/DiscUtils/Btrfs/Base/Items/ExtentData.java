@@ -194,10 +194,10 @@ public class ExtentData extends BaseItem {
     public int readFrom(byte[] buffer, int offset) {
         setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setDecodedSize(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setCompression(ExtentDataCompression.valueOf(buffer[offset + 0x10]));
+        setCompression(ExtentDataCompression.values()[buffer[offset + 0x10]]);
         setEncryption(buffer[offset + 0x11] != 0);
         //12 2 UINT other encoding (0=none)
-        setType(ExtentDataType.valueOf(buffer[offset + 0x14]));
+        setType(ExtentDataType.values()[buffer[offset + 0x14]]);
         if (getType() == ExtentDataType.Inline) {
             setInlineData(EndianUtilities.toByteArray(buffer, offset + 0x15, buffer.length - (offset + 0x15)));
         } else {

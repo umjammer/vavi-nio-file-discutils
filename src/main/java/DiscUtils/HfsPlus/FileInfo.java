@@ -22,16 +22,18 @@
 
 package DiscUtils.HfsPlus;
 
+import java.util.EnumSet;
+
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class FileInfo implements IByteArraySerializable {
+class FileInfo implements IByteArraySerializable {
     public int FileCreator;
 
     public int FileType;
 
-    public FinderFlags _FinderFlags;
+    public EnumSet<FinderFlags> _FinderFlags;
 
     public Point Point;
 

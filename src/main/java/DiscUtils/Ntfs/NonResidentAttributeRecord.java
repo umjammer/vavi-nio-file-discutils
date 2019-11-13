@@ -30,13 +30,15 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import vavi.util.StringUtil;
+
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
 import DiscUtils.Streams.Util.Range;
 
 
-public final class NonResidentAttributeRecord extends AttributeRecord {
+final class NonResidentAttributeRecord extends AttributeRecord {
     private static final short DefaultCompressionUnitSize = 4;
 
     private long _compressedSize;
@@ -154,10 +156,6 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
         return _dataRuns;
     }
 
-    public void setDataRuns(List<DataRun> value) {
-        _dataRuns = value;
-    }
-
     /**
      * The amount of initialized data in the attribute (in bytes).
      */
@@ -235,7 +233,7 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
 
     public void insertRun(int index, DataRun newRun) {
         _dataRuns.add(index, newRun);
-//Debug.println("+1[" + index + "]: " + newRun + " / " + StringUtil.paramString(getDataRuns()));
+//Debug.println("+1[" + index + "]: " + newRun + " / " + getDataRuns());
     }
 
     public List<Range> getClusters() {
@@ -399,5 +397,9 @@ public final class NonResidentAttributeRecord extends AttributeRecord {
             _dataRuns.add(run);
             pos += len;
         }
+    }
+
+    public String toString() {
+        return StringUtil.paramString(this);
     }
 }

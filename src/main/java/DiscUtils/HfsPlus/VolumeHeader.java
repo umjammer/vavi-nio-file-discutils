@@ -23,6 +23,7 @@
 package DiscUtils.HfsPlus;
 
 import java.time.ZoneId;
+import java.util.EnumSet;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -33,7 +34,7 @@ public final class VolumeHeader implements IByteArraySerializable {
 
     public ForkData AllocationFile;
 
-    public VolumeAttributes Attributes = VolumeAttributes.None;
+    public EnumSet<VolumeAttributes> Attributes/* = VolumeAttributes.None*/;
 
     public ForkData AttributesFile;
 

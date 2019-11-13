@@ -52,12 +52,12 @@ public final class Nfs3SetAttributes {
             setSize(reader.readInt64());
         }
 
-        setSetAccessTime(Nfs3SetTimeMethod.valueOf(reader.readInt32()));
+        setSetAccessTime(Nfs3SetTimeMethod.values()[reader.readInt32()]);
         if (getSetAccessTime() == Nfs3SetTimeMethod.ClientTime) {
             setAccessTime(new Nfs3FileTime(reader));
         }
 
-        setSetModifyTime(Nfs3SetTimeMethod.valueOf(reader.readInt32()));
+        setSetModifyTime(Nfs3SetTimeMethod.values()[reader.readInt32()]);
         if (getSetModifyTime() == Nfs3SetTimeMethod.ClientTime) {
             setModifyTime(new Nfs3FileTime(reader));
         }

@@ -25,8 +25,4 @@ package DiscUtils.Nfs;
 public enum RpcReplyStatus {
     Accepted,
     Denied;
-
-    public static RpcReplyStatus valueOf(int value) {
-        return values()[value];
-    }
 }

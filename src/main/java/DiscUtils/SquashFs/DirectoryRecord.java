@@ -63,7 +63,7 @@ public class DirectoryRecord implements IByteArraySerializable {
         DirectoryRecord result = new DirectoryRecord();
         result.offset = reader.readUShort();
         result.InodeNumber = reader.readShort();
-        result.Type = InodeType.valueOf(reader.readUShort());
+        result.Type = InodeType.values()[reader.readUShort()];
         short size = reader.readUShort();
         result.Name = reader.readString(size + 1);
 //Debug.println(result.Name);

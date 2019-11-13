@@ -114,7 +114,6 @@ public final class FreeSpaceTable {
         }
 
         if (start < 0 || start > _fileSize || length > _fileSize - start) {
-//Debug.println(length + ", " + _fileSize + ", " + start);
             throw new IndexOutOfBoundsException("Attempt to " + method + " space outside of file range");
         }
     }

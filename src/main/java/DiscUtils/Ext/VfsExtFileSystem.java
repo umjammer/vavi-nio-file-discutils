@@ -114,7 +114,7 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         File file = getFile(path);
         Inode inode = file.getInode();
 
-        UnixFileType fileType = UnixFileType.valueOf((inode.Mode >>> 12) & 0xff);
+        UnixFileType fileType = UnixFileType.values()[(inode.Mode >>> 12) & 0xff];
 
         int deviceId = 0;
         if (fileType == UnixFileType.Character || fileType == UnixFileType.Block) {

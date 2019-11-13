@@ -30,16 +30,16 @@ public final class CanonicalNameRecord extends ResourceRecord {
         super(name, type, rClass, expiry);
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
-        __CanonicalName = reader.readName();
+        _canonicalName = reader.readName();
         reader.setPosition(pos + dataLen);
     }
 
     /**
      * Gets the canonical name.
      */
-    private String __CanonicalName;
+    private String _canonicalName;
 
     public String getCanonicalName() {
-        return __CanonicalName;
+        return _canonicalName;
     }
 }

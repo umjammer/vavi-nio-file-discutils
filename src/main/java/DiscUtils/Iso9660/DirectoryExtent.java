@@ -29,7 +29,7 @@ import java.util.Map;
 import DiscUtils.Streams.Builder.BuilderExtent;
 
 
-public class DirectoryExtent extends BuilderExtent {
+class DirectoryExtent extends BuilderExtent {
     private final BuildDirectoryInfo _dirInfo;
 
     private final Charset _enc;

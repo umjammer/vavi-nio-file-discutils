@@ -86,14 +86,18 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         }
 
         _file.markMftRecordDirty();
+
         long newClusterCount = MathUtilities.ceil(value, _bytesPerCluster);
+
         if (value < getCapacity()) {
             truncate(value);
         } else {
             _activeStream.expandToClusters(newClusterCount, (NonResidentAttributeRecord) _attribute.getLastExtent(), true);
             getPrimaryAttributeRecord().setAllocatedLength(_cookedRuns.getNextVirtualCluster() * _bytesPerCluster);
         }
+
         getPrimaryAttributeRecord().setDataLength(value);
+
         if (getPrimaryAttributeRecord().getInitializedDataLength() > value) {
             getPrimaryAttributeRecord().setInitializedDataLength(value);
         }
@@ -121,32 +125,40 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         }
 
         int allocatedClusters = 0;
+
         long focusPos = pos;
         while (focusPos < pos + count) {
             long vcn = focusPos / _bytesPerCluster;
             long remaining = pos + count - focusPos;
             long clusterOffset = focusPos - vcn * _bytesPerCluster;
+
             if (vcn * _bytesPerCluster != focusPos || remaining < _bytesPerCluster) {
                 // Unaligned or short write
                 int toWrite = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
+
                 _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
                 System.arraycopy(buffer, (int) (offset + (focusPos - pos)), _ioBuffer, (int) clusterOffset, toWrite);
                 allocatedClusters += _activeStream.writeClusters(vcn, 1, _ioBuffer, 0);
+
                 focusPos += toWrite;
             } else {
                 // Aligned, full cluster writes...
                 int fullClusters = (int) (remaining / _bytesPerCluster);
                 allocatedClusters += _activeStream.writeClusters(vcn, fullClusters, buffer, (int) (offset + (focusPos - pos)));
+
                 focusPos += fullClusters * _bytesPerCluster;
             }
         }
+
         if (pos + count > getPrimaryAttributeRecord().getInitializedDataLength()) {
             _file.markMftRecordDirty();
+
             getPrimaryAttributeRecord().setInitializedDataLength(pos + count);
         }
 
         if (pos + count > getPrimaryAttributeRecord().getDataLength()) {
             _file.markMftRecordDirty();
+
             getPrimaryAttributeRecord().setDataLength(pos + count);
         }
 
@@ -223,8 +235,12 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         _cookedRuns.collapseRuns();
     }
 
+public static boolean debug;
+
     private static CookedDataRuns cookRuns(NtfsAttribute attribute) {
         CookedDataRuns result = new CookedDataRuns();
+
+//if (debug) new Exception().printStackTrace();
         for (Object _record : attribute.getRecords()) {
             NonResidentAttributeRecord record = (NonResidentAttributeRecord) _record;
             if (record.getStartVcn() != result.getNextVirtualCluster()) {
@@ -233,6 +249,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
 
             result.append(record.getDataRuns(), record);
         }
+
         return result;
     }
 
@@ -273,8 +290,10 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
 
     private void truncate(long value) {
         long endVcn = MathUtilities.ceil(value, _bytesPerCluster);
+
         // Release the clusters
         _activeStream.truncateToClusters(endVcn);
+
         // First, remove any extents that are now redundant.
         Map<AttributeReference, AttributeRecord> extentCache = new HashMap<>(_attribute.getExtents());
         for (Map.Entry<AttributeReference, AttributeRecord> extent : extentCache.entrySet()) {
@@ -283,13 +302,14 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
                 _file.removeAttributeExtent(extent.getKey());
                 _attribute.removeExtentCacheSafe(extent.getKey());
             }
-
         }
+
         getPrimaryAttributeRecord().setLastVcn(Math.max(0, endVcn - 1));
         getPrimaryAttributeRecord().setAllocatedLength(endVcn * _bytesPerCluster);
         getPrimaryAttributeRecord().setDataLength(value);
         getPrimaryAttributeRecord()
                 .setInitializedDataLength(Math.min(getPrimaryAttributeRecord().getInitializedDataLength(), value));
+
         _file.markMftRecordDirty();
     }
 }

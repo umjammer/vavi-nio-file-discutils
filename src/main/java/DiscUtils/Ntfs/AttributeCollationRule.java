@@ -3,7 +3,7 @@ package DiscUtils.Ntfs;
 
 import java.util.Arrays;
 
-public enum AttributeCollationRule {
+enum AttributeCollationRule {
     Binary(0x00000000),
     Filename(0x00000001),
     UnicodeString(0x00000002),

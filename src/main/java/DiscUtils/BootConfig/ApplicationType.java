@@ -22,11 +22,13 @@
 
 package DiscUtils.BootConfig;
 
-// use ordinal
+/**
+ * Enumeration of known application types.
+ *
+ * use ordinal
+ */
 public enum ApplicationType {
     /**
-     * Enumeration of known application types.
-     *
      * Unknown type.
      */
     None,

@@ -30,7 +30,7 @@ import vavi.util.Debug;
 import dotnet4j.io.IOException;
 
 
-public class CookedDataRuns {
+class CookedDataRuns {
     private int _firstDirty = Integer.MAX_VALUE;
 
     private int _lastDirty;
@@ -39,6 +39,7 @@ public class CookedDataRuns {
 
     public CookedDataRuns() {
         _runs = new ArrayList<>();
+if (NonResidentAttributeBuffer.debug) Debug.println("1:\t\t@" + this.hashCode());
     }
 
     public CookedDataRuns(List<DataRun> rawRuns, NonResidentAttributeRecord attributeExtent) {
@@ -58,7 +59,6 @@ public class CookedDataRuns {
         if (_runs.size() == 0) {
             return null;
         }
-
         return _runs.get(_runs.size() - 1);
     }
 
@@ -66,7 +66,6 @@ public class CookedDataRuns {
         if (_runs.size() == 0) {
             return 0;
         }
-
         int lastRun = _runs.size() - 1;
         return _runs.get(lastRun).getStartVcn() + _runs.get(lastRun).getLength();
     }
@@ -75,11 +74,13 @@ public class CookedDataRuns {
         int numRuns = _runs.size();
         if (numRuns > 0) {
             CookedDataRun run = _runs.get(numRuns - 1);
+if (NonResidentAttributeBuffer.debug) Debug.printf("%d, %d, %d, %d\t\t@%d", numRuns, run.getStartVcn(), run.getLength(), vcn, this.hashCode());
+//if (NonResidentAttributeBuffer.debug) new Exception().printStackTrace();
             if (vcn >= run.getStartVcn()) {
                 if (run.getStartVcn() + run.getLength() > vcn) {
                     return numRuns - 1;
                 }
-Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
+Debug.printf("%d + %d <= %d\t\t@%d", run.getStartVcn(), run.getLength(), vcn, this.hashCode());
                 throw new IOException("Looking for VCN outside of data runs");
             }
 
@@ -97,6 +98,7 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
     public void append(DataRun rawRun, NonResidentAttributeRecord attributeExtent) {
         CookedDataRun last = getLast();
         _runs.add(new CookedDataRun(rawRun, getNextVirtualCluster(), last == null ? 0 : last.getStartLcn(), attributeExtent));
+if (NonResidentAttributeBuffer.debug) Debug.println("+1: " + _runs);
     }
 
     public void append(List<DataRun> rawRuns, NonResidentAttributeRecord attributeExtent) {
@@ -107,6 +109,7 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
             vcn += run.getRunLength();
             lcn += run.getRunOffset();
         }
+if (NonResidentAttributeBuffer.debug) Debug.println("+2: " + _runs.size() + "\t\t@" + this.hashCode());
     }
 
     public void makeSparse(int index) {
@@ -120,8 +123,9 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
 
         long prevLcn = index == 0 ? 0 : _runs.get(index - 1).getStartLcn();
         CookedDataRun run = _runs.get(index);
+
         if (run.isSparse()) {
-            throw new IllegalArgumentException("Run is already sparse");
+            throw new IllegalArgumentException("index: Run is already sparse: " + index);
         }
 
         _runs.set(index,
@@ -130,6 +134,7 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
                                     prevLcn,
                                     run.getAttributeExtent()));
         run.getAttributeExtent().replaceRun(run.getDataRun(), _runs.get(index).getDataRun());
+
         for (int i = index + 1; i < _runs.size(); ++i) {
             if (!_runs.get(i).isSparse()) {
                 _runs.get(i).getDataRun().setRunOffset(_runs.get(i).getDataRun().getRunOffset() + run.getStartLcn() - prevLcn);
@@ -151,7 +156,7 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
         CookedDataRun run = _runs.get(index);
 
         if (!run.isSparse()) {
-            throw new IllegalArgumentException("Run is already non-sparse");
+            throw new IllegalArgumentException("index: Run is already non-sparse: " + index);
         }
 
         _runs.remove(index);
@@ -197,7 +202,7 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
         CookedDataRun run = _runs.get(runIdx);
 
         if (run.getStartVcn() >= vcn || run.getStartVcn() + run.getLength() <= vcn) {
-            throw new IllegalArgumentException("vcn: Attempt to split run outside of it's range");
+            throw new IllegalArgumentException("vcn: Attempt to split run outside of it's range: " + vcn);
         }
 
         long distance = vcn - run.getStartVcn();
@@ -249,7 +254,7 @@ Debug.printf("%x + %x <= %x", run.getStartVcn(), run.getLength(), vcn);
 
                 for (int j = i + 1; j < _runs.size(); ++j) {
                     if (_runs.get(j).isSparse()) {
-                        _runs.get(j).setStartLcn(_runs.get(j).getStartLcn());
+                        _runs.get(j).setStartLcn(_runs.get(i).getStartLcn());
                     } else {
                         _runs.get(j).getDataRun().setRunOffset(_runs.get(j).getStartLcn() - _runs.get(i).getStartLcn());
                         break;

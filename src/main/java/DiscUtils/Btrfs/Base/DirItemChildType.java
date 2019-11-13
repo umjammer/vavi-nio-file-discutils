@@ -32,8 +32,4 @@ public enum DirItemChildType {
     Socket,
     Symlink,
     ExtendedAttribute;
-
-    public static DirItemChildType valueOf(int value) {
-        return values()[value];
-    }
 }

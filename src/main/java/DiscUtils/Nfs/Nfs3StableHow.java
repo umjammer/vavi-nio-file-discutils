@@ -26,8 +26,4 @@ public enum Nfs3StableHow {
     Unstable,
     DataSync,
     FileSynce;
-
-    public static Nfs3StableHow valueOf(int value) {
-        return values()[value];
-    }
 }

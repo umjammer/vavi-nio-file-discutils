@@ -37,7 +37,7 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public PayloadBlockStatus getPayloadBlockStatus() {
-        return PayloadBlockStatus.valueOf((int) _value & 0x7);
+        return PayloadBlockStatus.values()[(int) _value & 0x7];
     }
 
     public void setPayloadBlockStatus(PayloadBlockStatus value) {

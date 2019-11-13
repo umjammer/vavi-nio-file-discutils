@@ -37,15 +37,15 @@ public class StreamUtilities {
      */
     public static void assertBufferParameters(byte[] buffer, int offset, int count) {
         if (buffer == null) {
-            throw new IllegalArgumentException("buffer");
+            throw new NullPointerException("buffer");
         }
 
         if (offset < 0) {
-            throw new IndexOutOfBoundsException("Offset is negative");
+            throw new IllegalArgumentException("Offset is negative");
         }
 
         if (count < 0) {
-            throw new IndexOutOfBoundsException("Count is negative");
+            throw new IllegalArgumentException("Count is negative");
         }
 
         if (buffer.length < offset + count) {
@@ -65,7 +65,6 @@ public class StreamUtilities {
         int originalCount = count;
         while (count > 0) {
             int numRead = stream.read(buffer, offset, count);
-//Debug.println(numRead + ", " + offset + ", " + count + " / " + originalCount);
             if (numRead == 0) {
                 throw new dotnet4j.io.IOException("Unable to complete read of " + originalCount + " bytes");
             }
@@ -83,9 +82,6 @@ public class StreamUtilities {
      * @return The data read from the stream.
      */
     public static byte[] readExact(Stream stream, int count) {
-if (count < 0) {
- new Exception("*** DUMMY ***").printStackTrace();
-}
         byte[] buffer = new byte[count];
         readExact(stream, buffer, 0, count);
         return buffer;

@@ -32,7 +32,7 @@ public class ScsiCommandException extends IscsiException {
      * Initializes a new instance of the ScsiCommandException class.
      */
     public ScsiCommandException() {
-        __Status = ScsiStatus.Good;
+        _status = ScsiStatus.Good;
     }
 
     /**
@@ -41,7 +41,7 @@ public class ScsiCommandException extends IscsiException {
      * @param status The SCSI status code.
      */
     public ScsiCommandException(ScsiStatus status) {
-        __Status = status;
+        _status = status;
     }
 
     /**
@@ -51,7 +51,7 @@ public class ScsiCommandException extends IscsiException {
      */
     public ScsiCommandException(String message) {
         super(message);
-        __Status = ScsiStatus.Good;
+        _status = ScsiStatus.Good;
     }
 
     /**
@@ -62,7 +62,7 @@ public class ScsiCommandException extends IscsiException {
      */
     public ScsiCommandException(ScsiStatus status, String message) {
         super(message);
-        __Status = status;
+        _status = status;
     }
 
     /**
@@ -74,7 +74,7 @@ public class ScsiCommandException extends IscsiException {
      */
     public ScsiCommandException(ScsiStatus status, String message, byte[] senseData) {
         super(message);
-        __Status = status;
+        _status = status;
         _senseData = senseData;
     }
 
@@ -86,7 +86,7 @@ public class ScsiCommandException extends IscsiException {
      */
     public ScsiCommandException(String message, Exception innerException) {
         super(message, innerException);
-        __Status = ScsiStatus.Good;
+        _status = ScsiStatus.Good;
     }
 
     /**
@@ -98,7 +98,7 @@ public class ScsiCommandException extends IscsiException {
      */
     public ScsiCommandException(ScsiStatus status, String message, Exception innerException) {
         super(message, innerException);
-        __Status = status;
+        _status = status;
     }
 
     /**
@@ -109,17 +109,17 @@ public class ScsiCommandException extends IscsiException {
      */
 //    protected ScsiCommandException(SerializationInfo info, StreamingContext context) {
 //        super(info, context);
-//        __Status = (ScsiStatus) info.getByte("status");
+//        _status = (ScsiStatus) info.getByte("status");
 //        _senseData = (byte[]) info.getValue("senseData", byte[].class);
 //    }
 
     /**
      * Gets the SCSI status associated with this exception.
      */
-    private ScsiStatus __Status = ScsiStatus.Good;
+    private ScsiStatus _status = ScsiStatus.Good;
 
     public ScsiStatus getStatus() {
-        return __Status;
+        return _status;
     }
 
     /**
@@ -137,9 +137,7 @@ public class ScsiCommandException extends IscsiException {
     /**
      * Gets the SCSI sense data (if any) associated with this exception.
      *
-     * @return The SCSI sense data, or
-     *         {@code null}
-     *         .
+     * @return The SCSI sense data, or {@code null} .
      */
     public byte[] getSenseData() {
         return _senseData;

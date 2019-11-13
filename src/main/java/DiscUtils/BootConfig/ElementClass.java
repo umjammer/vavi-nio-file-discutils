@@ -22,10 +22,11 @@
 
 package DiscUtils.BootConfig;
 
+/**
+ * The known classes of element.
+ */
 public enum ElementClass {
     /**
-     * The known classes of element.
-     * 
      * Unknown class.
      */
     None,

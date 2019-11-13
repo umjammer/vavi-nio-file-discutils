@@ -23,6 +23,7 @@
 package FileRecover;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
@@ -128,7 +129,7 @@ public class Program extends ProgramBase {
                 System.err.println("Caution! It is rare for the file contents of deleted files to be intact - most");
                 System.err.println("likely the contents recovered are corrupt as the space has been reused.");
             } else {
-                for (MasterFileTableEntry entry : mft.getEntries(EntryStates.NotInUse)) {
+                for (MasterFileTableEntry entry : mft.getEntries(EnumSet.of(EntryStates.NotInUse))) {
                     // Skip entries with no attributes, they've probably
                     // never been used. We're certainly
                     // not going to manage to recover any useful data from

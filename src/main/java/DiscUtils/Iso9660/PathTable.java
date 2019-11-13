@@ -33,7 +33,7 @@ import java.util.Map;
 import DiscUtils.Streams.Builder.BuilderExtent;
 
 
-public class PathTable extends BuilderExtent {
+class PathTable extends BuilderExtent {
     private final boolean _byteSwap;
 
     private final List<BuildDirectoryInfo> _dirs;

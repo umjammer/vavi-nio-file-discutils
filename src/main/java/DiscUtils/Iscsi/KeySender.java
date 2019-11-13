@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum KeySender {
+enum KeySender {
     __dummyEnum__0,
     Initiator,
     Target,

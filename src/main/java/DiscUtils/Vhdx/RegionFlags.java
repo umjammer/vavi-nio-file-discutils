@@ -22,11 +22,7 @@
 
 package DiscUtils.Vhdx;
 
-public enum RegionFlags {
+enum RegionFlags {
     None,
     Required;
-
-    public static RegionFlags valueOf(int value) {
-        return values()[value];
-    }
 }

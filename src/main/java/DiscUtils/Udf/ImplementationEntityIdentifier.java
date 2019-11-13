@@ -27,8 +27,8 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 public class ImplementationEntityIdentifier extends EntityIdentifier {
     public String toString() {
-        OSClass osClass = OSClass.valueOf(Suffix[0]);
-        OSIdentifier osId = OSIdentifier.valueOf(EndianUtilities.toUInt16BigEndian(Suffix, 0));
+        OSClass osClass = OSClass.values()[Suffix[0]];
+        OSIdentifier osId = OSIdentifier.values()[EndianUtilities.toUInt16BigEndian(Suffix, 0)];
         return String.format("%s [OS %s %s]", Identifier, osClass, osId);
     }
 }

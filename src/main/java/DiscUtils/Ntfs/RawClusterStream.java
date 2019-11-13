@@ -49,7 +49,7 @@ import dotnet4j.io.Stream;
  * <li> Extending attributes.
  * </ul>
  */
-public final class RawClusterStream extends ClusterStream {
+final class RawClusterStream extends ClusterStream {
     private final int _bytesPerCluster;
 
     private final INtfsContext _context;

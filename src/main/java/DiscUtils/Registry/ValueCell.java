@@ -88,7 +88,7 @@ public final class ValueCell extends Cell {
         int nameLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
         setDataLength(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04));
         setDataIndex(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08));
-        setDataType(RegistryValueType.valueOf(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C)));
+        setDataType(RegistryValueType.values()[EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C)]);
         _flags = ValueFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
         if (_flags.contains(ValueFlags.Named)) {
             setName(EndianUtilities.bytesToString(buffer, offset + 0x14, nameLen).replaceAll("(^\0*|\0*$)", ""));

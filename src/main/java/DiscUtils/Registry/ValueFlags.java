@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
-public enum ValueFlags {
+enum ValueFlags {
     Named,
     Unknown0002,
     Unknown0004,

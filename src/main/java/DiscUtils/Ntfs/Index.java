@@ -43,7 +43,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 
 
-public class Index implements Closeable {
+class Index implements Closeable {
     private final ObjectCache<Long, IndexBlock> _blockCache;
 
     protected BiosParameterBlock _bpb;
@@ -118,14 +118,14 @@ public class Index implements Closeable {
         _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, 32);
     }
 
-    private Stream __AllocationStream;
+    private Stream _allocationStream;
 
-    public Stream getAllocationStream() {
-        return __AllocationStream;
+    Stream getAllocationStream() {
+        return _allocationStream;
     }
 
-    public void setAllocationStream(Stream value) {
-        __AllocationStream = value;
+    void setAllocationStream(Stream value) {
+        _allocationStream = value;
     }
 
     public int getCount() {
@@ -140,13 +140,13 @@ public class Index implements Closeable {
         return result;
     }
 
-    public int getIndexBufferSize() {
+    int getIndexBufferSize() {
         return _root.getIndexAllocationSize();
     }
 
     private boolean _isFileIndex;
 
-    public boolean isFileIndex() {
+    boolean isFileIndex() {
         return _isFileIndex;
     }
 
@@ -226,7 +226,7 @@ public class Index implements Closeable {
         return false;
     }
 
-    public static String entryAsString(IndexEntry entry, String fileName, String indexName) {
+    static String entryAsString(IndexEntry entry, String fileName, String indexName) {
         IByteArraySerializable keyValue = null;
         IByteArraySerializable dataValue = null;
         // Try to guess the type of data in the key and data fields from the
@@ -274,7 +274,7 @@ public class Index implements Closeable {
         return "{Unknown-Index-Type}";
     }
 
-    public long indexBlockVcnToPosition(long vcn) {
+    long indexBlockVcnToPosition(long vcn) {
         if (vcn % _root.getRawClustersPerIndexRecord() != 0) {
             throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn +
                                                     " rcpir=" + _root.getRawClustersPerIndexRecord());
@@ -292,7 +292,7 @@ public class Index implements Closeable {
         return vcn / _root.getRawClustersPerIndexRecord() * _root.getIndexAllocationSize();
     }
 
-    public boolean shrinkRoot() {
+    boolean shrinkRoot() {
         if (_rootNode.depose()) {
             writeRootNodeToDisk();
             _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
@@ -302,7 +302,7 @@ public class Index implements Closeable {
         return false;
     }
 
-    public IndexBlock getSubBlock(IndexEntry parentEntry) {
+    IndexBlock getSubBlock(IndexEntry parentEntry) {
         IndexBlock block = _blockCache.get___idx(parentEntry.getChildrenVirtualCluster());
         if (block == null) {
             block = new IndexBlock(this, false, parentEntry, _bpb);
@@ -312,7 +312,7 @@ public class Index implements Closeable {
         return block;
     }
 
-    public IndexBlock allocateBlock(IndexEntry parentEntry) {
+    IndexBlock allocateBlock(IndexEntry parentEntry) {
         if (getAllocationStream() == null) {
             _file.createStream(AttributeType.IndexAllocation, _name);
             setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
@@ -332,18 +332,18 @@ public class Index implements Closeable {
         return block;
     }
 
-    public void freeBlock(long vcn) {
+    void freeBlock(long vcn) {
         long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.getSectorsPerCluster() * _bpb.getBytesPerSector());
         _indexBitmap.markAbsent(idx);
         _blockCache.remove(vcn);
     }
 
-    public int compare(byte[] x, byte[] y) {
+    int compare(byte[] x, byte[] y) {
 //Debug.println(_comparer.getClass() + ": " + _comparer.compare(x, y));
         return _comparer.compare(x, y);
     }
 
-    public void dump(PrintWriter writer, String prefix) {
+    void dump(PrintWriter writer, String prefix) {
         nodeAsString(writer, prefix, _rootNode, "R");
     }
 

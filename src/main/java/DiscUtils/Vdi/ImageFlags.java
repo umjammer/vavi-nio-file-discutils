@@ -23,12 +23,8 @@
 package DiscUtils.Vdi;
 
 /** use ordinal */
-public enum ImageFlags {
+enum ImageFlags {
     None,
     Split2G,
     ZeroExpand;
-
-    public static ImageFlags valueOf(int value) {
-        return values()[value];
-    }
 }

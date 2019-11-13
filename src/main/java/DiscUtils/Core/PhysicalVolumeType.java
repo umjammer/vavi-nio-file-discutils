@@ -1,10 +1,11 @@
 
 package DiscUtils.Core;
 
+/**
+ * Enumeration of possible types of physical volume.
+ */
 public enum PhysicalVolumeType {
     /**
-     * Enumeration of possible types of physical volume.
-     *
      * Unknown type.
      */
     None,

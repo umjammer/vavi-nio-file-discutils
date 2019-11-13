@@ -22,27 +22,23 @@
 
 package DiscUtils.Nfs;
 
+import java.util.Arrays;
+
 public enum PortMap2Protocol {
-    __dummyEnum__0,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
-    __dummyEnum__5,
-    Tcp,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    __dummyEnum__11,
-    __dummyEnum__12,
-    __dummyEnum__13,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    Udp;
+    Tcp(6),
+    Udp(17);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private PortMap2Protocol(int value) {
+        this.value = value;
+    }
 
     public static PortMap2Protocol valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(e -> e.getValue() == value).findFirst().get();
     }
 }

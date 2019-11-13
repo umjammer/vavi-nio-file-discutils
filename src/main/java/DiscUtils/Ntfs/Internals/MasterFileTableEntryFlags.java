@@ -27,42 +27,33 @@ import java.util.function.Supplier;
 
 import DiscUtils.Core.CoreCompat.EnumSettable;
 
+/**
+ * Flags indicating the nature of a Master File Table entry.
+ */
 public enum MasterFileTableEntryFlags implements EnumSettable {
     /**
-     * Flags indicating the nature of a Master File Table entry.
-     *
      * Default value.
      */
-    None(0x0000),
+//    None,
     /**
      * The entry is currently in use.
      */
-    InUse(0x0001),
+    InUse, // 0x0001
     /**
      * The entry is for a directory (rather than a file).
      */
-    IsDirectory(0x0002),
+    IsDirectory, // 0x0002
     /**
      * The entry is for a file that forms parts of the NTFS meta-data.
      */
-    IsMetaFile(0x0004),
+    IsMetaFile, // 0x0004
     /**
      * The entry contains index attributes.
      */
-    HasViewIndex(0x0008);
-
-    private int value;
-
-    public int getValue() {
-        return value;
-    }
-
-    private MasterFileTableEntryFlags(int value) {
-        this.value = value;
-    }
+    HasViewIndex; // 0x0008
 
     public Supplier<Integer> supplier() {
-        return this::getValue;
+        return () -> 1 << ordinal();
     }
 
     public Function<Integer, Boolean> function() {

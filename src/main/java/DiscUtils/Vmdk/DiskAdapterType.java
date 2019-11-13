@@ -22,10 +22,11 @@
 
 package DiscUtils.Vmdk;
 
+/**
+ * Enumeration of known virtual disk controller (aka adapter) types.
+ */
 public enum DiskAdapterType {
     /**
-     * Enumeration of known virtual disk controller (aka adapter) types.
-     *
      * Unknown or unspecified.
      */
     None,

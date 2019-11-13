@@ -55,7 +55,7 @@ public abstract class Inode implements IByteArraySerializable {
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        _type = InodeType.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0));
+        _type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(buffer, offset + 0)];
         _mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
         _uidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         _gidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
@@ -79,7 +79,7 @@ public abstract class Inode implements IByteArraySerializable {
             throw new IOException("Unable to read Inode type");
         }
 
-        InodeType type = InodeType.valueOf(EndianUtilities.toUInt16LittleEndian(typeData, 0));
+        InodeType type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(typeData, 0)];
         Inode inode = instantiateType(type);
         byte[] inodeData = new byte[inode.size()];
         inodeData[0] = typeData[0];

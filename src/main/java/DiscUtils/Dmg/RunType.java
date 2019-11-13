@@ -22,17 +22,29 @@
 
 package DiscUtils.Dmg;
 
-public enum RunType {
-    None,
-    Raw,
-    Zeros,
-    AdcCompressed,
-    ZlibCompressed,
-    BZlibCompressed,
-    Comment,
-    Terminator;
+import java.util.Arrays;
+
+enum RunType {
+    None(0x00000000),
+    Raw(0x00000001),
+    Zeros(0x00000002),
+    AdcCompressed(0x80000004),
+    ZlibCompressed(0x80000005),
+    BZlibCompressed(0x80000006),
+    Comment(0x7FFFFFFE),
+    Terminator(0xFFFFFFFF);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private RunType(int value) {
+        this.value = value;
+    }
 
     public static RunType valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

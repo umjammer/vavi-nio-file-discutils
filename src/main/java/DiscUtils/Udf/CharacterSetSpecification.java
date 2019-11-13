@@ -36,7 +36,7 @@ public class CharacterSetSpecification implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Type = CharacterSetType.valueOf(buffer[offset]);
+        Type = CharacterSetType.values()[buffer[offset]];
         Information = EndianUtilities.toByteArray(buffer, offset + 1, 63);
         return 64;
     }

@@ -40,7 +40,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 
 
-public class NtfsAttribute implements IDiagnosticTraceable {
+class NtfsAttribute implements IDiagnosticTraceable {
     private IBuffer _cachedRawBuffer;
 
     protected FileRecordReference _containingFile;
@@ -127,15 +127,12 @@ public class NtfsAttribute implements IDiagnosticTraceable {
     public AttributeRecord getFirstExtent() {
         if (_extents != null) {
             for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
-                NonResidentAttributeRecord nonResident = extent
-                        .getValue() instanceof NonResidentAttributeRecord ? (NonResidentAttributeRecord) extent.getValue()
-                                                                          : (NonResidentAttributeRecord) null;
-                if (nonResident == null) {
+                AttributeRecord record = extent.getValue();
+                if (!NonResidentAttributeRecord.class.isInstance(record)) {
+                    // Resident attribute, so there can only be one...
                     return extent.getValue();
                 }
-
-                // Resident attribute, so there can only be one...
-                if (nonResident.getStartVcn() == 0) {
+                if (NonResidentAttributeRecord.class.cast(record).getStartVcn() == 0) {
                     return extent.getValue();
                 }
             }
@@ -148,8 +145,8 @@ public class NtfsAttribute implements IDiagnosticTraceable {
         return _primaryRecord.getFlags();
     }
 
-    public void setFlags(EnumSet<AttributeFlags> value) {
-        _primaryRecord.setFlags(value);
+    public void addFlag(AttributeFlags value) {
+        _primaryRecord.getFlags().add(value);
         _cachedRawBuffer = null;
     }
 
@@ -163,17 +160,17 @@ public class NtfsAttribute implements IDiagnosticTraceable {
 
     public AttributeRecord getLastExtent() {
         AttributeRecord last = null;
+
         if (_extents != null) {
             long lastVcn = 0;
             for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
-                NonResidentAttributeRecord nonResident = extent
-                        .getValue() instanceof NonResidentAttributeRecord ? (NonResidentAttributeRecord) extent.getValue()
-                                                                          : (NonResidentAttributeRecord) null;
-                if (nonResident == null) {
+                AttributeRecord record = extent.getValue();
+                if (!NonResidentAttributeRecord.class.isInstance(record)) {
+                    // Resident attribute, so there can only be one...
                     return extent.getValue();
                 }
 
-                // Resident attribute, so there can only be one...
+                NonResidentAttributeRecord nonResident = NonResidentAttributeRecord.class.cast(record);
                 if (nonResident.getLastVcn() >= lastVcn) {
                     last = extent.getValue();
                     lastVcn = nonResident.getLastVcn();
@@ -317,15 +314,15 @@ public class NtfsAttribute implements IDiagnosticTraceable {
         return result;
     }
 
-    public SparseStream open(FileAccess access) {
+    SparseStream open(FileAccess access) {
         return new BufferStream(getDataBuffer(), access);
     }
 
-    public IMappedBuffer getDataBuffer() {
+    IMappedBuffer getDataBuffer() {
         return new NtfsAttributeBuffer(_file, this);
     }
 
-    public long offsetToAbsolutePos(long offset) {
+    long offsetToAbsolutePos(long offset) {
         return getDataBuffer().mapPosition(offset);
     }
 }

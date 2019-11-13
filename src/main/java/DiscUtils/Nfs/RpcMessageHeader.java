@@ -29,7 +29,7 @@ public class RpcMessageHeader {
 
     public RpcMessageHeader(XdrDataReader reader) {
         setTransactionId(reader.readUInt32());
-        RpcMessageType type = RpcMessageType.valueOf(reader.readInt32());
+        RpcMessageType type = RpcMessageType.values()[reader.readInt32()];
         if (type != RpcMessageType.Reply) {
             throw new UnsupportedOperationException("Parsing RPC call messages");
         }

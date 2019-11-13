@@ -22,6 +22,8 @@
 
 package DiscUtils.Wim;
 
+import java.util.EnumSet;
+
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
@@ -32,7 +34,7 @@ public class ShortResourceHeader {
 
     public long FileOffset;
 
-    public ResourceFlags Flags = ResourceFlags.None;
+    public EnumSet<ResourceFlags> Flags;
 
     public long OriginalSize;
 

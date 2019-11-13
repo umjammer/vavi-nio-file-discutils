@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public enum InodeFlags {
+enum InodeFlags {
 //    None,
     /**
      * The inode's data is located on the real-time device.

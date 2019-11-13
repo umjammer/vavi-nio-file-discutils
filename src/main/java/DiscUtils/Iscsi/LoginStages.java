@@ -2,13 +2,9 @@
 package DiscUtils.Iscsi;
 
 // use ordinal()
-public enum LoginStages {
+enum LoginStages {
     SecurityNegotiation,
     LoginOperationalNegotiation,
-    __dummyEnum__0,
+    __dummyEnum__2,
     FullFeaturePhase;
-
-    public static LoginStages valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -22,6 +22,7 @@
 
 package DiscUtils.Wim;
 
+import java.util.EnumSet;
 import java.util.UUID;
 
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -34,7 +35,7 @@ public class FileHeader {
 
     public int CompressionSize;
 
-    public FileFlags Flags = FileFlags.Compression;
+    public EnumSet<FileFlags> Flags;
 
     public int HeaderSize;
 

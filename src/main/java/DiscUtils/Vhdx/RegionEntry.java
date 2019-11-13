@@ -57,7 +57,7 @@ public final class RegionEntry implements IByteArraySerializable {
         guid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
         fileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
         length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        flags = RegionFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 28));
+        flags = RegionFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 28)];
         return 32;
     }
 

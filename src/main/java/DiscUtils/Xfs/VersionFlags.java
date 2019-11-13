@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  * must not operate upon the filesystem.
  * Most of the flags indicate features introduced over time.
  */
-public enum VersionFlags {
+enum VersionFlags {
 //    None,
     _dummy_0001,
     _dummy_0002,

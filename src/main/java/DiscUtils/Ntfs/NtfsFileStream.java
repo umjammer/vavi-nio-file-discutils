@@ -22,7 +22,6 @@
 
 package DiscUtils.Ntfs;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 
@@ -85,10 +84,8 @@ final class NtfsFileStream extends SparseStream {
     public void setPosition(long value) {
         assertOpen();
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             _baseStream.setPosition(value);
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -97,7 +94,7 @@ final class NtfsFileStream extends SparseStream {
             return;
         }
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             _baseStream.close();
             updateMetadata();
             _baseStream = null;
@@ -107,11 +104,9 @@ final class NtfsFileStream extends SparseStream {
     public void flush() {
         assertOpen();
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             _baseStream.flush();
             updateMetadata();
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -119,33 +114,27 @@ final class NtfsFileStream extends SparseStream {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             return _baseStream.read(buffer, offset, count);
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
     public long seek(long offset, SeekOrigin origin) {
         assertOpen();
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             return _baseStream.seek(offset, origin);
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
     public void setLength(long value) {
         assertOpen();
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             if (value != getLength()) {
                 _isDirty = true;
                 _baseStream.setLength(value);
             }
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -153,22 +142,18 @@ final class NtfsFileStream extends SparseStream {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             _isDirty = true;
             _baseStream.write(buffer, offset, count);
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
     public void clear(int count) {
         assertOpen();
 
-        try (Closeable c = new NtfsTransaction()) {
+        try (NtfsTransaction c = new NtfsTransaction()) {
             _isDirty = true;
             _baseStream.clear(count);
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 

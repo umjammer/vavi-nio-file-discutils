@@ -31,39 +31,39 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public final class AttributeDefinitionRecord {
     public static final int Size = 0xA0;
 
-    public AttributeCollationRule _collationRule = AttributeCollationRule.Binary;
+    public AttributeCollationRule collationRule = AttributeCollationRule.Binary;
 
-    public int _displayRule;
+    public int displayRule;
 
-    public EnumSet<AttributeTypeFlags> _flags;
+    public EnumSet<AttributeTypeFlags> flags;
 
-    public long _maxSize;
+    public long maxSize;
 
-    public long _minSize;
+    public long minSize;
 
-    public String _name;
+    public String name;
 
-    public AttributeType _type = AttributeType.None;
+    public AttributeType type = AttributeType.None;
 
     public void read(byte[] buffer, int offset) {
-        _name = new String(buffer, offset + 0, 128, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "")
+        name = new String(buffer, offset + 0, 128, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "")
                 .replaceFirst("\0*$", "");
-        _type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x80));
-        _displayRule = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x84);
-        _collationRule = AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x88));
-        _flags = AttributeTypeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8C));
-        _minSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x90);
-        _maxSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x98);
+        type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x80));
+        displayRule = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x84);
+        collationRule = AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x88));
+        flags = AttributeTypeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8C));
+        minSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x90);
+        maxSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x98);
     }
 
     public void write(byte[] buffer, int offset) {
-        byte[] bytes = _name.getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = name.getBytes(Charset.forName("UTF-16LE"));
         System.arraycopy(bytes, 0, buffer, offset + 0, bytes.length);
-        EndianUtilities.writeBytesLittleEndian(_type.getValue(), buffer, offset + 0x80);
-        EndianUtilities.writeBytesLittleEndian(_displayRule, buffer, offset + 0x84);
-        EndianUtilities.writeBytesLittleEndian(_collationRule.getValue(), buffer, offset + 0x88);
-        EndianUtilities.writeBytesLittleEndian((int) AttributeTypeFlags.valueOf(_flags), buffer, offset + 0x8C);
-        EndianUtilities.writeBytesLittleEndian(_minSize, buffer, offset + 0x90);
-        EndianUtilities.writeBytesLittleEndian(_maxSize, buffer, offset + 0x98);
+        EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset + 0x80);
+        EndianUtilities.writeBytesLittleEndian(displayRule, buffer, offset + 0x84);
+        EndianUtilities.writeBytesLittleEndian(collationRule.getValue(), buffer, offset + 0x88);
+        EndianUtilities.writeBytesLittleEndian((int) AttributeTypeFlags.valueOf(flags), buffer, offset + 0x8C);
+        EndianUtilities.writeBytesLittleEndian(minSize, buffer, offset + 0x90);
+        EndianUtilities.writeBytesLittleEndian(maxSize, buffer, offset + 0x98);
     }
 }

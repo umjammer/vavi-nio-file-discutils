@@ -73,8 +73,4 @@ public enum RegistryValueType {
      * A 64-bit integer.
      */
     QWord;
-
-    public static RegistryValueType valueOf(int value) {
-        return values()[value];
-    }
 }

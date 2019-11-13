@@ -111,8 +111,4 @@ public enum InodeFlag {
                 .filter(v -> v.function().apply(value))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(InodeFlag.class)));
     }
-
-    public static long valueOf(EnumSet<InodeFlag> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
-    }
 }

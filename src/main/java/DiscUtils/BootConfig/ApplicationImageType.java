@@ -22,10 +22,11 @@
 
 package DiscUtils.BootConfig;
 
+/**
+ * Enumeration of known application image types.
+ */
 public enum ApplicationImageType {
     /**
-     * Enumeration of known application image types.
-     *
      * Unknown type.
      */
     None,

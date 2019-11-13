@@ -45,8 +45,4 @@ public enum InodeFormat {
      * currently not used
      */
     Uuid;
-
-    public static InodeFormat valueOf(int value) {
-        return values()[value];
-    }
 }

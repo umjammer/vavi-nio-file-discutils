@@ -128,8 +128,7 @@ public final class LogEntry {
         StreamUtilities.readExact(logStream, logEntryBuffer, LogSectorSize, logEntryBuffer.length - LogSectorSize);
 
         EndianUtilities.writeBytesLittleEndian(0, logEntryBuffer, 4);
-        if (header.Checksum != Crc32LittleEndian
-                .compute(Crc32Algorithm.Castagnoli, logEntryBuffer, 0, header.EntryLength)) {
+        if (header.Checksum != Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, logEntryBuffer, 0, header.EntryLength)) {
             entry[0] = null;
             return false;
         }
@@ -268,8 +267,10 @@ public final class LogEntry {
 
         public boolean isValid(long sequenceNumber) {
             return SequenceNumber == sequenceNumber && _offset + LogSectorSize <= _data.length &&
-                   EndianUtilities.toUInt32LittleEndian(_data, _offset + LogSectorSize - 4) == (sequenceNumber & 0xFFFFFFFF) &&
-                   EndianUtilities.toUInt32LittleEndian(_data, _offset + 4) == ((sequenceNumber >>> 32) & 0xFFFFFFFF) &&
+                   (EndianUtilities.toUInt32LittleEndian(_data, _offset + LogSectorSize - 4) & 0xFFFFFFFFl) == (sequenceNumber &
+                                                                                                                0xFFFFFFFFl) &&
+                   (EndianUtilities.toUInt32LittleEndian(_data, _offset + 4) &
+                    0xFFFFFFFFl) == ((sequenceNumber >>> 32) & 0xFFFFFFFFl) &&
                    DataSignature == DataSectorSignature;
         }
 

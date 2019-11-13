@@ -81,7 +81,7 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
         }
         RawLocations = locations;
         for (RawLocation location : RawLocations) {
-            if ((location.Flags.ordinal() & RawLocationFlags.Ignored.ordinal()) != 0)
+            if (location.Flags == RawLocationFlags.Ignored)
                 continue;
 
             int checksum = PhysicalVolume.calcCrc(buffer, (int) location.Offset, (int) location.Length);

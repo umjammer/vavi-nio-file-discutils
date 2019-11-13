@@ -22,10 +22,11 @@
 
 package DiscUtils.BootConfig;
 
+/**
+ * Indicates the type of objects that can inherit from an object.
+ */
 public enum InheritType {
     /**
-     * Indicates the type of objects that can inherit from an object.
-     * 
      * Undefined value.
      */
     None,

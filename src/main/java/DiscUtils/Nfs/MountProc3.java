@@ -19,11 +19,11 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-// For more information, see
-// https://www.ietf.org/rfc/rfc1813.txt Appendix I: Mount Protocol
 
 package DiscUtils.Nfs;
 
+// For more information, see
+// https://www.ietf.org/rfc/rfc1813.txt Appendix I: Mount Protocol
 public enum MountProc3 {
     // Null - Do nothing
     Null,

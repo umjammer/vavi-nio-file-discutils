@@ -22,25 +22,30 @@
 
 package DiscUtils.Ntfs.Internals;
 
+import java.util.EnumSet;
+
+
+/**
+ * Flags indicating the state of a Master File Table entry.
+ *
+ * Used to filter entries in the Master File Table.
+ */
 public enum EntryStates {
     /**
-     * Flags indicating the state of a Master File Table entry.
-     *
-     * Used to filter entries in the Master File Table.
-     *
      * No entries match.
      */
-    None,
+//    None,
     /**
      * The entry is currently in use.
      */
-    InUse,
+    InUse, // 1
     /**
      * The entry is currently not in use.
      */
-    NotInUse,
+    NotInUse; // 2
+
     /**
      * All entries match.
      */
-    All
+    public static final EnumSet<EntryStates> All = EnumSet.of(InUse, NotInUse);
 }

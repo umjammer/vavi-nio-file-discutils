@@ -22,86 +22,99 @@
 
 package DiscUtils.Iscsi;
 
+import java.util.Arrays;
+
+/**
+ * Reasons for iSCSI login sucess or failure.
+ */
 public enum LoginStatusCode {
     /**
-     * Reasons for iSCSI login sucess or failure.
-     *
      * Login succeeded.
      */
-    Success,
+    Success(0),
     /**
      * The iSCSI target name has moved temporarily to a new address.
      */
-    TargetMovedTemporarily,
+    TargetMovedTemporarily(0x0101),
     /**
      * The iSCSI target name has moved permanently to a new address.
      */
-    TargetMovedPermanently,
+    TargetMovedPermanently(0x0102),
     /**
      * The Initiator was at fault.
      */
-    InitiatorError,
+    InitiatorError(0x0200),
     /**
      * The Initiator could not be authenticated, or the Target doesn't support
      * authentication.
      */
-    AuthenticationFailure,
+    AuthenticationFailure(0x0201),
     /**
      * The Initiator is not permitted to access the given Target.
      */
-    AuthorizationFailure,
+    AuthorizationFailure(0x0202),
     /**
      * The given iSCSI Target Name was not found.
      */
-    NotFound,
+    NotFound(0x0203),
     /**
      * The Target has been removed, and no new address provided.
      */
-    TargetRemoved,
+    TargetRemoved(0x0204),
     /**
      * The Target does not support this version of the iSCSI protocol.
      */
-    UnsupportedVersion,
+    UnsupportedVersion(0x0205),
     /**
      * Too many connections for this iSCSI session.
      */
-    TooManyConnections,
+    TooManyConnections(0x0206),
     /**
      * A required parameter is missing.
      */
-    MissingParameter,
+    MissingParameter(0x0207),
     /**
      * The Target does not support session spanning to this connection
      * (address).
      */
-    CannotIncludeInSession,
+    CannotIncludeInSession(0x0208),
     /**
      * The Target does not support this type of session (or not from this
      * Initiator).
      */
-    SessionTypeNotSupported,
+    SessionTypeNotSupported(0x0209),
     /**
      * Attempt to add a connection to a non-existent session.
      */
-    SessionDoesNotExist,
+    SessionDoesNotExist(0x020A),
     /**
      * An invalid request was sent during the login sequence.
      */
-    InvalidDuringLogin,
+    InvalidDuringLogin(0x020B),
     /**
      * The Target suffered an unknown hardware or software failure.
      */
-    TargetError,
+    TargetError(0x0300),
     /**
      * The iSCSI service or Target is not currently operational.
      */
-    ServiceUnavailable,
+    ServiceUnavailable(0x0301),
     /**
      * The Target is out of resources.
      */
-    OutOfResources;
+    OutOfResources(0x0302);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private LoginStatusCode(int value) {
+        this.value = value;
+    }
 
     public static LoginStatusCode valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

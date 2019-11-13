@@ -25,7 +25,7 @@ package DiscUtils.Vhdx;
 import java.util.ArrayList;
 
 
-public final class LogSequence extends ArrayList<LogEntry> {
+final class LogSequence extends ArrayList<LogEntry> {
     public LogEntry getHead() {
         return size() > 0 ? get(size() - 1) : null;
     }
@@ -46,10 +46,9 @@ public final class LogSequence extends ArrayList<LogEntry> {
         return position >= getTail().getPosition() || position < getHead().getPosition() + LogEntry.LogSectorSize;
     }
 
-    public boolean higherSequenceThan(LogSequence otherSequence) {
+    boolean higherSequenceThan(LogSequence otherSequence) {
         long other = otherSequence.size() > 0 ? otherSequence.getHead().getSequenceNumber() : 0;
         long self = size() > 0 ? getHead().getSequenceNumber() : 0;
         return self > other;
     }
-
 }

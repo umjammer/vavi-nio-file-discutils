@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum LogoutReason {
+enum LogoutReason {
     CloseSession,
     CloseConnection,
     CloseForRecovery

@@ -22,10 +22,11 @@
 
 package DiscUtils.OpticalDisk;
 
+/**
+ * The format of the optical image file.
+ */
 public enum OpticalFormat {
     /**
-     * The format of the optical image file.
-     *
      * Unspecified mode.
      */
     None,

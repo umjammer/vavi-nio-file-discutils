@@ -22,11 +22,8 @@
 
 package DiscUtils.Core.LogicalDiskManager;
 
-public enum ExtentMergeType {
+enum ExtentMergeType {
     None,
     Interleaved,
     Concatenated;
-    public static ExtentMergeType valueOf(int value) {
-        return values()[value];
-    }
 }

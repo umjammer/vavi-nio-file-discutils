@@ -26,6 +26,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public final class ServiceDiscoveryClient implements Closeable {
      * @return An array of service instances.Excluding some fields (for example
      *         the IP address) may reduce the time taken.
      */
-    public List<ServiceInstance> lookupInstances(String service, ServiceInstanceFields fields) {
+    public List<ServiceInstance> lookupInstances(String service, EnumSet<ServiceInstanceFields> fields) {
         return lookupInstances(service, "local.", fields);
     }
 
@@ -124,7 +125,7 @@ public final class ServiceDiscoveryClient implements Closeable {
      * @return An array of service instances.Excluding some fields (for example
      *         the IP address) may reduce the time taken.
      */
-    public List<ServiceInstance> lookupInstances(String service, String domain, ServiceInstanceFields fields) {
+    public List<ServiceInstance> lookupInstances(String service, String domain, EnumSet<ServiceInstanceFields> fields) {
         List<ResourceRecord> records = doLookup(service + "." + domain, RecordType.Pointer);
         List<ServiceInstance> instances = new ArrayList<>();
         for (ResourceRecord record : records) {
@@ -142,18 +143,18 @@ public final class ServiceDiscoveryClient implements Closeable {
      * @return The service instance.Excluding some fields (for example the IP
      *         address) may reduce the time taken.
      */
-    public ServiceInstance lookupInstance(String name, ServiceInstanceFields fields) {
+    public ServiceInstance lookupInstance(String name, EnumSet<ServiceInstanceFields> fields) {
         ServiceInstance instance = new ServiceInstance(name);
-        if ((fields.ordinal() & ServiceInstanceFields.DisplayName.ordinal()) != 0) {
+        if (fields.contains(ServiceInstanceFields.DisplayName)) {
             instance.setDisplayName(decodeDisplayName(name));
         }
 
-        if ((fields.ordinal() & ServiceInstanceFields.Parameters.ordinal()) != 0) {
+        if (fields.contains(ServiceInstanceFields.Parameters)) {
             instance.setParameters(lookupInstanceDetails(name));
         }
 
-        if ((fields.ordinal() & ServiceInstanceFields.DnsAddresses.ordinal()) != 0 ||
-            (fields.ordinal() & ServiceInstanceFields.IPAddresses.ordinal()) != 0) {
+        if (fields.contains(ServiceInstanceFields.DnsAddresses) ||
+            fields.contains(ServiceInstanceFields.IPAddresses)) {
             instance.setEndPoints(lookupInstanceEndpoints(name, fields));
         }
 
@@ -191,12 +192,12 @@ public final class ServiceDiscoveryClient implements Closeable {
         return sb.toString();
     }
 
-    private List<ServiceInstanceEndPoint> lookupInstanceEndpoints(String name, ServiceInstanceFields fields) {
+    private List<ServiceInstanceEndPoint> lookupInstanceEndpoints(String name, EnumSet<ServiceInstanceFields> fields) {
         List<ResourceRecord> records = doLookup(name, RecordType.Service);
         List<ServiceInstanceEndPoint> endpoints = new ArrayList<>();
         for (ResourceRecord record : records) {
             List<InetSocketAddress> ipEndPoints = null;
-            if ((fields.ordinal() & ServiceInstanceFields.IPAddresses.ordinal()) != 0) {
+            if (fields.contains(ServiceInstanceFields.IPAddresses)) {
                 ipEndPoints = new ArrayList<>();
                 List<ResourceRecord> ipRecords = doLookup(ServiceRecord.class.cast(record).getTarget(), RecordType.Address);
                 for (ResourceRecord ipRecord : ipRecords) {

@@ -84,7 +84,7 @@ public class PortMap2Mapping {
     public void write(XdrDataWriter writer) {
         writer.write(getProgram());
         writer.write(getVersion());
-        writer.write(getProtocol().ordinal());
+        writer.write(getProtocol().getValue());
         writer.write(getPort());
     }
 

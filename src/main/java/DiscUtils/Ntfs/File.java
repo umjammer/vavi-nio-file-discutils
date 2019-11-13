@@ -602,7 +602,7 @@ class File {
         return recordOffset + frs.getAttributeOffset(attrRef.getAttributeId());
     }
 
-    // TODO do be deprecated, use UUID.randomUUID()
+    // TODO to be deprecated, use UUID.randomUUID()
     private static UUID createNewGuid(INtfsContext context) {
         Random rng = context.getOptions().getRandomNumberGenerator();
         if (rng != null) {
@@ -616,13 +616,16 @@ class File {
 
     private void loadAttributes() {
         Map<Long, FileRecord> extraFileRecords = new HashMap<>();
+
         AttributeRecord attrListRec = _records.get(0).getAttribute(AttributeType.AttributeList);
         if (attrListRec != null) {
             NtfsAttribute lastAttr = null;
+
             StructuredNtfsAttribute<AttributeList> attrListAttr = StructuredNtfsAttribute.class
                     .cast(NtfsAttribute.fromRecord(this, getMftReference(), attrListRec));
             AttributeList attrList = attrListAttr.getContent();
             _attributes.add(attrListAttr);
+
             for (AttributeListRecord record : attrList) {
                 FileRecord attrFileRecord = _records.get(0);
                 if (record.BaseFileReference.getMftIndex() != _records.get(0).getMasterFileTableIndex()) {
@@ -631,12 +634,13 @@ class File {
                         if (attrFileRecord != null) {
                             extraFileRecords.put((long) attrFileRecord.getMasterFileTableIndex(), attrFileRecord);
                         }
-                    }
-                    attrFileRecord = extraFileRecords.get(record.BaseFileReference.getMftIndex());
+                    } else
+                        attrFileRecord = extraFileRecords.get(record.BaseFileReference.getMftIndex());
                 }
 
                 if (attrFileRecord != null) {
                     AttributeRecord attrRec = attrFileRecord.getAttribute(record.AttributeId);
+
                     if (attrRec != null) {
                         if (record.StartVcn == 0) {
                             lastAttr = NtfsAttribute.fromRecord(this, record.BaseFileReference, attrRec);
@@ -647,6 +651,7 @@ class File {
                     }
                 }
             }
+
             for (Map.Entry<Long, FileRecord> extraFileRecord : extraFileRecords.entrySet()) {
                 _records.add(extraFileRecord.getValue());
             }

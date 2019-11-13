@@ -44,7 +44,7 @@ public class LogoutResponse extends BaseResponse {
                                                _headerSegment._OpCode);
         }
 
-        Response = LogoutResponseCode.valueOf(headerData[headerOffset + 2]);
+        Response = LogoutResponseCode.values()[headerData[headerOffset + 2]];
         StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
         ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
         MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);

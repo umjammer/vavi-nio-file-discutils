@@ -22,18 +22,19 @@
 
 package DiscUtils.Ntfs;
 
-public class CookedDataRun {
+class CookedDataRun {
     public CookedDataRun(DataRun raw, long startVcn, long prevLcn, NonResidentAttributeRecord attributeExtent) {
         _dataRun = raw;
         _startVcn = startVcn;
         _startLcn = prevLcn + raw.getRunOffset();
         _attributeExtent = attributeExtent;
+
         if (startVcn < 0) {
-            throw new IndexOutOfBoundsException("VCN must be >= 0");
+            throw new IndexOutOfBoundsException("startVcn: VCN must be >= 0: " + startVcn);
         }
 
         if (_startLcn < 0) {
-            throw new IndexOutOfBoundsException("LCN must be >= 0");
+            throw new IndexOutOfBoundsException("prevLcn: LCN must be >= 0: " + prevLcn);
         }
     }
 
@@ -75,5 +76,9 @@ public class CookedDataRun {
 
     public long getStartVcn() {
         return _startVcn;
+    }
+
+    public String toString() {
+        return "🍳{" + _startVcn + ", " + getLength() + "}";
     }
 }

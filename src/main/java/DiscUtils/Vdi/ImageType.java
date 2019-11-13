@@ -23,14 +23,10 @@
 package DiscUtils.Vdi;
 
 /** use ordinal */
-public enum ImageType {
+enum ImageType {
     __dummyEnum__0,
     Dynamic,
     Fixed,
     Undo,
     Differencing;
-
-    public static ImageType valueOf(int i) {
-        return values()[i];
-    }
 }

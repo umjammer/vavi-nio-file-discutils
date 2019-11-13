@@ -22,10 +22,11 @@
 
 package DiscUtils.BootConfig;
 
+/**
+ * Enumeration of known object types.
+ */
 public enum ObjectType {
     /**
-     * Enumeration of known object types.
-     * 
      * An unknown type.
      */
     None,

@@ -48,6 +48,9 @@ public enum FileType {
     Differencing;
 
     public static FileType valueOf(int value) {
-        return value == -1 ? __dummyEnum__1 : values()[value]; // TODO cs accepts -1
+        return value == -1 ? __dummyEnum__1 : values()[value];
+        // TODO the original accepts -1
+        // in Footer#fromBytes(), it's possible a footer is lost
+        // so -1 means when got eof?
     }
 }

@@ -22,10 +22,11 @@
 
 package DiscUtils.Iso9660;
 
+/**
+ * Enumeration of boot device emulation modes.
+ */
 public enum BootDeviceEmulation {
     /**
-     * Enumeration of boot device emulation modes.
-     *
      * No emulation, the boot image is just loaded and executed.
      */
     NoEmulation,
@@ -45,8 +46,4 @@ public enum BootDeviceEmulation {
      * Emulates hard disk image as drive C.
      */
     HardDisk;
-
-    public static BootDeviceEmulation valueOf(int value) {
-        return values()[value];
-    }
 }

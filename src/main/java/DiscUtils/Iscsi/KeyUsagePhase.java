@@ -1,13 +1,13 @@
 
 package DiscUtils.Iscsi;
 
-public enum KeyUsagePhase {
+enum KeyUsagePhase {
     __dummyEnum__0,
     SecurityNegotiation,
     OperationalNegotiation,
-    __dummyEnum__1,
-    FullyFeatured,
-    __dummyEnum__2,
     __dummyEnum__3,
+    FullyFeatured,
+    __dummyEnum__5,
+    __dummyEnum__6,
     All
 }

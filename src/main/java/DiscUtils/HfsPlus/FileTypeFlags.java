@@ -1,7 +1,7 @@
 
 package DiscUtils.HfsPlus;
 
-public enum FileTypeFlags {
+enum FileTypeFlags {
     None(0x0),
     /** 'slnk' */
     SymLinkFileType(0x736C6E6B),

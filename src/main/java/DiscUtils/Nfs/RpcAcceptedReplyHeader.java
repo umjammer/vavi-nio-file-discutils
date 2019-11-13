@@ -36,7 +36,7 @@ public class RpcAcceptedReplyHeader {
 
     public RpcAcceptedReplyHeader(XdrDataReader reader) {
         Verifier = new RpcAuthentication(reader);
-        AcceptStatus = RpcAcceptStatus.valueOf(reader.readInt32());
+        AcceptStatus = RpcAcceptStatus.values()[reader.readInt32()];
         if (AcceptStatus == RpcAcceptStatus.ProgramVersionMismatch) {
             MismatchInfo = new RpcMismatchInfo(reader);
         }

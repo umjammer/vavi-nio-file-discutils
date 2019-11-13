@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
 
-public enum IndexEntryFlags {
+enum IndexEntryFlags {
     None,
     Node,
     End;

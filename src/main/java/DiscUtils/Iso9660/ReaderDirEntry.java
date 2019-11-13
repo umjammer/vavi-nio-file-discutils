@@ -121,7 +121,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
             // If Rock Ridge PX info is present, derive the attributes from the RR info.
             PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "PX");
             if (pfi != null) {
-                attrs = UnixFileType.toFileAttributes(UnixFileType.valueOf((pfi.FileMode >>> 12) & 0xF));
+                attrs = UnixFileType.toFileAttributes(UnixFileType.values()[(pfi.FileMode >>> 12) & 0xF]);
             }
 
             if (_fileName.startsWith(".")) {

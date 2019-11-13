@@ -22,10 +22,11 @@
 
 package DiscUtils.BootConfig;
 
+/**
+ * The known formats used to store BCD values.
+ */
 public enum ElementFormat {
     /**
-     * The known formats used to store BCD values.
-     * 
      * Unknown format.
      */
     None,

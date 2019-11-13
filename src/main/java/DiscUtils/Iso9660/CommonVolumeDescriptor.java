@@ -98,9 +98,9 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
         OptionalTypeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 144);
         TypeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 148));
         OptionalTypeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 152));
-        DirectoryRecord[] refVar___0 = new DirectoryRecord[1];
-        DirectoryRecord.readFrom(src, offset + 156, CharacterEncoding, refVar___0);
-        RootDirectory = refVar___0[0];
+        DirectoryRecord[] directoryRecord = new DirectoryRecord[1];
+        DirectoryRecord.readFrom(src, offset + 156, CharacterEncoding, directoryRecord);
+        RootDirectory = directoryRecord[0];
         VolumeSetIdentifier = IsoUtilities.readChars(src, offset + 190, 318 - 190, CharacterEncoding);
         PublisherIdentifier = IsoUtilities.readChars(src, offset + 318, 446 - 318, CharacterEncoding);
         DataPreparerIdentifier = IsoUtilities.readChars(src, offset + 446, 574 - 446, CharacterEncoding);
@@ -135,13 +135,9 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
         LogicalBlockSize = IsoUtilities.SectorSize;
         PathTableSize = pathTableSize;
         TypeLPathTableLocation = typeLPathTableLocation;
-        /**
-         * /OptionalTypeLPathTableLocation = 0;
-         */
+//        OptionalTypeLPathTableLocation = 0;
         TypeMPathTableLocation = typeMPathTableLocation;
-        /**
-         * /OptionalTypeMPathTableLocation = 0;
-         */
+//        OptionalTypeMPathTableLocation = 0;
         RootDirectory = new DirectoryRecord();
         RootDirectory.ExtendedAttributeRecordLength = 0;
         RootDirectory.LocationOfExtent = rootDirExtentLocation;
@@ -163,8 +159,7 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
         ModificationDateAndTime = buildTime;
         ExpirationDateAndTime = Long.MIN_VALUE;
         EffectiveDateAndTime = buildTime;
-        FileStructureVersion = 1;
+        FileStructureVersion = 1; // V1
     }
 }
 
-// V1

@@ -38,10 +38,6 @@ class DataRun {
         return _isSparse;
     }
 
-    public void setIsSparse(boolean value) {
-        _isSparse = value;
-    }
-
     private long _runLength;
 
     public long getRunLength() {
@@ -70,7 +66,7 @@ class DataRun {
     }
 
     public int read(byte[] buffer, int offset) {
-        int runOffsetSize = (buffer[offset] >>> 4) & 0x0F;
+        int runOffsetSize = ((buffer[offset] & 0xff) >>> 4) & 0x0F;
         int runLengthSize = buffer[offset] & 0x0F;
 
         _runLength = readVarLong(buffer, offset + 1, runLengthSize);
@@ -118,7 +114,7 @@ class DataRun {
         int pos = 0;
         do {
             buffer[offset + pos] = (byte) (val & 0xFF);
-            val >>>= 8;
+            val >>= 8;
             pos++;
         } while (val != 0 && val != -1);
 
@@ -142,7 +138,7 @@ class DataRun {
         int len = 0;
         do {
             lastByteHighBitSet = (val & 0x80) != 0;
-            val >>>= 8;
+            val >>= 8;
             len++;
         } while (val != 0 && val != -1);
 

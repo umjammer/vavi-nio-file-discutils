@@ -25,8 +25,6 @@ package DiscUtils.Ntfs;
 import java.util.ArrayList;
 import java.util.List;
 
-import vavi.util.Debug;
-
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Buffer.IMappedBuffer;
@@ -84,12 +82,12 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         for (Range range : _activeStream.getStoredClusters()) {
             extents.add(new StreamExtent(range.getOffset() * _bytesPerCluster, range.getCount() * _bytesPerCluster));
         }
-Debug.println(extents + ", " + new StreamExtent(0, getCapacity()));
+//Debug.println(extents + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(extents, new StreamExtent(0, getCapacity()));
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-Debug.println(getExtents() + ", " + new StreamExtent(start, count));
+//Debug.println(getExtents() + ", " + new StreamExtent(start, count));
         return StreamExtent.intersect(getExtents(), new StreamExtent(start, count));
     }
 

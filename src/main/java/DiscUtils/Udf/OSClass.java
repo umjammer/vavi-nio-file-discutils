@@ -1,7 +1,7 @@
 
 package DiscUtils.Udf;
 
-public enum OSClass {
+enum OSClass {
     None,
     Dos,
     OS2,
@@ -12,8 +12,4 @@ public enum OSClass {
     Os400,
     BeOS,
     WindowsCe;
-
-    public static OSClass valueOf(int value) {
-        return values()[value];
-    }
 }

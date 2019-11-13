@@ -30,7 +30,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.Sizes;
 
 
-public class BiosParameterBlock {
+class BiosParameterBlock {
     static final String NTFS_OEM_ID = "NTFS    ";
 
     // Value: 0x80 (first hard disk)

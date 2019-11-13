@@ -34,7 +34,7 @@ public class RpcReplyHeader {
     }
 
     public RpcReplyHeader(XdrDataReader reader) {
-        Status = RpcReplyStatus.valueOf(reader.readInt32());
+        Status = RpcReplyStatus.values()[reader.readInt32()];
         if (Status == RpcReplyStatus.Accepted) {
             AcceptReply = new RpcAcceptedReplyHeader(reader);
         } else {

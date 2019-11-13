@@ -74,7 +74,7 @@ public class LoginResponse extends BaseResponse {
     private void unpackState(byte value) {
         Transit = (value & 0x80) != 0;
         Continue = (value & 0x40) != 0;
-        CurrentStage = LoginStages.valueOf((value >>> 2) & 0x3);
-        NextStage = LoginStages.valueOf(value & 0x3);
+        CurrentStage = LoginStages.values()[(value >>> 2) & 0x3];
+        NextStage = LoginStages.values()[value & 0x3];
     }
 }

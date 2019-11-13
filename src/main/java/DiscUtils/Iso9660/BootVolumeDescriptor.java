@@ -30,25 +30,25 @@ public class BootVolumeDescriptor extends BaseVolumeDescriptor {
 
     public BootVolumeDescriptor(int catalogSector) {
         super(VolumeDescriptorType.Boot, (byte) 1);
-        __CatalogSector = catalogSector;
+        _catalogSector = catalogSector;
     }
 
     public BootVolumeDescriptor(byte[] src, int offset) {
         super(src, offset);
-        __SystemId = EndianUtilities.bytesToString(src, offset + 0x7, 0x20).replaceFirst("\0*$", "");
-        __CatalogSector = EndianUtilities.toUInt32LittleEndian(src, offset + 0x47);
+        _systemId = EndianUtilities.bytesToString(src, offset + 0x7, 0x20).replaceFirst("\0*$", "");
+        _catalogSector = EndianUtilities.toUInt32LittleEndian(src, offset + 0x47);
     }
 
-    private int __CatalogSector;
+    private int _catalogSector;
 
     public int getCatalogSector() {
-        return __CatalogSector;
+        return _catalogSector;
     }
 
-    private String __SystemId;
+    private String _systemId;
 
     public String getSystemId() {
-        return __SystemId;
+        return _systemId;
     }
 
     public void writeTo(byte[] buffer, int offset) {

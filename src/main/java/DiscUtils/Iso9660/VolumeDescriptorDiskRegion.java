@@ -27,7 +27,7 @@ import java.io.IOException;
 import DiscUtils.Streams.Builder.BuilderExtent;
 
 
-public abstract class VolumeDescriptorDiskRegion extends BuilderExtent {
+abstract class VolumeDescriptorDiskRegion extends BuilderExtent {
     private byte[] _readCache;
 
     public VolumeDescriptorDiskRegion(long start) {

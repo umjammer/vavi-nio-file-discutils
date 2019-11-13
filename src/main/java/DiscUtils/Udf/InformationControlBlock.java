@@ -57,7 +57,7 @@ public class InformationControlBlock implements IByteArraySerializable {
         _FileType = FileType.valueOf(buffer[offset + 11]);
         ParentICBLocation = EndianUtilities.<LogicalBlockAddress> toStruct(LogicalBlockAddress.class, buffer, offset + 12);
         short flagsField = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
-        _AllocationType = AllocationType.valueOf(flagsField & 0x3);
+        _AllocationType = AllocationType.values()[flagsField & 0x3];
         Flags = InformationControlBlockFlags.valueOf(flagsField & 0xFFFC);
         return 20;
     }

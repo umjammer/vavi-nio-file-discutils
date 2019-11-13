@@ -245,7 +245,7 @@ public class HfsPlusUtilities {
         result.setUserId(EndianUtilities.toInt32BigEndian(buffer, offset + 0));
         result.setGroupId(EndianUtilities.toInt32BigEndian(buffer, offset + 4));
         short fileMode = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
-        result.setFileType(UnixFileType.valueOf((fileMode >>> 12) & 0xF));
+        result.setFileType(UnixFileType.values()[(fileMode >>> 12) & 0xF]);
         result.setPermissions(UnixFilePermissions.valueOf(fileMode & 0xFFF));
         special[0] = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
         if (result.getFileType() == UnixFileType.Block || result.getFileType() == UnixFileType.Character) {

@@ -30,8 +30,8 @@ public class UdfEntityIdentifier extends EntityIdentifier {
     public String toString() {
         String major = String.format("%02x", Suffix[1]);
         String minor = String.format("%02x", Suffix[0]);
-        OSClass osClass = OSClass.valueOf(Suffix[2]);
-        OSIdentifier osId = OSIdentifier.valueOf(EndianUtilities.toUInt16BigEndian(Suffix, 2));
+        OSClass osClass = OSClass.values()[Suffix[2]];
+        OSIdentifier osId = OSIdentifier.values()[EndianUtilities.toUInt16BigEndian(Suffix, 2)];
         return String.format("%s [UDF %s.%s : OS %s %s]", Identifier, major, minor, osClass, osId);
     }
 }

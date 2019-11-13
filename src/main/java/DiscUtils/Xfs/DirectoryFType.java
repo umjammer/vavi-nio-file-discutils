@@ -28,7 +28,7 @@ package DiscUtils.Xfs;
  *
  * use ordinal
  */
-public enum DirectoryFType {
+enum DirectoryFType {
     __dummyEnum__0,
     /**
      * Entry points to a file.
@@ -62,8 +62,4 @@ public enum DirectoryFType {
      * Entry points to an overlayfs whiteout file.
      */
     Whiteout;
-
-    public static DirectoryFType valueOf(int value) {
-        return values()[value];
-    }
 }

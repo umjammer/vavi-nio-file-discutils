@@ -39,76 +39,76 @@ public class LunInfo {
             String vendor,
             String product,
             String revision) {
-        __Target = targetInfo;
-        __Lun = lun;
-        __DeviceType = type;
-        __Removable = removable;
-        __VendorId = vendor;
-        __ProductId = product;
-        __ProductRevision = revision;
+        _target = targetInfo;
+        _lun = lun;
+        _deviceType = type;
+        _removable = removable;
+        _vendorId = vendor;
+        _productId = product;
+        _productRevision = revision;
     }
 
     /**
      * Gets the type (or class) of this device.
      */
-    private LunClass __DeviceType = LunClass.BlockStorage;
+    private LunClass _deviceType = LunClass.BlockStorage;
 
     public LunClass getDeviceType() {
-        return __DeviceType;
+        return _deviceType;
     }
 
     /**
      * Gets the Logical Unit Number of this device.
      */
-    private long __Lun;
+    private long _lun;
 
     public long getLun() {
-        return __Lun;
+        return _lun;
     }
 
     /**
      * Gets the product id (name) for this device.
      */
-    private String __ProductId;
+    private String _productId;
 
     public String getProductId() {
-        return __ProductId;
+        return _productId;
     }
 
     /**
      * Gets the product revision for this device.
      */
-    private String __ProductRevision;
+    private String _productRevision;
 
     public String getProductRevision() {
-        return __ProductRevision;
+        return _productRevision;
     }
 
     /**
      * Gets a value indicating whether this Lun has removable media.
      */
-    private boolean __Removable;
+    private boolean _removable;
 
     public boolean getRemovable() {
-        return __Removable;
+        return _removable;
     }
 
     /**
      * Gets info about the target hosting this LUN.
      */
-    private TargetInfo __Target;
+    private TargetInfo _target;
 
     public TargetInfo getTarget() {
-        return __Target;
+        return _target;
     }
 
     /**
      * Gets the vendor id (registered name) for this device.
      */
-    private String __VendorId;
+    private String _vendorId;
 
     public String getVendorId() {
-        return __VendorId;
+        return _vendorId;
     }
 
     /**

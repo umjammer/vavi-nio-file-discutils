@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 /**
  * Read-write incompatible feature flags.
  */
-public enum IncompatibleFeatures {
+enum IncompatibleFeatures {
 //    None,
     /**
      * Directory file type. Each directory entry tracks the

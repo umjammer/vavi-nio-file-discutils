@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum TaskAttributes {
+enum TaskAttributes {
     Untagged,
     Simple,
     Ordered,

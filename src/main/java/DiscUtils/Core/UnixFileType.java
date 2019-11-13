@@ -45,35 +45,31 @@ public enum UnixFileType {
      * A character device.
      */
     Character,
-    __dummyEnum__0,
+    __dummyEnum__3,
     /**
      * A normal directory.
      */
     Directory,
-    __dummyEnum__1,
+    __dummyEnum__5,
     /**
      * A block device.
      */
     Block,
-    __dummyEnum__2,
+    __dummyEnum__7,
     /**
      * A regular file.
      */
     Regular,
-    __dummyEnum__3,
+    __dummyEnum__9,
     /**
      * A soft link.
      */
     Link,
-    __dummyEnum__4,
+    __dummyEnum__b,
     /**
      * A unix socket.
      */
     Socket;
-
-    public static UnixFileType valueOf(int value) {
-        return values()[value];
-    }
 
     public static EnumSet<FileAttributes> toFileAttributes(UnixFileType fileType) {
         switch (fileType) {

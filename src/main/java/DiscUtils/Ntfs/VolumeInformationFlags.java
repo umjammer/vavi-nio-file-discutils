@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public enum VolumeInformationFlags {
+enum VolumeInformationFlags {
 //    None,
     Dirty,
     ResizeLogFile,

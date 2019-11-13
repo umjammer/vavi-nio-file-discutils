@@ -25,8 +25,6 @@ package DiscUtils.Ntfs;
 import java.util.Arrays;
 import java.util.List;
 
-import vavi.util.Debug;
-
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Buffer.Buffer;
 import DiscUtils.Streams.Buffer.IBuffer;
@@ -88,6 +86,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         // Limit read to length of attribute
         int totalToRead = (int) Math.min(count, getCapacity() - pos);
         int toRead = totalToRead;
+
         // Handle uninitialized bytes at end of attribute
         if (pos + totalToRead > record.getInitializedDataLength()) {
             if (pos >= record.getInitializedDataLength()) {
@@ -108,6 +107,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         int numRead = 0;
         while (numRead < toRead) {
             IBuffer extentBuffer = _attribute.getRawBuffer();
+
             int justRead = extentBuffer.read(pos + numRead, buffer, offset + numRead, toRead - numRead);
             if (justRead == 0) {
                 break;
@@ -115,6 +115,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
 
             numRead += justRead;
         }
+
         return totalToRead;
     }
 
@@ -133,24 +134,27 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
 
     public void write(long pos, byte[] buffer, int offset, int count) {
         AttributeRecord record = _attribute.getPrimaryRecord();
+
         if (!canWrite()) {
             throw new IOException("Attempt to write to file not opened for write");
         }
 
         StreamUtilities.assertBufferParameters(buffer, offset, count);
+
         if (count == 0) {
             return;
         }
 
         _attribute.getRawBuffer().write(pos, buffer, offset, count);
+
         if (!record.isNonResident()) {
             _file.markMftRecordDirty();
         }
-
     }
 
     public void clear(long pos, int count) {
         AttributeRecord record = _attribute.getPrimaryRecord();
+
         if (!canWrite()) {
             throw new IOException("Attempt to write to file not opened for write");
         }
@@ -160,14 +164,14 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         }
 
         _attribute.getRawBuffer().clear(pos, count);
+
         if (!record.isNonResident()) {
             _file.markMftRecordDirty();
         }
-
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-Debug.println(count + ", " + _attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
+//Debug.println(count + ", " + _attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(_attribute.getRawBuffer().getExtentsInRange(start, count),
                                       new StreamExtent(0, getCapacity()));
     }

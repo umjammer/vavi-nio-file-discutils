@@ -22,13 +22,25 @@
 
 package DiscUtils.HfsPlus;
 
-public enum BTreeNodeKind {
-    LeafNode,
-    IndexNode,
-    HeaderNode,
-    MapNode;
+import java.util.Arrays;
+
+enum BTreeNodeKind {
+    LeafNode(-1),
+    IndexNode(0),
+    HeaderNode(1),
+    MapNode(2);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private BTreeNodeKind(int value) {
+        this.value = value;
+    }
 
     public static BTreeNodeKind valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

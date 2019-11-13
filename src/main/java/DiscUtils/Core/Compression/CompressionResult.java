@@ -22,21 +22,17 @@
 
 package DiscUtils.Core.Compression;
 
+/**
+ * Possible results of attempting to compress data.
+ *
+ * A compression routine may return {@code Compressed} , even if the data was
+ * 'all zeros' or increased in size. The {@code AllZeros} and
+ * {@code Incompressible} values are for algorithms that include special
+ * detection for these cases.
+ */
 public enum CompressionResult {
     /**
-     * Possible results of attempting to compress data.
-     *
-     * A compression routine may return
-     * {@code Compressed}
-     * , even if the data
-     * was 'all zeros' or increased in size. The
-     * {@code AllZeros}
-     * and
-     * {@code Incompressible}
-     *
-     * values are for algorithms that include special detection for these cases.
-     *
-     * The data compressed succesfully.
+     * The data compressed successfully.
      */
     Compressed,
     /**

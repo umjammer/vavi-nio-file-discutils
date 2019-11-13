@@ -50,7 +50,7 @@ public abstract class DatabaseRecord {
     public static DatabaseRecord readFrom(byte[] buffer, int[] offset) {
         DatabaseRecord result = null;
         if (EndianUtilities.toInt32BigEndian(buffer, offset[0] + 0xC) != 0) {
-            switch (RecordType.valueOf(buffer[offset[0] + 0x13] & 0xF)) {
+            switch (RecordType.values()[buffer[offset[0] + 0x13] & 0xF]) {
             case Volume:
                 result = new VolumeRecord();
                 break;
@@ -135,7 +135,7 @@ public abstract class DatabaseRecord {
         Counter = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
         Valid = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
         Flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
-        _RecordType = RecordType.valueOf(Flags & 0xF);
+        _RecordType = RecordType.values()[Flags & 0xF];
         DataLength = EndianUtilities.toUInt32BigEndian(buffer, 0x14);
     }
 }

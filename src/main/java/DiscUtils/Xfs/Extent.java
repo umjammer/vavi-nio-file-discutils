@@ -82,7 +82,7 @@ public class Extent implements IByteArraySerializable {
         setBlockCount((int) (lower & 0x001FFFFF));
         setStartBlock((middle >>> 5) & 0x000FFFFFFFFFFFFFl);
         setStartOffset((upper >>> 9) & 0x003FFFFFFFFFFFFFl);
-        setFlag(ExtentFlag.valueOf((buffer[offset + 0x0] >>> 6) & 0x3));
+        setFlag(ExtentFlag.values()[(buffer[offset + 0x0] >>> 6) & 0x3]);
         return size();
     }
 

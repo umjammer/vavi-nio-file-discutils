@@ -1,10 +1,11 @@
 
 package DiscUtils.Core;
 
+/**
+ * Enumeration of the health status of a logical volume.
+ */
 public enum LogicalVolumeStatus {
     /**
-     * Enumeration of the health status of a logical volume.
-     *
      * The volume is healthy and fully functional.
      */
     Healthy,
@@ -16,7 +17,4 @@ public enum LogicalVolumeStatus {
      * The volume is wholey, or partly, inaccessible.
      */
     Failed;
-    public static LogicalVolumeStatus valueOf(int value) {
-        return values()[value];
-    }
 }

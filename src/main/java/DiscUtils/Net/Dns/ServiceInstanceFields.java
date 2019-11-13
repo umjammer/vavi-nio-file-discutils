@@ -22,39 +22,31 @@
 
 package DiscUtils.Net.Dns;
 
+import java.util.EnumSet;
+
+/**
+ * Flags controlling which details are discovered for a particular DNS-SD
+ * service.
+ */
 public enum ServiceInstanceFields {
     /**
-     * Flags controlling which details are discovered for a particular DNS-SD
-     * service.
-     *
      * Resolves the display name for the service.
      */
-    __dummyEnum__0,
-    DisplayName,
+    DisplayName, // 0x01
     /**
      * Resolves the parameters for the service (held in TXT records).
      */
-    Parameters,
-    __dummyEnum__1,
+    Parameters, // 0x02
     /**
      * Resolves the DNS address for the service (held in SRV records).
      */
-    DnsAddresses,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
+    DnsAddresses, // 0x04
     /**
      * Resolves the IP address(es) for the service.
      */
-    IPAddresses,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    __dummyEnum__9,
-    __dummyEnum__10,
+    IPAddresses; // 0x08
     /**
      * Resolves all fields.
      */
-    All
+    public static final EnumSet<ServiceInstanceFields> All = EnumSet.of(DisplayName, Parameters, DnsAddresses, IPAddresses);
 }

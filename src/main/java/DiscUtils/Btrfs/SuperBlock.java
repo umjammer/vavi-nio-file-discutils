@@ -443,7 +443,7 @@ public class SuperBlock implements IByteArraySerializable {
         setCompatFlags(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xac));
         setCompatRoFlags(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xb4));
         setIncompatFlags(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xbc));
-        setChecksumType(ChecksumType.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0xc4)));
+        setChecksumType(ChecksumType.values()[EndianUtilities.toUInt16LittleEndian(buffer, offset + 0xc4)]);
         setRootLevel(buffer[offset + 0xc6]);
         setChunkRootLevel(buffer[offset + 0xc7]);
         setLogRootLevel(buffer[offset + 0xc8]);

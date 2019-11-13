@@ -22,10 +22,11 @@
 
 package DiscUtils.Vhdx;
 
+/**
+ * The known types of VHDX disks.
+ */
 public enum DiskType {
     /**
-     * The known types of VHDX disks.
-     *
      * Unknown type.
      */
     None,

@@ -131,7 +131,7 @@ public class WimFile {
                 numRead += ResourceInfo.Size;
                 ResourceInfo info = new ResourceInfo();
                 info.read(resBuffer, 0);
-                if ((info.Header.Flags.ordinal() & ResourceFlags.MetaData.ordinal()) != 0) {
+                if (info.Header.Flags.contains(ResourceFlags.MetaData)) {
                     if (i == index) {
                         return info.Header;
                     }
@@ -161,13 +161,13 @@ public class WimFile {
 
     public SparseStream openResourceStream(ShortResourceHeader hdr) {
         SparseStream fileSectionStream = new SubStream(_fileStream, Ownership.None, hdr.FileOffset, hdr.CompressedSize);
-        if ((hdr.Flags.ordinal() & ResourceFlags.Compressed.ordinal()) == 0) {
+        if (!hdr.Flags.contains(ResourceFlags.Compressed)) {
             return fileSectionStream;
         }
 
         return new FileResourceStream(fileSectionStream,
                                       hdr,
-                                      (_fileHeader.Flags.ordinal() & FileFlags.LzxCompression.ordinal()) != 0,
+                                      _fileHeader.Flags.contains(FileFlags.LzxCompression),
                                       _fileHeader.CompressionSize);
     }
 

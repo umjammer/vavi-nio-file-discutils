@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum SessionType {
+enum SessionType {
     @ProtocolKeyValueAttribute(name = "Discovery")
     Discovery,
     @ProtocolKeyValueAttribute(name = "Normal")

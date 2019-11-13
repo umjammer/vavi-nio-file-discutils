@@ -102,6 +102,6 @@ public class File implements IVfsFile {
     }
 
     private static EnumSet<FileAttributes> fromMode(int mode) {
-        return UnixFileType.toFileAttributes(UnixFileType.valueOf((mode >>> 12) & 0xF));
+        return UnixFileType.toFileAttributes(UnixFileType.values()[(mode >>> 12) & 0xF]);
     }
 }

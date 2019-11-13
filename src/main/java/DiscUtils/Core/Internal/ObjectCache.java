@@ -98,7 +98,7 @@ public class ObjectCache<K, V> {
         if (_nextPruneCount > PruneGap) {
             List<K> toPrune = new ArrayList<>();
             for (Map.Entry<K, WeakReference<V>> entry : _entries.entrySet()) {
-                if (!entry.getValue().isEnqueued()) {
+                if (entry.getValue().get() == null) {
                     toPrune.add(entry.getKey());
                 }
             }
@@ -124,5 +124,22 @@ public class ObjectCache<K, V> {
             _recent.remove(_recent.size() - 1);
         }
         _recent.add(0, new Tuple<>(key, val));
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append(_entries.size());
+        sb.append("]");
+        sb.append("{");
+        _entries.entrySet().forEach(e -> {
+            sb.append(e.getKey());
+            sb.append('=');
+            sb.append(e.getValue().get());
+            sb.append(", ");
+        });
+        sb.setLength(sb.length() - 2);
+        sb.append("}");
+        return sb.toString();
     }
 }

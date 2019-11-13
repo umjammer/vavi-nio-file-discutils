@@ -25,8 +25,4 @@ package DiscUtils.Nfs;
 public enum RpcMessageType {
     Call,
     Reply;
-
-    public static RpcMessageType valueOf(int value) {
-        return values()[value];
-    }
 }

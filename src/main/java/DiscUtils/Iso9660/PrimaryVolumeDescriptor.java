@@ -69,12 +69,9 @@ public class PrimaryVolumeDescriptor extends CommonVolumeDescriptor {
         IsoUtilities.writeAChars(buffer, offset + 318, 129, PublisherIdentifier);
         IsoUtilities.writeAChars(buffer, offset + 446, 129, DataPreparerIdentifier);
         IsoUtilities.writeAChars(buffer, offset + 574, 129, ApplicationIdentifier);
-        IsoUtilities.writeDChars(buffer, offset + 702, 37, CopyrightFileIdentifier);
-        // FIXME!!
-        IsoUtilities.writeDChars(buffer, offset + 739, 37, AbstractFileIdentifier);
-        // FIXME!!
-        IsoUtilities.writeDChars(buffer, offset + 776, 37, BibliographicFileIdentifier);
-        // FIXME!!
+        IsoUtilities.writeDChars(buffer, offset + 702, 37, CopyrightFileIdentifier); // FIXME!!
+        IsoUtilities.writeDChars(buffer, offset + 739, 37, AbstractFileIdentifier); // FIXME!!
+        IsoUtilities.writeDChars(buffer, offset + 776, 37, BibliographicFileIdentifier); // FIXME!!
         IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 813, CreationDateAndTime);
         IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 830, ModificationDateAndTime);
         IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 847, ExpirationDateAndTime);

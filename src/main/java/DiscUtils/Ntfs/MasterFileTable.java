@@ -129,9 +129,11 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public MasterFileTable(INtfsContext context) {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
+
         _recordCache = new ObjectCache<>();
         _recordSize = bpb.getMftRecordSize();
         _bytesPerSector = bpb.getBytesPerSector();
+
         // Temporary record stream - until we've bootstrapped the MFT properly
         _recordStream = new SubStream(context.getRawStream(),
                                       bpb._mftCluster * bpb.getSectorsPerCluster() * bpb.getBytesPerSector(),
@@ -144,11 +146,11 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
      */
     public List<FileRecord> getRecords() {
         List<FileRecord> result = new ArrayList<>();
-
         try (Stream mftStream = _self.openStream(AttributeType.Data, null, FileAccess.Read)) {
             int index = 0;
             while (mftStream.getPosition() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
+
                 if (!EndianUtilities.bytesToString(recordData, 0, 4).equals("FILE")) {
                     continue;
                 }
@@ -211,6 +213,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public void initialize(File file) {
         _self = file;
+
         if (_recordStream != null) {
             try {
                 _recordStream.close();
@@ -221,6 +224,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
         NtfsStream bitmapStream = _self.getStream(AttributeType.Bitmap, null);
         _bitmap = new Bitmap(bitmapStream.open(FileAccess.ReadWrite), Long.MAX_VALUE);
+
         NtfsStream recordsStream = _self.getStream(AttributeType.Data, null);
         _recordStream = recordsStream.open(FileAccess.ReadWrite);
     }
@@ -291,6 +295,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
             throw new dotnet4j.io.IOException("MFT too fragmented - unable to allocate MFT overflow record");
         }
+
         index = _bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
 
         if (index * _recordSize >= _recordStream.getLength()) {
@@ -320,10 +325,12 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public FileRecord allocateRecord(long index, EnumSet<FileRecordFlags> flags) {
         _bitmap.markPresent(index);
+
         FileRecord newRecord = new FileRecord(_bytesPerSector, _recordSize, (int) index);
         _recordCache.set___idx(index, newRecord);
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
+
         writeRecord(newRecord);
         _self.updateRecordInMft();
         return newRecord;
@@ -333,6 +340,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         FileRecord record = getRecord(fileRef.getMftIndex(), false);
         record.reset();
         writeRecord(record);
+
         _recordCache.remove(fileRef.getMftIndex());
         _bitmap.markAbsent(fileRef.getMftIndex());
         _self.updateRecordInMft();
@@ -340,6 +348,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public FileRecord getRecord(FileRecordReference fileReference) {
         FileRecord result = getRecord(fileReference.getMftIndex(), false);
+
         if (result != null) {
             if (fileReference.getSequenceNumber() != 0 && result.getSequenceNumber() != 0) {
                 if (fileReference.getSequenceNumber() != result.getSequenceNumber()) {
@@ -358,6 +367,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
     public FileRecord getRecord(long index, boolean ignoreMagic, boolean ignoreBitmap) {
         if (ignoreBitmap || _bitmap == null || _bitmap.isPresent(index)) {
             FileRecord result = _recordCache.get___idx(index);
+//if (NonResidentAttributeBuffer.debug) Debug.println(result + " / " + _recordCache);
             if (result != null) {
                 return result;
             }
@@ -484,6 +494,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     private static void wipe(Stream s) {
         s.setPosition(0);
+
         byte[] buffer = new byte[(int) (64 * Sizes.OneKiB)];
         int numWiped = 0;
         while (numWiped < s.getLength()) {

@@ -30,8 +30,6 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.VirtualDiskExtent;
@@ -368,7 +366,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public Stream openRegion(UUID region) {
         RegionEntry metadataRegion = _regionTable.Regions.get(region);
-Debug.println(_logicalStream + ", " + metadataRegion);
         return new SubStream(_logicalStream, metadataRegion.fileOffset, metadataRegion.getLength());
     }
 

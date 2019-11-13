@@ -162,7 +162,7 @@ public class FileResourceStream extends SparseStream {
         }
 
         Stream rawChunkStream = new SubStream(_baseStream, _offsetDelta + _chunkOffsets[chunk], _chunkLength[chunk]);
-        if ((_header.Flags.ordinal() & ResourceFlags.Compressed.ordinal()) != 0 && _chunkLength[chunk] != targetUncompressed) {
+        if (_header.Flags.contains(ResourceFlags.Compressed) && _chunkLength[chunk] != targetUncompressed) {
             if (_lzxCompression) {
                 return new LzxStream(rawChunkStream, 15, E8DecodeFileSize);
             }

@@ -22,13 +22,15 @@
 
 package DiscUtils.Nfs;
 
+import dotnet4j.io.compat.Utilities;
+
 public final class Nfs3WriteResult extends Nfs3CallResult {
     public Nfs3WriteResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
         setCacheConsistency(new Nfs3WeakCacheConsistency(reader));
         if (getStatus() == Nfs3Status.Ok) {
             setCount(reader.readInt32());
-            setHowCommitted(Nfs3StableHow.valueOf(reader.readInt32()));
+            setHowCommitted(Nfs3StableHow.values()[reader.readInt32()]);
             setWriteVerifier(reader.readUInt64());
         }
     }
@@ -36,44 +38,44 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
     public Nfs3WriteResult() {
     }
 
-    private Nfs3WeakCacheConsistency __CacheConsistency;
+    private Nfs3WeakCacheConsistency _cacheConsistency;
 
     public Nfs3WeakCacheConsistency getCacheConsistency() {
-        return __CacheConsistency;
+        return _cacheConsistency;
     }
 
     public void setCacheConsistency(Nfs3WeakCacheConsistency value) {
-        __CacheConsistency = value;
+        _cacheConsistency = value;
     }
 
-    private int __Count;
+    private int _count;
 
     public int getCount() {
-        return __Count;
+        return _count;
     }
 
     public void setCount(int value) {
-        __Count = value;
+        _count = value;
     }
 
-    private Nfs3StableHow __HowCommitted = Nfs3StableHow.Unstable;
+    private Nfs3StableHow _howCommitted = Nfs3StableHow.Unstable;
 
     public Nfs3StableHow getHowCommitted() {
-        return __HowCommitted;
+        return _howCommitted;
     }
 
     public void setHowCommitted(Nfs3StableHow value) {
-        __HowCommitted = value;
+        _howCommitted = value;
     }
 
-    private long __WriteVerifier;
+    private long _writeVerifier;
 
     public long getWriteVerifier() {
-        return __WriteVerifier;
+        return _writeVerifier;
     }
 
     public void setWriteVerifier(long value) {
-        __WriteVerifier = value;
+        _writeVerifier = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -84,7 +86,6 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
             writer.write(getHowCommitted().ordinal());
             writer.write(getWriteVerifier());
         }
-
     }
 
     public boolean equals(Object obj) {
@@ -96,12 +97,12 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getCacheConsistency().equals(getCacheConsistency()) &&
+        return other._status == _status && other.getCacheConsistency().equals(getCacheConsistency()) &&
                other.getCount() == getCount() && other.getWriteVerifier() == getWriteVerifier() &&
                other.getHowCommitted() == getHowCommitted();
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getCacheConsistency(), getCount(), getWriteVerifier(), getHowCommitted());
+        return Utilities.getCombinedHashCode(_status, _cacheConsistency, _count, _writeVerifier, _howCommitted);
     }
 }

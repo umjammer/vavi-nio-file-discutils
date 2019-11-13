@@ -51,7 +51,7 @@ public abstract class CommonCatalogFileInfo implements IByteArraySerializable {
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        RecordType = CatalogRecordType.valueOf(EndianUtilities.toInt16BigEndian(buffer, offset + 0));
+        RecordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
         FileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 8));
         CreateTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 12);
         ContentModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 16);

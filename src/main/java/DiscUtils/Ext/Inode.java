@@ -89,7 +89,7 @@ public class Inode implements IByteArraySerializable {
     public short UserIdLow;
 
     public UnixFileType getFileType() {
-        return UnixFileType.valueOf(((Mode & 0xffff) >>> 12) & 0xff);
+        return UnixFileType.values()[((Mode & 0xffff) >>> 12) & 0xff];
     }
 
     public int size() {

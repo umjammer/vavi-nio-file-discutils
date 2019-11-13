@@ -139,7 +139,7 @@ public class DirItem extends BaseItem {
         setTransId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x11));
         setDataLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b));
-        setChildType(DirItemChildType.valueOf(buffer[offset + 0x1d]));
+        setChildType(DirItemChildType.values()[buffer[offset + 0x1d]]);
         setName(new String(buffer, offset + 0x1e, getNameLength(), Charset.forName("UTF8")));
         setData(EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength()));
         return size();

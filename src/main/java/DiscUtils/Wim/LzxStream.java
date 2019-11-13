@@ -148,7 +148,7 @@ public class LzxStream extends Stream {
     }
 
     private void readBlocks() {
-        BlockType blockType = BlockType.valueOf(_bitStream.read(3));
+        BlockType blockType = BlockType.values()[_bitStream.read(3)];
         _buffer = new byte[32768];
         _bufferCount = 0;
         while (blockType != BlockType.None) {
@@ -160,7 +160,7 @@ public class LzxStream extends Stream {
                 _bufferCount += blockSize;
             }
             // Read start of next block (if any)
-            blockType = BlockType.valueOf(_bitStream.read(3));
+            blockType = BlockType.values()[_bitStream.read(3)];
         }
         fixupBlockBuffer();
     }
@@ -349,10 +349,6 @@ public class LzxStream extends Stream {
         Verbatim,
         AlignedOffset,
         Uncompressed;
-
-        public static BlockType valueOf(int value) {
-            return values()[value];
-        }
     }
 
     @Override

@@ -33,7 +33,7 @@ public class RawLocation implements IByteArraySerializable {
 
     public int Checksum;
 
-    public RawLocationFlags Flags = RawLocationFlags.Ignored;
+    public RawLocationFlags Flags = RawLocationFlags.None;
 
     /**
      *
@@ -49,7 +49,7 @@ public class RawLocation implements IByteArraySerializable {
         Offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
         Length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
         Checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        Flags = RawLocationFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14));
+        Flags = RawLocationFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14)];
         return size();
     }
 

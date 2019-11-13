@@ -22,12 +22,8 @@
 
 package DiscUtils.Xfs;
 
-public enum ExtentFlag {
+enum ExtentFlag {
     Normal,
     Unwritten,
     Invalid;
-
-    public static ExtentFlag valueOf(int value) {
-        return values()[value];
-    }
 }

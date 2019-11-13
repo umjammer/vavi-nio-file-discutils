@@ -49,7 +49,7 @@ public class BaseVolumeDescriptor {
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + IsoUtilities.SectorSize, (byte) 0);
-        buffer[offset] = (byte) _VolumeDescriptorType.ordinal();
+        buffer[offset] = (byte) _VolumeDescriptorType.getValue();
         IsoUtilities.writeAChars(buffer, offset + 1, 5, StandardIdentifier);
         buffer[offset + 6] = VolumeDescriptorVersion;
     }

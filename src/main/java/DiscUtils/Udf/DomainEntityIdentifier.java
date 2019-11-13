@@ -26,7 +26,7 @@ public class DomainEntityIdentifier extends EntityIdentifier {
     public String toString() {
         String major = String.format("%02x", Suffix[1]);
         String minor = String.format("%02x", Suffix[0]);
-        DomainFlags flags = DomainFlags.valueOf(Suffix[2]);
+        DomainFlags flags = DomainFlags.values()[Suffix[2]];
         return String.format("%s [UDF %d.%d : Flags %s]", Identifier, major, minor, flags);
     }
 
@@ -34,9 +34,5 @@ public class DomainEntityIdentifier extends EntityIdentifier {
         None,
         HardWriteProtect,
         SoftWriteProtect;
-
-        public static DomainFlags valueOf(int value) {
-            return values()[value];
-        }
     }
 }

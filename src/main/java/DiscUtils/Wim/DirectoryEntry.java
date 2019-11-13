@@ -129,11 +129,9 @@ public class DirectoryEntry {
             if (!Utilities.isAllZeros(Hash, 0, 20)) {
                 return Hash;
             }
-
         }
 
-        boolean result = AlternateStreams != null && AlternateStreams.containsKey(streamName);
-        if (result) {
+        if (AlternateStreams != null && AlternateStreams.containsKey(streamName)) {
             AlternateStreamEntry streamEntry = AlternateStreams.get(streamName);
             return streamEntry.Hash;
         }
@@ -146,8 +144,7 @@ public class DirectoryEntry {
             return Length;
         }
 
-        boolean result = AlternateStreams != null && AlternateStreams.containsKey(streamName);
-        if (result) {
+        if (AlternateStreams != null && AlternateStreams.containsKey(streamName)) {
             AlternateStreamEntry streamEntry = AlternateStreams.get(streamName);
             return streamEntry.Length;
         }

@@ -26,8 +26,4 @@ public enum ExtentDataCompression {
     None,
     Zlib,
     Lzo;
-
-    public static ExtentDataCompression valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -23,7 +23,7 @@
 package DiscUtils.SquashFs;
 
 // use ordinal
-public enum InodeType {
+enum InodeType {
     __dummyEnum__0,
     Directory,
     File,
@@ -39,8 +39,4 @@ public enum InodeType {
     ExtendedCharacterDevice,
     ExtendedFifo,
     ExtendedSocket;
-
-    public static InodeType valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -23,6 +23,7 @@
 package DiscUtils.Ntfs.Internals;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import DiscUtils.Ntfs.FileRecord;
@@ -128,17 +129,17 @@ public final class MasterFileTable {
      * @param filter Filter controlling which entries are returned.
      * @return An enumeration of entries matching the filter.
      */
-    public List<MasterFileTableEntry> getEntries(EntryStates filter) {
+    public List<MasterFileTableEntry> getEntries(EnumSet<EntryStates> filter) {
         List<MasterFileTableEntry> result = new ArrayList<>();
         for (FileRecord record : _mft.getRecords()) {
-            EntryStates state = EntryStates.None;
+            EntryStates state;
             if (record.getFlags().contains(FileRecordFlags.InUse)) {
                 state = EntryStates.InUse;
             } else {
                 state = EntryStates.NotInUse;
             }
 
-            if ((state.ordinal() & filter.ordinal()) != 0) {
+            if (filter.contains(state)) {
                 result.add(new MasterFileTableEntry(_context, record));
             }
         }

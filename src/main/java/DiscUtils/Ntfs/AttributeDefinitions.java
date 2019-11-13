@@ -75,17 +75,17 @@ public final class AttributeDefinitions {
 
     public AttributeDefinitions(File file) {
         _attrDefs = new HashMap<>();
-        byte[] buffer = new byte[AttributeDefinitionRecord.Size];
 
+        byte[] buffer = new byte[AttributeDefinitionRecord.Size];
         try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read)) {
             while (StreamUtilities.readMaximum(s, buffer, 0, buffer.length) == buffer.length) {
                 AttributeDefinitionRecord record = new AttributeDefinitionRecord();
                 record.read(buffer, 0);
-                // NULL terminator record
-                if (record._type != AttributeType.None) {
-                    _attrDefs.put(record._type, record);
-                }
 
+                // NULL terminator record
+                if (record.type != AttributeType.None) {
+                    _attrDefs.put(record.type, record);
+                }
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -102,8 +102,10 @@ public final class AttributeDefinitions {
                 buffer = new byte[AttributeDefinitionRecord.Size];
                 AttributeDefinitionRecord attrDef = _attrDefs.get(attribs.get(i));
                 attrDef.write(buffer, 0);
+
                 s.write(buffer, 0, buffer.length);
             }
+
             buffer = new byte[AttributeDefinitionRecord.Size];
             s.write(buffer, 0, buffer.length);
         } catch (IOException e) {
@@ -113,17 +115,18 @@ public final class AttributeDefinitions {
 
     public AttributeDefinitionRecord lookup(String name) {
         for (AttributeDefinitionRecord record : _attrDefs.values()) {
-            if (name.compareTo(record._name) == 0) {
+            if (name.compareTo(record.name) == 0) {
                 return record;
             }
         }
+
         return null;
     }
 
     public boolean mustBeResident(AttributeType attributeType) {
         if (_attrDefs.containsKey(attributeType)) {
             AttributeDefinitionRecord record = _attrDefs.get(attributeType);
-            return record._flags.contains(AttributeTypeFlags.MustBeResident);
+            return record.flags.contains(AttributeTypeFlags.MustBeResident);
         }
 
         return false;
@@ -132,7 +135,7 @@ public final class AttributeDefinitions {
     public boolean isIndexed(AttributeType attributeType) {
         if (_attrDefs.containsKey(attributeType)) {
             AttributeDefinitionRecord record = _attrDefs.get(attributeType);
-            return record._flags.contains(AttributeTypeFlags.Indexed);
+            return record.flags.contains(AttributeTypeFlags.Indexed);
         }
 
         return false;
@@ -144,11 +147,11 @@ public final class AttributeDefinitions {
                      int minSize,
                      int maxSize) {
         AttributeDefinitionRecord adr = new AttributeDefinitionRecord();
-        adr._type = attributeType;
-        adr._name = name;
-        adr._flags = attributeTypeFlags;
-        adr._minSize = minSize;
-        adr._maxSize = maxSize;
+        adr.type = attributeType;
+        adr.name = name;
+        adr.flags = attributeTypeFlags;
+        adr.minSize = minSize;
+        adr.maxSize = maxSize;
         _attrDefs.put(attributeType, adr);
     }
 }

@@ -26,11 +26,11 @@ public enum Nfs3FileSystemProperties {
     None,
     HardLinks,
     SymbolicLinks,
-    __dummyEnum__0,
-    Homogeneous,
-    __dummyEnum__1,
-    __dummyEnum__2,
     __dummyEnum__3,
+    Homogeneous,
+    __dummyEnum__5,
+    __dummyEnum__6,
+    __dummyEnum__7,
     SetTime;
 
     public static Nfs3FileSystemProperties valueOf(int value) {

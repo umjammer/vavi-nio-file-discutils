@@ -19,82 +19,49 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
-//
-// Initiator op-codes.
-//
 
 package DiscUtils.Iscsi;
 
-public enum OpCode {
-    NopOut,
-    ScsiCommand,
-    ScsiTaskManagementRequest,
-    LoginRequest,
-    TextRequest,
-    ScsiDataOut,
-    LogoutRequest,
-    __dummyEnum__0,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
-    __dummyEnum__4,
-    __dummyEnum__5,
-    __dummyEnum__6,
-    __dummyEnum__7,
-    __dummyEnum__8,
-    SnackRequest,
-    __dummyEnum__9,
-    __dummyEnum__10,
-    __dummyEnum__11,
-    __dummyEnum__12,
-    __dummyEnum__13,
-    __dummyEnum__14,
-    __dummyEnum__15,
-    __dummyEnum__16,
-    __dummyEnum__17,
-    __dummyEnum__18,
-    __dummyEnum__19,
-    __dummyEnum__20,
-    __dummyEnum__21,
-    __dummyEnum__22,
-    __dummyEnum__23,
+import java.util.Arrays;
+
+
+enum OpCode {
+    //
+    // Initiator op-codes.
+    //
+    NopOut(0x00),
+    ScsiCommand(0x01),
+    ScsiTaskManagementRequest(0x02),
+    LoginRequest(0x03),
+    TextRequest(0x04),
+    ScsiDataOut(0x05),
+    LogoutRequest(0x06),
+    SnackRequest(0x10),
     //
     // Target op-codes.
     //
-    NopIn,
-    ScsiResponse,
-    ScsiTaskManagementResponse,
-    LoginResponse,
-    TextResponse,
-    ScsiDataIn,
-    LogoutResponse,
-    __dummyEnum__24,
-    __dummyEnum__25,
-    __dummyEnum__26,
-    __dummyEnum__27,
-    __dummyEnum__28,
-    __dummyEnum__29,
-    __dummyEnum__30,
-    __dummyEnum__31,
-    __dummyEnum__32,
-    __dummyEnum__33,
-    ReadyToTransfer,
-    AsynchronousMessage,
-    __dummyEnum__34,
-    __dummyEnum__35,
-    __dummyEnum__36,
-    __dummyEnum__37,
-    __dummyEnum__38,
-    __dummyEnum__39,
-    __dummyEnum__40,
-    __dummyEnum__41,
-    __dummyEnum__42,
-    __dummyEnum__43,
-    __dummyEnum__44,
-    __dummyEnum__45,
-    Reject;
+    NopIn(0x20),
+    ScsiResponse(0x21),
+    ScsiTaskManagementResponse(0x22),
+    LoginResponse(0x23),
+    TextResponse(0x24),
+    ScsiDataIn(0x25),
+    LogoutResponse(0x26),
+    ReadyToTransfer(0x31),
+    AsynchronousMessage(0x32),
+    Reject(0x3f);
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    private OpCode(int value) {
+        this.value = value;
+    }
 
     public static OpCode valueOf(int value) {
-        return values()[value];
+        return Arrays.stream(values()).filter(v -> v.getValue() == value).findFirst().get();
     }
 }

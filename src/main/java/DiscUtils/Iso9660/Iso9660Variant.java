@@ -22,17 +22,17 @@
 
 package DiscUtils.Iso9660;
 
+/**
+ * Enumeration of known file system variants. ISO9660 has a number of
+ * significant limitations, and over time multiple schemes have been devised for
+ * extending the standard to support the richer file system semantics typical of
+ * most modern operating systems. These variants differ functionally and (in the
+ * case of RockRidge) may represent a logically different directory hierarchy to
+ * that encoded in the vanilla iso9660 standard.Use this enum to control which
+ * variants to honour / prefer when accessing an ISO image.
+ */
 public enum Iso9660Variant {
     /**
-     * Enumeration of known file system variants.
-     * ISO9660 has a number of significant limitations, and over time
-     * multiple schemes have been devised for extending the standard
-     * to support the richer file system semantics typical of most modern
-     * operating systems. These variants differ functionally and (in the
-     * case of RockRidge) may represent a logically different directory
-     * hierarchy to that encoded in the vanilla iso9660 standard.Use this enum
-     * to control which variants to honour / prefer
-     * when accessing an ISO image.
      * No known variant.
      */
     None,

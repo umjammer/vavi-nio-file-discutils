@@ -3,10 +3,11 @@ package DiscUtils.Nfs;
 
 import java.util.Arrays;
 
+/**
+ * NFS status codes.
+ */
 public enum Nfs3Status {
     /**
-     * NFS status codes.
-     *
      * Indicates the call completed successfully.
      */
     Ok(0),

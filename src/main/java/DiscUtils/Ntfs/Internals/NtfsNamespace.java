@@ -22,13 +22,14 @@
 
 package DiscUtils.Ntfs.Internals;
 
+/**
+ * The known NTFS namespaces.
+ *
+ * NTFS has multiple namespaces, indicating whether a name is the
+ * long name for a file, the short name for a file, both, or none.
+ */
 public enum NtfsNamespace {
     /**
-     * The known NTFS namespaces.
-     *
-     * NTFS has multiple namespaces, indicating whether a name is the
-     * long name for a file, the short name for a file, both, or none.
-     *
      * Posix namespace (i.e. long name).
      */
     Posix,

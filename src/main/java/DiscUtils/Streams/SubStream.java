@@ -27,9 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-import vavi.util.StringUtil;
-
 import DiscUtils.Streams.Util.Ownership;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
@@ -122,7 +119,7 @@ public class SubStream extends MappedStream {
 
         _parent.setPosition(_first + _position);
         int numRead = _parent.read(buffer, offset, (int) Math.min(count, Math.min(_length - _position, Integer.MAX_VALUE)));
-Debug.println(_parent + ", " + _first + ", " + _position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
+//if (numRead > 1) Debug.println(_parent + ", " + _first + ", " + _position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
         _position += numRead;
         return numRead;
     }

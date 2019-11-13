@@ -36,7 +36,7 @@ public class RpcAuthentication {
     }
 
     public RpcAuthentication(XdrDataReader reader) {
-        _flavour = RpcAuthFlavour.valueOf(reader.readInt32());
+        _flavour = RpcAuthFlavour.values()[reader.readInt32()];
         _body = reader.readBuffer(400);
     }
 

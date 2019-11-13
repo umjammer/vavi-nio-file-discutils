@@ -1,7 +1,7 @@
 
 package DiscUtils.Vmdk;
 
-public enum DescriptorFileEntryType {
+enum DescriptorFileEntryType {
     NoValue,
     Quoted,
     Plain

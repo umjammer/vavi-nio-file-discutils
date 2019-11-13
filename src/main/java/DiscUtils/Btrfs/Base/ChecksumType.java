@@ -24,8 +24,4 @@ package DiscUtils.Btrfs.Base;
 
 public enum ChecksumType {
     Crc32C;
-
-    public static ChecksumType valueOf(int value) {
-        return values()[value];
-    }
 }

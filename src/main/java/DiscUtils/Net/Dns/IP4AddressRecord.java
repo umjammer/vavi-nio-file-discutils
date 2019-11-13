@@ -37,7 +37,7 @@ public final class IP4AddressRecord extends ResourceRecord {
         try {
             short dataLen = reader.readUShort();
             int pos = reader.getPosition();
-            __Address = Inet4Address.getByAddress(reader.readBytes(dataLen));
+            _address = Inet4Address.getByAddress(reader.readBytes(dataLen));
             reader.setPosition(pos + dataLen);
         } catch (UnknownHostException e) {
             throw new IOException(e);
@@ -47,9 +47,9 @@ public final class IP4AddressRecord extends ResourceRecord {
     /**
      * Gets the IPv4 address.
      */
-    private InetAddress __Address;
+    private InetAddress _address;
 
     public InetAddress getAddress() {
-        return __Address;
+        return _address;
     }
 }

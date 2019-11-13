@@ -27,10 +27,11 @@
 
 package DiscUtils.BootConfig;
 
+/**
+ * Enumeration of known BCD elements.
+ */
 public enum WellKnownElement {
     /**
-     * Enumeration of known BCD elements.
-     * 
      * Not specified.
      */
     None(0),

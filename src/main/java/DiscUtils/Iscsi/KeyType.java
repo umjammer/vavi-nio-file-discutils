@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum KeyType {
+enum KeyType {
     Declarative,
     Negotiated
 }

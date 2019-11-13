@@ -33,11 +33,11 @@ public class RpcRejectedReplyHeader {
     }
 
     public RpcRejectedReplyHeader(XdrDataReader reader) {
-        Status = RpcRejectedStatus.valueOf(reader.readInt32());
+        Status = RpcRejectedStatus.values()[reader.readInt32()];
         if (Status == RpcRejectedStatus.RpcMismatch) {
             MismatchInfo = new RpcMismatchInfo(reader);
         } else {
-            AuthenticationStatus = RpcAuthenticationStatus.valueOf(reader.readInt32());
+            AuthenticationStatus = RpcAuthenticationStatus.values()[reader.readInt32()];
         }
     }
 

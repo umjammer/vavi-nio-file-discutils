@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public enum Version2Features {
+enum Version2Features {
     /**
      * Additional version flags if
      * {@link VersionFlags#MOREBITSBIT}

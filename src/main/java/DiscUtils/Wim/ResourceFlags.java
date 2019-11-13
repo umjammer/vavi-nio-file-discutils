@@ -1,18 +1,32 @@
 
 package DiscUtils.Wim;
 
-public enum ResourceFlags {
-    None,
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+enum ResourceFlags {
+//    None,
     Free,
     MetaData,
-    __dummyEnum__0,
     Compressed,
-    __dummyEnum__1,
-    __dummyEnum__2,
-    __dummyEnum__3,
     Spanned;
 
-    public static ResourceFlags valueOf(int value) {
-        return values()[value];
+    // TODO
+    public Supplier<Integer> supplier() {
+        return () -> 1 << ordinal();
+    }
+
+    // TODO
+    public Function<Integer, Boolean> function() {
+        return v -> (v & supplier().get()) != 0;
+    };
+
+    public static EnumSet<ResourceFlags> valueOf(int value) {
+        return Arrays.stream(values())
+                .filter(v -> v.function().apply(value))
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(ResourceFlags.class)));
     }
 }

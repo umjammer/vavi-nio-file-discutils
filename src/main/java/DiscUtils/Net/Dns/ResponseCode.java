@@ -22,15 +22,11 @@
 
 package DiscUtils.Net.Dns;
 
-public enum ResponseCode {
+enum ResponseCode {
     Success,
     FormatError,
     ServerFailure,
     NameError,
     NotImplemented,
     Refused;
-
-    public static ResponseCode valueOf(int value) {
-        return values()[value];
-    }
 }

@@ -97,7 +97,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
         setName(EndianUtilities.toByteArray(buffer, offset + 0x9, getNameLength()));
         offset += 0x9 + getNameLength();
         if (_ftype) {
-            setFType(DirectoryFType.valueOf(buffer[offset]));
+            setFType(DirectoryFType.values()[buffer[offset]]);
             offset++;
         }
 

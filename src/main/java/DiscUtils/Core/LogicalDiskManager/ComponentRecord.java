@@ -59,7 +59,7 @@ public final class ComponentRecord extends DatabaseRecord {
         Id = readVarULong(buffer, pos);
         Name = readVarString(buffer, pos);
         StatusString = readVarString(buffer, pos);
-        MergeType = ExtentMergeType.valueOf(readByte(buffer, pos));
+        MergeType = ExtentMergeType.values()[readByte(buffer, pos)];
         Unknown1 = readUInt(buffer, pos); // Zero
         NumExtents = readVarULong(buffer, pos);
         Unknown2 = readUInt(buffer, pos);

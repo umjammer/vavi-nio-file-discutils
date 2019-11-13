@@ -1,7 +1,7 @@
 
 package DiscUtils.Udf;
 
-public enum CharacterSetType {
+enum CharacterSetType {
     CharacterSet0,
     CharacterSet1,
     CharacterSet2,
@@ -11,8 +11,4 @@ public enum CharacterSetType {
     CharacterSet6,
     CharacterSet7,
     CharacterSet8;
-
-    public static CharacterSetType valueOf(int value) {
-        return values()[value];
-    }
 }

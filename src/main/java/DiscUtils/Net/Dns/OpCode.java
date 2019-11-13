@@ -22,12 +22,8 @@
 
 package DiscUtils.Net.Dns;
 
-public enum OpCode {
+enum OpCode {
     Query,
     InverseQuery,
     StatusRequest;
-
-    public static OpCode valueOf(int value) {
-        return values()[value];
-    }
 }

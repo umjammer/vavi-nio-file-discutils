@@ -34,7 +34,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
             int numAuthFlavours = reader.readInt32();
             setAuthFlavours(new ArrayList<RpcAuthFlavour>(numAuthFlavours));
             for (int i = 0; i < numAuthFlavours; ++i) {
-                getAuthFlavours().add(RpcAuthFlavour.valueOf(reader.readInt32()));
+                getAuthFlavours().add(RpcAuthFlavour.values()[reader.readInt32()]);
             }
         } else {
             throw new Nfs3Exception(getStatus());

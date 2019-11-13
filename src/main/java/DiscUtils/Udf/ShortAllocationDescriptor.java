@@ -41,7 +41,7 @@ public final class ShortAllocationDescriptor implements IByteArraySerializable {
         int len = EndianUtilities.toUInt32LittleEndian(buffer, offset);
         ExtentLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         ExtentLength = len & 0x3FFFFFFF;
-        Flags = ShortAllocationFlags.valueOf((len >>> 30) & 0x3);
+        Flags = ShortAllocationFlags.values()[(len >>> 30) & 0x3];
         return 8;
     }
 

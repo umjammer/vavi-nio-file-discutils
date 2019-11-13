@@ -1,7 +1,7 @@
 
 package DiscUtils.Iscsi;
 
-public enum StatusClass {
+enum StatusClass {
     Success,
     Redirection,
     InitiatorError,

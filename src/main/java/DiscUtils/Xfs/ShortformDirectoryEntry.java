@@ -96,7 +96,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
         _name = EndianUtilities.toByteArray(buffer, offset + 0x3, getNameLength());
         offset += 0x3 + getNameLength();
         if (_ftype) {
-            _fType = DirectoryFType.valueOf(buffer[offset]);
+            _fType = DirectoryFType.values()[buffer[offset]];
             offset++;
         }
 
