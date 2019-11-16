@@ -48,9 +48,8 @@ public class MasterFileTableReference {
     /**
      * Gets the revision number of the entry.
      *
-     * This value prevents accidental reference to an entry - it will get out
-     * of sync with the actual entry if the entry is re-allocated or
-     * de-allocated.
+     * This value prevents accidental reference to an entry - it will get out of
+     * sync with the actual entry if the entry is re-allocated or de-allocated.
      */
     public int getRecordSequenceNumber() {
         return _ref.getSequenceNumber();
@@ -61,48 +60,37 @@ public class MasterFileTableReference {
      *
      * @param a The first instance to compare.
      * @param b The second instance to compare.
-     * @return
-     *         {@code true}
-     *         if the instances are equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the instances are equivalent, else {@code false}.
      */
+    public static boolean equals(MasterFileTableReference a, MasterFileTableReference b) {
+        return a._ref.equals(b._ref);
+    }
 
     /**
      * Compares to instances for equality.
      *
      * @param a The first instance to compare.
      * @param b The second instance to compare.
-     * @return
-     *         {@code true}
-     *         if the instances are not equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the instances are not equivalent, else
+     *         {@code false}.
      */
+    public static boolean notEquals(MasterFileTableReference a, MasterFileTableReference b) {
+        return !equals(a ,b);
+    }
 
     /**
      * Compares another object for equality.
      *
      * @param obj The object to compare.
-     * @return
-     *         {@code true}
-     *         if the other object is equivalent, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the other object is equivalent, else
+     *         {@code false}.
      */
     public boolean equals(Object obj) {
-        try {
-            if (obj == null || !(obj instanceof MasterFileTableReference)) {
-                return false;
-            }
-
-            return _ref == ((MasterFileTableReference) obj)._ref;
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
+        if (obj == null || !(obj instanceof MasterFileTableReference)) {
+            return false;
         }
 
+        return _ref.equals(((MasterFileTableReference) obj)._ref);
     }
 
     /**

@@ -96,7 +96,9 @@ final class NtfsFileStream extends SparseStream {
 
         try (NtfsTransaction c = new NtfsTransaction()) {
             _baseStream.close();
+
             updateMetadata();
+
             _baseStream = null;
         }
     }
@@ -106,6 +108,7 @@ final class NtfsFileStream extends SparseStream {
 
         try (NtfsTransaction c = new NtfsTransaction()) {
             _baseStream.flush();
+
             updateMetadata();
         }
     }
@@ -166,8 +169,10 @@ final class NtfsFileStream extends SparseStream {
             } else {
                 _file.accessed();
             }
+
             // Update the directory entry used to open the file, so it's accurate
             _entry.updateFrom(_file);
+
             // Write attribute changes back to the Master File Table
             _file.updateRecordInMft();
             _isDirty = false;

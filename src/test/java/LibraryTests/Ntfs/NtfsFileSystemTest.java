@@ -31,8 +31,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import vavi.util.Debug;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -44,7 +42,6 @@ import DiscUtils.Core.Geometry;
 import DiscUtils.Core.ReparsePoint;
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Ntfs.AttributeType;
-import DiscUtils.Ntfs.NonResidentAttributeBuffer;
 import DiscUtils.Ntfs.NtfsFileSystem;
 import DiscUtils.Streams.SparseMemoryStream;
 import DiscUtils.Streams.SparseStream;
@@ -369,11 +366,12 @@ public class NtfsFileSystemTest {
                 stream.write(buffer, 0, buffer.length);
             }
         }
-Debug.println("1: ----");
+//Debug.println("T1: ----");
         for (int i = 0; i < 2500; ++i) {
             ntfs.deleteFile("DIR\\file" + i + ".bin");
         }
-Debug.println("2: ----");
+//Debug.println("T2: ----");
+//NonResidentAttributeBuffer.debug = true;
         // Create fragmented file (lots of small writes)
         try (Stream stream = ntfs.openFile("DIR\\fragmented.bin", FileMode.Create, FileAccess.ReadWrite)) {
             for (int i = 0; i < 2500; ++i) {
@@ -385,14 +383,13 @@ Debug.println("2: ----");
         for (int i = 0; i < largeWriteBuffer.length / 4096; ++i) {
             largeWriteBuffer[i * 4096] = (byte) i;
         }
-Debug.println("3: ----");
-NonResidentAttributeBuffer.debug = true;
+//Debug.println("T3: ----");
         try (Stream stream = ntfs.openFile("DIR\\fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
 //NonResidentAttributeBuffer.debug = false;
             stream.setPosition(stream.getLength() - largeWriteBuffer.length);
             stream.write(largeWriteBuffer, 0, largeWriteBuffer.length);
         }
-Debug.println("4: ----");
+//Debug.println("T4: ----");
         // And a large read
         byte[] largeReadBuffer = new byte[largeWriteBuffer.length];
         try (Stream stream = ntfs.openFile("DIR\\fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {

@@ -707,7 +707,7 @@ class File {
         boolean added = false;
         for (NtfsAttribute attr : _attributes) {
             for (Map.Entry<AttributeReference, AttributeRecord> existingRecord : attr.getExtents().entrySet()) {
-                if (existingRecord.getKey().getFile() == record.getReference()
+                if (existingRecord.getKey().getFile().equals(record.getReference())
                         && existingRecord.getKey().getAttributeId() == targetAttr.getAttributeId()) {
                     attr.addExtent(newAttrHome.getReference(), newAttr);
                     added = true;

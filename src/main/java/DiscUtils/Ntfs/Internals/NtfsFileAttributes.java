@@ -30,13 +30,14 @@ import java.util.stream.Collectors;
 import DiscUtils.Core.CoreCompat.EnumSettable;
 
 
+/**
+ * File attributes as stored natively by NTFS.
+ */
 public enum NtfsFileAttributes implements EnumSettable {
     /**
-     * File attributes as stored natively by NTFS.
-     *
      * No attributes.
      */
-    None(0x00000000),
+//    None(0x00000000),
     /**
      * The file is read-only.
      */

@@ -57,6 +57,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
         _primaryRecord = record;
         _extents = new HashMap<>();
         _extents.put(new AttributeReference(containingFile, record.getAttributeId()), _primaryRecord);
+//if (NonResidentAttributeBuffer.debug) Debug.println("4c: " + _extents.size());
     }
 
     protected String getAttributeTypeName() {
@@ -280,11 +281,13 @@ class NtfsAttribute implements IDiagnosticTraceable {
         _primaryRecord = record;
         _extents.clear();
         _extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
+//if (NonResidentAttributeBuffer.debug) Debug.println("4a: " + _extents.size());
     }
 
     public void addExtent(FileRecordReference containingFile, AttributeRecord record) {
         _cachedRawBuffer = null;
         _extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
+//if (NonResidentAttributeBuffer.debug) Debug.println("4b: " + _extents.size() + ", " + record.getAttributeId());
     }
 
     public void removeExtentCacheSafe(AttributeReference reference) {

@@ -25,8 +25,6 @@ package DiscUtils.Ntfs;
 import java.util.ArrayList;
 import java.util.List;
 
-import vavi.util.Debug;
-
 import dotnet4j.io.IOException;
 
 
@@ -39,7 +37,7 @@ class CookedDataRuns {
 
     public CookedDataRuns() {
         _runs = new ArrayList<>();
-if (NonResidentAttributeBuffer.debug) Debug.println("1:\t\t@" + this.hashCode());
+//if (NonResidentAttributeBuffer.debug) Debug.println("1:\t\t@" + this.hashCode());
     }
 
     public CookedDataRuns(List<DataRun> rawRuns, NonResidentAttributeRecord attributeExtent) {
@@ -74,13 +72,13 @@ if (NonResidentAttributeBuffer.debug) Debug.println("1:\t\t@" + this.hashCode())
         int numRuns = _runs.size();
         if (numRuns > 0) {
             CookedDataRun run = _runs.get(numRuns - 1);
-if (NonResidentAttributeBuffer.debug) Debug.printf("%d, %d, %d, %d\t\t@%d", numRuns, run.getStartVcn(), run.getLength(), vcn, this.hashCode());
+//if (NonResidentAttributeBuffer.debug) Debug.printf("%d, %d, %d, %d\t\t@%d", numRuns, run.getStartVcn(), run.getLength(), vcn, this.hashCode());
 //if (NonResidentAttributeBuffer.debug) new Exception().printStackTrace();
             if (vcn >= run.getStartVcn()) {
                 if (run.getStartVcn() + run.getLength() > vcn) {
                     return numRuns - 1;
                 }
-Debug.printf("%d + %d <= %d\t\t@%d", run.getStartVcn(), run.getLength(), vcn, this.hashCode());
+//Debug.printf("%d + %d <= %d\t\t@%d", run.getStartVcn(), run.getLength(), vcn, this.hashCode());
                 throw new IOException("Looking for VCN outside of data runs");
             }
 
@@ -98,7 +96,7 @@ Debug.printf("%d + %d <= %d\t\t@%d", run.getStartVcn(), run.getLength(), vcn, th
     public void append(DataRun rawRun, NonResidentAttributeRecord attributeExtent) {
         CookedDataRun last = getLast();
         _runs.add(new CookedDataRun(rawRun, getNextVirtualCluster(), last == null ? 0 : last.getStartLcn(), attributeExtent));
-if (NonResidentAttributeBuffer.debug) Debug.println("+1: " + _runs);
+//if (NonResidentAttributeBuffer.debug) Debug.println("+1: " + _runs.size());
     }
 
     public void append(List<DataRun> rawRuns, NonResidentAttributeRecord attributeExtent) {
@@ -109,7 +107,7 @@ if (NonResidentAttributeBuffer.debug) Debug.println("+1: " + _runs);
             vcn += run.getRunLength();
             lcn += run.getRunOffset();
         }
-if (NonResidentAttributeBuffer.debug) Debug.println("+2: " + _runs.size() + "\t\t@" + this.hashCode());
+//if (NonResidentAttributeBuffer.debug) Debug.println("+2: " + _runs.size() + "\t\t@" + this.hashCode());
     }
 
     public void makeSparse(int index) {

@@ -187,6 +187,7 @@ public class FileRecord extends FixupRecordBase {
     public void reInitialize(int sectorSize, int recordLength, int index) {
         initialize("FILE", sectorSize, recordLength);
         _sequenceNumber++; // TODO
+        assert _sequenceNumber > 0;
         _flags = EnumSet.noneOf(FileRecordFlags.class);
         _allocatedSize = recordLength;
         _nextAttributeId = 0;
