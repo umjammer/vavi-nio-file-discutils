@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 /**
  * Inode flags.
  */
-public enum InodeFlags {
+enum InodeFlags {
     SecureDelete,
     Undelete,
     CompressFile,

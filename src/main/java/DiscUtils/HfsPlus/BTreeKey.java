@@ -25,7 +25,7 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.IByteArraySerializable;
 
 
-public abstract class BTreeKey<T extends YComparable<?>> implements IByteArraySerializable, YComparable<T> {
+abstract class BTreeKey<T extends YComparable<?>> implements IByteArraySerializable, YComparable<T> {
 
     public abstract int size();
 

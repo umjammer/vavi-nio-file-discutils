@@ -28,13 +28,14 @@ import java.util.List;
 import DiscUtils.Core.Vfs.IVfsDirectory;
 
 
-public final class Directory extends File implements IVfsDirectory<DirEntry, File> {
+final class Directory extends File implements IVfsDirectory<DirEntry, File> {
     public Directory(Context context, CatalogNodeId nodeId, CommonCatalogFileInfo fileInfo) {
         super(context, nodeId, fileInfo);
     }
 
     public List<DirEntry> getAllEntries() {
         List<DirEntry> results = new ArrayList<>();
+
         getContext().getCatalog().visitRange((key, data) -> {
             if (key.getNodeId() == getNodeId()) {
                 if (data != null && key.getName() != null && !key.getName().isEmpty() && DirEntry.isFileOrDirectory(data)) {
@@ -43,17 +44,20 @@ public final class Directory extends File implements IVfsDirectory<DirEntry, Fil
 
                 return 0;
             }
-
             return key.getNodeId().getId() < getNodeId().getId() ? -1 : 1;
         });
+
         return results;
     }
 
     public DirEntry getSelf() {
         byte[] dirThreadData = getContext().getCatalog().find(new CatalogKey(getNodeId(), ""));
+
         CatalogThread dirThread = new CatalogThread();
         dirThread.readFrom(dirThreadData, 0);
+
         byte[] dirEntryData = getContext().getCatalog().find(new CatalogKey(dirThread.ParentId, dirThread.Name));
+
         return new DirEntry(dirThread.Name, dirEntryData);
     }
 

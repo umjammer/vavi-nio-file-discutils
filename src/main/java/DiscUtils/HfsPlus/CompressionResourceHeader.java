@@ -26,48 +26,48 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public class CompressionResourceHeader {
-    private int __DataSize;
+    private int _dataSize;
 
     public int getDataSize() {
-        return __DataSize;
+        return _dataSize;
     }
 
     public void setDataSize(int value) {
-        __DataSize = value;
+        _dataSize = value;
     }
 
-    private int __Flags;
+    private int _flags;
 
     public int getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(int value) {
-        __Flags = value;
+        _flags = value;
     }
 
-    private int __HeaderSize;
+    private int _headerSize;
 
     public int getHeaderSize() {
-        return __HeaderSize;
+        return _headerSize;
     }
 
     public void setHeaderSize(int value) {
-        __HeaderSize = value;
+        _headerSize = value;
     }
 
     public static int getSize() {
         return 16;
     }
 
-    private int __TotalSize;
+    private int _totalSize;
 
     public int getTotalSize() {
-        return __TotalSize;
+        return _totalSize;
     }
 
     public void setTotalSize(int value) {
-        __TotalSize = value;
+        _totalSize = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -75,6 +75,7 @@ public class CompressionResourceHeader {
         setTotalSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         setDataSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 8));
         setFlags(EndianUtilities.toUInt32BigEndian(buffer, offset + 12));
+
         return getSize();
     }
 }

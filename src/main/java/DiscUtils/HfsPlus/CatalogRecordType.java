@@ -22,7 +22,7 @@
 
 package DiscUtils.HfsPlus;
 
-public enum CatalogRecordType {
+enum CatalogRecordType {
     None,
     FolderRecord,
     FileRecord,

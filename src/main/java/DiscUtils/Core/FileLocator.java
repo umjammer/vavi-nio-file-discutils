@@ -44,20 +44,12 @@ public abstract class FileLocator {
     public static BiConsumer<Object, FileOpenEventArgs> openingFile;
 
     public Stream open(String fileName, FileMode mode, FileAccess access, FileShare share) {
-        FileOpenEventArgs args = new FileOpenEventArgs(fileName,
-                                                       mode,
-                                                       access,
-                                                       share,
-                                                       (fileName1, mode1, access1, share1) -> openFile(fileName1,
-                                                                                                       mode1,
-                                                                                                       access1,
-                                                                                                       share1));
+        FileOpenEventArgs args = new FileOpenEventArgs(fileName, mode, access, share, this::openFile);
         if (openingFile != null) {
             openingFile.accept(this, args);
         }
         if (args.getResult() != null)
             return args.getResult();
-
         return openFile(args.getFileName(), args.getFileMode(), args.getFileAccess(), args.getFileShare());
     }
 
@@ -84,6 +76,7 @@ public abstract class FileLocator {
 
         String ourFullPath = getFullPath("") + "\\";
         String otherFullPath = fileLocator.getFullPath(path);
+
         return Utilities.makeRelativePath(otherFullPath, ourFullPath);
     }
 }

@@ -44,24 +44,24 @@ public final class Nfs3MountResult extends Nfs3CallResult {
     public Nfs3MountResult() {
     }
 
-    private List<RpcAuthFlavour> __AuthFlavours;
+    private List<RpcAuthFlavour> _authFlavours;
 
     public List<RpcAuthFlavour> getAuthFlavours() {
-        return __AuthFlavours;
+        return _authFlavours;
     }
 
     public void setAuthFlavours(List<RpcAuthFlavour> value) {
-        __AuthFlavours = value;
+        _authFlavours = value;
     }
 
-    private Nfs3FileHandle __FileHandle;
+    private Nfs3FileHandle _fileHandle;
 
     public Nfs3FileHandle getFileHandle() {
-        return __FileHandle;
+        return _fileHandle;
     }
 
     public void setFileHandle(Nfs3FileHandle value) {
-        __FileHandle = value;
+        _fileHandle = value;
     }
 
     public void write(XdrDataWriter writer) {

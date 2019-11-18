@@ -26,54 +26,54 @@ import DiscUtils.Core.Vfs.VfsContext;
 import dotnet4j.io.Stream;
 
 
-public final class Context extends VfsContext {
-    private BTree<AttributeKey> __Attributes;
+final class Context extends VfsContext {
+    private BTree<AttributeKey> _attribute;
 
     public BTree<AttributeKey> getAttributes() {
-        return __Attributes;
+        return _attribute;
     }
 
     public void setAttributes(BTree<AttributeKey> value) {
-        __Attributes = value;
+        _attribute = value;
     }
 
-    private BTree<CatalogKey> __Catalog;
+    private BTree<CatalogKey> _catalog;
 
     public BTree<CatalogKey> getCatalog() {
-        return __Catalog;
+        return _catalog;
     }
 
     public void setCatalog(BTree<CatalogKey> value) {
-        __Catalog = value;
+        _catalog = value;
     }
 
-    private BTree<ExtentKey> __ExtentsOverflow;
+    private BTree<ExtentKey> _extentsOverflow;
 
     public BTree<ExtentKey> getExtentsOverflow() {
-        return __ExtentsOverflow;
+        return _extentsOverflow;
     }
 
     public void setExtentsOverflow(BTree<ExtentKey> value) {
-        __ExtentsOverflow = value;
+        _extentsOverflow = value;
     }
 
-    private VolumeHeader __VolumeHeader;
+    private VolumeHeader _volumeHeader;
 
     public VolumeHeader getVolumeHeader() {
-        return __VolumeHeader;
+        return _volumeHeader;
     }
 
     public void setVolumeHeader(VolumeHeader value) {
-        __VolumeHeader = value;
+        _volumeHeader = value;
     }
 
-    private Stream __VolumeStream;
+    private Stream _volumeStream;
 
     public Stream getVolumeStream() {
-        return __VolumeStream;
+        return _volumeStream;
     }
 
     public void setVolumeStream(Stream value) {
-        __VolumeStream = value;
+        _volumeStream = value;
     }
 }

@@ -25,32 +25,34 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
+final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
     private final int _size;
-    Class<TKey> clazz;
+
+    private Class<TKey> clazz;
+
     public BTreeIndexRecord(Class<TKey> clazz, int size) {
         _size = size;
         this.clazz = clazz;
     }
 
-    private int __ChildId;
+    private int _childId;
 
     public int getChildId() {
-        return __ChildId;
+        return _childId;
     }
 
     public void setChildId(int value) {
-        __ChildId = value;
+        _childId = value;
     }
 
-    private TKey __Key;
+    private TKey _key;
 
     public TKey getKey() {
-        return __Key;
+        return _key;
     }
 
     public void setKey(TKey value) {
-        __Key = value;
+        _key = value;
     }
 
     public int size() {
@@ -61,11 +63,13 @@ public final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeR
         try {
             setKey(clazz.newInstance());
             int keySize = getKey().readFrom(buffer, offset);
+
             if ((keySize & 1) != 0) {
                 ++keySize;
             }
 
             setChildId(EndianUtilities.toUInt32BigEndian(buffer, offset + keySize));
+
             return _size;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
@@ -77,6 +81,6 @@ public final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeR
     }
 
     public String toString() {
-        return getKey() + ":" + getChildId();
+        return _key + ":" + _childId;
     }
 }

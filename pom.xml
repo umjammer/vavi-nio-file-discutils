@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>DiscUtils</groupId>
-  <artifactId>DiscUtils</artifactId>
+  <artifactId>vavi-nio-file-discutils</artifactId>
   <version>0.14.3-SNAPSHOT</version>
 
   <build>
@@ -14,7 +14,6 @@
           <source>1.8</source>
           <target>1.8</target>
           <encoding>utf-8</encoding>
-          <excludes>vavi/**</excludes>
           <testExcludes>
             <testExclude>DiscUtils/PowerShell/**</testExclude>
             <testExclude>DiskClone/**</testExclude>

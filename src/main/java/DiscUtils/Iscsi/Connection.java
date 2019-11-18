@@ -258,7 +258,7 @@ class Connection implements Closeable {
                 targets.add(new TargetInfo(currentTarget, currentAddresses));
                 currentTarget = line.getValue();
                 currentAddresses.clear();
-            } else if (line.getKey() == TargetAddressParameter) {
+            } else if (line.getKey().equals(TargetAddressParameter)) {
                 currentAddresses.add(TargetAddress.parse(line.getValue()));
             }
         }

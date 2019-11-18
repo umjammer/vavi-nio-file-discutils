@@ -55,7 +55,7 @@ public final class RegionInfo {
      * To load a VHDX file, a parser must be able to interpret all regions
      * marked as required.
      */
-    public boolean getIsRequired() {
+    public boolean isRequired() {
         return _entry.flags == RegionFlags.Required;
     }
 
@@ -70,10 +70,7 @@ public final class RegionInfo {
      * Gets the well-known name (if any) of the region.
      *
      * VHDX 1.0 specification defines the "BAT" and "Metadata Region", unknown
-     * regions
-     * will return as
-     * {@code null}
-     * .
+     * regions will return as {@code null} .
      */
     public String getWellKnownName() {
         if (_entry.guid.equals(RegionEntry.BatGuid)) {
@@ -86,5 +83,4 @@ public final class RegionInfo {
 
         return null;
     }
-
 }

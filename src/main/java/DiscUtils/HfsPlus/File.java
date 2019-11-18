@@ -43,7 +43,7 @@ import dotnet4j.io.compression.CompressionMode;
 import dotnet4j.io.compression.DeflateStream;
 
 
-public class File implements IVfsFileWithStreams {
+class File implements IVfsFileWithStreams {
     private static final String CompressionAttributeName = "com.apple.decmpfs";
 
     private final CommonCatalogFileInfo _catalogInfo;

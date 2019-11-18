@@ -32,34 +32,34 @@ public final class Nfs3WeakCacheConsistencyAttr {
     public Nfs3WeakCacheConsistencyAttr() {
     }
 
-    private Nfs3FileTime __ChangeTime;
+    private Nfs3FileTime _changeTime;
 
     public Nfs3FileTime getChangeTime() {
-        return __ChangeTime;
+        return _changeTime;
     }
 
     public void setChangeTime(Nfs3FileTime value) {
-        __ChangeTime = value;
+        _changeTime = value;
     }
 
-    private Nfs3FileTime __ModifyTime;
+    private Nfs3FileTime _modifyTime;
 
     public Nfs3FileTime getModifyTime() {
-        return __ModifyTime;
+        return _modifyTime;
     }
 
     public void setModifyTime(Nfs3FileTime value) {
-        __ModifyTime = value;
+        _modifyTime = value;
     }
 
-    private long __Size;
+    private long _size;
 
     public long getSize() {
-        return __Size;
+        return _size;
     }
 
     public void setSize(long value) {
-        __Size = value;
+        _size = value;
     }
 
     public void write(XdrDataWriter writer) {

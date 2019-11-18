@@ -22,6 +22,7 @@
 
 package FileExtract;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.klab.commons.cli.Option;
@@ -52,7 +53,7 @@ public class Program extends ProgramBase {
     @Option(option = "o", argName = "_outFilePath", description = "The output file to be written.", args = 1, required = false)
     private String _outFilePath;
 
-    @Option(option = "dt", argName = "_diskType", description = "Force the type of disk - use a file extension (one of )")
+    @Option(option = "dt", argName = "_diskType", description = "Force the type of disk - use a file extension (one of TODO)")
     private String _diskType;
 
     @Option(option = "hd",
@@ -71,7 +72,7 @@ public class Program extends ProgramBase {
         VolumeManager volMgr = new VolumeManager();
         System.err.println("file: " + _diskFile);
         volMgr.addDisk(VirtualDisk.openDisk(_diskFile
-                .replace("/", "\\"), _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
+                .replace(File.separator, "\\"), _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
         VolumeInfo volInfo = null;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             volInfo = volMgr.getVolume(getVolumeId());

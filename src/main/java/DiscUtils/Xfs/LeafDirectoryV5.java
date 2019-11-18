@@ -30,54 +30,54 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class LeafDirectoryV5 extends LeafDirectory {
     public static final int HeaderMagicV5 = 0x58444433;
 
-    private int __Crc;
+    private int _crc;
 
     public int getCrc() {
-        return __Crc;
+        return _crc;
     }
 
     public void setCrc(int value) {
-        __Crc = value;
+        _crc = value;
     }
 
-    private long __BlockNumber;
+    private long _blockNumber;
 
     public long getBlockNumber() {
-        return __BlockNumber;
+        return _blockNumber;
     }
 
     public void setBlockNumber(long value) {
-        __BlockNumber = value;
+        _blockNumber = value;
     }
 
-    private long __LogSequenceNumber;
+    private long _logSequenceNumber;
 
     public long getLogSequenceNumber() {
-        return __LogSequenceNumber;
+        return _logSequenceNumber;
     }
 
     public void setLogSequenceNumber(long value) {
-        __LogSequenceNumber = value;
+        _logSequenceNumber = value;
     }
 
-    private UUID __Uuid;
+    private UUID _uuid;
 
     public UUID getUuid() {
-        return __Uuid;
+        return _uuid;
     }
 
     public void setUuid(UUID value) {
-        __Uuid = value;
+        _uuid = value;
     }
 
-    private long __Owner;
+    private long _owner;
 
     public long getOwner() {
-        return __Owner;
+        return _owner;
     }
 
     public void setOwner(long value) {
-        __Owner = value;
+        _owner = value;
     }
 
     protected int getHeaderPadding() {

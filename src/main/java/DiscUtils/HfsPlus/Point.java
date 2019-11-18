@@ -37,6 +37,7 @@ public final class Point implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         Vertical = EndianUtilities.toInt16BigEndian(buffer, offset + 0);
         Horizontal = EndianUtilities.toInt16BigEndian(buffer, offset + 2);
+
         return 4;
     }
 

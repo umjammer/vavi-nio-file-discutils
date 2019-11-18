@@ -41,6 +41,7 @@ public final class CatalogThread implements IByteArraySerializable {
         RecordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
         ParentId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         Name = HfsPlusUtilities.readUniStr255(buffer, offset + 8);
+
         return 0;
     }
 

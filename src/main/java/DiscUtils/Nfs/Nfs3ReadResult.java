@@ -42,44 +42,44 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
     public Nfs3ReadResult() {
     }
 
-    private int __Count;
+    private int _count;
 
     public int getCount() {
-        return __Count;
+        return _count;
     }
 
     public void setCount(int value) {
-        __Count = value;
+        _count = value;
     }
 
-    private byte[] __Data;
+    private byte[] _data;
 
     public byte[] getData() {
-        return __Data;
+        return _data;
     }
 
     public void setData(byte[] value) {
-        __Data = value;
+        _data = value;
     }
 
-    private boolean __Eof;
+    private boolean _eof;
 
     public boolean getEof() {
-        return __Eof;
+        return _eof;
     }
 
     public void setEof(boolean value) {
-        __Eof = value;
+        _eof = value;
     }
 
-    private Nfs3FileAttributes __FileAttributes;
+    private Nfs3FileAttributes _fileAttributes;
 
     public Nfs3FileAttributes getFileAttributes() {
-        return __FileAttributes;
+        return _fileAttributes;
     }
 
     public void setFileAttributes(Nfs3FileAttributes value) {
-        __FileAttributes = value;
+        _fileAttributes = value;
     }
 
     public void write(XdrDataWriter writer) {

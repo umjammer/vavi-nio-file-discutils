@@ -138,7 +138,6 @@ public class Program extends ProgramBase {
                                     elem.setValue(DiscUtils.BootConfig.ElementValue
                                             .forDevice(elem.getValue().getParentObject(), volMgr.getPhysicalVolumes().get(0)));
                                 }
-
                             }
                         }
                     }

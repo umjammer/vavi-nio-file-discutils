@@ -142,7 +142,7 @@ public final class Disk extends VirtualDisk {
                 throw new IllegalArgumentException(String.format("File at index %d does not have a parent disk", i));
             }
 
-            if (files.get(i).getParentUniqueId() != files.get(i + 1).getUniqueId()) {
+            if (!files.get(i).getParentUniqueId().equals(files.get(i + 1).getUniqueId())) {
                 throw new IllegalArgumentException(String
                         .format("File at index %d is not the parent of file at index %d - Unique Ids don't match", i + 1, i));
             }
@@ -473,7 +473,7 @@ public final class Disk extends VirtualDisk {
             for (String testPath : file.getParentLocations()) {
                 if (fileLocator.exists(testPath)) {
                     DiskImageFile newFile = new DiskImageFile(fileLocator, testPath, FileAccess.Read);
-                    if (newFile.getUniqueId() != file.getParentUniqueId()) {
+                    if (!newFile.getUniqueId().equals(file.getParentUniqueId())) {
                         throw new dotnet4j.io.IOException(String
                                 .format("Invalid disk chain found looking for parent with id %s, found %s with id %s",
                                         file.getParentUniqueId(),

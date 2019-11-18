@@ -22,7 +22,7 @@
 
 package DiscUtils.HfsPlus;
 
-public class BTreeGenericRecord extends BTreeNodeRecord {
+class BTreeGenericRecord extends BTreeNodeRecord {
     private byte[] _data;
 
     private final int _size;

@@ -238,24 +238,24 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Gets access to a view of the stream being validated, forcing 'lock-down'.
      *
+     * This method never lets changes through to the underlying stream, so
+     * ensures the integrity of the underlying stream. Any changes made to the
+     * returned stream are held as a private delta and discarded when the stream
+     * is disposed.
+     *
      * @param view The view to open.
      * @param readOnly Whether to fail changes to the stream.
      * @return The new stream, the caller must dispose.Always use this method to
      *         access the stream, rather than keeping a reference to the stream
-     *         passed to the constructor. This method never lets changes through
-     *         to the underlying stream, so ensures the integrity of the
-     *         underlying stream. Any changes made to the returned stream are
-     *         held as a private delta and discarded when the stream is
-     *         disposed.
+     *         passed to the constructor.
      */
     public Stream openStreamView(StreamView view, boolean readOnly) {
         // Prevent further changes.
         _lockdown = true;
         Stream s;
         // Perversely, the snap stream has the current view (squirrelled away in
-        // it's
-        // delta). The base stream is actually the stream state back at the last
-        // checkpoint.
+        // it's delta). The base stream is actually the stream state back at the
+        // last checkpoint.
         if (view == StreamView.Current) {
             s = _snapStream;
         } else {
@@ -275,24 +275,22 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Verifies the file system integrity.
      *
+     * Unlike Checkpoint, this method doesn't cause the snapshot to be re-taken.
+     *
      * @param reportOutput The destination for the verification report, or
      *            {@code null}
      * @param levels The amount of detail to include in the report (if not
      *            {@code null} )
      * @return {@code true} if the file system is OK, else {@code false} .This
      *         method may place this object into "lock-down", where no further
-     *         changes are permitted (if corruption is detected). Unlike
-     *         Checkpoint, this method doesn't cause the snapshot to be
-     *         re-taken.
+     *         changes are permitted (if corruption is detected).
      */
     public boolean verify(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         boolean ok = true;
         _snapStream.freeze();
         // Note the trace stream means that we can guarantee no further stream
-        // access
-        // after the file system object is disposed - when we dispose it, it
-        // forcibly
-        // severes the connection to the snapshot stream.
+        // access after the file system object is disposed - when we dispose it,
+        // it forcibly severes the connection to the snapshot stream.
         try (TracingStream traceStream = new TracingStream(_snapStream, Ownership.None)) {
             try {
 //Debug.println(checkerClass);
@@ -324,13 +322,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Verifies the file system integrity (as seen on disk), and resets the disk
      * checkpoint.
      *
+     * This method is automatically invoked according to the CheckpointInterval
+     * property, but can be called manually as well.
+     *
      * @param reportOutput The destination for the verification report, or
      *            {@code null}
-     *
      * @param levels The amount of detail to include in the report (if not
-     *            {@code null} )This method is automatically invoked according
-     *            to the CheckpointInterval property, but can be called manually
-     *            as well.
+     *            {@code null} )
      */
     public boolean checkpoint(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         if (!verify(reportOutput, levels)) {

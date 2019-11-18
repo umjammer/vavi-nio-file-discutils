@@ -37,24 +37,24 @@ public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
     public Nfs3FileSystemInfoResult() {
     }
 
-    private Nfs3FileSystemInfo __FileSystemInfo;
+    private Nfs3FileSystemInfo _fileSystemInfo;
 
     public Nfs3FileSystemInfo getFileSystemInfo() {
-        return __FileSystemInfo;
+        return _fileSystemInfo;
     }
 
     public void setFileSystemInfo(Nfs3FileSystemInfo value) {
-        __FileSystemInfo = value;
+        _fileSystemInfo = value;
     }
 
-    private Nfs3FileAttributes __PostOpAttributes;
+    private Nfs3FileAttributes _postOpAttributes;
 
     public Nfs3FileAttributes getPostOpAttributes() {
-        return __PostOpAttributes;
+        return _postOpAttributes;
     }
 
     public void setPostOpAttributes(Nfs3FileAttributes value) {
-        __PostOpAttributes = value;
+        _postOpAttributes = value;
     }
 
     public void write(XdrDataWriter writer) {

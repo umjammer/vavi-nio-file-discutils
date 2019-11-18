@@ -24,7 +24,7 @@ package DiskDump;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +42,7 @@ import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.LogicalVolumeStatus;
 import DiscUtils.Core.PhysicalVolumeInfo;
 import DiscUtils.Core.VirtualDisk;
+import DiscUtils.Core.VirtualDiskManager;
 import DiscUtils.Core.VolumeManager;
 import DiscUtils.Core.LogicalDiskManager.DynamicDiskManager;
 import DiscUtils.Core.Partitions.BiosPartitionInfo;
@@ -54,10 +55,18 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+    static final String types;
+
+    static {
+        types = String.join(", ", VirtualDiskManager.getSupportedDiskTypes());
+        System.err.println(types);
+    }
+
     @Option(option = "disk",
             description = "Paths to the disks to inspect.  Where a volume manager is used to span volumes across multiple virtual disks, specify all disks in the set.",
+            args = 1,
             required = false)
-    private String[] _inFiles;
+    private String _inFile; // TODO array option
 
     @Option(option = "db", argName = "diskbytes", description = "Includes a hexdump of all disk content in the output")
     private boolean _showContent;
@@ -78,23 +87,31 @@ public class Program extends ProgramBase {
 
     @Option(option = "dt",
             argName = "disktype",
-            description = "Force the type of disk - use a file extension (one of " +
-                          /* String.join(", ", VirtualDiskManager.getSupportedDiskTypes()) +*/ ")")
-    private String _diskType = "type";
+            args = 1,
+            description = "Force the type of disk - use a file extension (one of TODO)")
+    private String _diskType/* = "type" */;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
+//    StandardSwitches.UserAndPassword | StandardSwitches.FileNameEncoding;
+
     protected void doRun() throws IOException {
 //        DiscUtils.FileSystems.SetupHelper.setupFileSystems();
-        System.setProperty("file.encoding", Charset.forName("UTF8").name());
+
+//        System.setProperty("file.encoding", Charset.forName("UTF8").name());
+
         List<VirtualDisk> disks = new ArrayList<>();
+System.err.println(_inFile);
+String[] _inFiles = new String[] { _inFile };
         for (String path : _inFiles) {
             VirtualDisk disk = VirtualDisk
                     .openDisk(path, _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword());
             disks.add(disk);
+
             System.err.println();
             System.err.println("DISK: " + path);
             System.err.println();
@@ -105,8 +122,8 @@ public class Program extends ProgramBase {
             if (disk.isPartitioned()) {
                 System.err.printf("           GUID: %s\n", disk.getPartitions().getDiskGuid());
             }
-
             System.err.println();
+
             if (!_hideExtents) {
                 System.err.println();
                 System.err.println("  Stored Extents");
@@ -129,7 +146,6 @@ public class Program extends ProgramBase {
                 } catch (Exception e) {
                     System.err.println(e.toString());
                 }
-
                 System.err.println();
             }
 
@@ -148,16 +164,16 @@ public class Program extends ProgramBase {
                     BiosPartitionInfo bpi = partition instanceof BiosPartitionInfo ? (BiosPartitionInfo) partition
                                                                                    : (BiosPartitionInfo) null;
                     if (bpi != null) {
-                        System.err.printf("        {0,-16}  %s\n", bpi.getStart().toString(), bpi.getEnd().toString());
+                        System.err.printf("        %-16s  %s\n", bpi.getStart().toString(), bpi.getEnd().toString());
                         System.err.println();
                     }
-
                 }
             } else {
                 System.err.println("    No partitions");
                 System.err.println();
             }
         }
+
         System.err.println();
         System.err.println();
         System.err.println("VOLUMES");
@@ -166,6 +182,7 @@ public class Program extends ProgramBase {
         for (VirtualDisk disk : disks) {
             volMgr.addDisk(disk);
         }
+
         try {
             System.err.println();
             System.err.println("  Physical Volumes");
@@ -185,7 +202,7 @@ public class Program extends ProgramBase {
                 System.err.println();
             }
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
 
         try {
@@ -201,6 +218,7 @@ public class Program extends ProgramBase {
                 System.err.println("    Disk Geometry: " + vol.getPhysicalGeometry());
                 System.err.println("    BIOS Geometry: " + vol.getBiosGeometry());
                 System.err.println("    First Sector: " + vol.getPhysicalStartSector());
+
                 if (vol.getStatus() == LogicalVolumeStatus.Failed) {
                     System.err.println("    File Systems: <unknown - failed volume>");
                     System.err.println();
@@ -208,25 +226,20 @@ public class Program extends ProgramBase {
                 }
 
                 List<DiscUtils.Core.FileSystemInfo> fileSystemInfos = FileSystemManager.detectFileSystems(vol);
-                System.err.println("    File Systems: " + String.join(", ", fileSystemInfos.stream().toArray(String[]::new)));
+                System.err.println("    File Systems: " +
+                                   String.join(", ", fileSystemInfos.stream().map(f -> f.toString()).toArray(String[]::new)));
+
                 System.err.println();
+
                 if (_showVolContent) {
                     System.err.println("    Binary Contents...");
                     try {
-                        Stream s = vol.open();
-                        try {
-                            {
-                                HexDump.generate(s, System.err);
-                            }
-                        } finally {
-                            if (s != null)
-                                s.close();
-
+                        try (Stream s = vol.open()) {
+                            HexDump.generate(s, System.err);
                         }
                     } catch (Exception e) {
-                        System.err.println(e.toString());
+                        e.printStackTrace();
                     }
-
                     System.err.println();
                 }
 
@@ -234,50 +247,35 @@ public class Program extends ProgramBase {
                     for (FileSystemInfo fsi : fileSystemInfos) {
                         System.err.printf("    Boot Code: %s\n", fsi.getName());
                         try {
-                            DiscFileSystem fs = fsi.open(vol, getFileSystemParameters());
-                            try {
-                                {
-                                    byte[] bootCode = fs.readBootCode();
-                                    if (bootCode != null) {
-                                        HexDump.generate(bootCode, System.err);
-                                    } else {
-                                        System.err.println("      <file system reports no boot code>");
-                                    }
+                            try (DiscFileSystem fs = fsi.open(vol, getFileSystemParameters())) {
+                                byte[] bootCode = fs.readBootCode();
+                                if (bootCode != null) {
+                                    HexDump.generate(bootCode, System.err);
+                                } else {
+                                    System.err.println("      <file system reports no boot code>");
                                 }
-                            } finally {
-                                if (fs != null)
-                                    fs.close();
-
                             }
                         } catch (Exception e) {
+                            e.printStackTrace();
                             System.err.println("      Unable to show boot code: " + e.getMessage());
                         }
-
                         System.err.println();
                     }
                 }
 
                 if (_showFiles) {
                     for (FileSystemInfo fsi : fileSystemInfos) {
-                        DiscFileSystem fs = fsi.open(vol, getFileSystemParameters());
-                        try {
-                            {
-                                System.err.printf("    %s Volume Label: %s\n", fsi.getName(), fs.getVolumeLabel());
-                                System.err.printf("    Files (%s)...\n", fsi.getName());
-                                showDir(fs.getRoot(), 6);
-                            }
-                        } finally {
-                            if (fs != null)
-                                fs.close();
-
+                        try (DiscFileSystem fs = fsi.open(vol, getFileSystemParameters())) {
+                            System.err.printf("    %s Volume Label: %s\n", fsi.getName(), fs.getVolumeLabel());
+                            System.err.printf("    Files (%s)...\n", fsi.getName());
+                            showDir(fs.getRoot(), 6);
                         }
                         System.err.println();
                     }
                 }
-
             }
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
 
         try {
@@ -288,7 +286,6 @@ public class Program extends ProgramBase {
                     dynDiskManager.add(disk);
                     foundDynDisk = true;
                 }
-
             }
             if (foundDynDisk) {
                 System.err.println();
@@ -296,9 +293,8 @@ public class Program extends ProgramBase {
                 System.err.println();
                 dynDiskManager.dump(new PrintWriter(System.err), "  ");
             }
-
         } catch (Exception e) {
-            System.err.println(e.toString());
+            e.printStackTrace();
         }
 
         if (_showContent) {
@@ -311,24 +307,30 @@ public class Program extends ProgramBase {
                 System.err.println();
             }
         }
-
     }
 
     private static void showDir(DiscDirectoryInfo dirInfo, int indent) {
-        System.err.printf("%s{1,-50} [%d]\n",
+try {
+        System.err.printf("%s%-50s [%s]\n",
                           new String(new char[indent]).replace('\0', ' '),
                           cleanName(dirInfo.getFullName()),
-                          dirInfo.getCreationTimeUtc());
-        for (Object __dummyForeachVar10 : dirInfo.getDirectories()) {
-            DiscDirectoryInfo subDir = (DiscDirectoryInfo) __dummyForeachVar10;
+                          Instant.ofEpochMilli(dirInfo.getCreationTimeUtc()));
+        for (DiscDirectoryInfo subDir : dirInfo.getDirectories()) {
             showDir(subDir, indent + 0);
         }
-        for (Object __dummyForeachVar11 : dirInfo.getFiles()) {
-            DiscFileInfo file = (DiscFileInfo) __dummyForeachVar11;
-            System.err.printf("%s{1,-50} [%d]\n",
+} catch (Exception e) {
+ e.printStackTrace();
+ return;
+}
+        for (DiscFileInfo file : dirInfo.getFiles()) {
+try {
+            System.err.printf("%s%-50s [%s]\n",
                               new String(new char[indent]).replace('\0', ' '),
                               cleanName(file.getFullName()),
-                              file.getCreationTimeUtc());
+                              Instant.ofEpochMilli(file.getCreationTimeUtc()));
+} catch (Exception e) {
+ e.printStackTrace();
+}
         }
     }
 

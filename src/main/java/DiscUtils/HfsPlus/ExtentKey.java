@@ -22,10 +22,12 @@
 
 package DiscUtils.HfsPlus;
 
+import vavi.util.Debug;
+
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentKey> {
+final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentKey> {
     // 0 is data, 0xff is rsrc
     private byte _forkType;
 
@@ -83,6 +85,7 @@ public final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<
         _forkType = buffer[offset + 2];
         _nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         _startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+Debug.println((_keyLength & 0xffff) + 2);
         return (_keyLength & 0xffff) + 2;
     }
 

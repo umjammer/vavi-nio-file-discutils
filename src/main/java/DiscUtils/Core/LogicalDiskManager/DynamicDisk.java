@@ -100,7 +100,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
                 headerPos = 0xc00;
             } else {
                 for (PartitionInfo part : pt.getPartitions()) {
-                    if (part.getGuidType() == GuidPartitionTypes.WindowsLdmMetadata) {
+                    if (part.getGuidType().equals(GuidPartitionTypes.WindowsLdmMetadata)) {
                         headerPos = part.getLastSector() * Sizes.Sector;
                     }
                 }

@@ -166,7 +166,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
     }
 
     protected void displayHeader() {
-        System.err.printf("%s v%s, available from http://discutils.codeplex.com", "FileExtract", "0.0.1");
+        System.err.printf("%s v%s, available from http://discutils.codeplex.com\n", "FileExtract", "0.0.1");
         System.err.println("Copyright (c) Kenneth Bell, 2008-2013");
         System.err.println("Free software issued under the MIT License, see LICENSE.TXT for details.");
         System.err.println();

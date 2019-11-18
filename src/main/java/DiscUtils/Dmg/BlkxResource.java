@@ -22,6 +22,7 @@
 
 package DiscUtils.Dmg;
 
+import java.util.Base64;
 import java.util.Map;
 
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -30,15 +31,13 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class BlkxResource extends Resource {
     public BlkxResource(Map<String, Object> parts) {
         super("blkx", parts);
-        __Block = EndianUtilities.<CompressedBlock> toStruct(CompressedBlock.class,
-                                                             parts.get("Data") instanceof byte[] ? (byte[]) parts.get("Data")
-                                                                                                 : (byte[]) null,
-                                                             0);
+        byte[] data = Base64.getDecoder().decode(String.class.cast(parts.get("Data")).replaceAll("\\s", ""));
+        _block = EndianUtilities.<CompressedBlock> toStruct(CompressedBlock.class, data, 0);
     }
 
-    private CompressedBlock __Block;
+    private CompressedBlock _block;
 
     public CompressedBlock getBlock() {
-        return __Block;
+        return _block;
     }
 }

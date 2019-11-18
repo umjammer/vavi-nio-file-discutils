@@ -47,27 +47,27 @@ public final class Nfs3FileSystemStat {
     /**
      * The total size, in bytes, of the file system.
      */
-    private long __TotalSizeBytes;
+    private long _totalSizeBytes;
 
     public long getTotalSizeBytes() {
-        return __TotalSizeBytes;
+        return _totalSizeBytes;
     }
 
     public void setTotalSizeBytes(long value) {
-        __TotalSizeBytes = value;
+        _totalSizeBytes = value;
     }
 
     /**
      * The amount of free space, in bytes, in the file system.
      */
-    private long __FreeSpaceBytes;
+    private long _freeSpaceBytes;
 
     public long getFreeSpaceBytes() {
-        return __FreeSpaceBytes;
+        return _freeSpaceBytes;
     }
 
     public void setFreeSpaceBytes(long value) {
-        __FreeSpaceBytes = value;
+        _freeSpaceBytes = value;
     }
 
     /**
@@ -76,41 +76,41 @@ public final class Nfs3FileSystemStat {
      * by the file system; it does not reflect any quota system implemented by the
      * server.)
      */
-    private long __AvailableFreeSpaceBytes;
+    private long _availableFreeSpaceBytes;
 
     public long getAvailableFreeSpaceBytes() {
-        return __AvailableFreeSpaceBytes;
+        return _availableFreeSpaceBytes;
     }
 
     public void setAvailableFreeSpaceBytes(long value) {
-        __AvailableFreeSpaceBytes = value;
+        _availableFreeSpaceBytes = value;
     }
 
     /**
      * The total number of file slots in the file system. (On a UNIX server, this
      * often corresponds to the number of inodes configured.)
      */
-    private long __FileSlotCount;
+    private long _fileSlotCount;
 
     public long getFileSlotCount() {
-        return __FileSlotCount;
+        return _fileSlotCount;
     }
 
     public void setFileSlotCount(long value) {
-        __FileSlotCount = value;
+        _fileSlotCount = value;
     }
 
     /**
      * The number of free file slots in the file system.
      */
-    private long __FreeFileSlotCount;
+    private long _freeFileSlotCount;
 
     public long getFreeFileSlotCount() {
-        return __FreeFileSlotCount;
+        return _freeFileSlotCount;
     }
 
     public void setFreeFileSlotCount(long value) {
-        __FreeFileSlotCount = value;
+        _freeFileSlotCount = value;
     }
 
     /**
@@ -119,14 +119,14 @@ public final class Nfs3FileSystemStat {
      * reserved by the file system; it does not reflect any quota system implemented
      * by the server.)
      */
-    private long __AvailableFreeFileSlotCount;
+    private long _availableFreeFileSlotCount;
 
     public long getAvailableFreeFileSlotCount() {
-        return __AvailableFreeFileSlotCount;
+        return _availableFreeFileSlotCount;
     }
 
     public void setAvailableFreeFileSlotCount(long value) {
-        __AvailableFreeFileSlotCount = value;
+        _availableFreeFileSlotCount = value;
     }
 
     /**
@@ -140,24 +140,24 @@ public final class Nfs3FileSystemStat {
      * Note however, this measure is assumed to be dynamic and may change at any
      * time.
      */
-    private long __Invariant;
+    private long _invariant;
 
     public long getInvariant() {
-        return __Invariant;
+        return _invariant;
     }
 
     public void setInvariant(long value) {
-        __Invariant = value;
+        _invariant = value;
     }
 
-    private long __InvariantUntil;
+    private long _invariantUntil;
 
     public long getInvariantUntil() {
-        return __InvariantUntil;
+        return _invariantUntil;
     }
 
     public void setInvariantUntil(long value) {
-        __InvariantUntil = value;
+        _invariantUntil = value;
     }
 
     public void write(XdrDataWriter writer) {

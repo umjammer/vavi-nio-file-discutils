@@ -63,124 +63,124 @@ public final class Nfs3SetAttributes {
         }
     }
 
-    private Nfs3FileTime __AccessTime;
+    private Nfs3FileTime _accessTime;
 
     public Nfs3FileTime getAccessTime() {
-        return __AccessTime;
+        return _accessTime;
     }
 
     public void setAccessTime(Nfs3FileTime value) {
-        __AccessTime = value;
+        _accessTime = value;
     }
 
-    private int __Gid;
+    private int _gid;
 
     public int getGid() {
-        return __Gid;
+        return _gid;
     }
 
     public void setGid(int value) {
-        __Gid = value;
+        _gid = value;
     }
 
-    private EnumSet<UnixFilePermissions> __Mode;
+    private EnumSet<UnixFilePermissions> _mode;
 
     public EnumSet<UnixFilePermissions> getMode() {
-        return __Mode;
+        return _mode;
     }
 
     public void setMode(EnumSet<UnixFilePermissions> value) {
-        __Mode = value;
+        _mode = value;
     }
 
-    private Nfs3FileTime __ModifyTime;
+    private Nfs3FileTime _modifyTime;
 
     public Nfs3FileTime getModifyTime() {
-        return __ModifyTime;
+        return _modifyTime;
     }
 
     public void setModifyTime(Nfs3FileTime value) {
-        __ModifyTime = value;
+        _modifyTime = value;
     }
 
-    private Nfs3SetTimeMethod __SetAccessTime = Nfs3SetTimeMethod.NoChange;
+    private Nfs3SetTimeMethod _setAccessTime = Nfs3SetTimeMethod.NoChange;
 
     public Nfs3SetTimeMethod getSetAccessTime() {
-        return __SetAccessTime;
+        return _setAccessTime;
     }
 
     public void setSetAccessTime(Nfs3SetTimeMethod value) {
-        __SetAccessTime = value;
+        _setAccessTime = value;
     }
 
-    private boolean __SetGid;
+    private boolean _setGid;
 
     public boolean getSetGid() {
-        return __SetGid;
+        return _setGid;
     }
 
     public void setSetGid(boolean value) {
-        __SetGid = value;
+        _setGid = value;
     }
 
-    private boolean __SetMode;
+    private boolean _setMode;
 
     public boolean getSetMode() {
-        return __SetMode;
+        return _setMode;
     }
 
     public void setSetMode(boolean value) {
-        __SetMode = value;
+        _setMode = value;
     }
 
-    private Nfs3SetTimeMethod __SetModifyTime = Nfs3SetTimeMethod.NoChange;
+    private Nfs3SetTimeMethod _setModifyTime = Nfs3SetTimeMethod.NoChange;
 
     public Nfs3SetTimeMethod getSetModifyTime() {
-        return __SetModifyTime;
+        return _setModifyTime;
     }
 
     public void setSetModifyTime(Nfs3SetTimeMethod value) {
-        __SetModifyTime = value;
+        _setModifyTime = value;
     }
 
-    private boolean __SetSize;
+    private boolean _setSize;
 
     public boolean getSetSize() {
-        return __SetSize;
+        return _setSize;
     }
 
     public void setSetSize(boolean value) {
-        __SetSize = value;
+        _setSize = value;
     }
 
-    private boolean __SetUid;
+    private boolean _setUid;
 
     public boolean getSetUid() {
-        return __SetUid;
+        return _setUid;
     }
 
     public void setSetUid(boolean value) {
-        __SetUid = value;
+        _setUid = value;
     }
 
-    private long __Size;
+    private long _size;
 
     public long getSize() {
-        return __Size;
+        return _size;
     }
 
     public void setSize(long value) {
-        __Size = value;
+        _size = value;
     }
 
-    private int __Uid;
+    private int _uid;
 
     public int getUid() {
-        return __Uid;
+        return _uid;
     }
 
     public void setUid(int value) {
-        __Uid = value;
+        _uid = value;
     }
 
     public void write(XdrDataWriter writer) {

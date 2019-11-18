@@ -25,7 +25,7 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class CatalogFileInfo extends CommonCatalogFileInfo {
+final class CatalogFileInfo extends CommonCatalogFileInfo {
     public ForkData DataFork;
 
     public FileInfo FileInfo;
@@ -40,10 +40,13 @@ public final class CatalogFileInfo extends CommonCatalogFileInfo {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
+
         Flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
         FileInfo = EndianUtilities.<FileInfo> toStruct(FileInfo.class, buffer, offset + 48);
+
         DataFork = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 88);
         ResourceFork = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 168);
+
         return 0;
     }
 

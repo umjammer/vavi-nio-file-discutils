@@ -93,7 +93,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      */
     public boolean contains(MetadataInfo item) {
         for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : _table.Entries.entrySet()) {
-            if (entry.getKey().getItemId() == item.getItemId() && entry.getKey().isUser() == item.isUser()) {
+            if (entry.getKey().getItemId().equals(item.getItemId()) && entry.getKey().isUser() == item.isUser()) {
                 return true;
             }
 

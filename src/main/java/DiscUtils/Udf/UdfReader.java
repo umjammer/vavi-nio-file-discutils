@@ -25,6 +25,7 @@ package DiscUtils.Udf;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import DiscUtils.Core.Vfs.VfsFileSystemFacade;
 import DiscUtils.Core.Vfs.VfsReadOnlyFileSystem;
@@ -86,7 +87,11 @@ public final class UdfReader extends VfsFileSystemFacade {
                 break;
             }
 
-            bvd = new BaseVolumeDescriptor(buffer, 0);
+            try {
+                bvd = new BaseVolumeDescriptor(buffer, 0);
+            } catch (NoSuchElementException e) {
+                return false;
+            }
             if (bvd.StandardIdentifier.equals("NSR02") || bvd.StandardIdentifier.equals("NSR03")) {
                 foundUdfMarker = true;
             } else if (bvd.StandardIdentifier.equals("BEA01") || bvd.StandardIdentifier.equals("BOOT2") ||

@@ -47,44 +47,44 @@ public final class Nfs3ReadDirPlusResult extends Nfs3CallResult {
     public Nfs3ReadDirPlusResult() {
     }
 
-    private long __CookieVerifier;
+    private long _cookieVerifier;
 
     public long getCookieVerifier() {
-        return __CookieVerifier;
+        return _cookieVerifier;
     }
 
     public void setCookieVerifier(long value) {
-        __CookieVerifier = value;
+        _cookieVerifier = value;
     }
 
-    private Nfs3FileAttributes __DirAttributes;
+    private Nfs3FileAttributes _dirAttributes;
 
     public Nfs3FileAttributes getDirAttributes() {
-        return __DirAttributes;
+        return _dirAttributes;
     }
 
     public void setDirAttributes(Nfs3FileAttributes value) {
-        __DirAttributes = value;
+        _dirAttributes = value;
     }
 
-    private List<Nfs3DirectoryEntry> __DirEntries;
+    private List<Nfs3DirectoryEntry> _dirEntries;
 
     public List<Nfs3DirectoryEntry> getDirEntries() {
-        return __DirEntries;
+        return _dirEntries;
     }
 
     public void setDirEntries(List<Nfs3DirectoryEntry> value) {
-        __DirEntries = value;
+        _dirEntries = value;
     }
 
-    private boolean __Eof;
+    private boolean _eof;
 
     public boolean getEof() {
-        return __Eof;
+        return _eof;
     }
 
     public void setEof(boolean value) {
-        __Eof = value;
+        _eof = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -110,22 +110,16 @@ public final class Nfs3ReadDirPlusResult extends Nfs3CallResult {
     }
 
     public boolean equals(Nfs3ReadDirPlusResult other) {
-        try {
-            if (other == null) {
-                return false;
-            }
-
-            return other.getStatus() == getStatus() && other.getDirAttributes().equals(getDirAttributes()) &&
-                   other.getDirEntries().equals(getDirEntries()) && other.getCookieVerifier() == getCookieVerifier();
-        } catch (RuntimeException __dummyCatchVar1) {
-            throw __dummyCatchVar1;
-        } catch (Exception __dummyCatchVar1) {
-            throw new RuntimeException(__dummyCatchVar1);
+        if (other == null) {
+            return false;
         }
 
+        return other.getStatus() == getStatus() && other.getDirAttributes().equals(getDirAttributes()) &&
+               other.getDirEntries().equals(getDirEntries()) && other.getCookieVerifier() == getCookieVerifier();
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getDirAttributes(), getCookieVerifier(), getDirEntries());
+        return dotnet4j.io.compat.Utilities
+                .getCombinedHashCode(getStatus(), getDirAttributes(), getCookieVerifier(), getDirEntries());
     }
 }

@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Core.CoreCompat.FileAttributes;
@@ -670,16 +672,17 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         String currentPath = path;
         int resolvesLeft = 20;
         while (currentEntry.isSymlink() && resolvesLeft > 0) {
-            IVfsSymlink<TDirEntry, TFile> symlink = getFile(currentEntry) instanceof IVfsSymlink ? IVfsSymlink.class
-                    .cast(getFile(currentEntry)) : (IVfsSymlink<TDirEntry, TFile>) null;
-            if (symlink == null) {
+            TFile file = getFile(currentEntry);
+            if (!IVfsSymlink.class.isInstance(file)) {
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 
-            currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex("\\") + "*$", ""),
+            IVfsSymlink<TDirEntry, TFile> symlink = IVfsSymlink.class.cast(file);
+            currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex("\\*$"), ""),
                                                 symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {
+Debug.println(currentPath);
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
 

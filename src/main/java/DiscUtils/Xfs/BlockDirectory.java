@@ -34,54 +34,54 @@ public class BlockDirectory implements IByteArraySerializable {
 
     public static final int HeaderMagic = 0x58443242;
 
-    private int __Magic;
+    private int _magic;
 
     public int getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(int value) {
-        __Magic = value;
+        _magic = value;
     }
 
-    private int __LeafCount;
+    private int _leafCount;
 
     public int getLeafCount() {
-        return __LeafCount;
+        return _leafCount;
     }
 
     public void setLeafCount(int value) {
-        __LeafCount = value;
+        _leafCount = value;
     }
 
-    private int __LeafStale;
+    private int _leafStale;
 
     public int getLeafStale() {
-        return __LeafStale;
+        return _leafStale;
     }
 
     public void setLeafStale(int value) {
-        __LeafStale = value;
+        _leafStale = value;
     }
 
-    private BlockDirectoryDataFree[] __BestFree;
+    private BlockDirectoryDataFree[] _bestFree;
 
     public BlockDirectoryDataFree[] getBestFree() {
-        return __BestFree;
+        return _bestFree;
     }
 
     public void setBestFree(BlockDirectoryDataFree[] value) {
-        __BestFree = value;
+        _bestFree = value;
     }
 
-    private List<BlockDirectoryData> __Entries;
+    private List<BlockDirectoryData> _entries;
 
     public List<BlockDirectoryData> getEntries() {
-        return __Entries;
+        return _entries;
     }
 
     public void setEntries(List<BlockDirectoryData> value) {
-        __Entries = value;
+        _entries = value;
     }
 
     public int size() {

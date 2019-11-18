@@ -22,6 +22,7 @@
 
 package DiscUtils.Ext;
 
+import java.time.Instant;
 import java.util.EnumSet;
 
 import DiscUtils.Core.UnixFileType;
@@ -58,7 +59,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastAccessTimeUtc() {
-        return getInode().AccessTime;
+        return Instant.ofEpochSecond(getInode().AccessTime).toEpochMilli();
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -66,7 +67,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return getInode().ModificationTime;
+        return Instant.ofEpochSecond(getInode().ModificationTime).toEpochMilli();
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -74,7 +75,7 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return getInode().CreationTime;
+        return Instant.ofEpochSecond(getInode().CreationTime).toEpochMilli();
     }
 
     public void setCreationTimeUtc(long value) {

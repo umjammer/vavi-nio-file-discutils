@@ -40,34 +40,34 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
         }
     }
 
-    private Nfs3FileAttributes __DirAttributes;
+    private Nfs3FileAttributes _dirAttributes;
 
     public Nfs3FileAttributes getDirAttributes() {
-        return __DirAttributes;
+        return _dirAttributes;
     }
 
     public void setDirAttributes(Nfs3FileAttributes value) {
-        __DirAttributes = value;
+        _dirAttributes = value;
     }
 
-    private Nfs3FileAttributes __ObjectAttributes;
+    private Nfs3FileAttributes _objectAttributes;
 
     public Nfs3FileAttributes getObjectAttributes() {
-        return __ObjectAttributes;
+        return _objectAttributes;
     }
 
     public void setObjectAttributes(Nfs3FileAttributes value) {
-        __ObjectAttributes = value;
+        _objectAttributes = value;
     }
 
-    private Nfs3FileHandle __ObjectHandle;
+    private Nfs3FileHandle _objectHandle;
 
     public Nfs3FileHandle getObjectHandle() {
-        return __ObjectHandle;
+        return _objectHandle;
     }
 
     public void setObjectHandle(Nfs3FileHandle value) {
-        __ObjectHandle = value;
+        _objectHandle = value;
     }
 
     public void write(XdrDataWriter writer) {

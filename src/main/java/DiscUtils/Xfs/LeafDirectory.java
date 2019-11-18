@@ -36,34 +36,34 @@ public class LeafDirectory implements IByteArraySerializable {
 
     public static final long LeafOffset = (1 * (1L << (32 + 3)));
 
-    private int __Magic;
+    private int _magic;
 
     public int getMagic() {
-        return __Magic;
+        return _magic;
     }
 
     public void setMagic(int value) {
-        __Magic = value;
+        _magic = value;
     }
 
-    private BlockDirectoryDataFree[] __BestFree;
+    private BlockDirectoryDataFree[] _bestFree;
 
     public BlockDirectoryDataFree[] getBestFree() {
-        return __BestFree;
+        return _bestFree;
     }
 
     public void setBestFree(BlockDirectoryDataFree[] value) {
-        __BestFree = value;
+        _bestFree = value;
     }
 
-    private List<BlockDirectoryData> __Entries;
+    private List<BlockDirectoryData> _entries;
 
     public List<BlockDirectoryData> getEntries() {
-        return __Entries;
+        return _entries;
     }
 
     public void setEntries(List<BlockDirectoryData> value) {
-        __Entries = value;
+        _entries = value;
     }
 
     public int size() {

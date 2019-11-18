@@ -30,7 +30,7 @@ import DiscUtils.Core.Vfs.VfsDirEntry;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class DirEntry extends VfsDirEntry {
+final class DirEntry extends VfsDirEntry {
     public DirEntry(String name, byte[] dirEntryData) {
         _fileName = name;
         _catalogFileInfo = parseDirEntryData(dirEntryData);
@@ -89,7 +89,7 @@ public final class DirEntry extends VfsDirEntry {
         return getCatalogFileInfo().FileId.getId();
     }
 
-    public static boolean isFileOrDirectory(byte[] dirEntryData) {
+    static boolean isFileOrDirectory(byte[] dirEntryData) {
         CatalogRecordType type = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(dirEntryData, 0)];
         return type == CatalogRecordType.FolderRecord || type == CatalogRecordType.FileRecord;
     }

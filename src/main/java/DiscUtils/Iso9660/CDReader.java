@@ -23,6 +23,7 @@
 package DiscUtils.Iso9660;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import DiscUtils.Core.ClusterMap;
 import DiscUtils.Core.IClusterBasedFileSystem;
@@ -138,8 +139,8 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      *
      * @param path The path to inspect.
      * @return The clusters.Note that in some file systems, small files may not
-     *         have dedicated
-     *         clusters. Only dedicated clusters will be returned.
+     *         have dedicated clusters. Only dedicated clusters will be
+     *         returned.
      */
     public List<Range> pathToClusters(String path) {
         return VfsCDReader.class.cast(getRealFileSystem()).pathToClusters(path);
@@ -148,13 +149,13 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
     /**
      * Converts a file name to the extents containing its data.
      *
+     * Use this method with caution - not all file systems will store all bytes
+     * directly in extents. Files may be compressed, sparse or encrypted. This
+     * method merely indicates where file data is stored, not what's stored.
+     *
      * @param path The path to inspect.
      * @return The file extents, as absolute byte positions in the underlying
-     *         stream.Use this method with caution - not all file systems will
-     *         store all bytes
-     *         directly in extents. Files may be compressed, sparse or
-     *         encrypted. This method
-     *         merely indicates where file data is stored, not what's stored.
+     *         stream.
      */
     public List<StreamExtent> pathToExtents(String path) {
         return VfsCDReader.class.cast(getRealFileSystem()).pathToExtents(path);
@@ -184,9 +185,8 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      * Detects if a stream contains a valid ISO file system.
      *
      * @param data The stream to inspect.
-     * @return
-     *         {@code true}
-     *         if the stream contains an ISO file system, else false.
+     * @return {@code true} if the stream contains an ISO file system, else
+     *         false.
      */
     public static boolean detect(Stream data) {
         byte[] buffer = new byte[IsoUtilities.SectorSize];
@@ -200,8 +200,12 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
             return false;
         }
 
-        BaseVolumeDescriptor bvd = new BaseVolumeDescriptor(buffer, 0);
-        return bvd.StandardIdentifier.equals(BaseVolumeDescriptor.Iso9660StandardIdentifier);
+        try {
+            BaseVolumeDescriptor bvd = new BaseVolumeDescriptor(buffer, 0);
+            return bvd.StandardIdentifier.equals(BaseVolumeDescriptor.Iso9660StandardIdentifier);
+        } catch (NoSuchElementException e) {
+            return false;
+        }
     }
 
     /**

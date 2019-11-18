@@ -31,7 +31,7 @@ import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
 
 
-public final class FileBuffer extends Buffer {
+final class FileBuffer extends Buffer {
     private final ForkData _baseData;
 
     private final CatalogNodeId _cnid;
@@ -58,16 +58,20 @@ public final class FileBuffer extends Buffer {
 
     public int read(long pos, byte[] buffer, int offset, int count) {
         int totalRead = 0;
+
         int limitedCount = (int) Math.min(count, Math.max(0, getCapacity() - pos));
+
         while (totalRead < limitedCount) {
             long[] extentLogicalStart = new long[1];
             ExtentDescriptor extent = findExtent(pos, extentLogicalStart);
             long extentStreamStart = extent.StartBlock * (long) _context.getVolumeHeader().BlockSize;
             long extentSize = extent.BlockCount * (long) _context.getVolumeHeader().BlockSize;
+
             long extentOffset = pos + totalRead - extentLogicalStart[0];
             int toRead = (int) Math.min(limitedCount - totalRead, extentSize - extentOffset);
+
             // Remaining in extent can create a situation where amount to read is zero, and that appears
-            // to be OK, just need to exit thie while loop to avoid infinite loop.
+            // to be OK, just need to exit this while loop to avoid infinite loop.
             if (toRead == 0) {
                 break;
             }
@@ -75,8 +79,10 @@ public final class FileBuffer extends Buffer {
             Stream volStream = _context.getVolumeStream();
             volStream.setPosition(extentStreamStart + extentOffset);
             int numRead = volStream.read(buffer, offset + totalRead, toRead);
+
             totalRead += numRead;
         }
+
         return totalRead;
     }
 
@@ -106,14 +112,17 @@ public final class FileBuffer extends Buffer {
 
             blocksSeen += _baseData.Extents[i].BlockCount;
         }
+
         while (blocksSeen < _baseData.TotalBlocks) {
             byte[] extentData = _context.getExtentsOverflow().find(new ExtentKey(_cnid, blocksSeen, false));
+
             if (extentData != null) {
                 int extentDescriptorCount = extentData.length / 8;
                 for (int a = 0; a < extentDescriptorCount; a++) {
                     ExtentDescriptor extentDescriptor = new ExtentDescriptor();
                     @SuppressWarnings("unused")
                     int bytesRead = extentDescriptor.readFrom(extentData, a * 8);
+
                     if (blocksSeen + extentDescriptor.BlockCount > block) {
                         extentLogicalStart[0] = blocksSeen * (long) _context.getVolumeHeader().BlockSize;
                         return extentDescriptor;
@@ -125,6 +134,7 @@ public final class FileBuffer extends Buffer {
                 throw new IOException("Missing extent from extent overflow file: cnid=" + _cnid + ", blocksSeen=" + blocksSeen);
             }
         }
+
         throw new UnsupportedOperationException("Requested file fragment beyond EOF");
     }
 }

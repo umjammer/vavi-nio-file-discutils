@@ -28,7 +28,7 @@ import java.util.List;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
+class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
     public BTreeHeaderNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         super(clazz, tree, descriptor);
     }
@@ -40,16 +40,21 @@ public class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int totalRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
+
         int headerRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 2);
         int userDataRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 4);
         int mapRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 6);
+
         List<BTreeNodeRecord> results = new ArrayList<>(3);
         results.add(0, new BTreeHeaderRecord());
         results.get(0).readFrom(buffer, offset + headerRecordOffset);
+
         results.add(1, new BTreeGenericRecord(mapRecordOffset - userDataRecordOffset));
         results.get(1).readFrom(buffer, offset + userDataRecordOffset);
+
         results.add(2, new BTreeGenericRecord(nodeSize - (totalRecords * 2 + mapRecordOffset)));
         results.get(2).readFrom(buffer, offset + mapRecordOffset);
+
         return results;
     }
 }

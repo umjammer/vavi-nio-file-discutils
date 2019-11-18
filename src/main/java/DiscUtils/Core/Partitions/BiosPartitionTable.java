@@ -80,8 +80,8 @@ public final class BiosPartitionTable extends PartitionTable {
             if (r.isValid()) {
                 result.add(new BiosPartitionInfo(this, r));
             }
-
         }
+
         return Collections.unmodifiableList(result);
     }
 
@@ -103,8 +103,8 @@ public final class BiosPartitionTable extends PartitionTable {
             if (r.isValid()) {
                 result.add(new BiosPartitionInfo(this, r));
             }
-
         }
+
         return Collections.unmodifiableList(result);
     }
 
@@ -119,11 +119,11 @@ public final class BiosPartitionTable extends PartitionTable {
             disk.setPosition(0);
             byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
             if ((bootSector[510] & 0xff) == 0x55 && (bootSector[511] & 0xff) == 0xAA) {
-                byte maxHead = 0;
-                byte maxSector = 0;
+                int maxHead = 0;
+                int maxSector = 0;
                 for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
-                    maxHead = (byte) Math.max(maxHead, record.getEndHead());
-                    maxSector = (byte) Math.max(maxSector, record.getEndSector());
+                    maxHead = Math.max(maxHead, record.getEndHead());
+                    maxSector = Math.max(maxSector, record.getEndSector());
                 }
 
                 if (maxHead > 0 && maxSector > 0) {

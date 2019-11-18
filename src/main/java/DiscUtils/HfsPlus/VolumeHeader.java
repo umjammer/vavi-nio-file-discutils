@@ -101,30 +101,38 @@ public final class VolumeHeader implements IByteArraySerializable {
         Attributes = VolumeAttributes.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         LastMountedVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
         JournalInfoBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+
         CreateDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.systemDefault(), buffer, offset + 16);
         ModifyDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
         BackupDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
         CheckedDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
+
         FileCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
         FolderCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+
         BlockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 40);
         TotalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 44);
         FreeBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 48);
+
         NextAllocation = EndianUtilities.toUInt32BigEndian(buffer, offset + 52);
         ResourceClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
         DataClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
         NextCatalogId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 64));
+
         WriteCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 68);
         EncodingsBitmap = EndianUtilities.toUInt64BigEndian(buffer, offset + 72);
+
         FinderInfo = new int[8];
         for (int i = 0; i < 8; ++i) {
             FinderInfo[i] = EndianUtilities.toUInt32BigEndian(buffer, offset + 80 + i * 4);
         }
+
         AllocationFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 112);
         ExtentsFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 192);
         CatalogFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 272);
         AttributesFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 352);
         StartupFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 432);
+
         return 512;
     }
 

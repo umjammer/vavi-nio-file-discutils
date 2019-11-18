@@ -22,7 +22,7 @@
 
 package DiscUtils.HfsPlus;
 
-public abstract class BTreeKeyedNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
+abstract class BTreeKeyedNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
 
     public BTreeKeyedNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         super(clazz, tree, descriptor);

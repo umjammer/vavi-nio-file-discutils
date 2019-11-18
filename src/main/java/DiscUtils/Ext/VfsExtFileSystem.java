@@ -39,9 +39,9 @@ import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
 
 
-public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context>
+final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context>
     implements IUnixFileSystem {
-    public static final EnumSet<IncompatibleFeatures> SupportedIncompatibleFeatures = EnumSet
+    static final EnumSet<IncompatibleFeatures> SupportedIncompatibleFeatures = EnumSet
             .of(IncompatibleFeatures.FileType,
                 IncompatibleFeatures.FlexBlockGroups,
                 IncompatibleFeatures.Extents,
@@ -52,6 +52,7 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
 
     public VfsExtFileSystem(Stream stream, FileSystemParameters parameters) {
         super(new ExtFileSystemOptions(parameters));
+
         stream.setPosition(1024);
         byte[] superblockData = StreamUtilities.readExact(stream, 1024);
 
@@ -141,7 +142,6 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         if (dirEntry.getRecord().FileType == DirectoryRecord.FileTypeDirectory) {
             return new Directory(getContext(), dirEntry.getRecord().Inode, inode);
         }
-
         if (dirEntry.getRecord().FileType == DirectoryRecord.FileTypeSymlink) {
             return new Symlink(getContext(), dirEntry.getRecord().Inode, inode);
         }
@@ -205,15 +205,15 @@ public final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         SuperBlock superBlock = getContext().getSuperBlock();
         if (superBlock.has64Bit()) {
             long free = 0;
+            // ext4 64Bit Feature
             for (BlockGroup blockGroup : _blockGroups) {
-                // ext4 64Bit Feature
                 free += BlockGroup64.class.cast(blockGroup).getFreeBlocksCountHigh() << 16 | blockGroup.getFreeBlocksCount();
             }
             return superBlock.getBlockSize() * free;
         } else {
             long free = 0;
+            // ext4 64Bit Feature
             for (BlockGroup blockGroup : _blockGroups) {
-                // ext4 64Bit Feature
                 free += blockGroup.getFreeBlocksCount();
             }
             return superBlock.getBlockSize() * free;

@@ -123,7 +123,7 @@ public class Program extends ProgramBase {
                 System.err.printf("     Well-Known Name: %s\n", entry.getWellKnownName());
                 System.err.printf("         File Offset: %1$d (0x%1$8X)\n", entry.getFileOffset());
                 System.err.printf("              Length: %1$d (0x%1$8X)\n", entry.getLength());
-                System.err.printf("         Is Required: %s\n", entry.getIsRequired());
+                System.err.printf("         Is Required: %s\n", entry.isRequired());
                 System.err.println();
             }
             MetadataTableInfo metadataTable = info.getMetadataTable();

@@ -25,7 +25,7 @@ package DiscUtils.HfsPlus;
 import DiscUtils.HfsPlus.CatalogNodeId;
 
 
-public class CatalogNodeId {
+class CatalogNodeId {
 
     public static final CatalogNodeId RootParentId = new CatalogNodeId(1);
 

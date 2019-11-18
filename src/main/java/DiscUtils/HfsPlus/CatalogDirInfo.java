@@ -25,7 +25,7 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class CatalogDirInfo extends CommonCatalogFileInfo {
+final class CatalogDirInfo extends CommonCatalogFileInfo {
     public short Flags;
 
     public int Valence;
@@ -36,8 +36,10 @@ public final class CatalogDirInfo extends CommonCatalogFileInfo {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
+
         Flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
         Valence = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+
         return 0;
     }
 

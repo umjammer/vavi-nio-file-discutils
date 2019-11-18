@@ -25,7 +25,7 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.IByteArraySerializable;
 
 
-public abstract class BTreeNodeRecord implements IByteArraySerializable {
+abstract class BTreeNodeRecord implements IByteArraySerializable {
 
     public abstract int size();
 

@@ -832,7 +832,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
             return ExtentType.VmfsSparse;
         default:
             throw new IllegalArgumentException(String.format("Unable to convert %s", type));
-
         }
     }
 
@@ -866,7 +865,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     throw new dotnet4j.io.IOException(e);
                 }
             }
-
         }
 
         switch (extent.getType()) {
@@ -883,7 +881,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     .open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose, extentStart, parent, ownsParent);
         default:
             throw new UnsupportedOperationException();
-
         }
     }
 
@@ -916,9 +913,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                     byte[] blank = new byte[(int) (descriptorStream.getLength() - descriptorStream.getPosition())];
                     descriptorStream.write(blank, 0, blank.length);
                 }
-
             }
-
         }
     }
 }

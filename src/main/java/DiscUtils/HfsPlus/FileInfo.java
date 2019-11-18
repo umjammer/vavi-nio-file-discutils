@@ -28,12 +28,12 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-class FileInfo implements IByteArraySerializable {
+public class FileInfo implements IByteArraySerializable {
     public int FileCreator;
 
     public int FileType;
 
-    public EnumSet<FinderFlags> _FinderFlags;
+    public EnumSet<FinderFlags> _finderFlags;
 
     public Point Point;
 
@@ -44,8 +44,9 @@ class FileInfo implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         FileType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
         FileCreator = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        _FinderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
+        _finderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
         Point = EndianUtilities.<Point> toStruct(Point.class, buffer, offset + 10);
+
         return 16;
     }
 

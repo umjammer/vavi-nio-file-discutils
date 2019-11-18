@@ -28,7 +28,7 @@ import java.util.List;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
+final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
     private List<BTreeLeafRecord<TKey>> _records;
 
     public BTreeLeafNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
@@ -62,14 +62,18 @@ public final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNod
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
+
         _records = new ArrayList<>(numRecords);
+
         int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);
+
         for (int i = 0; i < numRecords; ++i) {
             int end = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - (i + 2) * 2);
             _records.add(i, new BTreeLeafRecord<>(keyClass, end - start));
             _records.get(i).readFrom(buffer, offset + start);
             start = end;
         }
+
         return List.class.cast(_records);
     }
 }

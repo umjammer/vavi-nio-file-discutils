@@ -33,7 +33,7 @@ import DiscUtils.Core.UnixFileType;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class HfsPlusUtilities {
+class HfsPlusUtilities {
     private static final int[] _lowerCaseTable = {
         0x0100, 0x0200, 0x0000, 0x0300, 0x0400, 0x0500, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
         0x0000, 0x0600, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -234,6 +234,7 @@ public class HfsPlusUtilities {
         int val = EndianUtilities.toUInt32BigEndian(buffer, offset);
         Instant epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0, 0, kind).toInstant();
         long result = epoch.plusSeconds(val).toEpochMilli();
+
         return result;
     }
 
@@ -244,9 +245,11 @@ public class HfsPlusUtilities {
         UnixFileSystemInfo result = new UnixFileSystemInfo();
         result.setUserId(EndianUtilities.toInt32BigEndian(buffer, offset + 0));
         result.setGroupId(EndianUtilities.toInt32BigEndian(buffer, offset + 4));
+
         short fileMode = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
-        result.setFileType(UnixFileType.values()[(fileMode >>> 12) & 0xF]);
+        result.setFileType(UnixFileType.values()[((fileMode & 0xffff) >>> 12) & 0xF]);
         result.setPermissions(UnixFilePermissions.valueOf(fileMode & 0xFFF));
+
         special[0] = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
         if (result.getFileType() == UnixFileType.Block || result.getFileType() == UnixFileType.Character) {
             result.setDeviceId(special[0]);
@@ -258,25 +261,27 @@ public class HfsPlusUtilities {
     public static int fastUnicodeCompare(String a, String b) {
         int aPos = 0;
         int bPos = 0;
+
         while (true) {
             char aChar = '\0';
             char bChar = '\0';
+
             while (aPos < a.length() && aChar == '\0') {
                 aChar = a.charAt(aPos++);
                 int temp = _lowerCaseTable[(aChar >>> 8) & 0xFF];
                 if (temp != 0) {
                     aChar = (char) _lowerCaseTable[temp + (aChar & 0xFF)];
                 }
-
             }
+
             while (bPos < b.length() && bChar == '\0') {
                 bChar = b.charAt(bPos++);
                 int temp = _lowerCaseTable[(bChar >>> 8) & 0xFF];
                 if (temp != 0) {
                     bChar = (char) _lowerCaseTable[temp + (bChar & 0xFF)];
                 }
-
             }
+
             if (aChar != bChar) {
                 return aChar < bChar ? -1 : 1;
             }

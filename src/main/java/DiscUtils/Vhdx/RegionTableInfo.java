@@ -101,10 +101,9 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      */
     public boolean contains(RegionInfo item) {
         for (Map.Entry<UUID, RegionEntry> entry : _table.Regions.entrySet()) {
-            if (entry.getKey() == item.getGuid()) {
+            if (entry.getKey().equals(item.getGuid())) {
                 return true;
             }
-
         }
         return false;
     }

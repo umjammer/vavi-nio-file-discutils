@@ -72,6 +72,7 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
         _fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
         _startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
         _name = HfsPlusUtilities.readUniStr255(buffer, offset + 12);
+
         return _keyLength + 2;
     }
 

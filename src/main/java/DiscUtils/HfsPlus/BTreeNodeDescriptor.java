@@ -54,6 +54,7 @@ public final class BTreeNodeDescriptor implements IByteArraySerializable {
         Height = buffer[offset + 9];
         NumRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
         Reserved = EndianUtilities.toUInt16BigEndian(buffer, offset + 12);
+
         return 14;
     }
 

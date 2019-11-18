@@ -45,10 +45,12 @@ public final class ForkData implements IByteArraySerializable {
         LogicalSize = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
         ClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
         TotalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+
         Extents = new ExtentDescriptor[8];
         for (int i = 0; i < 8; ++i) {
             Extents[i] = EndianUtilities.<ExtentDescriptor> toStruct(ExtentDescriptor.class, buffer, offset + 16 + i * 8);
         }
+
         return StructSize;
     }
 

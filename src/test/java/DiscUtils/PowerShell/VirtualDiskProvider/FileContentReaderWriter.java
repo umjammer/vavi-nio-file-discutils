@@ -54,7 +54,6 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         if (dynParams != null) {
             _encoding = dynParams.getEncoding();
         }
-
     }
 
     public void close() {
@@ -70,7 +69,6 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                                                  ErrorCategory.WriteError,
                                                  null));
         }
-
     }
 
     public void seek(long offset, SeekOrigin origin) {

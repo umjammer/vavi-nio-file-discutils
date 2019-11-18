@@ -28,35 +28,35 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializable {
+abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializable {
     protected Class<TKey> keyClass;
 
     public BTreeNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         keyClass = clazz;
-        __Tree = tree;
-        __Descriptor = descriptor;
+        _tree = tree;
+        _descriptor = descriptor;
     }
 
-    private BTreeNodeDescriptor __Descriptor;
+    private BTreeNodeDescriptor _descriptor;
 
     protected BTreeNodeDescriptor getDescriptor() {
-        return __Descriptor;
+        return _descriptor;
     }
 
-    private List<BTreeNodeRecord> __Records;
+    private List<BTreeNodeRecord> _records;
 
     public List<BTreeNodeRecord> getRecords() {
-        return __Records;
+        return _records;
     }
 
     public void setRecords(List<BTreeNodeRecord> value) {
-        __Records = value;
+        _records = value;
     }
 
-    private BTree<?> __Tree;
+    private BTree<?> _tree;
 
     protected BTree<?> getTree() {
-        return __Tree;
+        return _tree;
     }
 
     public int size() {
@@ -65,6 +65,7 @@ public abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArrayS
 
     public int readFrom(byte[] buffer, int offset) {
         setRecords(readRecords(buffer, offset));
+
         return 0;
     }
 
@@ -72,9 +73,10 @@ public abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArrayS
         throw new UnsupportedOperationException();
     }
 
-    public static <TKey extends BTreeKey<?>> BTreeNode<TKey> readNode(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
+    public static <TKey extends BTreeKey<?>> BTreeNode<?> readNode(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
         BTreeNodeDescriptor descriptor = EndianUtilities
                 .<BTreeNodeDescriptor> toStruct(BTreeNodeDescriptor.class, buffer, offset);
+
         switch (descriptor.Kind) {
         case HeaderNode:
             return new BTreeHeaderNode<>(clazz, tree, descriptor);
@@ -86,9 +88,10 @@ public abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArrayS
         }
     }
 
-    public static <TKey extends BTreeKey<?>> BTreeNode<?> readNode2(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
+    public static <TKey extends BTreeKey<?>> BTreeNode<TKey> readNode2(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
         BTreeNodeDescriptor descriptor = EndianUtilities
                 .<BTreeNodeDescriptor> toStruct(BTreeNodeDescriptor.class, buffer, offset);
+
         switch (descriptor.Kind) {
         case HeaderNode:
             return new BTreeHeaderNode<>(clazz, tree, descriptor);

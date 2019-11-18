@@ -38,6 +38,7 @@ public final class ExtentDescriptor implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         StartBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
         BlockCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+
         return 8;
     }
 

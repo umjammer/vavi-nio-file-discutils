@@ -22,11 +22,13 @@
 
 package DiscUtils.HfsPlus;
 
+import vavi.util.Debug;
+
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.StreamUtilities;
 
 
-public final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
+final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
     private Class<TKey> keyClass;
 
     private final IBuffer _data;
@@ -36,22 +38,28 @@ public final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
     private BTreeKeyedNode<TKey> _rootNode;
 
     public BTree(Class<TKey> clazz, IBuffer data) {
+Debug.println(data.getCapacity());
         keyClass = clazz;
+
         _data = data;
+
         byte[] headerInfo = StreamUtilities.readExact(_data, 0, 114);
+
         _header = new BTreeHeaderRecord();
         _header.readFrom(headerInfo, 14);
+
         byte[] node0data = StreamUtilities.readExact(_data, 0, _header.getNodeSize());
-        BTreeNode<TKey> node = BTreeNode.readNode(keyClass, this, node0data, 0);
+
+        BTreeNode<?> node = BTreeNode.readNode(keyClass, this, node0data, 0);
         BTreeHeaderNode<TKey> node0 = BTreeHeaderNode.class.cast(node);
         node0.readFrom(node0data, 0);
+
         if (node0.getHeaderRecord().RootNode != 0) {
             _rootNode = getKeyedNode(node0.getHeaderRecord().RootNode);
         }
-
     }
 
-    public int getNodeSize() {
+    int getNodeSize() {
         return _header.getNodeSize();
     }
 
@@ -63,9 +71,10 @@ public final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
         _rootNode.visitRange(visitor);
     }
 
-    public BTreeKeyedNode<TKey> getKeyedNode(int nodeId) {
+    BTreeKeyedNode<TKey> getKeyedNode(int nodeId) {
         byte[] nodeData = StreamUtilities.readExact(_data, nodeId * _header.getNodeSize(), _header.getNodeSize());
-        BTreeNode<TKey> node_ = BTreeNode.readNode(keyClass, this, nodeData, 0);
+
+        BTreeNode<TKey> node_ = BTreeNode.readNode2(keyClass, this, nodeData, 0);
         BTreeKeyedNode<TKey> node = BTreeKeyedNode.class.cast(node_);
         node.readFrom(nodeData, 0);
         return node;

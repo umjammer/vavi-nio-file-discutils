@@ -24,6 +24,7 @@ package DiscUtils.Streams.Util;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 import java.util.UUID;
 
 import DiscUtils.Streams.IByteArraySerializable;
@@ -261,5 +262,30 @@ public class EndianUtilities {
         }
 
         return new String(result);
+    }
+
+    /**
+     * Primitive conversion from ASCII to {@code encoding} that stops at a
+     * null-terminator.
+     *
+     * @param data The data to convert.
+     * @param offset The first byte to convert.
+     * @param count The number of bytes to convert.
+     * @param encoding encoding.
+     * @return The string.
+     */
+    public static String bytesToZString(byte[] data, int offset, int count, Charset encoding) {
+        byte[] result = new byte[count];
+
+        for (int i = 0; i < count; ++i) {
+            byte ch = data[i + offset];
+            if (ch == 0) {
+                return new String(result, 0, i, encoding);
+            }
+
+            result[i] = ch;
+        }
+
+        return new String(result, encoding);
     }
 }

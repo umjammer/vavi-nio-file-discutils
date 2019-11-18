@@ -31,9 +31,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import vavi.util.Debug;
+
 import DiscUtils.Core.Internal.Utilities;
 import DiscUtils.Core.Internal.VirtualDiskFactory;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
@@ -56,9 +56,9 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Finalizes an instance of the VirtualDisk class.
      */
-    protected void finalize() throws Throwable {
-        close();
-    }
+//    protected void finalize() throws Throwable {
+//        close();
+//    }
 
     /**
      * Gets the set of disk formats supported as an array of file extensions.
@@ -105,19 +105,21 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     }
 
     /**
-     * Gets the logical sector size of the disk, in bytes. This is an alias for the
-     * {@code BlockSize} property.
+     * Gets the logical sector size of the disk, in bytes. This is an alias for
+     * the {@code BlockSize} property.
      */
     public int getSectorSize() {
         return getBlockSize();
     }
 
     /**
-     * Gets the content of the disk as a stream. Note the returned stream is not
-     * guaranteed to be at any particular position. The actual position will depend
-     * on the last partition table/file system activity, since all access to the
-     * disk contents pass through a single stream instance. Set the stream position
-     * before accessing the stream.
+     * Gets the content of the disk as a stream.
+     *
+     * Note the returned stream is not guaranteed to be at any particular
+     * position. The actual position will depend on the last partition
+     * table/file system activity, since all access to the disk contents pass
+     * through a single stream instance. Set the stream position before
+     * accessing the stream.
      */
     public abstract SparseStream getContent();
 
@@ -141,34 +143,35 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     }
 
     /**
-     * Gets a value indicating whether the disk appears to have a valid partition
-     * table. There is no reliable way to determine whether a disk has a valid
-     * partition table. The 'guess' consists of checking for basic indicators and
-     * looking for obviously invalid data, such as overlapping partitions.
+     * Gets a value indicating whether the disk appears to have a valid
+     * partition table.
+     *
+     * There is no reliable way to determine whether a disk has a valid
+     * partition table. The 'guess' consists of checking for basic indicators
+     * and looking for obviously invalid data, such as overlapping partitions.
      */
     public boolean isPartitioned() {
         return PartitionTable.isPartitioned(getContent());
     }
 
     /**
-     * Gets the object that interprets the partition structure. It is theoretically
-     * possible for a disk to contain two independent partition structures - a
-     * BIOS/GPT one and an Apple one, for example. This method will return in order
-     * of preference, a GUID partition table, a BIOS partition table, then in
-     * undefined preference one of any other partition tables found. See
-     * PartitionTable.GetPartitionTables to gain access to all the discovered
-     * partition tables on a disk.
+     * Gets the object that interprets the partition structure.
+     *
+     * It is theoretically possible for a disk to contain two independent
+     * partition structures - a BIOS/GPT one and an Apple one, for example. This
+     * method will return in order of preference, a GUID partition table, a BIOS
+     * partition table, then in undefined preference one of any other partition
+     * tables found. See PartitionTable.GetPartitionTables to gain access to all
+     * the discovered partition tables on a disk.
      */
     public PartitionTable getPartitions() {
         List<PartitionTable> tables = PartitionTable.getPartitionTables(this);
         if (tables == null || tables.size() == 0) {
             return null;
         }
-
         if (tables.size() == 1) {
             return tables.get(0);
         }
-
         PartitionTable best = null;
         int bestScore = -1;
         for (int i = 0; i < tables.size(); ++i) {
@@ -183,23 +186,26 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                 bestScore = newScore;
                 best = tables.get(i);
             }
-
         }
+
         return best;
     }
 
     /**
-     * Gets the parameters of the disk. Most of the parameters are also available
-     * individually, such as DiskType and Capacity.
+     * Gets the parameters of the disk.
+     *
+     * Most of the parameters are also available individually, such as DiskType
+     * and Capacity.
      */
     public VirtualDiskParameters getParameters() {
         return new VirtualDiskParameters();
     }
 
     /**
-     * Gets information about the type of disk. This property provides access to
-     * meta-data about the disk format, for example whether the BIOS geometry is
-     * preserved in the disk file.
+     * Gets information about the type of disk.
+     *
+     * This property provides access to meta-data about the disk format, for
+     * example whether the BIOS geometry is preserved in the disk file.
      */
     public abstract VirtualDiskTypeInfo getDiskTypeInfo();
 
@@ -207,8 +213,8 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Gets the set of supported variants of a type of virtual disk.
      *
      * @param type A type, as returned by {@link #getSupportedDiskTypes()} .
-     * @return A collection of identifiers, or empty if there is no variant concept
-     *         for this type of disk.
+     * @return A collection of identifiers, or empty if there is no variant
+     *         concept for this type of disk.
      */
     public static String[] getSupportedDiskVariants(String type) {
         return VirtualDiskManager.getTypeMap().get(type).getVariants();
@@ -217,7 +223,8 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Gets information about disk type.
      *
-     * @param type The disk type, as returned by {@link #getSupportedDiskTypes()} .
+     * @param type The disk type, as returned by
+     *            {@link #getSupportedDiskTypes()} .
      * @param variant The variant of the disk type.
      * @return Information about the disk type.
      */
@@ -229,14 +236,15 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Create a new virtual disk, possibly within an existing disk.
      *
      * @param fileSystem The file system to create the disk on.
-     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
-     *            ).
+     * @param type The type of disk to create (see
+     *            {@link #getSupportedDiskTypes()} ).
      * @param variant The variant of the type to create (see
      *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
      * @param capacity The capacity of the new disk.
      * @param geometry The geometry of the new disk (or null).
-     * @param parameters Untyped parameters controlling the creation process (TBD).
+     * @param parameters Untyped parameters controlling the creation process
+     *            (TBD).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(DiscFileSystem fileSystem,
@@ -245,8 +253,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String path,
                                          long capacity,
                                          Geometry geometry,
-                                         Map<String, String> parameters)
-            throws IOException {
+                                         Map<String, String> parameters) throws IOException {
         VirtualDiskFactory factory = VirtualDiskManager.getTypeMap().get(type);
 
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
@@ -269,14 +276,15 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Create a new virtual disk.
      *
-     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
-     *            ).
+     * @param type The type of disk to create (see
+     *            {@link #getSupportedDiskTypes()} ).
      * @param variant The variant of the type to create (see
      *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
      * @param capacity The capacity of the new disk.
      * @param geometry The geometry of the new disk (or null).
-     * @param parameters Untyped parameters controlling the creation process (TBD).
+     * @param parameters Untyped parameters controlling the creation process
+     *            (TBD).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(String type,
@@ -284,16 +292,15 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String path,
                                          long capacity,
                                          Geometry geometry,
-                                         Map<String, String> parameters)
-            throws IOException {
+                                         Map<String, String> parameters) throws IOException {
         return createDisk(type, variant, path, capacity, geometry, null, null, parameters);
     }
 
     /**
      * Create a new virtual disk.
      *
-     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
-     *            ).
+     * @param type The type of disk to create (see
+     *            {@link #getSupportedDiskTypes()} ).
      * @param variant The variant of the type to create (see
      *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
@@ -303,7 +310,8 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      *            null).
      * @param password The password to use when accessing the {@code path} (or
      *            null).
-     * @param parameters Untyped parameters controlling the creation process (TBD).
+     * @param parameters Untyped parameters controlling the creation process
+     *            (TBD).
      * @return The newly created disk.
      */
     public static VirtualDisk createDisk(String type,
@@ -313,8 +321,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          Geometry geometry,
                                          String user,
                                          String password,
-                                         Map<String, String> parameters)
-            throws IOException {
+                                         Map<String, String> parameters) throws IOException {
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
         diskParams.setAdapterType(GenericDiskAdapterType.Scsi);
         diskParams.setCapacity(capacity);
@@ -332,13 +339,13 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     /**
      * Create a new virtual disk.
      *
-     * @param type The type of disk to create (see {@link #getSupportedDiskTypes()}
-     *            ).
+     * @param type The type of disk to create (see
+     *            {@link #getSupportedDiskTypes()} ).
      * @param variant The variant of the type to create (see
      *            {@link #getSupportedDiskVariants(String)} ).
      * @param path The path (or URI) for the disk to create.
-     * @param diskParameters Parameters controlling the capacity, geometry, etc of
-     *            the new disk.
+     * @param diskParameters Parameters controlling the capacity, geometry, etc
+     *            of the new disk.
      * @param user The user identity to use when accessing the {@code path} (or
      *            null).
      * @param password The password to use when accessing the {@code path} (or
@@ -350,8 +357,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String path,
                                          VirtualDiskParameters diskParameters,
                                          String user,
-                                         String password)
-            throws IOException {
+                                         String password) throws IOException {
         URI uri = pathToUri(path);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
@@ -412,9 +418,13 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      *         detected disk type can be forced by specifying a known disk type:
      *         RAW, VHD, VMDK, etc.
      */
-    public static VirtualDisk openDisk(String path, String forceType, FileAccess access, String user, String password)
-            throws IOException {
+    public static VirtualDisk openDisk(String path,
+                                       String forceType,
+                                       FileAccess access,
+                                       String user,
+                                       String password) throws IOException {
         URI uri = pathToUri(path);
+//Debug.println(uri);
         VirtualDisk result = null;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
             throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
@@ -503,7 +513,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
 
         if (data.length != Sizes.Sector) {
             throw new IllegalArgumentException("The Master Boot Record must be exactly 512 bytes in length " +
-                Arrays.toString(data));
+                                               Arrays.toString(data));
         }
 
         long oldPos = getContent().getPosition();
@@ -538,6 +548,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         if (VirtualDiskManager.getExtensionMap().containsKey(extension)) {
             return VirtualDiskManager.getExtensionMap().get(extension).openDiskLayer(locator, path, access);
         }
+
 Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
         return null;
     }
@@ -554,33 +565,34 @@ Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
     }
 
     private static URI pathToUri(String path) {
-        if (Objects.isNull(path) || path.isEmpty()) {
-            throw new IllegalArgumentException("Path must not be null or empty " + path);
+        if (path == null || path.isEmpty()) {
+            throw new IllegalArgumentException("path must not be null or empty: " + path);
         }
 
         if (path.contains("://")) {
             return URI.create(path);
         }
 
-        path = Paths.get(path.replace("\\", "/")).normalize().toString().replace("/", "\\");
+        path = Paths.get(path.replace("\\", "/")).normalize().toAbsolutePath().toString().replace("/", "\\");
 
-        // Built-in Uri class does cope well with query params on file Uris, so do some
+        // Built-in Uri class does cope well with query params on file Uris, so
+        // do some
         // parsing ourselves...
         if (path.length() >= 1 && path.charAt(0) == '\\') {
-            URI builder = URI.create("file:" + path.replace('\\', '/'));
+            URI builder = URI.create("file:" + path.replace('\\', '/').replace(" ", "%20"));
             return builder;
         }
 
         if (path.startsWith("//")) {
-            URI builder = URI.create("file:" + path);
+            URI builder = URI.create("file:" + path.replace('\\', '/').replace(" ", "%20"));
             return builder;
         }
 
         if (path.length() >= 2 && path.charAt(1) == ':') {
-            URI builder = URI.create("file:///" + path.replace('\\', '/'));
+            URI builder = URI.create("file:///" + path.replace('\\', '/').replace(" ", "%20"));
             return builder;
         }
 
-        return URI.create(path);
+        return URI.create(path.replace('\\', '/').replace(" ", "%20"));
     }
 }

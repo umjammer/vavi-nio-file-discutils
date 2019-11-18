@@ -29,7 +29,7 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public abstract class CommonCatalogFileInfo implements IByteArraySerializable {
+abstract class CommonCatalogFileInfo implements IByteArraySerializable {
     public long AccessTime;
 
     public long AttributeModifyTime;
@@ -58,9 +58,11 @@ public abstract class CommonCatalogFileInfo implements IByteArraySerializable {
         AttributeModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
         AccessTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
         BackupTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
+
         int[] special = new int[1];
         FileSystemInfo = HfsPlusUtilities.readBsdInfo(buffer, offset + 32, special);
         UnixSpecialField = special[0];
+
         return 0;
     }
 

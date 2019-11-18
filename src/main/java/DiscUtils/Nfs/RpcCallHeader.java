@@ -36,64 +36,64 @@ public class RpcCallHeader {
         setVerifier(new RpcAuthentication(reader));
     }
 
-    private RpcAuthentication __Credentials;
+    private RpcAuthentication _credentials;
 
     public RpcAuthentication getCredentials() {
-        return __Credentials;
+        return _credentials;
     }
 
     public void setCredentials(RpcAuthentication value) {
-        __Credentials = value;
+        _credentials = value;
     }
 
-    private int __Proc;
+    private int _proc;
 
     public int getProc() {
-        return __Proc;
+        return _proc;
     }
 
     public void setProc(int value) {
-        __Proc = value;
+        _proc = value;
     }
 
-    private int __Program;
+    private int _program;
 
     public int getProgram() {
-        return __Program;
+        return _program;
     }
 
     public void setProgram(int value) {
-        __Program = value;
+        _program = value;
     }
 
-    private int __RpcVersion;
+    private int _rpcVersion;
 
     public int getRpcVersion() {
-        return __RpcVersion;
+        return _rpcVersion;
     }
 
     public void setRpcVersion(int value) {
-        __RpcVersion = value;
+        _rpcVersion = value;
     }
 
-    private RpcAuthentication __Verifier;
+    private RpcAuthentication _verifier;
 
     public RpcAuthentication getVerifier() {
-        return __Verifier;
+        return _verifier;
     }
 
     public void setVerifier(RpcAuthentication value) {
-        __Verifier = value;
+        _verifier = value;
     }
 
-    private int __Version;
+    private int _version;
 
     public int getVersion() {
-        return __Version;
+        return _version;
     }
 
     public void setVersion(int value) {
-        __Version = value;
+        _version = value;
     }
 
     public void write(XdrDataWriter writer) {

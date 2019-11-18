@@ -25,25 +25,25 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class CompressionResourceBlockHead {
-    private int __DataSize;
+class CompressionResourceBlockHead {
+    private int _dataSize;
 
     public int getDataSize() {
-        return __DataSize;
+        return _dataSize;
     }
 
     public void setDataSize(int value) {
-        __DataSize = value;
+        _dataSize = value;
     }
 
-    private int __NumBlocks;
+    private int _numBlocks;
 
     public int getNumBlocks() {
-        return __NumBlocks;
+        return _numBlocks;
     }
 
     public void setNumBlocks(int value) {
-        __NumBlocks = value;
+        _numBlocks = value;
     }
 
     public static int getSize() {
@@ -53,6 +53,7 @@ public class CompressionResourceBlockHead {
     public int readFrom(byte[] buffer, int offset) {
         setDataSize(EndianUtilities.toUInt32BigEndian(buffer, offset));
         setNumBlocks(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
+
         return getSize();
     }
 }

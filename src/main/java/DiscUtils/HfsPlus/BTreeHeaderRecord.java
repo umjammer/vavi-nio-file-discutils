@@ -25,7 +25,7 @@ package DiscUtils.HfsPlus;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class BTreeHeaderRecord extends BTreeNodeRecord {
+class BTreeHeaderRecord extends BTreeNodeRecord {
     public int Attributes;
 
     public int ClumpSize;
@@ -77,6 +77,7 @@ public class BTreeHeaderRecord extends BTreeNodeRecord {
         TreeType = buffer[offset + 34];
         KeyCompareType = buffer[offset + 35];
         Attributes = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+
         return 104;
     }
 

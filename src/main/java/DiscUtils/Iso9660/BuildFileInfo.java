@@ -102,7 +102,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
     void closeStream(Stream s) {
         // Close and dispose the stream, unless it's one we were given to stream
         // in from (we might need it again).
-        if (_contentStream != s) {
+        if (_contentStream != s) { // TODO object compare
             try {
                 s.close();
             } catch (IOException e) {

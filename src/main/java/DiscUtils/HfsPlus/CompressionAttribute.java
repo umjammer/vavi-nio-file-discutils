@@ -29,7 +29,7 @@ import java.nio.charset.Charset;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public class CompressionAttribute {
+class CompressionAttribute {
     @SuppressWarnings("unused")
     private byte _attrData1;
 
@@ -50,14 +50,14 @@ public class CompressionAttribute {
     @SuppressWarnings("unused")
     private int _reserved3;
 
-    private int __AttrSize;
+    private int _attrSize;
 
     public int getAttrSize() {
-        return __AttrSize;
+        return _attrSize;
     }
 
     public void setAttrSize(int value) {
-        __AttrSize = value;
+        _attrSize = value;
     }
 
     public String getCompressionMagic() {
@@ -66,28 +66,28 @@ public class CompressionAttribute {
         return new String(buffer.array(), Charset.forName("ASCII"));
     }
 
-    private int __CompressionType;
+    private int _compressionType;
 
     public int getCompressionType() {
-        return __CompressionType;
+        return _compressionType;
     }
 
     public void setCompressionType(int value) {
-        __CompressionType = value;
+        _compressionType = value;
     }
 
     public static int getSize() {
         return 32;
     }
 
-    private int __UncompressedSize;
+    private int _uncompressedSize;
 
     public int getUncompressedSize() {
-        return __UncompressedSize;
+        return _uncompressedSize;
     }
 
     public void setUncompressedSize(int value) {
-        __UncompressedSize = value;
+        _uncompressedSize = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -99,6 +99,7 @@ public class CompressionAttribute {
         setCompressionType(EndianUtilities.toUInt32LittleEndian(buffer, offset + 20));
         setUncompressedSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
         _reserved3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 28);
+
         return getSize();
     }
 }

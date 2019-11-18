@@ -31,22 +31,29 @@ import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
 
 
-public final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Directory, Context> implements IUnixFileSystem {
+final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Directory, Context> implements IUnixFileSystem {
     public HfsPlusFileSystemImpl(Stream s) {
         super(new DiscFileSystemOptions());
+
         s.setPosition(1024);
+
         byte[] headerBuf = StreamUtilities.readExact(s, 512);
         VolumeHeader hdr = new VolumeHeader();
         hdr.readFrom(headerBuf, 0);
+
         setContext(new Context());
         getContext().setVolumeStream(s);
         getContext().setVolumeHeader(hdr);
+
         FileBuffer catalogBuffer = new FileBuffer(getContext(), hdr.CatalogFile, CatalogNodeId.CatalogFileId);
         getContext().setCatalog(new BTree<>(CatalogKey.class, catalogBuffer));
+
         FileBuffer extentsBuffer = new FileBuffer(getContext(), hdr.ExtentsFile, CatalogNodeId.ExtentsFileId);
         getContext().setExtentsOverflow(new BTree<>(ExtentKey.class, extentsBuffer));
+
         FileBuffer attributesBuffer = new FileBuffer(getContext(), hdr.AttributesFile, CatalogNodeId.AttributesFileId);
         getContext().setAttributes(new BTree<>(AttributeKey.class, attributesBuffer));
+
         // Establish Root directory
         byte[] rootThreadData = getContext().getCatalog().find(new CatalogKey(CatalogNodeId.RootFolderId, ""));
         CatalogThread rootThread = new CatalogThread();
@@ -64,6 +71,7 @@ public final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, D
         byte[] rootThreadData = getContext().getCatalog().find(new CatalogKey(CatalogNodeId.RootFolderId, ""));
         CatalogThread rootThread = new CatalogThread();
         rootThread.readFrom(rootThreadData, 0);
+
         return rootThread.Name;
     }
 
@@ -84,11 +92,9 @@ public final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, D
         if (dirEntry.isDirectory()) {
             return new Directory(getContext(), dirEntry.getNodeId(), dirEntry.getCatalogFileInfo());
         }
-
         if (dirEntry.isSymlink()) {
             return new Symlink(getContext(), dirEntry.getNodeId(), dirEntry.getCatalogFileInfo());
         }
-
         return new File(getContext(), dirEntry.getNodeId(), dirEntry.getCatalogFileInfo());
     }
 

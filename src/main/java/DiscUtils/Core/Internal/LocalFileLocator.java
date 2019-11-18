@@ -22,6 +22,7 @@
 
 package DiscUtils.Core.Internal;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -45,7 +46,7 @@ public final class LocalFileLocator extends FileLocator {
     }
 
     protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
-        return new FileStream(Utilities.combinePaths(_dir, fileName), mode);
+        return new FileStream(Utilities.combinePaths(_dir, fileName).replace("\\", File.separator), mode, access, share);
     }
 
     public FileLocator getRelativeLocator(String path) {
@@ -55,10 +56,10 @@ public final class LocalFileLocator extends FileLocator {
     public String getFullPath(String path) {
         String combinedPath = Utilities.combinePaths(_dir, path);
         if (combinedPath.isEmpty()) {
-            return System.getProperty("user.dir").replace("/", "\\");
+            return System.getProperty("user.dir").replace(File.separator, "\\");
         }
 
-        return Paths.get(combinedPath).toAbsolutePath().toString().replace("/", "\\");
+        return Paths.get(combinedPath).toAbsolutePath().toString().replace(File.separator, "\\");
     }
 
     public String getDirectoryFromPath(String path) {

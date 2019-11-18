@@ -113,24 +113,18 @@ public class UnbufferedNativeStream extends SparseStream {
         while (totalBytesRead < count) {
             long alignedStart = (_position / Alignment) * Alignment;
             int alignmentOffset = (int) (_position - alignedStart);
-            long newPos;
-            long[] refVar___1 = new long[1];
-            boolean boolVar___1 = !NativeMethods.INSTANCE.setFilePointerEx(_handle, alignedStart, refVar___1, 0);
-            newPos = refVar___1[0];
-            if (boolVar___1) {
+            long[] newPos = new long[1];
+            if (!NativeMethods.INSTANCE.setFilePointerEx(_handle, alignedStart, newPos, 0)) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
 
             int toRead = (int) Math.min(length - alignedStart, BufferSize);
-            int numRead;
-            int[] refVar___2 = new int[1];
-            boolean boolVar___2 = !NativeMethods.INSTANCE.readFile(_handle, _buffer, toRead, refVar___2, null);
-            numRead = refVar___2[0];
-            if (boolVar___2) {
+            int[] numRead = new int[1];
+            if (!NativeMethods.INSTANCE.readFile(_handle, _buffer, toRead, numRead, null)) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
 
-            int usefulData = numRead - alignmentOffset;
+            int usefulData = numRead[0] - alignmentOffset;
             if (usefulData <= 0) {
                 return totalBytesRead;
             }

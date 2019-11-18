@@ -30,6 +30,7 @@ import java.util.List;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.MathUtilities;
+import dotnet4j.io.compat.Utilities;
 
 
 public class FileRecord extends FixupRecordBase {
@@ -234,7 +235,7 @@ public class FileRecord extends FixupRecordBase {
      */
     public AttributeRecord getAttribute(AttributeType type, String name) {
         for (AttributeRecord attrRec : getAttributes()) {
-            if (attrRec.getAttributeType() == type && attrRec.getName().equals(name)) {
+            if (attrRec.getAttributeType() == type && Utilities.equals(attrRec.getName(), name)) {
                 return attrRec;
             }
         }

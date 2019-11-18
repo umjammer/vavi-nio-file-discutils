@@ -108,13 +108,13 @@ public class HexDump {
                         foundVal = true;
                     }
                     if (foundVal) {
-                        output.printf("%8x", i + readStart);
+                        output.printf("%08x", i + readStart);
                         for (int j = 0; j < 16; j++) {
                             if (j % 8 == 0) {
                                 output.print(" ");
                             }
 
-                            output.printf(" %2x", buffer[i + j]);
+                            output.printf(" %02x", buffer[i + j]);
                         }
                         output.print("  |");
                         for (int j = 0; j < 16; j++) {

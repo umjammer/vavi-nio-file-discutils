@@ -57,7 +57,7 @@ class ParentLocator implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         locatorType = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        if (locatorType != LocatorTypeGuid) {
+        if (!locatorType.equals(LocatorTypeGuid)) {
             throw new dotnet4j.io.IOException("Unrecognized Parent Locator type: " + locatorType);
         }
 
