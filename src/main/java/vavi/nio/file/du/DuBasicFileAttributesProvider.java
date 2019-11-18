@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2016 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2019 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
 
-package vavi.nio.file.dus;
+package vavi.nio.file.du;
 
 import java.io.IOException;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -21,7 +21,9 @@ import javax.annotation.Nonnull;
 
 import com.github.fge.filesystem.attributes.provider.BasicFileAttributesProvider;
 
-import DiscUtils.Core.VirtualDisk;
+import DiscUtils.Core.DiscDirectoryInfo;
+import DiscUtils.Core.DiscFileInfo;
+import DiscUtils.Core.DiscFileSystemInfo;
 
 
 /**
@@ -34,11 +36,11 @@ import DiscUtils.Core.VirtualDisk;
  * at 00:00:00 GMT).
  * </p>
  */
-public final class DusBasicFileAttributesProvider extends BasicFileAttributesProvider implements PosixFileAttributes {
+public final class DuBasicFileAttributesProvider extends BasicFileAttributesProvider implements PosixFileAttributes {
 
-    private final VirtualDisk entry;
+    private final DiscFileSystemInfo entry;
 
-    public DusBasicFileAttributesProvider(@Nonnull final VirtualDisk entry) {
+    public DuBasicFileAttributesProvider(@Nonnull final DiscFileSystemInfo entry) throws IOException {
         this.entry = Objects.requireNonNull(entry);
     }
 
@@ -55,7 +57,7 @@ public final class DusBasicFileAttributesProvider extends BasicFileAttributesPro
      */
     @Override
     public FileTime lastModifiedTime() {
-        return FileTime.fromMillis(entry.attributes().getModificationDate());
+        return FileTime.fromMillis(entry.getLastAccessTimeUtc());
     }
 
     /**
@@ -63,7 +65,7 @@ public final class DusBasicFileAttributesProvider extends BasicFileAttributesPro
      */
     @Override
     public boolean isRegularFile() {
-        return entry.isFile();
+        return DiscFileInfo.class.isInstance(entry);
     }
 
     /**
@@ -71,7 +73,7 @@ public final class DusBasicFileAttributesProvider extends BasicFileAttributesPro
      */
     @Override
     public boolean isDirectory() {
-        return entry.isDirectory();
+        return DiscDirectoryInfo.class.isInstance(entry);
     }
 
     /**
@@ -85,7 +87,7 @@ public final class DusBasicFileAttributesProvider extends BasicFileAttributesPro
      */
     @Override
     public long size() {
-        return entry.attributes().getSize();
+        return isRegularFile() ? DiscFileInfo.class.cast(entry).getLength() : 0;
     }
 
     /* @see java.nio.file.attribute.PosixFileAttributes#owner() */

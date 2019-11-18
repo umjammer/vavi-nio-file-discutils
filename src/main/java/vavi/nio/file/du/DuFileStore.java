@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2016 by Naohide Sano, All rights reserved.
+ * Copyright (c) 2019 by Naohide Sano, All rights reserved.
  *
  * Programmed by Naohide Sano
  */
 
-package vavi.nio.file.dus;
+package vavi.nio.file.du;
 
 import java.io.IOException;
 import java.nio.file.FileStore;
@@ -13,7 +13,7 @@ import com.dropbox.core.v1.DbxAccountInfo.Quota;
 import com.github.fge.filesystem.attributes.FileAttributesFactory;
 import com.github.fge.filesystem.filestore.FileStoreBase;
 
-import DiscUtils.Core.VirtualDisk;
+import DiscUtils.Core.DiscFileSystem;
 
 
 /**
@@ -24,17 +24,17 @@ import DiscUtils.Core.VirtualDisk;
  * Information is computed in "real time".
  * </p>
  */
-public final class DusFileStore extends FileStoreBase {
+public final class DuFileStore extends FileStoreBase {
 
-    private final VirtualDisk session;
+    private final DiscFileSystem session;
 
     /**
      * Constructor
      *
      * @param session the (valid) OneDrive client to use
      */
-    public DusFileStore(final VirtualDisk session, final FileAttributesFactory factory) {
-        super("dus", factory, false);
+    public DuFileStore(final DiscFileSystem session, final FileAttributesFactory factory) {
+        super("discutils", factory, false);
         this.session = session;
     }
 
@@ -46,9 +46,8 @@ public final class DusFileStore extends FileStoreBase {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    public long getTotalSpace() {
-        final Quota.Space quota = getQuota();
-        return quota == null ? 0 : quota.available + quota.used;
+    public long getTotalSpace() throws IOException {
+        return session.getSize();
     }
 
     /**
@@ -68,13 +67,8 @@ public final class DusFileStore extends FileStoreBase {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    public long getUsableSpace() {
-        final Quota.Space quota = getQuota();
-        if (quota == null) {
-            return 0;
-        } else {
-            return quota.available;
-        }
+    public long getUsableSpace() throws IOException {
+        return session.getUsedSpace();
     }
 
     /**
@@ -92,20 +86,7 @@ public final class DusFileStore extends FileStoreBase {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    public long getUnallocatedSpace() {
-        return 0;
-    }
-
-    /** */
-    private Quota.Space cache; // TODO refresh
-
-    /** */
-    private Quota.Space getQuota() {
-        if (cache != null) {
-            return cache;
-        } else {
-            cache = session._getFeature(Quota.class).get();
-            return cache;
-        }
+    public long getUnallocatedSpace() throws IOException {
+        return session.getAvailableSpace();
     }
 }
