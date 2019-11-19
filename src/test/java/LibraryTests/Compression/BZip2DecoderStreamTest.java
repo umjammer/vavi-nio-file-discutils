@@ -24,11 +24,14 @@ package LibraryTests.Compression;
 
 import java.nio.charset.Charset;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Core.Compression.BZip2DecoderStream;
 import DiscUtils.Streams.Util.Ownership;
+import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
 
 
@@ -54,6 +57,7 @@ public class BZip2DecoderStreamTest {
         (byte) 0xA2, (byte) 0xEE, 0x48, (byte) 0xA7, 0x0A, 0x12, 0x1E, (byte) 0xE7, (byte) 0x88, (byte) 0xCF, (byte) 0xC0
     };
 
+    @Test
     public void testValidStream() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(ValidData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
@@ -63,26 +67,29 @@ public class BZip2DecoderStreamTest {
         assertEquals("This is a test string", s);
     }
 
+    @Test
     public void testInvalidBlockCrcStream() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidBlockCrcData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IOException.class, () -> {
             return decoder.read(buffer, 0, 1024);
         });
     }
 
+    @Test
     public void testCombinedCrcStream() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidCombinedCrcData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IOException.class, () -> {
             return decoder.read(buffer, 0, 1024);
         });
     }
 
+    @Test
     public void testCombinedCrcStream_ExactLengthRead() throws Exception {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidCombinedCrcData), Ownership.Dispose);
         byte[] buffer = new byte[21];
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IOException.class, () -> {
             return decoder.read(buffer, 0, 21);
         });
     }

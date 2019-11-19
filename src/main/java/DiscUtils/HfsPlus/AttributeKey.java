@@ -89,11 +89,11 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
             throw new NullPointerException("other");
         }
 
-        if (getFileId() != other.getFileId()) {
-            return getFileId().getId() < other.getFileId().getId() ? -1 : 1;
+        if (!_fileId.equals(other._fileId)) {
+            return _fileId.getId() < other._fileId.getId() ? -1 : 1;
         }
 
-        return HfsPlusUtilities.fastUnicodeCompare(getName(), other.getName());
+        return HfsPlusUtilities.fastUnicodeCompare(_name, other._name);
     }
 
     public String toString() {

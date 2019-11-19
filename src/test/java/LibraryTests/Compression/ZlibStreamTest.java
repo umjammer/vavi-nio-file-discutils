@@ -24,45 +24,59 @@ package LibraryTests.Compression;
 
 import java.nio.charset.Charset;
 
+import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Core.Compression.ZlibStream;
+import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.compression.CompressionMode;
 
 
 public class ZlibStreamTest {
+    @Test
     public void testRoundtrip() throws Exception {
         byte[] testData = "This is a test string".getBytes(Charset.forName("ASCII"));
+
         MemoryStream compressedStream = new MemoryStream();
+
         try (ZlibStream zs = new ZlibStream(compressedStream, CompressionMode.Compress, true)) {
             zs.write(testData, 0, testData.length);
         }
+
+//Debug.println("\n" + StringUtil.getDump(compressedStream.toArray()));
         compressedStream.setPosition(0);
         try (ZlibStream uzs = new ZlibStream(compressedStream, CompressionMode.Decompress, true)) {
             byte[] outData = new byte[testData.length];
             uzs.read(outData, 0, outData.length);
             assertArrayEquals(testData, outData);
+
             // Should be end of stream
             assertEquals(-1, uzs.readByte());
         }
     }
 
+    @Test
     public void testInvalidChecksum() throws Exception {
         byte[] testData = "This is a test string".getBytes(Charset.forName("ASCII"));
+
         MemoryStream compressedStream = new MemoryStream();
+
         try (ZlibStream zs = new ZlibStream(compressedStream, CompressionMode.Compress, true)) {
             zs.write(testData, 0, testData.length);
         }
+
         compressedStream.seek(-2, SeekOrigin.End);
         compressedStream.write(new byte[] {
             0, 0
         }, 0, 2);
+
         compressedStream.setPosition(0);
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IOException.class, () -> {
             try (ZlibStream uzs = new ZlibStream(compressedStream, CompressionMode.Decompress, true)) {
                 byte[] outData = new byte[testData.length];
                 uzs.read(outData, 0, outData.length);

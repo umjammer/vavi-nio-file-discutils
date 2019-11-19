@@ -33,6 +33,8 @@ import DiscUtils.Streams.SparseStreamOpenDelegate;
  * physical volumes.
  */
 public final class LogicalVolumeInfo extends VolumeInfo {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private UUID _guid;
 
     private final SparseStreamOpenDelegate _opener;
@@ -50,7 +52,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
         _opener = opener;
         _length = length;
         _biosType = biosType;
-        __Status = status;
+        _status = status;
     }
 
     /**
@@ -71,16 +73,14 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     }
 
     /**
-     * The stable identity for this logical volume.
-     * The stability of the identity depends the disk structure.
-     * In some cases the identity may include a simple index, when no other
-     * information
-     * is available. Best practice is to add disks to the Volume Manager in a
-     * stable
-     * order, if the stability of this identity is paramount.
+     * The stable identity for this logical volume. The stability of the
+     * identity depends the disk structure. In some cases the identity may
+     * include a simple index, when no other information is available. Best
+     * practice is to add disks to the Volume Manager in a stable order, if the
+     * stability of this identity is paramount.
      */
     public String getIdentity() {
-        if (!_guid.equals(new UUID(0L, 0L))) {
+        if (!_guid.equals(EMPTY)) {
             return "VLG" + String.format("{%s}", _guid);
         }
 
@@ -115,10 +115,10 @@ public final class LogicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the status of the logical volume, indicating volume health.
      */
-    private LogicalVolumeStatus __Status = LogicalVolumeStatus.Healthy;
+    private LogicalVolumeStatus _status = LogicalVolumeStatus.Healthy;
 
     public LogicalVolumeStatus getStatus() {
-        return __Status;
+        return _status;
     }
 
     /**
@@ -135,5 +135,9 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      */
     public SparseStream open() {
         return _opener.invoke();
+    }
+
+    public String toString() {
+        return getIdentity() + ": " + _length;
     }
 }

@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.PhysicalVolumeInfo;
@@ -132,6 +134,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
                 LogicalVolumeInfo lvi = new LogicalVolumeInfo(volume
                         .getIdentity(), null, volume::open, volume.getLength(), volume.getBiosType(), volume.getStatus());
                 result.add(lvi);
+Debug.println("Lv2: " + lvi.getIdentity() + ", " + volume.getLength());
             }
         }
         return result;

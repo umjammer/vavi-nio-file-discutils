@@ -67,7 +67,7 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
             throw new NullPointerException("other");
         }
 
-        if (_nodeId != other._nodeId) {
+        if (!_nodeId.equals(other._nodeId)) {
             return _nodeId.getId() < other._nodeId.getId() ? -1 : 1;
         }
 

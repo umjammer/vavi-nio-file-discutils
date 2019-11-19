@@ -26,9 +26,9 @@ package DiscUtils.Core.Compression;
  * Implementation of the Adler-32 checksum algorithm.
  */
 public class Adler32 {
-    private int _a;
+    private long _a;
 
-    private int _b;
+    private long _b;
 
     /**
      * Initializes a new instance of the Adler32 class.
@@ -41,29 +41,30 @@ public class Adler32 {
      * Gets the checksum of all data processed so far.
      */
     public int getValue() {
-        return _b << 16 | _a;
+        return (int) (_b << 16 | _a);
     }
 
     /**
      * Provides data that should be checksummed.
      *
+     * Call this method repeatedly until all checksummed data has been
+     * processed.
+     *
      * @param buffer Buffer containing the data to checksum.
      * @param offset Offset of the first byte to checksum.
      * @param count The number of bytes to checksum.
-     *            Call this method repeatedly until all checksummed
-     *            data has been processed.
      */
     public void process(byte[] buffer, int offset, int count) {
         if (buffer == null) {
-            throw new IllegalArgumentException("buffer");
+            throw new NullPointerException("buffer");
         }
 
         if (offset < 0 || offset > buffer.length) {
-            throw new IllegalArgumentException("Offset outside of array bounds");
+            throw new IllegalArgumentException("offset: Offset outside of array bounds: " + offset);
         }
 
         if (count < 0 || offset + count > buffer.length) {
-            throw new IllegalArgumentException("Array index out of bounds");
+            throw new IllegalArgumentException("count: Array index out of bounds: " + count);
         }
 
         int processed = 0;

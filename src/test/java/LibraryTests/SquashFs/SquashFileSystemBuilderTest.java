@@ -48,6 +48,8 @@ public final class SquashFileSystemBuilderTest {
                             1, 2, 3, 4
                         }));
         builder.build(fsImage);
+
+//Debug.println("\n" + StringUtil.getDump(fsImage.toArray()));
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);
         assertEquals(1, reader.getFileSystemEntries("\\").size());
         assertEquals(4, reader.getFileLength("file"));

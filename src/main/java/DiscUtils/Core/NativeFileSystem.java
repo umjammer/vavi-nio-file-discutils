@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Internal.LocalFileLocator;
 import DiscUtils.Streams.SparseStream;
@@ -305,7 +307,8 @@ public class NativeFileSystem extends DiscFileSystem {
                     .get(getBasePath(), path)/* , searchPattern, searchOption */) // TODO impl
                     .map(p -> p.toString())
                     .collect(Collectors.toList()));
-        } catch (IOException __dummyCatchVar0) {
+        } catch (IOException e) {
+Debug.printStackTrace(e);
             return Arrays.asList();
         }
     }
@@ -351,7 +354,8 @@ public class NativeFileSystem extends DiscFileSystem {
                     .get(getBasePath(), path)/* , searchPattern, searchOption */) // TODO impl
                     .map(p -> p.toString())
                     .collect(Collectors.toList()));
-        } catch (IOException __dummyCatchVar2) {
+        } catch (IOException e) {
+Debug.printStackTrace(e);
             return Arrays.asList();
         }
     }
@@ -384,10 +388,10 @@ public class NativeFileSystem extends DiscFileSystem {
                     .list(Paths.get(getBasePath(), path)/* , searchPattern */) // TODO impl
                     .map(p -> p.toString())
                     .collect(Collectors.toList()));
-        } catch (IOException __dummyCatchVar4) {
+        } catch (IOException e) {
+Debug.printStackTrace(e);
             return Collections.EMPTY_LIST;
         }
-
     }
 
     /**

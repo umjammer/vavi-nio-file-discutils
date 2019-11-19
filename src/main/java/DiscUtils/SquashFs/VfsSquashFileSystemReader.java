@@ -55,13 +55,16 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
 
     public VfsSquashFileSystemReader(Stream stream) {
         super(new DiscFileSystemOptions());
+
         _context = new Context();
         _context.setSuperBlock(new SuperBlock());
         _context.setRawStream(stream);
+
         // Read superblock
         stream.setPosition(0);
         byte[] buffer = StreamUtilities.readExact(stream, _context.getSuperBlock().size());
         _context.getSuperBlock().readFrom(buffer, 0);
+
         if (_context.getSuperBlock().Magic != SuperBlock.SquashFsMagic) {
             throw new dotnet4j.io.IOException("Invalid SquashFS filesystem - magic mismatch");
         }
@@ -85,8 +88,10 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         _metablockCache = new BlockCache<>(MetadataBufferSize, 20);
         _context.setReadBlock(this::readBlock);
         _context.setReadMetaBlock(this::readMetaBlock);
+
         _context.setInodeReader(new MetablockReader(_context, _context.getSuperBlock().InodeTableStart));
         _context.setDirectoryReader(new MetablockReader(_context, _context.getSuperBlock().DirectoryTableStart));
+
         if (_context.getSuperBlock().FragmentTableStart != -1) {
             _context.setFragmentTableReaders(loadIndirectReaders(_context.getSuperBlock().FragmentTableStart,
                                                                  _context.getSuperBlock().FragmentsCount,
@@ -175,7 +180,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         case ExtendedSymlink:
             return UnixFileType.Link;
         default:
-            throw new UnsupportedOperationException("Unrecognized inode type: " + inodeType);
+            throw new IllegalArgumentException("Unrecognized inode type: " + inodeType);
         }
     }
 
@@ -183,10 +188,10 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         MetadataRef inodeRef = dirEntry.getInodeReference();
         _context.getInodeReader().setPosition(inodeRef);
         Inode inode = Inode.read(_context.getInodeReader());
+
         if (dirEntry.isSymlink()) {
             return new Symlink(_context, inode, inodeRef);
         }
-
         if (dirEntry.isDirectory()) {
             return new Directory(_context, inode, inodeRef);
         }
@@ -197,12 +202,14 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     private MetablockReader[] loadIndirectReaders(long pos, int count, int recordSize) {
         _context.getRawStream().setPosition(pos);
         int numBlocks = MathUtilities.ceil(count * recordSize, MetadataBufferSize);
+
         byte[] tableBytes = StreamUtilities.readExact(_context.getRawStream(), numBlocks * 8);
         MetablockReader[] result = new MetablockReader[numBlocks];
         for (int i = 0; i < numBlocks; ++i) {
             long block = EndianUtilities.toInt64LittleEndian(tableBytes, i * 8);
             result[i] = new MetablockReader(_context, block);
         }
+
         return result;
     }
 
@@ -224,8 +231,10 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
 
         Stream stream = _context.getRawStream();
         stream.setPosition(pos);
+
         int readLen = diskLen & 0x00FFFFFF;
         boolean isCompressed = (diskLen & 0x01000000) == 0;
+
         if (isCompressed) {
             if (_ioBuffer == null || readLen > _ioBuffer.length) {
                 _ioBuffer = new byte[readLen];
@@ -245,6 +254,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
             StreamUtilities.readExact(stream, block.getData(), 0, readLen);
             block.setAvailable(readLen);
         }
+
         return block;
     }
 
@@ -256,7 +266,9 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
 
         Stream stream = _context.getRawStream();
         stream.setPosition(pos);
+
         byte[] buffer = StreamUtilities.readExact(stream, 2);
+
         int readLen = EndianUtilities.toUInt16LittleEndian(buffer, 0);
         boolean isCompressed = (readLen & 0x8000) == 0;
         readLen &= 0x7FFF;
@@ -265,6 +277,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         }
 
         block.setNextBlockStart(pos + readLen + 2);
+
         if (isCompressed) {
             if (_ioBuffer == null || readLen > _ioBuffer.length) {
                 _ioBuffer = new byte[readLen];
@@ -282,6 +295,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         } else {
             block.setAvailable(StreamUtilities.readMaximum(stream, block.getData(), 0, readLen));
         }
+
         return block;
     }
 }

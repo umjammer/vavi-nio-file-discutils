@@ -43,8 +43,8 @@ import DiscUtils.Streams.Util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
-import dotnet4j.io.compat.SeekableLzoStream;
 import dotnet4j.io.compression.CompressionMode;
+import dotnet4j.io.lzo.SeekableLzoStream;
 
 
 /**
@@ -58,133 +58,133 @@ public class ExtentData extends BaseItem {
     /**
      * generation
      */
-    private long __Generation;
+    private long _generation;
 
     public long getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        _generation = value;
     }
 
     /**
      * (n) size of decoded extent
      */
-    private long __DecodedSize;
+    private long _decodedSize;
 
     public long getDecodedSize() {
-        return __DecodedSize;
+        return _decodedSize;
     }
 
     public void setDecodedSize(long value) {
-        __DecodedSize = value;
+        _decodedSize = value;
     }
 
     /**
      * compression (0=none, 1=zlib, 2=LZO)
      */
-    private ExtentDataCompression __Compression = ExtentDataCompression.None;
+    private ExtentDataCompression _compression = ExtentDataCompression.None;
 
     public ExtentDataCompression getCompression() {
-        return __Compression;
+        return _compression;
     }
 
     public void setCompression(ExtentDataCompression value) {
-        __Compression = value;
+        _compression = value;
     }
 
     /**
      * encryption (0=none)
      */
-    private boolean __Encryption;
+    private boolean _encryption;
 
     public boolean getEncryption() {
-        return __Encryption;
+        return _encryption;
     }
 
     public void setEncryption(boolean value) {
-        __Encryption = value;
+        _encryption = value;
     }
 
     /**
      * type (0=inline, 1=regular, 2=prealloc)
      */
-    private ExtentDataType __Type = ExtentDataType.Inline;
+    private ExtentDataType _type = ExtentDataType.Inline;
 
     public ExtentDataType getType() {
-        return __Type;
+        return _type;
     }
 
     public void setType(ExtentDataType value) {
-        __Type = value;
+        _type = value;
     }
 
     /**
      * If the extent is inline, the bytes are the data bytes (n bytes in case no
      * compression/encryption/other encoding is used)
      */
-    private byte[] __InlineData;
+    private byte[] _inlineData;
 
     public byte[] getInlineData() {
-        return __InlineData;
+        return _inlineData;
     }
 
     public void setInlineData(byte[] value) {
-        __InlineData = value;
+        _inlineData = value;
     }
 
     /**
      * (ea) logical address of extent. If this is zero, the extent is sparse and
      * consists of all zeroes.
      */
-    private long __ExtentAddress;
+    private long _extentAddress;
 
     public long getExtentAddress() {
-        return __ExtentAddress;
+        return _extentAddress;
     }
 
     public void setExtentAddress(long value) {
-        __ExtentAddress = value;
+        _extentAddress = value;
     }
 
     /**
      * (es) size of extent
      */
-    private long __ExtentSize;
+    private long _extentSize;
 
     public long getExtentSize() {
-        return __ExtentSize;
+        return _extentSize;
     }
 
     public void setExtentSize(long value) {
-        __ExtentSize = value;
+        _extentSize = value;
     }
 
     /**
      * (o) offset within the extent
      */
-    private long __ExtentOffset;
+    private long _extentOffset;
 
     public long getExtentOffset() {
-        return __ExtentOffset;
+        return _extentOffset;
     }
 
     public void setExtentOffset(long value) {
-        __ExtentOffset = value;
+        _extentOffset = value;
     }
 
     /**
      * (s) logical number of bytes in file
      */
-    private long __LogicalSize;
+    private long _logicalSize;
 
     public long getLogicalSize() {
-        return __LogicalSize;
+        return _logicalSize;
     }
 
     public void setLogicalSize(long value) {
-        __LogicalSize = value;
+        _logicalSize = value;
     }
 
     public int size() {
@@ -212,7 +212,6 @@ public class ExtentData extends BaseItem {
     public Stream getStream(Context context) {
         if (getEncryption())
             throw new IOException("Extent encryption is not supported");
-
         Stream stream;
         switch (getType()) {
         case Inline:
@@ -248,14 +247,16 @@ public class ExtentData extends BaseItem {
         case Lzo:
             byte[] buffer = StreamUtilities.readExact(stream, 4); // sizeof(int)
             int totalLength = EndianUtilities.toUInt32LittleEndian(buffer, 0);
-            long processed = 0;
+            long processed = 4; // sizeof(int)
             List<SparseStream> parts = new ArrayList<>();
             long remaining = getLogicalSize();
+//Debug.println("remaining: " + remaining + ", " + stream);
             while (processed < totalLength) {
                 stream.setPosition(processed);
                 StreamUtilities.readExact(stream, buffer, 0, 4); // sizeof(int)
                 int partLength = EndianUtilities.toUInt32LittleEndian(buffer, 0);
                 processed += 4; // sizeof(int)
+//Debug.println("processed: " + processed + ", partLength: " + partLength + ", remaining: " + remaining);
                 SubStream part = new SubStream(stream, Ownership.Dispose, processed, partLength);
                 SeekableLzoStream uncompressed = new SeekableLzoStream(part, CompressionMode.Decompress, false);
                 uncompressed.setLength(Math.min(Sizes.OneKiB * 4, remaining));

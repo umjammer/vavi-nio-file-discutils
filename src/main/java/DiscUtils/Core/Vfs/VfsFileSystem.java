@@ -282,11 +282,11 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (access != FileAccess.Read) {
                 throw new UnsupportedOperationException("Files cannot be opened for write");
             }
-
         }
 
         String fileName = Utilities.getFileFromPath(path);
         String attributeName = null;
+
         int streamSepPos = fileName.indexOf(':');
         if (streamSepPos >= 0) {
             attributeName = fileName.substring(streamSepPos + 1);
@@ -305,7 +305,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (mode == FileMode.Open) {
                 throw new dotnet4j.io.FileNotFoundException("No such file: " + path);
             }
-
             TDirectory parentDir = getDirectory(Utilities.getDirectoryFromPath(path));
             entry = parentDir.createNewFile(Utilities.getFileFromPath(path));
         } else if (mode == FileMode.CreateNew) {
@@ -319,15 +318,14 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (entry.isDirectory()) {
             throw new dotnet4j.io.IOException("Attempt to open directory as a file");
         }
-
         TFile file = getFile(entry);
+
         SparseStream stream = null;
         if (attributeName == null || attributeName.isEmpty()) {
             stream = new BufferStream(file.getFileContent(), access);
         } else {
-            IVfsFileWithStreams fileStreams = file instanceof IVfsFileWithStreams ? (IVfsFileWithStreams) file
-                                                                                  : (IVfsFileWithStreams) null;
-            if (fileStreams != null) {
+            if (IVfsFileWithStreams.class.isInstance(file)) {
+                IVfsFileWithStreams fileStreams = IVfsFileWithStreams.class.cast(file);
                 stream = fileStreams.openExistingStream(attributeName);
                 if (stream == null) {
                     if (mode == FileMode.Create || mode == FileMode.OpenOrCreate) {
@@ -336,11 +334,11 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
                         throw new dotnet4j.io.FileNotFoundException("No such attribute on file: " + path);
                     }
                 }
-
             } else {
                 throw new UnsupportedOperationException("Attempt to open a file stream on a file system that doesn't support them");
             }
         }
+
         if (mode == FileMode.Create || mode == FileMode.Truncate) {
             stream.setLength(0);
         }
@@ -367,7 +365,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (dirEntry.hasVfsFileAttributes()) {
             return FileAttributes.toMap(dirEntry.getFileAttributes());
         }
-
         return FileAttributes.toMap(getFile(dirEntry).getFileAttributes());
     }
 
@@ -400,7 +397,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (dirEntry.hasVfsTimeInfo()) {
             return dirEntry.getCreationTimeUtc();
         }
-
         return getFile(dirEntry).getCreationTimeUtc();
     }
 
@@ -433,7 +429,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (dirEntry.hasVfsTimeInfo()) {
             return dirEntry.getLastAccessTimeUtc();
         }
-
         return getFile(dirEntry).getLastAccessTimeUtc();
     }
 
@@ -466,7 +461,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (dirEntry.hasVfsTimeInfo()) {
             return dirEntry.getLastWriteTimeUtc();
         }
-
         return getFile(dirEntry).getLastWriteTimeUtc();
     }
 
@@ -512,6 +506,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         }
 
         TDirEntry dirEntry = getDirectoryEntry(path);
+
         if (dirEntry != null && dirEntry.isSymlink()) {
             dirEntry = resolveSymlink(dirEntry, path);
         }
@@ -537,15 +532,16 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     protected void forAllDirEntries(String path, DirEntryHandler handler) {
         TDirectory dir = null;
         TDirEntry self = getDirectoryEntry(path);
+
         if (self != null) {
             handler.invoke(path, self);
             if (self.isDirectory()) {
                 dir = (TDirectory) IVfsDirectory.class.cast(getFile(self));
             }
-
         } else {
             dir = (TDirectory) IVfsDirectory.class.cast(getFile(path));
         }
+
         if (dir != null) {
             for (TDirEntry subentry : dir.getAllEntries()) {
                 forAllDirEntries(Utilities.combinePaths(path, subentry.getFileName()), handler);
@@ -563,7 +559,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (isRoot(path)) {
             return (TFile) getRootDirectory();
         }
-
         if (path == null) {
             return null;
         }
@@ -608,6 +603,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     private TDirEntry getDirectoryEntry(TDirectory dir, String[] pathEntries, int pathOffset) {
         TDirEntry entry;
+
         if (pathEntries.length == 0) {
             return dir.getSelf();
         }
@@ -617,11 +613,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (pathOffset == pathEntries.length - 1) {
                 return entry;
             }
-
             if (entry.isDirectory()) {
                 return getDirectoryEntry((TDirectory) convertDirEntryToFile(entry), pathEntries, pathOffset + 1);
             }
-
             throw new dotnet4j.io.IOException(String.format("%s is a file, not a directory", pathEntries[pathOffset]));
         }
 
@@ -646,6 +640,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             }
 
             boolean isDir = entry.isDirectory();
+
             if ((isDir && dirs) || (!isDir && files)) {
                 if (regex.matcher(de.getSearchName()).find()) {
                     results.add(Utilities.combinePaths(resultPrefixPath, formatFileName(entry.getFileName())));
@@ -668,7 +663,6 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (path.length() > 0 && path.charAt(0) != '\\') {
             path = '\\' + path;
         }
-
         String currentPath = path;
         int resolvesLeft = 20;
         while (currentEntry.isSymlink() && resolvesLeft > 0) {
@@ -676,8 +670,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (!IVfsSymlink.class.isInstance(file)) {
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
-
             IVfsSymlink<TDirEntry, TFile> symlink = IVfsSymlink.class.cast(file);
+
             currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex("\\*$"), ""),
                                                 symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
@@ -688,6 +682,7 @@ Debug.println(currentPath);
 
             --resolvesLeft;
         }
+
         if (currentEntry.isSymlink()) {
             throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink - too many links: " + path);
         }
@@ -695,9 +690,16 @@ Debug.println(currentPath);
         return currentEntry;
     }
 
+    /**
+     * Delegate for processing directory entries.
+     */
     @FunctionalInterface
     protected static interface DirEntryHandler<TDirEntry extends VfsDirEntry> {
 
+        /**
+         * @param path Full path to the directory entry.
+         * @param dirEntry The directory entry itself.
+         */
         void invoke(String path, TDirEntry dirEntry);
     }
 }

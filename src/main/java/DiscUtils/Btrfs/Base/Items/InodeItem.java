@@ -44,37 +44,37 @@ public class InodeItem extends BaseItem {
 
     public static final int Length = 160;
 
-    private long __Generation;
+    private long _generation;
 
     public long getGeneration() {
-        return __Generation;
+        return _generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        _generation = value;
     }
 
-    private long __TransId;
+    private long _transId;
 
     public long getTransId() {
-        return __TransId;
+        return _transId;
     }
 
     public void setTransId(long value) {
-        __TransId = value;
+        _transId = value;
     }
 
     /**
      * Size of the file in bytes.
      */
-    private long __FileSize;
+    private long _fileSize;
 
     public long getFileSize() {
-        return __FileSize;
+        return _fileSize;
     }
 
     public void setFileSize(long value) {
-        __FileSize = value;
+        _fileSize = value;
     }
 
     /**
@@ -82,173 +82,173 @@ public class InodeItem extends BaseItem {
      * Sum of the offset fields of all EXTENT_DATA items for this inode. For
      * directories: 0.
      */
-    private long __NBytes;
+    private long _nBytes;
 
     public long getNBytes() {
-        return __NBytes;
+        return _nBytes;
     }
 
     public void setNBytes(long value) {
-        __NBytes = value;
+        _nBytes = value;
     }
 
     /**
      * Unused for normal inodes. Contains byte offset of block group when used
      * as a free space inode.
      */
-    private long __BlockGroup;
+    private long _blockGroup;
 
     public long getBlockGroup() {
-        return __BlockGroup;
+        return _blockGroup;
     }
 
     public void setBlockGroup(long value) {
-        __BlockGroup = value;
+        _blockGroup = value;
     }
 
     /**
      * Count of INODE_REF entries for the inode. When used outside of a file
      * tree, 1.
      */
-    private int __LinkCount;
+    private int _linkCount;
 
     public int getLinkCount() {
-        return __LinkCount;
+        return _linkCount;
     }
 
     public void setLinkCount(int value) {
-        __LinkCount = value;
+        _linkCount = value;
     }
 
     /**
      * stat.st_uid
      */
-    private int __Uid;
+    private int _uid;
 
     public int getUid() {
-        return __Uid;
+        return _uid;
     }
 
     public void setUid(int value) {
-        __Uid = value;
+        _uid = value;
     }
 
     /**
      * stat.st_gid
      */
-    private int __Gid;
+    private int _gid;
 
     public int getGid() {
-        return __Gid;
+        return _gid;
     }
 
     public void setGid(int value) {
-        __Gid = value;
+        _gid = value;
     }
 
     /**
      * stat.st_mode
      */
-    private int __Mode;
+    private int _mode;
 
     public int getMode() {
-        return __Mode;
+        return _mode;
     }
 
     public void setMode(int value) {
-        __Mode = value;
+        _mode = value;
     }
 
     /**
      * stat.st_rdev
      */
-    private long __RDev;
+    private long _rDev;
 
     public long getRDev() {
-        return __RDev;
+        return _rDev;
     }
 
     public void setRDev(long value) {
-        __RDev = value;
+        _rDev = value;
     }
 
     /**
      * Inode flags
      */
-    private EnumSet<InodeFlag> __Flags;
+    private EnumSet<InodeFlag> _flags;
 
     public EnumSet<InodeFlag> getFlags() {
-        return __Flags;
+        return _flags;
     }
 
     public void setFlags(EnumSet<InodeFlag> value) {
-        __Flags = value;
+        _flags = value;
     }
 
     /**
      * Sequence number used for NFS compatibility. Initialized to 0 and
      * incremented each time mtime value is changed.
      */
-    private long __Sequence;
+    private long _sequence;
 
     public long getSequence() {
-        return __Sequence;
+        return _sequence;
     }
 
     public void setSequence(long value) {
-        __Sequence = value;
+        _sequence = value;
     }
 
     /**
      * stat.st_atime
      */
-    private TimeSpec __ATime;
+    private TimeSpec _aTime;
 
     public TimeSpec getATime() {
-        return __ATime;
+        return _aTime;
     }
 
     public void setATime(TimeSpec value) {
-        __ATime = value;
+        _aTime = value;
     }
 
     /**
      * stat.st_ctime
      */
-    private TimeSpec __CTime;
+    private TimeSpec _cTime;
 
     public TimeSpec getCTime() {
-        return __CTime;
+        return _cTime;
     }
 
     public void setCTime(TimeSpec value) {
-        __CTime = value;
+        _cTime = value;
     }
 
     /**
      * stat.st_mtime
      */
-    private TimeSpec __MTime;
+    private TimeSpec _mTime;
 
     public TimeSpec getMTime() {
-        return __MTime;
+        return _mTime;
     }
 
     public void setMTime(TimeSpec value) {
-        __MTime = value;
+        _mTime = value;
     }
 
     /**
      * Timestamp of inode creation
      */
-    private TimeSpec __OTime;
+    private TimeSpec _oTime;
 
     public TimeSpec getOTime() {
-        return __OTime;
+        return _oTime;
     }
 
     public void setOTime(TimeSpec value) {
-        __OTime = value;
+        _oTime = value;
     }
 
     public int size() {

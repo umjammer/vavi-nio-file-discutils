@@ -62,4 +62,8 @@ class CatalogNodeId {
     public String toString() {
         return String.valueOf(_id);
     }
+
+    public boolean equals(Object other) {
+        return CatalogNodeId.class.isInstance(other) ? _id == CatalogNodeId.class.cast(other)._id : false;
+    }
 }

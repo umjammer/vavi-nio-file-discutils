@@ -87,8 +87,6 @@ public class GuidPartitionTypes {
             return LinuxSwap;
         default:
             throw new IllegalArgumentException("Unknown partition type");
-
         }
     }
-
 }

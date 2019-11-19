@@ -32,6 +32,7 @@ public class SampleDataTests {
             VolumeManager manager = new VolumeManager(disk);
             List<LogicalVolumeInfo> logicalVolumes = manager.getLogicalVolumes();
             assertEquals(3, logicalVolumes.size());
+
             assertEquals(1283457024, logicalVolumes.get(0).getLength());
             assertEquals(746586112, logicalVolumes.get(1).getLength());
             assertEquals(1178599424, logicalVolumes.get(2).getLength());

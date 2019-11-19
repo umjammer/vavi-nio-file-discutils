@@ -336,13 +336,9 @@ public final class SquashFileSystemBuilder {
         IdTableWriter idWriter = new IdTableWriter(_context);
 
         _context.setAllocateInode(this::allocateInode);
-        _context.setAllocateId(id -> {
-            return idWriter.allocateId(id);
-        });
+        _context.setAllocateId(idWriter::allocateId);
         _context.setWriteDataBlock(this::writeDataBlock);
-        _context.setWriteFragment((length, offset) -> {
-            return fragWriter.writeFragment(length, offset);
-        });
+        _context.setWriteFragment(fragWriter::writeFragment);
         _context.setInodeWriter(inodeWriter);
         _context.setDirectoryWriter(dirWriter);
 

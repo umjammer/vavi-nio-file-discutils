@@ -40,7 +40,7 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
 
     public ExtentKey(CatalogNodeId cnid, int startBlock, boolean resource_fork) {
         _keyLength = 10;
-        setNodeId(cnid);
+        _nodeId = cnid;
         _startBlock = startBlock;
         _forkType = (byte) (resource_fork ? 0xff : 0x00);
     }
@@ -65,7 +65,7 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         }
 
         // Sort by file id, fork type, then starting block
-        if (_nodeId != other._nodeId) {
+        if (!_nodeId.equals(other._nodeId)) {
             return _nodeId.getId() < other._nodeId.getId() ? -1 : 1;
         }
 

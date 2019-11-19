@@ -25,7 +25,7 @@ package DiscUtils.SquashFs;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
-public final class MetablockReader {
+final class MetablockReader {
     private final Context _context;
 
     private long _currentBlockStart;
@@ -59,6 +59,7 @@ public final class MetablockReader {
 
     public void skip(int count) {
         Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
+
         int totalSkipped = 0;
         while (totalSkipped < count) {
             if (_currentOffset >= block.getAvailable()) {
@@ -76,6 +77,7 @@ public final class MetablockReader {
 
     public int read(byte[] buffer, int offset, int count) {
         Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
+
         int totalRead = 0;
         while (totalRead < count) {
             if (_currentOffset >= block.getAvailable()) {
@@ -86,10 +88,12 @@ public final class MetablockReader {
             }
 
             int toRead = Math.min(count - totalRead, block.getAvailable() - _currentOffset);
+//Debug.println(_currentOffset + ", " + offset + ", " + totalRead + ", " + toRead + ", " + count + ", " + block.getAvailable());
             System.arraycopy(block.getData(), _currentOffset, buffer, offset + totalRead, toRead);
             totalRead += toRead;
             _currentOffset += toRead;
         }
+
         return totalRead;
     }
 
@@ -100,7 +104,6 @@ public final class MetablockReader {
             read(buffer, 0, 4);
             return EndianUtilities.toUInt32LittleEndian(buffer, 0);
         }
-
         int result = EndianUtilities.toUInt32LittleEndian(block.getData(), _currentOffset);
         _currentOffset += 4;
         return result;
@@ -113,7 +116,6 @@ public final class MetablockReader {
             read(buffer, 0, 4);
             return EndianUtilities.toInt32LittleEndian(buffer, 0);
         }
-
         int result = EndianUtilities.toInt32LittleEndian(block.getData(), _currentOffset);
         _currentOffset += 4;
         return result;
@@ -126,7 +128,6 @@ public final class MetablockReader {
             read(buffer, 0, 2);
             return EndianUtilities.toUInt16LittleEndian(buffer, 0);
         }
-
         short result = EndianUtilities.toUInt16LittleEndian(block.getData(), _currentOffset);
         _currentOffset += 2;
         return result;
@@ -139,7 +140,6 @@ public final class MetablockReader {
             read(buffer, 0, 2);
             return EndianUtilities.toInt16LittleEndian(buffer, 0);
         }
-
         short result = EndianUtilities.toInt16LittleEndian(block.getData(), _currentOffset);
         _currentOffset += 2;
         return result;
@@ -152,7 +152,6 @@ public final class MetablockReader {
             read(buffer, 0, len);
             return EndianUtilities.bytesToString(buffer, 0, len);
         }
-
         String result = EndianUtilities.bytesToString(block.getData(), _currentOffset, len);
         _currentOffset += len;
         return result;

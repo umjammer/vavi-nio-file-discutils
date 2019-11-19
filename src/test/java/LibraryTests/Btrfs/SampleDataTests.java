@@ -72,7 +72,10 @@ public class SampleDataTests {
                 assertEquals("test\n", getFileContent("\\folder\\symlink", btrfs)); //PR#36
                 assertEquals("b0d5fae237588b6641f974459404d197", getFileChecksum("\\folder\\subfolder\\lzo", btrfs));
             }
-            try (BtrfsFileSystem subvolume = new BtrfsFileSystem(volume.open(), new BtrfsFileSystemOptions())) {
+            BtrfsFileSystemOptions options = new BtrfsFileSystemOptions();
+            options.setSubvolumeId(256);
+            options.setVerifyChecksums(true);
+            try (BtrfsFileSystem subvolume = new BtrfsFileSystem(volume.open(), options)) {
                 assertEquals("test\n", getFileContent("\\subvolumefolder\\subvolumefile", subvolume));
             }
         }

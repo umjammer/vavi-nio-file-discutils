@@ -85,7 +85,7 @@ public class BlockCache<T extends Block> {
         T result;
 
         if (containsBlock(position)) {
-            result = getBlock(position, c);
+            result = _blocks.get(position);
             return result;
         }
 

@@ -26,14 +26,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
-
-import vavi.util.Debug;
 
 import DiscUtils.Core.Internal.LogicalVolumeFactory;
 import DiscUtils.Core.Partitions.PartitionInfo;
@@ -59,9 +57,9 @@ public final class VolumeManager implements Serializable {
 
     private boolean _needScan;
 
-    private SortedMap<String, PhysicalVolumeInfo> _physicalVolumes;
+    private Map<String, PhysicalVolumeInfo> _physicalVolumes;
 
-    private SortedMap<String, LogicalVolumeInfo> _logicalVolumes;
+    private Map<String, LogicalVolumeInfo> _logicalVolumes;
 
     /**
      * Initializes a new instance of the VolumeManager class.
@@ -211,8 +209,8 @@ public final class VolumeManager implements Serializable {
      * Scans all of the disks for their physical and logical volumes.
      */
     private void scan() {
-        SortedMap<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
-        SortedMap<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
+        Map<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
+        Map<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
 
         _physicalVolumes = newPhysicalVolumes;
         _logicalVolumes = newLogicalVolumes;
@@ -220,9 +218,9 @@ public final class VolumeManager implements Serializable {
         _needScan = false;
     }
 
-    private SortedMap<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) {
+    private Map<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) {
         List<PhysicalVolumeInfo> unhandledPhysical = new ArrayList<>();
-        SortedMap<String, LogicalVolumeInfo> result = new TreeMap<>();
+        Map<String, LogicalVolumeInfo> result = new LinkedHashMap<>();
 
         for (PhysicalVolumeInfo pvi : physicalVols) {
             boolean handled = false;
@@ -247,8 +245,8 @@ public final class VolumeManager implements Serializable {
         return result;
     }
 
-    private SortedMap<String, PhysicalVolumeInfo> scanForPhysicalVolumes() {
-        SortedMap<String, PhysicalVolumeInfo> result = new TreeMap<>();
+    private Map<String, PhysicalVolumeInfo> scanForPhysicalVolumes() {
+        Map<String, PhysicalVolumeInfo> result = new LinkedHashMap<>();
 
         for (int i = 0; i < _disks.size(); ++i) {
             // First scan physical volumes

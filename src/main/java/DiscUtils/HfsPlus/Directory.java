@@ -37,7 +37,7 @@ final class Directory extends File implements IVfsDirectory<DirEntry, File> {
         List<DirEntry> results = new ArrayList<>();
 
         getContext().getCatalog().visitRange((key, data) -> {
-            if (key.getNodeId() == getNodeId()) {
+            if (key.getNodeId().equals(getNodeId())) {
                 if (data != null && key.getName() != null && !key.getName().isEmpty() && DirEntry.isFileOrDirectory(data)) {
                     results.add(new DirEntry(key.getName(), data));
                 }

@@ -136,7 +136,7 @@ public class LogicalVolumeManager {
                                                                   (byte) 0,
                                                                   DiscUtils.Core.LogicalVolumeStatus.Healthy);
                     result.add(lvi);
-//Debug.println("Lv: " + lvi.getIdentity());
+//Debug.println("Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.ExtentSize * PhysicalVolume.SECTOR_SIZE);
                 }
             }
         }

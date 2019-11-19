@@ -21,8 +21,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.github.fge.filesystem.driver.FileSystemDriver;
 import com.github.fge.filesystem.provider.FileSystemRepositoryBase;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.FileSystemManager;
@@ -64,7 +62,7 @@ public final class DuFileSystemRepository extends FileSystemRepositoryBase {
             }
             // TODO virtual relative directory from rawSchemeSpecificParts[1]
 
-Debug.println("file: " + Paths.get(file).toAbsolutePath());
+//Debug.println("file: " + Paths.get(file).toAbsolutePath());
 
             VirtualDisk disk = VirtualDisk.openDisk(Paths.get(file).toAbsolutePath().toString(), null, FileAccess.Read, null, null);
             VolumeManager manager = new VolumeManager();

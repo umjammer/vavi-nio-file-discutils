@@ -29,7 +29,7 @@ import DiscUtils.Streams.Util.EndianUtilities;
 import dotnet4j.io.IOException;
 
 
-public abstract class Inode implements IByteArraySerializable {
+abstract class Inode implements IByteArraySerializable {
     public short _gidKey;
 
     public int _inodeNumber;
@@ -81,14 +81,17 @@ public abstract class Inode implements IByteArraySerializable {
 
         InodeType type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(typeData, 0)];
         Inode inode = instantiateType(type);
+
         byte[] inodeData = new byte[inode.size()];
         inodeData[0] = typeData[0];
         inodeData[1] = typeData[1];
+
         if (inodeReader.read(inodeData, 2, inode.size() - 2) != inode.size() - 2) {
             throw new IOException("Unable to read whole Inode");
         }
 
         inode.readFrom(inodeData, 0);
+
         return inode;
     }
 

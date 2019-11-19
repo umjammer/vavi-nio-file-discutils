@@ -35,7 +35,9 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Sizes;
 
 
-public class DynamicDisk implements IDiagnosticTraceable {
+class DynamicDisk implements IDiagnosticTraceable {
+    private static final UUID EMPTY = new UUID(0L, 0L);
+
     private final VirtualDisk _disk;
 
     private final PrivateHeader _header;
@@ -46,17 +48,17 @@ public class DynamicDisk implements IDiagnosticTraceable {
         TocBlock toc = getTableOfContents();
         long dbStart = _header.ConfigurationStartLba * 512 + toc.Item1Start * 512;
         _disk.getContent().setPosition(dbStart);
-        __Database = new Database(_disk.getContent());
+        _database = new Database(_disk.getContent());
     }
 
     public SparseStream getContent() {
         return _disk.getContent();
     }
 
-    private Database __Database;
+    private Database _database;
 
     public Database getDatabase() {
-        return __Database;
+        return _database;
     }
 
     public long getDataOffset() {
@@ -64,7 +66,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
     }
 
     public UUID getGroupId() {
-        return _header.DiskGroupId == null || _header.DiskGroupId.isEmpty() ? new UUID(0L, 0L) : UUID.fromString(_header.DiskGroupId);
+        return _header.DiskGroupId == null || _header.DiskGroupId.isEmpty() ? EMPTY : UUID.fromString(_header.DiskGroupId);
     }
 
     public UUID getId() {
@@ -92,7 +94,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
         writer.println(linePrefix + "              Log Size: " + _header.LogSizeLba + " (Sectors)");
     }
 
-    public static PrivateHeader getPrivateHeader(VirtualDisk disk) {
+    static PrivateHeader getPrivateHeader(VirtualDisk disk) {
         if (disk.isPartitioned()) {
             long headerPos = 0;
             PartitionTable pt = disk.getPartitions();
@@ -105,6 +107,7 @@ public class DynamicDisk implements IDiagnosticTraceable {
                     }
                 }
             }
+
             if (headerPos != 0) {
                 disk.getContent().setPosition(headerPos);
                 byte[] buffer = new byte[Sizes.Sector];
@@ -121,9 +124,11 @@ public class DynamicDisk implements IDiagnosticTraceable {
     private TocBlock getTableOfContents() {
         byte[] buffer = new byte[(int) _header.TocSizeLba * 512];
         _disk.getContent().setPosition(_header.ConfigurationStartLba * 512 + 1 * _header.TocSizeLba * 512);
+
         _disk.getContent().read(buffer, 0, buffer.length);
         TocBlock tocBlock = new TocBlock();
         tocBlock.readFrom(buffer, 0);
+
         if ("TOCBLOCK".equals(tocBlock.Signature)) {
             return tocBlock;
         }

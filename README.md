@@ -4,7 +4,7 @@
 
 | fs                     | list | upload | download | copy | move | rm | mkdir | cache | watch | library |
 |------------------------|------|--------|----------|------|------|----|-------|-------|-------|---------|
-| ISO | 🚫    |      |        |    |    |  |     |     |       |  |
+| ISO | ?    |      |        |    |    |  |     |     |       |  |
 | UDF |     |      |        |    |    |  |     |     |       |  |
 | FAT |     |      |        |    |    |  |     |     |       |  |
 | NTFS | ✅    |      |        |    |    |  |     |     |       |  |
@@ -14,9 +14,9 @@
 | VMDK |     |      |        |    |    |  |     |     |       |  |
 | Registry |     |      |        |    |    |  |     |     |       |  |
 | iSCSI |     |      |        |    |    |  |     |     |       |  |
-| NFS | ✅    |      |        |    |    |  |     |     |       |  |
+| NFS |     |      |        |    |    |  |     |     |       |  |
 | DMG | 🚫    |      |        |    |    |  |     |     |       |  |
-| HSF+ | 🚫    |      |        |    |    |  |     |     |       |  |
+| HSF+ | 🚫    |      |        |    |    |  |     |     |       | same error on original |
 
 ## Project Description
 
@@ -34,7 +34,7 @@ See more up to date documentation at the [Wiki](https://github.com/DiscUtils/Dis
 
 ### Implementation in this repository
 
-This repository has performed a few changes to the core DiscUtils library. For starters, all projects have been converted to J, and are targeting Java 8.
+This repository has performed a few changes to the core DiscUtils library. For starters, all projects have been converted to Java, and are targeting Java 8.
 
 The vavi-nio-file-discutils library has been split into 25 independent projects, which can function without the others present. This reduces the "cost" of having vavi-nio-file-discutils immensely, as we're down from the 1 MB binary it used to be. 
 
@@ -137,6 +137,9 @@ Automated CI builds are available on Github.
     * unit test (xUnit -> junit)
     * assembly -> ServiceLoader
     * attribute -> annotation
+    * unsigned
+    * object equals
+    * operator overloads
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnet4j)
  * https://github.com/shevek/lzo-java
  * https://github.com/akaigoro/df4j

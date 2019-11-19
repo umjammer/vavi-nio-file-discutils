@@ -67,9 +67,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>vavi</groupId>
+      <groupId>com.github.umjammer</groupId>
       <artifactId>vavi-commons</artifactId>
-      <version>1.0.12-SNAPSHOT</version>
+      <version>1.0.12</version>
     </dependency>
 
     <dependency>
@@ -89,9 +89,9 @@
     </dependency>
 
     <dependency>
-      <groupId>moe.yo3explorer</groupId>
+      <groupId>com.github.umjammer</groupId>
       <artifactId>dotnet4j</artifactId>
-      <version>1.2.0-SNAPSHOT</version>
+      <version>1.2.0</version>
     </dependency>
 
     <dependency>
