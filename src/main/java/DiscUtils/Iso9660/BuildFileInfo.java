@@ -59,8 +59,9 @@ public final class BuildFileInfo extends BuildDirectoryMember {
         _parent = parent;
         _contentPath = content;
         try {
-            _contentSize = Files.size(Paths.get(_contentPath));
-            _creationTime = Files.getLastModifiedTime(Paths.get(_contentPath)).toMillis();
+            String path = _contentPath.replace("\\", java.io.File.separator);
+            _contentSize = Files.size(Paths.get(path));
+            _creationTime = Files.getLastModifiedTime(Paths.get(path)).toMillis();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }

@@ -19,10 +19,10 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 //
+
 //
 // Symbolic names of BCD Objects taken from Geoff Chappell's website:
 //  http://www.geoffchappell.com/viewer.htm?doc=notes/windows/boot/bcd/objects.htm
-//
 //
 
 package DiscUtils.BootConfig;
@@ -261,7 +261,6 @@ public class BcdObject {
      * @return The element object.
      */
     public Element getElement(int id) {
-//Debug.println(id + ", " + hasElement(id));
         if (hasElement(id)) {
             return new Element(_storage, _id, getApplicationType(), id);
         }
@@ -340,7 +339,7 @@ public class BcdObject {
     }
 
     private static void addMapping(String name, String id) {
-        UUID guid = UUID.fromString(id.replaceAll("[\\{\\}]", ""));
+        UUID guid = UUID.fromString(id.replaceAll("(^\\{|\\}$)", ""));
         _nameToGuid.put(name, guid);
         _guidToName.put(guid, name);
     }

@@ -44,13 +44,13 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "f", argName = "_diskFile", description = "The disks to inspect.", args = 1, required = false)
+    @Option(option = "f", argName = "_diskFile", description = "The disks to inspect.", args = 1, required = true)
     private String _diskFile;
 
-    @Option(option = "d", argName = "_inFilePath", description = "The path of the file to extract.", args = 1, required = false)
+    @Option(option = "d", argName = "_inFilePath", description = "The path of the file to extract.", args = 1, required = true)
     private String _inFilePath;
 
-    @Option(option = "o", argName = "_outFilePath", description = "The output file to be written.", args = 1, required = false)
+    @Option(option = "o", argName = "_outFilePath", description = "The output file to be written.", args = 1, required = true)
     private String _outFilePath;
 
     @Option(option = "dt", argName = "_diskType", description = "Force the type of disk - use a file extension (one of TODO)")
@@ -70,7 +70,7 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
-        System.err.println("file: " + _diskFile);
+System.err.println("file: " + _diskFile);
         volMgr.addDisk(VirtualDisk.openDisk(_diskFile
                 .replace(File.separator, "\\"), _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
         VolumeInfo volInfo = null;

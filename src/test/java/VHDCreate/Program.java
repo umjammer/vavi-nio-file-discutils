@@ -25,6 +25,7 @@ package VHDCreate;
 import java.io.IOException;
 
 import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 import DiscUtils.Common.ProgramBase;
 import DiscUtils.Streams.Util.Ownership;
@@ -36,11 +37,12 @@ import dotnet4j.io.FileStream;
 import dotnet4j.io.compat.Utilities;
 
 
+@Options
 public class Program extends ProgramBase {
-    @Option(option = "new.vhd", description = "Path to the VHD file to create.", required = false)
+    @Option(option = "new.vhd", description = "Path to the VHD file to create.", args = 1, required = true)
     private String _sourceFile;
 
-    @Option(option = "base.vhd", description = "For differencing disks, the path to the base disk.", required = true)
+    @Option(option = "base.vhd", description = "For differencing disks, the path to the base disk.", args = 1, required = false)
     private String _destFile;
 
     @Option(option = "t",
@@ -53,8 +55,9 @@ public class Program extends ProgramBase {
             description = "For dynamic disks, the allocation int size for new disk regions in bytes.  The default is 2MB.    Use B, KB, MB, GB to specify units (units default to bytes if not specified).")
     private String _blockSizeSwitch = "size";
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
         System.exit(ExitCode);
     }
@@ -87,15 +90,8 @@ public class Program extends ProgramBase {
                 return;
             }
 
-            FileStream fs = new FileStream(_destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-            try {
-                {
-                    Disk.initializeDynamic(fs, Ownership.None, getDiskSize(), blockSize);
-                }
-            } finally {
-                if (fs != null)
-                    fs.close();
-
+            try (FileStream fs = new FileStream(_destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
+                Disk.initializeDynamic(fs, Ownership.None, getDiskSize(), blockSize);
             }
         } else if (Utilities.equals(_typeSwitch, "diff")) {
             // Create Diff
@@ -113,15 +109,8 @@ public class Program extends ProgramBase {
             }
 
             // Create Fixed disk
-            FileStream fs = new FileStream(_destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-            try {
-                {
-                    Disk.initializeFixed(fs, Ownership.None, getDiskSize());
-                }
-            } finally {
-                if (fs != null)
-                    fs.close();
-
+            try (FileStream fs = new FileStream(_destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
+                Disk.initializeFixed(fs, Ownership.None, getDiskSize());
             }
         } else {
             ExitCode = 1;

@@ -44,8 +44,9 @@ public class Program extends ProgramBase {
             required = true)
     private String _host;
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 

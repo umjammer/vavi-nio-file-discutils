@@ -41,28 +41,24 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "disk", description = "Paths to the disks to inspect.", required = false)
-    private String[] _diskFiles;
+    @Option(option = "disk", description = "Paths to the disks to inspect.", args = 1, required = true)
+    private String _diskFile; // TODO array
 
     @Option(option = "H", argName = "hidden",
-//            null,
             description = "Don't hide files and directories with the hidden attribute set in the directory listing.")
     private boolean _showHidden;
 
     @Option(option = "S", argName = "system",
-//            null,
             description = "Don't hide files and directories with the system attribute set in the directory listing.")
     private boolean _showSystem;
 
     @Option(option = "M", argName = "meta",
-//            null,
             description = "Don't hide files and directories that are part of the file system itself in the directory listing.")
     private boolean _showMeta;
 
-    public static void Main(String[] args) throws Exception {
-//        DiscUtils.Containers.SetupHelper.SetupContainers();
-//        DiscUtils.Transports.SetupHelper.SetupTransports();
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
@@ -70,6 +66,7 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
+String[] _diskFiles = new String[] { _diskFile };
         for (String disk : _diskFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(disk, FileAccess.Read, getUserName(), getPassword()));
         }

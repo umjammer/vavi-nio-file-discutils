@@ -41,11 +41,13 @@ import DiscUtils.Iscsi.TargetInfo;
 public class Program extends ProgramBase {
     @Option(option = "portal",
             description = "Address of the iSCSI server (aka Portal) in the form <host>[:<port>], for example 192.168.1.2:3260 or 192.168.1.2",
-            required = false)
+            args = 1,
+            required = true)
     private String _portalAddress;
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 

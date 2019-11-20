@@ -25,6 +25,7 @@ package VolInfo;
 import java.io.IOException;
 
 import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 import DiscUtils.Common.ProgramBase;
 import DiscUtils.Core.LogicalVolumeInfo;
@@ -34,17 +35,20 @@ import DiscUtils.Core.VolumeManager;
 import dotnet4j.io.FileAccess;
 
 
+@Options
 public class Program extends ProgramBase {
-    @Option(option = "disk", description = "Paths to the disks to inspect.", required = false)
-    private String[] _inFiles;
+    @Option(option = "disk", description = "Paths to the disks to inspect.", args = 1, required = true)
+    private String _inFile; // TODO array
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
+String[] _inFiles = new String[] { _inFile };
         for (String path : _inFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(path, FileAccess.Read, getUserName(), getPassword()));
         }

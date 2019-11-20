@@ -100,8 +100,6 @@ public class Program extends ProgramBase {
 //    StandardSwitches.UserAndPassword | StandardSwitches.FileNameEncoding;
 
     protected void doRun() throws IOException {
-//        DiscUtils.FileSystems.SetupHelper.setupFileSystems();
-
 //        System.setProperty("file.encoding", Charset.forName("UTF8").name());
 
         List<VirtualDisk> disks = new ArrayList<>();

@@ -61,19 +61,21 @@ public class Program extends ProgramBase {
 
     @Option(option = "in_file",
             description = "The disk image containing the Operating System image to be cloned.",
-            required = false)
+            args = 1,
+            required = true)
     private String _sourceFile;
 
-    @Option(option = "out_file", description = "The path to the output disk image.", required = false)
+    @Option(option = "out_file", description = "The path to the output disk image.", args = 1, required = true)
     private String _destFile;
 
-    @Option(option = "l", argName = "label", description = "The volume label for the NTFS file system created.")
+    @Option(option = "l", argName = "label", args = 1, description = "The volume label for the NTFS file system created.")
     private String _labelSwitch = "name";
 
     private Map<Long, String> _uniqueFiles = new HashMap<>();
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
@@ -189,7 +191,6 @@ public class Program extends ProgramBase {
                     // timestamps)
                     destNtfs.setFileStandardInformation(dir, sourceNtfs.getFileStandardInformation(dir));
                 }
-
             }
         }
 
@@ -208,14 +209,12 @@ public class Program extends ProgramBase {
                 if (hardLinksRemaining > 0) {
                     _uniqueFiles.put(sourceFileId, file);
                 }
-
             }
             // File may have a short name
             String shortName = sourceNtfs.getShortName(file);
             if (shortName != null && !shortName.isEmpty() && !Utilities.equals(shortName, file)) {
                 destNtfs.setShortName(file, shortName);
             }
-
         }
     }
 
@@ -244,7 +243,6 @@ public class Program extends ProgramBase {
             if (Utilities.equals(pathUpper, _excludedFiles[i])) {
                 return true;
             }
-
         }
         return false;
     }

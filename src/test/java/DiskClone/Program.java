@@ -34,19 +34,26 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "t", argName = "translation",
-//          "mode",
-            description = "Indicates the geometry adjustment to apply.  Set this parameter to match the translation configured in the BIOS of the machine that will boot from the disk - auto should work in most cases for modern BIOS.")
+    @Option(option = "t",
+            argName = "translation mode",
+            args = 1,
+            description = "Indicates the geometry adjustment to apply.  Set this parameter to match the translation " +
+                          "configured in the BIOS of the machine that will boot from the disk - " +
+                          "auto should work in most cases for modern BIOS.")
     private GeometryTranslation _translation = GeometryTranslation.Auto;
 
-    @Option(option = "volume", description = "Volumes to clone.  The volumes should all be on the same disk.", required = false)
+    @Option(option = "volume",
+            description = "Volumes to clone.  The volumes should all be on the same disk.",
+            args = 1,
+            required = true)
     private String[] _volumes;
 
-    @Option(option = "out_file", description = "Path to the output disk image.", required = false)
+    @Option(option = "out_file", description = "Path to the output disk image.", args = 1, required = true)
     private String _destDisk;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
@@ -146,21 +153,14 @@ public class Program extends ProgramBase {
                     ntfs.deleteFile("\\hiberfil.sys");
                 }
 
-                Stream bitmapStream = ntfs.openFile("$Bitmap", FileMode.Open);
-                try {
-                    {
-                        volBitmap = new byte[(int) bitmapStream.getLength()];
-                        int totalRead = 0;
-                        int numRead = bitmapStream.read(volBitmap, 0, volBitmap.length - totalRead);
-                        while (numRead > 0) {
-                            totalRead += numRead;
-                            numRead = bitmapStream.read(volBitmap, totalRead, volBitmap.length - totalRead);
-                        }
+                try (Stream bitmapStream = ntfs.openFile("$Bitmap", FileMode.Open)) {
+                    volBitmap = new byte[(int) bitmapStream.getLength()];
+                    int totalRead = 0;
+                    int numRead = bitmapStream.read(volBitmap, 0, volBitmap.length - totalRead);
+                    while (numRead > 0) {
+                        totalRead += numRead;
+                        numRead = bitmapStream.read(volBitmap, totalRead, volBitmap.length - totalRead);
                     }
-                } finally {
-                    if (bitmapStream != null)
-                        bitmapStream.close();
-
                 }
                 clusterSize = (int) ntfs.getClusterSize();
                 if (translation != GeometryTranslation.None) {
@@ -174,7 +174,6 @@ public class Program extends ProgramBase {
                 if (part.getFirstSector() * 512 == sv.SourceExtent.StartingOffset) {
                     contentBuilder.setPartitionContent(i, partSourceStream);
                 }
-
             }
         }
         SparseStream contentStream = contentBuilder.build();
@@ -245,8 +244,7 @@ public class Program extends ProgramBase {
                 ++cluster;
             }
 
-            result.add(new StreamExtent(startCluster * bytesPerCluster,
-                                        (cluster - startCluster) * bytesPerCluster));
+            result.add(new StreamExtent(startCluster * bytesPerCluster, (cluster - startCluster) * bytesPerCluster));
 
             while (cluster < numClusters && !isSet(bitmap, cluster)) {
                 ++cluster;

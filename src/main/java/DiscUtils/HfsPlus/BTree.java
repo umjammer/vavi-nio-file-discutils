@@ -22,8 +22,6 @@
 
 package DiscUtils.HfsPlus;
 
-import vavi.util.Debug;
-
 import DiscUtils.Streams.Buffer.IBuffer;
 import DiscUtils.Streams.Util.StreamUtilities;
 
@@ -38,7 +36,6 @@ final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
     private BTreeKeyedNode<TKey> _rootNode;
 
     public BTree(Class<TKey> clazz, IBuffer data) {
-Debug.println(data.getCapacity());
         keyClass = clazz;
 
         _data = data;

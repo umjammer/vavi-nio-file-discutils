@@ -9,7 +9,7 @@ import DiscUtils.Streams.SparseMemoryBuffer;
 import DiscUtils.Streams.Buffer.IBuffer;
 
 
-public class MyFile implements IVfsFile {
+class MyFile implements IVfsFile {
     private MyDirEntry _dirEntry;
 
     public MyFile(MyDirEntry dirEntry) {

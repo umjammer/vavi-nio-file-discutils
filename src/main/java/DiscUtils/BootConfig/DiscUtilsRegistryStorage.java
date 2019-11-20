@@ -33,7 +33,7 @@ import DiscUtils.Registry.RegistryValueType;
 public class DiscUtilsRegistryStorage extends BaseStorage {
     private static final UUID EMPTY = new UUID(0, 0);
 
-    private static final String ElementsPathTemplate = "Objects\\s%\\Elements";
+    private static final String ElementsPathTemplate = "Objects\\%s\\Elements";
 
     private static final String ElementPathTemplate = "Objects\\%s\\Elements\\%8X";
 
@@ -78,7 +78,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         List<UUID> result = new ArrayList<>();
         RegistryKey parentKey = _rootKey.openSubKey(ObjectsPath);
         for (String key : parentKey.getSubKeyNames()) {
-            result.add(UUID.fromString(key));
+            result.add(UUID.fromString(key.replaceAll("(^\\{|\\}$)", "")));
         }
         return result;
     }
@@ -97,8 +97,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         RegistryKey descKey = _rootKey.openSubKey(path);
         Object val = descKey.getValue("Type");
-//Debug.println("getObjectType: " + val);
-        return val == null ? 0 : (Integer) val; // TODO check spec
+        return val == null ? 0 : (Integer) val;
     }
 
     public boolean hasValue(UUID obj, int element) {
@@ -137,7 +136,6 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
     private Object getValue(UUID obj, int element) {
         String path = String.format(ElementPathTemplate, String.format("{%s}", obj), element);
         RegistryKey key = _rootKey.openSubKey(path);
-//Debug.println("key: " + key);
         return key.getValue("Element");
     }
 

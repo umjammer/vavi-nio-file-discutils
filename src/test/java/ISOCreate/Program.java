@@ -22,6 +22,7 @@
 
 package ISOCreate;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,20 +41,21 @@ import dotnet4j.io.FileStream;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "iso_file", description = "The ISO file to create.", required = false)
+    @Option(option = "iso_file", description = "The ISO file to create.", args = 1, required = false)
     private String _isoFileParam;
 
-    @Option(option = "sourcedir", description = "The directory to be added to the ISO", required = false)
+    @Option(option = "sourcedir", description = "The directory to be added to the ISO", args = 1, required = false)
     private String _srcDir;
 
-    @Option(option = "bootimage", description = "The bootable disk image, to create a bootable ISO", required = true)
+    @Option(option = "bootimage", description = "The bootable disk image, to create a bootable ISO", args = 1, required = false)
     private String _bootImage;
 
-    @Option(option = "vl", argName = "vollabel", description = "Volume Label for the ISO file.")
+    @Option(option = "vl", argName = "vollabel", args = 1, description = "Volume Label for the ISO file.")
     private String _volLabelSwitch = "label";
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
@@ -81,9 +83,12 @@ public class Program extends ProgramBase {
 
     private static void populateFromFolder(CDBuilder builder, Path di, String basePath) throws IOException {
         Files.list(di).forEach(f -> {
-            if (!Files.isDirectory(f))
-                builder.addFile(f.toAbsolutePath().toString().substring(basePath.length()), f.toAbsolutePath().toString());
-            else
+            if (!Files.isDirectory(f)) {
+                String n = f.toAbsolutePath().toString().substring(basePath.length()).replace(File.separator, "\\");
+                String p = f.toAbsolutePath().toString().replace(File.separator, "\\");
+//Debug.println(n + ", " + p);
+                builder.addFile(n, p);
+            } else
                 try {
                     populateFromFolder(builder, f, basePath);
                 } catch (IOException e) {

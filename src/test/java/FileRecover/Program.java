@@ -51,27 +51,25 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "disk", description = "The disks to inspect.", required = false)
+    @Option(option = "disk", description = "The disks to inspect.", required = true)
     private String[] _diskFiles;
 
-    @Option(option = "r", argName = "recover",
-//          "file_index",
+    @Option(option = "r",
+            argName = "recover file_index",
             description = "Tries to recover the file at MFT index file_index from the disk.")
     private String _recoverFile;
 
-    @Option(option = "M", argName = "meta",
-//          null,
+    @Option(option = "M",
+            argName = "meta",
             description = "Don't hide files and directories that are part of the file system itself.")
     private boolean _showMeta;
 
-    @Option(option = "Z",
-            argName = "empty",
-            // null,
-            description = "Don't hide files shown as zero size.")
+    @Option(option = "Z", argName = "empty", description = "Don't hide files shown as zero size.")
     private boolean _showZeroSize;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 

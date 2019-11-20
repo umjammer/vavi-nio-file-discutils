@@ -8,7 +8,7 @@ import java.util.EnumSet;
 import DiscUtils.Core.CoreCompat.FileAttributes;
 import DiscUtils.Core.Vfs.VfsDirEntry;
 
-public class MyDirEntry extends VfsDirEntry {
+class MyDirEntry extends VfsDirEntry {
     private static long _nextId;
 
     private boolean _isDir;

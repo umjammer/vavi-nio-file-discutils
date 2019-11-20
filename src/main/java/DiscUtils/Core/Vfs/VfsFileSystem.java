@@ -391,6 +391,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
+            // TODO check file status
             throw new dotnet4j.io.FileNotFoundException("No such file or directory: " + path);
         }
 

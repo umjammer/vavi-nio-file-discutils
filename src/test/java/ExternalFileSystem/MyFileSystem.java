@@ -7,7 +7,7 @@ import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Core.Vfs.VfsFileSystem;
 
 
-public class MyFileSystem extends VfsFileSystem<MyDirEntry, MyFile, MyDirectory, MyContext> {
+class MyFileSystem extends VfsFileSystem<MyDirEntry, MyFile, MyDirectory, MyContext> {
     public MyFileSystem() {
         super(new DiscFileSystemOptions());
         this.setContext(new MyContext());

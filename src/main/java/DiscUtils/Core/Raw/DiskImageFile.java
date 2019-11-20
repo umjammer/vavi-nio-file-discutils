@@ -65,26 +65,27 @@ public final class DiskImageFile extends VirtualDiskLayer {
     public DiskImageFile(Stream stream, Ownership ownsStream, Geometry geometry) {
         setContent(stream instanceof SparseStream ? (SparseStream) stream : (SparseStream) null);
         _ownsContent = ownsStream;
+
         if (getContent() == null) {
             setContent(SparseStream.fromStream(stream, ownsStream));
             _ownsContent = Ownership.Dispose;
         }
 
-        __Geometry = geometry != null ? geometry : detectGeometry(getContent());
+        _geometry = geometry != null ? geometry : detectGeometry(getContent());
     }
 
     public long getCapacity() {
         return getContent().getLength();
     }
 
-    private SparseStream __Content;
+    private SparseStream _content;
 
-    public SparseStream getContent() {
-        return __Content;
+    SparseStream getContent() {
+        return _content;
     }
 
-    public void setContent(SparseStream value) {
-        __Content = value;
+    void setContent(SparseStream value) {
+        _content = value;
     }
 
     /**
@@ -97,10 +98,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the geometry of the file.
      */
-    private Geometry __Geometry;
+    private Geometry _geometry;
 
     public Geometry getGeometry() {
-        return __Geometry;
+        return _geometry;
     }
 
     /**
@@ -133,10 +134,12 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public static DiskImageFile initialize(Stream stream, Ownership ownsStream, long capacity, Geometry geometry) {
         stream.setLength(MathUtilities.roundUp(capacity, Sizes.Sector));
+
         // Wipe any pre-existing master boot record / BPB
         stream.setPosition(0);
         stream.write(new byte[Sizes.Sector], 0, Sizes.Sector);
         stream.setPosition(0);
+
         return new DiskImageFile(stream, ownsStream, geometry);
     }
 
@@ -200,6 +203,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     private static Geometry detectGeometry(Stream disk) {
         long capacity = disk.getLength();
+
         // First, check for floppy disk capacities - these have well-defined geometries
         if (capacity == Sizes.Sector * 1440) {
             return new Geometry(80, 2, 9);
@@ -213,11 +217,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
             return new Geometry(80, 2, 36);
         }
 
+        // Failing that, try to detect the geometry from any partition table.
+        // Note: this call falls back to guessing the geometry from the capacity
         return BiosPartitionTable.detectGeometry(disk);
     }
-
-    // Failing that, try to detect the geometry from any partition table.
-    // Note: this call falls back to guessing the geometry from the capacity
 
     /**
      * Calculates the best guess disk type (i.e. floppy or hard disk).
@@ -243,7 +246,6 @@ public final class DiskImageFile extends VirtualDiskLayer {
             return Sizes.Sector * 5760;
         default:
             throw new IllegalArgumentException("Invalid floppy disk type " + type);
-
         }
     }
 }

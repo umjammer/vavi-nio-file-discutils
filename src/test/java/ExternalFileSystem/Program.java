@@ -36,29 +36,29 @@ import dotnet4j.io.MemoryStream;
 
 
 public class Program {
-    public static void Main(String[] args) {
-//        SetupHelper.registerAssembly(Program.class);
+    public static void main(String[] args) {
         MemoryStream dummyFileSystemData = new MemoryStream("MYFS".getBytes(Charset.forName("ASCII")));
+
         VirtualDisk dummyDisk = new DiscUtils.Core.Raw.Disk(dummyFileSystemData, Ownership.None);
         VolumeManager volMgr = new VolumeManager(dummyDisk);
+
         VolumeInfo volInfo = volMgr.getLogicalVolumes().get(0);
         DiscUtils.Core.FileSystemInfo fsInfo = FileSystemManager.detectFileSystems(volInfo).get(0);
+
         DiscFileSystem fs = fsInfo.open(volInfo);
         showDir(fs.getRoot(), 4);
     }
 
     private static void showDir(DiscDirectoryInfo dirInfo, int indent) {
-        System.err.printf("%s{1,-50} [%d]\n",
+        System.err.printf("%s%-50s [%s]\n",
                           new String(new char[indent]).replace('\0', ' '),
                           dirInfo.getFullName(),
                           dirInfo.getCreationTimeUtc());
-        for (Object __dummyForeachVar0 : dirInfo.getDirectories()) {
-            DiscDirectoryInfo subDir = (DiscDirectoryInfo) __dummyForeachVar0;
+        for (DiscDirectoryInfo subDir : dirInfo.getDirectories()) {
             showDir(subDir, indent + 0);
         }
-        for (Object __dummyForeachVar1 : dirInfo.getFiles()) {
-            DiscFileInfo file = (DiscFileInfo) __dummyForeachVar1;
-            System.err.printf("%s{1,-50} [%d]\n",
+        for (DiscFileInfo file : dirInfo.getFiles()) {
+            System.err.printf("%s%-50s [%s]\n",
                               new String(new char[indent]).replace('\0', ' '),
                               file.getFullName(),
                               file.getCreationTimeUtc());

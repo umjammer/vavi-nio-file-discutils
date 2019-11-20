@@ -130,6 +130,6 @@ public final class KeyNodeCell extends Cell {
     }
 
     public String toString() {
-        return "Key:" + Name + " " + Flags + " <" + Timestamp + ">";
+        return "Key: " + Name + " " + Flags + " <" + Timestamp + ">";
     }
 }

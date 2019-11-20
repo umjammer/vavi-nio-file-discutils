@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 import DiscUtils.Common.ProgramBase;
 import DiscUtils.Core.ReportLevels;
@@ -43,15 +44,17 @@ import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
 
 
+@Options
 public class Program extends ProgramBase {
-    @Option(option = "vhd_file", description = "Path to the VHD file to inspect.", required = false)
+    @Option(option = "vhd_file", description = "Path to the VHD file to inspect.", args = 1, required = true)
     private String _vhdFile;
 
     @Option(option = "nc", argName = "noCheck", description = "Don't check the VHD file format for corruption")
     private boolean _dontCheck;
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 
@@ -78,8 +81,8 @@ public class Program extends ProgramBase {
             System.err.println();
             System.err.println("Common Disk Info");
             System.err.println("-----------------");
-            System.err.printf("              Cookie: {0:x8}\n", info.getCookie());
-            System.err.printf("            Features: {0:x8}\n", info.getFeatures());
+            System.err.printf("              Cookie: %8x\n", info.getCookie());
+            System.err.printf("            Features: %8x\n", info.getFeatures());
             System.err.printf(" File Format Version: %s.%s\n",
                                ((info.getFileFormatVersion() >> 16) & 0xFFFF),
                                (info.getFileFormatVersion() & 0xFFFF));

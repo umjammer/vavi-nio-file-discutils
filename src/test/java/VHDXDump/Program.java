@@ -48,11 +48,12 @@ import dotnet4j.io.FileAccess;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "vhdx_file", description = "Path to the VHDX file to inspect.", required = false)
+    @Option(option = "vhdx_file", description = "Path to the VHDX file to inspect.", args = 1, required = true)
     private String _vhdxFile;
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 

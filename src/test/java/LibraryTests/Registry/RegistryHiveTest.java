@@ -24,6 +24,7 @@ package LibraryTests.Registry;
 
 import java.util.EnumSet;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,7 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import DiscUtils.Registry.RegistryHive;
+import DiscUtils.Registry.RegistryKey;
 import DiscUtils.Registry.RegistryKeyFlags;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileStream;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.security.accessControl.AccessControlSections;
@@ -40,7 +44,7 @@ import dotnet4j.security.accessControl.AccessControlSections;
 
 public class RegistryHiveTest {
     @Test
-//    @Disabled(value = "Issue #14")
+    @Tag("Issue #14")
     public void create() throws Exception {
         MemoryStream ms = new MemoryStream();
         RegistryHive hive = RegistryHive.create(ms);
@@ -58,5 +62,19 @@ public class RegistryHiveTest {
         assertThrows(NullPointerException.class, () -> {
             RegistryHive.create((Stream) null);
         });
+    }
+
+    /**
+     * @param args 0: registry file
+     */
+    public static void main(String[] args) throws Exception {
+        RegistryHive hive = new RegistryHive(new FileStream(args[0], FileMode.Open));
+        hive.getRoot().getSubKeys().forEach(RegistryHiveTest::dump);
+    }
+
+    /** dump keys */
+    private static void dump(RegistryKey key) {
+        System.err.println(key);
+        key.getSubKeys().forEach(RegistryHiveTest::dump);
     }
 }

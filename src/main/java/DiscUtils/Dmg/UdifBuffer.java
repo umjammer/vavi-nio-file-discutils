@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.Compression.BZip2DecoderStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.SubStream;
@@ -231,10 +233,15 @@ public class UdifBuffer extends Buffer {
 
     private void loadRun(CompressedRun run) {
         int toCopy = (int) (run.SectorCount * Sizes.Sector);
+
         switch (run.Type) {
         case ZlibCompressed: {
-            _stream.setPosition(run.CompOffset + 2);
-            // 2 byte zlib header
+            /*
+             * *** WARNING ***
+             * DeflateStream decompression needs zip header (0x78, 0x9c)
+             * so spec. is different from original C# DeflateStream
+             */
+            _stream.setPosition(run.CompOffset);
 
             try (DeflateStream ds = new DeflateStream(_stream, CompressionMode.Decompress, true)) {
                 StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
@@ -243,6 +250,7 @@ public class UdifBuffer extends Buffer {
             }
         }
             break;
+
         case AdcCompressed: {
             _stream.setPosition(run.CompOffset);
             byte[] compressed = StreamUtilities.readExact(_stream, (int) run.CompLength);
@@ -251,6 +259,7 @@ public class UdifBuffer extends Buffer {
             }
         }
             break;
+
         case BZlibCompressed: {
             try (BZip2DecoderStream ds = new BZip2DecoderStream(new SubStream(_stream, run.CompOffset, run.CompLength),
                                                                 Ownership.None)) {
@@ -260,12 +269,15 @@ public class UdifBuffer extends Buffer {
             }
         }
             break;
+
         case Zeros:
         case Raw:
             break;
+
         default:
             throw new UnsupportedOperationException("Unrecognized run type " + run.Type);
         }
+
         _activeRun = run;
     }
 }

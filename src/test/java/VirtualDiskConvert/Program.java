@@ -25,6 +25,7 @@ package VirtualDiskConvert;
 import java.io.IOException;
 
 import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 import DiscUtils.Common.ProgramBase;
 import DiscUtils.Core.FileSystemInfo;
@@ -47,26 +48,30 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.compat.Utilities;
 
 
+@Options
 public class Program extends ProgramBase {
-    @Option(option = "in_file", description = "Path to the source disk.", required = false)
+    @Option(option = "in_file", description = "Path to the source disk.", args = 1, required = true)
     private String _inFile;
 
-    @Option(option = "out_file", description = "Path to the output disk.", required = false)
+    @Option(option = "out_file", description = "Path to the output disk.", args = 1, required = true)
     private String _outFile;
 
     @Option(option = "t",
-            argName = "translation",
-            // "mode",
-            description = "Indicates the geometry adjustment to apply for bootable disks.  Set this parameter to match the translation configured in the BIOS of the machine that will boot from the disk - auto should work in most cases for modern BIOS.")
+            argName = "translation {mode}",
+            description = "Indicates the geometry adjustment to apply for bootable disks.  " +
+                          "Set this parameter to match the translation configured in the BIOS of the machine " +
+                          "that will boot from the disk - auto should work in most cases for modern BIOS.")
     private GeometryTranslation _translation = GeometryTranslation.None;
 
     @Option(option = "w",
             argName = "wipe",
-            description = "Write zero's to all unused parts of the disk.  This option only makes sense when converting to an iSCSI LUN which may be dirty.")
+            description = "Write zero's to all unused parts of the disk.  " +
+                          "This option only makes sense when converting to an iSCSI LUN which may be dirty.")
     private boolean _wipe;
 
-    public static void Main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Program program = new Program();
+        Options.Util.bind(args, program);
         program.run(args);
     }
 

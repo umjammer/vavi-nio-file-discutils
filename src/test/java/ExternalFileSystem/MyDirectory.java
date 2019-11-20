@@ -1,6 +1,3 @@
-//
-// Translated by CS2J (http://www.cs2j.com): 2019/07/30 1:38:18
-//
 
 package ExternalFileSystem;
 
@@ -11,7 +8,7 @@ import DiscUtils.Core.Vfs.IVfsDirectory;
 import dotnet4j.io.compat.StringUtilities;
 
 
-public class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
+class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
     private List<MyDirEntry> _entries = new ArrayList<>();
 
     public MyDirectory(MyDirEntry dirEntry, boolean isRoot) {
