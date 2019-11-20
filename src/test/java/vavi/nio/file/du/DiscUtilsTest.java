@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 
 /**
@@ -23,6 +25,7 @@ import org.junit.jupiter.api.Test;
 class DiscUtilsTest {
 
     @Test
+    @EnabledOnOs(OS.MAC)
     void test() throws Exception {
 //        String file = "/Users/nsano/Downloads/Play-20170829.dmg";
         String file = "/Users/nsano/Documents/VirtualBox/HardDisks/nsanov2.vdi";
