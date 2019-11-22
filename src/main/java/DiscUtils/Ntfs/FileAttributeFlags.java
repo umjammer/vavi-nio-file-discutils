@@ -44,14 +44,14 @@ public enum FileAttributeFlags implements EnumSettable {
     Directory,
     IndexView;
 
-    // TODO
+    private int value = 1 << ordinal();
+
     public Supplier<Integer> supplier() {
-        return () -> 1 << ordinal();
+        return () -> value;
     }
 
-    // TODO
     public Function<Integer, Boolean> function() {
-        return v -> (v & supplier().get()) != 0;
+        return v -> (v & value) != 0;
     };
 
     public static EnumSet<FileAttributeFlags> valueOf(int value) {
@@ -61,7 +61,7 @@ public enum FileAttributeFlags implements EnumSettable {
     }
 
     public static long valueOf(EnumSet<FileAttributeFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(e -> e.value)).getSum();
     }
 
     // TODO

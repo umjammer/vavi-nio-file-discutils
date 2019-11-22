@@ -70,12 +70,14 @@ public enum BlockGroupFlag {
      */
     Raid6;
 
+    private int value = 1 << ordinal();
+
     public Supplier<Integer> supplier() {
-        return () -> 1 << ordinal();
+        return () -> value;
     }
 
     public Function<Integer, Boolean> function() {
-        return v -> (v & supplier().get()) != 0;
+        return v -> (v & value) != 0;
     };
 
     public static EnumSet<BlockGroupFlag> valueOf(int value) {

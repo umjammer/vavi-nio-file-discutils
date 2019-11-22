@@ -49,14 +49,14 @@ enum FinderFlags {
 
     public static final int Color = 0x000e;
 
-    // TODO
+    private int value = 1 << ordinal();
+
     public Supplier<Integer> supplier() {
-        return () -> 1 << ordinal();
+        return () -> value;
     }
 
-    // TODO
     public Function<Integer, Boolean> function() {
-        return v -> (v & supplier().get()) != 0;
+        return v -> (v & value) != 0;
     };
 
     public static EnumSet<FinderFlags> valueOf(int value) {

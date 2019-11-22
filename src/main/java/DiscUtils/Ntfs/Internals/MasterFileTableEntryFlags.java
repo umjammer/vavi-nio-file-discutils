@@ -52,11 +52,13 @@ public enum MasterFileTableEntryFlags implements EnumSettable {
      */
     HasViewIndex; // 0x0008
 
+    private int value = 1 << ordinal();
+
     public Supplier<Integer> supplier() {
-        return () -> 1 << ordinal();
+        return () -> value;
     }
 
     public Function<Integer, Boolean> function() {
-        return v -> (v & supplier().get()) != 0;
+        return v -> (v & value) != 0;
     };
 }

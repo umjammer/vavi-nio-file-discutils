@@ -40,14 +40,14 @@ public enum Nfs3AccessPermissions {
 
     public static final EnumSet<Nfs3AccessPermissions> All = EnumSet.of(Read, Lookup, Modify, Extend, Delete, Execute);
 
-    // TODO
+    private int value = 1 << ordinal();
+
     public Supplier<Integer> supplier() {
-        return () -> 1 << ordinal();
+        return () -> value;
     }
 
-    // TODO
     public Function<Integer, Boolean> function() {
-        return v -> (v & supplier().get()) != 0;
+        return v -> (v & value) != 0;
     };
 
     public static EnumSet<Nfs3AccessPermissions> valueOf(int value) {
