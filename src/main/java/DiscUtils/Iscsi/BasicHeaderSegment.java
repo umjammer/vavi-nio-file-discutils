@@ -48,6 +48,7 @@ public class BasicHeaderSegment implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         Immediate = (buffer[offset] & 0x40) != 0;
         _OpCode = OpCode.valueOf(buffer[offset] & 0x3F);
+//Debug.println("OpCode: " + (buffer[offset] & 0x3F));
         FinalPdu = (buffer[offset + 1] & 0x80) != 0;
         TotalAhsLength = buffer[offset + 4];
         DataSegmentLength = EndianUtilities.toInt32BigEndian(buffer, offset + 4) & 0x00FFFFFF;

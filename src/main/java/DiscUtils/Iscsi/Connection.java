@@ -66,8 +66,8 @@ class Connection implements Closeable {
             MaxTargetReceiveDataSegmentLength = 8192;
 
             _negotiatedParameters = new HashMap<>();
-            NegotiateSecurity();
-            NegotiateFeatures();
+            negotiateSecurity();
+            negotiateFeatures();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -114,7 +114,7 @@ class Connection implements Closeable {
         _stream.write(packet, 0, packet.length);
         _stream.flush();
 
-        ProtocolDataUnit pdu = ReadPdu();
+        ProtocolDataUnit pdu = readPdu();
         LogoutResponse resp = parseResponse(LogoutResponse.class, pdu);
 
         if (resp.Response != LogoutResponseCode.ClosedSuccessfully) {
@@ -139,7 +139,7 @@ class Connection implements Closeable {
     public int send(ScsiCommand cmd, byte[] outBuffer, int outBufferOffset, int outBufferCount, byte[] inBuffer, int inBufferOffset, int inBufferMax) {
         CommandRequest req = new CommandRequest(this, cmd.getTargetLun());
 
-        int toSend = Math.min(Math.min(outBufferCount, session.getImmediateData() ? session.getFirstBurstLength() : 0), MaxTargetReceiveDataSegmentLength);
+        int toSend = Math.min(Math.min(outBufferCount, session._immediateData ? session._firstBurstLength : 0), MaxTargetReceiveDataSegmentLength);
         byte[] packet = req.getBytes(cmd, outBuffer, outBufferOffset, toSend, true, inBufferMax != 0, outBufferCount != 0, outBufferCount != 0 ? outBufferCount : inBufferMax);
         _stream.write(packet, 0, packet.length);
         _stream.flush();
@@ -148,7 +148,7 @@ class Connection implements Closeable {
         int numSent = toSend;
         int pktsSent = 0;
         while (numSent < outBufferCount) {
-            ProtocolDataUnit pdu = ReadPdu();
+            ProtocolDataUnit pdu = readPdu();
 
             ReadyToTransferPacket resp = parseResponse(ReadyToTransferPacket.class, pdu);
             numApproved = resp.DesiredTransferLength;
@@ -170,7 +170,7 @@ class Connection implements Closeable {
         boolean isFinal = false;
         int numRead = 0;
         while (!isFinal) {
-            ProtocolDataUnit pdu = ReadPdu();
+            ProtocolDataUnit pdu = readPdu();
 
             if (pdu.getOpCode() == OpCode.ScsiResponse) {
                 Response resp = parseResponse(Response.class, pdu);
@@ -221,7 +221,7 @@ class Connection implements Closeable {
         }
     }
 
-    public TargetInfo[] EnumerateTargets() {
+    public TargetInfo[] enumerateTargets() {
         TextBuffer parameters = new TextBuffer();
         parameters.add(SendTargetsParameter, "All");
 
@@ -234,7 +234,7 @@ class Connection implements Closeable {
         _stream.write(packet, 0, packet.length);
         _stream.flush();
 
-        ProtocolDataUnit pdu = ReadPdu();
+        ProtocolDataUnit pdu = readPdu();
         TextResponse resp = parseResponse(TextResponse.class, pdu);
 
         TextBuffer buffer = new TextBuffer();
@@ -270,7 +270,7 @@ class Connection implements Closeable {
         return targets.toArray(new TargetInfo[0]);
     }
 
-    void SeenStatusSequenceNumber(int number) {
+    void seenStatusSequenceNumber(int number) {
         if (number != 0 && number != expectedStatusSequenceNumber) {
             throw new InvalidProtocolException("Unexpected status sequence number " + number + ", expected " + expectedStatusSequenceNumber);
         }
@@ -278,7 +278,7 @@ class Connection implements Closeable {
         expectedStatusSequenceNumber = number + 1;
     }
 
-    private void NegotiateSecurity() {
+    private void negotiateSecurity() {
         currentLoginStage = LoginStages.SecurityNegotiation;
 
         //
@@ -286,7 +286,7 @@ class Connection implements Closeable {
         //
         TextBuffer parameters = new TextBuffer();
 
-        getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, session.getSessionType());
+        getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, session._sessionType);
         session.getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation);
 
         String authParam = _authenticators[0].getIdentifier();
@@ -304,6 +304,7 @@ class Connection implements Closeable {
 
         LoginRequest req = new LoginRequest(this);
         byte[] packet = req.getBytes(paramBuffer, 0, paramBuffer.length, true);
+//Debug.println("\n" + StringUtil.getDump(packet));
 
         _stream.write(packet, 0, packet.length);
         _stream.flush();
@@ -313,7 +314,7 @@ class Connection implements Closeable {
         //
         TextBuffer settings = new TextBuffer();
 
-        ProtocolDataUnit pdu = ReadPdu();
+        ProtocolDataUnit pdu = readPdu();
         LoginResponse resp = parseResponse(LoginResponse.class, pdu);
 
         if (resp.StatusCode != LoginStatusCode.Success) {
@@ -325,7 +326,7 @@ class Connection implements Closeable {
             ms.write(resp.TextData, 0, resp.TextData.length);
 
             while (resp.Continue) {
-                pdu = ReadPdu();
+                pdu = readPdu();
                 resp = parseResponse(LoginResponse.class, pdu);
                 ms.write(resp.TextData, 0, resp.TextData.length);
             }
@@ -373,7 +374,7 @@ class Connection implements Closeable {
             //
             settings = new TextBuffer();
 
-            pdu = ReadPdu();
+            pdu = readPdu();
             resp = parseResponse(LoginResponse.class, pdu);
 
             if (resp.StatusCode != LoginStatusCode.Success) {
@@ -386,7 +387,7 @@ class Connection implements Closeable {
                     ms.write(resp.TextData, 0, resp.TextData.length);
 
                     while (resp.Continue) {
-                        pdu = ReadPdu();
+                        pdu = readPdu();
                         resp = parseResponse(LoginResponse.class, pdu);
                         ms.write(resp.TextData, 0, resp.TextData.length);
                     }
@@ -407,12 +408,12 @@ class Connection implements Closeable {
         currentLoginStage = resp.NextStage;
     }
 
-    private void NegotiateFeatures() {
+    private void negotiateFeatures() {
         //
         // Send the request...
         //
         TextBuffer parameters = new TextBuffer();
-        getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, session.getSessionType());
+        getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, session._sessionType);
         session.getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation);
 
         byte[] paramBuffer = new byte[(int) parameters.getSize()];
@@ -429,7 +430,7 @@ class Connection implements Closeable {
         //
         TextBuffer settings = new TextBuffer();
 
-        ProtocolDataUnit pdu = ReadPdu();
+        ProtocolDataUnit pdu = readPdu();
         LoginResponse resp = parseResponse(LoginResponse.class, pdu);
 
         if (resp.StatusCode != LoginStatusCode.Success) {
@@ -441,7 +442,7 @@ class Connection implements Closeable {
             ms.write(resp.TextData, 0, resp.TextData.length);
 
             while (resp.Continue) {
-                pdu = ReadPdu();
+                pdu = readPdu();
                 resp = parseResponse(LoginResponse.class, pdu);
                 ms.write(resp.TextData, 0, resp.TextData.length);
             }
@@ -469,7 +470,7 @@ class Connection implements Closeable {
             //
             settings = new TextBuffer();
 
-            pdu = ReadPdu();
+            pdu = readPdu();
             resp = parseResponse(LoginResponse.class, pdu);
 
             if (resp.StatusCode != LoginStatusCode.Success) {
@@ -484,7 +485,7 @@ class Connection implements Closeable {
                     ms.write(resp.TextData, 0, resp.TextData.length);
 
                     while (resp.Continue) {
-                        pdu = ReadPdu();
+                        pdu = readPdu();
                         resp = parseResponse(LoginResponse.class, pdu);
                         ms.write(resp.TextData, 0, resp.TextData.length);
                     }
@@ -505,7 +506,7 @@ class Connection implements Closeable {
         currentLoginStage = resp.NextStage;
     }
 
-    private ProtocolDataUnit ReadPdu() {
+    private ProtocolDataUnit readPdu() {
         ProtocolDataUnit pdu = ProtocolDataUnit.readFrom(_stream, HeaderDigest != Digest.None, DataDigest != Digest.None);
 
         if (pdu.getOpCode() == OpCode.Reject) {
@@ -597,10 +598,10 @@ class Connection implements Closeable {
 
         resp.parse(pdu);
         if (resp.StatusPresent) {
-            SeenStatusSequenceNumber(resp.StatusSequenceNumber);
+            seenStatusSequenceNumber(resp.StatusSequenceNumber);
         }
 
-        if (clazz.isInstance(resp)) {
+        if (!clazz.isInstance(resp)) {
             throw new InvalidProtocolException("Unexpected response, expected " + clazz.getName() + ", got " + resp.getClass());
         }
 

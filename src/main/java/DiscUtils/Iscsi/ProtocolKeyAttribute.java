@@ -119,7 +119,9 @@ public @interface ProtocolKeyAttribute {
         }
 
         public static boolean shouldTransmit(ProtocolKeyAttribute attr, Object currentValue, Class<?> valueType, KeyUsagePhase phase, boolean discoverySession) {
-            return (attr.phase().ordinal() & phase.ordinal()) != 0 && (discoverySession ? attr.usedForDiscovery() : true) && currentValue != null && !getValueAsString(currentValue, valueType).equals(attr.defaultValue()) && (attr.sender().ordinal() & KeySender.Initiator.ordinal()) != 0;
+            return (attr.phase().ordinal() & phase.ordinal()) != 0 && (discoverySession ? attr.usedForDiscovery() : true) &&
+                   currentValue != null && !getValueAsString(currentValue, valueType).equals(attr.defaultValue()) &&
+                   (attr.sender().ordinal() & KeySender.Initiator.ordinal()) != 0;
         }
     }
 }

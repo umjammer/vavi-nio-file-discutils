@@ -114,7 +114,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
             description = "The number of the partition to inspect, in the range 0-n.  If not specified, 0 (the first partition) is the default.")
     int _partition = -1;
 
-    @Option(option = "v", argName = "_volumeId", args = 1,
+    @Option(option = "i", argName = "_volumeId", args = 1,
             description = "The volume id of the volume to access, use the VolInfo tool to discover this id.  If specified, the partition parameter is ignored.")
     String _volumeId;
 

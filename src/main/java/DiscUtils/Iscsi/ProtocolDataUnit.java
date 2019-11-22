@@ -29,20 +29,20 @@ import dotnet4j.io.Stream;
 
 public class ProtocolDataUnit {
     public ProtocolDataUnit(byte[] headerData, byte[] contentData) {
-        __HeaderData = headerData;
-        __ContentData = contentData;
+        _headerData = headerData;
+        _contentData = contentData;
     }
 
-    private byte[] __ContentData;
+    private byte[] _contentData;
 
     public byte[] getContentData() {
-        return __ContentData;
+        return _contentData;
     }
 
-    private byte[] __HeaderData;
+    private byte[] _headerData;
 
     public byte[] getHeaderData() {
-        return __HeaderData;
+        return _headerData;
     }
 
     public OpCode getOpCode() {

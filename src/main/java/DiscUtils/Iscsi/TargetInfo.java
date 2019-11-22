@@ -40,7 +40,7 @@ public class TargetInfo {
      * @param addresses The network addresses of the Target.
      */
     public TargetInfo(String name, List<TargetAddress> addresses) {
-        __Name = name;
+        _name = name;
         _addresses = addresses;
     }
 
@@ -54,10 +54,10 @@ public class TargetInfo {
     /**
      * Gets the name of the Target.
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     /**

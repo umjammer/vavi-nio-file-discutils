@@ -61,6 +61,7 @@ public class LoginRequest {
         _basicHeader.TotalAhsLength = 0;
         _basicHeader.DataSegmentLength = count;
         _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
+
         _transit = isFinalData;
         _continue = !isFinalData;
         _currentStage = _connection.getCurrentLoginStage();
@@ -71,6 +72,7 @@ public class LoginRequest {
         _connectionId = _connection.getId();
         _commandSequenceNumber = _connection.getSession().getCommandSequenceNumber();
         _expectedStatusSequenceNumber = _connection.getExpectedStatusSequenceNumber();
+
         byte[] buffer = new byte[MathUtilities.roundUp(48 + count, 4)];
         _basicHeader.writeTo(buffer, 0);
         buffer[1] = packState();
@@ -88,6 +90,7 @@ public class LoginRequest {
 
     private byte packState() {
         byte val = 0;
+
         if (_transit) {
             val |= 0x80;
         }
@@ -98,6 +101,7 @@ public class LoginRequest {
 
         val |= (byte) (_currentStage.ordinal() << 2);
         val |= (byte) _nextStage.ordinal();
+
         return val;
     }
 }

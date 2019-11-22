@@ -23,7 +23,7 @@
 package DiscUtils.Iscsi;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -31,7 +31,7 @@ public class TextBuffer {
     private final Map<String, String> _records;
 
     public TextBuffer() {
-        _records = new HashMap<>();
+        _records = new LinkedHashMap<>();
     }
 
     public int getCount() {

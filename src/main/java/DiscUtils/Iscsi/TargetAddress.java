@@ -24,6 +24,8 @@ package DiscUtils.Iscsi;
 
 import java.net.URI;
 
+import dotnet4j.io.compat.StringUtilities;
+
 
 /**
  * Information about an iSCSI Target.
@@ -41,36 +43,36 @@ public class TargetAddress {
      * @param targetGroupTag The Group Tag of the Target.
      */
     public TargetAddress(String address, int port, String targetGroupTag) {
-        __NetworkAddress = address;
-        __NetworkPort = port;
-        __TargetGroupTag = targetGroupTag;
+        _networkAddress = address;
+        _networkPort = port;
+        _targetGroupTag = targetGroupTag;
     }
 
     /**
      * Gets the IP address (or FQDN) of the Target.
      */
-    private String __NetworkAddress;
+    private String _networkAddress;
 
     public String getNetworkAddress() {
-        return __NetworkAddress;
+        return _networkAddress;
     }
 
     /**
      * Gets the network port of the Target.
      */
-    private int __NetworkPort;
+    private int _networkPort;
 
     public int getNetworkPort() {
-        return __NetworkPort;
+        return _networkPort;
     }
 
     /**
      * Gets the Group Tag of the Target.
      */
-    private String __TargetGroupTag;
+    private String _targetGroupTag;
 
     public String getTargetGroupTag() {
-        return __TargetGroupTag;
+        return _targetGroupTag;
     }
 
     /**
@@ -80,7 +82,7 @@ public class TargetAddress {
      * @return The structured address.
      */
     public static TargetAddress parse(String address) {
-        int addrEnd = address.indexOf(':') & address.indexOf(',');
+        int addrEnd = StringUtilities.indexOfAny(address, new char[] { ':', ',' });
         if (addrEnd == -1) {
             return new TargetAddress(address, DefaultPort, "");
         }
@@ -132,8 +134,8 @@ public class TargetAddress {
      * @return The target address in the form: iscsi://host[:port][/grouptag].
      */
     public URI toUri() {
-        URI builder = URI.create("iscsi" + "://" + getNetworkAddress() + ":" +
-                                 (getNetworkPort() != DefaultPort ? getNetworkPort() : -1) + "/" +
+        URI builder = URI.create("iscsi" + "://" + getNetworkAddress() +
+                                 (getNetworkPort() != DefaultPort ? ":" +getNetworkPort() : "") + "/" +
                                  (getTargetGroupTag() == null || getTargetGroupTag().isEmpty() ? "" : getTargetGroupTag()));
         return builder;
     }
