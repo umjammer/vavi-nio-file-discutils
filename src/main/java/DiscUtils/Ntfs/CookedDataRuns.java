@@ -244,7 +244,7 @@ class CookedDataRuns {
                 _runs.get(i).setLength(_runs.get(i).getLength() + _runs.get(i + 1).getLength());
                 _runs.get(i + 1).getAttributeExtent().removeRun(_runs.get(i + 1).getDataRun());
                 _runs.remove(i + 1);
-            } else if (!_runs.get(i).isSparse() && !_runs.get(i).isSparse() && // TODO bug report !_runs.get(i).isSparse() twice
+            } else if (!_runs.get(i).isSparse() && !_runs.get(i + 1).isSparse() &&
                        _runs.get(i).getStartLcn() + _runs.get(i).getLength() == _runs.get(i + 1).getStartLcn()) {
                 _runs.get(i).setLength(_runs.get(i).getLength() + _runs.get(i + 1).getLength());
                 _runs.get(i + 1).getAttributeExtent().removeRun(_runs.get(i + 1).getDataRun());

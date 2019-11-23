@@ -90,7 +90,8 @@ public class BiosExtendedPartitionTable {
                 BiosPartitionRecord thisPart = new BiosPartitionRecord(sector, offset, partPos, -1);
                 if (thisPart.getStartCylinder() != 0 || thisPart.getStartHead() != 0 || thisPart.getStartSector() != 0) {
                     if (thisPart.getPartitionType() == 0x05 || thisPart.getPartitionType() == 0x0F) {
-                        nextPartPos = _firstSector + (int) thisPart.getLBAStart(); // TODO needs break?
+                        nextPartPos = _firstSector + (int) thisPart.getLBAStart();
+                        break;
                     }
                 }
             }

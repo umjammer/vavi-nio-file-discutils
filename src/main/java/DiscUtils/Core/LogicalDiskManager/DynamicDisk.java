@@ -104,6 +104,7 @@ class DynamicDisk implements IDiagnosticTraceable {
                 for (PartitionInfo part : pt.getPartitions()) {
                     if (part.getGuidType().equals(GuidPartitionTypes.WindowsLdmMetadata)) {
                         headerPos = part.getLastSector() * Sizes.Sector;
+                        break;
                     }
                 }
             }
