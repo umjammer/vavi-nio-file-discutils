@@ -24,7 +24,7 @@ package LibraryTests.Registry;
 
 import java.util.EnumSet;
 
-import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +44,7 @@ import dotnet4j.security.accessControl.AccessControlSections;
 
 public class RegistryHiveTest {
     @Test
-    @Tag("Issue #14")
+    @DisplayName("Issue #14")
     public void create() throws Exception {
         MemoryStream ms = new MemoryStream();
         RegistryHive hive = RegistryHive.create(ms);

@@ -65,6 +65,7 @@ public final class DiscTransport extends VirtualDiskTransport {
                 if (service.getDisplayName().equals(instance)) {
                     _service = service;
                     _service.connect(System.getProperty("user.name"), InetAddress.getLocalHost().getHostName(), 30);
+
                     for (DiscInfo disk : _service.getAdvertisedDiscs()) {
                         if (disk.getVolumeLabel().equals(volName)) {
                             _disk = disk.getName();
@@ -72,6 +73,7 @@ public final class DiscTransport extends VirtualDiskTransport {
                     }
                 }
             }
+
             if (_disk == null) {
                 throw new FileNotFoundException("No such disk " + uri);
             }

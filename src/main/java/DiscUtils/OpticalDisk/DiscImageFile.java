@@ -83,6 +83,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
         } else {
             _format = format;
         }
+
         setContent(stream instanceof SparseStream ? (SparseStream) stream : (SparseStream) null);
         if (getContent() == null) {
             setContent(SparseStream.fromStream(stream, Ownership.None));
@@ -92,7 +93,6 @@ public final class DiscImageFile extends VirtualDiskLayer {
             Mode2Buffer converter = new Mode2Buffer(new StreamBuffer(getContent(), Ownership.None));
             setContent(new BufferStream(converter, FileAccess.Read));
         }
-
     }
 
     public long getCapacity() {

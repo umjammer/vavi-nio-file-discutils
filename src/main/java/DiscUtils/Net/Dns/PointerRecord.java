@@ -28,11 +28,14 @@ package DiscUtils.Net.Dns;
  */
 public final class PointerRecord extends ResourceRecord {
 
-    public PointerRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
+    PointerRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
+
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
+
         _targetName = reader.readName();
+
         reader.setPosition(pos + dataLen);
     }
 

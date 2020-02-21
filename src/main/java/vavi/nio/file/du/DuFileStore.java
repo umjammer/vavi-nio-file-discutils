@@ -9,7 +9,6 @@ package vavi.nio.file.du;
 import java.io.IOException;
 import java.nio.file.FileStore;
 
-import com.dropbox.core.v1.DbxAccountInfo.Quota;
 import com.github.fge.filesystem.attributes.FileAttributesFactory;
 import com.github.fge.filesystem.filestore.FileStoreBase;
 
@@ -20,7 +19,7 @@ import DiscUtils.Core.DiscFileSystem;
  * A simple DiskUtils {@link FileStore}
  *
  * <p>
- * This makes use of information available in {@link Quota}.
+ * This makes use of information available in {@link DiscFileSystem}.
  * Information is computed in "real time".
  * </p>
  */

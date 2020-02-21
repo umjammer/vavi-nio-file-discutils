@@ -45,9 +45,8 @@ import dotnet4j.io.compat.StringUtilities;
 
 
 /**
- * A file system backed by an NFS server.
- * NFS is a common storage protocol for Virtual Machines. Currently, only NFS v3
- * is supported.
+ * A file system backed by an NFS server. NFS is a common storage protocol for
+ * Virtual Machines. Currently, only NFS v3 is supported.
  */
 public class NfsFileSystem extends DiscFileSystem {
     private Nfs3Client _client;
@@ -184,6 +183,7 @@ public class NfsFileSystem extends DiscFileSystem {
                                                     Math.min(_client.getFileSystemInfo().getWritePreferredBytes(),
                                                              _client.getFileSystemInfo().getReadPreferredBytes()));
                     byte[] buffer = new byte[bufferSize];
+
                     int numRead = sourceFs.read(buffer, 0, bufferSize);
                     while (numRead > 0) {
                         destFs.write(buffer, 0, numRead);
@@ -229,9 +229,11 @@ public class NfsFileSystem extends DiscFileSystem {
     public void createDirectory(String path) {
         try {
             Nfs3FileHandle parent = getParentDirectory(path);
+
             Nfs3SetAttributes setAttrs = new Nfs3SetAttributes();
             setAttrs.setMode(getNfsOptions().getNewDirectoryPermissions());
             setAttrs.setSetMode(true);
+
             _client.makeDirectory(parent, Utilities.getFileFromPath(path), setAttrs);
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
@@ -254,11 +256,9 @@ public class NfsFileSystem extends DiscFileSystem {
             if (handle != null) {
                 _client.removeDirectory(parent, Utilities.getFileFromPath(path));
             }
-
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }
-
     }
 
     /**
@@ -277,7 +277,6 @@ public class NfsFileSystem extends DiscFileSystem {
             if (handle != null) {
                 _client.remove(parent, Utilities.getFileFromPath(path));
             }
-
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }
@@ -297,11 +296,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * Indicates whether a specified path exists, and refers to a directory.
      *
      * @param path The path to inspect.
-     * @return
-     *         {@code true}
-     *         if the path is a file, else
-     *         {@code false}
-     *         .
+     * @return {@code true} if the path is a file, else {@code false} .
      */
     public boolean fileExists(String path) {
         return getAttributes(path).containsKey("Normal") && Boolean.class.cast(getAttributes(path).get("Normal"));
@@ -309,8 +304,7 @@ public class NfsFileSystem extends DiscFileSystem {
 
     /**
      * Gets the names of subdirectories in a specified directory matching a
-     * specified
-     * search pattern, using a value to determine whether to search
+     * specified search pattern, using a value to determine whether to search
      * subdirectories.
      *
      * @param path The path to search.
@@ -369,8 +363,7 @@ public class NfsFileSystem extends DiscFileSystem {
 
     /**
      * Gets the names of files and subdirectories in a specified directory
-     * matching a specified
-     * search pattern.
+     * matching a specified search pattern.
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
@@ -397,8 +390,10 @@ public class NfsFileSystem extends DiscFileSystem {
         try {
             Nfs3FileHandle sourceParent = getParentDirectory(sourceDirectoryName);
             Nfs3FileHandle destParent = getParentDirectory(destinationDirectoryName);
+
             String sourceName = Utilities.getFileFromPath(sourceDirectoryName);
             String destName = Utilities.getFileFromPath(destinationDirectoryName);
+
             Nfs3FileHandle fileHandle = _client.lookup(sourceParent, sourceName);
             if (fileHandle == null) {
                 throw new FileNotFoundException(String.format("The directory '%s' does not exist", sourceDirectoryName));
@@ -426,8 +421,10 @@ public class NfsFileSystem extends DiscFileSystem {
         try {
             Nfs3FileHandle sourceParent = getParentDirectory(sourceName);
             Nfs3FileHandle destParent = getParentDirectory(destinationName);
+
             String sourceFileName = Utilities.getFileFromPath(sourceName);
             String destFileName = Utilities.getFileFromPath(destinationName);
+
             Nfs3FileHandle sourceFileHandle = _client.lookup(sourceParent, sourceFileName);
             if (sourceFileHandle == null) {
                 throw new FileNotFoundException(String.format("The file '%s' does not exist", sourceName));
@@ -467,8 +464,10 @@ public class NfsFileSystem extends DiscFileSystem {
             } else {
                 requested.add(Nfs3AccessPermissions.Modify);
             }
+
             if (mode == FileMode.Create || mode == FileMode.CreateNew || (mode == FileMode.OpenOrCreate && !fileExists(path))) {
                 Nfs3FileHandle parent = getParentDirectory(path);
+
                 Nfs3SetAttributes setAttrs = new Nfs3SetAttributes();
                 setAttrs.setMode(getNfsOptions().getNewFilePermissions());
                 setAttrs.setSetMode(true);
@@ -476,10 +475,12 @@ public class NfsFileSystem extends DiscFileSystem {
                 setAttrs.setSetSize(true);
                 Nfs3FileHandle handle = _client
                         .create(parent, Utilities.getFileFromPath(path), mode != FileMode.Create, setAttrs);
+
                 return new Nfs3FileStream(_client, handle, access);
             } else {
                 Nfs3FileHandle handle = getFile(path);
                 EnumSet<Nfs3AccessPermissions> actualPerms = _client.access(handle, requested);
+
                 if (!actualPerms.equals(requested)) {
                     throw new dotnet4j.io.IOException(String
                             .format("Access denied opening '%s'. Requested permission '%s', got '%s'",
@@ -512,6 +513,7 @@ public class NfsFileSystem extends DiscFileSystem {
         try {
             Nfs3FileHandle handle = getFile(path);
             Nfs3FileAttributes nfsAttrs = _client.getAttributes(handle);
+
             Map<String, Object> result = new HashMap<>();
             if (nfsAttrs.Type == Nfs3FileType.Directory) {
                 result.put("Directory", true);
@@ -520,6 +522,7 @@ public class NfsFileSystem extends DiscFileSystem {
             } else {
                 result.put("Normal", true);
             }
+
             if (Utilities.getFileFromPath(path).startsWith(".")) {
                 result.put("Hidden", true);
             }
@@ -550,7 +553,8 @@ public class NfsFileSystem extends DiscFileSystem {
      */
     public long getCreationTimeUtc(String path) {
         try {
-            // Note creation time is not available, so simulating from last modification time
+            // Note creation time is not available, so simulating from last
+            // modification time
             Nfs3FileHandle handle = getFile(path);
             Nfs3FileAttributes attrs = _client.getAttributes(handle);
             return attrs.ModifyTime.toDateTime();
@@ -567,9 +571,9 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param newTime The new time to set.
      */
     public void setCreationTimeUtc(String path, long newTime) {
+        // No action - creation time is not accessible over NFS
     }
 
-    // No action - creation time is not accessible over NFS
     /**
      * Gets the last access time (in UTC) of a file or directory.
      *
@@ -631,7 +635,6 @@ public class NfsFileSystem extends DiscFileSystem {
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }
-
     }
 
     /**
@@ -695,8 +698,10 @@ public class NfsFileSystem extends DiscFileSystem {
             }
 
             boolean isDir = de.getFileAttributes().Type == Nfs3FileType.Directory;
+
             if ((isDir && dirs) || (!isDir && files)) {
                 String searchName = de.getName().indexOf('.') == -1 ? de.getName() + "." : de.getName();
+
                 if (regex.matcher(searchName).find()) {
                     results.add(Utilities.combinePaths(path, de.getName()));
                 }
@@ -711,6 +716,7 @@ public class NfsFileSystem extends DiscFileSystem {
     private Nfs3FileHandle getFile(String path) {
         String file = Utilities.getFileFromPath(path);
         Nfs3FileHandle parent = getParentDirectory(path);
+
         Nfs3FileHandle handle = _client.lookup(parent, file);
         if (handle == null) {
             throw new FileNotFoundException("No such file or directory " + path);
@@ -745,8 +751,8 @@ public class NfsFileSystem extends DiscFileSystem {
             if (handle == null || _client.getAttributes(handle).Type != Nfs3FileType.Directory) {
                 throw new FileNotFoundException();
             }
-
         }
+
         return handle;
     }
 }

@@ -42,14 +42,10 @@ import java.util.logging.Logger;
  * Implements the Multicast DNS (mDNS) protocol.
  *
  * This implementation is a hybrid of a 'proper' mDNS resolver and a classic DNS
- * resolver
- * configured to use the mDNS multicast address. The implementation is aware of
- * some of
- * the unique semantics of mDNS, but because it is loaded in arbitrary processes
- * cannot
- * claim port 5353. It attempts to honour the spirit of mDNS to the extent
- * possible whilst
- * not binding to port 5353.
+ * resolver configured to use the mDNS multicast address. The implementation is
+ * aware of some of the unique semantics of mDNS, but because it is loaded in
+ * arbitrary processes cannot claim port 5353. It attempts to honour the spirit
+ * of mDNS to the extent possible whilst not binding to port 5353.
  */
 public final class MulticastDnsClient extends DnsClient implements Closeable {
     private static final Logger logger = Logger.getLogger(MulticastDnsClient.class.getName());
@@ -62,9 +58,9 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
     private DatagramChannel _udpClient;
 
-    private ExecutorService es = Executors.newSingleThreadExecutor();
-
     private static Random random = new Random();
+
+    private ExecutorService es = Executors.newSingleThreadExecutor();
 
     /**
      * Initializes a new instance of the MulticastDnsClient class.
@@ -120,8 +116,10 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
      */
     public ResourceRecord[] lookup(String name, RecordType type) {
         String normName = normalizeDomainName(name);
+
         synchronized (_transactions) {
             expireRecords();
+
             if (_cache.containsKey(normName.toUpperCase())) {
                 Map<RecordType, List<ResourceRecord>> typeRecords = _cache.get(normName.toUpperCase());
                 if (typeRecords.containsKey(type)) {
@@ -130,6 +128,7 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
                 }
             }
         }
+
         return queryNetwork(name, type);
     }
 
@@ -194,9 +193,12 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
     private void expireRecords() {
         long now = System.currentTimeMillis();
+
         List<String> removeNames = new ArrayList<>();
+
         for (Map.Entry<String, Map<RecordType, List<ResourceRecord>>> nameRecord : _cache.entrySet()) {
             List<RecordType> removeTypes = new ArrayList<>();
+
             for (Map.Entry<RecordType, List<ResourceRecord>> typeRecords : nameRecord.getValue().entrySet()) {
                 int i = 0;
                 while (i < typeRecords.getValue().size()) {
@@ -206,19 +208,21 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
                         ++i;
                     }
                 }
+
                 if (typeRecords.getValue().size() == 0) {
                     removeTypes.add(typeRecords.getKey());
                 }
-
             }
+
             for (RecordType recordType : removeTypes) {
                 nameRecord.getValue().remove(recordType);
             }
+
             if (nameRecord.getValue().size() == 0) {
                 removeNames.add(nameRecord.getKey());
             }
-
         }
+
         for (String name : removeNames) {
             _cache.remove(name);
         }
@@ -226,12 +230,16 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
     private void receiveCallback(byte[] packetBytes) {
         PacketReader reader = new PacketReader(packetBytes);
+
         Message msg = Message.read(reader);
+
         synchronized (_transactions) {
             Transaction transaction = _transactions.get(msg.getTransactionId());
+
             for (ResourceRecord answer : msg.getAdditionalRecords()) {
                 addRecord(_cache, answer);
             }
+
             for (ResourceRecord answer : msg.getAnswers()) {
                 if (transaction != null) {
                     transaction.getAnswers().add(answer);
@@ -239,6 +247,7 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
 
                 addRecord(_cache, answer);
             }
+
             if (transaction != null) {
                 transaction.getCompleteEvent().countDown();
             }

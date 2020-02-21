@@ -22,7 +22,7 @@
 
 package DiscUtils.Net.Dns;
 
-public final class Question {
+final class Question {
     private RecordClass _class = RecordClass.None;
 
     public RecordClass getClass_() {

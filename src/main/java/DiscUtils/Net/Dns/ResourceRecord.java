@@ -76,17 +76,23 @@ public class ResourceRecord {
         RecordType type = RecordType.valueOf(reader.readUShort());
         RecordClass rClass = RecordClass.valueOf(reader.readUShort());
         long expiry = Instant.now().plusSeconds(reader.readInt()).toEpochMilli();
+
         switch (type) {
         case Pointer:
             return new PointerRecord(name, type, rClass, expiry, reader);
+
         case CanonicalName:
             return new CanonicalNameRecord(name, type, rClass, expiry, reader);
+
         case Address:
             return new IP4AddressRecord(name, type, rClass, expiry, reader);
+
         case Text:
             return new TextRecord(name, type, rClass, expiry, reader);
+
         case Service:
             return new ServiceRecord(name, type, rClass, expiry, reader);
+
         default:
             int len = reader.readUShort();
             reader.setPosition(reader.getPosition() + len);

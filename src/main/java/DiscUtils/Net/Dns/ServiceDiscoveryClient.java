@@ -31,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import vavi.util.Debug;
+
 
 /**
  * Provides access to DNS-SD functionality.
@@ -194,39 +196,49 @@ public final class ServiceDiscoveryClient implements Closeable {
 
     private List<ServiceInstanceEndPoint> lookupInstanceEndpoints(String name, EnumSet<ServiceInstanceFields> fields) {
         List<ResourceRecord> records = doLookup(name, RecordType.Service);
+
         List<ServiceInstanceEndPoint> endpoints = new ArrayList<>();
+
         for (ResourceRecord record : records) {
             List<InetSocketAddress> ipEndPoints = null;
             if (fields.contains(ServiceInstanceFields.IPAddresses)) {
                 ipEndPoints = new ArrayList<>();
+
                 List<ResourceRecord> ipRecords = doLookup(ServiceRecord.class.cast(record).getTarget(), RecordType.Address);
+
                 for (ResourceRecord ipRecord : ipRecords) {
                     ipEndPoints.add(new InetSocketAddress(IP4AddressRecord.class.cast(ipRecord).getAddress(),
                                                           ServiceRecord.class.cast(record).getPort()));
                 }
+
                 List<ResourceRecord> ip6Records = doLookup(ServiceRecord.class.cast(record).getTarget(), RecordType.IP6Address);
+
+//              for (Ip6AddressRecord ipRecord : ipRecords) {
+//                  ipEndPoints.add(new IPEndPoint(ipRecord.Address, record.Port));
+//              }
             }
 
-//            for (Ip6AddressRecord ipRecord : ipRecords) {
-//                ipEndPoints.add(new IPEndPoint(ipRecord.Address, record.Port));
-//            }
             endpoints.add(new ServiceInstanceEndPoint(ServiceRecord.class.cast(record).getPriority(),
                                                       ServiceRecord.class.cast(record).getWeight(),
                                                       ServiceRecord.class.cast(record).getPort(),
                                                       ServiceRecord.class.cast(record).getTarget(),
                                                       ipEndPoints));
         }
+
         return endpoints;
     }
 
     private Map<String, byte[]> lookupInstanceDetails(String name) {
         List<ResourceRecord> records = doLookup(name, RecordType.Text);
+
         Map<String, byte[]> details = new HashMap<>();
+
         for (ResourceRecord record : records) {
             for (Map.Entry<String, byte[]> value : TextRecord.class.cast(record).getValues().entrySet()) {
                 details.put(value.getKey(), value.getValue());
             }
         }
+
         return details;
     }
 
@@ -238,13 +250,16 @@ public final class ServiceDiscoveryClient implements Closeable {
         } else {
             dnsClient = _dnsClient;
         }
+
         ResourceRecord[] records = dnsClient.lookup(fullName, recordType);
+
         List<ResourceRecord> cleanList = new ArrayList<>();
         for (ResourceRecord record : records) {
             if (record.getRecordType() == recordType && fullName.compareTo(record.getName()) == 0) {
                 cleanList.add(record);
             }
         }
+
         return cleanList;
     }
 }

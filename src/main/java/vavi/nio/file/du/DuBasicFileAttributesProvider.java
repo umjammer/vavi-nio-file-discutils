@@ -28,13 +28,6 @@ import DiscUtils.Core.DiscFileSystemInfo;
 
 /**
  * {@link BasicFileAttributes} implementation for DiskUtils.
- *
- * <p>
- * Note: OneDrive has poor support for file times; as required by the {@link
- * BasicFileAttributes} contract, all methods returning a {@link FileTime} for
- * which there is no support will return Unix's epoch (that is, Jan 1st, 1970
- * at 00:00:00 GMT).
- * </p>
  */
 public final class DuBasicFileAttributesProvider extends BasicFileAttributesProvider implements PosixFileAttributes {
 

@@ -112,15 +112,16 @@ public final class OpticalDiscService {
     /**
      * Connects to the service.
      *
-     * @param userName       The username to use, if the owner of the Mac / PC is
-     *                           prompted.
-     * @param computerName   The computer name to use, if the owner of the Mac / PC
-     *                           is prompted.
+     * @param userName The username to use, if the owner of the Mac / PC is
+     *            prompted.
+     * @param computerName The computer name to use, if the owner of the Mac /
+     *            PC is prompted.
      * @param maxWaitSeconds The maximum number of seconds to wait to be granted
-     *                           access.
+     *            access.
      */
     public void connect(String userName, String computerName, int maxWaitSeconds) {
         Map<String, String> sysParams = getParams("sys");
+
         int volFlags = 0;
         String volFlagsStr;
         if (sysParams.containsKey("adVF")) {
@@ -131,10 +132,12 @@ public final class OpticalDiscService {
         if ((volFlags & 0x200) != 0) {
             _userName = userName;
             askForAccess(userName, computerName, maxWaitSeconds);
-            // Flush any stale mDNS data - the server advertises extra info (such as the
-            // discs available)
-            // after a client is granted permission to access a disc.
+
+            // Flush any stale mDNS data - the server advertises extra info
+            // (such as the discs available) after a client is granted
+            // permission to access a disc.
             _sdClient.flushCache();
+
             _instance = _sdClient.lookupInstance(_instance.getName(), ServiceInstanceFields.All);
         }
     }
@@ -148,29 +151,37 @@ public final class OpticalDiscService {
     public VirtualDisk openDisc(String name) {
         ServiceInstanceEndPoint siep = _instance.getEndPoints().get(0);
         List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
+
         URI uri = URI
                 .create("http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort() + "/" + name + ".dmg");
         return new Disc(uri, _userName, _askToken);
     }
 
     private static String getAskToken(String askId, URI uri, int maxWaitSecs) {
-        URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask-status" + "?"
-                + "askID=" + askId);
+        URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask-status" + "?" +
+                                "askID=" + askId);
+
         boolean askBusy = true;
         String askStatus = "unknown";
         String askToken = null;
+
         Instant start = Instant.now();
         Duration maxWait = Duration.ofSeconds(maxWaitSecs);
-        while ("unknown".equals(askStatus) && maxWait.compareTo(Duration.between(start, Instant.now().atZone(ZoneId.of("UTC")))) > 0) {
+
+        while ("unknown".equals(askStatus) &&
+               maxWait.compareTo(Duration.between(start, Instant.now().atZone(ZoneId.of("UTC")))) > 0) {
             try {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
+
                 Request wreq = new Request.Builder().url(newURI.toString()).get().build();
+
                 Response wrsp = client.newCall(wreq).execute();
                 try (Stream inStream = new JavaIOStream(wrsp.body().byteStream(), null)) {
                     Map<String, Object> plist = Plist.parse(inStream);
+
                     Object _askBusy = plist.get("askBusy");
                     if (_askBusy instanceof Boolean) {
                         askBusy = Boolean.class.cast(_askBusy);
@@ -190,6 +201,7 @@ public final class OpticalDiscService {
                 throw new dotnet4j.io.IOException(e);
             }
         }
+
         if (askToken == null) {
             throw new dotnet4j.io.IOException("Access not granted");
         }
@@ -200,6 +212,7 @@ public final class OpticalDiscService {
     private static String initiateAsk(String userName, String computerName, URI uri) {
         try {
             URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask");
+
             RequestBody rb;
             try (MemoryStream outStream = new MemoryStream()) {
                 Map<String, Object> req = new HashMap<>();
@@ -212,10 +225,12 @@ public final class OpticalDiscService {
             Request wreq = new Request.Builder().url(uri.toString()).post(rb).build();
             String askId;
             Response wrsp = client.newCall(wreq).execute();
+
             try (Stream inStream = new JavaIOStream(wrsp.body().byteStream(), null)) {
                 Map<String, Object> plist = Plist.parse(inStream);
                 askId = String.valueOf((int) plist.get("askID"));
             }
+
             return askId;
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -226,24 +241,28 @@ public final class OpticalDiscService {
         if (volFlagsStr.startsWith("0x")) {
             return Integer.parseInt(volFlagsStr.substring(2), 16);
         }
-
         return Integer.parseInt(volFlagsStr);
     }
 
     private void askForAccess(String userName, String computerName, int maxWaitSecs) {
         ServiceInstanceEndPoint siep = _instance.getEndPoints().get(0);
         List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
+
         URI uri = URI.create("http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort());
+
         String askId = initiateAsk(userName, computerName, uri);
+
         _askToken = getAskToken(askId, uri, maxWaitSecs);
     }
 
     private Map<String, String> getParams(String section) {
         Map<String, String> result = new HashMap<>();
+
         if (_instance.getParameters().containsKey(section)) {
             byte[] data = _instance.getParameters().get(section);
             String asString = new String(data, Charset.forName("ASCII"));
             String[] nvPairs = asString.split(",");
+
             for (String nvPair : nvPairs) {
                 String[] parts = nvPair.split("=");
                 result.put(parts[0], parts[1]);

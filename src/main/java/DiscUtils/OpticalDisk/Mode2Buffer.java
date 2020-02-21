@@ -37,7 +37,7 @@ import DiscUtils.Streams.Util.StreamUtilities;
  * Effectively just strips the additional header / footer from the Mode 2 sector
  * data - does not attempt to validate the information.
  */
-public class Mode2Buffer implements IBuffer {
+class Mode2Buffer implements IBuffer {
     private final byte[] _iobuffer;
 
     private final IBuffer _wrapped;

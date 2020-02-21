@@ -29,16 +29,15 @@ import java.util.List;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Ownership;
 
+
 /**
  * Represents the base layer, or a differencing layer of a VirtualDisk.
- * VirtualDisks are composed of one or more layers - a base layer
- * which represents the entire disk (even if not all bytes are actually stored),
- * and a number of differencing layers that store the disk sectors that are
- * logically different to the base layer.Disk Layers may not store all sectors.
- * Any sectors that are not stored
- * are logically zero's (for base layers), or holes through to the layer
- * underneath
- * (all other layers).
+ * VirtualDisks are composed of one or more layers - a base layer which
+ * represents the entire disk (even if not all bytes are actually stored), and a
+ * number of differencing layers that store the disk sectors that are logically
+ * different to the base layer.Disk Layers may not store all sectors. Any
+ * sectors that are not stored are logically zero's (for base layers), or holes
+ * through to the layer underneath (all other layers).
  */
 public abstract class VirtualDiskLayer implements Closeable {
     /**
@@ -76,11 +75,8 @@ public abstract class VirtualDiskLayer implements Closeable {
     public abstract boolean needsParent();
 
     /**
-     * Gets a
-     * {@link FileLocator}
-     * that can resolve relative paths, or
-     * {@code null}
-     * .
+     * Gets a {@link FileLocator} that can resolve relative paths, or
+     * {@code null} .
      *
      * Typically used to locate parent disks.
      */

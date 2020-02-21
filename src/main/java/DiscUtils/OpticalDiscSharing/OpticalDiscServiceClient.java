@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import vavi.util.Debug;
+
 import DiscUtils.Net.Dns.ServiceDiscoveryClient;
 import DiscUtils.Net.Dns.ServiceInstance;
 import DiscUtils.Net.Dns.ServiceInstanceFields;
@@ -76,6 +78,7 @@ public final class OpticalDiscServiceClient implements Closeable {
         for (ServiceInstance instance : _sdClient.lookupInstances("_odisk._tcp", domain, ServiceInstanceFields.All)) {
             services.add(new OpticalDiscService(instance, _sdClient));
         }
+Debug.println("services: " + services.size());
         return services;
     }
 }

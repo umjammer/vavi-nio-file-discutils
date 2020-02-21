@@ -33,9 +33,12 @@ import java.util.Map;
 public final class TextRecord extends ResourceRecord {
     public TextRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
+
         _values = new HashMap<>();
+
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
+
         while (reader.getPosition() < pos + dataLen) {
             int valueLen = reader.readByte();
             byte[] valueBinary = reader.readBytes(valueLen);
@@ -59,6 +62,7 @@ public final class TextRecord extends ResourceRecord {
         while (i < value.length && value[i] != '=') {
             ++i;
         }
+
         if (i < value.length) {
             byte[] data = new byte[value.length - (i + 1)];
             System.arraycopy(value, i + 1, data, 0, data.length);

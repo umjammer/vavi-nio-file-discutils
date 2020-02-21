@@ -40,6 +40,7 @@ public final class PacketWriter {
     public void writeName(String name) {
         // TODO: Implement compression
         String[] labels = Arrays.stream(name.split("\\.")).filter(e -> !e.isEmpty()).toArray(String[]::new);
+
         for (String label : labels) {
             byte[] labelBytes = label.getBytes(Charset.forName("UTF8"));
             if (labelBytes.length > 63) {
@@ -50,6 +51,7 @@ public final class PacketWriter {
             System.arraycopy(labelBytes, 0, _data, _pos, labelBytes.length);
             _pos += labelBytes.length;
         }
+
         _data[_pos++] = 0;
     }
 

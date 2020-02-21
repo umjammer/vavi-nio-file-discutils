@@ -48,7 +48,7 @@ public enum RecordClass {
      * The Hesiod class.
      */
     Hesiod(4),
-   /**
+    /**
      * Wildcard that matches any class.
      */
     Any(255);

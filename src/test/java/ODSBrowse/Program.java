@@ -58,9 +58,12 @@ public class Program extends ProgramBase {
                 if (Utilities.equals(_host, service.getDisplayName()) ||
                     Utilities.equals(_host, URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8.name()))) {
                     found = true;
+
                     System.err.println("Connecting to " + service.getDisplayName() + " - the owner may need to accept...");
                     service.connect(System.getProperty("user.name"), InetAddress.getLocalHost().getHostName(), 30);
+
                     showService(service);
+
                     break;
                 }
             }
@@ -81,6 +84,7 @@ public class Program extends ProgramBase {
         System.err.println("  Safe Name: " + URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8.name()) +
                            "  (for URLs, copy+paste)");
         System.err.println();
+
         boolean foundDisk = false;
         for (DiscInfo disk : service.getAdvertisedDiscs()) {
             foundDisk = true;
@@ -91,6 +95,7 @@ public class Program extends ProgramBase {
                                URLEncoder.encode("ods://local/" + service.getDisplayName() + "/" + disk.getVolumeLabel(),
                                                  StandardCharsets.UTF_8.name()));
         }
+
         if (!foundDisk) {
             System.err.println("  [No disks found - try specifying host to connect for full list]");
         }
