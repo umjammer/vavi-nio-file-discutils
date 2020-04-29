@@ -72,6 +72,6 @@ public final class ServiceRecord extends ResourceRecord {
      * randomly choosing between records of equal priority.
      */
     public int getWeight() {
-        return _weight;
+        return _weight & 0xffff;
     }
 }

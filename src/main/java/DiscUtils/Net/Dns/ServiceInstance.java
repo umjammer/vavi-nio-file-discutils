@@ -31,55 +31,55 @@ import java.util.Map;
  */
 public final class ServiceInstance {
     public ServiceInstance(String name) {
-        __Name = name;
+        _name = name;
     }
 
     /**
      * Gets the display name for the service instance.
      */
-    private String __DisplayName;
+    private String _displayName;
 
     public String getDisplayName() {
-        return __DisplayName;
+        return _displayName;
     }
 
     public void setDisplayName(String value) {
-        __DisplayName = value;
+        _displayName = value;
     }
 
     /**
      * Gets the EndPoints that service this instance.
      */
-    private List<ServiceInstanceEndPoint> __EndPoints;
+    private List<ServiceInstanceEndPoint> _endPoints;
 
     public List<ServiceInstanceEndPoint> getEndPoints() {
-        return __EndPoints;
+        return _endPoints;
     }
 
     public void setEndPoints(List<ServiceInstanceEndPoint> value) {
-        __EndPoints = value;
+        _endPoints = value;
     }
 
     /**
      * Gets the network name for the service instance (think of this as the
      * unique key).
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     /**
      * Gets the parameters of the service instance.
      */
-    private Map<String, byte[]> __Parameters;
+    private Map<String, byte[]> _parameters;
 
     public Map<String, byte[]> getParameters() {
-        return __Parameters;
+        return _parameters;
     }
 
     public void setParameters(Map<String, byte[]> value) {
-        __Parameters = value;
+        _parameters = value;
     }
 }

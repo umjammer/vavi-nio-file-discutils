@@ -34,43 +34,51 @@ public final class PacketReader {
         _data = data;
     }
 
-    private int __Position;
+    private int _position;
 
     public int getPosition() {
-        return __Position;
+        return _position;
     }
 
     public void setPosition(int value) {
-        __Position = value;
+        _position = value;
     }
 
     public String readName() {
         StringBuilder sb = new StringBuilder();
+
         boolean hasIndirected = false;
         int readPos = getPosition();
+
         while (_data[readPos] != 0) {
             byte len = _data[readPos];
-            if ((len & 0xC0) == 0x00) {
+            switch (len & 0xC0) {
+            case 0x00:
                 sb.append(new String(_data, readPos + 1, len, Charset.forName("UTF8")));
                 sb.append(".");
                 readPos += 1 + len;
                 if (!hasIndirected) {
-                    setPosition(readPos);
+                    _position = readPos;
                 }
 
-            } else if ((len & 0xC0) == 0xC0) {
+                break;
+
+            case 0xC0:
                 if (!hasIndirected) {
-                    setPosition(getPosition() + 2);
+                    _position += + 2;
                 }
 
                 hasIndirected = true;
                 readPos = EndianUtilities.toUInt16BigEndian(_data, readPos) & 0x3FFF;
-            } else {
+                break;
+
+            default:
                 throw new UnsupportedOperationException("Unknown control flags reading label");
             }
         }
+
         if (!hasIndirected) {
-            setPosition(getPosition() + 1);
+            _position++;
         }
 
         return sb.toString();
@@ -78,26 +86,26 @@ public final class PacketReader {
 
     public short readUShort() {
         short result = EndianUtilities.toUInt16BigEndian(_data, getPosition());
-        setPosition(getPosition() + 2);
+        _position += 2;
         return result;
     }
 
     public int readInt() {
         int result = EndianUtilities.toInt32BigEndian(_data, getPosition());
-        setPosition(getPosition() + 4);
+        _position += 4;
         return result;
     }
 
     public byte readByte() {
         byte result = _data[getPosition()];
-        setPosition(getPosition() + 1);
+        _position++;
         return result;
     }
 
     public byte[] readBytes(int count) {
         byte[] result = new byte[count];
-        System.arraycopy(_data, getPosition(), result, 0, count);
-        setPosition(getPosition() + count);
+        System.arraycopy(_data, _position, result, 0, count);
+        _position += count;
         return result;
     }
 }

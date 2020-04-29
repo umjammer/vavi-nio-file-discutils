@@ -244,7 +244,10 @@ public final class ServiceDiscoveryClient implements Closeable {
 
     private List<ResourceRecord> doLookup(String name, RecordType recordType) {
         String fullName = DnsClient.normalizeDomainName(name);
+Debug.println("fullname: " + fullName);
+
         DnsClient dnsClient;
+
         if (fullName.endsWith(".local.")) {
             dnsClient = _mDnsClient;
         } else {

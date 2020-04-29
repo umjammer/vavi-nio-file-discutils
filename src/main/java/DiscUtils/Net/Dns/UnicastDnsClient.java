@@ -60,9 +60,9 @@ public final class UnicastDnsClient extends DnsClient {
 
     private final InetSocketAddress[] _servers;
 
-    private final int maxRetries = 3;
+    private static final int maxRetries = 3;
 
-    private final int responseTimeout = 2000;
+    private static final int responseTimeout = 2000;
 
     private static Random random = new Random();
 
@@ -145,7 +145,7 @@ public final class UnicastDnsClient extends DnsClient {
                 ExecutorService es = Executors.newSingleThreadExecutor();
                 Future<ResourceRecord[]> future = es.submit(() -> {
                     try {
-                        ByteBuffer packetBytes = ByteBuffer.allocate(1800); // TODO size
+                        ByteBuffer packetBytes = ByteBuffer.allocate(8972);
                         udpClient.receive(packetBytes);
                         PacketReader reader = new PacketReader(packetBytes.array());
                         Message response = Message.read(reader);
@@ -177,21 +177,23 @@ public final class UnicastDnsClient extends DnsClient {
     private static InetSocketAddress[] getDefaultDnsServers() {
         try {
             Map<InetSocketAddress, Object> addresses = new HashMap<>();
+
             for (NetworkInterface nic : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 if (nic.isUp()) {
                     Hashtable<String, String> env = new Hashtable<>();
                     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
                     DirContext ictx = new InitialDirContext(env);
                     String dnsServers = (String) ictx.getEnvironment().get("java.naming.provider.url");
-                    for (String _address : dnsServers.split(",")) {
+                    for (String _address : dnsServers.split(" ")) {
                         URI uri = URI.create(_address);
-                        InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort());
+                        InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort() == -1 ? 53 : uri.getPort());
                         if (!addresses.containsKey(address)) {
                             addresses.put(address, null);
                         }
                     }
                 }
             }
+
             return new ArrayList<>(addresses.keySet()).toArray(new InetSocketAddress[addresses.size()]);
         } catch (NamingException | SocketException e) {
             throw new dotnet4j.io.IOException(e);

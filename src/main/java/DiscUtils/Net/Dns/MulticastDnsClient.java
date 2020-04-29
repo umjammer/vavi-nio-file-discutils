@@ -25,8 +25,11 @@ package DiscUtils.Net.Dns;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+
+import vavi.util.Debug;
 
 
 /**
@@ -70,17 +75,33 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
             _nextTransId = (short) random.nextInt();
             _transactions = new HashMap<>();
             _udpClient = DatagramChannel.open(); // IPAddress.Any, 0
-            _udpClient.socket().bind(new InetSocketAddress(0));
+            _udpClient.configureBlocking(false);
+            _udpClient.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+            _udpClient.socket().bind(new InetSocketAddress(5353));
+            Selector selector = Selector.open();
+            _udpClient.register(selector, SelectionKey.OP_READ);
             es.execute(() -> {
-                while (true) {
+                while (!selector.keys().isEmpty()) {
                     try {
-                        ByteBuffer packetBytes = ByteBuffer.allocate(1800); // TODO size
-                        _udpClient.receive(packetBytes);
-                        receiveCallback(packetBytes.array());
+                        selector.select(500);
+                        for (SelectionKey key : selector.selectedKeys()) {
+                            selector.keys().remove(key);
+                            if (key.isValid()) {
+                                if (key.isReadable()) {
+                                    DatagramChannel channel = (DatagramChannel) key.channel();
+                                    ByteBuffer packetBytes = ByteBuffer.allocate(8972);
+                                    channel.receive(packetBytes);
+Debug.println("receive: " + packetBytes.position());
+                                    packetBytes.flip();
+                                    receiveCallback(packetBytes.array());
+                                }
+                            }
+                        }
                     } catch (IOException e) {
                         logger.info(e.getMessage());
                     }
                 }
+Debug.println("receiver exit");
             });
             _cache = new HashMap<>();
         } catch (IOException e) {
@@ -155,7 +176,7 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
         String normName = normalizeDomainName(name);
 
         Transaction transaction = new Transaction();
-        try {
+        try (DatagramChannel channel = DatagramChannel.open()) {
             synchronized (_transactions) {
                 _transactions.put(transactionId, transaction);
             }
@@ -175,9 +196,11 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
             byte[] msgBytes = writer.getBytes();
 
             InetSocketAddress mDnsAddress = new InetSocketAddress("224.0.0.251", 5353);
-            synchronized (_udpClient) {
-                _udpClient.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
-            }
+            channel.configureBlocking(false);
+            channel.connect(mDnsAddress);
+            while (channel.isConnected() == false);
+Debug.println("send: " + msgBytes.length);
+            channel.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
 
             transaction.getCompleteEvent().await(2000, TimeUnit.MILLISECONDS);
         } catch (IOException | InterruptedException e) {

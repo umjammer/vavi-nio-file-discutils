@@ -34,20 +34,20 @@ public final class ServiceInstanceEndPoint {
     private List<InetSocketAddress> _ipEndPoints;
 
     public ServiceInstanceEndPoint(int priority, int weight, int port, String address, List<InetSocketAddress> ipEndPoints) {
-        __Priority = priority;
-        __Weight = weight;
-        __Port = port;
-        __DnsAddress = address;
+        _priority = priority;
+        _weight = weight;
+        _port = port;
+        _dnsAddress = address;
         _ipEndPoints = ipEndPoints;
     }
 
     /**
      * Gets the DNS address of this EndPoint.
      */
-    private String __DnsAddress;
+    private String _dnsAddress;
 
     public String getDnsAddress() {
-        return __DnsAddress;
+        return _dnsAddress;
     }
 
     /**
@@ -60,28 +60,28 @@ public final class ServiceInstanceEndPoint {
     /**
      * Gets the port of this EndPoint.
      */
-    private int __Port;
+    private int _port;
 
     public int getPort() {
-        return __Port;
+        return _port;
     }
 
     /**
      * Gets the priority of this EndPoint (lower value is higher priority).
      */
-    private int __Priority;
+    private int _priority;
 
     public int getPriority() {
-        return __Priority;
+        return _priority;
     }
 
     /**
      * Gets the relative weight of this EndPoint when randomly choosing between
      * EndPoints of equal priority.
      */
-    private int __Weight;
+    private int _weight;
 
     public int getWeight() {
-        return __Weight;
+        return _weight;
     }
 }
