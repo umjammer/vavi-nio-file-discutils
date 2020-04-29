@@ -102,7 +102,7 @@ public final class DuFileSystemDriver extends UnixLikeFileSystemDriverBase {
     private Cache<DiscFileSystemInfo> cache = new Cache<DiscFileSystemInfo>() {
         /**
          * TODO when the parent is not cached
-         * 
+         *
          * @see #ignoreAppleDouble
          * @throws NoSuchFileException must be thrown when the path is not found
          *             in this cache
@@ -191,7 +191,7 @@ Debug.println("newOutputStream: " + e.getMessage());
     public SeekableByteChannel newByteChannel(Path path,
                                               Set<? extends OpenOption> options,
                                               FileAttribute<?>... attrs) throws IOException {
-        if (options.contains(StandardOpenOption.WRITE) || options.contains(StandardOpenOption.APPEND)) {
+        if (options != null && (options.contains(StandardOpenOption.WRITE) || options.contains(StandardOpenOption.APPEND))) {
             return new Util.SeekableByteChannelForWriting(newOutputStream(path, options)) {
                 @Override
                 protected long getLeftOver() throws IOException {
@@ -250,7 +250,7 @@ Debug.println("newOutputStream: " + e.getMessage());
     @Override
     public void copy(final Path source, final Path target, final Set<CopyOption> options) throws IOException {
         if (cache.existsEntry(target)) {
-            if (options.stream().anyMatch(o -> o.equals(StandardCopyOption.REPLACE_EXISTING))) {
+            if (options != null && options.stream().anyMatch(o -> o.equals(StandardCopyOption.REPLACE_EXISTING))) {
                 removeEntry(target);
             } else {
                 throw new FileAlreadyExistsException(target.toString());
@@ -263,7 +263,7 @@ Debug.println("newOutputStream: " + e.getMessage());
     public void move(final Path source, final Path target, final Set<CopyOption> options) throws IOException {
         if (cache.existsEntry(target)) {
             if (isDirectory(cache.getEntry(target))) {
-                if (options.stream().anyMatch(o -> o.equals(StandardCopyOption.REPLACE_EXISTING))) {
+                if (options != null && options.stream().anyMatch(o -> o.equals(StandardCopyOption.REPLACE_EXISTING))) {
                     // replace the target
                     if (cache.getChildCount(target) > 0) {
                         throw new DirectoryNotEmptyException(target.toString());
@@ -276,7 +276,7 @@ Debug.println("newOutputStream: " + e.getMessage());
                     moveEntry(source, target, true);
                 }
             } else {
-                if (options.stream().anyMatch(o -> o.equals(StandardCopyOption.REPLACE_EXISTING))) {
+                if (options != null && options.stream().anyMatch(o -> o.equals(StandardCopyOption.REPLACE_EXISTING))) {
                     removeEntry(target);
                     moveEntry(source, target, false);
                 } else {
