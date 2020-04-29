@@ -31,6 +31,8 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
+import vavi.util.Debug;
+
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
@@ -60,8 +62,10 @@ public final class DiscTransport extends VirtualDiskTransport {
                     .toArray(String[]::new);
             String instance = pathParts[0];
             String volName = pathParts[1];
+
             _odsClient = new OpticalDiscServiceClient();
             for (OpticalDiscService service : _odsClient.lookupServices(domain)) {
+Debug.println("service: " + service.getDisplayName());
                 if (service.getDisplayName().equals(instance)) {
                     _service = service;
                     _service.connect(System.getProperty("user.name"), InetAddress.getLocalHost().getHostName(), 30);

@@ -99,14 +99,14 @@ public final class DiscImageFile extends VirtualDiskLayer {
         return getContent().getLength();
     }
 
-    private SparseStream __Content;
+    private SparseStream _content;
 
-    public SparseStream getContent() {
-        return __Content;
+    SparseStream getContent() {
+        return _content;
     }
 
-    public void setContent(SparseStream value) {
-        __Content = value;
+    void setContent(SparseStream value) {
+        _content = value;
     }
 
     /**
