@@ -49,25 +49,25 @@ public final class Nfs3Client implements Closeable {
     public Nfs3Client(IRpcClient rpcClient, String mountPoint) {
         _rpcClient = rpcClient;
         _mountClient = new Nfs3Mount(_rpcClient);
-        __RootHandle = _mountClient.mount(mountPoint).getFileHandle();
+        _rootHandle = _mountClient.mount(mountPoint).getFileHandle();
         _nfsClient = new Nfs3(_rpcClient);
         Nfs3FileSystemInfoResult fsiResult = _nfsClient.fileSystemInfo(getRootHandle());
-        __FileSystemInfo = fsiResult.getFileSystemInfo();
+        _fileSystemInfo = fsiResult.getFileSystemInfo();
         _cachedAttributes = new HashMap<>();
         _cachedAttributes.put(getRootHandle(), fsiResult.getPostOpAttributes());
         _cachedStats = new HashMap<>();
     }
 
-    private Nfs3FileSystemInfo __FileSystemInfo;
+    private Nfs3FileSystemInfo _fileSystemInfo;
 
     public Nfs3FileSystemInfo getFileSystemInfo() {
-        return __FileSystemInfo;
+        return _fileSystemInfo;
     }
 
-    private Nfs3FileHandle __RootHandle;
+    private Nfs3FileHandle _rootHandle;
 
     public Nfs3FileHandle getRootHandle() {
-        return __RootHandle;
+        return _rootHandle;
     }
 
     public void close() throws IOException {

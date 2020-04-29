@@ -117,21 +117,15 @@ public class NfsFileSystem extends DiscFileSystem {
      * @return An enumeration of exported folders.
      */
     public static List<String> getExports(String address) {
-        RpcClient rpcClient = new RpcClient(address, null);
-        try {
+        try (RpcClient rpcClient = new RpcClient(address, null)) {
             List<String> result = new ArrayList<>();
             Nfs3Mount mountClient = new Nfs3Mount(rpcClient);
             for (Nfs3Export export : mountClient.exports()) {
                 result.add(export.getDirPath());
             }
             return result;
-        } finally {
-            if (rpcClient != null)
-                try {
-                    rpcClient.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+        } catch (IOException e) {
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -147,8 +141,10 @@ public class NfsFileSystem extends DiscFileSystem {
         try {
             Nfs3FileHandle sourceParent = getParentDirectory(sourceFile);
             Nfs3FileHandle destParent = getParentDirectory(destinationFile);
+
             String sourceFileName = Utilities.getFileFromPath(sourceFile);
             String destFileName = Utilities.getFileFromPath(destinationFile);
+
             Nfs3FileHandle sourceFileHandle = _client.lookup(sourceParent, sourceFileName);
             if (sourceFileHandle == null) {
                 throw new FileNotFoundException(String.format("The file '%s' does not exist", sourceFile));
@@ -174,37 +170,24 @@ public class NfsFileSystem extends DiscFileSystem {
             setAttrs.setSize(sourceAttrs.Size);
             setAttrs.setSetSize(true);
             destFileHandle = _client.create(destParent, destFileName, !overwrite, setAttrs);
-            // Copy the file contents
-            Nfs3FileStream sourceFs = new Nfs3FileStream(_client, sourceFileHandle, FileAccess.Read);
-            try {
-                Nfs3FileStream destFs = new Nfs3FileStream(_client, destFileHandle, FileAccess.Write);
-                try {
-                    int bufferSize = (int) Math.max(1 * Sizes.OneMiB,
-                                                    Math.min(_client.getFileSystemInfo().getWritePreferredBytes(),
-                                                             _client.getFileSystemInfo().getReadPreferredBytes()));
-                    byte[] buffer = new byte[bufferSize];
 
-                    int numRead = sourceFs.read(buffer, 0, bufferSize);
-                    while (numRead > 0) {
-                        destFs.write(buffer, 0, numRead);
-                        numRead = sourceFs.read(buffer, 0, bufferSize);
-                    }
-                } finally {
-                    if (destFs != null)
-                        try {
-                            destFs.close();
-                        } catch (IOException e) {
-                            throw new dotnet4j.io.IOException(e);
-                        }
+            // Copy the file contents
+            try (Nfs3FileStream sourceFs = new Nfs3FileStream(_client, sourceFileHandle, FileAccess.Read);
+                 Nfs3FileStream destFs = new Nfs3FileStream(_client, destFileHandle, FileAccess.Write)) {
+                int bufferSize = (int) Math.max(1 * Sizes.OneMiB,
+                                                Math.min(_client.getFileSystemInfo().getWritePreferredBytes(),
+                                                         _client.getFileSystemInfo().getReadPreferredBytes()));
+                byte[] buffer = new byte[bufferSize];
+
+                int numRead = sourceFs.read(buffer, 0, bufferSize);
+                while (numRead > 0) {
+                    destFs.write(buffer, 0, numRead);
+                    numRead = sourceFs.read(buffer, 0, bufferSize);
                 }
-            } finally {
-                if (sourceFs != null)
-                    try {
-                        sourceFs.close();
-                    } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
-                    }
+            } catch (IOException e) {
+                throw new dotnet4j.io.IOException(e);
             }
+
             // Set the new file's attributes based on the source file
             setAttrs = new Nfs3SetAttributes();
             setAttrs.setMode(sourceAttrs.Mode);
@@ -520,7 +503,7 @@ public class NfsFileSystem extends DiscFileSystem {
             } else if (nfsAttrs.Type == Nfs3FileType.BlockDevice || nfsAttrs.Type == Nfs3FileType.CharacterDevice) {
                 result.put("Device", true);
             } else {
-                result.put("Normal", true);
+               result.put("Normal", true);
             }
 
             if (Utilities.getFileFromPath(path).startsWith(".")) {
@@ -588,7 +571,6 @@ public class NfsFileSystem extends DiscFileSystem {
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }
-
     }
 
     /**
@@ -600,7 +582,10 @@ public class NfsFileSystem extends DiscFileSystem {
     public void setLastAccessTimeUtc(String path, long newTime) {
         try {
             Nfs3FileHandle handle = getFile(path);
-            _client.setAttributes(handle, new Nfs3SetAttributes());
+            Nfs3SetAttributes attributes = new Nfs3SetAttributes();
+            attributes.setSetAccessTime(Nfs3SetTimeMethod.ClientTime);
+            attributes.setAccessTime(new Nfs3FileTime(newTime));
+            _client.setAttributes(handle, attributes);
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }
@@ -631,7 +616,10 @@ public class NfsFileSystem extends DiscFileSystem {
     public void setLastWriteTimeUtc(String path, long newTime) {
         try {
             Nfs3FileHandle handle = getFile(path);
-            _client.setAttributes(handle, new Nfs3SetAttributes());
+            Nfs3SetAttributes attributes = new Nfs3SetAttributes();
+            attributes.setSetModifyTime(Nfs3SetTimeMethod.ClientTime);
+            attributes.setModifyTime(new Nfs3FileTime(newTime));
+            _client.setAttributes(handle, attributes);
         } catch (Nfs3Exception ne) {
             throw convertNfsException(ne);
         }

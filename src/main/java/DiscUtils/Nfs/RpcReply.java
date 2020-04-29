@@ -23,23 +23,23 @@
 package DiscUtils.Nfs;
 
 public class RpcReply {
-    private XdrDataReader __BodyReader;
+    private XdrDataReader _bodyReader;
 
     public XdrDataReader getBodyReader() {
-        return __BodyReader;
+        return _bodyReader;
     }
 
     public void setBodyReader(XdrDataReader value) {
-        __BodyReader = value;
+        _bodyReader = value;
     }
 
-    private RpcMessageHeader __Header;
+    private RpcMessageHeader _header;
 
     public RpcMessageHeader getHeader() {
-        return __Header;
+        return _header;
     }
 
     public void setHeader(RpcMessageHeader value) {
-        __Header = value;
+        _header = value;
     }
 }

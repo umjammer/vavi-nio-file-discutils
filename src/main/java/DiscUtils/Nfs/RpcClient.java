@@ -39,15 +39,15 @@ public final class RpcClient implements IRpcClient {
 
     public RpcClient(String address, RpcCredentials credential) {
         _serverAddress = address;
-        __Credentials = credential;
+        _credentials = credential;
         _nextTransaction = random.nextInt();
         _transports.put(PortMap2.ProgramIdentifier, new RpcTcpTransport(address, 111));
     }
 
-    private RpcCredentials __Credentials;
+    private RpcCredentials _credentials;
 
     public RpcCredentials getCredentials() {
-        return __Credentials;
+        return _credentials;
     }
 
     public void close() throws IOException {
