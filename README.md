@@ -1,27 +1,38 @@
 [![Actions Status](https://github.com/umjammer/vavi-nio-file-discutils/workflows/Java%20CI/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions) [![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
- 
+
 # vavi-nio-file-discutils
+
+A Java NIO FileSystem implementation over [DiscUtils](https://github.com/DiscUtils/DiscUtils)
+
+## Usage
+
+```Java
+ URI uri = URI.create("discutils:file:/Users/foo/bar.vhi");
+ FileSystem fs = FileSystems.newFileSystem(uri, Collections.EMPTY_MAP);
+ Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+```
 
 ## Status
 
 | fs       | list | upload | download | copy | move | rm | mkdir | cache | watch | create | comment |
 |----------|------|--------|----------|------|------|----|-------|-------|-------|--------|---------|
-| ISO      | 🚧   |        |          |      |      |    |       |       |       | ✅     |         |
 | UDF      |      |        |          |      |      |    |       |       |       |        |         |
 | FAT      |      |        |          |      |      |    |       |       |       |        |         |
 | NTFS     | ✅   |        | ✅      |      |      |    |       |       |       |        |         |
+| HSF+     | ✅ (DMG) |        |          |      |     |    |        |       |       |        | 🚫 (ISO) same error on original |
+| EXT     | 🚧 (VDI) |        |          |      |     |    |        |       |       |        |        |
+| XFS     |       |        |          |      |     |    |        |       |       |        |        |
+| ISO      | 🚧   |        |          |      |      |    |       |       |       | ✅     |         |
 | VHD      |      |        |          |      |      |    |       |       |       |        |         |
 | VDI      | ✅   |        |          |      |      |     |      |       |       |        |         |
 | XVA      |      |        |          |      |      |    |       |       |       |        |         |
 | VMDK     |      |        |          |      |      |    |       |       |       |        |         |
 | DMG      | ✅   |        |          |      |     |    |        |       |       |        |         |
-| HSF+     | ✅ (DMG) |        |          |      |     |    |        |       |       |        | 🚫 (ISO) same error on original |
-| EXT     | 🚧 (VDI) |        |          |      |     |    |        |       |       |        |        |
-| Registry | ✅   |        |          |      |      |    |       |       |       |        |         |
-|  BCD     | ✅   |        |          |      |      |    |       |       |       |        |         |
-| iSCSI    |      |        |          |      |      |    |       |       |       |        |         |
-| NFS      |      |        |          |      |      |    |       |       |       |        |         |
-| Optical Disk Share |      |        |          |      |      |    |       |       |       |        |         |
+| Registry | ✅   |        |          |      |      |    |       |       |       |        | Windows 10's registry |
+| ├ BCD    | ✅   |        |          |      |      |    |       |       |       |        | Windows XP's bcd   |
+| iSCSI    | 🚫   |        |          |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)   |
+| NFS      | 🚫   |        |          |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)  |
+| ODS      | 🚫   |        |          |      |      |    |       |       |       |        | server [pyods](https://github.com/klattimer/pyods)   |
 
 ## Project Description
 
@@ -144,7 +155,7 @@ Automated CI builds are available on Github.
     * object equals
     * operator overloads
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnet4j)
- * https://github.com/shevek/lzo-java
- * https://github.com/akaigoro/df4j
- * https://github.com/coderforlife/ms-compress
- * https://github.com/Saine87/SDDL-parser
+
+## TODO
+
+ * https://github.com/AssafTzurEl/DiscUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43
