@@ -5,8 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
 
-import DiscUtils.Core.CoreCompat.ReflectionHelper;
+import vavi.util.Debug;
+
 import DiscUtils.Core.Internal.VirtualDiskFactory;
 import DiscUtils.Core.Internal.VirtualDiskFactoryAttribute;
 import DiscUtils.Core.Internal.VirtualDiskTransport;
@@ -55,16 +57,17 @@ public class VirtualDiskManager {
         return typeMap;
     }
 
-    // Locates VirtualDiskFactory factories attributed with
-    // VirtualDiskFactoryAttribute, and types marked with
-    // VirtualDiskTransportAttribute, that are able to work with Virtual Disk
-    // types.
+    /**
+     * Locates {@link VirtualDiskFactory} factories attributed with
+     * {@link VirtualDiskFactoryAttribute}, and types marked with
+     * {@link VirtualDiskTransportAttribute}, that are able to work with Virtual Disk
+     * types.
+     */
     static {
         ServiceLoader<VirtualDiskFactory> factories = ServiceLoader.load(VirtualDiskFactory.class);
 
         for (VirtualDiskFactory factory : factories) {
-            VirtualDiskFactoryAttribute annotation = ReflectionHelper
-                    .getCustomAttribute(factory.getClass(), VirtualDiskFactoryAttribute.class, false);
+            VirtualDiskFactoryAttribute annotation = factory.getClass().getAnnotation(VirtualDiskFactoryAttribute.class);
             if (annotation != null) {
                 typeMap.put(annotation.type(), factory);
                 for (String extension : annotation.fileExtensions()) {
@@ -72,15 +75,16 @@ public class VirtualDiskManager {
                 }
             }
         }
+Debug.println(Level.FINE, "extensionMap: " + extensionMap);
 
-        ServiceLoader<VirtualDiskTransport> transports = ServiceLoader.load(VirtualDiskTransport.class);
+		ServiceLoader<VirtualDiskTransport> transports = ServiceLoader.load(VirtualDiskTransport.class);
 
         for (VirtualDiskTransport transport : transports) {
-            VirtualDiskTransportAttribute annotation = ReflectionHelper
-                    .getCustomAttribute(transport.getClass(), VirtualDiskTransportAttribute.class, false);
+            VirtualDiskTransportAttribute annotation = transport.getClass().getAnnotation(VirtualDiskTransportAttribute.class);
             if (annotation != null) {
                 diskTransports.put(annotation.scheme().toUpperCase(), transport);
             }
         }
+Debug.println(Level.FINE, "diskTransports: " + extensionMap);
     }
 }
