@@ -202,7 +202,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @return Array of directories.
      */
     public List<String> getDirectories(String path) throws IOException {
-        return getDirectories(path, "*.*", "TopDirectoryOnly");
+        return getDirectories(path, "*.*", TOP_DIRECTORY_ONLY);
     }
 
     /**
@@ -214,7 +214,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern) throws IOException {
-        return getDirectories(path, searchPattern, "TopDirectoryOnly");
+        return getDirectories(path, searchPattern, TOP_DIRECTORY_ONLY);
     }
 
     /**
@@ -236,7 +236,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @return Array of files.
      */
     public List<String> getFiles(String path) throws IOException {
-        return getFiles(path, "*.*", "TopDirectoryOnly");
+        return getFiles(path, "*.*", TOP_DIRECTORY_ONLY);
     }
 
     /**
@@ -247,7 +247,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern) throws IOException {
-        return getFiles(path, searchPattern, "TopDirectoryOnly");
+        return getFiles(path, searchPattern, TOP_DIRECTORY_ONLY);
     }
 
     /**

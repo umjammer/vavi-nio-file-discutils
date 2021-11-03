@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static DiscUtils.Core.IFileSystem.TOP_DIRECTORY_ONLY;
+
 
 /**
  * Provides information about a directory on a disc.
@@ -137,7 +139,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      * @return An array of child directories, or empty if none match.
      */
     public List<DiscDirectoryInfo> getDirectories(String pattern) {
-        return getDirectories(pattern, "TopDirectoryOnly");
+        return getDirectories(pattern, TOP_DIRECTORY_ONLY);
     }
 
     /**
@@ -189,7 +191,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      * @return An array of files, or empty if none match.
      */
     public List<DiscFileInfo> getFiles(String pattern) {
-        return getFiles(pattern, "TopDirectoryOnly");
+        return getFiles(pattern, TOP_DIRECTORY_ONLY);
     }
 
     /**
