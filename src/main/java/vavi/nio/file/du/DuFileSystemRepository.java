@@ -14,10 +14,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import com.github.fge.filesystem.driver.FileSystemDriver;
 import com.github.fge.filesystem.provider.FileSystemRepositoryBase;
 
@@ -37,7 +33,6 @@ import dotnet4j.io.FileAccess;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/17 umjammer initial version <br>
  */
-@ParametersAreNonnullByDefault
 public final class DuFileSystemRepository extends FileSystemRepositoryBase {
 
     /** */
@@ -50,7 +45,6 @@ public final class DuFileSystemRepository extends FileSystemRepositoryBase {
      *
      * @throws NoSuchElementException required values are not in env
      */
-    @Nonnull
     @Override
     public FileSystemDriver createDriver(final URI uri, final Map<String, ?> env) throws IOException {
         try {
@@ -78,7 +72,7 @@ public final class DuFileSystemRepository extends FileSystemRepositoryBase {
     }
 
     /* ad-hoc hack for ignoring checking opacity */
-    protected void checkURI(@Nullable final URI uri) {
+    protected void checkURI(URI uri) {
         Objects.requireNonNull(uri);
         if (!uri.isAbsolute()) {
             throw new IllegalArgumentException("uri is not absolute");

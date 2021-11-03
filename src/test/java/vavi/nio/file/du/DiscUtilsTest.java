@@ -6,14 +6,19 @@
 
 package vavi.nio.file.du;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.util.Collections;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 
 /**
@@ -22,15 +27,22 @@ import org.junit.jupiter.api.condition.OS;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/18 umjammer initial version <br>
  */
+@PropsEntity(url = "file://${user.dir}/local.properties")
 class DiscUtilsTest {
+
+    @Property
+    String discImage;
+
+    @BeforeEach
+    void before() throws IOException {
+    	PropsEntity.Util.bind(this);
+    }
 
     @Test
     @EnabledOnOs(OS.MAC)
     void test() throws Exception {
-//        String file = "/Users/nsano/Downloads/Play-20170829.dmg";
-        String file = "/Users/nsano/Documents/VirtualBox/HardDisks/nsanov2.vdi";
-        URI uri = URI.create("discutils:file:" + file);
-        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Collections.EMPTY_MAP);
+        URI uri = URI.create("discutils:file:" + discImage);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Collections.emptyMap());
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
     }
 }
