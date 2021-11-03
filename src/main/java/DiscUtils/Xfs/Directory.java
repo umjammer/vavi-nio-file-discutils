@@ -41,7 +41,8 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
 
     private Map<String, DirEntry> _allEntries;
 
-    public List<DirEntry> getAllEntries() {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<DirEntry> getAllEntries() {
         if (_allEntries != null)
             return new ArrayList<>(_allEntries.values());
 

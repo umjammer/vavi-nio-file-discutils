@@ -23,10 +23,7 @@
 
 package DiscUtils.Xfs;
 
-import DiscUtils.Xfs.AllocationGroup;
-import DiscUtils.Xfs.BtreeHeader;
 import dotnet4j.io.IOException;
-import DiscUtils.Xfs.BTreeInodeRecord;
 
 
 public class BTreeInodeLeaf extends BtreeHeader {

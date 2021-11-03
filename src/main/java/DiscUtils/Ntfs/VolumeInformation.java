@@ -65,21 +65,21 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
     }
 
     public int size() {
-        return 0x0C;
+        return 0x0c;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         _majorVersion = buffer[offset + 0x08];
         _minorVersion = buffer[offset + 0x09];
-        setFlags(VolumeInformationFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A)));
-        return 0x0C;
+        setFlags(VolumeInformationFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0a)));
+        return 0x0c;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian((long) 0, buffer, offset + 0x00);
         buffer[offset + 0x08] = _majorVersion;
         buffer[offset + 0x09] = _minorVersion;
-        EndianUtilities.writeBytesLittleEndian((short) VolumeInformationFlags.valueOf(getFlags()), buffer, offset + 0x0A);
+        EndianUtilities.writeBytesLittleEndian((short) VolumeInformationFlags.valueOf(getFlags()), buffer, offset + 0x0a);
     }
 
     public void dump(PrintWriter writer, String indent) {

@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.UnixFilePermissions;
 import DiscUtils.Core.Internal.Utilities;
-import DiscUtils.Nfs.Nfs3Exception;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Util.Sizes;
 import dotnet4j.io.FileAccess;

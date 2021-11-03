@@ -33,7 +33,8 @@ import java.util.stream.Collectors;
  * This class allows navigation of the disc directory/file hierarchy.
  */
 public final class DiscDirectoryInfo extends DiscFileSystemInfo {
-    /**
+
+	/**
      * Initializes a new instance of the DiscDirectoryInfo class.
      *
      * @param fileSystem The file system the directory info relates to.

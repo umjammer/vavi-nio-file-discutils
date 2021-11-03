@@ -22,9 +22,6 @@
 
 package DiscUtils.BootConfig;
 
-import DiscUtils.BootConfig.ElementFormat;
-import DiscUtils.BootConfig.ElementValue;
-
 
 public class BooleanElementValue extends ElementValue {
     private final boolean _value;

@@ -23,9 +23,6 @@
 package DiscUtils.Nfs;
 
 import DiscUtils.Nfs.Nfs3FileHandle;
-import DiscUtils.Nfs.Nfs3Mount;
-import DiscUtils.Nfs.XdrDataReader;
-import DiscUtils.Nfs.XdrDataWriter;
 
 
 public final class Nfs3FileHandle implements Comparable<Nfs3FileHandle> {

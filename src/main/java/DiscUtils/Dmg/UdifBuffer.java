@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import vavi.util.Debug;
-
 import DiscUtils.Core.Compression.BZip2DecoderStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.SubStream;

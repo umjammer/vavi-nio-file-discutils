@@ -22,8 +22,6 @@
 
 package DiscUtils.BootConfig;
 
-import DiscUtils.BootConfig.ElementFormat;
-import DiscUtils.BootConfig.ElementValue;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 

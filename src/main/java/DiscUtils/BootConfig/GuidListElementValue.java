@@ -22,9 +22,6 @@
 
 package DiscUtils.BootConfig;
 
-import DiscUtils.BootConfig.ElementFormat;
-import DiscUtils.BootConfig.ElementValue;
-
 
 public class GuidListElementValue extends ElementValue {
     private final String[] _values;

@@ -61,10 +61,9 @@ public final class DiskFactory extends VirtualDiskFactory {
                                   String variant,
                                   String path,
                                   VirtualDiskParameters diskParameters) throws IOException {
-        String __dummyScrutVar1 = variant;
-        if (__dummyScrutVar1.equals("fixed")) {
+        if (variant.equals("fixed")) {
             return Disk.initializeFixed(locator, path, diskParameters.getCapacity(), diskParameters.getGeometry());
-        } else if (__dummyScrutVar1.equals("dynamic")) {
+        } else if (variant.equals("dynamic")) {
             return Disk.initializeDynamic(locator,
                                           path,
                                           diskParameters.getCapacity(),

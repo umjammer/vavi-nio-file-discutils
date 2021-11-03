@@ -17,8 +17,6 @@ import java.nio.file.attribute.UserPrincipal;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-
 import com.github.fge.filesystem.attributes.provider.BasicFileAttributesProvider;
 
 import DiscUtils.Core.DiscDirectoryInfo;
@@ -33,7 +31,7 @@ public final class DuBasicFileAttributesProvider extends BasicFileAttributesProv
 
     private final DiscFileSystemInfo entry;
 
-    public DuBasicFileAttributesProvider(@Nonnull final DiscFileSystemInfo entry) throws IOException {
+    public DuBasicFileAttributesProvider(DiscFileSystemInfo entry) throws IOException {
         this.entry = Objects.requireNonNull(entry);
     }
 

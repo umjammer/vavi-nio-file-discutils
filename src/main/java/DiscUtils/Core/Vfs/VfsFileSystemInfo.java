@@ -22,6 +22,10 @@
 
 package DiscUtils.Core.Vfs;
 
+import java.util.logging.Level;
+
+import vavi.util.Debug;
+
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.FileSystemParameters;
@@ -44,27 +48,27 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      *            file system.
      */
     public VfsFileSystemInfo(String name, String description, VfsFileSystemOpener openDelegate) {
-        __Name = name;
-        __Description = description;
+        _name = name;
+        _description = description;
         _openDelegate = openDelegate;
     }
 
     /**
      * Gets a one-line description of the file system.
      */
-    private String __Description;
+    private String _description;
 
     public String getDescription() {
-        return __Description;
+        return _description;
     }
 
     /**
      * Gets the name of the file system.
      */
-    private String __Name;
+    private String _name;
 
     public String getName() {
-        return __Name;
+        return _name;
     }
 
     /**
@@ -75,7 +79,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      * @return A file system instance.
      */
     public DiscFileSystem open(VolumeInfo volume, FileSystemParameters parameters) {
-        return _openDelegate.invoke(volume.open(), volume, parameters);
+    	return _openDelegate.invoke(volume.open(), volume, parameters);
     }
 
     /**
