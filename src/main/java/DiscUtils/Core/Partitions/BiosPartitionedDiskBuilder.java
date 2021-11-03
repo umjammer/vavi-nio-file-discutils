@@ -136,7 +136,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
      */
     public void setPartitionContent(int index, SparseStream stream) {
         _partitionContents.put(index,
-                               new BuilderSparseStreamExtent(getPartitionTable().get___idx(index).getFirstSector() *
+                               new BuilderSparseStreamExtent(getPartitionTable().get(index).getFirstSector() *
                                                              Sizes.Sector,
                                                              stream));
     }

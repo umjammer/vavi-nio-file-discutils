@@ -1742,13 +1742,13 @@ public final class FatFileSystem extends DiscFileSystem {
      *         file system.
      */
     public static FatFileSystem formatPartition(VirtualDisk disk, int partitionIndex, String label) {
-        try (Stream partitionStream = disk.getPartitions().get___idx(partitionIndex).open()) {
+        try (Stream partitionStream = disk.getPartitions().get(partitionIndex).open()) {
             return formatPartition(partitionStream,
                                    label,
                                    disk.getGeometry(),
-                                   (int) disk.getPartitions().get___idx(partitionIndex).getFirstSector(),
-                                   (int) (1 + disk.getPartitions().get___idx(partitionIndex).getLastSector() -
-                                          disk.getPartitions().get___idx(partitionIndex).getFirstSector()),
+                                   (int) disk.getPartitions().get(partitionIndex).getFirstSector(),
+                                   (int) (1 + disk.getPartitions().get(partitionIndex).getLastSector() -
+                                          disk.getPartitions().get(partitionIndex).getFirstSector()),
                                    (short) 0);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

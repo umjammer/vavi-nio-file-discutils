@@ -38,7 +38,7 @@ public class TextBuffer {
         return _records.size();
     }
 
-    public String get___idx(String key) {
+    public String get(String key) {
         for (Map.Entry<String, String> entry : _records.entrySet()) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
@@ -47,7 +47,7 @@ public class TextBuffer {
         return null;
     }
 
-    public void set___idx(String key, String value) {
+    public void put(String key, String value) {
         for (Map.Entry<String, String> entry : _records.entrySet()) {
             if (entry.getKey().equals(key)) {
                 _records.put(key, value);

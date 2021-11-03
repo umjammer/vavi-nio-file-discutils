@@ -95,11 +95,11 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         long vcn = pos / _bytesPerCluster;
         int dataRunIdx = _cookedRuns.findDataRun(vcn, 0);
 
-        if (_cookedRuns.get___idx(dataRunIdx).isSparse()) {
+        if (_cookedRuns.get(dataRunIdx).isSparse()) {
             return -1;
         }
-        return _cookedRuns.get___idx(dataRunIdx).getStartLcn() * _bytesPerCluster +
-               (pos - _cookedRuns.get___idx(dataRunIdx).getStartVcn() * _bytesPerCluster);
+        return _cookedRuns.get(dataRunIdx).getStartLcn() * _bytesPerCluster +
+               (pos - _cookedRuns.get(dataRunIdx).getStartVcn() * _bytesPerCluster);
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {

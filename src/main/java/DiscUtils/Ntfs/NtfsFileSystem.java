@@ -126,7 +126,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         // Bootstrap the Master File Table
         _context.setMft(new MasterFileTable(_context));
         File mftFile = new File(_context, _context.getMft().getBootstrapRecord());
-        _fileCache.set___idx(MasterFileTable.MftIndex, mftFile);
+        _fileCache.put(MasterFileTable.MftIndex, mftFile);
         _context.getMft().initialize(mftFile);
 
         // Get volume information (includes version number)
@@ -2038,7 +2038,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             return null;
         }
 
-        File file = _fileCache.get___idx(fileReference.getMftIndex());
+        File file = _fileCache.get(fileReference.getMftIndex());
         if (file != null && file.getMftReference().getSequenceNumber() != fileReference.getSequenceNumber()) {
             file = null;
         }
@@ -2049,7 +2049,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             } else {
                 file = new File(_context, record);
             }
-            _fileCache.set___idx(fileReference.getMftIndex(), file);
+            _fileCache.put(fileReference.getMftIndex(), file);
         }
 
         return file;
@@ -2068,7 +2068,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             return null;
         }
 
-        File file = _fileCache.get___idx(index);
+        File file = _fileCache.get(index);
         if (file != null && file.getMftReference().getSequenceNumber() != record.getSequenceNumber()) {
             file = null;
         }
@@ -2080,7 +2080,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                 file = new File(_context, record);
             }
 
-            _fileCache.set___idx(index, file);
+            _fileCache.put(index, file);
         }
 
         return file;
@@ -2094,7 +2094,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
             result = new File(_context, _context.getMft().allocateRecord(flags, false));
         }
 
-        _fileCache.set___idx(result.getMftReference().getMftIndex(), result);
+        _fileCache.put(result.getMftReference().getMftIndex(), result);
         return result;
     }
 

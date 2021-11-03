@@ -44,7 +44,7 @@ public class BiosPartitionedDiskBuilderTest {
         BiosPartitionedDiskBuilder builder = new BiosPartitionedDiskBuilder(capacity, geometry);
         builder.getPartitionTable().create(WellKnownPartitionType.WindowsNtfs, true);
         SparseStream partitionContent = SparseStream
-                .fromStream(new MemoryStream((int) (builder.getPartitionTable().get___idx(0).getSectorCount() * 512)),
+                .fromStream(new MemoryStream((int) (builder.getPartitionTable().get(0).getSectorCount() * 512)),
                             Ownership.Dispose);
         partitionContent.setPosition(4053);
         partitionContent.writeByte((byte) 0xAf);

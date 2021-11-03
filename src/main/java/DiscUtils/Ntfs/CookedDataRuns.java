@@ -48,7 +48,7 @@ class CookedDataRuns {
         return _runs.size();
     }
 
-    public CookedDataRun get___idx(int index) {
+    public CookedDataRun get(int index) {
         return _runs.get(index);
     }
 

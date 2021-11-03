@@ -67,7 +67,7 @@ public abstract class PartitionTable {
      * @param index The index of the partition.
      * @return Information about the partition.
      */
-    public PartitionInfo get___idx(int index) {
+    public PartitionInfo get(int index) {
         return getPartitions().get(index);
     }
 

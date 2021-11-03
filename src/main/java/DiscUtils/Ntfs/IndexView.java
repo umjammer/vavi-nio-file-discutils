@@ -55,12 +55,12 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
     }
 
     @SuppressWarnings("unchecked")
-    public D get___idx(K key) {
-        return (D) convert(keyClass, _index.get___idx(unconvert(key)));
+    public D get(K key) {
+        return (D) convert(keyClass, _index.get(unconvert(key)));
     }
 
-    public void set___idx(K key, D value) {
-        _index.set___idx(unconvert(key), unconvert(value));
+    public void put(K key, D value) {
+        _index.put(unconvert(key), unconvert(value));
     }
 
     public List<Tuple<K, D>> findAll_(Comparable<byte[]> query) {

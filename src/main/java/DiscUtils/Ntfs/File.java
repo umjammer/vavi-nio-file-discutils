@@ -327,10 +327,10 @@ class File {
     }
 
     public Index getIndex(String name) {
-        Index idx = _indexCache.get___idx(name);
+        Index idx = _indexCache.get(name);
         if (idx == null) {
             idx = new Index(this, name, _context.getBiosParameterBlock(), _context.getUpperCase());
-            _indexCache.set___idx(name, idx);
+            _indexCache.put(name, idx);
         }
 
         return idx;

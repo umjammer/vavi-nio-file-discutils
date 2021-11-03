@@ -178,7 +178,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey hashIndexKey = new DiscUtils.Ntfs.SecurityDescriptors.HashIndexKey();
         hashIndexKey._hash = record._hash;
         hashIndexKey._id = record._id;
-        _hashIndex.set___idx(hashIndexKey, hashIndexData);
+        _hashIndex.put(hashIndexKey, hashIndexData);
         DiscUtils.Ntfs.SecurityDescriptors.IdIndexData idIndexData = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexData();
         idIndexData._hash = record._hash;
         idIndexData._id = record._id;
@@ -186,7 +186,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         idIndexData._sdsLength = record._entrySize;
         DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey idIndexKey = new DiscUtils.Ntfs.SecurityDescriptors.IdIndexKey();
         idIndexKey._id = record._id;
-        _idIndex.set___idx(idIndexKey, idIndexData);
+        _idIndex.put(idIndexKey, idIndexData);
         _file.updateRecordInMft();
         return record._id;
     }

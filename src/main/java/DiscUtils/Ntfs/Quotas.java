@@ -59,9 +59,9 @@ public final class Quotas {
         DiscUtils.Ntfs.Quotas.OwnerKey adminSid = new DiscUtils.Ntfs.Quotas.OwnerKey(new SecurityIdentifier(WellKnownSidType.BuiltinAdministratorsSid,
                                                                                                             null));
         DiscUtils.Ntfs.Quotas.OwnerRecord adminOwnerId = new DiscUtils.Ntfs.Quotas.OwnerRecord(256);
-        ownerIndexView.set___idx(adminSid, adminOwnerId);
-        quotaIndexView.set___idx(new DiscUtils.Ntfs.Quotas.OwnerRecord(1), new DiscUtils.Ntfs.Quotas.QuotaRecord(null));
-        quotaIndexView.set___idx(adminOwnerId, new DiscUtils.Ntfs.Quotas.QuotaRecord(adminSid._sid));
+        ownerIndexView.put(adminSid, adminOwnerId);
+        quotaIndexView.put(new DiscUtils.Ntfs.Quotas.OwnerRecord(1), new DiscUtils.Ntfs.Quotas.QuotaRecord(null));
+        quotaIndexView.put(adminOwnerId, new DiscUtils.Ntfs.Quotas.QuotaRecord(adminSid._sid));
         return new Quotas(file);
     }
 

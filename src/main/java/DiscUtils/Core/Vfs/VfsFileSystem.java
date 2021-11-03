@@ -492,10 +492,10 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     public TFile getFile(TDirEntry dirEntry) {
         long cacheKey = dirEntry.getUniqueCacheId();
-        TFile file = _fileCache.get___idx(cacheKey);
+        TFile file = _fileCache.get(cacheKey);
         if (file == null) {
             file = convertDirEntryToFile(dirEntry);
-            _fileCache.set___idx(cacheKey, file);
+            _fileCache.put(cacheKey, file);
         }
 //Debug.println(file);
         return file;

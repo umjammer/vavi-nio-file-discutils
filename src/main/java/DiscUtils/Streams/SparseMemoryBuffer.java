@@ -107,7 +107,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @return The byte stored at this position (or Zero if not explicitly
      *         stored).
      */
-    public byte get___idx(long pos) {
+    public byte get(long pos) {
         byte[] buffer = new byte[1];
         if (read(pos, buffer, 0, 1) != 0) {
             return buffer[0];
@@ -116,7 +116,7 @@ public final class SparseMemoryBuffer extends Buffer {
         return 0;
     }
 
-    public void set___idx(long pos, byte value) {
+    public void put(long pos, byte value) {
         byte[] buffer = new byte[1];
         buffer[0] = value;
         write(pos, buffer, 0, 1);

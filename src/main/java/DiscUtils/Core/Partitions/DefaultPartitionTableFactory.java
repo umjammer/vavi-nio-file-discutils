@@ -35,7 +35,7 @@ public final class DefaultPartitionTableFactory implements PartitionTableFactory
     public PartitionTable detectPartitionTable(VirtualDisk disk) {
         if (BiosPartitionTable.isValid(disk.getContent())) {
             BiosPartitionTable table = new BiosPartitionTable(disk);
-            if (table.getCount() == 1 && table.get___idx(0).getBiosType() == BiosPartitionTypes.GptProtective) {
+            if (table.getCount() == 1 && table.get(0).getBiosType() == BiosPartitionTypes.GptProtective) {
                 return new GuidPartitionTable(disk);
             }
 

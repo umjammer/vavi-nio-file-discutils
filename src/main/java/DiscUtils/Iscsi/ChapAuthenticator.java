@@ -69,9 +69,9 @@ public class ChapAuthenticator extends Authenticator {
     public void setParameters(TextBuffer textBuffer) {
         switch (_state) {
         case ReceiveChallenge:
-            _algorithm = Integer.parseInt(textBuffer.get___idx("CHAP_A"));
-            _identifier = Byte.parseByte(textBuffer.get___idx("CHAP_I"));
-            _challenge = parseByteString(textBuffer.get___idx("CHAP_C"));
+            _algorithm = Integer.parseInt(textBuffer.get("CHAP_A"));
+            _identifier = Byte.parseByte(textBuffer.get("CHAP_I"));
+            _challenge = parseByteString(textBuffer.get("CHAP_C"));
             _state = State.SendResponse;
             if (_algorithm != 0x5) {
                 throw new LoginException("Unexpected CHAP authentication algorithm: " + _algorithm);

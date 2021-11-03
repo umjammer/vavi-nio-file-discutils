@@ -58,7 +58,7 @@ public final class ObjectIds {
         newData.BirthObjectId = birthId;
         newData.BirthVolumeId = birthVolumeId;
         newData.BirthDomainId = birthDomainId;
-        _index.set___idx(newKey, newData);
+        _index.put(newKey, newData);
         _file.updateRecordInMft();
     }
 

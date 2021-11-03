@@ -330,7 +330,7 @@ public final class GuidPartitionTable extends PartitionTable {
             throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table not present or invalid", ioe);
         }
 
-        if (bpt.getCount() != 1 || bpt.get___idx(0).getBiosType() != BiosPartitionTypes.GptProtective) {
+        if (bpt.getCount() != 1 || bpt.get(0).getBiosType() != BiosPartitionTypes.GptProtective) {
             throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table is not valid");
         }
 

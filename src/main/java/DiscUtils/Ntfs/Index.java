@@ -150,7 +150,7 @@ class Index implements Closeable {
         return _isFileIndex;
     }
 
-    public byte[] get___idx(byte[] key) {
+    public byte[] get(byte[] key) {
         byte[][] value = new byte[1][];
         if (tryGetValue(key, value)) {
             return value[0];
@@ -158,7 +158,7 @@ class Index implements Closeable {
         throw new NoSuchElementException(Arrays.toString(key));
     }
 
-    public void set___idx(byte[] key, byte[] value) {
+    public void put(byte[] key, byte[] value) {
         IndexEntry[] oldEntry = new IndexEntry[1];
         IndexNode[] node = new IndexNode[1];
         _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
@@ -303,10 +303,10 @@ class Index implements Closeable {
     }
 
     IndexBlock getSubBlock(IndexEntry parentEntry) {
-        IndexBlock block = _blockCache.get___idx(parentEntry.getChildrenVirtualCluster());
+        IndexBlock block = _blockCache.get(parentEntry.getChildrenVirtualCluster());
         if (block == null) {
             block = new IndexBlock(this, false, parentEntry, _bpb);
-            _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
+            _blockCache.put(parentEntry.getChildrenVirtualCluster(), block);
         }
 
         return block;
@@ -328,7 +328,7 @@ class Index implements Closeable {
                                                                        _bpb.getSectorsPerCluster() * _bpb.getBytesPerSector()));
         parentEntry.getFlags().add(IndexEntryFlags.Node);
         IndexBlock block = IndexBlock.initialize(this, false, parentEntry, _bpb);
-        _blockCache.set___idx(parentEntry.getChildrenVirtualCluster(), block);
+        _blockCache.put(parentEntry.getChildrenVirtualCluster(), block);
         return block;
     }
 

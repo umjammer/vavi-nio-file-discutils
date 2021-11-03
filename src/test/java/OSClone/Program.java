@@ -101,7 +101,7 @@ public class Program extends ProgramBase {
             // for this new disk
             destDisk.setMasterBootRecord(sourceDisk.getMasterBootRecord());
             destDisk.setSignature(random.nextInt());
-            SparseStream sourcePartStream = SparseStream.fromStream(sourceDisk.getPartitions().get___idx(0).open(),
+            SparseStream sourcePartStream = SparseStream.fromStream(sourceDisk.getPartitions().get(0).open(),
                                                                     Ownership.None);
             NtfsFileSystem sourceNtfs = new NtfsFileSystem(sourcePartStream);
             // Copy the OS boot code into memory, so we can apply it when

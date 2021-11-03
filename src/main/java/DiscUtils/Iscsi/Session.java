@@ -380,8 +380,8 @@ public final class Session implements Closeable {
             for (Field propInfo : getClass().getDeclaredFields()) {
                 ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
                 if (attr != null) {
-                    if (inParameters.get___idx(attr.name()) != null) {
-                        Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get___idx(attr.name()),
+                    if (inParameters.get(attr.name()) != null) {
+                        Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get(attr.name()),
                                                                                   propInfo.getType());
                         propInfo.set(this, value);
                         inParameters.remove(attr.name());

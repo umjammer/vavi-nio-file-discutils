@@ -62,7 +62,7 @@ public class Directory extends File {
     }
 
     public void updateEntry(DirectoryEntry entry) {
-        getIndex().set___idx(entry.getDetails(), entry.getReference());
+        getIndex().put(entry.getDetails(), entry.getReference());
         updateRecordInMft();
     }
 
@@ -131,7 +131,7 @@ public class Directory extends File {
         file.setHardLinkCount((short) (file.getHardLinkCount() + 1));
         file.updateRecordInMft();
 
-        getIndex().set___idx(newNameRecord, file.getMftReference());
+        getIndex().put(newNameRecord, file.getMftReference());
 
         modified();
         updateRecordInMft();

@@ -537,7 +537,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     }
 
     private List<DirectoryEntry> getDirectory(long id) {
-        List<DirectoryEntry> dir = _dirCache.get___idx(id);
+        List<DirectoryEntry> dir = _dirCache.get(id);
         if (dir == null) {
             _metaDataStream.setPosition(id == 0 ? _rootDirPos : id);
             LittleEndianDataReader reader = new LittleEndianDataReader(_metaDataStream);
@@ -547,7 +547,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
                 dir.add(entry);
                 entry = DirectoryEntry.readFrom(reader);
             }
-            _dirCache.set___idx(id, dir);
+            _dirCache.put(id, dir);
         }
 
         return dir;

@@ -115,7 +115,7 @@ public final class MasterFileTable {
      * @param index The index of the entry.
      * @return The entry.
      */
-    public MasterFileTableEntry get___idx(long index) {
+    public MasterFileTableEntry get(long index) {
         FileRecord mftRecord = _mft.getRecord(index, true, true);
         if (mftRecord != null) {
             return new MasterFileTableEntry(_context, mftRecord);

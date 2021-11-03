@@ -207,7 +207,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         byte[] mftSelfRecordData = StreamUtilities.readExact(_recordStream, _recordSize);
         FileRecord mftSelfRecord = new FileRecord(_bytesPerSector);
         mftSelfRecord.fromBytes(mftSelfRecordData, 0);
-        _recordCache.set___idx(MftIndex, mftSelfRecord);
+        _recordCache.put(MftIndex, mftSelfRecord);
         return mftSelfRecord;
     }
 
@@ -239,7 +239,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         FileRecord fileRec = new FileRecord(bpb.getBytesPerSector(), bpb.getMftRecordSize(), (int) MftIndex);
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse));
         fileRec.setSequenceNumber((short) 1);
-        _recordCache.set___idx(MftIndex, fileRec);
+        _recordCache.put(MftIndex, fileRec);
 
         _self = new File(context, fileRec);
 
@@ -312,7 +312,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         FileRecord newRecord = getRecord(index, true);
         newRecord.reInitialize(_bytesPerSector, _recordSize, (int) index);
 
-        _recordCache.set___idx(index, newRecord);
+        _recordCache.put(index, newRecord);
 
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
@@ -327,7 +327,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         _bitmap.markPresent(index);
 
         FileRecord newRecord = new FileRecord(_bytesPerSector, _recordSize, (int) index);
-        _recordCache.set___idx(index, newRecord);
+        _recordCache.put(index, newRecord);
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
 
@@ -366,7 +366,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
 
     public FileRecord getRecord(long index, boolean ignoreMagic, boolean ignoreBitmap) {
         if (ignoreBitmap || _bitmap == null || _bitmap.isPresent(index)) {
-            FileRecord result = _recordCache.get___idx(index);
+            FileRecord result = _recordCache.get(index);
 //if (NonResidentAttributeBuffer.debug) Debug.println(result + " / " + _recordCache);
             if (result != null) {
                 return result;
@@ -383,7 +383,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
                 result = new FileRecord(_bytesPerSector, _recordSize, (int) index);
             }
 
-            _recordCache.set___idx(index, result);
+            _recordCache.put(index, result);
             return result;
         }
 

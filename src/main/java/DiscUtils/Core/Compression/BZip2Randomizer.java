@@ -25,7 +25,7 @@
 
 package DiscUtils.Core.Compression;
 
-import org.bouncycastle.util.Arrays;
+import java.util.Arrays;
 
 public class BZip2Randomizer extends DataBlockTransform {
     private static final int[] RandomVals = {
@@ -58,7 +58,7 @@ public class BZip2Randomizer extends DataBlockTransform {
     }
 
     protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
-        if (!Arrays.areEqual(input, output) || inputOffset != outputOffset) {
+        if (!Arrays.equals(input, output) || inputOffset != outputOffset) {
             System.arraycopy(input, inputOffset, output, outputOffset, inputCount);
         }
 

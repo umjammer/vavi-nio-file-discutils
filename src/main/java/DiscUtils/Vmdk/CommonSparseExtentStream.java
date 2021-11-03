@@ -337,7 +337,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         }
 
         // Cached grain table?
-        byte[] cachedGrainTable = _grainTableCache.get___idx(index);
+        byte[] cachedGrainTable = _grainTableCache.get(index);
         if (cachedGrainTable != null) {
             _currentGrainTable = index;
             _grainTable = cachedGrainTable;
@@ -350,7 +350,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         _currentGrainTable = index;
         _grainTable = newGrainTable;
 
-        _grainTableCache.set___idx(index, newGrainTable);
+        _grainTableCache.put(index, newGrainTable);
 
         return true;
     }

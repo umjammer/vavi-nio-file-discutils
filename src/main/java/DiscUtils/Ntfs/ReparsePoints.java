@@ -46,7 +46,7 @@ public class ReparsePoints {
         newKey.Tag = tag;
         newKey.File = file;
         DiscUtils.Ntfs.ReparsePoints.Data data = new DiscUtils.Ntfs.ReparsePoints.Data();
-        _index.set___idx(newKey, data);
+        _index.put(newKey, data);
         _file.updateRecordInMft();
     }
 

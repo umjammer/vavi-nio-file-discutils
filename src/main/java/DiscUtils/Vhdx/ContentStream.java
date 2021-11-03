@@ -350,10 +350,10 @@ public final class ContentStream extends MappedStream {
 
         sector[0] = blockOffset / _metadata.getLogicalSectorSize();
 
-        Chunk result = _chunks.get___idx(chunk[0]);
+        Chunk result = _chunks.get(chunk[0]);
         if (result == null) {
             result = new Chunk(_batStream, _fileStream, _freeSpaceTable, _fileParameters, chunk[0], chunkRatio);
-            _chunks.set___idx(chunk[0], result);
+            _chunks.put(chunk[0], result);
         }
 
         return result;

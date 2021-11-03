@@ -338,7 +338,7 @@ class Connection implements Closeable {
 
         Authenticator authenticator = null;
         for (int i = 0; i < _authenticators.length; ++i) {
-            if (settings.get___idx(AuthMethodParameter).equals(_authenticators[i].getIdentifier())) {
+            if (settings.get(AuthMethodParameter).equals(_authenticators[i].getIdentifier())) {
                 authenticator = _authenticators[i];
                 break;
             }
@@ -348,7 +348,7 @@ class Connection implements Closeable {
         settings.remove("TargetPortalGroupTag");
 
         if (authenticator == null) {
-            throw new LoginException("iSCSI Target specified an unsupported authentication method: " + settings.get___idx(AuthMethodParameter));
+            throw new LoginException("iSCSI Target specified an unsupported authentication method: " + settings.get(AuthMethodParameter));
         }
 
         parameters = new TextBuffer();
@@ -542,8 +542,8 @@ class Connection implements Closeable {
             for (Field propInfo : getClass().getDeclaredFields()) {
                 ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
                 if (attr != null && attr.sender() == KeySender.Target) {
-                    if (inParameters.get___idx(attr.name()) != null) {
-                        Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get___idx(attr.name()), propInfo.getType());
+                    if (inParameters.get(attr.name()) != null) {
+                        Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get(attr.name()), propInfo.getType());
 
                         propInfo.set(this, value);
                         inParameters.remove(attr.name());

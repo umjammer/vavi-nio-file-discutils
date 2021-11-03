@@ -57,7 +57,7 @@ public class ObjectCache<K, V> {
         _recent = new ArrayList<>();
     }
 
-    public V get___idx(K key) {
+    public V get(K key) {
         for (int i = 0; i < _recent.size(); ++i) {
             Tuple<K, V> recentEntry = _recent.get(i);
             if (recentEntry.getKey().equals(key)) {
@@ -77,8 +77,8 @@ public class ObjectCache<K, V> {
         return null;
     }
 
-    public void set___idx(K key, V value) {
         _entries.put(key, new WeakReference<>(value));
+    public V put(K key, V value) {
         makeMostRecent(key, value);
         pruneEntries();
     }

@@ -52,8 +52,8 @@ public class GuidPartitionTableTest {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
             int idx = table.create(WellKnownPartitionType.WindowsFat, true);
             // Make sure the partition fills from first to last usable.
-            assertEquals(table.getFirstUsableSector(), table.get___idx(idx).getFirstSector());
-            assertEquals(table.getLastUsableSector(), table.get___idx(idx).getLastSector());
+            assertEquals(table.getFirstUsableSector(), table.get(idx).getFirstSector());
+            assertEquals(table.getLastUsableSector(), table.get(idx).getLastSector());
         }
     }
 
@@ -64,12 +64,12 @@ public class GuidPartitionTableTest {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
             int idx = table.create(WellKnownPartitionType.WindowsFat, true);
             assertEquals(2, table.getPartitions().size());
-            assertEquals(GuidPartitionTypes.MicrosoftReserved, table.get___idx(0).getGuidType());
-            assertEquals(32 * 1024 * 1024, table.get___idx(0).getSectorCount() * 512);
+            assertEquals(GuidPartitionTypes.MicrosoftReserved, table.get(0).getGuidType());
+            assertEquals(32 * 1024 * 1024, table.get(0).getSectorCount() * 512);
             // Make sure the partition fills from first to last usable, allowing for
             // MicrosoftReserved sector.
-            assertEquals(table.get___idx(0).getLastSector() + 1, table.get___idx(idx).getFirstSector());
-            assertEquals(table.getLastUsableSector(), table.get___idx(idx).getLastSector());
+            assertEquals(table.get(0).getLastSector() + 1, table.get(idx).getFirstSector());
+            assertEquals(table.getLastUsableSector(), table.get(idx).getLastSector());
         }
     }
 
@@ -80,12 +80,12 @@ public class GuidPartitionTableTest {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
             int idx = table.create(WellKnownPartitionType.WindowsFat, true);
             assertEquals(2, table.getPartitions().size());
-            assertEquals(GuidPartitionTypes.MicrosoftReserved, table.get___idx(0).getGuidType());
-            assertEquals(128 * 1024 * 1024, table.get___idx(0).getSectorCount() * 512);
+            assertEquals(GuidPartitionTypes.MicrosoftReserved, table.get(0).getGuidType());
+            assertEquals(128 * 1024 * 1024, table.get(0).getSectorCount() * 512);
             // Make sure the partition fills from first to last usable, allowing for
             // MicrosoftReserved sector.
-            assertEquals(table.get___idx(0).getLastSector() + 1, table.get___idx(idx).getFirstSector());
-            assertEquals(table.getLastUsableSector(), table.get___idx(idx).getLastSector());
+            assertEquals(table.get(0).getLastSector() + 1, table.get(idx).getFirstSector());
+            assertEquals(table.getLastUsableSector(), table.get(idx).getLastSector());
         }
     }
 
@@ -96,13 +96,13 @@ public class GuidPartitionTableTest {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
             int idx = table.createAligned(WellKnownPartitionType.WindowsFat, true, 1024 * 1024);
             assertEquals(2, table.getPartitions().size());
-            assertEquals(GuidPartitionTypes.MicrosoftReserved, table.get___idx(0).getGuidType());
-            assertEquals(128 * 1024 * 1024, table.get___idx(0).getSectorCount() * 512);
+            assertEquals(GuidPartitionTypes.MicrosoftReserved, table.get(0).getGuidType());
+            assertEquals(128 * 1024 * 1024, table.get(0).getSectorCount() * 512);
             // Make sure the partition is aligned
-            assertEquals(0, table.get___idx(idx).getFirstSector() % 2048);
-            assertEquals(0, (table.get___idx(idx).getLastSector() + 1) % 2048);
+            assertEquals(0, table.get(idx).getFirstSector() % 2048);
+            assertEquals(0, (table.get(idx).getLastSector() + 1) % 2048);
             // Ensure partition fills most of the disk
-            assertTrue((table.get___idx(idx).getSectorCount() * 512) > disk.getCapacity() * 0.9);
+            assertTrue((table.get(idx).getSectorCount() * 512) > disk.getCapacity() * 0.9);
         }
     }
 
@@ -113,8 +113,8 @@ public class GuidPartitionTableTest {
             GuidPartitionTable table = GuidPartitionTable.initialize(disk);
             int idx = table.create(2 * 1024 * 1024, WellKnownPartitionType.WindowsFat, false);
             // Make sure the partition is within 10% of the size requested.
-            assertTrue((2 * 1024 * 2) * 0.9 < table.get___idx(idx).getSectorCount());
-            assertEquals(table.getFirstUsableSector(), table.get___idx(idx).getFirstSector());
+            assertTrue((2 * 1024 * 2) * 0.9 < table.get(idx).getSectorCount());
+            assertEquals(table.getFirstUsableSector(), table.get(idx).getFirstSector());
         }
     }
 
@@ -129,8 +129,8 @@ public class GuidPartitionTableTest {
             table.create((60 * 1024 * 1024)
                     / 512, ((70 * 1024 * 1024) / 512) - 1, GuidPartitionTypes.WindowsBasicData, 0, "Data Partition");
             int idx = table.create(20 * 1024 * 1024, WellKnownPartitionType.WindowsFat, false);
-            assertEquals(((30 * 1024 * 1024) / 512), table.get___idx(idx).getFirstSector());
-            assertEquals(((50 * 1024 * 1024) / 512) - 1, table.get___idx(idx).getLastSector());
+            assertEquals(((30 * 1024 * 1024) / 512), table.get(idx).getFirstSector());
+            assertEquals(((50 * 1024 * 1024) / 512) - 1, table.get(idx).getLastSector());
         }
     }
 
@@ -146,8 +146,8 @@ public class GuidPartitionTableTest {
             table.create((60 * 1024 * 1024)
                     / 512, ((70 * 1024 * 1024) / 512) - 1, GuidPartitionTypes.WindowsBasicData, 0, "Data Partition");
             int idx = table.createAligned(20 * 1024 * 1024, WellKnownPartitionType.WindowsFat, false, 64 * 1024);
-            assertEquals(((30 * 1024 * 1024) / 512), table.get___idx(idx).getFirstSector());
-            assertEquals(((50 * 1024 * 1024) / 512) - 1, table.get___idx(idx).getLastSector());
+            assertEquals(((30 * 1024 * 1024) / 512), table.get(idx).getFirstSector());
+            assertEquals(((50 * 1024 * 1024) / 512) - 1, table.get(idx).getLastSector());
         }
     }
 
@@ -160,11 +160,11 @@ public class GuidPartitionTableTest {
             assertEquals(1, table.create(2 * 1024 * 1024, WellKnownPartitionType.WindowsFat, false));
             assertEquals(2, table.create(3 * 1024 * 1024, WellKnownPartitionType.WindowsFat, false));
             long[] sectorCount = new long[] {
-                table.get___idx(0).getSectorCount(), table.get___idx(1).getSectorCount(), table.get___idx(2).getSectorCount()
+                table.get(0).getSectorCount(), table.get(1).getSectorCount(), table.get(2).getSectorCount()
             };
             table.delete(1);
             assertEquals(2, table.getCount());
-            assertEquals(sectorCount[2], table.get___idx(1).getSectorCount());
+            assertEquals(sectorCount[2], table.get(1).getSectorCount());
         }
     }
 }

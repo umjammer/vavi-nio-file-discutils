@@ -99,7 +99,7 @@ public class Program extends ProgramBase {
         try (NtfsFileSystem fs = new NtfsFileSystem(volInfo.open())) {
             MasterFileTable mft = fs.getMasterFileTable();
             if (_recoverFile != null) {
-                MasterFileTableEntry entry = mft.get___idx(Long.parseLong(_recoverFile));
+                MasterFileTableEntry entry = mft.get(Long.parseLong(_recoverFile));
                 IBuffer content = getContent(entry);
                 if (content == null) {
                     System.err.println("Sorry, unable to recover content");
@@ -197,7 +197,7 @@ public class Program extends ProgramBase {
         }
 
         String parentPath = "<unknown>";
-        MasterFileTableEntry parentEntry = mft.get___idx(fna.getParentDirectory().getRecordIndex());
+        MasterFileTableEntry parentEntry = mft.get(fna.getParentDirectory().getRecordIndex());
         if (parentEntry != null) {
             if (parentEntry.getSequenceNumber() == fna.getParentDirectory().getRecordSequenceNumber() ||
                 parentEntry.getSequenceNumber() == fna.getParentDirectory().getRecordSequenceNumber() + 1) {
