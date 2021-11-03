@@ -60,7 +60,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public boolean exists() {
         try {
-            return getFileSystem().fileExists(getPath());
+            return _fileSystem.fileExists(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -88,7 +88,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public long getLength() {
         try {
-            return getFileSystem().getFileLength(getPath());
+            return _fileSystem.getFileLength(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -99,7 +99,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public void delete() {
         try {
-            getFileSystem().deleteFile(getPath());
+            _fileSystem.deleteFile(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -133,7 +133,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public void copyTo(String destinationFileName, boolean overwrite) {
         try {
-            getFileSystem().copyFile(getPath(), destinationFileName, overwrite);
+            _fileSystem.copyFile(_path, destinationFileName, overwrite);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -164,7 +164,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public void moveTo(String destinationFileName) {
         try {
-            getFileSystem().moveFile(getPath(), destinationFileName);
+            _fileSystem.moveFile(_path, destinationFileName);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -179,7 +179,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public Stream open(FileMode mode) {
         try {
-            return getFileSystem().openFile(getPath(), mode);
+            return _fileSystem.openFile(_path, mode);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -195,7 +195,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
      */
     public Stream open(FileMode mode, FileAccess access) {
         try {
-            return getFileSystem().openFile(getPath(), mode, access);
+            return _fileSystem.openFile(_path, mode, access);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }

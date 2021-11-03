@@ -51,7 +51,7 @@ public class DiscFileSystemInfo {
      */
     public EnumSet<FileAttributes> getAttributes() {
         try {
-            return FileAttributes.toEnumSet(getFileSystem().getAttributes(getPath()));
+            return FileAttributes.toEnumSet(_fileSystem.getAttributes(_path));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -59,7 +59,7 @@ public class DiscFileSystemInfo {
 
     public void setAttributes(EnumSet<FileAttributes> value) {
         try {
-            getFileSystem().setAttributes(getPath(), FileAttributes.toMap(value));
+            _fileSystem.setAttributes(_path, FileAttributes.toMap(value));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -83,7 +83,7 @@ public class DiscFileSystemInfo {
      */
     public long getCreationTimeUtc() {
         try {
-            return getFileSystem().getCreationTimeUtc(getPath());
+            return _fileSystem.getCreationTimeUtc(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -91,7 +91,7 @@ public class DiscFileSystemInfo {
 
     public void setCreationTimeUtc(long value) {
         try {
-            getFileSystem().setCreationTimeUtc(getPath(), value);
+            _fileSystem.setCreationTimeUtc(_path, value);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -102,7 +102,7 @@ public class DiscFileSystemInfo {
      */
     public boolean exists() {
         try {
-            return getFileSystem().exists(getPath());
+            return _fileSystem.exists(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -124,7 +124,7 @@ public class DiscFileSystemInfo {
     /**
      * Gets the file system the referenced file or directory exists on.
      */
-    private DiscFileSystem _fileSystem;
+    protected DiscFileSystem _fileSystem;
 
     public DiscFileSystem getFileSystem() {
         return _fileSystem;
@@ -134,7 +134,7 @@ public class DiscFileSystemInfo {
      * Gets the full path of the file or directory.
      */
     public String getFullName() {
-        return getPath();
+        return _path;
     }
 
     /**
@@ -157,7 +157,7 @@ public class DiscFileSystemInfo {
      */
     public long getLastAccessTimeUtc() {
         try {
-            return getFileSystem().getLastAccessTimeUtc(getPath());
+            return _fileSystem.getLastAccessTimeUtc(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -165,7 +165,7 @@ public class DiscFileSystemInfo {
 
     public void setLastAccessTimeUtc(long value) {
         try {
-            getFileSystem().setLastAccessTimeUtc(getPath(), value);
+            _fileSystem.setLastAccessTimeUtc(_path, value);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -188,7 +188,7 @@ public class DiscFileSystemInfo {
      */
     public long getLastWriteTimeUtc() {
         try {
-            return getFileSystem().getLastWriteTimeUtc(getPath());
+            return _fileSystem.getLastWriteTimeUtc(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -196,7 +196,7 @@ public class DiscFileSystemInfo {
 
     public void setLastWriteTimeUtc(long value) {
         try {
-            getFileSystem().setLastWriteTimeUtc(getPath(), value);
+            _fileSystem.setLastWriteTimeUtc(_path, value);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -206,7 +206,7 @@ public class DiscFileSystemInfo {
      * Gets the name of the file or directory.
      */
     public String getName() {
-        return Utilities.getFileFromPath(getPath());
+        return Utilities.getFileFromPath(_path);
     }
 
     /**
@@ -214,21 +214,17 @@ public class DiscFileSystemInfo {
      * {@link #DiscFileSystemInfo} object.
      */
     public DiscDirectoryInfo getParent() {
-        if (getPath() == null || getPath().isEmpty()) {
+        if (_path == null || _path.isEmpty()) {
             return null;
         }
 
-        return new DiscDirectoryInfo(getFileSystem(), Utilities.getDirectoryFromPath(getPath()));
+        return new DiscDirectoryInfo(_fileSystem, Utilities.getDirectoryFromPath(_path));
     }
 
     /**
      * Gets the path to the referenced file.
      */
-    private String _path;
-
-    protected String getPath() {
-        return _path;
-    }
+    protected String _path;
 
     /**
      * Deletes a file or directory.
@@ -236,9 +232,9 @@ public class DiscFileSystemInfo {
     public void delete() {
         try {
             if (getAttributes().contains(FileAttributes.Directory)) {
-                getFileSystem().deleteDirectory(getPath());
+                _fileSystem.deleteDirectory(_path);
             } else {
-                getFileSystem().deleteFile(getPath());
+                _fileSystem.deleteFile(_path);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -256,7 +252,7 @@ public class DiscFileSystemInfo {
             return false;
         }
         DiscFileSystemInfo asInfo = DiscFileSystemInfo.class.cast(obj);
-        return getPath().equals(asInfo.getPath()) && getFileSystem().equals(asInfo.getFileSystem());
+        return _path.equals(asInfo._path) && _fileSystem.equals(asInfo._fileSystem);
     }
 
     /**
@@ -265,6 +261,6 @@ public class DiscFileSystemInfo {
      * @return The hash code.
      */
     public int hashCode() {
-        return getPath().hashCode() ^ getFileSystem().hashCode();
+        return _path.hashCode() ^ _fileSystem.hashCode();
     }
 }

@@ -49,7 +49,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public boolean exists() {
         try {
-            return getFileSystem().directoryExists(getPath());
+            return _fileSystem.directoryExists(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -67,7 +67,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public void create() {
         try {
-            getFileSystem().createDirectory(getPath());
+            _fileSystem.createDirectory(_path);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -78,7 +78,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public void delete() {
         try {
-            getFileSystem().deleteDirectory(getPath(), false);
+            _fileSystem.deleteDirectory(_path, false);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -92,7 +92,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public void delete(boolean recursive) {
         try {
-            getFileSystem().deleteDirectory(getPath(), recursive);
+            _fileSystem.deleteDirectory(_path, recursive);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -105,7 +105,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public void moveTo(String destinationDirName) {
         try {
-            getFileSystem().moveDirectory(getPath(), destinationDirName);
+            _fileSystem.moveDirectory(_path, destinationDirName);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -118,9 +118,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscDirectoryInfo> getDirectories() {
         try {
-            return getFileSystem().getDirectories(getPath())
+            return _fileSystem.getDirectories(_path)
                     .stream()
-                    .map(p -> new DiscDirectoryInfo(getFileSystem(), p))
+                    .map(p -> new DiscDirectoryInfo(_fileSystem, p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -154,9 +154,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscDirectoryInfo> getDirectories(String pattern, String searchOption) {
         try {
-            return getFileSystem().getDirectories(getPath(), pattern, searchOption)
+            return _fileSystem.getDirectories(_path, pattern, searchOption)
                     .stream()
-                    .map(p -> new DiscDirectoryInfo(getFileSystem(), p))
+                    .map(p -> new DiscDirectoryInfo(_fileSystem, p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -170,9 +170,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscFileInfo> getFiles() {
         try {
-            return getFileSystem().getFiles(getPath())
+            return _fileSystem.getFiles(_path)
                     .stream()
-                    .map(p -> new DiscFileInfo(getFileSystem(), p))
+                    .map(p -> new DiscFileInfo(_fileSystem, p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -206,9 +206,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscFileInfo> getFiles(String pattern, String searchOption) {
         try {
-            return getFileSystem().getFiles(getPath(), pattern, searchOption)
+            return _fileSystem.getFiles(_path, pattern, searchOption)
                     .stream()
-                    .map(p -> new DiscFileInfo(getFileSystem(), p))
+                    .map(p -> new DiscFileInfo(_fileSystem, p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -222,9 +222,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscFileSystemInfo> getFileSystemInfos() {
         try {
-            return getFileSystem().getFileSystemEntries(getPath())
+            return _fileSystem.getFileSystemEntries(_path)
                     .stream()
-                    .map(p -> new DiscFileSystemInfo(getFileSystem(), p))
+                    .map(p -> new DiscFileSystemInfo(_fileSystem, p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -242,9 +242,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      */
     public List<DiscFileSystemInfo> getFileSystemInfos(String pattern) {
         try {
-            return getFileSystem().getFileSystemEntries(getPath(), pattern)
+            return _fileSystem.getFileSystemEntries(_path, pattern)
                     .stream()
-                    .map(p -> new DiscFileSystemInfo(getFileSystem(), p))
+                    .map(p -> new DiscFileSystemInfo(_fileSystem, p))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
