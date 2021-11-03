@@ -174,7 +174,7 @@ public final class BZip2DecoderStream extends Stream {
         }
 
         if (_eof) {
-            throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
+            return 0;
         }
 
         if (count == 0) {

@@ -63,6 +63,8 @@ public class BZip2DecoderStreamTest {
         byte[] buffer = new byte[1024];
         int numRead = decoder.read(buffer, 0, 1024);
         assertEquals(21, numRead);
+        // Reading beyond the end of the stream will return 0 bytes
+        assertEquals(0, decoder.read(buffer, numRead, 1024 - numRead));
         String s = new String(buffer, 0, numRead, Charset.forName("ASCII"));
         assertEquals("This is a test string", s);
     }
