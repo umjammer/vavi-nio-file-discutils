@@ -22,7 +22,7 @@
 
 package DiscUtils.Core.Compression;
 
-import org.bouncycastle.util.Arrays;
+import java.util.Arrays;
 
 public abstract class DataBlockTransform {
     protected abstract boolean getBuffersMustNotOverlap();
@@ -38,7 +38,7 @@ public abstract class DataBlockTransform {
         if (getBuffersMustNotOverlap()) {
             int maxOut = maxOutputCount(inputCount);
 
-            if (Arrays.areEqual(input, output) && (inputOffset + (long) inputCount > outputOffset) &&
+            if (Arrays.equals(input, output) && (inputOffset + (long) inputCount > outputOffset) &&
                 (inputOffset <= outputOffset + (long) maxOut)) {
                 byte[] tempBuffer = new byte[maxOut];
 
