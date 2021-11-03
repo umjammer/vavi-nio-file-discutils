@@ -77,20 +77,21 @@ public class ObjectCache<K, V> {
         return null;
     }
 
-        _entries.put(key, new WeakReference<>(value));
     public V put(K key, V value) {
+        WeakReference<V> v = _entries.put(key, new WeakReference<>(value));
         makeMostRecent(key, value);
         pruneEntries();
+        return v != null ? v.get() : null;
     }
 
-    public void remove(K key) {
+    public V remove(Object key) {
         for (int i = 0; i < _recent.size(); ++i) {
             if (_recent.get(i).getKey().equals(key)) {
                 _recent.remove(i);
                 break;
             }
         }
-        _entries.remove(key);
+        return _entries.remove(key).get();
     }
 
     private void pruneEntries() {
@@ -126,20 +127,21 @@ public class ObjectCache<K, V> {
         _recent.add(0, new Tuple<>(key, val));
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        sb.append(_entries.size());
-        sb.append("]");
-        sb.append("{");
-        _entries.entrySet().forEach(e -> {
-            sb.append(e.getKey());
-            sb.append('=');
-            sb.append(e.getValue().get());
-            sb.append(", ");
-        });
-        sb.setLength(sb.length() - 2);
-        sb.append("}");
-        return sb.toString();
-    }
+    @Override
+	public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("[");
+	    sb.append(_entries.size());
+	    sb.append("]");
+	    sb.append("{");
+	    _entries.entrySet().forEach(e -> {
+	        sb.append(e.getKey());
+	        sb.append('=');
+	        sb.append(e.getValue().get());
+	        sb.append(", ");
+	    });
+	    sb.setLength(sb.length() - 2);
+	    sb.append("}");
+	    return sb.toString();
+	}
 }
