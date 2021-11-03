@@ -89,8 +89,8 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
         _magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
         _level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
         _numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
-        _leftSibling = EndianUtilities.toInt64BigEndian(buffer, offset + 0x8);
-        _rightSibling = EndianUtilities.toInt64BigEndian(buffer, offset + 0xC);
+        _leftSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0x8);
+        _rightSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0xC);
         return 24;
     }
 
