@@ -39,9 +39,7 @@ import dotnet4j.io.FileShare;
 @VirtualDiskFactoryAttribute(type = "VDI", fileExtensions = { ".vdi" })
 public final class DiskFactory extends VirtualDiskFactory {
     public String[] getVariants() {
-        return new String[] {
-            __dummyScrutVar0
-        };
+        return new String[] { "fixed", "dynamic" };
     }
 
     public VirtualDiskTypeInfo getDiskTypeInformation(String variant) {
@@ -51,8 +49,6 @@ public final class DiskFactory extends VirtualDiskFactory {
     public DiskImageBuilder getImageBuilder(String variant) {
         throw new UnsupportedOperationException();
     }
-
-    String __dummyScrutVar0;
 
     public VirtualDisk createDisk(FileLocator locator,
                                   String variant,
@@ -85,5 +81,4 @@ public final class DiskFactory extends VirtualDiskFactory {
     public static VirtualDiskTypeInfo makeDiskTypeInfo(String variant) {
         return new VirtualDiskTypeInfo();
     }
-
 }
