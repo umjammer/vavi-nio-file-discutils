@@ -62,7 +62,7 @@ public class TextBuffer {
         return _records;
     }
 
-    public long getSize() {
+    public int getSize() {
         int i = 0;
         for (Map.Entry<String, String> entry : _records.entrySet()) {
             i += entry.getKey().length() + entry.getValue().length() + 2;

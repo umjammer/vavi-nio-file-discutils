@@ -225,7 +225,7 @@ class Connection implements Closeable {
         TextBuffer parameters = new TextBuffer();
         parameters.add(SendTargetsParameter, "All");
 
-        byte[] paramBuffer = new byte[(int) parameters.getSize()];
+        byte[] paramBuffer = new byte[parameters.getSize()];
         parameters.writeTo(paramBuffer, 0);
 
         TextRequest req = new TextRequest(this);
@@ -299,7 +299,7 @@ class Connection implements Closeable {
         //
         // Send the request...
         //
-        byte[] paramBuffer = new byte[(int) parameters.getSize()];
+        byte[] paramBuffer = new byte[parameters.getSize()];
         parameters.writeTo(paramBuffer, 0);
 
         LoginRequest req = new LoginRequest(this);
@@ -360,7 +360,7 @@ class Connection implements Closeable {
             //
             parameters = new TextBuffer();
             authenticator.getParameters(parameters);
-            paramBuffer = new byte[(int) parameters.getSize()];
+            paramBuffer = new byte[parameters.getSize()];
             parameters.writeTo(paramBuffer, 0);
 
             req = new LoginRequest(this);
@@ -416,7 +416,7 @@ class Connection implements Closeable {
         getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, session._sessionType);
         session.getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation);
 
-        byte[] paramBuffer = new byte[(int) parameters.getSize()];
+        byte[] paramBuffer = new byte[parameters.getSize()];
         parameters.writeTo(paramBuffer, 0);
 
         LoginRequest req = new LoginRequest(this);
@@ -456,7 +456,7 @@ class Connection implements Closeable {
         consumeParameters(settings, parameters);
 
         while (!resp.Transit || parameters.getCount() != 0) {
-            paramBuffer = new byte[(int) parameters.getSize()];
+            paramBuffer = new byte[parameters.getSize()];
             parameters.writeTo(paramBuffer, 0);
 
             req = new LoginRequest(this);
