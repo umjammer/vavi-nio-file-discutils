@@ -17,6 +17,8 @@ on:
     inputs:
       environment:
         required: true
+      distribution:
+        required: true
 
 jobs:
   analyze:
