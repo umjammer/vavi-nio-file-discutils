@@ -38,7 +38,7 @@ jobs:
 
     # If this run was triggered by a pull request event, then checkout
     # the head of the pull request instead of the merge commit.
-    - run: git checkout HEAD^2
+    - run: git checkout HEAD
       if: ${{ github.event_name == 'pull_request' }}
 
     # Initializes the CodeQL tools for scanning.
@@ -52,9 +52,10 @@ jobs:
         # queries: ./path/to/local/query, your-org/your-repo/queries@main
 
     - name: Setup Java JDK
-      uses: actions/setup-java@v1.3.0
+      uses: actions/setup-java@v2.3.1
       with:
-        java-version: 13
+        java-version: '17.0.1+12'
+        distribution: 'temurin'
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
