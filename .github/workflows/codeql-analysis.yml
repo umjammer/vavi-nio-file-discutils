@@ -54,7 +54,7 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v2.3.1
       with:
-        java-version: '13'
+        java-version: '17.0.1+12'
         distribution: 'temurin'
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
