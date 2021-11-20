@@ -13,6 +13,10 @@ on:
     branches: [develop]
 #  schedule:
 #    - cron: '0 14 * * 6'
+  workflow_dispatch:
+    inputs:
+      environment:
+        required: true
 
 jobs:
   analyze:
