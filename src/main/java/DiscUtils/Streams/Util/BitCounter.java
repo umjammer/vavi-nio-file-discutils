@@ -70,7 +70,7 @@ public class BitCounter {
 
         long result = 0L;
         for (int i = offset; i < end; i++) {
-            int value = values[i];
+            int value = values[i] & 0xff;
             result += _lookupTable[value];
         }
         return result;
