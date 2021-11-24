@@ -18,8 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
-import com.github.fge.filesystem.driver.CachedFileSystemDriverBase;
+import com.github.fge.filesystem.driver.CachedFileSystemDriver;
 import com.github.fge.filesystem.exceptions.IsDirectoryException;
 import com.github.fge.filesystem.provider.FileSystemFactoryProvider;
 
@@ -43,7 +44,7 @@ import dotnet4j.io.compat.StreamOutputStream;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/17 umjammer initial version <br>
  */
-public final class DuFileSystemDriver extends CachedFileSystemDriverBase<DiscFileSystemInfo> {
+public final class DuFileSystemDriver extends CachedFileSystemDriver<DiscFileSystemInfo> {
 
     private DiscFileSystem fileSystem;
 
@@ -65,7 +66,7 @@ public final class DuFileSystemDriver extends CachedFileSystemDriverBase<DiscFil
     }
 
     @Override
-    protected String getFilenameString(DiscFileSystemInfo entry) throws IOException {
+    protected String getFilenameString(DiscFileSystemInfo entry) {
     	return toJavaPathString(entry.getFullName());
     }
 
@@ -76,8 +77,8 @@ public final class DuFileSystemDriver extends CachedFileSystemDriverBase<DiscFil
 
     @Override
     protected DiscFileSystemInfo getRootEntry(Path root) throws IOException {
-Debug.println("path: " + toDuPathString(root));
-Debug.println("root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
+Debug.println(Level.FINE, "path: " + toDuPathString(root));
+//Debug.println(Level.FINE, "root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
     	return fileSystem.getDirectoryInfo(toDuPathString(root));
     }
 
@@ -122,18 +123,6 @@ Debug.println("root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
     }
 
     @Override
-    protected DiscFileSystemInfo createDirectoryEntry(DiscFileSystemInfo parentEntry, Path dir) throws IOException {
-        // TODO: how to diagnose?
-        fileSystem.createDirectory(dir.toString());
-        return getEntry(null, dir);
-    }
-
-    @Override
-    public void close() throws IOException {
-        fileSystem.close();
-    }
-
-    @Override
     protected List<DiscFileSystemInfo> getDirectoryEntries(DiscFileSystemInfo dirEntry, Path dir) throws IOException {
     	List<DiscFileSystemInfo> list = new ArrayList<>();
     	List<DiscDirectoryInfo> folders = DiscDirectoryInfo.class.cast(dirEntry).getDirectories();
@@ -141,6 +130,13 @@ Debug.println("root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
     	List<DiscFileInfo> files = DiscDirectoryInfo.class.cast(dirEntry).getFiles();
     	list.addAll(files);
         return list;
+    }
+
+    @Override
+    protected DiscFileSystemInfo createDirectoryEntry(DiscFileSystemInfo parentEntry, Path dir) throws IOException {
+        // TODO: how to diagnose?
+        fileSystem.createDirectory(dir.toString());
+        return getEntry(null, dir);
     }
 
     @Override
@@ -181,5 +177,10 @@ Debug.println("root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
     protected DiscFileSystemInfo renameEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target) throws IOException {
         fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
         return getEntry(null, target);
+    }
+
+    @Override
+    public void close() throws IOException {
+        fileSystem.close();
     }
 }
