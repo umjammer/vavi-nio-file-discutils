@@ -24,7 +24,7 @@ package DiscUtils.OpticalDiscSharing;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Core.FileLocator;
@@ -92,7 +92,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
     }
 
     public List<String> getParentLocations() {
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 
     @Override

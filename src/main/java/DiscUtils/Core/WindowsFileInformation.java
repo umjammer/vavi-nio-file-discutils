@@ -34,65 +34,65 @@ public class WindowsFileInformation {
     /**
      * Gets or sets the last time the file was changed.
      */
-    private long __ChangeTime;
+    private long _changeTime;
 
     public long getChangeTime() {
-        return __ChangeTime;
+        return _changeTime;
     }
 
     public void setChangeTime(long value) {
-        __ChangeTime = value;
+        _changeTime = value;
     }
 
     /**
      * Gets or sets the creation time of the file.
      */
-    private long __CreationTime;
+    private long _creationTime;
 
     public long getCreationTime() {
-        return __CreationTime;
+        return _creationTime;
     }
 
     public void setCreationTime(long value) {
-        __CreationTime = value;
+        _creationTime = value;
     }
 
     /**
      * Gets or sets the file attributes.
      */
-    private EnumSet<FileAttributes> __FileAttributes;
+    private EnumSet<FileAttributes> _fileAttributes;
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return __FileAttributes;
+        return _fileAttributes;
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
-        __FileAttributes = value;
+        _fileAttributes = value;
     }
 
     /**
      * Gets or sets the last access time of the file.
      */
-    private long __LastAccessTime;
+    private long _lastAccessTime;
 
     public long getLastAccessTime() {
-        return __LastAccessTime;
+        return _lastAccessTime;
     }
 
     public void setLastAccessTime(long value) {
-        __LastAccessTime = value;
+        _lastAccessTime = value;
     }
 
     /**
      * Gets or sets the modification time of the file.
      */
-    private long __LastWriteTime;
+    private long _lastWriteTime;
 
     public long getLastWriteTime() {
-        return __LastWriteTime;
+        return _lastWriteTime;
     }
 
     public void setLastWriteTime(long value) {
-        __LastWriteTime = value;
+        _lastWriteTime = value;
     }
 }

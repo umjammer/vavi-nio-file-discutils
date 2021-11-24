@@ -23,7 +23,7 @@
 package DiscUtils.Vdi;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -209,7 +209,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public List<String> getParentLocations() {
         // Until diff/undo supported
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 
     /**

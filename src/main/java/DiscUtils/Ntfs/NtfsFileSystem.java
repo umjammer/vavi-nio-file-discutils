@@ -97,12 +97,12 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         _context.setRawStream(stream);
         _context.setOptions(getNtfsOptions());
 
-        _context.setGetFileByIndex(index -> getFile(index));
-        _context.setGetFileByRef(reference -> getFile(reference));
-        _context.setGetDirectoryByRef(reference -> getDirectory(reference));
-        _context.setGetDirectoryByIndex(index -> getDirectory(index));
-        _context.setAllocateFile(flags -> allocateFile(flags));
-        _context.setForgetFile(file -> forgetFile(file));
+        _context.setGetFileByIndex(this::getFile);
+        _context.setGetFileByRef(this::getFile);
+        _context.setGetDirectoryByRef(this::getDirectory);
+        _context.setGetDirectoryByIndex(this::getDirectory);
+        _context.setAllocateFile(this::allocateFile);
+        _context.setForgetFile(this::forgetFile);
         _context.setReadOnly(!stream.canWrite());
 
         _fileCache = new ObjectCache<>();
@@ -2032,8 +2032,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         }
 
         // Don't create file objects for file record segments that are part of
-        // another
-        // logical file.
+        // another logical file.
         if (record.getBaseFile().getValue() != 0) {
             return null;
         }
@@ -2062,8 +2061,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         }
 
         // Don't create file objects for file record segments that are part of
-        // another
-        // logical file.
+        // another logical file.
         if (record.getBaseFile().getValue() != 0) {
             return null;
         }

@@ -309,7 +309,7 @@ public class NativeFileSystem extends DiscFileSystem {
                     .collect(Collectors.toList()));
         } catch (IOException e) {
 Debug.printStackTrace(e);
-            return Arrays.asList();
+            return Collections.emptyList();
         }
     }
 
@@ -356,7 +356,7 @@ Debug.printStackTrace(e);
                     .collect(Collectors.toList()));
         } catch (IOException e) {
 Debug.printStackTrace(e);
-            return Arrays.asList();
+            return Collections.emptyList();
         }
     }
 

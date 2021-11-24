@@ -23,7 +23,7 @@
 package DiscUtils.Dmg;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +42,7 @@ import dotnet4j.io.Stream;
 
 
 public final class DiskImageFile extends VirtualDiskLayer {
+
     private final Ownership _ownsStream;
 
     private ResourceFork _resources;
@@ -63,24 +64,27 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _ownsStream = ownsStream;
         stream.setPosition(stream.getLength() - _udifHeader.size());
         byte[] data = StreamUtilities.readExact(stream, _udifHeader.size());
+
         _udifHeader.readFrom(data, 0);
+
         if (_udifHeader.getSignatureValid()) {
-            stream.setPosition(_udifHeader.XmlOffset);
-            byte[] xmlData = StreamUtilities.readExact(stream, (int) _udifHeader.XmlLength);
+            stream.setPosition(_udifHeader.xmlOffset);
+            byte[] xmlData = StreamUtilities.readExact(stream, (int) _udifHeader.xmlLength);
             Map<String, Object> plist = Plist.parse(new MemoryStream(xmlData));
+
             _resources = ResourceFork.fromPlist(plist);
-            __Buffer = new UdifBuffer(stream, _resources, _udifHeader.SectorCount);
+            _buffer = new UdifBuffer(stream, _resources, _udifHeader.sectorCount);
         }
     }
 
-    private UdifBuffer __Buffer;
+    private UdifBuffer _buffer;
 
     public UdifBuffer getBuffer() {
-        return __Buffer;
+        return _buffer;
     }
 
     public long getCapacity() {
-        return getBuffer() == null ? _stream.getLength() : getBuffer().getCapacity();
+        return _buffer == null ? _stream.getLength() : _buffer.getCapacity();
     }
 
     /**
@@ -91,7 +95,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     public boolean isSparse() {
-        return getBuffer() != null;
+        return _buffer != null;
     }
 
     /**
@@ -114,8 +118,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
             }
         }
 
-        if (getBuffer() != null) {
-            SparseStream rawStream = new BufferStream(getBuffer(), FileAccess.Read);
+        if (_buffer != null) {
+            SparseStream rawStream = new BufferStream(_buffer, FileAccess.Read);
             return new BlockCacheStream(rawStream, Ownership.Dispose);
         }
 
@@ -128,7 +132,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return Array of candidate file locations.
      */
     public List<String> getParentLocations() {
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 
     public void close() throws IOException {

@@ -73,7 +73,7 @@ public class FileAllocationTable {
     }
 
     public void flush() {
-        for (int i = 0; i < _numFats; ++i) {
+        for (int i = 0; i < _numFats; i++) {
             _buffer.writeDirtyRegions(_stream, _firstFatSector * Sizes.Sector + _buffer.getSize() * i);
         }
         _buffer.clearDirtyRegions();

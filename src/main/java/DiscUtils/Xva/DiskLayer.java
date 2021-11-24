@@ -23,7 +23,7 @@
 package DiscUtils.Xva;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Core.FileLocator;
@@ -111,7 +111,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      * @return Array of strings, empty if no parent.
      */
     public List<String> getParentLocations() {
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 
     @Override

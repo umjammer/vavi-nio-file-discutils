@@ -24,7 +24,7 @@ package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -111,7 +111,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     }
 
     public List<Range> getClusters() {
-        return Arrays.asList();
+        return Collections.emptyList();
     }
 
     public int write(byte[] buffer, int offset) {

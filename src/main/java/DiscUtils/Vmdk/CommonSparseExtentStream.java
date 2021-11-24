@@ -25,6 +25,7 @@ package DiscUtils.Vmdk;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Core.Internal.ObjectCache;
@@ -235,7 +236,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
         long maxCount = Math.min(getLength(), start + count) - start;
         if (maxCount < 0) {
-            return Arrays.asList();
+            return Collections.emptyList();
         }
 
         List<StreamExtent> parentExtents = _parentDiskStream.getExtentsInRange(_diskOffset + start, maxCount);

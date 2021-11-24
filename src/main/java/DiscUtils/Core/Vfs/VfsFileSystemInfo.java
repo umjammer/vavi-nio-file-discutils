@@ -53,20 +53,20 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
         _openDelegate = openDelegate;
     }
 
+    private String _description;
+
     /**
      * Gets a one-line description of the file system.
      */
-    private String _description;
-
     public String getDescription() {
         return _description;
     }
 
+    private String _name;
+
     /**
      * Gets the name of the file system.
      */
-    private String _name;
-
     public String getName() {
         return _name;
     }
@@ -92,5 +92,4 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
     public DiscFileSystem open(Stream stream, FileSystemParameters parameters) {
         return _openDelegate.invoke(stream, null, parameters);
     }
-
 }

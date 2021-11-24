@@ -137,6 +137,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
         return _opener.invoke();
     }
 
+    @Override
     public String toString() {
         return getIdentity() + ": " + _length;
     }

@@ -453,7 +453,6 @@ public abstract class VirtualDisk implements Serializable, Closeable {
             if (foundFactory) {
                 result = factory.openDisk(transport.getFileLocator(), transport.getFileName(), access);
             }
-
         }
         if (result != null) {
             result._transport = transport;

@@ -231,8 +231,6 @@ public final class FatFileSystem extends DiscFileSystem {
 
     /**
      * Indicates if this file system is read-only or read-write.
-     *
-     * @return .
      */
     public boolean canWrite() {
         return _data.canWrite();
@@ -266,11 +264,11 @@ public final class FatFileSystem extends DiscFileSystem {
         _fat = value;
     }
 
+    private byte _fatCount;
+
     /**
      * Gets the number of FATs present.
      */
-    private byte _fatCount;
-
     public int getFatCount() {
         return _fatCount & 0xff;
     }
@@ -293,11 +291,11 @@ public final class FatFileSystem extends DiscFileSystem {
         return _bpbFATSz16 != 0 ? _bpbFATSz16 & 0xffff : _bpbFATSz32 & 0xffff_ffffl;
     }
 
+    private FatType _fatVariant = FatType.None;
+
     /**
      * Gets the FAT variant of the file system.
      */
-    private FatType _fatVariant = FatType.None;
-
     public FatType getFatVariant() {
         return _fatVariant;
     }
@@ -365,11 +363,11 @@ public final class FatFileSystem extends DiscFileSystem {
         return _bpbRootEntCnt & 0xffff;
     }
 
+    private byte _media;
+
     /**
      * Gets the Media marker byte, which indicates fixed or removable media.
      */
-    private byte _media;
-
     public byte getMedia() {
         return _media;
     }
@@ -386,11 +384,11 @@ public final class FatFileSystem extends DiscFileSystem {
         return (_bpbExtFlags & 0x08) == 0;
     }
 
+    private String _oemName;
+
     /**
      * Gets the OEM name from the file system.
      */
-    private String _oemName;
-
     public String getOemName() {
         return _oemName;
     }
@@ -414,11 +412,11 @@ public final class FatFileSystem extends DiscFileSystem {
         return _bpbRootClus;
     }
 
+    private byte _sectorsPerCluster;
+
     /**
      * Gets the number of contiguous sectors that make up one cluster.
      */
-    private byte _sectorsPerCluster;
-
     public int getSectorsPerCluster() {
         return _sectorsPerCluster & 0xff;
     }
@@ -1414,19 +1412,19 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private static FatType detectFATType(byte[] bpb) {
-        int bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bpb, 11);
+        int bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bpb, 11) & 0xffff;
         if (bpbBytesPerSec == 0) {
             throw new IllegalStateException("Bytes per sector is 0, invalid or corrupt filesystem.");
         }
 
-        int bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(bpb, 17);
-        int bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(bpb, 22);
+        int bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(bpb, 17) & 0xffff;
+        int bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(bpb, 22) & 0xffff;
         int bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(bpb, 36);
-        int bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bpb, 19);
+        int bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bpb, 19) & 0xffff;
         int bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bpb, 32);
         int bpbResvdSecCnt = EndianUtilities.toUInt16LittleEndian(bpb, 14);
-        int bpbNumFATs = bpb[16];
-        int bpbSecPerClus = bpb[13];
+        int bpbNumFATs = bpb[16] & 0xff;
+        int bpbSecPerClus = bpb[13] & 0xff;
         int rootDirSectors = (bpbRootEntCnt * 32 + bpbBytesPerSec - 1) / bpbBytesPerSec;
         int fatSz = bpbFATSz16 != 0 ? bpbFATSz16 : bpbFATSz32;
         int totalSec = bpbTotSec16 != 0 ? bpbTotSec16 : bpbTotSec32;
@@ -1472,7 +1470,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
     private void loadRootDirectory() {
         Stream fatStream;
-        if (getFatVariant() != FatType.Fat32) {
+        if (_fatVariant != FatType.Fat32) {
             fatStream = new SubStream(_data,
                                       ((_bpbRsvdSecCnt & 0xffff) + getFatCount() * (_bpbFATSz16 & 0xffff)) *
                                              (_bpbBytesPerSec & 0xffff),
@@ -1484,7 +1482,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private void loadFAT() {
-        setFat(new FileAllocationTable(getFatVariant(),
+        setFat(new FileAllocationTable(_fatVariant,
                                        _data,
                                        _bpbRsvdSecCnt & 0xffff,
                                        (int) getFatSize(),
@@ -1506,7 +1504,7 @@ public final class FatFileSystem extends DiscFileSystem {
         _bpbNumHeads = EndianUtilities.toUInt16LittleEndian(_bootSector, 26);
         _bpbHiddSec = EndianUtilities.toUInt32LittleEndian(_bootSector, 28);
         _bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(_bootSector, 32);
-        if (getFatVariant() != FatType.Fat32) {
+        if (_fatVariant != FatType.Fat32) {
             readBS(36);
         } else {
             _bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(_bootSector, 36);

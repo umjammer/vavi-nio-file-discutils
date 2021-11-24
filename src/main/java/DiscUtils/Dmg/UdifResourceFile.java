@@ -28,45 +28,49 @@ import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
+/**
+ * Represents UDIF header structure. usually locates at the last of a dmg file. 
+ */
 public class UdifResourceFile implements IByteArraySerializable {
-    public UdifChecksum DataForkChecksum;
+    public UdifChecksum dataForkChecksum;
 
-    public long DataForkLength;
+    public long dataForkLength;
 
-    public long DataForkOffset;
+    public long dataForkOffset;
 
-    public int Flags;
+    public int flags;
 
-    public int HeaderSize;
+    public int headerSize;
 
-    public int ImageVariant;
+    public int imageVariant;
 
-    public UdifChecksum MasterChecksum;
+    public UdifChecksum masterChecksum;
 
-    public long RsrcForkLength;
+    public long rsrcForkLength;
 
-    public long RsrcForkOffset;
+    public long rsrcForkOffset;
 
-    public long RunningDataForkOffset;
+    public long runningDataForkOffset;
 
-    public long SectorCount;
+    public long sectorCount;
 
-    public int SegmentCount;
+    public int segmentCount;
 
-    public UUID SegmentGuid;
+    public UUID segmentGuid;
 
-    public int SegmentNumber;
+    public int segmentNumber;
 
-    public int Signature;
+    public int signature;
 
-    public int Version;
+    public int version;
 
-    public long XmlLength;
+    public long xmlLength;
 
-    public long XmlOffset;
+    public long xmlOffset;
 
+    /** "koly" */
     public boolean getSignatureValid() {
-        return Signature == 0x6B6F6C79;
+        return signature == 0x6B6F6C79;
     }
 
     public int size() {
@@ -74,24 +78,24 @@ public class UdifResourceFile implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        Version = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        HeaderSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        Flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        RunningDataForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 16);
-        DataForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
-        DataForkLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 32);
-        RsrcForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 40);
-        RsrcForkLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 48);
-        SegmentNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
-        SegmentCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
-        SegmentGuid = EndianUtilities.toGuidBigEndian(buffer, offset + 64);
-        DataForkChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 80);
-        XmlOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 216);
-        XmlLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 224);
-        MasterChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 352);
-        ImageVariant = EndianUtilities.toUInt32BigEndian(buffer, offset + 488);
-        SectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 492);
+        signature = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
+        version = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        headerSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        runningDataForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 16);
+        dataForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
+        dataForkLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 32);
+        rsrcForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 40);
+        rsrcForkLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 48);
+        segmentNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
+        segmentCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
+        segmentGuid = EndianUtilities.toGuidBigEndian(buffer, offset + 64);
+        dataForkChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 80);
+        xmlOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 216);
+        xmlLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 224);
+        masterChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 352);
+        imageVariant = EndianUtilities.toUInt32BigEndian(buffer, offset + 488);
+        sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 492);
         return size();
     }
 
