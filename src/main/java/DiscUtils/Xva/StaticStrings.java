@@ -1,6 +1,13 @@
 
 package DiscUtils.Xva;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 public class StaticStrings {
     // @formatter:off
     public static final String XVA_ova_base =
@@ -960,4 +967,16 @@ public class StaticStrings {
         "  </struct>" +
         "</value>";
     // @formatter:on
+
+    public static void main(String[] args) throws Exception {
+        String[] names = { "XVA_ova_base", "XVA_ova_ref", "XVA_ova_vbd", "XVA_ova_vm", "XVA_ova_vdi", "XVA_ova_sr" };
+        String[] values = { XVA_ova_base, XVA_ova_ref, XVA_ova_vbd, XVA_ova_vm, XVA_ova_vdi, XVA_ova_sr };
+        IntStream.range(0, values.length).forEach(i -> {
+                try {
+                    Files.write(Paths.get("src/main/resources", names[i] + ".xml"), values[i].getBytes());
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
+    }
 }
