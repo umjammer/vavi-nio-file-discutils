@@ -86,4 +86,8 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
         writer.println(indent + "  Version: " + _majorVersion + "." + _minorVersion);
         writer.println(indent + "    Flags: " + _flags);
     }
+
+    public String toString() {
+    	return "VolumeInformation: version: " + _majorVersion + "." + _minorVersion; 
+    }
 }

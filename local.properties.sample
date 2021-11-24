@@ -1,0 +1,2 @@
+discImage=/somewhere/your.vdi
+mountPoint=/Users/you/mnt/fuse

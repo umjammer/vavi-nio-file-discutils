@@ -27,6 +27,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.PhysicalVolumeInfo;
@@ -72,7 +75,7 @@ public class LogicalVolumeManager {
             for (MetadataVolumeGroupSection vg : device.VgMetadata.ParsedMetadata.VolumeGroupSections) {
                 if (Collections.binarySearch(_volumeGroups, vg, (x, y) -> x.Id.compareTo(y.Id)) < 0) {
                     _volumeGroups.add(vg);
-//Debug.println("Lg: " + vg.Id);
+Debug.println(Level.FINE, "Lg: " + vg.Id);
                 }
             }
         }
@@ -136,7 +139,7 @@ public class LogicalVolumeManager {
                                                                   (byte) 0,
                                                                   DiscUtils.Core.LogicalVolumeStatus.Healthy);
                     result.add(lvi);
-//Debug.println("Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.ExtentSize * PhysicalVolume.SECTOR_SIZE);
+Debug.println(Level.FINE, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.ExtentSize * PhysicalVolume.SECTOR_SIZE);
                 }
             }
         }

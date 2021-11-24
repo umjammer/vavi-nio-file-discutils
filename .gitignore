@@ -28,3 +28,4 @@ SigningKey.snk
 Version.template.props
 lib
 .pmd
+local.properties

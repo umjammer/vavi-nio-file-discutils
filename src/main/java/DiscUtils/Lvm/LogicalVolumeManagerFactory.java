@@ -25,6 +25,9 @@ package DiscUtils.Lvm;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.PhysicalVolumeInfo;
@@ -43,7 +46,7 @@ public class LogicalVolumeManagerFactory extends LogicalVolumeFactory {
         LogicalVolumeManager mgr = new LogicalVolumeManager(disks);
         for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {
             result.put(vol.getIdentity(), vol);
-//Debug.println("Ll: " + vol.getIdentity());
+Debug.println(Level.FINE, "Ll: " + vol.getIdentity());
         }
     }
 }

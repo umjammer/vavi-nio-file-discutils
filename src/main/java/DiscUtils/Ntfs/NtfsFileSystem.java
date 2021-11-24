@@ -31,14 +31,18 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.ClusterMap;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.IClusterBasedFileSystem;
 import DiscUtils.Core.IDiagnosticTraceable;
+import DiscUtils.Core.IFileSystem;
 import DiscUtils.Core.IWindowsFileSystem;
 import DiscUtils.Core.InvalidFileSystemException;
 import DiscUtils.Core.ReparsePoint;
@@ -132,8 +136,9 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         // Get volume information (includes version number)
         File volumeInfoFile = getFile(MasterFileTable.VolumeIndex);
         _volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
+Debug.println(Level.FINE, _volumeInfo);
 
-        // Initialize access to the other well-known metadata files
+		// Initialize access to the other well-known metadata files
         _context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
         _context.setAttributeDefinitions(new AttributeDefinitions(getFile(MasterFileTable.AttrDefIndex)));
         _context.setUpperCase(new UpperCase(getFile(MasterFileTable.UpCaseIndex)));
@@ -424,7 +429,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         try (NtfsTransaction c = new NtfsTransaction()) {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             List<String> dirs = new ArrayList<>();
-            doSearch(dirs, path, re, searchOption.equals("AllDirectories"), true, false);
+            doSearch(dirs, path, re, searchOption.equals(ALL_DIRECTORIES), true, false);
             return dirs;
         }
     }
@@ -443,7 +448,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         try (NtfsTransaction c = new NtfsTransaction()) {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             List<String> results = new ArrayList<>();
-            doSearch(results, path, re, searchOption.equals("AllDirectories"), false, true);
+            doSearch(results, path, re, searchOption.equals(ALL_DIRECTORIES), false, true);
             return results;
         }
     }

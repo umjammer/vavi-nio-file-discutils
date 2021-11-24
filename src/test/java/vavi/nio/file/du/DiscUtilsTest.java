@@ -10,12 +10,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
@@ -27,6 +28,7 @@ import vavi.util.properties.annotation.PropsEntity;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/18 umjammer initial version <br>
  */
+@ExtendWith(ExistsLocalPropertiesCondition.class)
 @PropsEntity(url = "file://${user.dir}/local.properties")
 class DiscUtilsTest {
 
@@ -39,10 +41,14 @@ class DiscUtilsTest {
     }
 
     @Test
-    @EnabledOnOs(OS.MAC)
+    @Disabled
     void test() throws Exception {
         URI uri = URI.create("discutils:file:" + discImage);
-        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Collections.emptyMap());
+        Map<String, Object> env = new HashMap<>();
+        env.put("volumeNumber", 1);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
+        Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+    }
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
     }
 }

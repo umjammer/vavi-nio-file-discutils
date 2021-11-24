@@ -139,5 +139,19 @@
       <version>5.3.0</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>${vavi-net-fuse.groupId}</groupId>
+      <artifactId>vavi-net-fuse</artifactId>
+      <version>${vavi-net-fuse.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${vavi-net-fuse.groupId}</groupId>
+      <artifactId>vavi-net-fuse</artifactId>
+      <version>${vavi-net-fuse.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

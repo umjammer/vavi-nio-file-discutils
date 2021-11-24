@@ -30,6 +30,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.ClusterMap;
 import DiscUtils.Core.ClusterRoles;
@@ -151,6 +154,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             while (mftStream.getPosition() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
 
+Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytesToString(recordData, 0, 4));
                 if (!EndianUtilities.bytesToString(recordData, 0, 4).equals("FILE")) {
                     continue;
                 }

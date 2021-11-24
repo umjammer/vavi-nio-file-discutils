@@ -32,6 +32,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.Internal.LogicalVolumeFactory;
 import DiscUtils.Core.Partitions.PartitionInfo;
@@ -201,7 +204,7 @@ public final class VolumeManager implements Serializable {
                                                           LogicalVolumeStatus.Healthy);
 
             result.put(lvi.getIdentity(), lvi);
-//Debug.println("Lp: " + lvi.getIdentity());
+Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
         }
     }
 
@@ -258,12 +261,13 @@ public final class VolumeManager implements Serializable {
                     for (PartitionInfo part : table.getPartitions()) {
                         PhysicalVolumeInfo pvi = new PhysicalVolumeInfo(diskId, disk, part);
                         result.put(pvi.getIdentity(), pvi);
-//Debug.println("P: " + pvi.getIdentity());
+Debug.println(Level.FINE, "P: " + pvi.getIdentity());
                     }
                 }
             } else {
                 PhysicalVolumeInfo pvi = new PhysicalVolumeInfo(diskId, disk);
                 result.put(pvi.getIdentity(), pvi);
+Debug.println(Level.FINE, "P: " + pvi.getIdentity());
             }
         }
 
@@ -274,6 +278,7 @@ public final class VolumeManager implements Serializable {
         VirtualDisk disk = _disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
+Debug.println(Level.FINE, "guid: " + guid);
             if (!guid.equals(EMPTY)) {
                 return "DG" + String.format("{%s}", guid);
             }

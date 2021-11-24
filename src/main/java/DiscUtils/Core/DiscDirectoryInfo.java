@@ -252,4 +252,10 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
             throw new dotnet4j.io.IOException(e);
         }
     }
+
+	@Override
+	public String toString() {
+		return String.format("DiscDirectoryInfo [getFullName()=%s, getDirectories()=%s, getFiles()=%s]", getFullName(),
+				getDirectories(), getFiles());
+	}
 }

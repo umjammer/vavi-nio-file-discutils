@@ -75,6 +75,7 @@ public class VirtualDiskManager {
                 }
             }
         }
+Debug.println(Level.FINE, "typeMap: " + typeMap);
 Debug.println(Level.FINE, "extensionMap: " + extensionMap);
 
 		ServiceLoader<VirtualDiskTransport> transports = ServiceLoader.load(VirtualDiskTransport.class);
@@ -85,6 +86,6 @@ Debug.println(Level.FINE, "extensionMap: " + extensionMap);
                 diskTransports.put(annotation.scheme().toUpperCase(), transport);
             }
         }
-Debug.println(Level.FINE, "diskTransports: " + extensionMap);
+Debug.println(Level.FINE, "diskTransports: " + diskTransports);
     }
 }

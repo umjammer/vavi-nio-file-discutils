@@ -23,6 +23,9 @@
 package DiscUtils.Vdi;
 
 import java.util.UUID;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
@@ -182,7 +185,7 @@ public class HeaderRecord {
             EndianUtilities.writeBytesLittleEndian(parentId, buffer, offset + 332);
         } else if (fileVersion.getMajor() == 1 && fileVersion.getMinor() == 1) {
             EndianUtilities.writeBytesLittleEndian(headerSize, buffer, offset + 0);
-//Debug.println(headerSize);
+Debug.println(Level.FINE, headerSize);
             EndianUtilities.writeBytesLittleEndian(imageType.ordinal(), buffer, offset + 4);
             EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 8);
             EndianUtilities.stringToBytes(comment, buffer, offset + 12, 256);
