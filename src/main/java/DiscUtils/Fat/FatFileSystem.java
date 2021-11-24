@@ -321,17 +321,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the friendly name for the file system, including FAT variant.
      */
     public String getFriendlyName() {
-        switch (getFatVariant()) {
-        case Fat12:
-            return "Microsoft FAT12";
-        case Fat16:
-            return "Microsoft FAT16";
-        case Fat32:
-            return "Microsoft FAT32";
-        default:
-            return "Unknown FAT";
-
-        }
+       return _fatVariant.getFriendlyName();
     }
 
     /**

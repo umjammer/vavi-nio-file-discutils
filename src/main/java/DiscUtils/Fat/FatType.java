@@ -32,28 +32,34 @@ public enum FatType {
     /**
      * Represents no known FAT type.
      */
-    None(0),
+    None(0, "Unknown FAT"),
     /**
      * Represents a 12-bit FAT.
      */
-    Fat12(12),
+    Fat12(12, "Microsoft FAT12"),
     /**
      * Represents a 16-bit FAT.
      */
-    Fat16(16),
+    Fat16(16, "Microsoft FAT16"),
     /**
      * Represents a 32-bit FAT.
      */
-    Fat32(32);
+    Fat32(32, "Microsoft FAT32");
 
     private int value;
+    private String friendlyName;
 
     public int getValue() {
         return value;
     }
 
-    private FatType(int value) {
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    private FatType(int value, String friendlyName) {
         this.value = value;
+        this.friendlyName = friendlyName;
     }
 
     public static FatType valueOf(int value) {
