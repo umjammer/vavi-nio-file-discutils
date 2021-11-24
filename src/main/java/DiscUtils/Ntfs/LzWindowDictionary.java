@@ -40,7 +40,7 @@ public final class LzWindowDictionary {
     public LzWindowDictionary() {
         initalize();
         // Build the index list, so Lz compression will become significantly faster
-        _offsetList = new ArrayList[0x100];
+        _offsetList = new List[0x100];
         for (int i = 0; i < _offsetList.length; i++) {
             _offsetList[i] = new ArrayList<>();
         }
