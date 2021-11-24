@@ -57,7 +57,7 @@ public class ObjectCache<K, V> {
         _recent = new ArrayList<>();
     }
 
-    public V get(K key) {
+    public synchronized V get(K key) {
         for (int i = 0; i < _recent.size(); ++i) {
             Tuple<K, V> recentEntry = _recent.get(i);
             if (recentEntry.getKey().equals(key)) {
@@ -77,14 +77,14 @@ public class ObjectCache<K, V> {
         return null;
     }
 
-    public V put(K key, V value) {
+    public synchronized V put(K key, V value) {
         WeakReference<V> v = _entries.put(key, new WeakReference<>(value));
         makeMostRecent(key, value);
         pruneEntries();
         return v != null ? v.get() : null;
     }
 
-    public V remove(Object key) {
+    public synchronized V remove(Object key) {
         for (int i = 0; i < _recent.size(); ++i) {
             if (_recent.get(i).getKey().equals(key)) {
                 _recent.remove(i);
@@ -94,7 +94,7 @@ public class ObjectCache<K, V> {
         return _entries.remove(key).get();
     }
 
-    private void pruneEntries() {
+    private synchronized void pruneEntries() {
         _nextPruneCount++;
         if (_nextPruneCount > PruneGap) {
             List<K> toPrune = new ArrayList<>();
@@ -110,7 +110,7 @@ public class ObjectCache<K, V> {
         }
     }
 
-    private void makeMostRecent(int i) {
+    private synchronized void makeMostRecent(int i) {
         if (i == 0) {
             return;
         }
@@ -120,7 +120,7 @@ public class ObjectCache<K, V> {
         _recent.add(0, entry);
     }
 
-    private void makeMostRecent(K key, V val) {
+    private synchronized void makeMostRecent(K key, V val) {
         while (_recent.size() >= MostRecentListSize) {
             _recent.remove(_recent.size() - 1);
         }

@@ -25,6 +25,9 @@ package DiscUtils.Streams.Block;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
@@ -179,7 +182,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param count  The number of bytes to read.
      * @return The number of bytes read.
      */
-    public int read(byte[] buffer, int offset, int count) {
+    public synchronized int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (_position >= getLength()) {
@@ -229,6 +232,7 @@ public final class BlockCacheStream extends SparseStream {
                 int bytesToRead = Math.min(count - totalBytesRead, block[0].getAvailable() - offsetInNextBlock);
 
                 System.arraycopy(block[0].getData(), offsetInNextBlock, buffer, offset + totalBytesRead, bytesToRead);
+
                 offsetInNextBlock = 0;
                 totalBytesRead += bytesToRead;
                 _position += bytesToRead;
@@ -313,7 +317,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param origin The base location.
      * @return The new absolute stream position.
      */
-    public long seek(long offset, SeekOrigin origin) {
+    public synchronized long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
@@ -348,7 +352,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param offset The first byte to write from buffer.
      * @param count  The number of bytes to write.
      */
-    public void write(byte[] buffer, int offset, int count) {
+    public synchronized void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         _stats.setTotalWritesIn(_stats.getTotalWritesIn() + 1);
