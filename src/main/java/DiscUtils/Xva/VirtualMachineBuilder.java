@@ -24,12 +24,18 @@ package DiscUtils.Xva;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import DiscUtils.Core.Archives.TarFileBuilder;
@@ -135,6 +141,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
             TarFileBuilder tarBuilder = new TarFileBuilder();
             int[][] diskIds = new int[1][];
             String ovaFileContent = generateOvaXml(diskIds);
+//Debug.println(ovaFileContent);
             tarBuilder.addFile("ova.xml", ovaFileContent.getBytes(Charset.forName("ASCII")));
             int diskIdx = 0;
             for (DiskRecord diskRec : _disks) {
@@ -200,6 +207,23 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         throw new UnsupportedOperationException();
     }
 
+    private static final String[] names = {
+        "XVA_ova_base", "XVA_ova_ref", "XVA_ova_vbd", "XVA_ova_vm", "XVA_ova_vdi", "XVA_ova_sr"
+    };
+
+    private static final Map<String, String> getStaticStrings() {
+        Map<String, String> results = new HashMap<>();
+        Arrays.stream(names).forEach(s -> {
+            try {
+                String v = new String(Files.readAllBytes(Paths.get(VirtualMachineBuilder.class.getResource("/" + s + ".xml").toURI())));
+                results.put(s, v);
+            } catch (IOException | URISyntaxException e) {
+                throw new IllegalStateException(e);
+            }
+        });
+        return results;
+    }
+
     /**
      * @param diskIds {@cs out}
      */
@@ -230,21 +254,22 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         String srName = "SR";
         int srId = id++;
         String vbdRefs = "";
+        Map<String, String> staticStrings = getStaticStrings();
         for (int i = 0; i < _disks.size(); ++i) {
-            vbdRefs += String.format(StaticStrings.XVA_ova_ref, "Ref:" + vbdIds[i]);
+            vbdRefs += String.format(staticStrings.get("XVA_ova_ref"), "Ref:" + vbdIds[i]);
         }
         String vdiRefs = "";
         for (int i = 0; i < _disks.size(); ++i) {
-            vdiRefs += String.format(StaticStrings.XVA_ova_ref, "Ref:" + vdiIds[i]);
+            vdiRefs += String.format(staticStrings.get("XVA_ova_ref"), "Ref:" + vdiIds[i]);
         }
         StringBuilder objectsString = new StringBuilder();
-        objectsString.append(String.format(StaticStrings.XVA_ova_vm, "Ref:" + vmId, vmGuid, vmName, vbdRefs));
+        objectsString.append(String.format(staticStrings.get("XVA_ova_vm"), "Ref:" + vmId, vmGuid, vmName, vbdRefs));
         for (int i = 0; i < _disks.size(); ++i) {
             objectsString.append(String
-                    .format(StaticStrings.XVA_ova_vbd, "Ref:" + vbdIds[i], vbdGuids[i], "Ref:" + vmId, "Ref:" + vdiIds[i], i));
+                    .format(staticStrings.get("XVA_ova_vbd"), "Ref:" + vbdIds[i], vbdGuids[i], "Ref:" + vmId, "Ref:" + vdiIds[i], i));
         }
         for (int i = 0; i < _disks.size(); ++i) {
-            objectsString.append(String.format(StaticStrings.XVA_ova_vdi,
+            objectsString.append(String.format(staticStrings.get("XVA_ova_vdi"),
                                                "Ref:" + vdiIds[i],
                                                vdiGuids[i],
                                                vdiNames[i],
@@ -252,8 +277,8 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                                                "Ref:" + vbdIds[i],
                                                String.valueOf(vdiSizes[i])));
         }
-        objectsString.append(String.format(StaticStrings.XVA_ova_sr, "Ref:" + srId, srGuid, srName, vdiRefs));
+        objectsString.append(String.format(staticStrings.get("XVA_ova_sr"), "Ref:" + srId, srGuid, srName, vdiRefs));
         diskIds[0] = vdiIds;
-        return String.format(StaticStrings.XVA_ova_base, objectsString.toString());
+        return String.format(staticStrings.get("XVA_ova_base"), objectsString.toString());
     }
 }
