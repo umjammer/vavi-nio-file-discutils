@@ -36,7 +36,7 @@ import static DiscUtils.Core.IFileSystem.TOP_DIRECTORY_ONLY;
  */
 public final class DiscDirectoryInfo extends DiscFileSystemInfo {
 
-	/**
+    /**
      * Initializes a new instance of the DiscDirectoryInfo class.
      *
      * @param fileSystem The file system the directory info relates to.
@@ -253,9 +253,9 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
         }
     }
 
-	@Override
-	public String toString() {
-		return String.format("DiscDirectoryInfo [getFullName()=%s, getDirectories()=%s, getFiles()=%s]", getFullName(),
-				getDirectories(), getFiles());
-	}
+    @Override
+    public String toString() {
+        return String.format("DiscDirectoryInfo [getFullName()=%s, getDirectories()=%s, getFiles()=%s]", getFullName(),
+                getDirectories(), getFiles());
+    }
 }

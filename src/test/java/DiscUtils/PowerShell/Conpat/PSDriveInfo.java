@@ -22,7 +22,7 @@ public class PSDriveInfo implements Comparable<PSDriveInfo> {
     }
 
     protected PSDriveInfo(PSDriveInfo driveInfo) {
-        
+
     }
 
     public getPSCredential Credential() {

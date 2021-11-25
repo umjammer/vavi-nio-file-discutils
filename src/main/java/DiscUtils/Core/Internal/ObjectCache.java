@@ -128,20 +128,20 @@ public class ObjectCache<K, V> {
     }
 
     @Override
-	public String toString() {
-	    StringBuilder sb = new StringBuilder();
-	    sb.append("[");
-	    sb.append(_entries.size());
-	    sb.append("]");
-	    sb.append("{");
-	    _entries.entrySet().forEach(e -> {
-	        sb.append(e.getKey());
-	        sb.append('=');
-	        sb.append(e.getValue().get());
-	        sb.append(", ");
-	    });
-	    sb.setLength(sb.length() - 2);
-	    sb.append("}");
-	    return sb.toString();
-	}
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        sb.append(_entries.size());
+        sb.append("]");
+        sb.append("{");
+        _entries.entrySet().forEach(e -> {
+            sb.append(e.getKey());
+            sb.append('=');
+            sb.append(e.getValue().get());
+            sb.append(", ");
+        });
+        sb.setLength(sb.length() - 2);
+        sb.append("}");
+        return sb.toString();
+    }
 }

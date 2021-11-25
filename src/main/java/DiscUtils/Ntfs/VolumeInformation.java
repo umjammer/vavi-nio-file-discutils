@@ -88,6 +88,6 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
     }
 
     public String toString() {
-    	return "VolumeInformation: version: " + _majorVersion + "." + _minorVersion; 
+        return "VolumeInformation: version: " + _majorVersion + "." + _minorVersion; 
     }
 }

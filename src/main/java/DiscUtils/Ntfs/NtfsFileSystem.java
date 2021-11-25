@@ -138,7 +138,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
         _volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
 Debug.println(Level.FINE, _volumeInfo);
 
-		// Initialize access to the other well-known metadata files
+        // Initialize access to the other well-known metadata files
         _context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
         _context.setAttributeDefinitions(new AttributeDefinitions(getFile(MasterFileTable.AttrDefIndex)));
         _context.setUpperCase(new UpperCase(getFile(MasterFileTable.UpCaseIndex)));

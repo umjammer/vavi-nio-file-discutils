@@ -36,12 +36,12 @@ import dotnet4j.io.FileMode;
  */
 public interface IFileSystem {
 
-	/** */
-	String TOP_DIRECTORY_ONLY = "TopDirectoryOnly";
-	/** */
-	String ALL_DIRECTORIES = "AllDirectories";
+    /** */
+    String TOP_DIRECTORY_ONLY = "TopDirectoryOnly";
+    /** */
+    String ALL_DIRECTORIES = "AllDirectories";
 
-	/**
+    /**
      * Gets a value indicating whether the file system is read-only or
      * read-write.
      *

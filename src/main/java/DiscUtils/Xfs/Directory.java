@@ -42,7 +42,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
     private Map<String, DirEntry> _allEntries;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	public List<DirEntry> getAllEntries() {
+    public List<DirEntry> getAllEntries() {
         if (_allEntries != null)
             return new ArrayList<>(_allEntries.values());
 

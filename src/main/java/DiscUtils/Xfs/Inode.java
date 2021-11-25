@@ -41,7 +41,7 @@ import dotnet4j.io.MemoryStream;
 
 public class Inode implements IByteArraySerializable {
     public Inode(long number, Context context) {
-    	_number = number;
+        _number = number;
         SuperBlock sb = context.getSuperBlock();
         setRelativeInodeNumber((int) (number & sb.getRelativeInodeMask()));
         setAllocationGroup((int) ((number & sb.getAgInodeMask()) >>> (sb.getAgBlocksLog2() + sb.getInodesPerBlockLog2())));
@@ -101,9 +101,9 @@ public class Inode implements IByteArraySerializable {
 
     private long _number;
 
-	public long getNumber() {
-    	return _number;
-	}
+    public long getNumber() {
+        return _number;
+    }
 
     public static final short InodeMagic = 0x494e;
 

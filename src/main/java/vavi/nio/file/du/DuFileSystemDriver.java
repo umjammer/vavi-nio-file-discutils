@@ -67,7 +67,7 @@ public final class DuFileSystemDriver extends CachedFileSystemDriver<DiscFileSys
 
     @Override
     protected String getFilenameString(DiscFileSystemInfo entry) {
-    	return toJavaPathString(entry.getFullName());
+        return toJavaPathString(entry.getFullName());
     }
 
     @Override
@@ -79,7 +79,7 @@ public final class DuFileSystemDriver extends CachedFileSystemDriver<DiscFileSys
     protected DiscFileSystemInfo getRootEntry(Path root) throws IOException {
 Debug.println(Level.FINE, "path: " + toDuPathString(root));
 //Debug.println(Level.FINE, "root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
-    	return fileSystem.getDirectoryInfo(toDuPathString(root));
+        return fileSystem.getDirectoryInfo(toDuPathString(root));
     }
 
     @Override
@@ -89,7 +89,7 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
         if (entry.getAttributes().contains(FileAttributes.Directory)) {
             return fileSystem.getDirectoryInfo(pathString);
         } else {
-        	return fileSystem.getFileInfo(pathString);
+            return fileSystem.getFileInfo(pathString);
         }
     }
 
@@ -124,11 +124,11 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
 
     @Override
     protected List<DiscFileSystemInfo> getDirectoryEntries(DiscFileSystemInfo dirEntry, Path dir) throws IOException {
-    	List<DiscFileSystemInfo> list = new ArrayList<>();
-    	List<DiscDirectoryInfo> folders = DiscDirectoryInfo.class.cast(dirEntry).getDirectories();
-    	list.addAll(folders);
-    	List<DiscFileInfo> files = DiscDirectoryInfo.class.cast(dirEntry).getFiles();
-    	list.addAll(files);
+        List<DiscFileSystemInfo> list = new ArrayList<>();
+        List<DiscDirectoryInfo> folders = DiscDirectoryInfo.class.cast(dirEntry).getDirectories();
+        list.addAll(folders);
+        List<DiscFileInfo> files = DiscDirectoryInfo.class.cast(dirEntry).getFiles();
+        list.addAll(files);
         return list;
     }
 
@@ -141,7 +141,7 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
 
     @Override
     protected boolean hasChildren(DiscFileSystemInfo dirEntry, Path dir) throws IOException {
-    	return getDirectoryEntries(dirEntry, dir).size() > 0;
+        return getDirectoryEntries(dirEntry, dir).size() > 0;
     }
 
     @Override
@@ -153,7 +153,7 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
 
     @Override
     protected DiscFileSystemInfo copyEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target, Set<CopyOption> options) throws IOException {
-    	fileSystem.copyFile(toDuPathString(source), toDuPathString(target));
+        fileSystem.copyFile(toDuPathString(source), toDuPathString(target));
         return getEntry(null, target);
     }
 
@@ -161,7 +161,7 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
     protected DiscFileSystemInfo moveEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target, boolean targetIsParent) throws IOException {
         fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
         if (targetIsParent) {
-        	return getEntry(null, target.resolve(source.getFileName()));
+            return getEntry(null, target.resolve(source.getFileName()));
         } else {
             return getEntry(null, target);
         }

@@ -38,7 +38,7 @@ import dotnet4j.io.FileMode;
  */
 public abstract class DiscFileSystem implements Serializable, IFileSystem, Closeable {
 
-	/**
+    /**
      * Initializes a new instance of the DiscFileSystem class.
      */
     protected DiscFileSystem() {

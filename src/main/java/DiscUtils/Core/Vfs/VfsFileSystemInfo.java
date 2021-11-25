@@ -80,7 +80,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      */
     public DiscFileSystem open(VolumeInfo volume, FileSystemParameters parameters) {
 Debug.println(Level.INFO, _openDelegate + ", " + volume);
-    	return _openDelegate.invoke(volume.open(), volume, parameters);
+        return _openDelegate.invoke(volume.open(), volume, parameters);
     }
 
     /**
