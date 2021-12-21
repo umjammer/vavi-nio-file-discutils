@@ -18,13 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
-import com.github.fge.filesystem.driver.CachedFileSystemDriver;
+import com.github.fge.filesystem.driver.ExtendedFileSystemDriver;
 import com.github.fge.filesystem.exceptions.IsDirectoryException;
 import com.github.fge.filesystem.provider.FileSystemFactoryProvider;
-
-import vavi.util.Debug;
 
 import static vavi.nio.file.Util.toPathString;
 
@@ -44,7 +41,7 @@ import dotnet4j.io.compat.StreamOutputStream;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/17 umjammer initial version <br>
  */
-public final class DuFileSystemDriver extends CachedFileSystemDriver<DiscFileSystemInfo> {
+public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileSystemInfo> {
 
     private DiscFileSystem fileSystem;
 
@@ -76,14 +73,12 @@ public final class DuFileSystemDriver extends CachedFileSystemDriver<DiscFileSys
     }
 
     @Override
-    protected DiscFileSystemInfo getRootEntry(Path root) throws IOException {
-Debug.println(Level.FINE, "path: " + toDuPathString(root));
-//Debug.println(Level.FINE, "root: " + fileSystem.getDirectoryInfo(toDuPathString(root)));
-        return fileSystem.getDirectoryInfo(toDuPathString(root));
+    protected boolean exists(DiscFileSystemInfo entry) throws IOException {
+        return fileSystem.exists(entry.getFullName());
     }
 
     @Override
-    protected DiscFileSystemInfo getEntry(DiscFileSystemInfo parentEntry, Path path)throws IOException {
+    protected DiscFileSystemInfo getEntry(Path path)throws IOException {
         String pathString = toDuPathString(path);
         DiscFileSystemInfo entry = fileSystem.getFileSystemInfo(pathString);
         if (entry.getAttributes().contains(FileAttributes.Directory)) {
@@ -98,28 +93,9 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
         return new StreamInputStream(fileSystem.openFile(toDuPathString(path), FileMode.Open));
     }
 
-    /**
-     * fuse からだと
-     * <ol>
-     * <li>create -> newByteChannel
-     * <li>flush -> n/a
-     * <li>lock -> n/a
-     * <li>release -> byteChannel.close
-     * </ol>
-     * と呼ばれる <br/>
-     * 元のファイルが取れない... <br/>
-     * 書き込みの指示もない...
-     * <p>
-     * nio.file からだと
-     * 
-     * <pre>
-     * newOutputStream -> write(2)
-     * </pre>
-     */
     @Override
     protected OutputStream uploadEntry(DiscFileSystemInfo parentEntry, Path path, Set<? extends OpenOption> options) throws IOException {
         return new StreamOutputStream(fileSystem.openFile(toDuPathString(path), FileMode.OpenOrCreate));
-        // TODO cache.addEntry(path, newEntry);
     }
 
     @Override
@@ -136,7 +112,7 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
     protected DiscFileSystemInfo createDirectoryEntry(DiscFileSystemInfo parentEntry, Path dir) throws IOException {
         // TODO: how to diagnose?
         fileSystem.createDirectory(dir.toString());
-        return getEntry(null, dir);
+        return getEntry(dir);
     }
 
     @Override
@@ -154,16 +130,16 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
     @Override
     protected DiscFileSystemInfo copyEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target, Set<CopyOption> options) throws IOException {
         fileSystem.copyFile(toDuPathString(source), toDuPathString(target));
-        return getEntry(null, target);
+        return getEntry(target);
     }
 
     @Override
     protected DiscFileSystemInfo moveEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target, boolean targetIsParent) throws IOException {
         fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
         if (targetIsParent) {
-            return getEntry(null, target.resolve(source.getFileName()));
+            return getEntry(target.resolve(source.getFileName()));
         } else {
-            return getEntry(null, target);
+            return getEntry(target);
         }
     }
 
@@ -176,7 +152,7 @@ Debug.println(Level.FINE, "path: " + toDuPathString(root));
     @Override
     protected DiscFileSystemInfo renameEntry(DiscFileSystemInfo sourceEntry, DiscFileSystemInfo targetParentEntry, Path source, Path target) throws IOException {
         fileSystem.moveFile(toDuPathString(source), toDuPathString(target));
-        return getEntry(null, target);
+        return getEntry(target);
     }
 
     @Override

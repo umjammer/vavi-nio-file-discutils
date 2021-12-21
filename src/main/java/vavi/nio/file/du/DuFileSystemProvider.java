@@ -6,7 +6,15 @@
 
 package vavi.nio.file.du;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+
 import com.github.fge.filesystem.provider.FileSystemProviderBase;
+
+import vavi.util.Debug;
 
 
 /**
@@ -17,9 +25,20 @@ import com.github.fge.filesystem.provider.FileSystemProviderBase;
  */
 public final class DuFileSystemProvider extends FileSystemProviderBase {
 
-    public static final String PARAM_ID = "id";
-
     public DuFileSystemProvider() {
         super(new DuFileSystemRepository());
+    }
+
+    /**
+     * utility
+     * TODO consider more
+     */
+    public static URI createURI(String path) throws IOException {
+        String url = URLEncoder.encode(Paths.get(path).toAbsolutePath().toString(), "utf-8");
+        url = url.replace("%2F", "/");
+        url = url.replace("+", "%20");
+        URI uri = URI.create("discutils:file:" + url);
+Debug.println(Level.FINE, "uri: " + uri);
+        return uri;
     }
 }
