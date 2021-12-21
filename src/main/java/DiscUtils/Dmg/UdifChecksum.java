@@ -27,20 +27,20 @@ import DiscUtils.Streams.Util.EndianUtilities;
 
 
 public class UdifChecksum implements IByteArraySerializable {
-    public int ChecksumSize;
+    public int checksumSize;
 
-    public byte[] Data;
+    public byte[] data;
 
-    public int Type;
+    public int type;
 
     public int size() {
         return 136;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Type = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        ChecksumSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        Data = EndianUtilities.toByteArray(buffer, offset + 8, 128);
+        type = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
+        checksumSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        data = EndianUtilities.toByteArray(buffer, offset + 8, 128);
         return 136;
     }
 

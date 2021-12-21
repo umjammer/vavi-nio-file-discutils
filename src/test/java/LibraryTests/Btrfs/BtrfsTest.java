@@ -42,7 +42,7 @@ public class BtrfsTest {
     public void emptyStreamIsNoValidBtrfs() throws Exception {
         try (Stream ms = new MemoryStream()) {
             IOException ex = assertThrows(IOException.class, () -> {
-                return new BtrfsFileSystem(ms);
+                new BtrfsFileSystem(ms);
             });
             assertEquals("No Superblock detected", ex.getMessage());
         }

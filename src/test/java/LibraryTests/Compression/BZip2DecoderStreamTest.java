@@ -74,7 +74,7 @@ public class BZip2DecoderStreamTest {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidBlockCrcData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
         assertThrows(IOException.class, () -> {
-            return decoder.read(buffer, 0, 1024);
+            decoder.read(buffer, 0, 1024);
         });
     }
 
@@ -83,7 +83,7 @@ public class BZip2DecoderStreamTest {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidCombinedCrcData), Ownership.Dispose);
         byte[] buffer = new byte[1024];
         assertThrows(IOException.class, () -> {
-            return decoder.read(buffer, 0, 1024);
+            decoder.read(buffer, 0, 1024);
         });
     }
 
@@ -92,7 +92,7 @@ public class BZip2DecoderStreamTest {
         BZip2DecoderStream decoder = new BZip2DecoderStream(new MemoryStream(InvalidCombinedCrcData), Ownership.Dispose);
         byte[] buffer = new byte[21];
         assertThrows(IOException.class, () -> {
-            return decoder.read(buffer, 0, 21);
+            decoder.read(buffer, 0, 21);
         });
     }
 }

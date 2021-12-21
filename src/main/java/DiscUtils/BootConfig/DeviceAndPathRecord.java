@@ -38,14 +38,7 @@ public class DeviceAndPathRecord extends DeviceRecord {
     }
 
     public String toString() {
-        try {
-            return _container + ":" + _path;
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
-        }
-
+        return _container + ":" + _path;
     }
 
     protected void doParse(byte[] data, int offset) {

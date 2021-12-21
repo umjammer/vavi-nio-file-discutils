@@ -42,7 +42,6 @@ import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.Geometry;
 import DiscUtils.Core.IClusterBasedFileSystem;
 import DiscUtils.Core.IDiagnosticTraceable;
-import DiscUtils.Core.IFileSystem;
 import DiscUtils.Core.IWindowsFileSystem;
 import DiscUtils.Core.InvalidFileSystemException;
 import DiscUtils.Core.ReparsePoint;
@@ -252,7 +251,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 }
             }
 
-            File newFile = File.createNew(_context, destParentDir.getStandardInformation()._FileAttributes);
+            File newFile = File.createNew(_context, destParentDir.getStandardInformation()._fileAttributes);
             for (NtfsStream origStream : origFile.getAllStreams()) {
                 NtfsStream newStream = newFile.getStream(origStream.getAttributeType(), origStream.getName());
 
@@ -689,7 +688,7 @@ Debug.println(Level.FINE, _volumeInfo);
             }
 
             updateStandardInformation(dirEntry, file, si -> {
-                si._FileAttributes = FileNameRecord.setAttributes(_newValue, si._FileAttributes);
+                si._fileAttributes = FileNameRecord.setAttributes(_newValue, si._fileAttributes);
             });
         }
     }
@@ -719,7 +718,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void setCreationTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            updateStandardInformation(path, si -> si.CreationTime = newTime);
+            updateStandardInformation(path, si -> si._creationTime = newTime);
         }
     }
 
@@ -748,7 +747,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void setLastAccessTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            updateStandardInformation(path, si -> si.LastAccessTime = newTime);
+            updateStandardInformation(path, si -> si._lastAccessTime = newTime);
         }
     }
 
@@ -777,7 +776,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void setLastWriteTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            updateStandardInformation(path, si -> si.ModificationTime = newTime);
+            updateStandardInformation(path, si -> si._modificationTime = newTime);
         }
     }
 
@@ -1074,7 +1073,7 @@ Debug.println(Level.FINE, _volumeInfo);
             // actual file state
             NtfsStream stdInfoStream = file.getStream(AttributeType.StandardInformation, null);
             StandardInformation si = stdInfoStream.getContent(StandardInformation.class);
-            si._FileAttributes.add(FileAttributeFlags.ReparsePoint);
+            si._fileAttributes.add(FileAttributeFlags.ReparsePoint);
             stdInfoStream.setContent(si);
 
             // Update the directory entry used to open the file, so it's
@@ -1271,11 +1270,11 @@ Debug.println(Level.FINE, _volumeInfo);
             StandardInformation si = file.getStandardInformation();
 
             WindowsFileInformation wfi = new WindowsFileInformation();
-            wfi.setCreationTime(si.CreationTime);
-            wfi.setLastAccessTime(si.LastAccessTime);
-            wfi.setChangeTime(si.MftChangedTime);
-            wfi.setLastWriteTime(si.ModificationTime);
-            wfi.setFileAttributes(StandardInformation.convertFlags(si._FileAttributes, file.isDirectory()));
+            wfi.setCreationTime(si._creationTime);
+            wfi.setLastAccessTime(si._lastAccessTime);
+            wfi.setChangeTime(si._mftChangedTime);
+            wfi.setLastWriteTime(si._modificationTime);
+            wfi.setFileAttributes(StandardInformation.convertFlags(si._fileAttributes, file.isDirectory()));
             return wfi;
         }
     }
@@ -1289,11 +1288,11 @@ Debug.println(Level.FINE, _volumeInfo);
     public void setFileStandardInformation(String path, WindowsFileInformation info) {
         try (Closeable ntfs = new NtfsTransaction()) {
             updateStandardInformation(path, si -> {
-                si.CreationTime = info.getCreationTime();
-                si.LastAccessTime = info.getLastAccessTime();
-                si.MftChangedTime = info.getChangeTime();
-                si.ModificationTime = info.getLastWriteTime();
-                si._FileAttributes = StandardInformation.setFileAttributes(info.getFileAttributes(), si._FileAttributes);
+                si._creationTime = info.getCreationTime();
+                si._lastAccessTime = info.getLastAccessTime();
+                si._mftChangedTime = info.getChangeTime();
+                si._modificationTime = info.getLastWriteTime();
+                si._fileAttributes = StandardInformation.setFileAttributes(info.getFileAttributes(), si._fileAttributes);
             });
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -1531,7 +1530,7 @@ Debug.println(Level.FINE, _volumeInfo);
             for (int i = 0; i < pathElements.length; ++i) {
                 DirectoryEntry childDirEntry = focusDir.getEntryByName(pathElements[i]);
                 if (childDirEntry == null) {
-                    EnumSet<FileAttributeFlags> newDirAttrs = focusDir.getStandardInformation()._FileAttributes;
+                    EnumSet<FileAttributeFlags> newDirAttrs = focusDir.getStandardInformation()._fileAttributes;
                     if (options != null && options.getCompressed().isPresent()) {
                         if (options.getCompressed().get()) {
                             newDirAttrs.add(FileAttributeFlags.Compressed);
@@ -1807,7 +1806,7 @@ Debug.println(Level.FINE, _volumeInfo);
         DirectoryEntry result;
         DirectoryEntry parentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(path));
         Directory parentDir = getDirectory(parentDirEntry.getReference());
-        EnumSet<FileAttributeFlags> newFileAttrs = parentDir.getStandardInformation()._FileAttributes;
+        EnumSet<FileAttributeFlags> newFileAttrs = parentDir.getStandardInformation()._fileAttributes;
         if (options != null && options.getCompressed().isPresent()) {
             if (options.getCompressed().get()) {
                 newFileAttrs.add(FileAttributeFlags.Compressed);
@@ -1925,7 +1924,7 @@ Debug.println(Level.FINE, _volumeInfo);
             // actual file state
             NtfsStream stdInfoStream = file.getStream(AttributeType.StandardInformation, null);
             StandardInformation si = stdInfoStream.getContent(StandardInformation.class);
-            si._FileAttributes.remove(FileAttributeFlags.ReparsePoint);
+            si._fileAttributes.remove(FileAttributeFlags.ReparsePoint);
             stdInfoStream.setContent(si);
             // Remove the reparse point from the index
             _context.getReparsePoints().remove(rp.Tag, file.getMftReference());
@@ -1939,7 +1938,7 @@ Debug.println(Level.FINE, _volumeInfo);
         }
 
         StandardInformation si = file.getStandardInformation();
-        return _context.getSecurityDescriptors().getDescriptorById(si.SecurityId);
+        return _context.getSecurityDescriptors().getDescriptorById(si._securityId);
     }
 
     private void doSetSecurity(File file, RawSecurityDescriptor securityDescriptor) {
@@ -1954,7 +1953,7 @@ Debug.println(Level.FINE, _volumeInfo);
             // actual file state
             NtfsStream stream = file.getStream(AttributeType.StandardInformation, null);
             StandardInformation si = stream.getContent(StandardInformation.class);
-            si.SecurityId = id;
+            si._securityId = id;
             stream.setContent(si);
             // Write attribute changes back to the Master File Table
             file.updateRecordInMft();

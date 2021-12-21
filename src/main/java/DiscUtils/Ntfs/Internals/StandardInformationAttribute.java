@@ -52,21 +52,21 @@ public final class StandardInformationAttribute extends GenericAttribute {
      * Gets the Unknown.
      */
     public long getClassId() {
-        return _si.ClassId;
+        return _si._classId;
     }
 
     /**
      * Gets the creation time of the file.
      */
     public long getCreationTime() {
-        return _si.CreationTime;
+        return _si._creationTime;
     }
 
     /**
      * Gets the attributes of the file, as stored by NTFS.
      */
     public EnumSet<NtfsFileAttributes> getFileAttributes() {
-        return FileAttributeFlags.cast(NtfsFileAttributes.class, _si._FileAttributes);
+        return FileAttributeFlags.cast(NtfsFileAttributes.class, _si._fileAttributes);
     }
 
     /**
@@ -74,49 +74,49 @@ public final class StandardInformationAttribute extends GenericAttribute {
      * user-readable journal).
      */
     public long getJournalSequenceNumber() {
-        return _si.UpdateSequenceNumber;
+        return _si._updateSequenceNumber;
     }
 
     /**
      * Gets the last access time of the file.
      */
     public long getLastAccessTime() {
-        return _si.LastAccessTime;
+        return _si._lastAccessTime;
     }
 
     /**
      * Gets the last time the Master File Table entry for the file was changed.
      */
     public long getMasterFileTableChangedTime() {
-        return _si.MftChangedTime;
+        return _si._mftChangedTime;
     }
 
     /**
      * Gets the maximum number of file versions (normally 0).
      */
     public long getMaxVersions() {
-        return _si.MaxVersions;
+        return _si._maxVersions;
     }
 
     /**
      * Gets the modification time of the file.
      */
     public long getModificationTime() {
-        return _si.ModificationTime;
+        return _si._modificationTime;
     }
 
     /**
      * Gets the owner identity, for the purposes of quota allocation.
      */
     public long getOwnerId() {
-        return _si.OwnerId;
+        return _si._ownerId;
     }
 
     /**
      * Gets the amount charged to the owners quota for this file.
      */
     public long getQuotaCharged() {
-        return _si.QuotaCharged;
+        return _si._quotaCharged;
     }
 
     /**
@@ -125,13 +125,13 @@ public final class StandardInformationAttribute extends GenericAttribute {
      * Security Descriptors are stored in the \$Secure meta-data file.
      */
     public long getSecurityId() {
-        return _si.SecurityId;
+        return _si._securityId;
     }
 
     /**
      * Gets the version number of the file (normally 0).
      */
     public long getVersion() {
-        return _si.Version;
+        return _si._version;
     }
 }

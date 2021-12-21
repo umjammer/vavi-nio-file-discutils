@@ -60,7 +60,7 @@ public class DiskTest {
         try (Disk disk = Disk.initializeFixed(ms, Ownership.Dispose, 8 * 1024 * 1024)) {
         }
         assertThrows(dotnet4j.io.IOException.class, () -> {
-            return ms.readByte();
+            ms.readByte();
         });
     }
 

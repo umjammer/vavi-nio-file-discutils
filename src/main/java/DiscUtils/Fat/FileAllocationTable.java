@@ -40,6 +40,8 @@ public class FileAllocationTable {
         _stream = stream;
         _firstFatSector = firstFatSector;
         _numFats = numFats;
+
+//Debug.printf(Level.FINE, "%d, %016x", _firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector);
         _stream.setPosition((firstFatSector + fatSize * activeFat) * Sizes.Sector);
         _buffer = new FatBuffer(type, StreamUtilities.readExact(_stream, fatSize * Sizes.Sector));
     }

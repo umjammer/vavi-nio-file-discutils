@@ -61,11 +61,11 @@ public class ClusterStream extends Stream {
         } else {
             _knownClusters.add(FatBuffer.EndOfChain);
         }
-        if (_length == 0xffffffff) {
+        if (_length == 0xffff_ffff) {
             _length = detectLength();
         }
 
-        _currentCluster = 0xffffffff;
+        _currentCluster = 0xffff_ffff;
         _clusterBuffer = new byte[_reader.getClusterSize()];
     }
 
@@ -350,21 +350,20 @@ public class ClusterStream extends Stream {
         int index = (int) (pos / _reader.getClusterSize());
         if (_knownClusters.size() <= index) {
             if (!tryPopulateKnownClusters(index)) {
-                cluster[0] = 0xffffffff;
+                cluster[0] = 0xffff_ffff;
                 return false;
             }
         }
 
         // Chain is shorter than the current stream position
         if (_knownClusters.size() <= index) {
-            cluster[0] = 0xffffffff;
+            cluster[0] = 0xffff_ffff;
             return false;
         }
 
         cluster[0] = _knownClusters.get(index);
-        // This is the 'special' End-of-chain cluster identifer, so the stream
-        // position
-        // is greater than the actual file length.
+        // This is the 'special' End-of-chain cluster identifier, so the stream
+        // position is greater than the actual file length.
         if (_fat.isEndOfChain(cluster[0])) {
             return false;
         }

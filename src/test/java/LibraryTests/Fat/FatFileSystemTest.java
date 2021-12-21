@@ -196,8 +196,8 @@ public class FatFileSystemTest {
     public void openFileAsDir() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
 
-        try (Stream s = fs.openFile("FOO.TXT", FileMode.Create, FileAccess.ReadWrite)) {
-            StreamWriter w = new StreamWriter(s);
+        try (Stream s = fs.openFile("FOO.TXT", FileMode.Create, FileAccess.ReadWrite);
+            StreamWriter w = new StreamWriter(s)) {
             w.writeLine("FOO - some sample text");
             w.flush();
         }
@@ -215,8 +215,8 @@ public class FatFileSystemTest {
 
         try (Stream t = fs.openFile("BAR\\AAA.TXT", FileMode.Create, FileAccess.ReadWrite)) {
         }
-        try (Stream s = fs.openFile("BAR\\FOO.TXT", FileMode.Create, FileAccess.ReadWrite)) {
-            StreamWriter w = new StreamWriter(s);
+        try (Stream s = fs.openFile("BAR\\FOO.TXT", FileMode.Create, FileAccess.ReadWrite);
+            StreamWriter w = new StreamWriter(s)) {
             w.writeLine("FOO - some sample text");
             w.flush();
         }
@@ -226,8 +226,8 @@ public class FatFileSystemTest {
 
         // Check we can access a file without any errors
         SparseStream roDiskStream = SparseStream.readOnly(diskStream, Ownership.None);
-        FatFileSystem fatFs = new FatFileSystem(roDiskStream);
-        try (Stream fileStream = fatFs.openFile("BAR\\FOO.TXT", FileMode.Open)) {
+        try (FatFileSystem fatFs = new FatFileSystem(roDiskStream);
+            Stream fileStream = fatFs.openFile("BAR\\FOO.TXT", FileMode.Open)) {
             fileStream.readByte();
         }
     }
@@ -239,7 +239,7 @@ public class FatFileSystemTest {
         stream.write(buffer, 0, 1024 * 1024);
         stream.setPosition(0);
         assertThrows(IllegalStateException.class, () -> { // InvalidFileSystemException
-            return new FatFileSystem(stream);
+            new FatFileSystem(stream);
         });
     }
 }

@@ -264,9 +264,9 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
                         File referencedFile = new File(_context, refFile);
                         StandardInformation si = referencedFile.getStandardInformation();
-                        if (si.CreationTime != entry.getKey()._creationTime ||
-                            si.MftChangedTime != entry.getKey()._mftChangedTime ||
-                            si.ModificationTime != entry.getKey()._modificationTime) {
+                        if (si._creationTime != entry.getKey()._creationTime ||
+                            si._mftChangedTime != entry.getKey()._mftChangedTime ||
+                            si._modificationTime != entry.getKey()._modificationTime) {
                             reportInfo("Directory entry %s in %s is out of date", entry.getKey(), f);
                         }
                     }

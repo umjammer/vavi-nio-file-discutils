@@ -236,8 +236,8 @@ class File {
         long now = System.currentTimeMillis();
         NtfsStream siStream = getStream(AttributeType.StandardInformation, null);
         StandardInformation si = siStream.getContent(StandardInformation.class);
-        si.LastAccessTime = now;
-        si.ModificationTime = now;
+        si._lastAccessTime = now;
+        si._modificationTime = now;
         siStream.setContent(si);
         markMftRecordDirty();
     }
@@ -246,7 +246,7 @@ class File {
         long now = System.currentTimeMillis();
         NtfsStream siStream = getStream(AttributeType.StandardInformation, null);
         StandardInformation si = siStream.getContent(StandardInformation.class);
-        si.LastAccessTime = now;
+        si._lastAccessTime = now;
         siStream.setContent(si);
         markMftRecordDirty();
     }
@@ -260,7 +260,7 @@ class File {
             if (NtfsTransaction.getCurrent() != null) {
                 NtfsStream stream = getStream(AttributeType.StandardInformation, null);
                 StandardInformation si = stream.getContent(StandardInformation.class);
-                si.MftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
+                si._mftChangedTime = NtfsTransaction.getCurrent().getTimestamp();
                 stream.setContent(si);
             }
 
@@ -563,11 +563,11 @@ class File {
         StandardInformation si = getStandardInformation();
         NtfsAttribute anonDataAttr = getAttribute(AttributeType.Data, null);
 
-        fileName._creationTime = si.CreationTime;
-        fileName._modificationTime = si.ModificationTime;
-        fileName._mftChangedTime = si.MftChangedTime;
-        fileName._lastAccessTime = si.LastAccessTime;
-        fileName._flags = si._FileAttributes;
+        fileName._creationTime = si._creationTime;
+        fileName._modificationTime = si._modificationTime;
+        fileName._mftChangedTime = si._mftChangedTime;
+        fileName._lastAccessTime = si._lastAccessTime;
+        fileName._flags = si._fileAttributes;
 
         if (getMftRecordIsDirty() && NtfsTransaction.getCurrent() != null) {
             fileName._mftChangedTime = NtfsTransaction.getCurrent().getTimestamp();

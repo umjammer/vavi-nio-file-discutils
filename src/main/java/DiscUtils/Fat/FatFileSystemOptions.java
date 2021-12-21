@@ -39,8 +39,8 @@ public final class FatFileSystemOptions extends DiscFileSystemOptions {
     static {
         try {
             EncodingHelper.registerEncodings();
-        } catch (Exception __dummyStaticConstructorCatchVar0) {
-            throw new ExceptionInInitializerError(__dummyStaticConstructorCatchVar0);
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 

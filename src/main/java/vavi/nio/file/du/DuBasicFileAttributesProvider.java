@@ -48,7 +48,7 @@ public final class DuBasicFileAttributesProvider extends BasicFileAttributesProv
      */
     @Override
     public FileTime lastModifiedTime() {
-        return FileTime.fromMillis(entry.getLastAccessTimeUtc());
+        return FileTime.fromMillis(entry.getLastWriteTimeUtc());
     }
 
     /**

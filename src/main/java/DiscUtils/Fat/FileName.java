@@ -133,12 +133,12 @@ public final class FileName {
     public FileName deleted() {
         byte[] data = new byte[11];
         System.arraycopy(_raw, 0, data, 0, 11);
-        data[0] = (byte) 0xE5;
+        data[0] = (byte) 0xe5;
         return new FileName(data, 0);
     }
 
     public boolean isDeleted() {
-        return (_raw[0] & 0xff) == 0xE5;
+        return (_raw[0] & 0xff) == 0xe5;
     }
 
     public boolean isEndMarker() {
@@ -154,7 +154,7 @@ public final class FileName {
     }
 
     public int hashCode() {
-        int val = 0x1A8D3C4E;
+        int val = 0x1a8d3c4e;
         for (int i = 0; i < 11; ++i) {
             val = (val << 2) ^ _raw[i];
         }

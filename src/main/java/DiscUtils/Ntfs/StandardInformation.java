@@ -36,48 +36,48 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public final class StandardInformation implements IByteArraySerializable, IDiagnosticTraceable {
     private boolean _haveExtraFields = true;
 
-    public int ClassId;
+    public int _classId;
 
-    public long CreationTime;
+    public long _creationTime;
 
-    public EnumSet<FileAttributeFlags> _FileAttributes;
+    public EnumSet<FileAttributeFlags> _fileAttributes;
 
-    public long LastAccessTime;
+    public long _lastAccessTime;
 
-    public int MaxVersions;
+    public int _maxVersions;
 
-    public long MftChangedTime;
+    public long _mftChangedTime;
 
-    public long ModificationTime;
+    public long _modificationTime;
 
-    public int OwnerId;
+    public int _ownerId;
 
-    public long QuotaCharged;
+    public long _quotaCharged;
 
-    public int SecurityId;
+    public int _securityId;
 
-    public long UpdateSequenceNumber;
+    public long _updateSequenceNumber;
 
-    public int Version;
+    public int _version;
 
     public int size() {
         return _haveExtraFields ? 0x48 : 0x30;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        CreationTime = readDateTime(buffer, 0x00);
-        ModificationTime = readDateTime(buffer, 0x08);
-        MftChangedTime = readDateTime(buffer, 0x10);
-        LastAccessTime = readDateTime(buffer, 0x18);
-        _FileAttributes = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x20));
-        MaxVersions = EndianUtilities.toUInt32LittleEndian(buffer, 0x24);
-        Version = EndianUtilities.toUInt32LittleEndian(buffer, 0x28);
-        ClassId = EndianUtilities.toUInt32LittleEndian(buffer, 0x2C);
+        _creationTime = readDateTime(buffer, 0x00);
+        _modificationTime = readDateTime(buffer, 0x08);
+        _mftChangedTime = readDateTime(buffer, 0x10);
+        _lastAccessTime = readDateTime(buffer, 0x18);
+        _fileAttributes = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x20));
+        _maxVersions = EndianUtilities.toUInt32LittleEndian(buffer, 0x24);
+        _version = EndianUtilities.toUInt32LittleEndian(buffer, 0x28);
+        _classId = EndianUtilities.toUInt32LittleEndian(buffer, 0x2C);
         if (buffer.length > 0x30) {
-            OwnerId = EndianUtilities.toUInt32LittleEndian(buffer, 0x30);
-            SecurityId = EndianUtilities.toUInt32LittleEndian(buffer, 0x34);
-            QuotaCharged = EndianUtilities.toUInt64LittleEndian(buffer, 0x38);
-            UpdateSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, 0x40);
+            _ownerId = EndianUtilities.toUInt32LittleEndian(buffer, 0x30);
+            _securityId = EndianUtilities.toUInt32LittleEndian(buffer, 0x34);
+            _quotaCharged = EndianUtilities.toUInt64LittleEndian(buffer, 0x38);
+            _updateSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, 0x40);
             _haveExtraFields = true;
             return 0x48;
         }
@@ -87,46 +87,46 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(CreationTime), buffer, 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(ModificationTime), buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(MftChangedTime), buffer, 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(LastAccessTime), buffer, 0x18);
-        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(_FileAttributes), buffer, 0x20);
-        EndianUtilities.writeBytesLittleEndian(MaxVersions, buffer, 0x24);
-        EndianUtilities.writeBytesLittleEndian(Version, buffer, 0x28);
-        EndianUtilities.writeBytesLittleEndian(ClassId, buffer, 0x2C);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_creationTime), buffer, 0x00);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_modificationTime), buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_mftChangedTime), buffer, 0x10);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_lastAccessTime), buffer, 0x18);
+        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(_fileAttributes), buffer, 0x20);
+        EndianUtilities.writeBytesLittleEndian(_maxVersions, buffer, 0x24);
+        EndianUtilities.writeBytesLittleEndian(_version, buffer, 0x28);
+        EndianUtilities.writeBytesLittleEndian(_classId, buffer, 0x2C);
         if (_haveExtraFields) {
-            EndianUtilities.writeBytesLittleEndian(OwnerId, buffer, 0x30);
-            EndianUtilities.writeBytesLittleEndian(SecurityId, buffer, 0x34);
-            EndianUtilities.writeBytesLittleEndian(QuotaCharged, buffer, 0x38);
-            EndianUtilities.writeBytesLittleEndian(UpdateSequenceNumber, buffer, 0x38);
+            EndianUtilities.writeBytesLittleEndian(_ownerId, buffer, 0x30);
+            EndianUtilities.writeBytesLittleEndian(_securityId, buffer, 0x34);
+            EndianUtilities.writeBytesLittleEndian(_quotaCharged, buffer, 0x38);
+            EndianUtilities.writeBytesLittleEndian(_updateSequenceNumber, buffer, 0x38);
         }
 
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "      Creation Time: " + CreationTime);
-        writer.println(indent + "  Modification Time: " + ModificationTime);
-        writer.println(indent + "   MFT Changed Time: " + MftChangedTime);
-        writer.println(indent + "   Last Access Time: " + LastAccessTime);
-        writer.println(indent + "   File Permissions: " + _FileAttributes);
-        writer.println(indent + "       Max Versions: " + MaxVersions);
-        writer.println(indent + "            Version: " + Version);
-        writer.println(indent + "           Class Id: " + ClassId);
-        writer.println(indent + "        Security Id: " + SecurityId);
-        writer.println(indent + "      Quota Charged: " + QuotaCharged);
-        writer.println(indent + "     Update Seq Num: " + UpdateSequenceNumber);
+        writer.println(indent + "      Creation Time: " + _creationTime);
+        writer.println(indent + "  Modification Time: " + _modificationTime);
+        writer.println(indent + "   MFT Changed Time: " + _mftChangedTime);
+        writer.println(indent + "   Last Access Time: " + _lastAccessTime);
+        writer.println(indent + "   File Permissions: " + _fileAttributes);
+        writer.println(indent + "       Max Versions: " + _maxVersions);
+        writer.println(indent + "            Version: " + _version);
+        writer.println(indent + "           Class Id: " + _classId);
+        writer.println(indent + "        Security Id: " + _securityId);
+        writer.println(indent + "      Quota Charged: " + _quotaCharged);
+        writer.println(indent + "     Update Seq Num: " + _updateSequenceNumber);
     }
 
     public static StandardInformation initializeNewFile(File file, EnumSet<FileAttributeFlags> flags) {
         long now = System.currentTimeMillis();
         NtfsStream siStream = file.createStream(AttributeType.StandardInformation, null);
         StandardInformation si = new StandardInformation();
-        si.CreationTime = now;
-        si.ModificationTime = now;
-        si.MftChangedTime = now;
-        si.LastAccessTime = now;
-        si._FileAttributes = flags;
+        si._creationTime = now;
+        si._modificationTime = now;
+        si._mftChangedTime = now;
+        si._lastAccessTime = now;
+        si._fileAttributes = flags;
         siStream.setContent(si);
         return si;
     }

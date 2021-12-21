@@ -171,7 +171,7 @@ public class DiscFileSystemFileTest {
         fs.createDirectory("FOO.TXT");
         DiscFileInfo di = fs.getFileInfo("foo.txt");
         assertThrows(IOException.class, () -> {
-            return di.open(FileMode.Create);
+            di.open(FileMode.Create);
         });
     }
 
@@ -228,7 +228,7 @@ public class DiscFileSystemFileTest {
             assertTrue(s.canWrite());
             assertFalse(s.canRead());
             assertThrows(IOException.class, () -> {
-                return s.readByte();
+                s.readByte();
             });
         }
     }

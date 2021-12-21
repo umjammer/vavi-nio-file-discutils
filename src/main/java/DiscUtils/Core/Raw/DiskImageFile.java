@@ -181,7 +181,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return Array of strings, empty if no parent.
      */
     public List<String> getParentLocations() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     /**
