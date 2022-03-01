@@ -23,6 +23,7 @@
 package DiscUtils.Iso9660;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 
 
@@ -90,7 +91,7 @@ public abstract class BuildDirectoryMember {
             return nameOverride;
         }
 
-        return enc.equals(Charset.forName("ASCII")) ? _shortName : _name;
+        return enc.equals(StandardCharsets.US_ASCII) ? _shortName : _name;
     }
 
     abstract long getDataSize(Charset enc);

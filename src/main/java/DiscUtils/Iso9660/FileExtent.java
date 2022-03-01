@@ -22,7 +22,7 @@
 
 package DiscUtils.Iso9660;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.Builder.BuilderExtent;
 import dotnet4j.io.IOException;
@@ -35,7 +35,7 @@ public class FileExtent extends BuilderExtent {
     private Stream _readStream;
 
     public FileExtent(BuildFileInfo fileInfo, long start) {
-        super(start, fileInfo.getDataSize(Charset.forName("ASCII")));
+        super(start, fileInfo.getDataSize(StandardCharsets.US_ASCII));
         _fileInfo = fileInfo;
     }
 

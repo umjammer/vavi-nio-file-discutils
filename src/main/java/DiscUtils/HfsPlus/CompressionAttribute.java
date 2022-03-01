@@ -24,7 +24,7 @@ package DiscUtils.HfsPlus;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -63,7 +63,7 @@ class CompressionAttribute {
     public String getCompressionMagic() {
         ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.nativeOrder());
         buffer.putInt(_compressionMagic);
-        return new String(buffer.array(), Charset.forName("ASCII"));
+        return new String(buffer.array(), StandardCharsets.US_ASCII);
     }
 
     private int _compressionType;

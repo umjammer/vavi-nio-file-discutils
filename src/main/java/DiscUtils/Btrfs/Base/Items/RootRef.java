@@ -22,7 +22,7 @@
 
 package DiscUtils.Btrfs.Base.Items;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Btrfs.Base.Key;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -96,7 +96,7 @@ public class RootRef extends BaseItem {
         setDirectoryId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setSequence(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
-        setName(new String(buffer, offset + 0x12, getNameLength(), Charset.forName("UTF8")));
+        setName(new String(buffer, offset + 0x12, getNameLength(), StandardCharsets.UTF_8));
         return size();
     }
 }

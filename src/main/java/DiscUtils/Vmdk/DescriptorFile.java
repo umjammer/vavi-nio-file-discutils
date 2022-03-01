@@ -22,7 +22,7 @@
 
 package DiscUtils.Vmdk;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -201,7 +201,7 @@ public class DescriptorFile {
         for (int i = 0; i < _diskDataBase.size(); ++i) {
             content.append(_diskDataBase.get(i).toString() + "\n");
         }
-        byte[] contentBytes = content.toString().getBytes(Charset.forName("ASCII"));
+        byte[] contentBytes = content.toString().getBytes(StandardCharsets.US_ASCII);
         stream.write(contentBytes, 0, contentBytes.length);
     }
 

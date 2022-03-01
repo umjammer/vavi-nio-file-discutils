@@ -100,7 +100,7 @@ public class Program extends ProgramBase {
 //    StandardSwitches.UserAndPassword | StandardSwitches.FileNameEncoding;
 
     protected void doRun() throws IOException {
-//        System.setProperty("file.encoding", Charset.forName("UTF8").name());
+//        System.setProperty("file.encoding", StandardCharsets.UTF_8.name());
 
         List<VirtualDisk> disks = new ArrayList<>();
 System.err.println(_inFile);

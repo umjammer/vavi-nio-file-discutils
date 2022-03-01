@@ -22,7 +22,7 @@
 
 package DiscUtils.Btrfs.Base.Items;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Btrfs.Base.DirItemChildType;
 import DiscUtils.Btrfs.Base.Key;
@@ -140,7 +140,7 @@ public class DirItem extends BaseItem {
         setDataLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b));
         setChildType(DirItemChildType.values()[buffer[offset + 0x1d]]);
-        setName(new String(buffer, offset + 0x1e, getNameLength(), Charset.forName("UTF8")));
+        setName(new String(buffer, offset + 0x1e, getNameLength(), StandardCharsets.UTF_8));
         setData(EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength()));
         return size();
     }

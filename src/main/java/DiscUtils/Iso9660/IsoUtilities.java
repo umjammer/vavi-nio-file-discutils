@@ -23,6 +23,7 @@
 package DiscUtils.Iso9660;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.Duration;
@@ -74,7 +75,7 @@ public class IsoUtilities {
         }
 
         /// WriteASCII(buffer, offset, numBytes, true, str);
-        writeString(buffer, offset, numBytes, true, str, Charset.forName("ASCII"));
+        writeString(buffer, offset, numBytes, true, str, StandardCharsets.US_ASCII);
     }
 
     static void writeDChars(byte[] buffer, int offset, int numBytes, String str) {
@@ -84,7 +85,7 @@ public class IsoUtilities {
         }
 
         // WriteASCII(buffer, offset, numBytes, true, str);
-        writeString(buffer, offset, numBytes, true, str, Charset.forName("ASCII"));
+        writeString(buffer, offset, numBytes, true, str, StandardCharsets.US_ASCII);
     }
 
     static void writeA1Chars(byte[] buffer, int offset, int numBytes, String str, Charset enc) {
@@ -289,7 +290,7 @@ e.printStackTrace();
             return Long.MIN_VALUE;
         }
 
-        String strForm = new String(data, offset, 16, Charset.forName("ASCII"));
+        String strForm = new String(data, offset, 16, StandardCharsets.US_ASCII);
 
         // Work around bugs in burning software that may use zero bytes (rather
         // than '0' characters)
@@ -329,7 +330,7 @@ e.printStackTrace();
 
     static void encodingToBytes(Charset enc, byte[] data, int offset) {
         Arrays.fill(data, offset, offset + 32, (byte) 0);
-        if (enc.equals(Charset.forName("ASCII"))) {
+        if (enc.equals(StandardCharsets.US_ASCII)) {
             // Nothing to do
         } else if (enc.equals(Charset.forName("UTF-16BE"))) {
             data[offset + 0] = 0x25;
@@ -341,7 +342,7 @@ e.printStackTrace();
     }
 
     static Charset encodingFromBytes(byte[] data, int offset) {
-        Charset enc = Charset.forName("ASCII");
+        Charset enc = StandardCharsets.US_ASCII;
         if (data[offset + 0] == 0x25 && data[offset + 1] == 0x2F &&
             (data[offset + 2] == 0x40 || data[offset + 2] == 0x43 || data[offset + 2] == 0x45)) {
             // I.e. this is a joliet disc!

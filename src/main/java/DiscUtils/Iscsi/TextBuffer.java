@@ -22,7 +22,7 @@
 
 package DiscUtils.Iscsi;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -90,13 +90,13 @@ public class TextBuffer {
                 throw new IllegalArgumentException("Invalid text buffer");
             }
 
-            String name = new String(buffer, nameStart, i - nameStart, Charset.forName("ASCII"));
+            String name = new String(buffer, nameStart, i - nameStart, StandardCharsets.US_ASCII);
             ++i;
             int valueStart = i;
             while (i < end && buffer[i] != '\0') {
                 ++i;
             }
-            String value = new String(buffer, valueStart, i - valueStart, Charset.forName("ASCII"));
+            String value = new String(buffer, valueStart, i - valueStart, StandardCharsets.US_ASCII);
             ++i;
             add(name, value);
         }
@@ -105,11 +105,11 @@ public class TextBuffer {
     public int writeTo(byte[] buffer, int offset) {
         int i = offset;
         for (Map.Entry<String, String> entry : _records.entrySet()) {
-            byte[] bytes = entry.getKey().getBytes(Charset.forName("ASCII"));
+            byte[] bytes = entry.getKey().getBytes(StandardCharsets.US_ASCII);
             System.arraycopy(bytes, 0, buffer, i, bytes.length);
             i += bytes.length;
             buffer[i++] = (byte) '=';
-            bytes = entry.getValue().getBytes(Charset.forName("ASCII"));
+            bytes = entry.getValue().getBytes(StandardCharsets.US_ASCII);
             System.arraycopy(bytes, 0, buffer, i, bytes.length);
             i += bytes.length;
             buffer[i++] = 0;

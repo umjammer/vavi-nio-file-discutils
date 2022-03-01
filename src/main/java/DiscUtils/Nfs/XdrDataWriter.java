@@ -22,7 +22,7 @@
 
 package DiscUtils.Nfs;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.ReaderWriter.BigEndianDataWriter;
 import dotnet4j.io.Stream;
@@ -59,6 +59,6 @@ public final class XdrDataWriter extends BigEndianDataWriter {
     }
 
     public void write(String value) {
-        writeBuffer(value.getBytes(Charset.forName("ASCII")));
+        writeBuffer(value.getBytes(StandardCharsets.US_ASCII));
     }
 }

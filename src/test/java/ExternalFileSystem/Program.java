@@ -22,7 +22,7 @@
 
 package ExternalFileSystem;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
@@ -37,7 +37,7 @@ import dotnet4j.io.MemoryStream;
 
 public class Program {
     public static void main(String[] args) {
-        MemoryStream dummyFileSystemData = new MemoryStream("MYFS".getBytes(Charset.forName("ASCII")));
+        MemoryStream dummyFileSystemData = new MemoryStream("MYFS".getBytes(StandardCharsets.US_ASCII));
 
         VirtualDisk dummyDisk = new DiscUtils.Core.Raw.Disk(dummyFileSystemData, Ownership.None);
         VolumeManager volMgr = new VolumeManager(dummyDisk);

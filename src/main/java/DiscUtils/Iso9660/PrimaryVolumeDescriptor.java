@@ -22,14 +22,14 @@
 
 package DiscUtils.Iso9660;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.Internal.Utilities;
 
 
 public class PrimaryVolumeDescriptor extends CommonVolumeDescriptor {
     public PrimaryVolumeDescriptor(byte[] src, int offset) {
-        super(src, offset, Charset.forName("ASCII"));
+        super(src, offset, StandardCharsets.US_ASCII);
     }
 
     public PrimaryVolumeDescriptor(int volumeSpaceSize,
@@ -48,13 +48,13 @@ public class PrimaryVolumeDescriptor extends CommonVolumeDescriptor {
               rootDirExtentLocation,
               rootDirDataLength,
               buildTime,
-              Charset.forName("ASCII"));
+              StandardCharsets.US_ASCII);
     }
 
     public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
         IsoUtilities.writeAChars(buffer, offset + 8, 32, SystemIdentifier);
-        IsoUtilities.writeString(buffer, offset + 40, 32, true, VolumeIdentifier, Charset.forName("ASCII"), true);
+        IsoUtilities.writeString(buffer, offset + 40, 32, true, VolumeIdentifier, StandardCharsets.US_ASCII, true);
         IsoUtilities.toBothFromUInt32(buffer, offset + 80, VolumeSpaceSize);
         IsoUtilities.toBothFromUInt16(buffer, offset + 120, VolumeSetSize);
         IsoUtilities.toBothFromUInt16(buffer, offset + 124, VolumeSequenceNumber);
@@ -64,7 +64,7 @@ public class PrimaryVolumeDescriptor extends CommonVolumeDescriptor {
         IsoUtilities.toBytesFromUInt32(buffer, offset + 144, OptionalTypeLPathTableLocation);
         IsoUtilities.toBytesFromUInt32(buffer, offset + 148, Utilities.bitSwap(TypeMPathTableLocation));
         IsoUtilities.toBytesFromUInt32(buffer, offset + 152, Utilities.bitSwap(OptionalTypeMPathTableLocation));
-        RootDirectory.writeTo(buffer, offset + 156, Charset.forName("ASCII"));
+        RootDirectory.writeTo(buffer, offset + 156, StandardCharsets.US_ASCII);
         IsoUtilities.writeDChars(buffer, offset + 190, 129, VolumeSetIdentifier);
         IsoUtilities.writeAChars(buffer, offset + 318, 129, PublisherIdentifier);
         IsoUtilities.writeAChars(buffer, offset + 446, 129, DataPreparerIdentifier);

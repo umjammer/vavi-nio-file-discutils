@@ -22,7 +22,7 @@
 
 package DiscUtils.Net.Dns;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -42,7 +42,7 @@ public final class PacketWriter {
         String[] labels = Arrays.stream(name.split("\\.")).filter(e -> !e.isEmpty()).toArray(String[]::new);
 
         for (String label : labels) {
-            byte[] labelBytes = label.getBytes(Charset.forName("UTF8"));
+            byte[] labelBytes = label.getBytes(StandardCharsets.UTF_8);
             if (labelBytes.length > 63) {
                 throw new IllegalArgumentException("Invalid DNS label - more than 63 octets '" + label + "' in '" + name + "'");
             }

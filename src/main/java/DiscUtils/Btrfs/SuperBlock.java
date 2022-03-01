@@ -25,6 +25,7 @@ package DiscUtils.Btrfs;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
@@ -42,7 +43,7 @@ public class SuperBlock implements IByteArraySerializable {
     public static final int Length = 0x1000;
 
     static {
-        ByteBuffer buffer = ByteBuffer.wrap("_BHRfS_M".getBytes(Charset.forName("ASCII")));
+        ByteBuffer buffer = ByteBuffer.wrap("_BHRfS_M".getBytes(StandardCharsets.US_ASCII));
         buffer.order(ByteOrder.nativeOrder());
         BtrfsMagic = buffer.getLong();
     }
@@ -451,7 +452,7 @@ public class SuperBlock implements IByteArraySerializable {
         byte[] labelData = EndianUtilities.toByteArray(buffer, offset + 0x12b, 0x100);
         OptionalInt eos = IntStream.range(0, labelData.length).filter(i -> labelData[i] == (byte) 0).findFirst();
         if (eos.isPresent()) {
-            setLabel(new String(labelData, 0, eos.getAsInt(), Charset.forName("UTF8")));
+            setLabel(new String(labelData, 0, eos.getAsInt(), StandardCharsets.UTF_8));
         }
 
         // 22b 100 reserved

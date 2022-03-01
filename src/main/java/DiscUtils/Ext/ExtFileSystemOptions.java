@@ -23,6 +23,7 @@
 package DiscUtils.Ext;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.DiscFileSystemOptions;
 import DiscUtils.Core.FileSystemParameters;
@@ -33,27 +34,27 @@ import DiscUtils.Core.FileSystemParameters;
  */
 public final class ExtFileSystemOptions extends DiscFileSystemOptions {
     public ExtFileSystemOptions() {
-        setFileNameEncoding(Charset.forName("UTF8"));
+        setFileNameEncoding(StandardCharsets.UTF_8);
     }
 
     public ExtFileSystemOptions(FileSystemParameters parameters) {
         if (parameters != null && parameters.getFileNameEncoding() != null) {
             setFileNameEncoding(parameters.getFileNameEncoding());
         } else {
-            setFileNameEncoding(Charset.forName("UTF8"));
+            setFileNameEncoding(StandardCharsets.UTF_8);
         }
     }
 
     /**
      * Gets or sets the character encoding used for file names.
      */
-    private Charset __FileNameEncoding;
+    private Charset _fileNameEncoding;
 
     public Charset getFileNameEncoding() {
-        return __FileNameEncoding;
+        return _fileNameEncoding;
     }
 
     public void setFileNameEncoding(Charset value) {
-        __FileNameEncoding = value;
+        _fileNameEncoding = value;
     }
 }

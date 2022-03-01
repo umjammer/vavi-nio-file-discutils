@@ -22,7 +22,7 @@
 
 package DiscUtils.Iso9660;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 
@@ -43,7 +43,7 @@ public class BaseVolumeDescriptor {
 
     public BaseVolumeDescriptor(byte[] src, int offset) {
         _VolumeDescriptorType = VolumeDescriptorType.valueOf(src[offset + 0] & 0xff);
-        StandardIdentifier = new String(src, offset + 1, 5, Charset.forName("ASCII"));
+        StandardIdentifier = new String(src, offset + 1, 5, StandardCharsets.US_ASCII);
         VolumeDescriptorVersion = src[offset + 6];
     }
 

@@ -22,7 +22,7 @@
 
 package DiscUtils.Swap;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.OptionalInt;
 import java.util.UUID;
 import java.util.stream.IntStream;
@@ -117,7 +117,7 @@ public class SwapHeader implements IByteArraySerializable {
         byte[] volume = EndianUtilities.toByteArray(buffer, 0x41c, 16);
         OptionalInt nullIndex = IntStream.range(0, volume.length).filter(i -> volume[i] == (byte) 0).findFirst();
         if (nullIndex.isPresent())
-            setVolume(new String(volume, 0, nullIndex.getAsInt(), Charset.forName("UTF8")));
+            setVolume(new String(volume, 0, nullIndex.getAsInt(), StandardCharsets.UTF_8));
 
         return size();
     }

@@ -22,7 +22,7 @@
 
 package DiscUtils.Ntfs;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -180,7 +180,7 @@ public class IndexEntry {
 
     public String toString() {
         try {
-            return (_keyBuffer != null ? new String(_keyBuffer, Charset.forName("ASCII")) : "null") + ": " +
+            return (_keyBuffer != null ? new String(_keyBuffer, StandardCharsets.US_ASCII) : "null") + ": " +
                    (_dataBuffer != null ? Arrays.toString(_dataBuffer) : "null");
         } catch (Exception e) {
             e.printStackTrace();

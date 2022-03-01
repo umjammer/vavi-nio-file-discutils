@@ -2,7 +2,7 @@
 
 package LibraryTests.Ext;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -57,10 +57,10 @@ public class ExtFileSystemTest {
             fsis.stream().forEach(f -> j.next().accept(f));
 
             byte[] tmpData = Helpers.readAll(fs.openFile("bar\\blah.txt", FileMode.Open));
-            assertArrayEquals("hello world\n".getBytes(Charset.forName("ASCII")), tmpData);
+            assertArrayEquals("hello world\n".getBytes(StandardCharsets.US_ASCII), tmpData);
 
             tmpData = Helpers.readAll(fs.openFile("bar\\testdir1\\test.txt", FileMode.Open));
-            assertArrayEquals("Mon Feb 11 19:54:14 UTC 2019\n".getBytes(Charset.forName("ASCII")), tmpData);
+            assertArrayEquals("Mon Feb 11 19:54:14 UTC 2019\n".getBytes(StandardCharsets.US_ASCII), tmpData);
         }
     }
 }

@@ -23,6 +23,7 @@
 package DiscUtils.Iso9660;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -118,8 +119,8 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
         List<BuildDirectoryMember> sorted = getSortedMembers();
 
         // Two pseudo entries, effectively '.' and '..'
-        pos += writeMember(this, "\0", Charset.forName("ASCII"), buffer, offset + pos, locationTable, enc);
-        pos += writeMember(_parent, "\01", Charset.forName("ASCII"), buffer, offset + pos, locationTable, enc);
+        pos += writeMember(this, "\0", StandardCharsets.US_ASCII, buffer, offset + pos, locationTable, enc);
+        pos += writeMember(_parent, "\01", StandardCharsets.US_ASCII, buffer, offset + pos, locationTable, enc);
         for (BuildDirectoryMember m : sorted) {
             int recordSize = m.getDirectoryRecordSize(enc);
 

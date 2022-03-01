@@ -22,7 +22,7 @@
 
 package LibraryTests.Compression;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +40,7 @@ import dotnet4j.io.compression.CompressionMode;
 public class ZlibStreamTest {
     @Test
     public void testRoundtrip() throws Exception {
-        byte[] testData = "This is a test string".getBytes(Charset.forName("ASCII"));
+        byte[] testData = "This is a test string".getBytes(StandardCharsets.US_ASCII);
 
         MemoryStream compressedStream = new MemoryStream();
 
@@ -62,7 +62,7 @@ public class ZlibStreamTest {
 
     @Test
     public void testInvalidChecksum() throws Exception {
-        byte[] testData = "This is a test string".getBytes(Charset.forName("ASCII"));
+        byte[] testData = "This is a test string".getBytes(StandardCharsets.US_ASCII);
 
         MemoryStream compressedStream = new MemoryStream();
 

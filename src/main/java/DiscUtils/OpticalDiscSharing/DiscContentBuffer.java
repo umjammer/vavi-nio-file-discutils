@@ -24,7 +24,7 @@ package DiscUtils.OpticalDiscSharing;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -177,13 +177,13 @@ public final class DiscContentBuffer extends Buffer {
         try {
             String a2 = method + ":" + uriPath;
             MessageDigest ha2hash = MessageDigest.getInstance("MD5");
-            String ha2 = toHexString(ha2hash.digest(a2.getBytes(Charset.forName("ASCII"))));
+            String ha2 = toHexString(ha2hash.digest(a2.getBytes(StandardCharsets.US_ASCII)));
             String a1 = _userName + ":" + realm + ":" + _password;
             MessageDigest ha1hash = MessageDigest.getInstance("MD5");
-            String ha1 = toHexString(ha1hash.digest(a1.getBytes(Charset.forName("ASCII"))));
+            String ha1 = toHexString(ha1hash.digest(a1.getBytes(StandardCharsets.US_ASCII)));
             String toHash = ha1 + ":" + nonce + ":" + ha2;
             MessageDigest respHas = MessageDigest.getInstance("MD5");
-            byte[] hash = respHas.digest(toHash.getBytes(Charset.forName("ASCII")));
+            byte[] hash = respHas.digest(toHash.getBytes(StandardCharsets.US_ASCII));
             return toHexString(hash);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);

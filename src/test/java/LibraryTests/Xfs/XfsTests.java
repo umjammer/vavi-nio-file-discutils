@@ -2,7 +2,7 @@
 
 package LibraryTests.Xfs;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ public class XfsTests {
         Context context = new Context();
         context.setSuperBlock(new SuperBlock());
         XfsFileSystemOptions options = new XfsFileSystemOptions();
-        options.setFileNameEncoding(Charset.forName("UTF8"));
+        options.setFileNameEncoding(StandardCharsets.UTF_8);
         context.setOptions(options);
 
         Inode inode = new Inode(1, context);

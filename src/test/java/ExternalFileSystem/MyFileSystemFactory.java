@@ -1,7 +1,7 @@
 
 package ExternalFileSystem;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemParameters;
@@ -18,7 +18,7 @@ public class MyFileSystemFactory extends VfsFileSystemFactory {
     public DiscUtils.Core.FileSystemInfo[] detect(Stream stream, VolumeInfo volumeInfo) {
         byte[] header = new byte[4];
         stream.read(header, 0, 4);
-        if (Utilities.equals(new String(header, 0, 4, Charset.forName("ASCII")), "MYFS")) {
+        if (Utilities.equals(new String(header, 0, 4, StandardCharsets.US_ASCII), "MYFS")) {
             return new DiscUtils.Core.FileSystemInfo[] {
                 new VfsFileSystemInfo("MyFs", "My File System", this::open)
             };

@@ -22,7 +22,7 @@
 
 package DiscUtils.Iscsi;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -100,7 +100,7 @@ public class ChapAuthenticator extends Authenticator {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             byte[] toHash = new byte[1 + _password.length() + _challenge.length];
             toHash[0] = _identifier;
-            byte[] bytes = _password.getBytes(Charset.forName("ASCII"));
+            byte[] bytes = _password.getBytes(StandardCharsets.US_ASCII);
             System.arraycopy(bytes, 0, toHash, 1, bytes.length);
             System.arraycopy(_challenge, 0, toHash, _password.length() + 1, _challenge.length);
             byte[] hash = md5.digest(toHash);

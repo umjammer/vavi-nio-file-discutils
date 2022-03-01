@@ -23,6 +23,7 @@
 package DiscUtils.Iso9660;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -279,7 +280,7 @@ public final class CDBuilder extends StreamBuilder {
 
         long buildTime = System.currentTimeMillis();
 
-        Charset suppEncoding = _buildParams.useJoliet() ? Charset.forName("UTF-16BE") : Charset.forName("ASCII");
+        Charset suppEncoding = _buildParams.useJoliet() ? Charset.forName("UTF-16BE") : StandardCharsets.US_ASCII;
 
         Map<BuildDirectoryMember, Integer> primaryLocationTable = new HashMap<>();
         Map<BuildDirectoryMember, Integer> supplementaryLocationTable = new HashMap<>();
@@ -346,7 +347,7 @@ public final class CDBuilder extends StreamBuilder {
         long startOfFirstDirData = focus;
         for (BuildDirectoryInfo di : _dirs) {
             primaryLocationTable.put(di, (int) (focus / IsoUtilities.SectorSize));
-            DirectoryExtent extent = new DirectoryExtent(di, primaryLocationTable, Charset.forName("ASCII"), focus);
+            DirectoryExtent extent = new DirectoryExtent(di, primaryLocationTable, StandardCharsets.US_ASCII, focus);
             fixedRegions.add(extent);
             focus += MathUtilities.roundUp(extent.getLength(), IsoUtilities.SectorSize);
         }
@@ -373,13 +374,13 @@ public final class CDBuilder extends StreamBuilder {
 
         // Find end of the path table
         long startOfFirstPathTable = focus;
-        PathTable pathTable = new PathTable(false, Charset.forName("ASCII"), _dirs, primaryLocationTable, focus);
+        PathTable pathTable = new PathTable(false, StandardCharsets.US_ASCII, _dirs, primaryLocationTable, focus);
         fixedRegions.add(pathTable);
         focus += MathUtilities.roundUp(pathTable.getLength(), IsoUtilities.SectorSize);
         long primaryPathTableLength = pathTable.getLength();
 
         long startOfSecondPathTable = focus;
-        pathTable = new PathTable(true, Charset.forName("ASCII"), _dirs, primaryLocationTable, focus);
+        pathTable = new PathTable(true, StandardCharsets.US_ASCII, _dirs, primaryLocationTable, focus);
         fixedRegions.add(pathTable);
         focus += MathUtilities.roundUp(pathTable.getLength(), IsoUtilities.SectorSize);
 
@@ -407,7 +408,7 @@ public final class CDBuilder extends StreamBuilder {
                                                                      (int) (startOfFirstPathTable / IsoUtilities.SectorSize), // TypeLPathTableLocation
                                                                      (int) (startOfSecondPathTable / IsoUtilities.SectorSize), // TypeMPathTableLocation
                                                                      (int) (startOfFirstDirData / IsoUtilities.SectorSize), // RootDirectory.LocationOfExtent
-                                                                     (int) _rootDirectory.getDataSize(Charset.forName("ASCII")), // RootDirectory.DataLength
+                                                                     (int) _rootDirectory.getDataSize(StandardCharsets.US_ASCII), // RootDirectory.DataLength
                                                                      buildTime);
         pvDesc.VolumeIdentifier = _buildParams.getVolumeIdentifier();
         PrimaryVolumeDescriptorRegion pvdr = new PrimaryVolumeDescriptorRegion(pvDesc, focus);

@@ -95,9 +95,9 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                 List<Object> result = new ArrayList<>();
                 if (_reader == null) {
                     if (_encoding == ContentEncoding.Unknown) {
-                        _reader = new StreamReader(_contentStream, Charset.forName("ASCII"), true);
+                        _reader = new StreamReader(_contentStream, StandardCharsets.US_ASCII, true);
                     } else {
-                        _reader = new StreamReader(_contentStream, getEncoding(Charset.forName("ASCII")));
+                        _reader = new StreamReader(_contentStream, getEncoding(StandardCharsets.US_ASCII));
                     }
                 }
 
@@ -141,7 +141,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                     }
                     _writer = new StreamWriter(_contentStream,
                                                getEncoding(foundExtended ? Charset.forName("Unicode")
-                                                                         : Charset.forName("ASCII")));
+                                                                         : StandardCharsets.US_ASCII));
                 }
 
                 String lastLine = null;
@@ -184,13 +184,13 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         case UTF-16:
             return Charset.forName("UTF-16");
         case UTF8:
-            return Charset.forName("UTF8");
+            return StandardCharsets.UTF_8;
         case UTF7:
             return Charset.forName("UTF7");
         case Unicode:
             return Charset.forName("Unicode");
         case Ascii:
-            return Charset.forName("ASCII");
+            return StandardCharsets.US_ASCII;
         default:
             return defEncoding;
         }

@@ -22,7 +22,7 @@
 
 package DiscUtils.Udf;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -41,7 +41,7 @@ public abstract class EntityIdentifier implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         Flags = buffer[offset];
-        Identifier = new String(buffer, offset + 1, 23, Charset.forName("ASCII")).replaceFirst("\0*$", "");
+        Identifier = new String(buffer, offset + 1, 23, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
         Suffix = EndianUtilities.toByteArray(buffer, offset + 24, 8);
         return 32;
     }

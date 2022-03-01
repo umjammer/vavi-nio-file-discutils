@@ -22,7 +22,7 @@
 
 package DiscUtils.Btrfs.Base.Items;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Btrfs.Base.Key;
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -82,7 +82,7 @@ public class InodeRef extends BaseItem {
     public int readFrom(byte[] buffer, int offset) {
         setIndex(EndianUtilities.toUInt64LittleEndian(buffer, offset));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x8));
-        setName(new String(buffer, offset + 0xa, getNameLength(), Charset.forName("UTF8")));
+        setName(new String(buffer, offset + 0xa, getNameLength(), StandardCharsets.UTF_8));
         return size();
     }
 }

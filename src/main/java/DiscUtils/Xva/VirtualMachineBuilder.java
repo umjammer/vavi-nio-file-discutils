@@ -25,7 +25,7 @@ package DiscUtils.Xva;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -142,7 +142,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
             int[][] diskIds = new int[1][];
             String ovaFileContent = generateOvaXml(diskIds);
 //Debug.println(ovaFileContent);
-            tarBuilder.addFile("ova.xml", ovaFileContent.getBytes(Charset.forName("ASCII")));
+            tarBuilder.addFile("ova.xml", ovaFileContent.getBytes(StandardCharsets.US_ASCII));
             int diskIdx = 0;
             for (DiskRecord diskRec : _disks) {
                 SparseStream diskStream = diskRec.Item2;
@@ -170,7 +170,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                             hashAlgDotnet.update(new byte[0], 0, 0);
                             hash = hashAlgDotnet.digest();
                             String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
-                            byte[] hashStringAscii = hashString.getBytes(Charset.forName("ASCII"));
+                            byte[] hashStringAscii = hashString.getBytes(StandardCharsets.US_ASCII);
                             tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], i), hashStringAscii);
                             lastChunkAdded = i;
                         }
@@ -189,7 +189,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
                     hashAlgDotnet.update(new byte[0], 0, 0);
                     hash = hashAlgDotnet.digest();
                     String hashString = BitSet.valueOf(hash).toString().replace("-", "").toLowerCase();
-                    byte[] hashStringAscii = hashString.getBytes(Charset.forName("ASCII"));
+                    byte[] hashStringAscii = hashString.getBytes(StandardCharsets.US_ASCII);
                     tarBuilder.addFile(String.format("Ref:%s/%8d.checksum", diskIds[0][diskIdx], lastActualChunk),
                                        hashStringAscii);
                 }

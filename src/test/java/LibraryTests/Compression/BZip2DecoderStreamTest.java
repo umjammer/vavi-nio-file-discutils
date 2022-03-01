@@ -22,7 +22,7 @@
 
 package LibraryTests.Compression;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +65,7 @@ public class BZip2DecoderStreamTest {
         assertEquals(21, numRead);
         // Reading beyond the end of the stream will return 0 bytes
         assertEquals(0, decoder.read(buffer, numRead, 1024 - numRead));
-        String s = new String(buffer, 0, numRead, Charset.forName("ASCII"));
+        String s = new String(buffer, 0, numRead, StandardCharsets.US_ASCII);
         assertEquals("This is a test string", s);
     }
 

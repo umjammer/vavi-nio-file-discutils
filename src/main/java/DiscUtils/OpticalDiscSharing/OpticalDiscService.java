@@ -25,7 +25,7 @@ package DiscUtils.OpticalDiscSharing;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -260,7 +260,7 @@ public final class OpticalDiscService {
 
         if (_instance.getParameters().containsKey(section)) {
             byte[] data = _instance.getParameters().get(section);
-            String asString = new String(data, Charset.forName("ASCII"));
+            String asString = new String(data, StandardCharsets.US_ASCII);
             String[] nvPairs = asString.split(",");
 
             for (String nvPair : nvPairs) {

@@ -22,7 +22,7 @@
 
 package DiscUtils.Nfs;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.ReaderWriter.BigEndianDataReader;
 import DiscUtils.Streams.Util.StreamUtilities;
@@ -65,11 +65,11 @@ public final class XdrDataReader extends BigEndianDataReader {
 
     public String readString() {
         byte[] data = readBuffer();
-        return new String(data, Charset.forName("ASCII"));
+        return new String(data, StandardCharsets.US_ASCII);
     }
 
     public String readString(int maxLength) {
         byte[] data = readBuffer(maxLength);
-        return new String(data, Charset.forName("ASCII"));
+        return new String(data, StandardCharsets.US_ASCII);
     }
 }

@@ -22,7 +22,7 @@
 
 package DiscUtils.Net.Dns;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,9 +66,9 @@ public final class TextRecord extends ResourceRecord {
         if (i < value.length) {
             byte[] data = new byte[value.length - (i + 1)];
             System.arraycopy(value, i + 1, data, 0, data.length);
-            getValues().put(new String(value, 0, i, Charset.forName("ASCII")), data);
+            getValues().put(new String(value, 0, i, StandardCharsets.US_ASCII), data);
         } else {
-            getValues().put(new String(value, Charset.forName("ASCII")), null);
+            getValues().put(new String(value, StandardCharsets.US_ASCII), null);
         }
     }
 }

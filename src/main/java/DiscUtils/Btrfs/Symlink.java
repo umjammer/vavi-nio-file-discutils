@@ -22,7 +22,7 @@
 
 package DiscUtils.Btrfs;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.Vfs.IVfsSymlink;
 import DiscUtils.Streams.Buffer.IBuffer;
@@ -37,6 +37,6 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
     public String getTargetPath() {
         IBuffer content = getFileContent();
         byte[] data = StreamUtilities.readExact(content, 0, (int) content.getCapacity());
-        return new String(data, 0, data.length, Charset.forName("UTF8")).replace('/', '\\');
+        return new String(data, 0, data.length, StandardCharsets.UTF_8).replace('/', '\\');
     }
 }

@@ -23,7 +23,7 @@
 package DiscUtils.Fat;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -1481,7 +1481,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private void readBPB() {
-        setOemName(new String(_bootSector, 3, 8, Charset.forName("ASCII")).replaceFirst("\0*$", ""));
+        setOemName(new String(_bootSector, 3, 8, StandardCharsets.US_ASCII).replaceFirst("\0*$", ""));
         _bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(_bootSector, 11);
         setSectorsPerCluster(_bootSector[13]);
         _bpbRsvdSecCnt = EndianUtilities.toUInt16LittleEndian(_bootSector, 14);
@@ -1511,8 +1511,8 @@ public final class FatFileSystem extends DiscFileSystem {
         setBiosDriveNumber(_bootSector[offset]);
         _bsBootSig = _bootSector[offset + 2];
         _bsVolId = EndianUtilities.toUInt32LittleEndian(_bootSector, offset + 3);
-        _bsVolLab = new String(_bootSector, offset + 7, 11, Charset.forName("ASCII"));
-        setFileSystemType(new String(_bootSector, offset + 18, 8, Charset.forName("ASCII")));
+        _bsVolLab = new String(_bootSector, offset + 7, 11, StandardCharsets.US_ASCII);
+        setFileSystemType(new String(_bootSector, offset + 18, 8, StandardCharsets.US_ASCII));
     }
 
     private long getDirectoryEntry(Directory dir, String path, Directory[] parent) {

@@ -22,7 +22,7 @@
 
 package DiscUtils.Net.Dns;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -54,7 +54,7 @@ public final class PacketReader {
             byte len = _data[readPos];
             switch (len & 0xC0) {
             case 0x00:
-                sb.append(new String(_data, readPos + 1, len, Charset.forName("UTF8")));
+                sb.append(new String(_data, readPos + 1, len, StandardCharsets.UTF_8));
                 sb.append(".");
                 readPos += 1 + len;
                 if (!hasIndirected) {
