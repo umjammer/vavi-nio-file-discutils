@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import DiscUtils.Streams.Util.EndianUtilities;
 import dotnet4j.io.Stream;
 
 
@@ -39,7 +38,7 @@ public class FatBuffer {
      * The actual end-of-chain marker bits on disk vary by FAT type, and can end
      * ...F8 through ...FF.
      */
-    public static final int EndOfChain = 0xFFFFFFFF;
+    public static final int EndOfChain = 0xffff_ffff;
 
     /**
      * The Bad-Cluster marker to WRITE (SetNext). Don't use this value to test
@@ -47,7 +46,7 @@ public class FatBuffer {
      *
      * The actual bad-cluster marker bits on disk vary by FAT type.
      */
-    public static final int BadCluster = 0xFFFFFFF7;
+    public static final int BadCluster = 0xffff_fff7;
 
     /**
      * The Free-Cluster marker to WRITE (SetNext). Don't use this value to test
@@ -74,14 +73,7 @@ public class FatBuffer {
     }
 
     public int getNumEntries() {
-        switch (_type) {
-        case Fat12:
-            return _buffer.length / 3 * 2;
-        case Fat16:
-            return _buffer.length / 2;
-        default:
-            return _buffer.length / 4;
-        }
+        return _type.getNumEntries(_buffer);
     }
 
     // FAT32
@@ -94,47 +86,15 @@ public class FatBuffer {
     }
 
     public boolean isEndOfChain(int val) {
-        switch (_type) {
-        case Fat12:
-            return (val & 0x0FFF) >= 0x0FF8;
-        case Fat16:
-            return (val & 0xFFFF) >= 0xFFF8;
-        case Fat32:
-            return (val & 0x0FFFFFF8) >= 0x0FFFFFF8;
-        default:
-            throw new IllegalArgumentException("Unknown FAT type");
-
-        }
+        return _type.isEndOfChain(val);
     }
 
     public boolean isBadCluster(int val) {
-        switch (_type) {
-        case Fat12:
-            return (val & 0x0FFF) == 0x0FF7;
-        case Fat16:
-            return (val & 0xFFFF) == 0xFFF7;
-        case Fat32:
-            return (val & 0x0FFFFFFF) == 0x0FFFFFF7; // TODO bug report
-        default:
-            throw new IllegalArgumentException("Unknown FAT type");
-        }
+        return _type.isBadCluster(val);
     }
 
     public int getNext(int cluster) {
-        if (_type == FatType.Fat16) {
-            return EndianUtilities.toUInt16LittleEndian(_buffer, cluster * 2);
-        }
-
-        if (_type == FatType.Fat32) {
-            return EndianUtilities.toUInt32LittleEndian(_buffer, cluster * 4) & 0x0FFFFFFF;
-        }
-
-        // FAT12
-        if ((cluster & 1) != 0) {
-            return (EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) >>> 4) & 0x0FFF;
-        }
-
-        return EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) & 0x0FFF;
+        return _type.getNext(cluster, _buffer);
     }
 
     public void setEndOfChain(int cluster) {
@@ -154,30 +114,7 @@ public class FatBuffer {
     }
 
     public void setNext(int cluster, int next) {
-        if (_type == FatType.Fat16) {
-            markDirty(cluster * 2);
-            EndianUtilities.writeBytesLittleEndian((short) next, _buffer, cluster * 2);
-        } else if (_type == FatType.Fat32) {
-            markDirty(cluster * 4);
-            int oldVal = EndianUtilities.toUInt32LittleEndian(_buffer, cluster * 4);
-            int newVal = (oldVal & 0xF0000000) | (next & 0x0FFFFFFF);
-            EndianUtilities.writeBytesLittleEndian(newVal, _buffer, cluster * 4);
-        } else {
-            int offset = cluster + cluster / 2;
-            markDirty(offset);
-            markDirty(offset + 1);
-            // On alternate sector boundaries, cluster info crosses two sectors
-            short maskedOldVal;
-            if ((cluster & 1) != 0) {
-                next = next << 4;
-                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(_buffer, offset) & 0x000F);
-            } else {
-                next = next & 0x0FFF;
-                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(_buffer, offset) & 0xF000);
-            }
-            short newVal = (short) (maskedOldVal | next);
-            EndianUtilities.writeBytesLittleEndian(newVal, _buffer, offset);
-        }
+        _type.setNext(cluster, next, _buffer, this::markDirty);
     }
 
     /**
@@ -185,10 +122,10 @@ public class FatBuffer {
      */
     public boolean tryGetFreeCluster(int[] cluster) {
         // Simple scan - don't hold a free list...
-        int numEntries = getNumEntries();
+        int numEntries = _type.getNumEntries(_buffer);
         for (int i = 0; i < numEntries; i++) {
             int candidate = (i + _nextFreeCandidate) % numEntries;
-            if (isFree(getNext(candidate))) {
+            if (isFree(_type.getNext(candidate, _buffer))) {
                 cluster[0] = candidate;
                 _nextFreeCandidate = candidate + 1;
                 return true;
@@ -209,15 +146,15 @@ public class FatBuffer {
         List<Integer> result = new ArrayList<>();
         if (head != 0) {
             int focus = head;
-            while (!isEndOfChain(focus)) {
+            while (!_type.isEndOfChain(focus)) {
                 result.add(focus);
-                focus = getNext(focus);
+                focus = _type.getNext(focus, _buffer);
             }
         }
         return result;
     }
 
-    public void markDirty(int offset) {
+    private void markDirty(int offset) {
         _dirtySectors.put(offset / DirtyRegionSize, offset / DirtyRegionSize);
     }
 

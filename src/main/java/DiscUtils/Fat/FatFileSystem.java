@@ -33,7 +33,10 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemParameters;
@@ -1420,6 +1423,19 @@ public final class FatFileSystem extends DiscFileSystem {
         int totalSec = bpbTotSec16 != 0 ? bpbTotSec16 : bpbTotSec32;
         int dataSec = totalSec - (bpbResvdSecCnt + bpbNumFATs * fatSz + rootDirSectors);
         int countOfClusters = dataSec / bpbSecPerClus;
+//Debug.println(Level.FINE, "bpbBytesPerSec: " + bpbBytesPerSec);
+//Debug.println(Level.FINE, "bpbRootEntCnt: " + bpbRootEntCnt);
+//Debug.println(Level.FINE, "bpbFATSz16: " + bpbFATSz16);
+//Debug.println(Level.FINE, "bpbFATSz32: " + bpbFATSz32);
+//Debug.println(Level.FINE, "bpbTotSec16: " + bpbTotSec16);
+//Debug.println(Level.FINE, "bpbTotSec32: " + bpbTotSec32);
+//Debug.println(Level.FINE, "bpbNumFATs: " + bpbNumFATs);
+//Debug.println(Level.FINE, "bpbSecPerClus: " + bpbSecPerClus);
+//Debug.println(Level.FINE, "rootDirSectors: " + rootDirSectors);
+//Debug.println(Level.FINE, "fatSz: " + fatSz);
+//Debug.println(Level.FINE, "totalSec: " + totalSec);
+//Debug.println(Level.FINE, "dataSec: " + dataSec);
+//Debug.println(Level.FINE, "countOfClusters: " + countOfClusters);
         if (countOfClusters < 4085) {
             return FatType.Fat12;
         }
@@ -1444,7 +1460,7 @@ public final class FatFileSystem extends DiscFileSystem {
         _data = data;
         _data.setPosition(0);
         _bootSector = StreamUtilities.readSector(_data);
-//Debug.println(StringUtil.getDump(_bootSector, 64));
+//Debug.println(Level.FINE, "\n" + StringUtil.getDump(_bootSector, 64));
         setFatVariant(detectFATType(_bootSector));
         readBPB();
         loadFAT();
@@ -1461,6 +1477,8 @@ public final class FatFileSystem extends DiscFileSystem {
     private void loadRootDirectory() {
         Stream fatStream;
         if (_fatVariant != FatType.Fat32) {
+//Debug.printf(Level.FINE, "%016x, %016x\n", ((_bpbRsvdSecCnt & 0xffff) + getFatCount() * (_bpbFATSz16 & 0xffff)) *
+//             (_bpbBytesPerSec & 0xffff), (_bpbRootEntCnt & 0xffff) * 32);
             fatStream = new SubStream(_data,
                                       ((_bpbRsvdSecCnt & 0xffff) + getFatCount() * (_bpbFATSz16 & 0xffff)) *
                                              (_bpbBytesPerSec & 0xffff),
@@ -1505,6 +1523,18 @@ public final class FatFileSystem extends DiscFileSystem {
             _bpbBkBootSec = EndianUtilities.toUInt16LittleEndian(_bootSector, 50);
             readBS(64);
         }
+//Debug.println(Level.FINE, "bpbBytesPerSec: " + _bpbBytesPerSec);
+//Debug.println(Level.FINE, "sectorsPerCluster: " + getSectorsPerCluster());
+//Debug.println(Level.FINE, "_bpbRsvdSecCnt: " + _bpbRsvdSecCnt);
+//Debug.println(Level.FINE, "fatCount: " + getFatCount());
+//Debug.println(Level.FINE, "_bpbRootEntCnt: " + _bpbRootEntCnt);
+//Debug.println(Level.FINE, "_bpbTotSec16: " + _bpbTotSec16);
+Debug.printf(Level.FINE, "media: %02x\n", getMedia());
+//Debug.println(Level.FINE, "_bpbFATSz16: " + _bpbFATSz16);
+//Debug.println(Level.FINE, "_bpbSecPerTrk: " + _bpbSecPerTrk);
+//Debug.println(Level.FINE, "_bpbNumHeads: " + _bpbNumHeads);
+//Debug.println(Level.FINE, "_bpbHiddSec: " + _bpbHiddSec);
+//Debug.println(Level.FINE, "_bpbTotSec32: " + _bpbTotSec32);
     }
 
     private void readBS(int offset) {
@@ -1866,5 +1896,10 @@ public final class FatFileSystem extends DiscFileSystem {
 
         stream.setPosition(pos);
         return new FatFileSystem(stream);
+    }
+
+    @Override
+    public String toString() {
+        return getFriendlyName() + ", " + getOemName();
     }
 }
