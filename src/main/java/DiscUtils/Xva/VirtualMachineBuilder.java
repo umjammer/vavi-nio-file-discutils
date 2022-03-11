@@ -24,10 +24,7 @@ package DiscUtils.Xva;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -36,6 +33,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.UUID;
 
 import DiscUtils.Core.Archives.TarFileBuilder;
@@ -214,12 +212,14 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
     private static final Map<String, String> getStaticStrings() {
         Map<String, String> results = new HashMap<>();
         Arrays.stream(names).forEach(s -> {
-            try {
-                String v = new String(Files.readAllBytes(Paths.get(VirtualMachineBuilder.class.getResource("/" + s + ".xml").toURI())));
-                results.put(s, v);
-            } catch (IOException | URISyntaxException e) {
-                throw new IllegalStateException(e);
+            Scanner scanner = new Scanner(VirtualMachineBuilder.class.getResourceAsStream("/" + s + ".xml"));
+            List<String> lines = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                lines.add(scanner.nextLine());
             }
+            scanner.close();
+            String v = String.join("\n", lines);
+            results.put(s, v);
         });
         return results;
     }
