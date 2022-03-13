@@ -26,7 +26,6 @@ import DiscUtils.Core.VirtualDisk;
 import dotnet4j.io.Stream;
 
 
-@PartitionTableFactoryAttribute
 public final class DefaultPartitionTableFactory implements PartitionTableFactory {
     public boolean detectIsPartitioned(Stream s) {
         return BiosPartitionTable.isValid(s);

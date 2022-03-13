@@ -7,13 +7,11 @@ import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemParameters;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.Vfs.VfsFileSystemFactory;
-import DiscUtils.Core.Vfs.VfsFileSystemFactoryAttribute;
 import DiscUtils.Core.Vfs.VfsFileSystemInfo;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compat.Utilities;
 
 
-@VfsFileSystemFactoryAttribute
 public class MyFileSystemFactory extends VfsFileSystemFactory {
     public DiscUtils.Core.FileSystemInfo[] detect(Stream stream, VolumeInfo volumeInfo) {
         byte[] header = new byte[4];
