@@ -49,7 +49,7 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3GetAttributesResult ? (Nfs3GetAttributesResult) obj : (Nfs3GetAttributesResult) null);
+        return equals(obj instanceof Nfs3GetAttributesResult ? (Nfs3GetAttributesResult) obj : null);
     }
 
     public boolean equals(Nfs3GetAttributesResult other) {

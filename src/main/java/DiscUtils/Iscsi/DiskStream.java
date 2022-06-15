@@ -22,7 +22,7 @@
 
 package DiscUtils.Iscsi;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.SparseStream;
@@ -71,7 +71,7 @@ public class DiskStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return Arrays.asList(new StreamExtent(0, _length));
+        return Collections.singletonList(new StreamExtent(0, _length));
     }
 
     public long getLength() {

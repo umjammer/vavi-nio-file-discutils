@@ -31,14 +31,14 @@ public final class Nfs3ModifyResult extends Nfs3CallResult {
         setCacheConsistency(new Nfs3WeakCacheConsistency(reader));
     }
 
-    private Nfs3WeakCacheConsistency __CacheConsistency;
+    private Nfs3WeakCacheConsistency cacheConsistency;
 
     public Nfs3WeakCacheConsistency getCacheConsistency() {
-        return __CacheConsistency;
+        return cacheConsistency;
     }
 
     public void setCacheConsistency(Nfs3WeakCacheConsistency value) {
-        __CacheConsistency = value;
+        cacheConsistency = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -47,7 +47,7 @@ public final class Nfs3ModifyResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3ModifyResult ? (Nfs3ModifyResult) obj : (Nfs3ModifyResult) null);
+        return equals(obj instanceof Nfs3ModifyResult ? (Nfs3ModifyResult) obj : null);
     }
 
     public boolean equals(Nfs3ModifyResult other) {

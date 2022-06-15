@@ -22,7 +22,7 @@
 
 package DiscUtils.HfsPlus;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -95,7 +95,7 @@ final class FileBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return Arrays.asList(new StreamExtent(start, Math.min(start + count, getCapacity()) - start));
+        return Collections.singletonList(new StreamExtent(start, Math.min(start + count, getCapacity()) - start));
     }
 
     /**

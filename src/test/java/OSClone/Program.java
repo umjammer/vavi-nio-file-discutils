@@ -239,8 +239,8 @@ public class Program extends ProgramBase {
 
     private static boolean isExcluded(String path) {
         String pathUpper = path.toUpperCase();
-        for (int i = 0; i < _excludedFiles.length; ++i) {
-            if (Utilities.equals(pathUpper, _excludedFiles[i])) {
+        for (String excludedFile : _excludedFiles) {
+            if (Utilities.equals(pathUpper, excludedFile)) {
                 return true;
             }
         }

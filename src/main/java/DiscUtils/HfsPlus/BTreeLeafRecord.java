@@ -22,6 +22,7 @@
 
 package DiscUtils.HfsPlus;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 
@@ -61,7 +62,7 @@ public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRe
 
     public int readFrom(byte[] buffer, int offset) {
         try {
-            _key = clazz.newInstance();
+            _key = clazz.getDeclaredConstructor().newInstance();
             int keySize = _key.readFrom(buffer, offset);
 
             if ((keySize & 1) != 0) {
@@ -72,7 +73,7 @@ public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRe
             System.arraycopy(buffer, offset + keySize, _data, 0, getData().length);
 
             return _size;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

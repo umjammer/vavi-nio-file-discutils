@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
@@ -58,7 +58,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
     public AttributeType Type = AttributeType.None;
 
     public int size() {
-        return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(Charset.forName("UTF-16LE")).length), 8);
+        return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(StandardCharsets.UTF_16LE).length), 8);
     }
 
     public int readFrom(byte[] data, int offset) {
@@ -70,7 +70,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         BaseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
         AttributeId = EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
         if (getNameLength() > 0) {
-            Name = new String(data, offset + getNameOffset(), getNameLength() * 2, Charset.forName("UTF-16LE"));
+            Name = new String(data, offset + getNameOffset(), getNameLength() * 2, StandardCharsets.UTF_16LE);
         } else {
             Name = null;
         }
@@ -86,7 +86,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         if (Name == null || Name.isEmpty()) {
             nameLength = 0;
         } else {
-            byte[] bytes = Name.getBytes(Charset.forName("UTF-16LE"));
+            byte[] bytes = Name.getBytes(StandardCharsets.UTF_16LE);
             System.arraycopy(bytes, 0, buffer, offset + getNameOffset(), bytes.length);
             nameLength = (byte) bytes.length;
         }
@@ -133,7 +133,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         newRecord.AttributeId = attr.getAttributeId();
 
         if (attr.isNonResident()) {
-            newRecord.StartVcn = ((NonResidentAttributeRecord) attr).getStartVcn();
+            newRecord.StartVcn = attr.getStartVcn();
         }
 
         return newRecord;

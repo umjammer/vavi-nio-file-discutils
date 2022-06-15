@@ -29,7 +29,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Range;
@@ -224,29 +224,29 @@ public class StreamExtentTest {
             failed = true;
         }
         if (failed) {
-            String str = "Expected " + eList.size() + "(<";
+            StringBuilder str = new StringBuilder("Expected " + eList.size() + "(<");
             for (int i = 0; i < Math.min(4, eList.size()); ++i) {
-                str += eList.get(i).toString() + ",";
+                str.append(eList.get(i).toString()).append(",");
             }
             if (eList.size() > 4) {
-                str += "...";
+                str.append("...");
             }
 
-            str += ">)";
-            str += ", actual " + aList.size() + "(<";
+            str.append(">)");
+            str.append(", actual ").append(aList.size()).append("(<");
             for (int i = 0; i < Math.min(4, aList.size()); ++i) {
-                str += aList.get(i).toString() + ",";
+                str.append(aList.get(i).toString()).append(",");
             }
             if (aList.size() > 4) {
-                str += "...";
+                str.append("...");
             }
 
-            str += ">)";
+            str.append(">)");
             if (failedIndex != -1) {
-                str += " - different at index " + failedIndex;
+                str.append(" - different at index ").append(failedIndex);
             }
 
-            assertTrue(false, str);
+            fail(str.toString());
         }
     }
 }

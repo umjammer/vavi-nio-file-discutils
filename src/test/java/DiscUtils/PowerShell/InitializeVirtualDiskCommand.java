@@ -58,7 +58,7 @@ public class InitializeVirtualDiskCommand extends PSCmdlet {
         VirtualDisk disk = null;
         if (getInputObject() != null) {
             diskObject = getInputObject();
-            disk = diskObject.BaseObject instanceof VirtualDisk ? (VirtualDisk) diskObject.BaseObject : (VirtualDisk) null;
+            disk = diskObject.BaseObject instanceof VirtualDisk ? (VirtualDisk) diskObject.BaseObject : null;
         }
 
         if (disk == null && (getLiteralPath() == null || getLiteralPath().isEmpty())) {
@@ -72,7 +72,7 @@ public class InitializeVirtualDiskCommand extends PSCmdlet {
         if (disk == null) {
             diskObject = SessionState.InvokeProvider.Item.get(getLiteralPath())[0];
             VirtualDisk vdisk = diskObject.BaseObject instanceof VirtualDisk ? (VirtualDisk) diskObject.BaseObject
-                                                                             : (VirtualDisk) null;
+                                                                             : null;
             if (vdisk == null) {
                 writeError(new ErrorRecord(new IllegalArgumentException("Path specified is not a virtual disk"),
                                            "BadDiskSpecified",
@@ -98,7 +98,7 @@ public class InitializeVirtualDiskCommand extends PSCmdlet {
         // Changed volume layout, force a rescan
         VirtualDiskPSDriveInfo drive = diskObject.Properties
                 .get("PSDrive").Value instanceof VirtualDiskPSDriveInfo ? (VirtualDiskPSDriveInfo) diskObject.Properties.get("PSDrive").Value
-                                                                        : (VirtualDiskPSDriveInfo) null;
+                                                                        : null;
         if (drive != null) {
             drive.rescanVolumes();
         }

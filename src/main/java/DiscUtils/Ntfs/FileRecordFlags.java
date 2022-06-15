@@ -16,7 +16,7 @@ public enum FileRecordFlags implements EnumSettable {
     IsMetaFile,
     HasViewIndex;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -24,7 +24,7 @@ public enum FileRecordFlags implements EnumSettable {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FileRecordFlags> valueOf(int value) {
         return Arrays.stream(values())

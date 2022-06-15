@@ -103,13 +103,13 @@ public final class LzxBitStream extends BitStream {
         while (totalRead < count) {
             int numRead = _byteStream.read(buffer, offset + totalRead, count - totalRead);
             if (numRead == 0) {
-                _position += totalRead * 8;
+                _position += totalRead * 8L;
                 return totalRead;
             }
 
             totalRead += numRead;
         }
-        _position += totalRead * 8;
+        _position += totalRead * 8L;
         return totalRead;
     }
 

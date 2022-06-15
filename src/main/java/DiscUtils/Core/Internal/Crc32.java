@@ -24,17 +24,17 @@ package DiscUtils.Core.Internal;
 
 public abstract class Crc32 {
 
-    protected final int[] Table;
+    protected final int[] table;
 
-    protected int _value;
+    protected int value;
 
     protected Crc32(int[] table) {
-        Table = table;
-        _value = 0xFFFFFFFF;
+        this.table = table;
+        value = 0xFFFFFFFF;
     }
 
     public int getValue() {
-        return _value ^ 0xFFFFFFFF;
+        return ~value;
     }
 
     public abstract void process(byte[] buffer, int offset, int count);

@@ -27,5 +27,5 @@ enum RawLocationFlags {
     /**
      * The raw location descriptor should be ignored
      */
-    Ignored;
+    Ignored
 }

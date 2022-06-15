@@ -25,5 +25,5 @@ package DiscUtils.Btrfs.Base;
 public enum ExtentDataType {
     Inline,
     Regular,
-    PreAlloc;
+    PreAlloc
 }

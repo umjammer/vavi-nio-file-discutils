@@ -23,7 +23,7 @@
 package DiscUtils.Xva;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.github.fge.filesystem.exceptions.UnsupportedOptionException;
@@ -114,7 +114,7 @@ public final class Disk extends VirtualDisk {
      * Gets the (single) layer of an XVA disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Arrays.asList(new DiskLayer(_vm, _capacity, _location));
+        return Collections.singletonList(new DiskLayer(_vm, _capacity, _location));
     }
 
     /**

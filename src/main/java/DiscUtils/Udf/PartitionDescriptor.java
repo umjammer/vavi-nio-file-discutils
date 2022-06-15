@@ -55,13 +55,13 @@ public class PartitionDescriptor extends TaggedDescriptor<PartitionDescriptor> {
         PartitionFlags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
         PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
         PartitionContents = EndianUtilities
-                .<ApplicationEntityIdentifier> toStruct(ApplicationEntityIdentifier.class, buffer, offset + 24);
+                .toStruct(ApplicationEntityIdentifier.class, buffer, offset + 24);
         PartitionContentsUse = EndianUtilities.toByteArray(buffer, offset + 56, 128);
         AccessType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 184);
         PartitionStartingLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 188);
         PartitionLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 192);
         ImplementationIdentifier = EndianUtilities
-                .<ImplementationEntityIdentifier> toStruct(ImplementationEntityIdentifier.class, buffer, offset + 196);
+                .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 196);
         ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 228, 128);
         return 512;
     }

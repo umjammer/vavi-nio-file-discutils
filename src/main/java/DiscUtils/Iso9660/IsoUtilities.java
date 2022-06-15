@@ -332,7 +332,7 @@ e.printStackTrace();
         Arrays.fill(data, offset, offset + 32, (byte) 0);
         if (enc.equals(StandardCharsets.US_ASCII)) {
             // Nothing to do
-        } else if (enc.equals(Charset.forName("UTF-16BE"))) {
+        } else if (enc.equals(StandardCharsets.UTF_16BE)) {
             data[offset + 0] = 0x25;
             data[offset + 1] = 0x2F;
             data[offset + 2] = 0x45;
@@ -346,7 +346,7 @@ e.printStackTrace();
         if (data[offset + 0] == 0x25 && data[offset + 1] == 0x2F &&
             (data[offset + 2] == 0x40 || data[offset + 2] == 0x43 || data[offset + 2] == 0x45)) {
             // I.e. this is a joliet disc!
-            enc = Charset.forName("UTF-16BE");
+            enc = StandardCharsets.UTF_16BE;
         }
 
         return enc;
@@ -367,9 +367,6 @@ e.printStackTrace();
         if (val < minVal) {
             return minVal;
         }
-        if (val > maxVal) {
-            return maxVal;
-        }
-        return val;
+        return Math.min(val, maxVal);
     }
 }

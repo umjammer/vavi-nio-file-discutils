@@ -22,6 +22,7 @@
 
 package DiscUtils.Streams.Block;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -122,11 +123,11 @@ public class BlockCache<T extends Block> {
             _freeBlockCount--;
         } else if (_blocksCreated < _totalBlocks) {
             try {
-                block = c.newInstance();
+                block = c.getDeclaredConstructor().newInstance();
                 block.setData(new byte[_blockSize]);
                 _blocksCreated++;
                 _freeBlockCount--;
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }
         } else {

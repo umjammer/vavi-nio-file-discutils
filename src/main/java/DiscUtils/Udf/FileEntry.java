@@ -80,8 +80,8 @@ public class FileEntry implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        DescriptorTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, buffer, offset);
-        InformationControlBlock = EndianUtilities.<InformationControlBlock> toStruct(InformationControlBlock.class, buffer, offset + 16);
+        DescriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
+        InformationControlBlock = EndianUtilities.toStruct(InformationControlBlock.class, buffer, offset + 16);
         Uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
         Gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
         Permissions = FilePermissions.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
@@ -95,8 +95,8 @@ public class FileEntry implements IByteArraySerializable {
         ModificationTime = UdfUtilities.parseTimestamp(buffer, offset + 84);
         AttributeTime = UdfUtilities.parseTimestamp(buffer, offset + 96);
         Checkpoint = EndianUtilities.toUInt32LittleEndian(buffer, offset + 108);
-        ExtendedAttributeIcb = EndianUtilities.<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 112);
-        ImplementationIdentifier = EndianUtilities.<ImplementationEntityIdentifier> toStruct(ImplementationEntityIdentifier.class, buffer, offset + 128);
+        ExtendedAttributeIcb = EndianUtilities.toStruct(LongAllocationDescriptor.class, buffer, offset + 112);
+        ImplementationIdentifier = EndianUtilities.toStruct(ImplementationEntityIdentifier.class, buffer, offset + 128);
         UniqueId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 160);
         ExtendedAttributesLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 168);
         AllocationDescriptorsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 172);

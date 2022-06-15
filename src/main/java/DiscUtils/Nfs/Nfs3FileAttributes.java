@@ -94,7 +94,7 @@ public final class Nfs3FileAttributes {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3FileAttributes ? (Nfs3FileAttributes) obj : (Nfs3FileAttributes) null);
+        return equals(obj instanceof Nfs3FileAttributes ? (Nfs3FileAttributes) obj : null);
     }
 
     public boolean equals(Nfs3FileAttributes other) {

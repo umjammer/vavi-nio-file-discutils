@@ -384,8 +384,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                 Exception replayException = null;
                 String preVerificationReportString = null;
                 try (StringWriter preVerificationReport = new StringWriter()) {
-                    TFileSystem replayFs = createFileSystem(fileSystemClass, ts);
-                    try {
+                    try (TFileSystem replayFs = createFileSystem(fileSystemClass, ts)) {
                         // Re-init the RNG to it's state when the checkpoint
                         // started, so we get
                         // reproducibility.
@@ -399,9 +398,6 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                         ts.start();
                         _checkpointBuffer.get(lowPoint).invoke(replayFs, replayContext);
                         ts.stop();
-                    } finally {
-                        if (replayFs != null)
-                            replayFs.close();
                     }
                     preVerificationReportString = preVerificationReport.getBuffer().toString();
                 } catch (Exception e) {
@@ -592,7 +588,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                 NoSuchMethodException | SecurityException tie) {
             try {
-                Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
+                Field remoteStackTraceString = Exception.class.getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
                 throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -607,7 +603,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                 NoSuchMethodException | SecurityException tie) {
             try {
-                Field remoteStackTraceString = Exception.class.getClass().getField("_remoteStackTraceString");
+                Field remoteStackTraceString = Exception.class.getField("_remoteStackTraceString");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
                 throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -620,9 +616,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Provides a friendly description of the file system type.
      */
     public String getFriendlyName() {
-        return (String) performActivity((fs, context) -> {
-            return fs.getFriendlyName();
-        });
+        return (String) performActivity((fs, context) -> fs.getFriendlyName());
     }
 
     /**
@@ -631,9 +625,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return true if the file system is read-write.
      */
     public boolean canWrite() {
-        return (Boolean) performActivity((fs, context) -> {
-            return fs.canWrite();
-        });
+        return (Boolean) performActivity((fs, context) -> fs.canWrite());
     }
 
     /**
@@ -782,13 +774,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of directories.
      */
     public List<String> getDirectories(String path) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getDirectories(path);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -800,13 +792,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getDirectories(path, searchPattern);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -820,13 +812,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getDirectories(path, searchPattern, searchOption);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -836,13 +828,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of files.
      */
     public List<String> getFiles(String path) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getFiles(path);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -853,13 +845,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getFiles(path, searchPattern);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -873,13 +865,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getFiles(path, searchPattern, searchOption);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -889,13 +881,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of files and subdirectories matching the search pattern.
      */
     public List<String> getFileSystemEntries(String path) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getFileSystemEntries(path);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -907,13 +899,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return Array of files and subdirectories matching the search pattern.
      */
     public List<String> getFileSystemEntries(String path, String searchPattern) {
-        return List.class.cast(performActivity((fs, context) -> {
+        return (List) performActivity((fs, context) -> {
             try {
                 return fs.getFileSystemEntries(path, searchPattern);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -1038,13 +1030,13 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return The attributes of the file or directory
      */
     public Map<String, Object> getAttributes(String path) {
-        return Map.class.cast(performActivity((fs, context) -> {
+        return (Map) performActivity((fs, context) -> {
             try {
                 return fs.getAttributes(path);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-        }));
+        });
     }
 
     /**
@@ -1332,9 +1324,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the Volume Label.
      */
     public String getVolumeLabel() {
-        return (String) performActivity((fs, context) -> {
-            return fs.getVolumeLabel();
-        });
+        return (String) performActivity((fs, context) -> fs.getVolumeLabel());
     }
 
     public long getSize() {

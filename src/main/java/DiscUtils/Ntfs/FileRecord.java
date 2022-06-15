@@ -246,8 +246,7 @@ public class FileRecord extends FixupRecordBase {
     public String toString() {
         for (AttributeRecord attr : getAttributes()) {
             if (attr.getAttributeType() == AttributeType.FileName) {
-                StructuredNtfsAttribute<FileNameRecord> fnAttr = StructuredNtfsAttribute.class
-                        .cast(NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr));
+                StructuredNtfsAttribute<FileNameRecord> fnAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr);
                 return fnAttr.getContent()._fileName;
             }
         }
@@ -363,7 +362,7 @@ public class FileRecord extends FixupRecordBase {
     }
 
     void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "FILE RECORD (" + toString() + ")");
+        writer.println(indent + "FILE RECORD (" + this + ")");
         writer.println(indent + "              Magic: " + getMagic());
         writer.println(indent + "  Update Seq Offset: " + getUpdateSequenceOffset());
         writer.println(indent + "   Update Seq Count: " + getUpdateSequenceCount());

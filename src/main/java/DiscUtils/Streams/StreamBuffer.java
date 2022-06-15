@@ -50,7 +50,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
             throw new IllegalArgumentException("stream");
         }
 
-        _stream = stream instanceof SparseStream ? (SparseStream) stream : (SparseStream) null;
+        _stream = stream instanceof SparseStream ? (SparseStream) stream : null;
         if (_stream == null) {
             _stream = SparseStream.fromStream(stream, ownership);
             _ownership = Ownership.Dispose;

@@ -6,5 +6,5 @@ enum LoginStages {
     SecurityNegotiation,
     LoginOperationalNegotiation,
     __dummyEnum__2,
-    FullFeaturePhase;
+    FullFeaturePhase
 }

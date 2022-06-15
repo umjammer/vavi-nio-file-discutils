@@ -32,7 +32,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
         if (getStatus() == Nfs3Status.Ok) {
             setFileHandle(new Nfs3FileHandle(reader));
             int numAuthFlavours = reader.readInt32();
-            setAuthFlavours(new ArrayList<RpcAuthFlavour>(numAuthFlavours));
+            setAuthFlavours(new ArrayList<>(numAuthFlavours));
             for (int i = 0; i < numAuthFlavours; ++i) {
                 getAuthFlavours().add(RpcAuthFlavour.values()[reader.readInt32()]);
             }
@@ -76,7 +76,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3MountResult ? (Nfs3MountResult) obj : (Nfs3MountResult) null);
+        return equals(obj instanceof Nfs3MountResult ? (Nfs3MountResult) obj : null);
     }
 
     public boolean equals(Nfs3MountResult other) {

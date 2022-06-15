@@ -25,5 +25,5 @@ package DiscUtils.Nfs;
 public enum Nfs3StableHow {
     Unstable,
     DataSync,
-    FileSynce;
+    FileSynce
 }

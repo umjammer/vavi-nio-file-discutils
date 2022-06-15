@@ -24,7 +24,7 @@ package DiscUtils.Streams;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
@@ -112,10 +112,10 @@ public final class SnapshotStream extends SparseStream {
      * data.
      */
     public List<StreamExtent> getExtents() {
-        if (SparseStream.class.isInstance(_baseStream)) {
-            return StreamExtent.union(SparseStream.class.cast(_baseStream).getExtents(), _diffExtents);
+        if (_baseStream instanceof SparseStream) {
+            return StreamExtent.union(((SparseStream) _baseStream).getExtents(), _diffExtents);
         }
-        return Arrays.asList(new StreamExtent(0, getLength()));
+        return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 
     /**

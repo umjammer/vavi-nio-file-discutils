@@ -142,13 +142,13 @@ public enum Nfs3Status {
      */
     Unknown(-1);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private Nfs3Status(int value) {
+    Nfs3Status(int value) {
         this.value = value;
     }
 

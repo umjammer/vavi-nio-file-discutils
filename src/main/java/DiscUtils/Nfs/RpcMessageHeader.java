@@ -38,38 +38,38 @@ public class RpcMessageHeader {
     }
 
     public boolean isSuccess() {
-        return getReplyHeader() != null && getReplyHeader().Status == RpcReplyStatus.Accepted
-                && getReplyHeader().AcceptReply.AcceptStatus == RpcAcceptStatus.Success;
+        return replyHeader != null && replyHeader.Status == RpcReplyStatus.Accepted
+                && replyHeader.AcceptReply.AcceptStatus == RpcAcceptStatus.Success;
     }
 
-    private RpcReplyHeader __ReplyHeader;
+    private RpcReplyHeader replyHeader;
 
     public RpcReplyHeader getReplyHeader() {
-        return __ReplyHeader;
+        return replyHeader;
     }
 
     public void setReplyHeader(RpcReplyHeader value) {
-        __ReplyHeader = value;
+        replyHeader = value;
     }
 
-    private int __TransactionId;
+    private int transactionId;
 
     public int getTransactionId() {
-        return __TransactionId;
+        return transactionId;
     }
 
     public void setTransactionId(int value) {
-        __TransactionId = value;
+        transactionId = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getTransactionId());
+        writer.write(transactionId);
         writer.write(RpcMessageType.Reply.ordinal());
-        getReplyHeader().write(writer);
+        replyHeader.write(writer);
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof RpcMessageHeader ? (RpcMessageHeader) obj : (RpcMessageHeader) null);
+        return equals(obj instanceof RpcMessageHeader ? (RpcMessageHeader) obj : null);
     }
 
     public boolean equals(RpcMessageHeader other) {
@@ -77,12 +77,12 @@ public class RpcMessageHeader {
             return false;
         }
 
-        return other.isSuccess() == isSuccess() && other.getTransactionId() == getTransactionId()
-                && other.getReplyHeader().equals(getReplyHeader());
+        return other.isSuccess() == isSuccess() && other.transactionId == transactionId
+                && other.replyHeader.equals(replyHeader);
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(isSuccess(), getTransactionId(), getReplyHeader());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(isSuccess(), transactionId, replyHeader);
     }
 
     public static RpcMessageHeader accepted(int transactionId) {

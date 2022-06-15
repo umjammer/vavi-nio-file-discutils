@@ -174,17 +174,17 @@ public abstract class VirtualDisk implements Serializable, Closeable {
         }
         PartitionTable best = null;
         int bestScore = -1;
-        for (int i = 0; i < tables.size(); ++i) {
+        for (PartitionTable table : tables) {
             int newScore = 0;
-            if (tables.get(i) instanceof GuidPartitionTable) {
+            if (table instanceof GuidPartitionTable) {
                 newScore = 2;
-            } else if (tables.get(i) instanceof BiosPartitionTable) {
+            } else if (table instanceof BiosPartitionTable) {
                 newScore = 1;
             }
 
             if (newScore > bestScore) {
                 bestScore = newScore;
-                best = tables.get(i);
+                best = table;
             }
         }
 

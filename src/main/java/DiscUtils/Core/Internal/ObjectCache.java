@@ -134,10 +134,10 @@ public class ObjectCache<K, V> {
         sb.append(_entries.size());
         sb.append("]");
         sb.append("{");
-        _entries.entrySet().forEach(e -> {
-            sb.append(e.getKey());
+        _entries.forEach((key, value) -> {
+            sb.append(key);
             sb.append('=');
-            sb.append(e.getValue().get());
+            sb.append(value.get());
             sb.append(", ");
         });
         sb.setLength(sb.length() - 2);

@@ -38,5 +38,5 @@ enum InodeType {
     ExtendedBlockDevice,
     ExtendedCharacterDevice,
     ExtendedFifo,
-    ExtendedSocket;
+    ExtendedSocket
 }

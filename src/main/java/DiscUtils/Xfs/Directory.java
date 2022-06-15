@@ -107,7 +107,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
 
     private void addDirEntries(List<BlockDirectoryData> entries, Map<String, DirEntry> target) {
         for (BlockDirectoryData entry : entries) {
-            IDirectoryEntry dirEntry = entry instanceof IDirectoryEntry ? (IDirectoryEntry) entry : (IDirectoryEntry) null;
+            IDirectoryEntry dirEntry = entry instanceof IDirectoryEntry ? (IDirectoryEntry) entry : null;
             if (dirEntry == null)
                 continue;
 

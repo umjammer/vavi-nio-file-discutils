@@ -23,7 +23,7 @@
 package DiscUtils.Streams;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,10 +78,10 @@ public class SubStream extends MappedStream {
     }
 
     public List<StreamExtent> getExtents() {
-        if (SparseStream.class.isInstance(_parent)) {
-            return offsetExtents(SparseStream.class.cast(_parent).getExtentsInRange(_first, _length));
+        if (_parent instanceof SparseStream) {
+            return offsetExtents(((SparseStream) _parent).getExtentsInRange(_first, _length));
         }
-        return Arrays.asList(new StreamExtent(0, _length));
+        return Collections.singletonList(new StreamExtent(0, _length));
     }
 
     public long getLength() {
@@ -101,7 +101,7 @@ public class SubStream extends MappedStream {
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
-        return Arrays.asList(new StreamExtent(start + _first, length));
+        return Collections.singletonList(new StreamExtent(start + _first, length));
     }
 
     public void flush() {

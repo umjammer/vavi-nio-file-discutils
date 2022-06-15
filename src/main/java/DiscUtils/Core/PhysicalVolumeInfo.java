@@ -154,8 +154,8 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * Gets the unique identity of the physical partition, if known.
      */
     public UUID getPartitionIdentity() {
-        if (GuidPartitionInfo.class.isInstance(_partition)) {
-            return GuidPartitionInfo.class.cast(_partition).getIdentity();
+        if (_partition instanceof GuidPartitionInfo) {
+            return ((GuidPartitionInfo) _partition).getIdentity();
         }
 
         return EMPTY;

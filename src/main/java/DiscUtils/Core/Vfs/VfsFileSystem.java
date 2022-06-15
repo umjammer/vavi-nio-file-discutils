@@ -296,7 +296,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         try {
             dirName = Utilities.getDirectoryFromPath(path);
         } catch (IllegalArgumentException e) {
-            throw (dotnet4j.io.IOException) new dotnet4j.io.IOException("Invalid path: " + path).initCause(e);
+            throw new dotnet4j.io.IOException("Invalid path: " + path, e);
         }
 
         String entryPath = Utilities.combinePaths(dirName, fileName);
@@ -324,8 +324,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (attributeName == null || attributeName.isEmpty()) {
             stream = new BufferStream(file.getFileContent(), access);
         } else {
-            if (IVfsFileWithStreams.class.isInstance(file)) {
-                IVfsFileWithStreams fileStreams = IVfsFileWithStreams.class.cast(file);
+            if (file instanceof IVfsFileWithStreams) {
+                IVfsFileWithStreams fileStreams = (IVfsFileWithStreams) file;
                 stream = fileStreams.openExistingStream(attributeName);
                 if (stream == null) {
                     if (mode == FileMode.Create || mode == FileMode.OpenOrCreate) {
@@ -537,10 +537,10 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (self != null) {
             handler.invoke(path, self);
             if (self.isDirectory()) {
-                dir = (TDirectory) IVfsDirectory.class.cast(getFile(self));
+                dir = (TDirectory) getFile(self);
             }
         } else {
-            dir = (TDirectory) IVfsDirectory.class.cast(getFile(path));
+            dir = (TDirectory) getFile(path);
         }
 
         if (dir != null) {
@@ -668,10 +668,10 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         int resolvesLeft = 20;
         while (currentEntry.isSymlink() && resolvesLeft > 0) {
             TFile file = getFile(currentEntry);
-            if (!IVfsSymlink.class.isInstance(file)) {
+            if (!(file instanceof IVfsSymlink)) {
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
-            IVfsSymlink<TDirEntry, TFile> symlink = IVfsSymlink.class.cast(file);
+            IVfsSymlink<TDirEntry, TFile> symlink = (IVfsSymlink) file;
 
             currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex("\\*$"), ""),
                                                 symlink.getTargetPath());
@@ -695,7 +695,7 @@ Debug.println(currentPath);
      * Delegate for processing directory entries.
      */
     @FunctionalInterface
-    protected static interface DirEntryHandler<TDirEntry extends VfsDirEntry> {
+    protected interface DirEntryHandler<TDirEntry extends VfsDirEntry> {
 
         /**
          * @param path Full path to the directory entry.

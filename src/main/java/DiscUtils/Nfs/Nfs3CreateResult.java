@@ -25,7 +25,7 @@ package DiscUtils.Nfs;
 public class Nfs3CreateResult extends Nfs3CallResult {
     public Nfs3CreateResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
-        if (getStatus() == Nfs3Status.Ok) {
+        if (_status == Nfs3Status.Ok) {
             if (reader.readBool()) {
                 _fileHandle = new Nfs3FileHandle(reader);
             }
@@ -73,7 +73,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
 
     public void write(XdrDataWriter writer) {
         writer.write(_status.getValue());
-        if (getStatus() == Nfs3Status.Ok) {
+        if (_status == Nfs3Status.Ok) {
             writer.write(getFileHandle() != null);
             if (getFileHandle() != null) {
                 getFileHandle().write(writer);
@@ -89,7 +89,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3CreateResult ? (Nfs3CreateResult) obj : (Nfs3CreateResult) null);
+        return equals(obj instanceof Nfs3CreateResult ? (Nfs3CreateResult) obj : null);
     }
 
     public boolean equals(Nfs3CreateResult other) {
@@ -97,13 +97,13 @@ public class Nfs3CreateResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getFileHandle().equals(getFileHandle()) &&
+        return other._status == _status && other.getFileHandle().equals(getFileHandle()) &&
                dotnet4j.io.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes()) &&
                other.getCacheConsistency().equals(getCacheConsistency());
     }
 
     public int hashCode() {
         return dotnet4j.io.compat.Utilities
-                .getCombinedHashCode(getStatus(), getFileHandle(), getFileAttributes(), getCacheConsistency());
+                .getCombinedHashCode(_status, getFileHandle(), getFileAttributes(), getCacheConsistency());
     }
 }

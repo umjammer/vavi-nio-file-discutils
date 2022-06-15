@@ -41,7 +41,7 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public void setPayloadBlockStatus(PayloadBlockStatus value) {
-        _value = (_value & ~0x7l) | value.ordinal();
+        _value = (_value & ~0x7L) | value.ordinal();
     }
 
     public boolean getBitmapBlockPresent() {
@@ -49,7 +49,7 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public void setBitmapBlockPresent(boolean value) {
-        _value = (_value & ~0x7l) | (value ? 6 : 0);
+        _value = (_value & ~0x7L) | (value ? 6 : 0);
     }
 
     public long getFileOffsetMB() {

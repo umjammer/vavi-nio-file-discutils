@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -301,7 +301,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         }
 
         if (getName() != null) {
-            System.arraycopy(getName().getBytes(Charset.forName("UTF-16LE")), 0, buffer, offset + nameOffset, nameLength * 2);
+            System.arraycopy(getName().getBytes(StandardCharsets.UTF_16LE), 0, buffer, offset + nameOffset, nameLength * 2);
         }
 
         return length;
@@ -333,9 +333,9 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         // Each extent has implicit start LCN=0, so have to make stored runs match reality.
         // However, take care not to stomp on 'sparse' runs that may be at the start of the
         // new extent (indicated by Zero run offset).
-        for (int i = 0; i < newRecordRuns.size(); ++i) {
-            if (!newRecordRuns.get(i).isSparse()) {
-                newRecordRuns.get(i).setRunOffset(newRecordRuns.get(i).getRunOffset() + splitLcn);;
+        for (DataRun newRecordRun : newRecordRuns) {
+            if (!newRecordRun.isSparse()) {
+                newRecordRun.setRunOffset(newRecordRun.getRunOffset() + splitLcn);
                 break;
             }
         }
@@ -357,10 +357,10 @@ final class NonResidentAttributeRecord extends AttributeRecord {
             writer.println(indent + "  Compressed Size: " + _compressedSize);
         }
 
-        String runStr = "";
+        StringBuilder runStr = new StringBuilder();
 
         for (DataRun run : _dataRuns) {
-            runStr += " " + run;
+            runStr.append(" ").append(run);
         }
 
         writer.println(indent + "        Data Runs:" + runStr);

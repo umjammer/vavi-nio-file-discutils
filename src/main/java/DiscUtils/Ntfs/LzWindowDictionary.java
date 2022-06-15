@@ -78,8 +78,8 @@ public final class LzWindowDictionary {
 
     public void reset() {
         initalize();
-        for (int i = 0; i < _offsetList.length; i++) {
-            _offsetList[i].clear();
+        for (List<Integer> integers : _offsetList) {
+            integers.clear();
         }
     }
 

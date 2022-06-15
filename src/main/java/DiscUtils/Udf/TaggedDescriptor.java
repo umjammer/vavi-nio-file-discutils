@@ -22,6 +22,8 @@
 
 package DiscUtils.Udf;
 
+import java.lang.reflect.InvocationTargetException;
+
 import DiscUtils.Streams.Util.StreamUtilities;
 import dotnet4j.io.Stream;
 
@@ -36,16 +38,16 @@ public abstract class TaggedDescriptor<T extends BaseTaggedDescriptor> extends B
         try {
             stream.setPosition(sector * (long) sectorSize);
             byte[] buffer = StreamUtilities.readExact(stream, 512);
-            T result = clazz.newInstance();
+            T result = clazz.getDeclaredConstructor().newInstance();
             result.readFrom(buffer, 0);
             if (result.Tag._TagIdentifier != result.RequiredTagIdentifier || result.Tag.TagLocation != sector) {
-                throw new IllegalStateException(String.format("Corrupt UDF file system, unable to read %d tag at sector %d",
+                throw new IllegalStateException(String.format("Corrupt UDF file system, unable to read %s tag at sector %d",
                                                               result.RequiredTagIdentifier,
                                                               sector));
             }
 
             return result;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

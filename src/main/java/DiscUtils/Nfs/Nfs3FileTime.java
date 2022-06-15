@@ -69,7 +69,7 @@ public final class Nfs3FileTime {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3FileTime ? (Nfs3FileTime) obj : (Nfs3FileTime) null);
+        return equals(obj instanceof Nfs3FileTime ? (Nfs3FileTime) obj : null);
     }
 
     public boolean equals(Nfs3FileTime other) {

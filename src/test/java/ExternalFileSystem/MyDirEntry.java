@@ -40,15 +40,15 @@ class MyDirEntry extends VfsDirEntry {
     }
 
     public long getLastAccessTimeUtc() {
-        return ZonedDateTime.of(1980, 10, 21, 11, 04, 22, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
+        return ZonedDateTime.of(1980, 10, 21, 11, 4, 22, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
     }
 
     public long getLastWriteTimeUtc() {
-        return ZonedDateTime.of(1980, 10, 21, 11, 04, 22, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
+        return ZonedDateTime.of(1980, 10, 21, 11, 4, 22, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
     }
 
     public long getCreationTimeUtc() {
-        return ZonedDateTime.of(1980, 10, 21, 11, 04, 22, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
+        return ZonedDateTime.of(1980, 10, 21, 11, 4, 22, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
     }
 
     public boolean hasVfsFileAttributes() {

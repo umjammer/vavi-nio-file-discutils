@@ -291,7 +291,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the size of a single FAT, in sectors.
      */
     public long getFatSize() {
-        return _bpbFATSz16 != 0 ? _bpbFATSz16 & 0xffff : _bpbFATSz32 & 0xffff_ffffl;
+        return _bpbFATSz16 != 0 ? _bpbFATSz16 & 0xffff : _bpbFATSz32 & 0xffff_ffffL;
     }
 
     private FatType _fatVariant = FatType.None;
@@ -429,7 +429,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * Gets the total number of sectors on the disk.
      */
     public long getTotalSectors() {
-        return _bpbTotSec16 != 0 ? _bpbTotSec16 & 0xffff : _bpbTotSec32 & 0xffff_ffffl;
+        return _bpbTotSec16 != 0 ? _bpbTotSec16 & 0xffff : _bpbTotSec32 & 0xffff_ffffL;
     }
 
     /**
@@ -506,7 +506,7 @@ public final class FatFileSystem extends DiscFileSystem {
         try {
             entryId = getDirectoryEntry(_rootDir, path, parent);
         } catch (IllegalArgumentException e) {
-            throw (dotnet4j.io.IOException) new dotnet4j.io.IOException("Invalid path: " + path).initCause(e);
+            throw new dotnet4j.io.IOException("Invalid path: " + path, e);
         }
 
         if (parent[0] == null) {
@@ -708,9 +708,7 @@ public final class FatFileSystem extends DiscFileSystem {
             return;
         }
 
-        updateDirEntry(path, e -> {
-            e.setLastAccessTime(convertFromUtc(newTime));
-        });
+        updateDirEntry(path, e -> e.setLastAccessTime(convertFromUtc(newTime)));
     }
 
     /**
@@ -871,10 +869,10 @@ public final class FatFileSystem extends DiscFileSystem {
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         Directory focusDir = _rootDir;
-        for (int i = 0; i < pathElements.length; ++i) {
+        for (String pathElement : pathElements) {
             FileName name;
             try {
-                name = new FileName(pathElements[i], getFatOptions().getFileNameEncoding());
+                name = new FileName(pathElement, getFatOptions().getFileNameEncoding());
             } catch (IllegalArgumentException ae) {
                 throw new dotnet4j.io.IOException("Invalid path: " + path, ae);
             }
@@ -1643,7 +1641,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
                 usedCluster++;
             }
         }
-        return (usedCluster * getSectorsPerCluster() * getBytesPerSector());
+        return ((long) usedCluster * getSectorsPerCluster() * getBytesPerSector());
     }
 
     /**
@@ -1654,7 +1652,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
     }
 
     @FunctionalInterface
-    private static interface EntryUpdateAction {
+    private interface EntryUpdateAction {
 
         void invoke(DirectoryEntry entry);
     }
@@ -1888,8 +1886,8 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
 
         // Make sure the stream is at least as large as the partition requires.
 
-        if (stream.getLength() < pos + sectorCount * Sizes.Sector) {
-            stream.setLength(pos + sectorCount * Sizes.Sector);
+        if (stream.getLength() < pos + (long) sectorCount * Sizes.Sector) {
+            stream.setLength(pos + (long) sectorCount * Sizes.Sector);
         }
 
         // Give the caller access to the new file system

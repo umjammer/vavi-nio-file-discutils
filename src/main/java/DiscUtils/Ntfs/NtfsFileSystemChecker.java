@@ -412,8 +412,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                     if (!verifyMftRecord(recordData, bitmap.isPresent(index), bytesPerSector)) {
                         reportError("Invalid MFT record at index %s", index);
                         StringBuilder bldr = new StringBuilder();
-                        for (int i = 0; i < recordData.length; ++i) {
-                            bldr.append(String.format(" %2x}", recordData[i]));
+                        for (byte recordDatum : recordData) {
+                            bldr.append(String.format(" %2x}", recordDatum));
                         }
 
                         reportInfo("MFT record binary data for index %s:%s", index, bldr.toString());
@@ -567,10 +567,10 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         _levelsDetected = ReportLevels.Errors;
         if (_reportLevels.contains(ReportLevels.Errors)) {
             _report.printf("ERROR: " + str + "\n",
-                           Arrays.stream(args).filter(a -> !Throwable.class.isInstance(a)).toArray(Object[]::new));
+                           Arrays.stream(args).filter(a -> !(a instanceof Throwable)).toArray(Object[]::new));
             Arrays.stream(args)
-                    .filter(a -> Throwable.class.isInstance(a))
-                    .map(a -> Throwable.class.cast(a))
+                    .filter(a -> a instanceof Throwable)
+                    .map(a -> (Throwable) a)
                     .forEach(e -> e.printStackTrace(_report));
         }
     }

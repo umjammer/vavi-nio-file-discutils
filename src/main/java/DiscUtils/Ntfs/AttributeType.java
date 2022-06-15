@@ -101,13 +101,13 @@ public enum AttributeType {
      */
     LoggedUtilityStream(0x100);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private AttributeType(int value) {
+    AttributeType(int value) {
         this.value = value;
     }
 

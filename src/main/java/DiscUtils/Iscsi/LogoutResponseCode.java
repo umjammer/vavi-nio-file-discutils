@@ -5,5 +5,5 @@ enum LogoutResponseCode {
     ClosedSuccessfully,
     ConnectionIdNotFound,
     RecoveryNotSupported,
-    CleanupFailed;
+    CleanupFailed
 }

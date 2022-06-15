@@ -25,5 +25,5 @@ package DiscUtils.Core.LogicalDiskManager;
 enum ExtentMergeType {
     None,
     Interleaved,
-    Concatenated;
+    Concatenated
 }

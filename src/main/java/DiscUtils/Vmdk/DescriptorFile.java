@@ -187,35 +187,35 @@ public class DescriptorFile {
     public void write(Stream stream) {
         StringBuilder content = new StringBuilder();
         content.append("# Disk DescriptorFile\n");
-        for (int i = 0; i < _header.size(); ++i) {
-            content.append(_header.get(i).toString() + "\n");
+        for (DescriptorFileEntry descriptorFileEntry : _header) {
+            content.append(descriptorFileEntry.toString()).append("\n");
         }
         content.append("\n");
         content.append("# Extent description\n");
         for (int i = 0; i < getExtents().size(); ++i) {
-            content.append(getExtents().get(i) + "\n");
+            content.append(getExtents().get(i)).append("\n");
         }
         content.append("\n");
         content.append("# The Disk Data Base\n");
         content.append("#DDB\n");
-        for (int i = 0; i < _diskDataBase.size(); ++i) {
-            content.append(_diskDataBase.get(i).toString() + "\n");
+        for (DescriptorFileEntry descriptorFileEntry : _diskDataBase) {
+            content.append(descriptorFileEntry.toString()).append("\n");
         }
         byte[] contentBytes = content.toString().getBytes(StandardCharsets.US_ASCII);
         stream.write(contentBytes, 0, contentBytes.length);
     }
 
     private static DiskAdapterType parseAdapterType(String value) {
-        String __dummyScrutVar0 = value;
-        if (__dummyScrutVar0.equals("ide")) {
+        switch (value) {
+        case "ide":
             return DiskAdapterType.Ide;
-        } else if (__dummyScrutVar0.equals("buslogic")) {
+        case "buslogic":
             return DiskAdapterType.BusLogicScsi;
-        } else if (__dummyScrutVar0.equals("lsilogic")) {
+        case "lsilogic":
             return DiskAdapterType.LsiLogicScsi;
-        } else if (__dummyScrutVar0.equals("legacyESX")) {
+        case "legacyESX":
             return DiskAdapterType.LegacyEsx;
-        } else {
+        default:
             throw new IllegalArgumentException(String.format("Unknown type: %s", value));
         }
     }

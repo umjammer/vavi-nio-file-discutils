@@ -35,7 +35,7 @@ public final class Nfs3ReadDirPlusResult extends Nfs3CallResult {
 
         if (getStatus() == Nfs3Status.Ok) {
             setCookieVerifier(reader.readUInt64());
-            setDirEntries(new ArrayList<Nfs3DirectoryEntry>());
+            setDirEntries(new ArrayList<>());
             while (reader.readBool()) {
                 Nfs3DirectoryEntry dirEntry = new Nfs3DirectoryEntry(reader);
                 getDirEntries().add(dirEntry);
@@ -106,7 +106,7 @@ public final class Nfs3ReadDirPlusResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3ReadDirPlusResult ? (Nfs3ReadDirPlusResult) obj : (Nfs3ReadDirPlusResult) null);
+        return equals(obj instanceof Nfs3ReadDirPlusResult ? (Nfs3ReadDirPlusResult) obj : null);
     }
 
     public boolean equals(Nfs3ReadDirPlusResult other) {

@@ -152,7 +152,7 @@ public class LzxStream extends Stream {
         _buffer = new byte[32768];
         _bufferCount = 0;
         while (blockType != BlockType.None) {
-            int blockSize = _bitStream.read(1) == 1 ? 1 << 15 : (int) _bitStream.read(16);
+            int blockSize = _bitStream.read(1) == 1 ? 1 << 15 : _bitStream.read(16);
             if (blockType == BlockType.Uncompressed) {
                 decodeUncompressedBlock(blockSize);
             } else {
@@ -263,9 +263,7 @@ public class LzxStream extends Stream {
                 }
                 int destOffset = _bufferCount + numRead;
                 int srcOffset = destOffset - matchOffset;
-                for (int i = 0; i < matchLength; ++i) {
-                    _buffer[destOffset + i] = _buffer[srcOffset + i];
-                }
+                if (matchLength >= 0) System.arraycopy(_buffer, srcOffset + 0, _buffer, destOffset + 0, matchLength);
                 numRead += matchLength;
             }
         }
@@ -348,7 +346,7 @@ public class LzxStream extends Stream {
         None,
         Verbatim,
         AlignedOffset,
-        Uncompressed;
+        Uncompressed
     }
 
     @Override

@@ -38,7 +38,7 @@ public class Extent implements IByteArraySerializable {
     private int firstPhysicalBlockLow;
 
     public long getFirstPhysicalBlockLow() {
-        return firstPhysicalBlockLow & 0xffff_ffffl;
+        return firstPhysicalBlockLow & 0xffff_ffffL;
     }
 
     private short numBlocks;

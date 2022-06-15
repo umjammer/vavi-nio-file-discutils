@@ -23,7 +23,7 @@
 package DiscUtils.Vhdx;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
@@ -106,7 +106,7 @@ public final class DiskBuilder extends DiskImageBuilder {
                                                                              new DiskStreamBuilder(getContent(),
                                                                                                    getDiskType(),
                                                                                                    getBlockSize()));
-        return Arrays.asList(fileSpec);
+        return Collections.singletonList(fileSpec);
     }
 
     private static class DiskStreamBuilder extends StreamBuilder {

@@ -96,7 +96,7 @@ public enum InodeFlag {
      */
     Compress;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -104,7 +104,7 @@ public enum InodeFlag {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<InodeFlag> valueOf(int value) {
         return Arrays.stream(values())

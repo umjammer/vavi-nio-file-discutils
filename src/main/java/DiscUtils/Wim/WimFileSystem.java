@@ -325,9 +325,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         }
 
         List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.SubdirOffset);
-        return parentDir.stream().map(m -> {
-            return Utilities.combinePaths(path, m.FileName);
-        }).collect(Collectors.toList());
+        return parentDir.stream().map(m -> Utilities.combinePaths(path, m.FileName)).collect(Collectors.toList());
     }
 
     /**
@@ -588,11 +586,11 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     private DirectoryEntry getEntry(List<DirectoryEntry> dir, String[] path) {
         List<DirectoryEntry> currentDir = dir;
         DirectoryEntry nextEntry = null;
-        for (int i = 0; i < path.length; ++i) {
+        for (String s : path) {
             nextEntry = null;
             for (DirectoryEntry entry : currentDir) {
-                if (path[i].equals(entry.FileName) ||
-                    (entry.ShortName != null && !entry.ShortName.isEmpty() && path[i].equals(entry.ShortName))) {
+                if (s.equals(entry.FileName) ||
+                        (entry.ShortName != null && !entry.ShortName.isEmpty() && s.equals(entry.ShortName))) {
                     nextEntry = entry;
                     break;
                 }

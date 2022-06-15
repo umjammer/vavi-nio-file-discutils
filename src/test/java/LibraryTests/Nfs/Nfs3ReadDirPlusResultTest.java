@@ -24,7 +24,7 @@ package LibraryTests.Nfs;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import org.junit.jupiter.api.Test;
@@ -102,7 +102,7 @@ public class Nfs3ReadDirPlusResultTest {
         entry.setFileHandle(handle);
         entry.setFileId(99);
         entry.setName("test");
-        result.setDirEntries(Arrays.asList(entry));
+        result.setDirEntries(Collections.singletonList(entry));
         result.setEof(false);
         result.setStatus(Nfs3Status.Ok);
 

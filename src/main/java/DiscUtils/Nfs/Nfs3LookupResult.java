@@ -87,7 +87,7 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3LookupResult ? (Nfs3LookupResult) obj : (Nfs3LookupResult) null);
+        return equals(obj instanceof Nfs3LookupResult ? (Nfs3LookupResult) obj : null);
     }
 
     public boolean equals(Nfs3LookupResult other) {

@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
@@ -48,16 +48,16 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
     }
 
     public int size() {
-        return getName().getBytes(Charset.forName("UTF-16LE")).length;
+        return getName().getBytes(StandardCharsets.UTF_16LE).length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setName(new String(buffer, offset, buffer.length - offset, Charset.forName("UTF-16LE")));
+        setName(new String(buffer, offset, buffer.length - offset, StandardCharsets.UTF_16LE));
         return buffer.length - offset;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        byte[] bytes = getName().getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = getName().getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset, bytes.length);
     }
 

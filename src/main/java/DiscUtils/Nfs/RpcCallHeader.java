@@ -106,7 +106,7 @@ public class RpcCallHeader {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof RpcCallHeader ? (RpcCallHeader) obj : (RpcCallHeader) null);
+        return equals(obj instanceof RpcCallHeader ? (RpcCallHeader) obj : null);
     }
 
     public boolean equals(RpcCallHeader other) {

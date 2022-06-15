@@ -62,7 +62,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
             StringBuilder rrName = new StringBuilder();
             if (nameEntries != null && nameEntries.size() > 0) {
                 for (SystemUseEntry nameEntry : nameEntries) {
-                    rrName.append(PosixNameSystemUseEntry.class.cast(nameEntry).NameData);
+                    rrName.append(((PosixNameSystemUseEntry) nameEntry).NameData);
                 }
 
                 _fileName = rrName.toString();
@@ -73,7 +73,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
             ChildLinkSystemUseEntry clEntry = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "CL");
             if (clEntry != null) {
                 _context.getDataStream()
-                        .setPosition(clEntry.ChildDirLocation * _context.getVolumeDescriptor().getLogicalBlockSize());
+                        .setPosition((long) clEntry.ChildDirLocation * _context.getVolumeDescriptor().getLogicalBlockSize());
                 byte[] firstSector = StreamUtilities.readExact(_context.getDataStream(),
                                                                _context.getVolumeDescriptor().getLogicalBlockSize());
 
@@ -185,7 +185,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
     }
 
     public long getUniqueCacheId() {
-        return ((_record.LocationOfExtent & 0xffffffffl) << 32) | _record.DataLength;
+        return ((_record.LocationOfExtent & 0xffffffffL) << 32) | _record.DataLength;
     }
 
     public String toString() {

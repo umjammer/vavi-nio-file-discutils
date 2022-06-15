@@ -24,6 +24,7 @@ package DiscUtils.Iscsi;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -106,7 +107,7 @@ public class Initiator {
      *         this method to discover the available Targets.
      */
     public TargetInfo[] getTargets(TargetAddress address) {
-        try (Session session = new Session(SessionType.Discovery, null, _userName, _password, Arrays.asList(address))) {
+        try (Session session = new Session(SessionType.Discovery, null, _userName, _password, Collections.singletonList(address))) {
             return session.enumerateTargets();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

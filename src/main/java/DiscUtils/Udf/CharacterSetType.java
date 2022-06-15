@@ -10,5 +10,5 @@ enum CharacterSetType {
     CharacterSet5,
     CharacterSet6,
     CharacterSet7,
-    CharacterSet8;
+    CharacterSet8
 }

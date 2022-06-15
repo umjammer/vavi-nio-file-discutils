@@ -42,10 +42,10 @@ final class CatalogFileInfo extends CommonCatalogFileInfo {
         super.readFrom(buffer, offset);
 
         Flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        FileInfo = EndianUtilities.<FileInfo> toStruct(FileInfo.class, buffer, offset + 48);
+        FileInfo = EndianUtilities.toStruct(FileInfo.class, buffer, offset + 48);
 
-        DataFork = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 88);
-        ResourceFork = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 168);
+        DataFork = EndianUtilities.toStruct(ForkData.class, buffer, offset + 88);
+        ResourceFork = EndianUtilities.toStruct(ForkData.class, buffer, offset + 168);
 
         return 0;
     }

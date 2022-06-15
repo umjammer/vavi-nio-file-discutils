@@ -99,19 +99,13 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
     }
 
     public void clear(int count) {
-        doOperation((s, opOffset, opCount) -> {
-            s.clear(opCount);
-        }, (buffer, offset, opOffset, opCount) -> {
-            Arrays.fill(buffer, offset, offset + opCount, (byte) 0);
-        }, count);
+        doOperation((s, opOffset, opCount) -> s.clear(opCount),
+                (buffer, offset, opOffset, opCount) -> Arrays.fill(buffer, offset, offset + opCount, (byte) 0), count);
     }
 
     public void write(byte[] buffer, int offset, int count) {
-        doOperation((s, opOffset, opCount) -> {
-            s.write(buffer, offset + opOffset, opCount);
-        }, (tempBuffer, tempOffset, opOffset, opCount) -> {
-            System.arraycopy(buffer, offset + opOffset, tempBuffer, tempOffset, opCount);
-        }, count);
+        doOperation((s, opOffset, opCount) -> s.write(buffer, offset + opOffset, opCount),
+                (tempBuffer, tempOffset, opOffset, opCount) -> System.arraycopy(buffer, offset + opOffset, tempBuffer, tempOffset, opCount), count);
     }
 
     private void doOperation(ModifyStream modifyStream, ModifyBuffer modifyBuffer, int count) {
@@ -169,13 +163,13 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
     }
 
     @FunctionalInterface
-    private static interface ModifyStream {
+    private interface ModifyStream {
 
         void invoke(SparseStream stream, int opOffset, int count);
     }
 
     @FunctionalInterface
-    private static interface ModifyBuffer {
+    private interface ModifyBuffer {
 
         void invoke(byte[] buffer, int offset, int opOffset, int count);
     }

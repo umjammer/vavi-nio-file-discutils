@@ -105,17 +105,17 @@ public final class VirtualMachine implements Closeable {
         try (Stream docStream = getArchive().openFile("ova.xml")) {
             InputSource ovaDoc = new InputSource(new StreamInputStream(docStream));
             XPath nav = XPathFactory.newInstance().newXPath();
-            NodeList nodeList = NodeList.class.cast(nav.evaluate(FindVDIsExpression, ovaDoc, XPathConstants.NODESET));
+            NodeList nodeList = (NodeList) nav.evaluate(FindVDIsExpression, ovaDoc, XPathConstants.NODESET);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                Node idNode = Node.class.cast(nav.evaluate(GetDiskId, node, XPathConstants.NODE));
+                Node idNode = (Node) nav.evaluate(GetDiskId, node, XPathConstants.NODE);
 
                 // Skip disks which are only referenced, not present
                 if (getArchive().dirExists(idNode.getTextContent())) {
-                    Node uuidNode = Node.class.cast(nav.evaluate(GetDiskUuid, node, XPathConstants.NODE));
-                    Node nameLabelNode = Node.class.cast(nav.evaluate(GetDiskNameLabel, node, XPathConstants.NODE));
+                    Node uuidNode = (Node) nav.evaluate(GetDiskUuid, node, XPathConstants.NODE);
+                    Node nameLabelNode = (Node) nav.evaluate(GetDiskNameLabel, node, XPathConstants.NODE);
                     long capacity = Long
-                            .parseLong(Node.class.cast(nav.evaluate(GetDiskCapacity, node, XPathConstants.NODE)).getTextContent());
+                            .parseLong(((Node) nav.evaluate(GetDiskCapacity, node, XPathConstants.NODE)).getTextContent());
                     result.add(new Disk(this, uuidNode.toString(), nameLabelNode.toString(), idNode.getTextContent(), capacity));
                 }
             }

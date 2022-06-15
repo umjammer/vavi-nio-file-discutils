@@ -123,7 +123,7 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public long getUniqueCacheId() {
-        long result = _inode == null ? 0 : (long) _inode.getTransId();
+        long result = _inode == null ? 0 : _inode.getTransId();
         result = (result * 397) ^ _item.getTransId();
         result = (result * 397) ^ _item.getChildLocation().getObjectId();
         return result;

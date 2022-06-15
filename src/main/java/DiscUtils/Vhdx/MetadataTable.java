@@ -34,7 +34,7 @@ import DiscUtils.Streams.Util.Sizes;
 public final class MetadataTable implements IByteArraySerializable {
     public static final int FixedSize = (int) (64 * Sizes.OneKiB);
 
-    public static final long MetadataTableSignature = 0x617461646174656Dl;
+    public static final long MetadataTableSignature = 0x617461646174656DL;
 
     public static final UUID FileParametersGuid = UUID.fromString("CAA16737-FA36-4D43-B3B6-33F0AA44E76B");
 

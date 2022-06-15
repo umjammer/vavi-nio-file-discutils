@@ -82,18 +82,18 @@ public final class PrimaryVolumeDescriptor extends TaggedDescriptor<PrimaryVolum
         MaxCharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 68);
         VolumeSetIdentifier = UdfUtilities.readDString(buffer, offset + 72, 128);
         DescriptorCharSet = EndianUtilities
-                .<CharacterSetSpecification> toStruct(CharacterSetSpecification.class, buffer, offset + 200);
+                .toStruct(CharacterSetSpecification.class, buffer, offset + 200);
         ExplanatoryCharSet = EndianUtilities
-                .<CharacterSetSpecification> toStruct(CharacterSetSpecification.class, buffer, offset + 264);
+                .toStruct(CharacterSetSpecification.class, buffer, offset + 264);
         VolumeAbstractExtent = new ExtentDescriptor();
         VolumeAbstractExtent.readFrom(buffer, offset + 328);
         VolumeCopyrightNoticeExtent = new ExtentDescriptor();
         VolumeCopyrightNoticeExtent.readFrom(buffer, offset + 336);
         ApplicationIdentifier = EndianUtilities
-                .<ApplicationEntityIdentifier> toStruct(ApplicationEntityIdentifier.class, buffer, offset + 344);
+                .toStruct(ApplicationEntityIdentifier.class, buffer, offset + 344);
         RecordingTime = UdfUtilities.parseTimestamp(buffer, offset + 376);
         ImplementationIdentifier = EndianUtilities
-                .<ImplementationEntityIdentifier> toStruct(ImplementationEntityIdentifier.class, buffer, offset + 388);
+                .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 388);
         ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 420, 64);
         PredecessorVolumeDescriptorSequenceLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 484);
         Flags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 488);

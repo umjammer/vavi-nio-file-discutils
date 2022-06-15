@@ -65,7 +65,7 @@ public final class PacketReader {
 
             case 0xC0:
                 if (!hasIndirected) {
-                    _position += + 2;
+                    _position += 2;
                 }
 
                 hasIndirected = true;

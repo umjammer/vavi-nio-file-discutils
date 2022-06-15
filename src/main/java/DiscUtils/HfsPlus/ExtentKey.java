@@ -94,7 +94,7 @@ Debug.println((_keyLength & 0xffff) + 2);
     }
 
     public int compareTo(BTreeKey<?> other) {
-        return compareTo(other instanceof ExtentKey ? (ExtentKey) other : (ExtentKey) null);
+        return compareTo(other instanceof ExtentKey ? (ExtentKey) other : null);
     }
 
     public String toString() {

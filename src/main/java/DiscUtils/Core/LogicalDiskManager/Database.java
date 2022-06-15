@@ -64,7 +64,7 @@ public class Database {
         return _records.values()
                 .stream()
                 .filter(r -> r._RecordType == RecordType.Disk)
-                .map(r -> DiskRecord.class.cast(r))
+                .map(r -> (DiskRecord) r)
                 .collect(Collectors.toList());
     }
 
@@ -72,7 +72,7 @@ public class Database {
         return _records.values()
                 .stream()
                 .filter(r -> r._RecordType == RecordType.Volume)
-                .map(r -> VolumeRecord.class.cast(r))
+                .map(r -> (VolumeRecord) r)
                 .collect(Collectors.toList());
     }
 
@@ -123,9 +123,7 @@ public class Database {
     }
 
     public VolumeRecord getVolume(UUID id) {
-        return findRecord(r -> {
-            return r.VolumeGuid.equals(id);
-        }, RecordType.Volume);
+        return findRecord(r -> r.VolumeGuid.equals(id), RecordType.Volume);
     }
 
     public <T extends DatabaseRecord> T findRecord(Predicate<T> pred, RecordType typeId) {

@@ -50,7 +50,7 @@ public class BuiltStream extends SparseStream {
         _extents = extents;
 
         // Make sure the extents are sorted, so binary searches will work.
-        Collections.sort(_extents, new ExtentStartComparer());
+        _extents.sort(new ExtentStartComparer());
     }
 
     public boolean canRead() {

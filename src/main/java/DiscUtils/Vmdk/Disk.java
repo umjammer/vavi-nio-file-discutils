@@ -88,10 +88,10 @@ public final class Disk extends VirtualDisk {
         _path = path;
         FileLocator fileLocator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
         _files = new ArrayList<>();
-        _files.add(new Tuple<VirtualDiskLayer, Ownership>(new DiskImageFile(fileLocator,
-                                                                            Utilities.getFileFromPath(path),
-                                                                            access),
-                                                          Ownership.Dispose));
+        _files.add(new Tuple<>(new DiskImageFile(fileLocator,
+                Utilities.getFileFromPath(path),
+                access),
+                Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -103,24 +103,24 @@ public final class Disk extends VirtualDisk {
      * @param ownsStream Indicates if the new instances owns the stream.
      */
     public Disk(Stream stream, Ownership ownsStream) {
-        if (FileStream.class.isInstance(stream)) {
-            _path = FileStream.class.cast(stream).getName();
+        if (stream instanceof FileStream) {
+            _path = ((FileStream) stream).getName();
         }
 
         _files = new ArrayList<>();
-        _files.add(new Tuple<VirtualDiskLayer, Ownership>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
+        _files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
     }
 
     Disk(DiskImageFile file, Ownership ownsStream) throws IOException {
         _files = new ArrayList<>();
-        _files.add(new Tuple<VirtualDiskLayer, Ownership>(file, ownsStream));
+        boolean add = _files.add(new Tuple<>(file, ownsStream));
         resolveFileChain();
     }
 
     Disk(FileLocator layerLocator, String path, FileAccess access) throws IOException {
         _path = path;
         _files = new ArrayList<>();
-        _files.add(new Tuple<VirtualDiskLayer, Ownership>(new DiskImageFile(layerLocator, path, access), Ownership.Dispose));
+        _files.add(new Tuple<>(new DiskImageFile(layerLocator, path, access), Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -130,8 +130,8 @@ public final class Disk extends VirtualDisk {
      */
     public Geometry getBiosGeometry() {
         VirtualDiskLayer item1 = _files.get(_files.size() - 1).Item1;
-        if (DiskImageFile.class.isInstance(item1)) {
-            return DiskImageFile.class.cast(item1).getBiosGeometry();
+        if (item1 instanceof DiskImageFile) {
+            return ((DiskImageFile) item1).getBiosGeometry();
         } else {
             return Geometry.makeBiosSafe(item1.getGeometry(), getCapacity());
         }
@@ -198,7 +198,7 @@ public final class Disk extends VirtualDisk {
      * Gets the links that make up the disk (type-safe version of Layers).
      */
     public List<DiskImageFile> getLinks() {
-        return _files.stream().map(file -> DiskImageFile.class.cast(file.Item1)).collect(Collectors.toList());
+        return _files.stream().map(file -> (DiskImageFile) file.Item1).collect(Collectors.toList());
     }
 
     /**
@@ -405,7 +405,7 @@ public final class Disk extends VirtualDisk {
     }
 
     private static DiskCreateType diffDiskCreateType(VirtualDiskLayer layer) {
-        DiskImageFile vmdkLayer = layer instanceof DiskImageFile ? (DiskImageFile) layer : (DiskImageFile) null;
+        DiskImageFile vmdkLayer = layer instanceof DiskImageFile ? (DiskImageFile) layer : null;
         if (vmdkLayer != null) {
             switch (vmdkLayer.getCreateType()) {
             case FullDevice:

@@ -39,7 +39,7 @@ public class ExtentBlock implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Header = EndianUtilities.<ExtentHeader> toStruct(ExtentHeader.class, buffer, offset + 0);
+        Header = EndianUtilities.toStruct(ExtentHeader.class, buffer, offset + 0);
         if (Header.Magic != ExtentHeader.HeaderMagic) {
             throw new IOException("Invalid extent header reading inode");
         }
@@ -48,13 +48,13 @@ public class ExtentBlock implements IByteArraySerializable {
             Index = null;
             Extents = new Extent[Header.getEntries()];
             for (int i = 0; i < Extents.length; ++i) {
-                Extents[i] = EndianUtilities.<Extent> toStruct(Extent.class, buffer, offset + 12 + i * 12);
+                Extents[i] = EndianUtilities.toStruct(Extent.class, buffer, offset + 12 + i * 12);
             }
         } else {
             Extents = null;
             Index = new ExtentIndex[Header.getEntries()];
             for (int i = 0; i < Index.length; ++i) {
-                Index[i] = EndianUtilities.<ExtentIndex> toStruct(ExtentIndex.class, buffer, offset + 12 + i * 12);
+                Index[i] = EndianUtilities.toStruct(ExtentIndex.class, buffer, offset + 12 + i * 12);
             }
         }
         return 12 + Header.getMaxEntries() * 12;

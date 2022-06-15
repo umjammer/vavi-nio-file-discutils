@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -117,7 +117,7 @@ public class Directory extends File {
         }
 
         if ((name.indexOf('\0') & name.indexOf('/')) != -1) {
-            throw new IOException("Invalid file name, contains \'\\0\' or \'/\': " + name);
+            throw new IOException("Invalid file name, contains '\\0' or '/': " + name);
         }
 
         FileNameRecord newNameRecord = file.getFileNameRecord(null, true);
@@ -158,14 +158,14 @@ public class Directory extends File {
     }
 
     public String createShortName(String name) {
-        String baseName = "";
-        String ext = "";
+        StringBuilder baseName = new StringBuilder();
+        StringBuilder ext = new StringBuilder();
         int lastPeriod = name.lastIndexOf('.');
         int i = 0;
         while (baseName.length() < 6 && i < name.length() && i != lastPeriod) {
             char upperChar = Character.toUpperCase(name.charAt(i));
             if (Utilities.is8Dot3Char(upperChar)) {
-                baseName += upperChar;
+                baseName.append(upperChar);
             }
 
             ++i;
@@ -175,7 +175,7 @@ public class Directory extends File {
             while (ext.length() < 3 && i < name.length()) {
                 char upperChar = Character.toUpperCase(name.charAt(i));
                 if (Utilities.is8Dot3Char(upperChar)) {
-                    ext += upperChar;
+                    ext.append(upperChar);
                 }
 
                 ++i;
@@ -224,7 +224,7 @@ public class Directory extends File {
         private final UpperCase _upperCase;
 
         public FileNameQuery(String query, UpperCase upperCase) {
-            _query = query.getBytes(Charset.forName("UTF-16LE"));
+            _query = query.getBytes(StandardCharsets.UTF_16LE);
             _upperCase = upperCase;
         }
 
@@ -237,7 +237,7 @@ public class Directory extends File {
         }
 
         public String toString() {
-            return new String(_query, Charset.forName("UTF-16LE")) + ": " + _upperCase;
+            return new String(_query, StandardCharsets.UTF_16LE) + ": " + _upperCase;
         }
     }
 }

@@ -137,9 +137,7 @@ public class DiscFileSystemDirectoryTest {
     @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void deleteRoot(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
-        assertThrows(IOException.class, () -> {
-            fs.getRoot().delete();
-        });
+        assertThrows(IOException.class, () -> fs.getRoot().delete());
     }
 
     @ParameterizedTest
@@ -147,9 +145,7 @@ public class DiscFileSystemDirectoryTest {
     public void deleteNonEmpty_NonRecursive(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("Fred\\child");
-        assertThrows(IOException.class, () -> {
-            fs.getRoot().getDirectories("Fred").get(0).delete();
-        });
+        assertThrows(IOException.class, () -> fs.getRoot().getDirectories("Fred").get(0).delete());
     }
 
     @ParameterizedTest
@@ -212,9 +208,7 @@ public class DiscFileSystemDirectoryTest {
     @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void getDirectories_BadPath(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
-        assertThrows(FileNotFoundException.class, () -> {
-            fs.getDirectories("\\baddir");
-        });
+        assertThrows(FileNotFoundException.class, () -> fs.getDirectories("\\baddir"));
     }
 
     @ParameterizedTest

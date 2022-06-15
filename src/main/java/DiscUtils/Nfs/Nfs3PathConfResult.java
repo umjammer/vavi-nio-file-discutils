@@ -152,7 +152,7 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3PathConfResult ? (Nfs3PathConfResult) obj : (Nfs3PathConfResult) null);
+        return equals(obj instanceof Nfs3PathConfResult ? (Nfs3PathConfResult) obj : null);
     }
 
     public boolean equals(Nfs3PathConfResult other) {

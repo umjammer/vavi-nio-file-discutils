@@ -124,9 +124,7 @@ public class Program extends ProgramBase {
 
                     long now = System.currentTimeMillis();
                     long totalBytes_ = totalBytes;
-                    pump.ProgressEvent = (o, e) -> {
-                        showProgress("Progress", totalBytes_, now, o, e);
-                    };
+                    pump.ProgressEvent = (o, e) -> showProgress("Progress", totalBytes_, now, o, e);
                 }
 
                 pump.run();

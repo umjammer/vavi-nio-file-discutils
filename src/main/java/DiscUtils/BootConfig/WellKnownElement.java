@@ -519,13 +519,13 @@ public enum WellKnownElement {
      */
     SetupRecoveryOs(0x46000010);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private WellKnownElement(int value) {
+    WellKnownElement(int value) {
         this.value = value;
     }
 }

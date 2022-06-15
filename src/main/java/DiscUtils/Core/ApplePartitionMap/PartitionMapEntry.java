@@ -111,6 +111,6 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
     }
 
     public SparseStream open() {
-        return new SubStream(_diskStream, PhysicalBlockStart * 512, PhysicalBlocks * 512);
+        return new SubStream(_diskStream, PhysicalBlockStart * 512L, PhysicalBlocks * 512L);
     }
 }

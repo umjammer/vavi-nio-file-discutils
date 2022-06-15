@@ -45,7 +45,7 @@ public class FileInfo implements IByteArraySerializable {
         FileType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
         FileCreator = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
         _finderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
-        Point = EndianUtilities.<Point> toStruct(Point.class, buffer, offset + 10);
+        Point = EndianUtilities.toStruct(Point.class, buffer, offset + 10);
 
         return 16;
     }

@@ -34,13 +34,13 @@ enum RunType {
     Comment(0x7FFFFFFE),
     Terminator(0xFFFFFFFF);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private RunType(int value) {
+    RunType(int value) {
         this.value = value;
     }
 

@@ -237,7 +237,7 @@ public final class Disk extends VirtualDisk {
      * is not called on this class.
      */
     public boolean getAutoCommitFooter() {
-        DynamicStream dynContent = getContent() instanceof DynamicStream ? (DynamicStream) getContent() : (DynamicStream) null;
+        DynamicStream dynContent = getContent() instanceof DynamicStream ? (DynamicStream) getContent() : null;
         if (dynContent == null) {
             return true;
         }
@@ -246,7 +246,7 @@ public final class Disk extends VirtualDisk {
     }
 
     public void setAutoCommitFooter(boolean value) {
-        DynamicStream dynContent = getContent() instanceof DynamicStream ? (DynamicStream) getContent() : (DynamicStream) null;
+        DynamicStream dynContent = getContent() instanceof DynamicStream ? (DynamicStream) getContent() : null;
         if (dynContent != null) {
             dynContent.setAutoCommitFooter(value);
         }

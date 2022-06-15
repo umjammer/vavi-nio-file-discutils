@@ -68,7 +68,7 @@ public class FileSetDescriptor implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        DescriptorTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, buffer, offset);
+        DescriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         RecordingTime = UdfUtilities.parseTimestamp(buffer, offset + 16);
         InterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
         MaximumInterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
@@ -77,20 +77,20 @@ public class FileSetDescriptor implements IByteArraySerializable {
         FileSetNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
         FileSetDescriptorNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
         LogicalVolumeIdentifierCharset = EndianUtilities
-                .<CharacterSetSpecification> toStruct(CharacterSetSpecification.class, buffer, offset + 48);
+                .toStruct(CharacterSetSpecification.class, buffer, offset + 48);
         LogicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 112, 128);
         FileSetCharset = EndianUtilities
-                .<CharacterSetSpecification> toStruct(CharacterSetSpecification.class, buffer, offset + 240);
+                .toStruct(CharacterSetSpecification.class, buffer, offset + 240);
         FileSetIdentifier = UdfUtilities.readDString(buffer, offset + 304, 32);
         CopyrightFileIdentifier = UdfUtilities.readDString(buffer, offset + 336, 32);
         AbstractFileIdentifier = UdfUtilities.readDString(buffer, offset + 368, 32);
         RootDirectoryIcb = EndianUtilities
-                .<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 400);
+                .toStruct(LongAllocationDescriptor.class, buffer, offset + 400);
         DomainIdentifier = EndianUtilities
-                .<DomainEntityIdentifier> toStruct(DomainEntityIdentifier.class, buffer, offset + 416);
-        NextExtent = EndianUtilities.<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 448);
+                .toStruct(DomainEntityIdentifier.class, buffer, offset + 416);
+        NextExtent = EndianUtilities.toStruct(LongAllocationDescriptor.class, buffer, offset + 448);
         SystemStreamDirectoryIcb = EndianUtilities
-                .<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 464);
+                .toStruct(LongAllocationDescriptor.class, buffer, offset + 464);
         return 512;
     }
 

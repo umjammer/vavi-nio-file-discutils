@@ -76,6 +76,7 @@ public class Program extends ProgramBase {
                 System.err.println();
             }
         }
+        odsClient.close();
     }
 
     private static void showService(OpticalDiscService service) throws IOException {

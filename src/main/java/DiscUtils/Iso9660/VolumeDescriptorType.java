@@ -10,13 +10,13 @@ enum VolumeDescriptorType {
     Partition(3),
     SetTerminator(255);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private VolumeDescriptorType(int value) {
+    VolumeDescriptorType(int value) {
         this.value = value;
     }
 

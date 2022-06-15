@@ -23,7 +23,7 @@
 package DiscUtils.Fat;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.SparseStream;
@@ -62,7 +62,7 @@ public class FatFileStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return Arrays.asList(new StreamExtent(0, getLength()));
+        return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 
     public long getLength() {

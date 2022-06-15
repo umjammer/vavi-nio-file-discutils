@@ -27,7 +27,7 @@ public enum ContentEncoding {
     String,
     Unicode,
     Byte,
-    UTF-16,
+    UTF16,
     UTF8,
     UTF7,
     Ascii

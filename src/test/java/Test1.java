@@ -73,10 +73,10 @@ public class Test1 {
     interface BarComparable<T extends BarComparable<?>> extends Comparable<T> {
     }
 
-    abstract class BarDescription<T extends BarComparable<?>> implements BarComparable<T> {
+    abstract static class BarDescription<T extends BarComparable<?>> implements BarComparable<T> {
     }
 
-    class FooBar extends BarDescription<FooBar> implements FooComparable<FooBar> {
+    static class FooBar extends BarDescription<FooBar> implements FooComparable<FooBar> {
         @Override
         public int compareTo(FooBar o) {
             return 0;
@@ -106,14 +106,14 @@ public class Test1 {
     @Test
     void test5() throws Exception {
         byte b = (byte) 0xaa;
-        assertTrue((b & 0xff) == 0xaa);
+        assertEquals(0xaa, (b & 0xff));
     }
 
     @Test
     void test5_1() throws Exception {
         UUID uuid1 = new UUID(0L, 0L);
         UUID uuid2 = new UUID(0L, 0L);
-        assertTrue(uuid1.equals(uuid2));
+        assertEquals(uuid1, uuid2);
 
 //System.err.printf("%s:%s\n", uuid1, uuid2);
     }
@@ -153,13 +153,13 @@ public class Test1 {
     @Test
     public void test8() {
         // formatter:off
-        String aa[][] = {
+        String[][] aa = {
             { "a1", "a2", "a3", "a4" },
             { "b1", "b2", "b3" },
             { "c1", "c2" },
         };
-        String x[] = { "a1", "a2", "a3", "a4", "b1", "b2", "b3", "c1", "c2" };
-        String[] r = Arrays.stream(aa).flatMap(a -> Arrays.stream(a)).toArray(String[]::new);
+        String[] x = { "a1", "a2", "a3", "a4", "b1", "b2", "b3", "c1", "c2" };
+        String[] r = Arrays.stream(aa).flatMap(Arrays::stream).toArray(String[]::new);
         assertArrayEquals(x, r);
         // formatter:on
     }

@@ -22,17 +22,22 @@
 
 package DiscUtils.PowerShell.VirtualRegistryProvider;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import DiscUtils.PowerShell.Conpat.ErrorRecord;
+import DiscUtils.PowerShell.Conpat.NavigationCmdletProvider;
+import DiscUtils.PowerShell.Conpat.PSDriveInfo;
+import DiscUtils.PowerShell.Conpat.ReturnContainers;
 import DiscUtils.PowerShell.Utilities;
 import DiscUtils.Registry.RegistryHive;
 import DiscUtils.Registry.RegistryKey;
 import DiscUtils.Registry.RegistryValueType;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.Stream;
 
 
 public final class Provider extends NavigationCmdletProvider implements IDynamicPropertyCmdletProvider {
@@ -40,7 +45,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
 
     protected PSDriveInfo newDrive(PSDriveInfo drive) {
         NewDriveParameters dynParams = DynamicParameters instanceof NewDriveParameters ? (NewDriveParameters) DynamicParameters
-                                                                                       : (NewDriveParameters) null;
+                                                                                       : null;
         if (drive == null) {
             writeError(new ErrorRecord(new NullPointerException(nameof(drive)),
                                        "NullDrive",
@@ -49,12 +54,12 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
             return null;
         }
 
-        if (String.IsNullOrEmpty(drive.Root)) {
+        if (drive.getRoot() == null || drive.getRoot().isEmpty()) {
             writeError(new ErrorRecord(new IllegalArgumentException("drive"), "NoRoot", ErrorCategory.InvalidArgument, drive));
             return null;
         }
 
-        String[] mountPaths = drive.Root.split('!');
+        String[] mountPaths = drive.getRoot().split('!');
         if (mountPaths.length < 1 || mountPaths.length > 2) {
             writeError(new ErrorRecord(new IllegalArgumentException("drive"),
                                        "InvalidRoot",
@@ -88,7 +93,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         return new NewDriveParameters();
     }
 
-    protected PSDriveInfo removeDrive(PSDriveInfo drive) {
+    protected PSDriveInfo removeDrive(PSDriveInfo drive) throws IOException {
         if (drive == null) {
             writeError(new ErrorRecord(new NullPointerException(nameof(drive)),
                                        "NullDrive",
@@ -98,7 +103,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         }
 
         VirtualRegistryPSDriveInfo vrDrive = drive instanceof VirtualRegistryPSDriveInfo ? (VirtualRegistryPSDriveInfo) drive
-                                                                                         : (VirtualRegistryPSDriveInfo) null;
+                                                                                         : null;
         if (vrDrive == null) {
             writeError(new ErrorRecord(new IllegalArgumentException("invalid type of drive"),
                                        "BadDrive",
@@ -155,16 +160,16 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         String parentPath = getParentPath(path, null);
         RegistryKey parentKey = findItemByPath(parentPath);
         if (recurse) {
-            parentKey.DeleteSubKeyTree(getChildName(path));
+            parentKey.deleteSubKeyTree(getChildName(path));
         } else {
-            parentKey.DeleteSubKey(getChildName(path));
+            parentKey.deleteSubKey(getChildName(path));
         }
     }
 
     protected void newItem(String path, String itemTypeName, Object newItemValue) {
         String parentPath = getParentPath(path, null);
         RegistryKey parentKey = findItemByPath(parentPath);
-        WriteItemObject(parentKey.CreateSubKey(getChildName(path)), path, true);
+        writeItemObject(parentKey.createSubKey(getChildName(path)), path, true);
     }
 
     protected void renameItem(String path, String newName) {
@@ -180,7 +185,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
     }
 
     protected String makePath(String parent, String child) {
-        return Utilities.NormalizePath(super.makePath(Utilities.denormalizePath(parent), Utilities.denormalizePath(child)));
+        return Utilities.normalizePath(super.makePath(Utilities.denormalizePath(parent), Utilities.denormalizePath(child)));
     }
 
     public void clearProperty(String path, Collection<String> propertyToClear) {
@@ -203,7 +208,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
 
         }
         if (foundProp) {
-            WritePropertyObject(propVal, path);
+            writePropertyObject(propVal, path);
         }
     }
 
@@ -227,7 +232,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
             }
         }
         if (foundProp) {
-            WritePropertyObject(propVal, path);
+            writePropertyObject(propVal, path);
         }
     }
 
@@ -279,7 +284,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
     public void newProperty(String path, String propertyName, String propertyTypeName, Object value) {
         RegistryKey key = findItemByPath(path);
         if (key == null) {
-            WriteError(new ErrorRecord(new IllegalArgumentException("path"),
+            writeError(new ErrorRecord(new IllegalArgumentException("path"),
                                        "NoSuchRegistryKey",
                                        ErrorCategory.ObjectNotFound,
                                        path));
@@ -332,7 +337,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
 
     private VirtualRegistryPSDriveInfo getDriveInfo() {
         return PSDriveInfo instanceof VirtualRegistryPSDriveInfo ? (VirtualRegistryPSDriveInfo) PSDriveInfo
-                                                                 : (VirtualRegistryPSDriveInfo) null;
+                                                                 : null;
     }
 
     private RegistryHive getHive() {
@@ -376,7 +381,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
             }
         }
         psObj.Properties.add(new PSNoteProperty("Property", valueNames));
-        writeItemObject(psObj, path.replaceAll("(^\\*|\\*$", ""), true);
+        writeItemObject(psObj, path.replaceAll("(^\\*|\\*$)", ""), true);
     }
 
     private boolean isMatch(String valueName, Collection<String> filters) {

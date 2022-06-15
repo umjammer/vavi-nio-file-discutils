@@ -43,40 +43,41 @@ import com.sun.jna.ptr.IntByReference;
  */
 public interface MSCompression extends Library {
 
-    public static final MSCompression INSTANCE = Native.load("MSCompression", MSCompression.class);
+    MSCompression INSTANCE = Native.load("MSCompression", MSCompression.class);
 
     // Formats supported
 
     /** COMPRESSION_FORMAT_NONE */
-    public static final int MSCOMP_NONE = 0;
+    int MSCOMP_NONE = 0;
 
     /** Called COMPRESSION_FORMAT_DEFAULT in MSDN but can never be used */
-    public static final int MSCOMP_RESERVED = 1;
+    int MSCOMP_RESERVED = 1;
 
     /** COMPRESSION_FORMAT_LZNT1 */
-    public static final int MSCOMP_LZNT1 = 2;
+
+    int MSCOMP_LZNT1 = 2;
 
     /** COMPRESSION_FORMAT_XPRESS */
-    public static final int MSCOMP_XPRESS = 3;
+    int MSCOMP_XPRESS = 3;
 
     /** COMPRESSION_FORMAT_XPRESS_HUFF */
-    public static final int MSCOMP_XPRESS_HUFF = 4;
+    int MSCOMP_XPRESS_HUFF = 4;
 
-    public static final int MSCOMP_OK = 0;
+    int MSCOMP_OK = 0;
 
-    public static final int MSCOMP_STREAM_END = 1;
+    int MSCOMP_STREAM_END = 1;
 
-    public static final int MSCOMP_POSSIBLE_STREAM_END = 2;
+    int MSCOMP_POSSIBLE_STREAM_END = 2;
 
-    public static final int MSCOMP_ERRNO = -1;
+    int MSCOMP_ERRNO = -1;
 
-    public static final int MSCOMP_ARG_ERROR = -2;
+    int MSCOMP_ARG_ERROR = -2;
 
-    public static final int MSCOMP_DATA_ERROR = -3;
+    int MSCOMP_DATA_ERROR = -3;
 
-    public static final int MSCOMP_MEM_ERROR = -4;
+    int MSCOMP_MEM_ERROR = -4;
 
-    public static final int MSCOMP_BUF_ERROR = -5;
+    int MSCOMP_BUF_ERROR = -5;
 
     /**
      * Compress the input buffer into the output buffer all in one go using the
@@ -107,7 +108,7 @@ public interface MSCompression extends Library {
      *         (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), MSCOMP_MEM_ERROR
      *         (-4), or MSCOMP_BUF_ERROR (-5)).
      */
-    public int ms_compress(int format, byte[] in, int in_len, byte[] out, IntByReference out_len);
+    int ms_compress(int format, byte[] in, int in_len, byte[] out, IntByReference out_len);
 
     /**
      * Decompress the input buffer into the output buffer all in one go using the

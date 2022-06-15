@@ -93,7 +93,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         // Calculate start pos for new grain
         long grainStartPos = (long) _serverHeader.FreeSector * Sizes.Sector;
         // Copy-on-write semantics, read the bytes from parent and write them out to this extent.
-        _parentDiskStream.setPosition(_diskOffset + (grain + _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
+        _parentDiskStream.setPosition(_diskOffset + (grain + (long) _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
         byte[] content = StreamUtilities.readExact(_parentDiskStream, (int) (_header.GrainSize * Sizes.Sector * count));
         _fileStream.setPosition(grainStartPos);
         _fileStream.write(content, 0, content.length);

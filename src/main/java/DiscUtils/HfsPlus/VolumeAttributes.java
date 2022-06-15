@@ -47,7 +47,7 @@ enum VolumeAttributes {
     _dummy_00004000,
     VolumeSoftwareLock;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -55,7 +55,7 @@ enum VolumeAttributes {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<VolumeAttributes> valueOf(int value) {
         return Arrays.stream(values())

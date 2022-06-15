@@ -43,40 +43,40 @@ public final class Nfs3FileSystemInfo {
     /**
      * The preferred size of a READDIR request.
      */
-    private int __DirectoryPreferredBytes;
+    private int directoryPreferredBytes;
 
     public int getDirectoryPreferredBytes() {
-        return __DirectoryPreferredBytes;
+        return directoryPreferredBytes;
     }
 
     public void setDirectoryPreferredBytes(int value) {
-        __DirectoryPreferredBytes = value;
+        directoryPreferredBytes = value;
     }
 
     /**
      * A bit mask of file system properties.
      */
-    private Nfs3FileSystemProperties __FileSystemProperties = Nfs3FileSystemProperties.None;
+    private Nfs3FileSystemProperties fileSystemProperties = Nfs3FileSystemProperties.None;
 
     public Nfs3FileSystemProperties getFileSystemProperties() {
-        return __FileSystemProperties;
+        return fileSystemProperties;
     }
 
     public void setFileSystemProperties(Nfs3FileSystemProperties value) {
-        __FileSystemProperties = value;
+        fileSystemProperties = value;
     }
 
     /**
      * The maximum size of a file on the file system.
      */
-    private long __MaxFileSize;
+    private long maxFileSize;
 
     public long getMaxFileSize() {
-        return __MaxFileSize;
+        return maxFileSize;
     }
 
     public void setMaxFileSize(long value) {
-        __MaxFileSize = value;
+        maxFileSize = value;
     }
 
     /**
@@ -85,27 +85,27 @@ public final class Nfs3FileSystemInfo {
      * rtmax will result in a short read of rtmax bytes or
      * less.
      */
-    private int __ReadMaxBytes;
+    private int readMaxBytes;
 
     public int getReadMaxBytes() {
-        return __ReadMaxBytes;
+        return readMaxBytes;
     }
 
     public void setReadMaxBytes(int value) {
-        __ReadMaxBytes = value;
+        readMaxBytes = value;
     }
 
     /**
      * The suggested multiple for the size of a READ request.
      */
-    private int __ReadMultipleSize;
+    private int readMultipleSize;
 
     public int getReadMultipleSize() {
-        return __ReadMultipleSize;
+        return readMultipleSize;
     }
 
     public void setReadMultipleSize(int value) {
-        __ReadMultipleSize = value;
+        readMultipleSize = value;
     }
 
     /**
@@ -131,14 +131,14 @@ public final class Nfs3FileSystemInfo {
      * denotes millisecond precision, and {1, 0} indicates that times
      * are accurate only to the nearest second.
      */
-    private Nfs3FileTime __TimePrecision;
+    private Nfs3FileTime timePrecision;
 
     public Nfs3FileTime getTimePrecision() {
-        return __TimePrecision;
+        return timePrecision;
     }
 
     public void setTimePrecision(Nfs3FileTime value) {
-        __TimePrecision = value;
+        timePrecision = value;
     }
 
     /**
@@ -148,28 +148,28 @@ public final class Nfs3FileSystemInfo {
      * larger write. Any WRITE with a count greater than wtmax
      * will result in a short write of at most wtmax bytes.
      */
-    private int __WriteMaxBytes;
+    private int writeMaxBytes;
 
     public int getWriteMaxBytes() {
-        return __WriteMaxBytes;
+        return writeMaxBytes;
     }
 
     public void setWriteMaxBytes(int value) {
-        __WriteMaxBytes = value;
+        writeMaxBytes = value;
     }
 
     /**
      * The suggested multiple for the size of a WRITE
      * request.
      */
-    private int __WriteMultipleSize;
+    private int writeMultipleSize;
 
     public int getWriteMultipleSize() {
-        return __WriteMultipleSize;
+        return writeMultipleSize;
     }
 
     public void setWriteMultipleSize(int value) {
-        __WriteMultipleSize = value;
+        writeMultipleSize = value;
     }
 
     /**
@@ -177,14 +177,14 @@ public final class Nfs3FileSystemInfo {
      * the same as wtmax unless there is a clear benefit in
      * performance or efficiency.
      */
-    private int __WritePreferredBytes;
+    private int writePreferredBytes;
 
     public int getWritePreferredBytes() {
-        return __WritePreferredBytes;
+        return writePreferredBytes;
     }
 
     public void setWritePreferredBytes(int value) {
-        __WritePreferredBytes = value;
+        writePreferredBytes = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -201,7 +201,7 @@ public final class Nfs3FileSystemInfo {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3FileSystemInfo ? (Nfs3FileSystemInfo) obj : (Nfs3FileSystemInfo) null);
+        return equals(obj instanceof Nfs3FileSystemInfo ? (Nfs3FileSystemInfo) obj : null);
     }
 
     public boolean equals(Nfs3FileSystemInfo other) {
@@ -220,15 +220,16 @@ public final class Nfs3FileSystemInfo {
 
     public int hashCode() {
         return dotnet4j.io.compat.Utilities.getCombinedHashCode(
-                                          dotnet4j.io.compat.Utilities.getCombinedHashCode(getReadMaxBytes(),
-                                                                     getReadPreferredBytes(),
-                                                                     getReadMultipleSize(),
-                                                                     getWriteMaxBytes(),
-                                                                     getWritePreferredBytes(),
-                                                                     getWriteMultipleSize(),
-                                                                     getDirectoryPreferredBytes(),
-                                                                     getMaxFileSize()),
-                                          getTimePrecision(),
-                                          getFileSystemProperties());
+                dotnet4j.io.compat.Utilities.getCombinedHashCode(
+                        getReadMaxBytes(),
+                        getReadPreferredBytes(),
+                        getReadMultipleSize(),
+                        getWriteMaxBytes(),
+                        getWritePreferredBytes(),
+                        getWriteMultipleSize(),
+                        getDirectoryPreferredBytes(),
+                        getMaxFileSize()),
+                getTimePrecision(),
+                getFileSystemProperties());
     }
 }

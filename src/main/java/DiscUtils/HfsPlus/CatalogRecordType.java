@@ -27,5 +27,5 @@ enum CatalogRecordType {
     FolderRecord,
     FileRecord,
     FolderThreadRecord,
-    FileThreadRecord;
+    FileThreadRecord
 }

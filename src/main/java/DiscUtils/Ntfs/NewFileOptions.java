@@ -45,14 +45,14 @@ public final class NewFileOptions {
      * {@code null}
      * ) value indicates the file system default behaviour applies.
      */
-    private Optional<Boolean> __Compressed;
+    private Optional<Boolean> compressed;
 
     public Optional<Boolean> getCompressed() {
-        return __Compressed;
+        return compressed;
     }
 
     public void setCompressed(Optional<Boolean> value) {
-        __Compressed = value;
+        compressed = value;
     }
 
     /**
@@ -61,14 +61,14 @@ public final class NewFileOptions {
      * {@code null}
      * ) value indicates the file system default behaviour applies.
      */
-    private Optional<Boolean> __CreateShortNames;
+    private Optional<Boolean> createShortNames;
 
     public Optional<Boolean> getCreateShortNames() {
-        return __CreateShortNames;
+        return createShortNames;
     }
 
     public void setCreateShortNames(Optional<Boolean> value) {
-        __CreateShortNames = value;
+        createShortNames = value;
     }
 
     /**
@@ -77,13 +77,13 @@ public final class NewFileOptions {
      * {@code null}
      * ) value indicates the security descriptor is inherited.
      */
-    private RawSecurityDescriptor __SecurityDescriptor;
+    private RawSecurityDescriptor securitydescriptor;
 
     public RawSecurityDescriptor getSecurityDescriptor() {
-        return __SecurityDescriptor;
+        return securitydescriptor;
     }
 
     public void setSecurityDescriptor(RawSecurityDescriptor value) {
-        __SecurityDescriptor = value;
+        securitydescriptor = value;
     }
 }

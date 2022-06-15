@@ -27,43 +27,43 @@ import dotnet4j.io.Stream;
 
 
 public class Context extends VfsContext {
-    private ExtFileSystemOptions __Options;
+    private ExtFileSystemOptions options;
 
     public ExtFileSystemOptions getOptions() {
-        return __Options;
+        return options;
     }
 
     public void setOptions(ExtFileSystemOptions value) {
-        __Options = value;
+        options = value;
     }
 
-    private Stream __RawStream;
+    private Stream rawStream;
 
     public Stream getRawStream() {
-        return __RawStream;
+        return rawStream;
     }
 
     public void setRawStream(Stream value) {
-        __RawStream = value;
+        rawStream = value;
     }
 
-    private SuperBlock __SuperBlock;
+    private SuperBlock superblock;
 
     public SuperBlock getSuperBlock() {
-        return __SuperBlock;
+        return superblock;
     }
 
     public void setSuperBlock(SuperBlock value) {
-        __SuperBlock = value;
+        superblock = value;
     }
 
-    private JournalSuperBlock __JournalSuperblock;
+    private JournalSuperBlock journalSuperblock;
 
     public JournalSuperBlock getJournalSuperblock() {
-        return __JournalSuperblock;
+        return journalSuperblock;
     }
 
     public void setJournalSuperblock(JournalSuperBlock value) {
-        __JournalSuperblock = value;
+        journalSuperblock = value;
     }
 }

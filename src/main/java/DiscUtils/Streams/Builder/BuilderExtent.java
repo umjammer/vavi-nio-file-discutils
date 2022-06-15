@@ -24,7 +24,7 @@ package DiscUtils.Streams.Builder;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -53,7 +53,7 @@ public abstract class BuilderExtent implements Closeable {
      * This may be an empty enumeration if all bytes are zero.
      */
     public List<StreamExtent> getStreamExtents() {
-        return Arrays.asList(new StreamExtent(_start, _length));
+        return Collections.singletonList(new StreamExtent(_start, _length));
     }
 
     public abstract void close() throws IOException;

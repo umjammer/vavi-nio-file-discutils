@@ -92,9 +92,7 @@ public abstract class ElementValue {
      */
     public static ElementValue forIntegerList(long[] values) {
         long[] ulValues = new long[values.length];
-        for (int i = 0; i < values.length; ++i) {
-            ulValues[i] = values[i];
-        }
+        System.arraycopy(values, 0, ulValues, 0, values.length);
         return new IntegerListElementValue(ulValues);
     }
 

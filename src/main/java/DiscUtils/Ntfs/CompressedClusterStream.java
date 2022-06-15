@@ -205,7 +205,7 @@ public final class CompressedClusterStream extends ClusterStream {
                 // Compressed data - read via IO buffer
                 _rawStream.readClusters(cuStart, _attr.getCompressionUnitSize(), _ioBuffer, 0);
                 int expected = (int) Math.min(_attr.getLength() - vcn * _bytesPerCluster,
-                                              _attr.getCompressionUnitSize() * _bytesPerCluster);
+                        (long) _attr.getCompressionUnitSize() * _bytesPerCluster);
                 int decomp = _context.getOptions().getCompressor().decompress(_ioBuffer, 0, _ioBuffer.length, _cacheBuffer, 0);
                 if (decomp < expected) {
                     throw new IOException("Decompression returned too little data");

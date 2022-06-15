@@ -608,7 +608,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         List<StreamExtent> extents = new ArrayList<>();
         for (int i = 0; i < batData.length; i += 8) {
             long entry = EndianUtilities.toUInt64LittleEndian(batData, i);
-            long filePos = ((entry >>> 20) & 0xFFF_FFFF_FFFFl) * Sizes.OneMiB;
+            long filePos = ((entry >>> 20) & 0xFFF_FFFF_FFFFL) * Sizes.OneMiB;
             if (filePos != 0) {
                 if (i % ((chunkRatio + 1) * 8) == chunkRatio * 8) {
                     // This is a sector bitmap block (always 1MB in size)

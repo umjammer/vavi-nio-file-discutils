@@ -102,9 +102,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * file-systems.
      */
     public List<PartitionInfo> getPartitions() {
-        return Collections.unmodifiableList(getAllEntries().stream().map(e -> {
-            return new GuidPartitionInfo(this, e);
-        }).collect(Collectors.toList()));
+        return Collections.unmodifiableList(getAllEntries().stream().map(e -> new GuidPartitionInfo(this, e)).collect(Collectors.toList()));
     }
 
     /**
@@ -287,7 +285,7 @@ public final class GuidPartitionTable extends PartitionTable {
      */
     public int create(long startSector, long endSector, UUID type, long attributes, String name) {
         GptEntry newEntry = createEntry(startSector, endSector, type, attributes, name);
-        return getEntryIndex(newEntry.Identity);
+        return getEntryIndex(newEntry.identity);
     }
 
     /**
@@ -302,8 +300,8 @@ public final class GuidPartitionTable extends PartitionTable {
     }
 
     public SparseStream open(GptEntry entry) {
-        long start = entry.FirstUsedLogicalBlock * _diskGeometry.getBytesPerSector();
-        long end = (entry.LastUsedLogicalBlock + 1) * _diskGeometry.getBytesPerSector();
+        long start = entry.firstUsedLogicalBlock * _diskGeometry.getBytesPerSector();
+        long end = (entry.lastUsedLogicalBlock + 1) * _diskGeometry.getBytesPerSector();
         return new SubStream(_diskData, start, end - start);
     }
 
@@ -388,8 +386,8 @@ public final class GuidPartitionTable extends PartitionTable {
         // and the
         // disk
         // has a 'reasonable' size free, create a Microsoft Reserved partition.
-        if (countEntries(allEntries, e -> e.PartitionType.equals(GuidPartitionTypes.MicrosoftReserved)) == 0 &&
-            countEntries(allEntries, e -> e.PartitionType.equals(GuidPartitionTypes.WindowsBasicData)) == 0 &&
+        if (countEntries(allEntries, e -> e.partitionType.equals(GuidPartitionTypes.MicrosoftReserved)) == 0 &&
+            countEntries(allEntries, e -> e.partitionType.equals(GuidPartitionTypes.WindowsBasicData)) == 0 &&
             _diskGeometry.getCapacity() > 512 * 1024 * 1024) {
             long reservedStart = firstAvailableSector(allEntries);
             long reservedEnd = findLastFreeSector(reservedStart, allEntries);
@@ -398,12 +396,12 @@ public final class GuidPartitionTable extends PartitionTable {
                 reservedEnd = reservedStart + size / _diskGeometry.getBytesPerSector() - 1;
                 int reservedOffset = getFreeEntryOffset();
                 GptEntry newReservedEntry = new GptEntry();
-                newReservedEntry.PartitionType = GuidPartitionTypes.MicrosoftReserved;
-                newReservedEntry.Identity = UUID.randomUUID();
-                newReservedEntry.FirstUsedLogicalBlock = reservedStart;
-                newReservedEntry.LastUsedLogicalBlock = reservedEnd;
-                newReservedEntry.Attributes = 0;
-                newReservedEntry.Name = "Microsoft reserved partition";
+                newReservedEntry.partitionType = GuidPartitionTypes.MicrosoftReserved;
+                newReservedEntry.identity = UUID.randomUUID();
+                newReservedEntry.firstUsedLogicalBlock = reservedStart;
+                newReservedEntry.lastUsedLogicalBlock = reservedEnd;
+                newReservedEntry.attributes = 0;
+                newReservedEntry.name = "Microsoft reserved partition";
                 newReservedEntry.writeTo(_entryBuffer, reservedOffset);
                 allEntries.add(newReservedEntry);
             }
@@ -417,12 +415,12 @@ public final class GuidPartitionTable extends PartitionTable {
 
         int offset = getFreeEntryOffset();
         GptEntry newEntry = new GptEntry();
-        newEntry.PartitionType = type;
-        newEntry.Identity = UUID.randomUUID();
-        newEntry.FirstUsedLogicalBlock = startSector;
-        newEntry.LastUsedLogicalBlock = endSector;
-        newEntry.Attributes = attributes;
-        newEntry.Name = name;
+        newEntry.partitionType = type;
+        newEntry.identity = UUID.randomUUID();
+        newEntry.firstUsedLogicalBlock = startSector;
+        newEntry.lastUsedLogicalBlock = endSector;
+        newEntry.attributes = attributes;
+        newEntry.name = name;
         newEntry.writeTo(_entryBuffer, offset);
         // Commit changes to disk
         write();
@@ -436,12 +434,12 @@ public final class GuidPartitionTable extends PartitionTable {
         for (GptEntry entry : list) {
             if (!Utilities.rangesOverlap(startSector,
                                          startSector + numSectors - 1,
-                                         entry.FirstUsedLogicalBlock,
-                                         entry.LastUsedLogicalBlock)) {
+                                         entry.firstUsedLogicalBlock,
+                                         entry.lastUsedLogicalBlock)) {
                 break;
             }
 
-            startSector = MathUtilities.roundUp(entry.LastUsedLogicalBlock + 1, alignmentSectors);
+            startSector = MathUtilities.roundUp(entry.lastUsedLogicalBlock + 1, alignmentSectors);
         }
         if (_diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
             throw new dotnet4j.io.IOException(String.format("Unable to find free space of %d sectors", numSectors));
@@ -453,8 +451,8 @@ public final class GuidPartitionTable extends PartitionTable {
     private long firstAvailableSector(List<GptEntry> allEntries) {
         long start = _primaryHeader.FirstUsable;
         for (GptEntry entry : allEntries) {
-            if (entry.LastUsedLogicalBlock >= start) {
-                start = entry.LastUsedLogicalBlock + 1;
+            if (entry.lastUsedLogicalBlock >= start) {
+                start = entry.lastUsedLogicalBlock + 1;
             }
 
         }
@@ -464,8 +462,8 @@ public final class GuidPartitionTable extends PartitionTable {
     private long findLastFreeSector(long start, List<GptEntry> allEntries) {
         long end = _primaryHeader.LastUsable;
         for (GptEntry entry : allEntries) {
-            if (entry.LastUsedLogicalBlock > start && entry.FirstUsedLogicalBlock <= end) {
-                end = entry.FirstUsedLogicalBlock - 1;
+            if (entry.lastUsedLogicalBlock > start && entry.firstUsedLogicalBlock <= end) {
+                end = entry.firstUsedLogicalBlock - 1;
             }
 
         }
@@ -483,7 +481,7 @@ public final class GuidPartitionTable extends PartitionTable {
         _primaryHeader.writeTo(buffer, 0);
         _diskData.setPosition(_diskGeometry.getBytesPerSector());
         _diskData.write(buffer, 0, buffer.length);
-        _diskData.setPosition(2 * _diskGeometry.getBytesPerSector());
+        _diskData.setPosition(2L * _diskGeometry.getBytesPerSector());
         _diskData.write(_entryBuffer, 0, _entryBuffer.length);
     }
 
@@ -516,7 +514,7 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (!entry.PartitionType.equals(EMPTY)) {
+            if (!entry.partitionType.equals(EMPTY)) {
                 result.add(entry);
             }
         }
@@ -530,7 +528,7 @@ public final class GuidPartitionTable extends PartitionTable {
         while (!found && position < _primaryHeader.PartitionEntryCount) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, position * _primaryHeader.PartitionEntrySize);
-            if (!entry.PartitionType.equals(EMPTY)) {
+            if (!entry.partitionType.equals(EMPTY)) {
                 if (index == entriesSoFar) {
                     found = true;
                     break;
@@ -553,11 +551,11 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.Identity.equals(identity)) {
+            if (entry.identity.equals(identity)) {
                 return index;
             }
 
-            if (!entry.PartitionType.equals(EMPTY)) {
+            if (!entry.partitionType.equals(EMPTY)) {
                 index++;
             }
         }
@@ -568,7 +566,7 @@ public final class GuidPartitionTable extends PartitionTable {
         for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
             entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
-            if (entry.PartitionType.equals(EMPTY)) {
+            if (entry.partitionType.equals(EMPTY)) {
                 return i * _primaryHeader.PartitionEntrySize;
             }
         }

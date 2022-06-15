@@ -30,63 +30,63 @@ import dotnet4j.io.Stream;
 
 
 public class IsoContext extends VfsContext {
-    private Stream __DataStream;
+    private Stream dataStream;
 
     public Stream getDataStream() {
-        return __DataStream;
+        return dataStream;
     }
 
     public void setDataStream(Stream value) {
-        __DataStream = value;
+        dataStream = value;
     }
 
-    private String __RockRidgeIdentifier;
+    private String rockRidgeIdentifier;
 
     public String getRockRidgeIdentifier() {
-        return __RockRidgeIdentifier;
+        return rockRidgeIdentifier;
     }
 
     public void setRockRidgeIdentifier(String value) {
-        __RockRidgeIdentifier = value;
+        rockRidgeIdentifier = value;
     }
 
-    private boolean __SuspDetected;
+    private boolean suspDetected;
 
     public boolean getSuspDetected() {
-        return __SuspDetected;
+        return suspDetected;
     }
 
     public void setSuspDetected(boolean value) {
-        __SuspDetected = value;
+        suspDetected = value;
     }
 
-    private List<SuspExtension> __SuspExtensions;
+    private List<SuspExtension> suspExtensions;
 
     public List<SuspExtension> getSuspExtensions() {
-        return __SuspExtensions;
+        return suspExtensions;
     }
 
     public void setSuspExtensions(List<SuspExtension> value) {
-        __SuspExtensions = value;
+        suspExtensions = value;
     }
 
-    private int __SuspSkipBytes;
+    private int suspSkipBytes;
 
     public int getSuspSkipBytes() {
-        return __SuspSkipBytes;
+        return suspSkipBytes;
     }
 
     public void setSuspSkipBytes(int value) {
-        __SuspSkipBytes = value;
+        suspSkipBytes = value;
     }
 
-    private CommonVolumeDescriptor __VolumeDescriptor;
+    private CommonVolumeDescriptor volumeDescriptor;
 
     public CommonVolumeDescriptor getVolumeDescriptor() {
-        return __VolumeDescriptor;
+        return volumeDescriptor;
     }
 
     public void setVolumeDescriptor(CommonVolumeDescriptor value) {
-        __VolumeDescriptor = value;
+        volumeDescriptor = value;
     }
 }

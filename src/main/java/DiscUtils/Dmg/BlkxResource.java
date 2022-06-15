@@ -31,8 +31,8 @@ import DiscUtils.Streams.Util.EndianUtilities;
 public class BlkxResource extends Resource {
     public BlkxResource(Map<String, Object> parts) {
         super("blkx", parts);
-        byte[] data = Base64.getDecoder().decode(String.class.cast(parts.get("Data")).replaceAll("\\s", ""));
-        _block = EndianUtilities.<CompressedBlock> toStruct(CompressedBlock.class, data, 0);
+        byte[] data = Base64.getDecoder().decode(((String) parts.get("Data")).replaceAll("\\s", ""));
+        _block = EndianUtilities.toStruct(CompressedBlock.class, data, 0);
     }
 
     private CompressedBlock _block;

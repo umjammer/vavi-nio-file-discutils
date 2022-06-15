@@ -117,7 +117,7 @@ public class BlockDirectory implements IByteArraySerializable {
         setLeafStale(EndianUtilities.toUInt32BigEndian(buffer, buffer.length - 0x4));
         setLeafCount(EndianUtilities.toUInt32BigEndian(buffer, buffer.length - 0x8));
         List<BlockDirectoryData> entries = new ArrayList<>();
-        long eof = buffer.length - 0x8 - getLeafCount() * 0x8;
+        long eof = buffer.length - 0x8 - getLeafCount() * 0x8L;
         while (offset < eof) {
             BlockDirectoryData entry;
             if ((buffer[offset] & 0xff) == 0xff && (buffer[offset + 0x1] & 0xff) == 0xff) {

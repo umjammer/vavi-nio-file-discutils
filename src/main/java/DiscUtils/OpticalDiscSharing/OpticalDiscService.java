@@ -184,15 +184,15 @@ public final class OpticalDiscService {
 
                     Object _askBusy = plist.get("askBusy");
                     if (_askBusy instanceof Boolean) {
-                        askBusy = Boolean.class.cast(_askBusy);
+                        askBusy = (Boolean) _askBusy;
                     }
                     Object _askStatus = plist.get("askStatus");
                     if (_askStatus instanceof String) {
-                        askStatus = String.class.cast(_askStatus);
+                        askStatus = (String) _askStatus;
                         if (askStatus.equals("accepted")) {
                             Object _askToken = plist.get("askToken");
                             if (_askToken instanceof String) {
-                                askToken = String.class.cast(_askToken);
+                                askToken = (String) _askToken;
                             }
                         }
                     }

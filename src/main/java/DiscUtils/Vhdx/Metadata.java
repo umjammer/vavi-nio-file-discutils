@@ -59,13 +59,13 @@ public final class Metadata {
     }
 
     @FunctionalInterface
-    private static interface Reader<T> {
+    private interface Reader<T> {
 
         T invoke(byte[] buffer, int offset);
     }
 
     @FunctionalInterface
-    private static interface Writer<T> {
+    private interface Writer<T> {
 
         void invoke(T val, byte[] buffer, int offset);
     }

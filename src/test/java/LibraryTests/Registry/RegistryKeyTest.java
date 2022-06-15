@@ -196,9 +196,7 @@ public class RegistryKeyTest {
     @Test
     public void deleteNonEmptyKey() throws Exception {
         RegistryKey newKey = hive.getRoot().createSubKey("Child\\Grandchild");
-        assertThrows(UnsupportedOperationException.class, () -> {
-            hive.getRoot().deleteSubKey("Child");
-        });
+        assertThrows(UnsupportedOperationException.class, () -> hive.getRoot().deleteSubKey("Child"));
     }
 
     @Test

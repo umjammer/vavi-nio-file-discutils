@@ -12,13 +12,13 @@ enum AttributeCollationRule {
     SecurityHash(0x00000012),
     MultipleUnsignedLongs(0x00000013);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private AttributeCollationRule(int value) {
+    AttributeCollationRule(int value) {
         this.value = value;
     }
 

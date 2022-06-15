@@ -198,7 +198,8 @@ Debug.println("receiver exit");
             InetSocketAddress mDnsAddress = new InetSocketAddress("224.0.0.251", 5353);
             channel.configureBlocking(false);
             channel.connect(mDnsAddress);
-            while (channel.isConnected() == false);
+            while (channel.isConnected() == false)
+                Thread.yield();
 Debug.println("send: " + msgBytes.length);
             channel.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
 

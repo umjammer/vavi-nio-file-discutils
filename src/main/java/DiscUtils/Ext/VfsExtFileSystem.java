@@ -163,10 +163,10 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
 
         getContext().getRawStream()
                 .setPosition((inodeBlockGroup.InodeTableBlock + block) * (long) superBlock.getBlockSize() +
-                    blockOffset * superBlock.getInodeSize());
+                        (long) blockOffset * superBlock.getInodeSize());
         byte[] inodeData = StreamUtilities.readExact(getContext().getRawStream(), superBlock.getInodeSize());
 
-        return EndianUtilities.<Inode> toStruct(Inode.class, inodeData, 0);
+        return EndianUtilities.toStruct(Inode.class, inodeData, 0);
     }
 
     private BlockGroup getBlockGroup(int index) {
@@ -179,14 +179,14 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
     public long getSize() {
         SuperBlock superBlock = getContext().getSuperBlock();
         long blockCount = ((long) superBlock.BlocksCountHigh << 32) | superBlock.BlocksCount;
-        long inodeSize = superBlock.InodesCount * superBlock.getInodeSize();
+        long inodeSize = (long) superBlock.InodesCount * superBlock.getInodeSize();
         long overhead = 0;
         long journalSize = 0;
         if (superBlock.OverheadBlocksCount != 0) {
-            overhead = superBlock.OverheadBlocksCount * superBlock.getBlockSize();
+            overhead = (long) superBlock.OverheadBlocksCount * superBlock.getBlockSize();
         }
         if (getContext().getJournalSuperblock() != null) {
-            journalSize = getContext().getJournalSuperblock().MaxLength * getContext().getJournalSuperblock().BlockSize;
+            journalSize = (long) getContext().getJournalSuperblock().MaxLength * getContext().getJournalSuperblock().BlockSize;
         }
         return superBlock.getBlockSize() * blockCount - (inodeSize + overhead + journalSize);
     }
@@ -207,7 +207,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
             long free = 0;
             // ext4 64Bit Feature
             for (BlockGroup blockGroup : _blockGroups) {
-                free += BlockGroup64.class.cast(blockGroup).getFreeBlocksCountHigh() << 16 | blockGroup.getFreeBlocksCount();
+                free += (long) ((BlockGroup64) blockGroup).getFreeBlocksCountHigh() << 16 | blockGroup.getFreeBlocksCount();
             }
             return superBlock.getBlockSize() * free;
         } else {

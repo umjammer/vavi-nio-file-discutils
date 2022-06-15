@@ -79,13 +79,13 @@ public final class LocalFileLocator extends FileLocator {
     }
 
     public boolean hasCommonRoot(FileLocator other) {
-        if (!LocalFileLocator.class.isInstance(other)) {
+        if (!(other instanceof LocalFileLocator)) {
             return false;
         }
 
         // If the paths have drive specifiers, then common root depends on them having a common
         // drive letter.
-        String otherDir = LocalFileLocator.class.cast(other)._dir;
+        String otherDir = ((LocalFileLocator) other)._dir;
         if (otherDir.length() >= 2 && _dir.length() >= 2) {
             if (otherDir.charAt(1) == ':' && _dir.charAt(1) == ':') {
                 return Character.toUpperCase(otherDir.charAt(0)) == Character.toUpperCase(_dir.charAt(0));

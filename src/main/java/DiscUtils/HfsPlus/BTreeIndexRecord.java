@@ -22,6 +22,8 @@
 
 package DiscUtils.HfsPlus;
 
+import java.lang.reflect.InvocationTargetException;
+
 import DiscUtils.Streams.Util.EndianUtilities;
 
 
@@ -61,7 +63,7 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
 
     public int readFrom(byte[] buffer, int offset) {
         try {
-            setKey(clazz.newInstance());
+            setKey(clazz.getDeclaredConstructor().newInstance());
             int keySize = getKey().readFrom(buffer, offset);
 
             if ((keySize & 1) != 0) {
@@ -71,7 +73,7 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
             setChildId(EndianUtilities.toUInt32BigEndian(buffer, offset + keySize));
 
             return _size;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

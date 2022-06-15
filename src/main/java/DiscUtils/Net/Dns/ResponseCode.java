@@ -28,5 +28,5 @@ enum ResponseCode {
     ServerFailure,
     NameError,
     NotImplemented,
-    Refused;
+    Refused
 }

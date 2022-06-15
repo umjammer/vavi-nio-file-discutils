@@ -4,7 +4,7 @@ package LibraryTests.Ext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import DiscUtils.Core.DiscFileSystemInfo;
@@ -30,7 +31,7 @@ public class ExtFileSystemTest {
         try (Stream data = Helpers.loadDataFile(getClass(), "data.ext4.dat.gz");
                 ExtFileSystem fs = new ExtFileSystem(data, new FileSystemParameters())) {
             List<DiscFileSystemInfo> fsis = fs.getRoot().getFileSystemInfos();
-            Collections.sort(fsis, (s1, s2) -> s1.getName().compareTo(s2.getName()));
+            fsis.sort(Comparator.comparing(DiscFileSystemInfo::getName));
             final Iterator<Consumer<DiscFileSystemInfo>> i = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("bar", s.getName());
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
@@ -41,20 +42,20 @@ public class ExtFileSystemTest {
                 assertEquals("lost+found", s.getName());
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
             }).iterator();
-            fsis.stream().forEach(f -> i.next().accept(f));
+            fsis.forEach(f -> i.next().accept(f));
 
             assertTrue(fs.getRoot().getDirectories("foo").get(0).getFileSystemInfos().isEmpty());
 
             fsis = fs.getRoot().getDirectories("bar").get(0).getFileSystemInfos();
-            Collections.sort(fsis, (s1, s2) -> s1.getName().compareTo(s2.getName()));
+            fsis.sort(Comparator.comparing(DiscFileSystemInfo::getName));
             final Iterator<Consumer<DiscFileSystemInfo>> j = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("blah.txt", s.getName());
-                assertTrue(!s.getAttributes().contains(FileAttributes.Directory));
+                assertFalse(s.getAttributes().contains(FileAttributes.Directory));
             }, s -> {
                 assertEquals("testdir1", s.getName());
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
             }).iterator();
-            fsis.stream().forEach(f -> j.next().accept(f));
+            fsis.forEach(f -> j.next().accept(f));
 
             byte[] tmpData = Helpers.readAll(fs.openFile("bar\\blah.txt", FileMode.Open));
             assertArrayEquals("hello world\n".getBytes(StandardCharsets.US_ASCII), tmpData);

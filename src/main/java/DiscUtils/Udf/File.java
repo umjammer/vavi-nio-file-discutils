@@ -80,7 +80,7 @@ public class File implements IVfsFile {
 
     public long getCreationTimeUtc() {
         ExtendedFileEntry efe = _fileEntry instanceof ExtendedFileEntry ? (ExtendedFileEntry) _fileEntry
-                                                                        : (ExtendedFileEntry) null;
+                                                                        : null;
         if (efe != null) {
             return efe.CreationTime;
         }
@@ -132,9 +132,9 @@ public class File implements IVfsFile {
     public static File fromDescriptor(UdfContext context, LongAllocationDescriptor icb) {
         LogicalPartition partition = context.LogicalPartitions.get(icb.ExtentLocation.getPartition());
         byte[] rootDirData = UdfUtilities.readExtent(context, icb);
-        DescriptorTag rootDirTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, rootDirData, 0);
+        DescriptorTag rootDirTag = EndianUtilities.toStruct(DescriptorTag.class, rootDirData, 0);
         if (rootDirTag._TagIdentifier == TagIdentifier.ExtendedFileEntry) {
-            ExtendedFileEntry fileEntry = EndianUtilities.<ExtendedFileEntry> toStruct(ExtendedFileEntry.class, rootDirData, 0);
+            ExtendedFileEntry fileEntry = EndianUtilities.toStruct(ExtendedFileEntry.class, rootDirData, 0);
             if (fileEntry.InformationControlBlock._FileType == FileType.Directory) {
                 return new Directory(context, partition, fileEntry);
             }
@@ -143,7 +143,7 @@ public class File implements IVfsFile {
         }
 
         if (rootDirTag._TagIdentifier == TagIdentifier.FileEntry) {
-            FileEntry fileEntry = EndianUtilities.<FileEntry> toStruct(FileEntry.class, rootDirData, 0);
+            FileEntry fileEntry = EndianUtilities.toStruct(FileEntry.class, rootDirData, 0);
             if (fileEntry.InformationControlBlock._FileType == FileType.Directory) {
                 return new Directory(context, partition, fileEntry);
             }

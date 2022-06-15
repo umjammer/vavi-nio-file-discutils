@@ -66,7 +66,7 @@ public final class FileName {
             byte b = bytes[nameIdx++];
             if ((b & 0xff) < 0x20 || contains(InvalidBytes, b)) {
 //Debug.println(name + ", " + encoding + ", " + Arrays.toString(bytes));
-                throw new IllegalArgumentException(String.format("Invalid character in file name '%1$c', %1$02x: %s", b, name));
+                throw new IllegalArgumentException(String.format("Invalid character in file name '%1$c', %1$02x: %2$s", b, name));
             }
 
             _raw[rawIdx++] = b;
@@ -150,7 +150,7 @@ public final class FileName {
     }
 
     public boolean equals(Object other) {
-        return equals(other instanceof FileName ? (FileName) other : (FileName) null);
+        return equals(other instanceof FileName ? (FileName) other : null);
     }
 
     public int hashCode() {

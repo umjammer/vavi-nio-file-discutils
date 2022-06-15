@@ -44,9 +44,9 @@ public class MetadataPartition extends LogicalPartition {
             throw new IOException("Invalid descriptor tag looking for Metadata file entry");
         }
 
-        DescriptorTag dt = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, entryData, 0);
+        DescriptorTag dt = EndianUtilities.toStruct(DescriptorTag.class, entryData, 0);
         if (dt._TagIdentifier == TagIdentifier.ExtendedFileEntry) {
-            ExtendedFileEntry efe = EndianUtilities.<ExtendedFileEntry> toStruct(ExtendedFileEntry.class, entryData, 0);
+            ExtendedFileEntry efe = EndianUtilities.toStruct(ExtendedFileEntry.class, entryData, 0);
             _metadataFile = new File(context, physical, efe, _volumeDescriptor.LogicalBlockSize);
         } else {
             throw new UnsupportedOperationException("Only EFE implemented for Metadata file entry");

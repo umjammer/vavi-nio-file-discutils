@@ -65,11 +65,11 @@ public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolum
         DescriptorCharset = EndianUtilities.toByteArray(buffer, offset + 20, 64);
         LogicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 84, 128);
         LogicalBlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 212);
-        DomainIdentifier = EndianUtilities.<DomainEntityIdentifier> toStruct(DomainEntityIdentifier.class, buffer, offset + 216);
+        DomainIdentifier = EndianUtilities.toStruct(DomainEntityIdentifier.class, buffer, offset + 216);
         LogicalVolumeContentsUse = EndianUtilities.toByteArray(buffer, offset + 248, 16);
         MapTableLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 264);
         NumPartitionMaps = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
-        ImplementationIdentifier = EndianUtilities.<ImplementationEntityIdentifier> toStruct(ImplementationEntityIdentifier.class, buffer, offset + 272);
+        ImplementationIdentifier = EndianUtilities.toStruct(ImplementationEntityIdentifier.class, buffer, offset + 272);
         ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 304, 128);
         IntegritySequenceExtent = new ExtentDescriptor();
         IntegritySequenceExtent.readFrom(buffer, offset + 432);

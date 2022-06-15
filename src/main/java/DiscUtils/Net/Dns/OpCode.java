@@ -25,5 +25,5 @@ package DiscUtils.Net.Dns;
 enum OpCode {
     Query,
     InverseQuery,
-    StatusRequest;
+    StatusRequest
 }

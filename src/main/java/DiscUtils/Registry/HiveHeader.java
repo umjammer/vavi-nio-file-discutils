@@ -22,7 +22,7 @@
 
 package DiscUtils.Registry;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import vavi.util.win32.DateUtil;
@@ -90,7 +90,7 @@ public final class HiveHeader implements IByteArraySerializable {
         int isLog = EndianUtilities.toInt32LittleEndian(buffer, 0x001C);
         RootCell = EndianUtilities.toInt32LittleEndian(buffer, 0x0024);
         Length = EndianUtilities.toInt32LittleEndian(buffer, 0x0028);
-        Path = new String(buffer, 0x0030, 0x0040, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
+        Path = new String(buffer, 0x0030, 0x0040, StandardCharsets.UTF_16LE).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
         Guid1 = EndianUtilities.toGuidLittleEndian(buffer, 0x0070);
         Guid2 = EndianUtilities.toGuidLittleEndian(buffer, 0x0094);
         Checksum = EndianUtilities.toUInt32LittleEndian(buffer, 0x01FC);
@@ -116,7 +116,7 @@ public final class HiveHeader implements IByteArraySerializable {
         // Unknown - seems to be '1'
         EndianUtilities.writeBytesLittleEndian(RootCell, buffer, offset + 0x0024);
         EndianUtilities.writeBytesLittleEndian(Length, buffer, offset + 0x0028);
-        byte[] bytes = Path.getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = Path.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 0x0030, bytes.length);
         EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0030 + Path.length() * 2);
         EndianUtilities.writeBytesLittleEndian(Guid1, buffer, offset + 0x0070);

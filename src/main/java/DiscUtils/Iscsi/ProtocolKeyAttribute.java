@@ -22,7 +22,6 @@
 
 package DiscUtils.Iscsi;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -67,14 +66,14 @@ public @interface ProtocolKeyAttribute {
                     return ((Integer) value).toString();
                 }
 
-                if (ReflectionHelper.isEnum(valueType)) {
+                if (valueType.isEnum()) {
                     Field[] infos = valueType.getFields();
                     for (Field info : infos) {
                         if (info.isEnumConstant()) {
                             Object literalValue = info.get(null);
                             if (literalValue.equals(value)) {
-                                Annotation attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
-                                return ((ProtocolKeyValueAttribute) attr).name();
+                                ProtocolKeyValueAttribute attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
+                                return attr.name();
                             }
                         }
                     }
@@ -100,12 +99,12 @@ public @interface ProtocolKeyAttribute {
                     return Integer.parseInt(value);
                 }
 
-                if (ReflectionHelper.isEnum(valueType)) {
+                if (valueType.isEnum()) {
                     Field[] infos = valueType.getFields();
                     for (Field info : infos) {
                         if (info.isEnumConstant()) {
-                            Annotation attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
-                            if (attr != null && ((ProtocolKeyValueAttribute) attr).name().equals(value)) {
+                            ProtocolKeyValueAttribute attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
+                            if (attr != null && attr.name().equals(value)) {
                                 return info.get(null);
                             }
                         }

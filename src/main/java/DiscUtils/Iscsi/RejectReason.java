@@ -14,5 +14,5 @@ enum RejectReason {
     InvalidPduField,
     LongOperationReject,
     NegotiationReset,
-    WaitingForLogout;
+    WaitingForLogout
 }

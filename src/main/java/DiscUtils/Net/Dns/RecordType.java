@@ -125,13 +125,13 @@ public enum RecordType {
      */
     All(255);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private RecordType(int value) {
+    RecordType(int value) {
         this.value = value;
     }
 

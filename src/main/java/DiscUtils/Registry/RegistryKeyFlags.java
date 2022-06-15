@@ -96,7 +96,7 @@ public enum RegistryKeyFlags {
      */
     Unknown8000;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -104,7 +104,7 @@ public enum RegistryKeyFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<RegistryKeyFlags> valueOf(int value) {
         return Arrays.stream(values())

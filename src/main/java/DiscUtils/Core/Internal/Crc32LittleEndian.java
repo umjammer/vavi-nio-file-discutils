@@ -39,11 +39,11 @@ public final class Crc32LittleEndian extends Crc32 {
     }
 
     public static int compute(Crc32Algorithm algorithm, byte[] buffer, int offset, int count) {
-        return process(Tables[algorithm.ordinal()], 0xFFFFFFFF, buffer, offset, count) ^ 0xFFFFFFFF;
+        return ~process(Tables[algorithm.ordinal()], 0xFFFFFFFF, buffer, offset, count);
     }
 
     public void process(byte[] buffer, int offset, int count) {
-        _value = process(Table, _value, buffer, offset, count);
+        value = process(table, value, buffer, offset, count);
     }
 
     private static int[] calcTable(int polynomial) {

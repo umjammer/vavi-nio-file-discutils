@@ -86,7 +86,7 @@ public class MasterFileTableReference {
      *         {@code false}.
      */
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof MasterFileTableReference)) {
+        if (!(obj instanceof MasterFileTableReference)) {
             return false;
         }
 

@@ -66,7 +66,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         return _attribute.getPrimaryRecord() instanceof NonResidentAttributeRecord
                                                                                    ? (NonResidentAttributeRecord) _attribute
                                                                                            .getPrimaryRecord()
-                                                                                   : (NonResidentAttributeRecord) null;
+                                                                                   : null;
     }
 
     public void alignVirtualClusterCount() {

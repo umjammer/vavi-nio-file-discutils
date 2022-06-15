@@ -280,14 +280,14 @@ public final class BZip2DecoderStream extends Stream {
 
     private int readBlock() {
         long marker = readMarker();
-        if (marker == 0x314159265359l) {
+        if (marker == 0x314159265359L) {
             int blockSize = _blockDecoder.process(_bitstream, _blockBuffer, 0);
             _rleStream.reset(_blockBuffer, 0, blockSize);
             _blockCrc = _blockDecoder.getCrc();
             _calcBlockCrc = new Crc32BigEndian(Crc32Algorithm.Common);
             return blockSize;
         }
-        if (marker == 0x177245385090l) {
+        if (marker == 0x177245385090L) {
             _compoundCrc = readUint();
             return 0;
         }

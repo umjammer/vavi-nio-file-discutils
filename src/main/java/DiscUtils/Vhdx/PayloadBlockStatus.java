@@ -30,5 +30,5 @@ enum PayloadBlockStatus {
     __dummyEnum__4,
     __dummyEnum__5,
     FullyPresent,
-    PartiallyPresent;
+    PartiallyPresent
 }

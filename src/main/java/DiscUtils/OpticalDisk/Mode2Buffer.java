@@ -23,7 +23,7 @@
 package DiscUtils.OpticalDisk;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -60,7 +60,7 @@ class Mode2Buffer implements IBuffer {
     }
 
     public List<StreamExtent> getExtents() {
-        return Arrays.asList(new StreamExtent(0, getCapacity()));
+        return Collections.singletonList(new StreamExtent(0, getCapacity()));
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {

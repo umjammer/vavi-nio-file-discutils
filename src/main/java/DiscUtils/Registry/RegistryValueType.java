@@ -72,5 +72,5 @@ public enum RegistryValueType {
     /**
      * A 64-bit integer.
      */
-    QWord;
+    QWord
 }

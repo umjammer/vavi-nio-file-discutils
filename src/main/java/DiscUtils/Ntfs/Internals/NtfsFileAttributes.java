@@ -99,7 +99,7 @@ public enum NtfsFileAttributes implements EnumSettable {
      */
     IndexView(0x20000000);
 
-    int value;
+    final int value;
 
     public int getValue() {
         return value;
@@ -115,7 +115,7 @@ public enum NtfsFileAttributes implements EnumSettable {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & supplier().get()) != 0;
-    };
+    }
 
     public static long valueOf(EnumSet<NtfsFileAttributes> flags) {
         return flags.stream().collect(Collectors.summarizingInt(e -> e.supplier().get())).getSum();

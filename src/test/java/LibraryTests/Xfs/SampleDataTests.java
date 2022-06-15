@@ -5,7 +5,7 @@ package LibraryTests.Xfs;
 import java.io.File;
 import java.net.URI;
 import java.security.MessageDigest;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -38,7 +38,7 @@ public class SampleDataTests {
         File fs = new File(URI.create(getClass().getResource("xfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
-                Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {
+                Disk disk = new Disk(Collections.singletonList(diskImage), Ownership.Dispose)) {
             VolumeManager manager = new VolumeManager(disk);
             List<LogicalVolumeInfo> logicalVolumes = manager.getLogicalVolumes();
             assertEquals(1, logicalVolumes.size());
@@ -48,7 +48,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("xfs", filesystem.getName());
             try (DiscFileSystem xfs = filesystem.open(volume)) {
-                assertTrue(XfsFileSystem.class.isInstance(xfs));
+                assertTrue(xfs instanceof XfsFileSystem);
                 assertEquals(9081139200L, xfs.getAvailableSpace());
                 assertEquals(10725863424L, xfs.getSize());
                 assertEquals(1644724224, xfs.getUsedSpace());
@@ -63,7 +63,7 @@ public class SampleDataTests {
         File fs = new File(URI.create(getClass().getResource("xfs5.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
-                Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {
+                Disk disk = new Disk(Collections.singletonList(diskImage), Ownership.Dispose)) {
             VolumeManager manager = new VolumeManager(disk);
             List<LogicalVolumeInfo> logicalVolumes = manager.getLogicalVolumes();
             assertEquals(1, logicalVolumes.size());
@@ -73,7 +73,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("xfs", filesystem.getName());
             try (DiscFileSystem xfs = filesystem.open(volume)) {
-                assertTrue(XfsFileSystem.class.isInstance(xfs));
+                assertTrue(xfs instanceof XfsFileSystem);
                 assertEquals(9080827904L, xfs.getAvailableSpace());
                 assertEquals(10725883904L, xfs.getSize());
                 assertEquals(1645056000, xfs.getUsedSpace());

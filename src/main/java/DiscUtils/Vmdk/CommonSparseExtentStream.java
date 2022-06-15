@@ -24,7 +24,7 @@ package DiscUtils.Vmdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -243,7 +243,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         parentExtents = StreamExtent.offset(parentExtents, -_diskOffset);
 
         List<StreamExtent> result = StreamExtent.union(layerExtents(start, maxCount), parentExtents);
-        result = StreamExtent.intersect(result, Arrays.asList(new StreamExtent(start, maxCount)));
+        result = StreamExtent.intersect(result, Collections.singletonList(new StreamExtent(start, maxCount)));
         return result;
     }
 

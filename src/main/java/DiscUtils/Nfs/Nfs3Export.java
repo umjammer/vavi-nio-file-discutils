@@ -39,24 +39,24 @@ public final class Nfs3Export {
     public Nfs3Export() {
     }
 
-    private String __DirPath;
+    private String dirPath;
 
     public String getDirPath() {
-        return __DirPath;
+        return dirPath;
     }
 
     public void setDirPath(String value) {
-        __DirPath = value;
+        dirPath = value;
     }
 
-    private List<String> __Groups;
+    private List<String> groups;
 
     public List<String> getGroups() {
-        return __Groups;
+        return groups;
     }
 
     public void setGroups(List<String> value) {
-        __Groups = value;
+        groups = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -69,7 +69,7 @@ public final class Nfs3Export {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3Export ? (Nfs3Export) obj : (Nfs3Export) null);
+        return equals(obj instanceof Nfs3Export ? (Nfs3Export) obj : null);
     }
 
     public boolean equals(Nfs3Export other) {

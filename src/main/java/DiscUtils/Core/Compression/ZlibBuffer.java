@@ -22,7 +22,7 @@
 
 package DiscUtils.Core.Compression;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -76,6 +76,6 @@ public class ZlibBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return Arrays.asList(new StreamExtent(0, _stream.getLength()));
+        return Collections.singletonList(new StreamExtent(0, _stream.getLength()));
     }
 }

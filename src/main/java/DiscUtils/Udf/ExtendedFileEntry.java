@@ -38,9 +38,9 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        DescriptorTag = EndianUtilities.<DescriptorTag> toStruct(DescriptorTag.class, buffer, offset);
+        DescriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         InformationControlBlock = EndianUtilities
-                .<InformationControlBlock> toStruct(InformationControlBlock.class, buffer, offset + 16);
+                .toStruct(InformationControlBlock.class, buffer, offset + 16);
         Uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
         Gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
         Permissions = FilePermissions.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
@@ -57,11 +57,11 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
         AttributeTime = UdfUtilities.parseTimestamp(buffer, offset + 116);
         Checkpoint = EndianUtilities.toUInt32LittleEndian(buffer, offset + 128);
         ExtendedAttributeIcb = EndianUtilities
-                .<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 136);
+                .toStruct(LongAllocationDescriptor.class, buffer, offset + 136);
         StreamDirectoryIcb = EndianUtilities
-                .<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, buffer, offset + 152);
+                .toStruct(LongAllocationDescriptor.class, buffer, offset + 152);
         ImplementationIdentifier = EndianUtilities
-                .<ImplementationEntityIdentifier> toStruct(ImplementationEntityIdentifier.class, buffer, offset + 168);
+                .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 168);
         UniqueId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 200);
         ExtendedAttributesLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 208);
         AllocationDescriptorsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 212);

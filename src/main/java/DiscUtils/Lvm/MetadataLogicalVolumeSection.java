@@ -23,7 +23,6 @@
 package DiscUtils.Lvm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -74,7 +73,8 @@ public class MetadataLogicalVolumeSection {
             if (line.contains("=")) {
                 Tuple<String, String> parameter = Metadata.parseParameter(line);
                 String paramValue = parameter.getKey().trim().toLowerCase();
-                if (paramValue.equals("id")) {
+                switch (paramValue) {
+                case "id":
                     Id = Metadata.parseStringValue(parameter.getValue());
                     byte[] guid = new byte[16];
                     EndianUtilities.stringToBytes(Id.replace("-", ""), guid, 0, 16);
@@ -82,7 +82,8 @@ public class MetadataLogicalVolumeSection {
                     guid[7] = (byte) ((guid[7] | (byte) 0x40) & (byte) 0x4f);
                     guid[8] = (byte) ((guid[8] | (byte) 0x80) & (byte) 0xbf);
                     Identity = UUID.nameUUIDFromBytes(guid);
-                } else if (paramValue.equals("status")) {
+                    break;
+                case "status":
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
@@ -96,15 +97,20 @@ public class MetadataLogicalVolumeSection {
                             throw new IndexOutOfBoundsException("Unexpected status in physical volume metadata");
                         }
                     }
-                } else if (paramValue.equals("flags")) {
+                    break;
+                case "flags":
                     Flags = Metadata.parseArrayValue(parameter.getValue());
-                } else if (paramValue.equals("creation_host")) {
+                    break;
+                case "creation_host":
                     CreationHost = Metadata.parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("creation_time")) {
+                    break;
+                case "creation_time":
                     CreationTime = Metadata.parseDateTimeValue(parameter.getValue());
-                } else if (paramValue.equals("segment_count")) {
+                    break;
+                case "segment_count":
                     SegmentCount = Metadata.parseNumericValue(parameter.getValue());
-                } else {
+                    break;
+                default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata " + parameter.getKey());
                 }
             } else if (line.endsWith("{")) {
@@ -145,7 +151,7 @@ public class MetadataLogicalVolumeSection {
 
             segments.add(segment);
         }
-        Collections.sort(segments, compareSegments);
+        segments.sort(compareSegments);
         // Sanity Check...
         long pos = 0;
         for (MetadataSegmentSection segment : segments) {
@@ -184,16 +190,14 @@ public class MetadataLogicalVolumeSection {
         return new SubStream(pv.getContent(), Ownership.None, start, length);
     }
 
-    private Comparator<MetadataSegmentSection> compareSegments = new Comparator<MetadataSegmentSection>() {
-        public int compare(MetadataSegmentSection x, MetadataSegmentSection y) {
-            if (x.StartExtent > y.StartExtent) {
-                return 1;
-            } else if (x.StartExtent < y.StartExtent) {
-                return -1;
-            }
-
-            return 0;
+    private Comparator<MetadataSegmentSection> compareSegments = (x, y) -> {
+        if (x.StartExtent > y.StartExtent) {
+            return 1;
+        } else if (x.StartExtent < y.StartExtent) {
+            return -1;
         }
+
+        return 0;
     };
 }
 
@@ -203,13 +207,13 @@ enum LogicalVolumeStatus {
     Write(0x2),
     Visible(0x4);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private LogicalVolumeStatus(int value) {
+    LogicalVolumeStatus(int value) {
         this.value = value;
     }
 }

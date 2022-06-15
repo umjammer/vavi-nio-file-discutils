@@ -22,8 +22,6 @@
 
 package DiscUtils.Nfs;
 
-import DiscUtils.Nfs.Nfs3FileHandle;
-
 
 public final class Nfs3FileHandle implements Comparable<Nfs3FileHandle> {
     public Nfs3FileHandle() {
@@ -33,14 +31,14 @@ public final class Nfs3FileHandle implements Comparable<Nfs3FileHandle> {
         setValue(reader.readBuffer(Nfs3Mount.MaxFileHandleSize));
     }
 
-    private byte[] __Value;
+    private byte[] value;
 
     public byte[] getValue() {
-        return __Value;
+        return value;
     }
 
     public void setValue(byte[] value) {
-        __Value = value;
+        this.value = value;
     }
 
     public int compareTo(Nfs3FileHandle other) {
@@ -90,7 +88,7 @@ public final class Nfs3FileHandle implements Comparable<Nfs3FileHandle> {
     }
 
     public boolean equals(Object obj) {
-        Nfs3FileHandle other = obj instanceof Nfs3FileHandle ? (Nfs3FileHandle) obj : (Nfs3FileHandle) null;
+        Nfs3FileHandle other = obj instanceof Nfs3FileHandle ? (Nfs3FileHandle) obj : null;
         return equals(other);
     }
 

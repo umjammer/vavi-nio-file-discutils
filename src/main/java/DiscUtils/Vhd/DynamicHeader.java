@@ -22,7 +22,7 @@
 
 package DiscUtils.Vhd;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -111,7 +111,7 @@ public class DynamicHeader {
         result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
         result.ParentTimestamp = Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56))
                 .toEpochMilli();
-        result.ParentUnicodeName = new String(data, offset + 64, 512, Charset.forName("UTF-16BE")).replaceFirst("\0*$", "");
+        result.ParentUnicodeName = new String(data, offset + 64, 512, StandardCharsets.UTF_16BE).replaceFirst("\0*$", "");
 
         result.ParentLocators = new ParentLocator[8];
         for (int i = 0; i < 8; ++i) {
@@ -137,7 +137,7 @@ public class DynamicHeader {
                                             offset + 56);
         EndianUtilities.writeBytesBigEndian(0, data, offset + 60);
         Arrays.fill(data, offset + 64, offset + 64 + 512, (byte) 0);
-        byte[] bytes = ParentUnicodeName.getBytes(Charset.forName("UTF-16BE"));
+        byte[] bytes = ParentUnicodeName.getBytes(StandardCharsets.UTF_16BE);
         System.arraycopy(bytes, 0, data, offset + 64, bytes.length);
 
         for (int i = 0; i < 8; ++i) {

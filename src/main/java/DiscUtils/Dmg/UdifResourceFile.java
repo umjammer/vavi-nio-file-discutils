@@ -90,10 +90,10 @@ public class UdifResourceFile implements IByteArraySerializable {
         segmentNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
         segmentCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
         segmentGuid = EndianUtilities.toGuidBigEndian(buffer, offset + 64);
-        dataForkChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 80);
+        dataForkChecksum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 80);
         xmlOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 216);
         xmlLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 224);
-        masterChecksum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 352);
+        masterChecksum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 352);
         imageVariant = EndianUtilities.toUInt32BigEndian(buffer, offset + 488);
         sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 492);
         return size();

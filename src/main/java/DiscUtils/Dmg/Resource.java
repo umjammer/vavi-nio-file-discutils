@@ -28,8 +28,8 @@ import java.util.Map;
 public abstract class Resource {
     protected Resource(String type, Map<String, Object> parts) {
         _type = type;
-        _name = parts.get("Name") instanceof String ? (String) parts.get("Name") : (String) null;
-        String idStr = parts.get("ID") instanceof String ? (String) parts.get("ID") : (String) null;
+        _name = parts.get("Name") instanceof String ? (String) parts.get("Name") : null;
+        String idStr = parts.get("ID") instanceof String ? (String) parts.get("ID") : null;
         if (idStr != null && !idStr.isEmpty()) {
             try {
                 int id = Integer.parseInt(idStr);
@@ -39,7 +39,7 @@ public abstract class Resource {
             }
         }
 
-        String attrString = parts.get("Attributes") instanceof String ? (String) parts.get("Attributes") : (String) null;
+        String attrString = parts.get("Attributes") instanceof String ? (String) parts.get("Attributes") : null;
         if (attrString != null && !attrString.isEmpty()) {
             int style = 10;
             if (attrString.startsWith("0x")) {

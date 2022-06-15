@@ -80,12 +80,12 @@ public class ConcatStream extends SparseStream {
         List<StreamExtent> extents = new ArrayList<>();
 
         long pos = 0;
-        for (int i = 0; i < _streams.size(); ++i) {
-            for (StreamExtent extent : _streams.get(i).getExtents()) {
+        for (SparseStream stream : _streams) {
+            for (StreamExtent extent : stream.getExtents()) {
                 extents.add(new StreamExtent(extent.getStart() + pos, extent.getLength()));
             }
 
-            pos += _streams.get(i).getLength();
+            pos += stream.getLength();
         }
         return extents;
     }
@@ -93,8 +93,9 @@ public class ConcatStream extends SparseStream {
     public long getLength() {
         checkDisposed();
         long length = 0;
-        for (int i = 0; i < _streams.size(); ++i) {
-            length += _streams.get(i).getLength();
+
+        for (SparseStream stream : _streams) {
+            length += stream.getLength();
         }
 
         return length;
@@ -112,8 +113,8 @@ public class ConcatStream extends SparseStream {
 
     public void flush() {
         checkDisposed();
-        for (int i = 0; i < _streams.size(); ++i) {
-            _streams.get(i).flush();
+        for (SparseStream stream : _streams) {
+            stream.flush();
         }
     }
 

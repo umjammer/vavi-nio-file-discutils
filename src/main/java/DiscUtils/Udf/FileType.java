@@ -45,13 +45,13 @@ enum FileType {
     UdfMetadataMirrorFile(251),
     UdfMetadataBitmapFile(252);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private FileType(int value) {
+    FileType(int value) {
         this.value = value;
     }
 

@@ -27,7 +27,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.Util.Ownership;
@@ -107,7 +109,7 @@ public class DynamicStreamTest {
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
-                    assertTrue(false);
+                    fail();
                 }
             }
         }
@@ -121,11 +123,9 @@ public class DynamicStreamTest {
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             contentStream = disk.getContent();
         }
-        try {
+        assertThrows(IOException.class, () -> {
             contentStream.setPosition(0);
-            assertTrue(false);
-        } catch (IOException e) {
-        }
+        });
     }
 
     @Test
@@ -138,7 +138,7 @@ public class DynamicStreamTest {
             disk.getContent().read(buffer, 0, buffer.length);
             for (int i = 0; i < 100; ++i) {
                 if (buffer[i] != 0) {
-                    assertTrue(false);
+                    fail();
                 }
             }
         }

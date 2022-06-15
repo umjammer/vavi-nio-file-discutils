@@ -28,10 +28,10 @@ package DiscUtils.Core;
 import java.io.IOException;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -305,7 +305,7 @@ public class NativeFileSystem extends DiscFileSystem {
         try {
             return cleanItems(Files.list(Paths
                     .get(getBasePath(), path)/* , searchPattern, searchOption */) // TODO impl
-                    .map(p -> p.toString())
+                    .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
 Debug.printStackTrace(e);
@@ -352,7 +352,7 @@ Debug.printStackTrace(e);
         try {
             return cleanItems(Files.list(Paths
                     .get(getBasePath(), path)/* , searchPattern, searchOption */) // TODO impl
-                    .map(p -> p.toString())
+                    .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
 Debug.printStackTrace(e);
@@ -386,7 +386,7 @@ Debug.printStackTrace(e);
         try {
             return cleanItems(Files
                     .list(Paths.get(getBasePath(), path)/* , searchPattern */) // TODO impl
-                    .map(p -> p.toString())
+                    .map(Path::toString)
                     .collect(Collectors.toList()));
         } catch (IOException e) {
 Debug.printStackTrace(e);

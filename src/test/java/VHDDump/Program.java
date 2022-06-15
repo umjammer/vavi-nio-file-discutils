@@ -81,13 +81,13 @@ public class Program extends ProgramBase {
             System.err.println();
             System.err.println("Common Disk Info");
             System.err.println("-----------------");
-            System.err.printf("              Cookie: %8x\n", info.getCookie());
+            System.err.printf("              Cookie: %s\n", info.getCookie());
             System.err.printf("            Features: %8x\n", info.getFeatures());
             System.err.printf(" File Format Version: %s.%s\n",
                                ((info.getFileFormatVersion() >> 16) & 0xFFFF),
                                (info.getFileFormatVersion() & 0xFFFF));
             System.err.printf("       Creation Time: %s (UTC)\n", info.getCreationTimestamp());
-            System.err.printf("         Creator App: %8x\n", info.getCreatorApp());
+            System.err.printf("         Creator App: %s\n", info.getCreatorApp());
             System.err.printf("     Creator Version: %s.%s\n",
                                ((info.getCreatorVersion() >> 16) & 0xFFFF),
                                (info.getCreatorVersion() & 0xFFFF));
@@ -115,8 +115,8 @@ public class Program extends ProgramBase {
                 System.err.printf("   Parent Write Time: %s (UTC)\n", info.getDynamicParentTimestamp());
                 System.err.printf("         Parent Name: %s\n", info.getDynamicParentUnicodeName());
                 System.err.print("    Parent Locations: ");
-                for (Object __dummyForeachVar0 : info.getDynamicParentLocators()) {
-                    String parentLocation = (String) __dummyForeachVar0;
+                for (String __dummyForeachVar0 : info.getDynamicParentLocators()) {
+                    String parentLocation = __dummyForeachVar0;
                     System.err.printf("%s\n                      \n", parentLocation);
                 }
                 System.err.println();

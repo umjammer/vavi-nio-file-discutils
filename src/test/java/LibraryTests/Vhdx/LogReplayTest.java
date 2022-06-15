@@ -24,7 +24,7 @@ package LibraryTests.Vhdx;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +44,7 @@ public class LogReplayTest {
         File fs = new File(URI.create(getClass().getResource("vhdx-log-replay.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
-                Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {
+                Disk disk = new Disk(Collections.singletonList(diskImage), Ownership.Dispose)) {
             assertTrue(disk.isPartitioned());
             assertEquals(2, disk.getPartitions().getCount());
         }

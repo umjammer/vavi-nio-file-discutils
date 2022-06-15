@@ -81,7 +81,7 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
     }
 
     public int compareTo(BTreeKey<?> other) {
-        return compareTo(other instanceof AttributeKey ? (AttributeKey) other : (AttributeKey) null);
+        return compareTo(other instanceof AttributeKey ? (AttributeKey) other : null);
     }
 
     public int compareTo(AttributeKey other) {

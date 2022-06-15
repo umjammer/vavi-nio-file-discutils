@@ -29,7 +29,9 @@ import java.security.SecurityPermission;
 import java.util.Arrays;
 import java.util.List;
 
-import DiscUtils.Complete.setupHelper;
+import DiscUtils.Complete.SetupHelper;
+import DiscUtils.Core.CoreCompat.IContentReader;
+import DiscUtils.Core.CoreCompat.IContentWriter;
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.Core.DiscFileSystem;
@@ -40,19 +42,23 @@ import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.VolumeManager;
 import DiscUtils.Ntfs.NtfsFileSystem;
+import DiscUtils.PowerShell.Conpat.ErrorRecord;
+import DiscUtils.PowerShell.Conpat.NavigationCmdletProvider;
+import DiscUtils.PowerShell.Conpat.PSDriveInfo;
+import DiscUtils.PowerShell.Conpat.ReturnContainers;
 import DiscUtils.PowerShell.Utilities;
 import DiscUtils.PowerShell.Conpat.IContentCmdletProvider;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 
 
 public final class Provider extends NavigationCmdletProvider implements IContentCmdletProvider {
     protected PSDriveInfo newDrive(PSDriveInfo drive) {
         SetupHelper.setupComplete();
         NewDriveParameters dynParams = DynamicParameters instanceof NewDriveParameters ? (NewDriveParameters) DynamicParameters
-                                                                                       : (NewDriveParameters) null;
+                                                                                       : null;
         if (drive == null) {
             writeError(new ErrorRecord(new NullPointerException(nameof(drive)),
                                        "NullDrive",
@@ -108,7 +114,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     protected PSDriveInfo removeDrive(PSDriveInfo drive) {
         if (drive == null) {
-            WriteError(new ErrorRecord(new NullPointerException(nameof(drive)),
+            writeError(new ErrorRecord(new NullPointerException(nameof(drive)),
                                        "NullDrive",
                                        ErrorCategory.InvalidArgument,
                                        null));
@@ -116,7 +122,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         }
 
         VirtualDiskPSDriveInfo vdDrive = drive instanceof VirtualDiskPSDriveInfo ? (VirtualDiskPSDriveInfo) drive
-                                                                                 : (VirtualDiskPSDriveInfo) null;
+                                                                                 : null;
         if (vdDrive == null) {
             writeError(new ErrorRecord(new IllegalArgumentException("invalid type of drive"),
                                        "BadDrive",
@@ -131,7 +137,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     protected void getItem(String path) {
         GetItemParameters dynParams = DynamicParameters instanceof GetItemParameters ? (GetItemParameters) DynamicParameters
-                                                                                     : (GetItemParameters) null;
+                                                                                     : null;
         boolean readOnly = !(dynParams != null && dynParams.getReadWrite().IsPresent);
         Object obj = findItemByPath(Utilities.normalizePath(path), false, readOnly);
         if (obj != null) {
@@ -206,46 +212,45 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         Object obj = findItemByPath(Utilities.normalizePath(parentPath), true, false);
         if (obj instanceof DiscDirectoryInfo) {
             DiscDirectoryInfo dirInfo = (DiscDirectoryInfo) obj;
-            if (itemTypeUpper.equals("FILE")) {
-                Closeable __newVar0 = dirInfo.getFileSystem()
-                        .openFile(Path.Combine(dirInfo.getFullName(), getChildName(path)), FileMode.Create);
-                try {
+            switch (itemTypeUpper) {
+            case "FILE":
+                try (Closeable __newVar0 = dirInfo.getFileSystem()
+                        .openFile(Path.Combine(dirInfo.getFullName(), getChildName(path)), FileMode.Create)) {
                     {
                     }
-                } finally {
-                    if (__newVar0 != null)
-                        __newVar0.close();
-
                 }
-            } else if (itemTypeUpper.equals("DIRECTORY")) {
+                break;
+            case "DIRECTORY":
                 dirInfo.getFileSystem().createDirectory(Path.Combine(dirInfo.getFullName(), getChildName(path)));
-            } else if (itemTypeUpper.equals("HARDLINK")) {
+                break;
+            case "HARDLINK":
                 NtfsFileSystem ntfs = dirInfo.getFileSystem() instanceof NtfsFileSystem
-                                                                                        ? (NtfsFileSystem) dirInfo
-                                                                                                .getFileSystem()
-                                                                                        : (NtfsFileSystem) null;
+                        ? (NtfsFileSystem) dirInfo
+                        .getFileSystem()
+                        : null;
                 if (ntfs != null) {
                     NewHardLinkDynamicParameters hlParams = (NewHardLinkDynamicParameters) DynamicParameters;
                     Object srcItems = SessionState.InvokeProvider.Item.get(hlParams.getSourcePath());
                     if (srcItems.size() != 1) {
                         writeError(new ErrorRecord(new UnsupportedOperationException("The type is unknown for this provider.  Only \"file\" and \"directory\" can be specified."),
-                                                   "UnknownTypeForNewItem",
-                                                   ErrorCategory.InvalidArgument,
-                                                   itemTypeName));
+                                "UnknownTypeForNewItem",
+                                ErrorCategory.InvalidArgument,
+                                itemTypeName));
                         return;
                     }
 
                     DiscFileSystemInfo srcFsi = srcItems[0].BaseObject instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) srcItems[0].BaseObject
-                                                                                                     : (DiscFileSystemInfo) null;
+                            : null;
                     ntfs.CreateHardLink(srcFsi.getFullName(), Path.Combine(dirInfo.getFullName(), getChildName(path)));
                 }
 
-            } else {
+                break;
+            default:
                 writeError(new ErrorRecord(new UnsupportedOperationException("The type is unknown for this provider.  Only \"file\" and \"directory\" can be specified."),
-                                           "UnknownTypeForNewItem",
-                                           ErrorCategory.InvalidArgument,
-                                           itemTypeName));
-                return;
+                        "UnknownTypeForNewItem",
+                        ErrorCategory.InvalidArgument,
+                        itemTypeName));
+                break;
             }
         } else {
             writeError(new ErrorRecord(new UnsupportedOperationException("Cannot create items in an object of this type: " +
@@ -253,7 +258,6 @@ public final class Provider extends NavigationCmdletProvider implements IContent
                                        "UnknownObjectTypeForNewItemParent",
                                        ErrorCategory.InvalidOperation,
                                        obj));
-            return;
         }
     }
 
@@ -272,7 +276,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     protected void renameItem(String path, String newName) {
         Object obj = findItemByPath(Utilities.normalizePath(path), true, false);
-        DiscFileSystemInfo fsiObj = obj instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) obj : (DiscFileSystemInfo) null;
+        DiscFileSystemInfo fsiObj = obj instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) obj : null;
         if (fsiObj == null) {
             writeError(new ErrorRecord(new UnsupportedOperationException("Cannot move items to this location"),
                                        "BadParentForNewItem",
@@ -296,12 +300,12 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         DiscDirectoryInfo destDir;
         String destFileName = null;
         Object destObj = findItemByPath(Utilities.normalizePath(copyPath), true, false);
-        destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : (DiscDirectoryInfo) null;
+        destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : null;
         if (destDir != null) {
             destFileName = getChildName(path);
         } else if (destObj == null || destObj instanceof DiscFileInfo) {
             destObj = FindItemByPath(Utilities.NormalizePath(getParentPath(copyPath, null)), true, false);
-            destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : (DiscDirectoryInfo) null;
+            destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : null;
             destFileName = getChildName(copyPath);
         }
 
@@ -315,7 +319,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
         Object srcDirObj = FindItemByPath(Utilities.NormalizePath(getParentPath(path, null)), true, true);
         DiscDirectoryInfo srcDir = srcDirObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) srcDirObj
-                                                                          : (DiscDirectoryInfo) null;
+                                                                          : null;
         String srcFileName = getChildName(path);
         if (srcDir == null) {
             writeError(new ErrorRecord(new UnsupportedOperationException("Cannot copy items from this location"),
@@ -349,15 +353,10 @@ public final class Provider extends NavigationCmdletProvider implements IContent
     public void clearContent(String path) {
         Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
         if (destObj instanceof DiscFileInfo) {
-            Stream s = ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite);
-            try {
+            try (Stream s = ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite)) {
                 {
                     s.setLength(0);
                 }
-            } finally {
-                if (s != null)
-                    s.close();
-
             }
         } else {
             writeError(new ErrorRecord(new IOException("Cannot write to this item"),
@@ -377,7 +376,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             return new FileContentReaderWriter(this,
                                                ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.Read),
                                                DynamicParameters instanceof ContentParameters ? (ContentParameters) DynamicParameters
-                                                                                              : (ContentParameters) null);
+                                                                                              : null);
         } else {
             writeError(new ErrorRecord(new IOException("Cannot read from this item"),
                                        "BadContentSource",
@@ -397,7 +396,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             return new FileContentReaderWriter(this,
                                                ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite),
                                                DynamicParameters instanceof ContentParameters ? (ContentParameters) DynamicParameters
-                                                                                              : (ContentParameters) null);
+                                                                                              : null);
         } else {
             writeError(new ErrorRecord(new IOException("Cannot write to this item"),
                                        "BadContentDestination",
@@ -417,7 +416,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         }
 
         DiscFileSystemInfo fsi = instance.BaseObject instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) instance.BaseObject
-                                                                                   : (DiscFileSystemInfo) null;
+                                                                                   : null;
         if (fsi == null) {
             return "";
         }
@@ -433,7 +432,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     private VirtualDiskPSDriveInfo getDriveInfo() {
         return PSDriveInfo instanceof VirtualDiskPSDriveInfo ? (VirtualDiskPSDriveInfo) PSDriveInfo
-                                                             : (VirtualDiskPSDriveInfo) null;
+                                                             : null;
     }
 
     private VirtualDisk getDisk() {
@@ -520,7 +519,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
     }
 
     private void showSlowDiskWarning() {
-        final String varName = "DiscUtils_HideSlowDiskWarning";;
+        final String varName = "DiscUtils_HideSlowDiskWarning";
         PSVariable psVar = this.SessionState.PSVariable.get(varName);
         if (psVar != null && psVar.Value != null) {
             boolean warningHidden;
@@ -601,7 +600,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             String name = "Volume" + i;
             String volPath = makePath(path, name);
             // new PathInfo(PathInfo.Parse(path, true).MountParts, "" + i).toString();
-            writeItemObject(namesOnly ? name : (Object) volumes.get(i), volPath, true);
+            writeItemObject(namesOnly ? name : volumes.get(i), volPath, true);
             if (recurse) {
                 getChildren(volPath, recurse, namesOnly);
             }
@@ -611,14 +610,14 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     private void enumerateDirectory(DiscDirectoryInfo parent, String basePath, boolean recurse, boolean namesOnly) {
         for (DiscDirectoryInfo dir : parent.getDirectories()) {
-            writeItemObject(namesOnly ? dir.getName() : (Object) dir, makePath(basePath, dir.getName()), true);
+            writeItemObject(namesOnly ? dir.getName() : dir, makePath(basePath, dir.getName()), true);
             if (recurse) {
                 enumerateDirectory(dir, makePath(basePath, dir.getName()), recurse, namesOnly);
             }
 
         }
         for (DiscDirectoryInfo file : parent.getFiles()) {
-            writeItemObject(namesOnly ? file.getName() : (Object) file, makePath(basePath, file.getName()), false);
+            writeItemObject(namesOnly ? file.getName() : file, makePath(basePath, file.getName()), false);
         }
     }
 
@@ -655,9 +654,9 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     private void doCopyDirectory(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) {
         IWindowsFileSystem destWindowsFs = destFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) destFs
-                                                                                : (IWindowsFileSystem) null;
+                                                                                : null;
         IWindowsFileSystem srcWindowsFs = srcFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) srcFs
-                                                                              : (IWindowsFileSystem) null;
+                                                                              : null;
         destFs.createDirectory(destPath);
         if (srcWindowsFs != null && destWindowsFs != null) {
             if (srcWindowsFs.getAttributes(srcPath).containsKey("ReparsePoint")) {
@@ -672,11 +671,10 @@ public final class Provider extends NavigationCmdletProvider implements IContent
 
     private void doCopyFile(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) {
         IWindowsFileSystem destWindowsFs = destFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) destFs
-                                                                                : (IWindowsFileSystem) null;
+                                                                                : null;
         IWindowsFileSystem srcWindowsFs = srcFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) srcFs
-                                                                              : (IWindowsFileSystem) null;
-        Stream src = srcFs.openFile(srcPath, FileMode.Open, FileAccess.Read);
-        try {
+                                                                              : null;
+        try (Stream src = srcFs.openFile(srcPath, FileMode.Open, FileAccess.Read)) {
             Stream dest = destFs.openFile(destPath, FileMode.Create, FileAccess.ReadWrite);
             try {
                 dest.setLength(src.getLength());
@@ -690,9 +688,6 @@ public final class Provider extends NavigationCmdletProvider implements IContent
                 if (dest != null)
                     dest.close();
             }
-        } finally {
-            if (src != null)
-                src.close();
         }
         if (srcWindowsFs != null && destWindowsFs != null) {
             if (srcWindowsFs.getAttributes(srcPath).containsKey("ReparsePoint")) {

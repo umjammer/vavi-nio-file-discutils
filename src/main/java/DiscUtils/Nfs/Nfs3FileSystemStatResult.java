@@ -71,7 +71,7 @@ public class Nfs3FileSystemStatResult extends Nfs3CallResult {
 
     public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3FileSystemStatResult ? (Nfs3FileSystemStatResult) obj
-                                                              : (Nfs3FileSystemStatResult) null);
+                                                              : null);
     }
 
     public boolean equals(Nfs3FileSystemStatResult other) {

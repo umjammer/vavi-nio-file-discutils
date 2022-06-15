@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
 import vavi.util.win32.DateUtil;
@@ -94,7 +94,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         _eaSizeOrReparsePointTag = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3C);
         int fnLen = buffer[offset + 0x40] & 0xff;
         _fileNameNamespace = FileNameNamespace.valueOf(buffer[offset + 0x41]);
-        _fileName = new String(buffer, offset + 0x42, fnLen * 2, Charset.forName("UTF-16LE"));
+        _fileName = new String(buffer, offset + 0x42, fnLen * 2, StandardCharsets.UTF_16LE);
         return 0x42 + fnLen * 2;
     }
 
@@ -110,7 +110,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         EndianUtilities.writeBytesLittleEndian(_eaSizeOrReparsePointTag, buffer, offset + 0x3C);
         buffer[offset + 0x40] = (byte) _fileName.length();
         buffer[offset + 0x41] = (byte) _fileNameNamespace.ordinal();
-        byte[] bytes = _fileName.getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = _fileName.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 0x42, bytes.length);
     }
 

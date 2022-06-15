@@ -23,8 +23,9 @@
 package DiscUtils.Vhd;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -496,9 +497,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         int batSize = (dynamicHeader.MaxTableEntries * 4 + Sizes.Sector - 1) / Sizes.Sector * Sizes.Sector;
         byte[] bat = new byte[batSize];
-        for (int i = 0; i < bat.length; ++i) {
-            bat[i] = (byte) 0xFF;
-        }
+        Arrays.fill(bat, (byte) 0xFF);
 
         stream.setPosition(0);
         stream.write(footerBlock, 0, 512);
@@ -541,16 +540,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         dynamicHeader.toBytes(dynamicHeaderBlock, 0);
 
         byte[] platformLocator1 = new byte[512];
-        byte[] bytes = parentAbsolutePath.getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = parentAbsolutePath.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, platformLocator1, 0, bytes.length);
         byte[] platformLocator2 = new byte[512];
-        bytes = parentRelativePath.getBytes(Charset.forName("UTF-16LE"));
+        bytes = parentRelativePath.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, platformLocator2, 0, bytes.length);
 
         byte[] bat = new byte[batSize];
-        for (int i = 0; i < bat.length; ++i) {
-            bat[i] = (byte) 0xFF;
-        }
+        Arrays.fill(bat, (byte) 0xFF);
 
         stream.setPosition(0);
         stream.write(footerBlock, 0, 512);
@@ -584,7 +581,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.PlatformCode)) {
                 _fileStream.setPosition(pl.PlatformDataOffset);
                 byte[] buffer = StreamUtilities.readExact(_fileStream, pl.PlatformDataLength);
-                String locationVal = new String(buffer, Charset.forName("UTF-16LE"));
+                String locationVal = new String(buffer, StandardCharsets.UTF_16LE);
 //Debug.println(locationVal + ", " + pl.PlatformCode + ", "+ StringUtil.getDump(locationVal));
                 if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.PlatformCode)) {
                     absPaths.add(locationVal);

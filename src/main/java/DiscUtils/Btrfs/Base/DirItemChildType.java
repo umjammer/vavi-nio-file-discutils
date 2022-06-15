@@ -31,5 +31,5 @@ public enum DirItemChildType {
     Fifo,
     Socket,
     Symlink,
-    ExtendedAttribute;
+    ExtendedAttribute
 }

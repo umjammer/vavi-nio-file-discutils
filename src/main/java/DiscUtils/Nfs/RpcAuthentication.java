@@ -58,7 +58,7 @@ public class RpcAuthentication {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof RpcAuthentication ? (RpcAuthentication) obj : (RpcAuthentication) null);
+        return equals(obj instanceof RpcAuthentication ? (RpcAuthentication) obj : null);
     }
 
     public boolean equals(RpcAuthentication other) {

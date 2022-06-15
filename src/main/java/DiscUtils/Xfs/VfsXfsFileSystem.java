@@ -130,7 +130,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         }
         long alloc_set_aside = 0;
 
-        alloc_set_aside = 4 + (superblock.getAgCount() * XFS_ALLOC_AGFL_RESERVE);
+        alloc_set_aside = 4 + ((long) superblock.getAgCount() * XFS_ALLOC_AGFL_RESERVE);
 
         if (superblock.getReadOnlyCompatibleFeatures().contains(ReadOnlyCompatibleFeatures.RMAPBT)) {
             int rmapMaxlevels = 9;
@@ -138,7 +138,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
                 rmapMaxlevels = superblock.computeBtreeMaxlevels();
             }
 
-            alloc_set_aside += superblock.getAgCount() * rmapMaxlevels;
+            alloc_set_aside += (long) superblock.getAgCount() * rmapMaxlevels;
         }
         return (fdblocks - alloc_set_aside) * superblock.getBlocksize();
     }
@@ -160,7 +160,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      * XFS_AGB_TO_DADDR
      */
     private long xFS_AGB_TO_DADDR(SuperBlock sb, int agno, int agbno) {
-        return fsbToBb(sb, agno * sb.getAgBlocks()) + agbno;
+        return fsbToBb(sb, (long) agno * sb.getAgBlocks()) + agbno;
     }
 
     /**
@@ -176,6 +176,6 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
      * XFS_AGF_DADDR
      */
     private long xFS_AGF_DADDR(SuperBlock sb) {
-        return 1 << (sb.getSectorSizeLog2() - BBSHIFT);
+        return 1L << (sb.getSectorSizeLog2() - BBSHIFT);
     }
 }

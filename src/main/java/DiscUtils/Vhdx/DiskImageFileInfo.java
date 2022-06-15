@@ -85,7 +85,7 @@ public final class DiskImageFileInfo {
      */
     public List<LogEntryInfo> getActiveLogSequence() {
         if (_activeLogSequence != null) {
-            return _activeLogSequence.stream().map(entry -> new LogEntryInfo(entry)).collect(Collectors.toList());
+            return _activeLogSequence.stream().map(LogEntryInfo::new).collect(Collectors.toList());
         } else {
             return Collections.EMPTY_LIST;
         }

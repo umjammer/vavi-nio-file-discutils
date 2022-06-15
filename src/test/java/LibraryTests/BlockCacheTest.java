@@ -25,7 +25,7 @@ package LibraryTests;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.Block.BlockCacheSettings;
@@ -44,14 +44,14 @@ public class BlockCacheTest {
         try {
             cacheStream.setPosition(0);
             cacheStream.readByte();
-            assertTrue(false, "Cache stream should have failed - disposed");
-        } catch (IOException __dummyCatchVar0) {}
+            fail("Cache stream should have failed - disposed");
+        } catch (IOException ignored) {}
 
         try {
             ms.setPosition(0);
             ms.readByte();
-            assertTrue(false, "Cache stream should have failed - disposed");
-        } catch (IOException __dummyCatchVar1) {}
+            fail("Cache stream should have failed - disposed");
+        } catch (IOException ignored) {}
     }
 
     @Test
@@ -314,11 +314,10 @@ public class BlockCacheTest {
     private void assertSequenced(byte[] buffer, int offset, int count, int seqOffset) {
         for (int i = 0; i < count; ++i) {
             if (buffer[i + offset] != (byte) (i + seqOffset)) {
-                assertTrue(false,
-                           String.format("Expected %2x at index %d, was %2x",
-                                         (byte) (i + seqOffset),
-                                         i + offset,
-                                         buffer[i + offset]));
+                fail(String.format("Expected %2x at index %d, was %2x",
+                        (byte) (i + seqOffset),
+                        i + offset,
+                        buffer[i + offset]));
             }
         }
     }

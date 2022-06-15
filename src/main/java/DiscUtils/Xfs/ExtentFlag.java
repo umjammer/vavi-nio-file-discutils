@@ -25,5 +25,5 @@ package DiscUtils.Xfs;
 enum ExtentFlag {
     Normal,
     Unwritten,
-    Invalid;
+    Invalid
 }

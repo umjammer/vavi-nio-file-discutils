@@ -61,5 +61,5 @@ enum DirectoryFType {
     /**
      * Entry points to an overlayfs whiteout file.
      */
-    Whiteout;
+    Whiteout
 }

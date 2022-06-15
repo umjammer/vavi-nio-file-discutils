@@ -129,7 +129,7 @@ class File {
 
     public boolean getHasWin32OrDosName() {
         for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
-            StructuredNtfsAttribute<FileNameRecord> attr = StructuredNtfsAttribute.class.cast(_attr);
+            StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute) _attr;
             FileNameRecord fnr = attr.getContent();
             if (fnr._fileNameNamespace != FileNameNamespace.Posix) {
                 return true;
@@ -170,7 +170,7 @@ class File {
             result.add("");
         } else {
             for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
-                StructuredNtfsAttribute<FileNameRecord> attr = StructuredNtfsAttribute.class.cast(_attr);
+                StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute) _attr;
                 String name = attr.getContent()._fileName;
                 Directory parentDir = _context.getGetDirectoryByRef().invoke(attr.getContent()._parentDirectory);
                 if (parentDir != null) {
@@ -338,7 +338,7 @@ class File {
 
     public void delete() {
         if (_records.get(0).getHardLinkCount() != 0) {
-            throw new UnsupportedOperationException("Attempt to delete in-use file: " + toString());
+            throw new UnsupportedOperationException("Attempt to delete in-use file: " + this);
         }
 
         _context.getForgetFile().invoke(this);
@@ -436,11 +436,11 @@ class File {
         StructuredNtfsAttribute<FileNameRecord> attr = null;
         if (name == null || name.isEmpty()) {
             if (attrs.size() != 0) {
-                attr = StructuredNtfsAttribute.class.cast(attrs.get(0));
+                attr = (StructuredNtfsAttribute) attrs.get(0);
             }
         } else {
             for (Object _a : attrs) { // need cast
-                StructuredNtfsAttribute<FileNameRecord> a = StructuredNtfsAttribute.class.cast(_a);
+                StructuredNtfsAttribute<FileNameRecord> a = (StructuredNtfsAttribute) _a;
                 if (_context.getUpperCase().compare(a.getContent()._fileName, name) == 0) {
                     attr = a;
                 }
@@ -458,7 +458,7 @@ class File {
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "FILE (" + toString() + ")");
+        writer.println(indent + "FILE (" + this + ")");
         writer.println(indent + "  File Number: " + _records.get(0).getMasterFileTableIndex());
         _records.get(0).dump(writer, indent + "  ");
         for (AttributeRecord attrRec : _records.get(0).getAttributes()) {
@@ -621,8 +621,7 @@ class File {
         if (attrListRec != null) {
             NtfsAttribute lastAttr = null;
 
-            StructuredNtfsAttribute<AttributeList> attrListAttr = StructuredNtfsAttribute.class
-                    .cast(NtfsAttribute.fromRecord(this, getMftReference(), attrListRec));
+            StructuredNtfsAttribute<AttributeList> attrListAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(this, getMftReference(), attrListRec);
             AttributeList attrList = attrListAttr.getContent();
             _attributes.add(attrListAttr);
 
@@ -770,8 +769,7 @@ class File {
 
     private void createAttributeList() {
         short id = _records.get(0).createAttribute(AttributeType.AttributeList, null, false, EnumSet.noneOf(AttributeFlags.class));
-        StructuredNtfsAttribute<AttributeList> newAttr = StructuredNtfsAttribute.class
-                .cast(NtfsAttribute.fromRecord(this, getMftReference(), _records.get(0).getAttribute(id)));
+        StructuredNtfsAttribute<AttributeList> newAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(this, getMftReference(), _records.get(0).getAttribute(id));
         _attributes.add(newAttr);
         updateAttributeList();
     }
@@ -787,7 +785,7 @@ class File {
                 }
             }
             StructuredNtfsAttribute<AttributeList> alAttr;
-            alAttr = StructuredNtfsAttribute.class.cast(getAttribute(AttributeType.AttributeList, null));
+            alAttr = (StructuredNtfsAttribute) getAttribute(AttributeType.AttributeList, null);
             alAttr.setContent(attrList);
             alAttr.save();
         }

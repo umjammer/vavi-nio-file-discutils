@@ -59,9 +59,7 @@ public class RegistryHiveTest {
 
     @Test
     public void create_Null() throws Exception {
-        assertThrows(NullPointerException.class, () -> {
-            RegistryHive.create((Stream) null);
-        });
+        assertThrows(NullPointerException.class, () -> RegistryHive.create((Stream) null));
     }
 
     /**

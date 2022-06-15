@@ -101,7 +101,7 @@ public class NtfsFileSystemTest {
         assertEquals(3, rp.getContent().length);
     }
 
-    class NullWriter extends Writer {
+    static class NullWriter extends Writer {
         public void write(char[] cbuf, int off, int len) throws IOException {
 //            System.err.print(new String(cbuf, off, len));
         }

@@ -84,7 +84,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
             _format = format;
         }
 
-        setContent(stream instanceof SparseStream ? (SparseStream) stream : (SparseStream) null);
+        setContent(stream instanceof SparseStream ? (SparseStream) stream : null);
         if (getContent() == null) {
             setContent(SparseStream.fromStream(stream, Ownership.None));
         }

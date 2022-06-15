@@ -22,7 +22,8 @@
 
 package DiscUtils.HfsPlus;
 
-import java.nio.charset.Charset;
+
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -226,13 +227,13 @@ class HfsPlusUtilities {
 
     public static String readUniStr255(byte[] buffer, int offset) {
         int len = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        return new String(buffer, offset + 2, len * 2, Charset.forName("UTF-16BE"));
+        return new String(buffer, offset + 2, len * 2, StandardCharsets.UTF_16BE);
     }
 
     public static long readHFSPlusDate(ZoneId kind, byte[] buffer, int offset) {
         int val = EndianUtilities.toUInt32BigEndian(buffer, offset);
         ZonedDateTime epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0, 0, kind);
-        long result = epoch.plusSeconds(val & 0xffffffffl).toInstant().toEpochMilli();
+        long result = epoch.plusSeconds(val & 0xffffffffL).toInstant().toEpochMilli();
 
         return result;
     }

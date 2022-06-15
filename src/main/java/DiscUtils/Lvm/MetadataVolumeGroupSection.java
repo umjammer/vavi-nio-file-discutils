@@ -66,13 +66,17 @@ public class MetadataVolumeGroupSection {
             if (line.contains("=")) {
                 Tuple<String, String> parameter = Metadata.parseParameter(line);
                 String paramValue = parameter.getKey().trim().toLowerCase();
-                if (paramValue.equals("id")) {
+                switch (paramValue) {
+                case "id":
                     Id = Metadata.parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("seqno")) {
+                    break;
+                case "seqno":
                     SequenceNumber = Metadata.parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("format")) {
+                    break;
+                case "format":
                     Format = Metadata.parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("status")) {
+                    break;
+                case "status":
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
@@ -86,17 +90,23 @@ public class MetadataVolumeGroupSection {
                             throw new IllegalArgumentException("Unexpected status in volume group metadata: " + statusValue);
                         }
                     }
-                } else if (paramValue.equals("flags")) {
+                    break;
+                case "flags":
                     Flags = Metadata.parseArrayValue(parameter.getValue());
-                } else if (paramValue.equals("extent_size")) {
+                    break;
+                case "extent_size":
                     ExtentSize = Metadata.parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("max_lv")) {
+                    break;
+                case "max_lv":
                     MaxLv = Metadata.parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("max_pv")) {
+                    break;
+                case "max_pv":
                     MaxPv = Metadata.parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("metadata_copies")) {
+                    break;
+                case "metadata_copies":
                     MetadataCopies = Metadata.parseNumericValue(parameter.getValue());
-                } else {
+                    break;
+                default:
                     throw new IllegalArgumentException("Unexpected parameter in volume group metadata: " + parameter.getKey());
                 }
             } else if (line.endsWith("{")) {
@@ -157,13 +167,13 @@ enum VolumeGroupStatus {
     Write(0x2),
     Resizeable(0x4);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private VolumeGroupStatus(int value) {
+    VolumeGroupStatus(int value) {
         this.value = value;
     }
 }

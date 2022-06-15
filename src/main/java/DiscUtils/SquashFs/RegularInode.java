@@ -39,8 +39,8 @@ public class RegularInode extends Inode {
     }
 
     public void setFileSize(long value) {
-        if (value > 0xffff_ffffl) {
-            throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffl);
+        if (value > 0xffff_ffffL) {
+            throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffL);
         }
 
         _fileSize = (int) value;

@@ -38,24 +38,24 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
         setAccess(Nfs3AccessPermissions.valueOf(reader.readInt32()));
     }
 
-    private EnumSet<Nfs3AccessPermissions> __Access;
+    private EnumSet<Nfs3AccessPermissions> access;
 
     public EnumSet<Nfs3AccessPermissions> getAccess() {
-        return __Access;
+        return access;
     }
 
     public void setAccess(EnumSet<Nfs3AccessPermissions> value) {
-        __Access = value;
+        access = value;
     }
 
-    private Nfs3FileAttributes __ObjectAttributes;
+    private Nfs3FileAttributes objectAttributes;
 
     public Nfs3FileAttributes getObjectAttributes() {
-        return __ObjectAttributes;
+        return objectAttributes;
     }
 
     public void setObjectAttributes(Nfs3FileAttributes value) {
-        __ObjectAttributes = value;
+        objectAttributes = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -69,7 +69,7 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3AccessResult ? (Nfs3AccessResult) obj : (Nfs3AccessResult) null);
+        return equals(obj instanceof Nfs3AccessResult ? (Nfs3AccessResult) obj : null);
     }
 
     public boolean equals(Nfs3AccessResult other) {

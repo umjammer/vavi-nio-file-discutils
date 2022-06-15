@@ -44,54 +44,54 @@ public final class Nfs3DirectoryEntry {
     public Nfs3DirectoryEntry() {
     }
 
-    private long __Cookie;
+    private long cookie;
 
     public long getCookie() {
-        return __Cookie;
+        return cookie;
     }
 
     public void setCookie(long value) {
-        __Cookie = value;
+        cookie = value;
     }
 
-    private Nfs3FileAttributes __FileAttributes;
+    private Nfs3FileAttributes fileAttributes;
 
     public Nfs3FileAttributes getFileAttributes() {
-        return __FileAttributes;
+        return fileAttributes;
     }
 
     public void setFileAttributes(Nfs3FileAttributes value) {
-        __FileAttributes = value;
+        fileAttributes = value;
     }
 
-    private Nfs3FileHandle __FileHandle;
+    private Nfs3FileHandle fileHandle;
 
     public Nfs3FileHandle getFileHandle() {
-        return __FileHandle;
+        return fileHandle;
     }
 
     public void setFileHandle(Nfs3FileHandle value) {
-        __FileHandle = value;
+        fileHandle = value;
     }
 
-    private long __FileId;
+    private long fileId;
 
     public long getFileId() {
-        return __FileId;
+        return fileId;
     }
 
     public void setFileId(long value) {
-        __FileId = value;
+        fileId = value;
     }
 
-    private String __Name;
+    private String name;
 
     public String getName() {
-        return __Name;
+        return name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        name = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -110,7 +110,7 @@ public final class Nfs3DirectoryEntry {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3DirectoryEntry ? (Nfs3DirectoryEntry) obj : (Nfs3DirectoryEntry) null);
+        return equals(obj instanceof Nfs3DirectoryEntry ? (Nfs3DirectoryEntry) obj : null);
     }
 
     public boolean equals(Nfs3DirectoryEntry other) {

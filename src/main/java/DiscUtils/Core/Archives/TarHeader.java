@@ -84,9 +84,9 @@ public final class TarHeader {
     }
 
     private static String longToOctal(long value, int length) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         while (value > 0) {
-            result = (char) ('0' + value % 8) + result;
+            result.insert(0, (char) ('0' + value % 8));
             value = value / 8;
         }
         return new String(new char[length - result.length()]).replace('\0', '0')  + result;

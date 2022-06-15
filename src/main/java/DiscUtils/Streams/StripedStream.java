@@ -24,7 +24,7 @@ package DiscUtils.Streams;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
@@ -80,7 +80,7 @@ public class StripedStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return Arrays.asList(new StreamExtent(0, _length));
+        return Collections.singletonList(new StreamExtent(0, _length));
     }
 
     // Temporary, indicate there are no 'unstored' extents.

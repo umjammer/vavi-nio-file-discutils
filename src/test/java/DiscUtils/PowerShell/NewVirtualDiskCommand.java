@@ -128,23 +128,13 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         VirtualDisk disk = null;
         if (parentObj.BaseObject instanceof DirectoryInfo) {
             String path = Path.Combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
-            VirtualDisk realDisk = VirtualDisk.createDisk(type, variant, path, size, null, null);
-            try {
-            } finally {
-                if (realDisk != null)
-                    realDisk.close();
-
+            try (VirtualDisk realDisk = VirtualDisk.createDisk(type, variant, path, size, null, null)) {
             }
             disk = new OnDemandVirtualDisk(path, FileAccess.ReadWrite);
         } else if (parentObj.BaseObject instanceof DiscDirectoryInfo) {
             DiscDirectoryInfo ddi = (DiscDirectoryInfo) parentObj.BaseObject;
             String path = Paths.get(ddi.getFullName(), child).toString();
-            VirtualDisk realDisk = VirtualDisk.createDisk(ddi.getFileSystem(), type, variant, path, size, null, null);
-            try {
-            } finally {
-                if (realDisk != null)
-                    realDisk.close();
-
+            try (VirtualDisk realDisk = VirtualDisk.createDisk(ddi.getFileSystem(), type, variant, path, size, null, null)) {
             }
             disk = new OnDemandVirtualDisk(ddi.getFileSystem(), path, FileAccess.ReadWrite);
         } else {
@@ -182,21 +172,13 @@ public class NewVirtualDiskCommand extends PSCmdlet {
             VirtualDisk newDisk = null;
             if (parentObj.BaseObject instanceof DirectoryInfo) {
                 String path = Path.Combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
-                Closeable __newVar0 = baseDisk.createDifferencingDisk(path);
-                try {
-                } finally {
-                    if (__newVar0 != null)
-                        __newVar0.close();
+                try (Closeable __newVar0 = baseDisk.createDifferencingDisk(path)) {
                 }
                 newDisk = new OnDemandVirtualDisk(path, FileAccess.ReadWrite);
             } else if (parentObj.BaseObject instanceof DiscDirectoryInfo) {
                 DiscDirectoryInfo ddi = (DiscDirectoryInfo) parentObj.BaseObject;
                 String path = Paths.get(ddi.getFullName(), child).toString();
-                Closeable __newVar1 = baseDisk.createDifferencingDisk(ddi.getFileSystem(), path);
-                try {
-                } finally {
-                    if (__newVar1 != null)
-                        __newVar1.close();
+                try (Closeable __newVar1 = baseDisk.createDifferencingDisk(ddi.getFileSystem(), path)) {
                 }
                 newDisk = new OnDemandVirtualDisk(ddi.getFileSystem(), path, FileAccess.ReadWrite);
             } else {

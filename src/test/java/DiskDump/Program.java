@@ -142,7 +142,7 @@ String[] _inFiles = new String[] { _inFile };
                     disk.getContent().read(mbr, 0, 512);
                     HexDump.generate(mbr, System.err);
                 } catch (Exception e) {
-                    System.err.println(e.toString());
+                    System.err.println(e);
                 }
                 System.err.println();
             }
@@ -160,9 +160,9 @@ String[] _inFiles = new String[] { _inFile };
                                       (partition.getLastSector() + 1) * disk.getSectorSize(),
                                       partition.getTypeAsString());
                     BiosPartitionInfo bpi = partition instanceof BiosPartitionInfo ? (BiosPartitionInfo) partition
-                                                                                   : (BiosPartitionInfo) null;
+                                                                                   : null;
                     if (bpi != null) {
-                        System.err.printf("        %-16s  %s\n", bpi.getStart().toString(), bpi.getEnd().toString());
+                        System.err.printf("        %-16s  %s\n", bpi.getStart(), bpi.getEnd());
                         System.err.println();
                     }
                 }
@@ -225,7 +225,7 @@ String[] _inFiles = new String[] { _inFile };
 
                 List<DiscUtils.Core.FileSystemInfo> fileSystemInfos = FileSystemManager.detectFileSystems(vol);
                 System.err.println("    File Systems: " +
-                                   String.join(", ", fileSystemInfos.stream().map(f -> f.toString()).toArray(String[]::new)));
+                                   String.join(", ", fileSystemInfos.stream().map(FileSystemInfo::toString).toArray(String[]::new)));
 
                 System.err.println();
 

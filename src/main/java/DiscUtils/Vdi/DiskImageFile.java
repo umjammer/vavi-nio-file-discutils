@@ -23,6 +23,7 @@
 package DiscUtils.Vdi;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -167,9 +168,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         PreHeaderRecord preHeader = PreHeaderRecord.initialized();
         HeaderRecord header = HeaderRecord.initialized(ImageType.Dynamic, ImageFlags.None, capacity, 1024 * 1024, 0);
         byte[] blockTable = new byte[header.blockCount * 4];
-        for (int i = 0; i < blockTable.length; ++i) {
-            blockTable[i] = (byte) 0xFF;
-        }
+        Arrays.fill(blockTable, (byte) 0xFF);
         header.blocksAllocated = 0;
         stream.setPosition(0);
         preHeader.write(stream);
@@ -236,7 +235,5 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _header.read(_preHeader.Version, _stream);
     }
 
-    private BiConsumer<Object, Object[]> onWriteOccurred = (sender, e) -> {
-        _writeOccurred = true;
-    };
+    private BiConsumer<Object, Object[]> onWriteOccurred = (sender, e) -> _writeOccurred = true;
 }

@@ -56,7 +56,7 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3ExportResult ? (Nfs3ExportResult) obj : (Nfs3ExportResult) null);
+        return equals(obj instanceof Nfs3ExportResult ? (Nfs3ExportResult) obj : null);
     }
 
     public boolean equals(Nfs3ExportResult other) {

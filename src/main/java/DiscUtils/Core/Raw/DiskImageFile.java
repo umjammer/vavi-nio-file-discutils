@@ -63,7 +63,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param geometry The emulated geometry of the disk.
      */
     public DiskImageFile(Stream stream, Ownership ownsStream, Geometry geometry) {
-        setContent(stream instanceof SparseStream ? (SparseStream) stream : (SparseStream) null);
+        setContent(stream instanceof SparseStream ? (SparseStream) stream : null);
         _ownsContent = ownsStream;
 
         if (getContent() == null) {

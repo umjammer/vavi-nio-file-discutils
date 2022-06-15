@@ -23,6 +23,7 @@
 package LibraryTests.Nfs;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +43,7 @@ public class Nfs3ExportResultTest {
         Nfs3Export export = new Nfs3Export();
         export.setDirPath("export");
         export.setGroups(Arrays.asList("GroupA","GroupB"));
-        result.setExports(Arrays.asList(export));
+        result.setExports(Collections.singletonList(export));
       Nfs3ExportResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

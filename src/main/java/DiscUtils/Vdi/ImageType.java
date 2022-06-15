@@ -28,5 +28,5 @@ enum ImageType {
     Dynamic,
     Fixed,
     Undo,
-    Differencing;
+    Differencing
 }

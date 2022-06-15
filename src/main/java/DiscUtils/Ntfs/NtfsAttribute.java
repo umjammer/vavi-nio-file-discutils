@@ -24,7 +24,6 @@ package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -93,31 +92,31 @@ class NtfsAttribute implements IDiagnosticTraceable {
 
     public long getCompressedDataSize() {
         AttributeRecord firstExtent = getFirstExtent();
-        if (!NonResidentAttributeRecord.class.isInstance(firstExtent)) {
+        if (!(firstExtent instanceof NonResidentAttributeRecord)) {
             return getFirstExtent().getAllocatedLength();
         }
-        return NonResidentAttributeRecord.class.cast(firstExtent).getCompressedDataSize();
+        return ((NonResidentAttributeRecord) firstExtent).getCompressedDataSize();
     }
 
     public void setCompressedDataSize(long value) {
         AttributeRecord firstExtent = getFirstExtent();
-        if (NonResidentAttributeRecord.class.isInstance(firstExtent)) {
-            NonResidentAttributeRecord.class.cast(firstExtent).setCompressedDataSize(value);
+        if (firstExtent instanceof NonResidentAttributeRecord) {
+            ((NonResidentAttributeRecord) firstExtent).setCompressedDataSize(value);
         }
     }
 
     public int getCompressionUnitSize() {
         AttributeRecord firstExtent = getFirstExtent();
-        if (!NonResidentAttributeRecord.class.isInstance(firstExtent)) {
+        if (!(firstExtent instanceof NonResidentAttributeRecord)) {
             return 0;
         }
-        return NonResidentAttributeRecord.class.cast(firstExtent).getCompressionUnitSize();
+        return ((NonResidentAttributeRecord) firstExtent).getCompressionUnitSize();
     }
 
     public void setCompressionUnitSize(int value) {
         AttributeRecord firstExtent = getFirstExtent();
-        if (NonResidentAttributeRecord.class.isInstance(firstExtent)) {
-            NonResidentAttributeRecord.class.cast(firstExtent).setCompressionUnitSize(value);
+        if (firstExtent instanceof NonResidentAttributeRecord) {
+            ((NonResidentAttributeRecord) firstExtent).setCompressionUnitSize(value);
         }
     }
 
@@ -129,11 +128,11 @@ class NtfsAttribute implements IDiagnosticTraceable {
         if (_extents != null) {
             for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
                 AttributeRecord record = extent.getValue();
-                if (!NonResidentAttributeRecord.class.isInstance(record)) {
+                if (!(record instanceof NonResidentAttributeRecord)) {
                     // Resident attribute, so there can only be one...
                     return extent.getValue();
                 }
-                if (NonResidentAttributeRecord.class.cast(record).getStartVcn() == 0) {
+                if (record.getStartVcn() == 0) {
                     return extent.getValue();
                 }
             }
@@ -166,12 +165,12 @@ class NtfsAttribute implements IDiagnosticTraceable {
             long lastVcn = 0;
             for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
                 AttributeRecord record = extent.getValue();
-                if (!NonResidentAttributeRecord.class.isInstance(record)) {
+                if (!(record instanceof NonResidentAttributeRecord)) {
                     // Resident attribute, so there can only be one...
                     return extent.getValue();
                 }
 
-                NonResidentAttributeRecord nonResident = NonResidentAttributeRecord.class.cast(record);
+                NonResidentAttributeRecord nonResident = (NonResidentAttributeRecord) record;
                 if (nonResident.getLastVcn() >= lastVcn) {
                     last = extent.getValue();
                     lastVcn = nonResident.getLastVcn();
@@ -208,7 +207,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
 
     public List<AttributeRecord> getRecords() {
         List<AttributeRecord> records = new ArrayList<>(_extents.values());
-        Collections.sort(records, AttributeRecord.compareStartVcns);
+        records.sort(AttributeRecord.compareStartVcns);
         return records;
     }
 
@@ -228,11 +227,11 @@ class NtfsAttribute implements IDiagnosticTraceable {
         } else {
             try {
                 try (Stream s = open(FileAccess.Read)) {
-                    String hex = "";
+                    StringBuilder hex = new StringBuilder();
                     byte[] buffer = new byte[32];
                     int numBytes = s.read(buffer, 0, buffer.length);
                     for (int i = 0; i < numBytes; ++i) {
-                        hex = hex + String.format(" %02x", buffer[i]);
+                        hex.append(String.format(" %02x", buffer[i]));
                     }
                     writer.println(indent + "    Data: " + hex + (numBytes < s.getLength() ? "..." : ""));
                 }

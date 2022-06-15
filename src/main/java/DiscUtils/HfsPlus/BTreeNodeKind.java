@@ -30,13 +30,13 @@ enum BTreeNodeKind {
     HeaderNode(1),
     MapNode(2);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private BTreeNodeKind(int value) {
+    BTreeNodeKind(int value) {
         this.value = value;
     }
 

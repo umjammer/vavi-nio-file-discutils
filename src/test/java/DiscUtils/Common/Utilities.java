@@ -49,7 +49,7 @@ public class Utilities {
         System.err.println();
         System.err.print("Password: ");
 
-        String restoreColor = (char) 0x1b + "[" + 00 + "m";
+        String restoreColor = (char) 0x1b + "[" + 0 + "m";
         System.err.print((char) 0x1b + "[" + 37 + "m");
         try (Scanner s = new Scanner(System.in)) {
             return s.nextLine();

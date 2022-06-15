@@ -23,17 +23,19 @@
 package DiscUtils.PowerShell.VirtualDiskProvider;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Core.CoreCompat.IContentReader;
 import DiscUtils.Core.CoreCompat.IContentWriter;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
-import moe.yo3explorer.dotnetio4j.Stream;
-import moe.yo3explorer.dotnetio4j.StreamReader;
-import moe.yo3explorer.dotnetio4j.StreamWriter;
+import DiscUtils.PowerShell.Conpat.ErrorRecord;
+import dotnet4j.io.IOException;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
+import dotnet4j.io.StreamReader;
+import dotnet4j.io.StreamWriter;
 
 
 public final class FileContentReaderWriter implements IContentWriter, IContentReader {
@@ -137,6 +139,8 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                     for (int i = 0; i < toInspect; ++i) {
                         if (((short) initialContent.charAt(i)) > 127) {
                             foundExtended = true;
+                            break;
+                            break;
                         }
                     }
                     _writer = new StreamWriter(_contentStream,
@@ -179,14 +183,18 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         }
     }
 
+    /**
+     * @see "https://sourceforge.net/projects/jutf7/"
+     * @see "https://ja.osdn.net/projects/sfnet_jutf7/"
+     */
     private Charset getEncoding(Charset defEncoding) {
         switch (_encoding) {
-        case UTF-16:
-            return Charset.forName("UTF-16");
+        case UTF16:
+            return StandardCharsets.UTF_16;
         case UTF8:
             return StandardCharsets.UTF_8;
         case UTF7:
-            return Charset.forName("UTF7");
+            return Charset.forName("UTF-7");
         case Unicode:
             return Charset.forName("Unicode");
         case Ascii:

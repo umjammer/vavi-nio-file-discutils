@@ -69,7 +69,7 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
 
     @Override
     protected boolean isFolder(DiscFileSystemInfo entry) {
-        return DiscDirectoryInfo.class.isInstance(entry);
+        return entry instanceof DiscDirectoryInfo;
     }
 
     @Override
@@ -100,10 +100,9 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
 
     @Override
     protected List<DiscFileSystemInfo> getDirectoryEntries(DiscFileSystemInfo dirEntry, Path dir) throws IOException {
-        List<DiscFileSystemInfo> list = new ArrayList<>();
-        List<DiscDirectoryInfo> folders = DiscDirectoryInfo.class.cast(dirEntry).getDirectories();
-        list.addAll(folders);
-        List<DiscFileInfo> files = DiscDirectoryInfo.class.cast(dirEntry).getFiles();
+        List<DiscDirectoryInfo> folders = ((DiscDirectoryInfo) dirEntry).getDirectories();
+        List<DiscFileSystemInfo> list = new ArrayList<>(folders);
+        List<DiscFileInfo> files = ((DiscDirectoryInfo) dirEntry).getFiles();
         list.addAll(files);
         return list;
     }

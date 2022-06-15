@@ -110,7 +110,7 @@ enum VersionFlags {
 
     public static final int NumberFlag = 0x000f;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -118,7 +118,7 @@ enum VersionFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<VersionFlags> valueOf(int value) {
         return Arrays.stream(values())

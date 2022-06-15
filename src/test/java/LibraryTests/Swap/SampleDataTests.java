@@ -4,7 +4,8 @@ package LibraryTests.Swap;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Arrays;
+
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ public class SampleDataTests {
         File fs = new File(URI.create(getClass().getResource("swap.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
-                Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {
+                Disk disk = new Disk(Collections.singletonList(diskImage), Ownership.Dispose)) {
 
             VolumeManager manager = new VolumeManager(disk);
             List<LogicalVolumeInfo> logicalVolumes = manager.getLogicalVolumes();
@@ -47,7 +48,7 @@ public class SampleDataTests {
             assertEquals("Swap", filesystem.getName());
 
             DiscFileSystem swap = filesystem.open(volume);
-            assertTrue(SwapFileSystem.class.isInstance(swap));
+            assertTrue(swap instanceof SwapFileSystem);
 
             assertEquals(0, swap.getAvailableSpace());
             assertEquals(10737414144L, swap.getSize());

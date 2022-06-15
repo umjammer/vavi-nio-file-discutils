@@ -90,7 +90,7 @@ public class AllocationGroup {
         }
 
         _inodeBtreeInfo = new AllocationGroupInodeBtreeInfo(superblock);
-        data.setPosition(offset + superblock.getSectorSize() * 2);
+        data.setPosition(offset + superblock.getSectorSize() * 2L);
         byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().size());
         _inodeBtreeInfo.readFrom(agiData, 0);
         if (_inodeBtreeInfo.getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {

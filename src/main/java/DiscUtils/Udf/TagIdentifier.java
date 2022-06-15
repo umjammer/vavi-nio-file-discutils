@@ -26,13 +26,13 @@ public enum TagIdentifier {
     PartitionIntegrityEntry(265),
     ExtendedFileEntry(266);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private TagIdentifier(int value) {
+    TagIdentifier(int value) {
         this.value = value;
     }
 

@@ -23,13 +23,13 @@ enum OSIdentifier {
     BeOS(0x0800),
     WindowsCe(0x0900);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private OSIdentifier(int value) {
+    OSIdentifier(int value) {
         this.value = value;
     }
 

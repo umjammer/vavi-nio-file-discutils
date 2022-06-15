@@ -40,6 +40,6 @@ enum FileParametersFlags {
     }
 
     public static long valueOf(EnumSet<FileParametersFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(Enum::ordinal)).getSum();
     }
 }

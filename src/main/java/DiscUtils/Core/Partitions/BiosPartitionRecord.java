@@ -93,7 +93,7 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     private int _lbaLength;
 
     public long getLBALength() {
-        return _lbaLength & 0xffffffffl;
+        return _lbaLength & 0xffffffffL;
     }
 
     public void setLBALength(int value) {
@@ -103,7 +103,7 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     private int _lbaStart;
 
     public long getLBAStart() {
-        return _lbaStart & 0xffffffffl;
+        return _lbaStart & 0xffffffffL;
     }
 
     public void setLBAStart(int value) {

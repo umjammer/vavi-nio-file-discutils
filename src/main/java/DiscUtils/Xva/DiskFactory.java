@@ -68,7 +68,7 @@ public final class DiskFactory extends VirtualDiskFactory {
     }
 
     public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
-        return openDisk(locator, path, "", new HashMap<String, String>(), access);
+        return openDisk(locator, path, "", new HashMap<>(), access);
     }
 
     public VirtualDisk openDisk(FileLocator locator,

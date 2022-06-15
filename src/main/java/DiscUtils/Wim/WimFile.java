@@ -182,7 +182,7 @@ public class WimFile {
                 info.read(resBuffer, 0);
                 int hashHash = EndianUtilities.toUInt32LittleEndian(info.Hash, 0);
                 if (!_resources.containsKey(hashHash)) {
-                    _resources.put(hashHash, new ArrayList<ResourceInfo>(1));
+                    _resources.put(hashHash, new ArrayList<>(1));
                 }
 
                 _resources.get(hashHash).add(info);

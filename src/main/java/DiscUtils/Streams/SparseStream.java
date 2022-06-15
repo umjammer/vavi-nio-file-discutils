@@ -24,7 +24,7 @@ package DiscUtils.Streams;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
@@ -140,7 +140,7 @@ public abstract class SparseStream extends Stream {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(getExtents(), Arrays.asList(new StreamExtent(start, count)));
+        return StreamExtent.intersect(getExtents(), Collections.singletonList(new StreamExtent(start, count)));
     }
 
     private static class SparseReadOnlyWrapperStream extends SparseStream {
@@ -239,10 +239,10 @@ public abstract class SparseStream extends Stream {
             if (_extents != null) {
                 return _extents;
             }
-            if (SparseStream.class.isInstance(_wrapped)) {
-                return SparseStream.class.cast(_wrapped).getExtents();
+            if (_wrapped instanceof SparseStream) {
+                return ((SparseStream) _wrapped).getExtents();
             }
-            return Arrays.asList(new StreamExtent(0, _wrapped.getLength()));
+            return Collections.singletonList(new StreamExtent(0, _wrapped.getLength()));
         }
 
         public long getLength() {

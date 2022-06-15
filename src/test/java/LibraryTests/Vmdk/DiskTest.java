@@ -52,7 +52,7 @@ public class DiskTest {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 7.9 * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 8.1 * 1024 * 1024);
-            assertTrue(disk.getGeometry().getCapacity() == disk.getContent().getLength());
+            assertEquals(disk.getGeometry().getCapacity(), disk.getContent().getLength());
             List<DiskImageFile> links = new ArrayList<>(disk.getLinks());
             List<String> paths = new ArrayList<>(links.get(0).getExtentPaths());
             assertEquals(1, paths.size());
@@ -70,7 +70,7 @@ public class DiskTest {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 7.9 * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 8.1 * 1024 * 1024);
-            assertTrue(disk.getGeometry().getCapacity() == disk.getContent().getLength());
+            assertEquals(disk.getGeometry().getCapacity(), disk.getContent().getLength());
             List<DiskImageFile> links = new ArrayList<>(disk.getLinks());
             List<String> paths = new ArrayList<>(links.get(0).getExtentPaths());
             assertEquals(1, paths.size());
@@ -85,14 +85,14 @@ public class DiskTest {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
-            assertTrue(disk.getContent().getLength() == 16 * 1024L * 1024 * 1024);
+            assertEquals(16 * 1024L * 1024 * 1024, disk.getContent().getLength());
         }
         assertTrue(fs.getFileLength("a.vmdk") > 2 * 1024 * 1024);
         assertTrue(fs.getFileLength("a.vmdk") < 4 * 1024 * 1024);
         try (Disk disk = new Disk(fs, "a.vmdk", FileAccess.Read)) {
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
-            assertTrue(disk.getContent().getLength() == 16 * 1024L * 1024 * 1024);
+            assertEquals(16 * 1024L * 1024 * 1024, disk.getContent().getLength());
             List<DiskImageFile> links = new ArrayList<>(disk.getLinks());
             List<String> paths = new ArrayList<>(links.get(0).getExtentPaths());
             assertEquals(1, paths.size());
@@ -110,7 +110,7 @@ public class DiskTest {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 16 * 1024L * 1024 * 1024);
-            assertTrue(disk.getContent().getLength() == 16 * 1024L * 1024 * 1024);
+            assertEquals(16 * 1024L * 1024 * 1024, disk.getContent().getLength());
             assertEquals(2, (new ArrayList<>(disk.getLayers())).size());
             List<DiskImageFile> links = new ArrayList<>(disk.getLinks());
             assertEquals(2, links.size());
@@ -132,7 +132,7 @@ public class DiskTest {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 16 * 1024L * 1024 * 1024);
-            assertTrue(disk.getContent().getLength() == 16 * 1024L * 1024 * 1024);
+            assertEquals(16 * 1024L * 1024 * 1024, disk.getContent().getLength());
             assertEquals(2, (new ArrayList<>(disk.getLayers())).size());
         }
         assertTrue(fs.getFileLength("\\dir\\diff.vmdk") > 2 * 1024 * 1024);

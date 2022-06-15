@@ -52,7 +52,7 @@ final class SubKeyIndirectListCell extends ListCell {
         int total = 0;
         for (int cellIndex : getCellIndexes()) {
             Cell cell = _hive.getCell(cellIndex);
-            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
+            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             if (listCell != null) {
                 total += listCell.getCount();
             } else {
@@ -79,7 +79,7 @@ final class SubKeyIndirectListCell extends ListCell {
     public int readFrom(byte[] buffer, int offset) {
         setListType(EndianUtilities.bytesToString(buffer, offset, 2));
         int numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
-        setCellIndexes(new ArrayList<Integer>(numElements));
+        setCellIndexes(new ArrayList<>(numElements));
         for (int i = 0; i < numElements; ++i) {
             getCellIndexes().add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x4));
         }
@@ -104,7 +104,7 @@ final class SubKeyIndirectListCell extends ListCell {
         }
 
         // Check first and last, to early abort if the name is outside the range of this list
-        int found[] = new int[1];
+        int[] found = new int[1];
         int result = doFindKey(name, 0, found);
         cellIndex[0] = found[0];
         if (result <= 0) {
@@ -125,8 +125,8 @@ final class SubKeyIndirectListCell extends ListCell {
 
     void enumerateKeys(List<String> names) {
         for (int i = 0; i < getCellIndexes().size(); ++i) {
-            Cell cell = _hive.<Cell> getCell(getCellIndexes().get(i));
-            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
+            Cell cell = _hive.getCell(getCellIndexes().get(i));
+            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             if (listCell != null) {
                 listCell.enumerateKeys(names);
             } else {
@@ -138,12 +138,10 @@ final class SubKeyIndirectListCell extends ListCell {
     List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
         for (int i = 0; i < getCellIndexes().size(); ++i) {
-            Cell cell = _hive.<Cell> getCell(getCellIndexes().get(i));
-            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
+            Cell cell = _hive.getCell(getCellIndexes().get(i));
+            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             if (listCell != null) {
-                for (KeyNodeCell keyNodeCell : listCell.enumerateKeys()) {
-                    result.add(keyNodeCell);
-                }
+                result.addAll(listCell.enumerateKeys());
             } else {
                 result.add(null);
             }
@@ -159,7 +157,7 @@ final class SubKeyIndirectListCell extends ListCell {
             }
 
             for (int i = 0; i < getCellIndexes().size() - 1; ++i) {
-                ListCell cell = _hive.<ListCell> getCell(getCellIndexes().get(i));
+                ListCell cell = _hive.getCell(getCellIndexes().get(i));
                 int[] tempIndex = new int[1];
                 if (cell.findKey(name, tempIndex) <= 0) {
                     getCellIndexes().set(i, cell.linkSubKey(name, cellIndex));
@@ -167,13 +165,14 @@ final class SubKeyIndirectListCell extends ListCell {
                 }
 
             }
-            ListCell lastCell = _hive.<ListCell> getCell(getCellIndexes().get(getCellIndexes().size() - 1));
+            ListCell lastCell = _hive.getCell(getCellIndexes().get(getCellIndexes().size() - 1));
             getCellIndexes().set(getCellIndexes().size() - 1, lastCell.linkSubKey(name, cellIndex));
             return _hive.updateCell(this, false);
         }
 
         for (int i = 0; i < getCellIndexes().size(); ++i) {
-            KeyNodeCell cell = _hive.<KeyNodeCell> getCell(getCellIndexes().get(i));
+            KeyNodeCell cell = _hive.
+                    getCell(getCellIndexes().get(i));
             if (name.compareTo(cell.Name) < 0) {
                 getCellIndexes().add(i, cellIndex);
                 return _hive.updateCell(this, true);
@@ -191,7 +190,7 @@ final class SubKeyIndirectListCell extends ListCell {
             }
 
             for (int i = 0; i < getCellIndexes().size(); ++i) {
-                ListCell cell = _hive.<ListCell> getCell(getCellIndexes().get(i));
+                ListCell cell = _hive.getCell(getCellIndexes().get(i));
                 int[] tempIndex = new int[1];
                 boolean result = cell.findKey(name, tempIndex) <= 0;
                 if (result) {
@@ -205,7 +204,7 @@ final class SubKeyIndirectListCell extends ListCell {
             }
         } else {
             for (int i = 0; i < getCellIndexes().size(); ++i) {
-                KeyNodeCell cell = _hive.<KeyNodeCell> getCell(getCellIndexes().get(i));
+                KeyNodeCell cell = _hive.getCell(getCellIndexes().get(i));
                 if (name.compareTo(cell.Name) == 0) {
                     getCellIndexes().remove(i);
                     return _hive.updateCell(this, true);
@@ -219,8 +218,8 @@ final class SubKeyIndirectListCell extends ListCell {
      * @param cellIndex {@cs out}
      */
     private int doFindKey(String name, int listIndex, int[] cellIndex) {
-        Cell cell = _hive.<Cell> getCell(getCellIndexes().get(listIndex));
-        ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
+        Cell cell = _hive.getCell(getCellIndexes().get(listIndex));
+        ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
         if (listCell != null) {
             int[] found = new int[1];
             int result = listCell.findKey(name, found);
@@ -254,7 +253,7 @@ final class SubKeyIndirectListCell extends ListCell {
 
         public int compare(Integer x, Integer y) {
             Cell cell = _hive.getCell(x);
-            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
+            ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             int result;
             if (listCell != null) {
                 int[] cellIndex = new int[1];

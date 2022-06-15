@@ -197,7 +197,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         // out to
         // this extent.
         _parentDiskStream
-                .setPosition(_diskOffset + (grain + _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
+                .setPosition(_diskOffset + (grain + (long) _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
         byte[] content = StreamUtilities.readExact(_parentDiskStream, (int) _header.GrainSize * Sizes.Sector);
         _fileStream.setPosition(grainStartPos);
         _fileStream.write(content, 0, content.length);

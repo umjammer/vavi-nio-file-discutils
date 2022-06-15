@@ -29,23 +29,23 @@ public final class Nfs3RenameResult extends Nfs3CallResult {
         setToDirCacheConsistency(new Nfs3WeakCacheConsistency(reader));
     }
 
-    private Nfs3WeakCacheConsistency __FromDirCacheConsistency;
+    private Nfs3WeakCacheConsistency fromDirCacheConsistency;
 
     public Nfs3WeakCacheConsistency getFromDirCacheConsistency() {
-        return __FromDirCacheConsistency;
+        return fromDirCacheConsistency;
     }
 
     public void setFromDirCacheConsistency(Nfs3WeakCacheConsistency value) {
-        __FromDirCacheConsistency = value;
+        fromDirCacheConsistency = value;
     }
 
-    private Nfs3WeakCacheConsistency __ToDirCacheConsistency;
+    private Nfs3WeakCacheConsistency toDirCacheConsistency;
 
     public Nfs3WeakCacheConsistency getToDirCacheConsistency() {
-        return __ToDirCacheConsistency;
+        return toDirCacheConsistency;
     }
 
     public void setToDirCacheConsistency(Nfs3WeakCacheConsistency value) {
-        __ToDirCacheConsistency = value;
+        toDirCacheConsistency = value;
     }
 }

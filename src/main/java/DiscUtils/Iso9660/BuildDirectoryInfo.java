@@ -26,7 +26,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -174,7 +173,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
     private List<BuildDirectoryMember> getSortedMembers() {
         if (_sortedMembers == null) {
             List<BuildDirectoryMember> sorted = new ArrayList<>(_members.values());
-            Collections.sort(sorted, SortedComparison);
+            sorted.sort(SortedComparison);
             _sortedMembers = sorted;
         }
 

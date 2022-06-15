@@ -470,7 +470,7 @@ public final class SquashFileSystemBuilder {
         for (int i = 0; i < elems.length; ++i) {
             BuilderNode nextDirAsNode = currentDir.getChild(elems[i]);
             BuilderDirectory nextDir = nextDirAsNode instanceof BuilderDirectory ? (BuilderDirectory) nextDirAsNode
-                                                                                 : (BuilderDirectory) null;
+                                                                                 : null;
             if (nextDirAsNode == null) {
                 nextDir = new BuilderDirectory();
                 nextDir.setUserId(user);

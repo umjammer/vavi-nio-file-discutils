@@ -45,7 +45,7 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Gets the attributes of the partition.
      */
     public long getAttributes() {
-        return _entry.Attributes;
+        return _entry.attributes;
     }
 
     /**
@@ -60,21 +60,21 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Logical Block Address.
      */
     public long getFirstSector() {
-        return _entry.FirstUsedLogicalBlock;
+        return _entry.firstUsedLogicalBlock;
     }
 
     /**
      * Gets the type of the partition, as a GUID.
      */
     public UUID getGuidType() {
-        return _entry.PartitionType;
+        return _entry.partitionType;
     }
 
     /**
      * Gets the unique identity of this specific partition.
      */
     public UUID getIdentity() {
-        return _entry.Identity;
+        return _entry.identity;
     }
 
     /**
@@ -82,14 +82,14 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Logical Block Address (inclusive).
      */
     public long getLastSector() {
-        return _entry.LastUsedLogicalBlock;
+        return _entry.lastUsedLogicalBlock;
     }
 
     /**
      * Gets the name of the partition.
      */
     public String getName() {
-        return _entry.Name;
+        return _entry.name;
     }
 
     /**

@@ -103,7 +103,7 @@ class File implements IVfsFileWithStreams {
 
     public long getFileLength() {
         CatalogFileInfo fileInfo = _catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) _catalogInfo
-                                                                           : (CatalogFileInfo) null;
+                                                                           : null;
         if (fileInfo == null) {
             throw new UnsupportedOperationException();
         }
@@ -113,7 +113,7 @@ class File implements IVfsFileWithStreams {
 
     public IBuffer getFileContent() {
         CatalogFileInfo fileInfo = _catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) _catalogInfo
-                                                                           : (CatalogFileInfo) null;
+                                                                           : null;
         if (fileInfo == null) {
             throw new UnsupportedOperationException();
         }
@@ -184,7 +184,7 @@ class File implements IVfsFileWithStreams {
                     blocks[i] = new CompressionResourceBlock();
                     byte[] blockData = new byte[CompressionResourceBlock.getSize()];
                     buffer.read(compressionFork.getHeaderSize() + CompressionResourceBlockHead.getSize() +
-                                i * CompressionResourceBlock.getSize(),
+                                    (long) i * CompressionResourceBlock.getSize(),
                                 blockData,
                                 0,
                                 blockData.length);

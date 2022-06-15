@@ -23,27 +23,25 @@
 package DiscUtils.Nfs;
 
 public class Nfs3CommitResult extends Nfs3CallResult {
-    public Nfs3CommitResult() {
-    }
 
-    private Nfs3WeakCacheConsistency __CacheConsistency;
+    private Nfs3WeakCacheConsistency cacheConsistency;
 
     public Nfs3WeakCacheConsistency getCacheConsistency() {
-        return __CacheConsistency;
+        return cacheConsistency;
     }
 
     public void setCacheConsistency(Nfs3WeakCacheConsistency value) {
-        __CacheConsistency = value;
+        cacheConsistency = value;
     }
 
-    private long __WriteVerifier;
+    private long writeVerifier;
 
     public long getWriteVerifier() {
-        return __WriteVerifier;
+        return writeVerifier;
     }
 
     public void setWriteVerifier(long value) {
-        __WriteVerifier = value;
+        writeVerifier = value;
     }
 
     public void write(XdrDataWriter writer) {

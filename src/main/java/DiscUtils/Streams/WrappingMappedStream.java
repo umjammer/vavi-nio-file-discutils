@@ -24,7 +24,7 @@ package DiscUtils.Streams;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.Util.Ownership;
@@ -68,10 +68,10 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         if (_extents != null) {
             return _extents;
         }
-        if (SparseStream.class.isInstance(getWrappedStream())) {
-            return SparseStream.class.cast(getWrappedStream()).getExtents();
+        if (getWrappedStream() instanceof SparseStream) {
+            return ((SparseStream) getWrappedStream()).getExtents();
         }
-        return Arrays.asList(new StreamExtent(0, getWrappedStream().getLength()));
+        return Collections.singletonList(new StreamExtent(0, getWrappedStream().getLength()));
     }
 
     public long getLength() {
@@ -97,10 +97,10 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
-        if (MappedStream.class.isInstance(getWrappedStream())) {
-            return MappedStream.class.cast(getWrappedStream()).mapContent(start, length);
+        if (getWrappedStream() instanceof MappedStream) {
+            return ((MappedStream) getWrappedStream()).mapContent(start, length);
         }
-        return Arrays.asList(new StreamExtent(start, length));
+        return Collections.singletonList(new StreamExtent(start, length));
     }
 
     public void flush() {
@@ -120,8 +120,8 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
     }
 
     public void clear(int count) {
-        if (SparseStream.class.isInstance(getWrappedStream())) {
-            SparseStream.class.cast(getWrappedStream()).clear(count);
+        if (getWrappedStream() instanceof SparseStream) {
+            ((SparseStream) getWrappedStream()).clear(count);
         } else {
             super.clear(count);
         }

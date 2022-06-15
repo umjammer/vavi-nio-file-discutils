@@ -29,22 +29,22 @@ public final class Crc32BigEndian extends Crc32 {
     private static final int[][] Tables;
     static {
         Tables = new int[4][];
-        Tables[((Enum<?>) Crc32Algorithm.Common).ordinal()] = calcTable(0x04C11DB7);
-        Tables[((Enum<?>) Crc32Algorithm.Castagnoli).ordinal()] = calcTable(0x1EDC6F41);
-        Tables[((Enum<?>) Crc32Algorithm.Koopman).ordinal()] = calcTable(0x741B8CD7);
-        Tables[((Enum<?>) Crc32Algorithm.Aeronautical).ordinal()] = calcTable(0x814141AB);
+        Tables[Crc32Algorithm.Common.ordinal()] = calcTable(0x04C11DB7);
+        Tables[Crc32Algorithm.Castagnoli.ordinal()] = calcTable(0x1EDC6F41);
+        Tables[Crc32Algorithm.Koopman.ordinal()] = calcTable(0x741B8CD7);
+        Tables[Crc32Algorithm.Aeronautical.ordinal()] = calcTable(0x814141AB);
     }
 
     public Crc32BigEndian(Crc32Algorithm algorithm) {
-        super(Tables[((Enum<?>) algorithm).ordinal()]);
+        super(Tables[algorithm.ordinal()]);
     }
 
     public static int compute(Crc32Algorithm algorithm, byte[] buffer, int offset, int count) {
-        return process(Tables[((Enum<?>) algorithm).ordinal()], 0xFFFFFFFF, buffer, offset, count) ^ 0xFFFFFFFF;
+        return ~process(Tables[algorithm.ordinal()], 0xFFFFFFFF, buffer, offset, count);
     }
 
     public void process(byte[] buffer, int offset, int count) {
-        _value = process(Table, _value, buffer, offset, count);
+        value = process(table, value, buffer, offset, count);
     }
 
     private static int[] calcTable(int polynomial) {

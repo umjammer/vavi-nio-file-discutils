@@ -15,38 +15,30 @@ public class ErrorRecord implements Serializable {
     }
 
     public ErrorCategoryInfo getCategoryInfo() {
-        ;
     }
 
     public ErrorDetails getErrorDetails() {
-        ;
     }
 
     public void setErrorDetails(ErrorDetails v) {
-        ;
     }
 
     public Exception getException() {
     }
 
     public String getFullyQualifiedErrorId() {
-        ;
     }
 
     public InvocationInfo getInvocationInfo() {
-        ;
     }
 
     public ReadOnlyCollection<Integer> getPipelineIterationInfo() {
-        ;
     }
 
     public String getScriptStackTrace() {
-        ;
     }
 
     public Object getTargetObject() {
-        ;
     }
 
     public abstract void GetObjectData(SerializationInfo info, StreamingContext context);

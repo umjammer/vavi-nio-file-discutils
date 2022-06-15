@@ -24,6 +24,7 @@ package DiscUtils.Lvm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class LogicalVolumeManager {
         }
         for (PhysicalVolume device : _devices) {
             for (MetadataVolumeGroupSection vg : device.VgMetadata.ParsedMetadata.VolumeGroupSections) {
-                if (Collections.binarySearch(_volumeGroups, vg, (x, y) -> x.Id.compareTo(y.Id)) < 0) {
+                if (Collections.binarySearch(_volumeGroups, vg, Comparator.comparing(x -> x.Id)) < 0) {
                     _volumeGroups.add(vg);
 Debug.println(Level.FINE, "Lg: " + vg.Id);
                 }

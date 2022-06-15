@@ -61,13 +61,13 @@ public enum ScsiStatus {
      */
     TaskAborted(0x40);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private ScsiStatus(int value) {
+    ScsiStatus(int value) {
         this.value = value;
     }
 

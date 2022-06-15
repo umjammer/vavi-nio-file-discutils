@@ -33,33 +33,33 @@ public final class Nfs3SetAttributes {
 
     public Nfs3SetAttributes(XdrDataReader reader) {
         setSetMode(reader.readBool());
-        if (getSetMode()) {
-            setMode(UnixFilePermissions.valueOf(reader.readInt32()));
+        if (_setMode) {
+            _mode = UnixFilePermissions.valueOf(reader.readInt32());
         }
 
         setSetUid(reader.readBool());
-        if (getSetUid()) {
-            setUid(reader.readUInt32());
+        if (_setUid) {
+            _uid = reader.readUInt32();
         }
 
         setSetGid(reader.readBool());
-        if (getSetGid()) {
-            setGid(reader.readUInt32());
+        if (_setGid) {
+            _gid = reader.readUInt32();
         }
 
         setSetSize(reader.readBool());
-        if (getSetSize()) {
-            setSize(reader.readInt64());
+        if (_setSize) {
+            _size = reader.readInt64();
         }
 
         setSetAccessTime(Nfs3SetTimeMethod.values()[reader.readInt32()]);
-        if (getSetAccessTime() == Nfs3SetTimeMethod.ClientTime) {
-            setAccessTime(new Nfs3FileTime(reader));
+        if (_setAccessTime == Nfs3SetTimeMethod.ClientTime) {
+            _accessTime = new Nfs3FileTime(reader);
         }
 
         setSetModifyTime(Nfs3SetTimeMethod.values()[reader.readInt32()]);
-        if (getSetModifyTime() == Nfs3SetTimeMethod.ClientTime) {
-            setModifyTime(new Nfs3FileTime(reader));
+        if (_setModifyTime == Nfs3SetTimeMethod.ClientTime) {
+            _modifyTime = new Nfs3FileTime(reader);
         }
     }
 
@@ -184,47 +184,45 @@ public final class Nfs3SetAttributes {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getSetMode());
-        if (getSetMode()) {
-            writer.write((int) UnixFilePermissions.valueOf(getMode()));
+        writer.write(_setMode);
+        if (_setMode) {
+            writer.write((int) UnixFilePermissions.valueOf(_mode));
         }
 
-        writer.write(getSetUid());
-        if (getSetUid()) {
-            writer.write(getUid());
+        writer.write(_setUid);
+        if (_setUid) {
+            writer.write(_uid);
         }
 
-        writer.write(getSetGid());
-        if (getSetGid()) {
-            writer.write(getGid());
+        writer.write(_setGid);
+        if (_setGid) {
+            writer.write(_gid);
         }
 
-        writer.write(getSetSize());
-        if (getSetSize()) {
-            writer.write(getSize());
+        writer.write(_setSize);
+        if (_setSize) {
+            writer.write(_size);
         }
 
-        writer.write(getSetAccessTime().ordinal());
-        if (getSetAccessTime() == Nfs3SetTimeMethod.ClientTime) {
-            getAccessTime().write(writer);
+        writer.write(_setAccessTime.ordinal());
+        if (_setAccessTime == Nfs3SetTimeMethod.ClientTime) {
+            _accessTime.write(writer);
         }
 
-        writer.write(getSetModifyTime().ordinal());
-        if (getSetModifyTime() == Nfs3SetTimeMethod.ClientTime) {
-            getModifyTime().write(writer);
+        writer.write(_setModifyTime.ordinal());
+        if (_setModifyTime == Nfs3SetTimeMethod.ClientTime) {
+            _modifyTime.write(writer);
         }
-
     }
 
     public boolean equals(Object obj) {
         try {
-            return equal(obj instanceof Nfs3SetAttributes ? (Nfs3SetAttributes) obj : (Nfs3SetAttributes) null);
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
+            return equal(obj instanceof Nfs3SetAttributes ? (Nfs3SetAttributes) obj : null);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     public boolean equal(Nfs3SetAttributes other) {
@@ -232,26 +230,27 @@ public final class Nfs3SetAttributes {
             return false;
         }
 
-        return other.getSetMode() == getSetMode() && other.getMode().equals(getMode()) && other.getSetUid() == getSetUid() &&
-               other.getUid() == getUid() && other.getSetGid() == getSetGid() && other.getGid() == getGid() &&
-               other.getSetSize() == getSetSize() && other.getSize() == getSize() &&
-               other.getSetAccessTime() == getSetAccessTime() && other.getAccessTime().equals(getAccessTime()) &&
-               other.getSetModifyTime() == getSetModifyTime() && other.getModifyTime().equals(getModifyTime());
+        return other._setMode == _setMode && other._mode.equals(_mode) && other._setUid == _setUid &&
+               other._uid == _uid && other._setGid == _setGid && other._gid == _gid &&
+               other._setSize == _setSize && other._size == _size &&
+               other._setAccessTime == _setAccessTime && other._accessTime.equals(_accessTime) &&
+               other._setModifyTime == _setModifyTime && other._modifyTime.equals(_modifyTime);
     }
 
     public int hashCode() {
         return dotnet4j.io.compat.Utilities.getCombinedHashCode(
-                                          dotnet4j.io.compat.Utilities.getCombinedHashCode(getSetMode(),
-                                                                     getModifyTime(),
-                                                                     getSetUid(),
-                                                                     getUid(),
-                                                                     getSetGid(),
-                                                                     getGid(),
-                                                                     getSetSize(),
-                                                                     getSize()),
-                                          getSetAccessTime(),
-                                          getAccessTime(),
-                                          getSetModifyTime(),
-                                          getModifyTime());
+                dotnet4j.io.compat.Utilities.getCombinedHashCode(
+                        _setMode,
+                        _modifyTime,
+                        _setUid,
+                        _uid,
+                        _setGid,
+                        _gid,
+                        _setSize,
+                        _size),
+                _setAccessTime,
+                _accessTime,
+                _setModifyTime,
+                _modifyTime);
     }
 }

@@ -150,7 +150,7 @@ public class FatFileSystemTest {
     @Test
     public void canWrite() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
-        assertEquals(true, fs.canWrite());
+        assertTrue(fs.canWrite());
     }
 
     @Test

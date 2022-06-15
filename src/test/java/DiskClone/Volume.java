@@ -123,9 +123,9 @@ public final class Volume implements Closeable {
             if (boolVar___2) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
-
         }
 
-        return Win32Wrapper.<DiskClone.NativeMethods.DiskExtent> byteArrayToStructureArray(buffer, 8, 1);
+        return Win32Wrapper.byteArrayToStructureArray(
+                DiskClone.NativeMethods.DiskExtent.class, buffer, 8, 1);
     }
 }

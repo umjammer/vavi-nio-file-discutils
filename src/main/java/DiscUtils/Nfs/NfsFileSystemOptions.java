@@ -51,26 +51,26 @@ public final class NfsFileSystemOptions extends DiscFileSystemOptions {
     /**
      * Gets or sets the permission mask to apply to newly created directories.
      */
-    private EnumSet<UnixFilePermissions> __NewDirectoryPermissions;
+    private EnumSet<UnixFilePermissions> newDirectoryPermissions;
 
     public EnumSet<UnixFilePermissions> getNewDirectoryPermissions() {
-        return __NewDirectoryPermissions;
+        return newDirectoryPermissions;
     }
 
     public void setNewDirectoryPermissions(EnumSet<UnixFilePermissions> value) {
-        __NewDirectoryPermissions = value;
+        newDirectoryPermissions = value;
     }
 
     /**
      * Gets or sets the permission mask to apply to newly created files.
      */
-    private EnumSet<UnixFilePermissions> __NewFilePermissions;
+    private EnumSet<UnixFilePermissions> newFilePermissions;
 
     public EnumSet<UnixFilePermissions> getNewFilePermissions() {
-        return __NewFilePermissions;
+        return newFilePermissions;
     }
 
     public void setNewFilePermissions(EnumSet<UnixFilePermissions> value) {
-        __NewFilePermissions = value;
+        newFilePermissions = value;
     }
 }

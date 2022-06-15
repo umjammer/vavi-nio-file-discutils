@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -138,7 +138,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         buffer[offset + 0x17] = 0; // Padding
 
         if (getName() != null) {
-            byte[] bytes = getName().getBytes(Charset.forName("UTF-16LE"));
+            byte[] bytes = getName().getBytes(StandardCharsets.UTF_16LE);
             System.arraycopy(bytes, 0, buffer, offset + nameOffset, bytes.length);
         }
 

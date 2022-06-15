@@ -70,17 +70,23 @@ public class Metadata {
             if (line.contains("=")) {
                 Tuple<String, String> parameter = parseParameter(line);
                 String paramValue = parameter.getKey().trim().toLowerCase();
-                if (paramValue.equals("contents")) {
+                switch (paramValue) {
+                case "contents":
                     Contents = parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("version")) {
+                    break;
+                case "version":
                     Version = (int) parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("description")) {
+                    break;
+                case "description":
                     Description = parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("creation_host")) {
+                    break;
+                case "creation_host":
                     CreationHost = parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("creation_time")) {
+                    break;
+                case "creation_time":
                     CreationTime = parseDateTimeValue(parameter.getValue());
-                } else {
+                    break;
+                default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata: " + parameter.getKey());
                 }
             } else if (line.endsWith("{")) {
@@ -127,7 +133,7 @@ public class Metadata {
         int index = line.indexOf("=");
         if (index < 0)
             throw new IllegalArgumentException("invalid parameter line: " + line);
-        return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1, line.length()).trim());
+        return new Tuple<>(line.substring(0, index).trim(), line.substring(index + 1).trim());
     }
 
     public static String removeComment(String line) {

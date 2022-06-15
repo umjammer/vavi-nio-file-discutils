@@ -54,7 +54,7 @@ public class SwapHeader implements IByteArraySerializable {
     private int _lastPage;
 
     public long getLastPage() {
-        return _lastPage & 0xffffffffl;
+        return _lastPage & 0xffffffffL;
     }
 
     public void setLastPage(int value) {

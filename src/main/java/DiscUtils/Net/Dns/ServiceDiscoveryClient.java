@@ -88,9 +88,9 @@ public final class ServiceDiscoveryClient implements Closeable {
         List<ResourceRecord> records = doLookup("_services._dns-sd._udp" + "." + domain, RecordType.Pointer);
         List<String> result = new ArrayList<>();
         for (ResourceRecord record : records) {
-            result.add(PointerRecord.class.cast(record)
+            result.add(((PointerRecord) record)
                     .getTargetName()
-                    .substring(0, PointerRecord.class.cast(record).getTargetName().length() - (domain.length() + 1)));
+                    .substring(0, ((PointerRecord) record).getTargetName().length() - (domain.length() + 1)));
         }
         return result;
     }
@@ -131,7 +131,7 @@ public final class ServiceDiscoveryClient implements Closeable {
         List<ResourceRecord> records = doLookup(service + "." + domain, RecordType.Pointer);
         List<ServiceInstance> instances = new ArrayList<>();
         for (ResourceRecord record : records) {
-            instances.add(lookupInstance(encodeName(PointerRecord.class.cast(record).getTargetName(), record.getName()),
+            instances.add(lookupInstance(encodeName(((PointerRecord) record).getTargetName(), record.getName()),
                                          fields));
         }
         return instances;
@@ -204,24 +204,24 @@ public final class ServiceDiscoveryClient implements Closeable {
             if (fields.contains(ServiceInstanceFields.IPAddresses)) {
                 ipEndPoints = new ArrayList<>();
 
-                List<ResourceRecord> ipRecords = doLookup(ServiceRecord.class.cast(record).getTarget(), RecordType.Address);
+                List<ResourceRecord> ipRecords = doLookup(((ServiceRecord) record).getTarget(), RecordType.Address);
 
                 for (ResourceRecord ipRecord : ipRecords) {
-                    ipEndPoints.add(new InetSocketAddress(IP4AddressRecord.class.cast(ipRecord).getAddress(),
-                                                          ServiceRecord.class.cast(record).getPort()));
+                    ipEndPoints.add(new InetSocketAddress(((IP4AddressRecord) ipRecord).getAddress(),
+                                                          ((ServiceRecord) record).getPort()));
                 }
 
-                List<ResourceRecord> ip6Records = doLookup(ServiceRecord.class.cast(record).getTarget(), RecordType.IP6Address);
+                List<ResourceRecord> ip6Records = doLookup(((ServiceRecord) record).getTarget(), RecordType.IP6Address);
 
 //              for (Ip6AddressRecord ipRecord : ipRecords) {
 //                  ipEndPoints.add(new IPEndPoint(ipRecord.Address, record.Port));
 //              }
             }
 
-            endpoints.add(new ServiceInstanceEndPoint(ServiceRecord.class.cast(record).getPriority(),
-                                                      ServiceRecord.class.cast(record).getWeight(),
-                                                      ServiceRecord.class.cast(record).getPort(),
-                                                      ServiceRecord.class.cast(record).getTarget(),
+            endpoints.add(new ServiceInstanceEndPoint(((ServiceRecord) record).getPriority(),
+                                                      ((ServiceRecord) record).getWeight(),
+                                                      ((ServiceRecord) record).getPort(),
+                                                      ((ServiceRecord) record).getTarget(),
                                                       ipEndPoints));
         }
 
@@ -234,9 +234,7 @@ public final class ServiceDiscoveryClient implements Closeable {
         Map<String, byte[]> details = new HashMap<>();
 
         for (ResourceRecord record : records) {
-            for (Map.Entry<String, byte[]> value : TextRecord.class.cast(record).getValues().entrySet()) {
-                details.put(value.getKey(), value.getValue());
-            }
+            details.putAll(((TextRecord) record).getValues());
         }
 
         return details;

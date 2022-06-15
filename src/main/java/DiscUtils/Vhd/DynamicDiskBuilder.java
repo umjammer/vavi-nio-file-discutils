@@ -24,6 +24,7 @@ package DiscUtils.Vhd;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import DiscUtils.Streams.SparseStream;
@@ -122,9 +123,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             super(start, MathUtilities.roundUp(maxEntries * 4, 512));
 
             _entries = new int[(int) (getLength() / 4)];
-            for (int i = 0; i < _entries.length; ++i) {
-                _entries[i] = 0xFFFFFFFF;
-            }
+            Arrays.fill(_entries, 0xFFFFFFFF);
         }
 
         public void close() throws IOException {

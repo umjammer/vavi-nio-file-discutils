@@ -63,7 +63,7 @@ public enum ReadOnlyCompatibleFeatures {
      */
     ExtraInodeSize;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -71,7 +71,7 @@ public enum ReadOnlyCompatibleFeatures {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<ReadOnlyCompatibleFeatures> valueOf(int value) {
         return Arrays.stream(values())

@@ -39,7 +39,7 @@ public final class UnallocatedSpaceDescriptor extends TaggedDescriptor<Unallocat
         int numDescriptors = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         Extents = new ExtentAllocationDescriptor[numDescriptors];
         for (int i = 0; i < numDescriptors; ++i) {
-            Extents[i] = EndianUtilities.<ExtentAllocationDescriptor> toStruct(ExtentAllocationDescriptor.class, buffer, offset + 24 + i * 8);
+            Extents[i] = EndianUtilities.toStruct(ExtentAllocationDescriptor.class, buffer, offset + 24 + i * 8);
         }
         return 24 + numDescriptors * 8;
     }

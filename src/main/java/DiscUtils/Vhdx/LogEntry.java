@@ -267,10 +267,10 @@ public final class LogEntry {
 
         public boolean isValid(long sequenceNumber) {
             return SequenceNumber == sequenceNumber && _offset + LogSectorSize <= _data.length &&
-                   (EndianUtilities.toUInt32LittleEndian(_data, _offset + LogSectorSize - 4) & 0xFFFFFFFFl) == (sequenceNumber &
-                                                                                                                0xFFFFFFFFl) &&
+                   (EndianUtilities.toUInt32LittleEndian(_data, _offset + LogSectorSize - 4) & 0xFFFFFFFFL) == (sequenceNumber &
+                           0xFFFFFFFFL) &&
                    (EndianUtilities.toUInt32LittleEndian(_data, _offset + 4) &
-                    0xFFFFFFFFl) == ((sequenceNumber >>> 32) & 0xFFFFFFFFl) &&
+                           0xFFFFFFFFL) == ((sequenceNumber >>> 32) & 0xFFFFFFFFL) &&
                    DataSignature == DataSectorSignature;
         }
 

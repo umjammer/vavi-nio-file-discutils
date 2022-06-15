@@ -127,11 +127,11 @@ public final class VolumeHeader implements IByteArraySerializable {
             FinderInfo[i] = EndianUtilities.toUInt32BigEndian(buffer, offset + 80 + i * 4);
         }
 
-        AllocationFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 112);
-        ExtentsFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 192);
-        CatalogFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 272);
-        AttributesFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 352);
-        StartupFile = EndianUtilities.<ForkData> toStruct(ForkData.class, buffer, offset + 432);
+        AllocationFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 112);
+        ExtentsFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 192);
+        CatalogFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 272);
+        AttributesFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 352);
+        StartupFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 432);
 
         return 512;
     }

@@ -360,7 +360,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("sector number is less than one (sectors are 1-based)");
         }
 
-        return (cylinder * (_headsPerCylinder & 0xffffffffl) + head) * _sectorsPerTrack + sector - 1;
+        return (cylinder * (_headsPerCylinder & 0xffffffffL) + head) * _sectorsPerTrack + sector - 1;
     }
 
     /**

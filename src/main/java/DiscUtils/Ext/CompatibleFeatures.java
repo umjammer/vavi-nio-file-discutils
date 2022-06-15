@@ -59,7 +59,7 @@ public enum CompatibleFeatures {
      */
     DirectoryIndex;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -67,7 +67,7 @@ public enum CompatibleFeatures {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<CompatibleFeatures> valueOf(int value) {
         return Arrays.stream(values())

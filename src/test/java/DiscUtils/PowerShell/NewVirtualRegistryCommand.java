@@ -44,11 +44,7 @@ public class NewVirtualRegistryCommand extends PSCmdlet {
         Stream hiveStream = Utilities.createPsPath(SessionState, getLiteralPath());
         try {
             hiveStream.setLength(0);
-            Closeable __newVar0 = RegistryHive.create(hiveStream);
-            try {
-            } finally {
-                if (__newVar0 != null)
-                    __newVar0.close();
+            try (Closeable __newVar0 = RegistryHive.create(hiveStream)) {
             }
         } finally {
             if (hiveStream != null)

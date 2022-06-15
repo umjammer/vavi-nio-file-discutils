@@ -39,11 +39,11 @@ public class GuidListElementValue extends ElementValue {
             return "<none>";
         }
 
-        String result = _values[0];
+        StringBuilder result = new StringBuilder(_values[0]);
         for (int i = 1; i < _values.length; ++i) {
-            result += "," + _values[i];
+            result.append(",").append(_values[i]);
         }
-        return result;
+        return result.toString();
     }
 
     public String[] getGuidStrings() {

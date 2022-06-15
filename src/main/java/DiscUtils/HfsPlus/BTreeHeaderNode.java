@@ -34,7 +34,7 @@ class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
     }
 
     public BTreeHeaderRecord getHeaderRecord() {
-        return getRecords().get(0) instanceof BTreeHeaderRecord ? BTreeHeaderRecord.class.cast(getRecords().get(0)) : null;
+        return getRecords().get(0) instanceof BTreeHeaderRecord ? (BTreeHeaderRecord) getRecords().get(0) : null;
     }
 
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {

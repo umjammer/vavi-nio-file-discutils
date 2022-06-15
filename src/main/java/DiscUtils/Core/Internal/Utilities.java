@@ -221,7 +221,7 @@ public class Utilities {
         // Find first part of paths that don't match
         int i = 0;
         while (i < Math.min(pathElements.size() - 1, basePathElements.size())) {
-            if (!pathElements.get(i).toUpperCase().equals(basePathElements.get(i).toUpperCase())) {
+            if (!pathElements.get(i).equalsIgnoreCase(basePathElements.get(i))) {
                 break;
             }
 

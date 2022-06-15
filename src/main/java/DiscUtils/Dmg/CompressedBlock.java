@@ -60,11 +60,11 @@ public class CompressedBlock implements IByteArraySerializable {
         DataStart = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
         DecompressBufferRequested = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
         BlocksDescriptor = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
-        CheckSum = EndianUtilities.<UdifChecksum> toStruct(UdifChecksum.class, buffer, offset + 60);
+        CheckSum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 60);
         Runs = new ArrayList<>();
         int numRuns = EndianUtilities.toInt32BigEndian(buffer, offset + 200);
         for (int i = 0; i < numRuns; ++i) {
-            Runs.add(EndianUtilities.<CompressedRun> toStruct(CompressedRun.class, buffer, offset + 204 + i * 40));
+            Runs.add(EndianUtilities.toStruct(CompressedRun.class, buffer, offset + 204 + i * 40));
         }
         return 0;
     }

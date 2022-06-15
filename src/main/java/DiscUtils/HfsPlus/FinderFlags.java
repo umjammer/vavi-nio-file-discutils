@@ -49,7 +49,7 @@ enum FinderFlags {
 
     public static final int Color = 0x000e;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -57,7 +57,7 @@ enum FinderFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FinderFlags> valueOf(int value) {
         return Arrays.stream(values())

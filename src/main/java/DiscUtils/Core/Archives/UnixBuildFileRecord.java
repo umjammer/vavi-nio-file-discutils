@@ -36,11 +36,11 @@ public final class UnixBuildFileRecord {
     private final BuilderExtentSource _source;
 
     public UnixBuildFileRecord(String name, byte[] buffer) {
-        this(name, new BuilderBufferExtentSource(buffer), EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0l /* UnixEpoch */);
+        this(name, new BuilderBufferExtentSource(buffer), EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0L /* UnixEpoch */);
     }
 
     public UnixBuildFileRecord(String name, Stream stream) {
-        this(name, new BuilderStreamExtentSource(stream), EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0l /* UnixEpoch */);
+        this(name, new BuilderStreamExtentSource(stream), EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0L /* UnixEpoch */);
     }
 
     public UnixBuildFileRecord(String name,

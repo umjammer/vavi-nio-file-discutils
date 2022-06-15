@@ -43,7 +43,7 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         Expiration,
         Effective;
 
-        private int value = 1 << ordinal();
+        private final int value = 1 << ordinal();
 
         public Supplier<Integer> supplier() {
             return () -> value;
@@ -51,7 +51,7 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
 
         public Function<Integer, Boolean> function() {
             return v -> (v & value) != 0;
-        };
+        }
 
         public static EnumSet<Timestamps> valueOf(int value) {
             return Arrays.stream(values())

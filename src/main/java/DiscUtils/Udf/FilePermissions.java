@@ -98,7 +98,7 @@ enum FilePermissions {
      */
     OwnerDelete;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -106,7 +106,7 @@ enum FilePermissions {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FilePermissions> valueOf(int value) {
         return Arrays.stream(values())

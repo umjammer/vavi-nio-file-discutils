@@ -466,9 +466,7 @@ Debug.println(Level.FINE, _volumeInfo);
             }
 
             Directory parentDir = getDirectory(parentDirEntry.getReference());
-            return parentDir.getAllEntries(true).stream().map(m -> {
-                return Utilities.combinePaths(path, m.getDetails()._fileName);
-            }).collect(Collectors.toList());
+            return parentDir.getAllEntries(true).stream().map(m -> Utilities.combinePaths(path, m.getDetails()._fileName)).collect(Collectors.toList());
         }
     }
 
@@ -687,9 +685,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 }
             }
 
-            updateStandardInformation(dirEntry, file, si -> {
-                si._fileAttributes = FileNameRecord.setAttributes(_newValue, si._fileAttributes);
-            });
+            updateStandardInformation(dirEntry, file, si -> si._fileAttributes = FileNameRecord.setAttributes(_newValue, si._fileAttributes));
         }
     }
 
@@ -808,7 +804,7 @@ Debug.println(Level.FINE, _volumeInfo);
             NtfsAttribute attr = file.getAttribute(attributeType[0], attributeName[0]);
             if (attr == null) {
                 throw new FileNotFoundException(String
-                        .format("No such attribute '%s(%d)'", attributeName[0], attributeType[0]));
+                        .format("No such attribute '%s(%s)'", attributeName[0], attributeType[0]));
             }
 
             return attr.getLength();
@@ -1527,8 +1523,8 @@ Debug.println(Level.FINE, _volumeInfo);
             Directory focusDir = getDirectory(MasterFileTable.RootDirIndex);
             DirectoryEntry focusDirEntry = focusDir.getDirectoryEntry();
 
-            for (int i = 0; i < pathElements.length; ++i) {
-                DirectoryEntry childDirEntry = focusDir.getEntryByName(pathElements[i]);
+            for (String pathElement : pathElements) {
+                DirectoryEntry childDirEntry = focusDir.getEntryByName(pathElement);
                 if (childDirEntry == null) {
                     EnumSet<FileAttributeFlags> newDirAttrs = focusDir.getStandardInformation()._fileAttributes;
                     if (options != null && options.getCompressed().isPresent()) {
@@ -1541,7 +1537,7 @@ Debug.println(Level.FINE, _volumeInfo);
 
                     Directory childDir = Directory.createNew(_context, newDirAttrs);
                     try {
-                        childDirEntry = addFileToDirectory(childDir, focusDir, pathElements[i], options);
+                        childDirEntry = addFileToDirectory(childDir, focusDir, pathElement, options);
                         RawSecurityDescriptor parentSd = doGetSecurity(focusDir);
                         RawSecurityDescriptor newSd;
                         if (options != null && options.getSecurityDescriptor() != null) {
@@ -1745,7 +1741,7 @@ Debug.println(Level.FINE, _volumeInfo);
 
         BlockCompressor _disposableCompressor = _context.getOptions().getCompressor();
         if (_disposableCompressor instanceof Closeable) {
-            Closeable disposableCompressor = Closeable.class.cast(_disposableCompressor);
+            Closeable disposableCompressor = (Closeable) _disposableCompressor;
             disposableCompressor.close();
             _context.getOptions().setCompressor(null);
         }
@@ -1963,7 +1959,7 @@ Debug.println(Level.FINE, _volumeInfo);
     private void dumpDirectory(Directory dir, PrintWriter writer, String indent) {
         for (DirectoryEntry dirEntry : dir.getAllEntries(true)) {
             File file = getFile(dirEntry.getReference());
-            Directory asDir = file instanceof Directory ? (Directory) file : (Directory) null;
+            Directory asDir = file instanceof Directory ? (Directory) file : null;
             writer.println(indent + "+-" + file + " (" + file.getIndexInMft() + ")");
             // Recurse - but avoid infinite recursion via the root dir...
             if (asDir != null && file.getIndexInMft() != 5) {
@@ -2016,7 +2012,7 @@ Debug.println(Level.FINE, _volumeInfo);
     }
 
     @FunctionalInterface
-    private static interface StandardInformationModifier {
+    private interface StandardInformationModifier {
 
         void invoke(StandardInformation si);
     }

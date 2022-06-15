@@ -55,7 +55,7 @@ import dotnet4j.io.SeekOrigin;
  * Note, the stream length cannot be changed.
  */
 public class ThreadSafeStream extends SparseStream {
-    private CommonState _common;
+    private final CommonState _common;
 
     private boolean _ownsCommon;
 
@@ -89,8 +89,8 @@ public class ThreadSafeStream extends SparseStream {
         }
 
         _common = new CommonState();
-        _common.WrappedStream = toWrap;
-        _common.WrappedStreamOwnership = ownership;
+        _common.wrappedStream = toWrap;
+        _common.wrappedStreamOwnership = ownership;
         _ownsCommon = true;
     }
 
@@ -158,7 +158,7 @@ public class ThreadSafeStream extends SparseStream {
     }
 
     private SparseStream getWrapped() {
-        SparseStream wrapped = _common.WrappedStream;
+        SparseStream wrapped = _common.wrappedStream;
         if (wrapped == null) {
             throw new dotnet4j.io.IOException("no wrapped stream.");
         }
@@ -275,23 +275,22 @@ public class ThreadSafeStream extends SparseStream {
     public void close() throws IOException {
         if (_ownsCommon && _common != null) {
             synchronized (_common) {
-                if (_common.WrappedStreamOwnership == Ownership.Dispose) {
-                    _common.WrappedStream.close();
+                if (_common.wrappedStreamOwnership == Ownership.Dispose) {
+                    _common.wrappedStream.close();
                 }
 
                 _common.close();
             }
         }
-        _common = null;
     }
 
     private final static class CommonState implements Cloneable {
-        public SparseStream WrappedStream;
+        public SparseStream wrappedStream;
 
-        public Ownership WrappedStreamOwnership = Ownership.None;
+        public Ownership wrappedStreamOwnership = Ownership.None;
 
         public void close() {
-            WrappedStream = null;
+            wrappedStream = null;
         }
     }
 }

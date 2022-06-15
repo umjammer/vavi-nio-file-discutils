@@ -61,7 +61,7 @@ public class LZNT1Test {
 
     @SuppressWarnings("unchecked")
     private static <T> T createInstance(Class<T> clazz, String name) throws Exception {
-        return (T) Class.forName(name).newInstance();
+        return (T) Class.forName(name).getDeclaredConstructor().newInstance();
     }
 
     @Test

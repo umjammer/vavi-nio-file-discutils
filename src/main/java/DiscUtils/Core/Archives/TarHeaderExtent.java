@@ -58,7 +58,7 @@ public final class TarHeaderExtent extends BuilderBufferExtent {
     }
 
     public TarHeaderExtent(long start, String fileName, long fileLength) {
-        this(start, fileName, fileLength, EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0l /* UnixEpoch */);
+        this(start, fileName, fileLength, EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0L /* UnixEpoch */);
     }
 
     protected byte[] getBuffer() {

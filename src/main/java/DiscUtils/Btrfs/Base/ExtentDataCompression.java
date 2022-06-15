@@ -25,5 +25,5 @@ package DiscUtils.Btrfs.Base;
 public enum ExtentDataCompression {
     None,
     Zlib,
-    Lzo;
+    Lzo
 }

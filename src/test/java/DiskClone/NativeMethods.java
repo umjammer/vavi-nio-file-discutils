@@ -35,18 +35,18 @@ import dotnet4j.io.FileShare;
 
 
 public interface NativeMethods extends Library {
-    static final NativeMethods INSTANCE = null;
+    NativeMethods INSTANCE = null;
 
     // [DllImport("vssapi.dll")]
     // internal static extern int CreateVssBackupComponentsInternal(out
     // IVssBackupComponents vssBackupCmpnts);
-    public int createVssBackupComponents(IVssBackupComponents[] vssBackupCmpnts);
+    int createVssBackupComponents(IVssBackupComponents[] vssBackupCmpnts);
 
-    public int createVssBackupComponents64(IVssBackupComponents[] vssBackupCmpnts);
+    int createVssBackupComponents64(IVssBackupComponents[] vssBackupCmpnts);
 
-    public int vssFreeSnapshotProperties(int[][] pProperties);
+    int vssFreeSnapshotProperties(int[][] pProperties);
 
-    public Pointer createFileW(String fileName,
+    Pointer createFileW(String fileName,
                                FileAccess fileAccess,
                                FileShare fileShare,
                                int[][] securityAttributes,
@@ -54,7 +54,7 @@ public interface NativeMethods extends Library {
                                int flags,
                                int[][] template);
 
-    public boolean deviceIoControl(Pointer hDevice,
+    boolean deviceIoControl(Pointer hDevice,
                                    EIOControlCode dwIoControlCode,
                                    Object InBuffer,
                                    int nInBufferSize,
@@ -63,13 +63,13 @@ public interface NativeMethods extends Library {
                                    int[] pBytesReturned,
                                    int[][] lpOverlapped);
 
-    public static final int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
+    int FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100;
 
-    public static final int FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
+    int FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
 
-    public static final int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+    int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
-    public int formatMessageW(int dwFlags,
+    int formatMessageW(int dwFlags,
                               int[][] lpSource,
                               int dwMessageId,
                               int dwLanguageId,
@@ -77,13 +77,13 @@ public interface NativeMethods extends Library {
                               int nSize,
                               int[][] pArguments);
 
-    public int[][] localFree(int[][] hMem);
+    int[][] localFree(int[][] hMem);
 
-    public boolean getFileSizeEx(Pointer handle, long[] size);
+    boolean getFileSizeEx(Pointer handle, long[] size);
 
-    public boolean setFilePointerEx(Pointer handle, long position, long[] pNewPointer, int MoveMethod);
+    boolean setFilePointerEx(Pointer handle, long position, long[] pNewPointer, int MoveMethod);
 
-    public boolean readFile(Pointer handle, int[] buffer, int count, int[] numRead, int[] overlapped);
+    boolean readFile(Pointer handle, int[] buffer, int count, int[] numRead, int[] overlapped);
 
     class NtfsVolumeData {
         public long VolumeSerialNumber;
@@ -135,7 +135,7 @@ public interface NativeMethods extends Library {
         public int BytesPerSector;
     }
 
-    public static final int ERROR_MORE_DATA = 234;
+    int ERROR_MORE_DATA = 234;
 
     enum EMethod {
         Buffered,

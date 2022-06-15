@@ -352,9 +352,7 @@ class Index implements Closeable {
         for (IndexEntry focus : node.getEntries()) {
             if (focus.getFlags().contains(IndexEntryFlags.Node)) {
                 IndexBlock block = getSubBlock(focus);
-                for (IndexEntry subEntry : enumerate(block.getNode())) {
-                    result.add(subEntry);
-                }
+                result.addAll(enumerate(block.getNode()));
             }
 
             if (!focus.getFlags().contains(IndexEntryFlags.End)) {
@@ -384,9 +382,7 @@ class Index implements Closeable {
 
             if (searchChildren && focus.getFlags().contains(IndexEntryFlags.Node)) {
                 IndexBlock block = getSubBlock(focus);
-                for (IndexEntry entry : findAllIn(query, block.getNode())) {
-                    result.add(entry);
-                }
+                result.addAll(findAllIn(query, block.getNode()));
             }
 
             if (matches) {

@@ -112,15 +112,10 @@ public class Program extends ProgramBase {
                     System.exit(1);
                 }
 
-                FileStream outFileStream = new FileStream(outFile, FileMode.CreateNew, FileAccess.Write);
-                try {
+                try (FileStream outFileStream = new FileStream(outFile, FileMode.CreateNew, FileAccess.Write)) {
                     {
                         pump(content, outFileStream);
                     }
-                } finally {
-                    if (outFileStream != null)
-                        outFileStream.close();
-
                 }
                 System.err.println("Possible file contents saved as: " + outFile);
                 System.err.println();
@@ -148,7 +143,7 @@ public class Program extends ProgramBase {
                     if (!_showZeroSize && size == 0)
                         continue;
 
-                    System.err.printf("Index: {0,-4}   Size: {1,-8}   Path: %d\n",
+                    System.err.printf("Index: %-4d   Size: %-8s  Path: %s\n",
                                       entry.getIndex(),
                                       DiscUtils.Common.Utilities.approximateDiskSize(size),
                                       path);
@@ -168,8 +163,8 @@ public class Program extends ProgramBase {
 
     static long getSize(MasterFileTableEntry entry) {
         for (GenericAttribute attr : entry.getAttributes()) {
-            if (FileNameAttribute.class.isInstance(attr)) {
-                return FileNameAttribute.class.cast(attr).getRealSize();
+            if (attr instanceof FileNameAttribute) {
+                return ((FileNameAttribute) attr).getRealSize();
             }
         }
         return 0;
@@ -182,7 +177,7 @@ public class Program extends ProgramBase {
 
         FileNameAttribute fna = null;
         for (GenericAttribute attr : entry.getAttributes()) {
-            FileNameAttribute thisFna = attr instanceof FileNameAttribute ? (FileNameAttribute) attr : (FileNameAttribute) null;
+            FileNameAttribute thisFna = attr instanceof FileNameAttribute ? (FileNameAttribute) attr : null;
             if (thisFna != null) {
                 if (fna == null || thisFna.getFileNameNamespace() == NtfsNamespace.Win32 ||
                     thisFna.getFileNameNamespace() == NtfsNamespace.Win32AndDos) {

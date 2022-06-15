@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -211,7 +211,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the relative paths to all of the disk's extents.
      */
     public List<String> getExtentPaths() {
-        return _descriptor.getExtents().stream().map(path -> path.getFileName()).collect(Collectors.toList());
+        return _descriptor.getExtents().stream().map(ExtentDescriptor::getFileName).collect(Collectors.toList());
     }
 
     /**
@@ -507,7 +507,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The parent locations as an array.
      */
     public List<String> getParentLocations() {
-        return Arrays.asList(_descriptor.getParentFileNameHint());
+        return Collections.singletonList(_descriptor.getParentFileNameHint());
     }
 
     /**
@@ -701,13 +701,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
 
         long redundantGrainDirStart = Math.max(descriptorStart[0], 1) + MathUtilities.ceil(descriptorLength, Sizes.Sector);
-        long redundantGrainDirLength = numGrainTables * 4;
+        long redundantGrainDirLength = numGrainTables * 4L;
         long redundantGrainTablesStart = redundantGrainDirStart + MathUtilities.ceil(redundantGrainDirLength, Sizes.Sector);
-        long redundantGrainTablesLength = numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
+        long redundantGrainTablesLength = (long) numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
         long grainDirStart = redundantGrainTablesStart + MathUtilities.ceil(redundantGrainTablesLength, Sizes.Sector);
-        long grainDirLength = numGrainTables * 4;
+        long grainDirLength = numGrainTables * 4L;
         long grainTablesStart = grainDirStart + MathUtilities.ceil(grainDirLength, Sizes.Sector);
-        long grainTablesLength = numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
+        long grainTablesLength = (long) numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
         long dataStart = MathUtilities.roundUp(grainTablesStart + MathUtilities.ceil(grainTablesLength, Sizes.Sector),
                                                grainSize);
         // Generate the header, and write it
@@ -745,7 +745,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         byte[] grainTable = new byte[GtesPerGt * 4];
         for (int i = 0; i < numGrainTables; ++i) {
             extentStream
-                    .setPosition(redundantGrainTablesStart * Sizes.Sector + i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
+                    .setPosition(redundantGrainTablesStart * Sizes.Sector + (long) i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
             extentStream.write(grainTable, 0, grainTable.length);
         }
         for (int i = 0; i < numGrainTables; ++i) {
@@ -759,7 +759,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         extentStream.write(grainDir, 0, grainDir.length);
         for (int i = 0; i < numGrainTables; ++i) {
             // Write out the blank grain tables
-            extentStream.setPosition(grainTablesStart * Sizes.Sector + i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
+            extentStream.setPosition(grainTablesStart * Sizes.Sector + (long) i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
             extentStream.write(grainTable, 0, grainTable.length);
         }
         // Make sure stream is correct length

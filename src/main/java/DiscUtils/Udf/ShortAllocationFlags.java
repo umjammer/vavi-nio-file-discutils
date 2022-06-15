@@ -6,5 +6,5 @@ enum ShortAllocationFlags {
     RecordedAndAllocated,
     AllocatedNotRecorded,
     NotRecordedNotAllocated,
-    NextExtentOfAllocationDescriptors;
+    NextExtentOfAllocationDescriptors
 }

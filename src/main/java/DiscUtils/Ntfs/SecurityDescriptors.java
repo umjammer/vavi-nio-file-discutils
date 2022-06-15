@@ -325,15 +325,8 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         }
 
         public int compareTo(int otherHash) {
-            if (_toMatch < otherHash) {
-                return -1;
-            }
+            return Integer.compare(_toMatch, otherHash);
 
-            if (_toMatch > otherHash) {
-                return 1;
-            }
-
-            return 0;
         }
     }
 }

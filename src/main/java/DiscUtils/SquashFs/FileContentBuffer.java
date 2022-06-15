@@ -22,7 +22,7 @@
 
 package DiscUtils.SquashFs;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -71,7 +71,7 @@ public class FileContentBuffer implements IBuffer {
     }
 
     public List<StreamExtent> getExtents() {
-        return Arrays.asList(new StreamExtent(0, getCapacity()));
+        return Collections.singletonList(new StreamExtent(0, getCapacity()));
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
@@ -79,7 +79,7 @@ public class FileContentBuffer implements IBuffer {
             return 0;
         }
 
-        long startOfFragment = _blockLengths.length * _context.getSuperBlock().BlockSize;
+        long startOfFragment = (long) _blockLengths.length * _context.getSuperBlock().BlockSize;
         long currentPos = pos;
         int totalRead = 0;
         int totalToRead = (int) Math.min(_inode.getFileSize() - pos, count);

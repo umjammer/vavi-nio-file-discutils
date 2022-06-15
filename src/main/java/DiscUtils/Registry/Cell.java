@@ -53,17 +53,25 @@ public abstract class Cell implements IByteArraySerializable {
     public static Cell parse(RegistryHive hive, int index, byte[] buffer, int pos) {
         String type = EndianUtilities.bytesToString(buffer, pos, 2);
         Cell result = null;
-        if (type.equals("nk")) {
+        switch (type) {
+        case "nk":
             result = new KeyNodeCell(index);
-        } else if (type.equals("sk")) {
+            break;
+        case "sk":
             result = new SecurityCell(index);
-        } else if (type.equals("vk")) {
+            break;
+        case "vk":
             result = new ValueCell(index);
-        } else if (type.equals("lh") || type.equals("lf")) {
+            break;
+        case "lh":
+        case "lf":
             result = new SubKeyHashedListCell(hive, index);
-        } else if (type.equals("li") || type.equals("ri")) {
+            break;
+        case "li":
+        case "ri":
             result = new SubKeyIndirectListCell(hive, index);
-        } else {
+            break;
+        default:
             throw new IllegalArgumentException("Unknown cell type '" + type + "'");
         }
         result.readFrom(buffer, pos);

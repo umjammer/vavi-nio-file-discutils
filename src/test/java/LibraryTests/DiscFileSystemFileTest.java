@@ -170,9 +170,7 @@ public class DiscFileSystemFileTest {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("FOO.TXT");
         DiscFileInfo di = fs.getFileInfo("foo.txt");
-        assertThrows(IOException.class, () -> {
-            di.open(FileMode.Create);
-        });
+        assertThrows(IOException.class, () -> di.open(FileMode.Create));
     }
 
     @ParameterizedTest
@@ -197,9 +195,7 @@ public class DiscFileSystemFileTest {
         DiscFileSystem fs = fsFactory.invoke();
         DiscFileInfo di = fs.getFileInfo("foo.txt");
         try (Stream s = di.open(FileMode.Create, FileAccess.Read)) {
-            assertThrows(IOException.class, () -> {
-                s.writeByte((byte) 1);
-            });
+            assertThrows(IOException.class, () -> s.writeByte((byte) 1));
         }
     }
 
@@ -227,9 +223,7 @@ public class DiscFileSystemFileTest {
         try (Stream s = di.open(FileMode.Open, FileAccess.Write)) {
             assertTrue(s.canWrite());
             assertFalse(s.canRead());
-            assertThrows(IOException.class, () -> {
-                s.readByte();
-            });
+            assertThrows(IOException.class, s::readByte);
         }
     }
 
@@ -360,18 +354,14 @@ public class DiscFileSystemFileTest {
     public void delete_Dir(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("foo.txt");
-        assertThrows(FileNotFoundException.class, () -> {
-            fs.getFileInfo("foo.txt").delete();
-        });
+        assertThrows(FileNotFoundException.class, () -> fs.getFileInfo("foo.txt").delete());
     }
 
     @ParameterizedTest
     @MethodSource("LibraryTests.FileSystemSource#getReadWriteFileSystems")
     public void delete_NoFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
-        assertThrows(FileNotFoundException.class, () -> {
-            fs.getFileInfo("foo.txt").delete();
-        });
+        assertThrows(FileNotFoundException.class, () -> fs.getFileInfo("foo.txt").delete());
     }
 
     @ParameterizedTest

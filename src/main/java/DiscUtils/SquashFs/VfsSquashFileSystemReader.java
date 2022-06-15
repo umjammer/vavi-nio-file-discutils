@@ -121,7 +121,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     public UnixFileSystemInfo getUnixFileInfo(String path) {
         File file = getFile(path);
         Inode inode = file.getInode();
-        DeviceInode devInod = inode instanceof DeviceInode ? (DeviceInode) inode : (DeviceInode) null;
+        DeviceInode devInod = inode instanceof DeviceInode ? (DeviceInode) inode : null;
 
         UnixFileSystemInfo info = new UnixFileSystemInfo();
         info.setFileType(fileTypeFromInodeType(inode._type));

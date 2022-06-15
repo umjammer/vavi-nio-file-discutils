@@ -28,13 +28,13 @@ public enum PortMap2Protocol {
     Tcp(6),
     Udp(17);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private PortMap2Protocol(int value) {
+    PortMap2Protocol(int value) {
         this.value = value;
     }
 

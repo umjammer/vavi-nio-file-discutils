@@ -63,7 +63,7 @@ enum IncompatibleFeatures {
 
     public static final EnumSet<IncompatibleFeatures > Supported = EnumSet.of(FType);
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -71,7 +71,7 @@ enum IncompatibleFeatures {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<IncompatibleFeatures> valueOf(int value) {
         return Arrays.stream(values())

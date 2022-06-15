@@ -26,7 +26,6 @@ package DiscUtils.Nfs;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketException;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 import DiscUtils.Streams.Util.StreamUtilities;
@@ -102,15 +101,9 @@ public final class RpcTcpTransport implements IRpcTransport {
 
                     _socket.connect(new InetSocketAddress(_address, _port));
                     _tcpStream = new NetworkStream(_socket, false);
-                } catch (SocketException se) {
+                } catch (IOException se) {
                     retries++;
                     lastException = se;
-                    if (!isNewConnection) {
-                        try { Thread.sleep(1000); } catch (InterruptedException e) {}
-                    }
-                } catch (IOException connectException) {
-                    retries++;
-                    lastException = connectException;
                     if (!isNewConnection) {
                         try { Thread.sleep(1000); } catch (InterruptedException e) {}
                     }

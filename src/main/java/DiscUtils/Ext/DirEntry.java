@@ -30,7 +30,7 @@ import DiscUtils.Core.Vfs.VfsDirEntry;
 
 public class DirEntry extends VfsDirEntry {
     public DirEntry(DirectoryRecord record) {
-        __Record = record;
+        this.record = record;
     }
 
     public long getCreationTimeUtc() {
@@ -69,10 +69,10 @@ public class DirEntry extends VfsDirEntry {
         throw new UnsupportedOperationException();
     }
 
-    private DirectoryRecord __Record;
+    private DirectoryRecord record;
 
     public DirectoryRecord getRecord() {
-        return __Record;
+        return record;
     }
 
     public long getUniqueCacheId() {

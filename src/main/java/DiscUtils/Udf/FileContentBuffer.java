@@ -109,8 +109,8 @@ public class FileContentBuffer implements IBuffer {
 
             int i = 0;
             while (i < activeBuffer.length) {
-                ShortAllocationDescriptor sad = EndianUtilities
-                        .<ShortAllocationDescriptor> toStruct(ShortAllocationDescriptor.class, activeBuffer, i);
+                ShortAllocationDescriptor sad =
+                        EndianUtilities.toStruct(ShortAllocationDescriptor.class, activeBuffer, i);
                 if (sad.ExtentLength == 0) {
                     break;
                 }
@@ -137,7 +137,7 @@ public class FileContentBuffer implements IBuffer {
             int i = 0;
             while (i < activeBuffer.length) {
                 LongAllocationDescriptor lad = EndianUtilities
-                        .<LongAllocationDescriptor> toStruct(LongAllocationDescriptor.class, activeBuffer, i);
+                        .toStruct(LongAllocationDescriptor.class, activeBuffer, i);
                 if (lad.ExtentLength == 0) {
                     break;
                 }

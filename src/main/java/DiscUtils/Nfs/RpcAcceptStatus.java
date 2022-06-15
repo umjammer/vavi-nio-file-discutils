@@ -27,5 +27,5 @@ public enum RpcAcceptStatus {
     ProgramUnavailable,
     ProgramVersionMismatch,
     ProcedureUnavailable,
-    GarbageArguments;
+    GarbageArguments
 }

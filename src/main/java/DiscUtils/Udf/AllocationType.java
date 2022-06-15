@@ -5,5 +5,5 @@ enum AllocationType {
     ShortDescriptors,
     LongDescriptors,
     ExtendedDescriptors,
-    Embedded;
+    Embedded
 }

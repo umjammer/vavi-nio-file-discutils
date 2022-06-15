@@ -99,14 +99,14 @@ public class NfsFileSystem extends DiscFileSystem {
      * Gets the preferred NFS read size.
      */
     public int getPreferredReadSize() {
-        return _client == null ? 0 : (int) _client.getFileSystemInfo().getReadPreferredBytes();
+        return _client == null ? 0 : _client.getFileSystemInfo().getReadPreferredBytes();
     }
 
     /**
      * Gets the preferred NFS write size.
      */
     public int getPreferredWriteSize() {
-        return _client == null ? 0 : (int) _client.getFileSystemInfo().getWritePreferredBytes();
+        return _client == null ? 0 : _client.getFileSystemInfo().getWritePreferredBytes();
     }
 
     /**
@@ -271,7 +271,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @return {@code true} if the path is a directory, else {@code false}.
      */
     public boolean directoryExists(String path) {
-        return getAttributes(path).containsKey("Directory") && Boolean.class.cast(getAttributes(path).get("Directory"));
+        return getAttributes(path).containsKey("Directory") && (Boolean) getAttributes(path).get("Directory");
     }
 
     /**
@@ -281,7 +281,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @return {@code true} if the path is a file, else {@code false} .
      */
     public boolean fileExists(String path) {
-        return getAttributes(path).containsKey("Normal") && Boolean.class.cast(getAttributes(path).get("Normal"));
+        return getAttributes(path).containsKey("Normal") && (Boolean) getAttributes(path).get("Normal");
     }
 
     /**
@@ -733,8 +733,8 @@ public class NfsFileSystem extends DiscFileSystem {
         }
 
         Nfs3FileHandle handle = parent;
-        for (int i = 0; i < dirs.length; ++i) {
-            handle = _client.lookup(handle, dirs[i]);
+        for (String dir : dirs) {
+            handle = _client.lookup(handle, dir);
             if (handle == null || _client.getAttributes(handle).Type != Nfs3FileType.Directory) {
                 throw new FileNotFoundException();
             }

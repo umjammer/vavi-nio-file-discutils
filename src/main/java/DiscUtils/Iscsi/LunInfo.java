@@ -24,7 +24,7 @@ package DiscUtils.Iscsi;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -156,7 +156,7 @@ public class LunInfo {
             throwInvalidURI(uri.toString());
         }
 
-        TargetInfo targetInfo = new TargetInfo(targetName, Arrays.asList(new TargetAddress(address, port, targetGroupTag)));
+        TargetInfo targetInfo = new TargetInfo(targetName, Collections.singletonList(new TargetAddress(address, port, targetGroupTag)));
 
         for (String queryElem : uri.getQuery().substring(1).split("&")) {
             if (queryElem.startsWith("LUN=")) {
@@ -176,7 +176,7 @@ public class LunInfo {
      * @return The LUN in string form.
      */
     public String toString() {
-        if ((getLun() & 0xFF00000000000000l) == 0) {
+        if ((getLun() & 0xFF00000000000000L) == 0) {
             return String.valueOf(getLun() >>> (6 * 8));
         }
         return String.valueOf(getLun());
@@ -191,7 +191,7 @@ public class LunInfo {
     public List<String> getUris() {
         List<String> results = new ArrayList<>();
         for (TargetAddress targetAddress : getTarget().getAddresses()) {
-            results.add(targetAddress.toUri() + "/" + getTarget().getName() + "?LUN=" + toString());
+            results.add(targetAddress.toUri() + "/" + getTarget().getName() + "?LUN=" + this);
         }
 
         return results;

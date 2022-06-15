@@ -22,7 +22,8 @@
 
 package DiscUtils.BootConfig;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 
 public class DeviceAndPathRecord extends DeviceRecord {
     private DeviceRecord _container;
@@ -45,6 +46,6 @@ public class DeviceAndPathRecord extends DeviceRecord {
         super.doParse(data, offset);
         _container = parse(data, offset + 0x34);
         int pathStart = 0x34 + _container.getSize();
-        _path = new String(data, offset + pathStart, getLength() - pathStart, Charset.forName("UTF-16LE"));
+        _path = new String(data, offset + pathStart, getLength() - pathStart, StandardCharsets.UTF_16LE);
     }
 }

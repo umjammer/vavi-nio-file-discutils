@@ -7,8 +7,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -53,7 +55,7 @@ public class ReflectionHelper {
 
     @Deprecated
     public static List<Class<?>> getAssembly(Class<?> type) {
-        return Arrays.asList(type);
+        return Collections.singletonList(type);
     }
 
     public static <T extends Serializable> int sizeOf(Class<T> c) {
@@ -68,12 +70,13 @@ public class ReflectionHelper {
 Debug.println(c);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(c.newInstance());
+                oos.writeObject(c.getDeclaredConstructor().newInstance());
                 oos.flush();
                 oos.close();
                 return baos.size();
             }
-        } catch (InstantiationException | IllegalAccessException | IOException e) {
+        } catch (InstantiationException | IllegalAccessException | IOException | NoSuchMethodException |
+                 InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

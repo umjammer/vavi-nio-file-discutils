@@ -81,7 +81,7 @@ public class FormatVolumeCommand extends PSCmdlet {
         VolumeInfo volInfo = null;
         if (getInputObject() != null) {
             volInfoObj = getInputObject();
-            volInfo = volInfoObj.BaseObject instanceof VolumeInfo ? (VolumeInfo) volInfoObj.BaseObject : (VolumeInfo) null;
+            volInfo = volInfoObj.BaseObject instanceof VolumeInfo ? (VolumeInfo) volInfoObj.BaseObject : null;
         }
 
         if (volInfo == null && (getLiteralPath() == null || getLiteralPath().isEmpty())) {
@@ -102,7 +102,7 @@ public class FormatVolumeCommand extends PSCmdlet {
 
         if (volInfo == null) {
             volInfoObj = SessionState.InvokeProvider.Item.get(getLiteralPath())[0];
-            volInfo = volInfoObj.BaseObject instanceof VolumeInfo ? (VolumeInfo) volInfoObj.BaseObject : (VolumeInfo) null;
+            volInfo = volInfoObj.BaseObject instanceof VolumeInfo ? (VolumeInfo) volInfoObj.BaseObject : null;
         }
 
         if (volInfo == null) {
@@ -116,7 +116,7 @@ public class FormatVolumeCommand extends PSCmdlet {
         Object driveProp = volInfoObj.Properties.get("PSDrive");
         if (driveProp != null) {
             VirtualDiskPSDriveInfo drive = driveProp.Value instanceof VirtualDiskPSDriveInfo ? (VirtualDiskPSDriveInfo) driveProp.Value
-                                                                                             : (VirtualDiskPSDriveInfo) null;
+                                                                                             : null;
             if (drive != null) {
                 drive.uncacheFileSystem(volInfo.getIdentity());
             }

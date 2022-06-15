@@ -24,6 +24,7 @@ package DiscUtils.Ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
 
 import DiscUtils.Core.IDiagnosticTraceable;
 import DiscUtils.Streams.IByteArraySerializable;
@@ -42,8 +43,8 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
     public StructuredNtfsAttribute(Class<T> clazz, File file, FileRecordReference containingFile, AttributeRecord record) {
         super(file, containingFile, record);
         try {
-            _structure = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            _structure = clazz.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

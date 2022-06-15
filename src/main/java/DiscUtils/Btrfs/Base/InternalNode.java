@@ -92,9 +92,7 @@ public class InternalNode extends NodeHeader {
             if (getNodes()[j] == null)
                 getNodes()[j] = context.readTree(keyPtr.getBlockNumber(), getLevel());
 
-            for (BaseItem item : getNodes()[j].find(key, context)) {
-                result.add(item);
-            }
+            result.addAll(getNodes()[j].find(key, context));
         }
         return result;
     }

@@ -83,14 +83,13 @@ public class PvHeader implements IByteArraySerializable {
     }
 
     private static String readUuid(byte[] buffer, int offset) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(EndianUtilities.bytesToString(buffer, offset, 0x6)).append('-');
-        sb.append(EndianUtilities.bytesToString(buffer, offset + 0x6, 0x4)).append('-');
-        sb.append(EndianUtilities.bytesToString(buffer, offset + 0xA, 0x4)).append('-');
-        sb.append(EndianUtilities.bytesToString(buffer, offset + 0xE, 0x4)).append('-');
-        sb.append(EndianUtilities.bytesToString(buffer, offset + 0x12, 0x4)).append('-');
-        sb.append(EndianUtilities.bytesToString(buffer, offset + 0x16, 0x4)).append('-');
-        sb.append(EndianUtilities.bytesToString(buffer, offset + 0x1A, 0x6));
-        return sb.toString();
+        String sb = EndianUtilities.bytesToString(buffer, offset, 0x6) + '-' +
+                EndianUtilities.bytesToString(buffer, offset + 0x6, 0x4) + '-' +
+                EndianUtilities.bytesToString(buffer, offset + 0xA, 0x4) + '-' +
+                EndianUtilities.bytesToString(buffer, offset + 0xE, 0x4) + '-' +
+                EndianUtilities.bytesToString(buffer, offset + 0x12, 0x4) + '-' +
+                EndianUtilities.bytesToString(buffer, offset + 0x16, 0x4) + '-' +
+                EndianUtilities.bytesToString(buffer, offset + 0x1A, 0x6);
+        return sb;
     }
 }

@@ -89,8 +89,8 @@ public final class RpcUnixCredential extends RpcCredentials {
             writer.write(0);
         } else {
             writer.write(_gids.length);
-            for (int i = 0; i < _gids.length; ++i) {
-                writer.write(_gids[i]);
+            for (int gid : _gids) {
+                writer.write(gid);
             }
         }
     }

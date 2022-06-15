@@ -14,7 +14,7 @@ enum ResourceFlags {
     Compressed,
     Spanned;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -22,7 +22,7 @@ enum ResourceFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<ResourceFlags> valueOf(int value) {
         return Arrays.stream(values())

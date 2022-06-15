@@ -42,15 +42,16 @@ public final class RockRidgeExtension extends SuspExtension {
 
     public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
         String __dummyScrutVar0 = name;
-        if (__dummyScrutVar0.equals("PX")) {
+        switch (__dummyScrutVar0) {
+        case "PX":
             return new PosixFileInfoSystemUseEntry(name, length, version, data, offset);
-        } else if (__dummyScrutVar0.equals("NM")) {
+        case "NM":
             return new PosixNameSystemUseEntry(name, length, version, data, offset);
-        } else if (__dummyScrutVar0.equals("CL")) {
+        case "CL":
             return new ChildLinkSystemUseEntry(name, length, version, data, offset);
-        } else if (__dummyScrutVar0.equals("TF")) {
+        case "TF":
             return new FileTimeSystemUseEntry(name, length, version, data, offset);
-        } else {
+        default:
             return new GenericSystemUseEntry(name, length, version, data, offset);
         }
     }

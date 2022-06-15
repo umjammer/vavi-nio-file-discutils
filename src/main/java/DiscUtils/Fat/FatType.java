@@ -134,8 +134,8 @@ public enum FatType {
         }
     };
 
-    private int value;
-    private String friendlyName;
+    private final int value;
+    private final String friendlyName;
 
     public int getValue() {
         return value;
@@ -155,7 +155,7 @@ public enum FatType {
 
     public abstract void setNext(int cluster, int next, byte[] _buffer, Consumer<Integer> markDirty);
 
-    private FatType(int value, String friendlyName) {
+    FatType(int value, String friendlyName) {
         this.value = value;
         this.friendlyName = friendlyName;
     }

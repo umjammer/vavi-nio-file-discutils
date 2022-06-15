@@ -22,9 +22,12 @@
 
 package DiscUtils.PowerShell.VirtualRegistryProvider;
 
+import java.io.IOException;
+
+import DiscUtils.PowerShell.Conpat.PSDriveInfo;
 import DiscUtils.Registry.RegistryHive;
 import DiscUtils.Streams.Util.Ownership;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public final class VirtualRegistryPSDriveInfo extends PSDriveInfo {
@@ -33,12 +36,12 @@ public final class VirtualRegistryPSDriveInfo extends PSDriveInfo {
     private RegistryHive _hive;
 
     public VirtualRegistryPSDriveInfo(PSDriveInfo toCopy, String root, Stream stream) {
-        super(toCopy.Name, toCopy.Provider, root, toCopy.Description, toCopy.Credential);
+        super(toCopy.getName(), toCopy.getProvider(), root, toCopy.getDescription(), toCopy.getCredential());
         _hiveStream = stream;
         _hive = new RegistryHive(_hiveStream, Ownership.Dispose);
     }
 
-    public void close() {
+    public void close() throws IOException {
         if (_hive != null) {
             _hive.close();
             _hive = null;

@@ -33,7 +33,7 @@ public class Directory extends File implements IVfsDirectory<DirectoryEntry, Fil
 
     public Directory(Context context, Inode inode, MetadataRef inodeRef) {
         super(context, inode, inodeRef);
-        _dirInode = inode instanceof IDirectoryInode ? (IDirectoryInode) inode : (IDirectoryInode) null;
+        _dirInode = inode instanceof IDirectoryInode ? (IDirectoryInode) inode : null;
         if (_dirInode == null) {
             throw new IllegalArgumentException("Inode is not a directory");
         }

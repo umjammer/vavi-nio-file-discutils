@@ -79,15 +79,16 @@ public final class DiskFactory extends VirtualDiskFactory {
     }
 
     private static DiskCreateType variantToCreateType(String variant) {
-        if (variant.equals("fixed")) {
+        switch (variant) {
+        case "fixed":
             return DiskCreateType.MonolithicFlat;
-        } else if (variant.equals("dynamic")) {
+        case "dynamic":
             return DiskCreateType.MonolithicSparse;
-        } else if (variant.equals("vmfsfixed")) {
+        case "vmfsfixed":
             return DiskCreateType.Vmfs;
-        } else if (variant.equals("vmfsdynamic")) {
+        case "vmfsdynamic":
             return DiskCreateType.VmfsSparse;
-        } else {
+        default:
             throw new IllegalArgumentException(String.format("Unknown VMDK disk variant '%s'", variant));
         }
     }

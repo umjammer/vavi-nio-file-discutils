@@ -23,7 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -128,17 +128,14 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         return new ResidentAttributeRecord(buffer, offset, length);
     }
 
-    public static Comparator<AttributeRecord> compareStartVcns = new Comparator<AttributeRecord>() {
-        @Override
-        public int compare(AttributeRecord x, AttributeRecord y) {
-            if (x.getStartVcn() < y.getStartVcn()) {
-                return -1;
-            }
-            if (x.getStartVcn() == y.getStartVcn()) {
-                return 0;
-            }
-            return 1;
+    public static Comparator<AttributeRecord> compareStartVcns = (x, y) -> {
+        if (x.getStartVcn() < y.getStartVcn()) {
+            return -1;
         }
+        if (x.getStartVcn() == y.getStartVcn()) {
+            return 0;
+        }
+        return 1;
     };
 
     public abstract List<Range> getClusters();
@@ -174,7 +171,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
                 throw new IOException("Corrupt attribute, name outside of attribute");
             }
 
-            _name = new String(buffer, offset + nameOffset, nameLength * 2, Charset.forName("UTF-16LE"));
+            _name = new String(buffer, offset + nameOffset, nameLength * 2, StandardCharsets.UTF_16LE);
         }
     }
 }

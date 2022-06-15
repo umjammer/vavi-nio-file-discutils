@@ -46,7 +46,7 @@ public enum FatAttributes {
     // TODO
     public Function<Integer, Boolean> function() {
         return v -> (v & supplier().get()) != 0;
-    };
+    }
 
     public static EnumSet<FatAttributes> valueOf(int value) {
         return Arrays.stream(values())
@@ -60,13 +60,13 @@ public enum FatAttributes {
 
     // TODO name()
     public static Map<String, Object> toMap(EnumSet<FatAttributes> flags) {
-        return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
+        return flags.stream().collect(Collectors.toMap(Enum::name, f -> true));
     }
 
     // TODO name()
     public static EnumSet<FatAttributes> toEnumSet(Map<String, Object> flags) {
         return Arrays.stream(values())
-                .filter(v -> flags.containsKey(v.name()) && Boolean.class.cast(flags.get(v.name())))
+                .filter(v -> flags.containsKey(v.name()) && (Boolean) flags.get(v.name()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FatAttributes.class)));
     }
 }

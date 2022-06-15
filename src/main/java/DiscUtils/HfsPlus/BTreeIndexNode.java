@@ -55,7 +55,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             }
             if (nextResult > 0) {
                 // Next record's key is too big, so worth looking at children
-                BTreeKeyedNode<TKey> child = BTree.class.cast(getTree()).getKeyedNode(_records.get(idx).getChildId());
+                BTreeKeyedNode<TKey> child = ((BTree) getTree()).getKeyedNode(_records.get(idx).getChildId());
                 return child.findKey(key);
             }
 
@@ -85,7 +85,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             }
             if (nextResult >= 0) {
                 // Next record's key isn't too small, so worth looking at children
-                BTreeKeyedNode<TKey> child = BTree.class.cast(getTree()).getKeyedNode(_records.get(idx).getChildId());
+                BTreeKeyedNode<TKey> child = ((BTree) getTree()).getKeyedNode(_records.get(idx).getChildId());
                 child.visitRange(visitor);
             }
 
@@ -110,6 +110,6 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             start = end;
         }
 
-        return List.class.cast(_records);
+        return (List) _records;
     }
 }

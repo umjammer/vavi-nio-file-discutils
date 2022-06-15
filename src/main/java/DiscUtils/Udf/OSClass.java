@@ -11,5 +11,5 @@ enum OSClass {
     WindowsNt,
     Os400,
     BeOS,
-    WindowsCe;
+    WindowsCe
 }

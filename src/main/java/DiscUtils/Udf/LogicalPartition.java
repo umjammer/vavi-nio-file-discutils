@@ -38,13 +38,13 @@ public abstract class LogicalPartition extends Partition {
 
     public static LogicalPartition fromDescriptor(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, int index) {
         PartitionMap map = volumeDescriptor.PartitionMaps[index];
-        Type1PartitionMap asType1 = map instanceof Type1PartitionMap ? (Type1PartitionMap) map : (Type1PartitionMap) null;
+        Type1PartitionMap asType1 = map instanceof Type1PartitionMap ? (Type1PartitionMap) map : null;
         if (asType1 != null) {
             return new Type1Partition(context, volumeDescriptor, asType1);
         }
 
         MetadataPartitionMap asMetadata = map instanceof MetadataPartitionMap ? (MetadataPartitionMap) map
-                                                                              : (MetadataPartitionMap) null;
+                                                                              : null;
         if (asMetadata != null) {
             return new MetadataPartition(context, volumeDescriptor, asMetadata);
         }

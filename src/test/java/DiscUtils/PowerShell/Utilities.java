@@ -76,13 +76,13 @@ public class Utilities {
         }
 
         DirectoryInfo parentAsDir = parentItems[0].BaseObject instanceof DirectoryInfo ? (DirectoryInfo) parentItems[0].BaseObject
-                                                                                       : (DirectoryInfo) null;
+                                                                                       : null;
         if (parentAsDir != null) {
             return File.Create(Path.Combine(parentAsDir.FullName, childName));
         }
 
         DiscDirectoryInfo parentAsDiscDir = parentItems[0].BaseObject instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) parentItems[0].BaseObject
-                                                                                                   : (DiscDirectoryInfo) null;
+                                                                                                   : null;
         if (parentAsDiscDir != null) {
             return parentAsDiscDir.getFileSystem()
                     .openFile(Paths.get(parentAsDiscDir.getFullName(), childName).toString(),
@@ -96,13 +96,13 @@ public class Utilities {
     public static Stream openPsPath(SessionState session, String filePath, FileAccess access, FileShare share) {
         Object items = session.InvokeProvider.Item.get(filePath);
         if (items.size() == 1) {
-            FileInfo itemAsFile = items[0].BaseObject instanceof FileInfo ? (FileInfo) items[0].BaseObject : (FileInfo) null;
+            FileInfo itemAsFile = items[0].BaseObject instanceof FileInfo ? (FileInfo) items[0].BaseObject : null;
             if (itemAsFile != null) {
                 return itemAsFile.open(FileMode.Open, access, share);
             }
 
             DiscFileInfo itemAsDiscFile = items[0].BaseObject instanceof DiscFileInfo ? (DiscFileInfo) items[0].BaseObject
-                                                                                      : (DiscFileInfo) null;
+                                                                                      : null;
             if (itemAsDiscFile != null) {
                 return itemAsDiscFile.open(FileMode.Open, access);
             }

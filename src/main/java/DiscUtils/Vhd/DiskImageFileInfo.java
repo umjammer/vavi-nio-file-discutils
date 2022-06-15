@@ -22,7 +22,7 @@
 
 package DiscUtils.Vhd;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -145,7 +145,7 @@ public class DiskImageFileInfo {
                 ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.PlatformCode)) {
                 _vhdStream.setPosition(pl.PlatformDataOffset);
                 byte[] buffer = StreamUtilities.readExact(_vhdStream, pl.PlatformDataLength);
-                vals.add(new String(buffer, Charset.forName("UTF-16LE")));
+                vals.add(new String(buffer, StandardCharsets.UTF_16LE));
             }
 
         }

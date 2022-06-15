@@ -24,7 +24,6 @@ package DiscUtils.Core.LogicalDiskManager;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -148,32 +147,28 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         return openVolume(_database.getVolume(volumeId));
     }
 
-    private static Comparator<ExtentRecord> ExtentOffsets = new Comparator<ExtentRecord>() {
-        public int compare(ExtentRecord x, ExtentRecord y) {
-            if (x.OffsetInVolumeLba > y.OffsetInVolumeLba) {
-                return 1;
-            }
-
-            if (x.OffsetInVolumeLba < y.OffsetInVolumeLba) {
-                return -1;
-            }
-
-            return 0;
+    private static Comparator<ExtentRecord> ExtentOffsets = (x, y) -> {
+        if (x.OffsetInVolumeLba > y.OffsetInVolumeLba) {
+            return 1;
         }
+
+        if (x.OffsetInVolumeLba < y.OffsetInVolumeLba) {
+            return -1;
+        }
+
+        return 0;
     };
 
-    private static Comparator<ExtentRecord> ExtentInterleaveOrder = new Comparator<ExtentRecord>() {
-        public int compare(ExtentRecord x, ExtentRecord y) {
-            if (x.InterleaveOrder > y.InterleaveOrder) {
-                return 1;
-            }
-
-            if (x.InterleaveOrder < y.InterleaveOrder) {
-                return -1;
-            }
-
-            return 0;
+    private static Comparator<ExtentRecord> ExtentInterleaveOrder = (x, y) -> {
+        if (x.InterleaveOrder > y.InterleaveOrder) {
+            return 1;
         }
+
+        if (x.InterleaveOrder < y.InterleaveOrder) {
+            return -1;
+        }
+
+        return 0;
     };
 
     private static LogicalVolumeStatus worstOf(LogicalVolumeStatus x, LogicalVolumeStatus y) {
@@ -230,7 +225,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
     private SparseStream openComponent(ComponentRecord component) {
         if (component.MergeType == ExtentMergeType.Concatenated) {
             List<ExtentRecord> extents = new ArrayList<>(_database.getComponentExtents(component.Id));
-            Collections.sort(extents, ExtentOffsets);
+            extents.sort(ExtentOffsets);
             // Sanity Check...
             long pos = 0;
             for (ExtentRecord extent : extents) {
@@ -249,7 +244,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
         if (component.MergeType == ExtentMergeType.Interleaved) {
             List<ExtentRecord> extents = new ArrayList<>(_database.getComponentExtents(component.Id));
-            Collections.sort(extents, ExtentInterleaveOrder);
+            extents.sort(ExtentInterleaveOrder);
             List<SparseStream> streams = new ArrayList<>();
             for (ExtentRecord extent : extents) {
                 streams.add(openExtent(extent));

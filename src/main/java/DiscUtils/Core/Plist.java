@@ -131,28 +131,29 @@ public class Plist {
 
     private static Object parseNode(Node xmlNode) {
         String nodeName = xmlNode.getNodeName();
-        if (nodeName.equals("dict")) {
+        switch (nodeName) {
+        case "dict":
             return parseMap(xmlNode);
-        } else if (nodeName.equals("array")) {
+        case "array":
             return parseArray(xmlNode);
-        } else if (nodeName.equals("string")) {
+        case "string":
             return parseString(xmlNode);
-        } else if (nodeName.equals("data")) {
+        case "data":
             return parseData(xmlNode);
-        } else if (nodeName.equals("integer")) {
+        case "integer":
             return parseInteger(xmlNode);
-        } else if (nodeName.equals("true")) {
+        case "true":
             return true;
-        } else if (nodeName.equals("false")) {
+        case "false":
             return false;
-        } else {
+        default:
             throw new UnsupportedOperationException();
         }
     }
 
     private static Node createNode(Document xmlDoc, Object obj) {
         if (obj instanceof Map) {
-            return createMap(xmlDoc, Map.class.cast(obj));
+            return createMap(xmlDoc, (Map) obj);
         }
 
         if (obj instanceof String) {

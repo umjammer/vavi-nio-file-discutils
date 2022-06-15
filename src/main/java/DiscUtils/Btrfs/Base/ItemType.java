@@ -53,13 +53,13 @@ public enum ItemType {
     ChunkItem(0xe4),
     StringItem(0xfd);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private ItemType(int value) {
+    ItemType(int value) {
         this.value = value;
     }
 

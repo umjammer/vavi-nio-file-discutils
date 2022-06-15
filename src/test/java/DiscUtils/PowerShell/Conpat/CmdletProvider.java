@@ -49,7 +49,7 @@ public abstract class CmdletProvider implements IResourceSupplier {
     }
 
     public boolean getStopping() {
-        return null;
+        return false;
     }
 
     protected Object getDynamicParameters() {
@@ -64,71 +64,71 @@ public abstract class CmdletProvider implements IResourceSupplier {
         return null;
     }
 
-    public abstract String GetResourceString(String baseName, String resourceId);
+    public abstract String getResourceString(String baseName, String resourceId);
 
-    public boolean ShouldContinue(String query, String caption) {
+    public boolean shouldContinue(String query, String caption) {
         return false;
     }
 
-    public boolean ShouldContinue(String query, String caption, boolean[] yesToAll, boolean[] noToAll) {
+    public boolean shouldContinue(String query, String caption, boolean[] yesToAll, boolean[] noToAll) {
         return false;
     }
 
-    public boolean ShouldProcess(String target) {
+    public boolean shouldProcess(String target) {
         return false;
     }
 
-    public boolean ShouldProcess(String target, String action) {
+    public boolean shouldProcess(String target, String action) {
         return false;
     }
 
-    public boolean ShouldProcess(String verboseDescription, String verboseWarning, String caption) {
+    public boolean shouldProcess(String verboseDescription, String verboseWarning, String caption) {
         return false;
     }
 
-    public boolean ShouldProcess(String verboseDescription,
+    public boolean shouldProcess(String verboseDescription,
                                  String verboseWarning,
                                  String caption,
                                  ShouldProcessReason[] shouldProcessReason) {
         return false;
     }
 
-    public void ThrowTerminatingError(ErrorRecord errorRecord) {
+    public void throwTerminatingError(ErrorRecord errorRecord) {
     }
 
-    public boolean TransactionAvailable() {
+    public boolean transactionAvailable() {
         return false;
     }
 
-    public void WriteDebug(String text) {
+    public void writeDebug(String text) {
     }
 
-    public void WriteError(ErrorRecord errorRecord) {
+    public void writeError(ErrorRecord errorRecord) {
     }
 
-    public void WriteItemObject(Object item, String path, boolean isContainer) {
+    public void writeItemObject(Object item, String path, boolean isContainer) {
     }
 
-    public void WriteProgress(ProgressRecord progressRecord) {
+    public void writeProgress(ProgressRecord progressRecord) {
     }
 
-    public void WritePropertyObject(Object propertyValue, String path) {
+    public void writePropertyObject(Object propertyValue, String path) {
     }
 
-    public void WriteSecurityDescriptorObject(ObjectSecurity securityDescriptor, String path) {
+    public void writeSecurityDescriptorObject(ObjectSecurity securityDescriptor, String path) {
     }
 
-    public void WriteVerbose(String text) {
+    public void writeVerbose(String text) {
     }
 
     public void WriteWarning(String text) {
     }
 
-    protected abstract ProviderInfo Start(ProviderInfo providerInfo);
+    protected abstract ProviderInfo start(ProviderInfo providerInfo);
 
-    protected abstract Object StartDynamicParameters();
+    protected abstract Object startDynamicParameters();
 
-    protected abstract void Stop();
+    protected abstract void stop();
 
-    abstract void StopProcessing();
+    abstract void stopProcessing();
 }

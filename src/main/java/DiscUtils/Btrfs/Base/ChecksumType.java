@@ -23,5 +23,5 @@
 package DiscUtils.Btrfs.Base;
 
 public enum ChecksumType {
-    Crc32C;
+    Crc32C
 }

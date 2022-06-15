@@ -25,7 +25,7 @@ public class PSDriveInfo implements Comparable<PSDriveInfo> {
 
     }
 
-    public getPSCredential Credential() {
+    public PSCredential getCredential() {
         return null;
     }
 
@@ -40,7 +40,6 @@ public class PSDriveInfo implements Comparable<PSDriveInfo> {
     }
 
     public void setDescription(String v) {
-        ;
     }
 
     public String getDisplayRoot() {

@@ -24,7 +24,7 @@ package DiscUtils.OpticalDiscSharing;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Core.DiscFileSystem;
@@ -98,7 +98,7 @@ public final class Disc extends VirtualDisk {
      * Gets the layers that make up the disc.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Arrays.asList(_file);
+        return Collections.singletonList(_file);
     }
 
     /**

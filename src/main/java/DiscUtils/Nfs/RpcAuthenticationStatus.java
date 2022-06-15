@@ -28,5 +28,5 @@ public enum RpcAuthenticationStatus {
     RejectedCredentials,
     BadVerifier,
     RejectedVerifier,
-    TooWeak;
+    TooWeak
 }

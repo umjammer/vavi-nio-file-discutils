@@ -22,7 +22,6 @@
 
 package DiscUtils.Core.Partitions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +98,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
      *
      * @param sourceDisk The disk to clone.
      */
-    public BiosPartitionedDiskBuilder(VirtualDisk sourceDisk) throws IOException {
+    public BiosPartitionedDiskBuilder(VirtualDisk sourceDisk) {
         if (sourceDisk == null) {
             throw new IllegalArgumentException("sourceDisk");
         }

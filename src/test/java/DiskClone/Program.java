@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.cli.CommandLineParser;
-
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
 
@@ -25,7 +23,6 @@ import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
 import DiscUtils.Streams.StreamPump;
 import DiscUtils.Streams.Util.Ownership;
-import DiscUtils.Udf.Partition;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
@@ -201,9 +198,7 @@ public class Program extends ProgramBase {
                     if (!getQuiet()) {
                         System.err.println();
                         long now = System.currentTimeMillis();
-                        pump.ProgressEvent = (o, e) -> {
-                            showProgress(fileSpecs.get(i).getName(), totalBytes, now, o, e);
-                        };
+                        pump.ProgressEvent = (o, e) -> showProgress(fileSpecs.get(i).getName(), totalBytes, now, o, e);
                     }
 
                     pump.run();
@@ -233,7 +228,7 @@ public class Program extends ProgramBase {
 
     private static List<StreamExtent> bitmapToRanges(byte[] bitmap, int bytesPerCluster) {
         List<StreamExtent> result = new ArrayList<>();
-        long numClusters = bitmap.length * 8;
+        long numClusters = bitmap.length * 8L;
         long cluster = 0;
         while (cluster < numClusters && !isSet(bitmap, cluster)) {
             ++cluster;
@@ -274,12 +269,12 @@ public class Program extends ProgramBase {
             System.err.println("Inspecting Volumes...");
         }
 
-        for (int i = 0; i < sourceVolume.length; ++i) {
+        for (String s : sourceVolume) {
 
-            try (Volume vol = new Volume(sourceVolume[i], 0)) {
-                DiskClone.NativeMethods.DiskExtent[] sourceExtents = vol.getDiskExtents();
+            try (Volume vol = new Volume(s, 0)) {
+                NativeMethods.DiskExtent[] sourceExtents = vol.getDiskExtents();
                 if (sourceExtents.length > 1) {
-                    System.err.printf("Volume '%s' is made up of multiple extents, which is not supported\n", sourceVolume[i]);
+                    System.err.printf("Volume '%s' is made up of multiple extents, which is not supported\n", s);
                     System.exit(1);
                 }
 
@@ -290,7 +285,7 @@ public class Program extends ProgramBase {
                     System.exit(1);
                 }
 
-                String volPath = sourceVolume[i];
+                String volPath = s;
                 if (volPath.charAt(volPath.length() - 1) != '\\') {
                     volPath += "\\";
                 }
@@ -345,7 +340,7 @@ public class Program extends ProgramBase {
     }
 
     @FunctionalInterface
-    private static interface VssAsyncMethod {
+    private interface VssAsyncMethod {
         void invoke(IVssAsync[] result);
     }
 

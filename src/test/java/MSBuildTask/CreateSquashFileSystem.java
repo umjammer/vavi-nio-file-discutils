@@ -38,27 +38,27 @@ public class CreateSquashFileSystem implements Callable<Boolean> {
     /**
      * The name of the file to create, containing the filesystem image.
      */
-    private ITaskItem __FileName;
+    private ITaskItem fileName;
 
     public ITaskItem getFileName() {
-        return __FileName;
+        return fileName;
     }
 
     public void setFileName(ITaskItem value) {
-        __FileName = value;
+        fileName = value;
     }
 
     /**
      * The files to add to the filesystem image.
      */
-    private ITaskItem[] __SourceFiles;
+    private ITaskItem[] sourceFiles;
 
     public ITaskItem[] getSourceFiles() {
-        return __SourceFiles;
+        return sourceFiles;
     }
 
     public void setSourceFiles(ITaskItem[] value) {
-        __SourceFiles = value;
+        sourceFiles = value;
     }
 
     /**
@@ -68,14 +68,14 @@ public class CreateSquashFileSystem implements Callable<Boolean> {
      * C:\MyDir, the filesystem will contain \MySubDir\file.txt. If not
      * specified, the file would be named \MyDir\MySubDir\file.txt.
      */
-    private ITaskItem __RemoveRoot;
+    private ITaskItem removeRoot;
 
     public ITaskItem getRemoveRoot() {
-        return __RemoveRoot;
+        return removeRoot;
     }
 
     public void setRemoveRoot(ITaskItem value) {
-        __RemoveRoot = value;
+        removeRoot = value;
     }
 
     public Boolean call() {

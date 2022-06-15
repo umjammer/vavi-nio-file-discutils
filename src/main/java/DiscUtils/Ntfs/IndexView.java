@@ -22,6 +22,7 @@
 
 package DiscUtils.Ntfs;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,10 +118,10 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
 
     private static <T extends IByteArraySerializable> T convert(Class<T> clazz, byte[] data) {
         try {
-            T result = clazz.newInstance();
+            T result = clazz.getDeclaredConstructor().newInstance();
             result.readFrom(data, 0);
             return result;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -16,5 +16,5 @@ public enum LogicalVolumeStatus {
     /**
      * The volume is wholey, or partly, inaccessible.
      */
-    Failed;
+    Failed
 }

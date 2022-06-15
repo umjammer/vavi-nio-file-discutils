@@ -22,6 +22,7 @@
 
 package DiscUtils.Streams.Util;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
@@ -106,8 +107,8 @@ public class EndianUtilities {
     }
 
     public static long toUInt64LittleEndian(byte[] buffer, int offset) {
-        return ((toUInt32LittleEndian(buffer, offset + 4) & 0xffffffffl) << 32) |
-               (toUInt32LittleEndian(buffer, offset + 0) & 0xffffffffl);
+        return ((toUInt32LittleEndian(buffer, offset + 4) & 0xffffffffL) << 32) |
+               (toUInt32LittleEndian(buffer, offset + 0) & 0xffffffffL);
     }
 
     public static short toInt16LittleEndian(byte[] buffer, int offset) {
@@ -134,8 +135,8 @@ public class EndianUtilities {
     }
 
     public static long toUInt64BigEndian(byte[] buffer, int offset) {
-        return ((toUInt32BigEndian(buffer, offset + 0) & 0xffffffffl) << 32) |
-               (toUInt32BigEndian(buffer, offset + 4) & 0xffffffffl);
+        return ((toUInt32BigEndian(buffer, offset + 0) & 0xffffffffL) << 32) |
+               (toUInt32BigEndian(buffer, offset + 4) & 0xffffffffL);
     }
 
     public static short toInt16BigEndian(byte[] buffer, int offset) {
@@ -179,10 +180,10 @@ public class EndianUtilities {
 
     public static <T extends IByteArraySerializable> T toStruct(Class<T> c, byte[] buffer, int offset) {
         try {
-            T result = c.newInstance();
+            T result = c.getDeclaredConstructor().newInstance();
             result.readFrom(buffer, offset);
             return result;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

@@ -66,7 +66,7 @@ public class Program extends ProgramBase {
             System.err.println("File Info");
             System.err.println("---------");
             System.err.printf("           File Name: %s\n", fileInfo.toAbsolutePath());
-            System.err.printf("           File Size: %d (%d bytes)\n",
+            System.err.printf("           File Size: %s (%d bytes)\n",
                               DiscUtils.Common.Utilities.approximateDiskSize(Files.size(fileInfo)),
                               Files.size(fileInfo));
             System.err.printf("  File Creation Time: %s (UTC)\n",
@@ -75,12 +75,12 @@ public class Program extends ProgramBase {
             System.err.println();
             System.err.println("VHDX File Info");
             System.err.println("--------------");
-            System.err.printf("           Signature: %8x\n", info.getSignature());
-            System.err.printf("             Creator: %8x\n", info.getCreator());
+            System.err.printf("           Signature: %s\n", info.getSignature());
+            System.err.printf("             Creator: %s\n", info.getCreator());
             System.err.printf("          Block Size: %1$d (0x%1$8X)\n", info.getBlockSize());
-            System.err.printf("Leave Blocks Alloced: %d\n", info.leaveBlocksAllocated());
+            System.err.printf("Leave Blocks Alloced: %s\n", info.leaveBlocksAllocated());
             System.err.printf("          Has Parent: %s\n", info.hasParent());
-            System.err.printf("           Disk Size: %1$d (%2$d (0x%2$8X))\n",
+            System.err.printf("           Disk Size: %1$s (%2$d (0x%2$8X))\n",
                               DiscUtils.Common.Utilities.approximateDiskSize(info.getDiskSize()),
                               info.getDiskSize());
             System.err.printf(" Logical Sector Size: %1$d (0x%1$8X)\n", info.getLogicalSectorSize());

@@ -23,6 +23,7 @@
 package DiscUtils.Ext;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -82,7 +83,7 @@ public class FileBuffer extends Buffer {
                         if (_inode.DoubleIndirectBlock != 0) {
                             _context.getRawStream()
                                     .setPosition(_inode.DoubleIndirectBlock * (long) blockSize +
-                                                 logicalBlock / (blockSize / 4) * 4);
+                                                 logicalBlock / (blockSize / 4) * 4L);
                             byte[] indirectData = StreamUtilities.readExact(_context.getRawStream(), 4);
                             int indirectBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                             if (indirectBlock != 0) {
@@ -123,6 +124,6 @@ public class FileBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(Arrays.asList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
+        return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
     }
 }

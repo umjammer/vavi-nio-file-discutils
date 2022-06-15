@@ -50,7 +50,7 @@ public class ScsiReportLunsResponse extends ScsiResponse {
     }
 
     public void readFrom(byte[] buffer, int offset, int count) {
-        setLuns(new ArrayList<Long>());
+        setLuns(new ArrayList<>());
         if (count == 0) {
             return;
         }

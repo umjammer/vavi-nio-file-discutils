@@ -321,7 +321,7 @@ public final class ContentStream extends MappedStream {
                 case Zero:
                     break;
                 default:
-                    result.add(new StreamExtent(pos + i * _metadata.getFileParameters().BlockSize,
+                    result.add(new StreamExtent(pos + (long) i * _metadata.getFileParameters().BlockSize,
                                                 _metadata.getFileParameters().BlockSize));
                     break;
                 }

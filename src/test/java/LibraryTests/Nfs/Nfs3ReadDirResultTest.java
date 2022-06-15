@@ -24,7 +24,7 @@ package LibraryTests.Nfs;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +79,7 @@ public class Nfs3ReadDirResultTest {
         entry.setFileHandle(handle);
         entry.setFileId(2018);
         entry.setName("test.bin");
-        result.setDirEntries(Arrays.asList());
+        result.setDirEntries(Collections.emptyList());
 
         Nfs3ReadDirResult clone = null;
         try (MemoryStream stream = new MemoryStream()) {

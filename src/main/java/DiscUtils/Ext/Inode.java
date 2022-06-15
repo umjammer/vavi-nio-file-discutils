@@ -116,7 +116,7 @@ public class Inode implements IByteArraySerializable {
             FastSymlink = new byte[60];
             System.arraycopy(buffer, offset + 40, FastSymlink, 0, 60);
         } else if (Flags.contains(InodeFlags.ExtentsUsed)) {
-            Extents = EndianUtilities.<ExtentBlock> toStruct(ExtentBlock.class, buffer, offset + 40);
+            Extents = EndianUtilities.toStruct(ExtentBlock.class, buffer, offset + 40);
         } else {
             DirectBlocks = new int[12];
             for (int i = 0; i < 12; ++i) {

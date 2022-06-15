@@ -22,7 +22,7 @@
 
 package DiscUtils.Registry;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import DiscUtils.Streams.Util.EndianUtilities;
 
@@ -168,13 +168,13 @@ public final class RegistryValue {
         case String:
         case ExpandString:
         case Link:
-            return new String(data, Charset.forName("UTF-16LE")).replaceAll("(^\0*|\0*$)", "");
+            return new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
         case Dword:
             return EndianUtilities.toInt32LittleEndian(data, 0);
         case DwordBigEndian:
             return EndianUtilities.toInt32BigEndian(data, 0);
         case MultiString:
-            String multiString = new String(data, Charset.forName("UTF-16LE")).replaceAll("(^\0*|\0*$)", "");
+            String multiString = new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
             return multiString.split("\0");
         case QWord:
             return "" + EndianUtilities.toUInt64LittleEndian(data, 0);
@@ -193,7 +193,7 @@ public final class RegistryValue {
         case String:
         case ExpandString:
             String strValue = value.toString();
-            data = strValue.getBytes(Charset.forName("UTF-16LE"));
+            data = strValue.getBytes(StandardCharsets.UTF_16LE);
             break;
         case Dword:
             data = new byte[4];
@@ -205,7 +205,7 @@ public final class RegistryValue {
             break;
         case MultiString:
             String multiStrValue = String.join("\0", (String[]) value) + "\0";
-            data = multiStrValue.getBytes(Charset.forName("UTF-16LE"));
+            data = multiStrValue.getBytes(StandardCharsets.UTF_16LE);
             break;
         default:
             data = (byte[]) value;
@@ -227,9 +227,9 @@ public final class RegistryValue {
             return String.join(",", (String[]) convertToObject(getData(), getDataType()));
         default:
             byte[] data = getData();
-            String result = "";
+            StringBuilder result = new StringBuilder();
             for (int i = 0; i < Math.min(data.length, 8); ++i) {
-                result += String.format("%2x ", (int) data[i]);
+                result.append(String.format("%2x ", (int) data[i]));
             }
             return result + String.format(" (%d bytes)", data.length);
         }

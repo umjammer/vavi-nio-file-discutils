@@ -44,7 +44,7 @@ public enum FileAttributeFlags implements EnumSettable {
     Directory,
     IndexView;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -52,7 +52,7 @@ public enum FileAttributeFlags implements EnumSettable {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FileAttributeFlags> valueOf(int value) {
         return Arrays.stream(values())

@@ -24,7 +24,6 @@ package DiscUtils.Vhd;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -176,7 +175,7 @@ public class DynamicStream extends MappedStream {
                 if (offsetInSector != 0 || toRead < Sizes.Sector) {
                     byte mask = (byte) (1 << (7 - sectorInBlock % 8));
                     if ((_blockBitmaps[(int) block][sectorInBlock / 8] & mask) != 0) {
-                        long extentStart = (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
+                        long extentStart = (long) (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
                                            _blockBitmapSize + offsetInSector;
                         result.add(new StreamExtent(extentStart, toRead));
                     }
@@ -203,7 +202,7 @@ public class DynamicStream extends MappedStream {
                     toRead = numSectors * Sizes.Sector;
 
                     if (!readFromParent) {
-                        long extentStart = (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
+                        long extentStart = (long) (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
                                            _blockBitmapSize;
                         result.add(new StreamExtent(extentStart, toRead));
                     }
@@ -245,7 +244,7 @@ public class DynamicStream extends MappedStream {
                 if (offsetInSector != 0 || toRead < Sizes.Sector) {
                     byte mask = (byte) (1 << (7 - sectorInBlock % 8));
                     if ((_blockBitmaps[(int) block][sectorInBlock / 8] & mask) != 0) {
-                        _fileStream.setPosition((_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
+                        _fileStream.setPosition((long) (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
                                          _blockBitmapSize + offsetInSector);
                         StreamUtilities.readExact(_fileStream, buffer, offset + numRead, toRead);
                     } else {
@@ -274,7 +273,7 @@ public class DynamicStream extends MappedStream {
                         StreamUtilities.readExact(_parentStream, buffer, offset + numRead, toRead);
                     } else {
                         _fileStream
-                                .setPosition((_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + _blockBitmapSize);
+                                .setPosition((long) (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + _blockBitmapSize);
                         StreamUtilities.readExact(_fileStream, buffer, offset + numRead, toRead);
                     }
                     numRead += toRead;
@@ -341,7 +340,7 @@ public class DynamicStream extends MappedStream {
                 // Reduce the write to just the end of the current sector
                 toWrite = Math.min(count - numWritten, Sizes.Sector - offsetInSector);
                 byte sectorMask = (byte) (1 << (7 - sectorInBlock % 8));
-                long sectorStart = (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + _blockBitmapSize;
+                long sectorStart = (long) (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + _blockBitmapSize;
                 // Get the existing sector data (if any), or otherwise the parent's content
                 byte[] sectorBuffer;
                 if ((_blockBitmaps[(int) block][sectorInBlock / 8] & sectorMask) != 0) {
@@ -365,7 +364,7 @@ public class DynamicStream extends MappedStream {
             } else {
                 // Processing at least one whole sector, just write (after making sure to trim any partial sectors from the end)...
                 toWrite = toWrite / Sizes.Sector * Sizes.Sector;
-                _fileStream.setPosition((_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + _blockBitmapSize);
+                _fileStream.setPosition((long) (_blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + _blockBitmapSize);
                 _fileStream.write(buffer, offset + numWritten, toWrite);
                 for (int i = offset; i < offset + toWrite; i += Sizes.Sector) {
                     // Update all of the bits in the block bitmap
@@ -397,7 +396,7 @@ public class DynamicStream extends MappedStream {
 
         List<StreamExtent> parentExtents = _parentStream.getExtentsInRange(start, maxCount);
         List<StreamExtent> result = StreamExtent.union(layerExtents(start, maxCount), parentExtents);
-        result = StreamExtent.intersect(result, Arrays.asList(new StreamExtent(start, maxCount)));
+        result = StreamExtent.intersect(result, Collections.singletonList(new StreamExtent(start, maxCount)));
         return result;
     }
 

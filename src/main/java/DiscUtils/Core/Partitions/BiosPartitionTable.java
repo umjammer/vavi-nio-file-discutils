@@ -165,8 +165,7 @@ public final class BiosPartitionTable extends PartitionTable {
             }
 
             if (record.getLBALength() > 0) {
-                List<StreamExtent> thisPartitionExtents = Arrays
-                        .asList(new StreamExtent(record.getLBAStart(), record.getLBALength()));
+                List<StreamExtent> thisPartitionExtents = Collections.singletonList(new StreamExtent(record.getLBAStart(), record.getLBALength()));
 
                 // If the partition intersects another partition, this is
                 // probably an invalid partition table
@@ -610,8 +609,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private int findCylinderGap(int numCylinders) {
-        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(r -> r.isValid()).collect(Collectors.toList());
-        Collections.sort(list);
+        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(BiosPartitionRecord::isValid).sorted().collect(Collectors.toList());
 
         int startCylinder = 0;
         for (BiosPartitionRecord r : list) {
@@ -642,8 +640,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private long findGap(long numSectors, long alignmentSectors) {
-        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(r -> r.isValid()).collect(Collectors.toList());
-        Collections.sort(list);
+        List<BiosPartitionRecord> list = Arrays.stream(getPrimaryRecords()).filter(BiosPartitionRecord::isValid).sorted().collect(Collectors.toList());
         long startSector = MathUtilities.roundUp(_diskGeometry.toLogicalBlockAddress(0, 1, 1), alignmentSectors);
         int idx = 0;
         while (idx < list.size()) {

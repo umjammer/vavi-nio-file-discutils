@@ -202,7 +202,7 @@ public class RootItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setInode(EndianUtilities.<InodeItem> toStruct(InodeItem.class, buffer, offset));
+        setInode(EndianUtilities.toStruct(InodeItem.class, buffer, offset));
         setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 160));
         setRootDirId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 168));
         setByteNr(EndianUtilities.toUInt64LittleEndian(buffer, offset + 176));
@@ -211,7 +211,7 @@ public class RootItem extends BaseItem {
         setLastSnapshot(EndianUtilities.toUInt64LittleEndian(buffer, offset + 200));
         setFlags(EndianUtilities.toUInt64LittleEndian(buffer, offset + 208));
         setRefs(EndianUtilities.toUInt32LittleEndian(buffer, offset + 216));
-        setDropProgress(EndianUtilities.<Key> toStruct(Key.class, buffer, offset + 220));
+        setDropProgress(EndianUtilities.toStruct(Key.class, buffer, offset + 220));
         setDropLevel(buffer[offset + 237]);
         setLevel(buffer[offset + 238]);
         //The following fields depend on the subvol_uuids+subvol_times features

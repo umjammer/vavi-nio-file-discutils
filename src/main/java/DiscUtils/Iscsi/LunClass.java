@@ -88,13 +88,13 @@ public enum LunClass {
      */
     Unknown(0xFF);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private LunClass(int value) {
+    LunClass(int value) {
         this.value = value;
     }
 

@@ -47,7 +47,7 @@ enum VolumeInformationFlags {
     _dummy_4000,
     ModifiedByChkDsk;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -55,7 +55,7 @@ enum VolumeInformationFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<VolumeInformationFlags> valueOf(int value) {
         return Arrays.stream(values())

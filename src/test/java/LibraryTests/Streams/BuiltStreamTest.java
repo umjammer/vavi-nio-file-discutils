@@ -22,7 +22,7 @@
 
 package LibraryTests.Streams;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,7 @@ public class BuiltStreamTest {
     public void buildStreamLengthIsRespected() throws Exception {
         int length = 1024;
         BuilderSparseStreamExtent extent = new BuilderSparseStreamExtent(0, new ZeroStream(2 * length));
-        try (BuiltStream stream = new BuiltStream(length, Arrays.asList(extent))) {
+        try (BuiltStream stream = new BuiltStream(length, Collections.singletonList(extent))) {
             assertEquals(0, stream.getPosition());
             assertEquals(length, stream.getLength());
             byte[] content = new byte[2 * length];

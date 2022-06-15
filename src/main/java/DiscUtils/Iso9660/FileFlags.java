@@ -19,7 +19,7 @@ enum FileFlags {
     __dummyEnum__40,
     MultiExtent;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -27,7 +27,7 @@ enum FileFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FileFlags> valueOf(int value) {
         return Arrays.stream(values())

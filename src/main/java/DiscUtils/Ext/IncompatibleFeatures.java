@@ -70,7 +70,7 @@ public enum IncompatibleFeatures {
      */
     FlexBlockGroups;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -78,7 +78,7 @@ public enum IncompatibleFeatures {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<IncompatibleFeatures> valueOf(int value) {
         return Arrays.stream(values())

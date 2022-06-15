@@ -85,7 +85,7 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
     }
 
     public int compareTo(BTreeKey<?> other) {
-        return compareTo(other instanceof CatalogKey ? (CatalogKey) other : (CatalogKey) null);
+        return compareTo(other instanceof CatalogKey ? (CatalogKey) other : null);
     }
 
     public String toString() {

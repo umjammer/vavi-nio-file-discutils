@@ -105,7 +105,7 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof Nfs3ReadDirResult ? (Nfs3ReadDirResult) obj : (Nfs3ReadDirResult) null);
+        return equals(obj instanceof Nfs3ReadDirResult ? (Nfs3ReadDirResult) obj : null);
     }
 
     public boolean equals(Nfs3ReadDirResult other) {

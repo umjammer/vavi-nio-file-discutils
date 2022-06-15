@@ -41,7 +41,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
     }
 
     private List<MetadataInfo> getEntries() {
-        return _table.Entries.values().stream().map(v -> new MetadataInfo(v)).collect(Collectors.toList());
+        return _table.Entries.values().stream().map(MetadataInfo::new).collect(Collectors.toList());
     }
 
     /**

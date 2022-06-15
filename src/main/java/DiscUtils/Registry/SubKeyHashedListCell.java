@@ -93,7 +93,7 @@ public final class SubKeyHashedListCell extends ListCell {
      */
     public int add(String name, int cellIndex) {
         for (int i = 0; i < _numElements; ++i) {
-            KeyNodeCell cell = _hive.<KeyNodeCell> getCell(_subKeyIndexes.get(i));
+            KeyNodeCell cell = _hive.getCell(_subKeyIndexes.get(i));
             if (cell.Name.compareTo(name) > 0) {
                 _subKeyIndexes.add(i, cellIndex);
                 _nameHashes.add(i, calcHash(name));
@@ -132,15 +132,15 @@ public final class SubKeyHashedListCell extends ListCell {
     }
 
     void enumerateKeys(List<String> names) {
-        for (int i = 0; i < _subKeyIndexes.size(); ++i) {
-            names.add(_hive.<KeyNodeCell> getCell(_subKeyIndexes.get(i)).Name);
+        for (Integer subKeyIndex : _subKeyIndexes) {
+            names.add(_hive.<KeyNodeCell>getCell(subKeyIndex).Name);
         }
     }
 
     List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
-        for (int i = 0; i < _subKeyIndexes.size(); ++i) {
-            result.add(_hive.<KeyNodeCell> getCell(_subKeyIndexes.get(i)));
+        for (Integer subKeyIndex : _subKeyIndexes) {
+            result.add(_hive.getCell(subKeyIndex));
         }
         return result;
     }
@@ -170,8 +170,8 @@ public final class SubKeyHashedListCell extends ListCell {
      */
     public int indexOf(String name) {
         for (int index : find(name, 0)) {
-            KeyNodeCell cell = _hive.<KeyNodeCell> getCell(_subKeyIndexes.get(index));
-            if (cell.Name.toUpperCase().equals(name.toUpperCase())) {
+            KeyNodeCell cell = _hive.getCell(_subKeyIndexes.get(index));
+            if (cell.Name.equalsIgnoreCase(name)) {
                 return index;
             }
         }
@@ -204,13 +204,13 @@ public final class SubKeyHashedListCell extends ListCell {
      * @param cellIndex {@cs out}
      */
     private int findKeyAt(String name, int listIndex, int[] cellIndex) {
-        Cell cell = _hive.<Cell> getCell(_subKeyIndexes.get(listIndex));
+        Cell cell = _hive.getCell(_subKeyIndexes.get(listIndex));
         if (cell == null) {
             cellIndex[0] = 0;
             return -1;
         }
 
-        ListCell listCell = cell instanceof ListCell ? (ListCell) cell : (ListCell) null;
+        ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
         if (listCell != null) {
             return listCell.findKey(name, cellIndex);
         }

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Streams.Util.Ownership;
 import dotnet4j.io.MemoryStream;
@@ -58,7 +58,7 @@ public class VirtualDiskTest {
         assertEquals(512, readMbr.length);
         for (int i = 0; i < 512; i++) {
             if (readMbr[i] != (byte) i) {
-                assertTrue(false, String.format("Mismatch on byte %d, expected %2x was %2x", i, (byte) i, readMbr[i]));
+                fail(String.format("Mismatch on byte %d, expected %2x was %2x", i, (byte) i, readMbr[i]));
             }
         }
     }
@@ -68,9 +68,7 @@ public class VirtualDiskTest {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         DiscUtils.Core.Raw.Disk rawDisk = new DiscUtils.Core.Raw.Disk(ms, Ownership.Dispose);
-        assertThrows(NullPointerException.class, () -> {
-            rawDisk.setMasterBootRecord(null);
-        });
+        assertThrows(NullPointerException.class, () -> rawDisk.setMasterBootRecord(null));
     }
 
     @Test
@@ -78,8 +76,6 @@ public class VirtualDiskTest {
         MemoryStream ms = new MemoryStream();
         ms.setLength(1024 * 1024);
         DiscUtils.Core.Raw.Disk rawDisk = new DiscUtils.Core.Raw.Disk(ms, Ownership.Dispose);
-        assertThrows(IllegalArgumentException.class, () -> {
-            rawDisk.setMasterBootRecord(new byte[511]);
-        });
+        assertThrows(IllegalArgumentException.class, () -> rawDisk.setMasterBootRecord(new byte[511]));
     }
 }

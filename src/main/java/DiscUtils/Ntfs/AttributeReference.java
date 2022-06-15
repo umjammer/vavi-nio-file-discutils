@@ -97,7 +97,7 @@ public class AttributeReference implements Comparable<AttributeReference> {
      */
     public boolean equals(Object obj) {
         AttributeReference objAsAttrRef = obj instanceof AttributeReference ? (AttributeReference) obj
-                                                                            : (AttributeReference) null;
+                                                                            : null;
         if (objAsAttrRef == null) {
             return false;
         }

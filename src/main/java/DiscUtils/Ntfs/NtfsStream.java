@@ -23,6 +23,7 @@
 package DiscUtils.Ntfs;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,10 +71,10 @@ public class NtfsStream {
         try (Stream s = open(FileAccess.Read)) {
             buffer = StreamUtilities.readExact(s, (int) s.getLength());
 
-            T value = contentType.newInstance();
+            T value = contentType.getDeclaredConstructor().newInstance();
             value.readFrom(buffer, 0);
             return value;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

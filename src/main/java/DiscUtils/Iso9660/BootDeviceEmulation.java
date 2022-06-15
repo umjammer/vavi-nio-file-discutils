@@ -45,5 +45,5 @@ public enum BootDeviceEmulation {
     /**
      * Emulates hard disk image as drive C.
      */
-    HardDisk;
+    HardDisk
 }

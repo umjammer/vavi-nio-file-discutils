@@ -50,9 +50,7 @@ public class MoveToFront {
     public byte getAndMove(int pos) {
         byte val = _buffer[pos];
 
-        for (int i = pos; i > 0; --i) {
-            _buffer[i] = _buffer[i - 1];
-        }
+        System.arraycopy(_buffer, 0, _buffer, 1, pos);
 
         _buffer[0] = val;
         return val;

@@ -128,8 +128,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 return 1;
             }
 
-            long xHash = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffl;
-            long yHash = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffl;
+            long xHash = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffL;
+            long yHash = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffL;
 
             if (xHash < yHash) {
                 return -1;
@@ -138,17 +138,11 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 return 1;
             }
 
-            long xId = EndianUtilities.toUInt32LittleEndian(x, 4) & 0xffffffffl;
-            long yId = EndianUtilities.toUInt32LittleEndian(y, 4) & 0xffffffffl;
+            long xId = EndianUtilities.toUInt32LittleEndian(x, 4) & 0xffffffffL;
+            long yId = EndianUtilities.toUInt32LittleEndian(y, 4) & 0xffffffffL;
 
-            if (xId < yId) {
-                return -1;
-            }
-            if (xId > yId) {
-                return 1;
-            }
+            return Long.compare(xId, yId);
 
-            return 0;
         }
     }
 
@@ -164,17 +158,11 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 return 1;
             }
 
-            long xVal = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffl;
-            long yVal = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffl;
+            long xVal = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffL;
+            long yVal = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffL;
 
-            if (xVal < yVal) {
-                return -1;
-            }
-            if (xVal > yVal) {
-                return 1;
-            }
+            return Long.compare(xVal, yVal);
 
-            return 0;
         }
     }
 
@@ -191,8 +179,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             }
 
             for (int i = 0; i < x.length / 4; ++i) {
-                long xVal = EndianUtilities.toUInt32LittleEndian(x, i * 4) & 0xffffffffl;
-                long yVal = EndianUtilities.toUInt32LittleEndian(y, i * 4) & 0xffffffffl;
+                long xVal = EndianUtilities.toUInt32LittleEndian(x, i * 4) & 0xffffffffL;
+                long yVal = EndianUtilities.toUInt32LittleEndian(y, i * 4) & 0xffffffffL;
 
                 if (xVal < yVal) {
                     return -1;
@@ -251,14 +239,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 }
             }
 
-            if (x.length < y.length) {
-                return -1;
-            }
-            if (x.length > y.length) {
-                return 1;
-            }
+            return Integer.compare(x.length, y.length);
 
-            return 0;
         }
     }
 }

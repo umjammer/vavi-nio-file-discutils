@@ -268,10 +268,10 @@ public class InodeItem extends BaseItem {
         setRDev(EndianUtilities.toUInt64LittleEndian(buffer, offset + 56));
         setFlags(InodeFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 64)));
         setSequence(EndianUtilities.toUInt64LittleEndian(buffer, offset + 72));
-        setATime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 112));
-        setCTime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 124));
-        setMTime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 136));
-        setOTime(EndianUtilities.<TimeSpec> toStruct(TimeSpec.class, buffer, offset + 148));
+        setATime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 112));
+        setCTime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 124));
+        setMTime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 136));
+        setOTime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 148));
         return size();
     }
 }

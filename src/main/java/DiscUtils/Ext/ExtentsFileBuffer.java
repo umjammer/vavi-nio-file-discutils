@@ -23,6 +23,7 @@
 package DiscUtils.Ext;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.StreamExtent;
@@ -99,7 +100,7 @@ public class ExtentsFileBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(Arrays.asList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
+        return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
     }
 
     private Extent findExtent(ExtentBlock node, int logicalBlock) {
@@ -159,7 +160,7 @@ public class ExtentsFileBuffer extends Buffer {
         int blockSize = _context.getSuperBlock().getBlockSize();
         _context.getRawStream().setPosition(idxEntry.getLeafPhysicalBlock() * blockSize);
         byte[] buffer = StreamUtilities.readExact(_context.getRawStream(), blockSize);
-        ExtentBlock subBlock = EndianUtilities.<ExtentBlock> toStruct(ExtentBlock.class, buffer, 0);
+        ExtentBlock subBlock = EndianUtilities.toStruct(ExtentBlock.class, buffer, 0);
         return subBlock;
     }
 }

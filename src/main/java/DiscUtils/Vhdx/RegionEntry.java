@@ -42,7 +42,7 @@ public final class RegionEntry implements IByteArraySerializable {
     private int length;
 
     public long getLength() {
-        return length & 0xffffffffl;
+        return length & 0xffffffffL;
     }
 
     public void setLength(int value) {

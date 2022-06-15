@@ -22,7 +22,7 @@
 
 package DiscUtils.Vhdx;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -71,8 +71,8 @@ class ParentLocator implements IByteArraySerializable {
             int keyLength = EndianUtilities.toUInt16LittleEndian(buffer, kvOffset + 8);
             int valueLength = EndianUtilities.toUInt16LittleEndian(buffer, kvOffset + 10);
 
-            String key = new String(buffer, keyOffset, keyLength, Charset.forName("UTF-16LE"));
-            String value = new String(buffer, valueOffset, valueLength, Charset.forName("UTF-16LE"));
+            String key = new String(buffer, keyOffset, keyLength, StandardCharsets.UTF_16LE);
+            String value = new String(buffer, valueOffset, valueLength, StandardCharsets.UTF_16LE);
 
             entries.put(key, value);
         }

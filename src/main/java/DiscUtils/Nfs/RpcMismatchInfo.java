@@ -42,7 +42,7 @@ public class RpcMismatchInfo {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof RpcMismatchInfo ? (RpcMismatchInfo) obj : (RpcMismatchInfo) null);
+        return equals(obj instanceof RpcMismatchInfo ? (RpcMismatchInfo) obj : null);
     }
 
     public boolean equals(RpcMismatchInfo other) {

@@ -49,7 +49,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
 
     public String getString(UUID obj, int element) {
         Object r = getValue(obj, element);
-        return r instanceof String ? (String) r : (String) null;
+        return r instanceof String ? (String) r : null;
     }
 
     public void setString(UUID obj, int element, String value) {
@@ -58,7 +58,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
 
     public byte[] getBinary(UUID obj, int element) {
         Object r = getValue(obj, element);
-        return r instanceof byte[] ? (byte[]) r : (byte[]) null;
+        return r instanceof byte[] ? (byte[]) r : null;
     }
 
     public void setBinary(UUID obj, int element, byte[] value) {
@@ -67,7 +67,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
 
     public String[] getMultiString(UUID obj, int element) {
         Object r = getValue(obj, element);
-        return r instanceof String[] ? (String[]) r : (String[]) null;
+        return r instanceof String[] ? (String[]) r : null;
     }
 
     public void setMultiString(UUID obj, int element, String[] values) {

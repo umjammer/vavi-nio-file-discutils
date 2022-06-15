@@ -231,10 +231,10 @@ public final class StreamPump {
     private void runSparse() {
         SparseStream inStream;
         Stream stream =  getInputStream();
-        if (!SparseStream.class.isInstance(stream)) {
+        if (!(stream instanceof SparseStream)) {
             inStream = SparseStream.fromStream(stream, Ownership.None);
         } else {
-            inStream = SparseStream.class.cast(stream);
+            inStream = (SparseStream) stream;
         }
 
         if (getBufferSize() > getSparseChunkSize() && getBufferSize() % getSparseChunkSize() != 0) {

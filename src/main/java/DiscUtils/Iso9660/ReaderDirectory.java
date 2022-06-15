@@ -37,7 +37,7 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
         super(context, dirEntry);
         byte[] buffer = new byte[IsoUtilities.SectorSize];
         Stream extent = new ExtentStream(_context
-                .getDataStream(), dirEntry.getRecord().LocationOfExtent, 0xffff_ffffl, (byte) 0, (byte) 0);
+                .getDataStream(), dirEntry.getRecord().LocationOfExtent, 0xffff_ffffL, (byte) 0, (byte) 0);
 
         _records = new ArrayList<>();
 

@@ -23,7 +23,7 @@
 package DiscUtils.Nfs;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.SparseStream;
@@ -63,7 +63,7 @@ public final class Nfs3FileStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return Arrays.asList(new StreamExtent(0, getLength()));
+        return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 
     public long getLength() {

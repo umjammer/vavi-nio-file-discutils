@@ -74,6 +74,6 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
             start = end;
         }
 
-        return List.class.cast(_records);
+        return (List) _records;
     }
 }

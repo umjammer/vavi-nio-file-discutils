@@ -14,7 +14,7 @@ enum FileCharacteristic {
     Parent,
     Metadata;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -22,7 +22,7 @@ enum FileCharacteristic {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FileCharacteristic> valueOf(int value) {
         return Arrays.stream(values())

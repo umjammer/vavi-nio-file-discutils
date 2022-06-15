@@ -22,7 +22,7 @@
 
 package DiscUtils.Registry;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -53,7 +53,7 @@ public final class RegistryKey {
      */
     public String getClassName() {
         if (_cell.ClassNameIndex > 0) {
-            return new String(_hive.rawCellData(_cell.ClassNameIndex, _cell.ClassNameLength), Charset.forName("UTF-16LE"));
+            return new String(_hive.rawCellData(_cell.ClassNameIndex, _cell.ClassNameLength), StandardCharsets.UTF_16LE);
         }
 
         return null;
@@ -245,7 +245,7 @@ public final class RegistryKey {
         if (regVal != null) {
             if (regVal.getDataType() == RegistryValueType.ExpandString &&
                 options != RegistryValueOptions.DoNotExpandEnvironmentNames) {
-                return Utilities.expandEnvironmentVariables(String.class.cast(regVal.getValue()));
+                return Utilities.expandEnvironmentVariables((String) regVal.getValue());
             }
 
             return regVal.getValue();
@@ -580,7 +580,7 @@ public final class RegistryKey {
     private int findSubKeyCell(String name) {
         if (_cell.NumSubKeys != 0) {
             ListCell listCell = _hive.getCell(_cell.SubKeysIndex);
-            int cellIndex[] = new int[1];
+            int[] cellIndex = new int[1];
             if (listCell.findKey(name, cellIndex) == 0) {
                 return cellIndex[0];
             }
@@ -662,7 +662,7 @@ public final class RegistryKey {
 
         Cell list = _hive.getCell(subkeyCell.SubKeysIndex);
         if (list instanceof SubKeyIndirectListCell) {
-            SubKeyIndirectListCell indirectList = SubKeyIndirectListCell.class.cast(list);
+            SubKeyIndirectListCell indirectList = (SubKeyIndirectListCell) list;
             // foreach (int listIndex in indirectList.CellIndexes)
             for (int i = 0; i < indirectList.getCellIndexes().size(); ++i) {
                 int listIndex = indirectList.getCellIndexes().get(i);

@@ -97,8 +97,8 @@ class IndexNode {
 
     private long getSpaceFree() {
         long entriesTotal = 0;
-        for (int i = 0; i < _entries.size(); ++i) {
-            entriesTotal += _entries.get(i).getSize();
+        for (IndexEntry entry : _entries) {
+            entriesTotal += entry.getSize();
         }
         int firstEntryOffset = MathUtilities.roundUp(IndexHeader.Size + _storageOverhead, 8);
         return _totalSpaceAvailable - (entriesTotal + firstEntryOffset);

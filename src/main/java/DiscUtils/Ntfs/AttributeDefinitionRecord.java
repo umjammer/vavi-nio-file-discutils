@@ -22,7 +22,7 @@
 
 package DiscUtils.Ntfs;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
 import DiscUtils.Streams.Util.EndianUtilities;
@@ -46,7 +46,7 @@ public final class AttributeDefinitionRecord {
     public AttributeType type = AttributeType.None;
 
     public void read(byte[] buffer, int offset) {
-        name = new String(buffer, offset + 0, 128, Charset.forName("UTF-16LE")).replaceFirst("^\0*", "")
+        name = new String(buffer, offset + 0, 128, StandardCharsets.UTF_16LE).replaceFirst("^\0*", "")
                 .replaceFirst("\0*$", "");
         type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x80));
         displayRule = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x84);
@@ -57,7 +57,7 @@ public final class AttributeDefinitionRecord {
     }
 
     public void write(byte[] buffer, int offset) {
-        byte[] bytes = name.getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = name.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 0, bytes.length);
         EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset + 0x80);
         EndianUtilities.writeBytesLittleEndian(displayRule, buffer, offset + 0x84);

@@ -25,7 +25,6 @@ package DiscUtils.Iso9660;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +62,7 @@ class PathTable extends BuilderExtent {
         _readCache = new byte[(int) getLength()];
         int pos = 0;
         List<BuildDirectoryInfo> sortedList = new ArrayList<>(_dirs);
-        Collections.sort(sortedList, BuildDirectoryInfo.PathTableSortComparison);
+        sortedList.sort(BuildDirectoryInfo.PathTableSortComparison);
         Map<BuildDirectoryInfo, Short> dirNumbers = new HashMap<>(_dirs.size());
         short i = 1;
         for (BuildDirectoryInfo di : sortedList) {

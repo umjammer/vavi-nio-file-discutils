@@ -35,13 +35,13 @@ public enum HostedSparseExtentFlags {
     CompressedGrains(0x00010000),
     MarkersInUse(0x00020000);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private HostedSparseExtentFlags(int value) {
+    HostedSparseExtentFlags(int value) {
         this.value = value;
     }
 
@@ -53,7 +53,7 @@ public enum HostedSparseExtentFlags {
     // TODO
     public Function<Integer, Boolean> function() {
         return v -> (v & supplier().get()) != 0;
-    };
+    }
 
     public static EnumSet<HostedSparseExtentFlags> valueOf(int value) {
         return Arrays.stream(values())

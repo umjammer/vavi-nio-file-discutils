@@ -73,13 +73,13 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
         }
 
         long redundantGrainDirStart = Math.max(descriptorStart, 1) + MathUtilities.ceil(descriptorLength, Sizes.Sector);
-        long redundantGrainDirLength = numGrainTables * 4;
+        long redundantGrainDirLength = numGrainTables * 4L;
         long redundantGrainTablesStart = redundantGrainDirStart + MathUtilities.ceil(redundantGrainDirLength, Sizes.Sector);
-        long redundantGrainTablesLength = numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
+        long redundantGrainTablesLength = (long) numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
         long grainDirStart = redundantGrainTablesStart + MathUtilities.ceil(redundantGrainTablesLength, Sizes.Sector);
-        long grainDirLength = numGrainTables * 4;
+        long grainDirLength = numGrainTables * 4L;
         long grainTablesStart = grainDirStart + MathUtilities.ceil(grainDirLength, Sizes.Sector);
-        long grainTablesLength = numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
+        long grainTablesLength = (long) numGrainTables * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector);
         long dataStart = MathUtilities.roundUp(grainTablesStart + MathUtilities.ceil(grainTablesLength, Sizes.Sector),
                                                grainSize);
         // Generate the header, and write it
@@ -182,7 +182,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
                 long dataStart,
                 int gtesPerGt,
                 long grainSize) {
-            super(start, gtesPerGt * 4);
+            super(start, gtesPerGt * 4L);
             _content = content;
             _grainSize = grainSize;
             _gtesPerGt = gtesPerGt;

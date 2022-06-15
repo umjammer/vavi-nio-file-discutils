@@ -55,7 +55,7 @@ enum ReadOnlyCompatibleFeatures {
 
     public static final EnumSet<ReadOnlyCompatibleFeatures> ALL = EnumSet.of(FINOBT, RMAPBT, REFLINK);
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -63,7 +63,7 @@ enum ReadOnlyCompatibleFeatures {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<ReadOnlyCompatibleFeatures> valueOf(int value) {
         return Arrays.stream(values())

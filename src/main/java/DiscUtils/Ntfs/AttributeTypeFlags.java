@@ -18,7 +18,7 @@ enum AttributeTypeFlags {
     MustBeResident,
     CanBeNonResident;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -26,7 +26,7 @@ enum AttributeTypeFlags {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<AttributeTypeFlags> valueOf(int value) {
         return Arrays.stream(values())

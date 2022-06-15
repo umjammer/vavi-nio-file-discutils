@@ -23,7 +23,7 @@
 package DiscUtils.Iso9660;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -231,7 +231,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
     public long getBootImageStart() {
         BootInitialEntry initialEntry = getBootInitialEntry();
         if (initialEntry != null) {
-            return initialEntry.ImageStart * IsoUtilities.SectorSize;
+            return (long) initialEntry.ImageStart * IsoUtilities.SectorSize;
         }
 
         return 0;
@@ -321,8 +321,8 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             throw new UnsupportedOperationException("Non-contiguous extents not supported");
         }
 
-        return Arrays.asList(new Range(entry.getRecord().LocationOfExtent,
-                                       MathUtilities.ceil(entry.getRecord().DataLength, IsoUtilities.SectorSize)));
+        return Collections.singletonList(new Range(entry.getRecord().LocationOfExtent,
+                MathUtilities.ceil(entry.getRecord().DataLength, IsoUtilities.SectorSize)));
     }
 
     public List<StreamExtent> pathToExtents(String path) {
@@ -335,8 +335,8 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             throw new UnsupportedOperationException("Non-contiguous extents not supported");
         }
 
-        return Arrays.asList(new StreamExtent(entry.getRecord().LocationOfExtent * IsoUtilities.SectorSize,
-                                              entry.getRecord().DataLength));
+        return Collections.singletonList(new StreamExtent((long) entry.getRecord().LocationOfExtent * IsoUtilities.SectorSize,
+                entry.getRecord().DataLength));
     }
 
     public ClusterMap buildClusterMap() {
@@ -362,17 +362,17 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 newPaths[paths.length] = path;
                 fileIdToPaths.put(entry.getUniqueCacheId(), newPaths);
             }
-            if (ReaderDirEntry.class.cast(entry).getRecord().FileUnitSize != 0 ||
-                ReaderDirEntry.class.cast(entry).getRecord().InterleaveGapSize != 0) {
+            if (((ReaderDirEntry) entry).getRecord().FileUnitSize != 0 ||
+                ((ReaderDirEntry) entry).getRecord().InterleaveGapSize != 0) {
                 throw new UnsupportedOperationException("Non-contiguous extents not supported");
             }
 
-            long clusters = MathUtilities.ceil(ReaderDirEntry.class.cast(entry).getRecord().DataLength,
+            long clusters = MathUtilities.ceil(((ReaderDirEntry) entry).getRecord().DataLength,
                                                IsoUtilities.SectorSize);
             for (long i = 0; i < clusters; ++i) {
-                clusterToRole[(int) i + ReaderDirEntry.class.cast(entry).getRecord().LocationOfExtent] = EnumSet
+                clusterToRole[(int) i + ((ReaderDirEntry) entry).getRecord().LocationOfExtent] = EnumSet
                         .of(ClusterRoles.DataFile);
-                clusterToFileId[(int) i + ReaderDirEntry.class.cast(entry).getRecord().LocationOfExtent] = entry
+                clusterToFileId[(int) i + ((ReaderDirEntry) entry).getRecord().LocationOfExtent] = entry
                         .getUniqueCacheId();
             }
         });
@@ -388,8 +388,8 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         BootInitialEntry initialEntry = getBootInitialEntry();
         if (initialEntry != null) {
             return new SubStream(_data,
-                                 initialEntry.ImageStart * IsoUtilities.SectorSize,
-                                 initialEntry.getSectorCount() * Sizes.Sector);
+                    (long) initialEntry.ImageStart * IsoUtilities.SectorSize,
+                    (long) initialEntry.getSectorCount() * Sizes.Sector);
         }
 
         throw new UnsupportedOperationException("No valid boot image");
@@ -418,7 +418,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         // Stage 1 - SUSP present?
         List<SuspExtension> extensions = new ArrayList<>();
         if (!SuspRecords.detectSharingProtocol(rootSelfRecord.SystemUseData, 0)) {
-            context.setSuspExtensions(new ArrayList<SuspExtension>());
+            context.setSuspExtensions(new ArrayList<>());
             context.setSuspDetected(false);
             return;
         }
@@ -432,13 +432,13 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         List<SystemUseEntry> extensionEntries = suspRecords.getEntries(null, "ER");
         if (extensionEntries != null) {
             for (SystemUseEntry extension : extensionEntries) {
-                String __dummyScrutVar2 = ExtensionSystemUseEntry.class.cast(extension).ExtensionIdentifier;
+                String __dummyScrutVar2 = ((ExtensionSystemUseEntry) extension).ExtensionIdentifier;
                 if (__dummyScrutVar2.equals("RRIP_1991A") || __dummyScrutVar2.equals("IEEE_P1282") ||
                     __dummyScrutVar2.equals("IEEE_1282")) {
-                    extensions.add(new RockRidgeExtension(ExtensionSystemUseEntry.class.cast(extension).ExtensionIdentifier));
-                    context.setRockRidgeIdentifier(ExtensionSystemUseEntry.class.cast(extension).ExtensionIdentifier);
+                    extensions.add(new RockRidgeExtension(((ExtensionSystemUseEntry) extension).ExtensionIdentifier));
+                    context.setRockRidgeIdentifier(((ExtensionSystemUseEntry) extension).ExtensionIdentifier);
                 } else {
-                    extensions.add(new GenericSuspExtension(ExtensionSystemUseEntry.class.cast(extension).ExtensionIdentifier));
+                    extensions.add(new GenericSuspExtension(((ExtensionSystemUseEntry) extension).ExtensionIdentifier));
                 }
             }
         } else if (suspRecords.getEntries(null, "RR") != null) {
@@ -455,7 +455,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
     private static DirectoryRecord readRootSelfRecord(IsoContext context) {
         context.getDataStream()
-                .setPosition(context.getVolumeDescriptor().RootDirectory.LocationOfExtent *
+                .setPosition((long) context.getVolumeDescriptor().RootDirectory.LocationOfExtent *
                              context.getVolumeDescriptor().getLogicalBlockSize());
         byte[] firstSector = StreamUtilities.readExact(context.getDataStream(),
                                                        context.getVolumeDescriptor().getLogicalBlockSize());
@@ -480,7 +480,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
     private byte[] getBootCatalog() {
         if (_bootCatalog == null && _bootVolDesc != null) {
-            _data.setPosition(_bootVolDesc.getCatalogSector() * IsoUtilities.SectorSize);
+            _data.setPosition((long) _bootVolDesc.getCatalogSector() * IsoUtilities.SectorSize);
             _bootCatalog = StreamUtilities.readExact(_data, IsoUtilities.SectorSize);
         }
 

@@ -48,15 +48,15 @@ public class IntegerListElementValue extends ElementValue {
             return "<none>";
         }
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < _values.length; ++i) {
             if (i != 0) {
-                result += " ";
+                result.append(" ");
             }
 
-            result += String.format("%16x", _values[i]);
+            result.append(String.format("%16x", _values[i]));
         }
-        return result;
+        return result.toString();
     }
 
     public byte[] getBytes() {

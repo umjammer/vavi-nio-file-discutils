@@ -100,13 +100,13 @@ public enum ReservedObjectId {
      */
     FirstChunkTree(256);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private ReservedObjectId(int value) {
+    ReservedObjectId(int value) {
         this.value = value;
     }
 

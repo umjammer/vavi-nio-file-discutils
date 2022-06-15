@@ -44,66 +44,66 @@ public class CreateIso implements Callable {
     /**
      * The name of the ISO file to create.
      */
-    private ITaskItem __FileName;
+    private ITaskItem fileName;
 
     public ITaskItem getFileName() {
-        return __FileName;
+        return fileName;
     }
 
     public void setFileName(ITaskItem value) {
-        __FileName = value;
+        fileName = value;
     }
 
     /**
      * Whether to use Joliet encoding for the ISO (default true).
      */
-    private boolean __UseJoliet;
+    private boolean useJoliet;
 
     public boolean getUseJoliet() {
-        return __UseJoliet;
+        return useJoliet;
     }
 
     public void setUseJoliet(boolean value) {
-        __UseJoliet = value;
+        useJoliet = value;
     }
 
     /**
      * The label for the ISO (may be truncated if too long)
      */
-    private String __VolumeLabel;
+    private String volumeLabel;
 
     public String getVolumeLabel() {
-        return __VolumeLabel;
+        return volumeLabel;
     }
 
     public void setVolumeLabel(String value) {
-        __VolumeLabel = value;
+        volumeLabel = value;
     }
 
     /**
      * The files to add to the ISO.
      */
-    private ITaskItem[] __SourceFiles;
+    private ITaskItem[] sourceFiles;
 
     public ITaskItem[] getSourceFiles() {
-        return __SourceFiles;
+        return sourceFiles;
     }
 
     public void setSourceFiles(ITaskItem[] value) {
-        __SourceFiles = value;
+        sourceFiles = value;
     }
 
     /**
      * The boot image to add to the ISO.
      */
-    private ITaskItem __BootImage;
+    private ITaskItem bootImage;
 
     public ITaskItem getBootImage() {
-        return __BootImage;
+        return bootImage;
     }
 
     public void setBootImage(ITaskItem value) {
-        __BootImage = value;
+        bootImage = value;
     }
 
     /**
@@ -111,14 +111,14 @@ public class CreateIso implements Callable {
      *
      * Unless patched, ISOLINUX will indicate a checksum error upon boot.
      */
-    private boolean __UpdateIsolinuxBootTable;
+    private boolean updateIsolinuxBootTable;
 
     public boolean getUpdateIsolinuxBootTable() {
-        return __UpdateIsolinuxBootTable;
+        return updateIsolinuxBootTable;
     }
 
     public void setUpdateIsolinuxBootTable(boolean value) {
-        __UpdateIsolinuxBootTable = value;
+        updateIsolinuxBootTable = value;
     }
 
     /**
@@ -127,14 +127,14 @@ public class CreateIso implements Callable {
     * If the source file is C:\MyDir\MySubDir\file.txt, and RemoveRoot is C:\MyDir, the ISO will
     * contain \MySubDir\file.txt.  If not specified, the file would be named \MyDir\MySubDir\file.txt.
     */
-    private ITaskItem[] __RemoveRoots = new ITaskItem[]();
+    private ITaskItem[] removeRoots = new ITaskItem[1];
 
     public ITaskItem[] getRemoveRoots() {
-        return __RemoveRoots;
+        return removeRoots;
     }
 
     public void setRemoveRoots(ITaskItem[] value) {
-        __RemoveRoots = value;
+        removeRoots = value;
     }
 
     public Boolean call() {

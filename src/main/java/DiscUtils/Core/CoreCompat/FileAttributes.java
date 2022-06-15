@@ -43,7 +43,7 @@ public enum FileAttributes implements EnumSettable {
     _dummy_10000,
     NoScrubData;
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -51,7 +51,7 @@ public enum FileAttributes implements EnumSettable {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<FileAttributes> valueOf(int value) {
         return Arrays.stream(values())
@@ -73,13 +73,13 @@ public enum FileAttributes implements EnumSettable {
 
     /** */
     public static Map<String, Object> toMap(EnumSet<FileAttributes> flags) {
-        return flags.stream().collect(Collectors.toMap(f -> f.name(), f -> true));
+        return flags.stream().collect(Collectors.toMap(Enum::name, f -> true));
     }
 
     // TODO using name(), loop flags is fewer than loop all enums
     public static EnumSet<FileAttributes> toEnumSet(Map<String, Object> flags) {
         return Arrays.stream(values())
-                .filter(v -> flags.containsKey(v.name()) && Boolean.class.cast(flags.get(v.name())))
+                .filter(v -> flags.containsKey(v.name()) && (Boolean) flags.get(v.name()))
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(FileAttributes.class)));
     }
 

@@ -48,7 +48,7 @@ public final class ForkData implements IByteArraySerializable {
 
         Extents = new ExtentDescriptor[8];
         for (int i = 0; i < 8; ++i) {
-            Extents[i] = EndianUtilities.<ExtentDescriptor> toStruct(ExtentDescriptor.class, buffer, offset + 16 + i * 8);
+            Extents[i] = EndianUtilities.toStruct(ExtentDescriptor.class, buffer, offset + 16 + i * 8);
         }
 
         return StructSize;

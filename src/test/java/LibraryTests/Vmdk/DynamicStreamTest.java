@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Streams.StreamExtent;
@@ -110,7 +111,7 @@ public class DynamicStreamTest {
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
-                    assertTrue(false);
+                    fail();
                 }
             }
         }
@@ -125,7 +126,7 @@ public class DynamicStreamTest {
         }
         try {
             contentStream.setPosition(0);
-            assertTrue(false);
+            fail();
         } catch (IOException __dummyCatchVar0) {
         }
     }
@@ -139,7 +140,7 @@ public class DynamicStreamTest {
         }
         try {
             contentStream.setPosition(0);
-            assertTrue(false);
+            fail();
         } catch (IOException __dummyCatchVar1) {
         }
     }
@@ -153,7 +154,7 @@ public class DynamicStreamTest {
             disk.getContent().read(buffer, 0, buffer.length);
             for (int i = 0; i < 100; ++i) {
                 if (buffer[i] != 0) {
-                    assertTrue(false);
+                    fail();
                 }
             }
         }
@@ -228,7 +229,7 @@ public class DynamicStreamTest {
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
-                    assertTrue(false);
+                    fail();
                 }
             }
         }
@@ -243,7 +244,7 @@ public class DynamicStreamTest {
         }
         try {
             contentStream.setPosition(0);
-            assertTrue(false);
+            fail();
         } catch (IOException __dummyCatchVar2) {
         }
     }
@@ -258,7 +259,7 @@ public class DynamicStreamTest {
 
             for (int i = 0; i < 100; ++i) {
                 if (buffer[i] != 0) {
-                    assertTrue(false);
+                    fail();
                 }
             }
         }

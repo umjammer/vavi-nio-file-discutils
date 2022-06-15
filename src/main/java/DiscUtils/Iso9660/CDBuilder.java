@@ -280,7 +280,7 @@ public final class CDBuilder extends StreamBuilder {
 
         long buildTime = System.currentTimeMillis();
 
-        Charset suppEncoding = _buildParams.useJoliet() ? Charset.forName("UTF-16BE") : StandardCharsets.US_ASCII;
+        Charset suppEncoding = _buildParams.useJoliet() ? StandardCharsets.UTF_16BE : StandardCharsets.US_ASCII;
 
         Map<BuildDirectoryMember, Integer> primaryLocationTable = new HashMap<>();
         Map<BuildDirectoryMember, Integer> supplementaryLocationTable = new HashMap<>();
@@ -505,10 +505,10 @@ public final class CDBuilder extends StreamBuilder {
                     return null;
                 }
             } else {
-                if (!BuildDirectoryInfo.class.isInstance(next[0])) {
+                if (!(next[0] instanceof BuildDirectoryInfo)) {
                     throw new IOException("File with conflicting name exists");
                 }
-                BuildDirectoryInfo nextAsBuildDirectoryInfo = BuildDirectoryInfo.class.cast(next[0]);
+                BuildDirectoryInfo nextAsBuildDirectoryInfo = (BuildDirectoryInfo) next[0];
                 focus = nextAsBuildDirectoryInfo;
             }
         }

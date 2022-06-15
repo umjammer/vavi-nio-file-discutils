@@ -36,41 +36,41 @@ public final class Nfs3WeakCacheConsistency {
     public Nfs3WeakCacheConsistency() {
     }
 
-    private Nfs3FileAttributes __After;
+    private Nfs3FileAttributes after;
 
     public Nfs3FileAttributes getAfter() {
-        return __After;
+        return after;
     }
 
     public void setAfter(Nfs3FileAttributes value) {
-        __After = value;
+        after = value;
     }
 
-    private Nfs3WeakCacheConsistencyAttr __Before;
+    private Nfs3WeakCacheConsistencyAttr before;
 
     public Nfs3WeakCacheConsistencyAttr getBefore() {
-        return __Before;
+        return before;
     }
 
     public void setBefore(Nfs3WeakCacheConsistencyAttr value) {
-        __Before = value;
+        before = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getBefore() != null);
-        if (getBefore() != null) {
-            getBefore().write(writer);
+        writer.write(before != null);
+        if (before != null) {
+            before.write(writer);
         }
 
-        writer.write(getAfter() != null);
-        if (getAfter() != null) {
-            getAfter().write(writer);
+        writer.write(after != null);
+        if (after != null) {
+            after.write(writer);
         }
     }
 
     public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3WeakCacheConsistency ? (Nfs3WeakCacheConsistency) obj
-                                                              : (Nfs3WeakCacheConsistency) null);
+                                                              : null);
     }
 
     public boolean equals(Nfs3WeakCacheConsistency other) {
@@ -78,10 +78,10 @@ public final class Nfs3WeakCacheConsistency {
             return false;
         }
 
-        return dotnet4j.io.compat.Utilities.equals(other.getAfter(), getAfter()) && dotnet4j.io.compat.Utilities.equals(other.getBefore(), getBefore());
+        return dotnet4j.io.compat.Utilities.equals(other.after, after) && dotnet4j.io.compat.Utilities.equals(other.before, before);
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getAfter(), getBefore());
+        return dotnet4j.io.compat.Utilities.getCombinedHashCode(after, before);
     }
 }

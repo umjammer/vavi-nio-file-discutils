@@ -17,6 +17,6 @@ enum IndexEntryFlags {
     }
 
     public static long valueOf(EnumSet<IndexEntryFlags> flags) {
-        return flags.stream().collect(Collectors.summarizingInt(e -> e.ordinal())).getSum();
+        return flags.stream().collect(Collectors.summarizingInt(Enum::ordinal)).getSum();
     }
 }

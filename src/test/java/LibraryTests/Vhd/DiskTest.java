@@ -63,9 +63,7 @@ public class DiskTest {
         MemoryStream ms = new MemoryStream();
         try (Disk disk = Disk.initializeFixed(ms, Ownership.Dispose, 8 * 1024 * 1024)) {
         }
-        assertThrows(IOException.class, () -> {
-            ms.readByte();
-        });
+        assertThrows(IOException.class, ms::readByte);
     }
 
     @Test
@@ -99,7 +97,7 @@ public class DiskTest {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024
                     && disk.getGeometry().getCapacity() <= 16 * 1024L * 1024 * 1024);
-            assertTrue(disk.getGeometry().getCapacity() == baseFile.getGeometry().getCapacity());
+            assertEquals(disk.getGeometry().getCapacity(), baseFile.getGeometry().getCapacity());
             assertEquals(2, (new ArrayList<>(disk.getLayers())).size());
         }
         assertTrue(1 * 1024 * 1024 > diffStream.getLength());

@@ -98,9 +98,9 @@ public final class AttributeDefinitions {
 
         try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
             byte[] buffer;
-            for (int i = 0; i < attribs.size(); ++i) {
+            for (AttributeType attrib : attribs) {
                 buffer = new byte[AttributeDefinitionRecord.Size];
-                AttributeDefinitionRecord attrDef = _attrDefs.get(attribs.get(i));
+                AttributeDefinitionRecord attrDef = _attrDefs.get(attrib);
                 attrDef.write(buffer, 0);
 
                 s.write(buffer, 0, buffer.length);

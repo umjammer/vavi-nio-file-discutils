@@ -171,7 +171,7 @@ public final class UdfReader extends VfsFileSystemFacade {
             File file = getFile(path);
             for (ExtendedAttributeRecord record : file.getExtendedAttributes()) {
                 ImplementationUseExtendedAttributeRecord implRecord = record instanceof ImplementationUseExtendedAttributeRecord ? (ImplementationUseExtendedAttributeRecord) record
-                                                                                                                                 : (ImplementationUseExtendedAttributeRecord) null;
+                                                                                                                                 : null;
                 if (implRecord != null) {
                     result.add(new ExtendedAttribute(implRecord.ImplementationIdentifier.Identifier,
                                                      implRecord.ImplementationUseData));
@@ -265,7 +265,7 @@ public final class UdfReader extends VfsFileSystemFacade {
             }
             byte[] fsdBuffer = UdfUtilities.readExtent(getContext(), _lvd.getFileSetDescriptorLocation());
             if (DescriptorTag.isValid(fsdBuffer, 0)) {
-                FileSetDescriptor fsd = EndianUtilities.<FileSetDescriptor> toStruct(FileSetDescriptor.class, fsdBuffer, 0);
+                FileSetDescriptor fsd = EndianUtilities.toStruct(FileSetDescriptor.class, fsdBuffer, 0);
                 setRootDirectory((Directory) File.fromDescriptor(getContext(), fsd.RootDirectoryIcb));
             }
         }

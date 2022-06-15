@@ -64,6 +64,6 @@ class CatalogNodeId {
     }
 
     public boolean equals(Object other) {
-        return CatalogNodeId.class.isInstance(other) ? _id == CatalogNodeId.class.cast(other)._id : false;
+        return other instanceof CatalogNodeId ? _id == ((CatalogNodeId) other)._id : false;
     }
 }

@@ -86,7 +86,7 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
     }
 
     public void loadBtree(Context context) {
-        setChildren(new HashMap<Long, BTreeExtentHeader>(getNumberOfRecords()));
+        setChildren(new HashMap<>(getNumberOfRecords()));
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BTreeExtentHeader child;
             if (getLevel() == 1) {

@@ -104,13 +104,13 @@ public enum LoginStatusCode {
      */
     OutOfResources(0x0302);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private LoginStatusCode(int value) {
+    LoginStatusCode(int value) {
         this.value = value;
     }
 

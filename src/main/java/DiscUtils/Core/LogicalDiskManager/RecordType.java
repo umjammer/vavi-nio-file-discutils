@@ -28,5 +28,5 @@ enum RecordType {
     Component,
     Extent,
     Disk,
-    DiskGroup;
+    DiskGroup
 }

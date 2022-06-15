@@ -89,7 +89,7 @@ public class PortMap2Mapping {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof PortMap2Mapping ? (PortMap2Mapping) obj : (PortMap2Mapping) null);
+        return equals(obj instanceof PortMap2Mapping ? (PortMap2Mapping) obj : null);
     }
 
     public boolean equals(PortMap2Mapping other) {

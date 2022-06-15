@@ -140,7 +140,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         // Temporary record stream - until we've bootstrapped the MFT properly
         _recordStream = new SubStream(context.getRawStream(),
                                       bpb._mftCluster * bpb.getSectorsPerCluster() * bpb.getBytesPerSector(),
-                                      24 * getRecordSize());
+                24L * getRecordSize());
     }
 
     /**
@@ -403,7 +403,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
         byte[] buffer = new byte[_recordSize];
         record.toBytes(buffer, 0);
 
-        _recordStream.setPosition(record.getMasterFileTableIndex() * _recordSize);
+        _recordStream.setPosition((long) record.getMasterFileTableIndex() * _recordSize);
         _recordStream.write(buffer, 0, _recordSize);
         _recordStream.flush();
 
@@ -425,7 +425,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
             File mftMirror = _self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
             if (mftMirror != null) {
                 try (Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
-                    s.setPosition(record.getMasterFileTableIndex() * _recordSize);
+                    s.setPosition((long) record.getMasterFileTableIndex() * _recordSize);
                     s.write(buffer, 0, _recordSize);
                 } catch (IOException e) {
                     throw new dotnet4j.io.IOException(e);

@@ -24,5 +24,5 @@ package DiscUtils.Nfs;
 
 public enum RpcRejectedStatus {
     RpcMismatch,
-    AuthError;
+    AuthError
 }

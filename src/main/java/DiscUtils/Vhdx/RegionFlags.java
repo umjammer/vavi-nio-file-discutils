@@ -24,5 +24,5 @@ package DiscUtils.Vhdx;
 
 enum RegionFlags {
     None,
-    Required;
+    Required
 }

@@ -28,7 +28,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import DiscUtils.Streams.SparseMemoryBuffer;
 import DiscUtils.Streams.SparseMemoryStream;
@@ -76,7 +78,7 @@ public class ThreadSafeStreamTest {
         assertEquals(2, tss.getLength());
         try {
             tss.setLength(10);
-            assertTrue(false, "SetLength should fail");
+            fail("SetLength should fail");
         } catch (UnsupportedOperationException __dummyCatchVar0) {
         }
     }
@@ -120,7 +122,7 @@ public class ThreadSafeStreamTest {
         tss.close();
         try {
             altView.readByte();
-            assertTrue(false, "Disposed stream didn't stop view");
+            fail("Disposed stream didn't stop view");
         } catch (IOException __dummyCatchVar1) {
         }
     }
@@ -142,19 +144,19 @@ public class ThreadSafeStreamTest {
     public void canWrite() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
-        assertEquals(true, tss.canWrite());
+        assertTrue(tss.canWrite());
         memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.Read);
         tss = new ThreadSafeStream(memStream);
-        assertEquals(false, tss.canWrite());
+        assertFalse(tss.canWrite());
     }
 
     @Test
     public void canRead() throws Exception {
         SparseMemoryStream memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.ReadWrite);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
-        assertEquals(true, tss.canRead());
+        assertTrue(tss.canRead());
         memStream = new SparseMemoryStream(new SparseMemoryBuffer(1), FileAccess.Write);
         tss = new ThreadSafeStream(memStream);
-        assertEquals(false, tss.canRead());
+        assertFalse(tss.canRead());
     }
 }

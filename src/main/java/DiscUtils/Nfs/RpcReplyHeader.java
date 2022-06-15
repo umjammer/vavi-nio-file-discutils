@@ -52,7 +52,7 @@ public class RpcReplyHeader {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof RpcReplyHeader ? (RpcReplyHeader) obj : (RpcReplyHeader) null);
+        return equals(obj instanceof RpcReplyHeader ? (RpcReplyHeader) obj : null);
     }
 
     public boolean equals(RpcReplyHeader other) {

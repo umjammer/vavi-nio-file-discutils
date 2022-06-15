@@ -22,7 +22,7 @@
 
 package DiscUtils.Vhdx;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import DiscUtils.Streams.IByteArraySerializable;
@@ -31,7 +31,7 @@ import DiscUtils.Streams.Util.Sizes;
 
 
 public final class FileHeader implements IByteArraySerializable {
-    public static final long VhdxSignature = 0x656C696678646876l;
+    public static final long VhdxSignature = 0x656C696678646876L;
 
     public String Creator;
 
@@ -47,14 +47,14 @@ public final class FileHeader implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         Signature = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0);
-        Creator = new String(buffer, offset + 8, 256 * 2, Charset.forName("UTF-16LE")).replaceFirst("\0*$", "");
+        Creator = new String(buffer, offset + 8, 256 * 2, StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
         return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + size(), (byte) 0);
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 0);
-        byte[] bytes = Creator.getBytes(Charset.forName("UTF-16LE"));
+        byte[] bytes = Creator.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 8, bytes.length);
     }
 }

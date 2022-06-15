@@ -53,13 +53,13 @@ public enum RecordClass {
      */
     Any(255);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private RecordClass(int value) {
+    RecordClass(int value) {
         this.value = value;
     }
 

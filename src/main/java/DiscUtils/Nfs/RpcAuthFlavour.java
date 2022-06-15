@@ -5,5 +5,5 @@ public enum RpcAuthFlavour {
     Null,
     Unix,
     Short,
-    Des;
+    Des
 }

@@ -23,7 +23,7 @@
 package DiscUtils.Dmg;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Core.DiscFileSystem;
@@ -109,7 +109,7 @@ public class Disk extends VirtualDisk {
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Arrays.asList(_file);
+        return Collections.singletonList(_file);
     }
 
     public PartitionTable getPartitions() {

@@ -74,7 +74,7 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof FileRecordReference)) {
+        if (!(obj instanceof FileRecordReference)) {
             return false;
         }
 
@@ -86,15 +86,8 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public int compareTo(FileRecordReference other) {
-        if (_value < other._value) {
-            return -1;
-        }
+        return Long.compare(_value, other._value);
 
-        if (_value > other._value) {
-            return 1;
-        }
-
-        return 0;
     }
 
     public String toString() {

@@ -210,7 +210,6 @@ public class Context extends VfsContext {
     BaseItem findKey(Key key) {
         switch (key.getItemType()) {
         case RootItem:
-            return _rootTreeRoot.findFirst(key, this);
         case DirItem:
             return _rootTreeRoot.findFirst(key, this);
         default:
@@ -233,7 +232,7 @@ public class Context extends VfsContext {
         switch (key.getItemType()) {
         case DirItem:
         case ExtentData:
-            return List.class.cast(tree.find(ExtentData.class, key, this));
+            return (List) tree.find(ExtentData.class, key, this);
         default:
             throw new UnsupportedOperationException();
         }

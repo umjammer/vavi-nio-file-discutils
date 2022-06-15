@@ -24,6 +24,7 @@ package DiscUtils.Ntfs;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
 
@@ -169,9 +170,7 @@ public class NtfsFormatter {
             try (Stream s = logFile.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
                 s.setLength(Math.min(Math.max(2 * Sizes.OneMiB, totalClusters / 500 * _clusterSize), 64 * Sizes.OneMiB));
                 byte[] buffer = new byte[1024 * 1024];
-                for (int i = 0; i < buffer.length; ++i) {
-                    buffer[i] = (byte) 0xFF;
-                }
+                Arrays.fill(buffer, (byte) 0xFF);
                 long totalWritten = 0;
                 while (totalWritten < s.getLength()) {
                     int toWrite = (int) Math.min(s.getLength() - totalWritten, buffer.length);
@@ -186,12 +185,8 @@ public class NtfsFormatter {
             volInfoStream.setContent(new VolumeInformation((byte) 3, (byte) 1, EnumSet.noneOf(VolumeInformationFlags.class)));
             setSecurityAttribute(volumeFile, "O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)");
             volumeFile.updateRecordInMft();
-            _context.setGetFileByIndex(index-> {
-                return new File(_context, _context.getMft().getRecord(index, false));
-            });
-            _context.setAllocateFile(frf -> {
-                return new File(_context, _context.getMft().allocateRecord(frf, false));
-            });
+            _context.setGetFileByIndex(index-> new File(_context, _context.getMft().getRecord(index, false)));
+            _context.setAllocateFile(frf -> new File(_context, _context.getMft().allocateRecord(frf, false)));
             File attrDefFile = createSystemFile(MasterFileTable.AttrDefIndex);
             _context.getAttributeDefinitions().writeTo(attrDefFile);
             setSecurityAttribute(attrDefFile, "O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)");

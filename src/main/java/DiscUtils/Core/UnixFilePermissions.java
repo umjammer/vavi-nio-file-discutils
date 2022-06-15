@@ -101,7 +101,7 @@ public enum UnixFilePermissions {
      */
     public static final EnumSet<UnixFilePermissions> OwnerAll = EnumSet.of(OthersExecute, OthersWrite, OthersRead);
 
-    private int value = 1 << ordinal();
+    private final int value = 1 << ordinal();
 
     public Supplier<Integer> supplier() {
         return () -> value;
@@ -109,7 +109,7 @@ public enum UnixFilePermissions {
 
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
-    };
+    }
 
     public static EnumSet<UnixFilePermissions> valueOf(int value) {
         return Arrays.stream(values())

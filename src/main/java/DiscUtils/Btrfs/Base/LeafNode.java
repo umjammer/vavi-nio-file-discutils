@@ -81,7 +81,6 @@ public class LeafNode extends NodeHeader {
             long objectId = getItems()[i].getKey().getObjectId();
             if (objectId == ReservedObjectId.CsumItem.getValue() ||
                 objectId == ReservedObjectId.TreeReloc.getValue()) {
-                continue;
             } else {
                 getNodeData()[i] = createItem(getItems()[i], buffer, Length + offset);
             }

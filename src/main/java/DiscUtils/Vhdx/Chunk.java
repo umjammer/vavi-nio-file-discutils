@@ -67,7 +67,7 @@ public final class Chunk {
         _fileParameters = fileParameters;
         _chunk = chunk;
         _blocksPerChunk = blocksPerChunk;
-        _bat.setPosition(_chunk * (_blocksPerChunk + 1) * 8);
+        _bat.setPosition((long) _chunk * (_blocksPerChunk + 1) * 8);
         _batData = StreamUtilities.readExact(bat, (_blocksPerChunk + 1) * 8);
     }
 
@@ -136,7 +136,7 @@ public final class Chunk {
         if (dataModified) {
             blockEntry.writeTo(_batData, block * 8);
 
-            _bat.setPosition(_chunk * (_blocksPerChunk + 1) * 8);
+            _bat.setPosition((long) _chunk * (_blocksPerChunk + 1) * 8);
             _bat.write(_batData, 0, (_blocksPerChunk + 1) * 8);
         }
 

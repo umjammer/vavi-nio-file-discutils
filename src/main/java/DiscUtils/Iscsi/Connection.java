@@ -25,6 +25,7 @@ package DiscUtils.Iscsi;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,7 +97,6 @@ class Connection implements Closeable {
         case SecurityNegotiation:
             return LoginStages.LoginOperationalNegotiation;
         case LoginOperationalNegotiation:
-            return LoginStages.FullFeaturePhase;
         default:
             return LoginStages.FullFeaturePhase;
         }
@@ -213,10 +213,10 @@ class Connection implements Closeable {
             byte[] tempBuffer = new byte[expected];
             int numRead = send(cmd, buffer, offset, count, tempBuffer, 0, expected);
 
-            T result = clazz.newInstance();
+            T result = clazz.getDeclaredConstructor().newInstance();
             result.readFrom(tempBuffer, 0, numRead);
             return result;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -289,12 +289,12 @@ class Connection implements Closeable {
         getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, session._sessionType);
         session.getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation);
 
-        String authParam = _authenticators[0].getIdentifier();
+        StringBuilder authParam = new StringBuilder(_authenticators[0].getIdentifier());
         for (int i = 1; i < _authenticators.length; ++i) {
-            authParam += "," + _authenticators[i].getIdentifier();
+            authParam.append(",").append(_authenticators[i].getIdentifier());
         }
 
-        parameters.add(AuthMethodParameter, authParam);
+        parameters.add(AuthMethodParameter, authParam.toString());
 
         //
         // Send the request...
@@ -337,9 +337,9 @@ class Connection implements Closeable {
         }
 
         Authenticator authenticator = null;
-        for (int i = 0; i < _authenticators.length; ++i) {
-            if (settings.get(AuthMethodParameter).equals(_authenticators[i].getIdentifier())) {
-                authenticator = _authenticators[i];
+        for (Authenticator value : _authenticators) {
+            if (settings.get(AuthMethodParameter).equals(value.getIdentifier())) {
+                authenticator = value;
                 break;
             }
         }

@@ -56,7 +56,7 @@ public final class MetadataEntryKey {
     }
 
     public boolean equals(Object other) {
-        MetadataEntryKey otherKey = other instanceof MetadataEntryKey ? (MetadataEntryKey) other : (MetadataEntryKey) null;
+        MetadataEntryKey otherKey = other instanceof MetadataEntryKey ? (MetadataEntryKey) other : null;
         if (otherKey != null) {
             return equals(otherKey);
         }

@@ -44,5 +44,5 @@ public enum InodeFormat {
     /**
      * currently not used
      */
-    Uuid;
+    Uuid
 }

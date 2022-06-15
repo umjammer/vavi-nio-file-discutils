@@ -5,7 +5,7 @@ package LibraryTests.Btrfs;
 import java.io.File;
 import java.net.URI;
 import java.security.MessageDigest;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -43,7 +43,7 @@ public class SampleDataTests {
         File fs = new File(URI.create(getClass().getResource("btrfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
-                Disk disk = new Disk(Arrays.asList(diskImage), Ownership.Dispose)) {
+                Disk disk = new Disk(Collections.singletonList(diskImage), Ownership.Dispose)) {
             VolumeManager manager = new VolumeManager(disk);
             List<LogicalVolumeInfo> logicalVolumes = manager.getLogicalVolumes();
             assertEquals(1, logicalVolumes.size());
@@ -53,7 +53,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("btrfs", filesystem.getName());
             try (DiscFileSystem btrfs = filesystem.open(volume)) {
-                assertTrue(BtrfsFileSystem.class.isInstance(btrfs));
+                assertTrue(btrfs instanceof BtrfsFileSystem);
                 assertEquals(1072594944, btrfs.getAvailableSpace());
                 assertEquals(1072693248, btrfs.getSize());
                 assertEquals(98304, btrfs.getUsedSpace());

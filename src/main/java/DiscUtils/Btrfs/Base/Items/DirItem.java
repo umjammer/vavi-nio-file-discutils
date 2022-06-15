@@ -135,7 +135,7 @@ public class DirItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setChildLocation(EndianUtilities.<Key> toStruct(Key.class, buffer, offset));
+        setChildLocation(EndianUtilities.toStruct(Key.class, buffer, offset));
         setTransId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x11));
         setDataLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19));
         setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b));

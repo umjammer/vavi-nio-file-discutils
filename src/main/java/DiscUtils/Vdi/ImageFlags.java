@@ -26,5 +26,5 @@ package DiscUtils.Vdi;
 enum ImageFlags {
     None,
     Split2G,
-    ZeroExpand;
+    ZeroExpand
 }

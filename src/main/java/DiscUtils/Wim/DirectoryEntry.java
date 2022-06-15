@@ -22,7 +22,7 @@
 
 package DiscUtils.Wim;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -97,13 +97,13 @@ public class DirectoryEntry {
         int shortNameLength = reader.readUInt16();
         int fileNameLength = reader.readUInt16();
         if (fileNameLength > 0) {
-            result.FileName = new String(reader.readBytes(fileNameLength + 2), Charset.forName("UTF-16LE")).replaceFirst("\0*$",
+            result.FileName = new String(reader.readBytes(fileNameLength + 2), StandardCharsets.UTF_16LE).replaceFirst("\0*$",
                                                                                                                          "");
         } else {
             result.FileName = "";
         }
         if (shortNameLength > 0) {
-            result.ShortName = new String(reader.readBytes(shortNameLength + 2), Charset.forName("UTF-16LE"))
+            result.ShortName = new String(reader.readBytes(shortNameLength + 2), StandardCharsets.UTF_16LE)
                     .replaceFirst("\0*$", "");
         } else {
             result.ShortName = null;

@@ -24,5 +24,5 @@ package DiscUtils.Nfs;
 
 public enum RpcReplyStatus {
     Accepted,
-    Denied;
+    Denied
 }

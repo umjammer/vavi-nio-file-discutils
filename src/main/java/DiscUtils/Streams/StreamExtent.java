@@ -24,6 +24,7 @@ package DiscUtils.Streams;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -78,15 +79,8 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      *         zero.
      */
     public int compareTo(StreamExtent other) {
-        if (start > other.start) {
-            return 1;
-        }
+        return Long.compare(start, other.start);
 
-        if (start == other.start) {
-            return 0;
-        }
-
-        return -1;
     }
 
     /**
@@ -104,7 +98,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     }
 
     public static List<StreamExtent> union() {
-        return union(Arrays.asList());
+        return union(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
@@ -120,7 +114,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @return The union of the extents.
      */
     public static List<StreamExtent> union(List<StreamExtent> extents, StreamExtent other) {
-        return union(extents, Arrays.asList(other));
+        return union(extents, Collections.singletonList(other));
     }
 
     /**
@@ -200,7 +194,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
     }
 
     public static List<StreamExtent> intersect() {
-        return intersect(Arrays.asList());
+        return intersect(Collections.emptyList());
     }
 
     @SuppressWarnings("unchecked")
@@ -217,7 +211,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @return The intersection of the extents.
      */
     public static List<StreamExtent> intersect(List<StreamExtent> extents, StreamExtent other) {
-        return intersect(extents, Arrays.asList(other));
+        return intersect(extents, Collections.singletonList(other));
     }
 
     /**
@@ -296,7 +290,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @return The subtraction of {@code other} from {@code extents} .
      */
     public static List<StreamExtent> subtract(List<StreamExtent> extents, StreamExtent other) {
-        return subtract(extents, Arrays.asList(other));
+        return subtract(extents, Collections.singletonList(other));
     }
 
     /**
@@ -503,7 +497,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      * @return {@code true} if {@code obj} is equivalent, else {@code false} .
      */
     public boolean equals(Object obj) {
-        return equals(StreamExtent.class.isInstance(obj) ? StreamExtent.class.cast(obj) : null);
+        return equals(obj instanceof StreamExtent ? (StreamExtent) obj : null);
     }
 
     /**

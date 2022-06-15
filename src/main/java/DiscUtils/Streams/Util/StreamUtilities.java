@@ -22,6 +22,8 @@
 
 package DiscUtils.Streams.Util;
 
+import java.lang.reflect.InvocationTargetException;
+
 import DiscUtils.Streams.IByteArraySerializable;
 import DiscUtils.Streams.Buffer.IBuffer;
 import dotnet4j.io.Stream;
@@ -202,12 +204,12 @@ public class StreamUtilities {
      */
     public static <T extends IByteArraySerializable> T readStruct(Class<T> c, Stream stream) {
         try {
-            T result = c.newInstance();
+            T result = c.getDeclaredConstructor().newInstance();
             int size = result.size();
             byte[] buffer = readExact(stream, size);
             result.readFrom(buffer, 0);
             return result;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -221,11 +223,11 @@ public class StreamUtilities {
      */
     public static <T extends IByteArraySerializable> T readStruct(Class<T> c, Stream stream, int length) {
         try {
-            T result = c.newInstance();
+            T result = c.getDeclaredConstructor().newInstance();
             byte[] buffer = readExact(stream, length);
             result.readFrom(buffer, 0);
             return result;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
     }

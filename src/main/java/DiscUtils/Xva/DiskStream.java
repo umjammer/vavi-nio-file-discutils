@@ -210,10 +210,10 @@ public class DiskStream extends SparseStream {
 
     private int correctChunkIndex(int rawIndex) {
         int index = rawIndex;
-        for (int i = 0; i < _skipChunks.size(); ++i) {
-            if (index >= _skipChunks.get(i)) {
+        for (Integer skipChunk : _skipChunks) {
+            if (index >= skipChunk) {
                 ++index;
-            } else if (index < +_skipChunks.get(i)) {
+            } else if (index < skipChunk) {
                 break;
             }
         }

@@ -27,7 +27,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,16 +101,16 @@ public final class DiscContentBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(Arrays.asList(new StreamExtent(0, _capacity)),
-                                      Arrays.asList(new StreamExtent(start, count)));
+        return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, _capacity)),
+                Collections.singletonList(new StreamExtent(start, count)));
     }
 
     private static String toHexString(byte[] p) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < p.length; ++i) {
-            int j = (p[i] >>> 4) & 0xf;
+        for (byte b : p) {
+            int j = (b >>> 4) & 0xf;
             result.append((char) (j <= 9 ? '0' + j : 'a' + (j - 10)));
-            j = p[i] & 0xf;
+            j = b & 0xf;
             result.append((char) (j <= 9 ? '0' + j : 'a' + (j - 10)));
         }
         return result.toString();
@@ -191,7 +191,7 @@ public final class DiscContentBuffer extends Buffer {
     }
 
     @FunctionalInterface
-    public static interface WebRequestCreator {
+    public interface WebRequestCreator {
 
         Request invoke();
     }

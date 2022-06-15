@@ -53,7 +53,7 @@ public class RpcAcceptedReplyHeader {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof RpcAcceptedReplyHeader ? (RpcAcceptedReplyHeader) obj : (RpcAcceptedReplyHeader) null);
+        return equals(obj instanceof RpcAcceptedReplyHeader ? (RpcAcceptedReplyHeader) obj : null);
     }
 
     public boolean equals(RpcAcceptedReplyHeader other) {

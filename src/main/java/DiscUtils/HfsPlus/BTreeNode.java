@@ -75,7 +75,7 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
 
     public static <TKey extends BTreeKey<?>> BTreeNode<?> readNode(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
         BTreeNodeDescriptor descriptor = EndianUtilities
-                .<BTreeNodeDescriptor> toStruct(BTreeNodeDescriptor.class, buffer, offset);
+                .toStruct(BTreeNodeDescriptor.class, buffer, offset);
 
         switch (descriptor.Kind) {
         case HeaderNode:
@@ -90,7 +90,7 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
 
     public static <TKey extends BTreeKey<?>> BTreeNode<TKey> readNode2(Class<TKey> clazz, BTree<?> tree, byte[] buffer, int offset) {
         BTreeNodeDescriptor descriptor = EndianUtilities
-                .<BTreeNodeDescriptor> toStruct(BTreeNodeDescriptor.class, buffer, offset);
+                .toStruct(BTreeNodeDescriptor.class, buffer, offset);
 
         switch (descriptor.Kind) {
         case HeaderNode:

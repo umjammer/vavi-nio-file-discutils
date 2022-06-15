@@ -67,38 +67,38 @@ class EndianUtilitiesTest {
     void test64BE() throws Exception {
         byte[] buf = new byte[8];
 
-        EndianUtilities.writeBytesBigEndian(0xfedcba9876543210l, buf, 0);
+        EndianUtilities.writeBytesBigEndian(0xfedcba9876543210L, buf, 0);
         long v = EndianUtilities.toInt64BigEndian(buf, 0);
 //System.err.printf("%x\n", v);
-        assertEquals(0xfedcba9876543210l, v);
+        assertEquals(0xfedcba9876543210L, v);
     }
 
     @Test
     void test64UBE() throws Exception {
         byte[] buf = new byte[8];
 
-        EndianUtilities.writeBytesBigEndian(0xfedcba9876543210l, buf, 0);
+        EndianUtilities.writeBytesBigEndian(0xfedcba9876543210L, buf, 0);
         long v = EndianUtilities.toUInt64BigEndian(buf, 0);
 //System.err.printf("%x\n", v);
-        assertEquals(0xfedcba9876543210l, v);
+        assertEquals(0xfedcba9876543210L, v);
     }
 
     @Test
     void test64LE() throws Exception {
         byte[] buf = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(0xfedcba9876543210l, buf, 0);
+        EndianUtilities.writeBytesLittleEndian(0xfedcba9876543210L, buf, 0);
         long v = EndianUtilities.toInt64LittleEndian(buf, 0);
 //System.err.printf("%x\n", v);
-        assertEquals(0xfedcba9876543210l, v);
+        assertEquals(0xfedcba9876543210L, v);
     }
 
     @Test
     void test64ULE() throws Exception {
         byte[] buf = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(0xfedcba9876543210l, buf, 0);
+        EndianUtilities.writeBytesLittleEndian(0xfedcba9876543210L, buf, 0);
         long v = EndianUtilities.toUInt64LittleEndian(buf, 0);
 //System.err.printf("%x\n", v);
-        assertEquals(0xfedcba9876543210l, v);
+        assertEquals(0xfedcba9876543210L, v);
     }
 
     @Test

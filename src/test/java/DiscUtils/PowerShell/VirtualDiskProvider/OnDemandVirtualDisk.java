@@ -59,12 +59,8 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
 
     public boolean getIsValid() {
         try {
-            VirtualDisk disk = openDisk();
-            try {
+            try (VirtualDisk disk = openDisk()) {
                 return disk != null;
-            } finally {
-                if (disk != null)
-                    disk.close();
             }
         } catch (IOException __dummyCatchVar0) {
             return false;

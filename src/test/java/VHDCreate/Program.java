@@ -114,7 +114,6 @@ public class Program extends ProgramBase {
             }
         } else {
             ExitCode = 1;
-            return;
         }
     }
 

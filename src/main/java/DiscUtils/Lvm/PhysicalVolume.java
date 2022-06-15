@@ -134,8 +134,8 @@ public class PhysicalVolume {
         int i = offset;
         while (i < offset + length) {
             crc ^= (buffer[i] & 0xff);
-            crc = ((crc & 0xffffffffl) >>> 4) ^ crctab[(int) crc & 0xf];
-            crc = ((crc & 0xffffffffl) >>> 4) ^ crctab[(int) crc & 0xf];
+            crc = ((crc & 0xffffffffL) >>> 4) ^ crctab[(int) crc & 0xf];
+            crc = ((crc & 0xffffffffL) >>> 4) ^ crctab[(int) crc & 0xf];
             i++;
         }
         return (int) crc;

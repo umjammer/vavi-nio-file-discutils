@@ -51,13 +51,13 @@ enum OpCode {
     AsynchronousMessage(0x32),
     Reject(0x3f);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private OpCode(int value) {
+    OpCode(int value) {
         this.value = value;
     }
 

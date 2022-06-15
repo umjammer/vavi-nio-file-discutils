@@ -56,7 +56,7 @@ public final class DuBasicFileAttributesProvider extends BasicFileAttributesProv
      */
     @Override
     public boolean isRegularFile() {
-        return DiscFileInfo.class.isInstance(entry);
+        return entry instanceof DiscFileInfo;
     }
 
     /**
@@ -64,7 +64,7 @@ public final class DuBasicFileAttributesProvider extends BasicFileAttributesProv
      */
     @Override
     public boolean isDirectory() {
-        return DiscDirectoryInfo.class.isInstance(entry);
+        return entry instanceof DiscDirectoryInfo;
     }
 
     /**
@@ -78,7 +78,7 @@ public final class DuBasicFileAttributesProvider extends BasicFileAttributesProv
      */
     @Override
     public long size() {
-        return isRegularFile() ? DiscFileInfo.class.cast(entry).getLength() : 0;
+        return isRegularFile() ? ((DiscFileInfo) entry).getLength() : 0;
     }
 
     /* @see java.nio.file.attribute.PosixFileAttributes#owner() */

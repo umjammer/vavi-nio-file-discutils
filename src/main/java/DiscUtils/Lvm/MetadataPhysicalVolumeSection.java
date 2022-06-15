@@ -55,11 +55,14 @@ public class MetadataPhysicalVolumeSection {
             if (line.contains("=")) {
                 Tuple<String, String> parameter = Metadata.parseParameter(line);
                 String paramValue = parameter.getKey().trim().toLowerCase();
-                if (paramValue.equals("id")) {
+                switch (paramValue) {
+                case "id":
                     Id = Metadata.parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("device")) {
+                    break;
+                case "device":
                     Device = Metadata.parseStringValue(parameter.getValue());
-                } else if (paramValue.equals("status")) {
+                    break;
+                case "status":
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
@@ -73,15 +76,20 @@ public class MetadataPhysicalVolumeSection {
                             throw new IndexOutOfBoundsException("Unexpected status in physical volume metadata");
                         }
                     }
-                } else if (paramValue.equals("flags")) {
+                    break;
+                case "flags":
                     Flags = Metadata.parseArrayValue(parameter.getValue());
-                } else if (paramValue.equals("dev_size")) {
+                    break;
+                case "dev_size":
                     DeviceSize = Metadata.parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("pe_start")) {
+                    break;
+                case "pe_start":
                     PeStart = Metadata.parseNumericValue(parameter.getValue());
-                } else if (paramValue.equals("pe_count")) {
+                    break;
+                case "pe_count":
                     PeCount = Metadata.parseNumericValue(parameter.getValue());
-                } else {
+                    break;
+                default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata");
                 }
             } else if (line.endsWith("}")) {
@@ -99,13 +107,14 @@ enum PhysicalVolumeStatus {
     Write(0x4),
     Allocatable(0x8);
 
-    private int value;
+    private final int
+            value;
 
     public int getValue() {
         return value;
     }
 
-    private PhysicalVolumeStatus(int value) {
+    PhysicalVolumeStatus(int value) {
         this.value = value;
     }
 }

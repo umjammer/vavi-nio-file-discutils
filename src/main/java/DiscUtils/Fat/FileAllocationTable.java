@@ -42,7 +42,7 @@ public class FileAllocationTable {
         _numFats = numFats;
 
 //Debug.printf(Level.FINE, "%d, %016x", _firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector);
-        _stream.setPosition((firstFatSector + fatSize * activeFat) * Sizes.Sector);
+        _stream.setPosition((firstFatSector + (long) fatSize * activeFat) * Sizes.Sector);
         _buffer = new FatBuffer(type, StreamUtilities.readExact(_stream, fatSize * Sizes.Sector));
     }
 
@@ -76,7 +76,7 @@ public class FileAllocationTable {
 
     public void flush() {
         for (int i = 0; i < _numFats; i++) {
-            _buffer.writeDirtyRegions(_stream, _firstFatSector * Sizes.Sector + _buffer.getSize() * i);
+            _buffer.writeDirtyRegions(_stream, (long) _firstFatSector * Sizes.Sector + _buffer.getSize() * i);
         }
         _buffer.clearDirtyRegions();
     }

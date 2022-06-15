@@ -31,9 +31,7 @@ public class BtrfsTest {
             ms.write(b, 0, 0x100);
             //create label without null terminator
             ms.seek(0, SeekOrigin.Begin);
-            IOException ex = assertThrows(IOException.class, () -> {
-                new BtrfsFileSystem(ms);
-            });
+            IOException ex = assertThrows(IOException.class, () -> new BtrfsFileSystem(ms));
             assertEquals("Invalid Superblock Magic", ex.getMessage());
         }
     }
@@ -41,9 +39,7 @@ public class BtrfsTest {
     @Test
     public void emptyStreamIsNoValidBtrfs() throws Exception {
         try (Stream ms = new MemoryStream()) {
-            IOException ex = assertThrows(IOException.class, () -> {
-                new BtrfsFileSystem(ms);
-            });
+            IOException ex = assertThrows(IOException.class, () -> new BtrfsFileSystem(ms));
             assertEquals("No Superblock detected", ex.getMessage());
         }
     }

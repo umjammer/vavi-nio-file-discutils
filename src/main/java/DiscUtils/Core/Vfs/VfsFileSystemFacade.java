@@ -551,6 +551,6 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @return The actual file system instance.
      */
     protected <TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> VfsFileSystem<TDirEntry, TFile, TDirectory, TContext> getRealFileSystem() {
-        return VfsFileSystem.class.cast(_wrapped);
+        return (VfsFileSystem) _wrapped;
     }
 }

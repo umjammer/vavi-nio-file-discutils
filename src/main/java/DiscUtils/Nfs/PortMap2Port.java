@@ -45,7 +45,7 @@ public class PortMap2Port implements IRpcObject {
     }
 
     public boolean equals(Object obj) {
-        return equals(obj instanceof PortMap2Port ? (PortMap2Port) obj : (PortMap2Port) null);
+        return equals(obj instanceof PortMap2Port ? (PortMap2Port) obj : null);
     }
 
     public boolean equals(PortMap2Port other) {

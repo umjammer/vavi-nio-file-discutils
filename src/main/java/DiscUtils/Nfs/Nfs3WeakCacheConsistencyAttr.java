@@ -70,7 +70,7 @@ public final class Nfs3WeakCacheConsistencyAttr {
 
     public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3WeakCacheConsistencyAttr ? (Nfs3WeakCacheConsistencyAttr) obj
-                                                                  : (Nfs3WeakCacheConsistencyAttr) null);
+                                                                  : null);
     }
 
     public boolean equals(Nfs3WeakCacheConsistencyAttr other) {

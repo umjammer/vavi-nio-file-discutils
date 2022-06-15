@@ -12,13 +12,13 @@ enum FileTypeFlags {
     /** 'hfs+' */
     HFSPlusCreator(0x6866732B);
 
-    private int value;
+    private final int value;
 
     public int getValue() {
         return value;
     }
 
-    private FileTypeFlags(int value) {
+    FileTypeFlags(int value) {
         this.value = value;
     }
 }
