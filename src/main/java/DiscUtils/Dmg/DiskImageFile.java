@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+
+import vavi.util.Debug;
 
 import DiscUtils.Core.FileLocator;
 import DiscUtils.Core.Geometry;
@@ -62,6 +65,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         _udifHeader = new UdifResourceFile();
         _stream = stream;
         _ownsStream = ownsStream;
+
+Debug.println(Level.FINE, "stream.getLength(): " + stream.getLength());
+Debug.println(Level.FINE, "udifHeader.size(): " + _udifHeader.size());
         stream.setPosition(stream.getLength() - _udifHeader.size());
         byte[] data = StreamUtilities.readExact(stream, _udifHeader.size());
 
@@ -74,6 +80,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
             _resources = ResourceFork.fromPlist(plist);
             _buffer = new UdifBuffer(stream, _resources, _udifHeader.sectorCount);
+        } else {
+            // TODO fat32 dmg doesn't have udif header
+Debug.printf(Level.WARNING, "_udifHeader: %08x\n", _udifHeader.signature);
         }
     }
 

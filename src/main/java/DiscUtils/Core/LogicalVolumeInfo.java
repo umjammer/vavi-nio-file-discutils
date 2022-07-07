@@ -139,6 +139,6 @@ public final class LogicalVolumeInfo extends VolumeInfo {
 
     @Override
     public String toString() {
-        return getIdentity() + ": " + _length;
+        return getIdentity() + ": " + getPhysicalStartSector() + ", " + _length;
     }
 }

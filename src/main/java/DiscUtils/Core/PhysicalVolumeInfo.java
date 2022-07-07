@@ -194,4 +194,9 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
     public SparseStream open() {
         return _streamOpener.invoke();
     }
+
+    @Override
+    public String toString() {
+        return getIdentity();
+    }
 }

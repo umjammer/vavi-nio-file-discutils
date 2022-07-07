@@ -86,6 +86,6 @@ public abstract class FileSystemInfo {
      * @return The file system name.
      */
     public String toString() {
-        return getName();
+        return getName() + ", " + getDescription();
     }
 }

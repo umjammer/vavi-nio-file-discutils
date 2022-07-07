@@ -113,8 +113,8 @@ public class PartitionRecord extends DeviceRecord {
     protected void doParse(byte[] data, int offset) {
         super.doParse(data, offset);
         if (getType() == 5) {
-        } else // Nothing to do - just empty...
-        if (getType() == 6) {
+            // Nothing to do - just empty...
+        } else if (getType() == 6) {
             setPartitionType(EndianUtilities.toInt32LittleEndian(data, offset + 0x24));
             if (getPartitionType() == 1) {
                 // BIOS disk

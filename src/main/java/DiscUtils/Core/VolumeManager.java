@@ -278,7 +278,7 @@ Debug.println(Level.FINE, "P: " + pvi.getIdentity());
         VirtualDisk disk = _disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
-Debug.println(Level.FINE, "guid: " + guid);
+Debug.println(Level.FINER, "guid: " + guid);
             if (!guid.equals(EMPTY)) {
                 return "DG" + String.format("{%s}", guid);
             }
