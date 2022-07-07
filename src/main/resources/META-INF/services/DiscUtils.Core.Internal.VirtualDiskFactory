@@ -1,8 +1,0 @@
-DiscUtils.OpticalDisk.DiscFactory
-DiscUtils.Dmg.DiskFactory
-DiscUtils.Core.Raw.DiskFactory
-DiscUtils.Vhd.DiskFactory
-DiscUtils.Vmdk.DiskFactory
-DiscUtils.Vhdx.DiskFactory
-DiscUtils.Vdi.DiskFactory
-DiscUtils.Xva.DiskFactory

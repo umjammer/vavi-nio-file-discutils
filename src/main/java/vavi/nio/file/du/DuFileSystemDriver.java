@@ -25,11 +25,11 @@ import com.github.fge.filesystem.provider.FileSystemFactoryProvider;
 
 import static vavi.nio.file.Util.toPathString;
 
-import DiscUtils.Core.DiscDirectoryInfo;
-import DiscUtils.Core.DiscFileInfo;
-import DiscUtils.Core.DiscFileSystem;
-import DiscUtils.Core.DiscFileSystemInfo;
-import DiscUtils.Core.CoreCompat.FileAttributes;
+import discUtils.core.DiscDirectoryInfo;
+import discUtils.core.DiscFileInfo;
+import discUtils.core.DiscFileSystem;
+import discUtils.core.DiscFileSystemInfo;
+import discUtils.core.coreCompat.FileAttributes;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.compat.StreamInputStream;
 import dotnet4j.io.compat.StreamOutputStream;

@@ -1,0 +1,8 @@
+discUtils.opticalDisk.DiscFactory
+discUtils.dmg.DiskFactory
+discUtils.core.raw.DiskFactory
+discUtils.vhd.DiskFactory
+discUtils.vmdk.DiskFactory
+discUtils.vhdx.DiskFactory
+discUtils.vdi.DiskFactory
+discUtils.xva.DiskFactory

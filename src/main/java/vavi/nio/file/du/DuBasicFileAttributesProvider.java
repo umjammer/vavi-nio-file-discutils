@@ -19,9 +19,9 @@ import java.util.Set;
 
 import com.github.fge.filesystem.attributes.provider.BasicFileAttributesProvider;
 
-import DiscUtils.Core.DiscDirectoryInfo;
-import DiscUtils.Core.DiscFileInfo;
-import DiscUtils.Core.DiscFileSystemInfo;
+import discUtils.core.DiscDirectoryInfo;
+import discUtils.core.DiscFileInfo;
+import discUtils.core.DiscFileSystemInfo;
 
 
 /**

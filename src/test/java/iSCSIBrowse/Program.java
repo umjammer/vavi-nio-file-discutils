@@ -28,13 +28,13 @@ import java.util.List;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
 
-import DiscUtils.Common.ProgramBase;
-import DiscUtils.Iscsi.Initiator;
-import DiscUtils.Iscsi.LoginException;
-import DiscUtils.Iscsi.LunInfo;
-import DiscUtils.Iscsi.Session;
-import DiscUtils.Iscsi.TargetAddress;
-import DiscUtils.Iscsi.TargetInfo;
+import discUtils.common.ProgramBase;
+import discUtils.iscsi.Initiator;
+import discUtils.iscsi.LoginException;
+import discUtils.iscsi.LunInfo;
+import discUtils.iscsi.Session;
+import discUtils.iscsi.TargetAddress;
+import discUtils.iscsi.TargetInfo;
 
 
 @Options

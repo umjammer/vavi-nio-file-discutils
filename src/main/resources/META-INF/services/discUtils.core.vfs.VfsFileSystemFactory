@@ -1,0 +1,9 @@
+discUtils.swap.FileSystemFactory
+discUtils.btrfs.FileSystemFactory
+discUtils.ext.FileSystemFactory
+discUtils.ntfs.FileSystemFactory
+discUtils.hfsPlus.FileSystemFactory
+discUtils.squashFs.FileSystemFactory
+discUtils.fat.FileSystemFactory
+discUtils.xfs.FileSystemFactory
+discUtils.opticalDisk.FileSystemFactory

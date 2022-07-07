@@ -12,7 +12,7 @@ import java.nio.file.FileStore;
 import com.github.fge.filesystem.attributes.FileAttributesFactory;
 import com.github.fge.filesystem.filestore.FileStoreBase;
 
-import DiscUtils.Core.DiscFileSystem;
+import discUtils.core.DiscFileSystem;
 
 
 /**

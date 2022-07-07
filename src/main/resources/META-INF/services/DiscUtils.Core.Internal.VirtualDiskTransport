@@ -1,4 +1,0 @@
-DiscUtils.OpticalDiscSharing.DiscTransport
-DiscUtils.Iscsi.DiskTransport
-DiscUtils.Nfs.DiskTransport
-DiscUtils.Core.FileTransport

@@ -18,14 +18,14 @@ import com.github.fge.filesystem.provider.FileSystemRepositoryBase;
 
 import vavi.util.Debug;
 
-import DiscUtils.Core.DiscFileSystem;
-import DiscUtils.Core.FileSystemInfo;
-import DiscUtils.Core.FileSystemManager;
-import DiscUtils.Core.FileSystemParameters;
-import DiscUtils.Core.LogicalVolumeInfo;
-import DiscUtils.Core.VirtualDisk;
-import DiscUtils.Core.VolumeManager;
-import DiscUtils.Core.Internal.VirtualDiskFactory;
+import discUtils.core.DiscFileSystem;
+import discUtils.core.FileSystemInfo;
+import discUtils.core.FileSystemManager;
+import discUtils.core.FileSystemParameters;
+import discUtils.core.LogicalVolumeInfo;
+import discUtils.core.VirtualDisk;
+import discUtils.core.VolumeManager;
+import discUtils.core.internal.VirtualDiskFactory;
 import dotnet4j.io.FileAccess;
 
 

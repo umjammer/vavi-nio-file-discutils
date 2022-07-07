@@ -8,7 +8,7 @@ package vavi.nio.file.du;
 
 import com.github.fge.filesystem.driver.ExtendedFileSystemDriverBase.ExtendsdFileAttributesFactory;
 
-import DiscUtils.Core.DiscFileSystemInfo;
+import discUtils.core.DiscFileSystemInfo;
 
 
 /**

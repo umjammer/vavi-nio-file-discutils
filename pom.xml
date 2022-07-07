@@ -15,9 +15,6 @@
           <target>1.8</target>
           <encoding>utf-8</encoding>
           <testExcludes>
-            <testExclude>DiscUtils/PowerShell/**</testExclude>
-            <testExclude>DiskClone/**</testExclude>
-            <testExclude>MSBuildTask/**</testExclude>
           </testExcludes>
         </configuration>
       </plugin>
@@ -61,6 +58,9 @@
       </plugin>
     </plugins>
   </build>
+            <testExclude>discUtils/powerShell/**</testExclude>
+            <testExclude>diskClone/**</testExclude>
+            <testExclude>msBuildTask/**</testExclude>
 
   <repositories>
     <repository>

@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import DiscUtils.Fat.FatAttributes;
-import DiscUtils.Ntfs.FileAttributeFlags;
-import DiscUtils.Ntfs.Internals.NtfsFileAttributes;
-import DiscUtils.Streams.Util.EndianUtilities;
-import DiscUtils.Vhd.Footer;
+import discUtils.fat.FatAttributes;
+import discUtils.ntfs.FileAttributeFlags;
+import discUtils.ntfs.internals.NtfsFileAttributes;
+import discUtils.streams.util.EndianUtilities;
+import discUtils.vhd.Footer;
 
 
 /**
