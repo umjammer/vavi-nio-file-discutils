@@ -52,7 +52,7 @@ public interface IVssBackupComponents {
     void setRestoreState();
 
     /**
-     * / set state describing restore
+     * set state describing restore
      */
     // STDMETHOD(SetRestoreState)
     // (
@@ -61,7 +61,7 @@ public interface IVssBackupComponents {
     void gatherWriterMetadata(IVssAsync[] async);
 
     /**
-     * / gather writer metadata
+     * gather writer metadata
      */
     // STDMETHOD(GatherWriterMetadata)
     // (
@@ -70,7 +70,7 @@ public interface IVssBackupComponents {
     void getWriterMetadataCount();
 
     /**
-     * / get count of writers with metadata
+     * get count of writers with metadata
      */
     // STDMETHOD(GetWriterMetadataCount)
     // (
@@ -79,7 +79,7 @@ public interface IVssBackupComponents {
     void getWriterMetadata();
 
     /**
-     * / get writer metadata for a specific writer
+     * get writer metadata for a specific writer
      */
     // STDMETHOD(GetWriterMetadata)
     // (
@@ -90,13 +90,13 @@ public interface IVssBackupComponents {
     void freeWriterMetadata();
 
     /**
-     * / free writer metadata
+     * free writer metadata
      */
     // STDMETHOD(FreeWriterMetadata)() = 0;
     void addComponent();
 
     /**
-     * / add a component to the BACKUP_COMPONENTS document
+     * add a component to the BACKUP_COMPONENTS document
      */
     // STDMETHOD(AddComponent)
     // (
@@ -109,7 +109,7 @@ public interface IVssBackupComponents {
     void prepareForBackup(IVssAsync[] async);
 
     /**
-     * / dispatch PrepareForBackup event to writers
+     * dispatch PrepareForBackup event to writers
      */
     // STDMETHOD(PrepareForBackup)
     // (
@@ -118,13 +118,13 @@ public interface IVssBackupComponents {
     void abortBackup();
 
     /**
-     * / abort the backup
+     * abort the backup
      */
     // STDMETHOD(AbortBackup)() = 0;
     void gatherWriterStatus();
 
     /**
-     * / dispatch the Identify event so writers can expose their metadata
+     * dispatch the Identify event so writers can expose their metadata
      */
     // STDMETHOD(GatherWriterStatus)
     // (
@@ -133,7 +133,7 @@ public interface IVssBackupComponents {
     void getWriterStatusCount();
 
     /**
-     * / get count of writers with status
+     * get count of writers with status
      */
     // STDMETHOD(GetWriterStatusCount)
     // (
@@ -156,7 +156,7 @@ public interface IVssBackupComponents {
     void setBackupSucceeded();
 
     /**
-     * / indicate whether backup succeeded on a component
+     * indicate whether backup succeeded on a component
      */
     // STDMETHOD(SetBackupSucceeded)
     // (
@@ -170,7 +170,7 @@ public interface IVssBackupComponents {
     void setBackupOptions();
 
     /**
-     * / set backup options for the writer
+     * set backup options for the writer
      */
     // STDMETHOD(SetBackupOptions)
     // (
@@ -183,7 +183,7 @@ public interface IVssBackupComponents {
     void setSelectedForRestore();
 
     /**
-     * / indicate that a given component is selected to be restored
+     * indicate that a given component is selected to be restored
      */
     // STDMETHOD(SetSelectedForRestore)
     // (
@@ -196,7 +196,7 @@ public interface IVssBackupComponents {
     void setRestoreOptions();
 
     /**
-     * / set restore options for the writer
+     * set restore options for the writer
      */
     // STDMETHOD(SetRestoreOptions)
     // (
@@ -209,7 +209,7 @@ public interface IVssBackupComponents {
     void setAdditionalRestores();
 
     /**
-     * / indicate that additional restores will follow
+     * indicate that additional restores will follow
      */
     // STDMETHOD(SetAdditionalRestores)
     // (
@@ -222,7 +222,7 @@ public interface IVssBackupComponents {
     void setPreviousBackupStamp();
 
     /**
-     * / set the backup stamp that the differential or incremental / backup is
+     * set the backup stamp that the differential or incremental / backup is
      * based on
      */
     // STDMETHOD(SetPreviousBackupStamp)
@@ -236,7 +236,7 @@ public interface IVssBackupComponents {
     void saveAsXML();
 
     /**
-     * / save BACKUP_COMPONENTS document as XML string
+     * save BACKUP_COMPONENTS document as XML string
      */
     // STDMETHOD(SaveAsXML)
     // (
@@ -245,7 +245,7 @@ public interface IVssBackupComponents {
     void backupComplete(IVssAsync[] async);
 
     /**
-     * / signal BackupComplete event to the writers
+     * signal BackupComplete event to the writers
      */
     // STDMETHOD(BackupComplete)
     // (
@@ -254,7 +254,7 @@ public interface IVssBackupComponents {
     void addAlternativeLocationMapping();
 
     /**
-     * / add an alternate mapping on restore
+     * add an alternate mapping on restore
      */
     // STDMETHOD(AddAlternativeLocationMapping)
     // (
@@ -270,7 +270,7 @@ public interface IVssBackupComponents {
     void addRestoreSubcomponent();
 
     /**
-     * / add a subcomponent to be restored
+     * add a subcomponent to be restored
      */
     // STDMETHOD(AddRestoreSubcomponent)
     // (
@@ -285,7 +285,7 @@ public interface IVssBackupComponents {
     void setFileRestoreStatus();
 
     /**
-     * / requestor indicates whether files were successfully restored
+     * requestor indicates whether files were successfully restored
      */
     // STDMETHOD(SetFileRestoreStatus)
     // (
@@ -298,7 +298,7 @@ public interface IVssBackupComponents {
     void addNewTarget();
 
     /**
-     * / add a new location target for a file to be restored
+     * add a new location target for a file to be restored
      */
     // STDMETHOD(AddNewTarget)
     // (
@@ -314,7 +314,7 @@ public interface IVssBackupComponents {
     void setRangesFilePath();
 
     /**
-     * / add a new location for the ranges file in case it was restored to / a
+     * add a new location for the ranges file in case it was restored to / a
      * different location
      */
     // STDMETHOD(SetRangesFilePath)
@@ -329,7 +329,7 @@ public interface IVssBackupComponents {
     void preRestore();
 
     /**
-     * / signal PreRestore event to the writers
+     * signal PreRestore event to the writers
      */
     // STDMETHOD(PreRestore)
     // (
@@ -338,7 +338,7 @@ public interface IVssBackupComponents {
     void postRestore();
 
     /**
-     * / signal PostRestore event to the writers
+     * signal PostRestore event to the writers
      */
     // STDMETHOD(PostRestore)
     // (
@@ -347,7 +347,7 @@ public interface IVssBackupComponents {
     void setContext(int context);
 
     /**
-     * / Called to set the context for subsequent snapshot-related operations
+     * Called to set the context for subsequent snapshot-related operations
      */
     // STDMETHOD(SetContext)
     // (
@@ -356,7 +356,7 @@ public interface IVssBackupComponents {
     void startSnapshotSet(UUID[] snapshotSetId);
 
     /**
-     * / start a snapshot set
+     * start a snapshot set
      */
     // STDMETHOD(StartSnapshotSet)
     // (
@@ -409,7 +409,7 @@ public interface IVssBackupComponents {
 //    __in UINT cInstanceId
 //    ) = 0;
 /**
- * / called to expose a snapshot
+ * called to expose a snapshot
  */
 //STDMETHOD(ExposeSnapshot)
 //    (

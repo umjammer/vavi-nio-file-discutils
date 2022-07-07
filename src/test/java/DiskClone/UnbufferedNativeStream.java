@@ -23,6 +23,8 @@
 package DiskClone;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import DiscUtils.Streams.SparseStream;
@@ -68,8 +70,6 @@ public class UnbufferedNativeStream extends SparseStream {
         if (!_handle.IsClosed) {
             _handle.close();
         }
-
-        super.close();
     }
 
     public boolean canRead() {
@@ -146,7 +146,7 @@ public class UnbufferedNativeStream extends SparseStream {
         }
 
         if (effectiveOffset < 0) {
-            throw new IOException("Attempt to move before beginning of disk");
+            throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         } else {
             _position = effectiveOffset;
             return _position;
@@ -162,6 +162,6 @@ public class UnbufferedNativeStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return ArrayList(new StreamExtent(0, getLength()));
+        return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 }

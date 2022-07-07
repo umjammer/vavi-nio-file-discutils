@@ -123,7 +123,7 @@ public class Win32Wrapper {
         }
     }
 
-    public static Exception getIOExceptionForLastError() {
+    public static RuntimeException getIOExceptionForLastError() {
         int lastError = Marshal.GetLastWin32Error();
         int lastErrorHr = Marshal.GetHRForLastWin32Error();
         return new IOException(getMessageForError(lastError), lastErrorHr);
