@@ -1,6 +1,7 @@
 
 package DiscUtils.PowerShell;
 
+import java.io.IOException;
 import java.util.Random;
 
 import DiscUtils.Core.VirtualDisk;
@@ -13,47 +14,47 @@ import DiscUtils.PowerShell.VirtualDiskProvider.VirtualDiskPSDriveInfo;
 
 
 public class InitializeVirtualDiskCommand extends PSCmdlet {
-    private String __LiteralPath;
+    private String literalPath;
 
     public String getLiteralPath() {
-        return __LiteralPath;
+        return literalPath;
     }
 
     public void setLiteralPath(String value) {
-        __LiteralPath = value;
+        literalPath = value;
     }
 
-    private PSObject __InputObject;
+    private PSObject inputObject;
 
     public PSObject getInputObject() {
-        return __InputObject;
+        return inputObject;
     }
 
     public void setInputObject(PSObject value) {
-        __InputObject = value;
+        inputObject = value;
     }
 
-    private VolumeManagerType __VolumeManager = VolumeManagerType.Bios;
+    private VolumeManagerType volumeManager = VolumeManagerType.Bios;
 
     public VolumeManagerType getVolumeManager() {
-        return __VolumeManager;
+        return volumeManager;
     }
 
     public void setVolumeManager(VolumeManagerType value) {
-        __VolumeManager = value;
+        volumeManager = value;
     }
 
-    private int __Signature;
+    private int signature;
 
     public int getSignature() {
-        return __Signature;
+        return signature;
     }
 
     public void setSignature(int value) {
-        __Signature = value;
+        signature = value;
     }
 
-    protected void processRecord() {
+    protected void processRecord() throws IOException {
         PSObject diskObject = null;
         VirtualDisk disk = null;
         if (getInputObject() != null) {

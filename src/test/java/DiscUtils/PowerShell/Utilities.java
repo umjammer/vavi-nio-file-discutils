@@ -22,18 +22,19 @@
 
 package DiscUtils.PowerShell;
 
-import java.io.File;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.DiscDirectoryInfo;
 import DiscUtils.Core.DiscFileInfo;
 import DiscUtils.HfsPlus.FileInfo;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileMode;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
-import moe.yo3explorer.dotnetio4j.FileShare;
-import moe.yo3explorer.dotnetio4j.IOException;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.File;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.FileShare;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Path;
+import dotnet4j.io.Stream;
 
 
 public class Utilities {
@@ -65,7 +66,7 @@ public class Utilities {
         return path.replace('#', ':');
     }
 
-    public static Stream createPsPath(SessionState session, String filePath) {
+    public static Stream createPsPath(SessionState session, String filePath) throws java.io.IOException {
         String parentPath = session.Path.ParseParent(filePath, null);
         String childName = session.Path.ParseChildName(filePath);
         Object parentItems = session.InvokeProvider.Item.get(parentPath);
@@ -78,7 +79,7 @@ public class Utilities {
         DirectoryInfo parentAsDir = parentItems[0].BaseObject instanceof DirectoryInfo ? (DirectoryInfo) parentItems[0].BaseObject
                                                                                        : null;
         if (parentAsDir != null) {
-            return File.Create(Path.Combine(parentAsDir.FullName, childName));
+            return File.create(Path.combine(parentAsDir.FullName, childName));
         }
 
         DiscDirectoryInfo parentAsDiscDir = parentItems[0].BaseObject instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) parentItems[0].BaseObject

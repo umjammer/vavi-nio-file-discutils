@@ -32,54 +32,55 @@ import DiscUtils.PowerShell.VirtualDiskProvider.VirtualDiskPSDriveInfo;
 
 
 public class NewVolumeCommand extends PSCmdlet {
-    private PSObject __InputObject;
+
+    private PSObject inputObject;
 
     public PSObject getInputObject() {
-        return __InputObject;
+        return inputObject;
     }
 
     public void setInputObject(PSObject value) {
-        __InputObject = value;
+        inputObject = value;
     }
 
-    private String __LiteralPath;
+    private String literalPath;
 
     public String getLiteralPath() {
-        return __LiteralPath;
+        return literalPath;
     }
 
     public void setLiteralPath(String value) {
-        __LiteralPath = value;
+        literalPath = value;
     }
 
-    private String __Size;
+    private String size;
 
     public String getSize() {
-        return __Size;
+        return size;
     }
 
     public void setSize(String value) {
-        __Size = value;
+        size = value;
     }
 
-    private WellKnownPartitionType __Type;
+    private WellKnownPartitionType type;
 
     public WellKnownPartitionType getType() {
-        return __Type;
+        return type;
     }
 
     public void setType(WellKnownPartitionType value) {
-        __Type = value;
+        type = value;
     }
 
-    private SwitchParameter __Active;
+    private SwitchParameter active;
 
     public SwitchParameter getActive() {
-        return __Active;
+        return active;
     }
 
     public void setActive(SwitchParameter value) {
-        __Active = value;
+        active = value;
     }
 
     public NewVolumeCommand() {

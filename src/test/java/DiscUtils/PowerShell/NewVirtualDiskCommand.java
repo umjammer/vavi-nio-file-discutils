@@ -23,7 +23,7 @@
 package DiscUtils.PowerShell;
 
 import java.io.Closeable;
-import java.nio.file.Path;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import DiscUtils.Core.DiscDirectoryInfo;
@@ -34,62 +34,64 @@ import DiscUtils.HfsPlus.FileInfo;
 import DiscUtils.PowerShell.Conpat.ErrorRecord;
 import DiscUtils.PowerShell.Conpat.PSCmdlet;
 import DiscUtils.PowerShell.VirtualDiskProvider.OnDemandVirtualDisk;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.FileNotFoundException;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.Path;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.FileNotFoundException;
 
 
 public class NewVirtualDiskCommand extends PSCmdlet {
-    private String __LiteralPath;
+    private String literalPath;
 
     public String getLiteralPath() {
-        return __LiteralPath;
+        return literalPath;
     }
 
     public void setLiteralPath(String value) {
-        __LiteralPath = value;
+        literalPath = value;
     }
 
-    private String __Type;
+    private String type;
 
     public String getType() {
-        return __Type;
+        return type;
     }
 
     public void setType(String value) {
-        __Type = value;
+        type = value;
     }
 
-    private String __Size;
+    private String size;
 
     public String getSize() {
-        return __Size;
+        return size;
     }
 
     public void setSize(String value) {
-        __Size = value;
+        size = value;
     }
 
-    private SwitchParameter __Differencing;
+    private SwitchParameter differencing;
 
     public SwitchParameter getDifferencing() {
-        return __Differencing;
+        return differencing;
     }
 
     public void setDifferencing(SwitchParameter value) {
-        __Differencing = value;
+        differencing = value;
     }
 
-    private String __BaseDisk;
+    private String baseDisk;
 
     public String getBaseDisk() {
-        return __BaseDisk;
+        return baseDisk;
     }
 
     public void setBaseDisk(String value) {
-        __BaseDisk = value;
+        baseDisk = value;
     }
 
-    protected void processRecord() {
+    protected void processRecord() throws IOException {
         if (ParameterSetName.equals("New")) {
             createNewDisk();
         } else {
@@ -97,7 +99,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         }
     }
 
-    private void createNewDisk() {
+    private void createNewDisk() throws IOException {
         String[] typeAndVariant = getType().split("-");
         if (typeAndVariant.length < 1 || typeAndVariant.length > 2) {
             writeError(new ErrorRecord(new IllegalArgumentException("Invalid Type of disk"),
@@ -127,7 +129,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         child = refVar___1.getValue();
         VirtualDisk disk = null;
         if (parentObj.BaseObject instanceof DirectoryInfo) {
-            String path = Path.Combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
+            String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
             try (VirtualDisk realDisk = VirtualDisk.createDisk(type, variant, path, size, null, null)) {
             }
             disk = new OnDemandVirtualDisk(path, FileAccess.ReadWrite);
@@ -147,7 +149,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         writeObject(disk, false);
     }
 
-    private void createDiffDisk() {
+    private void createDiffDisk() throws IOException {
         String child;
         String[] refVar___2 = new String[1];
         PSObject parentObj = resolveNewDiskPath(refVar___2);
@@ -171,7 +173,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
             }
             VirtualDisk newDisk = null;
             if (parentObj.BaseObject instanceof DirectoryInfo) {
-                String path = Path.Combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
+                String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
                 try (Closeable __newVar0 = baseDisk.createDifferencingDisk(path)) {
                 }
                 newDisk = new OnDemandVirtualDisk(path, FileAccess.ReadWrite);
@@ -208,7 +210,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         // actually wanted the root directory on the volume, not the volume itself.
         if (parentObj.BaseObject instanceof VolumeInfo) {
             parentObj = SessionState.InvokeProvider.Item.get(new String[] {
-                Path.Combine(parentPath.Path, "$Root")
+                Path.combine(parentPath.Path, "$Root")
             }, false, true)[0];
         }
 

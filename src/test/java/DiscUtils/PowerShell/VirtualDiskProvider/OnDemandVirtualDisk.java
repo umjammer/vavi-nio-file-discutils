@@ -35,8 +35,8 @@ import DiscUtils.Core.VirtualDiskParameters;
 import DiscUtils.Core.VirtualDiskTypeInfo;
 import DiscUtils.Streams.SparseStream;
 import DiscUtils.Streams.StreamExtent;
-import moe.yo3explorer.dotnetio4j.FileAccess;
-import moe.yo3explorer.dotnetio4j.SeekOrigin;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.SeekOrigin;
 
 
 public final class OnDemandVirtualDisk extends VirtualDisk {
@@ -76,7 +76,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -90,7 +90,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -104,7 +104,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -118,7 +118,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -140,7 +140,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -150,13 +150,13 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         try {
             return disk.createDifferencingDisk(fileSystem, path);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         } finally {
             if (disk != null)
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -166,13 +166,13 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         try {
             return disk.createDifferencingDisk(path);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         } finally {
             if (disk != null)
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                    throw new dotnet4j.io.IOException(e);
                 }
         }
     }
@@ -181,7 +181,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         try {
             return VirtualDisk.openDisk(_fileSystem, _path, _access);
         } catch (IOException e) {
-            throw new moe.yo3explorer.dotnetio4j.IOException(e);
+            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -209,7 +209,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -223,7 +223,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -237,7 +237,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -251,7 +251,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -268,7 +268,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -291,7 +291,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -305,7 +305,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
 
             if (effectiveOffset < 0) {
-                throw new moe.yo3explorer.dotnetio4j.IOException("Attempt to move before beginning of disk");
+                throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
             } else {
                 _position = effectiveOffset;
                 return _position;
@@ -321,7 +321,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -336,7 +336,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                        throw new dotnet4j.io.IOException(e);
                     }
             }
         }
@@ -345,7 +345,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             try {
                 return VirtualDisk.openDisk(_fileSystem, _path, _access);
             } catch (IOException e) {
-                throw new moe.yo3explorer.dotnetio4j.IOException(e);
+                throw new dotnet4j.io.IOException(e);
             }
         }
 

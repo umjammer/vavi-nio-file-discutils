@@ -4,7 +4,8 @@ package DiscUtils.PowerShell.Conpat;
 import java.io.Serializable;
 
 
-public class ErrorRecord implements Serializable {
+public abstract class ErrorRecord implements Serializable {
+
     public ErrorRecord(ErrorRecord errorRecord, Exception replaceParentContainsErrorRecordException) {
     }
 
@@ -14,32 +15,23 @@ public class ErrorRecord implements Serializable {
     protected ErrorRecord(SerializationInfo info, StreamingContext context) {
     }
 
-    public ErrorCategoryInfo getCategoryInfo() {
-    }
+    public abstract ErrorCategoryInfo getCategoryInfo();
 
-    public ErrorDetails getErrorDetails() {
-    }
+    public abstract ErrorDetails getErrorDetails();
 
-    public void setErrorDetails(ErrorDetails v) {
-    }
+    public abstract void setErrorDetails(ErrorDetails v);
 
-    public Exception getException() {
-    }
+    public abstract Exception getException();
 
-    public String getFullyQualifiedErrorId() {
-    }
+    public abstract String getFullyQualifiedErrorId();
 
-    public InvocationInfo getInvocationInfo() {
-    }
+    public abstract InvocationInfo getInvocationInfo();
 
-    public ReadOnlyCollection<Integer> getPipelineIterationInfo() {
-    }
+    public abstract ReadOnlyCollection<Integer> getPipelineIterationInfo();
 
-    public String getScriptStackTrace() {
-    }
+    public abstract String getScriptStackTrace();
 
-    public Object getTargetObject() {
-    }
+    public abstract Object getTargetObject();
 
-    public abstract void GetObjectData(SerializationInfo info, StreamingContext context);
+    public abstract void getObjectData(SerializationInfo info, StreamingContext context);
 }

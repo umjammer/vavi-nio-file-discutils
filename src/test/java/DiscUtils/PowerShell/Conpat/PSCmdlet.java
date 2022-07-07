@@ -1,7 +1,11 @@
 
 package DiscUtils.PowerShell.Conpat;
 
+import java.util.Collection;
+
+
 public abstract class PSCmdlet extends Cmdlet {
+
     protected PSCmdlet();
 
     public PSEventManager getEvents() {
@@ -36,7 +40,7 @@ public abstract class PSCmdlet extends Cmdlet {
         return null;
     }
 
-    public string getParameterSetName() {
+    public String getParameterSetName() {
         return null;
     }
 
@@ -44,13 +48,13 @@ public abstract class PSCmdlet extends Cmdlet {
         return null;
     }
 
-    public PathInfo CurrentProviderLocation(string providerId);
+    public abstract PathInfo CurrentProviderLocation(String providerId);
 
-    public Collection<string> GetResolvedProviderPathFromPSPath(String path, ProviderInfo[] provider);
+    public abstract Collection<String> GetResolvedProviderPathFromPSPath(String path, ProviderInfo[] provider);
 
-    public String GetUnresolvedProviderPathFromPSPath(string path);
+    public abstract String GetUnresolvedProviderPathFromPSPath(String path);
 
-    public Object GetVariableValue(string name);
+    public abstract Object GetVariableValue(String name);
 
-    public Object GetVariableValue(string name, Object defaultValue);
+    public abstract Object GetVariableValue(String name, Object defaultValue);
 }

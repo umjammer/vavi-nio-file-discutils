@@ -41,6 +41,7 @@ import dotnet4j.io.Stream;
 
 
 public final class Provider extends NavigationCmdletProvider implements IDynamicPropertyCmdletProvider {
+
     private static final String DefaultValueName = "(default)";
 
     protected PSDriveInfo newDrive(PSDriveInfo drive) {

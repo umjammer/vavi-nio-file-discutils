@@ -2,6 +2,7 @@
 package DiscUtils.PowerShell.Conpat;
 
 public abstract class NavigationCmdletProvider extends ContainerCmdletProvider {
+
     protected NavigationCmdletProvider() {}
 
     protected abstract String getChildName(String path);

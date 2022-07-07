@@ -22,6 +22,8 @@
 
 package DiscUtils.PowerShell;
 
+import java.io.IOException;
+
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Ntfs.NtfsFileSystem;
 import DiscUtils.PowerShell.Conpat.ErrorRecord;
@@ -33,50 +35,50 @@ enum FileSystemType {
 }
 
 public class FormatVolumeCommand extends PSCmdlet {
-    private PSObject __InputObject;
+    private PSObject inputObject;
 
     public PSObject getInputObject() {
-        return __InputObject;
+        return inputObject;
     }
 
     public void setInputObject(PSObject value) {
-        __InputObject = value;
+        inputObject = value;
     }
 
-    private String __LiteralPath;
+    private String literalPath;
 
     public String getLiteralPath() {
-        return __LiteralPath;
+        return literalPath;
     }
 
     public void setLiteralPath(String value) {
-        __LiteralPath = value;
+        literalPath = value;
     }
 
-    private FileSystemType __Filesystem = FileSystemType.Ntfs;
+    private FileSystemType filesystem = FileSystemType.Ntfs;
 
     public FileSystemType getFilesystem() {
-        return __Filesystem;
+        return filesystem;
     }
 
     public void setFilesystem(FileSystemType value) {
-        __Filesystem = value;
+        filesystem = value;
     }
 
-    private String __Label;
+    private String label;
 
     public String getLabel() {
-        return __Label;
+        return label;
     }
 
     public void setLabel(String value) {
-        __Label = value;
+        label = value;
     }
 
     public FormatVolumeCommand() {
     }
 
-    protected void processRecord() {
+    protected void processRecord() throws IOException {
         PSObject volInfoObj = null;
         VolumeInfo volInfo = null;
         if (getInputObject() != null) {
@@ -106,7 +108,7 @@ public class FormatVolumeCommand extends PSCmdlet {
         }
 
         if (volInfo == null) {
-            WriteError(new ErrorRecord(new IllegalArgumentException("Path specified is not a disk volume"),
+            writeError(new ErrorRecord(new IllegalArgumentException("Path specified is not a disk volume"),
                                        "BadVolumeSpecified",
                                        ErrorCategory.InvalidArgument,
                                        null));

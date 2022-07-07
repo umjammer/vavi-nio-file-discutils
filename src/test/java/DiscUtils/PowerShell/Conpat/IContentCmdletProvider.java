@@ -11,6 +11,7 @@ import DiscUtils.Core.CoreCompat.IContentReader;
 import DiscUtils.Core.CoreCompat.IContentWriter;
 
 public interface IContentCmdletProvider {
+
     void clearContent(String path);
 
     Object clearContentDynamicParameters(String path);

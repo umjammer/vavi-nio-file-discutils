@@ -23,32 +23,30 @@
 package DiscUtils.PowerShell;
 
 import java.io.Closeable;
+import java.io.IOException;
 
 import DiscUtils.PowerShell.Conpat.PSCmdlet;
 import DiscUtils.Registry.RegistryHive;
-import moe.yo3explorer.dotnetio4j.Stream;
+import dotnet4j.io.Stream;
 
 
 public class NewVirtualRegistryCommand extends PSCmdlet {
-    private String __LiteralPath;
+
+    private String literalPath;
 
     public String getLiteralPath() {
-        return __LiteralPath;
+        return literalPath;
     }
 
     public void setLiteralPath(String value) {
-        __LiteralPath = value;
+        literalPath = value;
     }
 
-    protected void processRecord() {
-        Stream hiveStream = Utilities.createPsPath(SessionState, getLiteralPath());
-        try {
+    protected void processRecord() throws IOException {
+        try (Stream hiveStream = Utilities.createPsPath(SessionState, getLiteralPath())) {
             hiveStream.setLength(0);
             try (Closeable __newVar0 = RegistryHive.create(hiveStream)) {
             }
-        } finally {
-            if (hiveStream != null)
-                hiveStream.close();
         }
     }
 }

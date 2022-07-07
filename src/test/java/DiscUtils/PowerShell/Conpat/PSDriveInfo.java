@@ -2,6 +2,7 @@
 package DiscUtils.PowerShell.Conpat;
 
 public class PSDriveInfo implements Comparable<PSDriveInfo> {
+
     public PSDriveInfo(String name, ProviderInfo provider, String root, String description, PSCredential credential) {
     }
 

@@ -22,11 +22,12 @@
 
 package DiscUtils.PowerShell.VirtualDiskProvider;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import DiscUtils.Complete.setupHelper;
+import DiscUtils.Complete.SetupHelper;
 import DiscUtils.Core.DiscFileSystem;
 import DiscUtils.Core.FileSystemInfo;
 import DiscUtils.Core.FileSystemManager;
@@ -34,6 +35,7 @@ import DiscUtils.Core.LogicalVolumeInfo;
 import DiscUtils.Core.VirtualDisk;
 import DiscUtils.Core.VolumeInfo;
 import DiscUtils.Core.VolumeManager;
+import DiscUtils.PowerShell.Conpat.PSDriveInfo;
 
 
 public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
@@ -44,7 +46,7 @@ public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
     private Map<String, DiscFileSystem> _fsCache;
 
     public VirtualDiskPSDriveInfo(PSDriveInfo toCopy, String root, VirtualDisk disk) {
-        super(toCopy.Name, toCopy.Provider, root, toCopy.Description, toCopy.Credential);
+        super(toCopy.getName(), toCopy.getProvider(), root, toCopy.getDescription(), toCopy.getCredential());
         _disk = disk;
         _volMgr = new VolumeManager(_disk);
         _fsCache = new HashMap<>();
@@ -74,7 +76,7 @@ public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
         return result;
     }
 
-    public void rescanVolumes() {
+    public void rescanVolumes() throws IOException {
         VolumeManager newVolMgr = new VolumeManager(_disk);
         Map<String, DiscFileSystem> newFsCache = new HashMap<>();
         Map<String, DiscFileSystem> deadFileSystems = new HashMap<>(_fsCache);
@@ -91,7 +93,7 @@ public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
         _fsCache = newFsCache;
     }
 
-    public void uncacheFileSystem(String volId) {
+    public void uncacheFileSystem(String volId) throws IOException {
         if (_fsCache.containsKey(volId)) {
             DiscFileSystem fs = _fsCache.get(volId);
             fs.close();

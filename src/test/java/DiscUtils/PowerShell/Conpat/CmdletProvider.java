@@ -5,6 +5,7 @@ import java.util.Collection;
 
 
 public abstract class CmdletProvider implements IResourceSupplier {
+
     protected CmdletProvider() {
     }
 
