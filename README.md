@@ -4,11 +4,15 @@
 
 A Java NIO FileSystem implementation over [DiscUtils](https://github.com/DiscUtils/DiscUtils)
 
+## Install
+
+https://jitpack.io/#umjammer/vavi-nio-file-discutils
+
 ## Usage
 
 ```Java
- URI uri = URI.create("discutils:file:/Users/foo/bar.vhi");
- FileSystem fs = FileSystems.newFileSystem(uri, Collections.EMPTY_MAP);
+ URI uri = URI.create("discutils:file:/Users/foo/bar.vdi");
+ FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
  Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
 ```
 
@@ -17,22 +21,22 @@ A Java NIO FileSystem implementation over [DiscUtils](https://github.com/DiscUti
 | fs       | list | upload | download | copy | move | rm | mkdir | cache | watch | create | comment |
 |----------|------|--------|----------|------|------|----|-------|-------|-------|--------|---------|
 | UDF      |      |        |          |      |      |    |       |       |       |        |         |
-| FAT      |      |        |          |      |      |    |       |       |       |        |         |
-| NTFS     | ✅   |        | ✅      |      |      |    |       |       |       |        |         |
-| HSF+     | ✅ (DMG) |        |          |      |     |    |        |       |       |        | 🚫 (ISO) same error on original |
-| EXT     | 🚧 (VDI) |        |          |      |     |    |        |       |       |        |        |
-| XFS     |       |        |          |      |     |    |        |       |       |        |        |
+| FAT      |✅ (RAW)|      |          |      |      |    |       |       |       |        |         |         |
+| NTFS     |✅ (VDI)|      | ✅ (VDI) |      |      |    |       |       |       |        |         |
+| HSF+     |✅ (DMG)|      |          |      |      |    |       |       |       |        | 🚫 (ISO) same error on original |
+| EXT      |🚧 (VDI)|      |          |      |      |    |       |       |       |        |         |
+| XFS      |      |        |          |      |      |    |       |       |       |        |         |
 | ISO      | 🚧   |        |          |      |      |    |       |       |       | ✅     |         |
 | VHD      |      |        |          |      |      |    |       |       |       |        |         |
-| VDI      | ✅   |        |          |      |      |     |      |       |       |        |         |
+| VDI      | ✅   |        |          |      |      |    |       |       |       |        |         |
 | XVA      |      |        |          |      |      |    |       |       |       |        |         |
 | VMDK     |      |        |          |      |      |    |       |       |       |        |         |
-| DMG      | ✅   |        |          |      |     |    |        |       |       |        |         |
+| DMG      | ✅   |        |          |      |      |    |       |       |       |        |         |
 | Registry | ✅   |        |          |      |      |    |       |       |       |        | Windows 10's registry |
 | ├ BCD    | ✅   |        |          |      |      |    |       |       |       |        | Windows XP's bcd   |
 | iSCSI    | 🚫   |        |          |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)   |
 | NFS      | 🚫   |        |          |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)  |
-| ODS      | 🚫   |        |          |      |      |    |       |       |       |        | server [pyods](https://github.com/klattimer/pyods)   |
+| ODS      | 🚫   |        |          |      |      |    |       |       |       |        | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)   |
 
 ## Project Description
 
@@ -54,23 +58,23 @@ The vavi-nio-file-discutils library has been split into 25 independent projects,
 
 To work with this, four Meta packages have been created:
 
-* DiscUtils.Complete: Everything, like before
-* DiscUtils.Containers: such as VMDK, VHD, VHDX
-* DiscUtils.FileSystems: such as NTFS, FAT, EXT
-* DiscUtils.Transports: such as NFS
+* discUtils.complete: Everything, like before
+* discUtils.containers: such as VMDK, VHD, VHDX
+* discUtils.fileSystems: such as NTFS, FAT, EXT
+* discUtils.Transports: such as NFS
 
 #### Note on detections
 
-vavi-nio-file-discutils has a number of detection helpers. These provide services like "which filesystem is this stream?". For this to work, you must register your filesystem providers with the DiscUtils core. To do this, write:
+vavi-nio-file-discutils has a number of detection helpers. These provide services like "which filesystem is this stream?". For this to work, you must register your filesystem providers with the discUtils core. To do this, write:
 
     META-INF/services/`class name`
 
 Where `class name` is the classes you wish to register. Note that the metapackages have helpers:
 
-    META-INF/services/DiscUtils.Core.Internal.VirtualDiskFactory // From DiscUtils.Complete
-    META-INF/services/DiscUtils.Core.Internal.LogicalVolumeFactory // From DiscUtils.Containers
-    META-INF/services/DiscUtils.Core.Vfs.VfsFileSystemFactory // From DiscUtils.FileSystems
-    META-INF/services/DiscUtils.Core.Internal.VirtualDiskTransport // From DiscUtils.Transports
+    META-INF/services/discUtils.core.internal.VirtualDiskFactory // From discUtils.complete
+    META-INF/services/discUtils.core.internal.LogicalVolumeFactory // From discUtils.containers
+    META-INF/services/discUtils.core.vfs.VfsFileSystemFactory // From discUtils.fileSystems
+    META-INF/services/discUtils.core.internal.VirtualDiskTransport // From discUtils.Transports
 
 ## How to use the Library
 
@@ -104,12 +108,12 @@ You can also browse through the directory hierarchy, starting at cd.Root.
 ### How to create a virtual hard disk:
 
 ```Java
-long diskSize = 30 * 1024 * 1024; //30MB
+long diskSize = 30 * 1024 * 1024; // 30MB
 try (Stream vhdStream = File.create("C:\\TEMP\\mydisk.vhd")) {
     Disk disk = Disk.initializeDynamic(vhdStream, diskSize);
     BiosPartitionTable.initialize(disk, WellKnownPartitionType.WindowsFat);
     try (FatFileSystem fs = FatFileSystem.formatPartition(disk, 0, null)) {
-        fs.CreateDirectory(@"TestDir\CHILD");
+        fs.createDirectory("TestDir\\CHILD");
         // do other things with the file system...
     }
 }
@@ -132,7 +136,7 @@ Again, start browsing the file system at floppy.Root.
 
 ## Development releases
 
-Automated CI builds are available on Github.
+Automated CI builds are available on [Github](https://github.com/umjammer/vavi-nio-file-discutils/actions).
 
 ## References
 
@@ -158,4 +162,10 @@ Automated CI builds are available on Github.
 
 ## TODO
 
- * https://github.com/AssafTzurEl/DiscUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43
+ * compile by jdk8
+ * ~~https://github.com/AssafTzurEl/discUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43~~
+   * img ... https://github.com/hessu/bchunk
+ * file separator
+ * pc98 partition (wip)
+ * d88 floppy disk
+ * qcow2
