@@ -29,7 +29,7 @@ import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySerializable, Comparable<AttributeListRecord> {

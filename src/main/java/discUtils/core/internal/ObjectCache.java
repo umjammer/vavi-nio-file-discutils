@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 
 
 /**

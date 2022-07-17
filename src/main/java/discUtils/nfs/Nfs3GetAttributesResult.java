@@ -57,10 +57,10 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
             return false;
         }
 
-        return other._status == _status && dotnet4j.io.compat.Utilities.equals(other._attributes, _attributes);
+        return other._status == _status && dotnet4j.util.compat.Utilities.equals(other._attributes, _attributes);
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(_status, _attributes);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(_status, _attributes);
     }
 }

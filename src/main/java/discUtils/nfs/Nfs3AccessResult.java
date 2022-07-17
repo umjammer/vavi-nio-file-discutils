@@ -77,11 +77,11 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getAccess().equals(getAccess()) && dotnet4j.io.compat.Utilities.equals(other.getObjectAttributes(), getObjectAttributes())
+        return other.getAccess().equals(getAccess()) && dotnet4j.util.compat.Utilities.equals(other.getObjectAttributes(), getObjectAttributes())
                 && other.getStatus() == getStatus();
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getAccess(), getObjectAttributes(), getStatus());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getAccess(), getObjectAttributes(), getStatus());
     }
 }

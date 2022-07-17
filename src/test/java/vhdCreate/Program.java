@@ -34,7 +34,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.FileStream;
-import dotnet4j.io.compat.Utilities;
+import dotnet4j.util.compat.Utilities;
 
 
 @Options

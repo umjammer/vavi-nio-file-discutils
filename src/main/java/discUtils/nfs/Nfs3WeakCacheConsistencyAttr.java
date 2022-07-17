@@ -83,6 +83,6 @@ public final class Nfs3WeakCacheConsistencyAttr {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getSize(), getModifyTime(), getChangeTime());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getSize(), getModifyTime(), getChangeTime());
     }
 }

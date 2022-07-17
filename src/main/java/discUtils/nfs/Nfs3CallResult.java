@@ -50,8 +50,6 @@ public abstract class Nfs3CallResult implements IRpcObject {
             XdrDataWriter writer = new XdrDataWriter(stream);
             write(writer);
             return stream.getLength();
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 }

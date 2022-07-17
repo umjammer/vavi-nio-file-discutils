@@ -24,7 +24,7 @@ package discUtils.iscsi;
 
 import java.net.URI;
 
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 /**

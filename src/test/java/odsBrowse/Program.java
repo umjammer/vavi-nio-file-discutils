@@ -34,7 +34,7 @@ import discUtils.common.ProgramBase;
 import discUtils.opticalDiscSharing.DiscInfo;
 import discUtils.opticalDiscSharing.OpticalDiscService;
 import discUtils.opticalDiscSharing.OpticalDiscServiceClient;
-import dotnet4j.io.compat.Utilities;
+import dotnet4j.util.compat.Utilities;
 
 
 @Options

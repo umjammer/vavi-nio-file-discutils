@@ -30,7 +30,7 @@ import java.util.List;
 
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
-import dotnet4j.io.compat.Utilities;
+import dotnet4j.util.compat.Utilities;
 
 
 public class FileRecord extends FixupRecordBase {

@@ -41,7 +41,7 @@ import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 /**

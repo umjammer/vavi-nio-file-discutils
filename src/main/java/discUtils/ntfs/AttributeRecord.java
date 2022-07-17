@@ -32,7 +32,7 @@ import discUtils.streams.buffer.IBuffer;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Range;
 import dotnet4j.io.IOException;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 public abstract class AttributeRecord implements Comparable<AttributeRecord> {

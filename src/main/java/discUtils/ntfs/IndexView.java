@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 
 
 public class IndexView<K extends IByteArraySerializable, D extends IByteArraySerializable> {

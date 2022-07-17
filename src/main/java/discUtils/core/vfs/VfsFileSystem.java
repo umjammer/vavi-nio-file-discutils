@@ -40,7 +40,7 @@ import discUtils.streams.SparseStream;
 import discUtils.streams.buffer.BufferStream;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 /**

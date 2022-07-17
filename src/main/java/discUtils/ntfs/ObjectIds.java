@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 
 
 public final class ObjectIds {

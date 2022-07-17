@@ -102,6 +102,6 @@ public class PortMap2Mapping {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getProgram(), getVersion(), getProtocol(), getPort());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getProgram(), getVersion(), getProtocol(), getPort());
     }
 }

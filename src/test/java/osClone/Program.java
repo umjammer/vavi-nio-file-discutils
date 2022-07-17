@@ -47,7 +47,7 @@ import discUtils.streams.util.Ownership;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.Stream;
-import dotnet4j.io.compat.Utilities;
+import dotnet4j.util.compat.Utilities;
 
 
 @Options

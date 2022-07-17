@@ -118,13 +118,13 @@ public final class Nfs3DirectoryEntry {
             return false;
         }
 
-        return other.getCookie() == getCookie() && dotnet4j.io.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes())
-                && dotnet4j.io.compat.Utilities.equals(other.getFileHandle(), getFileHandle()) && other.getFileId() == getFileId()
+        return other.getCookie() == getCookie() && dotnet4j.util.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes())
+                && dotnet4j.util.compat.Utilities.equals(other.getFileHandle(), getFileHandle()) && other.getFileId() == getFileId()
                 && other.getName().equals(getName());
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(Long.hashCode(getCookie()),
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(Long.hashCode(getCookie()),
                                              getFileAttributes().hashCode(),
                                              getFileHandle().hashCode(),
                                              Long.hashCode(getFileId()),
@@ -140,8 +140,6 @@ public final class Nfs3DirectoryEntry {
             XdrDataWriter writer = new XdrDataWriter(stream);
             write(writer);
             return stream.getLength();
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 }

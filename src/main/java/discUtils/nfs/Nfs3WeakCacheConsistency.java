@@ -78,10 +78,10 @@ public final class Nfs3WeakCacheConsistency {
             return false;
         }
 
-        return dotnet4j.io.compat.Utilities.equals(other.after, after) && dotnet4j.io.compat.Utilities.equals(other.before, before);
+        return dotnet4j.util.compat.Utilities.equals(other.after, after) && dotnet4j.util.compat.Utilities.equals(other.before, before);
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(after, before);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(after, before);
     }
 }

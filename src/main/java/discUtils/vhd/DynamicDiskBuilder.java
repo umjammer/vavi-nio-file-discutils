@@ -154,11 +154,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
 
         public void disposeReadState() {
             if (_dataStream != null) {
-                try {
-                    _dataStream.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+                _dataStream.close();
                 _dataStream = null;
             }
         }
@@ -221,11 +217,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
 
         public void disposeReadState() {
             if (_bitmapStream != null) {
-                try {
-                    _bitmapStream.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+                _bitmapStream.close();
                 _bitmapStream = null;
             }
         }

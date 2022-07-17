@@ -41,7 +41,7 @@ import dotnet4j.io.FileShare;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.io.compression.CompressionMode;
 
 

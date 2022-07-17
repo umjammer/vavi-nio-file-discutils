@@ -121,16 +121,10 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
 
         public void disposeReadState() {
             if (_streamView != null) {
-                try {
-                    _streamView.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+                _streamView.close();
                 _streamView = null;
             }
-
         }
-
     }
 
     private static class GrainTableExtent extends BuilderExtent {
@@ -206,11 +200,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
 
         public void disposeReadState() {
             if (_grainTableStream != null) {
-                try {
-                    _grainTableStream.close();
-                } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
-                }
+                _grainTableStream.close();
                 _grainTableStream = null;
             }
 
@@ -223,7 +213,5 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             long grainTableSectors = MathUtilities.ceil(header.NumGTEsPerGT * 4, Sizes.Sector);
             return (grainTableSectors + numDataGrains * header.GrainSize) * Sizes.Sector;
         }
-
     }
-
 }

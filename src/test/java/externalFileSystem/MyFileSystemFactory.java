@@ -9,7 +9,7 @@ import discUtils.core.VolumeInfo;
 import discUtils.core.vfs.VfsFileSystemFactory;
 import discUtils.core.vfs.VfsFileSystemInfo;
 import dotnet4j.io.Stream;
-import dotnet4j.io.compat.Utilities;
+import dotnet4j.util.compat.Utilities;
 
 
 public class MyFileSystemFactory extends VfsFileSystemFactory {

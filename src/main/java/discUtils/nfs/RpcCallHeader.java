@@ -120,6 +120,6 @@ public class RpcCallHeader {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getCredentials(), getProc(), getProgram(), getRpcVersion(), getVerifier(), getVersion());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getCredentials(), getProc(), getProgram(), getRpcVersion(), getVerifier(), getVersion());
     }
 }

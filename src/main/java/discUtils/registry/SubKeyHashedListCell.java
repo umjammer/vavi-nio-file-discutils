@@ -28,7 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import discUtils.streams.util.EndianUtilities;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 public final class SubKeyHashedListCell extends ListCell {

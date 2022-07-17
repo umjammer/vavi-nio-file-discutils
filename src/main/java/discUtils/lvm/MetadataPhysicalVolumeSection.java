@@ -25,7 +25,7 @@ package discUtils.lvm;
 import java.util.EnumSet;
 import java.util.Scanner;
 
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 
 
 public class MetadataPhysicalVolumeSection {

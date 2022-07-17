@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.core.vfs.IVfsDirectory;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {

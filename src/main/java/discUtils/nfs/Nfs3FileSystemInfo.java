@@ -219,8 +219,8 @@ public final class Nfs3FileSystemInfo {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(
-                dotnet4j.io.compat.Utilities.getCombinedHashCode(
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(
+                dotnet4j.util.compat.Utilities.getCombinedHashCode(
                         getReadMaxBytes(),
                         getReadPreferredBytes(),
                         getReadMultipleSize(),

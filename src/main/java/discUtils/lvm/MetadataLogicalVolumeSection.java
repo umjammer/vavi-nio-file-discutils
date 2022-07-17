@@ -36,7 +36,7 @@ import discUtils.streams.SparseStreamOpenDelegate;
 import discUtils.streams.SubStream;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 
 
 public class MetadataLogicalVolumeSection {

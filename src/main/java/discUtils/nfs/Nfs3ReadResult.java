@@ -105,11 +105,11 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && dotnet4j.io.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes())
+        return other.getStatus() == getStatus() && dotnet4j.util.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes())
                 && other.getCount() == getCount() && Arrays.equals(other.getData(), getData()) && other.getEof() == getEof();
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getFileAttributes(), getCount(), getEof(), getData());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getStatus(), getFileAttributes(), getCount(), getEof(), getData());
     }
 }

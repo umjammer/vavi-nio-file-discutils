@@ -22,7 +22,7 @@
 
 package discUtils.nfs;
 
-import dotnet4j.io.compat.Utilities;
+import dotnet4j.util.compat.Utilities;
 
 public final class Nfs3WriteResult extends Nfs3CallResult {
     public Nfs3WriteResult(XdrDataReader reader) {

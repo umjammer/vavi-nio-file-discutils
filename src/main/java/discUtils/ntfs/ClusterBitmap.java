@@ -29,7 +29,7 @@ import java.util.List;
 
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Range;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 
 
@@ -141,7 +141,7 @@ class ClusterBitmap implements Closeable {
 
     void freeClusters(List<Tuple<Long, Long>> runs) {
         for (Tuple<Long, Long> run : runs) {
-            _bitmap.markAbsentRange(run.Item1, run.Item2);
+            _bitmap.markAbsentRange(run.getItem1(), run.getItem2());
         }
     }
 

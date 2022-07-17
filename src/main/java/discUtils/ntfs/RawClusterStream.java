@@ -28,7 +28,7 @@ import java.util.List;
 
 import discUtils.streams.util.Range;
 import discUtils.streams.util.StreamUtilities;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
 
@@ -198,8 +198,8 @@ final class RawClusterStream extends ClusterStream {
 
                 long lcn = runIdx == 0 ? 0 : _cookedRuns.get(runIdx - 1).getStartLcn();
                 for (Tuple<Long, Long> allocation : alloced) {
-                    runs.add(new DataRun(allocation.Item1 - lcn, allocation.Item2, false));
-                    lcn = allocation.Item1;
+                    runs.add(new DataRun(allocation.getItem1() - lcn, allocation.getItem2(), false));
+                    lcn = allocation.getItem1();
                 }
 
                 _cookedRuns.makeNonSparse(runIdx, runs);

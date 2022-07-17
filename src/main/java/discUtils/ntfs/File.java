@@ -393,7 +393,7 @@ class File {
     public List<NtfsStream> getStreams(AttributeType attrType, String name) {
         List<NtfsStream> result = new ArrayList<>();
         for (NtfsAttribute attr : _attributes) {
-            if (attr.getType() == attrType && dotnet4j.io.compat.Utilities.equals(attr.getName(), name)) {
+            if (attr.getType() == attrType && dotnet4j.util.compat.Utilities.equals(attr.getName(), name)) {
                 result.add(new NtfsStream(this, attr));
             }
         }
@@ -516,7 +516,7 @@ class File {
      */
     NtfsAttribute getAttribute(AttributeType type, String name) {
         for (NtfsAttribute attr : _attributes) {
-            if (attr.getPrimaryRecord().getAttributeType() == type && dotnet4j.io.compat.Utilities.equals(attr.getName(), name)) {
+            if (attr.getPrimaryRecord().getAttributeType() == type && dotnet4j.util.compat.Utilities.equals(attr.getName(), name)) {
                 return attr;
             }
         }

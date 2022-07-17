@@ -95,6 +95,6 @@ public final class Nfs3Export {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getDirPath(), getGroups());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getDirPath(), getGroups());
     }
 }

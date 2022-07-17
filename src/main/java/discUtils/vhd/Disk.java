@@ -39,7 +39,7 @@ import discUtils.core.internal.LocalFileLocator;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.SparseStream;
 import discUtils.streams.util.Ownership;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
 
@@ -69,7 +69,7 @@ public final class Disk extends VirtualDisk {
     public Disk(Stream stream, Ownership ownsStream) {
         _files = new ArrayList<>();
         _files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
-        if (_files.get(0).Item1.needsParent()) {
+        if (_files.get(0).getItem1().needsParent()) {
             throw new UnsupportedOperationException("Differencing disks cannot be opened from a stream");
         }
 
@@ -257,7 +257,7 @@ public final class Disk extends VirtualDisk {
      * Gets the capacity of the disk (in bytes).
      */
     public long getCapacity() {
-        return _files.get(0).Item1.getCapacity();
+        return _files.get(0).getItem1().getCapacity();
     }
 
     /**
@@ -271,7 +271,7 @@ public final class Disk extends VirtualDisk {
         if (_content == null) {
             SparseStream stream = null;
             for (int i = _files.size() - 1; i >= 0; --i) {
-                stream = _files.get(i).Item1.openContent(stream, Ownership.Dispose);
+                stream = _files.get(i).getItem1().openContent(stream, Ownership.Dispose);
             }
             _content = stream;
         }
@@ -292,21 +292,21 @@ public final class Disk extends VirtualDisk {
      * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
-        return DiskFactory.makeDiskTypeInfo(_files.get(_files.size() - 1).Item1.isSparse() ? "dynamic" : "fixed");
+        return DiskFactory.makeDiskTypeInfo(_files.get(_files.size() - 1).getItem1().isSparse() ? "dynamic" : "fixed");
     }
 
     /**
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _files.get(0).Item1.getGeometry();
+        return _files.get(0).getItem1().getGeometry();
     }
 
     /**
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return _files.stream().map(file -> file.Item1).collect(Collectors.toList());
+        return _files.stream().map(file -> file.getItem1()).collect(Collectors.toList());
     }
 
     /**
@@ -450,7 +450,7 @@ public final class Disk extends VirtualDisk {
      */
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
         FileLocator locator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
-        DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Utilities.getFileFromPath(path));
+        DiskImageFile file = _files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
     }
 
@@ -462,7 +462,7 @@ public final class Disk extends VirtualDisk {
      */
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
         FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
-        DiskImageFile file = _files.get(0).Item1.createDifferencing(locator, Utilities.getFileFromPath(path));
+        DiskImageFile file = _files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
     }
 
@@ -490,8 +490,8 @@ public final class Disk extends VirtualDisk {
 
             if (_files != null) {
                 for (Tuple<DiskImageFile, Ownership> record : _files) {
-                    if (record.Item2 == Ownership.Dispose) {
-                        record.Item1.close();
+                    if (record.getItem2() == Ownership.Dispose) {
+                        record.getItem1().close();
                     }
 
                 }
@@ -503,7 +503,7 @@ public final class Disk extends VirtualDisk {
     }
 
     private void resolveFileChain() throws IOException {
-        DiskImageFile file = _files.get(_files.size() - 1).Item1;
+        DiskImageFile file = _files.get(_files.size() - 1).getItem1();
         while (file.needsParent()) {
             FileLocator fileLocator = file.getRelativeFileLocator();
             boolean found = false;

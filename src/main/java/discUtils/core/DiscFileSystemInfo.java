@@ -27,7 +27,7 @@ import java.util.EnumSet;
 
 import discUtils.core.coreCompat.FileAttributes;
 import discUtils.core.internal.Utilities;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 
 
 /**

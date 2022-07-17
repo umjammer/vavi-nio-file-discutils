@@ -28,7 +28,7 @@ import vavi.util.win32.DateUtil;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 import dotnet4j.security.principal.SecurityIdentifier;
 import dotnet4j.security.principal.WellKnownSidType;
 

@@ -29,7 +29,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import discUtils.core.internal.Utilities;
-import dotnet4j.Tuple;
+import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.IOException;
 
 

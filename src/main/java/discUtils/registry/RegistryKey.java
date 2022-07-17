@@ -30,7 +30,7 @@ import java.util.List;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
-import dotnet4j.io.compat.StringUtilities;
+import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.security.accessControl.RegistrySecurity;
 import dotnet4j.win32.RegistryValueOptions;
 

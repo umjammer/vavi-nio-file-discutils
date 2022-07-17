@@ -100,6 +100,6 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return dotnet4j.io.compat.Utilities.getCombinedHashCode(getStatus(), getObjectHandle(), getObjectAttributes(), getDirAttributes());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getStatus(), getObjectHandle(), getObjectAttributes(), getDirAttributes());
     }
 }
