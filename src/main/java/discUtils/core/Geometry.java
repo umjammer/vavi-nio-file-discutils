@@ -42,10 +42,10 @@ public final class Geometry {
     public Geometry(int cylinders, int headsPerCylinder, int sectorsPerTrack) {
         assert cylinders >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 : cylinders + ", " + headsPerCylinder + ", " +
                                                                                  sectorsPerTrack;
-        _cylinders = cylinders;
-        _headsPerCylinder = headsPerCylinder;
-        _sectorsPerTrack = sectorsPerTrack;
-        _bytesPerSector = 512;
+        this.cylinders = cylinders;
+        this.headsPerCylinder = headsPerCylinder;
+        this.sectorsPerTrack = sectorsPerTrack;
+        bytesPerSector = 512;
     }
 
     /**
@@ -60,10 +60,10 @@ public final class Geometry {
     public Geometry(int cylinders, int headsPerCylinder, int sectorsPerTrack, int bytesPerSector) {
         assert cylinders >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 &&
                bytesPerSector >= 0 : cylinders + ", " + headsPerCylinder + ", " + sectorsPerTrack + ", " + bytesPerSector;
-        _cylinders = cylinders;
-        _headsPerCylinder = headsPerCylinder;
-        _sectorsPerTrack = sectorsPerTrack;
-        _bytesPerSector = bytesPerSector;
+        this.cylinders = cylinders;
+        this.headsPerCylinder = headsPerCylinder;
+        this.sectorsPerTrack = sectorsPerTrack;
+        this.bytesPerSector = bytesPerSector;
     }
 
     /**
@@ -78,19 +78,19 @@ public final class Geometry {
     public Geometry(long capacity, int headsPerCylinder, int sectorsPerTrack, int bytesPerSector) {
         assert capacity >= 0 && headsPerCylinder >= 0 && sectorsPerTrack >= 0 &&
                bytesPerSector >= 0 : headsPerCylinder + ", " + sectorsPerTrack + ", " + bytesPerSector;
-        _cylinders = (int) (capacity / (headsPerCylinder * (long) sectorsPerTrack * bytesPerSector));
-        _headsPerCylinder = headsPerCylinder;
-        _sectorsPerTrack = sectorsPerTrack;
-        _bytesPerSector = bytesPerSector;
+        cylinders = (int) (capacity / (headsPerCylinder * (long) sectorsPerTrack * bytesPerSector));
+        this.headsPerCylinder = headsPerCylinder;
+        this.sectorsPerTrack = sectorsPerTrack;
+        this.bytesPerSector = bytesPerSector;
     }
 
     /**
      * Gets the number of bytes in each sector.
      */
-    private int _bytesPerSector;
+    private int bytesPerSector;
 
     public int getBytesPerSector() {
-        return _bytesPerSector;
+        return bytesPerSector;
     }
 
     /**
@@ -103,19 +103,19 @@ public final class Geometry {
     /**
      * Gets the number of cylinders.
      */
-    private int _cylinders;
+    private int cylinders;
 
     public int getCylinders() {
-        return _cylinders;
+        return cylinders;
     }
 
     /**
      * Gets the number of heads (aka platters).
      */
-    private int _headsPerCylinder;
+    private int headsPerCylinder;
 
     public int getHeadsPerCylinder() {
-        return _headsPerCylinder;
+        return headsPerCylinder;
     }
 
     /**
@@ -160,24 +160,24 @@ public final class Geometry {
     /**
      * Gets the number of sectors per track.
      */
-    private int _sectorsPerTrack;
+    private int sectorsPerTrack;
 
     public int getSectorsPerTrack() {
-        return _sectorsPerTrack;
+        return sectorsPerTrack;
     }
 
     /**
      * Gets the total size of the disk (in sectors).
      */
     public int getTotalSectors() {
-        return _cylinders * _headsPerCylinder * _sectorsPerTrack;
+        return cylinders * headsPerCylinder * sectorsPerTrack;
     }
 
     /**
      * Gets the total size of the disk (in sectors).
      */
     public long getTotalSectorsLong() {
-        return _cylinders * (long) _headsPerCylinder * _sectorsPerTrack;
+        return cylinders * (long) headsPerCylinder * sectorsPerTrack;
     }
 
     /**
@@ -188,9 +188,9 @@ public final class Geometry {
      *         geometry will indicate for the disk.
      */
     public static Geometry largeBiosGeometry(Geometry ideGeometry) {
-        int cylinders = ideGeometry._cylinders;
-        int heads = ideGeometry._headsPerCylinder;
-        int sectors = ideGeometry._sectorsPerTrack;
+        int cylinders = ideGeometry.cylinders;
+        int heads = ideGeometry.headsPerCylinder;
+        int sectors = ideGeometry.sectorsPerTrack;
         while (cylinders > 1024 && heads <= 127) {
             cylinders >>>= 1;
             heads <<= 1;
@@ -344,7 +344,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("cylinder number is negative");
         }
 
-        if (head >= _headsPerCylinder) {
+        if (head >= headsPerCylinder) {
             throw new IndexOutOfBoundsException("head number is larger than disk geometry");
         }
 
@@ -352,7 +352,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("head number is negative");
         }
 
-        if (sector > _sectorsPerTrack) {
+        if (sector > sectorsPerTrack) {
             throw new IndexOutOfBoundsException("sector number is larger than disk geometry");
         }
 
@@ -360,7 +360,7 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("sector number is less than one (sectors are 1-based)");
         }
 
-        return (cylinder * (_headsPerCylinder & 0xffffffffL) + head) * _sectorsPerTrack + sector - 1;
+        return (cylinder * (headsPerCylinder & 0xffffffffL) + head) * sectorsPerTrack + sector - 1;
     }
 
     /**
@@ -375,10 +375,10 @@ public final class Geometry {
             throw new IndexOutOfBoundsException("Logical block Address is negative");
         }
 
-        int cylinder = (int) (logicalBlockAddress / (_headsPerCylinder * _sectorsPerTrack));
-        int temp = (int) (logicalBlockAddress % (_headsPerCylinder * _sectorsPerTrack));
-        int head = temp / _sectorsPerTrack;
-        int sector = temp % _sectorsPerTrack + 1;
+        int cylinder = (int) (logicalBlockAddress / (headsPerCylinder * sectorsPerTrack));
+        int temp = (int) (logicalBlockAddress % (headsPerCylinder * sectorsPerTrack));
+        int head = temp / sectorsPerTrack;
+        int sector = temp % sectorsPerTrack + 1;
         return new ChsAddress(cylinder, head, sector);
     }
 
@@ -437,8 +437,8 @@ public final class Geometry {
         }
 
         Geometry other = (Geometry) obj;
-        return _cylinders == other._cylinders && _headsPerCylinder == other._headsPerCylinder &&
-               _sectorsPerTrack == other._sectorsPerTrack && _bytesPerSector == other._bytesPerSector;
+        return cylinders == other.cylinders && headsPerCylinder == other.headsPerCylinder &&
+               sectorsPerTrack == other.sectorsPerTrack && bytesPerSector == other.bytesPerSector;
     }
 
     /**
@@ -456,10 +456,10 @@ public final class Geometry {
      * @return The string representation.
      */
     public String toString() {
-        if (_bytesPerSector == 512) {
-            return "(" + _cylinders + "/" + _headsPerCylinder + "/" + _sectorsPerTrack + ")";
+        if (bytesPerSector == 512) {
+            return "(" + cylinders + "/" + headsPerCylinder + "/" + sectorsPerTrack + ")";
         }
 
-        return "(" + _cylinders + "/" + _headsPerCylinder + "/" + _sectorsPerTrack + ":" + _bytesPerSector + ")";
+        return "(" + cylinders + "/" + headsPerCylinder + "/" + sectorsPerTrack + ":" + bytesPerSector + ")";
     }
 }

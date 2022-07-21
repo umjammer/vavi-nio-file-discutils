@@ -36,6 +36,7 @@ import discUtils.streams.util.Sizes;
 
 
 class DynamicDisk implements IDiagnosticTraceable {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
     private final VirtualDisk _disk;
@@ -46,7 +47,7 @@ class DynamicDisk implements IDiagnosticTraceable {
         _disk = disk;
         _header = getPrivateHeader(_disk);
         TocBlock toc = getTableOfContents();
-        long dbStart = _header.ConfigurationStartLba * 512 + toc.Item1Start * 512;
+        long dbStart = _header.configurationStartLba * 512 + toc.Item1Start * 512;
         _disk.getContent().setPosition(dbStart);
         _database = new Database(_disk.getContent());
     }
@@ -62,36 +63,36 @@ class DynamicDisk implements IDiagnosticTraceable {
     }
 
     public long getDataOffset() {
-        return _header.DataStartLba;
+        return _header.dataStartLba;
     }
 
     public UUID getGroupId() {
-        return _header.DiskGroupId == null || _header.DiskGroupId.isEmpty() ? EMPTY : UUID.fromString(_header.DiskGroupId);
+        return _header.diskGroupId == null || _header.diskGroupId.isEmpty() ? EMPTY : UUID.fromString(_header.diskGroupId);
     }
 
     public UUID getId() {
-        return UUID.fromString(_header.DiskId);
+        return UUID.fromString(_header.diskId);
     }
 
     public void dump(PrintWriter writer, String linePrefix) {
-        writer.println(linePrefix + "DISK (" + _header.DiskId + ")");
-        writer.println(linePrefix + "      Metadata Version: " + ((_header.Version >>> 16) & 0xFFFF) + "." +
-                       (_header.Version & 0xFFFF));
-        writer.println(linePrefix + "             Timestamp: " + _header.Timestamp);
-        writer.println(linePrefix + "               Disk Id: " + _header.DiskId);
-        writer.println(linePrefix + "               Host Id: " + _header.HostId);
-        writer.println(linePrefix + "         Disk Group Id: " + _header.DiskGroupId);
-        writer.println(linePrefix + "       Disk Group Name: " + _header.DiskGroupName);
-        writer.println(linePrefix + "            Data Start: " + _header.DataStartLba + " (Sectors)");
-        writer.println(linePrefix + "             Data Size: " + _header.DataSizeLba + " (Sectors)");
-        writer.println(linePrefix + "   Configuration Start: " + _header.ConfigurationStartLba + " (Sectors)");
-        writer.println(linePrefix + "    Configuration Size: " + _header.ConfigurationSizeLba + " (Sectors)");
-        writer.println(linePrefix + "              TOC Size: " + _header.TocSizeLba + " (Sectors)");
-        writer.println(linePrefix + "              Next TOC: " + _header.NextTocLba + " (Sectors)");
-        writer.println(linePrefix + "     Number of Configs: " + _header.NumberOfConfigs);
-        writer.println(linePrefix + "           Config Size: " + _header.ConfigurationSizeLba + " (Sectors)");
-        writer.println(linePrefix + "        Number of Logs: " + _header.NumberOfLogs);
-        writer.println(linePrefix + "              Log Size: " + _header.LogSizeLba + " (Sectors)");
+        writer.println(linePrefix + "DISK (" + _header.diskId + ")");
+        writer.println(linePrefix + "      Metadata version: " + ((_header.version >>> 16) & 0xFFFF) + "." +
+                       (_header.version & 0xFFFF));
+        writer.println(linePrefix + "             Timestamp: " + _header.timestamp);
+        writer.println(linePrefix + "               Disk Id: " + _header.diskId);
+        writer.println(linePrefix + "               Host Id: " + _header.hostId);
+        writer.println(linePrefix + "         Disk Group Id: " + _header.diskGroupId);
+        writer.println(linePrefix + "       Disk Group Name: " + _header.diskGroupName);
+        writer.println(linePrefix + "            Data Start: " + _header.dataStartLba + " (Sectors)");
+        writer.println(linePrefix + "             Data Size: " + _header.dataSizeLba + " (Sectors)");
+        writer.println(linePrefix + "   Configuration Start: " + _header.configurationStartLba + " (Sectors)");
+        writer.println(linePrefix + "    Configuration Size: " + _header.configurationSizeLba + " (Sectors)");
+        writer.println(linePrefix + "              TOC Size: " + _header.tocSizeLba + " (Sectors)");
+        writer.println(linePrefix + "              Next TOC: " + _header.nextTocLba + " (Sectors)");
+        writer.println(linePrefix + "     Number of Configs: " + _header.numberOfConfigs);
+        writer.println(linePrefix + "           Config Size: " + _header.configurationSizeLba + " (Sectors)");
+        writer.println(linePrefix + "        Number of Logs: " + _header.numberOfLogs);
+        writer.println(linePrefix + "              Log Size: " + _header.logSizeLba + " (Sectors)");
     }
 
     static PrivateHeader getPrivateHeader(VirtualDisk disk) {
@@ -123,8 +124,8 @@ class DynamicDisk implements IDiagnosticTraceable {
     }
 
     private TocBlock getTableOfContents() {
-        byte[] buffer = new byte[(int) _header.TocSizeLba * 512];
-        _disk.getContent().setPosition(_header.ConfigurationStartLba * 512 + 1 * _header.TocSizeLba * 512);
+        byte[] buffer = new byte[(int) _header.tocSizeLba * 512];
+        _disk.getContent().setPosition(_header.configurationStartLba * 512 + 1 * _header.tocSizeLba * 512);
 
         _disk.getContent().read(buffer, 0, buffer.length);
         TocBlock tocBlock = new TocBlock();

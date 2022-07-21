@@ -30,41 +30,41 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class CompressedBlock implements IByteArraySerializable {
-    public int BlocksDescriptor;
+    public int blocksDescriptor;
 
-    public UdifChecksum CheckSum;
+    public UdifChecksum checkSum;
 
-    public long DataStart;
+    public long dataStart;
 
-    public int DecompressBufferRequested;
+    public int decompressBufferRequested;
 
-    public long FirstSector;
+    public long firstSector;
 
-    public int InfoVersion;
+    public int infoVersion;
 
-    public List<CompressedRun> Runs;
+    public List<CompressedRun> runs;
 
-    public long SectorCount;
+    public long sectorCount;
 
-    public int Signature;
+    public int signature;
 
     public int size() {
         throw new UnsupportedOperationException();
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        InfoVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        FirstSector = EndianUtilities.toInt64BigEndian(buffer, offset + 8);
-        SectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
-        DataStart = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
-        DecompressBufferRequested = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
-        BlocksDescriptor = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
-        CheckSum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 60);
-        Runs = new ArrayList<>();
+        signature = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
+        infoVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        firstSector = EndianUtilities.toInt64BigEndian(buffer, offset + 8);
+        sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
+        dataStart = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
+        decompressBufferRequested = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
+        blocksDescriptor = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+        checkSum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 60);
+        runs = new ArrayList<>();
         int numRuns = EndianUtilities.toInt32BigEndian(buffer, offset + 200);
         for (int i = 0; i < numRuns; ++i) {
-            Runs.add(EndianUtilities.toStruct(CompressedRun.class, buffer, offset + 204 + i * 40));
+            runs.add(EndianUtilities.toStruct(CompressedRun.class, buffer, offset + 204 + i * 40));
         }
         return 0;
     }

@@ -37,7 +37,7 @@ import discUtils.core.compression.BlockCompressor;
 import discUtils.core.compression.CompressionResult;
 
 
-@Disabled
+@Disabled("not implemented yet")
 public class LZNT1Test {
     private byte[] _uncompressedData;
 

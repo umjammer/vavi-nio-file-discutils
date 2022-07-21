@@ -31,13 +31,13 @@ import discUtils.streams.SubStream;
 
 
 public class UdifPartitionInfo extends PartitionInfo {
-    private final CompressedBlock _block;
+    private final CompressedBlock block;
 
-    private final Disk _disk;
+    private final Disk disk;
 
     public UdifPartitionInfo(Disk disk, CompressedBlock block) {
-        _block = block;
-        _disk = disk;
+        this.block = block;
+        this.disk = disk;
     }
 
     public byte getBiosType() {
@@ -45,7 +45,7 @@ public class UdifPartitionInfo extends PartitionInfo {
     }
 
     public long getFirstSector() {
-        return _block.FirstSector;
+        return block.firstSector;
     }
 
     public UUID getGuidType() {
@@ -53,11 +53,11 @@ public class UdifPartitionInfo extends PartitionInfo {
     }
 
     public long getLastSector() {
-        return _block.FirstSector + _block.SectorCount;
+        return block.firstSector + block.sectorCount;
     }
 
     public long getSectorCount() {
-        return _block.SectorCount;
+        return block.sectorCount;
     }
 
     public String getTypeAsString() {
@@ -69,6 +69,6 @@ public class UdifPartitionInfo extends PartitionInfo {
     }
 
     public SparseStream open() {
-        return new SubStream(_disk.getContent(), getFirstSector() * _disk.getSectorSize(), getSectorCount() * _disk.getSectorSize());
+        return new SubStream(disk.getContent(), getFirstSector() * disk.getSectorSize(), getSectorCount() * disk.getSectorSize());
     }
 }

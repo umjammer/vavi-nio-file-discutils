@@ -123,19 +123,19 @@ public class UdifBuffer extends Buffer {
         List<StreamExtent> result = new ArrayList<>();
         StreamExtent lastRun = null;
         for (CompressedBlock block : getBlocks()) {
-            if ((block.FirstSector + block.SectorCount) * Sizes.Sector < start) {
+            if ((block.firstSector + block.sectorCount) * Sizes.Sector < start) {
                 continue;
             }
 
             // Skip blocks before start of range
-            if (block.FirstSector * Sizes.Sector > start + count) {
+            if (block.firstSector * Sizes.Sector > start + count) {
                 continue;
             }
 
-            for (CompressedRun run : block.Runs) {
+            for (CompressedRun run : block.runs) {
                 // Skip blocks after end of range
                 if (run.SectorCount > 0 && run.Type != RunType.Zeros) {
-                    long thisRunStart = (block.FirstSector + run.SectorStart) * Sizes.Sector;
+                    long thisRunStart = (block.firstSector + run.SectorStart) * Sizes.Sector;
                     long thisRunEnd = thisRunStart + run.SectorCount * Sizes.Sector;
                     thisRunStart = Math.max(thisRunStart, start);
                     thisRunEnd = Math.min(thisRunEnd, start + count);
@@ -206,23 +206,23 @@ public class UdifBuffer extends Buffer {
 
         long findSector = pos / 512;
         for (CompressedBlock block : getBlocks()) {
-            if (block.FirstSector <= findSector && block.FirstSector + block.SectorCount > findSector) {
+            if (block.firstSector <= findSector && block.firstSector + block.sectorCount > findSector) {
                 // Make sure the decompression buffer is big enough
-                if (_decompBuffer == null || _decompBuffer.length < block.DecompressBufferRequested * Sizes.Sector) {
-                    _decompBuffer = new byte[block.DecompressBufferRequested * Sizes.Sector];
+                if (_decompBuffer == null || _decompBuffer.length < block.decompressBufferRequested * Sizes.Sector) {
+                    _decompBuffer = new byte[block.decompressBufferRequested * Sizes.Sector];
                 }
 
-                for (CompressedRun run : block.Runs) {
-                    if (block.FirstSector + run.SectorStart <= findSector &&
-                        block.FirstSector + run.SectorStart + run.SectorCount > findSector) {
+                for (CompressedRun run : block.runs) {
+                    if (block.firstSector + run.SectorStart <= findSector &&
+                        block.firstSector + run.SectorStart + run.SectorCount > findSector) {
                         loadRun(run);
-                        _activeRunOffset = block.FirstSector * Sizes.Sector;
+                        _activeRunOffset = block.firstSector * Sizes.Sector;
                         return;
                     }
 
                 }
                 throw new dotnet4j.io.IOException("No run for sector " + findSector + " in block starting at " +
-                    block.FirstSector);
+                    block.firstSector);
             }
 
         }

@@ -27,6 +27,7 @@ import dotnet4j.io.Stream;
 
 
 public final class DefaultPartitionTableFactory implements PartitionTableFactory {
+
     public boolean detectIsPartitioned(Stream s) {
         return BiosPartitionTable.isValid(s);
     }

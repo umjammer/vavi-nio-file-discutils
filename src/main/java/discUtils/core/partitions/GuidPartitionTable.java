@@ -47,15 +47,16 @@ import dotnet4j.io.Stream;
  * Represents a GUID Partition Table.
  */
 public final class GuidPartitionTable extends PartitionTable {
-    private Stream _diskData;
 
-    private Geometry _diskGeometry;
+    private Stream diskData;
 
-    private byte[] _entryBuffer;
+    private Geometry diskGeometry;
 
-    private GptHeader _primaryHeader;
+    private byte[] entryBuffer;
 
-    private GptHeader _secondaryHeader;
+    private GptHeader primaryHeader;
+
+    private GptHeader secondaryHeader;
 
     /**
      * Initializes a new instance of the GuidPartitionTable class.
@@ -80,21 +81,21 @@ public final class GuidPartitionTable extends PartitionTable {
      * Gets the unique GPT identifier for this disk.
      */
     public UUID getDiskGuid() {
-        return _primaryHeader.DiskGuid;
+        return primaryHeader.diskGuid;
     }
 
     /**
      * Gets the first sector of the disk available to hold partitions.
      */
     public long getFirstUsableSector() {
-        return _primaryHeader.FirstUsable;
+        return primaryHeader.firstUsable;
     }
 
     /**
      * Gets the last sector of the disk available to hold partitions.
      */
     public long getLastUsableSector() {
-        return _primaryHeader.LastUsable;
+        return primaryHeader.lastUsable;
     }
 
     /**
@@ -133,27 +134,27 @@ public final class GuidPartitionTable extends PartitionTable {
         byte[] entriesBuffer = new byte[EntryCount * EntrySize];
         // Prepare primary header
         GptHeader header = new GptHeader(diskGeometry.getBytesPerSector());
-        header.HeaderLba = 1;
-        header.AlternateHeaderLba = disk.getLength() / diskGeometry.getBytesPerSector() - 1;
-        header.FirstUsable = header.HeaderLba + entrySectors + 1;
-        header.LastUsable = header.AlternateHeaderLba - entrySectors - 1;
-        header.DiskGuid = UUID.randomUUID();
-        header.PartitionEntriesLba = 2;
-        header.PartitionEntryCount = EntryCount;
-        header.PartitionEntrySize = EntrySize;
-        header.EntriesCrc = calcEntriesCrc(entriesBuffer);
+        header.headerLba = 1;
+        header.alternateHeaderLba = disk.getLength() / diskGeometry.getBytesPerSector() - 1;
+        header.firstUsable = header.headerLba + entrySectors + 1;
+        header.lastUsable = header.alternateHeaderLba - entrySectors - 1;
+        header.diskGuid = UUID.randomUUID();
+        header.partitionEntriesLba = 2;
+        header.partitionEntryCount = EntryCount;
+        header.partitionEntrySize = EntrySize;
+        header.entriesCrc = calcEntriesCrc(entriesBuffer);
         // Write the primary header
         byte[] headerBuffer = new byte[diskGeometry.getBytesPerSector()];
         header.writeTo(headerBuffer, 0);
-        disk.setPosition(header.HeaderLba * diskGeometry.getBytesPerSector());
+        disk.setPosition(header.headerLba * diskGeometry.getBytesPerSector());
         disk.write(headerBuffer, 0, headerBuffer.length);
         // Calc alternate header
-        header.HeaderLba = header.AlternateHeaderLba;
-        header.AlternateHeaderLba = 1;
-        header.PartitionEntriesLba = header.HeaderLba - entrySectors;
+        header.headerLba = header.alternateHeaderLba;
+        header.alternateHeaderLba = 1;
+        header.partitionEntriesLba = header.headerLba - entrySectors;
         // Write the alternate header
         header.writeTo(headerBuffer, 0);
-        disk.setPosition(header.HeaderLba * diskGeometry.getBytesPerSector());
+        disk.setPosition(header.headerLba * diskGeometry.getBytesPerSector());
         disk.write(headerBuffer, 0, headerBuffer.length);
         return new GuidPartitionTable(disk, diskGeometry);
     }
@@ -199,12 +200,12 @@ public final class GuidPartitionTable extends PartitionTable {
      * @return The index of the new partition.
      */
     public int create(long size, WellKnownPartitionType type, boolean active) {
-        if (size < _diskGeometry.getBytesPerSector()) {
+        if (size < diskGeometry.getBytesPerSector()) {
             throw new IndexOutOfBoundsException("size must be at least one sector");
         }
 
-        long sectorLength = size / _diskGeometry.getBytesPerSector();
-        long start = findGap(size / _diskGeometry.getBytesPerSector(), 1);
+        long sectorLength = size / diskGeometry.getBytesPerSector();
+        long start = findGap(size / diskGeometry.getBytesPerSector(), 1);
         return create(start, start + sectorLength - 1, GuidPartitionTypes.convert(type), 0, "Data Partition");
     }
 
@@ -224,16 +225,16 @@ public final class GuidPartitionTable extends PartitionTable {
      * @return The index of the partition.
      */
     public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
-        if (alignment % _diskGeometry.getBytesPerSector() != 0) {
+        if (alignment % diskGeometry.getBytesPerSector() != 0) {
             throw new IllegalArgumentException("Alignment is not a multiple of the sector size");
         }
 
         List<GptEntry> allEntries = new ArrayList<>(getAllEntries());
         establishReservedPartition(allEntries);
         // Fill the rest of the disk with the requested partition
-        long start = MathUtilities.roundUp(firstAvailableSector(allEntries), alignment / _diskGeometry.getBytesPerSector());
+        long start = MathUtilities.roundUp(firstAvailableSector(allEntries), alignment / diskGeometry.getBytesPerSector());
         long end = MathUtilities.roundDown(findLastFreeSector(start, allEntries) + 1,
-                                           alignment / _diskGeometry.getBytesPerSector());
+                                           alignment / diskGeometry.getBytesPerSector());
         if (end <= start) {
             throw new dotnet4j.io.IOException("No available space");
         }
@@ -254,11 +255,11 @@ public final class GuidPartitionTable extends PartitionTable {
      *         partitions on large values that are a power of two.
      */
     public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
-        if (size < _diskGeometry.getBytesPerSector()) {
+        if (size < diskGeometry.getBytesPerSector()) {
             throw new IndexOutOfBoundsException("size must be at least one sector");
         }
 
-        if (alignment % _diskGeometry.getBytesPerSector() != 0) {
+        if (alignment % diskGeometry.getBytesPerSector() != 0) {
             throw new IllegalArgumentException("Alignment is not a multiple of the sector size");
         }
 
@@ -266,8 +267,8 @@ public final class GuidPartitionTable extends PartitionTable {
             throw new IllegalArgumentException("Size is not a multiple of the alignment");
         }
 
-        long sectorLength = size / _diskGeometry.getBytesPerSector();
-        long start = findGap(size / _diskGeometry.getBytesPerSector(), alignment / _diskGeometry.getBytesPerSector());
+        long sectorLength = size / diskGeometry.getBytesPerSector();
+        long start = findGap(size / diskGeometry.getBytesPerSector(), alignment / diskGeometry.getBytesPerSector());
         return create(start, start + sectorLength - 1, GuidPartitionTypes.convert(type), 0, "Data Partition");
     }
 
@@ -295,14 +296,14 @@ public final class GuidPartitionTable extends PartitionTable {
      */
     public void delete(int index) {
         int offset = getPartitionOffset(index);
-        Arrays.fill(_entryBuffer, offset, offset + _primaryHeader.PartitionEntrySize, (byte) 0);
+        Arrays.fill(entryBuffer, offset, offset + primaryHeader.partitionEntrySize, (byte) 0);
         write();
     }
 
     public SparseStream open(GptEntry entry) {
-        long start = entry.firstUsedLogicalBlock * _diskGeometry.getBytesPerSector();
-        long end = (entry.lastUsedLogicalBlock + 1) * _diskGeometry.getBytesPerSector();
-        return new SubStream(_diskData, start, end - start);
+        long start = entry.firstUsedLogicalBlock * diskGeometry.getBytesPerSector();
+        long end = (entry.lastUsedLogicalBlock + 1) * diskGeometry.getBytesPerSector();
+        return new SubStream(diskData, start, end - start);
     }
 
     private static int calcEntriesCrc(byte[] buffer) {
@@ -332,24 +333,24 @@ public final class GuidPartitionTable extends PartitionTable {
             throw new dotnet4j.io.IOException("Invalid GPT disk, protective MBR table is not valid");
         }
 
-        _diskData = disk;
-        _diskGeometry = diskGeometry;
+        diskData = disk;
+        this.diskGeometry = diskGeometry;
         disk.setPosition(diskGeometry.getBytesPerSector());
         byte[] sector = StreamUtilities.readExact(disk, diskGeometry.getBytesPerSector());
-        _primaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
-        if (!_primaryHeader.readFrom(sector, 0) || !readEntries(_primaryHeader)) {
+        primaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
+        if (!primaryHeader.readFrom(sector, 0) || !readEntries(primaryHeader)) {
             disk.setPosition(disk.getLength() - diskGeometry.getBytesPerSector());
             disk.read(sector, 0, sector.length);
-            _secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
-            if (!_secondaryHeader.readFrom(sector, 0) || !readEntries(_secondaryHeader)) {
+            secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
+            if (!secondaryHeader.readFrom(sector, 0) || !readEntries(secondaryHeader)) {
                 throw new dotnet4j.io.IOException("No valid GUID Partition Table found");
             }
 
             // Generate from the primary table from the secondary one
-            _primaryHeader = new GptHeader(_secondaryHeader);
-            _primaryHeader.HeaderLba = _secondaryHeader.AlternateHeaderLba;
-            _primaryHeader.AlternateHeaderLba = _secondaryHeader.HeaderLba;
-            _primaryHeader.PartitionEntriesLba = 2;
+            primaryHeader = new GptHeader(secondaryHeader);
+            primaryHeader.headerLba = secondaryHeader.alternateHeaderLba;
+            primaryHeader.alternateHeaderLba = secondaryHeader.headerLba;
+            primaryHeader.partitionEntriesLba = 2;
             // If the disk is writeable, fix up the primary partition table
             // based on the
             // (valid) secondary table.
@@ -359,17 +360,17 @@ public final class GuidPartitionTable extends PartitionTable {
 
         }
 
-        if (_secondaryHeader == null) {
-            _secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
+        if (secondaryHeader == null) {
+            secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
             disk.setPosition(disk.getLength() - diskGeometry.getBytesPerSector());
             disk.read(sector, 0, sector.length);
-            if (!_secondaryHeader.readFrom(sector, 0) || !readEntries(_secondaryHeader)) {
+            if (!secondaryHeader.readFrom(sector, 0) || !readEntries(secondaryHeader)) {
                 // Generate from the secondary table from the primary one
-                _secondaryHeader = new GptHeader(_primaryHeader);
-                _secondaryHeader.HeaderLba = _secondaryHeader.AlternateHeaderLba;
-                _secondaryHeader.AlternateHeaderLba = _secondaryHeader.HeaderLba;
-                _secondaryHeader.PartitionEntriesLba = _secondaryHeader.HeaderLba - MathUtilities
-                        .roundUp(_secondaryHeader.PartitionEntryCount * _secondaryHeader.PartitionEntrySize,
+                secondaryHeader = new GptHeader(primaryHeader);
+                secondaryHeader.headerLba = secondaryHeader.alternateHeaderLba;
+                secondaryHeader.alternateHeaderLba = secondaryHeader.headerLba;
+                secondaryHeader.partitionEntriesLba = secondaryHeader.headerLba - MathUtilities
+                        .roundUp(secondaryHeader.partitionEntryCount * secondaryHeader.partitionEntrySize,
                                  diskGeometry.getBytesPerSector());
                 // If the disk is writeable, fix up the secondary partition
                 // table based on the
@@ -388,12 +389,12 @@ public final class GuidPartitionTable extends PartitionTable {
         // has a 'reasonable' size free, create a Microsoft Reserved partition.
         if (countEntries(allEntries, e -> e.partitionType.equals(GuidPartitionTypes.MicrosoftReserved)) == 0 &&
             countEntries(allEntries, e -> e.partitionType.equals(GuidPartitionTypes.WindowsBasicData)) == 0 &&
-            _diskGeometry.getCapacity() > 512 * 1024 * 1024) {
+            diskGeometry.getCapacity() > 512 * 1024 * 1024) {
             long reservedStart = firstAvailableSector(allEntries);
             long reservedEnd = findLastFreeSector(reservedStart, allEntries);
-            if ((reservedEnd - reservedStart + 1) * _diskGeometry.getBytesPerSector() > 512 * 1024 * 1024) {
-                long size = (_diskGeometry.getCapacity() < 16 * 1024L * 1024 * 1024 ? 32 : 128) * 1024 * 1024;
-                reservedEnd = reservedStart + size / _diskGeometry.getBytesPerSector() - 1;
+            if ((reservedEnd - reservedStart + 1) * diskGeometry.getBytesPerSector() > 512 * 1024 * 1024) {
+                long size = (diskGeometry.getCapacity() < 16 * 1024L * 1024 * 1024 ? 32 : 128) * 1024 * 1024;
+                reservedEnd = reservedStart + size / diskGeometry.getBytesPerSector() - 1;
                 int reservedOffset = getFreeEntryOffset();
                 GptEntry newReservedEntry = new GptEntry();
                 newReservedEntry.partitionType = GuidPartitionTypes.MicrosoftReserved;
@@ -402,7 +403,7 @@ public final class GuidPartitionTable extends PartitionTable {
                 newReservedEntry.lastUsedLogicalBlock = reservedEnd;
                 newReservedEntry.attributes = 0;
                 newReservedEntry.name = "Microsoft reserved partition";
-                newReservedEntry.writeTo(_entryBuffer, reservedOffset);
+                newReservedEntry.writeTo(entryBuffer, reservedOffset);
                 allEntries.add(newReservedEntry);
             }
         }
@@ -421,7 +422,7 @@ public final class GuidPartitionTable extends PartitionTable {
         newEntry.lastUsedLogicalBlock = endSector;
         newEntry.attributes = attributes;
         newEntry.name = name;
-        newEntry.writeTo(_entryBuffer, offset);
+        newEntry.writeTo(entryBuffer, offset);
         // Commit changes to disk
         write();
         return newEntry;
@@ -430,7 +431,7 @@ public final class GuidPartitionTable extends PartitionTable {
     private long findGap(long numSectors, long alignmentSectors) {
         List<GptEntry> list = getAllEntries();
         Collections.sort(list);
-        long startSector = MathUtilities.roundUp(_primaryHeader.FirstUsable, alignmentSectors);
+        long startSector = MathUtilities.roundUp(primaryHeader.firstUsable, alignmentSectors);
         for (GptEntry entry : list) {
             if (!Utilities.rangesOverlap(startSector,
                                          startSector + numSectors - 1,
@@ -441,7 +442,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
             startSector = MathUtilities.roundUp(entry.lastUsedLogicalBlock + 1, alignmentSectors);
         }
-        if (_diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
+        if (diskGeometry.getTotalSectorsLong() - startSector < numSectors) {
             throw new dotnet4j.io.IOException(String.format("Unable to find free space of %d sectors", numSectors));
         }
 
@@ -449,7 +450,7 @@ public final class GuidPartitionTable extends PartitionTable {
     }
 
     private long firstAvailableSector(List<GptEntry> allEntries) {
-        long start = _primaryHeader.FirstUsable;
+        long start = primaryHeader.firstUsable;
         for (GptEntry entry : allEntries) {
             if (entry.lastUsedLogicalBlock >= start) {
                 start = entry.lastUsedLogicalBlock + 1;
@@ -460,7 +461,7 @@ public final class GuidPartitionTable extends PartitionTable {
     }
 
     private long findLastFreeSector(long start, List<GptEntry> allEntries) {
-        long end = _primaryHeader.LastUsable;
+        long end = primaryHeader.lastUsable;
         for (GptEntry entry : allEntries) {
             if (entry.lastUsedLogicalBlock > start && entry.firstUsedLogicalBlock <= end) {
                 end = entry.firstUsedLogicalBlock - 1;
@@ -476,29 +477,29 @@ public final class GuidPartitionTable extends PartitionTable {
     }
 
     private void writePrimaryHeader() {
-        byte[] buffer = new byte[_diskGeometry.getBytesPerSector()];
-        _primaryHeader.EntriesCrc = calcEntriesCrc();
-        _primaryHeader.writeTo(buffer, 0);
-        _diskData.setPosition(_diskGeometry.getBytesPerSector());
-        _diskData.write(buffer, 0, buffer.length);
-        _diskData.setPosition(2L * _diskGeometry.getBytesPerSector());
-        _diskData.write(_entryBuffer, 0, _entryBuffer.length);
+        byte[] buffer = new byte[diskGeometry.getBytesPerSector()];
+        primaryHeader.entriesCrc = calcEntriesCrc();
+        primaryHeader.writeTo(buffer, 0);
+        diskData.setPosition(diskGeometry.getBytesPerSector());
+        diskData.write(buffer, 0, buffer.length);
+        diskData.setPosition(2L * diskGeometry.getBytesPerSector());
+        diskData.write(entryBuffer, 0, entryBuffer.length);
     }
 
     private void writeSecondaryHeader() {
-        byte[] buffer = new byte[_diskGeometry.getBytesPerSector()];
-        _secondaryHeader.EntriesCrc = calcEntriesCrc();
-        _secondaryHeader.writeTo(buffer, 0);
-        _diskData.setPosition(_diskData.getLength() - _diskGeometry.getBytesPerSector());
-        _diskData.write(buffer, 0, buffer.length);
-        _diskData.setPosition(_secondaryHeader.PartitionEntriesLba * _diskGeometry.getBytesPerSector());
-        _diskData.write(_entryBuffer, 0, _entryBuffer.length);
+        byte[] buffer = new byte[diskGeometry.getBytesPerSector()];
+        secondaryHeader.entriesCrc = calcEntriesCrc();
+        secondaryHeader.writeTo(buffer, 0);
+        diskData.setPosition(diskData.getLength() - diskGeometry.getBytesPerSector());
+        diskData.write(buffer, 0, buffer.length);
+        diskData.setPosition(secondaryHeader.partitionEntriesLba * diskGeometry.getBytesPerSector());
+        diskData.write(entryBuffer, 0, entryBuffer.length);
     }
 
     private boolean readEntries(GptHeader header) {
-        _diskData.setPosition(header.PartitionEntriesLba * _diskGeometry.getBytesPerSector());
-        _entryBuffer = StreamUtilities.readExact(_diskData, header.PartitionEntrySize * header.PartitionEntryCount);
-        if (header.EntriesCrc != calcEntriesCrc()) {
+        diskData.setPosition(header.partitionEntriesLba * diskGeometry.getBytesPerSector());
+        entryBuffer = StreamUtilities.readExact(diskData, header.partitionEntrySize * header.partitionEntryCount);
+        if (header.entriesCrc != calcEntriesCrc()) {
             return false;
         }
 
@@ -506,14 +507,14 @@ public final class GuidPartitionTable extends PartitionTable {
     }
 
     private int calcEntriesCrc() {
-        return Crc32LittleEndian.compute(Crc32Algorithm.Common, _entryBuffer, 0, _entryBuffer.length);
+        return Crc32LittleEndian.compute(Crc32Algorithm.Common, entryBuffer, 0, entryBuffer.length);
     }
 
     private List<GptEntry> getAllEntries() {
         List<GptEntry> result = new ArrayList<>();
-        for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
+        for (int i = 0; i < primaryHeader.partitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
-            entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
+            entry.readFrom(entryBuffer, i * primaryHeader.partitionEntrySize);
             if (!entry.partitionType.equals(EMPTY)) {
                 result.add(entry);
             }
@@ -525,9 +526,9 @@ public final class GuidPartitionTable extends PartitionTable {
         boolean found = false;
         int entriesSoFar = 0;
         int position = 0;
-        while (!found && position < _primaryHeader.PartitionEntryCount) {
+        while (!found && position < primaryHeader.partitionEntryCount) {
             GptEntry entry = new GptEntry();
-            entry.readFrom(_entryBuffer, position * _primaryHeader.PartitionEntrySize);
+            entry.readFrom(entryBuffer, position * primaryHeader.partitionEntrySize);
             if (!entry.partitionType.equals(EMPTY)) {
                 if (index == entriesSoFar) {
                     found = true;
@@ -540,7 +541,7 @@ public final class GuidPartitionTable extends PartitionTable {
             position++;
         }
         if (found) {
-            return position * _primaryHeader.PartitionEntrySize;
+            return position * primaryHeader.partitionEntrySize;
         }
 
         throw new dotnet4j.io.IOException(String.format("No such partition: %d", index));
@@ -548,9 +549,9 @@ public final class GuidPartitionTable extends PartitionTable {
 
     private int getEntryIndex(UUID identity) {
         int index = 0;
-        for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
+        for (int i = 0; i < primaryHeader.partitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
-            entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
+            entry.readFrom(entryBuffer, i * primaryHeader.partitionEntrySize);
             if (entry.identity.equals(identity)) {
                 return index;
             }
@@ -563,11 +564,11 @@ public final class GuidPartitionTable extends PartitionTable {
     }
 
     private int getFreeEntryOffset() {
-        for (int i = 0; i < _primaryHeader.PartitionEntryCount; ++i) {
+        for (int i = 0; i < primaryHeader.partitionEntryCount; ++i) {
             GptEntry entry = new GptEntry();
-            entry.readFrom(_entryBuffer, i * _primaryHeader.PartitionEntrySize);
+            entry.readFrom(entryBuffer, i * primaryHeader.partitionEntrySize);
             if (entry.partitionType.equals(EMPTY)) {
-                return i * _primaryHeader.PartitionEntrySize;
+                return i * primaryHeader.partitionEntrySize;
             }
         }
         throw new dotnet4j.io.IOException("No free partition entries available");

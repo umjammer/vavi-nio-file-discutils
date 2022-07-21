@@ -40,9 +40,10 @@ import dotnet4j.io.Stream;
  * Re-enumerate the partitions to discover the next index-to-partition mapping.
  */
 public abstract class PartitionTable {
+
     protected static final UUID EMPTY = new UUID(0L, 0L);
 
-    private static ServiceLoader<PartitionTableFactory> _factories;
+    private static ServiceLoader<PartitionTableFactory> factories;
 
     /**
      * Gets the number of User partitions on the disk.
@@ -58,7 +59,7 @@ public abstract class PartitionTable {
     public abstract UUID getDiskGuid();
 
     static {
-        _factories = ServiceLoader.load(PartitionTableFactory.class);
+        factories = ServiceLoader.load(PartitionTableFactory.class);
     }
 
     /**
@@ -84,7 +85,7 @@ public abstract class PartitionTable {
      * @return {@code true} if the disk is partitioned, else {@code false} .
      */
     public static boolean isPartitioned(Stream content) {
-        for (PartitionTableFactory partTableFactory : _factories) {
+        for (PartitionTableFactory partTableFactory : factories) {
             if (partTableFactory.detectIsPartitioned(content)) {
                 return true;
             }
@@ -103,7 +104,7 @@ public abstract class PartitionTable {
     }
 
     /**
-     * Gets all of the partition tables found on a disk.
+     * Gets all the partition tables found on a disk.
      *
      * @param disk The disk to inspect.
      * @return It is rare for a disk to have multiple partition tables, but
@@ -111,7 +112,7 @@ public abstract class PartitionTable {
      */
     public static List<PartitionTable> getPartitionTables(VirtualDisk disk) {
         List<PartitionTable> tables = new ArrayList<>();
-        for (PartitionTableFactory factory : _factories) {
+        for (PartitionTableFactory factory : factories) {
             PartitionTable table = factory.detectPartitionTable(disk);
             if (table != null) {
                 tables.add(table);
@@ -121,7 +122,7 @@ public abstract class PartitionTable {
     }
 
     /**
-     * Gets all of the partition tables found on a disk.
+     * Gets all the partition tables found on a disk.
      *
      * @param contentStream The content of the disk to inspect.
      * @return It is rare for a disk to have multiple partition tables, but

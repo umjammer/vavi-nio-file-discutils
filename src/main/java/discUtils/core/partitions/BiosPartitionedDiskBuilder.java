@@ -48,13 +48,14 @@ import discUtils.streams.util.StreamUtilities;
  * of this class tries to read from that partition.
  */
 public class BiosPartitionedDiskBuilder extends StreamBuilder {
-    private Geometry _biosGeometry;
 
-    private final SparseMemoryStream _bootSectors;
+    private Geometry biosGeometry;
 
-    private final long _capacity;
+    private final SparseMemoryStream bootSectors;
 
-    private final Map<Integer, BuilderExtent> _partitionContents;
+    private final long capacity;
+
+    private final Map<Integer, BuilderExtent> partitionContents;
 
     /**
      * Initializes a new instance of the BiosPartitionedDiskBuilder class.
@@ -63,12 +64,12 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
      * @param biosGeometry The BIOS geometry of the disk.
      */
     public BiosPartitionedDiskBuilder(long capacity, Geometry biosGeometry) {
-        _capacity = capacity;
-        _biosGeometry = biosGeometry;
-        _bootSectors = new SparseMemoryStream();
-        _bootSectors.setLength(capacity);
-        __PartitionTable = BiosPartitionTable.initialize(_bootSectors, _biosGeometry);
-        _partitionContents = new HashMap<>();
+        this.capacity = capacity;
+        this.biosGeometry = biosGeometry;
+        bootSectors = new SparseMemoryStream();
+        bootSectors.setLength(capacity);
+        partitionTable = BiosPartitionTable.initialize(bootSectors, this.biosGeometry);
+        partitionContents = new HashMap<>();
     }
 
     /**
@@ -83,13 +84,13 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
             throw new IllegalArgumentException("bootSectors");
         }
 
-        _capacity = capacity;
-        _biosGeometry = biosGeometry;
-        _bootSectors = new SparseMemoryStream();
-        _bootSectors.setLength(capacity);
-        _bootSectors.write(bootSectors, 0, bootSectors.length);
-        __PartitionTable = new BiosPartitionTable(_bootSectors, biosGeometry);
-        _partitionContents = new HashMap<>();
+        this.capacity = capacity;
+        this.biosGeometry = biosGeometry;
+        this.bootSectors = new SparseMemoryStream();
+        this.bootSectors.setLength(capacity);
+        this.bootSectors.write(bootSectors, 0, bootSectors.length);
+        partitionTable = new BiosPartitionTable(this.bootSectors, biosGeometry);
+        partitionContents = new HashMap<>();
     }
 
     /**
@@ -103,27 +104,27 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
             throw new IllegalArgumentException("sourceDisk");
         }
 
-        _capacity = sourceDisk.getCapacity();
-        _biosGeometry = sourceDisk.getBiosGeometry();
-        _bootSectors = new SparseMemoryStream();
-        _bootSectors.setLength(_capacity);
+        capacity = sourceDisk.getCapacity();
+        biosGeometry = sourceDisk.getBiosGeometry();
+        bootSectors = new SparseMemoryStream();
+        bootSectors.setLength(capacity);
         for (StreamExtent extent : (new BiosPartitionTable(sourceDisk)).getMetadataDiskExtents()) {
             sourceDisk.getContent().setPosition(extent.getStart());
             byte[] buffer = StreamUtilities.readExact(sourceDisk.getContent(), (int) extent.getLength());
-            _bootSectors.setPosition(extent.getStart());
-            _bootSectors.write(buffer, 0, buffer.length);
+            bootSectors.setPosition(extent.getStart());
+            bootSectors.write(buffer, 0, buffer.length);
         }
-        __PartitionTable = new BiosPartitionTable(_bootSectors, _biosGeometry);
-        _partitionContents = new HashMap<>();
+        partitionTable = new BiosPartitionTable(bootSectors, biosGeometry);
+        partitionContents = new HashMap<>();
     }
 
     /**
      * Gets the partition table in the disk.
      */
-    private BiosPartitionTable __PartitionTable;
+    private BiosPartitionTable partitionTable;
 
     public BiosPartitionTable getPartitionTable() {
-        return __PartitionTable;
+        return partitionTable;
     }
 
     /**
@@ -134,7 +135,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
      * @param stream The stream with the contents of the partition.
      */
     public void setPartitionContent(int index, SparseStream stream) {
-        _partitionContents.put(index,
+        partitionContents.put(index,
                                new BuilderSparseStreamExtent(getPartitionTable().get(index).getFirstSector() *
                                                              Sizes.Sector,
                                                              stream));
@@ -151,21 +152,21 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
      */
     public void updateBiosGeometry(Geometry geometry) {
         getPartitionTable().updateBiosGeometry(geometry);
-        _biosGeometry = geometry;
+        biosGeometry = geometry;
     }
 
     /**
      * @param totalLength {@cs out}
      */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
-        totalLength[0] = _capacity;
+        totalLength[0] = capacity;
         List<BuilderExtent> extents = new ArrayList<>();
         for (StreamExtent extent : getPartitionTable().getMetadataDiskExtents()) {
-            _bootSectors.setPosition(extent.getStart());
-            byte[] buffer = StreamUtilities.readExact(_bootSectors, (int) extent.getLength());
+            bootSectors.setPosition(extent.getStart());
+            byte[] buffer = StreamUtilities.readExact(bootSectors, (int) extent.getLength());
             extents.add(new BuilderBufferExtent(extent.getStart(), buffer));
         }
-        extents.addAll(_partitionContents.values());
+        extents.addAll(partitionContents.values());
         return extents;
     }
 }

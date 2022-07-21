@@ -31,7 +31,9 @@ import java.util.UUID;
 import discUtils.streams.IByteArraySerializable;
 
 
+// TODO to be deprecated
 public class EndianUtilities {
+
     public static void writeBytesLittleEndian(short val, byte[] buffer, int offset) {
         buffer[offset] = (byte) (val & 0xFF);
         buffer[offset + 1] = (byte) ((val >>> 8) & 0xFF);

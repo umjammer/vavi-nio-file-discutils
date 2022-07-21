@@ -36,6 +36,7 @@ import java.util.Comparator;
  * which is the strictly compliant ISO 9660 name.
  */
 public abstract class BuildDirectoryMember {
+
     static final Comparator<BuildDirectoryMember> SortedComparison = new DirectorySortedComparison();
 
     /**

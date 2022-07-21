@@ -113,12 +113,12 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      */
     public void add(VirtualDisk disk) {
         PrivateHeader header = DynamicDisk.getPrivateHeader(disk);
-        if (_groups.containsKey(header.DiskGroupId)) {
-            DynamicDiskGroup group = _groups.get(header.DiskGroupId);
+        if (_groups.containsKey(header.diskGroupId)) {
+            DynamicDiskGroup group = _groups.get(header.diskGroupId);
             group.add(disk);
         } else {
             DynamicDiskGroup group = new DynamicDiskGroup(disk);
-            _groups.put(header.DiskGroupId, group);
+            _groups.put(header.diskGroupId, group);
         }
     }
 

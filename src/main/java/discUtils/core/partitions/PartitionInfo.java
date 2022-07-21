@@ -43,7 +43,7 @@ public abstract class PartitionInfo {
     public abstract byte getBiosType();
 
     /**
-     * Gets the first sector of the partion (relative to start of disk) as a
+     * Gets the first sector of the partition (relative to start of disk) as a
      * Logical block Address.
      */
     public abstract long getFirstSector();
@@ -51,13 +51,13 @@ public abstract class PartitionInfo {
     /**
      * Gets the type of the partition, as a GUID, when available.
      *
-     * {@link #System.Guid}
+     * {@link UUID}
      * .Empty for MBR-style partitions.
      */
     public abstract UUID getGuidType();
 
     /**
-     * Gets the last sector of the partion (relative to start of disk) as a
+     * Gets the last sector of the partition (relative to start of disk) as a
      * Logical block Address (inclusive).
      */
     public abstract long getLastSector();

@@ -410,9 +410,9 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * Opens an existing virtual disk.
      *
      * @param path The path of the virtual disk to open, can be a URI.
-     * @param forceType Force the detected disk type ( {@code null} to detect).
+     * @param forceType Force the detected disk type ({@code null} to detect).
      * @param access The desired access to the disk.
-     * @param user The user name to use for authentication (if necessary).
+     * @param user The username to use for authentication (if necessary).
      * @param password The password to use for authentication (if necessary).
      * @return The Virtual Disk, or {@code null} if an unknown disk format. The
      *         detected disk type can be forced by specifying a known disk type:

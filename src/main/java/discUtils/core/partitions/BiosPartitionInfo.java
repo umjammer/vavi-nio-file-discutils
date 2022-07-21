@@ -33,27 +33,28 @@ import discUtils.streams.SparseStream;
  * Provides access to partition records in a BIOS (MBR) partition table.
  */
 public final class BiosPartitionInfo extends PartitionInfo {
-    private final BiosPartitionRecord _record;
 
-    private final BiosPartitionTable _table;
+    private final BiosPartitionRecord record;
+
+    private final BiosPartitionTable table;
 
     public BiosPartitionInfo(BiosPartitionTable table, BiosPartitionRecord record) {
-        _table = table;
-        _record = record;
+        this.table = table;
+        this.record = record;
     }
 
     /**
      * Gets the type of the partition.
      */
     public byte getBiosType() {
-        return _record.getPartitionType();
+        return record.getPartitionType();
     }
 
     /**
      * Gets the end (inclusive) of the partition as a CHS address.
      */
     public ChsAddress getEnd() {
-        return new ChsAddress(_record.getEndCylinder(), _record.getEndHead(), _record.getEndSector());
+        return new ChsAddress(record.getEndCylinder(), record.getEndHead(), record.getEndSector());
     }
 
     /**
@@ -61,7 +62,7 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * Logical block Address.
      */
     public long getFirstSector() {
-        return _record.getLBAStartAbsolute();
+        return record.getLBAStartAbsolute();
     }
 
     /**
@@ -75,7 +76,7 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * Gets a value indicating whether this partition is active (bootable).
      */
     public boolean isActive() {
-        return _record.getStatus() != 0;
+        return record.getStatus() != 0;
     }
 
     /**
@@ -91,7 +92,7 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * Logical block Address (inclusive).
      */
     public long getLastSector() {
-        return _record.getLBAStartAbsolute() + _record.getLBALength() - 1;
+        return record.getLBAStartAbsolute() + record.getLBALength() - 1;
     }
 
     /**
@@ -99,21 +100,21 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * {@code -1} if not a primary partition.
      */
     public int getPrimaryIndex() {
-        return _record.getIndex();
+        return record.getIndex();
     }
 
     /**
      * Gets the start of the partition as a CHS address.
      */
     public ChsAddress getStart() {
-        return new ChsAddress(_record.getStartCylinder(), _record.getStartHead(), _record.getStartSector());
+        return new ChsAddress(record.getStartCylinder(), record.getStartHead(), record.getStartSector());
     }
 
     /**
      * Gets the type of the partition as a string.
      */
     public String getTypeAsString() {
-        return _record.getFriendlyPartitionType();
+        return record.getFriendlyPartitionType();
     }
 
     public PhysicalVolumeType getVolumeType() {
@@ -126,6 +127,6 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * @return The new stream.
      */
     public SparseStream open() {
-        return _table.open(_record);
+        return table.open(record);
     }
 }

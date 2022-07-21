@@ -26,6 +26,21 @@ import discUtils.core.VirtualDisk;
 import dotnet4j.io.Stream;
 
 
+/**
+ * <pre>
+ * detectPartitionTable(VirtualDisk disk)
+ *   |
+ *   +- table = new FooPartitionTable(disk)
+ *               |
+ *               +- diskData <- disk
+ *               +- diskGeometry <- disk
+ *   :
+ *   +- table.open(partitionId)
+ *        |
+ *        +- new SubStream(diskData, <- geometry)
+ * </pre>
+ * @see "META-INF/services/discUtils.core.partitions.PartitionTableFactory"
+ */
 public interface PartitionTableFactory {
 
     boolean detectIsPartitioned(Stream s);
