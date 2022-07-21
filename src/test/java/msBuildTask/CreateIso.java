@@ -22,9 +22,7 @@
 
 package msBuildTask;
 
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.nio.file.Paths;
 
 import discUtils.iso9660.BootDeviceEmulation;
 import discUtils.iso9660.CDBuilder;
@@ -32,25 +30,32 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 
-public class CreateIso implements Callable {
-    static final Logger logger = Logger.getLogger(CreateIso.class.getName());
+@Mojo(name = "discutil-plugin-create-iso", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+public class CreateIso implements org.apache.maven.plugin.Mojo {
+
+    private Log log;
 
     public CreateIso() {
-        setUseJoliet(true);
+        useJoliet = true;
     }
 
     /**
      * The name of the ISO file to create.
      */
-    private ITaskItem fileName;
+    private String fileName;
 
-    public ITaskItem getFileName() {
+    public String getFileName() {
         return fileName;
     }
 
-    public void setFileName(ITaskItem value) {
+    public void setFileName(String value) {
         fileName = value;
     }
 
@@ -83,26 +88,26 @@ public class CreateIso implements Callable {
     /**
      * The files to add to the ISO.
      */
-    private ITaskItem[] sourceFiles;
+    private String[] sourceFiles;
 
-    public ITaskItem[] getSourceFiles() {
+    public String[] getSourceFiles() {
         return sourceFiles;
     }
 
-    public void setSourceFiles(ITaskItem[] value) {
+    public void setSourceFiles(String[] value) {
         sourceFiles = value;
     }
 
     /**
      * The boot image to add to the ISO.
      */
-    private ITaskItem bootImage;
+    private String bootImage;
 
-    public ITaskItem getBootImage() {
+    public String getBootImage() {
         return bootImage;
     }
 
-    public void setBootImage(ITaskItem value) {
+    public void setBootImage(String value) {
         bootImage = value;
     }
 
@@ -127,18 +132,34 @@ public class CreateIso implements Callable {
     * If the source file is C:\MyDir\MySubDir\file.txt, and RemoveRoot is C:\MyDir, the ISO will
     * contain \MySubDir\file.txt.  If not specified, the file would be named \MyDir\MySubDir\file.txt.
     */
-    private ITaskItem[] removeRoots = new ITaskItem[1];
+    private String[] removeRoots = new String[1];
 
-    public ITaskItem[] getRemoveRoots() {
+    public String[] getRemoveRoots() {
         return removeRoots;
     }
 
-    public void setRemoveRoots(ITaskItem[] value) {
+    public void setRemoveRoots(String[] value) {
         removeRoots = value;
     }
 
-    public Boolean call() {
-        logger.info("Creating ISO file: '%s'", getFileName().ItemSpec);
+    private String getDestinationPath(String sourceFile) {
+        String fullPath = Paths.get(sourceFile).toAbsolutePath().toString();
+        if (getRemoveRoots() != null) {
+            for (String root : getRemoveRoots()) {
+                String rootPath = Paths.get(root).toAbsolutePath().toString();
+                if (fullPath.startsWith(rootPath)) {
+                    return fullPath.substring(rootPath.length());
+                }
+            }
+        }
+
+        // Not under a known root - so full path (minus drive)...
+        return sourceFile;
+    }
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        log.info(String.format("Creating ISO file: '%s'", fileName));
         try {
             CDBuilder builder = new CDBuilder();
             builder.setUseJoliet(getUseJoliet());
@@ -148,42 +169,33 @@ public class CreateIso implements Callable {
 
             Stream bootImageStream = null;
             if (getBootImage() != null) {
-                bootImageStream = new FileStream(getBootImage().GetMetadata("FullPath"), FileMode.Open, FileAccess.Read);
+                bootImageStream = new FileStream(Paths.get(bootImage).toAbsolutePath().toString(), FileMode.Open, FileAccess.Read);
                 builder.setBootImage(bootImageStream, BootDeviceEmulation.NoEmulation, 0);
                 builder.setUpdateIsolinuxBootTable(getUpdateIsolinuxBootTable());
             }
 
-            for (ITaskItem sourceFile : getSourceFiles()) {
-                builder.addFile(GetDestinationPath(sourceFile), sourceFile.getMetadata("FullPath"));
+            for (String sourceFile : getSourceFiles()) {
+                builder.addFile(getDestinationPath(sourceFile), Paths.get(sourceFile).toAbsolutePath().toString());
             }
             try {
-                builder.Build(getFileName().ItemSpec);
+                builder.build(fileName);
             } finally {
                 if (bootImageStream != null) {
                     bootImageStream.close();
                 }
-
             }
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-            return false;
+            log.error(e.getMessage(), e);
         }
-
-        return !logger.HasLoggedErrors;
     }
 
-    private String getDestinationPath(ITaskItem sourceFile) {
-        String fullPath = sourceFile.GetMetadata("FullPath");
-        if (getRemoveRoots() != null) {
-            for (Callable root : getRemoveRoots()) {
-                String rootPath = root.getMetadata("FullPath");
-                if (fullPath.startsWith(rootPath)) {
-                    return fullPath.substring(rootPath.length());
-                }
-            }
-        }
+    @Override
+    public void setLog(Log log) {
+        this.log = log;
+    }
 
-        // Not under a known root - so full path (minus drive)...
-        return sourceFile.getMetadata("Directory") + sourceFile.getMetadata("FileName") + sourceFile.getMetadata("Extension");
+    @Override
+    public Log getLog() {
+        return log;
     }
 }

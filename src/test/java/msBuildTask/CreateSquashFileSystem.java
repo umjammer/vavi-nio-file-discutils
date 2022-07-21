@@ -22,42 +22,44 @@
 
 package msBuildTask;
 
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.nio.file.Paths;
 
 import discUtils.squashFs.SquashFileSystemBuilder;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 
 
-public class CreateSquashFileSystem implements Callable<Boolean> {
-    static final Logger logger = Logger.getLogger(CreateSquashFileSystem.class.getName());
+@Mojo(name = "discutil-plugin-create-squashfs", defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
+public class CreateSquashFileSystem implements  org.apache.maven.plugin.Mojo {
 
-    public CreateSquashFileSystem() {
-    }
+    private Log log;
 
     /**
      * The name of the file to create, containing the filesystem image.
      */
-    private ITaskItem fileName;
+    private String fileName;
 
-    public ITaskItem getFileName() {
+    public String getFileName() {
         return fileName;
     }
 
-    public void setFileName(ITaskItem value) {
+    public void setFileName(String value) {
         fileName = value;
     }
 
     /**
      * The files to add to the filesystem image.
      */
-    private ITaskItem[] sourceFiles;
+    private String[] sourceFiles;
 
-    public ITaskItem[] getSourceFiles() {
+    public String[] getSourceFiles() {
         return sourceFiles;
     }
 
-    public void setSourceFiles(ITaskItem[] value) {
+    public void setSourceFiles(String[] value) {
         sourceFiles = value;
     }
 
@@ -68,37 +70,42 @@ public class CreateSquashFileSystem implements Callable<Boolean> {
      * C:\MyDir, the filesystem will contain \MySubDir\file.txt. If not
      * specified, the file would be named \MyDir\MySubDir\file.txt.
      */
-    private ITaskItem removeRoot;
+    private String removeRoot;
 
-    public ITaskItem getRemoveRoot() {
+    public String getRemoveRoot() {
         return removeRoot;
     }
 
-    public void setRemoveRoot(ITaskItem value) {
+    public void setRemoveRoot(String value) {
         removeRoot = value;
     }
 
-    public Boolean call() {
-        logger.log(String.format("Creating SquashFS file: '%s'", getFileName().ItemSpec));
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        log.info(String.format("Creating SquashFS file: '%s'", fileName));
         try {
             SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
-            for (ITaskItem sourceFile : getSourceFiles()) {
-                if (this.getRemoveRoot() != null) {
-                    String location = (sourceFile.GetMetadata("FullPath")).Replace(this.getRemoveRoot().GetMetadata("FullPath"),
-                                                                                   "");
-                    builder.addFile(location, sourceFile.GetMetadata("FullPath"));
+            for (String sourceFile : sourceFiles) {
+                if (this.removeRoot != null) {
+                    String location = Paths.get(sourceFile).toAbsolutePath().toString().replace(Paths.get(this.removeRoot).toAbsolutePath().toString(), "");
+                    builder.addFile(location, Paths.get(sourceFile).toAbsolutePath().toString());
                 } else {
-                    builder.addFile(sourceFile.GetMetadata("Directory") + sourceFile.GetMetadata("FileName") +
-                                    sourceFile.GetMetadata("Extension"),
-                                    sourceFile.GetMetadata("FullPath"));
+                    builder.addFile(sourceFile, Paths.get(sourceFile).toAbsolutePath().toString());
                 }
             }
-            builder.Build(getFileName().ItemSpec);
+            builder.build(fileName);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-            return false;
+            log.error(e.getMessage(), e);
         }
+    }
 
-        return !logger.HasLoggedErrors;
+    @Override
+    public void setLog(Log log) {
+        this.log = log;
+    }
+
+    @Override
+    public Log getLog() {
+        return log;
     }
 }
