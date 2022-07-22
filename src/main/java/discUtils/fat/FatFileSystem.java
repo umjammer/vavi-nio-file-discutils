@@ -22,6 +22,7 @@
 
 package discUtils.fat;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -62,6 +63,9 @@ import dotnet4j.util.compat.StringUtilities;
  * Class for accessing FAT file systems.
  */
 public final class FatFileSystem extends DiscFileSystem {
+
+    private static final String FS = File.separator;
+
     /**
      * The Epoch for FAT file systems (1st Jan, 1980) at system default zone.
      */
@@ -865,7 +869,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * @param path The directory to create.
      */
     public void createDirectory(String path) {
-        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         Directory focusDir = _rootDir;
@@ -1203,7 +1207,7 @@ public final class FatFileSystem extends DiscFileSystem {
 
     Directory getDirectory(String path) {
         Directory[] parent = new Directory[1];
-        if (path == null || path.isEmpty() || path.equals("\\")) {
+        if (path == null || path.isEmpty() || path.equals(FS)) {
             return _rootDir;
         }
 
@@ -1446,7 +1450,7 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     private static boolean isRootPath(String path) {
-        return (path == null || path.isEmpty()) || path.equals("\\");
+        return (path == null || path.isEmpty()) || path.equals(FS);
     }
 
     private long defaultTimeConverter(long time, boolean toUtc) {
@@ -1544,7 +1548,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
     }
 
     private long getDirectoryEntry(Directory dir, String path, Directory[] parent) {
-        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0, parent);

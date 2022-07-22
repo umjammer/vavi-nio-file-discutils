@@ -79,7 +79,7 @@ public class Directory extends File {
     }
 
     public String toString() {
-        return super.toString() + "\\";
+        return super.toString() + java.io.File.separator;
     }
 
     public static Directory createNew(INtfsContext context, EnumSet<FileAttributeFlags> parentDirFlags) {

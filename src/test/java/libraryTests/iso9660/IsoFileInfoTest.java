@@ -22,6 +22,7 @@
 
 package libraryTests.iso9660;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.EnumSet;
@@ -44,6 +45,9 @@ import dotnet4j.io.Stream;
 
 
 public class IsoFileInfoTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void length() throws Exception {
         CDBuilder builder = new CDBuilder();
@@ -73,10 +77,7 @@ public class IsoFileInfoTest {
     @Test
     public void open_Read() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("foo.txt",
-                        new byte[] {
-                            1
-                        });
+        builder.addFile("foo.txt", new byte[] { 1 });
         CDReader fs = new CDReader(builder.build(), false);
         DiscFileInfo di = fs.getFileInfo("foo.txt");
         try (Stream s = di.open(FileMode.Open, FileAccess.Read)) {
@@ -91,17 +92,14 @@ public class IsoFileInfoTest {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals("foo.txt", fs.getFileInfo("foo.txt").getName());
-        assertEquals("foo.txt", fs.getFileInfo("path\\foo.txt").getName());
-        assertEquals("foo.txt", fs.getFileInfo("\\foo.txt").getName());
+        assertEquals("foo.txt", fs.getFileInfo("path" + FS + "foo.txt").getName());
+        assertEquals("foo.txt", fs.getFileInfo(FS + "foo.txt").getName());
     }
 
     @Test
     public void attributes() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("foo.txt",
-                        new byte[] {
-                            1
-                        });
+        builder.addFile("foo.txt", new byte[] { 1 });
         CDReader fs = new CDReader(builder.build(), false);
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
         // Check default attributes
@@ -111,23 +109,17 @@ public class IsoFileInfoTest {
     @Test
     public void exists() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("dir\\foo.txt",
-                        new byte[] {
-                            1
-                        });
+        builder.addFile("dir" + FS + "foo.txt", new byte[] { 1 });
         CDReader fs = new CDReader(builder.build(), false);
         assertFalse(fs.getFileInfo("unknown.txt").exists());
-        assertTrue(fs.getFileInfo("dir\\foo.txt").exists());
+        assertTrue(fs.getFileInfo("dir" + FS + "foo.txt").exists());
         assertFalse(fs.getFileInfo("dir").exists());
     }
 
     @Test
     public void creationTimeUtc() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("foo.txt",
-                        new byte[] {
-                            1
-                        });
+        builder.addFile("foo.txt", new byte[] { 1 });
         CDReader fs = new CDReader(builder.build(), false);
         assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTimeUtc());
         assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt")
@@ -144,13 +136,10 @@ public class IsoFileInfoTest {
     @Test
     public void parent() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("SOMEDIR\\ADIR\\FILE.TXT",
-                        new byte[] {
-                            1
-                        });
+        builder.addFile("SOMEDIR" + FS + "ADIR" + FS + "FILE.TXT", new byte[] { 1 });
         CDReader fs = new CDReader(builder.build(), false);
-        DiscFileInfo fi = fs.getFileInfo("SOMEDIR\\ADIR\\FILE.TXT");
-        assertEquals(fs.getDirectoryInfo("SOMEDIR\\ADIR"), fi.getParent());
-        assertEquals(fs.getDirectoryInfo("SOMEDIR\\ADIR"), fi.getDirectory());
+        DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "ADIR" + FS + "FILE.TXT");
+        assertEquals(fs.getDirectoryInfo("SOMEDIR" + FS + "ADIR"), fi.getParent());
+        assertEquals(fs.getDirectoryInfo("SOMEDIR" + FS + "ADIR"), fi.getDirectory());
     }
 }

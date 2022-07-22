@@ -30,6 +30,9 @@ import java.util.Map;
 
 
 public final class BuilderDirectory extends BuilderNode {
+
+    private static final String FS = java.io.File.separator;
+
     private final List<Entry> _children;
 
     private final Map<String, Entry> _index;
@@ -46,7 +49,7 @@ public final class BuilderDirectory extends BuilderNode {
     }
 
     public void addChild(String name, BuilderNode node) {
-        if (name.contains("\\\\")) {
+        if (name.contains(FS + FS)) {
             throw new IllegalArgumentException("Single level of path must be provided");
         }
 

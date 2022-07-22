@@ -40,6 +40,6 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
 
         IBuffer content = getFileContent();
         byte[] data = StreamUtilities.readExact(content, 0, (int) Inode.getLength());
-        return new String(data, 0, data.length, Context.getOptions().getFileNameEncoding()).replace('/', '\\');
+        return new String(data, 0, data.length, Context.getOptions().getFileNameEncoding()).replace('/', java.io.File.separatorChar);
     }
 }

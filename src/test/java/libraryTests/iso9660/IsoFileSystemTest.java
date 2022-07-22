@@ -22,6 +22,8 @@
 
 package libraryTests.iso9660;
 
+import java.io.File;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +41,9 @@ import discUtils.streams.SparseStream;
 import dotnet4j.io.MemoryStream;
 
 public class IsoFileSystemTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void canWrite() throws Exception {
         CDBuilder builder = new CDBuilder();
@@ -50,7 +55,7 @@ public class IsoFileSystemTest {
     public void fileInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
-        DiscFileInfo fi = fs.getFileInfo("SOMEDIR\\SOMEFILE.TXT");
+        DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "SOMEFILE.TXT");
         assertNotNull(fi);
     }
 
@@ -66,7 +71,7 @@ public class IsoFileSystemTest {
     public void fileSystemInfo() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
-        DiscFileSystemInfo fi = fs.getFileSystemInfo("SOMEDIR\\SOMEFILE");
+        DiscFileSystemInfo fi = fs.getFileSystemInfo("SOMEDIR" + FS + "SOMEFILE");
         assertNotNull(fi);
     }
 
@@ -99,10 +104,10 @@ public class IsoFileSystemTest {
         MemoryStream ms = new MemoryStream();
         SparseStream.pump(builder.build(), ms);
         CDReader reader = new CDReader(ms, true, false);
-        assertEquals("\\FILE.TXT;1", reader.getFiles("").get(0));
-        assertEquals("\\FILE.TXT;1", reader.getFileSystemEntries("").get(0));
+        assertEquals(FS + "FILE.TXT;1", reader.getFiles("").get(0));
+        assertEquals(FS + "FILE.TXT;1", reader.getFileSystemEntries("").get(0));
         reader = new CDReader(ms, true, true);
-        assertEquals("\\FILE.TXT", reader.getFiles("").get(0));
-        assertEquals("\\FILE.TXT", reader.getFileSystemEntries("").get(0));
+        assertEquals(FS + "FILE.TXT", reader.getFiles("").get(0));
+        assertEquals(FS + "FILE.TXT", reader.getFileSystemEntries("").get(0));
     }
 }

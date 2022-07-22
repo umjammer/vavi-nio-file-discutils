@@ -45,6 +45,9 @@ import dotnet4j.io.SeekOrigin;
 
 
 public class DiskTest {
+
+    private static final String FS = java.io.File.separator;
+
     @Test
     public void initializeFixed() throws Exception {
         MemoryStream ms = new MemoryStream();
@@ -91,8 +94,8 @@ public class DiskTest {
                                                      Ownership.None,
                                                      baseFile,
                                                      Ownership.Dispose,
-                                                     "C:\\TEMP\\base.vhd",
-                                                     ".\\base.vhd",
+                                                     "C:" + FS + "TEMP" + FS + "base.vhd",
+                                                     "." + FS + "base.vhd",
                                                      Instant.now().toEpochMilli())) {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024
@@ -129,15 +132,15 @@ public class DiskTest {
         DiskImageFile childFile = DiskImageFile.initializeDifferencing(childStream,
                                                                        Ownership.Dispose,
                                                                        baseFile,
-                                                                       "C:\\temp\\foo.vhd",
-                                                                       ".\\foo.vhd",
+                                                                       "C:" + FS + "temp" + FS + "foo.vhd",
+                                                                       "." + FS + "foo.vhd",
                                                                        Instant.now().toEpochMilli());
         MemoryStream grandChildStream = new MemoryStream();
         DiskImageFile grandChildFile = DiskImageFile.initializeDifferencing(grandChildStream,
                                                                             Ownership.Dispose,
                                                                             childFile,
-                                                                            "C:\\temp\\child1.vhd",
-                                                                            ".\\child1.vhd",
+                                                                            "C:" + FS + "temp" + FS + "child1.vhd",
+                                                                            "." + FS + "child1.vhd",
                                                                             Instant.now().toEpochMilli());
         try (Disk disk = new Disk(Arrays.asList(grandChildFile, childFile, baseFile), Ownership.Dispose)) {
             assertNotNull(disk.getContent());

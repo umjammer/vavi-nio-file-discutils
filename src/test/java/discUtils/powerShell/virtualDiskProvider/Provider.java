@@ -55,6 +55,9 @@ import dotnet4j.io.Stream;
 
 
 public final class Provider extends NavigationCmdletProvider implements IContentCmdletProvider {
+
+    private static final String FS = java.io.File.separator;
+
     protected PSDriveInfo newDrive(PSDriveInfo drive) {
         SetupHelper.setupComplete();
         NewDriveParameters dynParams = DynamicParameters instanceof NewDriveParameters ? (NewDriveParameters) DynamicParameters
@@ -463,7 +466,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             }
         }
 
-        List<String> pathElems = Arrays.asList(relPath.split(discUtils.core.internal.Utilities.escapeForRegex("\\")));
+        List<String> pathElems = Arrays.asList(relPath.split(discUtils.core.internal.Utilities.escapeForRegex(FS)));
         if (pathElems.size() == 0) {
             return disk;
         }
@@ -504,7 +507,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
                 pathElems.remove(0);
             }
 
-            String fsPath = String.join("\\", pathElems.toArray(new String[0]));
+            String fsPath = String.join(FS, pathElems.toArray(new String[0]));
             if (fs.directoryExists(fsPath)) {
                 return fs.getDirectoryInfo(fsPath);
             } else if (fs.fileExists(fsPath)) {

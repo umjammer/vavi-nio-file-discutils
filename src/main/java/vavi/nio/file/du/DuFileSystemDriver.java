@@ -55,11 +55,11 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
     }
 
     private static String toDuPathString(Path path) throws IOException {
-        return toPathString(path).replace(File.separator, "\\").substring(1);
+        return toPathString(path).substring(1);
     }
 
     private static String toJavaPathString(String path) {
-        return File.separator + path.replace("\\", File.separator);
+        return File.separator + path;
     }
 
     @Override

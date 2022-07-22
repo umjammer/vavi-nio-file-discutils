@@ -22,6 +22,7 @@
 
 package libraryTests;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.EnumSet;
@@ -46,6 +47,8 @@ import dotnet4j.io.Stream;
 
 
 public class DiscFileSystemFileTest {
+
+    private static final String FS = File.separator;
 
     @ParameterizedTest
     @MethodSource("libraryTests.FileSystemSource#getReadWriteFileSystems")
@@ -232,8 +235,8 @@ public class DiscFileSystemFileTest {
     public void name(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals("foo.txt", fs.getFileInfo("foo.txt").getName());
-        assertEquals("foo.txt", fs.getFileInfo("path\\foo.txt").getName());
-        assertEquals("foo.txt", fs.getFileInfo("\\foo.txt").getName());
+        assertEquals("foo.txt", fs.getFileInfo("path" + FS + "foo.txt").getName());
+        assertEquals("foo.txt", fs.getFileInfo(FS + "foo.txt").getName());
     }
 
     @ParameterizedTest
@@ -440,12 +443,12 @@ public class DiscFileSystemFileTest {
     @MethodSource("libraryTests.FileSystemSource#getReadWriteFileSystems")
     public void parent(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
-        fs.createDirectory("SOMEDIR\\ADIR");
-        try (Stream s = fs.openFile("SOMEDIR\\ADIR\\FILE.TXT", FileMode.Create)) {
+        fs.createDirectory("SOMEDIR" + FS + "ADIR");
+        try (Stream s = fs.openFile("SOMEDIR" + FS + "ADIR" + FS + "FILE.TXT", FileMode.Create)) {
         }
-        DiscFileInfo fi = fs.getFileInfo("SOMEDIR\\ADIR\\FILE.TXT");
-        assertEquals(fs.getDirectoryInfo("SOMEDIR\\ADIR"), fi.getParent());
-        assertEquals(fs.getDirectoryInfo("SOMEDIR\\ADIR"), fi.getDirectory());
+        DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "ADIR" + FS + "FILE.TXT");
+        assertEquals(fs.getDirectoryInfo("SOMEDIR" + FS + "ADIR"), fi.getParent());
+        assertEquals(fs.getDirectoryInfo("SOMEDIR" + FS + "ADIR"), fi.getDirectory());
     }
 
     @ParameterizedTest

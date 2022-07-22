@@ -32,6 +32,9 @@ import dotnet4j.io.Stream;
 
 
 public class SampleDataTests {
+
+    private static final String FS = File.separator;
+
     @Test
     public void xfsVhdxZip() throws Exception {
         SetupHelper.setupComplete();
@@ -84,13 +87,13 @@ public class SampleDataTests {
 
     private void validateContent(DiscFileSystem xfs) throws Exception {
         assertTrue(xfs.directoryExists(""));
-        assertTrue(xfs.fileExists("folder\\nested\\file"));
+        assertTrue(xfs.fileExists("folder" + FS + "nested" + FS + "file"));
         assertEquals(0, xfs.getFileSystemEntries("empty").size());
         for (int i = 1; i <= 1000; i++) {
-            assertTrue(xfs.fileExists(String.format("folder\\file.%d", i)), String.format("File file.%d not found", i));
+            assertTrue(xfs.fileExists(String.format("folder" + FS + "file.%d", i)), String.format("File file.%d not found", i));
         }
 
-        try (Stream file = xfs.openFile("folder\\file.100", FileMode.Open); MemoryStream ms = new MemoryStream()) {
+        try (Stream file = xfs.openFile("folder" + FS + "file.100", FileMode.Open); MemoryStream ms = new MemoryStream()) {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             file.copyTo(ms);
             byte[] checksum = md5.digest(ms.toArray());
@@ -100,7 +103,7 @@ public class SampleDataTests {
                                  .collect(Collectors.joining()));
         }
 
-        try (Stream file = xfs.openFile("folder\\file.random", FileMode.Open); MemoryStream ms = new MemoryStream()) {
+        try (Stream file = xfs.openFile("folder" + FS + "file.random", FileMode.Open); MemoryStream ms = new MemoryStream()) {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             file.copyTo(ms);
             byte[] checksum = md5.digest(ms.toArray());
@@ -110,7 +113,7 @@ public class SampleDataTests {
                                  .collect(Collectors.joining()));
         }
         for (int i = 1; i <= 999; i++) {
-            assertTrue(xfs.fileExists(String.format("huge\\%d", i)), String.format("File huge/%d not found", i));
+            assertTrue(xfs.fileExists(String.format("huge" + FS + "%d", i)), String.format("File huge/%d not found", i));
         }
     }
 }

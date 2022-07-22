@@ -37,12 +37,14 @@ import dotnet4j.io.MemoryStream;
 
 public class ElementTest {
 
+    private static final String FS = java.io.File.separator;
+
     @Test
     public void friendlyName() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
-        Element el = obj.addElement(WellKnownElement.LibraryApplicationPath, ElementValue.forString("a\\path\\to\\nowhere"));
+        Element el = obj.addElement(WellKnownElement.LibraryApplicationPath, ElementValue.forString("a" + FS + "path" + FS + "to" + FS + "nowhere"));
         assertEquals("{path}", el.getFriendlyName());
     }
 }

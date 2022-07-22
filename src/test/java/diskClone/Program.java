@@ -1,6 +1,7 @@
 
 package diskClone;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,6 +32,9 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+
+    private static final String FS = java.io.File.separator;
+
     @Option(option = "t",
             argName = "translation mode",
             args = 1,
@@ -135,19 +139,19 @@ public class Program extends ProgramBase {
                 ntfs.getNtfsOptions().setHideSystemFiles(false);
                 ntfs.getNtfsOptions().setHideHiddenFiles(false);
                 ntfs.getNtfsOptions().setHideMetafiles(false);
-                for (String filePath : ntfs.getFiles("\\System Volume Information",
+                for (String filePath : ntfs.getFiles(FS + "System Volume Information",
                                                      "*{3808876B-C176-4e48-B7AE-04046E6CC752}")) {
                     // Remove VSS snapshot files (can be very large)
                     ntfs.deleteFile(filePath);
                 }
                 // Remove the page file
-                if (ntfs.fileExists("\\Pagefile.sys")) {
-                    ntfs.deleteFile("\\Pagefile.sys");
+                if (ntfs.fileExists(FS + "Pagefile.sys")) {
+                    ntfs.deleteFile(FS + "Pagefile.sys");
                 }
 
                 // Remove the hibernation file
-                if (ntfs.fileExists("\\hiberfil.sys")) {
-                    ntfs.deleteFile("\\hiberfil.sys");
+                if (ntfs.fileExists(FS + "hiberfil.sys")) {
+                    ntfs.deleteFile(FS + "hiberfil.sys");
                 }
 
                 try (Stream bitmapStream = ntfs.openFile("$Bitmap", FileMode.Open)) {
@@ -286,8 +290,8 @@ public class Program extends ProgramBase {
                 }
 
                 String volPath = s;
-                if (volPath.charAt(volPath.length() - 1) != '\\') {
-                    volPath += "\\";
+                if (volPath.charAt(volPath.length() - 1) != File.separatorChar) {
+                    volPath += FS;
                 }
 
                 cloneVolumes.add(new CloneVolume());

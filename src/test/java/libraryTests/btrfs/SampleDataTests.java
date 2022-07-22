@@ -36,6 +36,9 @@ import dotnet4j.io.StreamReader;
 
 
 public class SampleDataTests {
+
+    private static final String FS = File.separator;
+
     @Test
     public void btrfsVhdxZip() throws Exception {
 //        DiscUtils.setup.SetupHelper.RegisterAssembly(Disk.class.getTypeInfo().Assembly);
@@ -61,22 +64,22 @@ public class SampleDataTests {
                 assertEquals(1, subvolumes.length);
                 assertEquals(256L, subvolumes[0].getId());
                 assertEquals("subvolume", subvolumes[0].getName());
-                assertEquals("text\n", getFileContent("\\folder\\subfolder\\file", btrfs));
+                assertEquals("text\n", getFileContent(FS + "folder" + FS + "subfolder" + FS + "file", btrfs));
                 assertEquals("f64464c2024778f347277de6fa26fe87",
-                             getFileChecksum("\\folder\\subfolder\\f64464c2024778f347277de6fa26fe87", btrfs));
+                             getFileChecksum(FS + "folder" + FS + "subfolder" + FS + "f64464c2024778f347277de6fa26fe87", btrfs));
                 assertEquals("fa121c8b73cf3b01a4840b1041b35e9f",
-                             getFileChecksum("\\folder\\subfolder\\fa121c8b73cf3b01a4840b1041b35e9f", btrfs));
-                isAllZero("folder\\subfolder\\sparse", btrfs);
-                assertEquals("test\n", getFileContent("\\subvolume\\subvolumefolder\\subvolumefile", btrfs));
-                assertEquals("b0d5fae237588b6641f974459404d197", getFileChecksum("\\folder\\subfolder\\compressed", btrfs));
-                assertEquals("test\n", getFileContent("\\folder\\symlink", btrfs)); //PR#36
-                assertEquals("b0d5fae237588b6641f974459404d197", getFileChecksum("\\folder\\subfolder\\lzo", btrfs));
+                             getFileChecksum(FS + "folder" + FS + "subfolder" + FS + "fa121c8b73cf3b01a4840b1041b35e9f", btrfs));
+                isAllZero("folder" + FS + "subfolder" + FS + "sparse", btrfs);
+                assertEquals("test\n", getFileContent(FS + "subvolume" + FS + "subvolumefolder" + FS + "subvolumefile", btrfs));
+                assertEquals("b0d5fae237588b6641f974459404d197", getFileChecksum(FS + "folder" + FS + "subfolder" + FS + "compressed", btrfs));
+                assertEquals("test\n", getFileContent(FS + "folder" + FS + "symlink", btrfs)); //PR#36
+                assertEquals("b0d5fae237588b6641f974459404d197", getFileChecksum(FS + "folder" + FS + "subfolder" + FS + "lzo", btrfs));
             }
             BtrfsFileSystemOptions options = new BtrfsFileSystemOptions();
             options.setSubvolumeId(256);
             options.setVerifyChecksums(true);
             try (BtrfsFileSystem subvolume = new BtrfsFileSystem(volume.open(), options)) {
-                assertEquals("test\n", getFileContent("\\subvolumefolder\\subvolumefile", subvolume));
+                assertEquals("test\n", getFileContent(FS + "subvolumefolder" + FS + "subvolumefile", subvolume));
             }
         }
     }

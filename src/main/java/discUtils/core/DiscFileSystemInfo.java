@@ -22,6 +22,7 @@
 
 package discUtils.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 
@@ -35,13 +36,16 @@ import dotnet4j.util.compat.StringUtilities;
  * {@link DiscDirectoryInfo} objects.
  */
 public class DiscFileSystemInfo {
+
+    private static final String FS = File.separator;
+
     public DiscFileSystemInfo(DiscFileSystem fileSystem, String path) {
         if (path == null) {
             throw new NullPointerException("path");
         }
 
         _fileSystem = fileSystem;
-        _path = path.replaceAll(StringUtilities.escapeForRegex("(^\\*|\\*$)"), "");
+        _path = path.replaceAll(StringUtilities.escapeForRegex("(^" + FS + "*|" + FS + "*$)"), "");
 //Debug.println(_path);
     }
 

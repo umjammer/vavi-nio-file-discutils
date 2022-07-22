@@ -22,6 +22,7 @@
 
 package discUtils.iso9660;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -58,6 +59,9 @@ import dotnet4j.util.compat.StringUtilities;
  * </pre>
  */
 public final class CDBuilder extends StreamBuilder {
+
+    private static final String FS = File.separator;
+
     private static final long DiskStart = 0x8000;
 
     private BootInitialEntry _bootEntry;
@@ -166,7 +170,7 @@ public final class CDBuilder extends StreamBuilder {
      * @return The object representing this directory.
      */
     public BuildDirectoryInfo addDirectory(String name) {
-        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
+        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         return getDirectory(nameElements, nameElements.length, true);
@@ -189,7 +193,7 @@ public final class CDBuilder extends StreamBuilder {
      * @return The object representing this file.
      */
     public BuildFileInfo addFile(String name, byte[] content) {
-        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
+        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
@@ -221,7 +225,7 @@ public final class CDBuilder extends StreamBuilder {
      * @return The object representing this file.
      */
     public BuildFileInfo addFile(String name, String sourcePath) {
-        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
+        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);
@@ -257,7 +261,7 @@ public final class CDBuilder extends StreamBuilder {
             throw new IllegalArgumentException("source doesn't support seeking " + source);
         }
 
-        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex("\\")))
+        String[] nameElements = Arrays.stream(name.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         BuildDirectoryInfo dir = getDirectory(nameElements, nameElements.length - 1, true);

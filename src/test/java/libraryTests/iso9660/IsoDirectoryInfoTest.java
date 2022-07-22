@@ -22,6 +22,7 @@
 
 package libraryTests.iso9660;
 
+import java.io.File;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
@@ -40,34 +41,37 @@ import discUtils.iso9660.CDBuilder;
 import discUtils.iso9660.CDReader;
 
 public class IsoDirectoryInfoTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void exists() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("SOMEDIR\\CHILDDIR\\FILE.TXT", new byte[0]);
+        builder.addFile("SOMEDIR" + FS + "CHILDDIR" + FS + "FILE.TXT", new byte[0]);
         CDReader fs = new CDReader(builder.build(), false);
-        assertTrue(fs.getDirectoryInfo("\\").exists());
+        assertTrue(fs.getDirectoryInfo(FS).exists());
         assertTrue(fs.getDirectoryInfo("SOMEDIR").exists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").exists());
-        assertTrue(fs.getDirectoryInfo("SOMEDIR\\CHILDDIR\\").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR" + FS + "CHILDDIR").exists());
+        assertTrue(fs.getDirectoryInfo("SOMEDIR" + FS + "CHILDDIR" + FS).exists());
         assertFalse(fs.getDirectoryInfo("NONDIR").exists());
-        assertFalse(fs.getDirectoryInfo("SOMEDIR\\NONDIR").exists());
+        assertFalse(fs.getDirectoryInfo("SOMEDIR" + FS + "NONDIR").exists());
     }
 
     @Test
     public void fullName() throws Exception {
         CDBuilder builder = new CDBuilder();
         CDReader fs = new CDReader(builder.build(), false);
-        assertEquals("\\", fs.getRoot().getFullName());
-        assertEquals("SOMEDIR\\", fs.getDirectoryInfo("SOMEDIR").getFullName());
-        assertEquals("SOMEDIR\\CHILDDIR\\", fs.getDirectoryInfo("SOMEDIR\\CHILDDIR").getFullName());
+        assertEquals(FS, fs.getRoot().getFullName());
+        assertEquals("SOMEDIR" + FS, fs.getDirectoryInfo("SOMEDIR").getFullName());
+        assertEquals("SOMEDIR" + FS + "CHILDDIR" + FS, fs.getDirectoryInfo("SOMEDIR" + FS + "CHILDDIR").getFullName());
     }
 
     @Test
     public void simpleSearch() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("SOMEDIR\\CHILDDIR\\GCHILDIR\\FILE.TXT", new byte[0]);
+        builder.addFile("SOMEDIR" + FS + "CHILDDIR" + FS + "GCHILDIR" + FS + "FILE.TXT", new byte[0]);
         CDReader fs = new CDReader(builder.build(), false);
-        DiscDirectoryInfo di = fs.getDirectoryInfo("SOMEDIR\\CHILDDIR");
+        DiscDirectoryInfo di = fs.getDirectoryInfo("SOMEDIR" + FS + "CHILDDIR");
         List<DiscFileInfo> fis = di.getFiles("*.*", "AllDirectories");
     }
 
@@ -82,7 +86,7 @@ public class IsoDirectoryInfoTest {
     @Test
     public void getDirectories() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addDirectory("SOMEDIR\\CHILD\\GCHILD");
+        builder.addDirectory("SOMEDIR" + FS + "CHILD" + FS + "GCHILD");
         builder.addDirectory("A.DIR");
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals(2, fs.getRoot().getDirectories().size());
@@ -95,20 +99,20 @@ public class IsoDirectoryInfoTest {
         assertEquals(4, fs.getRoot().getDirectories("*.*", "AllDirectories").size());
         assertEquals(2, fs.getRoot().getDirectories("*.*", "TopDirectoryOnly").size());
         assertEquals(1, fs.getRoot().getDirectories("*.DIR", "AllDirectories").size());
-        assertEquals("A.DIR\\", fs.getRoot().getDirectories("*.DIR", "AllDirectories").get(0).getFullName());
+        assertEquals("A.DIR" + FS, fs.getRoot().getDirectories("*.DIR", "AllDirectories").get(0).getFullName());
         assertEquals(1, fs.getRoot().getDirectories("GCHILD", "AllDirectories").size());
-        assertEquals("SOMEDIR\\CHILD\\GCHILD\\", fs.getRoot().getDirectories("GCHILD", "AllDirectories").get(0).getFullName());
+        assertEquals("SOMEDIR" + FS + "CHILD" + FS + "GCHILD" + FS, fs.getRoot().getDirectories("GCHILD", "AllDirectories").get(0).getFullName());
     }
 
     @Test
     public void getFiles() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addDirectory("SOMEDIR\\CHILD\\GCHILD");
+        builder.addDirectory("SOMEDIR" + FS + "CHILD" + FS + "GCHILD");
         builder.addDirectory("AAA.DIR");
         builder.addFile("FOO.TXT", new byte[10]);
-        builder.addFile("SOMEDIR\\CHILD.TXT", new byte[10]);
-        builder.addFile("SOMEDIR\\FOO.TXT", new byte[10]);
-        builder.addFile("SOMEDIR\\CHILD\\GCHILD\\BAR.TXT", new byte[10]);
+        builder.addFile("SOMEDIR" + FS + "CHILD.TXT", new byte[10]);
+        builder.addFile("SOMEDIR" + FS + "FOO.TXT", new byte[10]);
+        builder.addFile("SOMEDIR" + FS + "CHILD" + FS + "GCHILD" + FS + "BAR.TXT", new byte[10]);
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals(1, fs.getRoot().getFiles().size());
         assertEquals("FOO.TXT", fs.getRoot().getFiles().get(0).getFullName());
@@ -120,12 +124,12 @@ public class IsoDirectoryInfoTest {
     @Test
     public void getFileSystemInfos() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addDirectory("SOMEDIR\\CHILD\\GCHILD");
+        builder.addDirectory("SOMEDIR" + FS + "CHILD" + FS + "GCHILD");
         builder.addDirectory("AAA.EXT");
         builder.addFile("FOO.TXT", new byte[10]);
-        builder.addFile("SOMEDIR\\CHILD.TXT", new byte[10]);
-        builder.addFile("SOMEDIR\\FOO.TXT", new byte[10]);
-        builder.addFile("SOMEDIR\\CHILD\\GCHILD\\BAR.TXT", new byte[10]);
+        builder.addFile("SOMEDIR" + FS + "CHILD.TXT", new byte[10]);
+        builder.addFile("SOMEDIR" + FS + "FOO.TXT", new byte[10]);
+        builder.addFile("SOMEDIR" + FS + "CHILD" + FS + "GCHILD" + FS + "BAR.TXT", new byte[10]);
         CDReader fs = new CDReader(builder.build(), false);
         assertEquals(3, fs.getRoot().getFileSystemInfos().size());
         assertEquals(1, fs.getRoot().getFileSystemInfos("*.EXT").size());

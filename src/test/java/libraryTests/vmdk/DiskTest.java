@@ -22,6 +22,7 @@
 
 package libraryTests.vmdk;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,9 @@ import dotnet4j.io.FileAccess;
 
 
 public class DiskTest {
+
+    private static final String FS = File.separator;
+
     public DiskTest() {
 //        SetupHelper.setupComplete();
     }
@@ -104,9 +108,9 @@ public class DiskTest {
     public void initializeDifferencing() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         DiskImageFile baseFile = DiskImageFile
-                .initialize(fs, "\\base\\base.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse);
+                .initialize(fs, FS + "base" + FS + "base.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse);
         try (Disk disk = Disk
-                .initializeDifferencing(fs, "\\diff\\diff.vmdk", DiskCreateType.MonolithicSparse, "\\base\\base.vmdk")) {
+                .initializeDifferencing(fs, FS + "diff" + FS + "diff.vmdk", DiskCreateType.MonolithicSparse, FS + "base" + FS + "base.vmdk")) {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 16 * 1024L * 1024 * 1024);
@@ -118,25 +122,25 @@ public class DiskTest {
             assertEquals(1, paths.size());
             assertEquals("diff.vmdk", paths.get(0));
         }
-        assertTrue(fs.getFileLength("\\diff\\diff.vmdk") > 2 * 1024 * 1024);
-        assertTrue(fs.getFileLength("\\diff\\diff.vmdk") < 4 * 1024 * 1024);
+        assertTrue(fs.getFileLength(FS + "diff" + FS + "diff.vmdk") > 2 * 1024 * 1024);
+        assertTrue(fs.getFileLength(FS + "diff" + FS + "diff.vmdk") < 4 * 1024 * 1024);
     }
 
     @Test
     public void initializeDifferencingRelPath() throws Exception {
         DiscFileSystem fs = new InMemoryFileSystem();
         DiskImageFile baseFile = DiskImageFile
-                .initialize(fs, "\\dir\\subdir\\base.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse);
+                .initialize(fs, FS + "dir" + FS + "subdir" + FS + "base.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.MonolithicSparse);
         try (Disk disk = Disk
-                .initializeDifferencing(fs, "\\dir\\diff.vmdk", DiskCreateType.MonolithicSparse, "subdir\\base.vmdk")) {
+                .initializeDifferencing(fs, FS + "dir" + FS + "diff.vmdk", DiskCreateType.MonolithicSparse, "subdir" + FS + "base.vmdk")) {
             assertNotNull(disk);
             assertTrue(disk.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                        disk.getGeometry().getCapacity() < 16 * 1024L * 1024 * 1024);
             assertEquals(16 * 1024L * 1024 * 1024, disk.getContent().getLength());
             assertEquals(2, (new ArrayList<>(disk.getLayers())).size());
         }
-        assertTrue(fs.getFileLength("\\dir\\diff.vmdk") > 2 * 1024 * 1024);
-        assertTrue(fs.getFileLength("\\dir\\diff.vmdk") < 4 * 1024 * 1024);
+        assertTrue(fs.getFileLength(FS + "dir" + FS + "diff.vmdk") > 2 * 1024 * 1024);
+        assertTrue(fs.getFileLength(FS + "dir" + FS + "diff.vmdk") < 4 * 1024 * 1024);
     }
 
     @Test

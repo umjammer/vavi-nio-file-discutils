@@ -572,26 +572,25 @@ Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
             return URI.create(path);
         }
 
-        path = Paths.get(path.replace("\\", "/")).normalize().toAbsolutePath().toString().replace("/", "\\");
+        path = Paths.get(path.replace("\\", "/")).normalize().toAbsolutePath().toString();
 
         // Built-in Uri class does cope well with query params on file Uris, so
-        // do some
-        // parsing ourselves...
-        if (path.length() >= 1 && path.charAt(0) == '\\') {
-            URI builder = URI.create("file:" + path.replace('\\', '/').replace(" ", "%20"));
+        // do some parsing ourselves...
+        if (path.length() >= 1 && path.charAt(0) == '/') {
+            URI builder = URI.create("file:" + path.replace(" ", "%20"));
             return builder;
         }
 
         if (path.startsWith("//")) {
-            URI builder = URI.create("file:" + path.replace('\\', '/').replace(" ", "%20"));
+            URI builder = URI.create("file:" + path.replace(" ", "%20"));
             return builder;
         }
 
         if (path.length() >= 2 && path.charAt(1) == ':') {
-            URI builder = URI.create("file:///" + path.replace('\\', '/').replace(" ", "%20"));
+            URI builder = URI.create("file:///" + path.replace(" ", "%20"));
             return builder;
         }
 
-        return URI.create(path.replace('\\', '/').replace(" ", "%20"));
+        return URI.create(path.replace(" ", "%20"));
     }
 }

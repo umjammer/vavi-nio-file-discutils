@@ -22,6 +22,7 @@
 
 package discUtils.core.internal;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -62,7 +63,7 @@ public abstract class VirtualDiskFactory {
     }
 
     public VirtualDisk openDisk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
-        return openDisk(new DiscFileLocator(fileSystem, "\\"), path, access);
+        return openDisk(new DiscFileLocator(fileSystem, File.separator), path, access);
     }
 
     public abstract VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) throws IOException;

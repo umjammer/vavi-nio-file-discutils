@@ -84,8 +84,8 @@ public class Program extends ProgramBase {
     private static void populateFromFolder(CDBuilder builder, Path di, String basePath) throws IOException {
         Files.list(di).forEach(f -> {
             if (!Files.isDirectory(f)) {
-                String n = f.toAbsolutePath().toString().substring(basePath.length()).replace(File.separator, "\\");
-                String p = f.toAbsolutePath().toString().replace(File.separator, "\\");
+                String n = f.toAbsolutePath().toString().substring(basePath.length());
+                String p = f.toAbsolutePath().toString();
 //Debug.println(n + ", " + p);
                 builder.addFile(n, p);
             } else

@@ -47,14 +47,17 @@ import dotnet4j.io.MemoryStream;
 
 
 public class ElementValueTest {
+
+    private static final String FS = java.io.File.separator;
+
     @Test
     public void stringValue() throws Exception {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
-        Element el = obj.addElement(WellKnownElement.LibraryApplicationPath, ElementValue.forString("a\\path\\to\\nowhere"));
+        Element el = obj.addElement(WellKnownElement.LibraryApplicationPath, ElementValue.forString("a" + FS + "path" + FS + "to" + FS + "nowhere"));
         el = obj.getElement(WellKnownElement.LibraryApplicationPath);
-        assertEquals("a\\path\\to\\nowhere", el.getValue().toString());
+        assertEquals("a" + FS + "path" + FS + "to" + FS + "nowhere", el.getValue().toString());
     }
 
     @Test

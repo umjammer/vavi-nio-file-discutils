@@ -35,6 +35,9 @@ import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
 
 public final class LocalFileLocator extends FileLocator {
+
+    private static final String FS = File.separator;
+
     private final String _dir;
 
     public LocalFileLocator(String dir) {
@@ -46,7 +49,7 @@ public final class LocalFileLocator extends FileLocator {
     }
 
     protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
-        return new FileStream(Utilities.combinePaths(_dir, fileName).replace("\\", File.separator), mode, access, share);
+        return new FileStream(Utilities.combinePaths(_dir, fileName), mode, access, share);
     }
 
     public FileLocator getRelativeLocator(String path) {
@@ -56,10 +59,10 @@ public final class LocalFileLocator extends FileLocator {
     public String getFullPath(String path) {
         String combinedPath = Utilities.combinePaths(_dir, path);
         if (combinedPath.isEmpty()) {
-            return System.getProperty("user.dir").replace(File.separator, "\\");
+            return System.getProperty("user.dir").replace(File.separator, FS);
         }
 
-        return Paths.get(combinedPath).toAbsolutePath().toString().replace(File.separator, "\\");
+        return Paths.get(combinedPath).toAbsolutePath().toString();
     }
 
     public String getDirectoryFromPath(String path) {

@@ -22,6 +22,7 @@
 
 package discUtils.core.vfs;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,6 +54,10 @@ import dotnet4j.util.compat.StringUtilities;
  * @param <TContext> The concrete type holding global state.
  */
 public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> extends DiscFileSystem {
+
+    private static final String FS = File.separator;
+    private static final char FSC = File.separatorChar;
+
     private final ObjectCache<Long, TFile> _fileCache;
 
     /**
@@ -210,8 +215,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      */
     public List<String> getFileSystemEntries(String path) {
         String fullPath = path;
-        if (!fullPath.startsWith("\\")) {
-            fullPath = "\\" + fullPath;
+        if (!fullPath.startsWith(FS)) {
+            fullPath = FS + fullPath;
         }
 
         String _fullPath = fullPath;
@@ -592,11 +597,11 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     }
 
     private static boolean isRoot(String path) {
-        return path == null || path.isEmpty() || "\\".equals(path);
+        return path == null || path.isEmpty() || FS.equals(path);
     }
 
     private TDirEntry getDirectoryEntry(TDirectory dir, String path) {
-        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0);
@@ -631,13 +636,13 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
         String resultPrefixPath = path;
         if (isRoot(path)) {
-            resultPrefixPath = "\\";
+            resultPrefixPath = FS;
         }
 
         for (TDirEntry de : parentDir.getAllEntries()) {
             TDirEntry entry = de;
             if (entry.isSymlink()) {
-                entry = resolveSymlink(entry, path + '\\' + entry.getFileName());
+                entry = resolveSymlink(entry, path + FSC + entry.getFileName());
             }
 
             boolean isDir = entry.isDirectory();
@@ -661,8 +666,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     private TDirEntry resolveSymlink(TDirEntry entry, String path) {
         TDirEntry currentEntry = entry;
-        if (path.length() > 0 && path.charAt(0) != '\\') {
-            path = '\\' + path;
+        if (path.length() > 0 && path.charAt(0) != FSC) {
+            path = FSC + path;
         }
         String currentPath = path;
         int resolvesLeft = 20;
@@ -673,7 +678,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             }
             IVfsSymlink<TDirEntry, TFile> symlink = (IVfsSymlink) file;
 
-            currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex("\\*$"), ""),
+            currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex(FS + "*$"), ""),
                                                 symlink.getTargetPath());
             currentEntry = getDirectoryEntry(currentPath);
             if (currentEntry == null) {

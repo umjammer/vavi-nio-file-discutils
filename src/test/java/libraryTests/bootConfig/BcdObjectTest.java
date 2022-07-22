@@ -38,15 +38,19 @@ import discUtils.registry.RegistryHive;
 import dotnet4j.io.MemoryStream;
 
 public class BcdObjectTest {
+
+    private static final String FS = java.io.File.separator;
+
     @Test
     public void addElement() {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
         assertFalse(obj.hasElement(WellKnownElement.LibraryApplicationPath));
-        obj.addElement(WellKnownElement.LibraryApplicationPath, ElementValue.forString("\\a\\path\\to\\nowhere"));
+        obj.addElement(WellKnownElement.LibraryApplicationPath,
+                ElementValue.forString(FS + "a" + FS + "path" + FS + "to" + FS + "nowhere"));
         assertTrue(obj.hasElement(WellKnownElement.LibraryApplicationPath));
-        assertEquals("\\a\\path\\to\\nowhere", obj.getElement(WellKnownElement.LibraryApplicationPath).getValue().toString());
+        assertEquals(FS + "a" + FS + "path" + FS + "to" + FS + "nowhere", obj.getElement(WellKnownElement.LibraryApplicationPath).getValue().toString());
     }
 
     @Test
@@ -54,7 +58,9 @@ public class BcdObjectTest {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
-        assertThrows(IllegalArgumentException.class, () -> obj.addElement(WellKnownElement.LibraryApplicationDevice, ElementValue.forString("\\a\\path\\to\\nowhere")));
+        assertThrows(IllegalArgumentException.class,
+                () -> obj.addElement(WellKnownElement.LibraryApplicationDevice,
+                        ElementValue.forString(FS + "a" + FS + "path" + FS + "to" + FS + "nowhere")));
     }
 
     @Test
@@ -62,7 +68,8 @@ public class BcdObjectTest {
         RegistryHive hive = RegistryHive.create(new MemoryStream());
         Store s = Store.initialize(hive.getRoot());
         BcdObject obj = s.createInherit(InheritType.AnyObject);
-        obj.addElement(WellKnownElement.LibraryApplicationPath, ElementValue.forString("\\a\\path\\to\\nowhere"));
+        obj.addElement(WellKnownElement.LibraryApplicationPath,
+                ElementValue.forString(FS + "a" + FS + "path" + FS + "to" + FS + "nowhere"));
         obj.removeElement(WellKnownElement.LibraryApplicationPath);
         assertFalse(obj.hasElement(WellKnownElement.LibraryApplicationPath));
     }

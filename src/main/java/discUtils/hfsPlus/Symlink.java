@@ -21,7 +21,7 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
             try (BufferStream stream = new BufferStream(getFileContent(), FileAccess.Read)) {
                 try (StreamReader reader = new StreamReader(stream)) {
                     _targetPath = reader.readToEnd();
-                    _targetPath = _targetPath.replace('/', '\\');
+                    _targetPath = _targetPath.replace('/', java.io.File.separatorChar);
                 }
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);

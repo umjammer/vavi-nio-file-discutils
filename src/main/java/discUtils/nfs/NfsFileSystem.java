@@ -22,6 +22,7 @@
 
 package discUtils.nfs;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +49,9 @@ import dotnet4j.util.compat.StringUtilities;
  * Virtual Machines. Currently, only NFS v3 is supported.
  */
 public class NfsFileSystem extends DiscFileSystem {
+
+    private static final String FS = File.separator;
+
     private Nfs3Client _client;
 
     /**
@@ -713,7 +717,7 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     private Nfs3FileHandle getParentDirectory(String path) {
-        String[] dirs = Arrays.stream(Utilities.getDirectoryFromPath(path).split(StringUtilities.escapeForRegex("\\")))
+        String[] dirs = Arrays.stream(Utilities.getDirectoryFromPath(path).split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         Nfs3FileHandle parent = getDirectory(_client.getRootHandle(), dirs);
@@ -721,7 +725,7 @@ public class NfsFileSystem extends DiscFileSystem {
     }
 
     private Nfs3FileHandle getDirectory(String path) {
-        String[] dirs = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        String[] dirs = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         return getDirectory(_client.getRootHandle(), dirs);

@@ -57,20 +57,22 @@ import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 public class NtfsFileSystemTest {
 
+    private static final String FS = java.io.File.separator;
+
     @Test
     public void aclInheritance() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
         RawSecurityDescriptor sd = new RawSecurityDescriptor("O:BAG:BAD:(A;OICINP;GA;;;BA)");
         ntfs.createDirectory("dir");
         ntfs.setSecurity("dir", sd);
-        ntfs.createDirectory("dir\\subdir");
-        RawSecurityDescriptor inheritedSd = ntfs.getSecurity("dir\\subdir");
+        ntfs.createDirectory("dir" + FS + "subdir");
+        RawSecurityDescriptor inheritedSd = ntfs.getSecurity("dir" + FS + "subdir");
         assertNotNull(inheritedSd);
         assertEquals("O:BAG:BAD:(A;ID;GA;;;BA)", inheritedSd.getSddlForm(AccessControlSections.All));
 
-        try (Closeable c = ntfs.openFile("dir\\subdir\\file", FileMode.Create, FileAccess.ReadWrite)) {
+        try (Closeable c = ntfs.openFile("dir" + FS + "subdir" + FS + "file", FileMode.Create, FileAccess.ReadWrite)) {
         }
-        inheritedSd = ntfs.getSecurity("dir\\subdir\\file");
+        inheritedSd = ntfs.getSecurity("dir" + FS + "subdir" + FS + "file");
         assertNotNull(inheritedSd);
         assertEquals("O:BAG:BAD:", inheritedSd.getSddlForm(AccessControlSections.All));
     }
@@ -211,9 +213,9 @@ public class NtfsFileSystemTest {
         for (int i = 0; i < 50; ++i) {
             ntfs.deleteFile("hl" + i);
         }
-        assertEquals(1, ntfs.getFiles("\\").size());
+        assertEquals(1, ntfs.getFiles(FS).size());
         ntfs.deleteFile("file");
-        assertEquals(0, ntfs.getFiles("\\").size());
+        assertEquals(0, ntfs.getFiles(FS).size());
     }
 
     @Test
@@ -227,11 +229,11 @@ public class NtfsFileSystemTest {
         assertTrue(ntfs.fileExists("ALONG~01.TXT"));
         // Check path handling
         ntfs.createDirectory("DIR");
-        try (Stream s = ntfs.openFile("DIR\\ALongFileName2.txt", FileMode.CreateNew)) {
+        try (Stream s = ntfs.openFile("DIR" + FS + "ALongFileName2.txt", FileMode.CreateNew)) {
         }
-        ntfs.setShortName("DIR\\ALongFileName2.txt", "ALONG~02.TXT");
-        assertEquals("ALONG~02.TXT", ntfs.getShortName("DIR\\ALongFileName2.txt"));
-        assertTrue(ntfs.fileExists("DIR\\ALONG~02.TXT"));
+        ntfs.setShortName("DIR" + FS + "ALongFileName2.txt", "ALONG~02.TXT");
+        assertEquals("ALONG~02.TXT", ntfs.getShortName("DIR" + FS + "ALongFileName2.txt"));
+        assertTrue(ntfs.fileExists("DIR" + FS + "ALONG~02.TXT"));
         // Check we can open a file by the short name
         try (Stream s = ntfs.openFile("ALONG~01.TXT", FileMode.Open)) {
         }
@@ -239,8 +241,8 @@ public class NtfsFileSystemTest {
         ntfs.deleteFile("ALONG~01.TXT");
         assertFalse(ntfs.fileExists("ALONG~01.TXT"));
         // Delete the short name, and make sure the file is gone
-        ntfs.deleteFile("DIR\\ALONG~02.TXT");
-        assertFalse(ntfs.fileExists("DIR\\ALongFileName2.txt"));
+        ntfs.deleteFile("DIR" + FS + "ALONG~02.TXT");
+        assertFalse(ntfs.fileExists("DIR" + FS + "ALongFileName2.txt"));
     }
 
     @Test
@@ -252,7 +254,7 @@ public class NtfsFileSystemTest {
         ntfs.createHardLink("ALongFileName.txt", "AHardLink.TXT");
         assertEquals(2, ntfs.getHardLinkCount("ALongFileName.txt"));
         ntfs.createDirectory("DIR");
-        ntfs.createHardLink("ALongFileName.txt", "DIR\\SHORTLNK.TXT");
+        ntfs.createHardLink("ALongFileName.txt", "DIR" + FS + "SHORTLNK.TXT");
         assertEquals(3, ntfs.getHardLinkCount("ALongFileName.txt"));
         // If we enumerate short names, then the initial long name results in two 'hardlinks'
         ntfs.getNtfsOptions().setHideDosFileNames(false);
@@ -293,7 +295,7 @@ public class NtfsFileSystemTest {
     @Test
     public void openRawStream() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
-        assertNull(ntfs.openRawStream("$Extend\\$ObjId", AttributeType.Data, null, FileAccess.Read));
+        assertNull(ntfs.openRawStream("$Extend" + FS + "$ObjId", AttributeType.Data, null, FileAccess.Read));
     }
 
     @Test
@@ -320,12 +322,12 @@ public class NtfsFileSystemTest {
     @Test
     public void deleteShortNameDir() throws Exception {
         NtfsFileSystem ntfs = FileSystemSource.ntfsFileSystem();
-        ntfs.createDirectory("\\TestLongName1\\TestLongName2");
-        ntfs.setShortName("\\TestLongName1\\TestLongName2", "TESTLO~1");
-        assertTrue(ntfs.directoryExists("\\TestLongName1\\TESTLO~1"));
-        assertTrue(ntfs.directoryExists("\\TestLongName1\\TestLongName2"));
-        ntfs.deleteDirectory("\\TestLongName1", true);
-        assertFalse(ntfs.directoryExists("\\TestLongName1"));
+        ntfs.createDirectory(FS + "TestLongName1" + FS + "TestLongName2");
+        ntfs.setShortName(FS + "TestLongName1" + FS + "TestLongName2", "TESTLO~1");
+        assertTrue(ntfs.directoryExists(FS + "TestLongName1" + FS + "TESTLO~1"));
+        assertTrue(ntfs.directoryExists(FS + "TestLongName1" + FS + "TestLongName2"));
+        ntfs.deleteDirectory(FS + "TestLongName1", true);
+        assertFalse(ntfs.directoryExists(FS + "TestLongName1"));
     }
 
     @Test
@@ -343,14 +345,14 @@ public class NtfsFileSystemTest {
         assertEquals(122, ntfs.getFileLength("AFILE.TXT:altstream"));
         // Test NTFS options for hardlink behaviour
         ntfs.createDirectory("Dir");
-        ntfs.createHardLink("AFILE.TXT", "Dir\\OtherLink.txt");
+        ntfs.createHardLink("AFILE.TXT", "Dir" + FS + "OtherLink.txt");
         try (Stream stream = ntfs.openFile("AFILE.TXT", FileMode.Open, FileAccess.ReadWrite)) {
             stream.setLength(50);
         }
         assertEquals(50, ntfs.getFileLength("AFILE.TXT"));
-        assertEquals(14325, ntfs.getFileLength("Dir\\OtherLink.txt"));
+        assertEquals(14325, ntfs.getFileLength("Dir" + FS + "OtherLink.txt"));
         ntfs.getNtfsOptions().setFileLengthFromDirectoryEntries(false);
-        assertEquals(50, ntfs.getFileLength("Dir\\OtherLink.txt"));
+        assertEquals(50, ntfs.getFileLength("Dir" + FS + "OtherLink.txt"));
     }
 
     @Test
@@ -359,21 +361,21 @@ public class NtfsFileSystemTest {
         ntfs.createDirectory("DIR");
         byte[] buffer = new byte[4096];
         for (int i = 0; i < 2500; ++i) {
-            try (Stream stream = ntfs.openFile("DIR\\file" + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
+            try (Stream stream = ntfs.openFile("DIR" + FS + "file" + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
                 stream.write(buffer, 0, buffer.length);
             }
-            try (Stream stream = ntfs.openFile("DIR\\" + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
+            try (Stream stream = ntfs.openFile("DIR" + FS + "" + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
                 stream.write(buffer, 0, buffer.length);
             }
         }
 //Debug.println("T1: ----");
         for (int i = 0; i < 2500; ++i) {
-            ntfs.deleteFile("DIR\\file" + i + ".bin");
+            ntfs.deleteFile("DIR" + FS + "file" + i + ".bin");
         }
 //Debug.println("T2: ----");
 //NonResidentAttributeBuffer.debug = true;
         // Create fragmented file (lots of small writes)
-        try (Stream stream = ntfs.openFile("DIR\\fragmented.bin", FileMode.Create, FileAccess.ReadWrite)) {
+        try (Stream stream = ntfs.openFile("DIR" + FS + "fragmented.bin", FileMode.Create, FileAccess.ReadWrite)) {
             for (int i = 0; i < 2500; ++i) {
                 stream.write(buffer, 0, buffer.length);
             }
@@ -384,7 +386,7 @@ public class NtfsFileSystemTest {
             largeWriteBuffer[i * 4096] = (byte) i;
         }
 //Debug.println("T3: ----");
-        try (Stream stream = ntfs.openFile("DIR\\fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
+        try (Stream stream = ntfs.openFile("DIR" + FS + "fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
 //NonResidentAttributeBuffer.debug = false;
             stream.setPosition(stream.getLength() - largeWriteBuffer.length);
             stream.write(largeWriteBuffer, 0, largeWriteBuffer.length);
@@ -392,7 +394,7 @@ public class NtfsFileSystemTest {
 //Debug.println("T4: ----");
         // And a large read
         byte[] largeReadBuffer = new byte[largeWriteBuffer.length];
-        try (Stream stream = ntfs.openFile("DIR\\fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
+        try (Stream stream = ntfs.openFile("DIR" + FS + "fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
             stream.setPosition(stream.getLength() - largeReadBuffer.length);
             stream.read(largeReadBuffer, 0, largeReadBuffer.length);
         }

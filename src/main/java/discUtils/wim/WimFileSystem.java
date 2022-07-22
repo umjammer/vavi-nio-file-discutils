@@ -22,6 +22,7 @@
 
 package discUtils.wim;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,9 @@ import dotnet4j.security.accessControl.RawSecurityDescriptor;
  * Provides access to the file system within a WIM file image.
  */
 public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFileSystem {
+
+    private static final String FS = File.separator;
+
     private final ObjectCache<Long, List<DirectoryEntry>> _dirCache;
 
     private WimFile _file;
@@ -572,15 +576,15 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     }
 
     private DirectoryEntry getEntry(String path) {
-        if (path.endsWith("\\")) {
+        if (path.endsWith(FS)) {
             path = path.substring(0, path.length() - 1);
         }
 
-        if (path != null && !path.isEmpty() && !path.startsWith("\\")) {
-            path = "\\" + path;
+        if (path != null && !path.isEmpty() && !path.startsWith(FS)) {
+            path = FS + path;
         }
 
-        return getEntry(getDirectory(0), path.split(StringUtilities.escapeForRegex("\\")));
+        return getEntry(getDirectory(0), path.split(StringUtilities.escapeForRegex(FS)));
     }
 
     private DirectoryEntry getEntry(List<DirectoryEntry> dir, String[] path) {

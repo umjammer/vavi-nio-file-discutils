@@ -22,6 +22,7 @@
 
 package discUtils.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
      * Gets the full path of the directory.
      */
     public String getFullName() {
-        return super.getFullName() + "\\";
+        return super.getFullName() + File.separator;
     }
 
     /**

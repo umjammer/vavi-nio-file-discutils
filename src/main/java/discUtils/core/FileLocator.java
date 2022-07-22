@@ -22,6 +22,7 @@
 
 package discUtils.core;
 
+import java.io.File;
 import java.util.function.BiConsumer;
 
 import discUtils.core.internal.Utilities;
@@ -74,7 +75,7 @@ public abstract class FileLocator {
             return null;
         }
 
-        String ourFullPath = getFullPath("") + "\\";
+        String ourFullPath = getFullPath("") + File.separator;
         String otherFullPath = fileLocator.getFullPath(path);
 
         return Utilities.makeRelativePath(otherFullPath, ourFullPath);

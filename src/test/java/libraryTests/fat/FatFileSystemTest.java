@@ -22,6 +22,7 @@
 
 package libraryTests.fat;
 
+import java.io.File;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -57,6 +58,9 @@ import dotnet4j.io.StreamWriter;
 
 
 public class FatFileSystemTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void formatFloppy() throws Exception {
         MemoryStream ms = new MemoryStream();
@@ -127,7 +131,7 @@ public class FatFileSystemTest {
         Geometry g = Geometry.fromCapacity(1024 * 1024 * 32);
         FatFileSystem fs = FatFileSystem.formatPartition(ms, "KBPARTITION", g, 0, (int) g.getTotalSectorsLong(), (short) 13);
 
-        fs.createDirectory("DIRB\\DIRC");
+        fs.createDirectory("DIRB" + FS + "DIRC");
 
         FatFileSystem fs2 = new FatFileSystem(ms);
         assertEquals(1, fs2.getRoot().getDirectories().size());
@@ -140,10 +144,10 @@ public class FatFileSystemTest {
         fs.createDirectory("UnItTeSt");
         assertEquals("UNITTEST", fs.getRoot().getDirectories("UNITTEST").get(0).getName());
 
-        fs.createDirectory("folder\\subflder");
+        fs.createDirectory("folder" + FS + "subflder");
         assertEquals("FOLDER", fs.getRoot().getDirectories("FOLDER").get(0).getName());
 
-        fs.createDirectory("folder\\subflder");
+        fs.createDirectory("folder" + FS + "subflder");
         assertEquals("SUBFLDER", fs.getRoot().getDirectories("FOLDER").get(0).getDirectories("SUBFLDER").get(0).getName());
     }
 
@@ -165,7 +169,7 @@ public class FatFileSystemTest {
     @Test
     public void fileInfo() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
-        DiscFileInfo fi = fs.getFileInfo("SOMEDIR\\SOMEFILE.TXT");
+        DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "SOMEFILE.TXT");
         assertNotNull(fi);
     }
 
@@ -179,7 +183,7 @@ public class FatFileSystemTest {
     @Test
     public void fileSystemInfo() throws Exception {
         FatFileSystem fs = FatFileSystem.formatFloppy(new MemoryStream(), FloppyDiskType.HighDensity, "FLOPPY_IMG ");
-        DiscFileSystemInfo fi = fs.getFileSystemInfo("SOMEDIR\\SOMEFILE");
+        DiscFileSystemInfo fi = fs.getFileSystemInfo("SOMEDIR" + FS + "SOMEFILE");
         assertNotNull(fi);
     }
 
@@ -213,21 +217,21 @@ public class FatFileSystemTest {
         fs.createDirectory("AAA");
         fs.createDirectory("BAR");
 
-        try (Stream t = fs.openFile("BAR\\AAA.TXT", FileMode.Create, FileAccess.ReadWrite)) {
+        try (Stream t = fs.openFile("BAR" + FS + "AAA.TXT", FileMode.Create, FileAccess.ReadWrite)) {
         }
-        try (Stream s = fs.openFile("BAR\\FOO.TXT", FileMode.Create, FileAccess.ReadWrite);
+        try (Stream s = fs.openFile("BAR" + FS + "FOO.TXT", FileMode.Create, FileAccess.ReadWrite);
             StreamWriter w = new StreamWriter(s)) {
             w.writeLine("FOO - some sample text");
             w.flush();
         }
         fs.setLastAccessTimeUtc("BAR", ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli());
-        fs.setLastAccessTimeUtc("BAR\\FOO.TXT",
+        fs.setLastAccessTimeUtc("BAR" + FS + "FOO.TXT",
                                 ZonedDateTime.of(1980, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli());
 
         // Check we can access a file without any errors
         SparseStream roDiskStream = SparseStream.readOnly(diskStream, Ownership.None);
         try (FatFileSystem fatFs = new FatFileSystem(roDiskStream);
-            Stream fileStream = fatFs.openFile("BAR\\FOO.TXT", FileMode.Open)) {
+            Stream fileStream = fatFs.openFile("BAR" + FS + "FOO.TXT", FileMode.Open)) {
             fileStream.readByte();
         }
     }

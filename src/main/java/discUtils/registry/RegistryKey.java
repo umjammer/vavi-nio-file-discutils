@@ -39,6 +39,9 @@ import dotnet4j.win32.RegistryValueOptions;
  * A key within a registry hive.
  */
 public final class RegistryKey {
+
+    private static final String FS = java.io.File.separator;
+
     private final KeyNodeCell _cell;
 
     private final RegistryHive _hive;
@@ -72,7 +75,7 @@ public final class RegistryKey {
     public String getName() {
         RegistryKey parent = getParent();
         if (parent != null && !parent.getFlags().contains(RegistryKeyFlags.Root)) {
-            return parent.getName() + "\\" + _cell.Name;
+            return parent.getName() + FS + _cell.Name;
         }
         return _cell.Name;
     }
@@ -375,7 +378,7 @@ public final class RegistryKey {
             return this;
         }
 
-        String[] split = subkey.split(StringUtilities.escapeForRegex("\\"), 2);
+        String[] split = subkey.split(StringUtilities.escapeForRegex(FS), 2);
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
             KeyNodeCell newKeyCell = new KeyNodeCell(split[0], _cell.getIndex());
@@ -409,7 +412,7 @@ public final class RegistryKey {
             return this;
         }
 
-        String[] split = path.split(StringUtilities.escapeForRegex("\\"), 2);
+        String[] split = path.split(StringUtilities.escapeForRegex(FS), 2);
 //Debug.println(StringUtil.paramString(split));
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
@@ -468,7 +471,7 @@ public final class RegistryKey {
             throw new IllegalArgumentException("Invalid SubKey");
         }
 
-        String[] split = subkey.split(StringUtilities.escapeForRegex("\\"), 2);
+        String[] split = subkey.split(StringUtilities.escapeForRegex(FS), 2);
         int subkeyCellIndex = findSubKeyCell(split[0]);
         if (subkeyCellIndex < 0) {
             if (throwOnMissingSubKey) {

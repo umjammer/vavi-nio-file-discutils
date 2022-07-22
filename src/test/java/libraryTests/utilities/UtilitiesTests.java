@@ -2,6 +2,8 @@
 
 package libraryTests.utilities;
 
+import java.io.File;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,12 +13,14 @@ import discUtils.core.internal.Utilities;
 
 public class UtilitiesTests {
 
+    private static final String FS = File.separator;
+
     @Test
     public void canResolveRelativePath() throws Exception {
-        checkResolvePath("\\etc\\rc.d", "init.d", "\\etc\\init.d");
-        checkResolvePath("\\etc\\rc.d\\", "init.d", "\\etc\\rc.d\\init.d");
+        checkResolvePath(FS + "etc" + FS + "rc.d", "init.d", FS + "etc" + FS + "init.d");
+        checkResolvePath(FS + "etc" + FS + "rc.d" + FS, "init.d", FS + "etc" + FS + "rc.d" + FS + "init.d");
         // For example: (\TEMP\Foo.txt, ..\..\Bar.txt) gives (\Bar.txt).
-        checkResolvePath("\\TEMP\\Foo.txt", "..\\..\\Bar.txt", "\\Bar.txt");
+        checkResolvePath(FS + "TEMP" + FS + "Foo.txt", ".." + FS + ".." + FS + "Bar.txt", FS + "Bar.txt");
     }
 
     private void checkResolvePath(String basePath, String relativePath, String expectedResult) {

@@ -22,6 +22,7 @@
 
 package libraryTests.vhd;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -42,6 +43,9 @@ import dotnet4j.io.MemoryStream;
 
 
 public class DiskImageFileTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void initializeDifferencing() throws Exception {
         MemoryStream baseStream = new MemoryStream();
@@ -49,15 +53,16 @@ public class DiskImageFileTest {
 
         try (DiskImageFile baseFile = DiskImageFile
                 .initializeDynamic(baseStream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
-            try (DiskImageFile diffFile = DiskImageFile.initializeDifferencing(diffStream,
-                                                                               Ownership.None,
-                                                                               baseFile,
-                                                                               "C:\\TEMP\\base.vhd",
-                                                                               ".\\base.vhd",
-                                                                               LocalDateTime.of(2007, 12, 31, 0, 0, 0, 0)
-                                                                                       .atZone(ZoneId.of("UTC"))
-                                                                                       .toInstant()
-                                                                                       .toEpochMilli())) {
+            try (DiskImageFile diffFile = DiskImageFile.initializeDifferencing(
+                    diffStream,
+                    Ownership.None,
+                    baseFile,
+                    "C:" + FS + "TEMP" + FS + "base.vhd",
+                    "." + FS + "base.vhd",
+                    LocalDateTime.of(2007, 12, 31, 0, 0, 0, 0)
+                           .atZone(ZoneId.of("UTC"))
+                           .toInstant()
+                           .toEpochMilli())) {
                 assertNotNull(diffFile);
                 assertTrue(diffFile.getGeometry().getCapacity() > 15.8 * 1024L * 1024 * 1024 &&
                            diffFile.getGeometry().getCapacity() < 16 * 1024L * 1024 * 1024);
@@ -77,15 +82,16 @@ public class DiskImageFileTest {
         try (DiskImageFile baseFile = DiskImageFile
                 .initializeDynamic(baseStream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
             // Write some data - exposes bug if mis-calculating where to write data
-            try (DiskImageFile diffFile = DiskImageFile.initializeDifferencing(diffStream,
-                                                                               Ownership.None,
-                                                                               baseFile,
-                                                                               "C:\\TEMP\\base.vhd",
-                                                                               ".\\base.vhd",
-                                                                               LocalDateTime.of(2007, 12, 31, 0, 0, 0, 0)
-                                                                                       .atZone(ZoneId.of("UTC"))
-                                                                                       .toInstant()
-                                                                                       .toEpochMilli())) {
+            try (DiskImageFile diffFile = DiskImageFile.initializeDifferencing(
+                    diffStream,
+                    Ownership.None,
+                    baseFile,
+                    "C:" + FS + "TEMP" + FS + "base.vhd",
+                    "." + FS + "base.vhd",
+                    LocalDateTime.of(2007, 12, 31, 0, 0, 0, 0)
+                            .atZone(ZoneId.of("UTC"))
+                            .toInstant()
+                            .toEpochMilli())) {
                 Disk disk = new Disk(Arrays.asList(diffFile, baseFile), Ownership.None);
                 disk.getContent().write(new byte[512], 0, 512);
             }
@@ -93,18 +99,18 @@ public class DiskImageFileTest {
 
         try (DiskImageFile diffFile = new DiskImageFile(diffStream)) {
             // Testing the obsolete method - disable warning
-            List<String> locations = diffFile.getParentLocations("E:\\FOO\\");
+            List<String> locations = diffFile.getParentLocations("E:" + FS + "FOO" + FS);
             assertEquals(2, locations.size());
-            assertEquals("C:\\TEMP\\base.vhd", locations.get(0));
-            assertEquals("E:\\FOO\\base.vhd", locations.get(1));
+            assertEquals("C:" + FS + "TEMP" + FS + "base.vhd", locations.get(0));
+            assertEquals("E:" + FS + "FOO" + FS + "base.vhd", locations.get(1));
         }
 
         try (DiskImageFile diffFile = new DiskImageFile(diffStream)) {
             // Testing the new method - note relative path because diff file initialized without a path
             List<String> locations = diffFile.getParentLocations();
             assertEquals(2, locations.size());
-            assertEquals("C:\\TEMP\\base.vhd", locations.get(0));
-            assertEquals(".\\base.vhd", locations.get(1));
+            assertEquals("C:" + FS + "TEMP" + FS + "base.vhd", locations.get(0));
+            assertEquals("." + FS + "base.vhd", locations.get(1));
         }
     }
 

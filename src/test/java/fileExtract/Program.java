@@ -71,8 +71,7 @@ public class Program extends ProgramBase {
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
 System.err.println("file: " + _diskFile);
-        volMgr.addDisk(VirtualDisk.openDisk(_diskFile
-                .replace(File.separator, "\\"), _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
+        volMgr.addDisk(VirtualDisk.openDisk(_diskFile, _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
         VolumeInfo volInfo = null;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             volInfo = volMgr.getVolume(getVolumeId());

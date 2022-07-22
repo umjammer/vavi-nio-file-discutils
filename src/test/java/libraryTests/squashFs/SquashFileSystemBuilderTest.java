@@ -22,6 +22,7 @@
 
 package libraryTests.squashFs;
 
+import java.io.File;
 import java.util.EnumSet;
 
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ import dotnet4j.io.Stream;
 
 
 public final class SquashFileSystemBuilderTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void singleFile() throws Exception {
         MemoryStream fsImage = new MemoryStream();
@@ -51,7 +55,7 @@ public final class SquashFileSystemBuilderTest {
 
 //Debug.println("\n" + StringUtil.getDump(fsImage.toArray()));
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);
-        assertEquals(1, reader.getFileSystemEntries("\\").size());
+        assertEquals(1, reader.getFileSystemEntries(FS).size());
         assertEquals(4, reader.getFileLength("file"));
         assertTrue(reader.fileExists("file"));
         assertFalse(reader.directoryExists("file"));
@@ -62,15 +66,15 @@ public final class SquashFileSystemBuilderTest {
     public void createDirs() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
-        builder.addFile("\\adir\\anotherdir\\file",
                         new MemoryStream(new byte[] {
                             1, 2, 3, 4
                         }));
+        builder.addFile(FS + "adir" + FS + "anotherdir" + FS + "file",
         builder.build(fsImage);
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);
         assertTrue(reader.directoryExists("adir"));
-        assertTrue(reader.directoryExists("adir\\anotherdir"));
-        assertTrue(reader.fileExists("adir\\anotherdir\\file"));
+        assertTrue(reader.directoryExists("adir" + FS + "anotherdir"));
+        assertTrue(reader.fileExists("adir" + FS + "anotherdir" + FS + "file"));
     }
 
     @Test

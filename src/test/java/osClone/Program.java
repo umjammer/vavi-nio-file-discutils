@@ -52,11 +52,14 @@ import dotnet4j.util.compat.Utilities;
 
 @Options
 public class Program extends ProgramBase {
+
+    private static final String FS = java.io.File.separator;
+
     // Shared to avoid continual re-allocation of a large buffer
     private static byte[] _copyBuffer = new byte[10 * 1024 * 1024];
 
     private static String[] _excludedFiles = new String[] {
-        "\\PAGEFILE.SYS", "\\HIBERFIL.SYS", "\\SYSTEM VOLUME INFORMATION"
+        FS + "PAGEFILE.SYS", FS + "HIBERFIL.SYS", FS + "SYSTEM VOLUME INFORMATION"
     };
 
     @Option(option = "in_file",
@@ -121,17 +124,17 @@ public class Program extends ProgramBase {
             String label = _labelSwitch != null ? _labelSwitch : sourceNtfs.getVolumeLabel();
 
             try (NtfsFileSystem destNtfs = NtfsFileSystem.format(volMgr.getLogicalVolumes().get(0), label, bootCode)) {
-                destNtfs.setSecurity("\\", sourceNtfs.getSecurity("\\"));
+                destNtfs.setSecurity(FS, sourceNtfs.getSecurity(FS));
                 destNtfs.getNtfsOptions().setShortNameCreation(ShortFileNameOption.Disabled);
                 sourceNtfs.getNtfsOptions().setHideHiddenFiles(false);
                 sourceNtfs.getNtfsOptions().setHideSystemFiles(false);
-                copyFiles(sourceNtfs, destNtfs, "\\", true);
-                if (destNtfs.fileExists("\\boot\\BCD")) {
+                copyFiles(sourceNtfs, destNtfs, FS, true);
+                if (destNtfs.fileExists(FS + "boot" + FS + "BCD")) {
                     // Force all boot entries in the BCD to point to the
                     // newly created NTFS partition - does _not_ cope with
                     // complex multi-volume / multi-boot scenarios at all.
 
-                    try (Stream bcdStream = destNtfs.openFile("\\boot\\BCD", FileMode.Open, FileAccess.ReadWrite);
+                    try (Stream bcdStream = destNtfs.openFile(FS + "boot" + FS + "BCD", FileMode.Open, FileAccess.ReadWrite);
                             RegistryHive hive = new RegistryHive(bcdStream)) {
                         Store store = new Store(hive.getRoot());
                         for (BcdObject obj : store.getObjects()) {

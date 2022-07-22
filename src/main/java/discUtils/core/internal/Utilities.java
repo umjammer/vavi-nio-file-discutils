@@ -22,6 +22,7 @@
 
 package discUtils.core.internal;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -107,8 +108,11 @@ public class Utilities {
     }
 
     public static long bitSwap(long value) {
-        return ((long) bitSwap((int) (value & 0xFFFFFFFF)) << 32) | bitSwap((int) (value >> 32));
+        return ((long) bitSwap((int) (value & 0xFFFFFFFFL)) << 32) | bitSwap((int) (value >> 32));
     }
+
+    private static final String FS = File.separator;
+    private static final char FSC = File.separatorChar;
 
     /**
      * Extracts the directory part of a path.
@@ -117,8 +121,8 @@ public class Utilities {
      * @return The directory part.
      */
     public static String getDirectoryFromPath(String path) {
-        String trimmed = path.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "");
-        int index = trimmed.lastIndexOf('\\');
+        String trimmed = path.replaceFirst(StringUtilities.escapeForRegex(FS + "*$"), "");
+        int index = trimmed.lastIndexOf(FSC);
         if (index < 0) {
             return ""; // No directory, just a file name
         }
@@ -133,8 +137,8 @@ public class Utilities {
      * @return The file part of the path.
      */
     public static String getFileFromPath(String path) {
-        String trimmed = path.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "");
-        int index = trimmed.lastIndexOf('\\');
+        String trimmed = path.replaceFirst(StringUtilities.escapeForRegex(FS + "*$"), "");
+        int index = trimmed.lastIndexOf(FSC);
         if (index < 0) {
             return trimmed;
         }
@@ -151,7 +155,7 @@ public class Utilities {
      * @return The combined path.
      */
     public static String combinePaths(String a, String b) {
-        if (Objects.isNull(a) || a.isEmpty() || (b.length() > 0 && b.charAt(0) == '\\')) {
+        if (Objects.isNull(a) || a.isEmpty() || (b.length() > 0 && b.charAt(0) == FSC)) {
             return b;
         }
 
@@ -159,8 +163,8 @@ public class Utilities {
             return a;
         }
 
-        return a.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "") + '\\' +
-               b.replaceFirst(StringUtilities.escapeForRegex("^\\*"), "");
+        return a.replaceFirst(StringUtilities.escapeForRegex(FS + "*$"), "") + FSC +
+               b.replaceFirst(StringUtilities.escapeForRegex("^" + FS + "*"), "");
     }
 
     /**
@@ -182,16 +186,16 @@ public class Utilities {
             return relativePath;
         }
 
-        if (!basePath.endsWith("\\")) {
+        if (!basePath.endsWith(FS)) {
             basePath = getDirectoryFromPath(basePath);
         }
 
         String merged = Paths.get(combinePaths(basePath, relativePath).replace("\\", "/"))
                 .normalize()
                 .toString()
-                .replace("/", "\\");
+                .replace("/", FS);
 
-        if (basePath.startsWith("\\") && merged.length() > 2 && merged.charAt(1) == ':') {
+        if (basePath.startsWith(FS) && merged.length() > 2 && merged.charAt(1) == ':') {
             return merged.substring(2);
         }
 
@@ -199,7 +203,7 @@ public class Utilities {
     }
 
     public static String resolvePath(String basePath, String path) {
-        if (!path.startsWith("\\")) {
+        if (!path.startsWith(FS)) {
             return resolveRelativePath(basePath, path);
         }
 
@@ -207,14 +211,14 @@ public class Utilities {
     }
 
     public static String makeRelativePath(String path, String basePath) {
-        List<String> pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        List<String> pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .collect(Collectors.toList());
-        List<String> basePathElements = Arrays.stream(basePath.split(StringUtilities.escapeForRegex("\\")))
+        List<String> basePathElements = Arrays.stream(basePath.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .collect(Collectors.toList());
 
-        if (!basePath.endsWith("\\") && basePathElements.size() > 0) {
+        if (!basePath.endsWith(FS) && basePathElements.size() > 0) {
             basePathElements.remove(basePathElements.size() - 1);
         }
 
@@ -230,22 +234,22 @@ public class Utilities {
         // For each remaining part of the base path, insert '..'
         StringBuilder result = new StringBuilder();
         if (i == basePathElements.size()) {
-            result.append("." + '\\');
+            result.append(".").append(FSC);
         } else if (i < basePathElements.size()) {
             for (int j = 0; j < basePathElements.size() - i; ++j) {
-                result.append(".." + '\\');
+                result.append("..").append(FSC);
             }
         }
 
         for (int j = i; j < pathElements.size() - 1; ++j) {
             // For each remaining part of the path, add the path element
             result.append(pathElements.get(j));
-            result.append("\\");
+            result.append(FS);
         }
         result.append(pathElements.get(pathElements.size() - 1));
         // If the target was a directory, put the terminator back
-        if (path.endsWith("\\")) {
-            result.append("\\");
+        if (path.endsWith(FS)) {
+            result.append(FS);
         }
 
         return result.toString();

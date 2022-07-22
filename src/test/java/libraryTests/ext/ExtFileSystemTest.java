@@ -2,6 +2,7 @@
 
 package libraryTests.ext;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -26,6 +27,9 @@ import dotnet4j.io.Stream;
 
 
 public class ExtFileSystemTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void loadFileSystem() throws Exception {
         try (Stream data = Helpers.loadDataFile(getClass(), "data.ext4.dat.gz");
@@ -57,10 +61,10 @@ public class ExtFileSystemTest {
             }).iterator();
             fsis.forEach(f -> j.next().accept(f));
 
-            byte[] tmpData = Helpers.readAll(fs.openFile("bar\\blah.txt", FileMode.Open));
+            byte[] tmpData = Helpers.readAll(fs.openFile("bar" + FS + "blah.txt", FileMode.Open));
             assertArrayEquals("hello world\n".getBytes(StandardCharsets.US_ASCII), tmpData);
 
-            tmpData = Helpers.readAll(fs.openFile("bar\\testdir1\\test.txt", FileMode.Open));
+            tmpData = Helpers.readAll(fs.openFile("bar" + FS + "testdir1" + FS + "test.txt", FileMode.Open));
             assertArrayEquals("Mon Feb 11 19:54:14 UTC 2019\n".getBytes(StandardCharsets.US_ASCII), tmpData);
         }
     }

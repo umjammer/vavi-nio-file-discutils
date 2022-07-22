@@ -77,6 +77,8 @@ public final class NtfsFileSystem extends DiscFileSystem implements
                                   IWindowsFileSystem,
                                   IDiagnosticTraceable {
 
+    private static final String FS = java.io.File.separator;
+
     private static final EnumSet<FileAttributes> NonSettableFileAttributes = EnumSet
             .of(FileAttributes.Directory, FileAttributes.Offline, FileAttributes.ReparsePoint);
 
@@ -144,9 +146,9 @@ Debug.println(Level.FINE, _volumeInfo);
 
         if (_volumeInfo.getVersion() >= VolumeInformation.VersionW2k) {
             _context.setSecurityDescriptors(new SecurityDescriptors(getFile(MasterFileTable.SecureIndex)));
-            _context.setObjectIds(new ObjectIds(getFile(getDirectoryEntry("$Extend\\$ObjId").getReference())));
-            _context.setReparsePoints(new ReparsePoints(getFile(getDirectoryEntry("$Extend\\$Reparse").getReference())));
-            _context.setQuotas(new Quotas(getFile(getDirectoryEntry("$Extend\\$Quota").getReference())));
+            _context.setObjectIds(new ObjectIds(getFile(getDirectoryEntry("$Extend" + FS + "$ObjId").getReference())));
+            _context.setReparsePoints(new ReparsePoints(getFile(getDirectoryEntry("$Extend" + FS + "$Reparse").getReference())));
+            _context.setQuotas(new Quotas(getFile(getDirectoryEntry("$Extend" + FS + "$Quota").getReference())));
         }
     }
 
@@ -907,7 +909,7 @@ Debug.println(Level.FINE, _volumeInfo);
      * @return The boot code, or {@code null} if not available.
      */
     public byte[] readBootCode() {
-        try (Stream s = openFile("\\$Boot", FileMode.Open)) {
+        try (Stream s = openFile(FS + "$Boot", FileMode.Open)) {
             return StreamUtilities.readExact(s, (int) s.getLength());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -974,7 +976,7 @@ Debug.println(Level.FINE, _volumeInfo);
 
         writer.println(linePrefix);
         writer.println(linePrefix + "DIRECTORY TREE");
-        writer.println(linePrefix + "\\ (5)");
+        writer.println(linePrefix + FS + " (5)");
         // 5 = Root Dir
         dumpDirectory(getDirectory(MasterFileTable.RootDirIndex), writer, linePrefix);
     }
@@ -1516,7 +1518,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void createDirectory(String path, NewFileOptions options) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+            String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                     .filter(e -> !e.isEmpty())
                     .toArray(String[]::new);
 
@@ -1833,7 +1835,7 @@ Debug.println(Level.FINE, _volumeInfo);
     }
 
     private DirectoryEntry getDirectoryEntry(Directory dir, String path) {
-        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
         return getDirectoryEntry(dir, pathElements, 0);

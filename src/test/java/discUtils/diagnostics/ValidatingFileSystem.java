@@ -90,6 +90,8 @@ enum StreamView {
  */
 public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnosticTraceable, TChecker extends DiscFileSystemChecker> extends DiscFileSystem {
 
+    private static final String FS = java.io.File.separator;
+
     private Stream _baseStream;
 
     // -------------------------------------
@@ -495,7 +497,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             if (_checkpointBuffer.size() >= _checkpointPeriod) {
                 // Roll over the on-disk trace
                 if (_runGlobalTrace) {
-                    _globalTrace.writeToFile(String.format("C:\\temp\\working\\trace%3X.log", _numScheduledCheckpoints++));
+                    _globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", _numScheduledCheckpoints++));
                 }
 
                 // We only do a full checkpoint, if the activity didn't throw an
@@ -524,7 +526,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             _globalTrace = new TracingStream(_snapStream, Ownership.None);
             _globalTrace.setCaptureStackTraces(_globalTraceCaptureStackTraces);
             _globalTrace.reset(_runGlobalTrace);
-            _globalTrace.writeToFile(String.format("C:\\temp\\working\\trace%3X.log", _numScheduledCheckpoints++));
+            _globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", _numScheduledCheckpoints++));
             focusStream = _globalTrace;
         }
 

@@ -22,6 +22,7 @@
 
 package discUtils.powerShell.virtualRegistryProvider;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -356,7 +357,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         } else {
             filePath = path.substring(0, mountSepIdx);
             relPath = path.substring(mountSepIdx + 1);
-            if (relPath.length() > 0 && relPath.charAt(0) == '\\') {
+            if (relPath.length() > 0 && relPath.charAt(0) == File.separatorChar) {
                 relPath = relPath.substring(1);
             }
 

@@ -25,6 +25,7 @@ package discUtils.iso9660;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import discUtils.core.internal.LocalFileLocator;
@@ -59,9 +60,9 @@ public final class BuildFileInfo extends BuildDirectoryMember {
         _parent = parent;
         _contentPath = content;
         try {
-            String path = _contentPath.replace("\\", java.io.File.separator);
-            _contentSize = Files.size(Paths.get(path));
-            _creationTime = Files.getLastModifiedTime(Paths.get(path)).toMillis();
+            Path path = Paths.get(_contentPath);
+            _contentSize = Files.size(path);
+            _creationTime = Files.getLastModifiedTime(path).toMillis();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }

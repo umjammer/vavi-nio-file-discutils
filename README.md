@@ -86,8 +86,8 @@ Here's a few really simple examples.
 CDBuilder builder = new CDBuilder();
 builder.useJoliet = true;
 builder.volumeIdentifier = "A_SAMPLE_DISK";
-builder.addFile("Folder\\Hello.txt", "Hello World!".getBytes(Charset.forName("ASCII")));
-builder.build("C:\\temp\\sample.iso");
+builder.addFile("folder/Hello.txt", "Hello World!".getBytes(Charset.forName("ASCII")));
+builder.build("/tmp/sample.iso");
 ```
 
 You can add files as byte arrays (shown above), as files from the Windows filesystem, or as a Stream. By using a different form of Build, you can get a Stream to the ISO file, rather than writing it to the Windows filesystem.
@@ -96,9 +96,9 @@ You can add files as byte arrays (shown above), as files from the Windows filesy
 ### How to extract a file from an ISO:
 
 ```Java
-try (FileStream isoStream = File.open("C:\\temp\\sample.iso")) {
+try (FileStream isoStream = File.open("/tmp/sample.iso")) {
   CDReader cd = new CDReader(isoStream, true);
-  Stream fileStream = cd.openFile("Folder\\Hello.txt", FileMode.Open);
+  Stream fileStream = cd.openFile("folder/Hello.txt", FileMode.Open);
   // Use fileStream...
 }
 ```
@@ -109,11 +109,11 @@ You can also browse through the directory hierarchy, starting at cd.Root.
 
 ```Java
 long diskSize = 30 * 1024 * 1024; // 30MB
-try (Stream vhdStream = File.create("C:\\TEMP\\mydisk.vhd")) {
+try (Stream vhdStream = File.create("/tmp/mydisk.vhd")) {
     Disk disk = Disk.initializeDynamic(vhdStream, diskSize);
     BiosPartitionTable.initialize(disk, WellKnownPartitionType.WindowsFat);
     try (FatFileSystem fs = FatFileSystem.formatPartition(disk, 0, null)) {
-        fs.createDirectory("TestDir\\CHILD");
+        fs.createDirectory("TestDir/CHILD");
         // do other things with the file system...
     }
 }
@@ -165,7 +165,7 @@ Automated CI builds are available on [Github](https://github.com/umjammer/vavi-n
  * compile by jdk8
  * ~~https://github.com/AssafTzurEl/discUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43~~
    * img ... https://github.com/hessu/bchunk
- * file separator
+ * ~~file separator~~
  * pc98 partition (wip)
  * d88 floppy disk
  * qcow2

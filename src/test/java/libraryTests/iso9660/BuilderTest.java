@@ -22,6 +22,8 @@
 
 package libraryTests.iso9660;
 
+import java.io.File;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,20 +38,23 @@ import dotnet4j.io.Stream;
 
 
 public class BuilderTest {
+
+    private static final String FS = File.separator;
+
     @Test
     public void addFileStream() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("ADIR\\AFILE.TXT", new MemoryStream());
+        builder.addFile("ADIR" + FS + "AFILE.TXT", new MemoryStream());
         CDReader fs = new CDReader(builder.build(), false);
-        assertTrue(fs.exists("ADIR\\AFILE.TXT"));
+        assertTrue(fs.exists("ADIR" + FS + "AFILE.TXT"));
     }
 
     @Test
     public void addFileBytes() throws Exception {
         CDBuilder builder = new CDBuilder();
-        builder.addFile("ADIR\\AFILE.TXT", new byte[] {});
+        builder.addFile("ADIR" + FS + "AFILE.TXT", new byte[] {});
         CDReader fs = new CDReader(builder.build(), false);
-        assertTrue(fs.exists("ADIR\\AFILE.TXT"));
+        assertTrue(fs.exists("ADIR" + FS + "AFILE.TXT"));
     }
 
     @Test

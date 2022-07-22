@@ -72,8 +72,8 @@ class Program extends ProgramBase {
                 for (FileSystemInfo fileSystem : FileSystemManager.detectFileSystems(volume)) {
                     if (fileSystem.getName().equals("HFS+")) {
                         try (HfsPlusFileSystem hfs = (HfsPlusFileSystem) fileSystem.open(volume)) {
-                            DiscDirectoryInfo source = hfs.getDirectoryInfo(_folder.replace(FS, "\\"));
-                            Path target = Paths.get(_out, source.getFullName().replace("\\", FS));
+                            DiscDirectoryInfo source = hfs.getDirectoryInfo(_folder);
+                            Path target = Paths.get(_out, source.getFullName());
 
                             Files.deleteIfExists(target);
 
@@ -101,7 +101,7 @@ class Program extends ProgramBase {
         System.err.println(source.getName());
 
         for (DiscFileInfo childFile : source.getFiles()) {
-            String n = target.resolve(childFile.getName()).toString().replace(FS, "\\");
+            String n = target.resolve(childFile.getName()).toString();
             try (Stream sourceStream = childFile.openRead();
                  Stream targetStream = File.openWrite(n)) {
                 sourceStream.copyTo(targetStream);

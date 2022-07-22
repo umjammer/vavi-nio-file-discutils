@@ -84,6 +84,19 @@ public class Main4 {
 
     //
 
+    @Test
+    @Disabled("for fucking intellij")
+    void testX() throws Exception {
+        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");
+
+        try (Fuse fuse = Fuse.getFuse()) {
+            fuse.mount(fs, mountPoint, options);
+while (true) { // for jnrfuse
+ Thread.yield();
+}
+        }
+    }
+
     public static void main(String[] args) throws Exception {
 //        System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.javafs.JavaFSFuseProvider");
         System.setProperty("vavi.net.fuse.FuseProvider.class", "vavi.net.fuse.jnrfuse.JnrFuseFuseProvider");

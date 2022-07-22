@@ -51,6 +51,9 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+
+    private static final String FS = java.io.File.separator;
+
     @Option(option = "disk", description = "The disks to inspect.", required = true)
     private String[] _diskFiles;
 
@@ -137,7 +140,7 @@ public class Program extends ProgramBase {
 
                     long size = getSize(entry);
                     String path = getPath(mft, entry);
-                    if (!_showMeta && path.startsWith("<root>\\$Extend"))
+                    if (!_showMeta && path.startsWith("<root>" + FS + "$Extend"))
                         continue;
 
                     if (!_showZeroSize && size == 0)
@@ -201,7 +204,7 @@ public class Program extends ProgramBase {
 
         }
 
-        return parentPath + "\\" + fna.getFileName();
+        return parentPath + FS + fna.getFileName();
     }
 
     private static void pump(IBuffer inBuffer, Stream outStream) {

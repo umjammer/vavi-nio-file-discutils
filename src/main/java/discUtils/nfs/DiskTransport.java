@@ -22,6 +22,7 @@
 
 package discUtils.nfs;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -72,7 +73,7 @@ public final class DiskTransport extends VirtualDiskTransport {
         }
 
         _fileSystem = new NfsFileSystem(uri.getHost(), bestRoot);
-        _path = fsPath.substring(bestRoot.length()).replace('/', '\\');
+        _path = fsPath.substring(bestRoot.length()).replace('/', File.separatorChar);
         _extraInfo = uri.getFragment().replaceFirst("^#*", "");
     }
 

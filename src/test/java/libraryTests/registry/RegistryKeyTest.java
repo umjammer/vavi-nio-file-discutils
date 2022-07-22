@@ -36,6 +36,9 @@ import discUtils.registry.RegistryValueType;
 import dotnet4j.io.MemoryStream;
 
 public class RegistryKeyTest {
+
+    private static final String FS = java.io.File.separator;
+
     private RegistryHive hive;
 
     public RegistryKeyTest() {
@@ -168,7 +171,7 @@ public class RegistryKeyTest {
 
     @Test
     public void createKey() throws Exception {
-        RegistryKey newKey = hive.getRoot().createSubKey("Child\\Grandchild");
+        RegistryKey newKey = hive.getRoot().createSubKey("Child" + FS + "Grandchild");
         assertNotNull(newKey);
         assertEquals(1, hive.getRoot().getSubKeyCount());
         assertEquals(1, hive.getRoot().openSubKey("cHiLd").getSubKeyCount());
@@ -195,13 +198,13 @@ public class RegistryKeyTest {
 
     @Test
     public void deleteNonEmptyKey() throws Exception {
-        RegistryKey newKey = hive.getRoot().createSubKey("Child\\Grandchild");
+        RegistryKey newKey = hive.getRoot().createSubKey("Child" + FS + "Grandchild");
         assertThrows(UnsupportedOperationException.class, () -> hive.getRoot().deleteSubKey("Child"));
     }
 
     @Test
     public void deleteKeyTree() throws Exception {
-        RegistryKey newKey = hive.getRoot().createSubKey("Child\\Grandchild");
+        RegistryKey newKey = hive.getRoot().createSubKey("Child" + FS + "Grandchild");
         assertEquals(1, hive.getRoot().getSubKeyCount());
         hive.getRoot().deleteSubKeyTree("cHiLd");
         assertEquals(0, hive.getRoot().getSubKeyCount());

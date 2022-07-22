@@ -31,13 +31,16 @@ import discUtils.registry.RegistryValueType;
 
 
 public class DiscUtilsRegistryStorage extends BaseStorage {
+
+    private static final String FS = java.io.File.separator;
+
     private static final UUID EMPTY = new UUID(0, 0);
 
-    private static final String ElementsPathTemplate = "Objects\\%s\\Elements";
+    private static final String ElementsPathTemplate = "Objects" + FS + "%s" + FS + "Elements";
 
-    private static final String ElementPathTemplate = "Objects\\%s\\Elements\\%8X";
+    private static final String ElementPathTemplate = "Objects" + FS + "%s" + FS + "Elements" + FS + "%8X";
 
-    private static final String ObjectTypePathTemplate = "Objects\\%s\\Description";
+    private static final String ObjectTypePathTemplate = "Objects" + FS + "%s" + FS + "Description";
 
     private static final String ObjectsPath = "Objects";
 

@@ -22,6 +22,7 @@
 
 package discUtils.xva;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -195,7 +196,7 @@ public class DiskStream extends SparseStream {
         List<Integer> skipChunks = new ArrayList<>();
         for (FileRecord fileInfo : _archive.getFiles(_dir)) {
             if (fileInfo.Length == 0) {
-                String path = fileInfo.Name.replace('/', '\\');
+                String path = fileInfo.Name.replace('/', File.separatorChar);
                 try {
                     int index = Integer.parseInt(Utilities.getFileFromPath(path));
                     skipChunks.add(index);

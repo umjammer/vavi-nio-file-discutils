@@ -25,6 +25,7 @@
 
 package discUtils.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
@@ -53,6 +54,9 @@ import dotnet4j.io.FileShare;
  * Provides an implementation for OS-mounted file systems.
  */
 public class NativeFileSystem extends DiscFileSystem {
+
+    private static final String FS = File.separator;
+
     private final boolean _readOnly;
 
     /**
@@ -63,8 +67,8 @@ public class NativeFileSystem extends DiscFileSystem {
      */
     public NativeFileSystem(String basePath, boolean readOnly) {
         _basePath = basePath;
-        if (!_basePath.endsWith("\\")) {
-            _basePath += "\\";
+        if (!_basePath.endsWith(FS)) {
+            _basePath += FS;
         }
 
         _readOnly = readOnly;
@@ -142,11 +146,11 @@ public class NativeFileSystem extends DiscFileSystem {
             throw new IOException("read only");
         }
 
-        if (sourceFile.startsWith("\\")) {
+        if (sourceFile.startsWith(FS)) {
             sourceFile = sourceFile.substring(1);
         }
 
-        if (destinationFile.startsWith("\\")) {
+        if (destinationFile.startsWith(FS)) {
             destinationFile = destinationFile.substring(1);
         }
 
@@ -164,7 +168,7 @@ public class NativeFileSystem extends DiscFileSystem {
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -182,7 +186,7 @@ public class NativeFileSystem extends DiscFileSystem {
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -220,7 +224,7 @@ public class NativeFileSystem extends DiscFileSystem {
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -234,7 +238,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @return true if the directory exists.
      */
     public boolean directoryExists(String path) {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -248,7 +252,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @return true if the file exists.
      */
     public boolean fileExists(String path) {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -298,7 +302,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @return Array of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -345,7 +349,7 @@ Debug.printStackTrace(e);
      * @return Array of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -379,7 +383,7 @@ Debug.printStackTrace(e);
      * @return Array of files and subdirectories matching the search pattern.
      */
     public List<String> getFileSystemEntries(String path, String searchPattern) {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -406,11 +410,11 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (sourceDirectoryName.startsWith("\\")) {
+        if (sourceDirectoryName.startsWith(FS)) {
             sourceDirectoryName = sourceDirectoryName.substring(1);
         }
 
-        if (destinationDirectoryName.startsWith("\\")) {
+        if (destinationDirectoryName.startsWith(FS)) {
             destinationDirectoryName = destinationDirectoryName.substring(1);
         }
 
@@ -440,7 +444,7 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (destinationName.startsWith("\\")) {
+        if (destinationName.startsWith(FS)) {
             destinationName = destinationName.substring(1);
         }
 
@@ -452,7 +456,7 @@ Debug.printStackTrace(e);
             }
         }
 
-        if (sourceName.startsWith("\\")) {
+        if (sourceName.startsWith(FS)) {
             sourceName = sourceName.substring(1);
         }
 
@@ -484,7 +488,7 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -504,7 +508,7 @@ Debug.printStackTrace(e);
      * @return The attributes of the file or directory.
      */
     public Map<String, Object> getAttributes(String path) throws IOException {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -526,7 +530,7 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -563,7 +567,7 @@ Debug.printStackTrace(e);
      * @throws IOException
      */
     public long getCreationTimeUtc(String path) throws IOException {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -581,7 +585,7 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -615,7 +619,7 @@ Debug.printStackTrace(e);
      * @return The last access time.
      */
     public long getLastAccessTimeUtc(String path) throws IOException {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -633,7 +637,7 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -667,7 +671,7 @@ Debug.printStackTrace(e);
      * @return The last write time.
      */
     public long getLastWriteTimeUtc(String path) throws IOException {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -685,7 +689,7 @@ Debug.printStackTrace(e);
             throw new IOException("read only");
         }
 
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 
@@ -699,7 +703,7 @@ Debug.printStackTrace(e);
      * @return The length in bytes.
      */
     public long getFileLength(String path) throws IOException {
-        if (path.startsWith("\\")) {
+        if (path.startsWith(FS)) {
             path = path.substring(1);
         }
 

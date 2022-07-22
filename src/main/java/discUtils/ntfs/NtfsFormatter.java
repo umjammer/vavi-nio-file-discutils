@@ -40,6 +40,9 @@ import dotnet4j.security.principal.WellKnownSidType;
 
 
 public class NtfsFormatter {
+
+    private static final String FS = java.io.File.separator;
+
     private long _bitmapCluster;
 
     private int _clusterSize;
@@ -263,11 +266,11 @@ public class NtfsFormatter {
                          new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.setSecurity("$Extend",
                          new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
-        ntfs.setSecurity("$Extend\\$Quota",
+        ntfs.setSecurity("$Extend" + FS + "$Quota",
                          new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
-        ntfs.setSecurity("$Extend\\$ObjId",
+        ntfs.setSecurity("$Extend" + FS + "$ObjId",
                          new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
-        ntfs.setSecurity("$Extend\\$Reparse",
+        ntfs.setSecurity("$Extend" + FS + "$Reparse",
                          new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.createDirectory("System Volume Information");
         ntfs.setAttributes("System Volume Information", new HashMap<String, Object>() {
@@ -278,18 +281,18 @@ public class NtfsFormatter {
             }
         });
         ntfs.setSecurity("System Volume Information", new RawSecurityDescriptor("O:BAG:SYD:(A;OICI;FA;;;SY)"));
-        try (Stream s = ntfs.openFile("System Volume Information\\MountPointManagerRemoteDatabase", FileMode.Create)) {
+        try (Stream s = ntfs.openFile("System Volume Information" + FS + "MountPointManagerRemoteDatabase", FileMode.Create)) {
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
-        ntfs.setAttributes("System Volume Information\\MountPointManagerRemoteDatabase", new HashMap<String, Object>() {
+        ntfs.setAttributes("System Volume Information" + FS + "MountPointManagerRemoteDatabase", new HashMap<String, Object>() {
             {
                 put(FileAttributeFlags.Hidden.name(), true);
                 put(FileAttributeFlags.System.name(), true);
                 put(FileAttributeFlags.Archive.name(), true);
             }
         });
-        ntfs.setSecurity("System Volume Information\\MountPointManagerRemoteDatabase",
+        ntfs.setSecurity("System Volume Information" + FS + "MountPointManagerRemoteDatabase",
                          new RawSecurityDescriptor("O:BAG:SYD:(A;;FA;;;SY)"));
         return ntfs;
     }

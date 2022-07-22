@@ -22,6 +22,7 @@
 
 package discUtils.squashFs;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -49,6 +50,7 @@ import dotnet4j.io.compression.CompressionMode;
  * Class that creates squashFs file systems.
  */
 public final class SquashFileSystemBuilder {
+
     private static final int DefaultBlockSize = 131072;
 
     private BuilderContext _context;
@@ -463,7 +465,7 @@ public final class SquashFileSystemBuilder {
 
     private BuilderDirectory createDirectory(String path, int user, int group, EnumSet<UnixFilePermissions> permissions) {
         BuilderDirectory currentDir = getRoot();
-        String[] elems = Arrays.stream(path.split(StringUtilities.escapeForRegex("\\")))
+        String[] elems = Arrays.stream(path.split(StringUtilities.escapeForRegex(File.separator)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
 
@@ -481,7 +483,7 @@ public final class SquashFileSystemBuilder {
                 currentDir.addChild(elems[i], nextDir);
             } else if (nextDir == null) {
                 throw new FileNotFoundException("Found " + nextDirAsNode.getInode()._type + ", expecting Directory " +
-                                                String.join("\\", Arrays.copyOfRange(elems, 0, i + 1)));
+                                                String.join(File.separator, Arrays.copyOfRange(elems, 0, i + 1)));
             }
 
             currentDir = nextDir;
