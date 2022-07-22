@@ -32,16 +32,17 @@ import discUtils.streams.util.StreamUtilities;
 
 
 public final class SuspRecords {
-    private final Map<String, Map<String, List<SystemUseEntry>>> _records;
+
+    private final Map<String, Map<String, List<SystemUseEntry>>> records;
 
     public SuspRecords(IsoContext context, byte[] data, int offset) {
-        _records = new HashMap<>();
+        records = new HashMap<>();
         ContinuationSystemUseEntry contEntry = parse(context, data, offset + context.getSuspSkipBytes());
         while (contEntry != null) {
             context.getDataStream()
-                    .setPosition(contEntry.Block * (long) context.getVolumeDescriptor().getLogicalBlockSize() +
-                        contEntry.BlockOffset);
-            byte[] contData = StreamUtilities.readExact(context.getDataStream(), contEntry.Length);
+                    .setPosition(contEntry.block * (long) context.getVolumeDescriptor().getLogicalBlockSize() +
+                        contEntry.blockOffset);
+            byte[] contData = StreamUtilities.readExact(context.getDataStream(), contEntry.length);
             contEntry = parse(context, contData, 0);
         }
     }
@@ -60,10 +61,10 @@ public final class SuspRecords {
             extension = "";
         }
 
-        if (!_records.containsKey(extension)) {
+        if (!records.containsKey(extension)) {
             return null;
         }
-        Map<String, List<SystemUseEntry>> extensionData = _records.get(extension);
+        Map<String, List<SystemUseEntry>> extensionData = records.get(extension);
 
         if (extensionData.containsKey(name)) {
             List<SystemUseEntry> result = extensionData.get(name);
@@ -102,7 +103,7 @@ public final class SuspRecords {
         while (data.length - pos > 4) {
             byte[] len = new byte[1];
             SystemUseEntry entry = SystemUseEntry
-                    .parse(data, pos, context.getVolumeDescriptor().CharacterEncoding, extension, len);
+                    .parse(data, pos, context.getVolumeDescriptor().characterEncoding, extension, len);
             pos += len[0] & 0xff;
             if (entry == null) {
                 // A null entry indicates SUSP parsing must terminate.
@@ -111,7 +112,7 @@ public final class SuspRecords {
                 return contEntry;
             }
 
-            switch (entry._name) {
+            switch (entry.name) {
             case "CE":
                 contEntry = (ContinuationSystemUseEntry) entry;
                 break;
@@ -136,18 +137,18 @@ public final class SuspRecords {
     private void storeEntry(SuspExtension extension, SystemUseEntry entry) {
         String extensionId = extension == null ? "" : extension.getIdentifier();
         Map<String, List<SystemUseEntry>> extensionEntries;
-        if (!_records.containsKey(extensionId)) {
+        if (!records.containsKey(extensionId)) {
             extensionEntries = new HashMap<>();
-            _records.put(extensionId, extensionEntries);
+            records.put(extensionId, extensionEntries);
         }
-        extensionEntries = _records.get(extensionId);
+        extensionEntries = records.get(extensionId);
 
         List<SystemUseEntry> entries;
-        if (!extensionEntries.containsKey(entry._name)) {
+        if (!extensionEntries.containsKey(entry.name)) {
             entries = new ArrayList<>();
-            extensionEntries.put(entry._name, entries);
+            extensionEntries.put(entry.name, entries);
         }
-        entries = extensionEntries.get(entry._name);
+        entries = extensionEntries.get(entry.name);
 
         entries.add(entry);
     }

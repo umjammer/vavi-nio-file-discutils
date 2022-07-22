@@ -26,17 +26,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class IntegerElementValue extends ElementValue {
-    private final long _value;
+
+    private final long value;
 
     public IntegerElementValue(byte[] value) {
         // Actual bytes stored may be less than 8
         byte[] buffer = new byte[8];
         System.arraycopy(value, 0, buffer, 0, value.length);
-        _value = EndianUtilities.toUInt64LittleEndian(buffer, 0);
+        this.value = EndianUtilities.toUInt64LittleEndian(buffer, 0);
     }
 
     public IntegerElementValue(long value) {
-        _value = value;
+        this.value = value;
     }
 
     public ElementFormat getFormat() {
@@ -44,12 +45,12 @@ public class IntegerElementValue extends ElementValue {
     }
 
     public String toString() {
-        return String.valueOf(_value);
+        return String.valueOf(value);
     }
 
     public byte[] getBytes() {
         byte[] bytes = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(_value, bytes, 0);
+        EndianUtilities.writeBytesLittleEndian(value, bytes, 0);
         return bytes;
     }
 }

@@ -28,13 +28,13 @@ import discUtils.streams.util.EndianUtilities;
 
 public final class PosixNameSystemUseEntry extends SystemUseEntry {
 
-    public byte Flags;
+    public byte flags;
 
-    public String NameData;
+    public String nameData;
 
     public PosixNameSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);
-        Flags = data[offset + 4];
-        NameData = EndianUtilities.bytesToString(data, offset + 5, length - 5);
+        flags = data[offset + 4];
+        nameData = EndianUtilities.bytesToString(data, offset + 5, length - 5);
     }
 }

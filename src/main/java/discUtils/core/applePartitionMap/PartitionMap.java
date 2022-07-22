@@ -38,9 +38,10 @@ import dotnet4j.io.Stream;
  * Interprets Apple Partition Map structures that partition a disk.
  */
 public final class PartitionMap extends PartitionTable {
-    private final List<PartitionMapEntry> _partitions;
 
-    private final Stream _stream;
+    private final List<PartitionMapEntry> partitions;
+
+    private final Stream stream;
 
     /**
      * Initializes a new instance of the PartitionMap class.
@@ -48,23 +49,23 @@ public final class PartitionMap extends PartitionTable {
      * @param stream Stream containing the contents of a disk.
      */
     public PartitionMap(Stream stream) {
-        _stream = stream;
+        this.stream = stream;
 
-        _stream.setPosition(0);
-        byte[] initialBytes = StreamUtilities.readExact(_stream, 1024);
+        this.stream.setPosition(0);
+        byte[] initialBytes = StreamUtilities.readExact(this.stream, 1024);
 
         BlockZero b0 = new BlockZero();
         b0.readFrom(initialBytes, 0);
 
-        PartitionMapEntry initialPart = new PartitionMapEntry(_stream);
+        PartitionMapEntry initialPart = new PartitionMapEntry(this.stream);
         initialPart.readFrom(initialBytes, 512);
 
-        byte[] partTableData = StreamUtilities.readExact(_stream, (initialPart.MapEntries - 1) * 512);
+        byte[] partTableData = StreamUtilities.readExact(this.stream, (initialPart.mapEntries - 1) * 512);
 
-        _partitions = new ArrayList<>(initialPart.MapEntries - 1);
-        for (int i = 0; i < initialPart.MapEntries - 1; ++i) {
-            PartitionMapEntry partitionMapEntry = new PartitionMapEntry(_stream);
-            _partitions.add(partitionMapEntry);
+        partitions = new ArrayList<>(initialPart.mapEntries - 1);
+        for (int i = 0; i < initialPart.mapEntries - 1; ++i) {
+            PartitionMapEntry partitionMapEntry = new PartitionMapEntry(this.stream);
+            partitions.add(partitionMapEntry);
             partitionMapEntry.readFrom(partTableData, 512 * i);
         }
     }
@@ -80,7 +81,7 @@ public final class PartitionMap extends PartitionTable {
      * Gets the partitions present on the disk.
      */
     public List<PartitionInfo> getPartitions() {
-        return Collections.unmodifiableList(_partitions);
+        return Collections.unmodifiableList(partitions);
     }
 
     /**

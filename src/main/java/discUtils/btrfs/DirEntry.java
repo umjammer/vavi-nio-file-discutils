@@ -35,33 +35,34 @@ import discUtils.core.vfs.VfsDirEntry;
 
 
 public class DirEntry extends VfsDirEntry {
-    private InodeItem _inode;
 
-    private DirIndex _item;
+    private InodeItem inode;
 
-    private final long _treeId;
+    private DirIndex item;
+
+    private final long treeId;
 
     public DirEntry(long treeId, long objectId) {
-        _treeId = treeId;
-        _objectId = objectId;
+        this.treeId = treeId;
+        this.objectId = objectId;
     }
 
     public DirEntry(long treeId, DirIndex item, InodeItem inode) {
         this(treeId, item.getChildLocation().getObjectId());
-        _inode = inode;
-        _item = item;
+        this.inode = inode;
+        this.item = item;
     }
 
     public long getCreationTimeUtc() {
-        return _inode.getCTime().getDateTime();
+        return inode.getCTime().getDateTime();
     }
 
     public long getLastAccessTimeUtc() {
-        return _inode.getATime().getDateTime();
+        return inode.getATime().getDateTime();
     }
 
     public long getLastWriteTimeUtc() {
-        return _inode.getMTime().getDateTime();
+        return inode.getMTime().getDateTime();
     }
 
     public boolean hasVfsTimeInfo() {
@@ -70,7 +71,7 @@ public class DirEntry extends VfsDirEntry {
 
     public EnumSet<FileAttributes> getFileAttributes() {
         UnixFileType unixFileType = UnixFileType.None;
-        switch (_item.getChildType()) {
+        switch (item.getChildType()) {
         case Unknown:
             unixFileType = UnixFileType.None;
             break;
@@ -100,68 +101,68 @@ public class DirEntry extends VfsDirEntry {
             break;
         }
         EnumSet<FileAttributes> result = UnixFileType.toFileAttributes(unixFileType);
-        if (_inode != null && _inode.getFlags().contains(InodeFlag.Readonly))
+        if (inode != null && inode.getFlags().contains(InodeFlag.Readonly))
             result.add(FileAttributes.ReadOnly);
 
         return result;
     }
 
     public boolean hasVfsFileAttributes() {
-        return _item != null;
+        return item != null;
     }
 
     public String getFileName() {
-        return _item.getName();
+        return item.getName();
     }
 
     public boolean isDirectory() {
-        return _item.getChildType() == DirItemChildType.Directory;
+        return item.getChildType() == DirItemChildType.Directory;
     }
 
     public boolean isSymlink() {
-        return _item.getChildType() == DirItemChildType.Symlink;
+        return item.getChildType() == DirItemChildType.Symlink;
     }
 
     public long getUniqueCacheId() {
-        long result = _inode == null ? 0 : _inode.getTransId();
-        result = (result * 397) ^ _item.getTransId();
-        result = (result * 397) ^ _item.getChildLocation().getObjectId();
+        long result = inode == null ? 0 : inode.getTransId();
+        result = (result * 397) ^ item.getTransId();
+        result = (result * 397) ^ item.getChildLocation().getObjectId();
         return result;
     }
 
-    private Directory _cachedDirectory;
+    private Directory cachedDirectory;
 
     public Directory getCachedDirectory() {
-        return _cachedDirectory;
+        return cachedDirectory;
     }
 
     public void setCachedDirectory(Directory value) {
-        _cachedDirectory = value;
+        cachedDirectory = value;
     }
 
     public DirItemChildType getType() {
-        return _item.getChildType();
+        return item.getChildType();
     }
 
-    private long _objectId;
+    private long objectId;
 
     public long getObjectId() {
-        return _objectId;
+        return objectId;
     }
 
     public void setObjectId(long value) {
-        _objectId = value;
+        objectId = value;
     }
 
     public long getTreeId() {
-        return _treeId;
+        return treeId;
     }
 
     public long getFileSize() {
-        return _inode.getFileSize();
+        return inode.getFileSize();
     }
 
     public boolean isSubtree() {
-        return _item != null && _item.getChildLocation().getItemType() == ItemType.RootItem;
+        return item != null && item.getChildLocation().getItemType() == ItemType.RootItem;
     }
 }

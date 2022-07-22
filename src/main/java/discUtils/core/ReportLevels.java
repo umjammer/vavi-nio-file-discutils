@@ -5,7 +5,7 @@ import java.util.EnumSet;
 
 public enum ReportLevels {
     /**
-     * Flags for the amount of detail to include in a report.
+     * flags for the amount of detail to include in a report.
      *
      * Report no information.
      */

@@ -31,17 +31,18 @@ import dotnet4j.io.Stream;
 
 
 public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntry, File> {
-    private final List<ReaderDirEntry> _records;
+
+    private final List<ReaderDirEntry> records;
 
     public ReaderDirectory(IsoContext context, ReaderDirEntry dirEntry) {
         super(context, dirEntry);
         byte[] buffer = new byte[IsoUtilities.SectorSize];
-        Stream extent = new ExtentStream(_context
-                .getDataStream(), dirEntry.getRecord().LocationOfExtent, 0xffff_ffffL, (byte) 0, (byte) 0);
+        Stream extent = new ExtentStream(this.context
+                .getDataStream(), dirEntry.getRecord().locationOfExtent, 0xffff_ffffL, (byte) 0, (byte) 0);
 
-        _records = new ArrayList<>();
+        records = new ArrayList<>();
 
-        int totalLength = dirEntry.getRecord().DataLength;
+        int totalLength = dirEntry.getRecord().dataLength;
         int totalRead = 0;
 
         while (totalRead < totalLength) {
@@ -53,22 +54,22 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
             int pos = 0;
             while (pos < bytesRead && buffer[pos] != 0) {
                 DirectoryRecord[] dr = new DirectoryRecord[1];
-                int length = DirectoryRecord.readFrom(buffer, pos, context.getVolumeDescriptor().CharacterEncoding, dr);
+                int length = DirectoryRecord.readFrom(buffer, pos, context.getVolumeDescriptor().characterEncoding, dr);
 
                 if (!IsoUtilities.isSpecialDirectory(dr[0])) {
-                    ReaderDirEntry childDirEntry = new ReaderDirEntry(_context, dr[0]);
+                    ReaderDirEntry childDirEntry = new ReaderDirEntry(this.context, dr[0]);
 
                     if (context.getSuspDetected() && context.getRockRidgeIdentifier() != null &&
                         !context.getRockRidgeIdentifier().isEmpty()) {
                         if (childDirEntry.getSuspRecords() == null ||
                             !childDirEntry.getSuspRecords().hasEntry(context.getRockRidgeIdentifier(), "RE")) {
-                            _records.add(childDirEntry);
+                            records.add(childDirEntry);
                         }
                     } else {
-                        _records.add(childDirEntry);
+                        records.add(childDirEntry);
                     }
-                } else if (dr[0].FileIdentifier.equals("\0")) {
-                    _self = new ReaderDirEntry(_context, dr[0]);
+                } else if (dr[0].fileIdentifier.equals("\0")) {
+                    self = new ReaderDirEntry(this.context, dr[0]);
                 }
 
                 pos += length;
@@ -77,17 +78,17 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
     }
 
     public byte[] getSystemUseData() {
-        return getSelf().getRecord().SystemUseData;
+        return getSelf().getRecord().systemUseData;
     }
 
     public List<ReaderDirEntry> getAllEntries() {
-        return _records;
+        return records;
     }
 
-    private ReaderDirEntry _self;
+    private ReaderDirEntry self;
 
     public ReaderDirEntry getSelf() {
-        return _self;
+        return self;
     }
 
     public ReaderDirEntry getEntryByName(String name) {
@@ -97,7 +98,7 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
             normName = normName.substring(0, normName.lastIndexOf(';') + 1);
         }
 
-        for (ReaderDirEntry r : _records) {
+        for (ReaderDirEntry r : records) {
             String toComp = IsoUtilities.normalizeFileName(r.getFileName()).toUpperCase();
             if (!anyVerMatch && toComp.equals(normName)) {
                 return r;

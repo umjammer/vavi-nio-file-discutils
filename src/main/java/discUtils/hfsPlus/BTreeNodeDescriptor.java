@@ -27,33 +27,34 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class BTreeNodeDescriptor implements IByteArraySerializable {
-    public int BackwardLink;
 
-    public int ForwardLink;
+    public int backwardLink;
 
-    public byte Height;
+    public int forwardLink;
 
-    public BTreeNodeKind Kind = BTreeNodeKind.LeafNode;
+    public byte height;
 
-    private short NumRecords;
+    public BTreeNodeKind kind = BTreeNodeKind.LeafNode;
+
+    private short numRecords;
 
     public int getNumRecords() {
-        return NumRecords & 0xffff;
+        return numRecords & 0xffff;
     }
 
-    public short Reserved;
+    public short reserved;
 
     public int size() {
         return 14;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        ForwardLink = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        BackwardLink = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        Kind = BTreeNodeKind.valueOf(buffer[offset + 8]);
-        Height = buffer[offset + 9];
-        NumRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
-        Reserved = EndianUtilities.toUInt16BigEndian(buffer, offset + 12);
+        forwardLink = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
+        backwardLink = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        kind = BTreeNodeKind.valueOf(buffer[offset + 8]);
+        height = buffer[offset + 9];
+        numRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
+        reserved = EndianUtilities.toUInt16BigEndian(buffer, offset + 12);
 
         return 14;
     }

@@ -122,11 +122,9 @@ public class NewVolumeCommand extends PSCmdlet {
         if (getSize() == null || getSize().isEmpty()) {
             newIndex = disk.getPartitions().create(getType(), getActive());
         } else {
-            long size;
-            Long[] refVar___0 = new Long[1];
-            boolean boolVar___0 = !discUtils.common.Utilities.tryParseDiskSize(getSize(), refVar___0);
-            size = refVar___0.getValue();
-            if (boolVar___0) {
+            long[] size = new long[1];
+            boolean r = !discUtils.common.Utilities.tryParseDiskSize(getSize(), size);
+            if (r) {
                 writeError(new ErrorRecord(new IllegalArgumentException("Unable to parse the volume size"),
                                            "BadVolumeSize",
                                            ErrorCategory.InvalidArgument,
@@ -134,9 +132,9 @@ public class NewVolumeCommand extends PSCmdlet {
                 return;
             }
 
-            newIndex = disk.getPartitions().create(size, getType(), getActive());
+            newIndex = disk.getPartitions().create(size[0], getType(), getActive());
         }
-        long startSector = disk.getPartitions().get___idx(newIndex).getFirstSector();
+        long startSector = disk.getPartitions().get(newIndex).getFirstSector();
         VolumeManager volMgr = null;
         // Changed volume layout, force a rescan
         VirtualDiskPSDriveInfo drive = diskObject.Properties

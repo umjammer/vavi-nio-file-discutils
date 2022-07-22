@@ -29,23 +29,24 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileInfo implements IByteArraySerializable {
-    public int FileCreator;
 
-    public int FileType;
+    public int fileCreator;
 
-    public EnumSet<FinderFlags> _finderFlags;
+    public int fileType;
 
-    public Point Point;
+    public EnumSet<FinderFlags> finderFlags;
+
+    public Point point;
 
     public int size() {
         return 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        FileType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        FileCreator = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        _finderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
-        Point = EndianUtilities.toStruct(Point.class, buffer, offset + 10);
+        fileType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
+        fileCreator = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        finderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
+        point = EndianUtilities.toStruct(Point.class, buffer, offset + 10);
 
         return 16;
     }

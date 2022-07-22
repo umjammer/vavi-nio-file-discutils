@@ -34,13 +34,14 @@ import dotnet4j.io.IOException;
 
 
 public class ExtentsFileBuffer extends Buffer {
-    private final Context _context;
 
-    private final Inode _inode;
+    private final Context context;
+
+    private final Inode inode;
 
     public ExtentsFileBuffer(Context context, Inode inode) {
-        _context = context;
-        _inode = inode;
+        this.context = context;
+        this.inode = inode;
     }
 
     public boolean canRead() {
@@ -52,18 +53,18 @@ public class ExtentsFileBuffer extends Buffer {
     }
 
     public long getCapacity() {
-        return _inode.FileSize;
+        return inode.fileSize;
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        if (pos > _inode.FileSize) {
+        if (pos > inode.fileSize) {
             return 0;
         }
 
-        long blockSize = _context.getSuperBlock().getBlockSize();
+        long blockSize = context.getSuperBlock().getBlockSize();
         int totalRead = 0;
-        int totalBytesRemaining = (int) Math.min(count, _inode.FileSize - pos);
-        ExtentBlock extents = _inode.Extents;
+        int totalBytesRemaining = (int) Math.min(count, inode.fileSize - pos);
+        ExtentBlock extents = inode.extents;
         while (totalBytesRemaining > 0) {
             int logicalBlock = (int) ((pos + totalRead) / blockSize);
             int blockOffset = (int) (pos + totalRead - logicalBlock * blockSize);
@@ -73,17 +74,17 @@ public class ExtentsFileBuffer extends Buffer {
                 throw new IOException("Unable to find extent for block " + logicalBlock);
             }
 
-            if (extent.FirstLogicalBlock > logicalBlock) {
+            if (extent.firstLogicalBlock > logicalBlock) {
                 numRead = (int) Math.min(totalBytesRemaining,
-                                         (extent.FirstLogicalBlock - logicalBlock) * blockSize - blockOffset);
+                                         (extent.firstLogicalBlock - logicalBlock) * blockSize - blockOffset);
                 Arrays.fill(buffer, offset + totalRead, offset + totalRead + numRead, (byte) 0);
             } else {
-                long physicalBlock = logicalBlock - extent.FirstLogicalBlock + extent.getFirstPhysicalBlock();
+                long physicalBlock = logicalBlock - extent.firstLogicalBlock + extent.getFirstPhysicalBlock();
                 int toRead = (int) Math
                         .min(totalBytesRemaining,
-                             (extent.getNumBlocks() - (logicalBlock - extent.FirstLogicalBlock)) * blockSize - blockOffset);
-                _context.getRawStream().setPosition(physicalBlock * blockSize + blockOffset);
-                numRead = _context.getRawStream().read(buffer, offset + totalRead, toRead);
+                             (extent.getNumBlocks() - (logicalBlock - extent.firstLogicalBlock)) * blockSize - blockOffset);
+                context.getRawStream().setPosition(physicalBlock * blockSize + blockOffset);
+                numRead = context.getRawStream().read(buffer, offset + totalRead, toRead);
             }
             totalBytesRemaining -= numRead;
             totalRead += numRead;
@@ -104,50 +105,50 @@ public class ExtentsFileBuffer extends Buffer {
     }
 
     private Extent findExtent(ExtentBlock node, int logicalBlock) {
-        if (node.Index != null) {
+        if (node.index != null) {
             ExtentIndex idxEntry = null;
-            if (node.Index.length == 0) {
+            if (node.index.length == 0) {
                 return null;
             }
 
-            if (node.Index[0].FirstLogicalBlock >= logicalBlock) {
-                idxEntry = node.Index[0];
+            if (node.index[0].firstLogicalBlock >= logicalBlock) {
+                idxEntry = node.index[0];
             } else {
-                for (int i = 0; i < node.Index.length; ++i) {
-                    if (node.Index[i].FirstLogicalBlock > logicalBlock) {
-                        idxEntry = node.Index[i - 1];
+                for (int i = 0; i < node.index.length; ++i) {
+                    if (node.index[i].firstLogicalBlock > logicalBlock) {
+                        idxEntry = node.index[i - 1];
                         break;
                     }
 
                 }
             }
             if (idxEntry == null) {
-                idxEntry = node.Index[node.Index.length - 1];
+                idxEntry = node.index[node.index.length - 1];
             }
 
             ExtentBlock subBlock = loadExtentBlock(idxEntry);
             return findExtent(subBlock, logicalBlock);
         }
 
-        if (node.Extents != null) {
+        if (node.extents != null) {
             Extent entry = null;
-            if (node.Extents.length == 0) {
+            if (node.extents.length == 0) {
                 return null;
             }
 
-            if (node.Extents[0].FirstLogicalBlock >= logicalBlock) {
-                return node.Extents[0];
+            if (node.extents[0].firstLogicalBlock >= logicalBlock) {
+                return node.extents[0];
             }
 
-            for (int i = 0; i < node.Extents.length; ++i) {
-                if (node.Extents[i].FirstLogicalBlock > logicalBlock) {
-                    entry = node.Extents[i - 1];
+            for (int i = 0; i < node.extents.length; ++i) {
+                if (node.extents[i].firstLogicalBlock > logicalBlock) {
+                    entry = node.extents[i - 1];
                     break;
                 }
 
             }
             if (entry == null) {
-                entry = node.Extents[node.Extents.length - 1];
+                entry = node.extents[node.extents.length - 1];
             }
 
             return entry;
@@ -157,9 +158,9 @@ public class ExtentsFileBuffer extends Buffer {
     }
 
     private ExtentBlock loadExtentBlock(ExtentIndex idxEntry) {
-        int blockSize = _context.getSuperBlock().getBlockSize();
-        _context.getRawStream().setPosition(idxEntry.getLeafPhysicalBlock() * blockSize);
-        byte[] buffer = StreamUtilities.readExact(_context.getRawStream(), blockSize);
+        int blockSize = context.getSuperBlock().getBlockSize();
+        context.getRawStream().setPosition(idxEntry.getLeafPhysicalBlock() * blockSize);
+        byte[] buffer = StreamUtilities.readExact(context.getRawStream(), blockSize);
         ExtentBlock subBlock = EndianUtilities.toStruct(ExtentBlock.class, buffer, 0);
         return subBlock;
     }

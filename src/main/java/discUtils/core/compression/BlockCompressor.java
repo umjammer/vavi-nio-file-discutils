@@ -26,6 +26,7 @@ package discUtils.core.compression;
  * base class for block compression algorithms.
  */
 public abstract class BlockCompressor {
+
     /**
      * Gets or sets the block size parameter to the algorithm.
      *
@@ -33,14 +34,14 @@ public abstract class BlockCompressor {
      * decompression, others may only use it to control compression. Some may
      * ignore it entirely.
      */
-    private int _blockSize;
+    private int blockSize;
 
     public int getBlockSize() {
-        return _blockSize;
+        return blockSize;
     }
 
     public void setBlockSize(int value) {
-        _blockSize = value;
+        blockSize = value;
     }
 
     /**

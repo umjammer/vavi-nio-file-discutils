@@ -44,79 +44,80 @@ import discUtils.streams.util.Sizes;
 
 
 public class DynamicDiskGroup implements IDiagnosticTraceable {
-    private final Database _database;
 
-    private final Map<UUID, DynamicDisk> _disks;
+    private final Database database;
 
-    private final DiskGroupRecord _record;
+    private final Map<UUID, DynamicDisk> disks;
+
+    private final DiskGroupRecord record;
 
     public DynamicDiskGroup(VirtualDisk disk) {
-        _disks = new HashMap<>();
+        disks = new HashMap<>();
         DynamicDisk dynDisk = new DynamicDisk(disk);
-        _database = dynDisk.getDatabase();
-        _disks.put(dynDisk.getId(), dynDisk);
-        _record = dynDisk.getDatabase().getDiskGroup(dynDisk.getGroupId());
+        database = dynDisk.getDatabase();
+        disks.put(dynDisk.getId(), dynDisk);
+        record = dynDisk.getDatabase().getDiskGroup(dynDisk.getGroupId());
     }
 
     public void dump(PrintWriter writer, String linePrefix) {
-        writer.println(linePrefix + "DISK GROUP (" + _record.Name + ")");
-        writer.println(linePrefix + "  Name: " + _record.Name);
-        writer.println(linePrefix + "  Flags: 0x" + String.format("%4x", _record.Flags & 0xFFF0));
-        writer.println(linePrefix + "  Database Id: " + _record.Id);
-        writer.println(linePrefix + "  Guid: " + _record.GroupGuidString);
+        writer.println(linePrefix + "DISK GROUP (" + record.name + ")");
+        writer.println(linePrefix + "  Name: " + record.name);
+        writer.println(linePrefix + "  flags: 0x" + String.format("%4x", record.flags & 0xFFF0));
+        writer.println(linePrefix + "  Database Id: " + record.id);
+        writer.println(linePrefix + "  Guid: " + record.groupGuidString);
         writer.println();
         writer.println(linePrefix + "  DISKS");
-        for (DiskRecord disk : _database.getDisks()) {
-            writer.println(linePrefix + "    DISK (" + disk.Name + ")");
-            writer.println(linePrefix + "      Name: " + disk.Name);
-            writer.println(linePrefix + "      Flags: 0x" + String.format("%4x", disk.Flags & 0xFFF0));
-            writer.println(linePrefix + "      Database Id: " + disk.Id);
-            writer.println(linePrefix + "      Guid: " + disk.DiskGuidString);
-            if (_disks.containsKey(UUID.fromString(disk.DiskGuidString))) {
-                DynamicDisk dynDisk = _disks.get(UUID.fromString(disk.DiskGuidString));
+        for (DiskRecord disk : database.getDisks()) {
+            writer.println(linePrefix + "    DISK (" + disk.name + ")");
+            writer.println(linePrefix + "      Name: " + disk.name);
+            writer.println(linePrefix + "      flags: 0x" + String.format("%4x", disk.flags & 0xFFF0));
+            writer.println(linePrefix + "      Database Id: " + disk.id);
+            writer.println(linePrefix + "      Guid: " + disk.diskGuidString);
+            if (disks.containsKey(UUID.fromString(disk.diskGuidString))) {
+                DynamicDisk dynDisk = disks.get(UUID.fromString(disk.diskGuidString));
                 writer.println(linePrefix + "      PRIVATE HEADER");
                 dynDisk.dump(writer, linePrefix + "        ");
             }
 
         }
         writer.println(linePrefix + "  VOLUMES");
-        for (VolumeRecord vol : _database.getVolumes()) {
-            writer.println(linePrefix + "    VOLUME (" + vol.Name + ")");
-            writer.println(linePrefix + "      Name: " + vol.Name);
-            writer.println(linePrefix + "      BIOS Type: " + String.format("%2x", vol.BiosType) + " [" +
-                           BiosPartitionTypes.toString(vol.BiosType) + "]");
-            writer.println(linePrefix + "      Flags: 0x" + String.format("%4x", vol.Flags & 0xFFF0));
-            writer.println(linePrefix + "      Database Id: " + vol.Id);
-            writer.println(linePrefix + "      Guid: " + vol.VolumeGuid);
-            writer.println(linePrefix + "      State: " + vol.ActiveString);
-            writer.println(linePrefix + "      Drive Hint: " + vol.MountHint);
-            writer.println(linePrefix + "      Num Components: " + vol.ComponentCount);
-            writer.println(linePrefix + "      Link Id: " + vol.PartitionComponentLink);
+        for (VolumeRecord vol : database.getVolumes()) {
+            writer.println(linePrefix + "    VOLUME (" + vol.name + ")");
+            writer.println(linePrefix + "      Name: " + vol.name);
+            writer.println(linePrefix + "      BIOS Type: " + String.format("%2x", vol.biosType) + " [" +
+                           BiosPartitionTypes.toString(vol.biosType) + "]");
+            writer.println(linePrefix + "      flags: 0x" + String.format("%4x", vol.flags & 0xFFF0));
+            writer.println(linePrefix + "      Database Id: " + vol.id);
+            writer.println(linePrefix + "      Guid: " + vol.volumeGuid);
+            writer.println(linePrefix + "      State: " + vol.activeString);
+            writer.println(linePrefix + "      Drive Hint: " + vol.mountHint);
+            writer.println(linePrefix + "      Num Components: " + vol.componentCount);
+            writer.println(linePrefix + "      Link Id: " + vol.partitionComponentLink);
             writer.println(linePrefix + "      COMPONENTS");
-            for (ComponentRecord cmpnt : _database.getVolumeComponents(vol.Id)) {
-                writer.println(linePrefix + "        COMPONENT (" + cmpnt.Name + ")");
-                writer.println(linePrefix + "          Name: " + cmpnt.Name);
-                writer.println(linePrefix + "          Flags: 0x" + String.format("%4x", cmpnt.Flags & 0xFFF0));
-                writer.println(linePrefix + "          Database Id: " + cmpnt.Id);
-                writer.println(linePrefix + "          State: " + cmpnt.StatusString);
-                writer.println(linePrefix + "          Mode: " + cmpnt.MergeType);
-                writer.println(linePrefix + "          Num Extents: " + cmpnt.NumExtents);
-                writer.println(linePrefix + "          Link Id: " + cmpnt.LinkId);
-                writer.println(linePrefix + "          Stripe Size: " + cmpnt.StripeSizeSectors + " (Sectors)");
-                writer.println(linePrefix + "          Stripe Stride: " + cmpnt.StripeStride);
+            for (ComponentRecord cmpnt : database.getVolumeComponents(vol.id)) {
+                writer.println(linePrefix + "        COMPONENT (" + cmpnt.name + ")");
+                writer.println(linePrefix + "          Name: " + cmpnt.name);
+                writer.println(linePrefix + "          flags: 0x" + String.format("%4x", cmpnt.flags & 0xFFF0));
+                writer.println(linePrefix + "          Database Id: " + cmpnt.id);
+                writer.println(linePrefix + "          State: " + cmpnt.statusString);
+                writer.println(linePrefix + "          Mode: " + cmpnt.mergeType);
+                writer.println(linePrefix + "          Num Extents: " + cmpnt.numExtents);
+                writer.println(linePrefix + "          Link Id: " + cmpnt.linkId);
+                writer.println(linePrefix + "          Stripe Size: " + cmpnt.stripeSizeSectors + " (Sectors)");
+                writer.println(linePrefix + "          Stripe Stride: " + cmpnt.stripeStride);
                 writer.println(linePrefix + "          EXTENTS");
-                for (ExtentRecord extent : _database.getComponentExtents(cmpnt.Id)) {
-                    writer.println(linePrefix + "            EXTENT (" + extent.Name + ")");
-                    writer.println(linePrefix + "              Name: " + extent.Name);
-                    writer.println(linePrefix + "              Flags: 0x" + String.format("%4x", extent.Flags & 0xFFF0));
-                    writer.println(linePrefix + "              Database Id: " + extent.Id);
-                    writer.println(linePrefix + "              Disk Offset: " + extent.DiskOffsetLba + " (Sectors)");
-                    writer.println(linePrefix + "              Volume Offset: " + extent.OffsetInVolumeLba + " (Sectors)");
-                    writer.println(linePrefix + "              Size: " + extent.SizeLba + " (Sectors)");
-                    writer.println(linePrefix + "              Component Id: " + extent.ComponentId);
-                    writer.println(linePrefix + "              Disk Id: " + extent.DiskId);
-                    writer.println(linePrefix + "              Link Id: " + extent.PartitionComponentLink);
-                    writer.println(linePrefix + "              Interleave Order: " + extent.InterleaveOrder);
+                for (ExtentRecord extent : database.getComponentExtents(cmpnt.id)) {
+                    writer.println(linePrefix + "            EXTENT (" + extent.name + ")");
+                    writer.println(linePrefix + "              Name: " + extent.name);
+                    writer.println(linePrefix + "              flags: 0x" + String.format("%4x", extent.flags & 0xFFF0));
+                    writer.println(linePrefix + "              Database Id: " + extent.id);
+                    writer.println(linePrefix + "              Disk Offset: " + extent.diskOffsetLba + " (Sectors)");
+                    writer.println(linePrefix + "              Volume Offset: " + extent.offsetInVolumeLba + " (Sectors)");
+                    writer.println(linePrefix + "              Size: " + extent.sizeLba + " (Sectors)");
+                    writer.println(linePrefix + "              Component Id: " + extent.componentId);
+                    writer.println(linePrefix + "              Disk Id: " + extent.diskId);
+                    writer.println(linePrefix + "              Link Id: " + extent.partitionComponentLink);
+                    writer.println(linePrefix + "              Interleave Order: " + extent.interleaveOrder);
                 }
             }
         }
@@ -124,35 +125,35 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
 
     public void add(VirtualDisk disk) {
         DynamicDisk dynDisk = new DynamicDisk(disk);
-        _disks.put(dynDisk.getId(), dynDisk);
+        disks.put(dynDisk.getId(), dynDisk);
     }
 
     public DynamicVolume[] getVolumes() {
         List<DynamicVolume> vols = new ArrayList<>();
-        for (VolumeRecord record : _database.getVolumes()) {
-            vols.add(new DynamicVolume(this, record.VolumeGuid));
+        for (VolumeRecord record : database.getVolumes()) {
+            vols.add(new DynamicVolume(this, record.volumeGuid));
         }
         return vols.toArray(new DynamicVolume[0]);
     }
 
     public VolumeRecord getVolume(UUID volume) {
-        return _database.getVolume(volume);
+        return database.getVolume(volume);
     }
 
     public LogicalVolumeStatus getVolumeStatus(long volumeId) {
-        return getVolumeStatus(_database.getVolume(volumeId));
+        return getVolumeStatus(database.getVolume(volumeId));
     }
 
     public SparseStream openVolume(long volumeId) {
-        return openVolume(_database.getVolume(volumeId));
+        return openVolume(database.getVolume(volumeId));
     }
 
     private static Comparator<ExtentRecord> ExtentOffsets = (x, y) -> {
-        if (x.OffsetInVolumeLba > y.OffsetInVolumeLba) {
+        if (x.offsetInVolumeLba > y.offsetInVolumeLba) {
             return 1;
         }
 
-        if (x.OffsetInVolumeLba < y.OffsetInVolumeLba) {
+        if (x.offsetInVolumeLba < y.offsetInVolumeLba) {
             return -1;
         }
 
@@ -160,11 +161,11 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
     };
 
     private static Comparator<ExtentRecord> ExtentInterleaveOrder = (x, y) -> {
-        if (x.InterleaveOrder > y.InterleaveOrder) {
+        if (x.interleaveOrder > y.interleaveOrder) {
             return 1;
         }
 
-        if (x.InterleaveOrder < y.InterleaveOrder) {
+        if (x.interleaveOrder < y.interleaveOrder) {
             return -1;
         }
 
@@ -179,7 +180,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         int numFailed = 0;
         long numOK = 0;
         LogicalVolumeStatus worst = LogicalVolumeStatus.Healthy;
-        for (ComponentRecord cmpnt : _database.getVolumeComponents(volume.Id)) {
+        for (ComponentRecord cmpnt : database.getVolumeComponents(volume.id)) {
             LogicalVolumeStatus cmpntStatus = getComponentStatus(cmpnt);
             worst = worstOf(worst, cmpntStatus);
             if (cmpntStatus == LogicalVolumeStatus.Failed) {
@@ -192,7 +193,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
             return LogicalVolumeStatus.Failed;
         }
 
-        if (numOK == volume.ComponentCount) {
+        if (numOK == volume.componentCount) {
             return worst;
         }
 
@@ -202,9 +203,9 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
     private LogicalVolumeStatus getComponentStatus(ComponentRecord cmpnt) {
         // NOTE: no support for RAID, so either valid or failed...
         LogicalVolumeStatus status = LogicalVolumeStatus.Healthy;
-        for (ExtentRecord extent : _database.getComponentExtents(cmpnt.Id)) {
-            DiskRecord disk = _database.getDisk(extent.DiskId);
-            if (!_disks.containsKey(UUID.fromString(disk.DiskGuidString))) {
+        for (ExtentRecord extent : database.getComponentExtents(cmpnt.id)) {
+            DiskRecord disk = database.getDisk(extent.diskId);
+            if (!disks.containsKey(UUID.fromString(disk.diskGuidString))) {
                 status = LogicalVolumeStatus.Failed;
                 break;
             }
@@ -214,26 +215,26 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
     }
 
     private SparseStream openExtent(ExtentRecord extent) {
-        DiskRecord disk = _database.getDisk(extent.DiskId);
-        DynamicDisk diskObj = _disks.get(UUID.fromString(disk.DiskGuidString));
+        DiskRecord disk = database.getDisk(extent.diskId);
+        DynamicDisk diskObj = disks.get(UUID.fromString(disk.diskGuidString));
         return new SubStream(diskObj.getContent(),
                              Ownership.None,
-                             (diskObj.getDataOffset() + extent.DiskOffsetLba) * Sizes.Sector,
-                             extent.SizeLba * Sizes.Sector);
+                             (diskObj.getDataOffset() + extent.diskOffsetLba) * Sizes.Sector,
+                             extent.sizeLba * Sizes.Sector);
     }
 
     private SparseStream openComponent(ComponentRecord component) {
-        if (component.MergeType == ExtentMergeType.Concatenated) {
-            List<ExtentRecord> extents = new ArrayList<>(_database.getComponentExtents(component.Id));
+        if (component.mergeType == ExtentMergeType.Concatenated) {
+            List<ExtentRecord> extents = new ArrayList<>(database.getComponentExtents(component.id));
             extents.sort(ExtentOffsets);
             // Sanity Check...
             long pos = 0;
             for (ExtentRecord extent : extents) {
-                if (extent.OffsetInVolumeLba != pos) {
+                if (extent.offsetInVolumeLba != pos) {
                     throw new dotnet4j.io.IOException("Volume extents are non-contiguous");
                 }
 
-                pos += extent.SizeLba;
+                pos += extent.sizeLba;
             }
             List<SparseStream> streams = new ArrayList<>();
             for (ExtentRecord extent : extents) {
@@ -242,22 +243,22 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
             return new ConcatStream(Ownership.Dispose, streams);
         }
 
-        if (component.MergeType == ExtentMergeType.Interleaved) {
-            List<ExtentRecord> extents = new ArrayList<>(_database.getComponentExtents(component.Id));
+        if (component.mergeType == ExtentMergeType.Interleaved) {
+            List<ExtentRecord> extents = new ArrayList<>(database.getComponentExtents(component.id));
             extents.sort(ExtentInterleaveOrder);
             List<SparseStream> streams = new ArrayList<>();
             for (ExtentRecord extent : extents) {
                 streams.add(openExtent(extent));
             }
-            return new StripedStream(component.StripeSizeSectors * Sizes.Sector, Ownership.Dispose, streams);
+            return new StripedStream(component.stripeSizeSectors * Sizes.Sector, Ownership.Dispose, streams);
         }
 
-        throw new UnsupportedOperationException("Unknown component mode: " + component.MergeType);
+        throw new UnsupportedOperationException("Unknown component mode: " + component.mergeType);
     }
 
     private SparseStream openVolume(VolumeRecord volume) {
         List<SparseStream> cmpntStreams = new ArrayList<>();
-        for (ComponentRecord component : _database.getVolumeComponents(volume.Id)) {
+        for (ComponentRecord component : database.getVolumeComponents(volume.id)) {
             if (getComponentStatus(component) == LogicalVolumeStatus.Healthy) {
                 cmpntStreams.add(openComponent(component));
             }

@@ -34,38 +34,39 @@ import dotnet4j.io.SeekOrigin;
  * Uses the read-modify-write pattern to align I/O.
  */
 public final class AligningStream extends WrappingMappedStream<SparseStream> {
-    private final byte[] _alignmentBuffer;
 
-    private final int _blockSize;
+    private final byte[] alignmentBuffer;
 
-    private long _position;
+    private final int blockSize;
+
+    private long position;
 
     public AligningStream(SparseStream toWrap, Ownership ownership, int blockSize) {
         super(toWrap, ownership, null);
-        _blockSize = blockSize;
-        _alignmentBuffer = new byte[blockSize];
+        this.blockSize = blockSize;
+        alignmentBuffer = new byte[blockSize];
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        int startOffset = (int) (_position % _blockSize);
-        if (startOffset == 0 && (count % _blockSize == 0 || _position + count == getLength())) {
+        int startOffset = (int) (position % blockSize);
+        if (startOffset == 0 && (count % blockSize == 0 || position + count == getLength())) {
             // Aligned read - pass through to underlying stream.
-            getWrappedStream().setPosition(_position);
+            getWrappedStream().setPosition(position);
             int numRead = getWrappedStream().read(buffer, offset, count);
-            _position += numRead;
+            position += numRead;
             return numRead;
         }
 
-        long startPos = MathUtilities.roundDown(_position, _blockSize);
-        long endPos = MathUtilities.roundUp(_position + count, _blockSize);
+        long startPos = MathUtilities.roundDown(position, blockSize);
+        long endPos = MathUtilities.roundUp(position + count, blockSize);
 
         if (endPos - startPos > Integer.MAX_VALUE) {
             throw new dotnet4j.io.IOException("Oversized read, after alignment");
@@ -79,14 +80,14 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 
         System.arraycopy(tempBuffer, startOffset, buffer, offset, available);
 
-        _position += available;
+        position += available;
         return available;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += getLength();
         }
@@ -94,8 +95,8 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public void clear(int count) {
@@ -109,57 +110,57 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
     }
 
     private void doOperation(ModifyStream modifyStream, ModifyBuffer modifyBuffer, int count) {
-        int startOffset = (int) (_position % _blockSize);
-        if (startOffset == 0 && (count % _blockSize == 0 || _position + count == getLength())) {
-            getWrappedStream().setPosition(_position);
+        int startOffset = (int) (position % blockSize);
+        if (startOffset == 0 && (count % blockSize == 0 || position + count == getLength())) {
+            getWrappedStream().setPosition(position);
             modifyStream.invoke(getWrappedStream(), 0, count);
-            _position += count;
+            position += count;
             return;
         }
 
-        long unalignedEnd = _position + count;
-        long alignedPos = MathUtilities.roundDown(_position, _blockSize);
+        long unalignedEnd = position + count;
+        long alignedPos = MathUtilities.roundDown(position, blockSize);
 
         if (startOffset != 0) {
             getWrappedStream().setPosition(alignedPos);
-            getWrappedStream().read(_alignmentBuffer, 0, _blockSize);
+            getWrappedStream().read(alignmentBuffer, 0, blockSize);
 
-            modifyBuffer.invoke(_alignmentBuffer, startOffset, 0, Math.min(count, _blockSize - startOffset));
+            modifyBuffer.invoke(alignmentBuffer, startOffset, 0, Math.min(count, blockSize - startOffset));
 
             getWrappedStream().setPosition(alignedPos);
-            getWrappedStream().write(_alignmentBuffer, 0, _blockSize);
+            getWrappedStream().write(alignmentBuffer, 0, blockSize);
         }
 
-        alignedPos = MathUtilities.roundUp(_position, _blockSize);
+        alignedPos = MathUtilities.roundUp(position, blockSize);
         if (alignedPos >= unalignedEnd) {
-            _position = unalignedEnd;
+            position = unalignedEnd;
             return;
         }
 
-        int passthroughLength = (int) MathUtilities.roundDown(_position + count - alignedPos, _blockSize);
+        int passthroughLength = (int) MathUtilities.roundDown(position + count - alignedPos, blockSize);
         if (passthroughLength > 0) {
             getWrappedStream().setPosition(alignedPos);
-            modifyStream.invoke(getWrappedStream(), (int) (alignedPos - _position), passthroughLength);
+            modifyStream.invoke(getWrappedStream(), (int) (alignedPos - position), passthroughLength);
         }
 
         alignedPos += passthroughLength;
         if (alignedPos >= unalignedEnd) {
-            _position = unalignedEnd;
+            position = unalignedEnd;
             return;
         }
 
         getWrappedStream().setPosition(alignedPos);
-        getWrappedStream().read(_alignmentBuffer, 0, _blockSize);
+        getWrappedStream().read(alignmentBuffer, 0, blockSize);
 
-        modifyBuffer.invoke(_alignmentBuffer,
+        modifyBuffer.invoke(alignmentBuffer,
                             0,
-                            (int) (alignedPos - _position),
-                            (int) Math.min(count - (alignedPos - _position), unalignedEnd - alignedPos));
+                            (int) (alignedPos - position),
+                            (int) Math.min(count - (alignedPos - position), unalignedEnd - alignedPos));
 
         getWrappedStream().setPosition(alignedPos);
-        getWrappedStream().write(_alignmentBuffer, 0, _blockSize);
+        getWrappedStream().write(alignmentBuffer, 0, blockSize);
 
-        _position = unalignedEnd;
+        position = unalignedEnd;
     }
 
     @FunctionalInterface

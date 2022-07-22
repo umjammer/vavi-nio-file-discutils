@@ -35,104 +35,105 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileNameRecord implements IByteArraySerializable, IDiagnosticTraceable {
-    public long _allocatedSize;
 
-    public long _creationTime;
+    public long allocatedSize;
 
-    public int _eaSizeOrReparsePointTag;
+    public long creationTime;
 
-    public String _fileName;
+    public int eaSizeOrReparsePointTag;
 
-    public FileNameNamespace _fileNameNamespace;
+    public String fileName;
 
-    public EnumSet<FileAttributeFlags> _flags;
+    public FileNameNamespace fileNameNamespace;
 
-    public long _lastAccessTime;
+    public EnumSet<FileAttributeFlags> flags;
 
-    public long _mftChangedTime;
+    public long lastAccessTime;
 
-    public long _modificationTime;
+    public long mftChangedTime;
 
-    public FileRecordReference _parentDirectory;
+    public long modificationTime;
 
-    public long _realSize;
+    public FileRecordReference parentDirectory;
+
+    public long realSize;
 
     public FileNameRecord() {
     }
 
     public FileNameRecord(FileNameRecord toCopy) {
-        _parentDirectory = toCopy._parentDirectory;
-        _creationTime = toCopy._creationTime;
-        _modificationTime = toCopy._modificationTime;
-        _mftChangedTime = toCopy._mftChangedTime;
-        _lastAccessTime = toCopy._lastAccessTime;
-        _allocatedSize = toCopy._allocatedSize;
-        _realSize = toCopy._realSize;
-        _flags = toCopy._flags;
-        _eaSizeOrReparsePointTag = toCopy._eaSizeOrReparsePointTag;
-        _fileNameNamespace = toCopy._fileNameNamespace;
-        _fileName = toCopy._fileName;
+        parentDirectory = toCopy.parentDirectory;
+        creationTime = toCopy.creationTime;
+        modificationTime = toCopy.modificationTime;
+        mftChangedTime = toCopy.mftChangedTime;
+        lastAccessTime = toCopy.lastAccessTime;
+        allocatedSize = toCopy.allocatedSize;
+        realSize = toCopy.realSize;
+        flags = toCopy.flags;
+        eaSizeOrReparsePointTag = toCopy.eaSizeOrReparsePointTag;
+        fileNameNamespace = toCopy.fileNameNamespace;
+        fileName = toCopy.fileName;
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return convertFlags(_flags);
+        return convertFlags(flags);
     }
 
     public int size() {
-        return 0x42 + _fileName.length() * 2;
+        return 0x42 + fileName.length() * 2;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _parentDirectory = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x00));
-        _creationTime = readDateTime(buffer, offset + 0x08);
-        _modificationTime = readDateTime(buffer, offset + 0x10);
-        _mftChangedTime = readDateTime(buffer, offset + 0x18);
-        _lastAccessTime = readDateTime(buffer, offset + 0x20);
-        _allocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
-        _realSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
-        _flags = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x38));
-        _eaSizeOrReparsePointTag = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3C);
+        parentDirectory = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x00));
+        creationTime = readDateTime(buffer, offset + 0x08);
+        modificationTime = readDateTime(buffer, offset + 0x10);
+        mftChangedTime = readDateTime(buffer, offset + 0x18);
+        lastAccessTime = readDateTime(buffer, offset + 0x20);
+        allocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
+        realSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
+        flags = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x38));
+        eaSizeOrReparsePointTag = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3C);
         int fnLen = buffer[offset + 0x40] & 0xff;
-        _fileNameNamespace = FileNameNamespace.valueOf(buffer[offset + 0x41]);
-        _fileName = new String(buffer, offset + 0x42, fnLen * 2, StandardCharsets.UTF_16LE);
+        fileNameNamespace = FileNameNamespace.valueOf(buffer[offset + 0x41]);
+        fileName = new String(buffer, offset + 0x42, fnLen * 2, StandardCharsets.UTF_16LE);
         return 0x42 + fnLen * 2;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(_parentDirectory.getValue(), buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_creationTime), buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_modificationTime), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_mftChangedTime), buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_lastAccessTime), buffer, offset + 0x20);
-        EndianUtilities.writeBytesLittleEndian(_allocatedSize, buffer, offset + 0x28);
-        EndianUtilities.writeBytesLittleEndian(_realSize, buffer, offset + 0x30);
-        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(_flags), buffer, offset + 0x38);
-        EndianUtilities.writeBytesLittleEndian(_eaSizeOrReparsePointTag, buffer, offset + 0x3C);
-        buffer[offset + 0x40] = (byte) _fileName.length();
-        buffer[offset + 0x41] = (byte) _fileNameNamespace.ordinal();
-        byte[] bytes = _fileName.getBytes(StandardCharsets.UTF_16LE);
+        EndianUtilities.writeBytesLittleEndian(parentDirectory.getValue(), buffer, offset + 0x00);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(creationTime), buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(modificationTime), buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(mftChangedTime), buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(lastAccessTime), buffer, offset + 0x20);
+        EndianUtilities.writeBytesLittleEndian(allocatedSize, buffer, offset + 0x28);
+        EndianUtilities.writeBytesLittleEndian(realSize, buffer, offset + 0x30);
+        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(flags), buffer, offset + 0x38);
+        EndianUtilities.writeBytesLittleEndian(eaSizeOrReparsePointTag, buffer, offset + 0x3C);
+        buffer[offset + 0x40] = (byte) fileName.length();
+        buffer[offset + 0x41] = (byte) fileNameNamespace.ordinal();
+        byte[] bytes = fileName.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 0x42, bytes.length);
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "FILE NAME RECORD");
-        writer.println(indent + "   Parent Directory: " + _parentDirectory);
-        writer.println(indent + "      Creation Time: " + _creationTime);
-        writer.println(indent + "  Modification Time: " + _modificationTime);
-        writer.println(indent + "   MFT Changed Time: " + _mftChangedTime);
-        writer.println(indent + "   Last Access Time: " + _lastAccessTime);
-        writer.println(indent + "     Allocated Size: " + _allocatedSize);
-        writer.println(indent + "          Real Size: " + _realSize);
-        writer.println(indent + "              Flags: " + _flags);
+        writer.println(indent + "   Parent Directory: " + parentDirectory);
+        writer.println(indent + "      Creation Time: " + creationTime);
+        writer.println(indent + "  Modification Time: " + modificationTime);
+        writer.println(indent + "   MFT Changed Time: " + mftChangedTime);
+        writer.println(indent + "   Last Access Time: " + lastAccessTime);
+        writer.println(indent + "     Allocated Size: " + allocatedSize);
+        writer.println(indent + "          Real Size: " + realSize);
+        writer.println(indent + "              flags: " + flags);
 
-        if (_flags.contains(FileAttributeFlags.ReparsePoint)) {
-            writer.println(indent + "  Reparse Point Tag: " + _eaSizeOrReparsePointTag);
+        if (flags.contains(FileAttributeFlags.ReparsePoint)) {
+            writer.println(indent + "  Reparse Point Tag: " + eaSizeOrReparsePointTag);
         } else {
-            writer.println(indent + "      ext Attr Size: " + (_eaSizeOrReparsePointTag & 0xFFFF));
+            writer.println(indent + "      ext Attr Size: " + (eaSizeOrReparsePointTag & 0xFFFF));
         }
 
-        writer.println(indent + "          Namespace: " + _fileNameNamespace);
-        writer.println(indent + "          File Name: " + _fileName);
+        writer.println(indent + "          Namespace: " + fileNameNamespace);
+        writer.println(indent + "          File Name: " + fileName);
     }
 
     public boolean equals(FileNameRecord other) {
@@ -140,12 +141,12 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
             return false;
         }
 
-        return _parentDirectory.equals(other._parentDirectory) && _fileNameNamespace == other._fileNameNamespace &&
-               _fileName.equals(other._fileName);
+        return parentDirectory.equals(other.parentDirectory) && fileNameNamespace == other.fileNameNamespace &&
+               fileName.equals(other.fileName);
     }
 
     public String toString() {
-        return _fileName;
+        return fileName;
     }
 
     public static EnumSet<FileAttributeFlags> setAttributes(EnumSet<FileAttributes> attrs, EnumSet<FileAttributeFlags> flags) {

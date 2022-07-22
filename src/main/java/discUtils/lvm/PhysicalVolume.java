@@ -30,42 +30,43 @@ import dotnet4j.io.Stream;
 
 
 public class PhysicalVolume {
+
     public static final short SECTOR_SIZE = 512;
 
     private static final int INITIAL_CRC = 0xf597a6cf;
 
-    public final PhysicalVolumeLabel _physicalVolumeLabel;
+    public final PhysicalVolumeLabel physicalVolumeLabel;
 
-    public final PvHeader PvHeader;
+    public final PvHeader pvHeader;
 
-    public VolumeGroupMetadata VgMetadata;
+    public VolumeGroupMetadata vgMetadata;
 
-    private Stream _content;
+    private Stream content;
 
     public Stream getContent() {
-        return _content;
+        return content;
     }
 
     public void setContent(Stream value) {
-        _content = value;
+        content = value;
     }
 
     public PhysicalVolume(PhysicalVolumeLabel physicalVolumeLabel, Stream content) {
-        _physicalVolumeLabel = physicalVolumeLabel;
-        PvHeader = new PvHeader();
-        content.setPosition(physicalVolumeLabel.Sector * SECTOR_SIZE);
+        this.physicalVolumeLabel = physicalVolumeLabel;
+        pvHeader = new PvHeader();
+        content.setPosition(physicalVolumeLabel.sector * SECTOR_SIZE);
         byte[] buffer = StreamUtilities.readExact(content, SECTOR_SIZE);
-        PvHeader.readFrom(buffer, (int) physicalVolumeLabel.Offset);
-        if (PvHeader.MetadataDiskAreas.size() > 0) {
-            DiskArea area = PvHeader.MetadataDiskAreas.get(0);
+        pvHeader.readFrom(buffer, (int) physicalVolumeLabel.offset);
+        if (pvHeader.metadataDiskAreas.size() > 0) {
+            DiskArea area = pvHeader.metadataDiskAreas.get(0);
             VolumeGroupMetadata metadata = new VolumeGroupMetadata();
-            content.setPosition(area.Offset);
-            buffer = StreamUtilities.readExact(content, (int) area.Length);
+            content.setPosition(area.offset);
+            buffer = StreamUtilities.readExact(content, (int) area.length);
             metadata.readFrom(buffer, 0x0);
-            VgMetadata = metadata;
+            vgMetadata = metadata;
         }
 
-        _content = content;
+        this.content = content;
     }
 
     public static boolean tryOpen(PartitionInfo volumeInfo, PhysicalVolume[] pv) {
@@ -103,15 +104,15 @@ public class PhysicalVolume {
             if (label.equals(PhysicalVolumeLabel.LABEL_ID)) {
                 pvLabel[0] = new PhysicalVolumeLabel();
                 pvLabel[0].readFrom(buffer, 0x0);
-                if (pvLabel[0].Sector != i) {
+                if (pvLabel[0].sector != i) {
                     //Invalid PV Sector;
                     return false;
                 }
-                if (pvLabel[0].Crc != pvLabel[0].CalculatedCrc) {
+                if (pvLabel[0].crc != pvLabel[0].calculatedCrc) {
                     //Invalid PV CRC
                     return false;
                 }
-                if (!pvLabel[0].Label2.equals(PhysicalVolumeLabel.LVM2_LABEL)) {
+                if (!pvLabel[0].label2.equals(PhysicalVolumeLabel.LVM2_LABEL)) {
                     // Invalid LVM2 Label
                     return false;
                 }
@@ -121,21 +122,20 @@ public class PhysicalVolume {
         return false;
     }
 
-
     /**
      * LVM2.2.02.79:lib/misc/crc.c:_calc_crc_old()
      */
     static int calcCrc(byte[] buffer, int offset, int length) {
         long crc = INITIAL_CRC;
-        final long[] crctab = new long[] {
+        final long[] crcTab = new long[] {
             0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c, 0xedb88320,
             0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
         };
         int i = offset;
         while (i < offset + length) {
             crc ^= (buffer[i] & 0xff);
-            crc = ((crc & 0xffffffffL) >>> 4) ^ crctab[(int) crc & 0xf];
-            crc = ((crc & 0xffffffffL) >>> 4) ^ crctab[(int) crc & 0xf];
+            crc = ((crc & 0xffffffffL) >>> 4) ^ crcTab[(int) crc & 0xf];
+            crc = ((crc & 0xffffffffL) >>> 4) ^ crcTab[(int) crc & 0xf];
             i++;
         }
         return (int) crc;

@@ -30,34 +30,35 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class MetadataEntry implements IByteArraySerializable {
-    public EnumSet<MetadataEntryFlags> Flags;
 
-    public UUID ItemId;
+    public EnumSet<MetadataEntryFlags> flags;
 
-    public int Length;
+    public UUID itemId;
 
-    public int Offset;
+    public int length;
 
-    public int Reserved;
+    public int offset;
+
+    public int reserved;
 
     public int size() {
         return 32;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        ItemId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        Offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        Length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        Flags = MetadataEntryFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
-        Reserved = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
+        itemId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+        this.offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        flags = MetadataEntryFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
+        reserved = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
         return 32;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(ItemId, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(Offset, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(Length, buffer, offset + 20);
-        EndianUtilities.writeBytesLittleEndian((int) MetadataEntryFlags.valueOf(Flags), buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(Reserved, buffer, offset + 28);
+        EndianUtilities.writeBytesLittleEndian(itemId, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(this.offset, buffer, offset + 16);
+        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 20);
+        EndianUtilities.writeBytesLittleEndian((int) MetadataEntryFlags.valueOf(flags), buffer, offset + 24);
+        EndianUtilities.writeBytesLittleEndian(reserved, buffer, offset + 28);
     }
 }

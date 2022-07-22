@@ -43,135 +43,135 @@ public class NtfsFormatter {
 
     private static final String FS = java.io.File.separator;
 
-    private long _bitmapCluster;
+    private long bitmapCluster;
 
-    private int _clusterSize;
+    private int clusterSize;
 
-    private NtfsContext _context;
+    private NtfsContext context;
 
-    private int _indexBufferSize;
+    private int indexBufferSize;
 
-    private long _mftCluster;
+    private long mftCluster;
 
-    private long _mftMirrorCluster;
+    private long mftMirrorCluster;
 
-    private int _mftRecordSize;
+    private int mftRecordSize;
 
-    private byte[] _bootCode;
+    private byte[] bootCode;
 
     public byte[] getBootCode() {
-        return _bootCode;
+        return bootCode;
     }
 
     public void setBootCode(byte[] value) {
-        _bootCode = value;
+        bootCode = value;
     }
 
-    private SecurityIdentifier _computerAccount;
+    private SecurityIdentifier computerAccount;
 
     public SecurityIdentifier getComputerAccount() {
-        return _computerAccount;
+        return computerAccount;
     }
 
     public void setComputerAccount(SecurityIdentifier value) {
-        _computerAccount = value;
+        computerAccount = value;
     }
 
-    private Geometry _diskGeometry;
+    private Geometry diskGeometry;
 
     public Geometry getDiskGeometry() {
-        return _diskGeometry;
+        return diskGeometry;
     }
 
     public void setDiskGeometry(Geometry value) {
-        _diskGeometry = value;
+        diskGeometry = value;
     }
 
-    private long _firstSector;
+    private long firstSector;
 
     public long getFirstSector() {
-        return _firstSector;
+        return firstSector;
     }
 
     public void setFirstSector(long value) {
-        _firstSector = value;
+        firstSector = value;
     }
 
-    private String _label;
+    private String label;
 
     public String getLabel() {
-        return _label;
+        return label;
     }
 
     public void setLabel(String value) {
-        _label = value;
+        label = value;
     }
 
-    private long _sectorCount;
+    private long sectorCount;
 
     public long getSectorCount() {
-        return _sectorCount;
+        return sectorCount;
     }
 
     public void setSectorCount(long value) {
-        _sectorCount = value;
+        sectorCount = value;
     }
 
     public NtfsFileSystem format(Stream stream) {
-        _context = new NtfsContext();
-        _context.setOptions(new NtfsOptions());
-        _context.setRawStream(stream);
-        _context.setAttributeDefinitions(new AttributeDefinitions());
+        context = new NtfsContext();
+        context.setOptions(new NtfsOptions());
+        context.setRawStream(stream);
+        context.setAttributeDefinitions(new AttributeDefinitions());
         String localAdminString = getComputerAccount() == null ? "LA"
                                                                : (new SecurityIdentifier(WellKnownSidType.AccountAdministratorSid,
                                                                                          getComputerAccount())).toString();
 
         try (Closeable c = new NtfsTransaction()) {
-            _clusterSize = 4096;
-            _mftRecordSize = 1024;
-            _indexBufferSize = 4096;
-            long totalClusters = (getSectorCount() - 1) * Sizes.Sector / _clusterSize;
+            clusterSize = 4096;
+            mftRecordSize = 1024;
+            indexBufferSize = 4096;
+            long totalClusters = (getSectorCount() - 1) * Sizes.Sector / clusterSize;
             // Allocate a minimum of 8KB for the boot loader, but allow for
             // more
             int numBootClusters = MathUtilities
-                    .ceil(Math.max((int) (8 * Sizes.OneKiB), getBootCode() == null ? 0 : getBootCode().length), _clusterSize);
+                    .ceil(Math.max((int) (8 * Sizes.OneKiB), getBootCode() == null ? 0 : getBootCode().length), clusterSize);
             // Place MFT mirror in the middle of the volume
-            _mftMirrorCluster = totalClusters / 2;
+            mftMirrorCluster = totalClusters / 2;
             int numMftMirrorClusters = 1;
             // The bitmap is also near the middle
-            _bitmapCluster = _mftMirrorCluster + 13;
-            int numBitmapClusters = (int) MathUtilities.ceil(totalClusters / 8, _clusterSize);
+            bitmapCluster = mftMirrorCluster + 13;
+            int numBitmapClusters = (int) MathUtilities.ceil(totalClusters / 8, clusterSize);
             // The MFT bitmap goes 'near' the start - approx 10% in - but
             // ensure we avoid the bootloader
             long mftBitmapCluster = Math.max(3 + totalClusters / 10, numBootClusters);
             int numMftBitmapClusters = 1;
             // The MFT follows it's bitmap
-            _mftCluster = mftBitmapCluster + numMftBitmapClusters;
+            mftCluster = mftBitmapCluster + numMftBitmapClusters;
             int numMftClusters = 8;
-            if (_mftCluster + numMftClusters > _mftMirrorCluster || _bitmapCluster + numBitmapClusters >= totalClusters) {
+            if (mftCluster + numMftClusters > mftMirrorCluster || bitmapCluster + numBitmapClusters >= totalClusters) {
                 throw new dotnet4j.io.IOException("Unable to determine initial layout of NTFS metadata - disk may be too small");
             }
 
-            createBiosParameterBlock(stream, numBootClusters * _clusterSize);
-            _context.setMft(new MasterFileTable(_context));
-            File mftFile = _context.getMft()
-                    .initializeNew(_context, mftBitmapCluster, numMftBitmapClusters, _mftCluster, numMftClusters);
-            File bitmapFile = createFixedSystemFile(MasterFileTable.BitmapIndex, _bitmapCluster, numBitmapClusters, true);
-            _context.setClusterBitmap(new ClusterBitmap(bitmapFile));
-            _context.getClusterBitmap().markAllocated(0, numBootClusters);
-            _context.getClusterBitmap().markAllocated(_bitmapCluster, numBitmapClusters);
-            _context.getClusterBitmap().markAllocated(mftBitmapCluster, numMftBitmapClusters);
-            _context.getClusterBitmap().markAllocated(_mftCluster, numMftClusters);
-            _context.getClusterBitmap().setTotalClusters(totalClusters);
+            createBiosParameterBlock(stream, numBootClusters * clusterSize);
+            context.setMft(new MasterFileTable(context));
+            File mftFile = context.getMft()
+                    .initializeNew(context, mftBitmapCluster, numMftBitmapClusters, mftCluster, numMftClusters);
+            File bitmapFile = createFixedSystemFile(MasterFileTable.BitmapIndex, bitmapCluster, numBitmapClusters, true);
+            context.setClusterBitmap(new ClusterBitmap(bitmapFile));
+            context.getClusterBitmap().markAllocated(0, numBootClusters);
+            context.getClusterBitmap().markAllocated(bitmapCluster, numBitmapClusters);
+            context.getClusterBitmap().markAllocated(mftBitmapCluster, numMftBitmapClusters);
+            context.getClusterBitmap().markAllocated(mftCluster, numMftClusters);
+            context.getClusterBitmap().setTotalClusters(totalClusters);
             bitmapFile.updateRecordInMft();
             File mftMirrorFile = createFixedSystemFile(MasterFileTable.MftMirrorIndex,
-                                                       _mftMirrorCluster,
+                    mftMirrorCluster,
                                                        numMftMirrorClusters,
                                                        true);
             File logFile = createSystemFile(MasterFileTable.LogFileIndex);
 
             try (Stream s = logFile.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
-                s.setLength(Math.min(Math.max(2 * Sizes.OneMiB, totalClusters / 500 * _clusterSize), 64 * Sizes.OneMiB));
+                s.setLength(Math.min(Math.max(2 * Sizes.OneMiB, totalClusters / 500 * clusterSize), 64 * Sizes.OneMiB));
                 byte[] buffer = new byte[1024 * 1024];
                 Arrays.fill(buffer, (byte) 0xFF);
                 long totalWritten = 0;
@@ -188,10 +188,10 @@ public class NtfsFormatter {
             volInfoStream.setContent(new VolumeInformation((byte) 3, (byte) 1, EnumSet.noneOf(VolumeInformationFlags.class)));
             setSecurityAttribute(volumeFile, "O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)");
             volumeFile.updateRecordInMft();
-            _context.setGetFileByIndex(index-> new File(_context, _context.getMft().getRecord(index, false)));
-            _context.setAllocateFile(frf -> new File(_context, _context.getMft().allocateRecord(frf, false)));
+            context.setGetFileByIndex(index-> new File(context, context.getMft().getRecord(index, false)));
+            context.setAllocateFile(frf -> new File(context, context.getMft().allocateRecord(frf, false)));
             File attrDefFile = createSystemFile(MasterFileTable.AttrDefIndex);
-            _context.getAttributeDefinitions().writeTo(attrDefFile);
+            context.getAttributeDefinitions().writeTo(attrDefFile);
             setSecurityAttribute(attrDefFile, "O:" + localAdminString + "G:BAD:(A;;FR;;;SY)(A;;FR;;;BA)");
             attrDefFile.updateRecordInMft();
             File bootFile = createFixedSystemFile(MasterFileTable.BootIndex, 0, numBootClusters, false);
@@ -202,23 +202,23 @@ public class NtfsFormatter {
             badClusFile.updateRecordInMft();
             File secureFile = createSystemFile(MasterFileTable.SecureIndex, EnumSet.of(FileRecordFlags.HasViewIndex));
             secureFile.removeStream(secureFile.getStream(AttributeType.Data, null));
-            _context.setSecurityDescriptors(SecurityDescriptors.initialize(secureFile));
+            context.setSecurityDescriptors(SecurityDescriptors.initialize(secureFile));
             secureFile.updateRecordInMft();
             File upcaseFile = createSystemFile(MasterFileTable.UpCaseIndex);
-            _context.setUpperCase(UpperCase.initialize(upcaseFile));
+            context.setUpperCase(UpperCase.initialize(upcaseFile));
             upcaseFile.updateRecordInMft();
-            File objIdFile = File.createNew(_context,
+            File objIdFile = File.createNew(context,
                                             EnumSet.of(FileRecordFlags.IsMetaFile, FileRecordFlags.HasViewIndex),
                                             EnumSet.noneOf(FileAttributeFlags.class));
             objIdFile.removeStream(objIdFile.getStream(AttributeType.Data, null));
             objIdFile.createIndex("$O", null, AttributeCollationRule.MultipleUnsignedLongs);
             objIdFile.updateRecordInMft();
-            File reparseFile = File.createNew(_context,
+            File reparseFile = File.createNew(context,
                                               EnumSet.of(FileRecordFlags.IsMetaFile, FileRecordFlags.HasViewIndex),
                                               EnumSet.noneOf(FileAttributeFlags.class));
             reparseFile.createIndex("$R", null, AttributeCollationRule.MultipleUnsignedLongs);
             reparseFile.updateRecordInMft();
-            File quotaFile = File.createNew(_context,
+            File quotaFile = File.createNew(context,
                                             EnumSet.of(FileRecordFlags.IsMetaFile, FileRecordFlags.HasViewIndex),
                                             EnumSet.noneOf(FileAttributeFlags.class));
             Quotas.initialize(quotaFile);
@@ -305,24 +305,24 @@ public class NtfsFormatter {
     }
 
     private File createFixedSystemFile(long mftIndex, long firstCluster, long numClusters, boolean wipe) {
-        BiosParameterBlock bpb = _context.getBiosParameterBlock();
+        BiosParameterBlock bpb = context.getBiosParameterBlock();
         if (wipe) {
             byte[] wipeBuffer = new byte[bpb.getBytesPerCluster()];
-            _context.getRawStream().setPosition(firstCluster * bpb.getBytesPerCluster());
+            context.getRawStream().setPosition(firstCluster * bpb.getBytesPerCluster());
             for (long i = 0; i < numClusters; ++i) {
-                _context.getRawStream().write(wipeBuffer, 0, wipeBuffer.length);
+                context.getRawStream().write(wipeBuffer, 0, wipeBuffer.length);
             }
         }
 
-        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
+        FileRecord fileRec = context.getMft().allocateRecord(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse));
         fileRec.setSequenceNumber((short) mftIndex);
-        File file = new File(_context, fileRec);
+        File file = new File(context, fileRec);
         StandardInformation.initializeNewFile(file, EnumSet.of(FileAttributeFlags.Hidden, FileAttributeFlags.System));
         file.createStream(AttributeType.Data, null, firstCluster, numClusters, bpb.getBytesPerCluster());
         file.updateRecordInMft();
-        if (_context.getClusterBitmap() != null) {
-            _context.getClusterBitmap().markAllocated(firstCluster, numClusters);
+        if (context.getClusterBitmap() != null) {
+            context.getClusterBitmap().markAllocated(firstCluster, numClusters);
         }
 
         return file;
@@ -333,9 +333,9 @@ public class NtfsFormatter {
     }
 
     private File createSystemFile(long mftIndex, EnumSet<FileRecordFlags> flags) {
-        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, flags);
+        FileRecord fileRec = context.getMft().allocateRecord(mftIndex, flags);
         fileRec.setSequenceNumber((short) mftIndex);
-        File file = new File(_context, fileRec);
+        File file = new File(context, fileRec);
         EnumSet<FileAttributeFlags> _flags = FileRecord.convertFlags(flags);
         _flags.add(FileAttributeFlags.Hidden);
         _flags.add(FileAttributeFlags.System);
@@ -346,10 +346,10 @@ public class NtfsFormatter {
     }
 
     private Directory createSystemDirectory(long mftIndex) {
-        FileRecord fileRec = _context.getMft().allocateRecord(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
+        FileRecord fileRec = context.getMft().allocateRecord(mftIndex, EnumSet.noneOf(FileRecordFlags.class));
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse, FileRecordFlags.IsDirectory));
         fileRec.setSequenceNumber((short) mftIndex);
-        Directory dir = new Directory(_context, fileRec);
+        Directory dir = new Directory(context, fileRec);
         StandardInformation.initializeNewFile(dir, EnumSet.of(FileAttributeFlags.Hidden, FileAttributeFlags.System));
         dir.createIndex("$I30", AttributeType.FileName, AttributeCollationRule.Filename);
         dir.updateRecordInMft();
@@ -363,13 +363,13 @@ public class NtfsFormatter {
         }
 
         BiosParameterBlock bpb = BiosParameterBlock.initialized(getDiskGeometry(),
-                                                                _clusterSize,
+                clusterSize,
                                                                 (int) getFirstSector(),
                                                                 getSectorCount(),
-                                                                _mftRecordSize,
-                                                                _indexBufferSize);
-        bpb._mftCluster = _mftCluster;
-        bpb._mftMirrorCluster = _mftMirrorCluster;
+                mftRecordSize,
+                indexBufferSize);
+        bpb.mftCluster = mftCluster;
+        bpb.mftMirrorCluster = mftMirrorCluster;
         bpb.toBytes(bootSectors, 0);
         // Primary goes at the start of the partition
         stream.setPosition(0);
@@ -377,6 +377,6 @@ public class NtfsFormatter {
         // Backup goes at the end of the data in the partition
         stream.setPosition((getSectorCount() - 1) * Sizes.Sector);
         stream.write(bootSectors, 0, Sizes.Sector);
-        _context.setBiosParameterBlock(bpb);
+        context.setBiosParameterBlock(bpb);
     }
 }

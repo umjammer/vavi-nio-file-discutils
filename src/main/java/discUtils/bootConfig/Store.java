@@ -33,7 +33,8 @@ import discUtils.registry.RegistryKey;
  * Represents a Boot Configuration Database store (i.e. a BCD file).
  */
 public class Store {
-    private final BaseStorage _store;
+
+    private final BaseStorage store;
 
     /**
      * Initializes a new instance of the Store class.
@@ -42,7 +43,7 @@ public class Store {
      *            database.
      */
     public Store(RegistryKey key) {
-        _store = new DiscUtilsRegistryStorage(key);
+        store = new DiscUtilsRegistryStorage(key);
     }
 
     /**
@@ -50,8 +51,8 @@ public class Store {
      */
     public List<BcdObject> getObjects() {
         List<BcdObject> result = new ArrayList<>();
-        for (UUID obj : _store.enumerateObjects()) {
-            result.add(new BcdObject(_store, obj));
+        for (UUID obj : store.enumerateObjects()) {
+            result.add(new BcdObject(store, obj));
         }
         return result;
     }
@@ -63,7 +64,7 @@ public class Store {
      * @return The BCD store.
      */
     public static Store initialize(RegistryKey root) {
-        RegistryKey descKey = root.createSubKey("Description");
+        RegistryKey descKey = root.createSubKey("description");
         descKey.setValue("KeyName", "BCD00000001");
         root.createSubKey("Objects");
         return new Store(root);
@@ -73,13 +74,11 @@ public class Store {
      * Gets an object from the store.
      * 
      * @param id The identity of the object.
-     * @return The requested object, or
-     *         {@code null}
-     *         .
+     * @return The requested object, or {@code null}.
      */
     public BcdObject getObject(UUID id) {
-        if (_store.objectExists(id)) {
-            return new BcdObject(_store, id);
+        if (store.objectExists(id)) {
+            return new BcdObject(store, id);
         }
 
         return null;
@@ -93,8 +92,8 @@ public class Store {
      * @return The object representing the new application.
      */
     public BcdObject createObject(UUID id, int type) {
-        _store.createObject(id, type);
-        return new BcdObject(_store, id);
+        store.createObject(id, type);
+        return new BcdObject(store, id);
     }
 
     /**
@@ -105,8 +104,8 @@ public class Store {
      * @return The object representing the new application.
      */
     public BcdObject createApplication(ApplicationImageType imageType, ApplicationType appType) {
-        UUID obj = _store.createObject(UUID.randomUUID(), BcdObject.makeApplicationType(imageType, appType));
-        return new BcdObject(_store, obj);
+        UUID obj = store.createObject(UUID.randomUUID(), BcdObject.makeApplicationType(imageType, appType));
+        return new BcdObject(store, obj);
     }
 
     /**
@@ -118,8 +117,8 @@ public class Store {
      * @return The object representing the new application.
      */
     public BcdObject createApplication(UUID id, ApplicationImageType imageType, ApplicationType appType) {
-        UUID obj = _store.createObject(id, BcdObject.makeApplicationType(imageType, appType));
-        return new BcdObject(_store, obj);
+        UUID obj = store.createObject(id, BcdObject.makeApplicationType(imageType, appType));
+        return new BcdObject(store, obj);
     }
 
     /**
@@ -129,8 +128,8 @@ public class Store {
      * @return The object representing the new settings.
      */
     public BcdObject createInherit(InheritType inheritType) {
-        UUID obj = _store.createObject(UUID.randomUUID(), BcdObject.makeInheritType(inheritType));
-        return new BcdObject(_store, obj);
+        UUID obj = store.createObject(UUID.randomUUID(), BcdObject.makeInheritType(inheritType));
+        return new BcdObject(store, obj);
     }
 
     /**
@@ -141,8 +140,8 @@ public class Store {
      * @return The object representing the new settings.
      */
     public BcdObject createInherit(UUID id, InheritType inheritType) {
-        UUID obj = _store.createObject(id, BcdObject.makeInheritType(inheritType));
-        return new BcdObject(_store, obj);
+        UUID obj = store.createObject(id, BcdObject.makeInheritType(inheritType));
+        return new BcdObject(store, obj);
     }
 
     /**
@@ -151,8 +150,8 @@ public class Store {
      * @return The object representing the new device.
      */
     public BcdObject createDevice() {
-        UUID obj = _store.createObject(UUID.randomUUID(), 0x30000000);
-        return new BcdObject(_store, obj);
+        UUID obj = store.createObject(UUID.randomUUID(), 0x30000000);
+        return new BcdObject(store, obj);
     }
 
     /**
@@ -161,6 +160,6 @@ public class Store {
      * @param id The identity of the object to remove.
      */
     public void removeObject(UUID id) {
-        _store.deleteObject(id);
+        store.deleteObject(id);
     }
 }

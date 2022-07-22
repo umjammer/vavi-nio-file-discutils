@@ -40,33 +40,34 @@ import dotnet4j.io.Stream;
 
 
 class Connection implements Closeable {
-    private final Authenticator[] _authenticators;
+
+    private final Authenticator[] authenticators;
 
     /**
      * The set of all 'parameters' we've negotiated.
      */
-    private final Map<String, String> _negotiatedParameters;
+    private final Map<String, String> negotiatedParameters;
 
-    private final Stream _stream;
+    private final Stream stream;
 
     public Connection(Session session, TargetAddress address, Authenticator[] authenticators) {
         try {
             this.session = session;
-            _authenticators = authenticators;
+            this.authenticators = authenticators;
 
             Socket client = new Socket(address.getNetworkAddress(), address.getNetworkPort());
             client.setTcpNoDelay(true);
-            _stream = new NetworkStream(client);
+            stream = new NetworkStream(client);
 
             id = session.nextConnectionId();
 
             // Default negotiated values
-            HeaderDigest = Digest.None;
-            DataDigest = Digest.None;
-            MaxInitiatorTransmitDataSegmentLength = 131072;
-            MaxTargetReceiveDataSegmentLength = 8192;
+            headerDigest = Digest.None;
+            dataDigest = Digest.None;
+            maxInitiatorTransmitDataSegmentLength = 131072;
+            maxTargetReceiveDataSegmentLength = 8192;
 
-            _negotiatedParameters = new HashMap<>();
+            negotiatedParameters = new HashMap<>();
             negotiateSecurity();
             negotiateFeatures();
         } catch (IOException e) {
@@ -111,17 +112,17 @@ class Connection implements Closeable {
     public void close() throws IOException {
         LogoutRequest req = new LogoutRequest(this);
         byte[] packet = req.getBytes(LogoutReason.CloseConnection);
-        _stream.write(packet, 0, packet.length);
-        _stream.flush();
+        stream.write(packet, 0, packet.length);
+        stream.flush();
 
         ProtocolDataUnit pdu = readPdu();
         LogoutResponse resp = parseResponse(LogoutResponse.class, pdu);
 
-        if (resp.Response != LogoutResponseCode.ClosedSuccessfully) {
-            throw new InvalidProtocolException("Target indicated failure during logout: " + resp.Response);
+        if (resp.response != LogoutResponseCode.ClosedSuccessfully) {
+            throw new InvalidProtocolException("Target indicated failure during logout: " + resp.response);
         }
 
-        _stream.close();
+        stream.close();
     }
 
     /**
@@ -139,10 +140,10 @@ class Connection implements Closeable {
     public int send(ScsiCommand cmd, byte[] outBuffer, int outBufferOffset, int outBufferCount, byte[] inBuffer, int inBufferOffset, int inBufferMax) {
         CommandRequest req = new CommandRequest(this, cmd.getTargetLun());
 
-        int toSend = Math.min(Math.min(outBufferCount, session._immediateData ? session._firstBurstLength : 0), MaxTargetReceiveDataSegmentLength);
+        int toSend = Math.min(Math.min(outBufferCount, session.immediateData ? session.firstBurstLength : 0), maxTargetReceiveDataSegmentLength);
         byte[] packet = req.getBytes(cmd, outBuffer, outBufferOffset, toSend, true, inBufferMax != 0, outBufferCount != 0, outBufferCount != 0 ? outBufferCount : inBufferMax);
-        _stream.write(packet, 0, packet.length);
-        _stream.flush();
+        stream.write(packet, 0, packet.length);
+        stream.flush();
 
         int numApproved = 0;
         int numSent = toSend;
@@ -151,16 +152,16 @@ class Connection implements Closeable {
             ProtocolDataUnit pdu = readPdu();
 
             ReadyToTransferPacket resp = parseResponse(ReadyToTransferPacket.class, pdu);
-            numApproved = resp.DesiredTransferLength;
-            int targetTransferTag = resp.TargetTransferTag;
+            numApproved = resp.desiredTransferLength;
+            int targetTransferTag = resp.targetTransferTag;
 
             while (numApproved > 0) {
-                toSend = Math.min(Math.min(outBufferCount - numSent, numApproved), MaxTargetReceiveDataSegmentLength);
+                toSend = Math.min(Math.min(outBufferCount - numSent, numApproved), maxTargetReceiveDataSegmentLength);
 
                 DataOutPacket pkt = new DataOutPacket(this, cmd.getTargetLun());
                 packet = pkt.getBytes(outBuffer, outBufferOffset + numSent, toSend, toSend == numApproved, pktsSent++, numSent, targetTransferTag);
-                _stream.write(packet, 0, packet.length);
-                _stream.flush();
+                stream.write(packet, 0, packet.length);
+                stream.flush();
 
                 numApproved -= toSend;
                 numSent += toSend;
@@ -175,30 +176,30 @@ class Connection implements Closeable {
             if (pdu.getOpCode() == OpCode.ScsiResponse) {
                 Response resp = parseResponse(Response.class, pdu);
 
-                if (resp.StatusPresent && resp.Status == ScsiStatus.CheckCondition) {
+                if (resp.statusPresent && resp.status == ScsiStatus.CheckCondition) {
                     short senseLength = EndianUtilities.toUInt16BigEndian(pdu.getContentData(), 0);
                     byte[] senseData = new byte[senseLength];
                     System.arraycopy(pdu.getContentData(), 2, senseData, 0, senseLength);
-                    throw new ScsiCommandException(resp.Status, "Target indicated SCSI failure", senseData);
+                    throw new ScsiCommandException(resp.status, "Target indicated SCSI failure", senseData);
                 }
-                if (resp.StatusPresent && resp.Status != ScsiStatus.Good) {
-                    throw new ScsiCommandException(resp.Status, "Target indicated SCSI failure");
+                if (resp.statusPresent && resp.status != ScsiStatus.Good) {
+                    throw new ScsiCommandException(resp.status, "Target indicated SCSI failure");
                 }
 
-                isFinal = resp.Header.FinalPdu;
+                isFinal = resp.header.finalPdu;
             } else if (pdu.getOpCode() == OpCode.ScsiDataIn) {
                 DataInPacket resp = parseResponse(DataInPacket.class, pdu);
 
-                if (resp.StatusPresent && resp.Status != ScsiStatus.Good) {
-                    throw new ScsiCommandException(resp.Status, "Target indicated SCSI failure");
+                if (resp.statusPresent && resp.status != ScsiStatus.Good) {
+                    throw new ScsiCommandException(resp.status, "Target indicated SCSI failure");
                 }
 
-                if (resp.ReadData != null) {
-                    System.arraycopy(resp.ReadData, 0, inBuffer, inBufferOffset + resp.BufferOffset, resp.ReadData.length);
-                    numRead += resp.ReadData.length;
+                if (resp.readData != null) {
+                    System.arraycopy(resp.readData, 0, inBuffer, inBufferOffset + resp.bufferOffset, resp.readData.length);
+                    numRead += resp.readData.length;
                 }
 
-                isFinal = resp.Header.FinalPdu;
+                isFinal = resp.header.finalPdu;
             }
         }
 
@@ -231,15 +232,15 @@ class Connection implements Closeable {
         TextRequest req = new TextRequest(this);
         byte[] packet = req.getBytes(0, paramBuffer, 0, paramBuffer.length, true);
 
-        _stream.write(packet, 0, packet.length);
-        _stream.flush();
+        stream.write(packet, 0, packet.length);
+        stream.flush();
 
         ProtocolDataUnit pdu = readPdu();
         TextResponse resp = parseResponse(TextResponse.class, pdu);
 
         TextBuffer buffer = new TextBuffer();
-        if (resp.TextData != null) {
-            buffer.readFrom(resp.TextData, 0, resp.TextData.length);
+        if (resp.textData != null) {
+            buffer.readFrom(resp.textData, 0, resp.textData.length);
         }
 
         List<TargetInfo> targets = new ArrayList<>();
@@ -286,12 +287,12 @@ class Connection implements Closeable {
         //
         TextBuffer parameters = new TextBuffer();
 
-        getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, session._sessionType);
+        getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation, session.sessionType);
         session.getParametersToNegotiate(parameters, KeyUsagePhase.SecurityNegotiation);
 
-        StringBuilder authParam = new StringBuilder(_authenticators[0].getIdentifier());
-        for (int i = 1; i < _authenticators.length; ++i) {
-            authParam.append(",").append(_authenticators[i].getIdentifier());
+        StringBuilder authParam = new StringBuilder(authenticators[0].getIdentifier());
+        for (int i = 1; i < authenticators.length; ++i) {
+            authParam.append(",").append(authenticators[i].getIdentifier());
         }
 
         parameters.add(AuthMethodParameter, authParam.toString());
@@ -306,8 +307,8 @@ class Connection implements Closeable {
         byte[] packet = req.getBytes(paramBuffer, 0, paramBuffer.length, true);
 //Debug.println("\n" + StringUtil.getDump(packet));
 
-        _stream.write(packet, 0, packet.length);
-        _stream.flush();
+        stream.write(packet, 0, packet.length);
+        stream.flush();
 
         //
         // Read the response...
@@ -317,27 +318,27 @@ class Connection implements Closeable {
         ProtocolDataUnit pdu = readPdu();
         LoginResponse resp = parseResponse(LoginResponse.class, pdu);
 
-        if (resp.StatusCode != LoginStatusCode.Success) {
-            throw new LoginException("iSCSI Target indicated login failure: " + resp.StatusCode);
+        if (resp.statusCode != LoginStatusCode.Success) {
+            throw new LoginException("iSCSI Target indicated login failure: " + resp.statusCode);
         }
 
-        if (resp.Continue) {
+        if (resp.continue_) {
             MemoryStream ms = new MemoryStream();
-            ms.write(resp.TextData, 0, resp.TextData.length);
+            ms.write(resp.textData, 0, resp.textData.length);
 
-            while (resp.Continue) {
+            while (resp.continue_) {
                 pdu = readPdu();
                 resp = parseResponse(LoginResponse.class, pdu);
-                ms.write(resp.TextData, 0, resp.TextData.length);
+                ms.write(resp.textData, 0, resp.textData.length);
             }
 
             settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
-        } else if (resp.TextData != null) {
-            settings.readFrom(resp.TextData, 0, resp.TextData.length);
+        } else if (resp.textData != null) {
+            settings.readFrom(resp.textData, 0, resp.textData.length);
         }
 
         Authenticator authenticator = null;
-        for (Authenticator value : _authenticators) {
+        for (Authenticator value : authenticators) {
             if (settings.get(AuthMethodParameter).equals(value.getIdentifier())) {
                 authenticator = value;
                 break;
@@ -354,7 +355,7 @@ class Connection implements Closeable {
         parameters = new TextBuffer();
         consumeParameters(settings, parameters);
 
-        while (!resp.Transit) {
+        while (!resp.transit) {
             //
             // Send the request...
             //
@@ -366,8 +367,8 @@ class Connection implements Closeable {
             req = new LoginRequest(this);
             packet = req.getBytes(paramBuffer, 0, paramBuffer.length, true);
 
-            _stream.write(packet, 0, packet.length);
-            _stream.flush();
+            stream.write(packet, 0, packet.length);
+            stream.flush();
 
             //
             // Read the response...
@@ -377,35 +378,35 @@ class Connection implements Closeable {
             pdu = readPdu();
             resp = parseResponse(LoginResponse.class, pdu);
 
-            if (resp.StatusCode != LoginStatusCode.Success) {
-                throw new LoginException("iSCSI Target indicated login failure: " + resp.StatusCode);
+            if (resp.statusCode != LoginStatusCode.Success) {
+                throw new LoginException("iSCSI Target indicated login failure: " + resp.statusCode);
             }
 
-            if (resp.TextData != null && resp.TextData.length != 0) {
-                if (resp.Continue) {
+            if (resp.textData != null && resp.textData.length != 0) {
+                if (resp.continue_) {
                     MemoryStream ms = new MemoryStream();
-                    ms.write(resp.TextData, 0, resp.TextData.length);
+                    ms.write(resp.textData, 0, resp.textData.length);
 
-                    while (resp.Continue) {
+                    while (resp.continue_) {
                         pdu = readPdu();
                         resp = parseResponse(LoginResponse.class, pdu);
-                        ms.write(resp.TextData, 0, resp.TextData.length);
+                        ms.write(resp.textData, 0, resp.textData.length);
                     }
 
                     settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
                 } else {
-                    settings.readFrom(resp.TextData, 0, resp.TextData.length);
+                    settings.readFrom(resp.textData, 0, resp.textData.length);
                 }
 
                 authenticator.setParameters(settings);
             }
         }
 
-        if (resp.NextStage != getNextLoginStage()) {
-            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + getNextLoginStage() + ")");
+        if (resp.nextStage != getNextLoginStage()) {
+            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.nextStage + " (expected: " + getNextLoginStage() + ")");
         }
 
-        currentLoginStage = resp.NextStage;
+        currentLoginStage = resp.nextStage;
     }
 
     private void negotiateFeatures() {
@@ -413,7 +414,7 @@ class Connection implements Closeable {
         // Send the request...
         //
         TextBuffer parameters = new TextBuffer();
-        getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, session._sessionType);
+        getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation, session.sessionType);
         session.getParametersToNegotiate(parameters, KeyUsagePhase.OperationalNegotiation);
 
         byte[] paramBuffer = new byte[parameters.getSize()];
@@ -422,8 +423,8 @@ class Connection implements Closeable {
         LoginRequest req = new LoginRequest(this);
         byte[] packet = req.getBytes(paramBuffer, 0, paramBuffer.length, true);
 
-        _stream.write(packet, 0, packet.length);
-        _stream.flush();
+        stream.write(packet, 0, packet.length);
+        stream.flush();
 
         //
         // Read the response...
@@ -433,37 +434,37 @@ class Connection implements Closeable {
         ProtocolDataUnit pdu = readPdu();
         LoginResponse resp = parseResponse(LoginResponse.class, pdu);
 
-        if (resp.StatusCode != LoginStatusCode.Success) {
-            throw new LoginException("iSCSI Target indicated login failure: " + resp.StatusCode);
+        if (resp.statusCode != LoginStatusCode.Success) {
+            throw new LoginException("iSCSI Target indicated login failure: " + resp.statusCode);
         }
 
-        if (resp.Continue) {
+        if (resp.continue_) {
             MemoryStream ms = new MemoryStream();
-            ms.write(resp.TextData, 0, resp.TextData.length);
+            ms.write(resp.textData, 0, resp.textData.length);
 
-            while (resp.Continue) {
+            while (resp.continue_) {
                 pdu = readPdu();
                 resp = parseResponse(LoginResponse.class, pdu);
-                ms.write(resp.TextData, 0, resp.TextData.length);
+                ms.write(resp.textData, 0, resp.textData.length);
             }
 
             settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
-        } else if (resp.TextData != null) {
-            settings.readFrom(resp.TextData, 0, resp.TextData.length);
+        } else if (resp.textData != null) {
+            settings.readFrom(resp.textData, 0, resp.textData.length);
         }
 
         parameters = new TextBuffer();
         consumeParameters(settings, parameters);
 
-        while (!resp.Transit || parameters.getCount() != 0) {
+        while (!resp.transit || parameters.getCount() != 0) {
             paramBuffer = new byte[parameters.getSize()];
             parameters.writeTo(paramBuffer, 0);
 
             req = new LoginRequest(this);
             packet = req.getBytes(paramBuffer, 0, paramBuffer.length, true);
 
-            _stream.write(packet, 0, packet.length);
-            _stream.flush();
+            stream.write(packet, 0, packet.length);
+            stream.flush();
 
             //
             // Read the response...
@@ -473,47 +474,47 @@ class Connection implements Closeable {
             pdu = readPdu();
             resp = parseResponse(LoginResponse.class, pdu);
 
-            if (resp.StatusCode != LoginStatusCode.Success) {
-                throw new LoginException("iSCSI Target indicated login failure: " + resp.StatusCode);
+            if (resp.statusCode != LoginStatusCode.Success) {
+                throw new LoginException("iSCSI Target indicated login failure: " + resp.statusCode);
             }
 
             parameters = new TextBuffer();
 
-            if (resp.TextData != null) {
-                if (resp.Continue) {
+            if (resp.textData != null) {
+                if (resp.continue_) {
                     MemoryStream ms = new MemoryStream();
-                    ms.write(resp.TextData, 0, resp.TextData.length);
+                    ms.write(resp.textData, 0, resp.textData.length);
 
-                    while (resp.Continue) {
+                    while (resp.continue_) {
                         pdu = readPdu();
                         resp = parseResponse(LoginResponse.class, pdu);
-                        ms.write(resp.TextData, 0, resp.TextData.length);
+                        ms.write(resp.textData, 0, resp.textData.length);
                     }
 
                     settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
                 } else {
-                    settings.readFrom(resp.TextData, 0, resp.TextData.length);
+                    settings.readFrom(resp.textData, 0, resp.textData.length);
                 }
 
                 consumeParameters(settings, parameters);
             }
         }
 
-        if (resp.NextStage != getNextLoginStage()) {
-            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.NextStage + " (expected: " + getNextLoginStage() + ")");
+        if (resp.nextStage != getNextLoginStage()) {
+            throw new LoginException("iSCSI Target wants to transition to a different login stage: " + resp.nextStage + " (expected: " + getNextLoginStage() + ")");
         }
 
-        currentLoginStage = resp.NextStage;
+        currentLoginStage = resp.nextStage;
     }
 
     private ProtocolDataUnit readPdu() {
-        ProtocolDataUnit pdu = ProtocolDataUnit.readFrom(_stream, HeaderDigest != Digest.None, DataDigest != Digest.None);
+        ProtocolDataUnit pdu = ProtocolDataUnit.readFrom(stream, headerDigest != Digest.None, dataDigest != Digest.None);
 
         if (pdu.getOpCode() == OpCode.Reject) {
             RejectPacket pkt = new RejectPacket();
             pkt.parse(pdu);
 
-            throw new IscsiException("Target sent reject packet, reason " + pkt.Reason);
+            throw new IscsiException("Target sent reject packet, reason " + pkt.reason);
         }
 
         return pdu;
@@ -528,7 +529,7 @@ class Connection implements Closeable {
 
                     if (ProtocolKeyAttribute.Util.shouldTransmit(attr, value, propInfo.getType(), phase, sessionType == SessionType.Discovery)) {
                         parameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
-                        _negotiatedParameters.put(attr.name(), "");
+                        negotiatedParameters.put(attr.name(), "");
                     }
                 }
             }
@@ -548,10 +549,10 @@ class Connection implements Closeable {
                         propInfo.set(this, value);
                         inParameters.remove(attr.name());
 
-                        if (attr.type() == KeyType.Negotiated && !_negotiatedParameters.containsKey(attr.name())) {
+                        if (attr.type() == KeyType.Negotiated && !negotiatedParameters.containsKey(attr.name())) {
                             value = propInfo.get(this);
                             outParameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
-                            _negotiatedParameters.put(attr.name(), "");
+                            negotiatedParameters.put(attr.name(), "");
                         }
                     }
                 }
@@ -597,8 +598,8 @@ class Connection implements Closeable {
         }
 
         resp.parse(pdu);
-        if (resp.StatusPresent) {
-            seenStatusSequenceNumber(resp.StatusSequenceNumber);
+        if (resp.statusPresent) {
+            seenStatusSequenceNumber(resp.statusSequenceNumber);
         }
 
         if (!clazz.isInstance(resp)) {
@@ -635,14 +636,14 @@ class Connection implements Closeable {
     private static final String ChapValue = "CHAP";
 
     @ProtocolKeyAttribute(name = "HeaderDigest", defaultValue = "None", phase = KeyUsagePhase.OperationalNegotiation, sender = KeySender.Both, type = KeyType.Negotiated, usedForDiscovery = true)
-    public Digest HeaderDigest;
+    public Digest headerDigest;
 
     @ProtocolKeyAttribute(name = "DataDigest", defaultValue = "None", phase = KeyUsagePhase.OperationalNegotiation, sender = KeySender.Both, type = KeyType.Negotiated, usedForDiscovery = true)
-    public Digest DataDigest;
+    public Digest dataDigest;
 
     @ProtocolKeyAttribute(name = "MaxRecvDataSegmentLength", defaultValue = "8192", phase = KeyUsagePhase.OperationalNegotiation, sender = KeySender.Initiator, type = KeyType.Declarative)
-    int MaxInitiatorTransmitDataSegmentLength;
+    int maxInitiatorTransmitDataSegmentLength;
 
     @ProtocolKeyAttribute(name = "MaxRecvDataSegmentLength", defaultValue = "8192", phase = KeyUsagePhase.OperationalNegotiation, sender = KeySender.Target, type = KeyType.Declarative)
-    int MaxTargetReceiveDataSegmentLength;
+    int maxTargetReceiveDataSegmentLength;
 }

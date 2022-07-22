@@ -28,15 +28,16 @@ import java.util.Map;
 
 
 public class ResourceFork {
-    private final List<Resource> _resources;
+
+    private final List<Resource> resources;
 
     public ResourceFork(List<Resource> resources) {
-        _resources = resources;
+        this.resources = resources;
     }
 
     public List<Resource> getAllResources(String type) {
         List<Resource> results = new ArrayList<>();
-        for (Resource res : _resources) {
+        for (Resource res : resources) {
             if (res.getType().equals(type)) {
                 results.add(res);
             }

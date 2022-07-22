@@ -29,7 +29,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
-    private List<BTreeLeafRecord<TKey>> _records;
+
+    private List<BTreeLeafRecord<TKey>> records;
 
     public BTreeLeafNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         super(clazz, tree, descriptor);
@@ -37,10 +38,10 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
 
     public byte[] findKey(TKey key) {
         int idx = 0;
-        while (idx < _records.size()) {
-            int compResult = key.compareTo(_records.get(idx).getKey());
+        while (idx < records.size()) {
+            int compResult = key.compareTo(records.get(idx).getKey());
             if (compResult == 0) {
-                return _records.get(idx).getData();
+                return records.get(idx).getData();
             }
 
             if (compResult < 0) {
@@ -54,7 +55,7 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
 
     public void visitRange(BTreeVisitor<TKey> visitor) {
         int idx = 0;
-        while (idx < _records.size() && visitor.invoke(_records.get(idx).getKey(), _records.get(idx).getData()) <= 0) {
+        while (idx < records.size() && visitor.invoke(records.get(idx).getKey(), records.get(idx).getData()) <= 0) {
             idx++;
         }
     }
@@ -63,17 +64,17 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
 
-        _records = new ArrayList<>(numRecords);
+        records = new ArrayList<>(numRecords);
 
         int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);
 
         for (int i = 0; i < numRecords; ++i) {
             int end = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - (i + 2) * 2);
-            _records.add(i, new BTreeLeafRecord<>(keyClass, end - start));
-            _records.get(i).readFrom(buffer, offset + start);
+            records.add(i, new BTreeLeafRecord<>(keyClass, end - start));
+            records.get(i).readFrom(buffer, offset + start);
             start = end;
         }
 
-        return (List) _records;
+        return (List) records;
     }
 }

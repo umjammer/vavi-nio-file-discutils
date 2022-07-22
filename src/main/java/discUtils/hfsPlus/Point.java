@@ -26,17 +26,18 @@ import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
 
 public final class Point implements IByteArraySerializable {
-    public short Horizontal;
 
-    public short Vertical;
+    public short horizontal;
+
+    public short vertical;
 
     public int size() {
         return 4;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Vertical = EndianUtilities.toInt16BigEndian(buffer, offset + 0);
-        Horizontal = EndianUtilities.toInt16BigEndian(buffer, offset + 2);
+        vertical = EndianUtilities.toInt16BigEndian(buffer, offset + 0);
+        horizontal = EndianUtilities.toInt16BigEndian(buffer, offset + 2);
 
         return 4;
     }

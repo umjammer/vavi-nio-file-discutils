@@ -32,6 +32,7 @@ import discUtils.streams.util.EndianUtilities;
  * From an inode to a name in a directory
  */
 public class RootRef extends BaseItem {
+
     public RootRef(Key key) {
         super(key);
     }
@@ -39,53 +40,53 @@ public class RootRef extends BaseItem {
     /**
      * ID of directory in [tree id] that contains the subtree
      */
-    private long _directoryId;
+    private long directoryId;
 
     public long getDirectoryId() {
-        return _directoryId;
+        return directoryId;
     }
 
     public void setDirectoryId(long value) {
-        _directoryId = value;
+        directoryId = value;
     }
 
     /**
      * Sequence (index in tree) (even, starting at 2?)
      */
-    private long _sequence;
+    private long sequence;
 
     public long getSequence() {
-        return _sequence;
+        return sequence;
     }
 
     public void setSequence(long value) {
-        _sequence = value;
+        sequence = value;
     }
 
     /**
      * (n)
      */
-    private short _nameLength;
+    private short nameLength;
 
     public int getNameLength() {
-        return _nameLength & 0xffff;
+        return nameLength & 0xffff;
     }
 
     public void setNameLength(short value) {
-        _nameLength = value;
+        nameLength = value;
     }
 
     /**
      * name
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     public int size() {

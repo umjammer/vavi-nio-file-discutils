@@ -30,6 +30,7 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class GptHeader {
+
     public static final String GptSignature = "EFI PART";
 
     public long alternateHeaderLba;

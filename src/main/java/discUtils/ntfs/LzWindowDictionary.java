@@ -31,54 +31,55 @@ import java.util.List;
 
 
 public final class LzWindowDictionary {
+
     /**
      * Index of locations of each possible byte value within the compression
      * window.
      */
-    private final List<Integer>[] _offsetList;
+    private final List<Integer>[] offsetList;
 
     public LzWindowDictionary() {
         initalize();
         // Build the index list, so Lz compression will become significantly faster
-        _offsetList = new List[0x100];
-        for (int i = 0; i < _offsetList.length; i++) {
-            _offsetList[i] = new ArrayList<>();
+        offsetList = new List[0x100];
+        for (int i = 0; i < offsetList.length; i++) {
+            offsetList[i] = new ArrayList<>();
         }
     }
 
-    private int _blockSize;
+    private int blockSize;
 
     private int getBlockSize() {
-        return _blockSize;
+        return blockSize;
     }
 
     private void setBlockSize(int value) {
-        _blockSize = value;
+        blockSize = value;
     }
 
-    private int _maxMatchAmount;
+    private int maxMatchAmount;
 
     public int getMaxMatchAmount() {
-        return _maxMatchAmount;
+        return maxMatchAmount;
     }
 
     public void setMaxMatchAmount(int value) {
-        _maxMatchAmount = value;
+        maxMatchAmount = value;
     }
 
-    private int _minMatchAmount;
+    private int minMatchAmount;
 
     public int getMinMatchAmount() {
-        return _minMatchAmount;
+        return minMatchAmount;
     }
 
     public void setMinMatchAmount(int value) {
-        _minMatchAmount = value;
+        minMatchAmount = value;
     }
 
     public void reset() {
         initalize();
-        for (List<Integer> integers : _offsetList) {
+        for (List<Integer> integers : offsetList) {
             integers.clear();
         }
     }
@@ -91,9 +92,9 @@ public final class LzWindowDictionary {
             return match;
         }
 
-        for (int i = 0; i < _offsetList[decompressedData[decompressedDataOffset + index] & 0xff].size(); i++) {
+        for (int i = 0; i < offsetList[decompressedData[decompressedDataOffset + index] & 0xff].size(); i++) {
             // Can't find matches if there isn't enough data
-            int matchStart = _offsetList[decompressedData[decompressedDataOffset + index] & 0xff].get(i);
+            int matchStart = offsetList[decompressedData[decompressedDataOffset + index] & 0xff].get(i);
             int matchSize = 1;
             if (index - matchStart > getBlockSize()) {
                 break;
@@ -123,7 +124,7 @@ public final class LzWindowDictionary {
     // Return the real match (or the default 0:0 match).
     // Add entries
     public void addEntry(byte[] decompressedData, int decompressedDataOffset, int index) {
-        _offsetList[decompressedData[decompressedDataOffset + index] & 0xff].add(index);
+        offsetList[decompressedData[decompressedDataOffset + index] & 0xff].add(index);
     }
 
     public void addEntryRange(byte[] decompressedData, int decompressedDataOffset, int index, int length) {
@@ -139,8 +140,8 @@ public final class LzWindowDictionary {
     }
 
     private void removeOldEntries(byte index) {
-        while (_offsetList[index & 0xff].size() > 256) {
-            _offsetList[index & 0xff].remove(0);
+        while (offsetList[index & 0xff].size() > 256) {
+            offsetList[index & 0xff].remove(0);
         }
     }
 }

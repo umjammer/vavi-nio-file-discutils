@@ -38,6 +38,7 @@ import dotnet4j.io.Stream;
  * when the destination stream is known not to contain any existing data.
  */
 public final class StreamPump {
+
     /**
      * Initializes a new instance of the StreamPump class.
      */
@@ -63,74 +64,68 @@ public final class StreamPump {
     }
 
     /**
-     * Gets or sets the amount of data to read at a time from
-     * {@code InputStream}
-     * .
+     * Gets or sets the amount of data to read at a time from {@code InputStream}.
      */
-    private int __BufferSize;
+    private int bufferSize;
 
     public int getBufferSize() {
-        return __BufferSize;
+        return bufferSize;
     }
 
     public void setBufferSize(int value) {
-        __BufferSize = value;
+        bufferSize = value;
     }
 
     /**
-     * Gets the number of bytes read from
-     * {@code InputStream}
-     * .
+     * Gets the number of bytes read from {@code InputStream}.
      */
-    private long __BytesRead;
+    private long bytesRead;
 
     public long getBytesRead() {
-        return __BytesRead;
+        return bytesRead;
     }
 
     public void setBytesRead(long value) {
-        __BytesRead = value;
+        bytesRead = value;
     }
 
     /**
-     * Gets the number of bytes written to
-     * {@code OutputStream}
-     * .
+     * Gets the number of bytes written to {@code OutputStream}.
      */
-    private long __BytesWritten;
+    private long bytesWritten;
 
     public long getBytesWritten() {
-        return __BytesWritten;
+        return bytesWritten;
     }
 
     public void setBytesWritten(long value) {
-        __BytesWritten = value;
+        bytesWritten = value;
     }
 
     /**
      * Gets or sets the stream that will be read from.
      */
-    private Stream __InputStream;
+    private Stream inputStream;
 
     public Stream getInputStream() {
-        return __InputStream;
+        return inputStream;
     }
 
     public void setInputStream(Stream value) {
-        __InputStream = value;
+        inputStream = value;
     }
 
     /**
      * Gets or sets the stream that will be written to.
      */
-    private Stream __OutputStream;
+    private Stream outputStream;
 
     public Stream getOutputStream() {
-        return __OutputStream;
+        return outputStream;
     }
 
     public void setOutputStream(Stream value) {
-        __OutputStream = value;
+        outputStream = value;
     }
 
     /**
@@ -139,43 +134,39 @@ public final class StreamPump {
      * A chunk is transfered if any byte in the chunk is valid, otherwise it is
      * not.
      * This value should normally be set to reflect the underlying storage
-     * granularity
-     * of
-     * {@code OutputStream}
-     * .
+     * granularity of {@code OutputStream}.
      */
-    private int __SparseChunkSize;
+    private int sparseChunkSize;
 
     public int getSparseChunkSize() {
-        return __SparseChunkSize;
+        return sparseChunkSize;
     }
 
     public void setSparseChunkSize(int value) {
-        __SparseChunkSize = value;
+        sparseChunkSize = value;
     }
 
     /**
      * Gets or sets a value indicating whether to enable the sparse copy
      * behaviour (default true).
      */
-    private boolean __SparseCopy;
+    private boolean sparseCopy;
 
     public boolean getSparseCopy() {
-        return __SparseCopy;
+        return sparseCopy;
     }
 
     public void setSparseCopy(boolean value) {
-        __SparseCopy = value;
+        sparseCopy = value;
     }
 
     /**
      * Event raised periodically through the pump operation.
      *
      * This event is signalled synchronously, so to avoid slowing the pumping
-     * activity
-     * implementations should return quickly.
+     * activity implementations should return quickly.
      */
-    public BiConsumer<Object, PumpProgressEventArgs> ProgressEvent;
+    public BiConsumer<Object, PumpProgressEventArgs> progressEvent;
 
     /**
      * Performs the pump activity, blocking until complete.
@@ -209,7 +200,6 @@ public final class StreamPump {
             if (buffer[offset + j] != 0) {
                 return false;
             }
-
         }
         return true;
     }
@@ -262,7 +252,6 @@ public final class StreamPump {
 
                         copyBufferOffset = i + getSparseChunkSize();
                     }
-
                 }
                 if (copyBufferOffset < numRead) {
                     getOutputStream().setPosition(extent.getStart() + extentOffset + copyBufferOffset);
@@ -286,20 +275,18 @@ public final class StreamPump {
                 getOutputStream().setPosition(inStream.getLength() - 1);
                 getOutputStream().writeByte((byte) b);
             }
-
         }
-
     }
 
     private void raiseProgressEvent() {
         // Raise the event by using the () operator.
-        if (ProgressEvent != null) {
+        if (progressEvent != null) {
             PumpProgressEventArgs args = new PumpProgressEventArgs();
             args.setBytesRead(getBytesRead());
             args.setBytesWritten(getBytesWritten());
             args.setSourcePosition(getInputStream().getPosition());
             args.setDestinationPosition(getOutputStream().getPosition());
-            ProgressEvent.accept(this, args);
+            progressEvent.accept(this, args);
         }
     }
 }

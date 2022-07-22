@@ -31,18 +31,19 @@ import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
 
 public final class DiscFileLocator extends FileLocator {
-    private final String _basePath;
 
-    private final DiscFileSystem _fileSystem;
+    private final String basePath;
+
+    private final DiscFileSystem fileSystem;
 
     public DiscFileLocator(DiscFileSystem fileSystem, String basePath) {
-        _fileSystem = fileSystem;
-        _basePath = basePath;
+        this.fileSystem = fileSystem;
+        this.basePath = basePath;
     }
 
     public boolean exists(String fileName) {
         try {
-            return _fileSystem.fileExists(Utilities.combinePaths(_basePath, fileName));
+            return fileSystem.fileExists(Utilities.combinePaths(basePath, fileName));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -50,18 +51,18 @@ public final class DiscFileLocator extends FileLocator {
 
     protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
         try {
-            return _fileSystem.openFile(Utilities.combinePaths(_basePath, fileName), mode, access);
+            return fileSystem.openFile(Utilities.combinePaths(basePath, fileName), mode, access);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
     }
 
     public FileLocator getRelativeLocator(String path) {
-        return new DiscFileLocator(_fileSystem, Utilities.combinePaths(_basePath, path));
+        return new DiscFileLocator(fileSystem, Utilities.combinePaths(basePath, path));
     }
 
     public String getFullPath(String path) {
-        return Utilities.combinePaths(_basePath, path);
+        return Utilities.combinePaths(basePath, path);
     }
 
     public String getDirectoryFromPath(String path) {
@@ -74,7 +75,7 @@ public final class DiscFileLocator extends FileLocator {
 
     public long getLastWriteTimeUtc(String path) {
         try {
-            return _fileSystem.getLastWriteTimeUtc(Utilities.combinePaths(_basePath, path));
+            return fileSystem.getLastWriteTimeUtc(Utilities.combinePaths(basePath, path));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -86,10 +87,10 @@ public final class DiscFileLocator extends FileLocator {
         }
 
         // common root if the same file system instance.
-        return ((DiscFileLocator) other)._fileSystem == _fileSystem; // TODO object compare
+        return ((DiscFileLocator) other).fileSystem == fileSystem; // TODO object compare
     }
 
     public String resolveRelativePath(String path) {
-        return Utilities.resolveRelativePath(_basePath, path);
+        return Utilities.resolveRelativePath(basePath, path);
     }
 }

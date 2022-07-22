@@ -26,34 +26,35 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BlockDirectoryDataUnused extends BlockDirectoryData {
-    private short _freetag;
+
+    private short freetag;
 
     public short getFreetag() {
-        return _freetag;
+        return freetag;
     }
 
     public void setFreetag(short value) {
-        _freetag = value;
+        freetag = value;
     }
 
-    private short _length;
+    private short length;
 
     public int getLength() {
-        return _length & 0xffff;
+        return length & 0xffff;
     }
 
     public void setLength(short value) {
-        _length = value;
+        length = value;
     }
 
-    private short _tag;
+    private short tag;
 
     public short getTag() {
-        return _tag;
+        return tag;
     }
 
     public void setTag(short value) {
-        _tag = value;
+        tag = value;
     }
 
     public int size() {
@@ -61,9 +62,9 @@ public class BlockDirectoryDataUnused extends BlockDirectoryData {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _freetag = EndianUtilities.toUInt16BigEndian(buffer, offset);
-        _length = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
-        _tag = EndianUtilities.toUInt16BigEndian(buffer, offset + getLength() - 0x2);
+        freetag = EndianUtilities.toUInt16BigEndian(buffer, offset);
+        length = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
+        tag = EndianUtilities.toUInt16BigEndian(buffer, offset + getLength() - 0x2);
         return size();
     }
 }

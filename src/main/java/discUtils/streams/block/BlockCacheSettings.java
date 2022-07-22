@@ -29,14 +29,15 @@ import discUtils.streams.util.Sizes;
  * Settings controlling BlockCache instances.
  */
 public final class BlockCacheSettings {
+
     /**
      * Initializes a new instance of the BlockCacheSettings class.
      */
     public BlockCacheSettings() {
-        _blockSize = (int) (4 * Sizes.OneKiB);
-        _readCacheSize = 4 * Sizes.OneMiB;
-        _largeReadSize = 64 * Sizes.OneKiB;
-        _optimumReadSize = (int) (64 * Sizes.OneKiB);
+        blockSize = (int) (4 * Sizes.OneKiB);
+        readCacheSize = 4 * Sizes.OneMiB;
+        largeReadSize = 64 * Sizes.OneKiB;
+        optimumReadSize = (int) (64 * Sizes.OneKiB);
     }
 
     /**
@@ -45,23 +46,23 @@ public final class BlockCacheSettings {
      * @param settings The cache settings.
      */
     public BlockCacheSettings(BlockCacheSettings settings) {
-        _blockSize = settings._blockSize;
-        _readCacheSize = settings._readCacheSize;
-        _largeReadSize = settings._largeReadSize;
-        _optimumReadSize = settings._optimumReadSize;
+        blockSize = settings.blockSize;
+        readCacheSize = settings.readCacheSize;
+        largeReadSize = settings.largeReadSize;
+        optimumReadSize = settings.optimumReadSize;
     }
 
     /**
      * Gets or sets the size (in bytes) of each cached block.
      */
-    private int _blockSize;
+    private int blockSize;
 
     public int getBlockSize() {
-        return _blockSize;
+        return blockSize;
     }
 
     public void setBlockSize(int value) {
-        _blockSize = value;
+        blockSize = value;
     }
 
     /**
@@ -70,40 +71,40 @@ public final class BlockCacheSettings {
      * be repeated. This setting controls what is considered 'large'.
      * Any read that is more than this many bytes will not be cached.
      */
-    private long _largeReadSize;
+    private long largeReadSize;
 
     public long getLargeReadSize() {
-        return _largeReadSize;
+        return largeReadSize;
     }
 
     public void setLargeReadSize(long value) {
-        _largeReadSize = value;
+        largeReadSize = value;
     }
 
     /**
      * Gets or sets the optimum size of a read to the wrapped stream.
      * This value must be a multiple of BlockSize.
      */
-    private int _optimumReadSize;
+    private int optimumReadSize;
 
     public int getOptimumReadSize() {
-        return _optimumReadSize;
+        return optimumReadSize;
     }
 
     public void setOptimumReadSize(int value) {
-        _optimumReadSize = value;
+        optimumReadSize = value;
     }
 
     /**
      * Gets or sets the size (in bytes) of the read cache.
      */
-    private long _readCacheSize;
+    private long readCacheSize;
 
     public long getReadCacheSize() {
-        return _readCacheSize;
+        return readCacheSize;
     }
 
     public void setReadCacheSize(long value) {
-        _readCacheSize = value;
+        readCacheSize = value;
     }
 }

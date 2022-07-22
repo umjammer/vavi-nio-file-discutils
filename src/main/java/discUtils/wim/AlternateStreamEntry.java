@@ -28,11 +28,12 @@ import discUtils.streams.readerWriter.DataReader;
 
 
 public class AlternateStreamEntry {
-    public byte[] Hash;
 
-    public long Length;
+    public byte[] hash;
 
-    public String Name;
+    public long length;
+
+    public String name;
 
     public static AlternateStreamEntry readFrom(DataReader reader) {
         long startPos = reader.getPosition();
@@ -43,13 +44,13 @@ public class AlternateStreamEntry {
 
         reader.skip(8);
         AlternateStreamEntry result = new AlternateStreamEntry();
-        result.Length = length;
-        result.Hash = reader.readBytes(20);
+        result.length = length;
+        result.hash = reader.readBytes(20);
         int nameLength = reader.readUInt16();
         if (nameLength > 0) {
-            result.Name = new String(reader.readBytes(nameLength + 2), StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
+            result.name = new String(reader.readBytes(nameLength + 2), StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
         } else {
-            result.Name = "";
+            result.name = "";
         }
         if (startPos + length > reader.getPosition()) {
             int toRead = (int) (startPos + length - reader.getPosition());

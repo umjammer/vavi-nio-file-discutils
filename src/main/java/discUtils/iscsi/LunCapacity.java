@@ -26,6 +26,7 @@ package discUtils.iscsi;
  * Class representing the capacity of a LUN.
  */
 public class LunCapacity {
+
     /**
      * Initializes a new instance of the LunCapacity class.
      *
@@ -33,26 +34,26 @@ public class LunCapacity {
      * @param blockSize The size of each block.
      */
     public LunCapacity(long logicalBlockCount, int blockSize) {
-        __LogicalBlockCount = logicalBlockCount;
-        __BlockSize = blockSize;
+        this.logicalBlockCount = logicalBlockCount;
+        this.blockSize = blockSize;
     }
 
     /**
      * Gets the size of each logical block.
      */
-    private int __BlockSize;
+    private int blockSize;
 
     public int getBlockSize() {
-        return __BlockSize;
+        return blockSize;
     }
 
     /**
      * Gets the number of logical blocks in the LUN.
      */
-    private long __LogicalBlockCount;
+    private long logicalBlockCount;
 
     public long getLogicalBlockCount() {
-        return __LogicalBlockCount;
+        return logicalBlockCount;
     }
 
     /**
@@ -61,6 +62,6 @@ public class LunCapacity {
      * @return A string containing an integer.
      */
     public String toString() {
-        return String.valueOf(getBlockSize() * getLogicalBlockCount());
+        return String.valueOf(blockSize * logicalBlockCount);
     }
 }

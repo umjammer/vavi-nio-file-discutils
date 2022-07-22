@@ -34,12 +34,13 @@ import java.util.List;
  * instance and configure it, before communicating with the Target.
  */
 public class Initiator {
+
     @SuppressWarnings("unused")
     private static final int DefaultPort = 3260;
 
-    private String _password;
+    private String password;
 
-    private String _userName;
+    private String userName;
 
     /**
      * Sets credentials used to authenticate this Initiator to the Target.
@@ -48,8 +49,8 @@ public class Initiator {
      * @param password The password, should be at least 12 characters.
      */
     public void setCredentials(String userName, String password) {
-        _userName = userName;
-        _password = password;
+        this.userName = userName;
+        this.password = password;
     }
 
     /**
@@ -85,7 +86,7 @@ public class Initiator {
      * @return The session representing the target connection.
      */
     public Session connectTo(String target, List<TargetAddress> addresses) {
-        return new Session(SessionType.Normal, target, _userName, _password, addresses);
+        return new Session(SessionType.Normal, target, userName, password, addresses);
     }
 
     /**
@@ -107,7 +108,7 @@ public class Initiator {
      *         this method to discover the available Targets.
      */
     public TargetInfo[] getTargets(TargetAddress address) {
-        try (Session session = new Session(SessionType.Discovery, null, _userName, _password, Collections.singletonList(address))) {
+        try (Session session = new Session(SessionType.Discovery, null, userName, password, Collections.singletonList(address))) {
             return session.enumerateTargets();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

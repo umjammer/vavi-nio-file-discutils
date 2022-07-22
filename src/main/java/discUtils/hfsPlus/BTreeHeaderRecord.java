@@ -26,57 +26,58 @@ import discUtils.streams.util.EndianUtilities;
 
 
 class BTreeHeaderRecord extends BTreeNodeRecord {
-    public int Attributes;
 
-    public int ClumpSize;
+    public int attributes;
 
-    public int FirstLeafNode;
+    public int clumpSize;
 
-    public int FreeNodes;
+    public int firstLeafNode;
 
-    public byte KeyCompareType;
+    public int freeNodes;
 
-    public int LastLeafNode;
+    public byte keyCompareType;
 
-    public short MaxKeyLength;
+    public int lastLeafNode;
 
-    private short NodeSize;
+    public short maxKeyLength;
+
+    private short nodeSize;
 
     public int getNodeSize() {
-        return NodeSize & 0xffff;
+        return nodeSize & 0xffff;
     }
 
-    public int NumLeafRecords;
+    public int numLeafRecords;
 
-    public short Res1;
+    public short res1;
 
-    public int RootNode;
+    public int rootNode;
 
-    public int TotalNodes;
+    public int totalNodes;
 
-    public short TreeDepth;
+    public short treeDepth;
 
-    public byte TreeType;
+    public byte treeType;
 
     public int size() {
         return 104;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        TreeDepth = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        RootNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 2);
-        NumLeafRecords = EndianUtilities.toUInt32BigEndian(buffer, offset + 6);
-        FirstLeafNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
-        LastLeafNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 14);
-        NodeSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 18);
-        MaxKeyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 20);
-        TotalNodes = EndianUtilities.toUInt16BigEndian(buffer, offset + 22);
-        FreeNodes = EndianUtilities.toUInt32BigEndian(buffer, offset + 24);
-        Res1 = EndianUtilities.toUInt16BigEndian(buffer, offset + 28);
-        ClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 30);
-        TreeType = buffer[offset + 34];
-        KeyCompareType = buffer[offset + 35];
-        Attributes = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+        treeDepth = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        rootNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 2);
+        numLeafRecords = EndianUtilities.toUInt32BigEndian(buffer, offset + 6);
+        firstLeafNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
+        lastLeafNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 14);
+        nodeSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 18);
+        maxKeyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 20);
+        totalNodes = EndianUtilities.toUInt16BigEndian(buffer, offset + 22);
+        freeNodes = EndianUtilities.toUInt32BigEndian(buffer, offset + 24);
+        res1 = EndianUtilities.toUInt16BigEndian(buffer, offset + 28);
+        clumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 30);
+        treeType = buffer[offset + 34];
+        keyCompareType = buffer[offset + 35];
+        attributes = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
 
         return 104;
     }

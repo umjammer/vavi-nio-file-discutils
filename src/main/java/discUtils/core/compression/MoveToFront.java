@@ -23,36 +23,37 @@
 package discUtils.core.compression;
 
 public class MoveToFront {
-    private final byte[] _buffer;
+
+    private final byte[] buffer;
 
     public MoveToFront() {
         this(256, false);
     }
 
     public MoveToFront(int size, boolean autoInit) {
-        _buffer = new byte[size];
+        buffer = new byte[size];
 
         if (autoInit) {
             for (byte i = 0; i < size; ++i) {
-                _buffer[i] = i;
+                buffer[i] = i;
             }
         }
     }
 
     public byte getHead() {
-        return _buffer[0];
+        return buffer[0];
     }
 
     public void set(int pos, byte val) {
-        _buffer[pos] = val;
+        buffer[pos] = val;
     }
 
     public byte getAndMove(int pos) {
-        byte val = _buffer[pos];
+        byte val = buffer[pos];
 
-        System.arraycopy(_buffer, 0, _buffer, 1, pos);
+        System.arraycopy(buffer, 0, buffer, 1, pos);
 
-        _buffer[0] = val;
+        buffer[0] = val;
         return val;
     }
 }

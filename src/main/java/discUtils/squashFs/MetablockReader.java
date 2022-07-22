@@ -26,17 +26,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class MetablockReader {
-    private final Context _context;
 
-    private long _currentBlockStart;
+    private final Context context;
 
-    private int _currentOffset;
+    private long currentBlockStart;
 
-    private final long _start;
+    private int currentOffset;
+
+    private final long start;
 
     public MetablockReader(Context context, long start) {
-        _context = context;
-        _start = start;
+        this.context = context;
+        this.start = start;
     }
 
     public void setPosition(MetadataRef position) {
@@ -48,112 +49,112 @@ final class MetablockReader {
             throw new IndexOutOfBoundsException("Offset must be positive and less than block size");
         }
 
-        _currentBlockStart = blockStart;
-        _currentOffset = blockOffset;
+        currentBlockStart = blockStart;
+        currentOffset = blockOffset;
     }
 
     public long distanceFrom(long blockStart, int blockOffset) {
-        return (_currentBlockStart - blockStart) * VfsSquashFileSystemReader.MetadataBufferSize +
-               (_currentOffset - blockOffset);
+        return (currentBlockStart - blockStart) * VfsSquashFileSystemReader.MetadataBufferSize +
+               (currentOffset - blockOffset);
     }
 
     public void skip(int count) {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
 
         int totalSkipped = 0;
         while (totalSkipped < count) {
-            if (_currentOffset >= block.getAvailable()) {
+            if (currentOffset >= block.getAvailable()) {
                 int oldAvailable = block.getAvailable();
-                block = _context.getReadMetaBlock().invoke(block.getNextBlockStart());
-                _currentBlockStart = block.getPosition() - _start;
-                _currentOffset -= oldAvailable;
+                block = context.getReadMetaBlock().invoke(block.getNextBlockStart());
+                currentBlockStart = block.getPosition() - start;
+                currentOffset -= oldAvailable;
             }
 
-            int toSkip = Math.min(count - totalSkipped, block.getAvailable() - _currentOffset);
+            int toSkip = Math.min(count - totalSkipped, block.getAvailable() - currentOffset);
             totalSkipped += toSkip;
-            _currentOffset += toSkip;
+            currentOffset += toSkip;
         }
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
 
         int totalRead = 0;
         while (totalRead < count) {
-            if (_currentOffset >= block.getAvailable()) {
+            if (currentOffset >= block.getAvailable()) {
                 int oldAvailable = block.getAvailable();
-                block = _context.getReadMetaBlock().invoke(block.getNextBlockStart());
-                _currentBlockStart = block.getPosition() - _start;
-                _currentOffset -= oldAvailable;
+                block = context.getReadMetaBlock().invoke(block.getNextBlockStart());
+                currentBlockStart = block.getPosition() - start;
+                currentOffset -= oldAvailable;
             }
 
-            int toRead = Math.min(count - totalRead, block.getAvailable() - _currentOffset);
-//Debug.println(_currentOffset + ", " + offset + ", " + totalRead + ", " + toRead + ", " + count + ", " + block.getAvailable());
-            System.arraycopy(block.getData(), _currentOffset, buffer, offset + totalRead, toRead);
+            int toRead = Math.min(count - totalRead, block.getAvailable() - currentOffset);
+//Debug.println(currentOffset + ", " + offset + ", " + totalRead + ", " + toRead + ", " + count + ", " + block.getAvailable());
+            System.arraycopy(block.getData(), currentOffset, buffer, offset + totalRead, toRead);
             totalRead += toRead;
-            _currentOffset += toRead;
+            currentOffset += toRead;
         }
 
         return totalRead;
     }
 
     public int readUInt() {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
-        if (block.getAvailable() - _currentOffset < 4) {
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
+        if (block.getAvailable() - currentOffset < 4) {
             byte[] buffer = new byte[4];
             read(buffer, 0, 4);
             return EndianUtilities.toUInt32LittleEndian(buffer, 0);
         }
-        int result = EndianUtilities.toUInt32LittleEndian(block.getData(), _currentOffset);
-        _currentOffset += 4;
+        int result = EndianUtilities.toUInt32LittleEndian(block.getData(), currentOffset);
+        currentOffset += 4;
         return result;
     }
 
     public int readInt() {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
-        if (block.getAvailable() - _currentOffset < 4) {
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
+        if (block.getAvailable() - currentOffset < 4) {
             byte[] buffer = new byte[4];
             read(buffer, 0, 4);
             return EndianUtilities.toInt32LittleEndian(buffer, 0);
         }
-        int result = EndianUtilities.toInt32LittleEndian(block.getData(), _currentOffset);
-        _currentOffset += 4;
+        int result = EndianUtilities.toInt32LittleEndian(block.getData(), currentOffset);
+        currentOffset += 4;
         return result;
     }
 
     public short readUShort() {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
-        if (block.getAvailable() - _currentOffset < 2) {
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
+        if (block.getAvailable() - currentOffset < 2) {
             byte[] buffer = new byte[2];
             read(buffer, 0, 2);
             return EndianUtilities.toUInt16LittleEndian(buffer, 0);
         }
-        short result = EndianUtilities.toUInt16LittleEndian(block.getData(), _currentOffset);
-        _currentOffset += 2;
+        short result = EndianUtilities.toUInt16LittleEndian(block.getData(), currentOffset);
+        currentOffset += 2;
         return result;
     }
 
     public short readShort() {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
-        if (block.getAvailable() - _currentOffset < 2) {
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
+        if (block.getAvailable() - currentOffset < 2) {
             byte[] buffer = new byte[2];
             read(buffer, 0, 2);
             return EndianUtilities.toInt16LittleEndian(buffer, 0);
         }
-        short result = EndianUtilities.toInt16LittleEndian(block.getData(), _currentOffset);
-        _currentOffset += 2;
+        short result = EndianUtilities.toInt16LittleEndian(block.getData(), currentOffset);
+        currentOffset += 2;
         return result;
     }
 
     public String readString(int len) {
-        Metablock block = _context.getReadMetaBlock().invoke(_start + _currentBlockStart);
-        if (block.getAvailable() - _currentOffset < len) {
+        Metablock block = context.getReadMetaBlock().invoke(start + currentBlockStart);
+        if (block.getAvailable() - currentOffset < len) {
             byte[] buffer = new byte[len];
             read(buffer, 0, len);
             return EndianUtilities.bytesToString(buffer, 0, len);
         }
-        String result = EndianUtilities.bytesToString(block.getData(), _currentOffset, len);
-        _currentOffset += len;
+        String result = EndianUtilities.bytesToString(block.getData(), currentOffset, len);
+        currentOffset += len;
         return result;
     }
 }

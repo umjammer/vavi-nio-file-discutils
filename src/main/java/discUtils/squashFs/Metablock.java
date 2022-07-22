@@ -26,14 +26,14 @@ import discUtils.streams.block.Block;
 
 
 public final class Metablock extends Block {
-    private long __NextBlockStart;
+
+    private long nextBlockStart;
 
     public long getNextBlockStart() {
-        return __NextBlockStart;
+        return nextBlockStart;
     }
 
     public void setNextBlockStart(long value) {
-        __NextBlockStart = value;
+        nextBlockStart = value;
     }
-
 }

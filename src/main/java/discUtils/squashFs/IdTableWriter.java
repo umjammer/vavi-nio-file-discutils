@@ -29,17 +29,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class IdTableWriter {
-    private final BuilderContext _context;
 
-    private final List<Integer> _ids;
+    private final BuilderContext context;
+
+    private final List<Integer> ids;
 
     public IdTableWriter(BuilderContext context) {
-        _context = context;
-        _ids = new ArrayList<>();
+        this.context = context;
+        ids = new ArrayList<>();
     }
 
     public int getIdCount() {
-        return _ids.size();
+        return ids.size();
     }
 
     /**
@@ -49,37 +50,37 @@ public final class IdTableWriter {
      * @return The key of the id.
      */
     public short allocateId(int id) {
-        for (int i = 0; i < _ids.size(); ++i) {
-            if (_ids.get(i) == id) {
+        for (int i = 0; i < ids.size(); ++i) {
+            if (ids.get(i) == id) {
                 return (short) i;
             }
         }
-        _ids.add(id);
-        return (short) (_ids.size() - 1);
+        ids.add(id);
+        return (short) (ids.size() - 1);
     }
 
     public long persist() {
-        if (_ids.size() <= 0) {
+        if (ids.size() <= 0) {
             return -1;
         }
 
-        if (_ids.size() * 4 > _context.getDataBlockSize()) {
+        if (ids.size() * 4 > context.getDataBlockSize()) {
             throw new UnsupportedOperationException("Large numbers of user / group id's");
         }
 
-        for (int i = 0; i < _ids.size(); ++i) {
-            EndianUtilities.writeBytesLittleEndian(_ids.get(i), _context.getIoBuffer(), i * 4);
+        for (int i = 0; i < ids.size(); ++i) {
+            EndianUtilities.writeBytesLittleEndian(ids.get(i), context.getIoBuffer(), i * 4);
         }
         // Persist the actual Id's
-        long blockPos = _context.getRawStream().getPosition();
+        long blockPos = context.getRawStream().getPosition();
         MetablockWriter writer = new MetablockWriter();
-        writer.write(_context.getIoBuffer(), 0, _ids.size() * 4);
-        writer.persist(_context.getRawStream());
+        writer.write(context.getIoBuffer(), 0, ids.size() * 4);
+        writer.persist(context.getRawStream());
         // Persist the table that references the block containing the id's
-        long tablePos = _context.getRawStream().getPosition();
+        long tablePos = context.getRawStream().getPosition();
         byte[] tableBuffer = new byte[8];
         EndianUtilities.writeBytesLittleEndian(blockPos, tableBuffer, 0);
-        _context.getRawStream().write(tableBuffer, 0, 8);
+        context.getRawStream().write(tableBuffer, 0, 8);
         return tablePos;
     }
 }

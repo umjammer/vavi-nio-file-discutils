@@ -23,11 +23,11 @@
 package discUtils.streams.builder;
 
 public class BuilderBytesExtent extends BuilderExtent {
-    protected byte[] _data;
+    protected byte[] data;
 
     public BuilderBytesExtent(long start, byte[] data) {
         super(start, data.length);
-        _data = data;
+        this.data = data;
     }
 
     protected BuilderBytesExtent(long start, long length) {
@@ -41,9 +41,9 @@ public class BuilderBytesExtent extends BuilderExtent {
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        int start = (int) Math.min(diskOffset - getStart(), _data.length);
-        int numRead = Math.min(count, _data.length - start);
-        System.arraycopy(_data, start, block, offset, numRead);
+        int start = (int) Math.min(diskOffset - getStart(), data.length);
+        int numRead = Math.min(count, data.length - start);
+        System.arraycopy(data, start, block, offset, numRead);
         return numRead;
     }
 

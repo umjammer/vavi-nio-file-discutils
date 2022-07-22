@@ -26,6 +26,7 @@ package discUtils.core;
  * Represents a Reparse Point, which can be associated with a file or directory.
  */
 public final class ReparsePoint {
+
     /**
      * Initializes a new instance of the ReparsePoint class.
      *
@@ -40,27 +41,26 @@ public final class ReparsePoint {
     /**
      * Gets or sets the reparse point's content.
      */
-    private byte[] __Content;
+    private byte[] content;
 
     public byte[] getContent() {
-        return __Content;
+        return content;
     }
 
     public void setContent(byte[] value) {
-        __Content = value;
+        content = value;
     }
 
     /**
      * Gets or sets the defined reparse point tag.
      */
-    private int __Tag;
+    private int tag;
 
     public int getTag() {
-        return __Tag;
+        return tag;
     }
 
     public void setTag(int value) {
-        __Tag = value;
+        tag = value;
     }
-
 }

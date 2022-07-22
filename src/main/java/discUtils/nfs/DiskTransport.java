@@ -37,11 +37,12 @@ import dotnet4j.io.FileAccess;
 
 @VirtualDiskTransportAttribute(scheme = "nfs")
 public final class DiskTransport extends VirtualDiskTransport {
-    private String _extraInfo;
 
-    private NfsFileSystem _fileSystem;
+    private String extraInfo;
 
-    private String _path;
+    private NfsFileSystem fileSystem;
+
+    private String path;
 
     public boolean isRawDisk() {
         return false;
@@ -72,9 +73,9 @@ public final class DiskTransport extends VirtualDiskTransport {
                     .format("Unable to find an NFS export providing access to '%s'", fsPath));
         }
 
-        _fileSystem = new NfsFileSystem(uri.getHost(), bestRoot);
-        _path = fsPath.substring(bestRoot.length()).replace('/', File.separatorChar);
-        _extraInfo = uri.getFragment().replaceFirst("^#*", "");
+        fileSystem = new NfsFileSystem(uri.getHost(), bestRoot);
+        path = fsPath.substring(bestRoot.length()).replace('/', File.separatorChar);
+        extraInfo = uri.getFragment().replaceFirst("^#*", "");
     }
 
     public VirtualDisk openDisk(FileAccess access) {
@@ -82,21 +83,21 @@ public final class DiskTransport extends VirtualDiskTransport {
     }
 
     public FileLocator getFileLocator() {
-        return new DiscFileLocator(_fileSystem, Utilities.getDirectoryFromPath(_path));
+        return new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
     }
 
     public String getFileName() {
-        return Utilities.getFileFromPath(_path);
+        return Utilities.getFileFromPath(path);
     }
 
     public String getExtraInfo() {
-        return _extraInfo;
+        return extraInfo;
     }
 
     public void close() throws IOException {
-        if (_fileSystem != null) {
-            _fileSystem.close();
-            _fileSystem = null;
+        if (fileSystem != null) {
+            fileSystem.close();
+            fileSystem = null;
         }
     }
 }

@@ -38,15 +38,15 @@ import dotnet4j.io.Stream;
  * builder to create UNIX Tar archive files.
  */
 public final class TarFileBuilder extends StreamBuilder {
-    private final List<UnixBuildFileRecord> _files;
+
+    private final List<UnixBuildFileRecord> files;
 
     /**
-     * Initializes a new instance of the
-     * {@link #TarFileBuilder}
+     * Initializes a new instance of the {@link #TarFileBuilder}
      * class.
      */
     public TarFileBuilder() {
-        _files = new ArrayList<>();
+        files = new ArrayList<>();
     }
 
     /**
@@ -56,7 +56,7 @@ public final class TarFileBuilder extends StreamBuilder {
      * @param buffer The file data.
      */
     public void addFile(String name, byte[] buffer) {
-        _files.add(new UnixBuildFileRecord(name, buffer));
+        files.add(new UnixBuildFileRecord(name, buffer));
     }
 
     /**
@@ -75,7 +75,7 @@ public final class TarFileBuilder extends StreamBuilder {
                         int ownerId,
                         int groupId,
                         long modificationTime) {
-        _files.add(new UnixBuildFileRecord(name, buffer, fileMode, ownerId, groupId, modificationTime));
+        files.add(new UnixBuildFileRecord(name, buffer, fileMode, ownerId, groupId, modificationTime));
     }
 
     /**
@@ -85,7 +85,7 @@ public final class TarFileBuilder extends StreamBuilder {
      * @param stream The file data.
      */
     public void addFile(String name, Stream stream) {
-        _files.add(new UnixBuildFileRecord(name, stream));
+        files.add(new UnixBuildFileRecord(name, stream));
     }
 
     /**
@@ -104,16 +104,16 @@ public final class TarFileBuilder extends StreamBuilder {
                         int ownerId,
                         int groupId,
                         long modificationTime) {
-        _files.add(new UnixBuildFileRecord(name, stream, fileMode, ownerId, groupId, modificationTime));
+        files.add(new UnixBuildFileRecord(name, stream, fileMode, ownerId, groupId, modificationTime));
     }
 
     /**
      * @param totalLength {@cs out}
      */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
-        List<BuilderExtent> result = new ArrayList<>(_files.size() * 2 + 2);
+        List<BuilderExtent> result = new ArrayList<>(files.size() * 2 + 2);
         long pos = 0;
-        for (UnixBuildFileRecord file : _files) {
+        for (UnixBuildFileRecord file : files) {
             BuilderExtent fileContentExtent = file.fix(pos + TarHeader.Length);
             result.add(new TarHeaderExtent(pos,
                                            file.getName(),

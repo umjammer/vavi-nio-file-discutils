@@ -37,10 +37,11 @@ import discUtils.streams.SparseStream;
 
 
 public final class Disc extends VirtualDisk {
-    private DiscImageFile _file;
+
+    private DiscImageFile file;
 
     public Disc(URI uri, String userName, String password) {
-        _file = new DiscImageFile(uri, userName, password);
+        file = new DiscImageFile(uri, userName, password);
     }
 
     /**
@@ -54,7 +55,7 @@ public final class Disc extends VirtualDisk {
      * Gets the capacity of the disc (in bytes).
      */
     public long getCapacity() {
-        return _file.getCapacity();
+        return file.getCapacity();
     }
 
     /**
@@ -67,7 +68,7 @@ public final class Disc extends VirtualDisk {
      * accessing the stream.
      */
     public SparseStream getContent() {
-        return _file.getContent();
+        return file.getContent();
     }
 
     /**
@@ -91,14 +92,14 @@ public final class Disc extends VirtualDisk {
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _file.getGeometry();
+        return file.getGeometry();
     }
 
     /**
      * Gets the layers that make up the disc.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Collections.singletonList(_file);
+        return Collections.singletonList(file);
     }
 
     /**
@@ -127,11 +128,11 @@ public final class Disc extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_file != null) {
-                _file.close();
+            if (file != null) {
+                file.close();
             }
 
-            _file = null;
+            file = null;
         } finally {
             super.close();
         }

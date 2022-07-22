@@ -41,12 +41,13 @@ import dotnet4j.io.Stream;
  * of disk formats.
  */
 public class DiskBuilderFileSystem extends DiscFileSystem {
-    private Map<String, DiskImageFileSpecification> _files;
+
+    private Map<String, DiskImageFileSpecification> files;
 
     public DiskBuilderFileSystem(List<DiskImageFileSpecification> fileSpecs) {
-        _files = new HashMap<>();
+        files = new HashMap<>();
         for (DiskImageFileSpecification fileSpec : fileSpecs) {
-            _files.put(fileSpec.getName(), fileSpec);
+            files.put(fileSpec.getName(), fileSpec);
         }
     }
 
@@ -119,12 +120,12 @@ public class DiskBuilderFileSystem extends DiscFileSystem {
     }
 
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
-        if (_files.containsKey(path)) {
+        if (files.containsKey(path)) {
             if (mode == FileMode.CreateNew) {
                 throw new dotnet4j.io.IOException("File already exists");
             }
 
-            return _files.get(path).openStream();
+            return files.get(path).openStream();
         } else {
             throw new FileNotFoundException();
         }
@@ -163,8 +164,8 @@ public class DiskBuilderFileSystem extends DiscFileSystem {
     }
 
     public long getFileLength(String path) {
-        if (_files.containsKey(path)) {
-            try (Stream s = _files.get(path).openStream()){
+        if (files.containsKey(path)) {
+            try (Stream s = files.get(path).openStream()){
                     return s.getLength();
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);

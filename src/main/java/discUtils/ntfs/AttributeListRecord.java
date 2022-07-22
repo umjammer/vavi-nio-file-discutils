@@ -33,11 +33,12 @@ import dotnet4j.util.compat.StringUtilities;
 
 
 public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySerializable, Comparable<AttributeListRecord> {
-    public short AttributeId;
 
-    public FileRecordReference BaseFileReference;
+    public short attributeId;
 
-    public String Name;
+    public FileRecordReference baseFileReference;
+
+    public String name;
 
     private byte nameLength;
 
@@ -51,89 +52,89 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         return nameOffset & 0xff;
     }
 
-    public short RecordLength;
+    public short recordLength;
 
-    public long StartVcn;
+    public long startVcn;
 
-    public AttributeType Type = AttributeType.None;
+    public AttributeType type = AttributeType.None;
 
     public int size() {
-        return MathUtilities.roundUp(0x20 + (Name == null || Name.isEmpty() ? 0 : Name.getBytes(StandardCharsets.UTF_16LE).length), 8);
+        return MathUtilities.roundUp(0x20 + (name == null || name.isEmpty() ? 0 : name.getBytes(StandardCharsets.UTF_16LE).length), 8);
     }
 
     public int readFrom(byte[] data, int offset) {
-        Type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(data, offset + 0x00));
-        RecordLength = EndianUtilities.toUInt16LittleEndian(data, offset + 0x04);
+        type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(data, offset + 0x00));
+        recordLength = EndianUtilities.toUInt16LittleEndian(data, offset + 0x04);
         nameLength = data[offset + 0x06];
         nameOffset = data[offset + 0x07];
-        StartVcn = EndianUtilities.toUInt64LittleEndian(data, offset + 0x08);
-        BaseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
-        AttributeId = EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
+        startVcn = EndianUtilities.toUInt64LittleEndian(data, offset + 0x08);
+        baseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
+        attributeId = EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
         if (getNameLength() > 0) {
-            Name = new String(data, offset + getNameOffset(), getNameLength() * 2, StandardCharsets.UTF_16LE);
+            name = new String(data, offset + getNameOffset(), getNameLength() * 2, StandardCharsets.UTF_16LE);
         } else {
-            Name = null;
+            name = null;
         }
-        if (RecordLength < 0x18) {
+        if (recordLength < 0x18) {
             throw new IllegalArgumentException("Malformed AttributeList record");
         }
 
-        return RecordLength;
+        return recordLength;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         nameOffset = 0x20;
-        if (Name == null || Name.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             nameLength = 0;
         } else {
-            byte[] bytes = Name.getBytes(StandardCharsets.UTF_16LE);
+            byte[] bytes = name.getBytes(StandardCharsets.UTF_16LE);
             System.arraycopy(bytes, 0, buffer, offset + getNameOffset(), bytes.length);
             nameLength = (byte) bytes.length;
         }
-        RecordLength = (short) MathUtilities.roundUp(getNameOffset() + getNameLength() * 2, 8);
-        EndianUtilities.writeBytesLittleEndian(Type.getValue(), buffer, offset);
-        EndianUtilities.writeBytesLittleEndian(RecordLength, buffer, offset + 0x04);
+        recordLength = (short) MathUtilities.roundUp(getNameOffset() + getNameLength() * 2, 8);
+        EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset);
+        EndianUtilities.writeBytesLittleEndian(recordLength, buffer, offset + 0x04);
         buffer[offset + 0x06] = nameLength;
         buffer[offset + 0x07] = nameOffset;
-        EndianUtilities.writeBytesLittleEndian(StartVcn, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(BaseFileReference.getValue(), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(AttributeId, buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(startVcn, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(baseFileReference.getValue(), buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(attributeId, buffer, offset + 0x18);
     }
 
     public int compareTo(AttributeListRecord other) {
-        int val = Type.ordinal() - other.Type.ordinal();
+        int val = type.ordinal() - other.type.ordinal();
         if (val != 0) {
             return val;
         }
 
-        val = StringUtilities.compare(Name, other.Name, true);
+        val = StringUtilities.compare(name, other.name, true);
         if (val != 0) {
             return val;
         }
 
-        return (int) StartVcn - (int) other.StartVcn;
+        return (int) startVcn - (int) other.startVcn;
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "ATTRIBUTE LIST RECORD");
-        writer.println(indent + "                 Type: " + Type);
-        writer.println(indent + "        Record Length: " + RecordLength);
-        writer.println(indent + "                 Name: " + Name);
-        writer.println(indent + "            Start VCN: " + StartVcn);
-        writer.println(indent + "  base File Reference: " + BaseFileReference);
-        writer.println(indent + "         Attribute ID: " + AttributeId);
+        writer.println(indent + "                 Type: " + type);
+        writer.println(indent + "        Record Length: " + recordLength);
+        writer.println(indent + "                 Name: " + name);
+        writer.println(indent + "            Start VCN: " + startVcn);
+        writer.println(indent + "  base File Reference: " + baseFileReference);
+        writer.println(indent + "         Attribute ID: " + attributeId);
     }
 
     public static AttributeListRecord fromAttribute(AttributeRecord attr, FileRecordReference mftRecord) {
         AttributeListRecord newRecord = new AttributeListRecord();
-        newRecord.Type = attr.getAttributeType();
-        newRecord.Name = attr.getName();
-        newRecord.StartVcn = 0;
-        newRecord.BaseFileReference = mftRecord;
-        newRecord.AttributeId = attr.getAttributeId();
+        newRecord.type = attr.getAttributeType();
+        newRecord.name = attr.getName();
+        newRecord.startVcn = 0;
+        newRecord.baseFileReference = mftRecord;
+        newRecord.attributeId = attr.getAttributeId();
 
         if (attr.isNonResident()) {
-            newRecord.StartVcn = attr.getStartVcn();
+            newRecord.startVcn = attr.getStartVcn();
         }
 
         return newRecord;

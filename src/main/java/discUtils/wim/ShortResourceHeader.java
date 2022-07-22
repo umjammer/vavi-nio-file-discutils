@@ -28,21 +28,22 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ShortResourceHeader {
+
     public static final int Size = 24;
 
-    public long CompressedSize;
+    public long compressedSize;
 
-    public long FileOffset;
+    public long fileOffset;
 
-    public EnumSet<ResourceFlags> Flags;
+    public EnumSet<ResourceFlags> flags;
 
-    public long OriginalSize;
+    public long originalSize;
 
     public void read(byte[] buffer, int offset) {
-        CompressedSize = EndianUtilities.toInt64LittleEndian(buffer, offset);
-        Flags = ResourceFlags.valueOf((int) (CompressedSize >>> 56) & 0xFF);
-        CompressedSize = CompressedSize & 0x00FFFFFFFFFFFFFFL;
-        FileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 8);
-        OriginalSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
+        compressedSize = EndianUtilities.toInt64LittleEndian(buffer, offset);
+        flags = ResourceFlags.valueOf((int) (compressedSize >>> 56) & 0xFF);
+        compressedSize = compressedSize & 0x00FF_FFFF_FFFF_FFFFL;
+        fileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 8);
+        originalSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
     }
 }

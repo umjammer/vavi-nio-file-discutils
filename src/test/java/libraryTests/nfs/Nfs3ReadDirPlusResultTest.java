@@ -50,50 +50,50 @@ public class Nfs3ReadDirPlusResultTest {
         Nfs3ReadDirPlusResult result = new Nfs3ReadDirPlusResult();
         result.setCookieVerifier(1);
         Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();
-        dirAttrs.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        dirAttrs.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        dirAttrs.BytesUsed = 1;
-        dirAttrs.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
+        dirAttrs.bytesUsed = 1;
+        dirAttrs.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        dirAttrs.FileId = 2;
-        dirAttrs.FileSystemId = 3;
-        dirAttrs.Gid = 4;
-        dirAttrs.LinkCount = 5;
-        dirAttrs.Mode = UnixFilePermissions.GroupAll;
-        dirAttrs.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        dirAttrs.fileId = 2;
+        dirAttrs.fileSystemId = 3;
+        dirAttrs.gid = 4;
+        dirAttrs.linkCount = 5;
+        dirAttrs.mode = UnixFilePermissions.GroupAll;
+        dirAttrs.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        dirAttrs.RdevMajor = 6;
-        dirAttrs.RdevMinor = 7;
-        dirAttrs.Size = 8;
-        dirAttrs.Type = Nfs3FileType.BlockDevice;
-        dirAttrs.Uid = 9;
+        dirAttrs.rdevMajor = 6;
+        dirAttrs.rdevMinor = 7;
+        dirAttrs.size = 8;
+        dirAttrs.type = Nfs3FileType.BlockDevice;
+        dirAttrs.uid = 9;
         result.setDirAttributes(dirAttrs);
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
         entry.setCookie(2);
         Nfs3FileAttributes fileAttrs = new Nfs3FileAttributes();
-        fileAttrs.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 10, 0, 0, 0, 0, ZoneId.of("UTC"))
+        fileAttrs.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 10, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        fileAttrs.BytesUsed = 11;
-        fileAttrs.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 12, 0, 0, 0, 0, ZoneId.of("UTC"))
+        fileAttrs.bytesUsed = 11;
+        fileAttrs.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 12, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        fileAttrs.FileId = 12;
-        fileAttrs.FileSystemId = 13;
-        fileAttrs.Gid = 14;
-        fileAttrs.LinkCount = 15;
-        fileAttrs.Mode = EnumSet.of(UnixFilePermissions.GroupWrite);
-        fileAttrs.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 13, 0, 0, 0, 0, ZoneId.of("UTC"))
+        fileAttrs.fileId = 12;
+        fileAttrs.fileSystemId = 13;
+        fileAttrs.gid = 14;
+        fileAttrs.linkCount = 15;
+        fileAttrs.mode = EnumSet.of(UnixFilePermissions.GroupWrite);
+        fileAttrs.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 13, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        fileAttrs.RdevMajor = 16;
-        fileAttrs.RdevMinor = 17;
-        fileAttrs.Size = 18;
-        fileAttrs.Type = Nfs3FileType.Socket;
-        fileAttrs.Uid = 19;
+        fileAttrs.rdevMajor = 16;
+        fileAttrs.rdevMinor = 17;
+        fileAttrs.size = 18;
+        fileAttrs.type = Nfs3FileType.Socket;
+        fileAttrs.uid = 19;
         entry.setFileAttributes(fileAttrs);
         Nfs3FileHandle handle = new Nfs3FileHandle();
         handle.setValue(new byte[] {

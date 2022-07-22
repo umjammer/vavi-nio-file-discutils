@@ -41,11 +41,12 @@ import dotnet4j.io.Stream;
  * file systems, create an instance of this class and call RegisterFileSystems.
  */
 public class FileSystemManager {
-    private static final List<VfsFileSystemFactory> _factories;
+
+    private static final List<VfsFileSystemFactory> factories;
 
     /* Initializes a new instance of the FileSystemManager class. */
     static {
-        _factories = new ArrayList<>();
+        factories = new ArrayList<>();
     }
 
     /**
@@ -76,14 +77,14 @@ public class FileSystemManager {
         ServiceLoader<VfsFileSystemFactory> detectFactories = ServiceLoader.load(VfsFileSystemFactory.class);
 
         for (VfsFileSystemFactory type : detectFactories) {
-            _factories.add(type);
+            factories.add(type);
         }
     }
 
     private static List<FileSystemInfo> doDetect(Stream stream, VolumeInfo volume) {
         BufferedStream detectStream = new BufferedStream(stream);
         List<FileSystemInfo> detected = new ArrayList<>();
-        for (VfsFileSystemFactory factory : _factories) {
+        for (VfsFileSystemFactory factory : factories) {
             detected.addAll(Arrays.asList(factory.detect(detectStream, volume)));
         }
         return detected;

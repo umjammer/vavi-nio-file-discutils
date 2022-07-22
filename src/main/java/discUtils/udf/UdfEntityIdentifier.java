@@ -28,10 +28,10 @@ import discUtils.streams.util.EndianUtilities;
 public class UdfEntityIdentifier extends EntityIdentifier {
 
     public String toString() {
-        String major = String.format("%02x", Suffix[1]);
-        String minor = String.format("%02x", Suffix[0]);
-        OSClass osClass = OSClass.values()[Suffix[2]];
-        OSIdentifier osId = OSIdentifier.values()[EndianUtilities.toUInt16BigEndian(Suffix, 2)];
-        return String.format("%s [UDF %s.%s : OS %s %s]", Identifier, major, minor, osClass, osId);
+        String major = String.format("%02x", suffix[1]);
+        String minor = String.format("%02x", suffix[0]);
+        OSClass osClass = OSClass.values()[suffix[2]];
+        OSIdentifier osId = OSIdentifier.values()[EndianUtilities.toUInt16BigEndian(suffix, 2)];
+        return String.format("%s [UDF %s.%s : OS %s %s]", identifier, major, minor, osClass, osId);
     }
 }

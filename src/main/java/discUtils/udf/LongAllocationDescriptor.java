@@ -27,21 +27,22 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class LongAllocationDescriptor implements IByteArraySerializable {
-    public int ExtentLength;
 
-    public LogicalBlockAddress ExtentLocation;
+    public int extentLength;
 
-    public byte[] ImplementationUse;
+    public LogicalBlockAddress extentLocation;
+
+    public byte[] implementationUse;
 
     public int size() {
         return 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        ExtentLength = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        ExtentLocation = new LogicalBlockAddress();
-        ExtentLocation.readFrom(buffer, offset + 4);
-        ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 10, 6);
+        extentLength = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        extentLocation = new LogicalBlockAddress();
+        extentLocation.readFrom(buffer, offset + 4);
+        implementationUse = EndianUtilities.toByteArray(buffer, offset + 10, 6);
         return 16;
     }
 
@@ -50,6 +51,6 @@ public class LongAllocationDescriptor implements IByteArraySerializable {
     }
 
     public String toString() {
-        return ExtentLocation + ":+" + ExtentLength;
+        return extentLocation + ":+" + extentLength;
     }
 }

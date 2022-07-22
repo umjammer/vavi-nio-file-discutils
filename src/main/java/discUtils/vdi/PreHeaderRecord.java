@@ -28,28 +28,29 @@ import dotnet4j.io.Stream;
 
 
 public class PreHeaderRecord {
+
     public static final int VdiSignature = 0xbeda107f;
 
     public static final int Size = 72;
 
-    public String FileInfo;
+    public String fileInfo;
 
-    public int Signature;
+    public int signature;
 
-    public FileVersion Version;
+    public FileVersion version;
 
     public static PreHeaderRecord initialized() {
         PreHeaderRecord result = new PreHeaderRecord();
-        result.FileInfo = "<<< Sun xVM VirtualBox Disk Image >>>\n";
-        result.Signature = VdiSignature;
-        result.Version = new FileVersion(0x00010001);
+        result.fileInfo = "<<< Sun xVM VirtualBox Disk Image >>>\n";
+        result.signature = VdiSignature;
+        result.version = new FileVersion(0x00010001);
         return result;
     }
 
     public int read(byte[] buffer, int offset) {
-        FileInfo = EndianUtilities.bytesToString(buffer, offset + 0, 64).replaceFirst("\0*$", "");
-        Signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 64);
-        Version = new FileVersion(EndianUtilities.toUInt32LittleEndian(buffer, offset + 68));
+        fileInfo = EndianUtilities.bytesToString(buffer, offset + 0, 64).replaceFirst("\0*$", "");
+        signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 64);
+        version = new FileVersion(EndianUtilities.toUInt32LittleEndian(buffer, offset + 68));
         return Size;
     }
 
@@ -65,8 +66,8 @@ public class PreHeaderRecord {
     }
 
     public void write(byte[] buffer, int offset) {
-        EndianUtilities.stringToBytes(FileInfo, buffer, offset + 0, 64);
-        EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 64);
-        EndianUtilities.writeBytesLittleEndian(Version.getValue(), buffer, offset + 68);
+        EndianUtilities.stringToBytes(fileInfo, buffer, offset + 0, 64);
+        EndianUtilities.writeBytesLittleEndian(signature, buffer, offset + 64);
+        EndianUtilities.writeBytesLittleEndian(version.getValue(), buffer, offset + 68);
     }
 }

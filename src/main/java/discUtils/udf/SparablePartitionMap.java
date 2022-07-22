@@ -26,7 +26,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class SparablePartitionMap extends PartitionMap {
-    public int[] LocationsOfSparingTables;
+
+    public int[] locationsOfSparingTables;
 
     private byte numSparingTables;
 
@@ -34,27 +35,27 @@ public final class SparablePartitionMap extends PartitionMap {
         return numSparingTables & 0xff;
     }
 
-    public short PacketLength;
+    public short packetLength;
 
-    public short PartitionNumber;
+    public short partitionNumber;
 
-    public int SparingTableSize;
+    public int sparingTableSize;
 
-    public short VolumeSequenceNumber;
+    public short volumeSequenceNumber;
 
     public int size() {
         return 64;
     }
 
     protected int parse(byte[] buffer, int offset) {
-        VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
-        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
-        PacketLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 40);
+        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
+        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
+        packetLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 40);
         numSparingTables = buffer[offset + 42];
-        SparingTableSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        LocationsOfSparingTables = new int[getNumSparingTables()];
+        sparingTableSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
+        locationsOfSparingTables = new int[getNumSparingTables()];
         for (int i = 0; i < getNumSparingTables(); ++i) {
-            LocationsOfSparingTables[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48 + 4 * i);
+            locationsOfSparingTables[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48 + 4 * i);
         }
         return 64;
     }

@@ -42,26 +42,26 @@ public class Nfs3FileAttributesTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.BytesUsed = 1;
-        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.bytesUsed = 1;
+        attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.FileId = 3;
-        attributes.FileSystemId = 4;
-        attributes.Gid = 5;
-        attributes.LinkCount = 6;
-        attributes.Mode = UnixFilePermissions.GroupAll;
-        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.fileId = 3;
+        attributes.fileSystemId = 4;
+        attributes.gid = 5;
+        attributes.linkCount = 6;
+        attributes.mode = UnixFilePermissions.GroupAll;
+        attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.RdevMajor = 7;
-        attributes.RdevMinor = 8;
-        attributes.Size = 9;
-        attributes.Type = Nfs3FileType.BlockDevice;
-        attributes.Uid = 11;
+        attributes.rdevMajor = 7;
+        attributes.rdevMinor = 8;
+        attributes.size = 9;
+        attributes.type = Nfs3FileType.BlockDevice;
+        attributes.uid = 11;
         Nfs3FileAttributes clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

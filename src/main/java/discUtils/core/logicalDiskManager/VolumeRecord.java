@@ -28,72 +28,73 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class VolumeRecord extends DatabaseRecord {
-    public String ActiveString;
 
-    public byte BiosType;
+    public String activeString;
 
-    public long ComponentCount;
+    public byte biosType;
 
-    // ??Seen once after adding 'foreign disk', from broken mirror (identical links(P/V/C))
-    public long DupCount;
+    public long componentCount;
 
-    public String GenString;
+    /** ??Seen once after adding 'foreign disk', from broken mirror (identical links(P/V/C)) */
+    public long dupCount;
 
-    public String MountHint;
+    public String genString;
 
-    // 8000000000000000 sometimes...
-    public String NumberString;
+    public String mountHint;
 
-    public int PartitionComponentLink;
+    /** 8000000000000000 sometimes... */
+    public String numberString;
 
-    public long Size;
+    public int partitionComponentLink;
 
-    // Zero
-    public long Unknown1;
+    public long size;
 
-    // Zero
-    public int Unknown2;
+    /** Zero */
+    public long unknown1;
 
-    // Zero
-    public long UnknownA;
+    /** Zero */
+    public int unknown2;
 
-    // 00 .. 03
-    public long UnknownB;
+    /** Zero */
+    public long unknownA;
 
-    // 00 00 00 11
-    public int UnknownC;
+    /** 00 .. 03 */
+    public long unknownB;
 
-    // Zero
-    public int UnknownD;
+    /** 00 00 00 11 */
+    public int unknownC;
 
-    public UUID VolumeGuid;
+    /** Zero */
+    public int unknownD;
+
+    public UUID volumeGuid;
 
     protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
 
         int[] pos = new int[] { offset + 0x18 };
 
-        Id = readVarULong(buffer, pos);
-        Name = readVarString(buffer, pos);
-        GenString = readVarString(buffer, pos);
-        NumberString = readVarString(buffer, pos);
-        ActiveString = readString(buffer, 6, pos);
-        UnknownA = readVarULong(buffer, pos);
-        UnknownB = readULong(buffer, pos);
-        DupCount = readVarULong(buffer, pos);
-        UnknownC = readUInt(buffer, pos);
-        ComponentCount = readVarULong(buffer, pos);
-        UnknownD = readUInt(buffer, pos);
-        PartitionComponentLink = readUInt(buffer, pos);
-        Unknown1 = readULong(buffer, pos);
-        Size = readVarLong(buffer, pos);
-        Unknown2 = readUInt(buffer, pos);
-        BiosType = readByte(buffer, pos);
-        VolumeGuid = EndianUtilities.toGuidBigEndian(buffer, pos[0]);
+        id = readVarULong(buffer, pos);
+        name = readVarString(buffer, pos);
+        genString = readVarString(buffer, pos);
+        numberString = readVarString(buffer, pos);
+        activeString = readString(buffer, 6, pos);
+        unknownA = readVarULong(buffer, pos);
+        unknownB = readULong(buffer, pos);
+        dupCount = readVarULong(buffer, pos);
+        unknownC = readUInt(buffer, pos);
+        componentCount = readVarULong(buffer, pos);
+        unknownD = readUInt(buffer, pos);
+        partitionComponentLink = readUInt(buffer, pos);
+        unknown1 = readULong(buffer, pos);
+        size = readVarLong(buffer, pos);
+        unknown2 = readUInt(buffer, pos);
+        biosType = readByte(buffer, pos);
+        volumeGuid = EndianUtilities.toGuidBigEndian(buffer, pos[0]);
         pos[0] += 16;
 
-        if ((Flags & 0x0200) != 0) {
-            MountHint = readVarString(buffer, pos);
+        if ((flags & 0x0200) != 0) {
+            mountHint = readVarString(buffer, pos);
         }
     }
 }

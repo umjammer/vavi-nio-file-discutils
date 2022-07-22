@@ -58,7 +58,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     private static final String FS = File.separator;
     private static final char FSC = File.separatorChar;
 
-    private final ObjectCache<Long, TFile> _fileCache;
+    private final ObjectCache<Long, TFile> fileCache;
 
     /**
      * Initializes a new instance of the VfsFileSystem class.
@@ -67,33 +67,33 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      */
     protected VfsFileSystem(DiscFileSystemOptions defaultOptions) {
         super(defaultOptions);
-        _fileCache = new ObjectCache<>();
+        fileCache = new ObjectCache<>();
     }
 
     /**
      * Gets or sets the global shared state.
      */
-    private TContext _context;
+    private TContext context;
 
     protected TContext getContext() {
-        return _context;
+        return context;
     }
 
     protected void setContext(TContext value) {
-        _context = value;
+        context = value;
     }
 
     /**
      * Gets or sets the object representing the root directory.
      */
-    private TDirectory _rootDirectory;
+    private TDirectory rootDirectory;
 
     protected TDirectory getRootDirectory() {
-        return _rootDirectory;
+        return rootDirectory;
     }
 
     protected void setRootDirectory(TDirectory value) {
-        _rootDirectory = value;
+        rootDirectory = value;
     }
 
     /**
@@ -497,10 +497,10 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     public TFile getFile(TDirEntry dirEntry) {
         long cacheKey = dirEntry.getUniqueCacheId();
-        TFile file = _fileCache.get(cacheKey);
+        TFile file = fileCache.get(cacheKey);
         if (file == null) {
             file = convertDirEntryToFile(dirEntry);
-            _fileCache.put(cacheKey, file);
+            fileCache.put(cacheKey, file);
         }
 //Debug.println(file);
         return file;

@@ -27,13 +27,14 @@ import discUtils.streams.util.MathUtilities;
 
 
 public class CommandRequest {
-    private final Connection _connection;
 
-    private final long _lun;
+    private final Connection connection;
+
+    private final long lun;
 
     public CommandRequest(Connection connection, long lun) {
-        _connection = connection;
-        _lun = lun;
+        this.connection = connection;
+        this.lun = lun;
     }
 
     public byte[] getBytes(ScsiCommand cmd,
@@ -44,20 +45,20 @@ public class CommandRequest {
                            boolean willRead,
                            boolean willWrite,
                            int expected) {
-        BasicHeaderSegment _basicHeader = new BasicHeaderSegment();
-        _basicHeader.Immediate = cmd.getImmediateDelivery();
-        _basicHeader._OpCode = OpCode.ScsiCommand;
-        _basicHeader.FinalPdu = isFinalData;
-        _basicHeader.TotalAhsLength = 0;
-        _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
+        BasicHeaderSegment basicHeader = new BasicHeaderSegment();
+        basicHeader.immediate = cmd.getImmediateDelivery();
+        basicHeader.opCode = OpCode.ScsiCommand;
+        basicHeader.finalPdu = isFinalData;
+        basicHeader.totalAhsLength = 0;
+        basicHeader.dataSegmentLength = count;
+        basicHeader.initiatorTaskTag = connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[48 + MathUtilities.roundUp(count, 4)];
-        _basicHeader.writeTo(buffer, 0);
+        basicHeader.writeTo(buffer, 0);
         buffer[1] = packAttrByte(isFinalData, willRead, willWrite, cmd.getTaskAttributes());
-        EndianUtilities.writeBytesBigEndian(_lun, buffer, 8);
+        EndianUtilities.writeBytesBigEndian(lun, buffer, 8);
         EndianUtilities.writeBytesBigEndian(expected, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_connection.getSession().getCommandSequenceNumber(), buffer, 24);
-        EndianUtilities.writeBytesBigEndian(_connection.getExpectedStatusSequenceNumber(), buffer, 28);
+        EndianUtilities.writeBytesBigEndian(connection.getSession().getCommandSequenceNumber(), buffer, 24);
+        EndianUtilities.writeBytesBigEndian(connection.getExpectedStatusSequenceNumber(), buffer, 28);
         cmd.writeTo(buffer, 32);
         if (immediateData != null && count != 0) {
             System.arraycopy(immediateData, offset, buffer, 48, count);

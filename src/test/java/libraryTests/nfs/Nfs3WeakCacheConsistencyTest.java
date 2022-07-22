@@ -53,26 +53,26 @@ public class Nfs3WeakCacheConsistencyTest {
                 .toEpochMilli()));
         before.setSize(3);
         Nfs3FileAttributes after = new Nfs3FileAttributes();
-        after.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        after.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        after.BytesUsed = 2;
-        after.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
+        after.bytesUsed = 2;
+        after.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        after.FileId = 3;
-        after.FileSystemId = 4;
-        after.Gid = 5;
-        after.LinkCount = 6;
-        after.Mode = UnixFilePermissions.GroupAll;
-        after.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        after.fileId = 3;
+        after.fileSystemId = 4;
+        after.gid = 5;
+        after.linkCount = 6;
+        after.mode = UnixFilePermissions.GroupAll;
+        after.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        after.RdevMajor = 7;
-        after.RdevMinor = 8;
-        after.Size = 9;
-        after.Type = Nfs3FileType.NamedPipe;
-        after.Uid = 10;
+        after.rdevMajor = 7;
+        after.rdevMinor = 8;
+        after.size = 9;
+        after.type = Nfs3FileType.NamedPipe;
+        after.uid = 10;
         Nfs3WeakCacheConsistency wcc = new Nfs3WeakCacheConsistency();
         wcc.setBefore(before);
         wcc.setAfter(after);

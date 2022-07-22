@@ -23,65 +23,39 @@
 package discUtils.core.logicalDiskManager;
 
 public final class ExtentRecord extends DatabaseRecord {
-    public long ComponentId;
+    public long componentId;
 
-    public long DiskId;
+    public long diskId;
 
-    public long DiskOffsetLba;
+    public long diskOffsetLba;
 
-    public long InterleaveOrder;
+    public long interleaveOrder;
 
-    public long OffsetInVolumeLba;
+    public long offsetInVolumeLba;
 
-    public int PartitionComponentLink;
+    public int partitionComponentLink;
 
-    public long SizeLba;
+    public long sizeLba;
 
-    public int Unknown1;
+    public int unknown1;
 
-    public int Unknown2;
+    public int unknown2;
 
     protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
-        int pos = offset + 0x18;
-        int[] refVar___0 = new int[] { pos };
-        Id = readVarULong(buffer, refVar___0);
-        pos = refVar___0[0];
-        int[] refVar___1 = new int[] { pos };
-        Name = readVarString(buffer, refVar___1);
-        pos = refVar___1[0];
-        int[] refVar___2 = new int[] { pos };
-        Unknown1 = readUInt(buffer, refVar___2);
-        pos = refVar___2[0];
-        int[] refVar___3 = new int[] { pos };
-        Unknown2 = readUInt(buffer, refVar___3);
-        pos = refVar___3[0];
-        int[] refVar___4 = new int[] { pos };
-        PartitionComponentLink = readUInt(buffer, refVar___4);
-        pos = refVar___4[0];
-        int[] refVar___5 = new int[] { pos };
-        DiskOffsetLba = readLong(buffer, refVar___5);
-        pos = refVar___5[0];
-        int[] refVar___6 = new int[] { pos };
-        OffsetInVolumeLba = readLong(buffer, refVar___6);
-        pos = refVar___6[0];
-        int[] refVar___7 = new int[] { pos };
-        SizeLba = readVarLong(buffer, refVar___7);
-        pos = refVar___7[0];
-        int[] refVar___8 = new int[] { pos };
-        ComponentId = readVarULong(buffer, refVar___8);
-        pos = refVar___8[0];
-        int[] refVar___9 = new int[] { pos };
-        DiskId = readVarULong(buffer, refVar___9);
-        pos = refVar___9[0];
-        if ((Flags & 0x0800) != 0) {
-            int[] refVar___10 = new int[] {
-                pos
-            };
-            InterleaveOrder = readVarULong(buffer, refVar___10);
-            pos = refVar___10[0];
+        int[] pos = new int[] {offset + 0x18};
+        id = readVarULong(buffer, pos);
+        name = readVarString(buffer, pos);
+        unknown1 = readUInt(buffer, pos);
+        unknown2 = readUInt(buffer, pos);
+        partitionComponentLink = readUInt(buffer, pos);
+        diskOffsetLba = readLong(buffer, pos);
+        offsetInVolumeLba = readLong(buffer, pos);
+        sizeLba = readVarLong(buffer, pos);
+        componentId = readVarULong(buffer, pos);
+        diskId = readVarULong(buffer, pos);
+        if ((flags & 0x0800) != 0) {
+            interleaveOrder = readVarULong(buffer, pos);
         }
-
     }
-
 }

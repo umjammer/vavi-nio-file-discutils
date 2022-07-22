@@ -41,16 +41,16 @@ public class Program extends ProgramBase {
             description = "Indicates the geometry adjustment to apply.  Set this parameter to match the translation " +
                           "configured in the BIOS of the machine that will boot from the disk - " +
                           "auto should work in most cases for modern BIOS.")
-    private GeometryTranslation _translation = GeometryTranslation.Auto;
+    private GeometryTranslation translation = GeometryTranslation.Auto;
 
     @Option(option = "volume",
             description = "Volumes to clone.  The volumes should all be on the same disk.",
             args = 1,
             required = true)
-    private String[] _volumes;
+    private String[] volumes;
 
     @Option(option = "out_file", description = "Path to the output disk image.", args = 1, required = true)
-    private String _destDisk;
+    private String destDisk;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -75,11 +75,9 @@ public class Program extends ProgramBase {
 
         DiskImageBuilder builder = DiskImageBuilder.getBuilder(getOutputDiskType(), getOutputDiskVariant());
         builder.setGenericAdapterType(getAdapterType());
-        String[] sourceVolume = _volumes;
-        int diskNumber;
-        int[] refVar___0 = new int[1];
-        List<CloneVolume> cloneVolumes = gatherVolumes(sourceVolume, refVar___0);
-        diskNumber = refVar___0[0];
+        String[] sourceVolume = volumes;
+        int[] diskNumber = new int[1];
+        List<CloneVolume> cloneVolumes = gatherVolumes(sourceVolume, diskNumber);
         if (!getQuiet()) {
             System.err.println("Inspecting Disk...");
         }
@@ -90,7 +88,7 @@ public class Program extends ProgramBase {
         Geometry ideGeometry;
         long capacity;
 
-        try (Disk disk = new Disk(diskNumber)) {
+        try (Disk disk = new Disk(diskNumber[0])) {
             contentBuilder = new BiosPartitionedDiskBuilder(disk);
             biosGeometry = disk.getBiosGeometry();
             ideGeometry = disk.getGeometry();
@@ -99,7 +97,7 @@ public class Program extends ProgramBase {
         // Preserve the IDE (aka Physical) geometry
         builder.setGeometry(ideGeometry);
         // Translate the BIOS (aka Logical) geometry
-        GeometryTranslation translation = _translation;
+        GeometryTranslation translation = this.translation;
         if (builder.getPreservesBiosGeometry() && translation == GeometryTranslation.Auto) {
             // If the new format preserves BIOS geometry, then take no action if
             // asked for 'auto'
@@ -112,24 +110,20 @@ public class Program extends ProgramBase {
             contentBuilder.updateBiosGeometry(builder.getBiosGeometry());
         }
 
-        IVssBackupComponents backupCmpnts;
         int status;
+        IVssBackupComponents[] backupCmpnts = new IVssBackupComponents[1];
         if (Marshal.SizeOf(IntPtr.class) == 4) {
-            IVssBackupComponents[] refVar___1 = new IVssBackupComponents[1];
-            status = NativeMethods.INSTANCE.createVssBackupComponents(refVar___1);
-            backupCmpnts = refVar___1[0];
+            status = NativeMethods.INSTANCE.createVssBackupComponents(backupCmpnts);
         } else {
-            IVssBackupComponents[] refVar___2 = new IVssBackupComponents[1];
-            status = NativeMethods.INSTANCE.createVssBackupComponents64(refVar___2);
-            backupCmpnts = refVar___2[0];
+            status = NativeMethods.INSTANCE.createVssBackupComponents64(backupCmpnts);
         }
-        UUID snapshotSetId = createSnapshotSet(cloneVolumes, backupCmpnts);
+        UUID snapshotSetId = createSnapshotSet(cloneVolumes, backupCmpnts[0]);
         if (!getQuiet()) {
             System.err.print("Copying Disk...");
         }
 
         for (CloneVolume sv : cloneVolumes) {
-            Volume sourceVol = new Volume(sv.SnapshotProperties.SnapshotDeviceObject, sv.SourceExtent.ExtentLength);
+            Volume sourceVol = new Volume(sv.snapshotProperties.snapshotDeviceObject, sv.sourceExtent.extentLength);
             SnapshotStream rawVolStream = new SnapshotStream(sourceVol.getContent(), Ownership.None);
             rawVolStream.snapshot();
             byte[] volBitmap;
@@ -172,15 +166,15 @@ public class Program extends ProgramBase {
             SparseStream partSourceStream = SparseStream.fromStream(rawVolStream, Ownership.None, extents);
             for (int i = 0; i < contentBuilder.getPartitionTable().getPartitions().size(); ++i) {
                 PartitionInfo part = contentBuilder.getPartitionTable().getPartitions().get(i);
-                if (part.getFirstSector() * 512 == sv.SourceExtent.StartingOffset) {
+                if (part.getFirstSector() * 512 == sv.sourceExtent.startingOffset) {
                     contentBuilder.setPartitionContent(i, partSourceStream);
                 }
             }
         }
         SparseStream contentStream = contentBuilder.build();
         // Write out the disk images
-        String dir = Paths.get(_destDisk).getParent().toString();
-        String file = Paths.get(_destDisk).getFileName().toString().substring(_destDisk.lastIndexOf('.') + 1);
+        String dir = Paths.get(destDisk).getParent().toString();
+        String file = Paths.get(destDisk).getFileName().toString().substring(destDisk.lastIndexOf('.') + 1);
         builder.setContent(contentStream);
         List<DiskImageFileSpecification> fileSpecs = builder.build(file);
         for (int i = 0; i < fileSpecs.size(); ++i) {
@@ -189,7 +183,7 @@ public class Program extends ProgramBase {
             String outputPath = Paths.get(dir, fileSpecs.get(i).getName()).toString();
             // Force the primary file to the be one from the command-line.
             if (i == 0) {
-                outputPath = _destDisk;
+                outputPath = destDisk;
             }
 
             try (SparseStream vhdStream = fileSpecs.get(i).openStream()) {
@@ -202,7 +196,7 @@ public class Program extends ProgramBase {
                     if (!getQuiet()) {
                         System.err.println();
                         long now = System.currentTimeMillis();
-                        pump.ProgressEvent = (o, e) -> showProgress(fileSpecs.get(i).getName(), totalBytes, now, o, e);
+                        pump.progressEvent = (o, e) -> showProgress(fileSpecs.get(i).getName(), totalBytes, now, o, e);
                     }
 
                     pump.run();
@@ -214,14 +208,10 @@ public class Program extends ProgramBase {
         }
         // complete - tidy up
         callAsyncMethod(backupCmpnts.backupComplete());
-        long numDeleteFailed;
-        UUID deleteFailed = UUID.randomUUID();
         /* VSS_OBJECT_SNAPSHOT_SET */
-        long[] refVar___3 = new long[1];
-        UUID[] refVar___4 = new UUID[1];
-        backupCmpnts.deleteSnapshots(snapshotSetId, 2, true, refVar___3, refVar___4);
-        numDeleteFailed = refVar___3[0];
-        deleteFailed = refVar___4[0];
+        long[] numDeleteFailed = new long[1];
+        UUID[] deleteFailed = new UUID[] {UUID.randomUUID()};
+        backupCmpnts.deleteSnapshots(snapshotSetId, 2, true, numDeleteFailed, deleteFailed);
         Marshal.ReleaseComObject(backupCmpnts);
     }
 
@@ -283,8 +273,8 @@ public class Program extends ProgramBase {
                 }
 
                 if (diskNumber[0] == 0xffffffff) {
-                    diskNumber[0] = sourceExtents[0].DiskNumber;
-                } else if (diskNumber[0] != sourceExtents[0].DiskNumber) {
+                    diskNumber[0] = sourceExtents[0].diskNumber;
+                } else if (diskNumber[0] != sourceExtents[0].diskNumber) {
                     System.err.println("Specified volumes span multiple disks, which is not supported");
                     System.exit(1);
                 }
@@ -311,15 +301,14 @@ public class Program extends ProgramBase {
         backupCmpnts.setBackupState(false, true, 5, false);
         /* VSS_BT_COPY */
         callAsyncMethod(backupCmpnts.gatherWriterMetadata());
-        UUID snapshotSetId;
         try {
-            UUID[] refVar___5 = new UUID[1];
-            backupCmpnts.startSnapshotSet(refVar___5);
-            snapshotSetId = refVar___5[0];
+            UUID[] snapshotSetId = new UUID[1];
+            backupCmpnts.startSnapshotSet(snapshotSetId);
+            snapshotSetId = snapshotSetId[0];
             for (CloneVolume vol : cloneVolumes) {
                 UUID[] refVar___6 = new UUID[1];
-                backupCmpnts.addToSnapshotSet(vol.Path, new UUID(0, 0), refVar___6);
-                vol.SnapshotId = refVar___6[0];
+                backupCmpnts.addToSnapshotSet(vol.path, new UUID(0, 0), refVar___6);
+                vol.snapshotId = refVar___6[0];
             }
             callAsyncMethod(backupCmpnts.prepareForBackup());
             callAsyncMethod(backupCmpnts.doSnapshotSet());
@@ -329,7 +318,7 @@ public class Program extends ProgramBase {
         }
 
         for (CloneVolume vol : cloneVolumes) {
-            vol.SnapshotProperties = getSnapshotProperties(backupCmpnts, vol.SnapshotId);
+            vol.snapshotProperties = getSnapshotProperties(backupCmpnts, vol.snapshotId);
         }
         return snapshotSetId;
     }

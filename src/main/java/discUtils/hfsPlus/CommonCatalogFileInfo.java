@@ -30,38 +30,39 @@ import discUtils.streams.util.EndianUtilities;
 
 
 abstract class CommonCatalogFileInfo implements IByteArraySerializable {
-    public long AccessTime;
 
-    public long AttributeModifyTime;
+    public long accessTime;
 
-    public long BackupTime;
+    public long attributeModifyTime;
 
-    public long ContentModifyTime;
+    public long backupTime;
 
-    public long CreateTime;
+    public long contentModifyTime;
 
-    public CatalogNodeId FileId;
+    public long createTime;
 
-    public UnixFileSystemInfo FileSystemInfo;
+    public CatalogNodeId fileId;
 
-    public CatalogRecordType RecordType = CatalogRecordType.None;
+    public UnixFileSystemInfo fileSystemInfo;
 
-    public int UnixSpecialField;
+    public CatalogRecordType recordType = CatalogRecordType.None;
+
+    public int unixSpecialField;
 
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        RecordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
-        FileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 8));
-        CreateTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 12);
-        ContentModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 16);
-        AttributeModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
-        AccessTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
-        BackupTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
+        recordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
+        fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 8));
+        createTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 12);
+        contentModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 16);
+        attributeModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
+        accessTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
+        backupTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
 
         int[] special = new int[1];
-        FileSystemInfo = HfsPlusUtilities.readBsdInfo(buffer, offset + 32, special);
-        UnixSpecialField = special[0];
+        fileSystemInfo = HfsPlusUtilities.readBsdInfo(buffer, offset + 32, special);
+        unixSpecialField = special[0];
 
         return 0;
     }

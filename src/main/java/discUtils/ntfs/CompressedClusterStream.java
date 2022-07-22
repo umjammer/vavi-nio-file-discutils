@@ -33,56 +33,56 @@ import dotnet4j.io.IOException;
 
 
 public final class CompressedClusterStream extends ClusterStream {
-    private final NtfsAttribute _attr;
 
-    private final int _bytesPerCluster;
+    private final NtfsAttribute attr;
 
-    private final byte[] _cacheBuffer;
+    private final int bytesPerCluster;
 
-    private long _cacheBufferVcn = -1;
+    private final byte[] cacheBuffer;
 
-    private final INtfsContext _context;
+    private long cacheBufferVcn = -1;
 
-    private final byte[] _ioBuffer;
+    private final INtfsContext context;
 
-    private final RawClusterStream _rawStream;
+    private final byte[] ioBuffer;
+
+    private final RawClusterStream rawStream;
 
     public CompressedClusterStream(INtfsContext context, NtfsAttribute attr, RawClusterStream rawStream) {
-        _context = context;
-        _attr = attr;
-        _rawStream = rawStream;
-        _bytesPerCluster = _context.getBiosParameterBlock().getBytesPerCluster();
-        _cacheBuffer = new byte[_attr.getCompressionUnitSize() * context.getBiosParameterBlock().getBytesPerCluster()];
-        _ioBuffer = new byte[_attr.getCompressionUnitSize() * context.getBiosParameterBlock().getBytesPerCluster()];
+        this.context = context;
+        this.attr = attr;
+        this.rawStream = rawStream;
+        bytesPerCluster = this.context.getBiosParameterBlock().getBytesPerCluster();
+        cacheBuffer = new byte[this.attr.getCompressionUnitSize() * context.getBiosParameterBlock().getBytesPerCluster()];
+        ioBuffer = new byte[this.attr.getCompressionUnitSize() * context.getBiosParameterBlock().getBytesPerCluster()];
     }
 
     public long getAllocatedClusterCount() {
-        return _rawStream.getAllocatedClusterCount();
+        return rawStream.getAllocatedClusterCount();
     }
 
     public List<Range> getStoredClusters() {
-        return Range.chunked(_rawStream.getStoredClusters(), _attr.getCompressionUnitSize());
+        return Range.chunked(rawStream.getStoredClusters(), attr.getCompressionUnitSize());
     }
 
     public boolean isClusterStored(long vcn) {
-        return _rawStream.isClusterStored(compressionStart(vcn));
+        return rawStream.isClusterStored(compressionStart(vcn));
     }
 
     public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
-        _rawStream.expandToClusters(MathUtilities.roundUp(numVirtualClusters, _attr.getCompressionUnitSize()), extent, false);
+        rawStream.expandToClusters(MathUtilities.roundUp(numVirtualClusters, attr.getCompressionUnitSize()), extent, false);
     }
 
     public void truncateToClusters(long numVirtualClusters) {
-        long alignedNum = MathUtilities.roundUp(numVirtualClusters, _attr.getCompressionUnitSize());
-        _rawStream.truncateToClusters(alignedNum);
+        long alignedNum = MathUtilities.roundUp(numVirtualClusters, attr.getCompressionUnitSize());
+        rawStream.truncateToClusters(alignedNum);
         if (alignedNum != numVirtualClusters) {
-            _rawStream.releaseClusters(numVirtualClusters, (int) (alignedNum - numVirtualClusters));
+            rawStream.releaseClusters(numVirtualClusters, (int) (alignedNum - numVirtualClusters));
         }
-
     }
 
     public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
-        if (buffer.length < count * _bytesPerCluster + offset) {
+        if (buffer.length < count * bytesPerCluster + offset) {
             throw new IllegalArgumentException("Cluster buffer too small");
         }
 
@@ -90,19 +90,19 @@ public final class CompressedClusterStream extends ClusterStream {
         while (totalRead < count) {
             long focusVcn = startVcn + totalRead;
             loadCache(focusVcn);
-            int cacheOffset = (int) (focusVcn - _cacheBufferVcn);
-            int toCopy = Math.min(_attr.getCompressionUnitSize() - cacheOffset, count - totalRead);
-            System.arraycopy(_cacheBuffer,
-                             cacheOffset * _bytesPerCluster,
+            int cacheOffset = (int) (focusVcn - cacheBufferVcn);
+            int toCopy = Math.min(attr.getCompressionUnitSize() - cacheOffset, count - totalRead);
+            System.arraycopy(cacheBuffer,
+                             cacheOffset * bytesPerCluster,
                              buffer,
-                             offset + totalRead * _bytesPerCluster,
-                             toCopy * _bytesPerCluster);
+                             offset + totalRead * bytesPerCluster,
+                             toCopy * bytesPerCluster);
             totalRead += toCopy;
         }
     }
 
     public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
-        if (buffer.length < count * _bytesPerCluster + offset) {
+        if (buffer.length < count * bytesPerCluster + offset) {
             throw new IllegalArgumentException("Cluster buffer too small");
         }
 
@@ -111,24 +111,24 @@ public final class CompressedClusterStream extends ClusterStream {
         while (totalWritten < count) {
             long focusVcn = startVcn + totalWritten;
             long cuStart = compressionStart(focusVcn);
-            if (cuStart == focusVcn && count - totalWritten >= _attr.getCompressionUnitSize()) {
+            if (cuStart == focusVcn && count - totalWritten >= attr.getCompressionUnitSize()) {
                 // Aligned write...
                 totalAllocated += compressAndWriteClusters(focusVcn,
-                                                           _attr.getCompressionUnitSize(),
+                                                           attr.getCompressionUnitSize(),
                                                            buffer,
-                                                           offset + totalWritten * _bytesPerCluster);
-                totalWritten += _attr.getCompressionUnitSize();
+                                                           offset + totalWritten * bytesPerCluster);
+                totalWritten += attr.getCompressionUnitSize();
             } else {
                 // Unaligned, so go through cache
                 loadCache(focusVcn);
-                int cacheOffset = (int) (focusVcn - _cacheBufferVcn);
-                int toCopy = Math.min(count - totalWritten, _attr.getCompressionUnitSize() - cacheOffset);
+                int cacheOffset = (int) (focusVcn - cacheBufferVcn);
+                int toCopy = Math.min(count - totalWritten, attr.getCompressionUnitSize() - cacheOffset);
                 System.arraycopy(buffer,
-                                 offset + totalWritten * _bytesPerCluster,
-                                 _cacheBuffer,
-                                 cacheOffset * _bytesPerCluster,
-                                 toCopy * _bytesPerCluster);
-                totalAllocated += compressAndWriteClusters(_cacheBufferVcn, _attr.getCompressionUnitSize(), _cacheBuffer, 0);
+                                 offset + totalWritten * bytesPerCluster,
+                        cacheBuffer,
+                                 cacheOffset * bytesPerCluster,
+                                 toCopy * bytesPerCluster);
+                totalAllocated += compressAndWriteClusters(cacheBufferVcn, attr.getCompressionUnitSize(), cacheBuffer, 0);
                 totalWritten += toCopy;
             }
         }
@@ -140,13 +140,13 @@ public final class CompressedClusterStream extends ClusterStream {
         int totalCleared = 0;
         while (totalCleared < count) {
             long focusVcn = startVcn + totalCleared;
-            if (compressionStart(focusVcn) == focusVcn && count - totalCleared >= _attr.getCompressionUnitSize()) {
+            if (compressionStart(focusVcn) == focusVcn && count - totalCleared >= attr.getCompressionUnitSize()) {
                 // Aligned - so it's a sparse compression unit...
-                totalReleased += _rawStream.releaseClusters(startVcn, _attr.getCompressionUnitSize());
-                totalCleared += _attr.getCompressionUnitSize();
+                totalReleased += rawStream.releaseClusters(startVcn, attr.getCompressionUnitSize());
+                totalCleared += attr.getCompressionUnitSize();
             } else {
                 int toZero = (int) Math.min(count - totalCleared,
-                                            _attr.getCompressionUnitSize() - (focusVcn - compressionStart(focusVcn)));
+                                            attr.getCompressionUnitSize() - (focusVcn - compressionStart(focusVcn)));
                 totalReleased -= writeZeroClusters(focusVcn, toZero);
                 totalCleared += toZero;
             }
@@ -156,7 +156,7 @@ public final class CompressedClusterStream extends ClusterStream {
 
     private int writeZeroClusters(long focusVcn, int count) {
         int allocatedClusters = 0;
-        byte[] zeroBuffer = new byte[16 * _bytesPerCluster];
+        byte[] zeroBuffer = new byte[16 * bytesPerCluster];
         int numWritten = 0;
         while (numWritten < count) {
             int toWrite = Math.min(count - numWritten, 16);
@@ -167,54 +167,54 @@ public final class CompressedClusterStream extends ClusterStream {
     }
 
     private int compressAndWriteClusters(long focusVcn, int count, byte[] buffer, int offset) {
-        BlockCompressor compressor = _context.getOptions().getCompressor();
-        compressor.setBlockSize(_bytesPerCluster);
+        BlockCompressor compressor = context.getOptions().getCompressor();
+        compressor.setBlockSize(bytesPerCluster);
         int totalAllocated = 0;
         int[] compressedLength = new int[] {
-            _ioBuffer.length
+            ioBuffer.length
         };
         CompressionResult result = compressor
-                .compress(buffer, offset, _attr.getCompressionUnitSize() * _bytesPerCluster, _ioBuffer, 0, compressedLength);
+                .compress(buffer, offset, attr.getCompressionUnitSize() * bytesPerCluster, ioBuffer, 0, compressedLength);
         if (result == CompressionResult.AllZeros) {
-            totalAllocated -= _rawStream.releaseClusters(focusVcn, count);
+            totalAllocated -= rawStream.releaseClusters(focusVcn, count);
         } else if (result == CompressionResult.Compressed &&
-                   _attr.getCompressionUnitSize() * _bytesPerCluster - compressedLength[0] > _bytesPerCluster) {
-            int compClusters = MathUtilities.ceil(compressedLength[0], _bytesPerCluster);
-            totalAllocated += _rawStream.allocateClusters(focusVcn, compClusters);
-            totalAllocated += _rawStream.writeClusters(focusVcn, compClusters, _ioBuffer, 0);
-            totalAllocated -= _rawStream.releaseClusters(focusVcn + compClusters,
-                                                         _attr.getCompressionUnitSize() - compClusters);
+                   attr.getCompressionUnitSize() * bytesPerCluster - compressedLength[0] > bytesPerCluster) {
+            int compClusters = MathUtilities.ceil(compressedLength[0], bytesPerCluster);
+            totalAllocated += rawStream.allocateClusters(focusVcn, compClusters);
+            totalAllocated += rawStream.writeClusters(focusVcn, compClusters, ioBuffer, 0);
+            totalAllocated -= rawStream.releaseClusters(focusVcn + compClusters,
+                                                         attr.getCompressionUnitSize() - compClusters);
         } else {
-            totalAllocated += _rawStream.allocateClusters(focusVcn, _attr.getCompressionUnitSize());
-            totalAllocated += _rawStream.writeClusters(focusVcn, _attr.getCompressionUnitSize(), buffer, offset);
+            totalAllocated += rawStream.allocateClusters(focusVcn, attr.getCompressionUnitSize());
+            totalAllocated += rawStream.writeClusters(focusVcn, attr.getCompressionUnitSize(), buffer, offset);
         }
         return totalAllocated;
     }
 
     private long compressionStart(long vcn) {
-        return MathUtilities.roundDown(vcn, _attr.getCompressionUnitSize());
+        return MathUtilities.roundDown(vcn, attr.getCompressionUnitSize());
     }
 
     private void loadCache(long vcn) {
         long cuStart = compressionStart(vcn);
-        if (_cacheBufferVcn != cuStart) {
-            if (_rawStream.areAllClustersStored(cuStart, _attr.getCompressionUnitSize())) {
+        if (cacheBufferVcn != cuStart) {
+            if (rawStream.areAllClustersStored(cuStart, attr.getCompressionUnitSize())) {
                 // Uncompressed data - read straight into cache buffer
-                _rawStream.readClusters(cuStart, _attr.getCompressionUnitSize(), _cacheBuffer, 0);
-            } else if (_rawStream.isClusterStored(cuStart)) {
+                rawStream.readClusters(cuStart, attr.getCompressionUnitSize(), cacheBuffer, 0);
+            } else if (rawStream.isClusterStored(cuStart)) {
                 // Compressed data - read via IO buffer
-                _rawStream.readClusters(cuStart, _attr.getCompressionUnitSize(), _ioBuffer, 0);
-                int expected = (int) Math.min(_attr.getLength() - vcn * _bytesPerCluster,
-                        (long) _attr.getCompressionUnitSize() * _bytesPerCluster);
-                int decomp = _context.getOptions().getCompressor().decompress(_ioBuffer, 0, _ioBuffer.length, _cacheBuffer, 0);
+                rawStream.readClusters(cuStart, attr.getCompressionUnitSize(), ioBuffer, 0);
+                int expected = (int) Math.min(attr.getLength() - vcn * bytesPerCluster,
+                        (long) attr.getCompressionUnitSize() * bytesPerCluster);
+                int decomp = context.getOptions().getCompressor().decompress(ioBuffer, 0, ioBuffer.length, cacheBuffer, 0);
                 if (decomp < expected) {
                     throw new IOException("Decompression returned too little data");
                 }
             } else {
                 // Sparse, wipe cache buffer directly
-                Arrays.fill(_cacheBuffer, 0, 0 + _cacheBuffer.length, (byte) 0);
+                Arrays.fill(cacheBuffer, 0, 0 + cacheBuffer.length, (byte) 0);
             }
-            _cacheBufferVcn = cuStart;
+            cacheBufferVcn = cuStart;
         }
     }
 }

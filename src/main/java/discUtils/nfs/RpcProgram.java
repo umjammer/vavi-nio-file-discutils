@@ -26,12 +26,13 @@ import dotnet4j.io.MemoryStream;
 
 
 public abstract class RpcProgram {
+
     public static final int RpcVersion = 2;
 
-    protected IRpcClient _client;
+    protected IRpcClient client;
 
     protected RpcProgram(IRpcClient client) {
-        _client = client;
+        this.client = client;
     }
 
     public abstract int getIdentifier();
@@ -50,7 +51,7 @@ public abstract class RpcProgram {
     }
 
     protected RpcReply doSend(MemoryStream ms) {
-        IRpcTransport transport = _client.getTransport(getIdentifier(), getVersion());
+        IRpcTransport transport = client.getTransport(getIdentifier(), getVersion());
         byte[] buffer = ms.toArray();
         buffer = transport.sendAndReceive(buffer);
         XdrDataReader reader = new XdrDataReader(new MemoryStream(buffer));
@@ -72,7 +73,7 @@ public abstract class RpcProgram {
 
     protected XdrDataWriter startCallMessage(MemoryStream ms, RpcCredentials credentials, int procedure) {
         XdrDataWriter writer = new XdrDataWriter(ms);
-        writer.write(_client.nextTransactionId());
+        writer.write(client.nextTransactionId());
         writer.write(RpcMessageType.Call.ordinal());
         RpcCallHeader hdr = new RpcCallHeader();
         hdr.setRpcVersion(RpcVersion);

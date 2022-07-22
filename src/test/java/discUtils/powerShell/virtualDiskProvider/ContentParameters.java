@@ -24,13 +24,13 @@ package discUtils.powerShell.virtualDiskProvider;
 
 public class ContentParameters {
 
-    private ContentEncoding __Encoding;
+    private ContentEncoding encoding;
 
     public ContentEncoding getEncoding() {
-        return __Encoding;
+        return encoding;
     }
 
     public void setEncoding(ContentEncoding value) {
-        __Encoding = value;
+        encoding = value;
     }
 }

@@ -27,49 +27,50 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ExtendedFileEntry extends FileEntry implements IByteArraySerializable {
-    public long CreationTime;
 
-    public long ObjectSize;
+    public long creationTime;
 
-    public LongAllocationDescriptor StreamDirectoryIcb;
+    public long objectSize;
+
+    public LongAllocationDescriptor streamDirectoryIcb;
 
     public int size() {
         throw new UnsupportedOperationException();
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        DescriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
-        InformationControlBlock = EndianUtilities
+        descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
+        informationControlBlock = EndianUtilities
                 .toStruct(InformationControlBlock.class, buffer, offset + 16);
-        Uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
-        Gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        Permissions = FilePermissions.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
-        FileLinkCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 48);
-        RecordFormat = buffer[offset + 50];
-        RecordDisplayAttributes = buffer[offset + 51];
-        RecordLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);
-        InformationLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
-        ObjectSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 64);
-        LogicalBlocksRecorded = EndianUtilities.toUInt64LittleEndian(buffer, offset + 72);
-        AccessTime = UdfUtilities.parseTimestamp(buffer, offset + 80);
-        ModificationTime = UdfUtilities.parseTimestamp(buffer, offset + 92);
-        CreationTime = UdfUtilities.parseTimestamp(buffer, offset + 104);
-        AttributeTime = UdfUtilities.parseTimestamp(buffer, offset + 116);
-        Checkpoint = EndianUtilities.toUInt32LittleEndian(buffer, offset + 128);
-        ExtendedAttributeIcb = EndianUtilities
+        uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
+        gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
+        permissions = FilePermissions.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
+        fileLinkCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 48);
+        recordFormat = buffer[offset + 50];
+        recordDisplayAttributes = buffer[offset + 51];
+        recordLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);
+        informationLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
+        objectSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 64);
+        logicalBlocksRecorded = EndianUtilities.toUInt64LittleEndian(buffer, offset + 72);
+        accessTime = UdfUtilities.parseTimestamp(buffer, offset + 80);
+        modificationTime = UdfUtilities.parseTimestamp(buffer, offset + 92);
+        creationTime = UdfUtilities.parseTimestamp(buffer, offset + 104);
+        attributeTime = UdfUtilities.parseTimestamp(buffer, offset + 116);
+        checkpoint = EndianUtilities.toUInt32LittleEndian(buffer, offset + 128);
+        extendedAttributeIcb = EndianUtilities
                 .toStruct(LongAllocationDescriptor.class, buffer, offset + 136);
-        StreamDirectoryIcb = EndianUtilities
+        streamDirectoryIcb = EndianUtilities
                 .toStruct(LongAllocationDescriptor.class, buffer, offset + 152);
-        ImplementationIdentifier = EndianUtilities
+        implementationIdentifier = EndianUtilities
                 .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 168);
-        UniqueId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 200);
-        ExtendedAttributesLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 208);
-        AllocationDescriptorsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 212);
-        AllocationDescriptors = EndianUtilities
-                .toByteArray(buffer, offset + 216 + ExtendedAttributesLength, AllocationDescriptorsLength);
-        byte[] eaData = EndianUtilities.toByteArray(buffer, offset + 216, ExtendedAttributesLength);
-        ExtendedAttributes = readExtendedAttributes(eaData);
-        return 216 + ExtendedAttributesLength + AllocationDescriptorsLength;
+        uniqueId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 200);
+        extendedAttributesLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 208);
+        allocationDescriptorsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 212);
+        allocationDescriptors = EndianUtilities
+                .toByteArray(buffer, offset + 216 + extendedAttributesLength, allocationDescriptorsLength);
+        byte[] eaData = EndianUtilities.toByteArray(buffer, offset + 216, extendedAttributesLength);
+        extendedAttributes = readExtendedAttributes(eaData);
+        return 216 + extendedAttributesLength + allocationDescriptorsLength;
     }
 
     public void writeTo(byte[] buffer, int offset) {

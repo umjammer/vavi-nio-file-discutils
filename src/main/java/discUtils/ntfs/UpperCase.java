@@ -32,14 +32,15 @@ import dotnet4j.io.Stream;
 
 
 public final class UpperCase implements Comparator<String> {
-    private final char[] _table;
+
+    private final char[] table;
 
     public UpperCase(File file) {
         try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read)) {
-            _table = new char[(int) s.getLength() / 2];
+            table = new char[(int) s.getLength() / 2];
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
-            for (int i = 0; i < _table.length; ++i) {
-                _table[i] = (char) EndianUtilities.toUInt16LittleEndian(buffer, i * 2);
+            for (int i = 0; i < table.length; ++i) {
+                table[i] = (char) EndianUtilities.toUInt16LittleEndian(buffer, i * 2);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -49,7 +50,7 @@ public final class UpperCase implements Comparator<String> {
     public int compare(String x, String y) {
         int compLen = Math.min(x.length(), y.length());
         for (int i = 0; i < compLen; ++i) {
-            int result = _table[x.charAt(i)] - _table[y.charAt(i)];
+            int result = table[x.charAt(i)] - table[y.charAt(i)];
             if (result != 0) {
                 return result;
             }
@@ -65,7 +66,7 @@ public final class UpperCase implements Comparator<String> {
         for (int i = 0; i < compLen; ++i) {
             char xCh = (char) ((x[xOffset + i * 2] & 0xff) | ((x[xOffset + i * 2 + 1] & 0xff) << 8));
             char yCh = (char) ((y[yOffset + i * 2] & 0xff) | ((y[yOffset + i * 2 + 1] & 0xff) << 8));
-            int result = _table[xCh] - _table[yCh];
+            int result = table[xCh] - table[yCh];
             if (result != 0) {
                 return result;
             }

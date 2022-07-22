@@ -27,6 +27,7 @@ import java.time.ZonedDateTime;
 
 
 public final class Nfs3FileTime {
+
     private static final long TicksPerSec = 10 * 1000 * 1000;
 
     // 10 million ticks per sec
@@ -35,33 +36,33 @@ public final class Nfs3FileTime {
     // 1 tick = 100 ns
     private static final long nfsEpoch = ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")).toInstant().toEpochMilli();
 
-    private final int _nseconds;
+    private final int nSeconds;
 
-    private final int _seconds;
+    private final int seconds;
 
     public Nfs3FileTime(XdrDataReader reader) {
-        _seconds = reader.readUInt32();
-        _nseconds = reader.readUInt32();
+        seconds = reader.readUInt32();
+        nSeconds = reader.readUInt32();
     }
 
     public Nfs3FileTime(long time) {
         long ticks = time - nfsEpoch;
-        _seconds = (int) (ticks / TicksPerSec);
-        _nseconds = (int) (ticks % TicksPerSec * TicksPerNanoSec);
+        seconds = (int) (ticks / TicksPerSec);
+        nSeconds = (int) (ticks % TicksPerSec * TicksPerNanoSec);
     }
 
     public Nfs3FileTime(int seconds, int nseconds) {
-        _seconds = seconds;
-        _nseconds = nseconds;
+        this.seconds = seconds;
+        this.nSeconds = nseconds;
     }
 
     public long toDateTime() {
-        return _seconds * TicksPerSec + _nseconds / TicksPerNanoSec + nfsEpoch;
+        return seconds * TicksPerSec + nSeconds / TicksPerNanoSec + nfsEpoch;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_seconds);
-        writer.write(_nseconds);
+        writer.write(seconds);
+        writer.write(nSeconds);
     }
 
     public static Nfs3FileTime getPrecision() {
@@ -77,11 +78,11 @@ public final class Nfs3FileTime {
             return false;
         }
 
-        return other._seconds == _seconds && other._nseconds == _nseconds;
+        return other.seconds == seconds && other.nSeconds == nSeconds;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(_seconds, _nseconds);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(seconds, nSeconds);
     }
 
     public String toString() {

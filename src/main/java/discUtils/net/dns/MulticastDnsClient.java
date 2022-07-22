@@ -53,15 +53,16 @@ import vavi.util.Debug;
  * of mDNS to the extent possible whilst not binding to port 5353.
  */
 public final class MulticastDnsClient extends DnsClient implements Closeable {
+
     private static final Logger logger = Logger.getLogger(MulticastDnsClient.class.getName());
 
-    private Map<String, Map<RecordType, List<ResourceRecord>>> _cache;
+    private Map<String, Map<RecordType, List<ResourceRecord>>> cache;
 
-    private short _nextTransId;
+    private short nextTransId;
 
-    private final Map<Short, Transaction> _transactions;
+    private final Map<Short, Transaction> transactions;
 
-    private DatagramChannel _udpClient;
+    private DatagramChannel udpClient;
 
     private static Random random = new Random();
 
@@ -72,14 +73,14 @@ public final class MulticastDnsClient extends DnsClient implements Closeable {
      */
     public MulticastDnsClient() {
         try {
-            _nextTransId = (short) random.nextInt();
-            _transactions = new HashMap<>();
-            _udpClient = DatagramChannel.open(); // IPAddress.Any, 0
-            _udpClient.configureBlocking(false);
-            _udpClient.setOption(StandardSocketOptions.SO_REUSEADDR, true);
-            _udpClient.socket().bind(new InetSocketAddress(5353));
+            nextTransId = (short) random.nextInt();
+            transactions = new HashMap<>();
+            udpClient = DatagramChannel.open(); // IPAddress.Any, 0
+            udpClient.configureBlocking(false);
+            udpClient.setOption(StandardSocketOptions.SO_REUSEADDR, true);
+            udpClient.socket().bind(new InetSocketAddress(5353));
             Selector selector = Selector.open();
-            _udpClient.register(selector, SelectionKey.OP_READ);
+            udpClient.register(selector, SelectionKey.OP_READ);
             es.execute(() -> {
                 while (!selector.keys().isEmpty()) {
                     try {
@@ -103,7 +104,7 @@ Debug.println("receive: " + packetBytes.position());
                 }
 Debug.println("receiver exit");
             });
-            _cache = new HashMap<>();
+            cache = new HashMap<>();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -113,9 +114,9 @@ Debug.println("receiver exit");
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_udpClient != null) {
-            _udpClient.close();
-            _udpClient = null;
+        if (udpClient != null) {
+            udpClient.close();
+            udpClient = null;
         }
     }
 
@@ -123,8 +124,8 @@ Debug.println("receiver exit");
      * Flushes any cached DNS records.
      */
     public void flushCache() {
-        synchronized (_transactions) {
-            _cache = new HashMap<>();
+        synchronized (transactions) {
+            cache = new HashMap<>();
         }
     }
 
@@ -138,11 +139,11 @@ Debug.println("receiver exit");
     public ResourceRecord[] lookup(String name, RecordType type) {
         String normName = normalizeDomainName(name);
 
-        synchronized (_transactions) {
+        synchronized (transactions) {
             expireRecords();
 
-            if (_cache.containsKey(normName.toUpperCase())) {
-                Map<RecordType, List<ResourceRecord>> typeRecords = _cache.get(normName.toUpperCase());
+            if (cache.containsKey(normName.toUpperCase())) {
+                Map<RecordType, List<ResourceRecord>> typeRecords = cache.get(normName.toUpperCase());
                 if (typeRecords.containsKey(type)) {
                     List<ResourceRecord> records = typeRecords.get(type);
                     return records.toArray(new ResourceRecord[0]);
@@ -172,13 +173,13 @@ Debug.println("receiver exit");
     }
 
     private ResourceRecord[] queryNetwork(String name, RecordType type) {
-        short transactionId = _nextTransId++;
+        short transactionId = nextTransId++;
         String normName = normalizeDomainName(name);
 
         Transaction transaction = new Transaction();
         try (DatagramChannel channel = DatagramChannel.open()) {
-            synchronized (_transactions) {
-                _transactions.put(transactionId, transaction);
+            synchronized (transactions) {
+                transactions.put(transactionId, transaction);
             }
 
             PacketWriter writer = new PacketWriter(1800);
@@ -198,7 +199,7 @@ Debug.println("receiver exit");
             InetSocketAddress mDnsAddress = new InetSocketAddress("224.0.0.251", 5353);
             channel.configureBlocking(false);
             channel.connect(mDnsAddress);
-            while (channel.isConnected() == false)
+            while (!channel.isConnected())
                 Thread.yield();
 Debug.println("send: " + msgBytes.length);
             channel.send(ByteBuffer.wrap(msgBytes), mDnsAddress);
@@ -207,8 +208,8 @@ Debug.println("send: " + msgBytes.length);
         } catch (IOException | InterruptedException e) {
             throw new dotnet4j.io.IOException(e);
         } finally {
-            synchronized (_transactions) {
-                _transactions.remove(transactionId);
+            synchronized (transactions) {
+                transactions.remove(transactionId);
             }
         }
 
@@ -220,7 +221,7 @@ Debug.println("send: " + msgBytes.length);
 
         List<String> removeNames = new ArrayList<>();
 
-        for (Map.Entry<String, Map<RecordType, List<ResourceRecord>>> nameRecord : _cache.entrySet()) {
+        for (Map.Entry<String, Map<RecordType, List<ResourceRecord>>> nameRecord : cache.entrySet()) {
             List<RecordType> removeTypes = new ArrayList<>();
 
             for (Map.Entry<RecordType, List<ResourceRecord>> typeRecords : nameRecord.getValue().entrySet()) {
@@ -248,7 +249,7 @@ Debug.println("send: " + msgBytes.length);
         }
 
         for (String name : removeNames) {
-            _cache.remove(name);
+            cache.remove(name);
         }
     }
 
@@ -257,11 +258,11 @@ Debug.println("send: " + msgBytes.length);
 
         Message msg = Message.read(reader);
 
-        synchronized (_transactions) {
-            Transaction transaction = _transactions.get(msg.getTransactionId());
+        synchronized (transactions) {
+            Transaction transaction = transactions.get(msg.getTransactionId());
 
             for (ResourceRecord answer : msg.getAdditionalRecords()) {
-                addRecord(_cache, answer);
+                addRecord(cache, answer);
             }
 
             for (ResourceRecord answer : msg.getAnswers()) {
@@ -269,7 +270,7 @@ Debug.println("send: " + msgBytes.length);
                     transaction.getAnswers().add(answer);
                 }
 
-                addRecord(_cache, answer);
+                addRecord(cache, answer);
             }
 
             if (transaction != null) {

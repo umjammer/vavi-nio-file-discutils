@@ -24,9 +24,10 @@ package discUtils.nfs;
 
 
 public class RpcReplyHeader {
-    public RpcAcceptedReplyHeader AcceptReply;
 
-    public RpcRejectedReplyHeader RejectedReply;
+    public RpcAcceptedReplyHeader acceptReply;
+
+    public RpcRejectedReplyHeader rejectedReply;
 
     public RpcReplyStatus Status = RpcReplyStatus.Accepted;
 
@@ -36,18 +37,18 @@ public class RpcReplyHeader {
     public RpcReplyHeader(XdrDataReader reader) {
         Status = RpcReplyStatus.values()[reader.readInt32()];
         if (Status == RpcReplyStatus.Accepted) {
-            AcceptReply = new RpcAcceptedReplyHeader(reader);
+            acceptReply = new RpcAcceptedReplyHeader(reader);
         } else {
-            RejectedReply = new RpcRejectedReplyHeader(reader);
+            rejectedReply = new RpcRejectedReplyHeader(reader);
         }
     }
 
     public void write(XdrDataWriter writer) {
         writer.write(Status.ordinal());
         if (Status == RpcReplyStatus.Accepted) {
-            AcceptReply.write(writer);
+            acceptReply.write(writer);
         } else {
-            RejectedReply.write(writer);
+            rejectedReply.write(writer);
         }
     }
 
@@ -60,11 +61,11 @@ public class RpcReplyHeader {
             return false;
         }
 
-        return other.Status == Status && dotnet4j.util.compat.Utilities.equals(other.AcceptReply, AcceptReply)
-                && dotnet4j.util.compat.Utilities.equals(other.RejectedReply, RejectedReply);
+        return other.Status == Status && dotnet4j.util.compat.Utilities.equals(other.acceptReply, acceptReply)
+                && dotnet4j.util.compat.Utilities.equals(other.rejectedReply, rejectedReply);
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(Status, AcceptReply, RejectedReply);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(Status, acceptReply, rejectedReply);
     }
 }

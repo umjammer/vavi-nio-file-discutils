@@ -27,15 +27,16 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class LogicalBlockAddress implements IByteArraySerializable {
+
     public LogicalBlockAddress() {
     }
 
-    public int LogicalBlock;
+    public int logicalBlock;
 
-    private short Partition;
+    private short partition;
 
     public int getPartition() {
-        return Partition;
+        return partition;
     }
 
     public int size() {
@@ -43,8 +44,8 @@ public class LogicalBlockAddress implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        LogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        Partition = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        logicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        partition = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         return 6;
     }
 
@@ -53,6 +54,6 @@ public class LogicalBlockAddress implements IByteArraySerializable {
     }
 
     public String toString() {
-        return LogicalBlock + ",p" + Partition;
+        return logicalBlock + ",p" + partition;
     }
 }

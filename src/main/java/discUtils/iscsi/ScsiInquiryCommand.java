@@ -28,17 +28,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ScsiInquiryCommand extends ScsiCommand {
+
     public static final int InitialResponseDataLength = 36;
 
-    private final boolean _askForPage = false;
+    private final boolean askForPage = false;
 
-    private final int _expected;
+    private final int expected;
 
-    private final byte _pageCode = 0;
+    private final byte pageCode = 0;
 
     public ScsiInquiryCommand(long targetLun, int expected) {
         super(targetLun);
-        _expected = expected;
+        this.expected = expected;
     }
 
     public int size() {
@@ -47,9 +48,9 @@ public class ScsiInquiryCommand extends ScsiCommand {
 
 //    public ScsiInquiryCommand(long targetLun, byte pageCode, int expected) {
 //        super(targetLun);
-//        _askForPage = true;
-//        _pageCode = pageCode;
-//        _expected = expected;
+//        askForPage = true;
+//        this.pageCode = pageCode;
+//        this.expected = expected;
 //    }
 
     public TaskAttributes getTaskAttributes() {
@@ -64,9 +65,9 @@ public class ScsiInquiryCommand extends ScsiCommand {
         Arrays.fill(buffer, offset, offset + 10, (byte) 0);
         buffer[offset] = 0x12;
         // OpCode
-        buffer[offset + 1] = (byte) (_askForPage ? 0x01 : 0x00);
-        buffer[offset + 2] = _pageCode;
-        EndianUtilities.writeBytesBigEndian((short) _expected, buffer, offset + 3);
+        buffer[offset + 1] = (byte) (askForPage ? 0x01 : 0x00);
+        buffer[offset + 2] = pageCode;
+        EndianUtilities.writeBytesBigEndian((short) expected, buffer, offset + 3);
         buffer[offset + 5] = 0;
     }
 }

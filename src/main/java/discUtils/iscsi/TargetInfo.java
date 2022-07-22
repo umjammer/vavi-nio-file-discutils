@@ -31,7 +31,8 @@ import java.util.List;
  * A target contains zero or more LUNs.
  */
 public class TargetInfo {
-    private List<TargetAddress> _addresses;
+
+    private List<TargetAddress> addresses;
 
     /**
      * Initializes a new instance of the TargetInfo class.
@@ -40,24 +41,24 @@ public class TargetInfo {
      * @param addresses The network addresses of the Target.
      */
     public TargetInfo(String name, List<TargetAddress> addresses) {
-        _name = name;
-        _addresses = addresses;
+        this.name = name;
+        this.addresses = addresses;
     }
 
     /**
      * Gets the network addresses of the Target.
      */
     public List<TargetAddress> getAddresses() {
-        return _addresses;
+        return addresses;
     }
 
     /**
      * Gets the name of the Target.
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
@@ -66,6 +67,6 @@ public class TargetInfo {
      * @return String of the form host[:port][,group]/name.
      */
     public String toString() {
-        return _addresses.get(0) + "/" + getName();
+        return addresses.get(0) + "/" + name;
     }
 }

@@ -27,42 +27,43 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class SecurityDescriptorRecord implements IByteArraySerializable {
-    public int _entrySize;
 
-    public int _hash;
+    public int entrySize;
 
-    public int _id;
+    public int hash;
 
-    public long _offsetInFile;
+    public int id;
 
-    public byte[] _securityDescriptor;
+    public long offsetInFile;
+
+    public byte[] securityDescriptor;
 
     public int size() {
-        return _securityDescriptor.length + 0x14;
+        return securityDescriptor.length + 0x14;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         read(buffer, offset);
-        return _securityDescriptor.length + 0x14;
+        return securityDescriptor.length + 0x14;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        _entrySize = size();
-        EndianUtilities.writeBytesLittleEndian(_hash, buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(_offsetInFile, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(_entrySize, buffer, offset + 0x10);
-        System.arraycopy(_securityDescriptor, 0, buffer, offset + 0x14, _securityDescriptor.length);
+        entrySize = size();
+        EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0x00);
+        EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(offsetInFile, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(entrySize, buffer, offset + 0x10);
+        System.arraycopy(securityDescriptor, 0, buffer, offset + 0x14, securityDescriptor.length);
     }
 
     public boolean read(byte[] buffer, int offset) {
-        _hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
-        _id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
-        _offsetInFile = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-        _entrySize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        if (_entrySize > 0) {
-            _securityDescriptor = new byte[_entrySize - 0x14];
-            System.arraycopy(buffer, offset + 0x14, _securityDescriptor, 0, _securityDescriptor.length);
+        hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
+        id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
+        offsetInFile = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
+        entrySize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
+        if (entrySize > 0) {
+            securityDescriptor = new byte[entrySize - 0x14];
+            System.arraycopy(buffer, offset + 0x14, securityDescriptor, 0, securityDescriptor.length);
             return true;
         }
 

@@ -29,20 +29,21 @@ import dotnet4j.io.Stream;
 
 
 public class PassthroughStreamBuilder extends StreamBuilder {
-    private final Stream _stream;
+
+    private final Stream stream;
 
     public PassthroughStreamBuilder(Stream stream) {
-        _stream = stream;
+        this.stream = stream;
     }
 
     /**
      * @param totalLength {@cs out}
      */
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
-        _stream.setPosition(0);
+        stream.setPosition(0);
         List<BuilderExtent> result = new ArrayList<>();
-        result.add(new BuilderStreamExtent(0, _stream));
-        totalLength[0] = _stream.getLength();
+        result.add(new BuilderStreamExtent(0, stream));
+        totalLength[0] = stream.getLength();
         return result;
     }
 }

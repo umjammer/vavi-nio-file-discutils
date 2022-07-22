@@ -39,81 +39,80 @@ import dotnet4j.util.compat.Utilities;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "new.vhd", description = "Path to the VHD file to create.", args = 1, required = true)
-    private String _sourceFile;
+    private String sourceFile;
 
     @Option(option = "base.vhd", description = "For differencing disks, the path to the base disk.", args = 1, required = false)
-    private String _destFile;
+    private String destFile;
 
     @Option(option = "t",
             argName = "type",
             description = "The type of disk to create, one of: fixed, dynamic, diff.  The default is dynamic.")
-    private String _typeSwitch = "type";
+    private String typeSwitch = "type";
 
     @Option(option = "bs",
             argName = "blocksize",
             description = "For dynamic disks, the allocation int size for new disk regions in bytes.  The default is 2MB.    Use B, KB, MB, GB to specify units (units default to bytes if not specified).")
-    private String _blockSizeSwitch = "size";
+    private String blockSizeSwitch = "size";
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
         Options.Util.bind(args, program);
         program.run(args);
-        System.exit(ExitCode);
+        System.exit(exitCode);
     }
 
-    static int ExitCode;
+    static int exitCode;
 
     protected void doRun() throws IOException {
 
-        if ((_typeSwitch != null && Utilities.equals(_typeSwitch, "dynamic")) || _typeSwitch == null) {
-            long blockSize = 2 * 1024 * 1024;
-            if (_blockSizeSwitch != null) {
-                long[] refVar___0 = new long[1];
-                boolean boolVar___0 = !discUtils.common.Utilities.tryParseDiskSize(_blockSizeSwitch, refVar___0);
-                blockSize = refVar___0[0];
-                if (boolVar___0) {
-                    ExitCode = 1;
+        if ((typeSwitch != null && Utilities.equals(typeSwitch, "dynamic")) || typeSwitch == null) {
+            long[] blockSize = new long[] {2 * 1024 * 1024};
+            if (blockSizeSwitch != null) {
+                boolean r = !discUtils.common.Utilities.tryParseDiskSize(blockSizeSwitch, blockSize);
+                if (r) {
+                    exitCode = 1;
                     return;
                 }
             }
 
-            if (blockSize == 0 || ((blockSize & 0x1FF) != 0) || !isPowerOfTwo(blockSize / 512)) {
+            if (blockSize[0] == 0 || ((blockSize[0] & 0x1FF) != 0) || !isPowerOfTwo(blockSize[0] / 512)) {
                 System.err.println("ERROR: blocksize must be power of 2 sectors - e.g. 512B, 1KB, 2KB, 4KB, ...");
-                ExitCode = 2;
+                exitCode = 2;
                 return;
             }
 
             if (getDiskSize() <= 0) {
                 System.err.println("ERROR: disk size must be greater than zero.");
-                ExitCode = 3;
+                exitCode = 3;
                 return;
             }
 
-            try (FileStream fs = new FileStream(_destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
-                Disk.initializeDynamic(fs, Ownership.None, getDiskSize(), blockSize);
+            try (FileStream fs = new FileStream(destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
+                Disk.initializeDynamic(fs, Ownership.None, getDiskSize(), blockSize[0]);
             }
-        } else if (Utilities.equals(_typeSwitch, "diff")) {
+        } else if (Utilities.equals(typeSwitch, "diff")) {
             // Create Diff
-            if (_sourceFile == null) {
-                ExitCode = 1;
+            if (sourceFile == null) {
+                exitCode = 1;
                 return;
             }
 
-            Disk.initializeDifferencing(_destFile, _sourceFile);
-        } else if (Utilities.equals(_typeSwitch, "fixed")) {
+            Disk.initializeDifferencing(destFile, sourceFile);
+        } else if (Utilities.equals(typeSwitch, "fixed")) {
             if (getDiskSize() <= 0) {
                 System.err.println("ERROR: disk size must be greater than zero.");
-                ExitCode = 3;
+                exitCode = 3;
                 return;
             }
 
             // Create Fixed disk
-            try (FileStream fs = new FileStream(_destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
+            try (FileStream fs = new FileStream(destFile, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
                 Disk.initializeFixed(fs, Ownership.None, getDiskSize());
             }
         } else {
-            ExitCode = 1;
+            exitCode = 1;
         }
     }
 

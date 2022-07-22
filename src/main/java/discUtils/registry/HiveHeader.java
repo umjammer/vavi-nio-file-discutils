@@ -33,42 +33,43 @@ import dotnet4j.io.IOException;
 
 
 public final class HiveHeader implements IByteArraySerializable {
+
     public static final int HeaderSize = 512;
 
     private static final int Signature = 0x66676572;
 
-    public int Checksum;
+    public int checksum;
 
-    public UUID Guid1;
+    public UUID guid1;
 
-    public UUID Guid2;
+    public UUID guid2;
 
-    public int Length;
+    public int length;
 
-    public int MajorVersion;
+    public int majorVersion;
 
-    public int MinorVersion;
+    public int minorVersion;
 
-    public String Path;
+    public String path;
 
-    public int RootCell;
+    public int rootCell;
 
-    public int Sequence1;
+    public int sequence1;
 
-    public int Sequence2;
+    public int sequence2;
 
-    public long Timestamp;
+    public long timestamp;
 
     public HiveHeader() {
-        Sequence1 = 1;
-        Sequence2 = 1;
-        Timestamp = System.currentTimeMillis();
-        MajorVersion = 1;
-        MinorVersion = 3;
-        RootCell = -1;
-        Path = "";
-        Guid1 = UUID.randomUUID();
-        Guid2 = UUID.randomUUID();
+        sequence1 = 1;
+        sequence2 = 1;
+        timestamp = System.currentTimeMillis();
+        majorVersion = 1;
+        minorVersion = 3;
+        rootCell = -1;
+        path = "";
+        guid1 = UUID.randomUUID();
+        guid2 = UUID.randomUUID();
     }
 
     public int size() {
@@ -81,24 +82,24 @@ public final class HiveHeader implements IByteArraySerializable {
             throw new IOException("Invalid signature for registry hive");
         }
 
-        Sequence1 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0004);
-        Sequence2 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0008);
-        Timestamp = DateUtil.toFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x000C));
-        MajorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0014);
-        MinorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0018);
+        sequence1 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0004);
+        sequence2 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0008);
+        timestamp = DateUtil.toFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x000C));
+        majorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0014);
+        minorVersion = EndianUtilities.toInt32LittleEndian(buffer, 0x0018);
         @SuppressWarnings("unused")
         int isLog = EndianUtilities.toInt32LittleEndian(buffer, 0x001C);
-        RootCell = EndianUtilities.toInt32LittleEndian(buffer, 0x0024);
-        Length = EndianUtilities.toInt32LittleEndian(buffer, 0x0028);
-        Path = new String(buffer, 0x0030, 0x0040, StandardCharsets.UTF_16LE).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
-        Guid1 = EndianUtilities.toGuidLittleEndian(buffer, 0x0070);
-        Guid2 = EndianUtilities.toGuidLittleEndian(buffer, 0x0094);
-        Checksum = EndianUtilities.toUInt32LittleEndian(buffer, 0x01FC);
-        if (Sequence1 != Sequence2) {
+        rootCell = EndianUtilities.toInt32LittleEndian(buffer, 0x0024);
+        length = EndianUtilities.toInt32LittleEndian(buffer, 0x0028);
+        path = new String(buffer, 0x0030, 0x0040, StandardCharsets.UTF_16LE).replaceFirst("^\0*", "").replaceFirst("\0*$", "");
+        guid1 = EndianUtilities.toGuidLittleEndian(buffer, 0x0070);
+        guid2 = EndianUtilities.toGuidLittleEndian(buffer, 0x0094);
+        checksum = EndianUtilities.toUInt32LittleEndian(buffer, 0x01FC);
+        if (sequence1 != sequence2) {
             throw new UnsupportedOperationException("Support for replaying registry log file");
         }
 
-        if (Checksum != calcChecksum(buffer, offset)) {
+        if (checksum != calcChecksum(buffer, offset)) {
             throw new IOException("Invalid checksum on registry file");
         }
 
@@ -107,20 +108,20 @@ public final class HiveHeader implements IByteArraySerializable {
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset);
-        EndianUtilities.writeBytesLittleEndian(Sequence1, buffer, offset + 0x0004);
-        EndianUtilities.writeBytesLittleEndian(Sequence2, buffer, offset + 0x0008);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Timestamp), buffer, offset + 0x000C);
-        EndianUtilities.writeBytesLittleEndian(MajorVersion, buffer, offset + 0x0014);
-        EndianUtilities.writeBytesLittleEndian(MinorVersion, buffer, offset + 0x0018);
+        EndianUtilities.writeBytesLittleEndian(sequence1, buffer, offset + 0x0004);
+        EndianUtilities.writeBytesLittleEndian(sequence2, buffer, offset + 0x0008);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(timestamp), buffer, offset + 0x000C);
+        EndianUtilities.writeBytesLittleEndian(majorVersion, buffer, offset + 0x0014);
+        EndianUtilities.writeBytesLittleEndian(minorVersion, buffer, offset + 0x0018);
         EndianUtilities.writeBytesLittleEndian(1, buffer, offset + 0x0020);
         // Unknown - seems to be '1'
-        EndianUtilities.writeBytesLittleEndian(RootCell, buffer, offset + 0x0024);
-        EndianUtilities.writeBytesLittleEndian(Length, buffer, offset + 0x0028);
-        byte[] bytes = Path.getBytes(StandardCharsets.UTF_16LE);
+        EndianUtilities.writeBytesLittleEndian(rootCell, buffer, offset + 0x0024);
+        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x0028);
+        byte[] bytes = path.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 0x0030, bytes.length);
-        EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0030 + Path.length() * 2);
-        EndianUtilities.writeBytesLittleEndian(Guid1, buffer, offset + 0x0070);
-        EndianUtilities.writeBytesLittleEndian(Guid2, buffer, offset + 0x0094);
+        EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0030 + path.length() * 2);
+        EndianUtilities.writeBytesLittleEndian(guid1, buffer, offset + 0x0070);
+        EndianUtilities.writeBytesLittleEndian(guid2, buffer, offset + 0x0094);
         EndianUtilities.writeBytesLittleEndian(calcChecksum(buffer, offset), buffer, offset + 0x01FC);
     }
 

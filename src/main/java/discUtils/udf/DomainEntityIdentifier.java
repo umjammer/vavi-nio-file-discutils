@@ -24,10 +24,10 @@ package discUtils.udf;
 
 public class DomainEntityIdentifier extends EntityIdentifier {
     public String toString() {
-        String major = String.format("%02x", Suffix[1]);
-        String minor = String.format("%02x", Suffix[0]);
-        DomainFlags flags = DomainFlags.values()[Suffix[2]];
-        return String.format("%s [UDF %s.%s : Flags %s]", Identifier, major, minor, flags);
+        String major = String.format("%02x", suffix[1]);
+        String minor = String.format("%02x", suffix[0]);
+        DomainFlags flags = DomainFlags.values()[suffix[2]];
+        return String.format("%s [UDF %s.%s : flags %s]", identifier, major, minor, flags);
     }
 
     private enum DomainFlags {

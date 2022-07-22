@@ -39,103 +39,104 @@ import discUtils.streams.util.StreamUtilities;
 
 
 public final class ReaderDirEntry extends VfsDirEntry {
-    private final IsoContext _context;
 
-    private String _fileName;
+    private final IsoContext context;
 
-    private final DirectoryRecord _record;
+    private String fileName;
+
+    private final DirectoryRecord record;
 
     public ReaderDirEntry(IsoContext context, DirectoryRecord dirRecord) {
-        _context = context;
-        _record = dirRecord;
-        _fileName = _record.FileIdentifier;
+        this.context = context;
+        record = dirRecord;
+        fileName = record.fileIdentifier;
 
-        boolean rockRidge = _context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty();
+        boolean rockRidge = this.context.getRockRidgeIdentifier() != null && !this.context.getRockRidgeIdentifier().isEmpty();
 
-        if (context.getSuspDetected() && _record.SystemUseData != null) {
-            _suspRecords = new SuspRecords(_context, _record.SystemUseData, 0);
+        if (context.getSuspDetected() && record.systemUseData != null) {
+            suspRecords = new SuspRecords(this.context, record.systemUseData, 0);
         }
 
         if (rockRidge && getSuspRecords() != null) {
             // The full name is taken from this record, even if it's a child-link record
-            List<SystemUseEntry> nameEntries = getSuspRecords().getEntries(_context.getRockRidgeIdentifier(), "NM");
+            List<SystemUseEntry> nameEntries = getSuspRecords().getEntries(this.context.getRockRidgeIdentifier(), "NM");
             StringBuilder rrName = new StringBuilder();
             if (nameEntries != null && nameEntries.size() > 0) {
                 for (SystemUseEntry nameEntry : nameEntries) {
-                    rrName.append(((PosixNameSystemUseEntry) nameEntry).NameData);
+                    rrName.append(((PosixNameSystemUseEntry) nameEntry).nameData);
                 }
 
-                _fileName = rrName.toString();
+                fileName = rrName.toString();
             }
 
             // If this is a Rock Ridge child link, replace the dir record with that from the 'self' record
             // in the child directory.
-            ChildLinkSystemUseEntry clEntry = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "CL");
+            ChildLinkSystemUseEntry clEntry = getSuspRecords().getEntry(this.context.getRockRidgeIdentifier(), "CL");
             if (clEntry != null) {
-                _context.getDataStream()
-                        .setPosition((long) clEntry.ChildDirLocation * _context.getVolumeDescriptor().getLogicalBlockSize());
-                byte[] firstSector = StreamUtilities.readExact(_context.getDataStream(),
-                                                               _context.getVolumeDescriptor().getLogicalBlockSize());
+                this.context.getDataStream()
+                        .setPosition((long) clEntry.childDirLocation * this.context.getVolumeDescriptor().getLogicalBlockSize());
+                byte[] firstSector = StreamUtilities.readExact(this.context.getDataStream(),
+                                                               this.context.getVolumeDescriptor().getLogicalBlockSize());
 
-                DirectoryRecord[] _record = new DirectoryRecord[1];
-                DirectoryRecord.readFrom(firstSector, 0, _context.getVolumeDescriptor().CharacterEncoding, _record);
-                if (_record[0].SystemUseData != null) {
-                    _suspRecords = new SuspRecords(_context, _record[0].SystemUseData, 0);
+                DirectoryRecord[] record = new DirectoryRecord[1];
+                DirectoryRecord.readFrom(firstSector, 0, this.context.getVolumeDescriptor().characterEncoding, record);
+                if (record[0].systemUseData != null) {
+                    suspRecords = new SuspRecords(this.context, record[0].systemUseData, 0);
                 }
             }
         }
 
-        _lastAccessTimeUtc = _record.RecordingDateAndTime;
-        _lastWriteTimeUtc = _record.RecordingDateAndTime;
-        _creationTimeUtc = _record.RecordingDateAndTime;
+        lastAccessTimeUtc = record.recordingDateAndTime;
+        lastWriteTimeUtc = record.recordingDateAndTime;
+        creationTimeUtc = record.recordingDateAndTime;
 
         if (rockRidge && getSuspRecords() != null) {
-            FileTimeSystemUseEntry tfEntry = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "TF");
+            FileTimeSystemUseEntry tfEntry = getSuspRecords().getEntry(this.context.getRockRidgeIdentifier(), "TF");
 
             if (tfEntry != null) {
-                if (tfEntry.TimestampsPresent.contains(Timestamps.Access)) {
-                    _lastAccessTimeUtc = tfEntry.AccessTime;
+                if (tfEntry.timestampsPresent.contains(Timestamps.Access)) {
+                    lastAccessTimeUtc = tfEntry.accessTime;
                 }
 
-                if (tfEntry.TimestampsPresent.contains(Timestamps.Modify)) {
-                    _lastWriteTimeUtc = tfEntry.ModifyTime;
+                if (tfEntry.timestampsPresent.contains(Timestamps.Modify)) {
+                    lastWriteTimeUtc = tfEntry.modifyTime;
                 }
 
-                if (tfEntry.TimestampsPresent.contains(Timestamps.Creation)) {
-                    _creationTimeUtc = tfEntry.CreationTime;
+                if (tfEntry.timestampsPresent.contains(Timestamps.Creation)) {
+                    creationTimeUtc = tfEntry.creationTime;
                 }
             }
         }
     }
 
-    private long _creationTimeUtc;
+    private long creationTimeUtc;
 
     public long getCreationTimeUtc() {
-        return _creationTimeUtc;
+        return creationTimeUtc;
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
         EnumSet<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
 
-        if (_context.getRockRidgeIdentifier() != null && !_context.getRockRidgeIdentifier().isEmpty()) {
+        if (context.getRockRidgeIdentifier() != null && !context.getRockRidgeIdentifier().isEmpty()) {
             // If Rock Ridge PX info is present, derive the attributes from the RR info.
-            PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(_context.getRockRidgeIdentifier(), "PX");
+            PosixFileInfoSystemUseEntry pfi = getSuspRecords().getEntry(context.getRockRidgeIdentifier(), "PX");
             if (pfi != null) {
-                attrs = UnixFileType.toFileAttributes(UnixFileType.values()[(pfi.FileMode >>> 12) & 0xF]);
+                attrs = UnixFileType.toFileAttributes(UnixFileType.values()[(pfi.fileMode >>> 12) & 0xF]);
             }
 
-            if (_fileName.startsWith(".")) {
+            if (fileName.startsWith(".")) {
                 attrs.add(FileAttributes.Hidden);
             }
         }
 
         attrs.add(FileAttributes.ReadOnly);
 
-        if (_record.Flags.contains(FileFlags.Directory)) {
+        if (record.flags.contains(FileFlags.Directory)) {
             attrs.add(FileAttributes.Directory);
         }
 
-        if (_record.Flags.contains(FileFlags.Hidden)) {
+        if (record.flags.contains(FileFlags.Hidden)) {
             attrs.add(FileAttributes.Hidden);
         }
 
@@ -143,7 +144,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
     }
 
     public String getFileName() {
-        return _fileName;
+        return fileName;
     }
 
     public boolean hasVfsFileAttributes() {
@@ -155,40 +156,40 @@ public final class ReaderDirEntry extends VfsDirEntry {
     }
 
     public boolean isDirectory() {
-        return _record.Flags.contains(FileFlags.Directory);
+        return record.flags.contains(FileFlags.Directory);
     }
 
     public boolean isSymlink() {
         return false;
     }
 
-    private long _lastAccessTimeUtc;
+    private long lastAccessTimeUtc;
 
     public long getLastAccessTimeUtc() {
-        return _lastAccessTimeUtc;
+        return lastAccessTimeUtc;
     }
 
-    private long _lastWriteTimeUtc;
+    private long lastWriteTimeUtc;
 
     public long getLastWriteTimeUtc() {
-        return _lastWriteTimeUtc;
+        return lastWriteTimeUtc;
     }
 
     public DirectoryRecord getRecord() {
-        return _record;
+        return record;
     }
 
-    private SuspRecords _suspRecords;
+    private SuspRecords suspRecords;
 
     public SuspRecords getSuspRecords() {
-        return _suspRecords;
+        return suspRecords;
     }
 
     public long getUniqueCacheId() {
-        return ((_record.LocationOfExtent & 0xffffffffL) << 32) | _record.DataLength;
+        return ((record.locationOfExtent & 0xffffffffL) << 32) | record.dataLength;
     }
 
     public String toString() {
-        return _fileName;
+        return fileName;
     }
 }

@@ -47,21 +47,21 @@ class CatalogNodeId {
 
     public static final CatalogNodeId FirstUserCatalogNodeId = new CatalogNodeId(16);
 
-    private final int _id;
+    private final int id;
 
     public CatalogNodeId(int id) {
-        _id = id;
+        this.id = id;
     }
 
     public int getId() {
-        return _id;
+        return id;
     }
 
     public String toString() {
-        return String.valueOf(_id);
+        return String.valueOf(id);
     }
 
     public boolean equals(Object other) {
-        return other instanceof CatalogNodeId ? _id == ((CatalogNodeId) other)._id : false;
+        return other instanceof CatalogNodeId ? id == ((CatalogNodeId) other).id : false;
     }
 }

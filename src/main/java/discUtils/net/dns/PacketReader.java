@@ -28,20 +28,21 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class PacketReader {
-    private final byte[] _data;
+
+    private final byte[] data;
 
     public PacketReader(byte[] data) {
-        _data = data;
+        this.data = data;
     }
 
-    private int _position;
+    private int position;
 
     public int getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(int value) {
-        _position = value;
+        position = value;
     }
 
     public String readName() {
@@ -50,26 +51,26 @@ public final class PacketReader {
         boolean hasIndirected = false;
         int readPos = getPosition();
 
-        while (_data[readPos] != 0) {
-            byte len = _data[readPos];
+        while (data[readPos] != 0) {
+            byte len = data[readPos];
             switch (len & 0xC0) {
             case 0x00:
-                sb.append(new String(_data, readPos + 1, len, StandardCharsets.UTF_8));
+                sb.append(new String(data, readPos + 1, len, StandardCharsets.UTF_8));
                 sb.append(".");
                 readPos += 1 + len;
                 if (!hasIndirected) {
-                    _position = readPos;
+                    position = readPos;
                 }
 
                 break;
 
             case 0xC0:
                 if (!hasIndirected) {
-                    _position += 2;
+                    position += 2;
                 }
 
                 hasIndirected = true;
-                readPos = EndianUtilities.toUInt16BigEndian(_data, readPos) & 0x3FFF;
+                readPos = EndianUtilities.toUInt16BigEndian(data, readPos) & 0x3FFF;
                 break;
 
             default:
@@ -78,34 +79,34 @@ public final class PacketReader {
         }
 
         if (!hasIndirected) {
-            _position++;
+            position++;
         }
 
         return sb.toString();
     }
 
     public short readUShort() {
-        short result = EndianUtilities.toUInt16BigEndian(_data, getPosition());
-        _position += 2;
+        short result = EndianUtilities.toUInt16BigEndian(data, getPosition());
+        position += 2;
         return result;
     }
 
     public int readInt() {
-        int result = EndianUtilities.toInt32BigEndian(_data, getPosition());
-        _position += 4;
+        int result = EndianUtilities.toInt32BigEndian(data, getPosition());
+        position += 4;
         return result;
     }
 
     public byte readByte() {
-        byte result = _data[getPosition()];
-        _position++;
+        byte result = data[getPosition()];
+        position++;
         return result;
     }
 
     public byte[] readBytes(int count) {
         byte[] result = new byte[count];
-        System.arraycopy(_data, _position, result, 0, count);
-        _position += count;
+        System.arraycopy(data, position, result, 0, count);
+        position += count;
         return result;
     }
 }

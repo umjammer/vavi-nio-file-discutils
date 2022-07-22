@@ -32,40 +32,40 @@ public class KeyPointer implements IByteArraySerializable {
     /**
      * key
      */
-    private Key __Key;
+    private Key key;
 
     public Key getKey() {
-        return __Key;
+        return key;
     }
 
     public void setKey(Key value) {
-        __Key = value;
+        key = value;
     }
 
     /**
      * block number
      */
-    private long __BlockNumber;
+    private long blockNumber;
 
     public long getBlockNumber() {
-        return __BlockNumber;
+        return blockNumber;
     }
 
     public void setBlockNumber(long value) {
-        __BlockNumber = value;
+        blockNumber = value;
     }
 
     /**
      * generation
      */
-    private long __Generation;
+    private long generation;
 
     public long getGeneration() {
-        return __Generation;
+        return generation;
     }
 
     public void setGeneration(long value) {
-        __Generation = value;
+        generation = value;
     }
 
     public int size() {

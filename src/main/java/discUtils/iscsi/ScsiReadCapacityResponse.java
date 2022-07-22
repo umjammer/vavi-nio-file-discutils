@@ -26,39 +26,39 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ScsiReadCapacityResponse extends ScsiResponse {
-    private boolean _truncated;
+    private boolean truncated;
 
-    private int __LogicalBlockSize;
+    private int logicalBlockSize;
 
     public int getLogicalBlockSize() {
-        return __LogicalBlockSize;
+        return logicalBlockSize;
     }
 
     public void setLogicalBlockSize(int value) {
-        __LogicalBlockSize = value;
+        logicalBlockSize = value;
     }
 
     public int getNeededDataLength() {
         return 8;
     }
 
-    private int __NumLogicalBlocks;
+    private int numLogicalBlocks;
 
     public int getNumLogicalBlocks() {
-        return __NumLogicalBlocks;
+        return numLogicalBlocks;
     }
 
     public void setNumLogicalBlocks(int value) {
-        __NumLogicalBlocks = value;
+        numLogicalBlocks = value;
     }
 
     public boolean getTruncated() {
-        return _truncated;
+        return truncated;
     }
 
     public void readFrom(byte[] buffer, int offset, int count) {
         if (count < 8) {
-            _truncated = true;
+            truncated = true;
             return;
         }
 

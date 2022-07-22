@@ -56,9 +56,9 @@ public class Program extends ProgramBase {
     private static final String FS = java.io.File.separator;
 
     // Shared to avoid continual re-allocation of a large buffer
-    private static byte[] _copyBuffer = new byte[10 * 1024 * 1024];
+    private static byte[] copyBuffer = new byte[10 * 1024 * 1024];
 
-    private static String[] _excludedFiles = new String[] {
+    private static String[] excludedFiles = new String[] {
         FS + "PAGEFILE.SYS", FS + "HIBERFIL.SYS", FS + "SYSTEM VOLUME INFORMATION"
     };
 
@@ -66,15 +66,15 @@ public class Program extends ProgramBase {
             description = "The disk image containing the Operating System image to be cloned.",
             args = 1,
             required = true)
-    private String _sourceFile;
+    private String sourceFile;
 
     @Option(option = "out_file", description = "The path to the output disk image.", args = 1, required = true)
-    private String _destFile;
+    private String destFile;
 
     @Option(option = "l", argName = "label", args = 1, description = "The volume label for the NTFS file system created.")
-    private String _labelSwitch = "name";
+    private String labelSwitch = "name";
 
-    private Map<Long, String> _uniqueFiles = new HashMap<>();
+    private Map<Long, String> uniqueFiles = new HashMap<>();
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -89,10 +89,10 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
 
-        try (VirtualDisk sourceDisk = VirtualDisk.openDisk(_sourceFile, FileAccess.Read, getUserName(), getPassword());
-                VirtualDisk destDisk = VirtualDisk.createDisk(getOutputDiskType(),
+        try (VirtualDisk sourceDisk = VirtualDisk.openDisk(sourceFile, FileAccess.Read, getUserName(), getPassword());
+             VirtualDisk destDisk = VirtualDisk.createDisk(getOutputDiskType(),
                                                               getOutputDiskVariant(),
-                                                              _destFile,
+                     destFile,
                                                               getDiskParameters(),
                                                               getUserName(),
                                                               getPassword())) {
@@ -121,7 +121,7 @@ public class Program extends ProgramBase {
             // Partition the new disk with a single NTFS partition
             BiosPartitionTable.initialize(destDisk, WellKnownPartitionType.WindowsNtfs);
             VolumeManager volMgr = new VolumeManager(destDisk);
-            String label = _labelSwitch != null ? _labelSwitch : sourceNtfs.getVolumeLabel();
+            String label = labelSwitch != null ? labelSwitch : sourceNtfs.getVolumeLabel();
 
             try (NtfsFileSystem destNtfs = NtfsFileSystem.format(volMgr.getLogicalVolumes().get(0), label, bootCode)) {
                 destNtfs.setSecurity(FS, sourceNtfs.getSecurity(FS));
@@ -159,8 +159,8 @@ public class Program extends ProgramBase {
                     boolean newDir = false;
                     long sourceFileId = sourceNtfs.getFileId(dir);
                     String refPath;
-                    if (_uniqueFiles.containsKey(sourceFileId)) {
-                        refPath = _uniqueFiles.get(sourceFileId);
+                    if (uniqueFiles.containsKey(sourceFileId)) {
+                        refPath = uniqueFiles.get(sourceFileId);
                         // If this is another name for a known dir, recreate the
                         // hard link
                         destNtfs.createHardLink(refPath, dir);
@@ -184,7 +184,7 @@ public class Program extends ProgramBase {
 
                     if (newDir) {
                         if (hardLinksRemaining > 0) {
-                            _uniqueFiles.put(sourceFileId, dir);
+                            uniqueFiles.put(sourceFileId, dir);
                         }
 
                         copyFiles(sourceNtfs, destNtfs, dir, subs);
@@ -202,15 +202,15 @@ public class Program extends ProgramBase {
             int hardLinksRemaining = sourceNtfs.getHardLinkCount(file) - 1;
             long sourceFileId = sourceNtfs.getFileId(file);
             String refPath;
-            if (_uniqueFiles.containsKey(sourceFileId)) {
-                refPath = _uniqueFiles.get(sourceFileId);
+            if (uniqueFiles.containsKey(sourceFileId)) {
+                refPath = uniqueFiles.get(sourceFileId);
                 // If this is another name for a known file, recreate the hard
                 // link
                 destNtfs.createHardLink(refPath, file);
             } else {
                 copyFile(sourceNtfs, destNtfs, file);
                 if (hardLinksRemaining > 0) {
-                    _uniqueFiles.put(sourceFileId, file);
+                    uniqueFiles.put(sourceFileId, file);
                 }
             }
             // File may have a short name
@@ -229,10 +229,10 @@ public class Program extends ProgramBase {
         try (Stream s = sourceNtfs.openFile(path, FileMode.Open, FileAccess.Read);
                 Stream d = destNtfs.openFile(path, FileMode.Create, FileAccess.ReadWrite)) {
             d.setLength(s.getLength());
-            int numRead = s.read(_copyBuffer, 0, _copyBuffer.length);
+            int numRead = s.read(copyBuffer, 0, copyBuffer.length);
             while (numRead > 0) {
-                d.write(_copyBuffer, 0, numRead);
-                numRead = s.read(_copyBuffer, 0, _copyBuffer.length);
+                d.write(copyBuffer, 0, numRead);
+                numRead = s.read(copyBuffer, 0, copyBuffer.length);
             }
         }
 
@@ -242,7 +242,7 @@ public class Program extends ProgramBase {
 
     private static boolean isExcluded(String path) {
         String pathUpper = path.toUpperCase();
-        for (String excludedFile : _excludedFiles) {
+        for (String excludedFile : excludedFiles) {
             if (Utilities.equals(pathUpper, excludedFile)) {
                 return true;
             }

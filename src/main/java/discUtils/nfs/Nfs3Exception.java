@@ -51,7 +51,7 @@ public class Nfs3Exception extends IOException {
      */
     public Nfs3Exception(String message, Nfs3Status status) {
         super(message);
-        NfsStatus = status;
+        nfsStatus = status;
     }
 
     /**
@@ -69,7 +69,7 @@ public class Nfs3Exception extends IOException {
      */
     Nfs3Exception(Nfs3Status status) {
         this(generateMessage(status));
-        NfsStatus = status;
+        nfsStatus = status;
     }
 
     /**
@@ -79,27 +79,27 @@ public class Nfs3Exception extends IOException {
      */
 //    private Nfs3Exception(SerializationInfo info, StreamingContext context) {
 //        this(info, context);
-//        NfsStatus = (Nfs3Status) info.GetInt32("Status");
+//        nfsStatus = (Nfs3Status) info.GetInt32("Status");
 //    }
 
     /**
      * Gets the NFS status code that lead to the exception.
      */
     public Nfs3Status getNfs3Status() {
-        return NfsStatus;
+        return nfsStatus;
     }
 
-    private Nfs3Status NfsStatus = Nfs3Status.Unknown;
+    private Nfs3Status nfsStatus = Nfs3Status.Unknown;
 
     /**
      * Serializes this exception.
      * <param name="info">The object to populate with serialized data.</param>
      * <param name="context">The context for this serialization.</param>
-     * [SecurityPermission(SecurityAction.LinkDemand, Flags =
+     * [SecurityPermission(SecurityAction.LinkDemand, flags =
      * SecurityPermissionFlag.SerializationFormatter)]
      */
 //    public void getObjectData(SerializationInfo info, StreamingContext context) {
-//        info.AadValue("Status", (int) NfsStatus.ordinal());
+//        info.AadValue("Status", (int) nfsStatus.ordinal());
 //        super.getObjectData(info, context);
 //    }
 

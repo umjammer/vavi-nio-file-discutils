@@ -44,27 +44,28 @@ import dotnet4j.io.IOException;
 
 
 public class LeafNode extends NodeHeader {
+
     /**
      * key pointers
      */
-    private NodeItem[] _items;
+    private NodeItem[] items;
 
     public NodeItem[] getItems() {
-        return _items;
+        return items;
     }
 
     public void setItems(NodeItem[] value) {
-        _items = value;
+        items = value;
     }
 
-    private BaseItem[] _nodeData;
+    private BaseItem[] nodeData;
 
     public BaseItem[] getNodeData() {
-        return _nodeData;
+        return nodeData;
     }
 
     public void setNodeData(BaseItem[] value) {
-        _nodeData = value;
+        nodeData = value;
     }
 
     public int size() {
@@ -73,8 +74,8 @@ public class LeafNode extends NodeHeader {
 
     public int readFrom(byte[] buffer, int offset) {
         int itemOffset = super.readFrom(buffer, offset);
-        setItems(new NodeItem[getItemCount()]);
-        setNodeData(new BaseItem[getItemCount()]);
+        items = new NodeItem[getItemCount()];
+        nodeData = new BaseItem[getItemCount()];
         for (int i = 0; i < getItemCount(); i++) {
             getItems()[i] = new NodeItem();
             itemOffset += getItems()[i].readFrom(buffer, itemOffset);
@@ -137,13 +138,13 @@ public class LeafNode extends NodeHeader {
 
     public List<BaseItem> find(Key key, Context context) {
         List<BaseItem> result = new ArrayList<>();
-        for (int i = 0; i < getItems().length; i++) {
-            if (getItems()[i].getKey().getObjectId() > key.getObjectId())
+        for (int i = 0; i < items.length; i++) {
+            if (items[i].getKey().getObjectId() > key.getObjectId())
                 break;
 
-            if (getItems()[i].getKey().getObjectId() == key.getObjectId() &&
-                getItems()[i].getKey().getItemType() == key.getItemType())
-                result.add(getNodeData()[i]);
+            if (items[i].getKey().getObjectId() == key.getObjectId() &&
+                items[i].getKey().getItemType() == key.getItemType())
+                result.add(nodeData[i]);
         }
         return result;
     }

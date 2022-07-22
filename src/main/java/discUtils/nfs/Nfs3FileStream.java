@@ -33,25 +33,26 @@ import dotnet4j.io.SeekOrigin;
 
 
 public final class Nfs3FileStream extends SparseStream {
-    private final FileAccess _access;
 
-    private final Nfs3Client _client;
+    private final FileAccess access;
 
-    private final Nfs3FileHandle _handle;
+    private final Nfs3Client client;
 
-    private long _length;
+    private final Nfs3FileHandle handle;
 
-    private long _position;
+    private long length;
+
+    private long position;
 
     public Nfs3FileStream(Nfs3Client client, Nfs3FileHandle handle, FileAccess access) {
-        _client = client;
-        _handle = handle;
-        _access = access;
-        _length = _client.getAttributes(_handle).Size;
+        this.client = client;
+        this.handle = handle;
+        this.access = access;
+        length = this.client.getAttributes(this.handle).size;
     }
 
     public boolean canRead() {
-        return _access != FileAccess.Write;
+        return access != FileAccess.Write;
     }
 
     public boolean canSeek() {
@@ -59,7 +60,7 @@ public final class Nfs3FileStream extends SparseStream {
     }
 
     public boolean canWrite() {
-        return _access != FileAccess.Read;
+        return access != FileAccess.Read;
     }
 
     public List<StreamExtent> getExtents() {
@@ -67,49 +68,49 @@ public final class Nfs3FileStream extends SparseStream {
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        int numToRead = Math.min(_client.getFileSystemInfo().getReadMaxBytes(), count);
-        Nfs3ReadResult readResult = _client.read(_handle, _position, numToRead);
+        int numToRead = Math.min(client.getFileSystemInfo().getReadMaxBytes(), count);
+        Nfs3ReadResult readResult = client.read(handle, position, numToRead);
         int toCopy = Math.min(count, readResult.getCount());
         System.arraycopy(readResult.getData(), 0, buffer, offset, toCopy);
         if (readResult.getEof()) {
-            _length = _position + readResult.getCount();
+            length = position + readResult.getCount();
         }
 
-        _position += toCopy;
+        position += toCopy;
         return toCopy;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
-            newPos += _position;
+            newPos += position;
         } else if (origin == SeekOrigin.End) {
             newPos += getLength();
         }
 
-        _position = newPos;
+        position = newPos;
         return newPos;
     }
 
     public void setLength(long value) {
         if (canWrite()) {
-            _client.setAttributes(_handle, new Nfs3SetAttributes());
-            _length = value;
+            client.setAttributes(handle, new Nfs3SetAttributes());
+            length = value;
         } else {
             throw new UnsupportedOperationException("Attempt to change length of read-only file");
         }
@@ -118,16 +119,16 @@ public final class Nfs3FileStream extends SparseStream {
     public void write(byte[] buffer, int offset, int count) {
         int totalWritten = 0;
         while (totalWritten < count) {
-            int numToWrite = Math.min(_client.getFileSystemInfo().getWriteMaxBytes(), count - totalWritten);
-            int numWritten = _client.write(_handle, _position, buffer, offset + totalWritten, numToWrite);
-            _position += numWritten;
+            int numToWrite = Math.min(client.getFileSystemInfo().getWriteMaxBytes(), count - totalWritten);
+            int numWritten = client.write(handle, position, buffer, offset + totalWritten, numToWrite);
+            position += numWritten;
             totalWritten += numWritten;
         }
-        _length = Math.max(_length, _position);
+        length = Math.max(length, position);
     }
 
     @Override
     public void close() throws IOException {
-        _client.close();
+        client.close();
     }
 }

@@ -26,64 +26,56 @@ package discUtils.streams;
  * Event arguments indicating progress on pumping a stream.
  */
 public class PumpProgressEventArgs /* extends EventArgs */ {
+
     /**
-     * Gets or sets the number of bytes read from
-     * {@code InputStream}
-     * .
+     * Gets or sets the number of bytes read from {@code InputStream}.
      */
-    private long __BytesRead;
+    private long bytesRead;
 
     public long getBytesRead() {
-        return __BytesRead;
+        return bytesRead;
     }
 
     public void setBytesRead(long value) {
-        __BytesRead = value;
+        bytesRead = value;
     }
 
     /**
-     * Gets or sets the number of bytes written to
-     * {@code OutputStream}
-     * .
+     * Gets or sets the number of bytes written to {@code OutputStream}.
      */
-    private long __BytesWritten;
+    private long bytesWritten;
 
     public long getBytesWritten() {
-        return __BytesWritten;
+        return bytesWritten;
     }
 
     public void setBytesWritten(long value) {
-        __BytesWritten = value;
+        bytesWritten = value;
     }
 
     /**
-     * Gets or sets the absolute position in
-     * {@code OutputStream}
-     * .
+     * Gets or sets the absolute position in {@code OutputStream}.
      */
-    private long __DestinationPosition;
+    private long destinationPosition;
 
     public long getDestinationPosition() {
-        return __DestinationPosition;
+        return destinationPosition;
     }
 
     public void setDestinationPosition(long value) {
-        __DestinationPosition = value;
+        destinationPosition = value;
     }
 
     /**
-     * Gets or sets the absolute position in
-     * {@code InputStream}
-     * .
+     * Gets or sets the absolute position in {@code InputStream}.
      */
-    private long __SourcePosition;
+    private long sourcePosition;
 
     public long getSourcePosition() {
-        return __SourcePosition;
+        return sourcePosition;
     }
 
     public void setSourcePosition(long value) {
-        __SourcePosition = value;
+        sourcePosition = value;
     }
-
 }

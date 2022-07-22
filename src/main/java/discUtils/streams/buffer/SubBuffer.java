@@ -32,11 +32,12 @@ import discUtils.streams.StreamExtent;
  * Class representing a portion of an existing buffer.
  */
 public class SubBuffer extends Buffer {
-    private final long _first;
 
-    private final long _length;
+    private final long first;
 
-    private final IBuffer _parent;
+    private final long length;
+
+    private final IBuffer parent;
 
     /**
      * Initializes a new instance of the SubBuffer class.
@@ -50,10 +51,10 @@ public class SubBuffer extends Buffer {
      *            represented by this sub-buffer.
      */
     public SubBuffer(IBuffer parent, long first, long length) {
-        _parent = parent;
-        _first = first;
-        _length = length;
-        if (_first + _length > _parent.getCapacity()) {
+        this.parent = parent;
+        this.first = first;
+        this.length = length;
+        if (this.first + this.length > this.parent.getCapacity()) {
             throw new IllegalArgumentException("Substream extends beyond end of parent stream");
         }
 
@@ -63,21 +64,21 @@ public class SubBuffer extends Buffer {
      * Can this buffer be read.
      */
     public boolean canRead() {
-        return _parent.canRead();
+        return parent.canRead();
     }
 
     /**
      * Can this buffer be modified.
      */
     public boolean canWrite() {
-        return _parent.canWrite();
+        return parent.canWrite();
     }
 
     /**
      * Gets the current capacity of the buffer, in bytes.
      */
     public long getCapacity() {
-        return _length;
+        return length;
     }
 
     /**
@@ -85,14 +86,14 @@ public class SubBuffer extends Buffer {
      * This may be an empty enumeration if all bytes are zero.
      */
     public List<StreamExtent> getExtents() {
-        return offsetExtents(_parent.getExtentsInRange(_first, _length));
+        return offsetExtents(parent.getExtentsInRange(first, length));
     }
 
     /**
      * Flushes all data to the underlying storage.
      */
     public void flush() {
-        _parent.flush();
+        parent.flush();
     }
 
     /**
@@ -109,11 +110,11 @@ public class SubBuffer extends Buffer {
             throw new IndexOutOfBoundsException("Attempt to read negative bytes");
         }
 
-        if (pos >= _length) {
+        if (pos >= length) {
             return 0;
         }
 
-        return _parent.read(pos + _first, buffer, offset, (int) Math.min(count, Math.min(_length - pos, Integer.MAX_VALUE)));
+        return parent.read(pos + first, buffer, offset, (int) Math.min(count, Math.min(length - pos, Integer.MAX_VALUE)));
     }
 
     /**
@@ -129,11 +130,11 @@ public class SubBuffer extends Buffer {
             throw new IndexOutOfBoundsException("Attempt to write negative bytes");
         }
 
-        if (pos + count > _length) {
+        if (pos + count > length) {
             throw new IndexOutOfBoundsException("Attempt to write beyond end of substream");
         }
 
-        _parent.write(pos + _first, buffer, offset, count);
+        parent.write(pos + first, buffer, offset, count);
     }
 
     /**
@@ -153,13 +154,12 @@ public class SubBuffer extends Buffer {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        long absStart = _first + start;
-        long absEnd = Math.min(absStart + count, _first + _length);
-        return offsetExtents(_parent.getExtentsInRange(absStart, absEnd - absStart));
+        long absStart = first + start;
+        long absEnd = Math.min(absStart + count, first + length);
+        return offsetExtents(parent.getExtentsInRange(absStart, absEnd - absStart));
     }
 
     private List<StreamExtent> offsetExtents(List<StreamExtent> src) {
-        return src.stream().map(e -> new StreamExtent(e.getStart() - _first, e.getLength())).collect(Collectors.toList());
+        return src.stream().map(e -> new StreamExtent(e.getStart() - first, e.getLength())).collect(Collectors.toList());
     }
-
 }

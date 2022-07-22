@@ -54,32 +54,32 @@ public class SupplementaryVolumeDescriptor extends CommonVolumeDescriptor {
 
     public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
-        IsoUtilities.writeA1Chars(buffer, offset + 8, 32, SystemIdentifier, CharacterEncoding);
-        IsoUtilities.writeString(buffer, offset + 40, 32, true, VolumeIdentifier, CharacterEncoding, true);
-        IsoUtilities.toBothFromUInt32(buffer, offset + 80, VolumeSpaceSize);
-        IsoUtilities.encodingToBytes(CharacterEncoding, buffer, offset + 88);
-        IsoUtilities.toBothFromUInt16(buffer, offset + 120, VolumeSetSize);
-        IsoUtilities.toBothFromUInt16(buffer, offset + 124, VolumeSequenceNumber);
-        IsoUtilities.toBothFromUInt16(buffer, offset + 128, LogicalBlockSize);
-        IsoUtilities.toBothFromUInt32(buffer, offset + 132, PathTableSize);
-        IsoUtilities.toBytesFromUInt32(buffer, offset + 140, TypeLPathTableLocation);
-        IsoUtilities.toBytesFromUInt32(buffer, offset + 144, OptionalTypeLPathTableLocation);
-        IsoUtilities.toBytesFromUInt32(buffer, offset + 148, Utilities.bitSwap(TypeMPathTableLocation));
-        IsoUtilities.toBytesFromUInt32(buffer, offset + 152, Utilities.bitSwap(OptionalTypeMPathTableLocation));
-        RootDirectory.writeTo(buffer, offset + 156, CharacterEncoding);
-        IsoUtilities.writeD1Chars(buffer, offset + 190, 129, VolumeSetIdentifier, CharacterEncoding);
-        IsoUtilities.writeA1Chars(buffer, offset + 318, 129, PublisherIdentifier, CharacterEncoding);
-        IsoUtilities.writeA1Chars(buffer, offset + 446, 129, DataPreparerIdentifier, CharacterEncoding);
-        IsoUtilities.writeA1Chars(buffer, offset + 574, 129, ApplicationIdentifier, CharacterEncoding);
-        IsoUtilities.writeD1Chars(buffer, offset + 702, 37, CopyrightFileIdentifier, CharacterEncoding); // FIXME!!
-        IsoUtilities.writeD1Chars(buffer, offset + 739, 37, AbstractFileIdentifier, CharacterEncoding); // FIXME!!
-        IsoUtilities.writeD1Chars(buffer, offset + 776, 37, BibliographicFileIdentifier, CharacterEncoding);
+        IsoUtilities.writeA1Chars(buffer, offset + 8, 32, systemIdentifier, characterEncoding);
+        IsoUtilities.writeString(buffer, offset + 40, 32, true, volumeIdentifier, characterEncoding, true);
+        IsoUtilities.toBothFromUInt32(buffer, offset + 80, volumeSpaceSize);
+        IsoUtilities.encodingToBytes(characterEncoding, buffer, offset + 88);
+        IsoUtilities.toBothFromUInt16(buffer, offset + 120, volumeSetSize);
+        IsoUtilities.toBothFromUInt16(buffer, offset + 124, volumeSequenceNumber);
+        IsoUtilities.toBothFromUInt16(buffer, offset + 128, logicalBlockSize);
+        IsoUtilities.toBothFromUInt32(buffer, offset + 132, pathTableSize);
+        IsoUtilities.toBytesFromUInt32(buffer, offset + 140, typeLPathTableLocation);
+        IsoUtilities.toBytesFromUInt32(buffer, offset + 144, optionalTypeLPathTableLocation);
+        IsoUtilities.toBytesFromUInt32(buffer, offset + 148, Utilities.bitSwap(typeMPathTableLocation));
+        IsoUtilities.toBytesFromUInt32(buffer, offset + 152, Utilities.bitSwap(optionalTypeMPathTableLocation));
+        rootDirectory.writeTo(buffer, offset + 156, characterEncoding);
+        IsoUtilities.writeD1Chars(buffer, offset + 190, 129, volumeSetIdentifier, characterEncoding);
+        IsoUtilities.writeA1Chars(buffer, offset + 318, 129, publisherIdentifier, characterEncoding);
+        IsoUtilities.writeA1Chars(buffer, offset + 446, 129, dataPreparerIdentifier, characterEncoding);
+        IsoUtilities.writeA1Chars(buffer, offset + 574, 129, applicationIdentifier, characterEncoding);
+        IsoUtilities.writeD1Chars(buffer, offset + 702, 37, copyrightFileIdentifier, characterEncoding); // FIXME!!
+        IsoUtilities.writeD1Chars(buffer, offset + 739, 37, abstractFileIdentifier, characterEncoding); // FIXME!!
+        IsoUtilities.writeD1Chars(buffer, offset + 776, 37, bibliographicFileIdentifier, characterEncoding);
 
         // FIXME!!
-        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 813, CreationDateAndTime);
-        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 830, ModificationDateAndTime);
-        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 847, ExpirationDateAndTime);
-        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 864, EffectiveDateAndTime);
-        buffer[offset + 881] = FileStructureVersion;
+        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 813, creationDateAndTime);
+        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 830, modificationDateAndTime);
+        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 847, expirationDateAndTime);
+        IsoUtilities.toVolumeDescriptorTimeFromUTC(buffer, offset + 864, effectiveDateAndTime);
+        buffer[offset + 881] = fileStructureVersion;
     }
 }

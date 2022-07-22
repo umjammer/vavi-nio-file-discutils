@@ -23,13 +23,14 @@
 package discUtils.iscsi;
 
 public abstract class BaseResponse {
-    public int ExpectedCommandSequenceNumber;
 
-    public int MaxCommandSequenceNumber;
+    public int expectedCommandSequenceNumber;
 
-    public boolean StatusPresent;
+    public int maxCommandSequenceNumber;
 
-    public int StatusSequenceNumber;
+    public boolean statusPresent;
+
+    public int statusSequenceNumber;
 
     public abstract void parse(ProtocolDataUnit pdu);
 }

@@ -31,30 +31,31 @@ import dotnet4j.io.IOException;
 
 
 public class InternalNode extends NodeHeader {
+
     /**
      * key pointers
      */
-    private KeyPointer[] _keyPointers;
+    private KeyPointer[] keyPointers;
 
     public KeyPointer[] getKeyPointers() {
-        return _keyPointers;
+        return keyPointers;
     }
 
     public void setKeyPointers(KeyPointer[] value) {
-        _keyPointers = value;
+        keyPointers = value;
     }
 
     /**
-     * data at {@link #_keyPointers}
+     * data at {@link #keyPointers}
      */
-    private NodeHeader[] _nodes;
+    private NodeHeader[] nodes;
 
     public NodeHeader[] getNodes() {
-        return _nodes;
+        return nodes;
     }
 
     public void setNodes(NodeHeader[] value) {
-        _nodes = value;
+        nodes = value;
     }
 
     public int size() {

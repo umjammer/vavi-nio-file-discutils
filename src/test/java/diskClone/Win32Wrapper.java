@@ -83,19 +83,17 @@ public class Win32Wrapper {
     }
 
     public static long getDiskCapacity(Pointer diskHandle) {
-        byte[] sizeBytes = new byte[8];
+        Integer[] sizeBytes = new Integer[] {bytesRet};
         int bytesRet = sizeBytes.length;
-        Integer[] refVar___2 = new Integer[] {bytesRet};
         boolean boolVar___2 = !NativeMethods.DeviceIoControl(diskHandle,
                                                              EIOControlCode.DiskGetLengthInfo,
                                                              null,
                                                              0,
                                                              sizeBytes,
                                                              bytesRet,
-                                                             refVar___2,
+                                                             sizeBytes,
                                                              null);
-        bytesRet = refVar___2[0];
-        if (boolVar___2) {
+        if (sizeBytes[0] != 0) {
             throw Win32Wrapper.getIOExceptionForLastError();
         }
 
@@ -103,19 +101,17 @@ public class Win32Wrapper {
     }
 
     public static String getMessageForError(int code) {
-        int[] buffer = new int[1];
         try {
-            int[][] refVar___3 = new int[][] { buffer } ;
+            int[][] buffer = new int[1][];
             NativeMethods.INSTANCE.formatMessageW(NativeMethods.FORMAT_MESSAGE_ALLOCATE_BUFFER |
                                          NativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | NativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS,
                                          null,
                                          code,
                                          0,
-                                         refVar___3,
+                                          buffer,
                                          0,
                                          null);
-            buffer = refVar___3[0];
-            return Marshal.PtrToStringUni(buffer);
+            return Marshal.PtrToStringUni(buffer[0]);
         } finally {
             if (buffer != null) {
                 NativeMethods.INSTANCE.localFree(buffer);

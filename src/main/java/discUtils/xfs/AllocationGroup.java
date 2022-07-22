@@ -32,88 +32,89 @@ import dotnet4j.io.Stream;
 
 
 public class AllocationGroup {
+
     public static final int IbtMagic = 0x49414254;
 
     public static final int IbtCrcMagic = 0x49414233;
 
-    private long _offset;
+    private long offset;
 
     public long getOffset() {
-        return _offset;
+        return offset;
     }
 
     public void setOffset(long value) {
-        _offset = value;
+        offset = value;
     }
 
-    private AllocationGroupFreeBlockInfo _freeBlockInfo;
+    private AllocationGroupFreeBlockInfo freeBlockInfo;
 
     public AllocationGroupFreeBlockInfo getFreeBlockInfo() {
-        return _freeBlockInfo;
+        return freeBlockInfo;
     }
 
     public void setFreeBlockInfo(AllocationGroupFreeBlockInfo value) {
-        _freeBlockInfo = value;
+        freeBlockInfo = value;
     }
 
-    private AllocationGroupInodeBtreeInfo _inodeBtreeInfo;
+    private AllocationGroupInodeBtreeInfo inodeBtreeInfo;
 
     public AllocationGroupInodeBtreeInfo getInodeBtreeInfo() {
-        return _inodeBtreeInfo;
+        return inodeBtreeInfo;
     }
 
     public void setInodeBtreeInfo(AllocationGroupInodeBtreeInfo value) {
-        _inodeBtreeInfo = value;
+        inodeBtreeInfo = value;
     }
 
-    private Context _context;
+    private Context context;
 
     public Context getContext() {
-        return _context;
+        return context;
     }
 
     public void setContext(Context value) {
-        _context = value;
+        context = value;
     }
 
     public AllocationGroup(Context context, long offset) {
-        _offset = offset;
-        _context = context;
+        this.offset = offset;
+        this.context = context;
         Stream data = context.getRawStream();
-        SuperBlock superblock = _context.getSuperBlock();
-        _freeBlockInfo = new AllocationGroupFreeBlockInfo(superblock);
+        SuperBlock superblock = this.context.getSuperBlock();
+        freeBlockInfo = new AllocationGroupFreeBlockInfo(superblock);
         data.setPosition(offset + superblock.getSectorSize());
-        byte[] agfData = StreamUtilities.readExact(data, _freeBlockInfo.size());
-        _freeBlockInfo.readFrom(agfData, 0);
-        if (_freeBlockInfo.getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
+        byte[] agfData = StreamUtilities.readExact(data, freeBlockInfo.size());
+        freeBlockInfo.readFrom(agfData, 0);
+        if (freeBlockInfo.getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
             throw new IOException("Invalid AGF magic - probably not an xfs file system");
         }
 
-        _inodeBtreeInfo = new AllocationGroupInodeBtreeInfo(superblock);
+        inodeBtreeInfo = new AllocationGroupInodeBtreeInfo(superblock);
         data.setPosition(offset + superblock.getSectorSize() * 2L);
         byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().size());
-        _inodeBtreeInfo.readFrom(agiData, 0);
-        if (_inodeBtreeInfo.getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
+        inodeBtreeInfo.readFrom(agiData, 0);
+        if (inodeBtreeInfo.getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
             throw new IOException("Invalid AGI magic - probably not an xfs file system");
         }
 
-        _inodeBtreeInfo.loadBtree(context, offset);
-        if (superblock.getSbVersion() < 5 && _inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtMagic ||
-            superblock.getSbVersion() >= 5 && _inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtCrcMagic) {
-Debug.printf("%d, %x\n", superblock.getSbVersion(), _inodeBtreeInfo.getRootInodeBtree().getMagic());
+        inodeBtreeInfo.loadBtree(context, offset);
+        if (superblock.getSbVersion() < 5 && inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtMagic ||
+            superblock.getSbVersion() >= 5 && inodeBtreeInfo.getRootInodeBtree().getMagic() != IbtCrcMagic) {
+Debug.printf("%d, %x\n", superblock.getSbVersion(), inodeBtreeInfo.getRootInodeBtree().getMagic());
             throw new IOException("Invalid IBT magic - probably not an xfs file system");
         }
 
-        if (_inodeBtreeInfo.getSequenceNumber() != _freeBlockInfo.getSequenceNumber()) {
+        if (inodeBtreeInfo.getSequenceNumber() != freeBlockInfo.getSequenceNumber()) {
             throw new IOException("inconsistent AG sequence numbers");
         }
     }
 
     public void loadInode(Inode inode) {
-        long offset = _offset + ((long) inode.getAgBlock() * _context.getSuperBlock().getBlocksize()) +
-                      ((long) inode.getBlockOffset() * _context.getSuperBlock().getInodeSize());
-        _context.getRawStream().setPosition(offset);
-        byte[] data = StreamUtilities.readExact(_context.getRawStream(), _context.getSuperBlock().getInodeSize());
+        long offset = this.offset + ((long) inode.getAgBlock() * context.getSuperBlock().getBlocksize()) +
+                      ((long) inode.getBlockOffset() * context.getSuperBlock().getInodeSize());
+        context.getRawStream().setPosition(offset);
+        byte[] data = StreamUtilities.readExact(context.getRawStream(), context.getSuperBlock().getInodeSize());
         inode.readFrom(data, 0);
     }
 }

@@ -27,11 +27,12 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ShortAllocationDescriptor implements IByteArraySerializable {
-    public int ExtentLength;
 
-    public int ExtentLocation;
+    public int extentLength;
 
-    public ShortAllocationFlags Flags = ShortAllocationFlags.RecordedAndAllocated;
+    public int extentLocation;
+
+    public ShortAllocationFlags flags = ShortAllocationFlags.RecordedAndAllocated;
 
     public int size() {
         return 8;
@@ -39,9 +40,9 @@ public final class ShortAllocationDescriptor implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         int len = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        ExtentLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        ExtentLength = len & 0x3FFFFFFF;
-        Flags = ShortAllocationFlags.values()[(len >>> 30) & 0x3];
+        extentLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        extentLength = len & 0x3FFFFFFF;
+        flags = ShortAllocationFlags.values()[(len >>> 30) & 0x3];
         return 8;
     }
 
@@ -50,6 +51,6 @@ public final class ShortAllocationDescriptor implements IByteArraySerializable {
     }
 
     public String toString() {
-        return ExtentLocation + ":+" + ExtentLength + " [" + Flags + "]";
+        return extentLocation + ":+" + extentLength + " [" + flags + "]";
     }
 }

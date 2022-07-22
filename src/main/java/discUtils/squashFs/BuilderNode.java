@@ -28,97 +28,97 @@ import discUtils.core.UnixFilePermissions;
 
 
 public abstract class BuilderNode {
-    protected boolean _written;
+    protected boolean written;
 
     public BuilderNode() {
         setModificationTime(System.currentTimeMillis());
     }
 
-    private int __GroupId;
+    private int groupId;
 
     public int getGroupId() {
-        return __GroupId;
+        return groupId;
     }
 
     public void setGroupId(int value) {
-        __GroupId = value;
+        groupId = value;
     }
 
     public abstract Inode getInode();
 
-    private int __InodeNumber;
+    private int inodeNumber;
 
     public int getInodeNumber() {
-        return __InodeNumber;
+        return inodeNumber;
     }
 
     public void setInodeNumber(int value) {
-        __InodeNumber = value;
+        inodeNumber = value;
     }
 
-    private MetadataRef __InodeRef;
+    private MetadataRef inodeRef;
 
     public MetadataRef getInodeRef() {
-        return __InodeRef;
+        return inodeRef;
     }
 
     public void setInodeRef(MetadataRef value) {
-        __InodeRef = value;
+        inodeRef = value;
     }
 
-    private EnumSet<UnixFilePermissions> __Mode = EnumSet.noneOf(UnixFilePermissions.class);
+    private EnumSet<UnixFilePermissions> mode = EnumSet.noneOf(UnixFilePermissions.class);
 
     public EnumSet<UnixFilePermissions> getMode() {
-        return __Mode;
+        return mode;
     }
 
     public void setMode(EnumSet<UnixFilePermissions> value) {
-        __Mode = value;
+        mode = value;
     }
 
-    private long __ModificationTime;
+    private long modificationTime;
 
     public long getModificationTime() {
-        return __ModificationTime;
+        return modificationTime;
     }
 
     public void setModificationTime(long value) {
-        __ModificationTime = value;
+        modificationTime = value;
     }
 
-    private int __NumLinks;
+    private int numLinks;
 
     public int getNumLinks() {
-        return __NumLinks;
+        return numLinks;
     }
 
     public void setNumLinks(int value) {
-        __NumLinks = value;
+        numLinks = value;
     }
 
-    private int __UserId;
+    private int userId;
 
     public int getUserId() {
-        return __UserId;
+        return userId;
     }
 
     public void setUserId(int value) {
-        __UserId = value;
+        userId = value;
     }
 
     public void reset() {
-        _written = false;
+        written = false;
     }
 
     public abstract void write(BuilderContext context);
 
     protected void fillCommonInodeData(BuilderContext context) {
-        getInode()._mode = (short) UnixFilePermissions.valueOf(getMode());
-        getInode()._uidKey = context.getAllocateId().invoke(getUserId());
-        getInode()._gidKey = context.getAllocateId().invoke(getGroupId());
-        getInode()._modificationTime = getModificationTime();
+        getInode().mode = (short) UnixFilePermissions.valueOf(getMode());
+        getInode().uidKey = context.getAllocateId().invoke(getUserId());
+        getInode().gidKey = context.getAllocateId().invoke(getGroupId());
+        getInode().modificationTime = getModificationTime();
         setInodeNumber(context.getAllocateInode().invoke());
-        getInode()._inodeNumber = getInodeNumber();
-        getInode()._numLinks = getNumLinks();
+        getInode().inodeNumber = getInodeNumber();
+        getInode().numLinks = getNumLinks();
     }
 }

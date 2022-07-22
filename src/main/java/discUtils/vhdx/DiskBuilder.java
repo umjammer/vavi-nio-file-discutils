@@ -52,6 +52,7 @@ import dotnet4j.io.MemoryStream;
  * is simply to present a VHD version of an existing disk.
  */
 public final class DiskBuilder extends DiskImageBuilder {
+
     private long blockSize = 32 * Sizes.OneMiB;
 
     /**
@@ -110,23 +111,24 @@ public final class DiskBuilder extends DiskImageBuilder {
     }
 
     private static class DiskStreamBuilder extends StreamBuilder {
-        private final long _blockSize;
 
-        private final SparseStream _content;
+        private final long blockSize;
 
-        private final DiskType _diskType;
+        private final SparseStream content;
+
+        private final DiskType diskType;
 
         public DiskStreamBuilder(SparseStream content, DiskType diskType, long blockSize) {
-            _content = content;
-            _diskType = diskType;
-            _blockSize = blockSize;
+            this.content = content;
+            this.diskType = diskType;
+            this.blockSize = blockSize;
         }
 
         /**
          * @param totalLength {@cs out}
          */
         protected List<BuilderExtent> fixExtents(long[] totalLength) {
-            if (_diskType != DiskType.Dynamic) {
+            if (diskType != DiskType.Dynamic) {
                 throw new UnsupportedOperationException("Creation of only dynamic disks currently implemented");
             }
 
@@ -134,32 +136,32 @@ public final class DiskBuilder extends DiskImageBuilder {
 
             int logicalSectorSize = 512;
             int physicalSectorSize = 4096;
-            long chunkRatio = 0x800000L * logicalSectorSize / _blockSize;
-            long dataBlocksCount = MathUtilities.ceil(_content.getLength(), _blockSize);
+            long chunkRatio = 0x800000L * logicalSectorSize / blockSize;
+            long dataBlocksCount = MathUtilities.ceil(content.getLength(), blockSize);
             @SuppressWarnings("unused")
             long sectorBitmapBlocksCount = MathUtilities.ceil(dataBlocksCount, chunkRatio);
             long totalBatEntriesDynamic = dataBlocksCount + (dataBlocksCount - 1) / chunkRatio;
 
             FileHeader fileHeader = new FileHeader();
-            fileHeader.Creator = ".NET DiscUtils";
+            fileHeader.creator = ".NET DiscUtils";
 
             long fileEnd = Sizes.OneMiB;
 
             VhdxHeader header1 = new VhdxHeader();
-            header1.SequenceNumber = 0;
-            header1.FileWriteGuid = UUID.randomUUID();
-            header1.DataWriteGuid = UUID.randomUUID();
-            header1.LogGuid = new UUID(0L, 0L);
-            header1.LogVersion = 0;
-            header1.Version = 1;
-            header1.LogLength = (int) Sizes.OneMiB;
-            header1.LogOffset = fileEnd;
+            header1.sequenceNumber = 0;
+            header1.fileWriteGuid = UUID.randomUUID();
+            header1.dataWriteGuid = UUID.randomUUID();
+            header1.logGuid = new UUID(0L, 0L);
+            header1.logVersion = 0;
+            header1.version = 1;
+            header1.logLength = (int) Sizes.OneMiB;
+            header1.logOffset = fileEnd;
             header1.calcChecksum();
 
-            fileEnd += header1.LogLength;
+            fileEnd += header1.logLength;
 
             VhdxHeader header2 = new VhdxHeader(header1);
-            header2.SequenceNumber = 1;
+            header2.sequenceNumber = 1;
             header2.calcChecksum();
 
             RegionTable regionTable = new RegionTable();
@@ -169,7 +171,7 @@ public final class DiskBuilder extends DiskImageBuilder {
             metadataRegion.fileOffset = fileEnd;
             metadataRegion.setLength((int) Sizes.OneMiB);
             metadataRegion.flags = RegionFlags.Required;
-            regionTable.Regions.put(metadataRegion.guid, metadataRegion);
+            regionTable.regions.put(metadataRegion.guid, metadataRegion);
 
             fileEnd += metadataRegion.getLength();
 
@@ -178,7 +180,7 @@ public final class DiskBuilder extends DiskImageBuilder {
             batRegion.fileOffset = fileEnd;
             batRegion.setLength((int) MathUtilities.roundUp(totalBatEntriesDynamic * 8, Sizes.OneMiB));
             batRegion.flags = RegionFlags.Required;
-            regionTable.Regions.put(batRegion.guid, batRegion);
+            regionTable.regions.put(batRegion.guid, batRegion);
 
             fileEnd += batRegion.getLength();
 
@@ -190,8 +192,8 @@ public final class DiskBuilder extends DiskImageBuilder {
 
             // Metadata
             FileParameters fileParams = new FileParameters();
-            fileParams.BlockSize = (int)_blockSize;
-            fileParams.Flags = EnumSet.of(FileParametersFlags.None);
+            fileParams.blockSize = (int) blockSize;
+            fileParams.flags = EnumSet.of(FileParametersFlags.None);
             @SuppressWarnings("unused")
             ParentLocator parentLocator = new ParentLocator();
 
@@ -199,30 +201,30 @@ public final class DiskBuilder extends DiskImageBuilder {
             MemoryStream metadataStream = new MemoryStream(metadataBuffer);
             Metadata.initialize(metadataStream,
                                 fileParams,
-                                _content.getLength(),
+                                content.getLength(),
                                 logicalSectorSize,
                                 physicalSectorSize,
                                 null);
             extents.add(new BuilderBufferExtent(metadataRegion.fileOffset, metadataBuffer));
-            List<Range> presentBlocks = StreamExtent.blocks(_content.getExtents(), _blockSize);
+            List<Range> presentBlocks = StreamExtent.blocks(content.getExtents(), blockSize);
 
             // BAT
             BlockAllocationTableBuilderExtent batExtent = new BlockAllocationTableBuilderExtent(batRegion.fileOffset,
                                                                                                 batRegion.getLength(),
                                                                                                 presentBlocks,
                                                                                                 fileEnd,
-                                                                                                _blockSize,
+                    blockSize,
                                                                                                 chunkRatio);
             extents.add(batExtent);
 
             // Stream contents
             for (Range range : presentBlocks) {
-                long substreamStart = range.getOffset() * _blockSize;
-                long substreamCount = Math.min(_content.getLength() - substreamStart, range.getCount() * _blockSize);
-                SubStream dataSubStream = new SubStream(_content, substreamStart, substreamCount);
+                long substreamStart = range.getOffset() * blockSize;
+                long substreamCount = Math.min(content.getLength() - substreamStart, range.getCount() * blockSize);
+                SubStream dataSubStream = new SubStream(content, substreamStart, substreamCount);
                 BuilderSparseStreamExtent dataExtent = new BuilderSparseStreamExtent(fileEnd, dataSubStream);
                 extents.add(dataExtent);
-                fileEnd += range.getCount() * _blockSize;
+                fileEnd += range.getCount() * blockSize;
             }
 
             totalLength[0] = fileEnd;
@@ -238,15 +240,16 @@ public final class DiskBuilder extends DiskImageBuilder {
     }
 
     private static class BlockAllocationTableBuilderExtent extends BuilderExtent {
-        private byte[] _batData;
 
-        private final List<Range> _blocks;
+        private byte[] batData;
 
-        private final long _blockSize;
+        private final List<Range> blocks;
 
-        private final long _chunkRatio;
+        private final long blockSize;
 
-        private final long _dataStart;
+        private final long chunkRatio;
+
+        private final long dataStart;
 
         public BlockAllocationTableBuilderExtent(long start,
                 long length,
@@ -255,42 +258,42 @@ public final class DiskBuilder extends DiskImageBuilder {
                 long blockSize,
                 long chunkRatio) {
             super(start, length);
-            _blocks = blocks;
-            _dataStart = dataStart;
-            _blockSize = blockSize;
-            _chunkRatio = chunkRatio;
+            this.blocks = blocks;
+            this.dataStart = dataStart;
+            this.blockSize = blockSize;
+            this.chunkRatio = chunkRatio;
         }
 
         public void close() {
-            _batData = null;
+            batData = null;
         }
 
         public void prepareForRead() {
-            _batData = new byte[(int) getLength()];
-            long fileOffset = _dataStart;
+            batData = new byte[(int) getLength()];
+            long fileOffset = dataStart;
             BatEntry entry = new BatEntry();
-            for (Range range : _blocks) {
+            for (Range range : blocks) {
                 for (long block = range.getOffset(); block < range.getOffset() + range.getCount(); ++block) {
-                    long chunk = block / _chunkRatio;
-                    long chunkOffset = block % _chunkRatio;
-                    long batIndex = chunk * (_chunkRatio + 1) + chunkOffset;
+                    long chunk = block / chunkRatio;
+                    long chunkOffset = block % chunkRatio;
+                    long batIndex = chunk * (chunkRatio + 1) + chunkOffset;
                     entry.setFileOffsetMB(fileOffset / Sizes.OneMiB);
                     entry.setPayloadBlockStatus(PayloadBlockStatus.FullyPresent);
-                    entry.writeTo(_batData, (int) (batIndex * 8));
-                    fileOffset += _blockSize;
+                    entry.writeTo(batData, (int) (batIndex * 8));
+                    fileOffset += blockSize;
                 }
             }
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
-            int start = (int) Math.min(diskOffset - getStart(), _batData.length);
-            int numRead = Math.min(count, _batData.length - start);
-            System.arraycopy(_batData, start, block, offset, numRead);
+            int start = (int) Math.min(diskOffset - getStart(), batData.length);
+            int numRead = Math.min(count, batData.length - start);
+            System.arraycopy(batData, start, block, offset, numRead);
             return numRead;
         }
 
         public void disposeReadState() {
-            _batData = null;
+            batData = null;
         }
     }
 }

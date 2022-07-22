@@ -23,28 +23,29 @@
 package discUtils.nfs;
 
 public class Nfs3GetAttributesResult extends Nfs3CallResult {
+
     public Nfs3GetAttributesResult() {
     }
 
     public Nfs3GetAttributesResult(XdrDataReader reader) {
-        _status = Nfs3Status.valueOf(reader.readInt32());
-        _attributes = new Nfs3FileAttributes(reader);
+        status = Nfs3Status.valueOf(reader.readInt32());
+        attributes = new Nfs3FileAttributes(reader);
     }
 
-    private Nfs3FileAttributes _attributes;
+    private Nfs3FileAttributes attributes;
 
     public Nfs3FileAttributes getAttributes() {
-        return _attributes;
+        return attributes;
     }
 
     public void setAttributes(Nfs3FileAttributes value) {
-        _attributes = value;
+        attributes = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        if (_status == Nfs3Status.Ok) {
-            _attributes.write(writer);
+        writer.write(status.getValue());
+        if (status == Nfs3Status.Ok) {
+            attributes.write(writer);
         }
     }
 
@@ -57,10 +58,10 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
             return false;
         }
 
-        return other._status == _status && dotnet4j.util.compat.Utilities.equals(other._attributes, _attributes);
+        return other.status == status && dotnet4j.util.compat.Utilities.equals(other.attributes, attributes);
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(_status, _attributes);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, attributes);
     }
 }

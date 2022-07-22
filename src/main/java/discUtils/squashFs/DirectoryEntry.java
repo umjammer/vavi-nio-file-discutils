@@ -30,13 +30,14 @@ import discUtils.core.vfs.VfsDirEntry;
 
 
 public class DirectoryEntry extends VfsDirEntry {
-    private final DirectoryHeader _header;
 
-    private final DirectoryRecord _record;
+    private final DirectoryHeader header;
+
+    private final DirectoryRecord record;
 
     public DirectoryEntry(DirectoryHeader header, DirectoryRecord record) {
-        _header = header;
-        _record = record;
+        this.header = header;
+        this.record = record;
     }
 
     public long getCreationTimeUtc() {
@@ -44,12 +45,12 @@ public class DirectoryEntry extends VfsDirEntry {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(_record.Type);
+        UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(record.type);
         return UnixFileType.toFileAttributes(fileType);
     }
 
     public String getFileName() {
-        return _record.Name;
+        return record.name;
     }
 
     public boolean hasVfsFileAttributes() {
@@ -61,15 +62,15 @@ public class DirectoryEntry extends VfsDirEntry {
     }
 
     public MetadataRef getInodeReference() {
-        return new MetadataRef(_header.StartBlock, _record.getOffset());
+        return new MetadataRef(header.startBlock, record.getOffset());
     }
 
     public boolean isDirectory() {
-        return _record.Type == InodeType.Directory || _record.Type == InodeType.ExtendedDirectory;
+        return record.type == InodeType.Directory || record.type == InodeType.ExtendedDirectory;
     }
 
     public boolean isSymlink() {
-        return _record.Type == InodeType.Symlink || _record.Type == InodeType.ExtendedSymlink;
+        return record.type == InodeType.Symlink || record.type == InodeType.ExtendedSymlink;
     }
 
     public long getLastAccessTimeUtc() {
@@ -81,6 +82,6 @@ public class DirectoryEntry extends VfsDirEntry {
     }
 
     public long getUniqueCacheId() {
-        return _header.InodeNumber + _record.InodeNumber;
+        return header.inodeNumber + record.inodeNumber;
     }
 }

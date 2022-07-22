@@ -26,13 +26,14 @@ import discUtils.core.vfs.VfsContext;
 
 
 public class SwapContext extends VfsContext {
-    private SwapHeader __Header;
+
+    private SwapHeader header;
 
     public SwapHeader getHeader() {
-        return __Header;
+        return header;
     }
 
     public void setHeader(SwapHeader value) {
-        __Header = value;
+        header = value;
     }
 }

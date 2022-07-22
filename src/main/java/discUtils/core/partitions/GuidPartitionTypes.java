@@ -29,6 +29,7 @@ import java.util.UUID;
  * Convenient access to well known GPT partition types.
  */
 public class GuidPartitionTypes {
+
     /**
      * EFI system partition.
      */

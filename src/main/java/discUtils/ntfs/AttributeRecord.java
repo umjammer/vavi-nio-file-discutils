@@ -36,24 +36,25 @@ import dotnet4j.util.compat.StringUtilities;
 
 
 public abstract class AttributeRecord implements Comparable<AttributeRecord> {
-    protected short _attributeId;
 
-    protected EnumSet<AttributeFlags> _flags;
+    protected short attributeId;
 
-    protected String _name;
+    protected EnumSet<AttributeFlags> flags;
 
-    protected byte _nonResidentFlag;
+    protected String name;
 
-    protected AttributeType _type;
+    protected byte nonResidentFlag;
+
+    protected AttributeType type;
 
     public AttributeRecord() {
     }
 
     public AttributeRecord(AttributeType type, String name, short id, EnumSet<AttributeFlags> flags) {
-        _type = type;
-        _name = name;
-        _attributeId = id;
-        _flags = flags;
+        this.type = type;
+        this.name = name;
+        attributeId = id;
+        this.flags = flags;
     }
 
     public abstract long getAllocatedLength();
@@ -61,15 +62,15 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
     public abstract void setAllocatedLength(long value);
 
     public short getAttributeId() {
-        return _attributeId;
+        return attributeId;
     }
 
     public void setAttributeId(short value) {
-        _attributeId = value;
+        attributeId = value;
     }
 
     public AttributeType getAttributeType() {
-        return _type;
+        return type;
     }
 
     public abstract long getDataLength();
@@ -77,11 +78,11 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
     public abstract void setDataLength(long value);
 
     public EnumSet<AttributeFlags> getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(EnumSet<AttributeFlags> value) {
-        _flags = value;
+        flags = value;
     }
 
     public abstract long getInitializedDataLength();
@@ -89,11 +90,11 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
     public abstract void setInitializedDataLength(long value);
 
     public boolean isNonResident() {
-        return _nonResidentFlag != 0;
+        return nonResidentFlag != 0;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public abstract int getSize();
@@ -101,17 +102,17 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
     public abstract long getStartVcn();
 
     public int compareTo(AttributeRecord other) {
-        int val = _type.getValue() - other._type.getValue();
+        int val = type.getValue() - other.type.getValue();
         if (val != 0) {
             return val;
         }
 
-        val = StringUtilities.compare(_name, other._name, true);
+        val = StringUtilities.compare(name, other.name, true);
         if (val != 0) {
             return val;
         }
 
-        return _attributeId - other._attributeId;
+        return attributeId - other.attributeId;
     }
 
     /**
@@ -146,32 +147,32 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "ATTRIBUTE RECORD");
-        writer.println(indent + "            Type: " + _type);
-        writer.println(indent + "    Non-Resident: " + _nonResidentFlag);
-        writer.println(indent + "            Name: " + _name);
-        writer.println(indent + "           Flags: " + _flags);
-        writer.println(indent + "     AttributeId: " + _attributeId);
+        writer.println(indent + "            Type: " + type);
+        writer.println(indent + "    Non-Resident: " + nonResidentFlag);
+        writer.println(indent + "            Name: " + name);
+        writer.println(indent + "           flags: " + flags);
+        writer.println(indent + "     attributeId: " + attributeId);
     }
 
     /**
      * @param length {@cs out}
      */
     protected void read(byte[] buffer, int offset, int[] length) {
-        _type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00));
+        type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00));
         length[0] = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
 
-        _nonResidentFlag = buffer[offset + 0x08];
+        nonResidentFlag = buffer[offset + 0x08];
         int nameLength = buffer[offset + 0x09] & 0xff;
         int nameOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A) & 0xffff;
-        _flags = AttributeFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
-        _attributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0E);
+        flags = AttributeFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
+        attributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0E);
 
         if (nameLength != 0x00) {
             if (nameLength + nameOffset > length[0]) {
                 throw new IOException("Corrupt attribute, name outside of attribute");
             }
 
-            _name = new String(buffer, offset + nameOffset, nameLength * 2, StandardCharsets.UTF_16LE);
+            name = new String(buffer, offset + nameOffset, nameLength * 2, StandardCharsets.UTF_16LE);
         }
     }
 }

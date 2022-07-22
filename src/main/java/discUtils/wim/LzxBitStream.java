@@ -33,22 +33,22 @@ import dotnet4j.io.Stream;
  * emulated.It is strongly recommended to use some kind of in memory buffering
  * (such as a
  * BufferedStream) for the wrapped stream. This class makes a large number of
- * small
- * reads..
+ * small reads.
  */
 public final class LzxBitStream extends BitStream {
-    private int _buffer;
 
-    private int _bufferAvailable;
+    private int buffer;
 
-    private final Stream _byteStream;
+    private int bufferAvailable;
 
-    private long _position;
+    private final Stream byteStream;
 
-    private final byte[] _readBuffer = new byte[2];
+    private long position;
+
+    private final byte[] readBuffer = new byte[2];
 
     public LzxBitStream(Stream byteStream) {
-        _byteStream = byteStream;
+        this.byteStream = byteStream;
     }
 
     public int getMaxReadAhead() {
@@ -60,61 +60,61 @@ public final class LzxBitStream extends BitStream {
             throw new IndexOutOfBoundsException("Maximum 32 bits can be read");
         }
 
-        if (_bufferAvailable < count) {
+        if (bufferAvailable < count) {
             need(count);
         }
 
-        _bufferAvailable -= count;
-        _position += count;
+        bufferAvailable -= count;
+        position += count;
         int mask = (1 << count) - 1;
-        return (_buffer >>> _bufferAvailable) & mask;
+        return (buffer >>> bufferAvailable) & mask;
     }
 
     public int peek(int count) {
-        if (_bufferAvailable < count) {
+        if (bufferAvailable < count) {
             need(count);
         }
 
         int mask = (1 << count) - 1;
-        return (_buffer >>> (_bufferAvailable - count)) & mask;
+        return (buffer >>> (bufferAvailable - count)) & mask;
     }
 
     public void consume(int count) {
-        if (_bufferAvailable < count) {
+        if (bufferAvailable < count) {
             need(count);
         }
 
-        _bufferAvailable -= count;
-        _position += count;
+        bufferAvailable -= count;
+        position += count;
     }
 
     public void align(int bits) {
         // Note: Consumes 1-16 bits, to force alignment (never 0)
-        int offset = (int) (_position % bits);
+        int offset = (int) (position % bits);
         consume(bits - offset);
     }
 
     public int readBytes(byte[] buffer, int offset, int count) {
-        if (_position % 8 != 0) {
+        if (position % 8 != 0) {
             throw new UnsupportedOperationException("Attempt to read bytes when not byte-aligned");
         }
 
         int totalRead = 0;
         while (totalRead < count) {
-            int numRead = _byteStream.read(buffer, offset + totalRead, count - totalRead);
+            int numRead = byteStream.read(buffer, offset + totalRead, count - totalRead);
             if (numRead == 0) {
-                _position += totalRead * 8L;
+                position += totalRead * 8L;
                 return totalRead;
             }
 
             totalRead += numRead;
         }
-        _position += totalRead * 8L;
+        position += totalRead * 8L;
         return totalRead;
     }
 
     public byte[] readBytes(int count) {
-        if (_position % 8 != 0) {
+        if (position % 8 != 0) {
             throw new UnsupportedOperationException("Attempt to read bytes when not byte-aligned");
         }
 
@@ -124,12 +124,12 @@ public final class LzxBitStream extends BitStream {
     }
 
     private void need(int count) {
-        while (_bufferAvailable < count) {
-            _readBuffer[0] = 0;
-            _readBuffer[1] = 0;
-            _byteStream.read(_readBuffer, 0, 2);
-            _buffer = _buffer << 16 | (_readBuffer[1] & 0xff) << 8 | (_readBuffer[0] & 0xff);
-            _bufferAvailable += 16;
+        while (bufferAvailable < count) {
+            readBuffer[0] = 0;
+            readBuffer[1] = 0;
+            byteStream.read(readBuffer, 0, 2);
+            buffer = buffer << 16 | (readBuffer[1] & 0xff) << 8 | (readBuffer[0] & 0xff);
+            bufferAvailable += 16;
         }
     }
 }

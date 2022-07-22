@@ -34,14 +34,14 @@ public abstract class Cell implements IByteArraySerializable {
         setIndex(index);
     }
 
-    private int __Index;
+    private int index;
 
     public int getIndex() {
-        return __Index;
+        return index;
     }
 
     public void setIndex(int value) {
-        __Index = value;
+        index = value;
     }
 
     public abstract int size();
@@ -52,7 +52,7 @@ public abstract class Cell implements IByteArraySerializable {
 
     public static Cell parse(RegistryHive hive, int index, byte[] buffer, int pos) {
         String type = EndianUtilities.bytesToString(buffer, pos, 2);
-        Cell result = null;
+        Cell result;
         switch (type) {
         case "nk":
             result = new KeyNodeCell(index);

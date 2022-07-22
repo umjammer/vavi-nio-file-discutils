@@ -23,22 +23,23 @@
 package discUtils.hfsPlus;
 
 class BTreeGenericRecord extends BTreeNodeRecord {
-    private byte[] _data;
 
-    private final int _size;
+    private byte[] data;
+
+    private final int size;
 
     public BTreeGenericRecord(int size) {
-        _size = size;
+        this.size = size;
     }
 
     public int size() {
-        return _size;
+        return size;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _data = new byte[_size];
-        System.arraycopy(buffer, offset, _data, 0, _size);
-        return _size;
+        data = new byte[size];
+        System.arraycopy(buffer, offset, data, 0, size);
+        return size;
     }
 
     public void writeTo(byte[] buffer, int offset) {

@@ -26,17 +26,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class IntegerListElementValue extends ElementValue {
-    private final long[] _values;
+
+    private final long[] values;
 
     public IntegerListElementValue(byte[] value) {
-        _values = new long[value.length / 8];
-        for (int i = 0; i < _values.length; ++i) {
-            _values[i] = EndianUtilities.toUInt64LittleEndian(value, i * 8);
+        values = new long[value.length / 8];
+        for (int i = 0; i < values.length; ++i) {
+            values[i] = EndianUtilities.toUInt64LittleEndian(value, i * 8);
         }
     }
 
     public IntegerListElementValue(long[] values) {
-        _values = values;
+        this.values = values;
     }
 
     public ElementFormat getFormat() {
@@ -44,25 +45,25 @@ public class IntegerListElementValue extends ElementValue {
     }
 
     public String toString() {
-        if (_values == null || _values.length == 0) {
+        if (values == null || values.length == 0) {
             return "<none>";
         }
 
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < _values.length; ++i) {
+        for (int i = 0; i < values.length; ++i) {
             if (i != 0) {
                 result.append(" ");
             }
 
-            result.append(String.format("%16x", _values[i]));
+            result.append(String.format("%16x", values[i]));
         }
         return result.toString();
     }
 
     public byte[] getBytes() {
-        byte[] bytes = new byte[_values.length * 8];
-        for (int i = 0; i < _values.length; ++i) {
-            EndianUtilities.writeBytesLittleEndian(_values[i], bytes, i * 8);
+        byte[] bytes = new byte[values.length * 8];
+        for (int i = 0; i < values.length; ++i) {
+            EndianUtilities.writeBytesLittleEndian(values[i], bytes, i * 8);
         }
         return bytes;
     }

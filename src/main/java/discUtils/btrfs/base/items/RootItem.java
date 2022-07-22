@@ -30,6 +30,7 @@ import discUtils.streams.util.EndianUtilities;
  * Contains the stat information for an inode
  */
 public class RootItem extends BaseItem {
+
     public static final int Length = 375;
 
     public RootItem(Key key) {
@@ -41,160 +42,160 @@ public class RootItem extends BaseItem {
      * generation=1, size=3,nlink=1, nbytes=leafsize, mode=040755
      * flags depends on kernel version.
      */
-    private InodeItem _inode;
+    private InodeItem inode;
 
     public InodeItem getInode() {
-        return _inode;
+        return inode;
     }
 
     public void setInode(InodeItem value) {
-        _inode = value;
+        inode = value;
     }
 
     /**
      * transid of the transaction that created this root.
      */
-    private long _generation;
+    private long generation;
 
     public long getGeneration() {
-        return _generation;
+        return generation;
     }
 
     public void setGeneration(long value) {
-        _generation = value;
+        generation = value;
     }
 
     /**
      * For file trees, the objectid of the root directory in this tree (always
      * 256). Otherwise, 0.
      */
-    private long _rootDirId;
+    private long rootDirId;
 
     public long getRootDirId() {
-        return _rootDirId;
+        return rootDirId;
     }
 
     public void setRootDirId(long value) {
-        _rootDirId = value;
+        rootDirId = value;
     }
 
     /**
      * The disk offset in bytes for the root node of this tree.
      */
-    private long _byteNr;
+    private long byteNr;
 
     public long getByteNr() {
-        return _byteNr;
+        return byteNr;
     }
 
     public void setByteNr(long value) {
-        _byteNr = value;
+        byteNr = value;
     }
 
     /**
      * Unused. Always 0.
      */
-    private long _byteLimit;
+    private long byteLimit;
 
     public long getByteLimit() {
-        return _byteLimit;
+        return byteLimit;
     }
 
     public void setByteLimit(long value) {
-        _byteLimit = value;
+        byteLimit = value;
     }
 
     /**
      * Unused
      */
-    private long _bytesUsed;
+    private long bytesUsed;
 
     public long getBytesUsed() {
-        return _bytesUsed;
+        return bytesUsed;
     }
 
     public void setBytesUsed(long value) {
-        _bytesUsed = value;
+        bytesUsed = value;
     }
 
     /**
      * The last transid of the transaction that created a snapshot of this root.
      */
-    private long _lastSnapshot;
+    private long lastSnapshot;
 
     public long getLastSnapshot() {
-        return _lastSnapshot;
+        return lastSnapshot;
     }
 
     public void setLastSnapshot(long value) {
-        _lastSnapshot = value;
+        lastSnapshot = value;
     }
 
     /**
      * flags
      */
-    private long _flags;
+    private long flags;
 
     public long getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(long value) {
-        _flags = value;
+        flags = value;
     }
 
     /**
      * Originally indicated a reference count. In modern usage, it is only 0 or
      * 1.
      */
-    private int _refs;
+    private int refs;
 
     public int getRefs() {
-        return _refs;
+        return refs;
     }
 
     public void setRefs(int value) {
-        _refs = value;
+        refs = value;
     }
 
     /**
      * Contains key of last dropped item during subvolume removal or relocation.
      * Zeroed otherwise.
      */
-    private Key _dropProgress;
+    private Key dropProgress;
 
     public Key getDropProgress() {
-        return _dropProgress;
+        return dropProgress;
     }
 
     public void setDropProgress(Key value) {
-        _dropProgress = value;
+        dropProgress = value;
     }
 
     /**
      * The tree level of the node described in drop_progress.
      */
-    private byte _dropLevel;
+    private byte dropLevel;
 
     public byte getDropLevel() {
-        return _dropLevel;
+        return dropLevel;
     }
 
     public void setDropLevel(byte value) {
-        _dropLevel = value;
+        dropLevel = value;
     }
 
     /**
      * The height of the tree rooted at bytenr.
      */
-    private byte _level;
+    private byte level;
 
     public int getLevel() {
-        return _level & 0xff;
+        return level & 0xff;
     }
 
     public void setLevel(byte value) {
-        _level = value;
+        level = value;
     }
 
     public int size() {
@@ -202,18 +203,18 @@ public class RootItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setInode(EndianUtilities.toStruct(InodeItem.class, buffer, offset));
-        setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 160));
-        setRootDirId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 168));
-        setByteNr(EndianUtilities.toUInt64LittleEndian(buffer, offset + 176));
-        setByteLimit(EndianUtilities.toUInt64LittleEndian(buffer, offset + 184));
-        setBytesUsed(EndianUtilities.toUInt64LittleEndian(buffer, offset + 192));
-        setLastSnapshot(EndianUtilities.toUInt64LittleEndian(buffer, offset + 200));
-        setFlags(EndianUtilities.toUInt64LittleEndian(buffer, offset + 208));
-        setRefs(EndianUtilities.toUInt32LittleEndian(buffer, offset + 216));
-        setDropProgress(EndianUtilities.toStruct(Key.class, buffer, offset + 220));
-        setDropLevel(buffer[offset + 237]);
-        setLevel(buffer[offset + 238]);
+        inode = EndianUtilities.toStruct(InodeItem.class, buffer, offset);
+        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 160);
+        rootDirId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 168);
+        byteNr = EndianUtilities.toUInt64LittleEndian(buffer, offset + 176);
+        byteLimit = EndianUtilities.toUInt64LittleEndian(buffer, offset + 184);
+        bytesUsed = EndianUtilities.toUInt64LittleEndian(buffer, offset + 192);
+        lastSnapshot = EndianUtilities.toUInt64LittleEndian(buffer, offset + 200);
+        flags = EndianUtilities.toUInt64LittleEndian(buffer, offset + 208);
+        refs = EndianUtilities.toUInt32LittleEndian(buffer, offset + 216);
+        dropProgress = EndianUtilities.toStruct(Key.class, buffer, offset + 220);
+        dropLevel = buffer[offset + 237];
+        level = buffer[offset + 238];
         //The following fields depend on the subvol_uuids+subvol_times features
         //239   __le64  generation_v2   If equal to generation, indicates validity of the following fields.
         //If the root is modified using an older kernel, this field and generation will become out of sync. This is normal and recoverable.

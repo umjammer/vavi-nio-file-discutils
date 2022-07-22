@@ -31,8 +31,8 @@ import java.util.Comparator;
  * Provides the base class for {@link BuildFileInfo} and
  * {@link BuildDirectoryInfo} objects that will be built into an
  * ISO image.
- * Instances of this class have two names, a {@link #_name},
- * which is the full-length Joliet name and a {@link #_shortName},
+ * Instances of this class have two names, a {@link #name},
+ * which is the full-length Joliet name and a {@link #shortName},
  * which is the strictly compliant ISO 9660 name.
  */
 public abstract class BuildDirectoryMember {
@@ -46,31 +46,31 @@ public abstract class BuildDirectoryMember {
      * @param shortName The ISO 9660 compliant name of the file or directory.
      */
     protected BuildDirectoryMember(String name, String shortName) {
-        _name = name;
-        _shortName = shortName;
-        _creationTime = System.currentTimeMillis();
+        this.name = name;
+        this.shortName = shortName;
+        creationTime = System.currentTimeMillis();
     }
 
     /**
      * Gets or sets the creation date for the file or directory, in UTC.
      */
-    protected long _creationTime;
+    protected long creationTime;
 
     public long getCreationTime() {
-        return _creationTime;
+        return creationTime;
     }
 
     public void setCreationTime(long value) {
-        _creationTime = value;
+        creationTime = value;
     }
 
     /**
      * Gets the Joliet compliant name of the file or directory.
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
@@ -81,10 +81,10 @@ public abstract class BuildDirectoryMember {
     /**
      * Gets the ISO 9660 compliant name of the file or directory.
      */
-    private String _shortName;
+    private String shortName;
 
     public String getShortName() {
-        return _shortName;
+        return shortName;
     }
 
     String pickName(String nameOverride, Charset enc) {
@@ -92,7 +92,7 @@ public abstract class BuildDirectoryMember {
             return nameOverride;
         }
 
-        return enc.equals(StandardCharsets.US_ASCII) ? _shortName : _name;
+        return enc.equals(StandardCharsets.US_ASCII) ? shortName : name;
     }
 
     abstract long getDataSize(Charset enc);

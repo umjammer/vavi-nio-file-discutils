@@ -60,21 +60,21 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         }
     }
 
-    public long AccessTime;
+    public long accessTime;
 
-    public long AttributesTime;
+    public long attributesTime;
 
-    public long BackupTime;
+    public long backupTime;
 
-    public long CreationTime;
+    public long creationTime;
 
-    public long EffectiveTime;
+    public long effectiveTime;
 
-    public long ExpirationTime;
+    public long expirationTime;
 
-    public long ModifyTime;
+    public long modifyTime;
 
-    public EnumSet<Timestamps> TimestampsPresent = EnumSet.noneOf(Timestamps.class);
+    public EnumSet<Timestamps> timestampsPresent = EnumSet.noneOf(Timestamps.class);
 
     public FileTimeSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);
@@ -82,17 +82,17 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         boolean longForm = (flags & 0x80) != 0;
         @SuppressWarnings("unused")
         int fieldLen = longForm ? 17 : 7;
-        TimestampsPresent = Timestamps.valueOf(flags & 0x7F);
+        timestampsPresent = Timestamps.valueOf(flags & 0x7F);
         int[] pos = new int[] {
             offset + 5
         };
-        CreationTime = readTimestamp(Timestamps.Creation, data, longForm, pos);
-        ModifyTime = readTimestamp(Timestamps.Modify, data, longForm, pos);
-        AccessTime = readTimestamp(Timestamps.Access, data, longForm, pos);
-        AttributesTime = readTimestamp(Timestamps.Attributes, data, longForm, pos);
-        BackupTime = readTimestamp(Timestamps.Backup, data, longForm, pos);
-        ExpirationTime = readTimestamp(Timestamps.Expiration, data, longForm, pos);
-        EffectiveTime = readTimestamp(Timestamps.Effective, data, longForm, pos);
+        creationTime = readTimestamp(Timestamps.Creation, data, longForm, pos);
+        modifyTime = readTimestamp(Timestamps.Modify, data, longForm, pos);
+        accessTime = readTimestamp(Timestamps.Access, data, longForm, pos);
+        attributesTime = readTimestamp(Timestamps.Attributes, data, longForm, pos);
+        backupTime = readTimestamp(Timestamps.Backup, data, longForm, pos);
+        expirationTime = readTimestamp(Timestamps.Expiration, data, longForm, pos);
+        effectiveTime = readTimestamp(Timestamps.Effective, data, longForm, pos);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
      */
     private long readTimestamp(Timestamps timestamp, byte[] data, boolean longForm, int[] pos) {
         long result = Long.MIN_VALUE;
-        if (TimestampsPresent.contains(timestamp)) {
+        if (timestampsPresent.contains(timestamp)) {
             if (longForm) {
                 result = IsoUtilities.toDateTimeFromVolumeDescriptorTime(data, pos[0]);
                 pos[0] = pos[0] + 17;

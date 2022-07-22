@@ -43,71 +43,72 @@ import dotnet4j.io.compression.CompressionMode;
 
 class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context>
     implements IUnixFileSystem {
+
     public static final int MetadataBufferSize = 8 * 1024;
 
-    private final BlockCache<Block> _blockCache;
+    private final BlockCache<Block> blockCache;
 
-    private final Context _context;
+    private final Context context;
 
-    private byte[] _ioBuffer;
+    private byte[] ioBuffer;
 
-    private final BlockCache<Metablock> _metablockCache;
+    private final BlockCache<Metablock> metablockCache;
 
     public VfsSquashFileSystemReader(Stream stream) {
         super(new DiscFileSystemOptions());
 
-        _context = new Context();
-        _context.setSuperBlock(new SuperBlock());
-        _context.setRawStream(stream);
+        context = new Context();
+        context.setSuperBlock(new SuperBlock());
+        context.setRawStream(stream);
 
         // Read superblock
         stream.setPosition(0);
-        byte[] buffer = StreamUtilities.readExact(stream, _context.getSuperBlock().size());
-        _context.getSuperBlock().readFrom(buffer, 0);
+        byte[] buffer = StreamUtilities.readExact(stream, context.getSuperBlock().size());
+        context.getSuperBlock().readFrom(buffer, 0);
 
-        if (_context.getSuperBlock().Magic != SuperBlock.SquashFsMagic) {
+        if (context.getSuperBlock().magic != SuperBlock.SquashFsMagic) {
             throw new dotnet4j.io.IOException("Invalid SquashFS filesystem - magic mismatch");
         }
 
-        if (_context.getSuperBlock().Compression != 1) {
+        if (context.getSuperBlock().compression != 1) {
             throw new dotnet4j.io.IOException("Unsupported compression used");
         }
 
-        if (_context.getSuperBlock().ExtendedAttrsTableStart != -1) {
+        if (context.getSuperBlock().extendedAttrsTableStart != -1) {
             throw new dotnet4j.io.IOException("Unsupported extended attributes present");
         }
 
-        if (_context.getSuperBlock().MajorVersion != 4) {
+        if (context.getSuperBlock().majorVersion != 4) {
             throw new dotnet4j.io.IOException("Unsupported file system version: " +
-                _context.getSuperBlock().MajorVersion + "." + _context.getSuperBlock().MinorVersion);
+                context.getSuperBlock().majorVersion + "." + context.getSuperBlock().minorVersion);
         }
 
         // Create block caches, used to reduce the amount of I/O and decompression
         // activity.
-        _blockCache = new BlockCache<>(_context.getSuperBlock().BlockSize, 20);
-        _metablockCache = new BlockCache<>(MetadataBufferSize, 20);
-        _context.setReadBlock(this::readBlock);
-        _context.setReadMetaBlock(this::readMetaBlock);
+        blockCache = new BlockCache<>(context.getSuperBlock().blockSize, 20);
+        metablockCache = new BlockCache<>(MetadataBufferSize, 20);
+        context.setReadBlock(this::readBlock);
+        context.setReadMetaBlock(this::readMetaBlock);
 
-        _context.setInodeReader(new MetablockReader(_context, _context.getSuperBlock().InodeTableStart));
-        _context.setDirectoryReader(new MetablockReader(_context, _context.getSuperBlock().DirectoryTableStart));
+        context.setInodeReader(new MetablockReader(context, context.getSuperBlock().inodeTableStart));
+        context.setDirectoryReader(new MetablockReader(context, context.getSuperBlock().directoryTableStart));
 
-        if (_context.getSuperBlock().FragmentTableStart != -1) {
-            _context.setFragmentTableReaders(loadIndirectReaders(_context.getSuperBlock().FragmentTableStart,
-                                                                 _context.getSuperBlock().FragmentsCount,
+        if (context.getSuperBlock().fragmentTableStart != -1) {
+            context.setFragmentTableReaders(loadIndirectReaders(context.getSuperBlock().fragmentTableStart,
+                                                                 context.getSuperBlock().fragmentsCount,
                                                                  FragmentRecord.RecordSize));
         }
 
-        if (_context.getSuperBlock().UidGidTableStart != -1) {
-            _context.setUidGidTableReaders(loadIndirectReaders(_context.getSuperBlock().UidGidTableStart,
-                                                               _context.getSuperBlock().getUidGidCount(),
+        if (context.getSuperBlock().uidGidTableStart != -1) {
+            context.setUidGidTableReaders(loadIndirectReaders(context.getSuperBlock().uidGidTableStart,
+                                                               context.getSuperBlock().getUidGidCount(),
                                                                4));
         }
 
         // Bootstrap the root directory
-        _context.getInodeReader().setPosition(_context.getSuperBlock().RootInode);
-        DirectoryInode dirInode = (DirectoryInode) Inode.read(_context.getInodeReader());
-        setRootDirectory(new Directory(_context, dirInode, _context.getSuperBlock().RootInode));
+        context.getInodeReader().setPosition(context.getSuperBlock().rootInode);
+        DirectoryInode dirInode = (DirectoryInode) Inode.read(context.getInodeReader());
+        setRootDirectory(new Directory(context, dirInode, context.getSuperBlock().rootInode));
     }
 
     public String getFriendlyName() {
@@ -124,12 +125,12 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         DeviceInode devInod = inode instanceof DeviceInode ? (DeviceInode) inode : null;
 
         UnixFileSystemInfo info = new UnixFileSystemInfo();
-        info.setFileType(fileTypeFromInodeType(inode._type));
-        info.setUserId(getId(inode._uidKey));
-        info.setGroupId(getId(inode._gidKey));
-        info.setPermissions(UnixFilePermissions.valueOf(inode._mode & 0xffff));
-        info.setInode(inode._inodeNumber);
-        info.setLinkCount(inode._numLinks);
+        info.setFileType(fileTypeFromInodeType(inode.type));
+        info.setUserId(getId(inode.uidKey));
+        info.setGroupId(getId(inode.gidKey));
+        info.setPermissions(UnixFilePermissions.valueOf(inode.mode & 0xffff));
+        info.setInode(inode.inodeNumber);
+        info.setLinkCount(inode.numLinks);
         info.setDeviceId(devInod == null ? 0 : devInod.getDeviceId());
 
         return info;
@@ -186,28 +187,28 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
 
     protected File convertDirEntryToFile(DirectoryEntry dirEntry) {
         MetadataRef inodeRef = dirEntry.getInodeReference();
-        _context.getInodeReader().setPosition(inodeRef);
-        Inode inode = Inode.read(_context.getInodeReader());
+        context.getInodeReader().setPosition(inodeRef);
+        Inode inode = Inode.read(context.getInodeReader());
 
         if (dirEntry.isSymlink()) {
-            return new Symlink(_context, inode, inodeRef);
+            return new Symlink(context, inode, inodeRef);
         }
         if (dirEntry.isDirectory()) {
-            return new Directory(_context, inode, inodeRef);
+            return new Directory(context, inode, inodeRef);
         }
 
-        return new File(_context, inode, inodeRef);
+        return new File(context, inode, inodeRef);
     }
 
     private MetablockReader[] loadIndirectReaders(long pos, int count, int recordSize) {
-        _context.getRawStream().setPosition(pos);
+        context.getRawStream().setPosition(pos);
         int numBlocks = MathUtilities.ceil(count * recordSize, MetadataBufferSize);
 
-        byte[] tableBytes = StreamUtilities.readExact(_context.getRawStream(), numBlocks * 8);
+        byte[] tableBytes = StreamUtilities.readExact(context.getRawStream(), numBlocks * 8);
         MetablockReader[] result = new MetablockReader[numBlocks];
         for (int i = 0; i < numBlocks; ++i) {
             long block = EndianUtilities.toInt64LittleEndian(tableBytes, i * 8);
-            result[i] = new MetablockReader(_context, block);
+            result[i] = new MetablockReader(context, block);
         }
 
         return result;
@@ -218,35 +219,35 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         int block = (idKey & 0xffff) / recordsPerBlock;
         int offset = (idKey & 0xffff) % recordsPerBlock;
 
-        MetablockReader reader = _context.getUidGidTableReaders()[block];
+        MetablockReader reader = context.getUidGidTableReaders()[block];
         reader.setPosition(0, offset * 4);
         return reader.readInt();
     }
 
     private Block readBlock(long pos, int diskLen) {
-        Block block = _blockCache.getBlock(pos, Block.class);
+        Block block = blockCache.getBlock(pos, Block.class);
         if (block.getAvailable() >= 0) {
             return block;
         }
 
-        Stream stream = _context.getRawStream();
+        Stream stream = context.getRawStream();
         stream.setPosition(pos);
 
         int readLen = diskLen & 0x00FFFFFF;
         boolean isCompressed = (diskLen & 0x01000000) == 0;
 
         if (isCompressed) {
-            if (_ioBuffer == null || readLen > _ioBuffer.length) {
-                _ioBuffer = new byte[readLen];
+            if (ioBuffer == null || readLen > ioBuffer.length) {
+                ioBuffer = new byte[readLen];
             }
 
-            StreamUtilities.readExact(stream, _ioBuffer, 0, readLen);
+            StreamUtilities.readExact(stream, ioBuffer, 0, readLen);
 
-            try (ZlibStream zlibStream = new ZlibStream(new MemoryStream(_ioBuffer, 0, readLen, false),
+            try (ZlibStream zlibStream = new ZlibStream(new MemoryStream(ioBuffer, 0, readLen, false),
                                                         CompressionMode.Decompress,
                                                         true)) {
                 block.setAvailable(StreamUtilities
-                        .readMaximum(zlibStream, block.getData(), 0, _context.getSuperBlock().BlockSize));
+                        .readMaximum(zlibStream, block.getData(), 0, context.getSuperBlock().blockSize));
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
@@ -259,12 +260,12 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     }
 
     private Metablock readMetaBlock(long pos) {
-        Metablock block = _metablockCache.getBlock(pos, Metablock.class);
+        Metablock block = metablockCache.getBlock(pos, Metablock.class);
         if (block.getAvailable() >= 0) {
             return block;
         }
 
-        Stream stream = _context.getRawStream();
+        Stream stream = context.getRawStream();
         stream.setPosition(pos);
 
         byte[] buffer = StreamUtilities.readExact(stream, 2);
@@ -279,13 +280,13 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         block.setNextBlockStart(pos + readLen + 2);
 
         if (isCompressed) {
-            if (_ioBuffer == null || readLen > _ioBuffer.length) {
-                _ioBuffer = new byte[readLen];
+            if (ioBuffer == null || readLen > ioBuffer.length) {
+                ioBuffer = new byte[readLen];
             }
 
-            StreamUtilities.readExact(stream, _ioBuffer, 0, readLen);
+            StreamUtilities.readExact(stream, ioBuffer, 0, readLen);
 
-            try (ZlibStream zlibStream = new ZlibStream(new MemoryStream(_ioBuffer, 0, readLen, false),
+            try (ZlibStream zlibStream = new ZlibStream(new MemoryStream(ioBuffer, 0, readLen, false),
                                                         CompressionMode.Decompress,
                                                         true)) {
                 block.setAvailable(StreamUtilities.readMaximum(zlibStream, block.getData(), 0, MetadataBufferSize));

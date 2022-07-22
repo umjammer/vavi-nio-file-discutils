@@ -30,66 +30,67 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class VolumeGroupMetadata implements IByteArraySerializable {
+
     public static final String VgMetadataMagic = " LVM2 x[5A%r0N*>";
 
     public static final int VgMetadataVersion = 1;
 
-    public int Crc;
+    public int crc;
 
-    public long CalculatedCrc;
+    public long calculatedCrc;
 
-    public String Magic;
+    public String magic;
 
-    public int Version;
+    public int version;
 
-    public long Start;
+    public long start;
 
-    public long Length;
+    public long length;
 
-    public List<RawLocation> RawLocations;
+    public List<RawLocation> rawLocations;
 
-    public String _Metadata;
+    public String metadata;
 
-    public Metadata ParsedMetadata;
+    public Metadata parsedMetadata;
 
     /**
      *
      */
     public int size() {
-        return (int) Length;
+        return (int) length;
     }
 
     /**
      *
      */
     public int readFrom(byte[] buffer, int offset) {
-        Crc = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        CalculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x4, PhysicalVolume.SECTOR_SIZE - 0x4);
-        Magic = EndianUtilities.bytesToString(buffer, offset + 0x4, 0x10);
-        Version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
-        Start = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
-        Length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
+        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        calculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x4, PhysicalVolume.SECTOR_SIZE - 0x4);
+        magic = EndianUtilities.bytesToString(buffer, offset + 0x4, 0x10);
+        version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
+        start = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
+        length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
         List<RawLocation> locations = new ArrayList<>();
         int locationOffset = offset + 0x28;
         while (true) {
             RawLocation location = new RawLocation();
             locationOffset += location.readFrom(buffer, locationOffset);
-            if (location.Offset == 0 && location.Length == 0 && location.Checksum == 0 && location.Flags.ordinal() == 0)
+            if (location.offset == 0 && location.length == 0 && location.checksum == 0 && location.flags.ordinal() == 0)
                 break;
 
             locations.add(location);
         }
-        RawLocations = locations;
-        for (RawLocation location : RawLocations) {
-            if (location.Flags == RawLocationFlags.Ignored)
+        rawLocations = locations;
+        for (RawLocation location : rawLocations) {
+            if (location.flags == RawLocationFlags.Ignored)
                 continue;
 
-            int checksum = PhysicalVolume.calcCrc(buffer, (int) location.Offset, (int) location.Length);
-            if (location.Checksum != checksum)
+            int checksum = PhysicalVolume.calcCrc(buffer, (int) location.offset, (int) location.length);
+            if (location.checksum != checksum)
                 throw new dotnet4j.io.IOException("invalid metadata checksum");
 
-            _Metadata = EndianUtilities.bytesToString(buffer, (int) location.Offset, (int) location.Length);
-            ParsedMetadata = Metadata.parse(_Metadata);
+            metadata = EndianUtilities.bytesToString(buffer, (int) location.offset, (int) location.length);
+            parsedMetadata = Metadata.parse(metadata);
             break;
         }
         return size();

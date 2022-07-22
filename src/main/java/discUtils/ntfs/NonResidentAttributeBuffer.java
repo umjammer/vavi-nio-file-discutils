@@ -33,29 +33,30 @@ import dotnet4j.io.IOException;
 
 
 public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
-    private final NtfsAttribute _attribute;
 
-    private final File _file;
+    private final NtfsAttribute attribute;
+
+    private final File file;
 
     public NonResidentAttributeBuffer(File file, NtfsAttribute attribute) {
         super(file.getContext(), cookRuns(attribute), file.getIndexInMft() == MasterFileTable.MftIndex);
 
-        _file = file;
-        _attribute = attribute;
+        this.file = file;
+        this.attribute = attribute;
 
         if (attribute.getFlags().contains(AttributeFlags.Sparse)) {
-            _activeStream = new SparseClusterStream(_attribute, _rawStream);
+            activeStream = new SparseClusterStream(this.attribute, rawStream);
         } else if (attribute.getFlags().contains(AttributeFlags.Compressed)) {
-            _activeStream = new CompressedClusterStream(_context, _attribute, _rawStream);
+            activeStream = new CompressedClusterStream(context, this.attribute, rawStream);
         } else if (attribute.getFlags().isEmpty()) {
-            _activeStream = _rawStream;
+            activeStream = rawStream;
         } else {
             throw new UnsupportedOperationException("Unhandled attribute type '" + attribute.getFlags() + "'");
         }
     }
 
     public boolean canWrite() {
-        return _context.getRawStream().canWrite() && _file != null;
+        return context.getRawStream().canWrite() && file != null;
     }
 
     public long getCapacity() {
@@ -63,16 +64,16 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
     }
 
     private NonResidentAttributeRecord getPrimaryAttributeRecord() {
-        return _attribute.getPrimaryRecord() instanceof NonResidentAttributeRecord
-                                                                                   ? (NonResidentAttributeRecord) _attribute
+        return attribute.getPrimaryRecord() instanceof NonResidentAttributeRecord
+                                                                                   ? (NonResidentAttributeRecord) attribute
                                                                                            .getPrimaryRecord()
                                                                                    : null;
     }
 
     public void alignVirtualClusterCount() {
-        _file.markMftRecordDirty();
-        _activeStream.expandToClusters(MathUtilities.ceil(_attribute.getLength(), _bytesPerCluster),
-                                       (NonResidentAttributeRecord) _attribute.getLastExtent(),
+        file.markMftRecordDirty();
+        activeStream.expandToClusters(MathUtilities.ceil(attribute.getLength(), bytesPerCluster),
+                                       (NonResidentAttributeRecord) attribute.getLastExtent(),
                                        false);
     }
 
@@ -85,15 +86,15 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             return;
         }
 
-        _file.markMftRecordDirty();
+        file.markMftRecordDirty();
 
-        long newClusterCount = MathUtilities.ceil(value, _bytesPerCluster);
+        long newClusterCount = MathUtilities.ceil(value, bytesPerCluster);
 
         if (value < getCapacity()) {
             truncate(value);
         } else {
-            _activeStream.expandToClusters(newClusterCount, (NonResidentAttributeRecord) _attribute.getLastExtent(), true);
-            getPrimaryAttributeRecord().setAllocatedLength(_cookedRuns.getNextVirtualCluster() * _bytesPerCluster);
+            activeStream.expandToClusters(newClusterCount, (NonResidentAttributeRecord) attribute.getLastExtent(), true);
+            getPrimaryAttributeRecord().setAllocatedLength(cookedRuns.getNextVirtualCluster() * bytesPerCluster);
         }
 
         getPrimaryAttributeRecord().setDataLength(value);
@@ -102,7 +103,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             getPrimaryAttributeRecord().setInitializedDataLength(value);
         }
 
-        _cookedRuns.collapseRuns();
+        cookedRuns.collapseRuns();
     }
 
     public void write(long pos, byte[] buffer, int offset, int count) {
@@ -128,46 +129,46 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
 
         long focusPos = pos;
         while (focusPos < pos + count) {
-            long vcn = focusPos / _bytesPerCluster;
+            long vcn = focusPos / bytesPerCluster;
             long remaining = pos + count - focusPos;
-            long clusterOffset = focusPos - vcn * _bytesPerCluster;
+            long clusterOffset = focusPos - vcn * bytesPerCluster;
 
-            if (vcn * _bytesPerCluster != focusPos || remaining < _bytesPerCluster) {
+            if (vcn * bytesPerCluster != focusPos || remaining < bytesPerCluster) {
                 // Unaligned or short write
-                int toWrite = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
+                int toWrite = (int) Math.min(remaining, bytesPerCluster - clusterOffset);
 
-                _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
-                System.arraycopy(buffer, (int) (offset + (focusPos - pos)), _ioBuffer, (int) clusterOffset, toWrite);
-                allocatedClusters += _activeStream.writeClusters(vcn, 1, _ioBuffer, 0);
+                activeStream.readClusters(vcn, 1, ioBuffer, 0);
+                System.arraycopy(buffer, (int) (offset + (focusPos - pos)), ioBuffer, (int) clusterOffset, toWrite);
+                allocatedClusters += activeStream.writeClusters(vcn, 1, ioBuffer, 0);
 
                 focusPos += toWrite;
             } else {
                 // Aligned, full cluster writes...
-                int fullClusters = (int) (remaining / _bytesPerCluster);
-                allocatedClusters += _activeStream.writeClusters(vcn, fullClusters, buffer, (int) (offset + (focusPos - pos)));
+                int fullClusters = (int) (remaining / bytesPerCluster);
+                allocatedClusters += activeStream.writeClusters(vcn, fullClusters, buffer, (int) (offset + (focusPos - pos)));
 
-                focusPos += fullClusters * _bytesPerCluster;
+                focusPos += fullClusters * bytesPerCluster;
             }
         }
 
         if (pos + count > getPrimaryAttributeRecord().getInitializedDataLength()) {
-            _file.markMftRecordDirty();
+            file.markMftRecordDirty();
 
             getPrimaryAttributeRecord().setInitializedDataLength(pos + count);
         }
 
         if (pos + count > getPrimaryAttributeRecord().getDataLength()) {
-            _file.markMftRecordDirty();
+            file.markMftRecordDirty();
 
             getPrimaryAttributeRecord().setDataLength(pos + count);
         }
 
-        if (!Collections.disjoint(_attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
+        if (!Collections.disjoint(attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             getPrimaryAttributeRecord().setCompressedDataSize(getPrimaryAttributeRecord().getCompressedDataSize() +
-                                                              allocatedClusters * _bytesPerCluster);
+                                                              allocatedClusters * bytesPerCluster);
         }
 
-        _cookedRuns.collapseRuns();
+        cookedRuns.collapseRuns();
     }
 
     public void clear(long pos, int count) {
@@ -183,7 +184,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             setCapacity(pos + count);
         }
 
-        _file.markMftRecordDirty();
+        file.markMftRecordDirty();
 
         // Write zeros from end of current initialized data to the start of the
         // new write
@@ -195,27 +196,27 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
 
         long focusPos = pos;
         while (focusPos < pos + count) {
-            long vcn = focusPos / _bytesPerCluster;
+            long vcn = focusPos / bytesPerCluster;
             long remaining = pos + count - focusPos;
-            long clusterOffset = focusPos - vcn * _bytesPerCluster;
+            long clusterOffset = focusPos - vcn * bytesPerCluster;
 
-            if (vcn * _bytesPerCluster != focusPos || remaining < _bytesPerCluster) {
+            if (vcn * bytesPerCluster != focusPos || remaining < bytesPerCluster) {
                 // Unaligned or short write
-                int toClear = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
+                int toClear = (int) Math.min(remaining, bytesPerCluster - clusterOffset);
 
-                if (_activeStream.isClusterStored(vcn)) {
-                    _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
-                    Arrays.fill(_ioBuffer, (int) clusterOffset, (int) clusterOffset + toClear, (byte) 0);
-                    releasedClusters -= _activeStream.writeClusters(vcn, 1, _ioBuffer, 0);
+                if (activeStream.isClusterStored(vcn)) {
+                    activeStream.readClusters(vcn, 1, ioBuffer, 0);
+                    Arrays.fill(ioBuffer, (int) clusterOffset, (int) clusterOffset + toClear, (byte) 0);
+                    releasedClusters -= activeStream.writeClusters(vcn, 1, ioBuffer, 0);
                 }
 
                 focusPos += toClear;
             } else {
                 // Aligned, full cluster clears...
-                int fullClusters = (int) (remaining / _bytesPerCluster);
-                releasedClusters += _activeStream.clearClusters(vcn, fullClusters);
+                int fullClusters = (int) (remaining / bytesPerCluster);
+                releasedClusters += activeStream.clearClusters(vcn, fullClusters);
 
-                focusPos += fullClusters * _bytesPerCluster;
+                focusPos += fullClusters * bytesPerCluster;
             }
         }
 
@@ -227,12 +228,12 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
             getPrimaryAttributeRecord().setDataLength(pos + count);
         }
 
-        if (!Collections.disjoint(_attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
+        if (!Collections.disjoint(attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             getPrimaryAttributeRecord().setCompressedDataSize(getPrimaryAttributeRecord().getCompressedDataSize() -
-                                                              releasedClusters * _bytesPerCluster);
+                                                              releasedClusters * bytesPerCluster);
         }
 
-        _cookedRuns.collapseRuns();
+        cookedRuns.collapseRuns();
     }
 
 //public static boolean debug;
@@ -255,61 +256,61 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
 
     private void initializeData(long pos) {
         long initDataLen = getPrimaryAttributeRecord().getInitializedDataLength();
-        _file.markMftRecordDirty();
+        file.markMftRecordDirty();
 
         int clustersAllocated = 0;
 
         while (initDataLen < pos) {
-            long vcn = initDataLen / _bytesPerCluster;
-            if (initDataLen % _bytesPerCluster != 0 || pos - initDataLen < _bytesPerCluster) {
-                int clusterOffset = (int) (initDataLen - vcn * _bytesPerCluster);
-                int toClear = (int) Math.min(_bytesPerCluster - clusterOffset, pos - initDataLen);
+            long vcn = initDataLen / bytesPerCluster;
+            if (initDataLen % bytesPerCluster != 0 || pos - initDataLen < bytesPerCluster) {
+                int clusterOffset = (int) (initDataLen - vcn * bytesPerCluster);
+                int toClear = (int) Math.min(bytesPerCluster - clusterOffset, pos - initDataLen);
 
-                if (_activeStream.isClusterStored(vcn)) {
-                    _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
-                    Arrays.fill(_ioBuffer, clusterOffset, clusterOffset + toClear, (byte) 0);
-                    clustersAllocated += _activeStream.writeClusters(vcn, 1, _ioBuffer, 0);
+                if (activeStream.isClusterStored(vcn)) {
+                    activeStream.readClusters(vcn, 1, ioBuffer, 0);
+                    Arrays.fill(ioBuffer, clusterOffset, clusterOffset + toClear, (byte) 0);
+                    clustersAllocated += activeStream.writeClusters(vcn, 1, ioBuffer, 0);
                 }
 
                 initDataLen += toClear;
             } else {
-                int numClusters = (int) (pos / _bytesPerCluster - vcn);
-                clustersAllocated -= _activeStream.clearClusters(vcn, numClusters);
+                int numClusters = (int) (pos / bytesPerCluster - vcn);
+                clustersAllocated -= activeStream.clearClusters(vcn, numClusters);
 
-                initDataLen += numClusters * _bytesPerCluster;
+                initDataLen += numClusters * bytesPerCluster;
             }
         }
 
         getPrimaryAttributeRecord().setInitializedDataLength(pos);
 
-        if (!Collections.disjoint(_attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
+        if (!Collections.disjoint(attribute.getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             getPrimaryAttributeRecord().setCompressedDataSize(getPrimaryAttributeRecord().getCompressedDataSize() +
-                                                              clustersAllocated * _bytesPerCluster);
+                                                              clustersAllocated * bytesPerCluster);
         }
     }
 
     private void truncate(long value) {
-        long endVcn = MathUtilities.ceil(value, _bytesPerCluster);
+        long endVcn = MathUtilities.ceil(value, bytesPerCluster);
 
         // Release the clusters
-        _activeStream.truncateToClusters(endVcn);
+        activeStream.truncateToClusters(endVcn);
 
         // First, remove any extents that are now redundant.
-        Map<AttributeReference, AttributeRecord> extentCache = new HashMap<>(_attribute.getExtents());
+        Map<AttributeReference, AttributeRecord> extentCache = new HashMap<>(attribute.getExtents());
         for (Map.Entry<AttributeReference, AttributeRecord> extent : extentCache.entrySet()) {
             if (extent.getValue().getStartVcn() >= endVcn) {
                 NonResidentAttributeRecord record = (NonResidentAttributeRecord) extent.getValue();
-                _file.removeAttributeExtent(extent.getKey());
-                _attribute.removeExtentCacheSafe(extent.getKey());
+                file.removeAttributeExtent(extent.getKey());
+                attribute.removeExtentCacheSafe(extent.getKey());
             }
         }
 
         getPrimaryAttributeRecord().setLastVcn(Math.max(0, endVcn - 1));
-        getPrimaryAttributeRecord().setAllocatedLength(endVcn * _bytesPerCluster);
+        getPrimaryAttributeRecord().setAllocatedLength(endVcn * bytesPerCluster);
         getPrimaryAttributeRecord().setDataLength(value);
         getPrimaryAttributeRecord()
                 .setInitializedDataLength(Math.min(getPrimaryAttributeRecord().getInitializedDataLength(), value));
 
-        _file.markMftRecordDirty();
+        file.markMftRecordDirty();
     }
 }

@@ -40,27 +40,28 @@ import dotnet4j.io.Stream;
 
 
 class NtfsAttribute implements IDiagnosticTraceable {
-    private IBuffer _cachedRawBuffer;
 
-    protected FileRecordReference _containingFile;
+    private IBuffer cachedRawBuffer;
 
-    protected Map<AttributeReference, AttributeRecord> _extents;
+    protected FileRecordReference containingFile;
 
-    protected File _file;
+    protected Map<AttributeReference, AttributeRecord> extents;
 
-    protected AttributeRecord _primaryRecord;
+    protected File file;
+
+    protected AttributeRecord primaryRecord;
 
     protected NtfsAttribute(File file, FileRecordReference containingFile, AttributeRecord record) {
-        _file = file;
-        _containingFile = containingFile;
-        _primaryRecord = record;
-        _extents = new HashMap<>();
-        _extents.put(new AttributeReference(containingFile, record.getAttributeId()), _primaryRecord);
-//if (NonResidentAttributeBuffer.debug) Debug.println("4c: " + _extents.size());
+        this.file = file;
+        this.containingFile = containingFile;
+        primaryRecord = record;
+        extents = new HashMap<>();
+        extents.put(new AttributeReference(containingFile, record.getAttributeId()), primaryRecord);
+//if (NonResidentAttributeBuffer.debug) Debug.println("4c: " + extents.size());
     }
 
     protected String getAttributeTypeName() {
-        switch (_primaryRecord.getAttributeType()) {
+        switch (primaryRecord.getAttributeType()) {
         case StandardInformation:
             return "STANDARD INFORMATION";
         case FileName:
@@ -121,12 +122,12 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     public Map<AttributeReference, AttributeRecord> getExtents() {
-        return _extents;
+        return extents;
     }
 
     public AttributeRecord getFirstExtent() {
-        if (_extents != null) {
-            for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
+        if (extents != null) {
+            for (Map.Entry<AttributeReference, AttributeRecord> extent : extents.entrySet()) {
                 AttributeRecord record = extent.getValue();
                 if (!(record instanceof NonResidentAttributeRecord)) {
                     // Resident attribute, so there can only be one...
@@ -142,28 +143,28 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     public EnumSet<AttributeFlags> getFlags() {
-        return _primaryRecord.getFlags();
+        return primaryRecord.getFlags();
     }
 
     public void addFlag(AttributeFlags value) {
-        _primaryRecord.getFlags().add(value);
-        _cachedRawBuffer = null;
+        primaryRecord.getFlags().add(value);
+        cachedRawBuffer = null;
     }
 
     public short getId() {
-        return _primaryRecord.getAttributeId();
+        return primaryRecord.getAttributeId();
     }
 
     public boolean isNonResident() {
-        return _primaryRecord.isNonResident();
+        return primaryRecord.isNonResident();
     }
 
     public AttributeRecord getLastExtent() {
         AttributeRecord last = null;
 
-        if (_extents != null) {
+        if (extents != null) {
             long lastVcn = 0;
-            for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
+            for (Map.Entry<AttributeReference, AttributeRecord> extent : extents.entrySet()) {
                 AttributeRecord record = extent.getValue();
                 if (!(record instanceof NonResidentAttributeRecord)) {
                     // Resident attribute, so there can only be one...
@@ -182,47 +183,47 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     public long getLength() {
-        return _primaryRecord.getDataLength();
+        return primaryRecord.getDataLength();
     }
 
     public String getName() {
-        return _primaryRecord.getName();
+        return primaryRecord.getName();
     }
 
     public AttributeRecord getPrimaryRecord() {
-        return _primaryRecord;
+        return primaryRecord;
     }
 
     public IBuffer getRawBuffer() {
-        if (_cachedRawBuffer == null) {
-            if (_primaryRecord.isNonResident()) {
-                _cachedRawBuffer = new NonResidentAttributeBuffer(_file, this);
+        if (cachedRawBuffer == null) {
+            if (primaryRecord.isNonResident()) {
+                cachedRawBuffer = new NonResidentAttributeBuffer(file, this);
             } else {
-                _cachedRawBuffer = ((ResidentAttributeRecord) _primaryRecord).getDataBuffer();
+                cachedRawBuffer = ((ResidentAttributeRecord) primaryRecord).getDataBuffer();
             }
         }
 
-        return _cachedRawBuffer;
+        return cachedRawBuffer;
     }
 
     public List<AttributeRecord> getRecords() {
-        List<AttributeRecord> records = new ArrayList<>(_extents.values());
+        List<AttributeRecord> records = new ArrayList<>(extents.values());
         records.sort(AttributeRecord.compareStartVcns);
         return records;
     }
 
     public AttributeReference getReference() {
-        return new AttributeReference(_containingFile, _primaryRecord.getAttributeId());
+        return new AttributeReference(containingFile, primaryRecord.getAttributeId());
     }
 
     public AttributeType getType() {
-        return _primaryRecord.getAttributeType();
+        return primaryRecord.getAttributeType();
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + getAttributeTypeName() + " ATTRIBUTE (" + (getName() == null ? "No Name" : getName()) + ")");
-        writer.println(indent + "  Length: " + _primaryRecord.getDataLength() + " bytes");
-        if (_primaryRecord.getDataLength() == 0) {
+        writer.println(indent + "  Length: " + primaryRecord.getDataLength() + " bytes");
+        if (primaryRecord.getDataLength() == 0) {
             writer.println(indent + "    Data: <none>");
         } else {
             try {
@@ -240,7 +241,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
                 writer.println(indent + "    Data: <can't read>");
             }
         }
-        _primaryRecord.dump(writer, indent + "  ");
+        primaryRecord.dump(writer, indent + "  ");
     }
 
     public static NtfsAttribute fromRecord(File file, FileRecordReference recordFile, AttributeRecord record) {
@@ -275,42 +276,42 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     public void setExtent(FileRecordReference containingFile, AttributeRecord record) {
-        _cachedRawBuffer = null;
-        _containingFile = containingFile;
-        _primaryRecord = record;
-        _extents.clear();
-        _extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
-//if (NonResidentAttributeBuffer.debug) Debug.println("4a: " + _extents.size());
+        cachedRawBuffer = null;
+        this.containingFile = containingFile;
+        primaryRecord = record;
+        extents.clear();
+        extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
+//if (NonResidentAttributeBuffer.debug) Debug.println("4a: " + extents.size());
     }
 
     public void addExtent(FileRecordReference containingFile, AttributeRecord record) {
-        _cachedRawBuffer = null;
-        _extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
-//if (NonResidentAttributeBuffer.debug) Debug.println("4b: " + _extents.size() + ", " + record.getAttributeId());
+        cachedRawBuffer = null;
+        extents.put(new AttributeReference(containingFile, record.getAttributeId()), record);
+//if (NonResidentAttributeBuffer.debug) Debug.println("4b: " + extents.size() + ", " + record.getAttributeId());
     }
 
     public void removeExtentCacheSafe(AttributeReference reference) {
-        _extents.remove(reference);
+        extents.remove(reference);
     }
 
     public boolean replaceExtent(AttributeReference oldRef, AttributeReference newRef, AttributeRecord record) {
-        _cachedRawBuffer = null;
-        if (_extents.remove(oldRef) == null) {
+        cachedRawBuffer = null;
+        if (extents.remove(oldRef) == null) {
             return false;
         }
 
-        if (oldRef.equals(getReference()) || _extents.size() == 0) {
-            _primaryRecord = record;
-            _containingFile = newRef.getFile();
+        if (oldRef.equals(getReference()) || extents.size() == 0) {
+            primaryRecord = record;
+            containingFile = newRef.getFile();
         }
 
-        _extents.put(newRef, record);
+        extents.put(newRef, record);
         return true;
     }
 
     public List<Range> getClusters() {
         List<Range> result = new ArrayList<>();
-        for (Map.Entry<AttributeReference, AttributeRecord> extent : _extents.entrySet()) {
+        for (Map.Entry<AttributeReference, AttributeRecord> extent : extents.entrySet()) {
             result.addAll(extent.getValue().getClusters());
         }
         return result;
@@ -321,7 +322,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     IMappedBuffer getDataBuffer() {
-        return new NtfsAttributeBuffer(_file, this);
+        return new NtfsAttributeBuffer(file, this);
     }
 
     long offsetToAbsolutePos(long offset) {

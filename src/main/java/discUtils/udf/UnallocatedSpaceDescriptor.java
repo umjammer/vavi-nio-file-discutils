@@ -26,20 +26,21 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class UnallocatedSpaceDescriptor extends TaggedDescriptor<UnallocatedSpaceDescriptor> {
-    public ExtentAllocationDescriptor[] Extents;
 
-    public int VolumeDescriptorSequenceNumber;
+    public ExtentAllocationDescriptor[] extents;
+
+    public int volumeDescriptorSequenceNumber;
 
     public UnallocatedSpaceDescriptor() {
         super(TagIdentifier.UnallocatedSpaceDescriptor);
     }
 
     public int parse(byte[] buffer, int offset) {
-        VolumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
         int numDescriptors = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        Extents = new ExtentAllocationDescriptor[numDescriptors];
+        extents = new ExtentAllocationDescriptor[numDescriptors];
         for (int i = 0; i < numDescriptors; ++i) {
-            Extents[i] = EndianUtilities.toStruct(ExtentAllocationDescriptor.class, buffer, offset + 24 + i * 8);
+            extents[i] = EndianUtilities.toStruct(ExtentAllocationDescriptor.class, buffer, offset + 24 + i * 8);
         }
         return 24 + numDescriptors * 8;
     }

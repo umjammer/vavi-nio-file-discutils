@@ -28,52 +28,53 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileHeader {
-    public long BootCodeOffset;
 
-    public long BootCodeSize;
+    public long bootCodeOffset;
 
-    public long Checksum;
+    public long bootCodeSize;
 
-    public long DeviceId;
+    public long checksum;
 
-    public UUID DeviceModel;
+    public long deviceId;
 
-    public long DeviceRole;
+    public UUID deviceModel;
 
-    /**
-     * /Reserved long
-     */
-    public long PageAlignment;
+    public long deviceRole;
 
     /**
      * /Reserved long
      */
-    public UUID RuntimeGuid;
+    public long pageAlignment;
 
-    public long RuntimeOEMRev;
+    /**
+     * /Reserved long
+     */
+    public UUID runtimeGuid;
 
-    public String Tag;
+    public long runtimeOEMRev;
 
-    public long Type;
+    public String tag;
 
-    public long VendorId;
+    public long type;
+
+    public long vendorId;
 
     public void readFrom(byte[] buffer, int offset) {
-        Tag = EndianUtilities.bytesToString(buffer, offset, 8);
-        if (!Tag.equals("$SDI0001")) {
+        tag = EndianUtilities.bytesToString(buffer, offset, 8);
+        if (!tag.equals("$SDI0001")) {
             throw new IllegalArgumentException("SDI format marker not found");
         }
 
-        Type = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
-        BootCodeOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
-        BootCodeSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
-        VendorId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
-        DeviceId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
-        DeviceModel = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x30);
-        DeviceRole = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
-        RuntimeGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x50);
-        RuntimeOEMRev = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x60);
-        PageAlignment = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x70);
-        Checksum = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x1F8);
+        type = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
+        bootCodeOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
+        bootCodeSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
+        vendorId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
+        deviceId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
+        deviceModel = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x30);
+        deviceRole = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
+        runtimeGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x50);
+        runtimeOEMRev = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x60);
+        pageAlignment = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x70);
+        checksum = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x1F8);
     }
 }

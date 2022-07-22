@@ -389,7 +389,7 @@ public interface IVssBackupComponents {
 //    ) = 0;
 //STDMETHOD(IsVolumeSupported)
 //    (
-//    __in VSS_ID ProviderId,
+//    __in VSS_ID providerId,
 //    __in_z VSS_PWSZ pwszVolumeName,
 //    __in BOOL * pbSupportedByThisProvider
 //    ) = 0;
@@ -413,7 +413,7 @@ public interface IVssBackupComponents {
  */
 //STDMETHOD(ExposeSnapshot)
 //    (
-//    __in VSS_ID SnapshotId,
+//    __in VSS_ID snapshotId,
 //    __in_z VSS_PWSZ wszPathFromRoot,
 //    __in LONG lAttributes,
 //    __in_z VSS_PWSZ wszExpose,
@@ -421,7 +421,7 @@ public interface IVssBackupComponents {
 //    ) = 0;
 //STDMETHOD(RevertToSnapshot)
 //    (
-//    __in VSS_ID SnapshotId,
+//    __in VSS_ID snapshotId,
 //    __in BOOL bForceDismount
 //    ) = 0;
 //STDMETHOD(QueryRevertStatus)

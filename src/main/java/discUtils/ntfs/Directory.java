@@ -34,18 +34,19 @@ import dotnet4j.io.IOException;
 
 
 public class Directory extends File {
-    private IndexView<FileNameRecord, FileRecordReference> _index;
+
+    private IndexView<FileNameRecord, FileRecordReference> index;
 
     public Directory(INtfsContext context, FileRecord baseRecord) {
         super(context, baseRecord);
     }
 
     private IndexView<FileNameRecord, FileRecordReference> getIndex() {
-        if (_index == null && streamExists(AttributeType.IndexRoot, "$I30")) {
-            _index = new IndexView<>(FileNameRecord.class, FileRecordReference.class, getIndex("$I30"));
+        if (index == null && streamExists(AttributeType.IndexRoot, "$I30")) {
+            index = new IndexView<>(FileNameRecord.class, FileRecordReference.class, getIndex("$I30"));
         }
 
-        return _index;
+        return index;
     }
 
     public boolean isEmpty() {
@@ -71,7 +72,7 @@ public class Directory extends File {
         writer.println(indent + "  File Number: " + getIndexInMft());
         if (getIndex() != null) {
             for (Tuple<FileNameRecord, FileRecordReference> entry : getIndex().getEntries()) {
-                writer.println(indent + "  DIRECTORY ENTRY (" + entry.getKey()._fileName + ")");
+                writer.println(indent + "  DIRECTORY ENTRY (" + entry.getKey().fileName + ")");
                 writer.println(indent + "    MFT Ref: " + entry.getValue());
                 entry.getKey().dump(writer, indent + "    ");
             }
@@ -103,7 +104,7 @@ public class Directory extends File {
             searchName = name.substring(0, streamSepPos);
         }
 
-        Tuple<FileNameRecord, FileRecordReference> entry = getIndex().findFirst_(new FileNameQuery(searchName, _context.getUpperCase()));
+        Tuple<FileNameRecord, FileRecordReference> entry = getIndex().findFirst_(new FileNameQuery(searchName, context.getUpperCase()));
         if (entry != null && entry.getKey() != null) {
             return new DirectoryEntry(this, entry.getValue(), entry.getKey());
         }
@@ -121,9 +122,9 @@ public class Directory extends File {
         }
 
         FileNameRecord newNameRecord = file.getFileNameRecord(null, true);
-        newNameRecord._fileNameNamespace = nameNamespace;
-        newNameRecord._fileName = name;
-        newNameRecord._parentDirectory = getMftReference();
+        newNameRecord.fileNameNamespace = nameNamespace;
+        newNameRecord.fileName = name;
+        newNameRecord.parentDirectory = getMftReference();
 
         NtfsStream nameStream = file.createStream(AttributeType.FileName, null);
         nameStream.setContent(newNameRecord);
@@ -140,7 +141,7 @@ public class Directory extends File {
     }
 
     public void removeEntry(DirectoryEntry dirEntry) {
-        File file = _context.getGetFileByRef().invoke(dirEntry.getReference());
+        File file = context.getGetFileByRef().invoke(dirEntry.getReference());
         FileNameRecord nameRecord = dirEntry.getDetails();
         getIndex().remove(dirEntry.getDetails());
         for (NtfsStream stream : file.getStreams(AttributeType.FileName, null)) {
@@ -197,19 +198,19 @@ public class Directory extends File {
         List<Tuple<FileNameRecord, FileRecordReference>> entries = new ArrayList<>();
         for (Tuple<FileNameRecord, FileRecordReference> entry : entriesIter) {
             // Weed out short-name entries for files and any hidden / system / metadata files.
-            if (entry.getKey()._flags.contains(FileAttributeFlags.Hidden) && _context.getOptions().hideHiddenFiles()) {
+            if (entry.getKey().flags.contains(FileAttributeFlags.Hidden) && context.getOptions().hideHiddenFiles()) {
                 continue;
             }
 
-            if (entry.getKey()._flags.contains(FileAttributeFlags.System) && _context.getOptions().hideSystemFiles()) {
+            if (entry.getKey().flags.contains(FileAttributeFlags.System) && context.getOptions().hideSystemFiles()) {
                 continue;
             }
 
-            if (entry.getValue().getMftIndex() < 24 && _context.getOptions().hideMetafiles()) {
+            if (entry.getValue().getMftIndex() < 24 && context.getOptions().hideMetafiles()) {
                 continue;
             }
 
-            if (entry.getKey()._fileNameNamespace == FileNameNamespace.Dos && _context.getOptions().hideDosFileNames()) {
+            if (entry.getKey().fileNameNamespace == FileNameNamespace.Dos && context.getOptions().hideDosFileNames()) {
                 continue;
             }
 
@@ -219,13 +220,14 @@ public class Directory extends File {
     }
 
     private final static class FileNameQuery implements Comparable<byte[]> {
-        private final byte[] _query;
 
-        private final UpperCase _upperCase;
+        private final byte[] query;
+
+        private final UpperCase upperCase;
 
         public FileNameQuery(String query, UpperCase upperCase) {
-            _query = query.getBytes(StandardCharsets.UTF_16LE);
-            _upperCase = upperCase;
+            this.query = query.getBytes(StandardCharsets.UTF_16LE);
+            this.upperCase = upperCase;
         }
 
         public int compareTo(byte[] buffer) {
@@ -233,11 +235,11 @@ public class Directory extends File {
             // reasons, we don't want to decode the entire structure.  In fact can avoid the string
             // conversion as well.
             byte fnLen = buffer[0x40];
-            return _upperCase.compare(_query, 0, _query.length, buffer, 0x42, fnLen * 2);
+            return upperCase.compare(query, 0, query.length, buffer, 0x42, fnLen * 2);
         }
 
         public String toString() {
-            return new String(_query, StandardCharsets.UTF_16LE) + ": " + _upperCase;
+            return new String(query, StandardCharsets.UTF_16LE) + ": " + upperCase;
         }
     }
 }

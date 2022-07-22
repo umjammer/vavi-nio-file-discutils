@@ -42,75 +42,76 @@ import dotnet4j.io.Stream;
 
 
 public abstract class CommonSparseExtentStream extends MappedStream {
+
     /**
      * Indicator to whether end-of-stream has been reached.
      */
-    protected boolean _atEof;
+    protected boolean atEof;
 
     /**
-     * The current grain that's loaded into _grainTable.
+     * The current grain that's loaded into grainTable.
      */
-    protected int _currentGrainTable;
+    protected int currentGrainTable;
 
     /**
      * Offset of this extent within the disk.
      */
-    protected long _diskOffset;
+    protected long diskOffset;
 
     /**
      * Stream containing the sparse extent.
      */
-    protected Stream _fileStream;
+    protected Stream fileStream;
 
     /**
      * The Global Directory for this extent.
      */
-    protected int[] _globalDirectory;
+    protected int[] globalDirectory;
 
     /**
      * The data corresponding to the current grain (or null).
      */
-    protected byte[] _grainTable;
+    protected byte[] grainTable;
 
     /**
      * Cache of recently used grain tables.
      */
-    private final ObjectCache<Integer, byte[]> _grainTableCache = new ObjectCache<>();
+    private final ObjectCache<Integer, byte[]> grainTableCache = new ObjectCache<>();
 
     /**
      * The number of bytes controlled by a single grain table.
      */
-    protected long _gtCoverage;
+    protected long gtCoverage;
 
     /**
      * The header from the start of the extent.
      */
-    protected CommonSparseExtentHeader _header;
+    protected CommonSparseExtentHeader header;
 
     /**
-     * Indicates if this object controls the lifetime of _fileStream.
+     * Indicates if this object controls the lifetime of fileStream.
      */
-    protected Ownership _ownsFileStream;
+    protected Ownership ownsFileStream;
 
     /**
-     * Indicates if this object controls the lifetime of _parentDiskStream.
+     * Indicates if this object controls the lifetime of parentDiskStream.
      */
-    protected Ownership _ownsParentDiskStream;
+    protected Ownership ownsParentDiskStream;
 
     /**
      * The stream containing the unstored bytes.
      */
-    protected SparseStream _parentDiskStream;
+    protected SparseStream parentDiskStream;
 
     /**
      * Current position in the extent.
      */
-    protected long _position;
+    protected long position;
 
     /**
      * The Redundant Global Directory for this extent.
      */
-    protected int[] _redundantGlobalDirectory;
+    protected int[] redundantGlobalDirectory;
 
     public boolean canRead() {
         checkDisposed();
@@ -124,7 +125,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
     public boolean canWrite() {
         checkDisposed();
-        return _fileStream.canWrite();
+        return fileStream.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
@@ -133,18 +134,18 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
     public long getLength() {
         checkDisposed();
-        return _header.Capacity * Sizes.Sector;
+        return header.capacity * Sizes.Sector;
     }
 
     public long getPosition() {
         checkDisposed();
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
         checkDisposed();
-        _position = value;
-        _atEof = false;
+        position = value;
+        atEof = false;
     }
 
     public void flush() {
@@ -154,44 +155,44 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
-        if (_position > getLength()) {
-            _atEof = true;
+        if (position > getLength()) {
+            atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
-        if (_position == getLength()) {
-            if (_atEof) {
+        if (position == getLength()) {
+            if (atEof) {
                 throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
             }
-            _atEof = true;
+            atEof = true;
             return 0;
         }
 
-        int maxToRead = (int) Math.min(count, getLength() - _position);
+        int maxToRead = (int) Math.min(count, getLength() - position);
         int totalRead = 0;
         int numRead;
 
         do {
-            int grainTable = (int) (_position / _gtCoverage);
-            int grainTableOffset = (int) (_position - grainTable * _gtCoverage);
+            int grainTable = (int) (position / gtCoverage);
+            int grainTableOffset = (int) (position - grainTable * gtCoverage);
             numRead = 0;
 
             if (!loadGrainTable(grainTable)) {
                 // Read from parent stream, to at most the end of grain table's coverage
-                _parentDiskStream.setPosition(_position + _diskOffset);
-                numRead = _parentDiskStream.read(buffer,
+                parentDiskStream.setPosition(position + diskOffset);
+                numRead = parentDiskStream.read(buffer,
                                                  offset + totalRead,
-                                                 (int) Math.min(maxToRead - totalRead, _gtCoverage - grainTableOffset));
+                                                 (int) Math.min(maxToRead - totalRead, gtCoverage - grainTableOffset));
             } else {
-                int grainSize = (int) (_header.GrainSize * Sizes.Sector);
+                int grainSize = (int) (header.grainSize * Sizes.Sector);
                 int grain = grainTableOffset / grainSize;
                 int grainOffset = grainTableOffset - grain * grainSize;
 
                 int numToRead = Math.min(maxToRead - totalRead, grainSize - grainOffset);
 
                 if (getGrainTableEntry(grain) == 0) {
-                    _parentDiskStream.setPosition(_position + _diskOffset);
-                    numRead = _parentDiskStream.read(buffer, offset + totalRead, numToRead);
+                    parentDiskStream.setPosition(position + diskOffset);
+                    numRead = parentDiskStream.read(buffer, offset + totalRead, numToRead);
                 } else {
                     int bufferOffset = offset + totalRead;
                     long grainStart = (long) getGrainTableEntry(grain) * Sizes.Sector;
@@ -199,7 +200,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
                 }
             }
 
-            _position += numRead;
+            position += numRead;
             totalRead += numRead;
         } while (numRead != 0 && totalRead < maxToRead);
 
@@ -217,18 +218,18 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _header.Capacity * Sizes.Sector;
+            effectiveOffset += header.capacity * Sizes.Sector;
         }
 
-        _atEof = false;
+        atEof = false;
 
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
@@ -239,8 +240,8 @@ public abstract class CommonSparseExtentStream extends MappedStream {
             return Collections.emptyList();
         }
 
-        List<StreamExtent> parentExtents = _parentDiskStream.getExtentsInRange(_diskOffset + start, maxCount);
-        parentExtents = StreamExtent.offset(parentExtents, -_diskOffset);
+        List<StreamExtent> parentExtents = parentDiskStream.getExtentsInRange(diskOffset + start, maxCount);
+        parentExtents = StreamExtent.offset(parentExtents, -diskOffset);
 
         List<StreamExtent> result = StreamExtent.union(layerExtents(start, maxCount), parentExtents);
         result = StreamExtent.intersect(result, Collections.singletonList(new StreamExtent(start, maxCount)));
@@ -257,11 +258,11 @@ public abstract class CommonSparseExtentStream extends MappedStream {
             long pos = start;
 
             do {
-                int grainTable = (int) (pos / _gtCoverage);
-                int grainTableOffset = (int) (pos - grainTable * _gtCoverage);
+                int grainTable = (int) (pos / gtCoverage);
+                int grainTableOffset = (int) (pos - grainTable * gtCoverage);
 
                 if (loadGrainTable(grainTable)) {
-                    int grainSize = (int) (_header.GrainSize * Sizes.Sector);
+                    int grainSize = (int) (header.grainSize * Sizes.Sector);
                     int grain = grainTableOffset / grainSize;
                     int grainOffset = grainTableOffset - grain * grainSize;
 
@@ -274,7 +275,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
                     pos += numToRead;
                 } else {
-                    pos = (grainTable + 1) * _gtCoverage;
+                    pos = (grainTable + 1) * gtCoverage;
                 }
             } while (pos < end);
         }
@@ -282,24 +283,24 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     }
 
     public void close() throws IOException {
-        if (_ownsFileStream == Ownership.Dispose && _fileStream != null) {
-            _fileStream.close();
+        if (ownsFileStream == Ownership.Dispose && fileStream != null) {
+            fileStream.close();
         }
 
-        _fileStream = null;
-        if (_ownsParentDiskStream == Ownership.Dispose && _parentDiskStream != null) {
-            _parentDiskStream.close();
+        fileStream = null;
+        if (ownsParentDiskStream == Ownership.Dispose && parentDiskStream != null) {
+            parentDiskStream.close();
         }
 
-        _parentDiskStream = null;
+        parentDiskStream = null;
     }
 
     protected int getGrainTableEntry(int grain) {
-        return EndianUtilities.toUInt32LittleEndian(_grainTable, grain * 4);
+        return EndianUtilities.toUInt32LittleEndian(grainTable, grain * 4);
     }
 
     protected void setGrainTableEntry(int grain, int value) {
-        EndianUtilities.writeBytesLittleEndian(value, _grainTable, grain * 4);
+        EndianUtilities.writeBytesLittleEndian(value, grainTable, grain * 4);
     }
 
     protected int readGrain(byte[] buffer,
@@ -307,8 +308,8 @@ public abstract class CommonSparseExtentStream extends MappedStream {
                             long grainStart,
                             int grainOffset,
                             int numToRead) {
-        _fileStream.setPosition(grainStart + grainOffset);
-        return _fileStream.read(buffer, bufferOffset, numToRead);
+        fileStream.setPosition(grainStart + grainOffset);
+        return fileStream.read(buffer, bufferOffset, numToRead);
     }
 
     protected StreamExtent mapGrain(long grainStart, int grainOffset, int numToRead) {
@@ -316,48 +317,48 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     }
 
     protected void loadGlobalDirectory() {
-        int numGTs = (int) MathUtilities.ceil(_header.Capacity * Sizes.Sector, _gtCoverage);
+        int numGTs = (int) MathUtilities.ceil(header.capacity * Sizes.Sector, gtCoverage);
 
-        _globalDirectory = new int[numGTs];
-        _fileStream.setPosition(_header.GdOffset * Sizes.Sector);
-        byte[] gdAsBytes = StreamUtilities.readExact(_fileStream, numGTs * 4);
-        for (int i = 0; i < _globalDirectory.length; ++i) {
-            _globalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
+        globalDirectory = new int[numGTs];
+        fileStream.setPosition(header.gdOffset * Sizes.Sector);
+        byte[] gdAsBytes = StreamUtilities.readExact(fileStream, numGTs * 4);
+        for (int i = 0; i < globalDirectory.length; ++i) {
+            globalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
         }
     }
 
     protected boolean loadGrainTable(int index) {
         // Current grain table, so early-out
-        if (_grainTable != null && _currentGrainTable == index) {
+        if (grainTable != null && currentGrainTable == index) {
             return true;
         }
 
         // This grain table not present in grain directory, so can't load it...
-        if (_globalDirectory[index] == 0) {
+        if (globalDirectory[index] == 0) {
             return false;
         }
 
         // Cached grain table?
-        byte[] cachedGrainTable = _grainTableCache.get(index);
+        byte[] cachedGrainTable = grainTableCache.get(index);
         if (cachedGrainTable != null) {
-            _currentGrainTable = index;
-            _grainTable = cachedGrainTable;
+            currentGrainTable = index;
+            grainTable = cachedGrainTable;
             return true;
         }
 
         // Not cached, so read
-        _fileStream.setPosition((long) _globalDirectory[index] * Sizes.Sector);
-        byte[] newGrainTable = StreamUtilities.readExact(_fileStream, _header.NumGTEsPerGT * 4);
-        _currentGrainTable = index;
-        _grainTable = newGrainTable;
+        fileStream.setPosition((long) globalDirectory[index] * Sizes.Sector);
+        byte[] newGrainTable = StreamUtilities.readExact(fileStream, header.numGTEsPerGT * 4);
+        currentGrainTable = index;
+        grainTable = newGrainTable;
 
-        _grainTableCache.put(index, newGrainTable);
+        grainTableCache.put(index, newGrainTable);
 
         return true;
     }
 
     protected void checkDisposed() {
-        if (_fileStream == null) {
+        if (fileStream == null) {
             throw new dotnet4j.io.IOException("CommonSparseExtentStream");
         }
     }
@@ -365,7 +366,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     private List<StreamExtent> layerExtents(long start, long count) {
         List<StreamExtent> result = new ArrayList<>();
         long maxPos = start + count;
-        long pos = findNextPresentGrain(MathUtilities.roundDown(start, _header.GrainSize * Sizes.Sector), maxPos);
+        long pos = findNextPresentGrain(MathUtilities.roundDown(start, header.grainSize * Sizes.Sector), maxPos);
         while (pos < maxPos) {
             long end = findNextAbsentGrain(pos, maxPos);
             result.add(new StreamExtent(pos, end - pos));
@@ -376,16 +377,16 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     }
 
     private long findNextPresentGrain(long pos, long maxPos) {
-        int grainSize = (int) (_header.GrainSize * Sizes.Sector);
+        int grainSize = (int) (header.grainSize * Sizes.Sector);
 
         boolean foundStart = false;
         while (pos < maxPos && !foundStart) {
-            int grainTable = (int) (pos / _gtCoverage);
+            int grainTable = (int) (pos / gtCoverage);
 
             if (!loadGrainTable(grainTable)) {
-                pos += _gtCoverage;
+                pos += gtCoverage;
             } else {
-                int grainTableOffset = (int) (pos - grainTable * _gtCoverage);
+                int grainTableOffset = (int) (pos - grainTable * gtCoverage);
 
                 int grain = grainTableOffset / grainSize;
 
@@ -401,16 +402,16 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     }
 
     private long findNextAbsentGrain(long pos, long maxPos) {
-        int grainSize = (int) (_header.GrainSize * Sizes.Sector);
+        int grainSize = (int) (header.grainSize * Sizes.Sector);
 
         boolean foundEnd = false;
         while (pos < maxPos && !foundEnd) {
-            int grainTable = (int) (pos / _gtCoverage);
+            int grainTable = (int) (pos / gtCoverage);
 
             if (!loadGrainTable(grainTable)) {
                 foundEnd = true;
             } else {
-                int grainTableOffset = (int) (pos - grainTable * _gtCoverage);
+                int grainTableOffset = (int) (pos - grainTable * gtCoverage);
 
                 int grain = grainTableOffset / grainSize;
 

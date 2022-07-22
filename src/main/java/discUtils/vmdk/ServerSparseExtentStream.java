@@ -32,45 +32,46 @@ import dotnet4j.io.Stream;
 
 
 public final class ServerSparseExtentStream extends CommonSparseExtentStream {
-    private final ServerSparseExtentHeader _serverHeader;
+
+    private final ServerSparseExtentHeader serverHeader;
 
     public ServerSparseExtentStream(Stream file,
             Ownership ownsFile,
             long diskOffset,
             SparseStream parentDiskStream,
             Ownership ownsParentDiskStream) {
-        _fileStream = file;
-        _ownsFileStream = ownsFile;
-        _diskOffset = diskOffset;
-        _parentDiskStream = parentDiskStream;
-        _ownsParentDiskStream = ownsParentDiskStream;
+        fileStream = file;
+        ownsFileStream = ownsFile;
+        this.diskOffset = diskOffset;
+        this.parentDiskStream = parentDiskStream;
+        this.ownsParentDiskStream = ownsParentDiskStream;
         file.setPosition(0);
         byte[] firstSectors = StreamUtilities.readExact(file, Sizes.Sector * 4);
-        _serverHeader = ServerSparseExtentHeader.read(firstSectors, 0);
-        _header = _serverHeader;
-        _gtCoverage = _header.NumGTEsPerGT * _header.GrainSize * Sizes.Sector;
+        serverHeader = ServerSparseExtentHeader.read(firstSectors, 0);
+        header = serverHeader;
+        gtCoverage = header.numGTEsPerGT * header.grainSize * Sizes.Sector;
         loadGlobalDirectory();
     }
 
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
-        if (_position + count > getLength()) {
+        if (position + count > getLength()) {
             throw new dotnet4j.io.IOException("Attempt to write beyond end of stream");
         }
 
         int totalWritten = 0;
         while (totalWritten < count) {
-            int grainTable = (int) (_position / _gtCoverage);
-            int grainTableOffset = (int) (_position - grainTable * _gtCoverage);
+            int grainTable = (int) (position / gtCoverage);
+            int grainTableOffset = (int) (position - grainTable * gtCoverage);
             if (!loadGrainTable(grainTable)) {
                 allocateGrainTable(grainTable);
             }
 
-            int grainSize = (int) (_header.GrainSize * Sizes.Sector);
+            int grainSize = (int) (header.grainSize * Sizes.Sector);
             int startGrain = grainTableOffset / grainSize;
             int startGrainOffset = grainTableOffset - startGrain * grainSize;
             int numGrains = 0;
-            while (startGrain + numGrains < _header.NumGTEsPerGT &&
+            while (startGrain + numGrains < header.numGTEsPerGT &&
                    numGrains * grainSize - startGrainOffset < count - totalWritten &&
                    getGrainTableEntry(startGrain + numGrains) == 0) {
                 ++numGrains;
@@ -81,68 +82,68 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
                 numGrains = 1;
             }
             int numToWrite = Math.min(count - totalWritten, grainSize * numGrains - startGrainOffset);
-            _fileStream.setPosition((long) getGrainTableEntry(startGrain) * Sizes.Sector + startGrainOffset);
-            _fileStream.write(buffer, offset + totalWritten, numToWrite);
-            _position += numToWrite;
+            fileStream.setPosition((long) getGrainTableEntry(startGrain) * Sizes.Sector + startGrainOffset);
+            fileStream.write(buffer, offset + totalWritten, numToWrite);
+            position += numToWrite;
             totalWritten += numToWrite;
         }
-        _atEof = _position == getLength();
+        atEof = position == getLength();
     }
 
     private void allocateGrains(int grainTable, int grain, int count) {
         // Calculate start pos for new grain
-        long grainStartPos = (long) _serverHeader.FreeSector * Sizes.Sector;
+        long grainStartPos = (long) serverHeader.freeSector * Sizes.Sector;
         // Copy-on-write semantics, read the bytes from parent and write them out to this extent.
-        _parentDiskStream.setPosition(_diskOffset + (grain + (long) _header.NumGTEsPerGT * grainTable) * _header.GrainSize * Sizes.Sector);
-        byte[] content = StreamUtilities.readExact(_parentDiskStream, (int) (_header.GrainSize * Sizes.Sector * count));
-        _fileStream.setPosition(grainStartPos);
-        _fileStream.write(content, 0, content.length);
+        parentDiskStream.setPosition(diskOffset + (grain + (long) header.numGTEsPerGT * grainTable) * header.grainSize * Sizes.Sector);
+        byte[] content = StreamUtilities.readExact(parentDiskStream, (int) (header.grainSize * Sizes.Sector * count));
+        fileStream.setPosition(grainStartPos);
+        fileStream.write(content, 0, content.length);
         // Update next-free-sector in disk header
-        _serverHeader.FreeSector += MathUtilities.ceil(content.length, Sizes.Sector);
-        byte[] headerBytes = _serverHeader.getBytes();
-        _fileStream.setPosition(0);
-        _fileStream.write(headerBytes, 0, headerBytes.length);
+        serverHeader.freeSector += MathUtilities.ceil(content.length, Sizes.Sector);
+        byte[] headerBytes = serverHeader.getBytes();
+        fileStream.setPosition(0);
+        fileStream.write(headerBytes, 0, headerBytes.length);
         loadGrainTable(grainTable);
         for (int i = 0; i < count; ++i) {
-            setGrainTableEntry(grain + i, (int) (grainStartPos / Sizes.Sector + _header.GrainSize * i));
+            setGrainTableEntry(grain + i, (int) (grainStartPos / Sizes.Sector + header.grainSize * i));
         }
         writeGrainTable();
     }
 
     private void allocateGrainTable(int grainTable) {
         // Write out new blank grain table.
-        int startSector = _serverHeader.FreeSector;
-        byte[] emptyGrainTable = new byte[_header.NumGTEsPerGT * 4];
-        _fileStream.setPosition(startSector * (long) Sizes.Sector);
-        _fileStream.write(emptyGrainTable, 0, emptyGrainTable.length);
+        int startSector = serverHeader.freeSector;
+        byte[] emptyGrainTable = new byte[header.numGTEsPerGT * 4];
+        fileStream.setPosition(startSector * (long) Sizes.Sector);
+        fileStream.write(emptyGrainTable, 0, emptyGrainTable.length);
         // Update header
-        _serverHeader.FreeSector += MathUtilities.ceil(emptyGrainTable.length, Sizes.Sector);
-        byte[] headerBytes = _serverHeader.getBytes();
-        _fileStream.setPosition(0);
-        _fileStream.write(headerBytes, 0, headerBytes.length);
+        serverHeader.freeSector += MathUtilities.ceil(emptyGrainTable.length, Sizes.Sector);
+        byte[] headerBytes = serverHeader.getBytes();
+        fileStream.setPosition(0);
+        fileStream.write(headerBytes, 0, headerBytes.length);
         // Update the global directory
-        _globalDirectory[grainTable] = startSector;
+        globalDirectory[grainTable] = startSector;
         writeGlobalDirectory();
-        _grainTable = new byte[_header.NumGTEsPerGT * 4];
-        _currentGrainTable = grainTable;
+        this.grainTable = new byte[header.numGTEsPerGT * 4];
+        currentGrainTable = grainTable;
     }
 
     private void writeGlobalDirectory() {
-        byte[] buffer = new byte[_globalDirectory.length * 4];
-        for (int i = 0; i < _globalDirectory.length; ++i) {
-            EndianUtilities.writeBytesLittleEndian(_globalDirectory[i], buffer, i * 4);
+        byte[] buffer = new byte[globalDirectory.length * 4];
+        for (int i = 0; i < globalDirectory.length; ++i) {
+            EndianUtilities.writeBytesLittleEndian(globalDirectory[i], buffer, i * 4);
         }
-        _fileStream.setPosition(_serverHeader.GdOffset * Sizes.Sector);
-        _fileStream.write(buffer, 0, buffer.length);
+        fileStream.setPosition(serverHeader.gdOffset * Sizes.Sector);
+        fileStream.write(buffer, 0, buffer.length);
     }
 
     private void writeGrainTable() {
-        if (_grainTable == null) {
+        if (grainTable == null) {
             throw new IllegalStateException("No grain table loaded");
         }
 
-        _fileStream.setPosition(_globalDirectory[_currentGrainTable] * (long) Sizes.Sector);
-        _fileStream.write(_grainTable, 0, _grainTable.length);
+        fileStream.setPosition(globalDirectory[currentGrainTable] * (long) Sizes.Sector);
+        fileStream.write(grainTable, 0, grainTable.length);
     }
 
 }

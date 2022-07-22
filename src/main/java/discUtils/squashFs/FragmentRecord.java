@@ -27,25 +27,26 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FragmentRecord implements IByteArraySerializable {
+
     public static final int RecordSize = 16;
 
-    public int CompressedSize;
+    public int compressedSize;
 
-    public long StartBlock;
+    public long startBlock;
 
     public int size() {
         return RecordSize;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        StartBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 0);
-        CompressedSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
+        startBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 0);
+        compressedSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
         return RecordSize;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(StartBlock, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(CompressedSize, buffer, offset + 8);
+        EndianUtilities.writeBytesLittleEndian(startBlock, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(compressedSize, buffer, offset + 8);
         EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 12);
     }
 }

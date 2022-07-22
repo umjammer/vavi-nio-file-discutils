@@ -31,46 +31,47 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class IndexRoot implements IByteArraySerializable, IDiagnosticTraceable {
+
     public static final int HeaderOffset = 0x10;
 
-    private int _attributeType;
+    private int attributeType;
 
     public int getAttributeType() {
-        return _attributeType;
+        return attributeType;
     }
 
     public void setAttributeType(int value) {
-        _attributeType = value;
+        attributeType = value;
     }
 
-    private AttributeCollationRule _collationRule = AttributeCollationRule.Binary;
+    private AttributeCollationRule collationRule = AttributeCollationRule.Binary;
 
     public AttributeCollationRule getCollationRule() {
-        return _collationRule;
+        return collationRule;
     }
 
     public void setCollationRule(AttributeCollationRule value) {
-        _collationRule = value;
+        collationRule = value;
     }
 
-    private int _indexAllocationSize;
+    private int indexAllocationSize;
 
     public int getIndexAllocationSize() {
-        return _indexAllocationSize;
+        return indexAllocationSize;
     }
 
     public void setIndexAllocationSize(int value) {
-        _indexAllocationSize = value;
+        indexAllocationSize = value;
     }
 
-    private byte _rawClustersPerIndexRecord;
+    private byte rawClustersPerIndexRecord;
 
     public int getRawClustersPerIndexRecord() {
-        return _rawClustersPerIndexRecord & 0xff;
+        return rawClustersPerIndexRecord & 0xff;
     }
 
     public void setRawClustersPerIndexRecord(byte value) {
-        _rawClustersPerIndexRecord = value;
+        rawClustersPerIndexRecord = value;
     }
 
     public int size() {
@@ -78,29 +79,29 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _attributeType = EndianUtilities.toUInt32LittleEndian(buffer, 0x00);
-        _collationRule = AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x04));
-        _indexAllocationSize = EndianUtilities.toUInt32LittleEndian(buffer, 0x08);
-        _rawClustersPerIndexRecord = buffer[0x0C];
+        attributeType = EndianUtilities.toUInt32LittleEndian(buffer, 0x00);
+        collationRule = AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x04));
+        indexAllocationSize = EndianUtilities.toUInt32LittleEndian(buffer, 0x08);
+        rawClustersPerIndexRecord = buffer[0x0C];
         return 16;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(_attributeType, buffer, 0);
-        EndianUtilities.writeBytesLittleEndian(_collationRule.getValue(), buffer, 0x04);
-        EndianUtilities.writeBytesLittleEndian(_indexAllocationSize, buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(_rawClustersPerIndexRecord, buffer, 0x0C);
+        EndianUtilities.writeBytesLittleEndian(attributeType, buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(collationRule.getValue(), buffer, 0x04);
+        EndianUtilities.writeBytesLittleEndian(indexAllocationSize, buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian(rawClustersPerIndexRecord, buffer, 0x0C);
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "                Attr Type: " + _attributeType);
-        writer.println(indent + "           Collation Rule: " + _collationRule);
-        writer.println(indent + "         Index Alloc Size: " + _indexAllocationSize);
-        writer.println(indent + "  raw Clusters Per Record: " + _rawClustersPerIndexRecord);
+        writer.println(indent + "                Attr Type: " + attributeType);
+        writer.println(indent + "           Collation Rule: " + collationRule);
+        writer.println(indent + "         Index Alloc Size: " + indexAllocationSize);
+        writer.println(indent + "  raw Clusters Per Record: " + rawClustersPerIndexRecord);
     }
 
     public Comparator<byte[]> getCollator(UpperCase upCase) {
-        switch (getCollationRule()) {
+        switch (collationRule) {
         case Filename:
             return new FileNameComparer(upCase);
         case SecurityHash:
@@ -195,10 +196,11 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class FileNameComparer implements Comparator<byte[]> {
-        private final UpperCase _stringComparer;
+
+        private final UpperCase stringComparer;
 
         public FileNameComparer(UpperCase upCase) {
-            _stringComparer = upCase;
+            stringComparer = upCase;
         }
 
         public int compare(byte[] x, byte[] y) {
@@ -215,7 +217,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             int xFnLen = x[0x40] & 0xff;
             int yFnLen = y[0x40] & 0xff;
 
-            return _stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2);
+            return stringComparer.compare(x, 0x42, xFnLen * 2, y, 0x42, yFnLen * 2);
         }
     }
 
@@ -240,7 +242,6 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             }
 
             return Integer.compare(x.length, y.length);
-
         }
     }
 }

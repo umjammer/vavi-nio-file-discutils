@@ -28,69 +28,70 @@ import dotnet4j.io.Stream;
 
 
 public class FileAllocationTable {
-    private final FatBuffer _buffer;
 
-    private final int _firstFatSector;
+    private final FatBuffer buffer;
 
-    private final int _numFats;
+    private final int firstFatSector;
 
-    private final Stream _stream;
+    private final int numFats;
+
+    private final Stream stream;
 
     public FileAllocationTable(FatType type, Stream stream, int firstFatSector, int fatSize, int numFats, byte activeFat) {
-        _stream = stream;
-        _firstFatSector = firstFatSector;
-        _numFats = numFats;
+        this.stream = stream;
+        this.firstFatSector = firstFatSector;
+        this.numFats = numFats;
 
-//Debug.printf(Level.FINE, "%d, %016x", _firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector);
-        _stream.setPosition((firstFatSector + (long) fatSize * activeFat) * Sizes.Sector);
-        _buffer = new FatBuffer(type, StreamUtilities.readExact(_stream, fatSize * Sizes.Sector));
+//Debug.printf(Level.FINE, "%d, %016x", firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector);
+        this.stream.setPosition((firstFatSector + (long) fatSize * activeFat) * Sizes.Sector);
+        buffer = new FatBuffer(type, StreamUtilities.readExact(this.stream, fatSize * Sizes.Sector));
     }
 
     public boolean isFree(int val) {
-        return _buffer.isFree(val);
+        return buffer.isFree(val);
     }
 
     public boolean isEndOfChain(int val) {
-        return _buffer.isEndOfChain(val);
+        return buffer.isEndOfChain(val);
     }
 
     public boolean isBadCluster(int val) {
-        return _buffer.isBadCluster(val);
+        return buffer.isBadCluster(val);
     }
 
     public int getNext(int cluster) {
-        return _buffer.getNext(cluster);
+        return buffer.getNext(cluster);
     }
 
     public void setEndOfChain(int cluster) {
-        _buffer.setEndOfChain(cluster);
+        buffer.setEndOfChain(cluster);
     }
 
     public void setBadCluster(int cluster) {
-        _buffer.setBadCluster(cluster);
+        buffer.setBadCluster(cluster);
     }
 
     public void setNext(int cluster, int next) {
-        _buffer.setNext(cluster, next);
+        buffer.setNext(cluster, next);
     }
 
     public void flush() {
-        for (int i = 0; i < _numFats; i++) {
-            _buffer.writeDirtyRegions(_stream, (long) _firstFatSector * Sizes.Sector + _buffer.getSize() * i);
+        for (int i = 0; i < numFats; i++) {
+            buffer.writeDirtyRegions(stream, (long) firstFatSector * Sizes.Sector + buffer.getSize() * i);
         }
-        _buffer.clearDirtyRegions();
+        buffer.clearDirtyRegions();
     }
 
     public boolean tryGetFreeCluster(int[] cluster) {
-        boolean result = _buffer.tryGetFreeCluster(cluster);
+        boolean result = buffer.tryGetFreeCluster(cluster);
         return result;
     }
 
     public void freeChain(int head) {
-        _buffer.freeChain(head);
+        buffer.freeChain(head);
     }
 
     public int getNumEntries() {
-        return _buffer.getNumEntries();
+        return buffer.getNumEntries();
     }
 }

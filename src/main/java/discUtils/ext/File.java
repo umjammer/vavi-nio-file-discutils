@@ -32,34 +32,35 @@ import discUtils.streams.buffer.IBuffer;
 
 
 public class File implements IVfsFile {
-    private IBuffer _content;
+
+    private IBuffer content;
 
     public File(Context context, int inodeNum, Inode inode) {
-        _context = context;
-        _inodeNumber = inodeNum;
-        _inode = inode;
+        this.context = context;
+        inodeNumber = inodeNum;
+        this.inode = inode;
     }
 
-    private Context _context;
+    private Context context;
 
     protected Context getContext() {
-        return _context;
+        return context;
     }
 
-    private Inode _inode;
+    private Inode inode;
 
     public Inode getInode() {
-        return _inode;
+        return inode;
     }
 
-    private int _inodeNumber;
+    private int inodeNumber;
 
     public int getInodeNumber() {
-        return _inodeNumber;
+        return inodeNumber;
     }
 
     public long getLastAccessTimeUtc() {
-        return Instant.ofEpochSecond(getInode().AccessTime).toEpochMilli();
+        return Instant.ofEpochSecond(inode.accessTime).toEpochMilli();
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -67,7 +68,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return Instant.ofEpochSecond(getInode().ModificationTime).toEpochMilli();
+        return Instant.ofEpochSecond(inode.modificationTime).toEpochMilli();
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -75,7 +76,7 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return Instant.ofEpochSecond(getInode().CreationTime).toEpochMilli();
+        return Instant.ofEpochSecond(inode.creationTime).toEpochMilli();
     }
 
     public void setCreationTimeUtc(long value) {
@@ -83,7 +84,7 @@ public class File implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return fromMode(getInode().Mode);
+        return fromMode(inode.mode);
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
@@ -91,15 +92,15 @@ public class File implements IVfsFile {
     }
 
     public long getFileLength() {
-        return getInode().FileSize;
+        return inode.fileSize;
     }
 
     public IBuffer getFileContent() {
-        if (_content == null) {
-            _content = getInode().getContentBuffer(getContext());
+        if (content == null) {
+            content = getInode().getContentBuffer(getContext());
         }
 
-        return _content;
+        return content;
     }
 
     private static EnumSet<FileAttributes> fromMode(int mode) {

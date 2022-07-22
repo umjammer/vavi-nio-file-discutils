@@ -38,62 +38,62 @@ import dotnet4j.io.Stream;
  * contents into memory..
  */
 public class LzxStream extends Stream {
-    private static final int[] _positionSlots;
 
-    private static final int[] _extraBits;
+    private static final int[] positionSlots;
 
-    private HuffmanTree _alignedOffsetTree;
+    private static final int[] extraBits;
 
-    private final LzxBitStream _bitStream;
+    private HuffmanTree alignedOffsetTree;
 
-    private byte[] _buffer;
+    private final LzxBitStream bitStream;
 
-    private int _bufferCount;
+    private byte[] buffer;
 
-    private final int _fileSize;
+    private int bufferCount;
 
-    private HuffmanTree _lengthTree;
+    private final int fileSize;
+
+    private HuffmanTree lengthTree;
 
     // block state
-    private HuffmanTree _mainTree;
+    private HuffmanTree mainTree;
 
-    private final int _numPositionSlots;
+    private final int numPositionSlots;
 
-    private long _position;
+    private long position;
 
-    private final int[] _repeatedOffsets = {
+    private final int[] repeatedOffsets = {
         1, 1, 1
     };
 
-    private final int _windowBits;
+    private final int windowBits;
     static {
         try {
-            _positionSlots = new int[50];
-            _extraBits = new int[50];
+            positionSlots = new int[50];
+            extraBits = new int[50];
             int numBits = 0;
-            _positionSlots[1] = 1;
+            positionSlots[1] = 1;
             for (int i = 2; i < 50; i += 2) {
-                _extraBits[i] = numBits;
-                _extraBits[i + 1] = numBits;
-                _positionSlots[i] = _positionSlots[i - 1] + (1 << _extraBits[i - 1]);
-                _positionSlots[i + 1] = _positionSlots[i] + (1 << numBits);
+                extraBits[i] = numBits;
+                extraBits[i + 1] = numBits;
+                positionSlots[i] = positionSlots[i - 1] + (1 << extraBits[i - 1]);
+                positionSlots[i + 1] = positionSlots[i] + (1 << numBits);
                 if (numBits < 17) {
                     numBits++;
                 }
 
             }
-        } catch (Exception __dummyStaticConstructorCatchVar0) {
-            throw new ExceptionInInitializerError(__dummyStaticConstructorCatchVar0);
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
         }
-
     }
 
     public LzxStream(Stream stream, int windowBits, int fileSize) {
-        _bitStream = new LzxBitStream(new BufferedStream(stream, 8192));
-        _windowBits = windowBits;
-        _fileSize = fileSize;
-        _numPositionSlots = _windowBits * 2;
-        _buffer = new byte[1 << windowBits];
+        bitStream = new LzxBitStream(new BufferedStream(stream, 8192));
+        this.windowBits = windowBits;
+        this.fileSize = fileSize;
+        numPositionSlots = this.windowBits * 2;
+        buffer = new byte[1 << windowBits];
         readBlocks();
     }
 
@@ -110,28 +110,28 @@ public class LzxStream extends Stream {
     }
 
     public long getLength() {
-        return _bufferCount;
+        return bufferCount;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position > getLength()) {
+        if (position > getLength()) {
             return 0;
         }
 
-        int numToRead = (int) Math.min(count, _bufferCount - _position);
-        System.arraycopy(_buffer, (int) _position, buffer, offset, numToRead);
-        _position += numToRead;
+        int numToRead = (int) Math.min(count, bufferCount - position);
+        System.arraycopy(this.buffer, (int) position, buffer, offset, numToRead);
+        position += numToRead;
         return numToRead;
     }
 
@@ -148,19 +148,19 @@ public class LzxStream extends Stream {
     }
 
     private void readBlocks() {
-        BlockType blockType = BlockType.values()[_bitStream.read(3)];
-        _buffer = new byte[32768];
-        _bufferCount = 0;
+        BlockType blockType = BlockType.values()[bitStream.read(3)];
+        buffer = new byte[32768];
+        bufferCount = 0;
         while (blockType != BlockType.None) {
-            int blockSize = _bitStream.read(1) == 1 ? 1 << 15 : _bitStream.read(16);
+            int blockSize = bitStream.read(1) == 1 ? 1 << 15 : bitStream.read(16);
             if (blockType == BlockType.Uncompressed) {
                 decodeUncompressedBlock(blockSize);
             } else {
                 decodeCompressedBlock(blockType, blockSize);
-                _bufferCount += blockSize;
+                bufferCount += blockSize;
             }
             // Read start of next block (if any)
-            blockType = BlockType.values()[_bitStream.read(3)];
+            blockType = BlockType.values()[bitStream.read(3)];
         }
         fixupBlockBuffer();
     }
@@ -178,18 +178,18 @@ public class LzxStream extends Stream {
     private void fixupBlockBuffer() {
         byte[] temp = new byte[4];
         int i = 0;
-        while (i < _bufferCount - 10) {
-            if ((_buffer[i] & 0xff) == 0xE8) {
-                System.arraycopy(_buffer, i + 1, temp, 0, 4);
-                int absoluteValue = EndianUtilities.toInt32LittleEndian(_buffer, i + 1);
-                if (absoluteValue >= -i && absoluteValue < _fileSize) {
+        while (i < bufferCount - 10) {
+            if ((buffer[i] & 0xff) == 0xE8) {
+                System.arraycopy(buffer, i + 1, temp, 0, 4);
+                int absoluteValue = EndianUtilities.toInt32LittleEndian(buffer, i + 1);
+                if (absoluteValue >= -i && absoluteValue < fileSize) {
                     int offsetValue;
                     if (absoluteValue >= 0) {
                         offsetValue = absoluteValue - i;
                     } else {
-                        offsetValue = absoluteValue + _fileSize;
+                        offsetValue = absoluteValue + fileSize;
                     }
-                    EndianUtilities.writeBytesLittleEndian(offsetValue, _buffer, i + 1);
+                    EndianUtilities.writeBytesLittleEndian(offsetValue, buffer, i + 1);
                 }
 
                 i += 4;
@@ -200,70 +200,70 @@ public class LzxStream extends Stream {
     }
 
     private void decodeUncompressedBlock(int blockSize) {
-        _bitStream.align(16);
-        _repeatedOffsets[0] = EndianUtilities.toUInt32LittleEndian(_bitStream.readBytes(4), 0);
-        _repeatedOffsets[1] = EndianUtilities.toUInt32LittleEndian(_bitStream.readBytes(4), 0);
-        _repeatedOffsets[2] = EndianUtilities.toUInt32LittleEndian(_bitStream.readBytes(4), 0);
-        int numRead = _bitStream.readBytes(_buffer, _bufferCount, blockSize);
-        _bufferCount += numRead;
+        bitStream.align(16);
+        repeatedOffsets[0] = EndianUtilities.toUInt32LittleEndian(bitStream.readBytes(4), 0);
+        repeatedOffsets[1] = EndianUtilities.toUInt32LittleEndian(bitStream.readBytes(4), 0);
+        repeatedOffsets[2] = EndianUtilities.toUInt32LittleEndian(bitStream.readBytes(4), 0);
+        int numRead = bitStream.readBytes(buffer, bufferCount, blockSize);
+        bufferCount += numRead;
         if ((numRead & 1) != 0) {
-            _bitStream.readBytes(1);
+            bitStream.readBytes(1);
         }
     }
 
     private void decodeCompressedBlock(BlockType blockType, int blockSize) {
         if (blockType == BlockType.AlignedOffset) {
-            _alignedOffsetTree = readFixedHuffmanTree(8, 3);
+            alignedOffsetTree = readFixedHuffmanTree(8, 3);
         }
 
         readMainTree();
         readLengthTree();
         int numRead = 0;
         while (numRead < blockSize) {
-            int symbol = _mainTree.nextSymbol(_bitStream);
+            int symbol = mainTree.nextSymbol(bitStream);
             if (symbol < 256) {
-                _buffer[_bufferCount + numRead++] = (byte) symbol;
+                buffer[bufferCount + numRead++] = (byte) symbol;
             } else {
                 int lengthHeader = (symbol - 256) & 7;
-                int matchLength = lengthHeader + 2 + (lengthHeader == 7 ? _lengthTree.nextSymbol(_bitStream) : 0);
+                int matchLength = lengthHeader + 2 + (lengthHeader == 7 ? lengthTree.nextSymbol(bitStream) : 0);
                 int positionSlot = (symbol - 256) >>> 3;
                 int matchOffset;
                 if (positionSlot == 0) {
-                    matchOffset = _repeatedOffsets[0];
+                    matchOffset = repeatedOffsets[0];
                 } else if (positionSlot == 1) {
-                    matchOffset = _repeatedOffsets[1];
-                    _repeatedOffsets[1] = _repeatedOffsets[0];
-                    _repeatedOffsets[0] = matchOffset;
+                    matchOffset = repeatedOffsets[1];
+                    repeatedOffsets[1] = repeatedOffsets[0];
+                    repeatedOffsets[0] = matchOffset;
                 } else if (positionSlot == 2) {
-                    matchOffset = _repeatedOffsets[2];
-                    _repeatedOffsets[2] = _repeatedOffsets[0];
-                    _repeatedOffsets[0] = matchOffset;
+                    matchOffset = repeatedOffsets[2];
+                    repeatedOffsets[2] = repeatedOffsets[0];
+                    repeatedOffsets[0] = matchOffset;
                 } else {
-                    int extra = _extraBits[positionSlot];
+                    int extra = extraBits[positionSlot];
                     int formattedOffset;
                     if (blockType == BlockType.AlignedOffset) {
                         int verbatimBits = 0;
                         int alignedBits = 0;
                         if (extra >= 3) {
-                            verbatimBits = _bitStream.read(extra - 3) << 3;
-                            alignedBits = _alignedOffsetTree.nextSymbol(_bitStream);
+                            verbatimBits = bitStream.read(extra - 3) << 3;
+                            alignedBits = alignedOffsetTree.nextSymbol(bitStream);
                         } else if (extra > 0) {
-                            verbatimBits = _bitStream.read(extra);
+                            verbatimBits = bitStream.read(extra);
                         }
 
-                        formattedOffset = _positionSlots[positionSlot] + verbatimBits + alignedBits;
+                        formattedOffset = positionSlots[positionSlot] + verbatimBits + alignedBits;
                     } else {
-                        int verbatimBits = extra > 0 ? _bitStream.read(extra) : 0;
-                        formattedOffset = _positionSlots[positionSlot] + verbatimBits;
+                        int verbatimBits = extra > 0 ? bitStream.read(extra) : 0;
+                        formattedOffset = positionSlots[positionSlot] + verbatimBits;
                     }
                     matchOffset = formattedOffset - 2;
-                    _repeatedOffsets[2] = _repeatedOffsets[1];
-                    _repeatedOffsets[1] = _repeatedOffsets[0];
-                    _repeatedOffsets[0] = matchOffset;
+                    repeatedOffsets[2] = repeatedOffsets[1];
+                    repeatedOffsets[1] = repeatedOffsets[0];
+                    repeatedOffsets[0] = matchOffset;
                 }
-                int destOffset = _bufferCount + numRead;
+                int destOffset = bufferCount + numRead;
                 int srcOffset = destOffset - matchOffset;
-                if (matchLength >= 0) System.arraycopy(_buffer, srcOffset + 0, _buffer, destOffset + 0, matchLength);
+                if (matchLength >= 0) System.arraycopy(buffer, srcOffset + 0, buffer, destOffset + 0, matchLength);
                 numRead += matchLength;
             }
         }
@@ -271,27 +271,27 @@ public class LzxStream extends Stream {
 
     private void readMainTree() {
         int[] lengths;
-        if (_mainTree == null) {
-            lengths = new int[256 + 8 * _numPositionSlots];
+        if (mainTree == null) {
+            lengths = new int[256 + 8 * numPositionSlots];
         } else {
-            lengths = _mainTree.getLengths();
+            lengths = mainTree.getLengths();
         }
         HuffmanTree preTree = readFixedHuffmanTree(20, 4);
         readLengths(preTree, lengths, 0, 256);
         preTree = readFixedHuffmanTree(20, 4);
-        readLengths(preTree, lengths, 256, 8 * _numPositionSlots);
-        _mainTree = new HuffmanTree(lengths);
+        readLengths(preTree, lengths, 256, 8 * numPositionSlots);
+        mainTree = new HuffmanTree(lengths);
     }
 
     private void readLengthTree() {
         HuffmanTree preTree = readFixedHuffmanTree(20, 4);
-        _lengthTree = readDynamicHuffmanTree(249, preTree, _lengthTree);
+        lengthTree = readDynamicHuffmanTree(249, preTree, lengthTree);
     }
 
     private HuffmanTree readFixedHuffmanTree(int count, int bits) {
         int[] treeLengths = new int[count];
         for (int i = 0; i < treeLengths.length; ++i) {
-            treeLengths[i] = _bitStream.read(bits);
+            treeLengths[i] = bitStream.read(bits);
         }
         return new HuffmanTree(treeLengths);
     }
@@ -299,7 +299,7 @@ public class LzxStream extends Stream {
     private HuffmanTree readDynamicHuffmanTree(int count, HuffmanTree preTree, HuffmanTree oldTree) {
         int[] lengths;
         if (oldTree == null) {
-            lengths = new int[256 + 8 * _numPositionSlots];
+            lengths = new int[256 + 8 * numPositionSlots];
         } else {
             lengths = oldTree.getLengths();
         }
@@ -310,22 +310,22 @@ public class LzxStream extends Stream {
     private void readLengths(HuffmanTree preTree, int[] lengths, int offset, int count) {
         int i = 0;
         while (i < count) {
-            int value = preTree.nextSymbol(_bitStream);
+            int value = preTree.nextSymbol(bitStream);
             if (value == 17) {
-                int numZeros = 4 + _bitStream.read(4);
+                int numZeros = 4 + bitStream.read(4);
                 for (int j = 0; j < numZeros; ++j) {
                     lengths[offset + i] = 0;
                     ++i;
                 }
             } else if (value == 18) {
-                int numZeros = 20 + _bitStream.read(5);
+                int numZeros = 20 + bitStream.read(5);
                 for (int j = 0; j < numZeros; ++j) {
                     lengths[offset + i] = 0;
                     ++i;
                 }
             } else if (value == 19) {
-                int same = _bitStream.read(1);
-                value = preTree.nextSymbol(_bitStream);
+                int same = bitStream.read(1);
+                value = preTree.nextSymbol(bitStream);
                 if (value > 16) {
                     throw new IllegalArgumentException("Invalid table encoding");
                 }

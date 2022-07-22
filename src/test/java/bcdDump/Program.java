@@ -39,8 +39,9 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "bcd_file", description = "Path to the BCD file to inspect.", args = 1, required = true)
-    private String _bcdFile;
+    private String bcdFile;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -49,7 +50,7 @@ public class Program extends ProgramBase {
     }
 
     protected void doRun() throws IOException {
-        try (Stream fileStream = File.openRead(_bcdFile);
+        try (Stream fileStream = File.openRead(bcdFile);
              RegistryHive hive = new RegistryHive(fileStream)) {
 
             Store bcdDb = new Store(hive.getRoot());

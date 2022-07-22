@@ -33,19 +33,19 @@ public final class BuilderDirectory extends BuilderNode {
 
     private static final String FS = java.io.File.separator;
 
-    private final List<Entry> _children;
+    private final List<Entry> children;
 
-    private final Map<String, Entry> _index;
+    private final Map<String, Entry> index;
 
-    private DirectoryInode _inode;
+    private DirectoryInode inode;
 
     public BuilderDirectory() {
-        _children = new ArrayList<>();
-        _index = new HashMap<>();
+        children = new ArrayList<>();
+        index = new HashMap<>();
     }
 
     public Inode getInode() {
-        return _inode;
+        return inode;
     }
 
     public void addChild(String name, BuilderNode node) {
@@ -53,45 +53,45 @@ public final class BuilderDirectory extends BuilderNode {
             throw new IllegalArgumentException("Single level of path must be provided");
         }
 
-        if (_index.containsKey(name)) {
+        if (index.containsKey(name)) {
             throw new dotnet4j.io.IOException("The directory entry '" + name + "' already exists");
         }
 
         Entry newEntry = new Entry();
-        newEntry.Name = name;
-        newEntry.Node = node;
-        _children.add(newEntry);
-        _index.put(name, newEntry);
+        newEntry.name = name;
+        newEntry.node = node;
+        children.add(newEntry);
+        index.put(name, newEntry);
     }
 
     public BuilderNode getChild(String name) {
-        if (_index.containsKey(name)) {
-            Entry result = _index.get(name);
-            return result.Node;
+        if (index.containsKey(name)) {
+            Entry result = index.get(name);
+            return result.node;
         }
 
         return null;
     }
 
     public void reset() {
-        for (Entry entry : _children) {
-            entry.Node.reset();
+        for (Entry entry : children) {
+            entry.node.reset();
         }
-        _inode = new DirectoryInode();
+        inode = new DirectoryInode();
     }
 
     public void write(BuilderContext context) {
-        if (_written) {
+        if (written) {
             return;
         }
 
-        Collections.sort(_children);
-        for (Entry entry : _children) {
-            entry.Node.write(context);
+        Collections.sort(children);
+        for (Entry entry : children) {
+            entry.node.write(context);
         }
         writeDirectory(context);
         writeInode(context);
-        _written = true;
+        written = true;
     }
 
     private void writeDirectory(BuilderContext context) {
@@ -99,38 +99,38 @@ public final class BuilderDirectory extends BuilderNode {
 
         int currentChild = 0;
         int numDirs = 0;
-        while (currentChild < _children.size()) {
-            long thisBlock = _children.get(currentChild).Node.getInodeRef().getBlock();
-            int firstInode = _children.get(currentChild).Node.getInodeNumber();
+        while (currentChild < children.size()) {
+            long thisBlock = children.get(currentChild).node.getInodeRef().getBlock();
+            int firstInode = children.get(currentChild).node.getInodeNumber();
 
             int count = 1;
-            while (currentChild + count < _children.size()
-                    && _children.get(currentChild + count).Node.getInodeRef().getBlock() == thisBlock
-                    && _children.get(currentChild + count).Node.getInodeNumber() - firstInode < 0x7FFF) {
+            while (currentChild + count < children.size()
+                    && children.get(currentChild + count).node.getInodeRef().getBlock() == thisBlock
+                    && children.get(currentChild + count).node.getInodeNumber() - firstInode < 0x7FFF) {
                 ++count;
             }
 
             DirectoryHeader hdr = new DirectoryHeader();
-            hdr.Count = count - 1;
-            hdr.InodeNumber = firstInode;
-            hdr.StartBlock = (int) thisBlock;
+            hdr.count = count - 1;
+            hdr.inodeNumber = firstInode;
+            hdr.startBlock = (int) thisBlock;
 
             hdr.writeTo(context.getIoBuffer(), 0);
             context.getDirectoryWriter().write(context.getIoBuffer(), 0, hdr.size());
 
             for (int i = 0; i < count; ++i) {
-                Entry child = _children.get(currentChild + i);
+                Entry child = children.get(currentChild + i);
                 DirectoryRecord record = new DirectoryRecord();
-                record.setOffset((short) child.Node.getInodeRef().getOffset());
-                record.InodeNumber = (short) (child.Node.getInodeNumber() - firstInode);
-                record.Type = child.Node.getInode()._type;
-                record.Name = child.Name;
+                record.setOffset((short) child.node.getInodeRef().getOffset());
+                record.inodeNumber = (short) (child.node.getInodeNumber() - firstInode);
+                record.type = child.node.getInode().type;
+                record.name = child.name;
 
                 record.writeTo(context.getIoBuffer(), 0);
                 context.getDirectoryWriter().write(context.getIoBuffer(), 0, record.size());
 
-                if (child.Node.getInode()._type == InodeType.Directory
-                        || child.Node.getInode()._type == InodeType.ExtendedDirectory) {
+                if (child.node.getInode().type == InodeType.Directory
+                        || child.node.getInode().type == InodeType.ExtendedDirectory) {
                     ++numDirs;
                 }
             }
@@ -145,27 +145,27 @@ public final class BuilderDirectory extends BuilderNode {
 
         setNumLinks(numDirs + 2); // +1 for self, +1 for parent
 
-        _inode.setStartBlock((int) startPos.getBlock());
-        _inode.setOffset((short) startPos.getOffset());
-        _inode.setFileSize((int) size + 3);
+        inode.setStartBlock((int) startPos.getBlock());
+        inode.setOffset((short) startPos.getOffset());
+        inode.setFileSize((int) size + 3);
     }
 
     // For some reason, always +3
     private void writeInode(BuilderContext context) {
         fillCommonInodeData(context);
-        _inode._type = InodeType.Directory;
+        inode.type = InodeType.Directory;
         setInodeRef(context.getInodeWriter().getPosition());
-        _inode.writeTo(context.getIoBuffer(), 0);
-        context.getInodeWriter().write(context.getIoBuffer(), 0, _inode.size());
+        inode.writeTo(context.getIoBuffer(), 0);
+        context.getInodeWriter().write(context.getIoBuffer(), 0, inode.size());
     }
 
     private static class Entry implements Comparable<Entry> {
-        public String Name;
+        public String name;
 
-        public BuilderNode Node;
+        public BuilderNode node;
 
         public int compareTo(Entry other) {
-            return Name.compareTo(other.Name);
+            return name.compareTo(other.name);
         }
     }
 }

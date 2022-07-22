@@ -39,11 +39,12 @@ import discUtils.iscsi.TargetInfo;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "portal",
             description = "Address of the iSCSI server (aka Portal) in the form <host>[:<port>], for example 192.168.1.2:3260 or 192.168.1.2",
             args = 1,
             required = true)
-    private String _portalAddress;
+    private String portalAddress;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -61,7 +62,7 @@ public class Program extends ProgramBase {
 
         boolean foundTargets = false;
         try {
-            for (TargetInfo target : initiator.getTargets(_portalAddress)) {
+            for (TargetInfo target : initiator.getTargets(portalAddress)) {
                 foundTargets = true;
                 System.err.println("Target: " + target);
                 if (getVerbose()) {

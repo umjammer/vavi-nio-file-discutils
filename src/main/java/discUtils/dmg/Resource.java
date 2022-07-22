@@ -26,9 +26,10 @@ import java.util.Map;
 
 
 public abstract class Resource {
+
     protected Resource(String type, Map<String, Object> parts) {
-        _type = type;
-        _name = parts.get("Name") instanceof String ? (String) parts.get("Name") : null;
+        this.type = type;
+        name = parts.get("Name") instanceof String ? (String) parts.get("Name") : null;
         String idStr = parts.get("ID") instanceof String ? (String) parts.get("ID") : null;
         if (idStr != null && !idStr.isEmpty()) {
             try {
@@ -56,40 +57,40 @@ public abstract class Resource {
         }
     }
 
-    private int _attributes;
+    private int attributes;
 
     public int getAttributes() {
-        return _attributes;
+        return attributes;
     }
 
     public void setAttributes(int value) {
-        _attributes = value;
+        attributes = value;
     }
 
-    private int _id;
+    private int id;
 
     public int getId() {
-        return _id;
+        return id;
     }
 
     public void setId(int value) {
-        _id = value;
+        id = value;
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
-    private String _type;
+    private String type;
 
     public String getType() {
-        return _type;
+        return type;
     }
 
     public static Resource fromPlist(String type, Map<String, Object> parts) {

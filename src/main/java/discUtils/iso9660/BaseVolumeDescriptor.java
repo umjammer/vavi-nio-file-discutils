@@ -29,28 +29,28 @@ import java.util.Arrays;
 public class BaseVolumeDescriptor {
     public static final String Iso9660StandardIdentifier = "CD001";
 
-    public final String StandardIdentifier;
+    public final String standardIdentifier;
 
-    public final VolumeDescriptorType _VolumeDescriptorType;
+    public final VolumeDescriptorType volumeDescriptorType;
 
-    public final byte VolumeDescriptorVersion;
+    public final byte volumeDescriptorVersion;
 
     public BaseVolumeDescriptor(VolumeDescriptorType type, byte version) {
-        _VolumeDescriptorType = type;
-        StandardIdentifier = "CD001";
-        VolumeDescriptorVersion = version;
+        volumeDescriptorType = type;
+        standardIdentifier = "CD001";
+        volumeDescriptorVersion = version;
     }
 
     public BaseVolumeDescriptor(byte[] src, int offset) {
-        _VolumeDescriptorType = VolumeDescriptorType.valueOf(src[offset + 0] & 0xff);
-        StandardIdentifier = new String(src, offset + 1, 5, StandardCharsets.US_ASCII);
-        VolumeDescriptorVersion = src[offset + 6];
+        volumeDescriptorType = VolumeDescriptorType.valueOf(src[offset + 0] & 0xff);
+        standardIdentifier = new String(src, offset + 1, 5, StandardCharsets.US_ASCII);
+        volumeDescriptorVersion = src[offset + 6];
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + IsoUtilities.SectorSize, (byte) 0);
-        buffer[offset] = (byte) _VolumeDescriptorType.getValue();
-        IsoUtilities.writeAChars(buffer, offset + 1, 5, StandardIdentifier);
-        buffer[offset + 6] = VolumeDescriptorVersion;
+        buffer[offset] = (byte) volumeDescriptorType.getValue();
+        IsoUtilities.writeAChars(buffer, offset + 1, 5, standardIdentifier);
+        buffer[offset + 6] = volumeDescriptorVersion;
     }
 }

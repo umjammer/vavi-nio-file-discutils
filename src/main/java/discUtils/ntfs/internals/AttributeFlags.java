@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Flags indicating how an attribute's content is stored on disk.
+ * flags indicating how an attribute's content is stored on disk.
  */
 public enum AttributeFlags {
     /**

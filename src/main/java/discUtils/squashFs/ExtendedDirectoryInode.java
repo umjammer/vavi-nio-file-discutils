@@ -26,20 +26,21 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
-    @SuppressWarnings("unused")
-    private int _extendedAttributes;
-
-    private int _fileSize;
 
     @SuppressWarnings("unused")
-    private short _indexCount;
+    private int extendedAttributes;
+
+    private int fileSize;
+
+    @SuppressWarnings("unused")
+    private short indexCount;
 
     public int size() {
         return 40;
     }
 
     public long getFileSize() {
-        return _fileSize;
+        return fileSize;
     }
 
     public void setFileSize(long value) {
@@ -47,48 +48,48 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
             throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffL);
         }
 
-        _fileSize = (int) value;
+        fileSize = (int) value;
     }
 
-    private int _startBlock;
+    private int startBlock;
 
     public int getStartBlock() {
-        return _startBlock;
+        return startBlock;
     }
 
     public void setStartBlock(int value) {
-        _startBlock = value;
+        startBlock = value;
     }
 
-    private int _parentInode;
+    private int parentInode;
 
     public int getParentInode() {
-        return _parentInode;
+        return parentInode;
     }
 
     public void setParentInode(int value) {
-        _parentInode = value;
+        parentInode = value;
     }
 
-    private short _offset;
+    private short offset;
 
     public int getOffset() {
-        return _offset & 0xffff;
+        return offset & 0xffff;
     }
 
     public void setOffset(short value) {
-        _offset = value;
+        offset = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        _numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
-        _fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        _startBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        _parentInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
-        _indexCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 32);
-        _offset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 34);
-        _extendedAttributes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
+        numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
+        fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        startBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
+        parentInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
+        indexCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 32);
+        this.offset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 34);
+        extendedAttributes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
         return 40;
     }
 }

@@ -33,372 +33,373 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class SuperBlock implements IByteArraySerializable {
+
     public static final int XfsMagic = 0x58465342;
 
     /**
      * magic number == XFS_SB_MAGIC
      */
-    private int _magic;
+    private int magic;
 
     public int getMagic() {
-        return _magic;
+        return magic;
     }
 
     public void setMagic(int value) {
-        _magic = value;
+        magic = value;
     }
 
     /**
      * logical block size, bytes
      */
-    private int _blocksize;
+    private int blocksize;
 
     public int getBlocksize() {
-        return _blocksize;
+        return blocksize;
     }
 
     public void setBlocksize(int value) {
-        _blocksize = value;
+        blocksize = value;
     }
 
     /**
      * number of data blocks
      */
-    private long _dataBlocks;
+    private long dataBlocks;
 
     public long getDataBlocks() {
-        return _dataBlocks;
+        return dataBlocks;
     }
 
     public void setDataBlocks(long value) {
-        _dataBlocks = value;
+        dataBlocks = value;
     }
 
     /**
      * number of realtime blocks
      */
-    private long _realtimeBlocks;
+    private long realtimeBlocks;
 
     public long getRealtimeBlocks() {
-        return _realtimeBlocks;
+        return realtimeBlocks;
     }
 
     public void setRealtimeBlocks(long value) {
-        _realtimeBlocks = value;
+        realtimeBlocks = value;
     }
 
     /**
      * number of realtime extents
      */
-    private long _realtimeExtents;
+    private long realtimeExtents;
 
     public long getRealtimeExtents() {
-        return _realtimeExtents;
+        return realtimeExtents;
     }
 
     public void setRealtimeExtents(long value) {
-        _realtimeExtents = value;
+        realtimeExtents = value;
     }
 
     /**
      * user-visible file system unique id
      */
-    private UUID _uniqueId;
+    private UUID uniqueId;
 
     public UUID getUniqueId() {
-        return _uniqueId;
+        return uniqueId;
     }
 
     public void setUniqueId(UUID value) {
-        _uniqueId = value;
+        uniqueId = value;
     }
 
     /**
      * starting block of log if internal
      */
-    private long _logstart;
+    private long logstart;
 
     public long getLogstart() {
-        return _logstart;
+        return logstart;
     }
 
     public void setLogstart(long value) {
-        _logstart = value;
+        logstart = value;
     }
 
     /**
      * root inode number
      */
-    private long _rootInode;
+    private long rootInode;
 
     public long getRootInode() {
-        return _rootInode;
+        return rootInode;
     }
 
     public void setRootInode(long value) {
-        _rootInode = value;
+        rootInode = value;
     }
 
     /**
      * bitmap inode for realtime extents
      */
-    private long _realtimeBitmapInode;
+    private long realtimeBitmapInode;
 
     public long getRealtimeBitmapInode() {
-        return _realtimeBitmapInode;
+        return realtimeBitmapInode;
     }
 
     public void setRealtimeBitmapInode(long value) {
-        _realtimeBitmapInode = value;
+        realtimeBitmapInode = value;
     }
 
     /**
      * summary inode for rt bitmap
      */
-    private long _realtimeSummaryInode;
+    private long realtimeSummaryInode;
 
     public long getRealtimeSummaryInode() {
-        return _realtimeSummaryInode;
+        return realtimeSummaryInode;
     }
 
     public void setRealtimeSummaryInode(long value) {
-        _realtimeSummaryInode = value;
+        realtimeSummaryInode = value;
     }
 
     /**
      * realtime extent size, blocks
      */
-    private int _realtimeExtentSize;
+    private int realtimeExtentSize;
 
     public int getRealtimeExtentSize() {
-        return _realtimeExtentSize;
+        return realtimeExtentSize;
     }
 
     public void setRealtimeExtentSize(int value) {
-        _realtimeExtentSize = value;
+        realtimeExtentSize = value;
     }
 
     /**
      * size of an allocation group
      */
-    private int _agBlocks;
+    private int agBlocks;
 
     public int getAgBlocks() {
-        return _agBlocks;
+        return agBlocks;
     }
 
     public void setAgBlocks(int value) {
-        _agBlocks = value;
+        agBlocks = value;
     }
 
     /**
      * number of allocation groups
      */
-    private int _agCount;
+    private int agCount;
 
     public int getAgCount() {
-        return _agCount;
+        return agCount;
     }
 
     public void setAgCount(int value) {
-        _agCount = value;
+        agCount = value;
     }
 
     /**
      * number of rt bitmap blocks
      */
-    private int _realtimeBitmapBlocks;
+    private int realtimeBitmapBlocks;
 
     public int getRealtimeBitmapBlocks() {
-        return _realtimeBitmapBlocks;
+        return realtimeBitmapBlocks;
     }
 
     public void setRealtimeBitmapBlocks(int value) {
-        _realtimeBitmapBlocks = value;
+        realtimeBitmapBlocks = value;
     }
 
     /**
      * number of log blocks
      */
-    private int _logBlocks;
+    private int logBlocks;
 
     public int getLogBlocks() {
-        return _logBlocks;
+        return logBlocks;
     }
 
     public void setLogBlocks(int value) {
-        _logBlocks = value;
+        logBlocks = value;
     }
 
-    private int _version;
+    private int version;
 
     /**
      * header version == XFS_SB_VERSION
      */
-    private EnumSet<VersionFlags> _versionFlags;
+    private EnumSet<VersionFlags> versionFlags;
 
     public EnumSet<VersionFlags> getVersion() {
-        return _versionFlags;
+        return versionFlags;
     }
 
     public void setVersion(EnumSet<VersionFlags> value) {
-        _versionFlags = value;
+        versionFlags = value;
     }
 
     /**
      * volume sector size, bytes
      */
-    private short _sectorSize;
+    private short sectorSize;
 
     public int getSectorSize() {
-        return _sectorSize & 0xffff;
+        return sectorSize & 0xffff;
     }
 
     public void setSectorSize(short value) {
-        _sectorSize = value;
+        sectorSize = value;
     }
 
     /**
      * inode size, bytes
      */
-    private short _inodeSize;
+    private short inodeSize;
 
     public int getInodeSize() {
-        return _inodeSize & 0xffff;
+        return inodeSize & 0xffff;
     }
 
     public void setInodeSize(short value) {
-        _inodeSize = value;
+        inodeSize = value;
     }
 
     /**
      * inodes per block
      */
-    private short _inodesPerBlock;
+    private short inodesPerBlock;
 
     public int getInodesPerBlock() {
-        return _inodesPerBlock & 0xffff;
+        return inodesPerBlock & 0xffff;
     }
 
     public void setInodesPerBlock(short value) {
-        _inodesPerBlock = value;
+        inodesPerBlock = value;
     }
 
     /**
      * file system name
      */
-    private String _filesystemName;
+    private String filesystemName;
 
     public String getFilesystemName() {
-        return _filesystemName;
+        return filesystemName;
     }
 
     public void setFilesystemName(String value) {
-        _filesystemName = value;
+        filesystemName = value;
     }
 
     /**
-     * log2 of {@link #_blocksize}
+     * log2 of {@link #blocksize}
      */
-    private byte _blocksizeLog2;
+    private byte blocksizeLog2;
 
     public int getBlocksizeLog2() {
-        return _blocksizeLog2 & 0xff;
+        return blocksizeLog2 & 0xff;
     }
 
     public void setBlocksizeLog2(byte value) {
-        _blocksizeLog2 = value;
+        blocksizeLog2 = value;
     }
 
     /**
-     * log2 of {@link #_sectorSize}
+     * log2 of {@link #sectorSize}
      */
-    private byte _sectorSizeLog2;
+    private byte sectorSizeLog2;
 
     public int getSectorSizeLog2() {
-        return _sectorSizeLog2 & 0xff;
+        return sectorSizeLog2 & 0xff;
     }
 
     public void setSectorSizeLog2(byte value) {
-        _sectorSizeLog2 = value;
+        sectorSizeLog2 = value;
     }
 
     /**
-     * log2 of {@link #_inodeSize}
+     * log2 of {@link #inodeSize}
      */
-    private byte _inodeSizeLog2;
+    private byte inodeSizeLog2;
 
     public int getInodeSizeLog2() {
-        return _inodeSizeLog2 & 0xff;
+        return inodeSizeLog2 & 0xff;
     }
 
     public void setInodeSizeLog2(byte value) {
-        _inodeSizeLog2 = value;
+        inodeSizeLog2 = value;
     }
 
     /**
-     * log2 of {@link #_inodesPerBlock}
+     * log2 of {@link #inodesPerBlock}
      */
-    private byte _inodesPerBlockLog2;
+    private byte inodesPerBlockLog2;
 
     public int getInodesPerBlockLog2() {
-        return _inodesPerBlockLog2 & 0xff;
+        return inodesPerBlockLog2 & 0xff;
     }
 
     public void setInodesPerBlockLog2(byte value) {
-        _inodesPerBlockLog2 = value;
+        inodesPerBlockLog2 = value;
     }
 
     /**
-     * log2 of {@link #_agBlocks} (rounded up)
+     * log2 of {@link #agBlocks} (rounded up)
      */
-    private byte _agBlocksLog2;
+    private byte agBlocksLog2;
 
     public int getAgBlocksLog2() {
-        return _agBlocksLog2 & 0xff;
+        return agBlocksLog2 & 0xff;
     }
 
     public void setAgBlocksLog2(byte value) {
-        _agBlocksLog2 = value;
+        agBlocksLog2 = value;
     }
 
     /**
-     * log2 of {@link #_realtimeExtents}
+     * log2 of {@link #realtimeExtents}
      */
-    private byte _realtimeExtentsLog2;
+    private byte realtimeExtentsLog2;
 
     public int getRealtimeExtentsLog2() {
-        return _realtimeExtentsLog2 & 0xff;
+        return realtimeExtentsLog2 & 0xff;
     }
 
     public void setRealtimeExtentsLog2(byte value) {
-        _realtimeExtentsLog2 = value;
+        realtimeExtentsLog2 = value;
     }
 
     /**
      * mkfs is in progress, don't mount
      */
-    private byte _inProgress;
+    private byte inProgress;
 
     public int getInProgress() {
-        return _inProgress & 0xff;
+        return inProgress & 0xff;
     }
 
     public void setInProgress(byte value) {
-        _inProgress = value;
+        inProgress = value;
     }
 
     /**
      * max % of fs for inode space
      */
-    private byte _inodesMaxPercent;
+    private byte inodesMaxPercent;
 
     public int getInodesMaxPercent() {
-        return _inodesMaxPercent & 0xff;
+        return inodesMaxPercent & 0xff;
     }
 
     public void setInodesMaxPercent(byte value) {
-        _inodesMaxPercent = value;
+        inodesMaxPercent = value;
     }
 
     // These fields must remain contiguous. If you really
@@ -408,222 +409,222 @@ public class SuperBlock implements IByteArraySerializable {
     /**
      * allocated inodes
      */
-    private long _allocatedInodes;
+    private long allocatedInodes;
 
     public long getAllocatedInodes() {
-        return _allocatedInodes;
+        return allocatedInodes;
     }
 
     public void setAllocatedInodes(long value) {
-        _allocatedInodes = value;
+        allocatedInodes = value;
     }
 
     /**
      * free inodes
      */
-    private long _freeInodes;
+    private long freeInodes;
 
     public long getFreeInodes() {
-        return _freeInodes;
+        return freeInodes;
     }
 
     public void setFreeInodes(long value) {
-        _freeInodes = value;
+        freeInodes = value;
     }
 
     /**
      * free data blocks
      */
-    private long _freeDataBlocks;
+    private long freeDataBlocks;
 
     public long getFreeDataBlocks() {
-        return _freeDataBlocks;
+        return freeDataBlocks;
     }
 
     public void setFreeDataBlocks(long value) {
-        _freeDataBlocks = value;
+        freeDataBlocks = value;
     }
 
     /**
      * free realtime extents
      */
-    private long _freeRealtimeExtents;
+    private long freeRealtimeExtents;
 
     public long getFreeRealtimeExtents() {
-        return _freeRealtimeExtents;
+        return freeRealtimeExtents;
     }
 
     public void setFreeRealtimeExtents(long value) {
-        _freeRealtimeExtents = value;
+        freeRealtimeExtents = value;
     }
 
     /**
      * user quota inode
      */
-    private long _userQuotaInode;
+    private long userQuotaInode;
 
     public long getUserQuotaInode() {
-        return _userQuotaInode;
+        return userQuotaInode;
     }
 
     public void setUserQuotaInode(long value) {
-        _userQuotaInode = value;
+        userQuotaInode = value;
     }
 
     /**
      * group quota inode
      */
-    private long _groupQuotaInode;
+    private long groupQuotaInode;
 
     public long getGroupQuotaInode() {
-        return _groupQuotaInode;
+        return groupQuotaInode;
     }
 
     public void setGroupQuotaInode(long value) {
-        _groupQuotaInode = value;
+        groupQuotaInode = value;
     }
 
     /**
      * quota flags
      */
-    private short _quotaFlags;
+    private short quotaFlags;
 
     public short getQuotaFlags() {
-        return _quotaFlags;
+        return quotaFlags;
     }
 
     public void setQuotaFlags(short value) {
-        _quotaFlags = value;
+        quotaFlags = value;
     }
 
     /**
      * misc. flags
      */
-    private byte _flags;
+    private byte flags;
 
     public byte getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(byte value) {
-        _flags = value;
+        flags = value;
     }
 
     /**
      * shared version number
      */
-    private byte _sharedVersionNumber;
+    private byte sharedVersionNumber;
 
     public int getSharedVersionNumber() {
-        return _sharedVersionNumber & 0xff;
+        return sharedVersionNumber & 0xff;
     }
 
     public void setSharedVersionNumber(byte value) {
-        _sharedVersionNumber = value;
+        sharedVersionNumber = value;
     }
 
     /**
      * inode chunk alignment, fsblocks
      */
-    private int _inodeChunkAlignment;
+    private int inodeChunkAlignment;
 
     public int getInodeChunkAlignment() {
-        return _inodeChunkAlignment;
+        return inodeChunkAlignment;
     }
 
     public void setInodeChunkAlignment(int value) {
-        _inodeChunkAlignment = value;
+        inodeChunkAlignment = value;
     }
 
     /**
      * stripe or raid unit
      */
-    private int _unit;
+    private int unit;
 
     public int getUnit() {
-        return _unit;
+        return unit;
     }
 
     public void setUnit(int value) {
-        _unit = value;
+        unit = value;
     }
 
     /**
      * stripe or raid width
      */
-    private int _width;
+    private int width;
 
     public int getWidth() {
-        return _width;
+        return width;
     }
 
     public void setWidth(int value) {
-        _width = value;
+        width = value;
     }
 
     /**
      * log2 of dir block size (fsbs)
      */
-    private byte _dirBlockLog2;
+    private byte dirBlockLog2;
 
     public int getDirBlockLog2() {
-        return _dirBlockLog2 & 0xff;
+        return dirBlockLog2 & 0xff;
     }
 
     public void setDirBlockLog2(byte value) {
-        _dirBlockLog2 = value;
+        dirBlockLog2 = value;
     }
 
     /**
      * log2 of the log sector size
      */
-    private byte _logSectorSizeLog2;
+    private byte logSectorSizeLog2;
 
     public int getLogSectorSizeLog2() {
-        return _logSectorSizeLog2 & 0xff;
+        return logSectorSizeLog2 & 0xff;
     }
 
     public void setLogSectorSizeLog2(byte value) {
-        _logSectorSizeLog2 = value;
+        logSectorSizeLog2 = value;
     }
 
     /**
      * sector size for the log, bytes
      */
-    private short _logSectorSize;
+    private short logSectorSize;
 
     public int getLogSectorSize() {
-        return _logSectorSize & 0xffff;
+        return logSectorSize & 0xffff;
     }
 
     public void setLogSectorSize(short value) {
-        _logSectorSize = value;
+        logSectorSize = value;
     }
 
     /**
      * stripe unit size for the log
      */
-    private int _logUnitSize;
+    private int logUnitSize;
 
     public int getLogUnitSize() {
-        return _logUnitSize;
+        return logUnitSize;
     }
 
     public void setLogUnitSize(int value) {
-        _logUnitSize = value;
+        logUnitSize = value;
     }
 
     /**
      * additional feature bits
      */
-    private EnumSet<Version2Features> _features2;
+    private EnumSet<Version2Features> features2;
 
     public EnumSet<Version2Features> getFeatures2() {
-        return _features2;
+        return features2;
     }
 
     public void setFeatures2(EnumSet<Version2Features> value) {
-        _features2 = value;
+        features2 = value;
     }
 
     // bad features2 field as a result of failing to pad the sb structure to
@@ -642,153 +643,153 @@ public class SuperBlock implements IByteArraySerializable {
      * value in sb_features2 when formatting the incore superblock to the disk
      * buffer.
      */
-    private int _badFeatures2;
+    private int badFeatures2;
 
     public int getBadFeatures2() {
-        return _badFeatures2;
+        return badFeatures2;
     }
 
     public void setBadFeatures2(int value) {
-        _badFeatures2 = value;
+        badFeatures2 = value;
     }
 
     // version 5 superblock fields start here
 
     /* feature masks */
-    private int _compatibleFeatures;
+    private int compatibleFeatures;
 
     public int getCompatibleFeatures() {
-        return _compatibleFeatures;
+        return compatibleFeatures;
     }
 
     public void setCompatibleFeatures(int value) {
-        _compatibleFeatures = value;
+        compatibleFeatures = value;
     }
 
-    private EnumSet<ReadOnlyCompatibleFeatures> _readOnlyCompatibleFeatures = EnumSet.noneOf(ReadOnlyCompatibleFeatures.class);
+    private EnumSet<ReadOnlyCompatibleFeatures> readOnlyCompatibleFeatures = EnumSet.noneOf(ReadOnlyCompatibleFeatures.class);
 
     public EnumSet<ReadOnlyCompatibleFeatures> getReadOnlyCompatibleFeatures() {
-        return _readOnlyCompatibleFeatures;
+        return readOnlyCompatibleFeatures;
     }
 
     public void setReadOnlyCompatibleFeatures(EnumSet<ReadOnlyCompatibleFeatures> value) {
-        _readOnlyCompatibleFeatures = value;
+        readOnlyCompatibleFeatures = value;
     }
 
-    private EnumSet<IncompatibleFeatures> _incompatibleFeatures = EnumSet.noneOf(IncompatibleFeatures.class);
+    private EnumSet<IncompatibleFeatures> incompatibleFeatures = EnumSet.noneOf(IncompatibleFeatures.class);
 
     public EnumSet<IncompatibleFeatures> getIncompatibleFeatures() {
-        return _incompatibleFeatures;
+        return incompatibleFeatures;
     }
 
     public void setIncompatibleFeatures(EnumSet<IncompatibleFeatures> value) {
-        _incompatibleFeatures = value;
+        incompatibleFeatures = value;
     }
 
-    private int _logIncompatibleFeatures;
+    private int logIncompatibleFeatures;
 
     public int getLogIncompatibleFeatures() {
-        return _logIncompatibleFeatures;
+        return logIncompatibleFeatures;
     }
 
     public void setLogIncompatibleFeatures(int value) {
-        _logIncompatibleFeatures = value;
+        logIncompatibleFeatures = value;
     }
 
     /**
      * superblock crc
      */
-    private int _crc;
+    private int crc;
 
     public int getCrc() {
-        return _crc;
+        return crc;
     }
 
     public void setCrc(int value) {
-        _crc = value;
+        crc = value;
     }
 
     /**
      * sparse inode chunk alignment
      */
-    private int _sparseInodeAlignment;
+    private int sparseInodeAlignment;
 
     public int getSparseInodeAlignment() {
-        return _sparseInodeAlignment;
+        return sparseInodeAlignment;
     }
 
     public void setSparseInodeAlignment(int value) {
-        _sparseInodeAlignment = value;
+        sparseInodeAlignment = value;
     }
 
     /**
      * project quota inode
      */
-    private long _projectQuotaInode;
+    private long projectQuotaInode;
 
     public long getProjectQuotaInode() {
-        return _projectQuotaInode;
+        return projectQuotaInode;
     }
 
     public void setProjectQuotaInode(long value) {
-        _projectQuotaInode = value;
+        projectQuotaInode = value;
     }
 
     /**
      * last write sequence
      */
-    private long _lsn;
+    private long lsn;
 
     public long getLsn() {
-        return _lsn;
+        return lsn;
     }
 
     public void setLsn(long value) {
-        _lsn = value;
+        lsn = value;
     }
 
     /**
      * metadata file system unique id
      */
-    private UUID _metaUuid;
+    private UUID metaUuid;
 
     public UUID getMetaUuid() {
-        return _metaUuid;
+        return metaUuid;
     }
 
     public void setMetaUuid(UUID value) {
-        _metaUuid = value;
+        metaUuid = value;
     }
 
     /* must be padded to 64 bit alignment */
-    private int _relativeInodeMask;
+    private int relativeInodeMask;
 
     public int getRelativeInodeMask() {
-        return _relativeInodeMask;
+        return relativeInodeMask;
     }
 
     public void setRelativeInodeMask(int value) {
-        _relativeInodeMask = value;
+        relativeInodeMask = value;
     }
 
-    private int _agInodeMask;
+    private int agInodeMask;
 
     public int getAgInodeMask() {
-        return _agInodeMask;
+        return agInodeMask;
     }
 
     public void setAgInodeMask(int value) {
-        _agInodeMask = value;
+        agInodeMask = value;
     }
 
-    private int _dirBlockSize;
+    private int dirBlockSize;
 
     public int getDirBlockSize() {
-        return _dirBlockSize;
+        return dirBlockSize;
     }
 
     public void setDirBlockSize(int value) {
-        _dirBlockSize = value;
+        dirBlockSize = value;
     }
 
     public int size() {
@@ -800,93 +801,91 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     public int getSbVersion() {
-        return _version;
+        return version;
     }
 
     public boolean getSbVersionHasMoreBits() {
-        return _versionFlags.contains(VersionFlags.Features2);
+        return versionFlags.contains(VersionFlags.Features2);
     }
 
     public boolean hasFType() {
-        return getSbVersion() == 5 && _incompatibleFeatures.contains(IncompatibleFeatures.FType) ||
-               getSbVersionHasMoreBits() && _features2.contains(Version2Features.FType);
+        return getSbVersion() == 5 && incompatibleFeatures.contains(IncompatibleFeatures.FType) ||
+               getSbVersionHasMoreBits() && features2.contains(Version2Features.FType);
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        if (getMagic() != XfsMagic)
+        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        if (magic != XfsMagic)
             return size();
 
-        setBlocksize(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4));
-        setDataBlocks(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8));
-        setRealtimeBlocks(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10));
-        setRealtimeExtents(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x18));
-        setUniqueId(EndianUtilities.toGuidBigEndian(buffer, offset + 0x20));
-        setLogstart(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x30));
-        setRootInode(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x38));
-        setRealtimeBitmapInode(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x40));
-        setRealtimeSummaryInode(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x48));
-        setRealtimeExtentSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x50));
-        setAgBlocks(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x54));
-        setAgCount(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x58));
-        setRealtimeBitmapBlocks(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x5C));
-        setLogBlocks(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x60));
+        blocksize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        dataBlocks = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
+        realtimeBlocks = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10);
+        realtimeExtents = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x18);
+        uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x20);
+        logstart = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x30);
+        rootInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x38);
+        realtimeBitmapInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x40);
+        realtimeSummaryInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x48);
+        realtimeExtentSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x50);
+        agBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x54);
+        agCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x58);
+        realtimeBitmapBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x5C);
+        logBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x60);
         short versionFlags = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x64);
-        _version = versionFlags & VersionFlags.NumberFlag;
-        setVersion(VersionFlags.valueOf(versionFlags & ~VersionFlags.NumberFlag));
-        setSectorSize(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x66));
-        setInodeSize(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x68));
-        setInodesPerBlock(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6A));
-        setFilesystemName(EndianUtilities.bytesToZString(buffer, offset + 0x6C, 12));
-        setBlocksizeLog2(buffer[offset + 0x78]);
-        setSectorSizeLog2(buffer[offset + 0x79]);
-        setInodeSizeLog2(buffer[offset + 0x7A]);
-        setInodesPerBlockLog2(buffer[offset + 0x7B]);
-        setAgBlocksLog2(buffer[offset + 0x7C]);
-        setRealtimeExtentsLog2(buffer[offset + 0x7D]);
-        setInProgress(buffer[offset + 0x7E]);
-        setInodesMaxPercent(buffer[offset + 0x7F]);
-        setAllocatedInodes(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x80));
-        setFreeInodes(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x88));
-        setFreeDataBlocks(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x90));
-        setFreeRealtimeExtents(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x98));
-        setUserQuotaInode(EndianUtilities.toUInt64BigEndian(buffer, offset + 0xA0));
-        setGroupQuotaInode(EndianUtilities.toUInt64BigEndian(buffer, offset + 0xA8));
-        setQuotaFlags(EndianUtilities.toUInt16BigEndian(buffer, offset + 0xB0));
-        setFlags(buffer[offset + 0xB2]);
-        setSharedVersionNumber(buffer[offset + 0xB3]);
-        setInodeChunkAlignment(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB4));
-        setUnit(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB8));
-        setWidth(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xBC));
-        setDirBlockLog2(buffer[offset + 0xC0]);
-        setLogSectorSizeLog2(buffer[offset + 0xC1]);
-        setLogSectorSize(EndianUtilities.toUInt16BigEndian(buffer, offset + 0xC2));
-        setLogUnitSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC4));
-        setFeatures2(Version2Features.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC8)));
-        setBadFeatures2(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xCC));
+        version = versionFlags & VersionFlags.NumberFlag;
+        this.versionFlags = VersionFlags.valueOf(versionFlags & ~VersionFlags.NumberFlag);
+        sectorSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x66);
+        inodeSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x68);
+        inodesPerBlock = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6A);
+        filesystemName = EndianUtilities.bytesToZString(buffer, offset + 0x6C, 12);
+        blocksizeLog2 = buffer[offset + 0x78];
+        sectorSizeLog2 = buffer[offset + 0x79];
+        inodeSizeLog2 = buffer[offset + 0x7A];
+        inodesPerBlockLog2 = buffer[offset + 0x7B];
+        agBlocksLog2 = buffer[offset + 0x7C];
+        realtimeExtentsLog2 = buffer[offset + 0x7D];
+        inProgress = buffer[offset + 0x7E];
+        inodesMaxPercent = buffer[offset + 0x7F];
+        allocatedInodes = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x80);
+        freeInodes = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x88);
+        freeDataBlocks = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x90);
+        freeRealtimeExtents = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x98);
+        userQuotaInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0xA0);
+        groupQuotaInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0xA8);
+        quotaFlags = EndianUtilities.toUInt16BigEndian(buffer, offset + 0xB0);
+        flags = buffer[offset + 0xB2];
+        sharedVersionNumber = buffer[offset + 0xB3];
+        inodeChunkAlignment = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB4);
+        unit = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB8);
+        width = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xBC);
+        dirBlockLog2 = buffer[offset + 0xC0];
+        logSectorSizeLog2 = buffer[offset + 0xC1];
+        logSectorSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 0xC2);
+        logUnitSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC4);
+        features2 = Version2Features.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC8));
+        badFeatures2 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xCC);
 
-        if (getSbVersion() >= (short) VersionFlags.Version5) {
-            setCompatibleFeatures(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD0));
-            setReadOnlyCompatibleFeatures(ReadOnlyCompatibleFeatures
-                    .valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD4)));
-            setIncompatibleFeatures(IncompatibleFeatures.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD8)));
-            setLogIncompatibleFeatures(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xDC));
-            setCrc(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xE0));
-            setSparseInodeAlignment(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xE4));
-            setProjectQuotaInode(EndianUtilities.toUInt64BigEndian(buffer, offset + 0xE8));
-            setLsn(EndianUtilities.toInt64BigEndian(buffer, offset + 0xF0));
-            setMetaUuid(EndianUtilities.toGuidBigEndian(buffer, offset + 0xF8));
-            getIncompatibleFeatures();
-            getIncompatibleFeatures();
-            if (Collections.disjoint(_incompatibleFeatures, IncompatibleFeatures.Supported))
-                throw new UnsupportedOperationException("XFS Features not supported");
+        if (version >= (short) VersionFlags.Version5) {
+            compatibleFeatures = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD0);
+            readOnlyCompatibleFeatures = ReadOnlyCompatibleFeatures
+                        .valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD4));
+            incompatibleFeatures = IncompatibleFeatures.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD8));
+            logIncompatibleFeatures = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xDC);
+            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xE0);
+            sparseInodeAlignment = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xE4);
+            projectQuotaInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0xE8);
+            lsn = EndianUtilities.toInt64BigEndian(buffer, offset + 0xF0);
+            metaUuid = EndianUtilities.toGuidBigEndian(buffer, offset + 0xF8);
+            if (Collections.disjoint(incompatibleFeatures, IncompatibleFeatures.Supported))
+                throw new UnsupportedOperationException("XFS features not supported");
         }
 
         long agOffset = getAgBlocksLog2() + getInodesPerBlockLog2();
-        setRelativeInodeMask(0xffffffff >>> (32 - agOffset));
-        setAgInodeMask(~getRelativeInodeMask());
+        relativeInodeMask = 0xffff_ffff >>> (32 - agOffset);
+        agInodeMask = ~relativeInodeMask;
 
-        setDirBlockSize(getBlocksize() << getDirBlockLog2());
+        dirBlockSize = blocksize << getDirBlockLog2();
         return size();
     }
 
@@ -896,7 +895,7 @@ public class SuperBlock implements IByteArraySerializable {
 
     // xfs_btree_compute_maxlevels
     public int computeBtreeMaxlevels() {
-        int len = _agBlocks;
+        int len = agBlocks;
         int level;
         int[] limits = new int[] {
             xfs_rmapbt_maxrecs(false), xfs_rmapbt_maxrecs(true)
@@ -908,7 +907,7 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     private int xfs_rmapbt_maxrecs(boolean leaf) {
-        int blocklen = _blocksize - 56;
+        int blocklen = blocksize - 56;
         if (leaf)
             return blocklen / 24;
 

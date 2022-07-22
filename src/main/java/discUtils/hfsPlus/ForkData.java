@@ -27,28 +27,29 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ForkData implements IByteArraySerializable {
+
     public static final int StructSize = 80;
 
-    public int ClumpSize;
+    public int clumpSize;
 
-    public ExtentDescriptor[] Extents;
+    public ExtentDescriptor[] extents;
 
-    public long LogicalSize;
+    public long logicalSize;
 
-    public int TotalBlocks;
+    public int totalBlocks;
 
     public int size() {
         return StructSize;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        LogicalSize = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
-        ClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        TotalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        logicalSize = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
+        clumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        totalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
 
-        Extents = new ExtentDescriptor[8];
+        extents = new ExtentDescriptor[8];
         for (int i = 0; i < 8; ++i) {
-            Extents[i] = EndianUtilities.toStruct(ExtentDescriptor.class, buffer, offset + 16 + i * 8);
+            extents[i] = EndianUtilities.toStruct(ExtentDescriptor.class, buffer, offset + 16 + i * 8);
         }
 
         return StructSize;

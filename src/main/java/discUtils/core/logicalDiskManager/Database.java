@@ -36,51 +36,49 @@ import dotnet4j.io.Stream;
 
 
 public class Database {
-    private final Map<Long, DatabaseRecord> _records;
 
-    private final DatabaseHeader _vmdb;
+    private final Map<Long, DatabaseRecord> records;
+
+    private final DatabaseHeader vmdb;
 
     public Database(Stream stream) {
         long dbStart = stream.getPosition();
         byte[] buffer = new byte[Sizes.Sector];
         stream.read(buffer, 0, buffer.length);
-        _vmdb = new DatabaseHeader();
-        _vmdb.readFrom(buffer, 0);
-        stream.setPosition(dbStart + _vmdb.HeaderSize);
-        buffer = StreamUtilities.readExact(stream, _vmdb.BlockSize * _vmdb.NumVBlks);
-        _records = new HashMap<>();
-        for (int i = 0; i < _vmdb.NumVBlks; ++i) {
-            DatabaseRecord rec = DatabaseRecord.readFrom(buffer,
-                                                         new int[] {
-                                                             i * _vmdb.BlockSize
-                                                         });
+        vmdb = new DatabaseHeader();
+        vmdb.readFrom(buffer, 0);
+        stream.setPosition(dbStart + vmdb.headerSize);
+        buffer = StreamUtilities.readExact(stream, vmdb.blockSize * vmdb.numVBlks);
+        records = new HashMap<>();
+        for (int i = 0; i < vmdb.numVBlks; ++i) {
+            DatabaseRecord rec = DatabaseRecord.readFrom(buffer, new int[] { i * vmdb.blockSize});
             if (rec != null) {
-                _records.put(rec.Id, rec);
+                records.put(rec.id, rec);
             }
         }
     }
 
     public List<DiskRecord> getDisks() {
-        return _records.values()
+        return records.values()
                 .stream()
-                .filter(r -> r._RecordType == RecordType.Disk)
+                .filter(r -> r.recordType == RecordType.Disk)
                 .map(r -> (DiskRecord) r)
                 .collect(Collectors.toList());
     }
 
     public List<VolumeRecord> getVolumes() {
-        return _records.values()
+        return records.values()
                 .stream()
-                .filter(r -> r._RecordType == RecordType.Volume)
+                .filter(r -> r.recordType == RecordType.Volume)
                 .map(r -> (VolumeRecord) r)
                 .collect(Collectors.toList());
     }
 
     public DiskGroupRecord getDiskGroup(UUID guid) {
-        for (DatabaseRecord record : _records.values()) {
-            if (record._RecordType == RecordType.DiskGroup) {
+        for (DatabaseRecord record : records.values()) {
+            if (record.recordType == RecordType.DiskGroup) {
                 DiskGroupRecord dgRecord = (DiskGroupRecord) record;
-                if (UUID.fromString(dgRecord.GroupGuidString).equals(guid) || guid.equals(new UUID(0L, 0L))) {
+                if (UUID.fromString(dgRecord.groupGuidString).equals(guid) || guid.equals(new UUID(0L, 0L))) {
                     return dgRecord;
                 }
             }
@@ -90,10 +88,10 @@ public class Database {
 
     public List<ComponentRecord> getVolumeComponents(long volumeId) {
         List<ComponentRecord> result = new ArrayList<>();
-        for (DatabaseRecord record : _records.values()) {
-            if (record._RecordType == RecordType.Component) {
+        for (DatabaseRecord record : records.values()) {
+            if (record.recordType == RecordType.Component) {
                 ComponentRecord cmpntRecord = (ComponentRecord) record;
-                if (cmpntRecord.VolumeId == volumeId) {
+                if (cmpntRecord.volumeId == volumeId) {
                     result.add(cmpntRecord);
                 }
             }
@@ -103,10 +101,10 @@ public class Database {
 
     public List<ExtentRecord> getComponentExtents(long componentId) {
         List<ExtentRecord> result = new ArrayList<>();
-        for (DatabaseRecord record : _records.values()) {
-            if (record._RecordType == RecordType.Extent) {
+        for (DatabaseRecord record : records.values()) {
+            if (record.recordType == RecordType.Extent) {
                 ExtentRecord extentRecord = (ExtentRecord) record;
-                if (extentRecord.ComponentId == componentId) {
+                if (extentRecord.componentId == componentId) {
                     result.add(extentRecord);
                 }
             }
@@ -115,20 +113,20 @@ public class Database {
     }
 
     public DiskRecord getDisk(long diskId) {
-        return (DiskRecord) _records.get(diskId);
+        return (DiskRecord) records.get(diskId);
     }
 
     public VolumeRecord getVolume(long volumeId) {
-        return (VolumeRecord) _records.get(volumeId);
+        return (VolumeRecord) records.get(volumeId);
     }
 
     public VolumeRecord getVolume(UUID id) {
-        return findRecord(r -> r.VolumeGuid.equals(id), RecordType.Volume);
+        return findRecord(r -> r.volumeGuid.equals(id), RecordType.Volume);
     }
 
     public <T extends DatabaseRecord> T findRecord(Predicate<T> pred, RecordType typeId) {
-        for (DatabaseRecord record : _records.values()) {
-            if (record._RecordType == typeId) {
+        for (DatabaseRecord record : records.values()) {
+            if (record.recordType == typeId) {
                 T t = (T) record;
                 if (pred.test(t)) {
                     return t;

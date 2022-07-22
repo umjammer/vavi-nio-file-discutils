@@ -55,20 +55,20 @@ public class Program extends ProgramBase {
     private static final String FS = java.io.File.separator;
 
     @Option(option = "disk", description = "The disks to inspect.", required = true)
-    private String[] _diskFiles;
+    private String[] diskFiles;
 
     @Option(option = "r",
             argName = "recover file_index",
             description = "Tries to recover the file at MFT index file_index from the disk.")
-    private String _recoverFile;
+    private String recoverFile;
 
     @Option(option = "M",
             argName = "meta",
             description = "Don't hide files and directories that are part of the file system itself.")
-    private boolean _showMeta;
+    private boolean showMeta;
 
     @Option(option = "Z", argName = "empty", description = "Don't hide files shown as zero size.")
-    private boolean _showZeroSize;
+    private boolean showZeroSize;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -87,7 +87,7 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
-        for (String disk : _diskFiles) {
+        for (String disk : diskFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(disk, FileAccess.Read, getUserName(), getPassword()));
         }
         VolumeInfo volInfo = null;
@@ -101,15 +101,15 @@ public class Program extends ProgramBase {
 
         try (NtfsFileSystem fs = new NtfsFileSystem(volInfo.open())) {
             MasterFileTable mft = fs.getMasterFileTable();
-            if (_recoverFile != null) {
-                MasterFileTableEntry entry = mft.get(Long.parseLong(_recoverFile));
+            if (recoverFile != null) {
+                MasterFileTableEntry entry = mft.get(Long.parseLong(recoverFile));
                 IBuffer content = getContent(entry);
                 if (content == null) {
                     System.err.println("Sorry, unable to recover content");
                     System.exit(1);
                 }
 
-                String outFile = _recoverFile + "__recovered.bin";
+                String outFile = recoverFile + "__recovered.bin";
                 if (File.exists(outFile)) {
                     System.err.println("Sorry, the file already exists: " + outFile);
                     System.exit(1);
@@ -140,10 +140,10 @@ public class Program extends ProgramBase {
 
                     long size = getSize(entry);
                     String path = getPath(mft, entry);
-                    if (!_showMeta && path.startsWith("<root>" + FS + "$Extend"))
+                    if (!showMeta && path.startsWith("<root>" + FS + "$Extend"))
                         continue;
 
-                    if (!_showZeroSize && size == 0)
+                    if (!showZeroSize && size == 0)
                         continue;
 
                     System.err.printf("Index: %-4d   Size: %-8s  Path: %s\n",

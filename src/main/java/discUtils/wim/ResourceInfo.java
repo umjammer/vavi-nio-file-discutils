@@ -26,22 +26,23 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ResourceInfo {
+
     public static final int Size = ShortResourceHeader.Size + 26;
 
-    public byte[] Hash;
+    public byte[] hash;
 
-    public ShortResourceHeader Header;
+    public ShortResourceHeader header;
 
-    public short PartNumber;
+    public short partNumber;
 
-    public int RefCount;
+    public int refCount;
 
     public void read(byte[] buffer, int offset) {
-        Header = new ShortResourceHeader();
-        Header.read(buffer, offset);
-        PartNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + ShortResourceHeader.Size);
-        RefCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + ShortResourceHeader.Size + 2);
-        Hash = new byte[20];
-        System.arraycopy(buffer, offset + ShortResourceHeader.Size + 6, Hash, 0, 20);
+        header = new ShortResourceHeader();
+        header.read(buffer, offset);
+        partNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + ShortResourceHeader.Size);
+        refCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + ShortResourceHeader.Size + 2);
+        hash = new byte[20];
+        System.arraycopy(buffer, offset + ShortResourceHeader.Size + 6, hash, 0, 20);
     }
 }

@@ -29,49 +29,50 @@ import java.util.Random;
 
 
 public final class RpcClient implements IRpcClient {
-    private int _nextTransaction;
 
-    private final String _serverAddress;
+    private int nextTransaction;
 
-    private Map<Integer, RpcTcpTransport> _transports = new HashMap<>();
+    private final String serverAddress;
+
+    private Map<Integer, RpcTcpTransport> transports = new HashMap<>();
 
     private static Random random = new Random();
 
     public RpcClient(String address, RpcCredentials credential) {
-        _serverAddress = address;
-        _credentials = credential;
-        _nextTransaction = random.nextInt();
-        _transports.put(PortMap2.ProgramIdentifier, new RpcTcpTransport(address, 111));
+        serverAddress = address;
+        credentials = credential;
+        nextTransaction = random.nextInt();
+        transports.put(PortMap2.ProgramIdentifier, new RpcTcpTransport(address, 111));
     }
 
-    private RpcCredentials _credentials;
+    private RpcCredentials credentials;
 
     public RpcCredentials getCredentials() {
-        return _credentials;
+        return credentials;
     }
 
     public void close() throws IOException {
-        if (_transports != null) {
-            for (RpcTcpTransport transport : _transports.values()) {
+        if (transports != null) {
+            for (RpcTcpTransport transport : transports.values()) {
                 transport.close();
             }
-            _transports = null;
+            transports = null;
         }
     }
 
     public int nextTransactionId() {
-        return _nextTransaction++;
+        return nextTransaction++;
     }
 
     public IRpcTransport getTransport(int program, int version) {
         RpcTcpTransport transport;
-        if (!_transports.containsKey(program)) {
+        if (!transports.containsKey(program)) {
             PortMap2 pm = new PortMap2(this);
             int port = pm.getPort(program, version, PortMap2Protocol.Tcp);
-            transport = new RpcTcpTransport(_serverAddress, port);
-            _transports.put(program, transport);
+            transport = new RpcTcpTransport(serverAddress, port);
+            transports.put(program, transport);
         }
-        transport = _transports.get(program);
+        transport = transports.get(program);
 
         return transport;
     }

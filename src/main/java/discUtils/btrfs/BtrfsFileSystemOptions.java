@@ -26,38 +26,39 @@ import discUtils.core.DiscFileSystemOptions;
 
 
 public class BtrfsFileSystemOptions extends DiscFileSystemOptions {
-    private long _subvolumeId;
+
+    private long subvolumeId;
 
     public BtrfsFileSystemOptions() {
-        _useDefaultSubvolume = true;
+        useDefaultSubvolume = true;
     }
 
     public long getSubvolumeId() {
-        return _subvolumeId;
+        return subvolumeId;
     }
 
     public void setSubvolumeId(long value) {
-        _subvolumeId = value;
+        subvolumeId = value;
         setUseDefaultSubvolume(false);
     }
 
-    private boolean _verifyChecksums;
+    private boolean verifyChecksums;
 
     public boolean verifyChecksums() {
-        return _verifyChecksums;
+        return verifyChecksums;
     }
 
     public void setVerifyChecksums(boolean value) {
-        _verifyChecksums = value;
+        verifyChecksums = value;
     }
 
-    private boolean _useDefaultSubvolume;
+    private boolean useDefaultSubvolume;
 
     public boolean useDefaultSubvolume() {
-        return _useDefaultSubvolume;
+        return useDefaultSubvolume;
     }
 
     public void setUseDefaultSubvolume(boolean value) {
-        _useDefaultSubvolume = value;
+        useDefaultSubvolume = value;
     }
 }

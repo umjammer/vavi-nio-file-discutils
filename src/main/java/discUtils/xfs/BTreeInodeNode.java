@@ -33,34 +33,35 @@ import dotnet4j.io.Stream;
 
 
 public class BTreeInodeNode extends BtreeHeader {
-    private int[] __Keys;
+
+    private int[] keys;
 
     public int[] getKeys() {
-        return __Keys;
+        return keys;
     }
 
     public void setKeys(int[] value) {
-        __Keys = value;
+        keys = value;
     }
 
-    private int[] __Pointer;
+    private int[] pointer;
 
     public int[] getPointer() {
-        return __Pointer;
+        return pointer;
     }
 
     public void setPointer(int[] value) {
-        __Pointer = value;
+        pointer = value;
     }
 
-    private Map<Integer, BtreeHeader> __Children;
+    private Map<Integer, BtreeHeader> children;
 
     public Map<Integer, BtreeHeader> getChildren() {
-        return __Children;
+        return children;
     }
 
     public void setChildren(Map<Integer, BtreeHeader> value) {
-        __Children = value;
+        children = value;
     }
 
     public int size() {
@@ -77,19 +78,19 @@ public class BTreeInodeNode extends BtreeHeader {
         if (getLevel() == 0)
             throw new IOException("invalid B+tree level - expected 0");
 
-        setKeys(new int[getNumberOfRecords()]);
-        setPointer(new int[getNumberOfRecords()]);
+        keys = new int[getNumberOfRecords()];
+        pointer = new int[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            getKeys()[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
+            keys[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
         }
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            getPointer()[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
+            pointer[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
         }
         return size();
     }
 
     public void loadBtree(AllocationGroup ag) {
-        setChildren(new HashMap<>(getNumberOfRecords()));
+        children = new HashMap<>(getNumberOfRecords());
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BtreeHeader child;
             if (getLevel() == 1) {
@@ -102,7 +103,7 @@ public class BTreeInodeNode extends BtreeHeader {
             byte[] buffer = StreamUtilities.readExact(data, ag.getContext().getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             child.loadBtree(ag);
-            getChildren().put(getKeys()[i], child);
+            children.put(getKeys()[i], child);
         }
     }
 }

@@ -10,14 +10,15 @@ import discUtils.streams.buffer.IBuffer;
 
 
 class MyFile implements IVfsFile {
-    private MyDirEntry _dirEntry;
+
+    private MyDirEntry dirEntry;
 
     public MyFile(MyDirEntry dirEntry) {
-        _dirEntry = dirEntry;
+        this.dirEntry = dirEntry;
     }
 
     public long getLastAccessTimeUtc() {
-        return _dirEntry.getLastAccessTimeUtc();
+        return dirEntry.getLastAccessTimeUtc();
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -25,7 +26,7 @@ class MyFile implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return _dirEntry.getLastWriteTimeUtc();
+        return dirEntry.getLastWriteTimeUtc();
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -33,7 +34,7 @@ class MyFile implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return _dirEntry.getCreationTimeUtc();
+        return dirEntry.getCreationTimeUtc();
     }
 
     public void setCreationTimeUtc(long value) {
@@ -41,7 +42,7 @@ class MyFile implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return _dirEntry.getFileAttributes();
+        return dirEntry.getFileAttributes();
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {

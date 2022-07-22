@@ -50,17 +50,18 @@ import dotnet4j.io.Stream;
  * Class that checks NTFS file system integrity. Poor relation of chkdsk/fsck.
  */
 public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
-    private final Stream _target;
 
-    private NtfsContext _context;
+    private final Stream target;
 
-    private PrintWriter _report;
+    private NtfsContext context;
 
-    private EnumSet<ReportLevels> _reportLevels;
+    private PrintWriter report;
 
-    private ReportLevels _levelsDetected;
+    private EnumSet<ReportLevels> reportLevels;
 
-    private final ReportLevels _levelsConsideredFail = ReportLevels.Errors;
+    private ReportLevels levelsDetected;
+
+    private final ReportLevels levelsConsideredFail = ReportLevels.Errors;
 
     /**
      * Initializes a new instance of the NtfsFileSystemChecker class.
@@ -71,7 +72,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         SnapshotStream protectiveStream = new SnapshotStream(diskData, Ownership.None);
         protectiveStream.snapshot();
         protectiveStream.freeze();
-        _target = protectiveStream;
+        target = protectiveStream;
     }
 
     /**
@@ -83,13 +84,13 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
      *         {@code false}.
      */
     public boolean check(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
-        _context = new NtfsContext();
-        _context.setRawStream(_target);
-        _context.setOptions(new NtfsOptions());
+        context = new NtfsContext();
+        context.setRawStream(target);
+        context.setOptions(new NtfsOptions());
 
-        _report = reportOutput;
-        _reportLevels = levels;
-        _levelsDetected = ReportLevels.None;
+        report = reportOutput;
+        reportLevels = levels;
+        levelsDetected = ReportLevels.None;
 
         try {
             doCheck();
@@ -101,7 +102,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             return false;
         }
 
-        return _levelsDetected != _levelsConsideredFail;
+        return levelsDetected != levelsConsideredFail;
     }
 
     /**
@@ -110,16 +111,16 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
      * @return The cluster map.
      */
     public ClusterMap buildClusterMap() {
-        _context = new NtfsContext();
-        _context.setRawStream(_target);
-        _context.setOptions(new NtfsOptions());
-        _context.getRawStream().setPosition(0);
-        byte[] bytes = StreamUtilities.readExact(_context.getRawStream(), 512);
-        _context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
-        _context.setMft(new MasterFileTable(_context));
-        File mftFile = new File(_context, _context.getMft().getBootstrapRecord());
-        _context.getMft().initialize(mftFile);
-        return _context.getMft().getClusterMap();
+        context = new NtfsContext();
+        context.setRawStream(target);
+        context.setOptions(new NtfsOptions());
+        context.getRawStream().setPosition(0);
+        byte[] bytes = StreamUtilities.readExact(context.getRawStream(), 512);
+        context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
+        context.setMft(new MasterFileTable(context));
+        File mftFile = new File(context, context.getMft().getBootstrapRecord());
+        context.getMft().initialize(mftFile);
+        return context.getMft().getClusterMap();
     }
 
     private static void abort() {
@@ -127,36 +128,36 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void doCheck() {
-        _context.getRawStream().setPosition(0);
-        byte[] bytes = StreamUtilities.readExact(_context.getRawStream(), 512);
+        context.getRawStream().setPosition(0);
+        byte[] bytes = StreamUtilities.readExact(context.getRawStream(), 512);
 
-        _context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
+        context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
 
         // -----------------------------------------------------------------------
         // MASTER FILE TABLE
         //
 
         // Bootstrap the Master File Table
-        _context.setMft(new MasterFileTable(_context));
-        File mftFile = new File(_context, _context.getMft().getBootstrapRecord());
+        context.setMft(new MasterFileTable(context));
+        File mftFile = new File(context, context.getMft().getBootstrapRecord());
 
         // Verify basic MFT records before initializing the Master File Table
         preVerifyMft(mftFile);
-        _context.getMft().initialize(mftFile);
+        context.getMft().initialize(mftFile);
 
         // Now the MFT is up and running, do more detailed analysis of it's
         // contents -
         // double-accounted clusters, etc
         verifyMft();
-        _context.getMft().dump(_report, "INFO: ");
+        context.getMft().dump(report, "INFO: ");
 
         // -----------------------------------------------------------------------
         // INDEXES
         //
 
         // Need UpperCase in order to verify some indexes (i.e. directories).
-        File ucFile = new File(_context, _context.getMft().getRecord(MasterFileTable.UpCaseIndex, false));
-        _context.setUpperCase(new UpperCase(ucFile));
+        File ucFile = new File(context, context.getMft().getRecord(MasterFileTable.UpCaseIndex, false));
+        context.setUpperCase(new UpperCase(ucFile));
         selfCheckIndexes();
 
         // -----------------------------------------------------------------------
@@ -179,8 +180,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         //
 
         // Temporary...
-        try (NtfsFileSystem fs = new NtfsFileSystem(_context.getRawStream())) {
-            if (_reportLevels.contains(ReportLevels.Information)) {
+        try (NtfsFileSystem fs = new NtfsFileSystem(context.getRawStream())) {
+            if (reportLevels.contains(ReportLevels.Information)) {
                 reportDump(fs);
             }
         } catch (IOException e) {
@@ -189,14 +190,14 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void verifyWellKnownFilesExist() {
-        Directory rootDir = new Directory(_context, _context.getMft().getRecord(MasterFileTable.RootDirIndex, false));
+        Directory rootDir = new Directory(context, context.getMft().getRecord(MasterFileTable.RootDirIndex, false));
         DirectoryEntry extendDirEntry = rootDir.getEntryByName("$Extend");
         if (extendDirEntry == null) {
             reportError("$Extend does not exist in root directory");
             abort();
         }
 
-        Directory extendDir = new Directory(_context, _context.getMft().getRecord(extendDirEntry.getReference()));
+        Directory extendDir = new Directory(context, context.getMft().getRecord(extendDirEntry.getReference()));
         DirectoryEntry objIdDirEntry = extendDir.getEntryByName("$ObjId");
         if (objIdDirEntry == null) {
             reportError("$ObjId does not exist in $Extend directory");
@@ -204,69 +205,69 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
 
         // Stash ObjectIds
-        _context.setObjectIds(new ObjectIds(new File(_context, _context.getMft().getRecord(objIdDirEntry.getReference()))));
+        context.setObjectIds(new ObjectIds(new File(context, context.getMft().getRecord(objIdDirEntry.getReference()))));
         DirectoryEntry sysVolInfDirEntry = rootDir.getEntryByName("System Volume Information");
         if (sysVolInfDirEntry == null) {
             reportError("'System Volume Information' does not exist in root directory");
             abort();
         }
-//        Directory sysVolInfDir = new Directory(_context, _context.getMft().GetRecord(sysVolInfDirEntry.getReference()));
+//        Directory sysVolInfDir = new Directory(context, context.getMft().GetRecord(sysVolInfDirEntry.getReference()));
     }
 
     private void verifyObjectIds() {
-        for (FileRecord fr : _context.getMft().getRecords()) {
+        for (FileRecord fr : context.getMft().getRecords()) {
             if (fr.getBaseFile().getValue() != 0) {
-                File f = new File(_context, fr);
+                File f = new File(context, fr);
                 for (NtfsStream stream : f.getAllStreams()) {
                     if (stream.getAttributeType() == AttributeType.ObjectId) {
                         ObjectId objId = stream.getContent(ObjectId.class);
                         ObjectIdRecord[] objIdRec = new ObjectIdRecord[1];
-                        boolean r = !_context.getObjectIds().tryGetValue(objId.Id, objIdRec);
+                        boolean r = !context.getObjectIds().tryGetValue(objId.Id, objIdRec);
                         if (r) {
                             reportError("ObjectId %s for file %s is not indexed", objId.Id, f.getBestName());
                         } else {
-                            if (!objIdRec[0].MftReference.equals(f.getMftReference())) {
+                            if (!objIdRec[0].mftReference.equals(f.getMftReference())) {
                                 reportError("ObjectId %s for file %s points to {2}",
                                             objId.Id,
                                             f.getBestName(),
-                                            objIdRec[0].MftReference);
+                                            objIdRec[0].mftReference);
                             }
                         }
                     }
                 }
             }
         }
-        for (Map.Entry<UUID, ObjectIdRecord> objIdRec : _context.getObjectIds().getAll().entrySet()) {
-            if (_context.getMft().getRecord(objIdRec.getValue().MftReference) == null) {
-                reportError("ObjectId %s refers to non-existant file %s", objIdRec.getKey(), objIdRec.getValue().MftReference);
+        for (Map.Entry<UUID, ObjectIdRecord> objIdRec : context.getObjectIds().getAll().entrySet()) {
+            if (context.getMft().getRecord(objIdRec.getValue().mftReference) == null) {
+                reportError("ObjectId %s refers to non-existant file %s", objIdRec.getKey(), objIdRec.getValue().mftReference);
             }
         }
     }
 
     private void verifyDirectories() {
-        for (FileRecord fr : _context.getMft().getRecords()) {
+        for (FileRecord fr : context.getMft().getRecords()) {
             if (fr.getBaseFile().getValue() != 0) {
                 continue;
             }
 
-            File f = new File(_context, fr);
+            File f = new File(context, fr);
             for (NtfsStream stream : f.getAllStreams()) {
                 if (stream.getAttributeType() == AttributeType.IndexRoot && stream.getName().equals("$I30")) {
                     IndexView<FileNameRecord, FileRecordReference> dir = new IndexView<>(FileNameRecord.class,
                                                                                          FileRecordReference.class,
                                                                                          f.getIndex("$I30"));
                     for (Tuple<FileNameRecord, FileRecordReference> entry : dir.getEntries()) {
-                        FileRecord refFile = _context.getMft().getRecord(entry.getValue());
+                        FileRecord refFile = context.getMft().getRecord(entry.getValue());
                         // Make sure each referenced file actually exists...
                         if (refFile == null) {
                             reportError("Directory %s references non-existent file %s", f, entry.getKey());
                         }
 
-                        File referencedFile = new File(_context, refFile);
+                        File referencedFile = new File(context, refFile);
                         StandardInformation si = referencedFile.getStandardInformation();
-                        if (si._creationTime != entry.getKey()._creationTime ||
-                            si._mftChangedTime != entry.getKey()._mftChangedTime ||
-                            si._modificationTime != entry.getKey()._modificationTime) {
+                        if (si.creationTime != entry.getKey().creationTime ||
+                            si.mftChangedTime != entry.getKey().mftChangedTime ||
+                            si.modificationTime != entry.getKey().modificationTime) {
                             reportInfo("Directory entry %s in %s is out of date", entry.getKey(), f);
                         }
                     }
@@ -276,8 +277,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void selfCheckIndexes() {
-        for (FileRecord fr : _context.getMft().getRecords()) {
-            File f = new File(_context, fr);
+        for (FileRecord fr : context.getMft().getRecords()) {
+            File f = new File(context, fr);
             for (NtfsStream stream : f.getAllStreams()) {
                 if (stream.getAttributeType() == AttributeType.IndexRoot) {
                     selfCheckIndex(f, stream.getName());
@@ -328,10 +329,10 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
         IndexEntry lastEntry = null;
 
-        Comparator<byte[]> collator = root.getCollator(_context.getUpperCase());
+        Comparator<byte[]> collator = root.getCollator(context.getUpperCase());
 
-        int pos = header._offsetToFirstEntry;
-        while (pos < header._totalSizeOfEntries) {
+        int pos = header.offsetToFirstEntry;
+        while (pos < header.totalSizeOfEntries) {
             IndexEntry entry = new IndexEntry(indexName.equals("$I30"));
             entry.read(buffer, offset + pos);
             pos += entry.getSize();
@@ -339,8 +340,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             if (entry.getFlags().contains(IndexEntryFlags.Node)) {
                 long bitmapIdx = entry.getChildrenVirtualCluster() / MathUtilities
                         .ceil(root.getIndexAllocationSize(),
-                              _context.getBiosParameterBlock().getSectorsPerCluster() *
-                                                             _context.getBiosParameterBlock().getBytesPerSector());
+                              context.getBiosParameterBlock().getSectorsPerCluster() *
+                                                             context.getBiosParameterBlock().getBytesPerSector());
                 if (!bitmap.isPresent(bitmapIdx)) {
                     reportError("Index entry %s is non-leaf, but child vcn %s is not in bitmap at index {2}",
                                 Index.entryAsString(entry, fileName, indexName),
@@ -350,7 +351,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             }
 
             if (entry.getFlags().contains(IndexEntryFlags.End)) {
-                if (pos != header._totalSizeOfEntries) {
+                if (pos != header.totalSizeOfEntries) {
                     reportError("Found END index entry %s, but not at end of node",
                                 Index.entryAsString(entry, fileName, indexName));
                     ok = false;
@@ -371,8 +372,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void preVerifyMft(File file) {
-        int recordLength = _context.getBiosParameterBlock().getMftRecordSize();
-        int bytesPerSector = _context.getBiosParameterBlock().getBytesPerSector();
+        int recordLength = context.getBiosParameterBlock().getMftRecordSize();
+        int bytesPerSector = context.getBiosParameterBlock().getBytesPerSector();
 
         // Check out the MFT's clusters
         for (Range range : file.getAttribute(AttributeType.Data, null).getClusters()) {
@@ -430,9 +431,9 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     private void verifyMft() {
         // Cluster allocation check - check for double allocations
         Map<Long, String> clusterMap = new HashMap<>();
-        for (FileRecord fr : _context.getMft().getRecords()) {
+        for (FileRecord fr : context.getMft().getRecords()) {
             if (fr.getFlags().contains(FileRecordFlags.InUse)) {
-                File f = new File(_context, fr);
+                File f = new File(context, fr);
                 for (NtfsAttribute attr : f.getAllAttributes()) {
                     String attrKey = fr.getMasterFileTableIndex() + ":" + attr.getId();
 
@@ -541,7 +542,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
 
         if ((range.getOffset() + range.getCount()) *
-            _context.getBiosParameterBlock().getBytesPerCluster() > _context.getRawStream().getLength()) {
+            context.getBiosParameterBlock().getBytesPerCluster() > context.getRawStream().getLength()) {
             reportError("Invalid cluster range %s - beyond end of disk", range);
             ok = false;
         }
@@ -550,28 +551,28 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void reportDump(IDiagnosticTraceable toDump) {
-        _levelsDetected = ReportLevels.Information;
-        if (_reportLevels.contains(ReportLevels.Information)) {
-            toDump.dump(_report, "INFO: ");
+        levelsDetected = ReportLevels.Information;
+        if (reportLevels.contains(ReportLevels.Information)) {
+            toDump.dump(report, "INFO: ");
         }
     }
 
     private void reportInfo(String str, Object... args) {
-        _levelsDetected = ReportLevels.Information;
-        if (_reportLevels.contains(ReportLevels.Information)) {
-            _report.printf("INFO: " + str + "\n", args);
+        levelsDetected = ReportLevels.Information;
+        if (reportLevels.contains(ReportLevels.Information)) {
+            report.printf("INFO: " + str + "\n", args);
         }
     }
 
     private void reportError(String str, Object... args) {
-        _levelsDetected = ReportLevels.Errors;
-        if (_reportLevels.contains(ReportLevels.Errors)) {
-            _report.printf("ERROR: " + str + "\n",
+        levelsDetected = ReportLevels.Errors;
+        if (reportLevels.contains(ReportLevels.Errors)) {
+            report.printf("ERROR: " + str + "\n",
                            Arrays.stream(args).filter(a -> !(a instanceof Throwable)).toArray(Object[]::new));
             Arrays.stream(args)
                     .filter(a -> a instanceof Throwable)
                     .map(a -> (Throwable) a)
-                    .forEach(e -> e.printStackTrace(_report));
+                    .forEach(e -> e.printStackTrace(report));
         }
     }
 

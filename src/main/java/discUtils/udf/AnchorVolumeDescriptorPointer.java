@@ -23,19 +23,20 @@
 package discUtils.udf;
 
 public class AnchorVolumeDescriptorPointer extends TaggedDescriptor<AnchorVolumeDescriptorPointer> {
-    public ExtentDescriptor MainDescriptorSequence;
 
-    public ExtentDescriptor ReserveDescriptorSequence;
+    public ExtentDescriptor mainDescriptorSequence;
+
+    public ExtentDescriptor reserveDescriptorSequence;
 
     public AnchorVolumeDescriptorPointer() {
         super(TagIdentifier.AnchorVolumeDescriptorPointer);
     }
 
     public int parse(byte[] buffer, int offset) {
-        MainDescriptorSequence = new ExtentDescriptor();
-        MainDescriptorSequence.readFrom(buffer, offset + Tag.size());
-        ReserveDescriptorSequence = new ExtentDescriptor();
-        ReserveDescriptorSequence.readFrom(buffer, offset + Tag.size() + MainDescriptorSequence.size());
+        mainDescriptorSequence = new ExtentDescriptor();
+        mainDescriptorSequence.readFrom(buffer, offset + tag.size());
+        reserveDescriptorSequence = new ExtentDescriptor();
+        reserveDescriptorSequence.readFrom(buffer, offset + tag.size() + mainDescriptorSequence.size());
         return 512;
     }
 }

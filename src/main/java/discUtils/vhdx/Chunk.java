@@ -37,23 +37,24 @@ import dotnet4j.io.Stream;
  * sector bitmap blocks may (or may not) be present.
  */
 public final class Chunk {
+
     private static final long SectorBitmapPresent = 6;
 
-    private final Stream _bat;
+    private final Stream bat;
 
-    private final byte[] _batData;
+    private final byte[] batData;
 
-    private final int _blocksPerChunk;
+    private final int blocksPerChunk;
 
-    private final int _chunk;
+    private final int chunk;
 
-    private final SparseStream _file;
+    private final SparseStream file;
 
-    private final FileParameters _fileParameters;
+    private final FileParameters fileParameters;
 
-    private final FreeSpaceTable _freeSpace;
+    private final FreeSpaceTable freeSpace;
 
-    private byte[] _sectorBitmap;
+    private byte[] sectorBitmap;
 
     public Chunk(Stream bat,
             SparseStream file,
@@ -61,66 +62,66 @@ public final class Chunk {
             FileParameters fileParameters,
             int chunk,
             int blocksPerChunk) {
-        _bat = bat;
-        _file = file;
-        _freeSpace = freeSpace;
-        _fileParameters = fileParameters;
-        _chunk = chunk;
-        _blocksPerChunk = blocksPerChunk;
-        _bat.setPosition((long) _chunk * (_blocksPerChunk + 1) * 8);
-        _batData = StreamUtilities.readExact(bat, (_blocksPerChunk + 1) * 8);
+        this.bat = bat;
+        this.file = file;
+        this.freeSpace = freeSpace;
+        this.fileParameters = fileParameters;
+        this.chunk = chunk;
+        this.blocksPerChunk = blocksPerChunk;
+        this.bat.setPosition((long) this.chunk * (this.blocksPerChunk + 1) * 8);
+        batData = StreamUtilities.readExact(bat, (this.blocksPerChunk + 1) * 8);
     }
 
     private boolean getHasSectorBitmap() {
-        return new BatEntry(_batData, _blocksPerChunk * 8).getBitmapBlockPresent();
+        return new BatEntry(batData, blocksPerChunk * 8).getBitmapBlockPresent();
     }
 
     private long getSectorBitmapPos() {
-        return new BatEntry(_batData, _blocksPerChunk * 8).getFileOffsetMB() * Sizes.OneMiB;
+        return new BatEntry(batData, blocksPerChunk * 8).getFileOffsetMB() * Sizes.OneMiB;
     }
 
     private void setSectorBitmapPos(long value) {
         BatEntry entry = new BatEntry();
         entry.setBitmapBlockPresent(value != 0);
         entry.setFileOffsetMB(value / Sizes.OneMiB);
-        entry.writeTo(_batData, _blocksPerChunk * 8);
+        entry.writeTo(batData, blocksPerChunk * 8);
     }
 
     public long getBlockPosition(int block) {
-        return new BatEntry(_batData, block * 8).getFileOffsetMB() * Sizes.OneMiB;
+        return new BatEntry(batData, block * 8).getFileOffsetMB() * Sizes.OneMiB;
     }
 
     public PayloadBlockStatus getBlockStatus(int block) {
-        // TODO _batData are all zero
-        return new BatEntry(_batData, block * 8).getPayloadBlockStatus();
+        // TODO batData are all zero
+        return new BatEntry(batData, block * 8).getPayloadBlockStatus();
     }
 
     public BlockBitmap getBlockBitmap(int block) {
-        int bytesPerBlock = (int) (Sizes.OneMiB / _blocksPerChunk);
+        int bytesPerBlock = (int) (Sizes.OneMiB / blocksPerChunk);
         int offset = bytesPerBlock * block;
         byte[] data = loadSectorBitmap();
         return new BlockBitmap(data, offset, bytesPerBlock);
     }
 
     public void writeBlockBitmap(int block) {
-        int bytesPerBlock = (int) (Sizes.OneMiB / _blocksPerChunk);
+        int bytesPerBlock = (int) (Sizes.OneMiB / blocksPerChunk);
         int offset = bytesPerBlock * block;
-        _file.setPosition(getSectorBitmapPos() + offset);
-        _file.write(_sectorBitmap, offset, bytesPerBlock);
+        file.setPosition(getSectorBitmapPos() + offset);
+        file.write(sectorBitmap, offset, bytesPerBlock);
     }
 
     public PayloadBlockStatus allocateSpaceForBlock(int block) {
         boolean dataModified = false;
 
-        BatEntry blockEntry = new BatEntry(_batData, block * 8);
+        BatEntry blockEntry = new BatEntry(batData, block * 8);
         if (blockEntry.getFileOffsetMB() == 0) {
-            blockEntry.setFileOffsetMB(allocateSpace(_fileParameters.BlockSize, false) / Sizes.OneMiB);
+            blockEntry.setFileOffsetMB(allocateSpace(fileParameters.blockSize, false) / Sizes.OneMiB);
             dataModified = true;
         }
 
         if (blockEntry.getPayloadBlockStatus() != PayloadBlockStatus.FullyPresent &&
             blockEntry.getPayloadBlockStatus() != PayloadBlockStatus.PartiallyPresent) {
-            if (_fileParameters.Flags.contains(FileParametersFlags.HasParent)) {
+            if (fileParameters.flags.contains(FileParametersFlags.HasParent)) {
                 if (!getHasSectorBitmap()) {
                     setSectorBitmapPos(allocateSpace((int) Sizes.OneMiB, true));
                 }
@@ -134,33 +135,33 @@ public final class Chunk {
         }
 
         if (dataModified) {
-            blockEntry.writeTo(_batData, block * 8);
+            blockEntry.writeTo(batData, block * 8);
 
-            _bat.setPosition((long) _chunk * (_blocksPerChunk + 1) * 8);
-            _bat.write(_batData, 0, (_blocksPerChunk + 1) * 8);
+            bat.setPosition((long) chunk * (blocksPerChunk + 1) * 8);
+            bat.write(batData, 0, (blocksPerChunk + 1) * 8);
         }
 
         return blockEntry.getPayloadBlockStatus();
     }
 
     private byte[] loadSectorBitmap() {
-        if (_sectorBitmap == null) {
-            _file.setPosition(getSectorBitmapPos());
-            _sectorBitmap = StreamUtilities.readExact(_file, (int) Sizes.OneMiB);
+        if (sectorBitmap == null) {
+            file.setPosition(getSectorBitmapPos());
+            sectorBitmap = StreamUtilities.readExact(file, (int) Sizes.OneMiB);
         }
 
-        return _sectorBitmap;
+        return sectorBitmap;
     }
 
     private long allocateSpace(int sizeBytes, boolean zero) {
         long[] pos = new long[1];
-        if (!_freeSpace.tryAllocate(sizeBytes, pos)) {
-            pos[0] = MathUtilities.roundUp(_file.getLength(), Sizes.OneMiB);
-            _file.setLength(pos[0] + sizeBytes);
-            _freeSpace.extendTo(pos[0] + sizeBytes, false);
+        if (!freeSpace.tryAllocate(sizeBytes, pos)) {
+            pos[0] = MathUtilities.roundUp(file.getLength(), Sizes.OneMiB);
+            file.setLength(pos[0] + sizeBytes);
+            freeSpace.extendTo(pos[0] + sizeBytes, false);
         } else if (zero) {
-            _file.setPosition(pos[0]);
-            _file.clear(sizeBytes);
+            file.setPosition(pos[0]);
+            file.clear(sizeBytes);
         }
 
         return pos[0];

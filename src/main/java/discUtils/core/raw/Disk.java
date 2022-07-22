@@ -47,7 +47,8 @@ import dotnet4j.io.Stream;
  * This disk format is simply an uncompressed capture of all blocks on a disk.
  */
 public final class Disk extends VirtualDisk {
-    private DiskImageFile _file;
+
+    private DiskImageFile file;
 
     /**
      * Initializes a new instance of the Disk class.
@@ -69,7 +70,7 @@ public final class Disk extends VirtualDisk {
      * @param geometry The emulated geometry of the disk.
      */
     public Disk(Stream stream, Ownership ownsStream, Geometry geometry) {
-        _file = new DiskImageFile(stream, ownsStream, geometry);
+        file = new DiskImageFile(stream, ownsStream, geometry);
     }
 
     /**
@@ -90,7 +91,7 @@ public final class Disk extends VirtualDisk {
     public Disk(String path, FileAccess access) throws IOException {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         LocalFileLocator locator = new LocalFileLocator("");
-        _file = new DiskImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose, null);
+        file = new DiskImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose, null);
     }
 
     /**
@@ -99,14 +100,14 @@ public final class Disk extends VirtualDisk {
      * @param file The contents of the disk.
      */
     private Disk(DiskImageFile file) {
-        _file = file;
+        this.file = file;
     }
 
     /**
      * Gets the capacity of the disk (in bytes).
      */
     public long getCapacity() {
-        return _file.getCapacity();
+        return file.getCapacity();
     }
 
     /**
@@ -119,14 +120,14 @@ public final class Disk extends VirtualDisk {
      * accessing the stream.
      */
     public SparseStream getContent() {
-        return _file.getContent();
+        return file.getContent();
     }
 
     /**
      * Gets the type of disk represented by this object.
      */
     public VirtualDiskClass getDiskClass() {
-        return _file.getDiskType();
+        return file.getDiskType();
     }
 
     /**
@@ -143,14 +144,14 @@ public final class Disk extends VirtualDisk {
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _file.getGeometry();
+        return file.getGeometry();
     }
 
     /**
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Collections.singletonList(_file);
+        return Collections.singletonList(file);
     }
 
     /**
@@ -174,8 +175,7 @@ public final class Disk extends VirtualDisk {
      *            the stream.
      * @param capacity The desired capacity of the new disk.
      * @param geometry The desired geometry of the new disk, or
-     *            {@code null}
-     *            for default.
+     *            {@code null} for default.
      * @return An object that accesses the stream as a disk.
      */
     public static Disk initialize(Stream stream,
@@ -224,11 +224,11 @@ public final class Disk extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_file != null) {
-                _file.close();
+            if (file != null) {
+                file.close();
             }
 
-            _file = null;
+            file = null;
         } finally {
             super.close();
         }

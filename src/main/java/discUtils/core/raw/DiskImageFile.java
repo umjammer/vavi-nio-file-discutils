@@ -43,7 +43,8 @@ import dotnet4j.io.Stream;
  * Represents a single raw disk image file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
-    private Ownership _ownsContent;
+
+    private Ownership ownsContent;
 
     /**
      * Initializes a new instance of the DiskImageFile class.
@@ -64,28 +65,28 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public DiskImageFile(Stream stream, Ownership ownsStream, Geometry geometry) {
         setContent(stream instanceof SparseStream ? (SparseStream) stream : null);
-        _ownsContent = ownsStream;
+        ownsContent = ownsStream;
 
         if (getContent() == null) {
             setContent(SparseStream.fromStream(stream, ownsStream));
-            _ownsContent = Ownership.Dispose;
+            ownsContent = Ownership.Dispose;
         }
 
-        _geometry = geometry != null ? geometry : detectGeometry(getContent());
+        this.geometry = geometry != null ? geometry : detectGeometry(getContent());
     }
 
     public long getCapacity() {
         return getContent().getLength();
     }
 
-    private SparseStream _content;
+    private SparseStream content;
 
     SparseStream getContent() {
-        return _content;
+        return content;
     }
 
     void setContent(SparseStream value) {
-        _content = value;
+        content = value;
     }
 
     /**
@@ -98,10 +99,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the geometry of the file.
      */
-    private Geometry _geometry;
+    private Geometry geometry;
 
     public Geometry getGeometry() {
-        return _geometry;
+        return geometry;
     }
 
     /**
@@ -188,7 +189,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        if (_ownsContent == Ownership.Dispose && getContent() != null) {
+        if (ownsContent == Ownership.Dispose && getContent() != null) {
             getContent().close();
         }
 

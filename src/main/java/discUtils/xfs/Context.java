@@ -29,49 +29,50 @@ import dotnet4j.io.Stream;
 
 
 public class Context extends VfsContext {
-    private Stream __RawStream;
+
+    private Stream rawStream;
 
     public Stream getRawStream() {
-        return __RawStream;
+        return rawStream;
     }
 
     public void setRawStream(Stream value) {
-        __RawStream = value;
+        rawStream = value;
     }
 
-    private SuperBlock __SuperBlock;
+    private SuperBlock superblock;
 
     public SuperBlock getSuperBlock() {
-        return __SuperBlock;
+        return superblock;
     }
 
     public void setSuperBlock(SuperBlock value) {
-        __SuperBlock = value;
+        superblock = value;
     }
 
-    private AllocationGroup[] __AllocationGroups;
+    private AllocationGroup[] allocationGroups;
 
     public AllocationGroup[] getAllocationGroups() {
-        return __AllocationGroups;
+        return allocationGroups;
     }
 
     public void setAllocationGroups(AllocationGroup[] value) {
-        __AllocationGroups = value;
+        allocationGroups = value;
     }
 
-    private XfsFileSystemOptions __Options;
+    private XfsFileSystemOptions options;
 
     public XfsFileSystemOptions getOptions() {
-        return __Options;
+        return options;
     }
 
     public void setOptions(XfsFileSystemOptions value) {
-        __Options = value;
+        options = value;
     }
 
     public Inode getInode(long number) {
         Inode inode = new Inode(number, this);
-        AllocationGroup group = getAllocationGroups()[inode.getAllocationGroup()];
+        AllocationGroup group = allocationGroups[inode.getAllocationGroup()];
         group.loadInode(inode);
         if (inode.getMagic() != Inode.InodeMagic)
             throw new IOException("invalid inode magic");

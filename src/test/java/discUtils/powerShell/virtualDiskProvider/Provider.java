@@ -217,7 +217,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             DiscDirectoryInfo dirInfo = (DiscDirectoryInfo) obj;
             switch (itemTypeUpper) {
             case "FILE":
-                try (Closeable __newVar0 = dirInfo.getFileSystem()
+                try (Closeable ignored = dirInfo.getFileSystem()
                         .openFile(Path.Combine(dirInfo.getFullName(), getChildName(path)), FileMode.Create)) {
                     {
                     }
@@ -443,7 +443,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         return (driveInfo != null) ? driveInfo.getDisk() : null;
     }
 
-    private Object findItemByPath(String path, boolean preferFs, boolean readOnly) {
+    private Object findItemByPath(String path, boolean preferFs, boolean readOnly) throws java.io.IOException {
         FileAccess fileAccess = readOnly ? FileAccess.Read : FileAccess.ReadWrite;
         String diskPath;
         String relPath;
@@ -475,15 +475,15 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         VolumeManager volMgr = getDriveInfo() != null ? getDriveInfo().getVolumeManager() : new VolumeManager(disk);
         List<LogicalVolumeInfo> volumes = volMgr.getLogicalVolumes();
         String volNumStr = pathElems.get(0).startsWith("Volume") ? pathElems.get(0).substring(6) : null;
-        int volNum;
-        boolean boolVar___0;
+        int volNum = 0;
+        boolean r;
         try {
             volNum = Integer.parseInt(volNumStr);
-            boolVar___0 = true;
+            r = true;
         } catch (NumberFormatException e) {
-            boolVar___0 = false;
+            r = false;
         }
-        if (boolVar___0 || volNum < 0 || volNum >= volumes.size()) {
+        if (r || volNum < 0 || volNum >= volumes.size()) {
             volInfo = volumes.get(volNum);
         } else {
             volInfo = volMgr.getVolume(Utilities.denormalizePath(pathElems.get(0)));
@@ -557,7 +557,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         return null;
     }
 
-    private void getChildren(String path, boolean recurse, boolean namesOnly) {
+    private void getChildren(String path, boolean recurse, boolean namesOnly) throws java.io.IOException {
         if (path == null || path.isEmpty()) {
             return;
         }
@@ -592,7 +592,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         }
     }
 
-    private void enumerateDisk(VirtualDisk vd, String path, boolean recurse, boolean namesOnly) {
+    private void enumerateDisk(VirtualDisk vd, String path, boolean recurse, boolean namesOnly) throws java.io.IOException {
         if (!path.replaceFirst("\\*$", "").endsWith("!")) {
             path += "!";
         }
@@ -607,7 +607,6 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             if (recurse) {
                 getChildren(volPath, recurse, namesOnly);
             }
-
         }
     }
 
@@ -672,7 +671,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         destFs.setAttributes(destPath, srcFs.getAttributes(srcPath));
     }
 
-    private void doCopyFile(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) {
+    private void doCopyFile(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) throws java.io.IOException {
         IWindowsFileSystem destWindowsFs = destFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) destFs
                                                                                 : null;
         IWindowsFileSystem srcWindowsFs = srcFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) srcFs

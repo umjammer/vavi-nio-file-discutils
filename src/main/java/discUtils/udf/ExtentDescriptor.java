@@ -27,17 +27,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ExtentDescriptor implements IByteArraySerializable {
-    public int Length;
 
-    public int Location;
+    public int length;
+
+    public int location;
 
     public int size() {
         return 8;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Length = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        Location = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        length = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        location = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         return 8;
     }
 

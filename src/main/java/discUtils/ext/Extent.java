@@ -27,7 +27,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class Extent implements IByteArraySerializable {
-    public int FirstLogicalBlock;
+
+    public int firstLogicalBlock;
 
     private short firstPhysicalBlockHi;
 
@@ -56,7 +57,7 @@ public class Extent implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        FirstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        firstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         numBlocks = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         firstPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
         firstPhysicalBlockLow = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);

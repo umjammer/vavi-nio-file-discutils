@@ -41,27 +41,28 @@ import dotnet4j.io.Stream;
 
 
 public class DiskStream extends SparseStream {
+
     private static final Logger logger = Logger.getLogger(DiskStream.class.getName());
 
-    private final TarFile _archive;
+    private final TarFile archive;
 
-    private final String _dir;
+    private final String dir;
 
-    private final long _length;
+    private final long length;
 
-    private Stream _currentChunkData;
+    private Stream currentChunkData;
 
-    private int _currentChunkIndex;
+    private int currentChunkIndex;
 
-    private long _position;
+    private long position;
 
-    private List<Integer> _skipChunks;
+    private List<Integer> skipChunks;
 
     public DiskStream(TarFile archive, long length, String dir) {
-        _archive = archive;
-        _length = length;
-        _dir = dir;
-        if (!archive.dirExists(_dir)) {
+        this.archive = archive;
+        this.length = length;
+        this.dir = dir;
+        if (!archive.dirExists(this.dir)) {
             throw new dotnet4j.io.IOException("No such disk");
         }
 
@@ -85,7 +86,7 @@ public class DiskStream extends SparseStream {
 
         long chunkSize = Sizes.OneMiB;
         int i = 0;
-        int numChunks = (int) ((_length + chunkSize - 1) / chunkSize);
+        int numChunks = (int) ((length + chunkSize - 1) / chunkSize);
         while (i < numChunks) {
             // Find next stored block
             while (i < numChunks && !chunkExists(i)) {
@@ -108,68 +109,68 @@ public class DiskStream extends SparseStream {
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        if (value > _length) {
+        if (value > length) {
             throw new dotnet4j.io.IOException("Attempt to move beyond end of stream");
         }
 
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position == _length) {
+        if (position == length) {
             return 0;
         }
 
-        if (_position > _length) {
+        if (position > length) {
             throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
-        int chunk = correctChunkIndex((int) (_position / Sizes.OneMiB));
-        if (_currentChunkIndex != chunk || _currentChunkData == null) {
-            if (_currentChunkData != null) {
+        int chunk = correctChunkIndex((int) (position / Sizes.OneMiB));
+        if (currentChunkIndex != chunk || currentChunkData == null) {
+            if (currentChunkData != null) {
                 try {
-                    _currentChunkData.close();
+                    currentChunkData.close();
                 } catch (IOException e) {
                     throw new dotnet4j.io.IOException(e);
                 }
-                _currentChunkData = null;
+                currentChunkData = null;
             }
 
             Stream[] tmp = new Stream[1];
-            boolean result = !_archive.tryOpenFile(String.format("%s/%8d", _dir, chunk), tmp);
-            _currentChunkData = tmp[0];
+            boolean result = !archive.tryOpenFile(String.format("%s/%8d", dir, chunk), tmp);
+            currentChunkData = tmp[0];
             if (result) {
-                _currentChunkData = new ZeroStream(Sizes.OneMiB);
+                currentChunkData = new ZeroStream(Sizes.OneMiB);
             }
 
-            _currentChunkIndex = chunk;
+            currentChunkIndex = chunk;
         }
 
-        long chunkOffset = _position % Sizes.OneMiB;
-        int toRead = Math.min((int) Math.min(Sizes.OneMiB - chunkOffset, _length - _position), count);
-        _currentChunkData.setPosition(chunkOffset);
-        int numRead = _currentChunkData.read(buffer, offset, toRead);
-        _position += numRead;
+        long chunkOffset = position % Sizes.OneMiB;
+        int toRead = Math.min((int) Math.min(Sizes.OneMiB - chunkOffset, length - position), count);
+        currentChunkData.setPosition(chunkOffset);
+        int numRead = currentChunkData.read(buffer, offset, toRead);
+        position += numRead;
         return numRead;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _length;
+            effectiveOffset += length;
         }
 
         if (effectiveOffset < 0) {
@@ -189,14 +190,14 @@ public class DiskStream extends SparseStream {
     }
 
     private boolean chunkExists(int i) {
-        return _archive.fileExists(String.format("%s/%8d", _dir, correctChunkIndex(i)));
+        return archive.fileExists(String.format("%s/%8d", dir, correctChunkIndex(i)));
     }
 
     private void readChunkSkipList() {
         List<Integer> skipChunks = new ArrayList<>();
-        for (FileRecord fileInfo : _archive.getFiles(_dir)) {
-            if (fileInfo.Length == 0) {
-                String path = fileInfo.Name.replace('/', File.separatorChar);
+        for (FileRecord fileInfo : archive.getFiles(dir)) {
+            if (fileInfo.length == 0) {
+                String path = fileInfo.name.replace('/', File.separatorChar);
                 try {
                     int index = Integer.parseInt(Utilities.getFileFromPath(path));
                     skipChunks.add(index);
@@ -206,12 +207,12 @@ public class DiskStream extends SparseStream {
             }
         }
         Collections.sort(skipChunks);
-        _skipChunks = skipChunks;
+        this.skipChunks = skipChunks;
     }
 
     private int correctChunkIndex(int rawIndex) {
         int index = rawIndex;
-        for (Integer skipChunk : _skipChunks) {
+        for (Integer skipChunk : skipChunks) {
             if (index >= skipChunk) {
                 ++index;
             } else if (index < skipChunk) {

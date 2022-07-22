@@ -28,21 +28,22 @@ import dotnet4j.io.compression.DeflateStream;
 
 
 public class SizedDeflateStream extends DeflateStream {
-    private final int _length;
 
-    private int _position;
+    private final int length;
+
+    private int position;
 
     public SizedDeflateStream(Stream stream, CompressionMode mode, boolean leaveOpen, int length) {
         super(stream, mode, leaveOpen);
-        _length = length;
+        this.length = length;
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
@@ -53,7 +54,7 @@ public class SizedDeflateStream extends DeflateStream {
 
     public int read(byte[] array, int offset, int count) {
         int read = super.read(array, offset, count);
-        _position += read;
+        position += read;
         return read;
     }
 }

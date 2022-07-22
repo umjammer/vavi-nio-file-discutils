@@ -39,61 +39,61 @@ import dotnet4j.io.Stream;
  * wrapping streams need only override the methods they need to intercept.
  */
 public class WrappingMappedStream<T extends Stream> extends MappedStream {
-    private List<StreamExtent> _extents;
 
-    private final Ownership _ownership;
+    private List<StreamExtent> extents;
+
+    private final Ownership ownership;
 
     public WrappingMappedStream(T toWrap, Ownership ownership, List<StreamExtent> extents) {
-        setWrappedStream(toWrap);
-        _ownership = ownership;
+        wrappedStream = toWrap;
+        this.ownership = ownership;
         if (extents != null) {
-            _extents = new ArrayList<>(extents);
+            this.extents = new ArrayList<>(extents);
         }
-
     }
 
     public boolean canRead() {
-        return getWrappedStream().canRead();
+        return wrappedStream.canRead();
     }
 
     public boolean canSeek() {
-        return getWrappedStream().canSeek();
+        return wrappedStream.canSeek();
     }
 
     public boolean canWrite() {
-        return getWrappedStream().canWrite();
+        return wrappedStream.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
-        if (_extents != null) {
-            return _extents;
+        if (extents != null) {
+            return extents;
         }
-        if (getWrappedStream() instanceof SparseStream) {
-            return ((SparseStream) getWrappedStream()).getExtents();
+        if (wrappedStream instanceof SparseStream) {
+            return ((SparseStream) wrappedStream).getExtents();
         }
-        return Collections.singletonList(new StreamExtent(0, getWrappedStream().getLength()));
+        return Collections.singletonList(new StreamExtent(0, wrappedStream.getLength()));
     }
 
     public long getLength() {
-        return getWrappedStream().getLength();
+        return wrappedStream.getLength();
     }
 
     public long getPosition() {
-        return getWrappedStream().getPosition();
+        return wrappedStream.getPosition();
     }
 
     public void setPosition(long value) {
-        getWrappedStream().setPosition(value);
+        wrappedStream.setPosition(value);
     }
 
-    private T __WrappedStream;
+    private T wrappedStream;
 
     protected T getWrappedStream() {
-        return __WrappedStream;
+        return wrappedStream;
     }
 
     protected void setWrappedStream(T value) {
-        __WrappedStream = value;
+        wrappedStream = value;
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
@@ -108,34 +108,34 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        return getWrappedStream().read(buffer, offset, count);
+        return wrappedStream.read(buffer, offset, count);
     }
 
     public long seek(long offset, SeekOrigin origin) {
-        return getWrappedStream().seek(offset, origin);
+        return wrappedStream.seek(offset, origin);
     }
 
     public void setLength(long value) {
-        getWrappedStream().setLength(value);
+        wrappedStream.setLength(value);
     }
 
     public void clear(int count) {
-        if (getWrappedStream() instanceof SparseStream) {
-            ((SparseStream) getWrappedStream()).clear(count);
+        if (wrappedStream instanceof SparseStream) {
+            ((SparseStream) wrappedStream).clear(count);
         } else {
             super.clear(count);
         }
     }
 
     public void write(byte[] buffer, int offset, int count) {
-        getWrappedStream().write(buffer, offset, count);
+        wrappedStream.write(buffer, offset, count);
     }
 
     public void close() throws IOException {
-        if (getWrappedStream() != null && _ownership == Ownership.Dispose) {
-            getWrappedStream().close();
+        if (wrappedStream != null && ownership == Ownership.Dispose) {
+            wrappedStream.close();
         }
 
-        setWrappedStream(null);
+        wrappedStream = null;
     }
 }

@@ -25,93 +25,94 @@ package discUtils.squashFs;
 import dotnet4j.io.Stream;
 
 public final class BuilderContext {
-    private AllocateId __AllocateId;
+
+    private AllocateId allocateId;
 
     public AllocateId getAllocateId() {
-        return __AllocateId;
+        return allocateId;
     }
 
     public void setAllocateId(AllocateId value) {
-        __AllocateId = value;
+        allocateId = value;
     }
 
-    private AllocateInode __AllocateInode;
+    private AllocateInode allocateInode;
 
     public AllocateInode getAllocateInode() {
-        return __AllocateInode;
+        return allocateInode;
     }
 
     public void setAllocateInode(AllocateInode value) {
-        __AllocateInode = value;
+        allocateInode = value;
     }
 
-    private int __DataBlockSize;
+    private int dataBlockSize;
 
     public int getDataBlockSize() {
-        return __DataBlockSize;
+        return dataBlockSize;
     }
 
     public void setDataBlockSize(int value) {
-        __DataBlockSize = value;
+        dataBlockSize = value;
     }
 
-    private MetablockWriter __DirectoryWriter;
+    private MetablockWriter directoryWriter;
 
     public MetablockWriter getDirectoryWriter() {
-        return __DirectoryWriter;
+        return directoryWriter;
     }
 
     public void setDirectoryWriter(MetablockWriter value) {
-        __DirectoryWriter = value;
+        directoryWriter = value;
     }
 
-    private MetablockWriter __InodeWriter;
+    private MetablockWriter inodeWriter;
 
     public MetablockWriter getInodeWriter() {
-        return __InodeWriter;
+        return inodeWriter;
     }
 
     public void setInodeWriter(MetablockWriter value) {
-        __InodeWriter = value;
+        inodeWriter = value;
     }
 
-    private byte[] __IoBuffer;
+    private byte[] ioBuffer;
 
     public byte[] getIoBuffer() {
-        return __IoBuffer;
+        return ioBuffer;
     }
 
     public void setIoBuffer(byte[] value) {
-        __IoBuffer = value;
+        ioBuffer = value;
     }
 
-    private Stream __RawStream;
+    private Stream rawStream;
 
     public Stream getRawStream() {
-        return __RawStream;
+        return rawStream;
     }
 
     public void setRawStream(Stream value) {
-        __RawStream = value;
+        rawStream = value;
     }
 
-    private WriteDataBlock __WriteDataBlock;
+    private WriteDataBlock writeDataBlock;
 
     public WriteDataBlock getWriteDataBlock() {
-        return __WriteDataBlock;
+        return writeDataBlock;
     }
 
     public void setWriteDataBlock(WriteDataBlock value) {
-        __WriteDataBlock = value;
+        writeDataBlock = value;
     }
 
-    private WriteFragment __WriteFragment;
+    private WriteFragment writeFragment;
 
     public WriteFragment getWriteFragment() {
-        return __WriteFragment;
+        return writeFragment;
     }
 
     public void setWriteFragment(WriteFragment value) {
-        __WriteFragment = value;
+        writeFragment = value;
     }
 }

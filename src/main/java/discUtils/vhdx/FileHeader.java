@@ -31,14 +31,15 @@ import discUtils.streams.util.Sizes;
 
 
 public final class FileHeader implements IByteArraySerializable {
+
     public static final long VhdxSignature = 0x656C696678646876L;
 
-    public String Creator;
+    public String creator;
 
-    public long Signature = VhdxSignature;
+    public long signature = VhdxSignature;
 
     public boolean isValid() {
-        return Signature == VhdxSignature;
+        return signature == VhdxSignature;
     }
 
     public int size() {
@@ -46,15 +47,15 @@ public final class FileHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0);
-        Creator = new String(buffer, offset + 8, 256 * 2, StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
+        signature = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0);
+        creator = new String(buffer, offset + 8, 256 * 2, StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
         return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + size(), (byte) 0);
-        EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 0);
-        byte[] bytes = Creator.getBytes(StandardCharsets.UTF_16LE);
+        EndianUtilities.writeBytesLittleEndian(signature, buffer, offset + 0);
+        byte[] bytes = creator.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 8, bytes.length);
     }
 }

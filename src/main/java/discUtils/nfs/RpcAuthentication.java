@@ -27,25 +27,26 @@ import dotnet4j.io.MemoryStream;
 
 
 public class RpcAuthentication {
-    private byte[] _body;
 
-    private RpcAuthFlavour _flavour = RpcAuthFlavour.Null;
+    private byte[] body;
+
+    private RpcAuthFlavour flavour = RpcAuthFlavour.Null;
 
     public RpcAuthentication() {
-        _body = new byte[400];
+        body = new byte[400];
     }
 
     public RpcAuthentication(XdrDataReader reader) {
-        _flavour = RpcAuthFlavour.values()[reader.readInt32()];
-        _body = reader.readBuffer(400);
+        flavour = RpcAuthFlavour.values()[reader.readInt32()];
+        body = reader.readBuffer(400);
     }
 
     public RpcAuthentication(RpcCredentials credential) {
-        _flavour = credential.getAuthFlavour();
+        flavour = credential.getAuthFlavour();
         MemoryStream ms = new MemoryStream();
         XdrDataWriter writer = new XdrDataWriter(ms);
         credential.write(writer);
-        _body = ms.toArray();
+        body = ms.toArray();
     }
 
     public static RpcAuthentication null_() {
@@ -53,8 +54,8 @@ public class RpcAuthentication {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_flavour.ordinal());
-        writer.writeBuffer(_body);
+        writer.write(flavour.ordinal());
+        writer.writeBuffer(body);
     }
 
     public boolean equals(Object obj) {
@@ -66,10 +67,10 @@ public class RpcAuthentication {
             return false;
         }
 
-        return other._flavour == _flavour;
+        return other.flavour == flavour;
     }
 
     public int hashCode() {
-        return _flavour.hashCode();
+        return flavour.hashCode();
     }
 }

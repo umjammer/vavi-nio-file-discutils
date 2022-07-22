@@ -36,72 +36,73 @@ import dotnet4j.io.SeekOrigin;
  * wrapping streams need only override the methods they need to intercept.
  */
 public class WrappingStream extends SparseStream {
-    private final Ownership _ownership;
 
-    private SparseStream _wrapped;
+    private final Ownership ownership;
+
+    private SparseStream wrapped;
 
     public WrappingStream(SparseStream toWrap, Ownership ownership) {
-        _wrapped = toWrap;
-        _ownership = ownership;
+        wrapped = toWrap;
+        this.ownership = ownership;
     }
 
     public boolean canRead() {
-        return _wrapped.canRead();
+        return wrapped.canRead();
     }
 
     public boolean canSeek() {
-        return _wrapped.canSeek();
+        return wrapped.canSeek();
     }
 
     public boolean canWrite() {
-        return _wrapped.canWrite();
+        return wrapped.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
-        return _wrapped.getExtents();
+        return wrapped.getExtents();
     }
 
     public long getLength() {
-        return _wrapped.getLength();
+        return wrapped.getLength();
     }
 
     public long getPosition() {
-        return _wrapped.getPosition();
+        return wrapped.getPosition();
     }
 
     public void setPosition(long value) {
-        _wrapped.setPosition(value);
+        wrapped.setPosition(value);
     }
 
     public void flush() {
-        _wrapped.flush();
+        wrapped.flush();
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        return _wrapped.read(buffer, offset, count);
+        return wrapped.read(buffer, offset, count);
     }
 
     public long seek(long offset, SeekOrigin origin) {
-        return _wrapped.seek(offset, origin);
+        return wrapped.seek(offset, origin);
     }
 
     public void setLength(long value) {
-        _wrapped.setLength(value);
+        wrapped.setLength(value);
     }
 
     public void clear(int count) {
-        _wrapped.clear(count);
+        wrapped.clear(count);
     }
 
     public void write(byte[] buffer, int offset, int count) {
-        _wrapped.write(buffer, offset, count);
+        wrapped.write(buffer, offset, count);
     }
 
     public void close() throws IOException {
-        if (_wrapped != null && _ownership == Ownership.Dispose) {
-            _wrapped.close();
+        if (wrapped != null && ownership == Ownership.Dispose) {
+            wrapped.close();
         }
 
-        _wrapped = null;
+        wrapped = null;
     }
 }

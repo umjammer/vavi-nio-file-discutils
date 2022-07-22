@@ -23,25 +23,26 @@
 package discUtils.nfs;
 
 public class PortMap2Port implements IRpcObject {
+
     public PortMap2Port() {
     }
 
     public PortMap2Port(XdrDataReader reader) {
-        _port = reader.readUInt32();
+        port = reader.readUInt32();
     }
 
-    private int _port;
+    private int port;
 
     public int getPort() {
-        return _port;
+        return port;
     }
 
     public void setPort(int value) {
-        _port = value;
+        port = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_port);
+        writer.write(port);
     }
 
     public boolean equals(Object obj) {
@@ -53,10 +54,10 @@ public class PortMap2Port implements IRpcObject {
             return false;
         }
 
-        return other._port == _port;
+        return other.port == port;
     }
 
     public int hashCode() {
-        return _port;
+        return port;
     }
 }

@@ -28,18 +28,19 @@ import java.util.Map;
 
 
 public class TextBuffer {
-    private final Map<String, String> _records;
+
+    private final Map<String, String> records;
 
     public TextBuffer() {
-        _records = new LinkedHashMap<>();
+        records = new LinkedHashMap<>();
     }
 
     public int getCount() {
-        return _records.size();
+        return records.size();
     }
 
     public String get(String key) {
-        for (Map.Entry<String, String> entry : _records.entrySet()) {
+        for (Map.Entry<String, String> entry : records.entrySet()) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
             }
@@ -48,30 +49,30 @@ public class TextBuffer {
     }
 
     public void put(String key, String value) {
-        for (Map.Entry<String, String> entry : _records.entrySet()) {
+        for (Map.Entry<String, String> entry : records.entrySet()) {
             if (entry.getKey().equals(key)) {
-                _records.put(key, value);
+                records.put(key, value);
                 return;
             }
 
         }
-        _records.put(key, value);
+        records.put(key, value);
     }
 
     public Map<String, String> getLines() {
-        return _records;
+        return records;
     }
 
     public int getSize() {
         int i = 0;
-        for (Map.Entry<String, String> entry : _records.entrySet()) {
+        for (Map.Entry<String, String> entry : records.entrySet()) {
             i += entry.getKey().length() + entry.getValue().length() + 2;
         }
         return i;
     }
 
     public void add(String key, String value) {
-        _records.put(key, value);
+        records.put(key, value);
     }
 
     public void readFrom(byte[] buffer, int offset, int length) {
@@ -104,7 +105,7 @@ public class TextBuffer {
 
     public int writeTo(byte[] buffer, int offset) {
         int i = offset;
-        for (Map.Entry<String, String> entry : _records.entrySet()) {
+        for (Map.Entry<String, String> entry : records.entrySet()) {
             byte[] bytes = entry.getKey().getBytes(StandardCharsets.US_ASCII);
             System.arraycopy(bytes, 0, buffer, i, bytes.length);
             i += bytes.length;
@@ -118,9 +119,9 @@ public class TextBuffer {
     }
 
     public void remove(String key) {
-        for (Map.Entry<String, String> entry : _records.entrySet()) {
+        for (Map.Entry<String, String> entry : records.entrySet()) {
             if (entry.getKey().equals(key)) {
-                _records.remove(key);
+                records.remove(key);
                 return;
             }
         }

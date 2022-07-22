@@ -26,31 +26,32 @@ import java.io.Closeable;
 
 
 public final class NtfsTransaction implements Closeable {
-    private static NtfsTransaction _instance;
 
-    private boolean _ownRecord;
+    private static NtfsTransaction instance;
+
+    private boolean ownRecord;
 
     public NtfsTransaction() {
-        if (_instance == null) {
-            _instance = this;
-            _timestamp = System.currentTimeMillis();
-            _ownRecord = true;
+        if (instance == null) {
+            instance = this;
+            timestamp = System.currentTimeMillis();
+            ownRecord = true;
         }
     }
 
     public static NtfsTransaction getCurrent() {
-        return _instance;
+        return instance;
     }
 
-    private long _timestamp;
+    private long timestamp;
 
     public long getTimestamp() {
-        return _timestamp;
+        return timestamp;
     }
 
     public void close() {
-        if (_ownRecord) {
-            _instance = null;
+        if (ownRecord) {
+            instance = null;
         }
     }
 }

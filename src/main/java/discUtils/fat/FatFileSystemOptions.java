@@ -34,7 +34,7 @@ import discUtils.core.coreCompat.EncodingHelper;
  */
 public final class FatFileSystemOptions extends DiscFileSystemOptions {
 
-    private Charset _encoding;
+    private Charset encoding;
 
     static {
         try {
@@ -60,7 +60,7 @@ public final class FatFileSystemOptions extends DiscFileSystemOptions {
      * Gets or sets the character encoding used for file names.
      */
     public Charset getFileNameEncoding() {
-        return _encoding;
+        return encoding;
     }
 
     public void setFileNameEncoding(Charset value) {
@@ -68,6 +68,6 @@ public final class FatFileSystemOptions extends DiscFileSystemOptions {
             throw new IllegalArgumentException(value.name() + " is not a single byte encoding");
         }
 
-        _encoding = value;
+        encoding = value;
     }
 }

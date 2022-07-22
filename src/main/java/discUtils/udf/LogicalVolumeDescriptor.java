@@ -26,29 +26,30 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolumeDescriptor> {
-    public byte[] DescriptorCharset;
 
-    public EntityIdentifier DomainIdentifier;
+    public byte[] descriptorCharset;
 
-    public EntityIdentifier ImplementationIdentifier;
+    public EntityIdentifier domainIdentifier;
 
-    public byte[] ImplementationUse;
+    public EntityIdentifier implementationIdentifier;
 
-    public ExtentDescriptor IntegritySequenceExtent;
+    public byte[] implementationUse;
 
-    public int LogicalBlockSize;
+    public ExtentDescriptor integritySequenceExtent;
 
-    public byte[] LogicalVolumeContentsUse;
+    public int logicalBlockSize;
 
-    public String LogicalVolumeIdentifier;
+    public byte[] logicalVolumeContentsUse;
 
-    public int MapTableLength;
+    public String logicalVolumeIdentifier;
 
-    public int NumPartitionMaps;
+    public int mapTableLength;
 
-    public PartitionMap[] PartitionMaps;
+    public int numPartitionMaps;
 
-    public int VolumeDescriptorSequenceNumber;
+    public PartitionMap[] partitionMaps;
+
+    public int volumeDescriptorSequenceNumber;
 
     public LogicalVolumeDescriptor() {
         super(TagIdentifier.LogicalVolumeDescriptor);
@@ -56,29 +57,29 @@ public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolum
 
     public LongAllocationDescriptor getFileSetDescriptorLocation() {
         LongAllocationDescriptor lad = new LongAllocationDescriptor();
-        lad.readFrom(LogicalVolumeContentsUse, 0);
+        lad.readFrom(logicalVolumeContentsUse, 0);
         return lad;
     }
 
     public int parse(byte[] buffer, int offset) {
-        VolumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        DescriptorCharset = EndianUtilities.toByteArray(buffer, offset + 20, 64);
-        LogicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 84, 128);
-        LogicalBlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 212);
-        DomainIdentifier = EndianUtilities.toStruct(DomainEntityIdentifier.class, buffer, offset + 216);
-        LogicalVolumeContentsUse = EndianUtilities.toByteArray(buffer, offset + 248, 16);
-        MapTableLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 264);
-        NumPartitionMaps = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
-        ImplementationIdentifier = EndianUtilities.toStruct(ImplementationEntityIdentifier.class, buffer, offset + 272);
-        ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 304, 128);
-        IntegritySequenceExtent = new ExtentDescriptor();
-        IntegritySequenceExtent.readFrom(buffer, offset + 432);
+        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        descriptorCharset = EndianUtilities.toByteArray(buffer, offset + 20, 64);
+        logicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 84, 128);
+        logicalBlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 212);
+        domainIdentifier = EndianUtilities.toStruct(DomainEntityIdentifier.class, buffer, offset + 216);
+        logicalVolumeContentsUse = EndianUtilities.toByteArray(buffer, offset + 248, 16);
+        mapTableLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 264);
+        numPartitionMaps = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
+        implementationIdentifier = EndianUtilities.toStruct(ImplementationEntityIdentifier.class, buffer, offset + 272);
+        implementationUse = EndianUtilities.toByteArray(buffer, offset + 304, 128);
+        integritySequenceExtent = new ExtentDescriptor();
+        integritySequenceExtent.readFrom(buffer, offset + 432);
         int pmOffset = 0;
-        PartitionMaps = new PartitionMap[NumPartitionMaps];
-        for (int i = 0; i < NumPartitionMaps; ++i) {
-            PartitionMaps[i] = PartitionMap.createFrom(buffer, offset + 440 + pmOffset);
-            pmOffset += PartitionMaps[i].size();
+        partitionMaps = new PartitionMap[numPartitionMaps];
+        for (int i = 0; i < numPartitionMaps; ++i) {
+            partitionMaps[i] = PartitionMap.createFrom(buffer, offset + 440 + pmOffset);
+            pmOffset += partitionMaps[i].size();
         }
-        return 440 + MapTableLength;
+        return 440 + mapTableLength;
     }
 }

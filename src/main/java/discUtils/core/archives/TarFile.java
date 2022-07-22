@@ -36,9 +36,10 @@ import dotnet4j.io.Stream;
  * Minimal tar file format implementation.
  */
 public final class TarFile {
-    private final Map<String, FileRecord> _files;
 
-    private final Stream _fileStream;
+    private final Map<String, FileRecord> files;
+
+    private final Stream fileStream;
 
     /**
      * Initializes a new instance of the TarFile class.
@@ -46,16 +47,16 @@ public final class TarFile {
      * @param fileStream The Tar file.
      */
     public TarFile(Stream fileStream) {
-        _fileStream = fileStream;
-        _files = new HashMap<>();
+        this.fileStream = fileStream;
+        files = new HashMap<>();
         TarHeader hdr = new TarHeader();
-        byte[] hdrBuf = StreamUtilities.readExact(_fileStream, TarHeader.Length);
+        byte[] hdrBuf = StreamUtilities.readExact(this.fileStream, TarHeader.Length);
         hdr.readFrom(hdrBuf, 0);
-        while (hdr.FileLength != 0 || (hdr.FileName != null && !hdr.FileName.isEmpty())) {
-            FileRecord record = new FileRecord(hdr.FileName, _fileStream.getPosition(), hdr.FileLength);
-            _files.put(record.Name, record);
-            _fileStream.setPosition(_fileStream.getPosition() + (hdr.FileLength + 511) / 512 * 512);
-            hdrBuf = StreamUtilities.readExact(_fileStream, TarHeader.Length);
+        while (hdr.fileLength != 0 || (hdr.fileName != null && !hdr.fileName.isEmpty())) {
+            FileRecord record = new FileRecord(hdr.fileName, this.fileStream.getPosition(), hdr.fileLength);
+            files.put(record.name, record);
+            this.fileStream.setPosition(this.fileStream.getPosition() + (hdr.fileLength + 511) / 512 * 512);
+            hdrBuf = StreamUtilities.readExact(this.fileStream, TarHeader.Length);
             hdr.readFrom(hdrBuf, 0);
         }
     }
@@ -68,9 +69,9 @@ public final class TarFile {
      * @return {@code true} if the file could be opened, else {@code false} .
      */
     public boolean tryOpenFile(String path, Stream[] stream) {
-        if (_files.containsKey(path)) {
-            FileRecord file = _files.get(path);
-            stream[0] = new SubStream(_fileStream, file.Start, file.Length);
+        if (files.containsKey(path)) {
+            FileRecord file = files.get(path);
+            stream[0] = new SubStream(fileStream, file.start, file.length);
             return true;
         }
 
@@ -87,9 +88,9 @@ public final class TarFile {
      *             found.
      */
     public Stream openFile(String path) {
-        if (_files.containsKey(path)) {
-            FileRecord file = _files.get(path);
-            return new SubStream(_fileStream, file.Start, file.Length);
+        if (files.containsKey(path)) {
+            FileRecord file = files.get(path);
+            return new SubStream(fileStream, file.start, file.length);
         }
 
         throw new dotnet4j.io.FileNotFoundException("File is not in archive: " + path);
@@ -102,7 +103,7 @@ public final class TarFile {
      * @return {@code true} if the file is present, else {@code false} .
      */
     public boolean fileExists(String path) {
-        return _files.containsKey(path);
+        return files.containsKey(path);
     }
 
     /**
@@ -115,7 +116,7 @@ public final class TarFile {
         String searchStr = path;
         searchStr = searchStr.replace("\\", "/");
         searchStr = searchStr.endsWith("/") ? searchStr : searchStr + "/";
-        for (String filePath : _files.keySet()) {
+        for (String filePath : files.keySet()) {
             if (filePath.startsWith(searchStr)) {
                 return true;
             }
@@ -128,9 +129,9 @@ public final class TarFile {
         String searchStr = dir;
         searchStr = searchStr.replace("\\", "/");
         searchStr = searchStr.endsWith("/") ? searchStr : searchStr + "/";
-        for (String filePath : _files.keySet()) {
+        for (String filePath : files.keySet()) {
             if (filePath.startsWith(searchStr)) {
-                result.add(_files.get(filePath));
+                result.add(files.get(filePath));
             }
         }
         return result;

@@ -29,28 +29,28 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ScsiReportLunsResponse extends ScsiResponse {
-    private int _availableLuns;
+    private int availableLuns;
 
-    private List<Long> __Luns;
+    private List<Long> luns;
 
     public List<Long> getLuns() {
-        return __Luns;
+        return luns;
     }
 
     public void setLuns(List<Long> value) {
-        __Luns = value;
+        luns = value;
     }
 
     public int getNeededDataLength() {
-        return _availableLuns * 8 + 8;
+        return availableLuns * 8 + 8;
     }
 
     public boolean getTruncated() {
-        return _availableLuns != getLuns().size();
+        return availableLuns != luns.size();
     }
 
     public void readFrom(byte[] buffer, int offset, int count) {
-        setLuns(new ArrayList<>());
+        luns = new ArrayList<>();
         if (count == 0) {
             return;
         }
@@ -59,10 +59,10 @@ public class ScsiReportLunsResponse extends ScsiResponse {
             throw new IllegalArgumentException("Data truncated too far");
         }
 
-        _availableLuns = EndianUtilities.toUInt32BigEndian(buffer, offset) / 8;
+        availableLuns = EndianUtilities.toUInt32BigEndian(buffer, offset) / 8;
         int pos = 8;
-        while (pos <= count - 8 && getLuns().size() < _availableLuns) {
-            getLuns().add(EndianUtilities.toUInt64BigEndian(buffer, offset + pos));
+        while (pos <= count - 8 && luns.size() < availableLuns) {
+            luns.add(EndianUtilities.toUInt64BigEndian(buffer, offset + pos));
             pos += 8;
         }
     }

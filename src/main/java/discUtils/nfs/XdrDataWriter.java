@@ -29,6 +29,7 @@ import dotnet4j.io.Stream;
 
 
 public final class XdrDataWriter extends BigEndianDataWriter {
+
     public XdrDataWriter(Stream stream) {
         super(stream);
     }
@@ -38,10 +39,10 @@ public final class XdrDataWriter extends BigEndianDataWriter {
     }
 
     public void writeBytes(byte[] buffer, int offset, int count) {
-        _stream.write(buffer, offset, count);
+        stream.write(buffer, offset, count);
         if ((count & 0x3) != 0) {
             int padding = 4 - (buffer.length & 0x3);
-            _stream.write(new byte[padding], 0, padding);
+            stream.write(new byte[padding], 0, padding);
         }
     }
 

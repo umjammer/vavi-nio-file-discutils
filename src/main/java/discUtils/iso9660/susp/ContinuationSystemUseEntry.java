@@ -25,16 +25,17 @@ package discUtils.iso9660.susp;
 import discUtils.iso9660.IsoUtilities;
 
 public final class ContinuationSystemUseEntry extends SystemUseEntry {
-    public int Block;
 
-    public int BlockOffset;
+    public int block;
 
-    public int Length;
+    public int blockOffset;
+
+    public int length;
 
     public ContinuationSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 28, (byte) 1);
-        Block = IsoUtilities.toUInt32FromBoth(data, offset + 4);
-        BlockOffset = IsoUtilities.toUInt32FromBoth(data, offset + 12);
-        Length = IsoUtilities.toUInt32FromBoth(data, offset + 20);
+        block = IsoUtilities.toUInt32FromBoth(data, offset + 4);
+        blockOffset = IsoUtilities.toUInt32FromBoth(data, offset + 12);
+        this.length = IsoUtilities.toUInt32FromBoth(data, offset + 20);
     }
 }

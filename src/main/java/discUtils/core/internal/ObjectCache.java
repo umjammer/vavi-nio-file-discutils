@@ -42,31 +42,32 @@ import dotnet4j.util.compat.Tuple;
  * @param <V> The type of the objects to cache.
  */
 public class ObjectCache<K, V> {
+
     private static final int MostRecentListSize = 20;
 
     private static final int PruneGap = 500;
 
-    private final Map<K, WeakReference<V>> _entries;
+    private final Map<K, WeakReference<V>> entries;
 
-    private int _nextPruneCount;
+    private int nextPruneCount;
 
-    private final List<Tuple<K, V>> _recent;
+    private final List<Tuple<K, V>> recent;
 
     public ObjectCache() {
-        _entries = new HashMap<>();
-        _recent = new ArrayList<>();
+        entries = new HashMap<>();
+        recent = new ArrayList<>();
     }
 
     public synchronized V get(K key) {
-        for (int i = 0; i < _recent.size(); ++i) {
-            Tuple<K, V> recentEntry = _recent.get(i);
+        for (int i = 0; i < recent.size(); ++i) {
+            Tuple<K, V> recentEntry = recent.get(i);
             if (recentEntry.getKey().equals(key)) {
                 makeMostRecent(i);
                 return recentEntry.getValue();
             }
         }
-        if (_entries.containsKey(key)) {
-            V val = _entries.get(key).get();
+        if (entries.containsKey(key)) {
+            V val = entries.get(key).get();
             if (val != null) {
                 makeMostRecent(key, val);
             }
@@ -78,35 +79,35 @@ public class ObjectCache<K, V> {
     }
 
     public synchronized V put(K key, V value) {
-        WeakReference<V> v = _entries.put(key, new WeakReference<>(value));
+        WeakReference<V> v = entries.put(key, new WeakReference<>(value));
         makeMostRecent(key, value);
         pruneEntries();
         return v != null ? v.get() : null;
     }
 
     public synchronized V remove(Object key) {
-        for (int i = 0; i < _recent.size(); ++i) {
-            if (_recent.get(i).getKey().equals(key)) {
-                _recent.remove(i);
+        for (int i = 0; i < recent.size(); ++i) {
+            if (recent.get(i).getKey().equals(key)) {
+                recent.remove(i);
                 break;
             }
         }
-        return _entries.remove(key).get();
+        return entries.remove(key).get();
     }
 
     private synchronized void pruneEntries() {
-        _nextPruneCount++;
-        if (_nextPruneCount > PruneGap) {
+        nextPruneCount++;
+        if (nextPruneCount > PruneGap) {
             List<K> toPrune = new ArrayList<>();
-            for (Map.Entry<K, WeakReference<V>> entry : _entries.entrySet()) {
+            for (Map.Entry<K, WeakReference<V>> entry : entries.entrySet()) {
                 if (entry.getValue().get() == null) {
                     toPrune.add(entry.getKey());
                 }
             }
             for (K key : toPrune) {
-                _entries.remove(key);
+                entries.remove(key);
             }
-            _nextPruneCount = 0;
+            nextPruneCount = 0;
         }
     }
 
@@ -115,26 +116,26 @@ public class ObjectCache<K, V> {
             return;
         }
 
-        Tuple<K, V> entry = _recent.get(i);
-        _recent.remove(i);
-        _recent.add(0, entry);
+        Tuple<K, V> entry = recent.get(i);
+        recent.remove(i);
+        recent.add(0, entry);
     }
 
     private synchronized void makeMostRecent(K key, V val) {
-        while (_recent.size() >= MostRecentListSize) {
-            _recent.remove(_recent.size() - 1);
+        while (recent.size() >= MostRecentListSize) {
+            recent.remove(recent.size() - 1);
         }
-        _recent.add(0, new Tuple<>(key, val));
+        recent.add(0, new Tuple<>(key, val));
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
-        sb.append(_entries.size());
+        sb.append(entries.size());
         sb.append("]");
         sb.append("{");
-        _entries.forEach((key, value) -> {
+        entries.forEach((key, value) -> {
             sb.append(key);
             sb.append('=');
             sb.append(value.get());

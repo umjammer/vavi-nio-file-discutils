@@ -34,34 +34,35 @@ import dotnet4j.io.Stream;
 
 
 public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
-    private long[] __Keys;
+
+    private long[] keys;
 
     public long[] getKeys() {
-        return __Keys;
+        return keys;
     }
 
     public void setKeys(long[] value) {
-        __Keys = value;
+        keys = value;
     }
 
-    private long[] __Pointer;
+    private long[] pointer;
 
     public long[] getPointer() {
-        return __Pointer;
+        return pointer;
     }
 
     public void setPointer(long[] value) {
-        __Pointer = value;
+        pointer = value;
     }
 
-    private Map<Long, BTreeExtentHeader> __Children;
+    private Map<Long, BTreeExtentHeader> children;
 
     public Map<Long, BTreeExtentHeader> getChildren() {
-        return __Children;
+        return children;
     }
 
     public void setChildren(Map<Long, BTreeExtentHeader> value) {
-        __Children = value;
+        children = value;
     }
 
     public int size() {
@@ -73,20 +74,20 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
         if (getLevel() == 0)
             throw new IOException("invalid B+tree level - expected >= 1");
 
-        setKeys(new long[getNumberOfRecords()]);
-        setPointer(new long[getNumberOfRecords()]);
+        keys = new long[getNumberOfRecords()];
+        pointer = new long[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
             getKeys()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
         offset += ((buffer.length - offset) / 16) * 8;
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            getPointer()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            pointer[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
         return size();
     }
 
     public void loadBtree(Context context) {
-        setChildren(new HashMap<>(getNumberOfRecords()));
+        children = new HashMap<>(getNumberOfRecords());
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BTreeExtentHeader child;
             if (getLevel() == 1) {
@@ -95,7 +96,7 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
                 child = new BTreeExtentNodeV5();
             }
             Stream data = context.getRawStream();
-            data.setPosition(Extent.getOffset(context, getPointer()[i]));
+            data.setPosition(Extent.getOffset(context, pointer[i]));
             byte[] buffer = StreamUtilities.readExact(data, context.getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             if (child.getMagic() != BtreeMagicV5) {
@@ -103,7 +104,7 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
             }
 
             child.loadBtree(context);
-            getChildren().put(getKeys()[i], child);
+            children.put(getKeys()[i], child);
         }
     }
 
@@ -112,7 +113,7 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
      */
     public List<Extent> getExtents() {
         List<Extent> result = new ArrayList<>();
-        for (Map.Entry<Long, BTreeExtentHeader> child : getChildren().entrySet()) {
+        for (Map.Entry<Long, BTreeExtentHeader> child : children.entrySet()) {
             result.addAll(child.getValue().getExtents());
         }
         return result;

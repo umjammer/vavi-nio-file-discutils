@@ -27,32 +27,33 @@ import dotnet4j.io.Stream;
 
 
 public class BigEndianDataReader extends DataReader {
+
     public BigEndianDataReader(Stream stream) {
         super(stream);
     }
 
     public short readUInt16() {
         readToBuffer(2);
-        return EndianUtilities.toUInt16BigEndian(_buffer, 0);
+        return EndianUtilities.toUInt16BigEndian(buffer, 0);
     }
 
     public int readInt32() {
         readToBuffer(4);
-        return EndianUtilities.toInt32BigEndian(_buffer, 0);
+        return EndianUtilities.toInt32BigEndian(buffer, 0);
     }
 
     public int readUInt32() {
         readToBuffer(4);
-        return EndianUtilities.toUInt32BigEndian(_buffer, 0);
+        return EndianUtilities.toUInt32BigEndian(buffer, 0);
     }
 
     public long readInt64() {
         readToBuffer(8);
-        return EndianUtilities.toInt64BigEndian(_buffer, 0);
+        return EndianUtilities.toInt64BigEndian(buffer, 0);
     }
 
     public long readUInt64() {
         readToBuffer(8);
-        return EndianUtilities.toUInt64BigEndian(_buffer, 0);
+        return EndianUtilities.toUInt64BigEndian(buffer, 0);
     }
 }

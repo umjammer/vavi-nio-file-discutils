@@ -26,34 +26,34 @@ package discUtils.sdi;
  * Information about a blob (or section) within an SDI file.
  */
 public class Section {
-    private final SectionRecord _record;
+    private final SectionRecord record;
 
     public Section(SectionRecord record, int index) {
-        _record = record;
-        __Index = index;
+        this.record = record;
+        this.index = index;
     }
 
     /**
      * Gets the zero-based index of this section.
      */
-    private int __Index;
+    private int index;
 
     public int getIndex() {
-        return __Index;
+        return index;
     }
 
     /**
      * Gets the length of the section.
      */
     public long getLength() {
-        return _record.Size;
+        return record.size;
     }
 
     /**
      * Gets the MBR partition type of the partition, for "PART" sections.
      */
     public byte getPartitionType() {
-        return (byte) _record.PartitionType;
+        return (byte) record.partitionType;
     }
 
     /**
@@ -61,6 +61,6 @@ public class Section {
      * Sample types are "PART" (disk partition), "WIM" (Windows Imaging Format).
      */
     public String getSectionType() {
-        return _record.SectionType;
+        return record.sectionType;
     }
 }

@@ -26,28 +26,29 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class RejectPacket extends BaseResponse {
-    public int DataSequenceNumber;
 
-    public BasicHeaderSegment Header;
+    public int dataSequenceNumber;
 
-    public RejectReason Reason = RejectReason.None;
+    public BasicHeaderSegment header;
+
+    public RejectReason reason = RejectReason.None;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 
     public void parse(byte[] headerData, int headerOffset) {
-        Header = new BasicHeaderSegment();
-        Header.readFrom(headerData, headerOffset);
-        if (Header._OpCode != OpCode.Reject) {
+        header = new BasicHeaderSegment();
+        header.readFrom(headerData, headerOffset);
+        if (header.opCode != OpCode.Reject) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.Reject + " was " +
-                                               Header._OpCode);
+                                               header.opCode);
         }
 
-        Reason = RejectReason.values()[headerData[headerOffset + 2]];
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        DataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
+        reason = RejectReason.values()[headerData[headerOffset + 2]];
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        dataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
     }
 }

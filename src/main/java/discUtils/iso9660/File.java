@@ -35,27 +35,28 @@ import discUtils.streams.util.Ownership;
 
 
 public class File implements IVfsFile {
-    protected IsoContext _context;
 
-    protected ReaderDirEntry _dirEntry;
+    protected IsoContext context;
+
+    protected ReaderDirEntry dirEntry;
 
     public File(IsoContext context, ReaderDirEntry dirEntry) {
-        _context = context;
-        _dirEntry = dirEntry;
+        this.context = context;
+        this.dirEntry = dirEntry;
     }
 
     public byte[] getSystemUseData() {
-        return _dirEntry.getRecord().SystemUseData;
+        return dirEntry.getRecord().systemUseData;
     }
 
     public UnixFileSystemInfo getUnixFileInfo() {
-        if (!_context.getSuspDetected() || _context.getRockRidgeIdentifier() == null ||
-            _context.getRockRidgeIdentifier().isEmpty()) {
+        if (!context.getSuspDetected() || context.getRockRidgeIdentifier() == null ||
+            context.getRockRidgeIdentifier().isEmpty()) {
             throw new UnsupportedOperationException("No rockRidge file information available");
         }
 
-        SuspRecords suspRecords = new SuspRecords(_context, getSystemUseData(), 0);
-        PosixFileInfoSystemUseEntry pfi = suspRecords.getEntry(_context.getRockRidgeIdentifier(), "PX");
+        SuspRecords suspRecords = new SuspRecords(context, getSystemUseData(), 0);
+        PosixFileInfoSystemUseEntry pfi = suspRecords.getEntry(context.getRockRidgeIdentifier(), "PX");
         if (pfi != null) {
             return new UnixFileSystemInfo();
         }
@@ -64,7 +65,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastAccessTimeUtc() {
-        return _dirEntry.getLastAccessTimeUtc();
+        return dirEntry.getLastAccessTimeUtc();
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -72,7 +73,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return _dirEntry.getLastWriteTimeUtc();
+        return dirEntry.getLastWriteTimeUtc();
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -80,7 +81,7 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return _dirEntry.getCreationTimeUtc();
+        return dirEntry.getCreationTimeUtc();
     }
 
     public void setCreationTimeUtc(long value) {
@@ -88,7 +89,7 @@ public class File implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return _dirEntry.getFileAttributes();
+        return dirEntry.getFileAttributes();
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
@@ -96,19 +97,19 @@ public class File implements IVfsFile {
     }
 
     public long getFileLength() {
-        return _dirEntry.getRecord().DataLength;
+        return dirEntry.getRecord().dataLength;
     }
 
     public IBuffer getFileContent() {
-        ExtentStream es = new ExtentStream(_context.getDataStream(),
-                                           _dirEntry.getRecord().LocationOfExtent,
-                                           _dirEntry.getRecord().DataLength,
-                                           _dirEntry.getRecord().FileUnitSize,
-                                           _dirEntry.getRecord().InterleaveGapSize);
+        ExtentStream es = new ExtentStream(context.getDataStream(),
+                                           dirEntry.getRecord().locationOfExtent,
+                                           dirEntry.getRecord().dataLength,
+                                           dirEntry.getRecord().fileUnitSize,
+                                           dirEntry.getRecord().interleaveGapSize);
         return new StreamBuffer(es, Ownership.Dispose);
     }
 
     public String toString() {
-        return getClass() + ": " + _dirEntry.getFileName() + ", " + getFileLength();
+        return getClass() + ": " + dirEntry.getFileName() + ", " + getFileLength();
     }
 }

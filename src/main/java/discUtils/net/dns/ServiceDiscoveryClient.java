@@ -38,25 +38,26 @@ import vavi.util.Debug;
  * Provides access to DNS-SD functionality.
  */
 public final class ServiceDiscoveryClient implements Closeable {
-    private final UnicastDnsClient _dnsClient;
 
-    private MulticastDnsClient _mDnsClient;
+    private final UnicastDnsClient dnsClient;
+
+    private MulticastDnsClient mDnsClient;
 
     /**
      * Initializes a new instance of the ServiceDiscoveryClient class.
      */
     public ServiceDiscoveryClient() {
-        _mDnsClient = new MulticastDnsClient();
-        _dnsClient = new UnicastDnsClient();
+        mDnsClient = new MulticastDnsClient();
+        dnsClient = new UnicastDnsClient();
     }
 
     /**
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_mDnsClient != null) {
-            _mDnsClient.close();
-            _mDnsClient = null;
+        if (mDnsClient != null) {
+            mDnsClient.close();
+            mDnsClient = null;
         }
     }
 
@@ -64,8 +65,8 @@ public final class ServiceDiscoveryClient implements Closeable {
      * Flushes any cached data.
      */
     public void flushCache() {
-        _mDnsClient.flushCache();
-        _dnsClient.flushCache();
+        mDnsClient.flushCache();
+        dnsClient.flushCache();
     }
 
     /**
@@ -247,9 +248,9 @@ Debug.println("fullname: " + fullName);
         DnsClient dnsClient;
 
         if (fullName.endsWith(".local.")) {
-            dnsClient = _mDnsClient;
+            dnsClient = mDnsClient;
         } else {
-            dnsClient = _dnsClient;
+            dnsClient = this.dnsClient;
         }
 
         ResourceRecord[] records = dnsClient.lookup(fullName, recordType);

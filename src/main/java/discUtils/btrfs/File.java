@@ -41,17 +41,17 @@ import discUtils.streams.util.Ownership;
 
 public class File implements IVfsFile {
 
-    protected final DirEntry DirEntry;
+    protected final DirEntry dirEntry;
 
-    protected final Context Context;
+    protected final Context context;
 
     public File(DirEntry dirEntry, Context context) {
-        DirEntry = dirEntry;
-        Context = context;
+        this.dirEntry = dirEntry;
+        this.context = context;
     }
 
     public long getCreationTimeUtc() {
-        return DirEntry.getCreationTimeUtc();
+        return dirEntry.getCreationTimeUtc();
     }
 
     public void setCreationTimeUtc(long value) {
@@ -59,7 +59,7 @@ public class File implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return DirEntry.getFileAttributes();
+        return dirEntry.getFileAttributes();
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
@@ -67,7 +67,7 @@ public class File implements IVfsFile {
     }
 
     public IBuffer getFileContent() {
-        List<ExtentData> extents = Context.findKey(DirEntry.getTreeId(), new Key(DirEntry.getObjectId(), ItemType.ExtentData));
+        List<ExtentData> extents = context.findKey(dirEntry.getTreeId(), new Key(dirEntry.getObjectId(), ItemType.ExtentData));
         return bufferFromExtentList(extents);
     }
 
@@ -75,10 +75,10 @@ public class File implements IVfsFile {
         List<BuilderExtent> builderExtents = new ArrayList<>(extents.size());
         for (ExtentData extent : extents) {
             long offset = extent.getKey().getOffset();
-            BuilderExtent builderExtent = new BuilderStreamExtent(offset, extent.getStream(Context), Ownership.Dispose);
+            BuilderExtent builderExtent = new BuilderStreamExtent(offset, extent.getStream(context), Ownership.Dispose);
             builderExtents.add(builderExtent);
         }
-        return new StreamBuffer(new BuiltStream(DirEntry.getFileSize(), builderExtents), Ownership.Dispose);
+        return new StreamBuffer(new BuiltStream(dirEntry.getFileSize(), builderExtents), Ownership.Dispose);
     }
 
     public long getFileLength() {
@@ -86,7 +86,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastAccessTimeUtc() {
-        return DirEntry.getLastAccessTimeUtc();
+        return dirEntry.getLastAccessTimeUtc();
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -94,7 +94,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return DirEntry.getLastWriteTimeUtc();
+        return dirEntry.getLastWriteTimeUtc();
     }
 
     public void setLastWriteTimeUtc(long value) {

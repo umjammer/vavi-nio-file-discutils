@@ -92,11 +92,11 @@ public final class UdfReader extends VfsFileSystemFacade {
             } catch (NoSuchElementException e) {
                 return false;
             }
-            if (bvd.StandardIdentifier.equals("NSR02") || bvd.StandardIdentifier.equals("NSR03")) {
+            if (bvd.standardIdentifier.equals("NSR02") || bvd.standardIdentifier.equals("NSR03")) {
                 foundUdfMarker = true;
-            } else if (bvd.StandardIdentifier.equals("BEA01") || bvd.StandardIdentifier.equals("BOOT2") ||
-                bvd.StandardIdentifier.equals("CD001") || bvd.StandardIdentifier.equals("CDW02") ||
-                bvd.StandardIdentifier.equals("TEA01")) {} else {
+            } else if (bvd.standardIdentifier.equals("BEA01") || bvd.standardIdentifier.equals("BOOT2") ||
+                bvd.standardIdentifier.equals("CD001") || bvd.standardIdentifier.equals("CDW02") ||
+                bvd.standardIdentifier.equals("TEA01")) {} else {
                 validDescriptor = false;
             }
             vdpos += IsoUtilities.SectorSize;
@@ -117,30 +117,31 @@ public final class UdfReader extends VfsFileSystemFacade {
     }
 
     private final static class VfsUdfReader extends VfsReadOnlyFileSystem<FileIdentifier, File, Directory, UdfContext> {
-        private final Stream _data;
 
-        private LogicalVolumeDescriptor _lvd;
+        private final Stream data;
 
-        private PrimaryVolumeDescriptor _pvd;
+        private LogicalVolumeDescriptor lvd;
 
-        private final int _sectorSize;
+        private PrimaryVolumeDescriptor pvd;
+
+        private final int sectorSize;
 
         public VfsUdfReader(Stream data) {
             super(null);
-            _data = data;
+            this.data = data;
             if (!detect(data)) {
                 throw new IllegalArgumentException("Stream is not a recognized UDF format");
             }
 
             // Try a number of possible sector sizes, from most common.
             if (probeSectorSize(2048)) {
-                _sectorSize = 2048;
+                sectorSize = 2048;
             } else if (probeSectorSize(512)) {
-                _sectorSize = 512;
+                sectorSize = 512;
             } else if (probeSectorSize(4096)) {
-                _sectorSize = 4096;
+                sectorSize = 4096;
             } else if (probeSectorSize(1024)) {
-                _sectorSize = 1024;
+                sectorSize = 1024;
             } else {
                 throw new IllegalArgumentException("Unable to detect physical media sector size");
             }
@@ -149,8 +150,8 @@ public final class UdfReader extends VfsFileSystemFacade {
 
         public VfsUdfReader(Stream data, int sectorSize) {
             super(null);
-            _data = data;
-            _sectorSize = sectorSize;
+            this.data = data;
+            this.sectorSize = sectorSize;
             if (!detect(data)) {
                 throw new IllegalArgumentException("Stream is not a recognized UDF format");
             }
@@ -163,7 +164,7 @@ public final class UdfReader extends VfsFileSystemFacade {
         }
 
         public String getVolumeLabel() {
-            return _lvd.LogicalVolumeIdentifier;
+            return lvd.logicalVolumeIdentifier;
         }
 
         public List<ExtendedAttribute> getExtendedAttributes(String path) {
@@ -173,8 +174,8 @@ public final class UdfReader extends VfsFileSystemFacade {
                 ImplementationUseExtendedAttributeRecord implRecord = record instanceof ImplementationUseExtendedAttributeRecord ? (ImplementationUseExtendedAttributeRecord) record
                                                                                                                                  : null;
                 if (implRecord != null) {
-                    result.add(new ExtendedAttribute(implRecord.ImplementationIdentifier.Identifier,
-                                                     implRecord.ImplementationUseData));
+                    result.add(new ExtendedAttribute(implRecord.implementationIdentifier.identifier,
+                                                     implRecord.implementationUseData));
                 }
 
             }
@@ -203,49 +204,49 @@ public final class UdfReader extends VfsFileSystemFacade {
         }
 
         protected File convertDirEntryToFile(FileIdentifier dirEntry) {
-            return File.fromDescriptor(getContext(), dirEntry.FileLocation);
+            return File.fromDescriptor(getContext(), dirEntry.fileLocation);
         }
 
         private void initialize() {
             UdfContext context = new UdfContext();
-            context.PhysicalPartitions = new HashMap<>();
-            context.PhysicalSectorSize = _sectorSize;
-            context.LogicalPartitions = new ArrayList<>();
+            context.physicalPartitions = new HashMap<>();
+            context.physicalSectorSize = sectorSize;
+            context.logicalPartitions = new ArrayList<>();
             setContext(context);
 
-            IBuffer dataBuffer = new StreamBuffer(_data, Ownership.None);
+            IBuffer dataBuffer = new StreamBuffer(data, Ownership.None);
 
             AnchorVolumeDescriptorPointer avdp = AnchorVolumeDescriptorPointer
-                    .fromStream(_data, 256, _sectorSize, AnchorVolumeDescriptorPointer.class);
+                    .fromStream(data, 256, sectorSize, AnchorVolumeDescriptorPointer.class);
 
-            int sector = avdp.MainDescriptorSequence.Location;
+            int sector = avdp.mainDescriptorSequence.location;
             boolean terminatorFound = false;
             while (!terminatorFound) {
-                _data.setPosition(sector * (long) _sectorSize);
+                data.setPosition(sector * (long) sectorSize);
 
                 DescriptorTag[] dt = new DescriptorTag[1];
-                if (!DescriptorTag.tryFromStream(_data, dt)) {
+                if (!DescriptorTag.tryFromStream(data, dt)) {
                     break;
                 }
 
-                switch (dt[0]._TagIdentifier) {
+                switch (dt[0].tagIdentifier) {
                 case PrimaryVolumeDescriptor:
-                    _pvd = PrimaryVolumeDescriptor.fromStream(_data, sector, _sectorSize, PrimaryVolumeDescriptor.class);
+                    pvd = PrimaryVolumeDescriptor.fromStream(data, sector, sectorSize, PrimaryVolumeDescriptor.class);
                     break;
                 case ImplementationUseVolumeDescriptor:
                     // Not used
                     break;
                 case PartitionDescriptor:
                     PartitionDescriptor pd = PartitionDescriptor
-                            .fromStream(_data, sector, _sectorSize, PartitionDescriptor.class);
-                    if (getContext().PhysicalPartitions.containsKey(pd.PartitionNumber)) {
+                            .fromStream(data, sector, sectorSize, PartitionDescriptor.class);
+                    if (getContext().physicalPartitions.containsKey(pd.partitionNumber)) {
                         throw new IOException("Duplicate partition number reading UDF Partition Descriptor");
                     }
 
-                    getContext().PhysicalPartitions.put(pd.PartitionNumber, new PhysicalPartition(pd, dataBuffer, _sectorSize));
+                    getContext().physicalPartitions.put(pd.partitionNumber, new PhysicalPartition(pd, dataBuffer, sectorSize));
                     break;
                 case LogicalVolumeDescriptor:
-                    _lvd = LogicalVolumeDescriptor.fromStream(_data, sector, _sectorSize, LogicalVolumeDescriptor.class);
+                    lvd = LogicalVolumeDescriptor.fromStream(data, sector, sectorSize, LogicalVolumeDescriptor.class);
                     break;
                 case UnallocatedSpaceDescriptor:
                     // Not used for reading
@@ -259,30 +260,30 @@ public final class UdfReader extends VfsFileSystemFacade {
 
                 sector++;
             }
-            for (int i = 0; i < _lvd.PartitionMaps.length; ++i) {
+            for (int i = 0; i < lvd.partitionMaps.length; ++i) {
                 // Convert logical partition descriptors into actual partition objects
-                getContext().LogicalPartitions.add(LogicalPartition.fromDescriptor(getContext(), _lvd, i));
+                getContext().logicalPartitions.add(LogicalPartition.fromDescriptor(getContext(), lvd, i));
             }
-            byte[] fsdBuffer = UdfUtilities.readExtent(getContext(), _lvd.getFileSetDescriptorLocation());
+            byte[] fsdBuffer = UdfUtilities.readExtent(getContext(), lvd.getFileSetDescriptorLocation());
             if (DescriptorTag.isValid(fsdBuffer, 0)) {
                 FileSetDescriptor fsd = EndianUtilities.toStruct(FileSetDescriptor.class, fsdBuffer, 0);
-                setRootDirectory((Directory) File.fromDescriptor(getContext(), fsd.RootDirectoryIcb));
+                setRootDirectory((Directory) File.fromDescriptor(getContext(), fsd.rootDirectoryIcb));
             }
         }
 
         private boolean probeSectorSize(int size) {
-            if (_data.getLength() < 257 * (long) size) {
+            if (data.getLength() < 257 * (long) size) {
                 return false;
             }
 
-            _data.setPosition(256 * (long) size);
+            data.setPosition(256 * (long) size);
             DescriptorTag[] dt = new DescriptorTag[1];
-            boolean result = !DescriptorTag.tryFromStream(_data, dt);
+            boolean result = !DescriptorTag.tryFromStream(data, dt);
             if (result) {
                 return false;
             }
 
-            return dt[0]._TagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer && dt[0].TagLocation == 256;
+            return dt[0].tagIdentifier == TagIdentifier.AnchorVolumeDescriptorPointer && dt[0].tagLocation == 256;
         }
     }
 }

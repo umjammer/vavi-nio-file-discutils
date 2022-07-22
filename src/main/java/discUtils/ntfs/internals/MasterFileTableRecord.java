@@ -29,22 +29,23 @@ import discUtils.ntfs.FileRecordFlags;
 
 
 public final class MasterFileTableRecord {
-    private final FileRecord _fileRecord;
+
+    private final FileRecord fileRecord;
 
     public MasterFileTableRecord(FileRecord fileRecord) {
-        _fileRecord = fileRecord;
+        this.fileRecord = fileRecord;
     }
 
     public MasterFileTableReference getBaseRecordReference() {
-        return new MasterFileTableReference(_fileRecord.getBaseFile());
+        return new MasterFileTableReference(fileRecord.getBaseFile());
     }
 
     public EnumSet<FileRecordFlags> getFlags() {
-        return _fileRecord.getFlags();
+        return fileRecord.getFlags();
     }
 
     public int getHardLinkCount() {
-        return _fileRecord.getHardLinkCount();
+        return fileRecord.getHardLinkCount();
     }
 
     /**
@@ -52,14 +53,14 @@ public final class MasterFileTableRecord {
      * journal.
      */
     public long getJournalSequenceNumber() {
-        return _fileRecord.getLogFileSequenceNumber();
+        return fileRecord.getLogFileSequenceNumber();
     }
 
     public int getNextAttributeId() {
-        return _fileRecord.getNextAttributeId();
+        return fileRecord.getNextAttributeId();
     }
 
     public int getSequenceNumber() {
-        return _fileRecord.getSequenceNumber();
+        return fileRecord.getSequenceNumber();
     }
 }

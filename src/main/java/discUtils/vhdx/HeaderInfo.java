@@ -31,17 +31,18 @@ import discUtils.streams.util.EndianUtilities;
  * Class representing a VHDX header.
  */
 public final class HeaderInfo {
-    private final VhdxHeader _header;
+
+    private final VhdxHeader header;
 
     public HeaderInfo(VhdxHeader header) {
-        _header = header;
+        this.header = header;
     }
 
     /**
      * Gets the checksum of the header information.
      */
     public int getChecksum() {
-        return _header.Checksum;
+        return header.checksum;
     }
 
     /**
@@ -49,7 +50,7 @@ public final class HeaderInfo {
      * changed.
      */
     public UUID getDataWriteGuid() {
-        return _header.DataWriteGuid;
+        return header.dataWriteGuid;
     }
 
     /**
@@ -57,7 +58,7 @@ public final class HeaderInfo {
      * modified.
      */
     public UUID getFileWriteGuid() {
-        return _header.FileWriteGuid;
+        return header.fileWriteGuid;
     }
 
     /**
@@ -66,28 +67,28 @@ public final class HeaderInfo {
      * The NULL GUID indicates there are no log records to replay.
      */
     public UUID getLogGuid() {
-        return _header.LogGuid;
+        return header.logGuid;
     }
 
     /**
      * Gets the length of the VHDX log.
      */
     public long getLogLength() {
-        return _header.LogLength;
+        return header.logLength;
     }
 
     /**
      * Gets the offset of the VHDX log within the file.
      */
     public long getLogOffset() {
-        return _header.LogOffset;
+        return header.logOffset;
     }
 
     /**
      * Gets the version of the log information, expected to be Zero.
      */
     public int getLogVersion() {
-        return _header.LogVersion;
+        return header.logVersion;
     }
 
     /**
@@ -98,7 +99,7 @@ public final class HeaderInfo {
      * sequence number represents the current header information.
      */
     public long getSequenceNumber() {
-        return _header.SequenceNumber;
+        return header.sequenceNumber;
     }
 
     /**
@@ -106,7 +107,7 @@ public final class HeaderInfo {
      */
     public String getSignature() {
         byte[] buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(_header.Signature, buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(header.signature, buffer, 0);
         return EndianUtilities.bytesToString(buffer, 0, 4);
     }
 
@@ -114,7 +115,6 @@ public final class HeaderInfo {
      * Gets the VHDX file format version, expected to be One.
      */
     public int getVersion() {
-        return _header.Version;
+        return header.version;
     }
-
 }

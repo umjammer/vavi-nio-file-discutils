@@ -50,76 +50,76 @@ import dotnet4j.io.Stream;
 public class Context extends VfsContext {
 
     public Context(BtrfsFileSystemOptions options) {
-        _fsTrees = new HashMap<>();
-        _options = options;
+        fsTrees = new HashMap<>();
+        this.options = options;
     }
 
-    private BtrfsFileSystemOptions _options;
+    private BtrfsFileSystemOptions options;
 
     public BtrfsFileSystemOptions getOptions() {
-        return _options;
+        return options;
     }
 
     public void setOptions(BtrfsFileSystemOptions value) {
-        _options = value;
+        options = value;
     }
 
-    private Stream _rawStream;
+    private Stream rawStream;
 
     public Stream getRawStream() {
-        return _rawStream;
+        return rawStream;
     }
 
     public void setRawStream(Stream value) {
-        _rawStream = value;
+        rawStream = value;
     }
 
-    private SuperBlock _superBlock;
+    private SuperBlock superBlock;
 
     public SuperBlock getSuperBlock() {
-        return _superBlock;
+        return superBlock;
     }
 
     public void setSuperBlock(SuperBlock value) {
-        _superBlock = value;
+        superBlock = value;
     }
 
-    private NodeHeader _chunkTreeRoot;
+    private NodeHeader chunkTreeRoot;
 
     NodeHeader getChunkTreeRoot() {
-        return _chunkTreeRoot;
+        return chunkTreeRoot;
     }
 
     void setChunkTreeRoot(NodeHeader value) {
-        _chunkTreeRoot = value;
+        chunkTreeRoot = value;
     }
 
-    private NodeHeader _rootTreeRoot;
+    private NodeHeader rootTreeRoot;
 
     NodeHeader getRootTreeRoot() {
-        return _rootTreeRoot;
+        return rootTreeRoot;
     }
 
     void setRootTreeRoot(NodeHeader value) {
-        _rootTreeRoot = value;
+        rootTreeRoot = value;
     }
 
-    private Map<Long, NodeHeader> _fsTrees;
+    private Map<Long, NodeHeader> fsTrees;
 
     Map<Long, NodeHeader> getFsTrees() {
-        return _fsTrees;
+        return fsTrees;
     }
 
     NodeHeader getFsTree(long treeId) {
         NodeHeader tree;
-        if (_fsTrees.containsKey(treeId)) {
-            return _fsTrees.get(treeId);
+        if (fsTrees.containsKey(treeId)) {
+            return fsTrees.get(treeId);
         }
         RootItem rootItem = getRootTreeRoot().findFirst(RootItem.class, new Key(treeId, ItemType.RootItem), this);
         if (rootItem == null)
             return null;
         tree = readTree(rootItem.getByteNr(), rootItem.getLevel());
-        _fsTrees.put(treeId, tree);
+        fsTrees.put(treeId, tree);
         return tree;
     }
 
@@ -141,7 +141,7 @@ public class Context extends VfsContext {
                 return stripe.getOffset() + (logical - chunk.getKey().getOffset());
             }
         }
-        for (ChunkItem chunk : _superBlock.getSystemChunkArray()) {
+        for (ChunkItem chunk : superBlock.getSystemChunkArray()) {
             if (chunk.getKey().getItemType() != ItemType.ChunkItem)
                 continue;
             if (chunk.getKey().getOffset() > logical)
@@ -160,10 +160,10 @@ public class Context extends VfsContext {
 
     public NodeHeader readTree(long logical, int level) {
         long physical = mapToPhysical(logical);
-        _rawStream.seek(physical, SeekOrigin.Begin);
-        int dataSize = level > 0 ? _superBlock.getNodeSize() : _superBlock.getLeafSize();
+        rawStream.seek(physical, SeekOrigin.Begin);
+        int dataSize = level > 0 ? superBlock.getNodeSize() : superBlock.getLeafSize();
         byte[] buffer = new byte[dataSize];
-        _rawStream.read(buffer, 0, buffer.length);
+        rawStream.read(buffer, 0, buffer.length);
         NodeHeader result = NodeHeader.create(buffer, 0);
         verifyChecksum(result.getChecksum(), buffer, 0x20, dataSize - 0x20);
         return result;
@@ -172,7 +172,7 @@ public class Context extends VfsContext {
     void verifyChecksum(byte[] checksum, byte[] data, int offset, int count) {
         if (!getOptions().verifyChecksums())
             return;
-        if (_superBlock.getChecksumType() != ChecksumType.Crc32C)
+        if (superBlock.getChecksumType() != ChecksumType.Crc32C)
             throw new IllegalArgumentException("Unsupported ChecksumType {SuperBlock.ChecksumType}");
         Crc32LittleEndian crc = new Crc32LittleEndian(Crc32Algorithm.Castagnoli);
         crc.process(data, offset, count);
@@ -211,7 +211,7 @@ public class Context extends VfsContext {
         switch (key.getItemType()) {
         case RootItem:
         case DirItem:
-            return _rootTreeRoot.findFirst(key, this);
+            return rootTreeRoot.findFirst(key, this);
         default:
             throw new UnsupportedOperationException();
         }

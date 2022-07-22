@@ -28,7 +28,8 @@ import discUtils.streams.builder.BuilderExtent;
 
 
 abstract class VolumeDescriptorDiskRegion extends BuilderExtent {
-    private byte[] _readCache;
+
+    private byte[] readCache;
 
     public VolumeDescriptorDiskRegion(long start) {
         super(start, IsoUtilities.SectorSize);
@@ -38,18 +39,18 @@ abstract class VolumeDescriptorDiskRegion extends BuilderExtent {
     }
 
     public void prepareForRead() {
-        _readCache = getBlockData();
+        readCache = getBlockData();
     }
 
     public int read(long diskOffset, byte[] buffer, int offset, int count) {
         long relPos = diskOffset - getStart();
-        int numRead = (int) Math.min(count, _readCache.length - relPos);
-        System.arraycopy(_readCache, (int) relPos, buffer, offset, numRead);
+        int numRead = (int) Math.min(count, readCache.length - relPos);
+        System.arraycopy(readCache, (int) relPos, buffer, offset, numRead);
         return numRead;
     }
 
     public void disposeReadState() {
-        _readCache = null;
+        readCache = null;
     }
 
     protected abstract byte[] getBlockData();

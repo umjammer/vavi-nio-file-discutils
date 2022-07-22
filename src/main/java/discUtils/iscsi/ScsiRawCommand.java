@@ -23,21 +23,22 @@
 package discUtils.iscsi;
 
 public class ScsiRawCommand extends ScsiCommand {
-    private final byte[] _buffer;
 
-    private final int _length;
+    private final byte[] buffer;
 
-    private final int _offset;
+    private final int length;
+
+    private final int offset;
 
     public ScsiRawCommand(long targetLun, byte[] buffer, int offset, int length) {
         super(targetLun);
-        _buffer = buffer;
-        _offset = offset;
-        _length = length;
+        this.buffer = buffer;
+        this.offset = offset;
+        this.length = length;
     }
 
     public int size() {
-        return _length;
+        return length;
     }
 
     public TaskAttributes getTaskAttributes() {
@@ -49,6 +50,6 @@ public class ScsiRawCommand extends ScsiCommand {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        System.arraycopy(_buffer, _offset, buffer, offset, _length);
+        System.arraycopy(this.buffer, this.offset, buffer, offset, length);
     }
 }

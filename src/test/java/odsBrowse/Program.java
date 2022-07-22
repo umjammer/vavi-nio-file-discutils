@@ -39,10 +39,11 @@ import dotnet4j.util.compat.Utilities;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "host",
             description = "The name of a Mac / PC sharing its optical disk(s).  For example \"My Computer\".",
             required = true)
-    private String _host;
+    private String host;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -52,11 +53,11 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         OpticalDiscServiceClient odsClient = new OpticalDiscServiceClient();
-        if (_host != null) {
+        if (host != null) {
             boolean found = false;
             for (OpticalDiscService service : odsClient.lookupServices()) {
-                if (Utilities.equals(_host, service.getDisplayName()) ||
-                    Utilities.equals(_host, URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8.name()))) {
+                if (Utilities.equals(host, service.getDisplayName()) ||
+                    Utilities.equals(host, URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8.name()))) {
                     found = true;
 
                     System.err.println("Connecting to " + service.getDisplayName() + " - the owner may need to accept...");

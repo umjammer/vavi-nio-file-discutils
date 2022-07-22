@@ -45,13 +45,14 @@ import discUtils.streams.util.StreamUtilities;
  * attribute.
  */
 public final class AttributeListAttribute extends GenericAttribute {
-    private final AttributeList _list;
+
+    private final AttributeList list;
 
     public AttributeListAttribute(INtfsContext context, AttributeRecord record) {
         super(context, record);
         byte[] content = StreamUtilities.readAll(getContent());
-        _list = new AttributeList();
-        _list.readFrom(content, 0);
+        list = new AttributeList();
+        list.readFrom(content, 0);
     }
 
     /**
@@ -59,7 +60,7 @@ public final class AttributeListAttribute extends GenericAttribute {
      */
     public List<AttributeListEntry> getEntries() {
         List<AttributeListEntry> entries = new ArrayList<>();
-        for (AttributeListRecord record : _list) {
+        for (AttributeListRecord record : list) {
             entries.add(new AttributeListEntry(record));
         }
         return entries;

@@ -33,28 +33,29 @@ import discUtils.core.FileSystemParameters;
  * XFS file system options.
  */
 public final class XfsFileSystemOptions extends DiscFileSystemOptions {
+
     public XfsFileSystemOptions() {
         setFileNameEncoding(StandardCharsets.UTF_8);
     }
 
     public XfsFileSystemOptions(FileSystemParameters parameters) {
         if (parameters != null && parameters.getFileNameEncoding() != null) {
-            setFileNameEncoding(parameters.getFileNameEncoding());
+            fileNameEncoding = parameters.getFileNameEncoding();
         } else {
-            setFileNameEncoding(StandardCharsets.UTF_8);
+            fileNameEncoding = StandardCharsets.UTF_8;
         }
     }
 
     /**
      * Gets or sets the character encoding used for file names.
      */
-    private Charset _fileNameEncoding;
+    private Charset fileNameEncoding;
 
     public Charset getFileNameEncoding() {
-        return _fileNameEncoding;
+        return fileNameEncoding;
     }
 
     public void setFileNameEncoding(Charset value) {
-        _fileNameEncoding = value;
+        fileNameEncoding = value;
     }
 }

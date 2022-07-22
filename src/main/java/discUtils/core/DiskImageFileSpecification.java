@@ -30,20 +30,21 @@ import discUtils.streams.builder.StreamBuilder;
  * Describes a particular file that is a constituent part of a virtual disk.
  */
 public final class DiskImageFileSpecification {
-    private final StreamBuilder _builder;
+
+    private final StreamBuilder builder;
 
     public DiskImageFileSpecification(String name, StreamBuilder builder) {
-        _name = name;
-        _builder = builder;
+        this.name = name;
+        this.builder = builder;
     }
 
     /**
      * Gets name of the file.
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
@@ -52,6 +53,6 @@ public final class DiskImageFileSpecification {
      * @return A stream object that contains the file's content.
      */
     public SparseStream openStream() {
-        return _builder.build();
+        return builder.build();
     }
 }

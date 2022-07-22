@@ -40,13 +40,13 @@ public final class RpcUnixCredential extends RpcCredentials {
      */
     public static final RpcUnixCredential Default = new RpcUnixCredential(65534, 65534);
 
-    private final int _gid;
+    private final int gid;
 
-    private final int[] _gids;
+    private final int[] gids;
 
-    private final String _machineName;
+    private final String machineName;
 
-    private final int _uid;
+    private final int uid;
 
     /**
      * Initializes a new instance of the RpcUnixCredential class.
@@ -67,10 +67,10 @@ public final class RpcUnixCredential extends RpcCredentials {
      */
     public RpcUnixCredential(int user, int primaryGroup, int[] groups) {
         try {
-            _machineName = InetAddress.getLocalHost().getHostName();
-            _uid = user;
-            _gid = primaryGroup;
-            _gids = groups;
+            machineName = InetAddress.getLocalHost().getHostName();
+            uid = user;
+            gid = primaryGroup;
+            gids = groups;
         } catch (UnknownHostException e) {
             throw new IllegalStateException(e);
         }
@@ -82,14 +82,14 @@ public final class RpcUnixCredential extends RpcCredentials {
 
     public void write(XdrDataWriter writer) {
         writer.write(0);
-        writer.write(_machineName);
-        writer.write(_uid);
-        writer.write(_gid);
-        if (_gids == null) {
+        writer.write(machineName);
+        writer.write(uid);
+        writer.write(gid);
+        if (gids == null) {
             writer.write(0);
         } else {
-            writer.write(_gids.length);
-            for (int gid : _gids) {
+            writer.write(gids.length);
+            for (int gid : gids) {
                 writer.write(gid);
             }
         }

@@ -28,47 +28,48 @@ import discUtils.streams.util.StreamUtilities;
 
 
 public class Extent implements IByteArraySerializable {
+
     /**
      * Number of Blocks
      */
-    private int __BlockCount;
+    private int blockCount;
 
     public int getBlockCount() {
-        return __BlockCount;
+        return blockCount;
     }
 
     public void setBlockCount(int value) {
-        __BlockCount = value;
+        blockCount = value;
     }
 
-    private long __StartBlock;
+    private long startBlock;
 
     public long getStartBlock() {
-        return __StartBlock;
+        return startBlock;
     }
 
     public void setStartBlock(long value) {
-        __StartBlock = value;
+        startBlock = value;
     }
 
-    private long __StartOffset;
+    private long startOffset;
 
     public long getStartOffset() {
-        return __StartOffset;
+        return startOffset;
     }
 
     public void setStartOffset(long value) {
-        __StartOffset = value;
+        startOffset = value;
     }
 
-    private ExtentFlag __Flag = ExtentFlag.Normal;
+    private ExtentFlag flag = ExtentFlag.Normal;
 
     public ExtentFlag getFlag() {
-        return __Flag;
+        return flag;
     }
 
     public void setFlag(ExtentFlag value) {
-        __Flag = value;
+        flag = value;
     }
 
     public int size() {
@@ -79,10 +80,10 @@ public class Extent implements IByteArraySerializable {
         long lower = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
         long middle = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x6);
         long upper = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
-        setBlockCount((int) (lower & 0x001FFFFF));
-        setStartBlock((middle >>> 5) & 0x000FFFFFFFFFFFFFL);
-        setStartOffset((upper >>> 9) & 0x003FFFFFFFFFFFFFL);
-        setFlag(ExtentFlag.values()[(buffer[offset + 0x0] >>> 6) & 0x3]);
+        blockCount = (int) (lower & 0x001F_FFFF);
+        startBlock = (middle >>> 5) & 0x000F_FFFF_FFFF_FFFFL;
+        startOffset = (upper >>> 9) & 0x003F_FFFF_FFFF_FFFFL;
+        flag = ExtentFlag.values()[(buffer[offset + 0x0] >>> 6) & 0x3];
         return size();
     }
 
@@ -95,10 +96,10 @@ public class Extent implements IByteArraySerializable {
     }
 
     public static long getOffset(Context context, long block) {
-        long daddr = (block >>> context.getSuperBlock().getAgBlocksLog2()) * context.getSuperBlock().getAgBlocks() +
+        long dAddr = (block >>> context.getSuperBlock().getAgBlocksLog2()) * context.getSuperBlock().getAgBlocks() +
                      (block &
                       (1L << context.getSuperBlock().getAgBlocksLog2()) - 1) << (context.getSuperBlock().getBlocksizeLog2() - 9);
-        return daddr * 512;
+        return dAddr * 512;
     }
 
     public byte[] getData(Context context) {
@@ -114,6 +115,6 @@ public class Extent implements IByteArraySerializable {
      *
      */
     public String toString() {
-        return String.format("[%d,%d,%d,%s]", __StartOffset, __StartBlock, __BlockCount, __Flag);
+        return String.format("[%d,%d,%d,%s]", startOffset, startBlock, blockCount, flag);
     }
 }

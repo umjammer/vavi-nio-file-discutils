@@ -31,6 +31,7 @@ import dotnet4j.io.MemoryStream;
 
 
 public final class Nfs3Mount extends RpcProgram {
+
     public static final int ProgramIdentifier = RpcIdentifiers.Nfs3MountProgramIdentifier;
 
     public static final int ProgramVersion = RpcIdentifiers.Nfs3MountProgramVersion;
@@ -70,7 +71,7 @@ public final class Nfs3Mount extends RpcProgram {
 
     public Nfs3MountResult mount(String dirPath) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), MountProc3.Mnt);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), MountProc3.Mnt);
         writer.write(dirPath);
         RpcReply reply = doSend(ms);
         if (reply.getHeader().isSuccess()) {

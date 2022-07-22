@@ -42,9 +42,10 @@ import dotnet4j.io.Stream;
  * Represents a DMG (aka UDIF) backed disk.
  */
 public class Disk extends VirtualDisk {
-    private SparseStream _content;
 
-    private DiskImageFile _file;
+    private SparseStream content;
+
+    private DiskImageFile file;
 
     /**
      * Initializes a new instance of the Disk class.
@@ -53,14 +54,14 @@ public class Disk extends VirtualDisk {
      * @param ownsStream Whether the new instance takes ownership of stream.
      */
     public Disk(Stream stream, Ownership ownsStream) {
-        _file = new DiskImageFile(stream, ownsStream);
+        file = new DiskImageFile(stream, ownsStream);
     }
 
     /**
      * Gets the capacity of the disk (in bytes).
      */
     public long getCapacity() {
-        return _file.getCapacity();
+        return file.getCapacity();
     }
 
     /**
@@ -74,11 +75,11 @@ public class Disk extends VirtualDisk {
      * accessing the stream.
      */
     public SparseStream getContent() {
-        if (_content == null) {
-            _content = _file.openContent(null, Ownership.None);
+        if (content == null) {
+            content = file.openContent(null, Ownership.None);
         }
 
-        return _content;
+        return content;
     }
 
     /**
@@ -102,18 +103,18 @@ public class Disk extends VirtualDisk {
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _file.getGeometry();
+        return file.getGeometry();
     }
 
     /**
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Collections.singletonList(_file);
+        return Collections.singletonList(file);
     }
 
     public PartitionTable getPartitions() {
-        return new UdifPartitionTable(this, _file.getBuffer());
+        return new UdifPartitionTable(this, file.getBuffer());
     }
 
     /**
@@ -142,14 +143,14 @@ public class Disk extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_content != null) {
-                _content.close();
-                _content = null;
+            if (content != null) {
+                content.close();
+                content = null;
             }
 
-            if (_file != null) {
-                _file.close();
-                _file = null;
+            if (file != null) {
+                file.close();
+                file = null;
             }
         } finally {
             super.close();

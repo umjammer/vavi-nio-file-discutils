@@ -30,9 +30,10 @@ import discUtils.streams.util.Sizes;
 
 
 public final class FreeSpaceTable {
-    private long _fileSize;
 
-    private List<StreamExtent> _freeExtents;
+    private long fileSize;
+
+    private List<StreamExtent> freeExtents;
 
     public FreeSpaceTable(long fileSize) {
         // There used to be a check here that the file size is a multiple of 1 MB.
@@ -42,9 +43,9 @@ public final class FreeSpaceTable {
         // Which does not mean the file size has to be multiple of 1MiB.
         // (The last extent can be less than 1MiB and still all extent have 1 MiB alignment.)
 
-        _freeExtents = new ArrayList<>();
-        _freeExtents.add(new StreamExtent(0, fileSize));
-        _fileSize = fileSize;
+        freeExtents = new ArrayList<>();
+        freeExtents.add(new StreamExtent(0, fileSize));
+        this.fileSize = fileSize;
     }
 
     public void extendTo(long fileSize, boolean isFree) {
@@ -52,29 +53,29 @@ public final class FreeSpaceTable {
             throw new IllegalArgumentException("VHDX space must be allocated on 1MB boundaries");
         }
 
-        if (fileSize < _fileSize) {
+        if (fileSize < this.fileSize) {
             throw new IndexOutOfBoundsException("Attempt to extend file to smaller size: " + fileSize);
         }
 
-        _fileSize = fileSize;
+        this.fileSize = fileSize;
 
         if (isFree) {
-            _freeExtents = StreamExtent.union(_freeExtents, new StreamExtent(_fileSize, fileSize - _fileSize));
+            freeExtents = StreamExtent.union(freeExtents, new StreamExtent(this.fileSize, fileSize - this.fileSize));
         }
     }
 
     public void release(long start, long length) {
         validateRange(start, length, "release");
-        _freeExtents = StreamExtent.union(_freeExtents, new StreamExtent(start, length));
+        freeExtents = StreamExtent.union(freeExtents, new StreamExtent(start, length));
     }
 
     public void reserve(long start, long length) {
         validateRange(start, length, "reserve");
-        _freeExtents = StreamExtent.subtract(_freeExtents, new StreamExtent(start, length));
+        freeExtents = StreamExtent.subtract(freeExtents, new StreamExtent(start, length));
     }
 
     public void reserve(List<StreamExtent> extents) {
-        _freeExtents = StreamExtent.subtract(_freeExtents, extents);
+        freeExtents = StreamExtent.subtract(freeExtents, extents);
     }
 
     /**
@@ -85,16 +86,16 @@ public final class FreeSpaceTable {
             throw new IllegalArgumentException("VHDX free space must be managed on 1MB boundaries");
         }
 
-        for (int i = 0; i < _freeExtents.size(); ++i) {
-            StreamExtent extent = _freeExtents.get(i);
+        for (int i = 0; i < freeExtents.size(); ++i) {
+            StreamExtent extent = freeExtents.get(i);
             if (extent.getLength() == length) {
-                _freeExtents.remove(i);
+                freeExtents.remove(i);
                 start[0] = extent.getStart();
                 return true;
             }
 
             if (extent.getLength() > length) {
-                _freeExtents.set(i, new StreamExtent(extent.getStart() + length, extent.getLength() - length));
+                freeExtents.set(i, new StreamExtent(extent.getStart() + length, extent.getLength() - length));
                 start[0] = extent.getStart();
                 return true;
             }
@@ -113,7 +114,7 @@ public final class FreeSpaceTable {
             throw new IllegalArgumentException("VHDX free space must be managed on 1MB boundaries");
         }
 
-        if (start < 0 || start > _fileSize || length > _fileSize - start) {
+        if (start < 0 || start > fileSize || length > fileSize - start) {
             throw new IndexOutOfBoundsException("Attempt to " + method + " space outside of file range");
         }
     }

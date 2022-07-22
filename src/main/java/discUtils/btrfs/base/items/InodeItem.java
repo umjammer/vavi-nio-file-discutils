@@ -34,6 +34,7 @@ import discUtils.streams.util.EndianUtilities;
  * define the location and parameters of the root of a btree
  */
 public class InodeItem extends BaseItem {
+
     public InodeItem(Key key) {
         super(key);
     }
@@ -44,37 +45,37 @@ public class InodeItem extends BaseItem {
 
     public static final int Length = 160;
 
-    private long _generation;
+    private long generation;
 
     public long getGeneration() {
-        return _generation;
+        return generation;
     }
 
     public void setGeneration(long value) {
-        _generation = value;
+        generation = value;
     }
 
-    private long _transId;
+    private long transId;
 
     public long getTransId() {
-        return _transId;
+        return transId;
     }
 
     public void setTransId(long value) {
-        _transId = value;
+        transId = value;
     }
 
     /**
      * Size of the file in bytes.
      */
-    private long _fileSize;
+    private long fileSize;
 
     public long getFileSize() {
-        return _fileSize;
+        return fileSize;
     }
 
     public void setFileSize(long value) {
-        _fileSize = value;
+        fileSize = value;
     }
 
     /**
@@ -82,173 +83,173 @@ public class InodeItem extends BaseItem {
      * Sum of the offset fields of all EXTENT_DATA items for this inode. For
      * directories: 0.
      */
-    private long _nBytes;
+    private long nBytes;
 
     public long getNBytes() {
-        return _nBytes;
+        return nBytes;
     }
 
     public void setNBytes(long value) {
-        _nBytes = value;
+        nBytes = value;
     }
 
     /**
      * Unused for normal inodes. Contains byte offset of block group when used
      * as a free space inode.
      */
-    private long _blockGroup;
+    private long blockGroup;
 
     public long getBlockGroup() {
-        return _blockGroup;
+        return blockGroup;
     }
 
     public void setBlockGroup(long value) {
-        _blockGroup = value;
+        blockGroup = value;
     }
 
     /**
      * Count of INODE_REF entries for the inode. When used outside of a file
      * tree, 1.
      */
-    private int _linkCount;
+    private int linkCount;
 
     public int getLinkCount() {
-        return _linkCount;
+        return linkCount;
     }
 
     public void setLinkCount(int value) {
-        _linkCount = value;
+        linkCount = value;
     }
 
     /**
      * stat.st_uid
      */
-    private int _uid;
+    private int uid;
 
     public int getUid() {
-        return _uid;
+        return uid;
     }
 
     public void setUid(int value) {
-        _uid = value;
+        uid = value;
     }
 
     /**
      * stat.st_gid
      */
-    private int _gid;
+    private int gid;
 
     public int getGid() {
-        return _gid;
+        return gid;
     }
 
     public void setGid(int value) {
-        _gid = value;
+        gid = value;
     }
 
     /**
      * stat.st_mode
      */
-    private int _mode;
+    private int mode;
 
     public int getMode() {
-        return _mode;
+        return mode;
     }
 
     public void setMode(int value) {
-        _mode = value;
+        mode = value;
     }
 
     /**
      * stat.st_rdev
      */
-    private long _rDev;
+    private long rDev;
 
     public long getRDev() {
-        return _rDev;
+        return rDev;
     }
 
     public void setRDev(long value) {
-        _rDev = value;
+        rDev = value;
     }
 
     /**
      * Inode flags
      */
-    private EnumSet<InodeFlag> _flags;
+    private EnumSet<InodeFlag> flags;
 
     public EnumSet<InodeFlag> getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(EnumSet<InodeFlag> value) {
-        _flags = value;
+        flags = value;
     }
 
     /**
      * Sequence number used for NFS compatibility. Initialized to 0 and
      * incremented each time mtime value is changed.
      */
-    private long _sequence;
+    private long sequence;
 
     public long getSequence() {
-        return _sequence;
+        return sequence;
     }
 
     public void setSequence(long value) {
-        _sequence = value;
+        sequence = value;
     }
 
     /**
      * stat.st_atime
      */
-    private TimeSpec _aTime;
+    private TimeSpec aTime;
 
     public TimeSpec getATime() {
-        return _aTime;
+        return aTime;
     }
 
     public void setATime(TimeSpec value) {
-        _aTime = value;
+        aTime = value;
     }
 
     /**
      * stat.st_ctime
      */
-    private TimeSpec _cTime;
+    private TimeSpec cTime;
 
     public TimeSpec getCTime() {
-        return _cTime;
+        return cTime;
     }
 
     public void setCTime(TimeSpec value) {
-        _cTime = value;
+        cTime = value;
     }
 
     /**
      * stat.st_mtime
      */
-    private TimeSpec _mTime;
+    private TimeSpec mTime;
 
     public TimeSpec getMTime() {
-        return _mTime;
+        return mTime;
     }
 
     public void setMTime(TimeSpec value) {
-        _mTime = value;
+        mTime = value;
     }
 
     /**
      * Timestamp of inode creation
      */
-    private TimeSpec _oTime;
+    private TimeSpec oTime;
 
     public TimeSpec getOTime() {
-        return _oTime;
+        return oTime;
     }
 
     public void setOTime(TimeSpec value) {
-        _oTime = value;
+        oTime = value;
     }
 
     public int size() {
@@ -256,22 +257,22 @@ public class InodeItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setTransId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 8));
-        setFileSize(EndianUtilities.toUInt64LittleEndian(buffer, offset + 16));
-        setNBytes(EndianUtilities.toUInt64LittleEndian(buffer, offset + 24));
-        setBlockGroup(EndianUtilities.toUInt64LittleEndian(buffer, offset + 32));
-        setLinkCount(EndianUtilities.toUInt32LittleEndian(buffer, offset + 40));
-        setUid(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
-        setGid(EndianUtilities.toUInt32LittleEndian(buffer, offset + 48));
-        setMode(EndianUtilities.toUInt32LittleEndian(buffer, offset + 52));
-        setRDev(EndianUtilities.toUInt64LittleEndian(buffer, offset + 56));
-        setFlags(InodeFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 64)));
-        setSequence(EndianUtilities.toUInt64LittleEndian(buffer, offset + 72));
-        setATime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 112));
-        setCTime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 124));
-        setMTime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 136));
-        setOTime(EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 148));
+        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        transId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
+        fileSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
+        nBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
+        blockGroup = EndianUtilities.toUInt64LittleEndian(buffer, offset + 32);
+        linkCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
+        uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
+        gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
+        mode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 52);
+        rDev = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
+        flags = InodeFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 64));
+        sequence = EndianUtilities.toUInt64LittleEndian(buffer, offset + 72);
+        aTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 112);
+        cTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 124);
+        mTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 136);
+        oTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 148);
         return size();
     }
 }

@@ -36,11 +36,12 @@ import dotnet4j.io.SeekOrigin;
  * Converts a buffer into a Stream.
  */
 public class BufferStream extends SparseStream {
-    private final FileAccess _access;
 
-    private final IBuffer _buffer;
+    private final FileAccess access;
 
-    private long _position;
+    private final IBuffer buffer;
+
+    private long position;
 
     /**
      * Initializes a new instance of the BufferStream class.
@@ -49,15 +50,15 @@ public class BufferStream extends SparseStream {
      * @param access The access permitted to clients.
      */
     public BufferStream(IBuffer buffer, FileAccess access) {
-        _buffer = buffer;
-        _access = access;
+        this.buffer = buffer;
+        this.access = access;
     }
 
     /**
      * Gets an indication of whether read access is permitted.
      */
     public boolean canRead() {
-        return _access != FileAccess.Write;
+        return access != FileAccess.Write;
     }
 
     /**
@@ -71,32 +72,32 @@ public class BufferStream extends SparseStream {
      * Gets an indication of whether write access is permitted.
      */
     public boolean canWrite() {
-        return _access != FileAccess.Read;
+        return access != FileAccess.Read;
     }
 
     /**
      * Gets the stored extents within the sparse stream.
      */
     public List<StreamExtent> getExtents() {
-        return _buffer.getExtents();
+        return buffer.getExtents();
     }
 
     /**
      * Gets the length of the stream (the capacity of the underlying buffer).
      */
     public long getLength() {
-        return _buffer.getCapacity();
+        return buffer.getCapacity();
     }
 
     /**
      * Gets and sets the current position within the stream.
      */
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     /**
@@ -119,8 +120,8 @@ public class BufferStream extends SparseStream {
         }
 
         StreamUtilities.assertBufferParameters(buffer, offset, count);
-        int numRead = _buffer.read(_position, buffer, offset, count);
-        _position += numRead;
+        int numRead = this.buffer.read(position, buffer, offset, count);
+        position += numRead;
         return numRead;
     }
 
@@ -134,17 +135,17 @@ public class BufferStream extends SparseStream {
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _buffer.getCapacity();
+            effectiveOffset += buffer.getCapacity();
         }
 
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     /**
@@ -153,7 +154,7 @@ public class BufferStream extends SparseStream {
      * @param value The new length of the stream.
      */
     public void setLength(long value) {
-        _buffer.setCapacity(value);
+        buffer.setCapacity(value);
     }
 
     /**
@@ -169,8 +170,8 @@ public class BufferStream extends SparseStream {
         }
 
         StreamUtilities.assertBufferParameters(buffer, offset, count);
-        _buffer.write(_position, buffer, offset, count);
-        _position += count;
+        this.buffer.write(position, buffer, offset, count);
+        position += count;
     }
 
     /**
@@ -192,8 +193,8 @@ public class BufferStream extends SparseStream {
             throw new dotnet4j.io.IOException("Attempt to erase bytes in a read-only stream");
         }
 
-        _buffer.clear(_position, count);
-        _position += count;
+        buffer.clear(position, count);
+        position += count;
     }
 
     /**
@@ -204,7 +205,7 @@ public class BufferStream extends SparseStream {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return _buffer.getExtentsInRange(start, count);
+        return buffer.getExtentsInRange(start, count);
     }
 
     @Override

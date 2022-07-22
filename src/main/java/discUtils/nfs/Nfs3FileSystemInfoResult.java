@@ -23,49 +23,50 @@
 package discUtils.nfs;
 
 public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
+
     public Nfs3FileSystemInfoResult(XdrDataReader reader) {
-        setStatus(Nfs3Status.valueOf(reader.readInt32()));
+        status = Nfs3Status.valueOf(reader.readInt32());
         if (reader.readBool()) {
-            setPostOpAttributes(new Nfs3FileAttributes(reader));
+            postOpAttributes = new Nfs3FileAttributes(reader);
         }
 
         if (getStatus() == Nfs3Status.Ok) {
-            setFileSystemInfo(new Nfs3FileSystemInfo(reader));
+            fileSystemInfo = new Nfs3FileSystemInfo(reader);
         }
     }
 
     public Nfs3FileSystemInfoResult() {
     }
 
-    private Nfs3FileSystemInfo _fileSystemInfo;
+    private Nfs3FileSystemInfo fileSystemInfo;
 
     public Nfs3FileSystemInfo getFileSystemInfo() {
-        return _fileSystemInfo;
+        return fileSystemInfo;
     }
 
     public void setFileSystemInfo(Nfs3FileSystemInfo value) {
-        _fileSystemInfo = value;
+        fileSystemInfo = value;
     }
 
-    private Nfs3FileAttributes _postOpAttributes;
+    private Nfs3FileAttributes postOpAttributes;
 
     public Nfs3FileAttributes getPostOpAttributes() {
-        return _postOpAttributes;
+        return postOpAttributes;
     }
 
     public void setPostOpAttributes(Nfs3FileAttributes value) {
-        _postOpAttributes = value;
+        postOpAttributes = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        writer.write(getPostOpAttributes() != null);
-        if (getPostOpAttributes() != null) {
-            getPostOpAttributes().write(writer);
+        writer.write(status.getValue());
+        writer.write(postOpAttributes != null);
+        if (postOpAttributes != null) {
+            postOpAttributes.write(writer);
         }
 
-        if (getStatus() == Nfs3Status.Ok) {
-            getFileSystemInfo().write(writer);
+        if (status == Nfs3Status.Ok) {
+            fileSystemInfo.write(writer);
         }
     }
 
@@ -79,11 +80,11 @@ public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getPostOpAttributes().equals(getPostOpAttributes()) &&
-               other.getStatus() == getStatus() && other.getFileSystemInfo().equals(getFileSystemInfo());
+        return other.status == status && other.postOpAttributes.equals(postOpAttributes) &&
+               other.status == status && other.fileSystemInfo.equals(fileSystemInfo);
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getStatus(), getPostOpAttributes(), getStatus(), getFileSystemInfo());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, postOpAttributes, status, fileSystemInfo);
     }
 }

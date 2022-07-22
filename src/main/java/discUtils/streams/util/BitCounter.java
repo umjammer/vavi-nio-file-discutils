@@ -28,10 +28,10 @@ package discUtils.streams.util;
  */
 public class BitCounter {
 
-    private static final byte[] _lookupTable;
+    private static final byte[] lookupTable;
 
     static {
-        _lookupTable = new byte[256];
+        lookupTable = new byte[256];
         for (int i = 0; i < 256; i++) {
             byte bitCount = 0;
             int value = i;
@@ -39,7 +39,7 @@ public class BitCounter {
                 bitCount++;
                 value &= (byte) (value - 1);
             }
-            _lookupTable[i] = bitCount;
+            lookupTable[i] = bitCount;
         }
     }
 
@@ -51,7 +51,7 @@ public class BitCounter {
      *         {@code value}
      */
     public static byte count(byte value) {
-        return _lookupTable[value];
+        return lookupTable[value];
     }
 
     /**
@@ -71,7 +71,7 @@ public class BitCounter {
         long result = 0L;
         for (int i = offset; i < end; i++) {
             int value = values[i] & 0xff;
-            result += _lookupTable[value];
+            result += lookupTable[value];
         }
         return result;
     }

@@ -37,61 +37,62 @@ import discUtils.streams.SparseStream;
  * base class for all disk image builders.
  */
 public abstract class DiskImageBuilder {
-    private static final Map<String, VirtualDiskFactory> _typeMap;
+
+    private static final Map<String, VirtualDiskFactory> typeMap;
 
     /**
      * Gets or sets the geometry of this disk, as reported by the BIOS, will be
      * implied from the content stream if not set.
      */
-    private Geometry _biosGeometry;
+    private Geometry biosGeometry;
 
     public Geometry getBiosGeometry() {
-        return _biosGeometry;
+        return biosGeometry;
     }
 
     public void setBiosGeometry(Geometry value) {
-        _biosGeometry = value;
+        biosGeometry = value;
     }
 
     /**
      * Gets or sets the content for this disk, implying the size of the disk.
      */
-    private SparseStream _content;
+    private SparseStream content;
 
     public SparseStream getContent() {
-        return _content;
+        return content;
     }
 
     public void setContent(SparseStream value) {
-        _content = value;
+        content = value;
     }
 
     /**
      * Gets or sets the adapter type for created virtual disk, for file formats
      * that encode this information.
      */
-    private GenericDiskAdapterType _genericAdapterType = GenericDiskAdapterType.Ide;
+    private GenericDiskAdapterType genericAdapterType = GenericDiskAdapterType.Ide;
 
     public GenericDiskAdapterType getGenericAdapterType() {
-        return _genericAdapterType;
+        return genericAdapterType;
     }
 
     public void setGenericAdapterType(GenericDiskAdapterType value) {
-        _genericAdapterType = value;
+        genericAdapterType = value;
     }
 
     /**
      * Gets or sets the geometry of this disk, will be implied from the content
      * stream if not set.
      */
-    private Geometry _geometry;
+    private Geometry geometry;
 
     public Geometry getGeometry() {
-        return _geometry;
+        return geometry;
     }
 
     public void setGeometry(Geometry value) {
-        _geometry = value;
+        geometry = value;
     }
 
     /**
@@ -103,7 +104,7 @@ public abstract class DiskImageBuilder {
     }
 
     private static Map<String, VirtualDiskFactory> getTypeMap() {
-        return _typeMap;
+        return typeMap;
     }
 
     /**
@@ -141,11 +142,11 @@ public abstract class DiskImageBuilder {
 
     static {
         ServiceLoader<VirtualDiskFactory> loader = ServiceLoader.load(VirtualDiskFactory.class);
-        _typeMap = new HashMap<>();
+        typeMap = new HashMap<>();
         for (VirtualDiskFactory factory : loader) {
             VirtualDiskFactoryAttribute attr = ReflectionHelper
                     .getCustomAttribute(factory.getClass(), VirtualDiskFactoryAttribute.class, false);
-            _typeMap.put(attr.type(), factory);
+            typeMap.put(attr.type(), factory);
         }
     }
 }

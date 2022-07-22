@@ -27,6 +27,7 @@ import java.util.List;
 
 
 public class ExtentDescriptor {
+
     public ExtentDescriptor() {
     }
 
@@ -38,54 +39,54 @@ public class ExtentDescriptor {
         setOffset(offset);
     }
 
-    private ExtentAccess _access = ExtentAccess.None;
+    private ExtentAccess access = ExtentAccess.None;
 
     public ExtentAccess getAccess() {
-        return _access;
+        return access;
     }
 
     public void setAccess(ExtentAccess value) {
-        _access = value;
+        access = value;
     }
 
-    private String _fileName;
+    private String fileName;
 
     public String getFileName() {
-        return _fileName;
+        return fileName;
     }
 
     public void setFileName(String value) {
-        _fileName = value;
+        fileName = value;
     }
 
-    private long _offset;
+    private long offset;
 
     public long getOffset() {
-        return _offset;
+        return offset;
     }
 
     public void setOffset(long value) {
-        _offset = value;
+        offset = value;
     }
 
-    private long _sizeInSectors;
+    private long sizeInSectors;
 
     public long getSizeInSectors() {
-        return _sizeInSectors;
+        return sizeInSectors;
     }
 
     public void setSizeInSectors(long value) {
-        _sizeInSectors = value;
+        sizeInSectors = value;
     }
 
-    private ExtentType _type = ExtentType.Flat;
+    private ExtentType type = ExtentType.Flat;
 
     public ExtentType getType() {
-        return _type;
+        return type;
     }
 
     public void setType(ExtentType value) {
-        _type = value;
+        type = value;
     }
 
     public static ExtentDescriptor parse(String descriptor) {
@@ -132,7 +133,6 @@ public class ExtentDescriptor {
             return "RW";
         default:
             throw new IllegalArgumentException("Unknown access type");
-
         }
     }
 
@@ -186,25 +186,23 @@ public class ExtentDescriptor {
             return "VMFSRAW";
         default:
             throw new IllegalArgumentException("Unknown extent type");
-
         }
     }
 
     public String toString() {
         try {
-            String basic = formatAccess(getAccess()) + " " + getSizeInSectors() + " " + formatExtentType(getType()) + " \"" +
+            String basic = formatAccess(access) + " " + sizeInSectors + " " + formatExtentType(type) + " \"" +
                            getFileName() + "\"";
-            if (getType() != ExtentType.Sparse && getType() != ExtentType.VmfsSparse && getType() != ExtentType.Zero) {
-                return basic + " " + getOffset();
+            if (type != ExtentType.Sparse && type != ExtentType.VmfsSparse && type != ExtentType.Zero) {
+                return basic + " " + offset;
             }
 
             return basic;
-        } catch (RuntimeException __dummyCatchVar0) {
-            throw __dummyCatchVar0;
-        } catch (Exception __dummyCatchVar0) {
-            throw new RuntimeException(__dummyCatchVar0);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-
     }
 
     private static List<String> splitQuotedString(String source) {
@@ -236,5 +234,4 @@ public class ExtentDescriptor {
         }
         return result;
     }
-
 }

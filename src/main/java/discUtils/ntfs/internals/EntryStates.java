@@ -26,7 +26,7 @@ import java.util.EnumSet;
 
 
 /**
- * Flags indicating the state of a Master File Table entry.
+ * flags indicating the state of a Master File Table entry.
  *
  * Used to filter entries in the Master File Table.
  */

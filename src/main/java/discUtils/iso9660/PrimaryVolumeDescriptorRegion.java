@@ -23,16 +23,17 @@
 package discUtils.iso9660;
 
 public class PrimaryVolumeDescriptorRegion extends VolumeDescriptorDiskRegion {
-    private final PrimaryVolumeDescriptor _descriptor;
+
+    private final PrimaryVolumeDescriptor descriptor;
 
     public PrimaryVolumeDescriptorRegion(PrimaryVolumeDescriptor descriptor, long start) {
         super(start);
-        _descriptor = descriptor;
+        this.descriptor = descriptor;
     }
 
     protected byte[] getBlockData() {
         byte[] buffer = new byte[IsoUtilities.SectorSize];
-        _descriptor.writeTo(buffer, 0);
+        descriptor.writeTo(buffer, 0);
         return buffer;
     }
 }

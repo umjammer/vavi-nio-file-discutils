@@ -26,38 +26,39 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class Response extends BaseResponse {
-    public int BidiReadResidualCount;
 
-    public int ExpectedDataSequenceNumber;
+    public int bidiReadResidualCount;
 
-    public BasicHeaderSegment Header;
+    public int expectedDataSequenceNumber;
 
-    public int ResidualCount;
+    public BasicHeaderSegment header;
 
-    public byte ResponseCode;
+    public int residualCount;
 
-    public ScsiStatus Status = ScsiStatus.Good;
+    public byte responseCode;
+
+    public ScsiStatus status = ScsiStatus.Good;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 
     public void parse(byte[] headerData, int headerOffset) {
-        Header = new BasicHeaderSegment();
-        Header.readFrom(headerData, headerOffset);
-        if (Header._OpCode != OpCode.ScsiResponse) {
+        header = new BasicHeaderSegment();
+        header.readFrom(headerData, headerOffset);
+        if (header.opCode != OpCode.ScsiResponse) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.ScsiResponse + " was " +
-                                               Header._OpCode);
+                                               header.opCode);
         }
 
-        ResponseCode = headerData[headerOffset + 2];
-        StatusPresent = true;
-        Status = ScsiStatus.valueOf(headerData[headerOffset + 3]);
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        ExpectedDataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
-        BidiReadResidualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
-        ResidualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
+        responseCode = headerData[headerOffset + 2];
+        statusPresent = true;
+        status = ScsiStatus.valueOf(headerData[headerOffset + 3]);
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        expectedDataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
+        bidiReadResidualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
+        residualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
     }
 }

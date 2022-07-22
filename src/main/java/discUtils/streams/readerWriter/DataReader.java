@@ -30,22 +30,23 @@ import dotnet4j.io.Stream;
  * base class for reading binary data from a stream.
  */
 public abstract class DataReader {
-    private static final int _bufferSize = 8;
 
-    protected final Stream _stream;
+    private static final int bufferSize = 8;
 
-    protected byte[] _buffer;
+    protected final Stream stream;
+
+    protected byte[] buffer;
 
     public DataReader(Stream stream) {
-        _stream = stream;
+        this.stream = stream;
     }
 
     public long getLength() {
-        return _stream.getLength();
+        return stream.getLength();
     }
 
     public long getPosition() {
-        return _stream.getPosition();
+        return stream.getPosition();
     }
 
     public void skip(int bytes) {
@@ -63,14 +64,14 @@ public abstract class DataReader {
     public abstract long readUInt64();
 
     public byte[] readBytes(int count) {
-        return StreamUtilities.readExact(_stream, count);
+        return StreamUtilities.readExact(stream, count);
     }
 
     protected void readToBuffer(int count) {
-        if (_buffer == null) {
-            _buffer = new byte[_bufferSize];
+        if (buffer == null) {
+            buffer = new byte[bufferSize];
         }
 
-        StreamUtilities.readExact(_stream, _buffer, 0, count);
+        StreamUtilities.readExact(stream, buffer, 0, count);
     }
 }

@@ -37,7 +37,8 @@ import dotnet4j.io.Stream;
  * Class holding information about a file system.
  */
 public final class VfsFileSystemInfo extends FileSystemInfo {
-    private final VfsFileSystemOpener _openDelegate;
+
+    private final VfsFileSystemOpener openDelegate;
 
     /**
      * Initializes a new instance of the VfsFileSystemInfo class.
@@ -48,27 +49,27 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      *            file system.
      */
     public VfsFileSystemInfo(String name, String description, VfsFileSystemOpener openDelegate) {
-        _name = name;
-        _description = description;
-        _openDelegate = openDelegate;
+        this.name = name;
+        this.description = description;
+        this.openDelegate = openDelegate;
     }
 
-    private String _description;
+    private String description;
 
     /**
      * Gets a one-line description of the file system.
      */
     public String getDescription() {
-        return _description;
+        return description;
     }
 
-    private String _name;
+    private String name;
 
     /**
      * Gets the name of the file system.
      */
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
@@ -79,8 +80,8 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      * @return A file system instance.
      */
     public DiscFileSystem open(VolumeInfo volume, FileSystemParameters parameters) {
-Debug.println(Level.INFO, _openDelegate + ", " + volume);
-        return _openDelegate.invoke(volume.open(), volume, parameters);
+Debug.println(Level.INFO, openDelegate + ", " + volume);
+        return openDelegate.invoke(volume.open(), volume, parameters);
     }
 
     /**
@@ -91,6 +92,6 @@ Debug.println(Level.INFO, _openDelegate + ", " + volume);
      * @return A file system instance.
      */
     public DiscFileSystem open(Stream stream, FileSystemParameters parameters) {
-        return _openDelegate.invoke(stream, null, parameters);
+        return openDelegate.invoke(stream, null, parameters);
     }
 }

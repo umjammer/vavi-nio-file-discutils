@@ -31,27 +31,28 @@ import java.util.List;
  * This report contains detailed tracing information.
  */
 public final class ReplayReport {
-    private Exception _failureException;
 
-    private Exception _replayException;
+    private Exception failureException;
 
-    private List<StreamTraceRecord> _globalTraceReport;
+    private Exception replayException;
 
-    private List<StreamTraceRecord> _traceReport;
+    private List<StreamTraceRecord> globalTraceReport;
 
-    private int _replayBufferSize;
+    private List<StreamTraceRecord> traceReport;
 
-    private int _eventsReplayed;
+    private int replayBufferSize;
 
-    private long _eventsBeforeLockdown;
+    private int eventsReplayed;
 
-    private String _replayPreVerificationReport;
+    private long eventsBeforeLockdown;
 
-    private boolean _failedVerifyOnReplay;
+    private String replayPreVerificationReport;
 
-    private String _replayVerificationReport;
+    private boolean failedVerifyOnReplay;
 
-    private String _lastCheckpointReport;
+    private String replayVerificationReport;
+
+    private String lastCheckpointReport;
 
     public ReplayReport(Exception failureEx,
             Exception replayEx,
@@ -64,17 +65,17 @@ public final class ReplayReport {
             boolean failedVerifyOnReplay,
             String replayVerificationReport,
             String lastCheckpointReport) {
-        _failureException = failureEx;
-        _replayException = replayEx;
-        _globalTraceReport = new ArrayList<>(globalTraceStream.getLog());
-        _traceReport = new ArrayList<>(traceStream.getLog());
-        _replayBufferSize = replayBufferSize;
-        _eventsReplayed = eventsReplayed;
-        _eventsBeforeLockdown = eventsBeforeLockdown;
-        _replayPreVerificationReport = replayPreVerificationReport;
-        _failedVerifyOnReplay = failedVerifyOnReplay;
-        _replayVerificationReport = replayVerificationReport;
-        _lastCheckpointReport = lastCheckpointReport;
+        failureException = failureEx;
+        replayException = replayEx;
+        globalTraceReport = new ArrayList<>(globalTraceStream.getLog());
+        traceReport = new ArrayList<>(traceStream.getLog());
+        this.replayBufferSize = replayBufferSize;
+        this.eventsReplayed = eventsReplayed;
+        this.eventsBeforeLockdown = eventsBeforeLockdown;
+        this.replayPreVerificationReport = replayPreVerificationReport;
+        this.failedVerifyOnReplay = failedVerifyOnReplay;
+        this.replayVerificationReport = replayVerificationReport;
+        this.lastCheckpointReport = lastCheckpointReport;
     }
 
     /**
@@ -82,14 +83,14 @@ public final class ReplayReport {
      * fail.
      */
     public Exception getVerificationFailureException() {
-        return _failureException;
+        return failureException;
     }
 
     /**
      * The exception (if any) that cause the full replay to fail.
      */
     public Exception getReplayException() {
-        return _replayException;
+        return replayException;
     }
 
     /**
@@ -97,7 +98,7 @@ public final class ReplayReport {
      * broke the file system.
      */
     public List<StreamTraceRecord> getInterCheckpointStreamTraceLog() {
-        return _globalTraceReport;
+        return globalTraceReport;
     }
 
     /**
@@ -105,28 +106,28 @@ public final class ReplayReport {
      * broke the file system.
      */
     public List<StreamTraceRecord> getReplayStreamTraceLog() {
-        return _traceReport;
+        return traceReport;
     }
 
     /**
      * The number of replay events available to replay.
      */
     public int getReplayEventsAvailable() {
-        return _replayBufferSize;
+        return replayBufferSize;
     }
 
     /**
      * The number of replay events successfully replayed.
      */
     public int getReplayEventsProcessed() {
-        return _eventsReplayed;
+        return eventsReplayed;
     }
 
     /**
      * Gets whether file system corruption was detected whilst replaying events.
      */
     public boolean getReplayFailedVerification() {
-        return _failedVerifyOnReplay;
+        return failedVerifyOnReplay;
     }
 
     /**
@@ -134,7 +135,7 @@ public final class ReplayReport {
      * checkpoint.
      */
     public String getLastCheckpointReport() {
-        return _lastCheckpointReport;
+        return lastCheckpointReport;
     }
 
     /**
@@ -142,7 +143,7 @@ public final class ReplayReport {
      * replaying the file system action that failed.
      */
     public String getReplayPreVerificationReport() {
-        return _replayPreVerificationReport;
+        return replayPreVerificationReport;
     }
 
     /**
@@ -150,13 +151,13 @@ public final class ReplayReport {
      * file system action that failed.
      */
     public String getReplayVerificationReport() {
-        return _replayVerificationReport;
+        return replayVerificationReport;
     }
 
     /**
      * The total number of events processed (ignoring events run during replay).
      */
     public long getTotalEventsProcessed() {
-        return _eventsBeforeLockdown;
+        return eventsBeforeLockdown;
     }
 }

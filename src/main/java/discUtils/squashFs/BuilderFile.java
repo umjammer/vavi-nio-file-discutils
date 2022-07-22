@@ -36,83 +36,83 @@ import dotnet4j.io.Stream;
 
 
 public final class BuilderFile extends BuilderNode {
-    private RegularInode _inode;
 
-    private List<Integer> _lengths;
+    private RegularInode inode;
 
-    private Stream _source;
+    private List<Integer> lengths;
 
-    private String _sourcePath;
+    private Stream source;
+
+    private String sourcePath;
 
     public BuilderFile(Stream source) {
-        _source = source;
+        this.source = source;
         setNumLinks(1);
     }
 
     public BuilderFile(String source) {
-        _sourcePath = source;
+        sourcePath = source;
         setNumLinks(1);
     }
 
     public Inode getInode() {
-        return _inode;
+        return inode;
     }
 
     public void reset() {
-        _inode = new RegularInode();
-        _lengths = null;
+        inode = new RegularInode();
+        lengths = null;
     }
 
     public void write(BuilderContext context) {
-        if (!_written) {
+        if (!written) {
             writeFileData(context);
             writeInode(context);
-            _written = true;
+            written = true;
         }
-
     }
 
     private void writeFileData(BuilderContext context) {
         Stream outStream = context.getRawStream();
         boolean disposeSource = false;
         try {
-            if (_source == null) {
+            if (source == null) {
                 LocalFileLocator locator = new LocalFileLocator("");
-                _source = locator.open(_sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                source = locator.open(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 disposeSource = true;
             }
 
-            if (_source.getPosition() != 0) {
-                _source.setPosition(0);
+            if (source.getPosition() != 0) {
+                source.setPosition(0);
             }
 
             long startPos = outStream.getPosition();
-            int bufferedBytes = StreamUtilities.readMaximum(_source, context.getIoBuffer(), 0, context.getDataBlockSize());
+            int bufferedBytes = StreamUtilities.readMaximum(source, context.getIoBuffer(), 0, context.getDataBlockSize());
             if (bufferedBytes < context.getDataBlockSize()) {
                 // Fragment - less than one complete block of data
-                _inode.StartBlock = 0xFFFFFFFF;
-                int[] refVar___0 = new int[1];
-                _inode.FragmentKey = context.getWriteFragment().invoke(bufferedBytes, refVar___0);
-                _inode.FragmentOffset = refVar___0[0];
-                _inode.setFileSize(bufferedBytes);
+                inode.startBlock = 0xFFFF_FFFF;
+                int[] offset = new int[1];
+                inode.fragmentKey = context.getWriteFragment().invoke(bufferedBytes, offset);
+                inode.fragmentOffset = offset[0];
+                inode.setFileSize(bufferedBytes);
             } else {
                 // At least one full block, no fragments used
-                _inode.FragmentKey = 0xFFFFFFFF;
-                _lengths = new ArrayList<>();
-                _inode.StartBlock = (int) startPos;
-                _inode.setFileSize(bufferedBytes);
+                inode.fragmentKey = 0xFFFF_FFFF;
+                lengths = new ArrayList<>();
+                inode.startBlock = (int) startPos;
+                inode.setFileSize(bufferedBytes);
                 while (bufferedBytes > 0) {
-                    _lengths.add(context.getWriteDataBlock().invoke(context.getIoBuffer(), 0, bufferedBytes));
-                    bufferedBytes = StreamUtilities.readMaximum(_source, context.getIoBuffer(), 0, context.getDataBlockSize());
-                    _inode.setFileSize(_inode.getFileSize() + bufferedBytes);
+                    lengths.add(context.getWriteDataBlock().invoke(context.getIoBuffer(), 0, bufferedBytes));
+                    bufferedBytes = StreamUtilities.readMaximum(source, context.getIoBuffer(), 0, context.getDataBlockSize());
+                    inode.setFileSize(inode.getFileSize() + bufferedBytes);
                 }
             }
         } finally {
             if (disposeSource) {
                 try {
-                    _source.close();
+                    source.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -124,15 +124,15 @@ public final class BuilderFile extends BuilderNode {
         }
 
         fillCommonInodeData(context);
-        _inode._type = InodeType.File;
+        inode.type = InodeType.File;
         setInodeRef(context.getInodeWriter().getPosition());
-        int totalSize =_inode.size();
-        _inode.writeTo(context.getIoBuffer(), 0);
-        if (_lengths != null && _lengths.size() > 0) {
-            for (int i = 0; i < _lengths.size(); ++i) {
-                EndianUtilities.writeBytesLittleEndian(_lengths.get(i), context.getIoBuffer(), _inode.size() + i * 4);
+        int totalSize = inode.size();
+        inode.writeTo(context.getIoBuffer(), 0);
+        if (lengths != null && lengths.size() > 0) {
+            for (int i = 0; i < lengths.size(); ++i) {
+                EndianUtilities.writeBytesLittleEndian(lengths.get(i), context.getIoBuffer(), inode.size() + i * 4);
             }
-            totalSize += _lengths.size() * 4;
+            totalSize += lengths.size() * 4;
         }
 
         context.getInodeWriter().write(context.getIoBuffer(), 0, totalSize);

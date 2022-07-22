@@ -202,7 +202,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
 
         try {
             BaseVolumeDescriptor bvd = new BaseVolumeDescriptor(buffer, 0);
-            return bvd.StandardIdentifier.equals(BaseVolumeDescriptor.Iso9660StandardIdentifier);
+            return bvd.standardIdentifier.equals(BaseVolumeDescriptor.Iso9660StandardIdentifier);
         } catch (NoSuchElementException e) {
             return false;
         }

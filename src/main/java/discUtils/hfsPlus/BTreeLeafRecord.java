@@ -27,52 +27,53 @@ import java.util.Arrays;
 
 
 public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
-    private final int _size;
+
+    private final int size;
 
     Class<TKey> clazz;
 
     public BTreeLeafRecord(Class<TKey> clazz, int size) {
-        _size = size;
+        this.size = size;
         this.clazz = clazz;
     }
 
-    private byte[] _data;
+    private byte[] data;
 
     public byte[] getData() {
-        return _data;
+        return data;
     }
 
     public void setData(byte[] value) {
-        _data = value;
+        data = value;
     }
 
-    private TKey _key;
+    private TKey key;
 
     public TKey getKey() {
-        return _key;
+        return key;
     }
 
     public void setKey(TKey value) {
-        _key = value;
+        key = value;
     }
 
     public int size() {
-        return _size;
+        return size;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         try {
-            _key = clazz.getDeclaredConstructor().newInstance();
-            int keySize = _key.readFrom(buffer, offset);
+            key = clazz.getDeclaredConstructor().newInstance();
+            int keySize = key.readFrom(buffer, offset);
 
             if ((keySize & 1) != 0) {
                 ++keySize;
             }
 
-            _data = new byte[_size - keySize];
-            System.arraycopy(buffer, offset + keySize, _data, 0, getData().length);
+            data = new byte[size - keySize];
+            System.arraycopy(buffer, offset + keySize, data, 0, getData().length);
 
-            return _size;
+            return size;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
@@ -83,6 +84,6 @@ public final class BTreeLeafRecord<TKey extends BTreeKey<?>> extends BTreeNodeRe
     }
 
     public String toString() {
-        return _key + ":" + Arrays.toString(_data);
+        return key + ":" + Arrays.toString(data);
     }
 }

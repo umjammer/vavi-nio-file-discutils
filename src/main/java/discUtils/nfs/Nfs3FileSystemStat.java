@@ -47,27 +47,27 @@ public final class Nfs3FileSystemStat {
     /**
      * The total size, in bytes, of the file system.
      */
-    private long _totalSizeBytes;
+    private long totalSizeBytes;
 
     public long getTotalSizeBytes() {
-        return _totalSizeBytes;
+        return totalSizeBytes;
     }
 
     public void setTotalSizeBytes(long value) {
-        _totalSizeBytes = value;
+        totalSizeBytes = value;
     }
 
     /**
      * The amount of free space, in bytes, in the file system.
      */
-    private long _freeSpaceBytes;
+    private long freeSpaceBytes;
 
     public long getFreeSpaceBytes() {
-        return _freeSpaceBytes;
+        return freeSpaceBytes;
     }
 
     public void setFreeSpaceBytes(long value) {
-        _freeSpaceBytes = value;
+        freeSpaceBytes = value;
     }
 
     /**
@@ -76,41 +76,41 @@ public final class Nfs3FileSystemStat {
      * by the file system; it does not reflect any quota system implemented by the
      * server.)
      */
-    private long _availableFreeSpaceBytes;
+    private long availableFreeSpaceBytes;
 
     public long getAvailableFreeSpaceBytes() {
-        return _availableFreeSpaceBytes;
+        return availableFreeSpaceBytes;
     }
 
     public void setAvailableFreeSpaceBytes(long value) {
-        _availableFreeSpaceBytes = value;
+        availableFreeSpaceBytes = value;
     }
 
     /**
      * The total number of file slots in the file system. (On a UNIX server, this
      * often corresponds to the number of inodes configured.)
      */
-    private long _fileSlotCount;
+    private long fileSlotCount;
 
     public long getFileSlotCount() {
-        return _fileSlotCount;
+        return fileSlotCount;
     }
 
     public void setFileSlotCount(long value) {
-        _fileSlotCount = value;
+        fileSlotCount = value;
     }
 
     /**
      * The number of free file slots in the file system.
      */
-    private long _freeFileSlotCount;
+    private long freeFileSlotCount;
 
     public long getFreeFileSlotCount() {
-        return _freeFileSlotCount;
+        return freeFileSlotCount;
     }
 
     public void setFreeFileSlotCount(long value) {
-        _freeFileSlotCount = value;
+        freeFileSlotCount = value;
     }
 
     /**
@@ -119,14 +119,14 @@ public final class Nfs3FileSystemStat {
      * reserved by the file system; it does not reflect any quota system implemented
      * by the server.)
      */
-    private long _availableFreeFileSlotCount;
+    private long availableFreeFileSlotCount;
 
     public long getAvailableFreeFileSlotCount() {
-        return _availableFreeFileSlotCount;
+        return availableFreeFileSlotCount;
     }
 
     public void setAvailableFreeFileSlotCount(long value) {
-        _availableFreeFileSlotCount = value;
+        availableFreeFileSlotCount = value;
     }
 
     /**
@@ -140,37 +140,37 @@ public final class Nfs3FileSystemStat {
      * Note however, this measure is assumed to be dynamic and may change at any
      * time.
      */
-    private long _invariant;
+    private long invariant;
 
     public long getInvariant() {
-        return _invariant;
+        return invariant;
     }
 
     public void setInvariant(long value) {
-        _invariant = value;
+        invariant = value;
     }
 
-    private long _invariantUntil;
+    private long invariantUntil;
 
     public long getInvariantUntil() {
-        return _invariantUntil;
+        return invariantUntil;
     }
 
     public void setInvariantUntil(long value) {
-        _invariantUntil = value;
+        invariantUntil = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getTotalSizeBytes());
-        writer.write(getFreeSpaceBytes());
-        writer.write(getAvailableFreeSpaceBytes());
-        writer.write(getFileSlotCount());
-        writer.write(getFreeFileSlotCount());
-        writer.write(getAvailableFreeFileSlotCount());
+        writer.write(totalSizeBytes);
+        writer.write(freeSpaceBytes);
+        writer.write(availableFreeSpaceBytes);
+        writer.write(fileSlotCount);
+        writer.write(freeFileSlotCount);
+        writer.write(availableFreeFileSlotCount);
         if (getInvariant() == 0xffff_ffff_ffff_ffffL) {
             writer.write(0xffff_ffff);
         } else {
-            writer.write((int) getInvariant());
+            writer.write((int) invariant);
         }
     }
 
@@ -183,20 +183,20 @@ public final class Nfs3FileSystemStat {
             return false;
         }
 
-        return other.getTotalSizeBytes() == getTotalSizeBytes() && other.getFreeSpaceBytes() == getFreeSpaceBytes()
-                && other.getAvailableFreeSpaceBytes() == getAvailableFreeSpaceBytes()
-                && other.getFileSlotCount() == getFileSlotCount() && other.getFreeFileSlotCount() == getFreeFileSlotCount()
-                && other.getAvailableFreeFileSlotCount() == getAvailableFreeFileSlotCount()
-                && other.getInvariant() == getInvariant();
+        return other.totalSizeBytes == totalSizeBytes && other.freeSpaceBytes == freeSpaceBytes
+                && other.availableFreeSpaceBytes == availableFreeSpaceBytes
+                && other.fileSlotCount == fileSlotCount && other.freeFileSlotCount == freeFileSlotCount
+                && other.availableFreeFileSlotCount == availableFreeFileSlotCount
+                && other.invariant == invariant;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getTotalSizeBytes(),
-                                             getFreeSpaceBytes(),
-                                             getAvailableFreeSpaceBytes(),
-                                             getFileSlotCount(),
-                                             getFreeFileSlotCount(),
-                                             getAvailableFreeFileSlotCount(),
-                                             getInvariant());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(totalSizeBytes,
+                freeSpaceBytes,
+                availableFreeSpaceBytes,
+                fileSlotCount,
+                freeFileSlotCount,
+                availableFreeFileSlotCount,
+                invariant);
     }
 }

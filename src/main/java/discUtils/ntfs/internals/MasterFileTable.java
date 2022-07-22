@@ -100,13 +100,13 @@ public final class MasterFileTable {
      */
     private static final int FirstNormalFileIndex = 24;
 
-    private final INtfsContext _context;
+    private final INtfsContext context;
 
-    private final discUtils.ntfs.MasterFileTable _mft;
+    private final discUtils.ntfs.MasterFileTable mft;
 
     public MasterFileTable(INtfsContext context, discUtils.ntfs.MasterFileTable mft) {
-        _context = context;
-        _mft = mft;
+        this.context = context;
+        this.mft = mft;
     }
 
     /**
@@ -116,9 +116,9 @@ public final class MasterFileTable {
      * @return The entry.
      */
     public MasterFileTableEntry get(long index) {
-        FileRecord mftRecord = _mft.getRecord(index, true, true);
+        FileRecord mftRecord = mft.getRecord(index, true, true);
         if (mftRecord != null) {
-            return new MasterFileTableEntry(_context, mftRecord);
+            return new MasterFileTableEntry(context, mftRecord);
         }
         return null;
     }
@@ -131,7 +131,7 @@ public final class MasterFileTable {
      */
     public List<MasterFileTableEntry> getEntries(EnumSet<EntryStates> filter) {
         List<MasterFileTableEntry> result = new ArrayList<>();
-        for (FileRecord record : _mft.getRecords()) {
+        for (FileRecord record : mft.getRecords()) {
             EntryStates state;
             if (record.getFlags().contains(FileRecordFlags.InUse)) {
                 state = EntryStates.InUse;
@@ -140,7 +140,7 @@ public final class MasterFileTable {
             }
 
             if (filter.contains(state)) {
-                result.add(new MasterFileTableEntry(_context, record));
+                result.add(new MasterFileTableEntry(context, record));
             }
         }
         return result;

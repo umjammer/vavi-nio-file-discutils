@@ -37,18 +37,18 @@ import dotnet4j.io.FileAccess;
 @VirtualDiskTransportAttribute(scheme = "file")
 public final class FileTransport extends VirtualDiskTransport {
 
-    private String _extraInfo;
+    private String extraInfo;
 
-    private String _path;
+    private String path;
 
     public boolean isRawDisk() {
         return false;
     }
 
     public void connect(URI uri, String username, String password) {
-        _path = uri.getPath().replace("/", File.separator);
-        _extraInfo = uri.getFragment();
-        String path = Utilities.getDirectoryFromPath(_path);
+        path = uri.getPath();
+        extraInfo = uri.getFragment();
+        String path = Utilities.getDirectoryFromPath(this.path);
         if (path == null || !Files.exists(Paths.get(path))) {
             throw new dotnet4j.io.FileNotFoundException(String.format("No such file '%s'", uri));
         }
@@ -59,15 +59,15 @@ public final class FileTransport extends VirtualDiskTransport {
     }
 
     public FileLocator getFileLocator() {
-        return new LocalFileLocator(Utilities.getDirectoryFromPath(_path) + File.separator);
+        return new LocalFileLocator(Utilities.getDirectoryFromPath(path) + File.separator);
     }
 
     public String getFileName() {
-        return Utilities.getFileFromPath(_path);
+        return Utilities.getFileFromPath(path);
     }
 
     public String getExtraInfo() {
-        return _extraInfo;
+        return extraInfo;
     }
 
     @Override

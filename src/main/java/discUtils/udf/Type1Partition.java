@@ -26,18 +26,19 @@ import discUtils.streams.buffer.IBuffer;
 
 
 public class Type1Partition extends LogicalPartition {
-    @SuppressWarnings("unused")
-    private Type1PartitionMap _partitionMap;
 
-    private final PhysicalPartition _physical;
+    @SuppressWarnings("unused")
+    private Type1PartitionMap partitionMap;
+
+    private final PhysicalPartition physical;
 
     public Type1Partition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, Type1PartitionMap partitionMap) {
         super(context, volumeDescriptor);
-        _partitionMap = partitionMap;
-        _physical = context.PhysicalPartitions.get(partitionMap.PartitionNumber);
+        this.partitionMap = partitionMap;
+        physical = context.physicalPartitions.get(partitionMap.partitionNumber);
     }
 
     public IBuffer getContent() {
-        return _physical.getContent();
+        return physical.getContent();
     }
 }

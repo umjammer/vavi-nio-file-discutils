@@ -28,36 +28,37 @@ import dotnet4j.io.IOException;
 
 
 public class ExtentBlock implements IByteArraySerializable {
-    public Extent[] Extents;
 
-    public ExtentHeader Header;
+    public Extent[] extents;
 
-    public ExtentIndex[] Index;
+    public ExtentHeader header;
+
+    public ExtentIndex[] index;
 
     public int size() {
-        return 12 + Header.getMaxEntries() * 12;
+        return 12 + header.getMaxEntries() * 12;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Header = EndianUtilities.toStruct(ExtentHeader.class, buffer, offset + 0);
-        if (Header.Magic != ExtentHeader.HeaderMagic) {
+        header = EndianUtilities.toStruct(ExtentHeader.class, buffer, offset + 0);
+        if (header.magic != ExtentHeader.HeaderMagic) {
             throw new IOException("Invalid extent header reading inode");
         }
 
-        if (Header.Depth == 0) {
-            Index = null;
-            Extents = new Extent[Header.getEntries()];
-            for (int i = 0; i < Extents.length; ++i) {
-                Extents[i] = EndianUtilities.toStruct(Extent.class, buffer, offset + 12 + i * 12);
+        if (header.depth == 0) {
+            index = null;
+            extents = new Extent[header.getEntries()];
+            for (int i = 0; i < extents.length; ++i) {
+                extents[i] = EndianUtilities.toStruct(Extent.class, buffer, offset + 12 + i * 12);
             }
         } else {
-            Extents = null;
-            Index = new ExtentIndex[Header.getEntries()];
-            for (int i = 0; i < Index.length; ++i) {
-                Index[i] = EndianUtilities.toStruct(ExtentIndex.class, buffer, offset + 12 + i * 12);
+            extents = null;
+            index = new ExtentIndex[header.getEntries()];
+            for (int i = 0; i < index.length; ++i) {
+                index[i] = EndianUtilities.toStruct(ExtentIndex.class, buffer, offset + 12 + i * 12);
             }
         }
-        return 12 + Header.getMaxEntries() * 12;
+        return 12 + header.getMaxEntries() * 12;
     }
 
     public void writeTo(byte[] buffer, int offset) {

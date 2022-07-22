@@ -37,13 +37,14 @@ import discUtils.streams.util.Ownership;
  * entire disk.
  */
 public final class PhysicalVolumeInfo extends VolumeInfo {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
-    private final VirtualDisk _disk;
+    private final VirtualDisk disk;
 
-    private final String _diskId;
+    private final String diskId;
 
-    private final SparseStreamOpenDelegate _streamOpener;
+    private final SparseStreamOpenDelegate streamOpener;
 
     /**
      * Initializes a new instance of the PhysicalVolumeInfo class.
@@ -54,11 +55,11 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      *            to represent a (BIOS or GPT) partition.
      */
     PhysicalVolumeInfo(String diskId, VirtualDisk disk, PartitionInfo partitionInfo) {
-        _diskId = diskId;
-        _disk = disk;
-        _streamOpener = partitionInfo::open;
-        _volumeType = partitionInfo.getVolumeType();
-        _partition = partitionInfo;
+        this.diskId = diskId;
+        this.disk = disk;
+        streamOpener = partitionInfo::open;
+        volumeType = partitionInfo.getVolumeType();
+        partition = partitionInfo;
     }
 
     /**
@@ -69,10 +70,10 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      *            disk as a single volume.
      */
     PhysicalVolumeInfo(String diskId, VirtualDisk disk) {
-        _diskId = diskId;
-        _disk = disk;
-        _streamOpener = () -> new SubStream(disk.getContent(), Ownership.None, 0, disk.getCapacity());
-        _volumeType = PhysicalVolumeType.EntireDisk;
+        this.diskId = diskId;
+        this.disk = disk;
+        streamOpener = () -> new SubStream(disk.getContent(), Ownership.None, 0, disk.getCapacity());
+        volumeType = PhysicalVolumeType.EntireDisk;
     }
 
     /**
@@ -80,21 +81,21 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * calls), may be null.
      */
     public Geometry getBiosGeometry() {
-        return _disk.getBiosGeometry();
+        return disk.getBiosGeometry();
     }
 
     /**
      * Gets the one-byte BIOS type for this volume, which indicates the content.
      */
     public byte getBiosType() {
-        return _partition == null ? (byte) 0 : _partition.getBiosType();
+        return partition == null ? (byte) 0 : partition.getBiosType();
     }
 
     /**
      * Gets the unique identity of the disk containing the volume, if known.
      */
     public UUID getDiskIdentity() {
-        return _volumeType != PhysicalVolumeType.EntireDisk ? _disk.getPartitions().getDiskGuid() : EMPTY;
+        return volumeType != PhysicalVolumeType.EntireDisk ? disk.getPartitions().getDiskGuid() : EMPTY;
     }
 
     /**
@@ -102,7 +103,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * partition-type volumes).
      */
     public int getDiskSignature() {
-        return _volumeType != PhysicalVolumeType.EntireDisk ? _disk.getSignature() : 0;
+        return volumeType != PhysicalVolumeType.EntireDisk ? disk.getSignature() : 0;
     }
 
     /**
@@ -114,48 +115,48 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * stable order, if the stability of this identity is paramount.
      */
     public String getIdentity() {
-        if (_volumeType == PhysicalVolumeType.GptPartition) {
+        if (volumeType == PhysicalVolumeType.GptPartition) {
             return "VPG" + String.format("{%s}", getPartitionIdentity());
         }
         String partId;
-        switch (_volumeType) {
+        switch (volumeType) {
         case EntireDisk:
             partId = "PD";
             break;
         case BiosPartition:
         case ApplePartition:
-            partId = "PO" + Long.toHexString(_partition.getFirstSector() * _disk.getSectorSize());
+            partId = "PO" + Long.toHexString(partition.getFirstSector() * disk.getSectorSize());
             break;
         default:
             partId = "P*";
             break;
         }
 
-        return "VPD:" + _diskId + ":" + partId;
+        return "VPD:" + diskId + ":" + partId;
     }
 
     /**
      * Gets the size of the volume, in bytes.
      */
     public long getLength() {
-        return _partition == null ? _disk.getCapacity() : _partition.getSectorCount() * _disk.getSectorSize();
+        return partition == null ? disk.getCapacity() : partition.getSectorCount() * disk.getSectorSize();
     }
 
-    private PartitionInfo _partition;
+    private PartitionInfo partition;
 
     /**
      * Gets the underlying partition (if any).
      */
     public PartitionInfo getPartition() {
-        return _partition;
+        return partition;
     }
 
     /**
      * Gets the unique identity of the physical partition, if known.
      */
     public UUID getPartitionIdentity() {
-        if (_partition instanceof GuidPartitionInfo) {
-            return ((GuidPartitionInfo) _partition).getIdentity();
+        if (partition instanceof GuidPartitionInfo) {
+            return ((GuidPartitionInfo) partition).getIdentity();
         }
 
         return EMPTY;
@@ -166,7 +167,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * null).
      */
     public Geometry getPhysicalGeometry() {
-        return _disk.getGeometry();
+        return disk.getGeometry();
     }
 
     /**
@@ -174,16 +175,16 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * (may be Zero).
      */
     public long getPhysicalStartSector() {
-        return _volumeType == PhysicalVolumeType.EntireDisk ? 0 : _partition.getFirstSector();
+        return volumeType == PhysicalVolumeType.EntireDisk ? 0 : partition.getFirstSector();
     }
 
     /**
      * Gets the type of the volume.
      */
-    private PhysicalVolumeType _volumeType = PhysicalVolumeType.None;
+    private PhysicalVolumeType volumeType = PhysicalVolumeType.None;
 
     public PhysicalVolumeType getVolumeType() {
-        return _volumeType;
+        return volumeType;
     }
 
     /**
@@ -192,7 +193,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * @return A stream that can be used to access the volume.
      */
     public SparseStream open() {
-        return _streamOpener.invoke();
+        return streamOpener.invoke();
     }
 
     @Override

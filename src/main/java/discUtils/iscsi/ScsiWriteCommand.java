@@ -26,18 +26,19 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ScsiWriteCommand extends ScsiCommand {
-    private final int _logicalBlockAddress;
+
+    private final int logicalBlockAddress;
 
     public ScsiWriteCommand(long targetLun, int logicalBlockAddress, short numBlocks) {
         super(targetLun);
-        _logicalBlockAddress = logicalBlockAddress;
-        _numBlocks = numBlocks;
+        this.logicalBlockAddress = logicalBlockAddress;
+        this.numBlocks = numBlocks;
     }
 
-    private short _numBlocks;
+    private short numBlocks;
 
     public int getNumBlocks() {
-        return _numBlocks & 0xffff;
+        return numBlocks & 0xffff;
     }
 
     public int size() {
@@ -55,9 +56,9 @@ public class ScsiWriteCommand extends ScsiCommand {
     public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = 0x2A;
         buffer[offset + 1] = 0;
-        EndianUtilities.writeBytesBigEndian(_logicalBlockAddress, buffer, offset + 2);
+        EndianUtilities.writeBytesBigEndian(logicalBlockAddress, buffer, offset + 2);
         buffer[offset + 6] = 0;
-        EndianUtilities.writeBytesBigEndian(_numBlocks, buffer, offset + 7);
+        EndianUtilities.writeBytesBigEndian(numBlocks, buffer, offset + 7);
         buffer[offset + 9] = 0;
     }
 }

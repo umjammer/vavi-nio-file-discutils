@@ -28,27 +28,27 @@ import discUtils.iso9660.IsoUtilities;
 
 
 public final class ExtensionSystemUseEntry extends SystemUseEntry {
-    public String ExtensionDescriptor;
+    public String extensionDescriptor;
 
-    public String ExtensionIdentifier;
+    public String extensionIdentifier;
 
-    public String ExtensionSource;
+    public String extensionSource;
 
-    public byte ExtensionVersion;
+    public byte extensionVersion;
 
     public ExtensionSystemUseEntry(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
         checkAndSetCommonProperties(name, length, version, (byte) 8, (byte) 1);
         int lenId = data[offset + 4] & 0xff;
         int lenDescriptor = data[offset + 5] & 0xff;
         int lenSource = data[offset + 6] & 0xff;
-        ExtensionVersion = data[offset + 7];
+        extensionVersion = data[offset + 7];
         if ((length & 0xff) < 8 + lenId + lenDescriptor + lenSource) {
             throw new IllegalArgumentException("Invalid SUSP ER entry - too short, only " + (length & 0xff) +
                 " bytes - expected: " + (8 + lenId + lenDescriptor + lenSource));
         }
 
-        ExtensionIdentifier = IsoUtilities.readChars(data, offset + 8, lenId, encoding);
-        ExtensionDescriptor = IsoUtilities.readChars(data, offset + 8 + lenId, lenDescriptor, encoding);
-        ExtensionSource = IsoUtilities.readChars(data, offset + 8 + lenId + lenDescriptor, lenSource, encoding);
+        extensionIdentifier = IsoUtilities.readChars(data, offset + 8, lenId, encoding);
+        extensionDescriptor = IsoUtilities.readChars(data, offset + 8 + lenId, lenDescriptor, encoding);
+        extensionSource = IsoUtilities.readChars(data, offset + 8 + lenId + lenDescriptor, lenSource, encoding);
     }
 }

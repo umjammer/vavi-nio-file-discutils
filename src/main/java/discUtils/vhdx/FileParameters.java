@@ -30,28 +30,29 @@ import discUtils.streams.util.Sizes;
 
 
 public final class FileParameters implements IByteArraySerializable {
+
     public static final int DefaultBlockSize = 32 * (int) Sizes.OneMiB;
 
     public static final int DefaultDifferencingBlockSize = 2 * (int) Sizes.OneMiB;
 
     public static final int DefaultDynamicBlockSize = 32 * (int) Sizes.OneMiB;
 
-    public int BlockSize;
+    public int blockSize;
 
-    public EnumSet<FileParametersFlags> Flags;
+    public EnumSet<FileParametersFlags> flags;
 
     public int size() {
         return 8;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        BlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        Flags = FileParametersFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
+        blockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        flags = FileParametersFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
         return 8;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(BlockSize, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian((int) FileParametersFlags.valueOf(Flags), buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian(blockSize, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian((int) FileParametersFlags.valueOf(flags), buffer, offset + 4);
     }
 }

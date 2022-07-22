@@ -41,53 +41,54 @@ import dotnet4j.io.Stream;
  * Represents a disk accessed via iSCSI.
  */
 public class Disk extends VirtualDisk {
-    private final FileAccess _access;
 
-    private LunCapacity _capacity;
+    private final FileAccess access;
 
-    private final long _lun;
+    private LunCapacity capacity;
 
-    private final Session _session;
+    private final long lun;
 
-    private DiskStream _stream;
+    private final Session session;
+
+    private DiskStream stream;
 
     public Disk(Session session, long lun, FileAccess access) {
-        _session = session;
-        _lun = lun;
-        _access = access;
+        this.session = session;
+        this.lun = lun;
+        this.access = access;
     }
 
     /**
      * Gets the size of the disk's logical blocks (in bytes).
      */
     public int getBlockSize() {
-        if (_capacity == null) {
-            _capacity = _session.getCapacity(_lun);
+        if (capacity == null) {
+            capacity = session.getCapacity(lun);
         }
 
-        return _capacity.getBlockSize();
+        return capacity.getBlockSize();
     }
 
     /**
      * The capacity of the disk.
      */
     public long getCapacity() {
-        if (_capacity == null) {
-            _capacity = _session.getCapacity(_lun);
+        if (capacity == null) {
+            capacity = session.getCapacity(lun);
         }
 
-        return _capacity.getBlockSize() * _capacity.getLogicalBlockCount();
+        return capacity.getBlockSize() * capacity.getLogicalBlockCount();
     }
 
     /**
      * Gets a stream that provides access to the disk's content.
      */
     public SparseStream getContent() {
-        if (_stream == null) {
-            _stream = new DiskStream(_session, _lun, _access);
+        if (stream == null) {
+            stream = new DiskStream(session, lun, access);
         }
 
-        return _stream;
+        return stream;
     }
 
     /**

@@ -41,57 +41,58 @@ import dotnet4j.io.Stream;
 
 
 public final class LogEntry {
+
     public static final int LogSectorSize = (int) (4 * Sizes.OneKiB);
 
-    private final List<Descriptor> _descriptors;
+    private final List<Descriptor> descriptors;
 
-    private final LogEntryHeader _header;
+    private final LogEntryHeader header;
 
     private LogEntry(long position, LogEntryHeader header, List<Descriptor> descriptors) {
-        _position = position;
-        _header = header;
-        _descriptors = descriptors;
+        this.position = position;
+        this.header = header;
+        this.descriptors = descriptors;
     }
 
     public long getFlushedFileOffset() {
-        return _header.FlushedFileOffset;
+        return header.flushedFileOffset;
     }
 
     public boolean isEmpty() {
-        return _descriptors.size() == 0;
+        return descriptors.size() == 0;
     }
 
     public long getLastFileOffset() {
-        return _header.LastFileOffset;
+        return header.lastFileOffset;
     }
 
     public UUID getLogGuid() {
-        return _header.LogGuid;
+        return header.logGuid;
     }
 
     public List<Range> getModifiedExtents() {
-        return _descriptors.stream().map(d -> new Range(d.FileOffset, d.getFileLength())).collect(Collectors.toList());
+        return descriptors.stream().map(d -> new Range(d.fileOffset, d.getFileLength())).collect(Collectors.toList());
     }
 
-    private long _position;
+    private long position;
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public long getSequenceNumber() {
-        return _header.SequenceNumber;
+        return header.sequenceNumber;
     }
 
     public int getTail() {
-        return _header.Tail;
+        return header.tail;
     }
 
     public void replay(Stream target) {
         if (isEmpty())
             return;
 
-        for (Descriptor descriptor : _descriptors) {
+        for (Descriptor descriptor : descriptors) {
             descriptor.writeData(target);
         }
     }
@@ -117,26 +118,26 @@ public final class LogEntry {
         LogEntryHeader header = new LogEntryHeader();
         header.readFrom(sectorBuffer, 0);
 
-        if (!header.isValid() || header.EntryLength > logStream.getLength()) {
+        if (!header.isValid() || header.entryLength > logStream.getLength()) {
             entry[0] = null;
             return false;
         }
 
-        byte[] logEntryBuffer = new byte[header.EntryLength];
+        byte[] logEntryBuffer = new byte[header.entryLength];
         System.arraycopy(sectorBuffer, 0, logEntryBuffer, 0, LogSectorSize);
 
         StreamUtilities.readExact(logStream, logEntryBuffer, LogSectorSize, logEntryBuffer.length - LogSectorSize);
 
         EndianUtilities.writeBytesLittleEndian(0, logEntryBuffer, 4);
-        if (header.Checksum != Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, logEntryBuffer, 0, header.EntryLength)) {
+        if (header.checksum != Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, logEntryBuffer, 0, header.entryLength)) {
             entry[0] = null;
             return false;
         }
 
-        int dataPos = MathUtilities.roundUp(header.DescriptorCount * 32 + 64, LogSectorSize);
+        int dataPos = MathUtilities.roundUp(header.descriptorCount * 32 + 64, LogSectorSize);
 
         List<Descriptor> descriptors = new ArrayList<>();
-        for (int i = 0; i < header.DescriptorCount; ++i) {
+        for (int i = 0; i < header.descriptorCount; ++i) {
             int offset = i * 32 + 64;
             Descriptor descriptor;
 
@@ -155,7 +156,7 @@ public final class LogEntry {
             }
 
             descriptor.readFrom(logEntryBuffer, offset);
-            if (!descriptor.isValid(header.SequenceNumber)) {
+            if (!descriptor.isValid(header.sequenceNumber)) {
                 entry[0] = null;
                 return false;
             }
@@ -168,15 +169,16 @@ public final class LogEntry {
     }
 
     private abstract static class Descriptor implements IByteArraySerializable {
+
         public static final int ZeroDescriptorSignature = 0x6F72657A;
 
         public static final int DataDescriptorSignature = 0x63736564;
 
         public static final int DataSectorSignature = 0x61746164;
 
-        public long FileOffset;
+        public long fileOffset;
 
-        public long SequenceNumber;
+        public long sequenceNumber;
 
         public abstract long getFileLength();
 
@@ -194,16 +196,17 @@ public final class LogEntry {
     }
 
     private final static class ZeroDescriptor extends Descriptor {
-        public long ZeroLength;
+
+        public long zeroLength;
 
         public long getFileLength() {
-            return ZeroLength;
+            return zeroLength;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            ZeroLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-            FileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-            SequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
+            zeroLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
+            fileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
+            sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
 
             return 32;
         }
@@ -213,13 +216,13 @@ public final class LogEntry {
         }
 
         public boolean isValid(long sequenceNumber) {
-            return SequenceNumber == sequenceNumber;
+            return this.sequenceNumber == sequenceNumber;
         }
 
         public void writeData(Stream target) {
-            target.seek(FileOffset, SeekOrigin.Begin);
+            target.seek(fileOffset, SeekOrigin.Begin);
             byte[] zeroBuffer = new byte[(int) (4 * Sizes.OneKiB)];
-            long total = ZeroLength;
+            long total = zeroLength;
             while (total > 0) {
                 int count = zeroBuffer.length;
                 if (total < count)
@@ -231,19 +234,20 @@ public final class LogEntry {
     }
 
     private final static class DataDescriptor extends Descriptor {
-        private final byte[] _data;
 
-        private final int _offset;
+        private final byte[] data;
 
-        public long LeadingBytes;
+        private final int offset;
 
-        public int TrailingBytes;
+        public long leadingBytes;
 
-        public int DataSignature;
+        public int trailingBytes;
+
+        public int dataSignature;
 
         public DataDescriptor(byte[] data, int offset) {
-            _data = data;
-            _offset = offset;
+            this.data = data;
+            this.offset = offset;
         }
 
         public long getFileLength() {
@@ -251,12 +255,12 @@ public final class LogEntry {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            TrailingBytes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-            LeadingBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-            FileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-            SequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
+            trailingBytes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+            leadingBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
+            fileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
+            sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
 
-            DataSignature = EndianUtilities.toUInt32LittleEndian(_data, _offset);
+            dataSignature = EndianUtilities.toUInt32LittleEndian(data, this.offset);
 
             return 32;
         }
@@ -266,23 +270,23 @@ public final class LogEntry {
         }
 
         public boolean isValid(long sequenceNumber) {
-            return SequenceNumber == sequenceNumber && _offset + LogSectorSize <= _data.length &&
-                   (EndianUtilities.toUInt32LittleEndian(_data, _offset + LogSectorSize - 4) & 0xFFFFFFFFL) == (sequenceNumber &
-                           0xFFFFFFFFL) &&
-                   (EndianUtilities.toUInt32LittleEndian(_data, _offset + 4) &
-                           0xFFFFFFFFL) == ((sequenceNumber >>> 32) & 0xFFFFFFFFL) &&
-                   DataSignature == DataSectorSignature;
+            return this.sequenceNumber == sequenceNumber && offset + LogSectorSize <= data.length &&
+                   (EndianUtilities.toUInt32LittleEndian(data, offset + LogSectorSize - 4) & 0xFFFF_FFFFL) == (sequenceNumber &
+                           0xFFFF_FFFFL) &&
+                   (EndianUtilities.toUInt32LittleEndian(data, offset + 4) &
+                           0xFFFF_FFFFL) == ((sequenceNumber >>> 32) & 0xFFFF_FFFFL) &&
+                   dataSignature == DataSectorSignature;
         }
 
         public void writeData(Stream target) {
-            target.seek(FileOffset, SeekOrigin.Begin);
+            target.seek(fileOffset, SeekOrigin.Begin);
             byte[] leading = new byte[8];
-            EndianUtilities.writeBytesLittleEndian(LeadingBytes, leading, 0);
+            EndianUtilities.writeBytesLittleEndian(leadingBytes, leading, 0);
             byte[] trailing = new byte[4];
-            EndianUtilities.writeBytesLittleEndian(TrailingBytes, trailing, 0);
+            EndianUtilities.writeBytesLittleEndian(trailingBytes, trailing, 0);
 
             target.write(leading, 0, leading.length);
-            target.write(_data, _offset + 8, 4084);
+            target.write(data, offset + 8, 4084);
             target.write(trailing, 0, trailing.length);
         }
     }

@@ -44,51 +44,52 @@ import dotnet4j.io.Stream;
 
 
 class Index implements Closeable {
-    private final ObjectCache<Long, IndexBlock> _blockCache;
 
-    protected BiosParameterBlock _bpb;
+    private final ObjectCache<Long, IndexBlock> blockCache;
 
-    private final Comparator<byte[]> _comparer;
+    protected BiosParameterBlock bpb;
 
-    protected File _file;
+    private final Comparator<byte[]> comparer;
 
-    private Bitmap _indexBitmap;
+    protected File file;
 
-    protected String _name;
+    private Bitmap indexBitmap;
 
-    private final IndexRoot _root;
+    protected String name;
 
-    private final IndexNode _rootNode;
+    private final IndexRoot root;
+
+    private final IndexNode rootNode;
 
     public Index(File file, String name, BiosParameterBlock bpb, UpperCase upCase) {
-        _file = file;
-        _name = name;
-        _bpb = bpb;
-        _isFileIndex = name.equals("$I30");
+        this.file = file;
+        this.name = name;
+        this.bpb = bpb;
+        isFileIndex = name.equals("$I30");
 
-        _blockCache = new ObjectCache<>();
+        blockCache = new ObjectCache<>();
 
-        _root = _file.getStream(AttributeType.IndexRoot, _name).getContent(IndexRoot.class);
-        _comparer = _root.getCollator(upCase);
+        root = this.file.getStream(AttributeType.IndexRoot, this.name).getContent(IndexRoot.class);
+        comparer = root.getCollator(upCase);
 
-        try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Read)) {
+        try (Stream s = this.file.openStream(AttributeType.IndexRoot, this.name, FileAccess.Read)) {
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
-            _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
+            rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, buffer, IndexRoot.HeaderOffset);
             // Give the attribute some room to breathe, so long as it doesn't
             // squeeze others out BROKEN, BROKEN, BROKEN - how to figure this
             // out? Query at the point of adding entries to the root node?
-            _rootNode.setTotalSpaceAvailable(_rootNode.getTotalSpaceAvailable() +
-                                             (_file.mftRecordFreeSpace(AttributeType.IndexRoot, _name) - 100));
+            rootNode.setTotalSpaceAvailable(rootNode.getTotalSpaceAvailable() +
+                                             (this.file.mftRecordFreeSpace(AttributeType.IndexRoot, this.name) - 100));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
 
-        if (_file.streamExists(AttributeType.IndexAllocation, _name)) {
-            setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
+        if (this.file.streamExists(AttributeType.IndexAllocation, this.name)) {
+            setAllocationStream(this.file.openStream(AttributeType.IndexAllocation, this.name, FileAccess.ReadWrite));
         }
 
-        if (_file.streamExists(AttributeType.Bitmap, _name)) {
-            _indexBitmap = new Bitmap(_file.openStream(AttributeType.Bitmap, _name, FileAccess.ReadWrite), Long.MAX_VALUE);
+        if (this.file.streamExists(AttributeType.Bitmap, this.name)) {
+            indexBitmap = new Bitmap(this.file.openStream(AttributeType.Bitmap, this.name, FileAccess.ReadWrite), Long.MAX_VALUE);
         }
     }
 
@@ -98,34 +99,34 @@ class Index implements Closeable {
             String name,
             BiosParameterBlock bpb,
             UpperCase upCase) {
-        _file = file;
-        _name = name;
-        _bpb = bpb;
-        _isFileIndex = name.equals("$I30");
+        this.file = file;
+        this.name = name;
+        this.bpb = bpb;
+        isFileIndex = name.equals("$I30");
 
-        _blockCache = new ObjectCache<>();
+        blockCache = new ObjectCache<>();
 
-        _file.createStream(AttributeType.IndexRoot, _name);
+        this.file.createStream(AttributeType.IndexRoot, this.name);
 
-        _root = new IndexRoot();
-        _root.setAttributeType(attrType != null ? attrType.ordinal() : 0);
-        _root.setCollationRule(collationRule);
-        _root.setIndexAllocationSize(bpb.getIndexBufferSize());
-        _root.setRawClustersPerIndexRecord(bpb._rawIndexBufferSize);
+        root = new IndexRoot();
+        root.setAttributeType(attrType != null ? attrType.ordinal() : 0);
+        root.setCollationRule(collationRule);
+        root.setIndexAllocationSize(bpb.getIndexBufferSize());
+        root.setRawClustersPerIndexRecord(bpb.rawIndexBufferSize);
 
-        _comparer = _root.getCollator(upCase);
+        comparer = root.getCollator(upCase);
 
-        _rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, 32);
+        rootNode = new IndexNode(this::writeRootNodeToDisk, 0, this, true, 32);
     }
 
-    private Stream _allocationStream;
+    private Stream allocationStream;
 
     Stream getAllocationStream() {
-        return _allocationStream;
+        return allocationStream;
     }
 
     void setAllocationStream(Stream value) {
-        _allocationStream = value;
+        allocationStream = value;
     }
 
     public int getCount() {
@@ -134,20 +135,20 @@ class Index implements Closeable {
 
     public List<Tuple<byte[], byte[]>> getEntries() {
         List<Tuple<byte[], byte[]>> result = new ArrayList<>();
-        for (IndexEntry entry : enumerate(_rootNode)) {
+        for (IndexEntry entry : enumerate(rootNode)) {
             result.add(new Tuple<>(entry.getKeyBuffer(), entry.getDataBuffer()));
         }
         return result;
     }
 
     int getIndexBufferSize() {
-        return _root.getIndexAllocationSize();
+        return root.getIndexAllocationSize();
     }
 
-    private boolean _isFileIndex;
+    private boolean isFileIndex;
 
     boolean isFileIndex() {
-        return _isFileIndex;
+        return isFileIndex;
     }
 
     public byte[] get(byte[] key) {
@@ -161,19 +162,19 @@ class Index implements Closeable {
     public void put(byte[] key, byte[] value) {
         IndexEntry[] oldEntry = new IndexEntry[1];
         IndexNode[] node = new IndexNode[1];
-        _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
+        rootNode.setTotalSpaceAvailable(rootNode.calcSize() + file.mftRecordFreeSpace(AttributeType.IndexRoot, name));
 
-        if (_rootNode.tryFindEntry(key, oldEntry, node)) {
+        if (rootNode.tryFindEntry(key, oldEntry, node)) {
             node[0].updateEntry(key, value);
         } else {
-            _rootNode.addEntry(key, value);
+            rootNode.addEntry(key, value);
         }
     }
 
     public void close() throws IOException {
-        if (_indexBitmap != null) {
-            _indexBitmap.close();
-            _indexBitmap = null;
+        if (indexBitmap != null) {
+            indexBitmap.close();
+            indexBitmap = null;
         }
     }
 
@@ -189,7 +190,7 @@ class Index implements Closeable {
 
     public List<Tuple<byte[], byte[]>> findAll(Comparable<byte[]> query) {
         List<Tuple<byte[], byte[]>> result = new ArrayList<>();
-        for (IndexEntry entry : findAllIn(query, _rootNode)) {
+        for (IndexEntry entry : findAllIn(query, rootNode)) {
             result.add(new Tuple<>(entry.getKeyBuffer(), entry.getDataBuffer()));
         }
         return result;
@@ -200,9 +201,9 @@ class Index implements Closeable {
     }
 
     public boolean remove(byte[] key) {
-        _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
+        rootNode.setTotalSpaceAvailable(rootNode.calcSize() + file.mftRecordFreeSpace(AttributeType.IndexRoot, name));
         IndexEntry[] overflowEntry = new IndexEntry[1];
-        boolean found = _rootNode.removeEntry(key, overflowEntry);
+        boolean found = rootNode.removeEntry(key, overflowEntry);
         if (overflowEntry[0] != null) {
             throw new dotnet4j.io.IOException("Error removing entry, root overflowed");
         }
@@ -217,7 +218,7 @@ class Index implements Closeable {
         IndexEntry[] entry = new IndexEntry[1];
         IndexNode[] node = new IndexNode[1];
 
-        if (_rootNode.tryFindEntry(key, entry, node)) {
+        if (rootNode.tryFindEntry(key, entry, node)) {
             value[0] = entry[0].getDataBuffer();
             return true;
         }
@@ -275,27 +276,27 @@ class Index implements Closeable {
     }
 
     long indexBlockVcnToPosition(long vcn) {
-        if (vcn % _root.getRawClustersPerIndexRecord() != 0) {
+        if (vcn % root.getRawClustersPerIndexRecord() != 0) {
             throw new UnsupportedOperationException("Unexpected vcn (not a multiple of clusters-per-index-record): vcn=" + vcn +
-                                                    " rcpir=" + _root.getRawClustersPerIndexRecord());
+                                                    " rcpir=" + root.getRawClustersPerIndexRecord());
         }
 
-        if (_bpb.getBytesPerCluster() <= _root.getIndexAllocationSize()) {
-            return vcn * _bpb.getBytesPerCluster();
+        if (bpb.getBytesPerCluster() <= root.getIndexAllocationSize()) {
+            return vcn * bpb.getBytesPerCluster();
         }
 
-        if (_root.getRawClustersPerIndexRecord() != 8) {
+        if (root.getRawClustersPerIndexRecord() != 8) {
             throw new UnsupportedOperationException("Unexpected RawClustersPerIndexRecord (multiple index blocks per cluster): " +
-                                                    _root.getRawClustersPerIndexRecord());
+                                                    root.getRawClustersPerIndexRecord());
         }
 
-        return vcn / _root.getRawClustersPerIndexRecord() * _root.getIndexAllocationSize();
+        return vcn / root.getRawClustersPerIndexRecord() * root.getIndexAllocationSize();
     }
 
     boolean shrinkRoot() {
-        if (_rootNode.depose()) {
+        if (rootNode.depose()) {
             writeRootNodeToDisk();
-            _rootNode.setTotalSpaceAvailable(_rootNode.calcSize() + _file.mftRecordFreeSpace(AttributeType.IndexRoot, _name));
+            rootNode.setTotalSpaceAvailable(rootNode.calcSize() + file.mftRecordFreeSpace(AttributeType.IndexRoot, name));
             return true;
         }
 
@@ -303,10 +304,10 @@ class Index implements Closeable {
     }
 
     IndexBlock getSubBlock(IndexEntry parentEntry) {
-        IndexBlock block = _blockCache.get(parentEntry.getChildrenVirtualCluster());
+        IndexBlock block = blockCache.get(parentEntry.getChildrenVirtualCluster());
         if (block == null) {
-            block = new IndexBlock(this, false, parentEntry, _bpb);
-            _blockCache.put(parentEntry.getChildrenVirtualCluster(), block);
+            block = new IndexBlock(this, false, parentEntry, bpb);
+            blockCache.put(parentEntry.getChildrenVirtualCluster(), block);
         }
 
         return block;
@@ -314,37 +315,37 @@ class Index implements Closeable {
 
     IndexBlock allocateBlock(IndexEntry parentEntry) {
         if (getAllocationStream() == null) {
-            _file.createStream(AttributeType.IndexAllocation, _name);
-            setAllocationStream(_file.openStream(AttributeType.IndexAllocation, _name, FileAccess.ReadWrite));
+            file.createStream(AttributeType.IndexAllocation, name);
+            setAllocationStream(file.openStream(AttributeType.IndexAllocation, name, FileAccess.ReadWrite));
         }
 
-        if (_indexBitmap == null) {
-            _file.createStream(AttributeType.Bitmap, _name);
-            _indexBitmap = new Bitmap(_file.openStream(AttributeType.Bitmap, _name, FileAccess.ReadWrite), Long.MAX_VALUE);
+        if (indexBitmap == null) {
+            file.createStream(AttributeType.Bitmap, name);
+            indexBitmap = new Bitmap(file.openStream(AttributeType.Bitmap, name, FileAccess.ReadWrite), Long.MAX_VALUE);
         }
 
-        long idx = _indexBitmap.allocateFirstAvailable(0);
-        parentEntry.setChildrenVirtualCluster(idx * MathUtilities.ceil(_bpb.getIndexBufferSize(),
-                                                                       _bpb.getSectorsPerCluster() * _bpb.getBytesPerSector()));
+        long idx = indexBitmap.allocateFirstAvailable(0);
+        parentEntry.setChildrenVirtualCluster(idx * MathUtilities.ceil(bpb.getIndexBufferSize(),
+                                                                       bpb.getSectorsPerCluster() * bpb.getBytesPerSector()));
         parentEntry.getFlags().add(IndexEntryFlags.Node);
-        IndexBlock block = IndexBlock.initialize(this, false, parentEntry, _bpb);
-        _blockCache.put(parentEntry.getChildrenVirtualCluster(), block);
+        IndexBlock block = IndexBlock.initialize(this, false, parentEntry, bpb);
+        blockCache.put(parentEntry.getChildrenVirtualCluster(), block);
         return block;
     }
 
     void freeBlock(long vcn) {
-        long idx = vcn / MathUtilities.ceil(_bpb.getIndexBufferSize(), _bpb.getSectorsPerCluster() * _bpb.getBytesPerSector());
-        _indexBitmap.markAbsent(idx);
-        _blockCache.remove(vcn);
+        long idx = vcn / MathUtilities.ceil(bpb.getIndexBufferSize(), bpb.getSectorsPerCluster() * bpb.getBytesPerSector());
+        indexBitmap.markAbsent(idx);
+        blockCache.remove(vcn);
     }
 
     int compare(byte[] x, byte[] y) {
-//Debug.println(_comparer.getClass() + ": " + _comparer.compare(x, y));
-        return _comparer.compare(x, y);
+//Debug.println(comparer.getClass() + ": " + comparer.compare(x, y));
+        return comparer.compare(x, y);
     }
 
     void dump(PrintWriter writer, String prefix) {
-        nodeAsString(writer, prefix, _rootNode, "R");
+        nodeAsString(writer, prefix, rootNode, "R");
     }
 
     protected List<IndexEntry> enumerate(IndexNode node) {
@@ -397,11 +398,11 @@ class Index implements Closeable {
     }
 
     private void writeRootNodeToDisk() {
-        _rootNode.getHeader()._allocatedSizeOfEntries = _rootNode.calcSize();
-        byte[] buffer = new byte[_rootNode.getHeader()._allocatedSizeOfEntries + _root.size()];
-        _root.writeTo(buffer, 0);
-        _rootNode.writeTo(buffer, _root.size());
-        try (Stream s = _file.openStream(AttributeType.IndexRoot, _name, FileAccess.Write)) {
+        rootNode.getHeader().allocatedSizeOfEntries = rootNode.calcSize();
+        byte[] buffer = new byte[rootNode.getHeader().allocatedSizeOfEntries + root.size()];
+        root.writeTo(buffer, 0);
+        rootNode.writeTo(buffer, root.size());
+        try (Stream s = file.openStream(AttributeType.IndexRoot, name, FileAccess.Write)) {
             s.setPosition(0);
             s.write(buffer, 0, buffer.length);
             s.setLength(s.getPosition());
@@ -416,7 +417,7 @@ class Index implements Closeable {
             if (entry.getFlags().contains(IndexEntryFlags.End)) {
                 writer.println(prefix + "      E");
             } else {
-                writer.println(prefix + "      " + entryAsString(entry, _file.getBestName(), _name));
+                writer.println(prefix + "      " + entryAsString(entry, file.getBestName(), name));
             }
             if (entry.getFlags().contains(IndexEntryFlags.Node)) {
                 nodeAsString(writer,

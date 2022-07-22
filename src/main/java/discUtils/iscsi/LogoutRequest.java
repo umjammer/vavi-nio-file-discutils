@@ -27,26 +27,27 @@ import discUtils.streams.util.MathUtilities;
 
 
 public class LogoutRequest {
-    private final Connection _connection;
+
+    private final Connection connection;
 
     public LogoutRequest(Connection connection) {
-        _connection = connection;
+        this.connection = connection;
     }
 
     public byte[] getBytes(LogoutReason reason) {
-        BasicHeaderSegment _basicHeader = new BasicHeaderSegment();
-        _basicHeader.Immediate = true;
-        _basicHeader._OpCode = OpCode.LogoutRequest;
-        _basicHeader.FinalPdu = true;
-        _basicHeader.TotalAhsLength = 0;
-        _basicHeader.DataSegmentLength = 0;
-        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
+        BasicHeaderSegment basicHeader = new BasicHeaderSegment();
+        basicHeader.immediate = true;
+        basicHeader.opCode = OpCode.LogoutRequest;
+        basicHeader.finalPdu = true;
+        basicHeader.totalAhsLength = 0;
+        basicHeader.dataSegmentLength = 0;
+        basicHeader.initiatorTaskTag = connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[MathUtilities.roundUp(48, 4)];
-        _basicHeader.writeTo(buffer, 0);
+        basicHeader.writeTo(buffer, 0);
         buffer[1] |= (byte) (reason.ordinal() & 0x7F);
-        EndianUtilities.writeBytesBigEndian(_connection.getId(), buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_connection.getSession().getCommandSequenceNumber(), buffer, 24);
-        EndianUtilities.writeBytesBigEndian(_connection.getExpectedStatusSequenceNumber(), buffer, 28);
+        EndianUtilities.writeBytesBigEndian(connection.getId(), buffer, 20);
+        EndianUtilities.writeBytesBigEndian(connection.getSession().getCommandSequenceNumber(), buffer, 24);
+        EndianUtilities.writeBytesBigEndian(connection.getExpectedStatusSequenceNumber(), buffer, 28);
         return buffer;
     }
 }

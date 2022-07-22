@@ -28,47 +28,48 @@ import java.time.Instant;
  * base class for all resource records (DNS RRs).
  */
 public class ResourceRecord {
+
     public ResourceRecord(String name, RecordType type, RecordClass rClass, long expiry) {
-        _name = name;
-        _recordType = type;
-        _class = rClass;
-        _expiry = expiry;
+        this.name = name;
+        recordType = type;
+        clazz = rClass;
+        this.expiry = expiry;
     }
 
     /**
      * Gets the class of record.
      */
-    private RecordClass _class;
+    private RecordClass clazz;
 
     public RecordClass getClass_() {
-        return _class;
+        return clazz;
     }
 
     /**
      * Gets the expiry time of the record.
      */
-    private long _expiry;
+    private long expiry;
 
     public long getExpiry() {
-        return _expiry;
+        return expiry;
     }
 
     /**
      * Gets the name of the resource (domain).
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
      * Gets the type of record.
      */
-    private RecordType _recordType;
+    private RecordType recordType;
 
     public RecordType getRecordType() {
-        return _recordType;
+        return recordType;
     }
 
     public static ResourceRecord readFrom(PacketReader reader) {

@@ -34,29 +34,30 @@ import dotnet4j.io.FileAccess;
 
 
 class ClusterBitmap implements Closeable {
-    private Bitmap _bitmap;
 
-    private final File _file;
+    private Bitmap bitmap;
 
-    private boolean _fragmentedDiskMode;
+    private final File file;
 
-    private long _nextDataCluster;
+    private boolean fragmentedDiskMode;
+
+    private long nextDataCluster;
 
     public ClusterBitmap(File file) {
-        _file = file;
-        _bitmap = new Bitmap(_file.openStream(AttributeType.Data, null, FileAccess.ReadWrite),
-                             MathUtilities.ceil(file.getContext().getBiosParameterBlock()._totalSectors64,
+        this.file = file;
+        bitmap = new Bitmap(this.file.openStream(AttributeType.Data, null, FileAccess.ReadWrite),
+                             MathUtilities.ceil(file.getContext().getBiosParameterBlock().totalSectors64,
                                                 file.getContext().getBiosParameterBlock().getSectorsPerCluster()));
     }
 
     Bitmap getBitmap() {
-        return _bitmap;
+        return bitmap;
     }
 
     public void close() throws IOException {
-        if (_bitmap != null) {
-            _bitmap.close();
-            _bitmap = null;
+        if (bitmap != null) {
+            bitmap.close();
+            bitmap = null;
         }
     }
 
@@ -75,8 +76,8 @@ class ClusterBitmap implements Closeable {
 
         long numFound = 0;
 
-        long totalClusters = _file.getContext().getRawStream().getLength() /
-                             _file.getContext().getBiosParameterBlock().getBytesPerCluster();
+        long totalClusters = file.getContext().getRawStream().getLength() /
+                             file.getContext().getBiosParameterBlock().getBytesPerCluster();
 
         if (isMft) {
             // First, try to extend the existing cluster run (if available)
@@ -85,7 +86,7 @@ class ClusterBitmap implements Closeable {
             }
 
             // The MFT grows sequentially across the disk
-            if (numFound < count && !_fragmentedDiskMode) {
+            if (numFound < count && !fragmentedDiskMode) {
                 numFound += findClusters(count - numFound, result, 0, totalClusters, isMft, true, 0);
             }
 
@@ -99,7 +100,7 @@ class ClusterBitmap implements Closeable {
             }
 
             // Try to find a contiguous range
-            if (numFound < count && !_fragmentedDiskMode) {
+            if (numFound < count && !fragmentedDiskMode) {
                 numFound += findClusters(count - numFound, result, totalClusters / 8, totalClusters, isMft, true, total / 4);
             }
 
@@ -129,25 +130,25 @@ class ClusterBitmap implements Closeable {
         // then switch out of trying to allocate contiguous ranges. Similarly,
         // switch back if we found a resonable quantity in a single span.
         if ((numFound > 4 && result.size() == 1) || result.size() > 1) {
-            _fragmentedDiskMode = numFound / result.size() < 4;
+            fragmentedDiskMode = numFound / result.size() < 4;
         }
 
         return result;
     }
 
     void markAllocated(long first, long count) {
-        _bitmap.markPresentRange(first, count);
+        bitmap.markPresentRange(first, count);
     }
 
     void freeClusters(List<Tuple<Long, Long>> runs) {
         for (Tuple<Long, Long> run : runs) {
-            _bitmap.markAbsentRange(run.getItem1(), run.getItem2());
+            bitmap.markAbsentRange(run.getItem1(), run.getItem2());
         }
     }
 
     void freeClusters(Range... runs) {
         for (Range run : runs) {
-            _bitmap.markAbsentRange(run.getOffset(), run.getCount());
+            bitmap.markAbsentRange(run.getOffset(), run.getCount());
         }
     }
 
@@ -160,7 +161,7 @@ class ClusterBitmap implements Closeable {
      * @param numClusters Total number of clusters in the volume.
      */
     void setTotalClusters(long numClusters) {
-        long actualClusters = _bitmap.setTotalEntries(numClusters);
+        long actualClusters = bitmap.setTotalEntries(numClusters);
         if (actualClusters != numClusters) {
             markAllocated(numClusters, actualClusters - numClusters);
         }
@@ -168,14 +169,14 @@ class ClusterBitmap implements Closeable {
 
     private long extendRun(long count, List<Tuple<Long, Long>> result, long start, long end) {
         long focusCluster = start;
-        while (!_bitmap.isPresent(focusCluster) && focusCluster < end && focusCluster - start < count) {
+        while (!bitmap.isPresent(focusCluster) && focusCluster < end && focusCluster - start < count) {
             ++focusCluster;
         }
 
         long numFound = focusCluster - start;
 
         if (numFound > 0) {
-            _bitmap.markPresentRange(start, numFound);
+            bitmap.markPresentRange(start, numFound);
             result.add(new Tuple<>(start, numFound));
         }
 
@@ -208,27 +209,27 @@ class ClusterBitmap implements Closeable {
         if (isMft) {
             focusCluster = start;
         } else {
-            if (_nextDataCluster < start || _nextDataCluster >= end) {
-                _nextDataCluster = start;
+            if (nextDataCluster < start || nextDataCluster >= end) {
+                nextDataCluster = start;
             }
 
-            focusCluster = _nextDataCluster;
+            focusCluster = nextDataCluster;
         }
 
         long numInspected = 0;
         while (numFound < count && focusCluster >= start && numInspected < end - start) {
-            if (!_bitmap.isPresent(focusCluster)) {
+            if (!bitmap.isPresent(focusCluster)) {
                 // Start of a run...
                 long runStart = focusCluster;
                 ++focusCluster;
 
-                while (!_bitmap.isPresent(focusCluster) && focusCluster - runStart < count - numFound) {
+                while (!bitmap.isPresent(focusCluster) && focusCluster - runStart < count - numFound) {
                     ++focusCluster;
                     ++numInspected;
                 }
 
                 if (!contiguous || focusCluster - runStart == count - numFound) {
-                    _bitmap.markPresentRange(runStart, focusCluster - runStart);
+                    bitmap.markPresentRange(runStart, focusCluster - runStart);
                     result.add(new Tuple<>(runStart, focusCluster - runStart));
                     numFound += focusCluster - runStart;
                 }
@@ -244,7 +245,7 @@ class ClusterBitmap implements Closeable {
         }
 
         if (!isMft) {
-            _nextDataCluster = focusCluster + headroom;
+            nextDataCluster = focusCluster + headroom;
         }
 
         return numFound;

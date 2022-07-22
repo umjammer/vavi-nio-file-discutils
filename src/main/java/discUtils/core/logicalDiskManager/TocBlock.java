@@ -26,66 +26,67 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class TocBlock {
-    public int Checksum;
 
-    // 00 00 08 B6
-    public long Item1Size;
+    /** 00 00 08 B6 */
+    public int checksum;
 
-    // Unit?
-    public long Item1Start;
+    /** Unit? */
+    public long item1Size;
 
-    // Sector Offset from ConfigurationStart
-    public String Item1Str;
+    /** Sector Offset from ConfigurationStart */
+    public long item1Start;
 
-    // 'config', length 10
-    public long Item2Size;
+    /** 'config', length 10 */
+    public String item1Str;
 
-    // Unit?
-    public long Item2Start;
+    /** Unit? */
+    public long item2Size;
 
-    // Sector Offset from ConfigurationStart
-    public String Item2Str;
+    /** Sector Offset from ConfigurationStart */
+    public long item2Start;
 
-    // 'log', length 10
-    public long SequenceNumber;
+    /** 'log', length 10 */
+    public String item2Str;
 
-    // 00 .. 01
-    public String Signature;
+    /** 00 .. 01 */
+    public long sequenceNumber;
 
-    // TOCBLOCK
-    public long Unknown1;
+    /** TOCBLOCK */
+    public String signature;
 
-    // 0
-    public long Unknown2;
+    /** 0 */
+    public long unknown1;
 
-    // 00
-    public int Unknown3;
+    /** 00 */
+    public long unknown2;
 
-    // 00 06 00 01  (may be two values?)
-    public int Unknown4;
+    /** 00 06 00 01 (maybe two values?) */
+    public int unknown3;
 
-    // 00 00 00 00
-    public int Unknown5;
+    /** 00 00 00 00 */
+    public int unknown4;
 
-    // 00 06 00 01  (may be two values?)
-    public int Unknown6;
+    /** 00 06 00 01 (maybe two values?) */
+    public int unknown5;
 
-    // 00 00 00 00
+    /** 00 00 00 00 */
+    public int unknown6;
+
     public void readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 8);
-        Checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
-        SequenceNumber = EndianUtilities.toInt64BigEndian(buffer, offset + 0x0C);
-        Unknown1 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x14);
-        Unknown2 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x1C);
-        Item1Str = EndianUtilities.bytesToString(buffer, offset + 0x24, 10).replaceFirst("\0*$", "");
-        Item1Start = EndianUtilities.toInt64BigEndian(buffer, offset + 0x2E);
-        Item1Size = EndianUtilities.toInt64BigEndian(buffer, offset + 0x36);
-        Unknown3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x3E);
-        Unknown4 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x42);
-        Item2Str = EndianUtilities.bytesToString(buffer, offset + 0x46, 10).replaceFirst("\0*$", "");
-        Item2Start = EndianUtilities.toInt64BigEndian(buffer, offset + 0x50);
-        Item2Size = EndianUtilities.toInt64BigEndian(buffer, offset + 0x58);
-        Unknown5 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x60);
-        Unknown6 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x64);
+        signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 8);
+        checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
+        sequenceNumber = EndianUtilities.toInt64BigEndian(buffer, offset + 0x0C);
+        unknown1 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x14);
+        unknown2 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x1C);
+        item1Str = EndianUtilities.bytesToString(buffer, offset + 0x24, 10).replaceFirst("\0*$", "");
+        item1Start = EndianUtilities.toInt64BigEndian(buffer, offset + 0x2E);
+        item1Size = EndianUtilities.toInt64BigEndian(buffer, offset + 0x36);
+        unknown3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x3E);
+        unknown4 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x42);
+        item2Str = EndianUtilities.bytesToString(buffer, offset + 0x46, 10).replaceFirst("\0*$", "");
+        item2Start = EndianUtilities.toInt64BigEndian(buffer, offset + 0x50);
+        item2Size = EndianUtilities.toInt64BigEndian(buffer, offset + 0x58);
+        unknown5 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x60);
+        unknown6 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x64);
     }
 }

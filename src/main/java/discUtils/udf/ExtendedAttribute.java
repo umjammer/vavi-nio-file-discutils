@@ -26,28 +26,29 @@ package discUtils.udf;
  * Contains extended attribute information for a file or directory.
  */
 public final class ExtendedAttribute {
+
     public ExtendedAttribute(String id, byte[] data) {
-        __Identifier = id;
-        __Data = data;
+        identifier = id;
+        this.data = data;
     }
 
     /**
      * Gets the data contained in the attribute.
      * The format of the data will depend on the identifier.
      */
-    private byte[] __Data;
+    private byte[] data;
 
     public byte[] getData() {
-        return __Data;
+        return data;
     }
 
     /**
      * Gets the value of the identifier of this attribute.
      * A typical identifier is "*UDF DVD CGMS Info".
      */
-    private String __Identifier;
+    private String identifier;
 
     public String getIdentifier() {
-        return __Identifier;
+        return identifier;
     }
 }

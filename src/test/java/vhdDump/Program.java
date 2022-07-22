@@ -46,11 +46,12 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "vhd_file", description = "Path to the VHD file to inspect.", args = 1, required = true)
-    private String _vhdFile;
+    private String vhdFile;
 
     @Option(option = "nc", argName = "noCheck", description = "Don't check the VHD file format for corruption")
-    private boolean _dontCheck;
+    private boolean dontCheck;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -59,8 +60,8 @@ public class Program extends ProgramBase {
     }
 
     protected void doRun() throws IOException {
-        if (!_dontCheck) {
-            try (Stream s = new FileStream(_vhdFile, FileMode.Open, FileAccess.Read)) {
+        if (!dontCheck) {
+            try (Stream s = new FileStream(vhdFile, FileMode.Open, FileAccess.Read)) {
                 FileChecker vhdChecker = new FileChecker(s);
                 if (!vhdChecker.check(new PrintWriter(System.err), ReportLevels.All)) {
                     System.err.println("Aborting: Invalid VHD file");
@@ -69,9 +70,9 @@ public class Program extends ProgramBase {
             }
         }
 
-        try (DiskImageFile vhdFile = new DiskImageFile(_vhdFile, FileAccess.Read)) {
+        try (DiskImageFile vhdFile = new DiskImageFile(this.vhdFile, FileAccess.Read)) {
             DiskImageFileInfo info = vhdFile.getInformation();
-            Path fileInfo = Paths.get(_vhdFile);
+            Path fileInfo = Paths.get(this.vhdFile);
             System.err.println("File Info");
             System.err.println("---------");
             System.err.printf("           File Name: %s\n", fileInfo.toAbsolutePath());
@@ -82,7 +83,7 @@ public class Program extends ProgramBase {
             System.err.println("common Disk Info");
             System.err.println("-----------------");
             System.err.printf("              Cookie: %s\n", info.getCookie());
-            System.err.printf("            Features: %8x\n", info.getFeatures());
+            System.err.printf("            features: %8x\n", info.getFeatures());
             System.err.printf(" File Format Version: %s.%s\n",
                                ((info.getFileFormatVersion() >> 16) & 0xFFFF),
                                (info.getFileFormatVersion() & 0xFFFF));
@@ -115,8 +116,7 @@ public class Program extends ProgramBase {
                 System.err.printf("   Parent Write Time: %s (UTC)\n", info.getDynamicParentTimestamp());
                 System.err.printf("         Parent Name: %s\n", info.getDynamicParentUnicodeName());
                 System.err.print("    Parent Locations: ");
-                for (String __dummyForeachVar0 : info.getDynamicParentLocators()) {
-                    String parentLocation = __dummyForeachVar0;
+                for (String parentLocation : info.getDynamicParentLocators()) {
                     System.err.printf("%s\n                      \n", parentLocation);
                 }
                 System.err.println();

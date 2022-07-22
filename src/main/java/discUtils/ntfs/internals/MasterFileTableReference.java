@@ -29,20 +29,21 @@ import discUtils.ntfs.FileRecordReference;
  * A reference to a Master File Table entry.
  */
 public class MasterFileTableReference {
+
     public MasterFileTableReference() {
     }
 
-    private FileRecordReference _ref;
+    private FileRecordReference ref;
 
     public MasterFileTableReference(FileRecordReference recordRef) {
-        _ref = recordRef;
+        ref = recordRef;
     }
 
     /**
      * Gets the index of the referred entry in the Master File Table.
      */
     public long getRecordIndex() {
-        return _ref.getMftIndex();
+        return ref.getMftIndex();
     }
 
     /**
@@ -52,7 +53,7 @@ public class MasterFileTableReference {
      * sync with the actual entry if the entry is re-allocated or de-allocated.
      */
     public int getRecordSequenceNumber() {
-        return _ref.getSequenceNumber();
+        return ref.getSequenceNumber();
     }
 
     /**
@@ -63,7 +64,7 @@ public class MasterFileTableReference {
      * @return {@code true} if the instances are equivalent, else {@code false}.
      */
     public static boolean equals(MasterFileTableReference a, MasterFileTableReference b) {
-        return a._ref.equals(b._ref);
+        return a.ref.equals(b.ref);
     }
 
     /**
@@ -90,7 +91,7 @@ public class MasterFileTableReference {
             return false;
         }
 
-        return _ref.equals(((MasterFileTableReference) obj)._ref);
+        return ref.equals(((MasterFileTableReference) obj).ref);
     }
 
     /**
@@ -99,6 +100,6 @@ public class MasterFileTableReference {
      * @return The hash code.
      */
     public int hashCode() {
-        return _ref.hashCode();
+        return ref.hashCode();
     }
 }

@@ -36,36 +36,37 @@ import discUtils.streams.SparseStream;
 import com.sun.jna.Pointer;
 
 public class Disk extends VirtualDisk {
-    private String _path;
 
-    private Pointer _handle;
+    private String path;
 
-    private SparseStream _stream;
+    private Pointer handle;
+
+    private SparseStream stream;
 
     public Disk(int number) {
-        _path = "\\\\.\\PhysicalDrive" + number;
-        _handle = Win32Wrapper.openFileHandle(_path);
+        path = "\\\\.\\PhysicalDrive" + number;
+        handle = Win32Wrapper.openFileHandle(path);
     }
 
     public void close() throws IOException {
-        if (_stream != null) {
-            _stream.close();
-            _stream = null;
+        if (stream != null) {
+            stream.close();
+            stream = null;
         }
 
-        if (!_handle.IsClosed) {
-            _handle.close();
+        if (!handle.IsClosed) {
+            handle.close();
         }
 
         super.close();
     }
 
     public SparseStream getContent() {
-        if (_stream == null) {
-            _stream = new DiskStream(_handle);
+        if (stream == null) {
+            stream = new DiskStream(handle);
         }
 
-        return _stream;
+        return stream;
     }
 
     public Geometry getGeometry() {
@@ -73,11 +74,11 @@ public class Disk extends VirtualDisk {
     }
 
     public Geometry getBiosGeometry() {
-        diskClone.NativeMethods.DiskGeometry diskGeometry = Win32Wrapper.getDiskGeometry(_handle);
-        return new Geometry((int) diskGeometry.Cylinders,
-                            diskGeometry.TracksPerCylinder,
-                            diskGeometry.SectorsPerTrack,
-                            diskGeometry.BytesPerSector);
+        diskClone.NativeMethods.DiskGeometry diskGeometry = Win32Wrapper.getDiskGeometry(handle);
+        return new Geometry((int) diskGeometry.cylinders,
+                            diskGeometry.tracksPerCylinder,
+                            diskGeometry.sectorsPerTrack,
+                            diskGeometry.bytesPerSector);
     }
 
     public VirtualDiskClass getDiskClass() {
@@ -85,7 +86,7 @@ public class Disk extends VirtualDisk {
     }
 
     public long getCapacity() {
-        return Win32Wrapper.getDiskCapacity(_handle);
+        return Win32Wrapper.getDiskCapacity(handle);
     }
 
     public List<VirtualDiskLayer> getLayers() {

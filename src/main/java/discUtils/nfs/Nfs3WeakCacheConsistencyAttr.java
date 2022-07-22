@@ -23,6 +23,7 @@
 package discUtils.nfs;
 
 public final class Nfs3WeakCacheConsistencyAttr {
+
     public Nfs3WeakCacheConsistencyAttr(XdrDataReader reader) {
         setSize(reader.readInt64());
         setModifyTime(new Nfs3FileTime(reader));
@@ -32,40 +33,40 @@ public final class Nfs3WeakCacheConsistencyAttr {
     public Nfs3WeakCacheConsistencyAttr() {
     }
 
-    private Nfs3FileTime _changeTime;
+    private Nfs3FileTime changeTime;
 
     public Nfs3FileTime getChangeTime() {
-        return _changeTime;
+        return changeTime;
     }
 
     public void setChangeTime(Nfs3FileTime value) {
-        _changeTime = value;
+        changeTime = value;
     }
 
-    private Nfs3FileTime _modifyTime;
+    private Nfs3FileTime modifyTime;
 
     public Nfs3FileTime getModifyTime() {
-        return _modifyTime;
+        return modifyTime;
     }
 
     public void setModifyTime(Nfs3FileTime value) {
-        _modifyTime = value;
+        modifyTime = value;
     }
 
-    private long _size;
+    private long size;
 
     public long getSize() {
-        return _size;
+        return size;
     }
 
     public void setSize(long value) {
-        _size = value;
+        size = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getSize());
-        getModifyTime().write(writer);
-        getChangeTime().write(writer);
+        writer.write(size);
+        modifyTime.write(writer);
+        changeTime.write(writer);
     }
 
     public boolean equals(Object obj) {
@@ -78,11 +79,11 @@ public final class Nfs3WeakCacheConsistencyAttr {
             return false;
         }
 
-        return other.getSize() == getSize() && other.getModifyTime().equals(getModifyTime()) &&
-               other.getChangeTime().equals(getChangeTime());
+        return other.size == size && other.modifyTime.equals(modifyTime) &&
+               other.changeTime.equals(changeTime);
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getSize(), getModifyTime(), getChangeTime());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(size, modifyTime, changeTime);
     }
 }

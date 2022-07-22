@@ -40,6 +40,7 @@ import dotnet4j.io.MemoryStream;
  * is simply to present a VMDK version of an existing disk.
  */
 public final class DiskBuilder extends DiskImageBuilder {
+
     /**
      * Initializes a new instance of the DiskBuilder class.
      */
@@ -51,27 +52,27 @@ public final class DiskBuilder extends DiskImageBuilder {
     /**
      * Gets or sets the specific VMware disk adapter type to embed in the VMDK.
      */
-    private DiskAdapterType __AdapterType = DiskAdapterType.None;
+    private DiskAdapterType adapterType = DiskAdapterType.None;
 
     public DiskAdapterType getAdapterType() {
-        return __AdapterType;
+        return adapterType;
     }
 
     public void setAdapterType(DiskAdapterType value) {
-        __AdapterType = value;
+        adapterType = value;
     }
 
     /**
      * Gets or sets the type of VMDK disk file required.
      */
-    private DiskCreateType __DiskType = DiskCreateType.None;
+    private DiskCreateType diskType = DiskCreateType.None;
 
     public DiskCreateType getDiskType() {
-        return __DiskType;
+        return diskType;
     }
 
     public void setDiskType(DiskCreateType value) {
-        __DiskType = value;
+        diskType = value;
     }
 
     /**
@@ -84,11 +85,10 @@ public final class DiskBuilder extends DiskImageBuilder {
 
     public void setGenericAdapterType(GenericDiskAdapterType value) {
         if (value == GenericDiskAdapterType.Ide) {
-            setAdapterType(DiskAdapterType.Ide);
-        } else if (getAdapterType() == DiskAdapterType.Ide) {
-            setAdapterType(DiskAdapterType.LsiLogicScsi);
+            adapterType = DiskAdapterType.Ide;
+        } else if (adapterType == DiskAdapterType.Ide) {
+            adapterType = DiskAdapterType.LsiLogicScsi;
         }
-
     }
 
     /**
@@ -116,8 +116,8 @@ public final class DiskBuilder extends DiskImageBuilder {
             throw new UnsupportedOperationException("No content stream specified");
         }
 
-        if (getDiskType() != DiskCreateType.Vmfs && getDiskType() != DiskCreateType.VmfsSparse &&
-            getDiskType() != DiskCreateType.MonolithicSparse) {
+        if (diskType != DiskCreateType.Vmfs && diskType != DiskCreateType.VmfsSparse &&
+            diskType != DiskCreateType.MonolithicSparse) {
             throw new UnsupportedOperationException("Only MonolithicSparse, Vmfs and VmfsSparse disks implemented");
         }
 
@@ -162,5 +162,4 @@ public final class DiskBuilder extends DiskImageBuilder {
 
         return fileSpecs;
     }
-
 }

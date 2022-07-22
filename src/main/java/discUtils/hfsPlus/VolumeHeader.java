@@ -30,62 +30,63 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class VolumeHeader implements IByteArraySerializable {
+
     public static final short HfsPlusSignature = 0x482b;
 
-    public ForkData AllocationFile;
+    public ForkData allocationFile;
 
-    public EnumSet<VolumeAttributes> Attributes/* = VolumeAttributes.None*/;
+    public EnumSet<VolumeAttributes> attributes/* = VolumeAttributes.None*/;
 
-    public ForkData AttributesFile;
+    public ForkData attributesFile;
 
-    public long BackupDate;
+    public long backupDate;
 
-    public int BlockSize;
+    public int blockSize;
 
-    public ForkData CatalogFile;
+    public ForkData catalogFile;
 
-    public long CheckedDate;
+    public long checkedDate;
 
-    public long CreateDate;
+    public long createDate;
 
-    public int DataClumpSize;
+    public int dataClumpSize;
 
-    public long EncodingsBitmap;
+    public long encodingsBitmap;
 
-    public ForkData ExtentsFile;
+    public ForkData extentsFile;
 
-    public int FileCount;
+    public int fileCount;
 
-    public int[] FinderInfo;
+    public int[] finderInfo;
 
-    public int FolderCount;
+    public int folderCount;
 
-    public int FreeBlocks;
+    public int freeBlocks;
 
-    public int JournalInfoBlock;
+    public int journalInfoBlock;
 
-    public int LastMountedVersion;
+    public int lastMountedVersion;
 
-    public long ModifyDate;
+    public long modifyDate;
 
-    public int NextAllocation;
+    public int nextAllocation;
 
-    public CatalogNodeId NextCatalogId;
+    public CatalogNodeId nextCatalogId;
 
-    public int ResourceClumpSize;
+    public int resourceClumpSize;
 
-    public short Signature;
+    public short signature;
 
-    public ForkData StartupFile;
+    public ForkData startupFile;
 
-    public int TotalBlocks;
+    public int totalBlocks;
 
-    public short Version;
+    public short version;
 
-    public int WriteCount;
+    public int writeCount;
 
     public boolean isValid() {
-        return Signature == HfsPlusSignature;
+        return signature == HfsPlusSignature;
     }
 
     public int size() {
@@ -93,45 +94,45 @@ public final class VolumeHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
         if (!isValid())
             return size();
 
-        Version = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        Attributes = VolumeAttributes.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        LastMountedVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        JournalInfoBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        version = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
+        attributes = VolumeAttributes.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
+        lastMountedVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        journalInfoBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
 
-        CreateDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.systemDefault(), buffer, offset + 16);
-        ModifyDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
-        BackupDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
-        CheckedDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
+        createDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.systemDefault(), buffer, offset + 16);
+        modifyDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
+        backupDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
+        checkedDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
 
-        FileCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
-        FolderCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+        fileCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
+        folderCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
 
-        BlockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 40);
-        TotalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 44);
-        FreeBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 48);
+        blockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 40);
+        totalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 44);
+        freeBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 48);
 
-        NextAllocation = EndianUtilities.toUInt32BigEndian(buffer, offset + 52);
-        ResourceClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
-        DataClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
-        NextCatalogId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 64));
+        nextAllocation = EndianUtilities.toUInt32BigEndian(buffer, offset + 52);
+        resourceClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
+        dataClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
+        nextCatalogId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 64));
 
-        WriteCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 68);
-        EncodingsBitmap = EndianUtilities.toUInt64BigEndian(buffer, offset + 72);
+        writeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 68);
+        encodingsBitmap = EndianUtilities.toUInt64BigEndian(buffer, offset + 72);
 
-        FinderInfo = new int[8];
+        finderInfo = new int[8];
         for (int i = 0; i < 8; ++i) {
-            FinderInfo[i] = EndianUtilities.toUInt32BigEndian(buffer, offset + 80 + i * 4);
+            finderInfo[i] = EndianUtilities.toUInt32BigEndian(buffer, offset + 80 + i * 4);
         }
 
-        AllocationFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 112);
-        ExtentsFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 192);
-        CatalogFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 272);
-        AttributesFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 352);
-        StartupFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 432);
+        allocationFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 112);
+        extentsFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 192);
+        catalogFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 272);
+        attributesFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 352);
+        startupFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 432);
 
         return 512;
     }

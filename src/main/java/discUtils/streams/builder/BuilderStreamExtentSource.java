@@ -25,14 +25,14 @@ package discUtils.streams.builder;
 import dotnet4j.io.Stream;
 
 public class BuilderStreamExtentSource extends BuilderExtentSource {
-    private final Stream _stream;
+
+    private final Stream stream;
 
     public BuilderStreamExtentSource(Stream stream) {
-        _stream = stream;
+        this.stream = stream;
     }
 
     public BuilderExtent fix(long pos) {
-        return new BuilderStreamExtent(pos, _stream);
+        return new BuilderStreamExtent(pos, stream);
     }
-
 }

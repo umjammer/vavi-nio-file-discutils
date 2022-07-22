@@ -31,76 +31,76 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
     }
 
     public Nfs3ReadDirResult(XdrDataReader reader) {
-        _status = Nfs3Status.valueOf(reader.readInt32());
+        status = Nfs3Status.valueOf(reader.readInt32());
         if (reader.readBool()) {
-            _dirAttributes = new Nfs3FileAttributes(reader);
+            dirAttributes = new Nfs3FileAttributes(reader);
         }
 
-        _dirEntries = new ArrayList<>();
-        if (_status == Nfs3Status.Ok) {
-            _cookieVerifier = reader.readUInt64();
+        dirEntries = new ArrayList<>();
+        if (status == Nfs3Status.Ok) {
+            cookieVerifier = reader.readUInt64();
             while (reader.readBool()) {
-                _dirEntries.add(new Nfs3DirectoryEntry(reader));
+                dirEntries.add(new Nfs3DirectoryEntry(reader));
             }
-            _eof = reader.readBool();
+            eof = reader.readBool();
         }
     }
 
-    private Nfs3FileAttributes _dirAttributes;
+    private Nfs3FileAttributes dirAttributes;
 
     public Nfs3FileAttributes getDirAttributes() {
-        return _dirAttributes;
+        return dirAttributes;
     }
 
     public void setDirAttributes(Nfs3FileAttributes value) {
-        _dirAttributes = value;
+        dirAttributes = value;
     }
 
-    private List<Nfs3DirectoryEntry> _dirEntries;
+    private List<Nfs3DirectoryEntry> dirEntries;
 
     public List<Nfs3DirectoryEntry> getDirEntries() {
-        return _dirEntries;
+        return dirEntries;
     }
 
     public void setDirEntries(List<Nfs3DirectoryEntry> value) {
-        _dirEntries = value;
+        dirEntries = value;
     }
 
-    private long _cookieVerifier;
+    private long cookieVerifier;
 
     public long getCookieVerifier() {
-        return _cookieVerifier;
+        return cookieVerifier;
     }
 
     public void setCookieVerifier(long value) {
-        _cookieVerifier = value;
+        cookieVerifier = value;
     }
 
-    private boolean _eof;
+    private boolean eof;
 
     public boolean getEof() {
-        return _eof;
+        return eof;
     }
 
     public void setEof(boolean value) {
-        _eof = value;
+        eof = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        writer.write(_dirAttributes != null);
-        if (_dirAttributes != null) {
-            _dirAttributes.write(writer);
+        writer.write(status.getValue());
+        writer.write(dirAttributes != null);
+        if (dirAttributes != null) {
+            dirAttributes.write(writer);
         }
 
-        if (_status == Nfs3Status.Ok) {
-            writer.write(_cookieVerifier);
-            for (Nfs3DirectoryEntry entry : _dirEntries) {
+        if (status == Nfs3Status.Ok) {
+            writer.write(cookieVerifier);
+            for (Nfs3DirectoryEntry entry : dirEntries) {
                 writer.write(true);
                 entry.write(writer);
             }
             writer.write(false);
-            writer.write(_eof);
+            writer.write(eof);
         }
     }
 
@@ -113,12 +113,12 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
             return false;
         }
 
-        return other._status == _status && other._dirAttributes.equals(_dirAttributes) &&
-               other._cookieVerifier == _cookieVerifier && other._dirEntries.equals(_dirEntries) &&
-               other._eof == _eof;
+        return other.status == status && other.dirAttributes.equals(dirAttributes) &&
+               other.cookieVerifier == cookieVerifier && other.dirEntries.equals(dirEntries) &&
+               other.eof == eof;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(_status, _dirAttributes, _cookieVerifier, _dirEntries, _eof);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, dirAttributes, cookieVerifier, dirEntries, eof);
     }
 }

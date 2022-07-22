@@ -35,33 +35,34 @@ import dotnet4j.io.IOException;
 
 
 public class Directory extends File implements IVfsDirectory<DirEntry, File> {
+
     public Directory(Context context, Inode inode) {
         super(context, inode);
     }
 
-    private Map<String, DirEntry> _allEntries;
+    private Map<String, DirEntry> allEntries;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<DirEntry> getAllEntries() {
-        if (_allEntries != null)
-            return new ArrayList<>(_allEntries.values());
+        if (allEntries != null)
+            return new ArrayList<>(allEntries.values());
 
         Map<String, DirEntry> result = new HashMap<>();
-        if (Inode.getFormat() == InodeFormat.Local) {
+        if (inode.getFormat() == InodeFormat.Local) {
             //shortform directory
-            ShortformDirectory sfDir = new ShortformDirectory(Context);
-            sfDir.readFrom(Inode.getDataFork(), 0);
+            ShortformDirectory sfDir = new ShortformDirectory(context);
+            sfDir.readFrom(inode.getDataFork(), 0);
             for (ShortformDirectoryEntry entry : sfDir.getEntries()) {
-                result.put(new String(entry.getName(), Context.getOptions().getFileNameEncoding()),
-                           new DirEntry(entry, Context));
+                result.put(new String(entry.getName(), context.getOptions().getFileNameEncoding()),
+                           new DirEntry(entry, context));
             }
-        } else if (Inode.getFormat() == InodeFormat.Extents) {
-            if (Inode.getExtents() == 1) {
-                BlockDirectory blockDir = new BlockDirectory(Context);
-                if (Context.getSuperBlock().getSbVersion() == 5)
-                    blockDir = new BlockDirectoryV5(Context);
+        } else if (inode.getFormat() == InodeFormat.Extents) {
+            if (inode.getExtents() == 1) {
+                BlockDirectory blockDir = new BlockDirectory(context);
+                if (context.getSuperBlock().getSbVersion() == 5)
+                    blockDir = new BlockDirectoryV5(context);
 
-                IBuffer dirContent = Inode.getContentBuffer(Context);
+                IBuffer dirContent = inode.getContentBuffer(context);
                 byte[] buffer = StreamUtilities.readAll(dirContent);
                 blockDir.readFrom(buffer, 0);
                 if (!blockDir.getHasValidMagic())
@@ -69,31 +70,31 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
 
                 addDirEntries(blockDir.getEntries(), result);
             } else {
-                List<Extent> extents = Inode.getExtents_();
+                List<Extent> extents = inode.getExtents_();
                 addLeafDirExtentEntries(extents, result);
             }
         } else {
             BTreeExtentRoot header = new BTreeExtentRoot();
-            header.readFrom(Inode.getDataFork(), 0);
-            header.loadBtree(Context);
+            header.readFrom(inode.getDataFork(), 0);
+            header.loadBtree(context);
             List<Extent> extents = header.getExtents();
             addLeafDirExtentEntries(extents, result);
         }
-        _allEntries = result;
+        allEntries = result;
         return new ArrayList(result.values());
     }
 
     private void addLeafDirExtentEntries(List<Extent> extents, Map<String, DirEntry> target) {
-        long leafOffset = LeafDirectory.LeafOffset / Context.getSuperBlock().getBlocksize();
+        long leafOffset = LeafDirectory.LeafOffset / context.getSuperBlock().getBlocksize();
         for (Extent extent : extents) {
             if (extent.getStartOffset() < leafOffset) {
                 for (long i = 0; i < extent.getBlockCount(); i++) {
-                    byte[] buffer = extent.getData(Context,
-                                                   i * Context.getSuperBlock().getDirBlockSize(),
-                                                   Context.getSuperBlock().getDirBlockSize());
-                    LeafDirectory leafDir = new LeafDirectory(Context);
-                    if (Context.getSuperBlock().getSbVersion() == 5)
-                        leafDir = new LeafDirectoryV5(Context);
+                    byte[] buffer = extent.getData(context,
+                                                   i * context.getSuperBlock().getDirBlockSize(),
+                                                   context.getSuperBlock().getDirBlockSize());
+                    LeafDirectory leafDir = new LeafDirectory(context);
+                    if (context.getSuperBlock().getSbVersion() == 5)
+                        leafDir = new LeafDirectoryV5(context);
 
                     leafDir.readFrom(buffer, 0);
                     if (!leafDir.getHasValidMagic())
@@ -111,11 +112,11 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
             if (dirEntry == null)
                 continue;
 
-            String name = new String(dirEntry.getName(), Context.getOptions().getFileNameEncoding());
+            String name = new String(dirEntry.getName(), context.getOptions().getFileNameEncoding());
             if (name.equals(".") || name.equals(".."))
                 continue;
 
-            target.put(name, new DirEntry(dirEntry, Context));
+            target.put(name, new DirEntry(dirEntry, context));
         }
     }
 

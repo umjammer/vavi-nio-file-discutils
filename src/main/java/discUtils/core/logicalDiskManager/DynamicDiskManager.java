@@ -44,7 +44,8 @@ import discUtils.core.partitions.PartitionInfo;
  * logical volumes.
  */
 public class DynamicDiskManager implements IDiagnosticTraceable {
-    private final Map<String, DynamicDiskGroup> _groups;
+
+    private final Map<String, DynamicDiskGroup> groups;
 
     /**
      * Initializes a new instance of the DynamicDiskManager class.
@@ -52,7 +53,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      * @param disks The initial set of disks to manage.
      */
     public DynamicDiskManager(VirtualDisk... disks) {
-        _groups = new HashMap<>();
+        groups = new HashMap<>();
         for (VirtualDisk disk : disks) {
             add(disk);
         }
@@ -66,7 +67,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      */
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "DISK GROUPS");
-        for (DynamicDiskGroup group : _groups.values()) {
+        for (DynamicDiskGroup group : groups.values()) {
             group.dump(writer, linePrefix + "  ");
         }
     }
@@ -113,12 +114,12 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      */
     public void add(VirtualDisk disk) {
         PrivateHeader header = DynamicDisk.getPrivateHeader(disk);
-        if (_groups.containsKey(header.diskGroupId)) {
-            DynamicDiskGroup group = _groups.get(header.diskGroupId);
+        if (groups.containsKey(header.diskGroupId)) {
+            DynamicDiskGroup group = groups.get(header.diskGroupId);
             group.add(disk);
         } else {
             DynamicDiskGroup group = new DynamicDiskGroup(disk);
-            _groups.put(header.diskGroupId, group);
+            groups.put(header.diskGroupId, group);
         }
     }
 
@@ -129,7 +130,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      */
     public List<LogicalVolumeInfo> getLogicalVolumes() {
         List<LogicalVolumeInfo> result = new ArrayList<>();
-        for (DynamicDiskGroup group : _groups.values()) {
+        for (DynamicDiskGroup group : groups.values()) {
             for (DynamicVolume volume : group.getVolumes()) {
                 LogicalVolumeInfo lvi = new LogicalVolumeInfo(volume
                         .getIdentity(), null, volume::open, volume.getLength(), volume.getBiosType(), volume.getStatus());

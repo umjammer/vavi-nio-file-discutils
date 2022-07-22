@@ -30,6 +30,7 @@ import discUtils.streams.util.MathUtilities;
 
 
 public class DirectoryRecord implements IByteArraySerializable {
+
     public static final byte FileTypeUnknown = 0;
     public static final byte FileTypeRegularFile = 1;
     public static final byte FileTypeDirectory = 2;
@@ -39,28 +40,28 @@ public class DirectoryRecord implements IByteArraySerializable {
     public static final byte FileTypeSocket = 6;
     public static final byte FileTypeSymlink = 7;
 
-    private final Charset _nameEncoding;
+    private final Charset nameEncoding;
 
-    public byte FileType;
+    public byte fileType;
 
-    public int Inode;
+    public int inode;
 
-    public String Name;
+    public String name;
 
     public DirectoryRecord(Charset nameEncoding) {
-        _nameEncoding = nameEncoding;
+        this.nameEncoding = nameEncoding;
     }
 
     public int size() {
-        return MathUtilities.roundUp(8 + Name.length(), 4);
+        return MathUtilities.roundUp(8 + name.length(), 4);
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Inode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        inode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
         short recordLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         int nameLen = buffer[offset + 6];
-        FileType = buffer[offset + 7];
-        Name = new String(buffer, offset + 8, nameLen, _nameEncoding);
+        fileType = buffer[offset + 7];
+        name = new String(buffer, offset + 8, nameLen, nameEncoding);
 
         return recordLen;
     }

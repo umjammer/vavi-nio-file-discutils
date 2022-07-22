@@ -55,6 +55,7 @@ import dotnet4j.io.Stream;
  * File classes.
  */
 public class MasterFileTable implements IDiagnosticTraceable, Closeable {
+
     /**
      * MFT index of the MFT file itself.
      */
@@ -120,26 +121,26 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
      */
     private static final int FirstAvailableMftIndex = 24;
 
-    private Bitmap _bitmap;
+    private Bitmap bitmap;
 
-    private int _bytesPerSector;
+    private int bytesPerSector;
 
-    private final ObjectCache<Long, FileRecord> _recordCache;
+    private final ObjectCache<Long, FileRecord> recordCache;
 
-    private Stream _recordStream;
+    private Stream recordStream;
 
-    private File _self;
+    private File self;
 
     public MasterFileTable(INtfsContext context) {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
 
-        _recordCache = new ObjectCache<>();
-        _recordSize = bpb.getMftRecordSize();
-        _bytesPerSector = bpb.getBytesPerSector();
+        recordCache = new ObjectCache<>();
+        recordSize = bpb.getMftRecordSize();
+        bytesPerSector = bpb.getBytesPerSector();
 
         // Temporary record stream - until we've bootstrapped the MFT properly
-        _recordStream = new SubStream(context.getRawStream(),
-                                      bpb._mftCluster * bpb.getSectorsPerCluster() * bpb.getBytesPerSector(),
+        recordStream = new SubStream(context.getRawStream(),
+                                      bpb.mftCluster * bpb.getSectorsPerCluster() * bpb.getBytesPerSector(),
                 24L * getRecordSize());
     }
 
@@ -149,7 +150,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
      */
     public List<FileRecord> getRecords() {
         List<FileRecord> result = new ArrayList<>();
-        try (Stream mftStream = _self.openStream(AttributeType.Data, null, FileAccess.Read)) {
+        try (Stream mftStream = self.openStream(AttributeType.Data, null, FileAccess.Read)) {
             int index = 0;
             while (mftStream.getPosition() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
@@ -159,7 +160,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
                     continue;
                 }
 
-                FileRecord record = new FileRecord(_bytesPerSector);
+                FileRecord record = new FileRecord(bytesPerSector);
                 record.fromBytes(recordData, 0);
                 record.setLoadedIndex(index);
 
@@ -173,19 +174,19 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
         }
     }
 
-    private int _recordSize;
+    private int recordSize;
 
     public int getRecordSize() {
-        return _recordSize;
+        return recordSize;
     }
 
     public void setRecordSize(int value) {
-        _recordSize = value;
+        recordSize = value;
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "MASTER FILE TABLE");
-        writer.println(indent + "  Record Length: " + _recordSize);
+        writer.println(indent + "  Record Length: " + recordSize);
         for (FileRecord record : getRecords()) {
             record.dump(writer, indent + "  ");
             for (AttributeRecord attr : record.getAttributes()) {
@@ -195,42 +196,42 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
     }
 
     public void close() throws IOException {
-        if (_recordStream != null) {
-            _recordStream.close();
-            _recordStream = null;
+        if (recordStream != null) {
+            recordStream.close();
+            recordStream = null;
         }
 
-        if (_bitmap != null) {
-            _bitmap.close();
-            _bitmap = null;
+        if (bitmap != null) {
+            bitmap.close();
+            bitmap = null;
         }
     }
 
     public FileRecord getBootstrapRecord() {
-        _recordStream.setPosition(0);
-        byte[] mftSelfRecordData = StreamUtilities.readExact(_recordStream, _recordSize);
-        FileRecord mftSelfRecord = new FileRecord(_bytesPerSector);
+        recordStream.setPosition(0);
+        byte[] mftSelfRecordData = StreamUtilities.readExact(recordStream, recordSize);
+        FileRecord mftSelfRecord = new FileRecord(bytesPerSector);
         mftSelfRecord.fromBytes(mftSelfRecordData, 0);
-        _recordCache.put(MftIndex, mftSelfRecord);
+        recordCache.put(MftIndex, mftSelfRecord);
         return mftSelfRecord;
     }
 
     public void initialize(File file) {
-        _self = file;
+        self = file;
 
-        if (_recordStream != null) {
+        if (recordStream != null) {
             try {
-                _recordStream.close();
+                recordStream.close();
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
         }
 
-        NtfsStream bitmapStream = _self.getStream(AttributeType.Bitmap, null);
-        _bitmap = new Bitmap(bitmapStream.open(FileAccess.ReadWrite), Long.MAX_VALUE);
+        NtfsStream bitmapStream = self.getStream(AttributeType.Bitmap, null);
+        bitmap = new Bitmap(bitmapStream.open(FileAccess.ReadWrite), Long.MAX_VALUE);
 
-        NtfsStream recordsStream = _self.getStream(AttributeType.Data, null);
-        _recordStream = recordsStream.open(FileAccess.ReadWrite);
+        NtfsStream recordsStream = self.getStream(AttributeType.Data, null);
+        recordStream = recordsStream.open(FileAccess.ReadWrite);
     }
 
     public File initializeNew(INtfsContext context,
@@ -243,41 +244,41 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
         FileRecord fileRec = new FileRecord(bpb.getBytesPerSector(), bpb.getMftRecordSize(), (int) MftIndex);
         fileRec.setFlags(EnumSet.of(FileRecordFlags.InUse));
         fileRec.setSequenceNumber((short) 1);
-        _recordCache.put(MftIndex, fileRec);
+        recordCache.put(MftIndex, fileRec);
 
-        _self = new File(context, fileRec);
+        self = new File(context, fileRec);
 
-        StandardInformation.initializeNewFile(_self, EnumSet.of(FileAttributeFlags.Hidden, FileAttributeFlags.System));
+        StandardInformation.initializeNewFile(self, EnumSet.of(FileAttributeFlags.Hidden, FileAttributeFlags.System));
 
-        NtfsStream recordsStream = _self
+        NtfsStream recordsStream = self
                 .createStream(AttributeType.Data, null, firstRecordsCluster, numRecordsClusters, bpb.getBytesPerCluster());
-        _recordStream = recordsStream.open(FileAccess.ReadWrite);
-        wipe(_recordStream);
+        recordStream = recordsStream.open(FileAccess.ReadWrite);
+        wipe(recordStream);
 
-        NtfsStream bitmapStream = _self
+        NtfsStream bitmapStream = self
                 .createStream(AttributeType.Bitmap, null, firstBitmapCluster, numBitmapClusters, bpb.getBytesPerCluster());
 
         try (Stream s = bitmapStream.open(FileAccess.ReadWrite)) {
             wipe(s);
             s.setLength(8);
-            _bitmap = new Bitmap(s, Long.MAX_VALUE);
+            bitmap = new Bitmap(s, Long.MAX_VALUE);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
 
         setRecordSize(context.getBiosParameterBlock().getMftRecordSize());
-        _bytesPerSector = context.getBiosParameterBlock().getBytesPerSector();
+        bytesPerSector = context.getBiosParameterBlock().getBytesPerSector();
 
-        _bitmap.markPresentRange(0, 1);
+        bitmap.markPresentRange(0, 1);
 
         // Write the MFT's own record to itself
-        byte[] buffer = new byte[_recordSize];
+        byte[] buffer = new byte[recordSize];
         fileRec.toBytes(buffer, 0);
-        _recordStream.setPosition(0);
-        _recordStream.write(buffer, 0, _recordSize);
-        _recordStream.flush();
+        recordStream.setPosition(0);
+        recordStream.write(buffer, 0, recordSize);
+        recordStream.flush();
 
-        return _self;
+        return self;
     }
 
     public FileRecord allocateRecord(EnumSet<FileRecordFlags> flags, boolean isMft) {
@@ -300,43 +301,43 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
             throw new dotnet4j.io.IOException("MFT too fragmented - unable to allocate MFT overflow record");
         }
 
-        index = _bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
+        index = bitmap.allocateFirstAvailable(FirstAvailableMftIndex);
 
-        if (index * _recordSize >= _recordStream.getLength()) {
+        if (index * recordSize >= recordStream.getLength()) {
             // Note: 64 is significant, since bitmap extends by 8 bytes (=64
             // bits) at a time.
             long newEndIndex = MathUtilities.roundUp(index + 1, 64);
-            _recordStream.setLength(newEndIndex * _recordSize);
+            recordStream.setLength(newEndIndex * recordSize);
             for (long i = index; i < newEndIndex; ++i) {
-                FileRecord record = new FileRecord(_bytesPerSector, _recordSize, (int) i);
+                FileRecord record = new FileRecord(bytesPerSector, recordSize, (int) i);
                 writeRecord(record);
             }
         }
 
         FileRecord newRecord = getRecord(index, true);
-        newRecord.reInitialize(_bytesPerSector, _recordSize, (int) index);
+        newRecord.reInitialize(bytesPerSector, recordSize, (int) index);
 
-        _recordCache.put(index, newRecord);
+        recordCache.put(index, newRecord);
 
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
 
         writeRecord(newRecord);
-        _self.updateRecordInMft();
+        self.updateRecordInMft();
 
         return newRecord;
     }
 
     public FileRecord allocateRecord(long index, EnumSet<FileRecordFlags> flags) {
-        _bitmap.markPresent(index);
+        bitmap.markPresent(index);
 
-        FileRecord newRecord = new FileRecord(_bytesPerSector, _recordSize, (int) index);
-        _recordCache.put(index, newRecord);
+        FileRecord newRecord = new FileRecord(bytesPerSector, recordSize, (int) index);
+        recordCache.put(index, newRecord);
         flags.add(FileRecordFlags.InUse);
         newRecord.setFlags(flags);
 
         writeRecord(newRecord);
-        _self.updateRecordInMft();
+        self.updateRecordInMft();
         return newRecord;
     }
 
@@ -345,9 +346,9 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
         record.reset();
         writeRecord(record);
 
-        _recordCache.remove(fileRef.getMftIndex());
-        _bitmap.markAbsent(fileRef.getMftIndex());
-        _self.updateRecordInMft();
+        recordCache.remove(fileRef.getMftIndex());
+        bitmap.markAbsent(fileRef.getMftIndex());
+        self.updateRecordInMft();
     }
 
     public FileRecord getRecord(FileRecordReference fileReference) {
@@ -369,25 +370,25 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
     }
 
     public FileRecord getRecord(long index, boolean ignoreMagic, boolean ignoreBitmap) {
-        if (ignoreBitmap || _bitmap == null || _bitmap.isPresent(index)) {
-            FileRecord result = _recordCache.get(index);
-//if (NonResidentAttributeBuffer.debug) Debug.println(result + " / " + _recordCache);
+        if (ignoreBitmap || bitmap == null || bitmap.isPresent(index)) {
+            FileRecord result = recordCache.get(index);
+//if (NonResidentAttributeBuffer.debug) Debug.println(result + " / " + recordCache);
             if (result != null) {
                 return result;
             }
 
-            if ((index + 1) * _recordSize <= _recordStream.getLength()) {
-                _recordStream.setPosition(index * _recordSize);
-                byte[] recordBuffer = StreamUtilities.readExact(_recordStream, _recordSize);
+            if ((index + 1) * recordSize <= recordStream.getLength()) {
+                recordStream.setPosition(index * recordSize);
+                byte[] recordBuffer = StreamUtilities.readExact(recordStream, recordSize);
 
-                result = new FileRecord(_bytesPerSector);
+                result = new FileRecord(bytesPerSector);
                 result.fromBytes(recordBuffer, 0, ignoreMagic);
                 result.setLoadedIndex((int) index);
             } else {
-                result = new FileRecord(_bytesPerSector, _recordSize, (int) index);
+                result = new FileRecord(bytesPerSector, recordSize, (int) index);
             }
 
-            _recordCache.put(index, result);
+            recordCache.put(index, result);
             return result;
         }
 
@@ -396,37 +397,37 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
 
     public void writeRecord(FileRecord record) {
         int recordSize = (int) record.getSize();
-        if (recordSize > _recordSize) {
+        if (recordSize > this.recordSize) {
             throw new dotnet4j.io.IOException("Attempting to write over-sized MFT record");
         }
 
-        byte[] buffer = new byte[_recordSize];
+        byte[] buffer = new byte[this.recordSize];
         record.toBytes(buffer, 0);
 
-        _recordStream.setPosition((long) record.getMasterFileTableIndex() * _recordSize);
-        _recordStream.write(buffer, 0, _recordSize);
-        _recordStream.flush();
+        recordStream.setPosition((long) record.getMasterFileTableIndex() * this.recordSize);
+        recordStream.write(buffer, 0, this.recordSize);
+        recordStream.flush();
 
         // We may have modified our own meta-data by extending the data stream,
         // so make sure our records are up-to-date.
-        if (_self.getMftRecordIsDirty()) {
-            DirectoryEntry dirEntry = _self.getDirectoryEntry();
+        if (self.getMftRecordIsDirty()) {
+            DirectoryEntry dirEntry = self.getDirectoryEntry();
             if (dirEntry != null) {
-                dirEntry.updateFrom(_self);
+                dirEntry.updateFrom(self);
             }
 
-            _self.updateRecordInMft();
+            self.updateRecordInMft();
         }
 
         // Need to update Mirror. OpenRaw is OK because this is short duration,
         // and we don't extend or otherwise modify any meta-data, just the
         // content of the Data stream.
-        if (record.getMasterFileTableIndex() < 4 && _self.getContext().getGetFileByIndex() != null) {
-            File mftMirror = _self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
+        if (record.getMasterFileTableIndex() < 4 && self.getContext().getGetFileByIndex() != null) {
+            File mftMirror = self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
             if (mftMirror != null) {
                 try (Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
-                    s.setPosition((long) record.getMasterFileTableIndex() * _recordSize);
-                    s.write(buffer, 0, _recordSize);
+                    s.setPosition((long) record.getMasterFileTableIndex() * this.recordSize);
+                    s.write(buffer, 0, this.recordSize);
                 } catch (IOException e) {
                     throw new dotnet4j.io.IOException(e);
                 }
@@ -435,12 +436,12 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
     }
 
     public long getRecordOffset(FileRecordReference fileReference) {
-        return fileReference.getMftIndex() * _recordSize;
+        return fileReference.getMftIndex() * recordSize;
     }
 
     public ClusterMap getClusterMap() {
-        int totalClusters = (int) MathUtilities.ceil(_self.getContext().getBiosParameterBlock()._totalSectors64,
-                                                     _self.getContext().getBiosParameterBlock().getSectorsPerCluster());
+        int totalClusters = (int) MathUtilities.ceil(self.getContext().getBiosParameterBlock().totalSectors64,
+                                                     self.getContext().getBiosParameterBlock().getSectorsPerCluster());
 
         @SuppressWarnings("unchecked")
         EnumSet<ClusterRoles>[] clusterToRole = new EnumSet[totalClusters];
@@ -456,7 +457,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
                 continue;
             }
 
-            File f = new File(_self.getContext(), fr);
+            File f = new File(self.getContext(), fr);
 
             for (NtfsStream stream : f.getAllStreams()) {
                 String fileId;

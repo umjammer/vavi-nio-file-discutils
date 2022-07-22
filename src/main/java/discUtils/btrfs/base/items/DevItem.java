@@ -34,6 +34,7 @@ import discUtils.streams.util.EndianUtilities;
  * Maps logical address to physical
  */
 public class DevItem extends BaseItem {
+
     public static final int Length = 0x62;
 
     public DevItem(Key key) {
@@ -43,184 +44,184 @@ public class DevItem extends BaseItem {
     /**
      * the internal btrfs device id
      */
-    private long _deviceId;
+    private long deviceId;
 
     public long getDeviceId() {
-        return _deviceId;
+        return deviceId;
     }
 
     public void setDeviceId(long value) {
-        _deviceId = value;
+        deviceId = value;
     }
 
     /**
      * size of the device
      */
-    private long _deviceSize;
+    private long deviceSize;
 
     public long getDeviceSize() {
-        return _deviceSize;
+        return deviceSize;
     }
 
     public void setDeviceSize(long value) {
-        _deviceSize = value;
+        deviceSize = value;
     }
 
     /**
      * number of bytes used
      */
-    private long _deviceSizeUsed;
+    private long deviceSizeUsed;
 
     public long getDeviceSizeUsed() {
-        return _deviceSizeUsed;
+        return deviceSizeUsed;
     }
 
     public void setDeviceSizeUsed(long value) {
-        _deviceSizeUsed = value;
+        deviceSizeUsed = value;
     }
 
     /**
      * optimal io alignment
      */
-    private int _optimalIoAlignment;
+    private int optimalIoAlignment;
 
     public int getOptimalIoAlignment() {
-        return _optimalIoAlignment;
+        return optimalIoAlignment;
     }
 
     public void setOptimalIoAlignment(int value) {
-        _optimalIoAlignment = value;
+        optimalIoAlignment = value;
     }
 
     /**
      * optimal io width
      */
-    private int _optimalIoWidth;
+    private int optimalIoWidth;
 
     public int getOptimalIoWidth() {
-        return _optimalIoWidth;
+        return optimalIoWidth;
     }
 
     public void setOptimalIoWidth(int value) {
-        _optimalIoWidth = value;
+        optimalIoWidth = value;
     }
 
     /**
      * minimal io size (sector size)
      */
-    private int _minimalIoSize;
+    private int minimalIoSize;
 
     public int getMinimalIoSize() {
-        return _minimalIoSize;
+        return minimalIoSize;
     }
 
     public void setMinimalIoSize(int value) {
-        _minimalIoSize = value;
+        minimalIoSize = value;
     }
 
     /**
      * type and info about this device
      */
-    private EnumSet<BlockGroupFlag> _type;
+    private EnumSet<BlockGroupFlag> type;
 
     public EnumSet<BlockGroupFlag> getType() {
-        return _type;
+        return type;
     }
 
     public void setType(EnumSet<BlockGroupFlag> value) {
-        _type = value;
+        type = value;
     }
 
     /**
      * expected generation for this device
      */
-    private long _generation;
+    private long generation;
 
     public long getGeneration() {
-        return _generation;
+        return generation;
     }
 
     public void setGeneration(long value) {
-        _generation = value;
+        generation = value;
     }
 
     /**
      * starting byte of this partition on the device,
      * to allow for stripe alignment in the future
      */
-    private long _startOffset;
+    private long startOffset;
 
     public long getStartOffset() {
-        return _startOffset;
+        return startOffset;
     }
 
     public void setStartOffset(long value) {
-        _startOffset = value;
+        startOffset = value;
     }
 
     /**
      * grouping information for allocation decisions
      */
-    private int _devGroup;
+    private int devGroup;
 
     public int getDevGroup() {
-        return _devGroup;
+        return devGroup;
     }
 
     public void setDevGroup(int value) {
-        _devGroup = value;
+        devGroup = value;
     }
 
     /**
     * seek speed 0-100 where 100 is fastest
     */
-    private byte _seekSpeed;
+    private byte seekSpeed;
 
     public byte getSeekSpeed() {
-        return _seekSpeed;
+        return seekSpeed;
     }
 
     public void setSeekSpeed(byte value) {
-        _seekSpeed = value;
+        seekSpeed = value;
     }
 
     /**
     * bandwidth 0-100 where 100 is fastest
     */
-    private byte _bandwidth;
+    private byte bandwidth;
 
     public byte getBandwidth() {
-        return _bandwidth;
+        return bandwidth;
     }
 
     public void setBandwidth(byte value) {
-        _bandwidth = value;
+        bandwidth = value;
     }
 
     /**
      * btrfs generated uuid for this device
      */
-    private UUID _deviceUuid;
+    private UUID deviceUuid;
 
     public UUID getDeviceUuid() {
-        return _deviceUuid;
+        return deviceUuid;
     }
 
     public void setDeviceUuid(UUID value) {
-        _deviceUuid = value;
+        deviceUuid = value;
     }
 
     /**
      * uuid of FS who owns this device
      */
-    private UUID _fsUuid;
+    private UUID fsUuid;
 
     public UUID getFsUuid() {
-        return _fsUuid;
+        return fsUuid;
     }
 
     public void setFsUuid(UUID value) {
-        _fsUuid = value;
+        fsUuid = value;
     }
 
     public int size() {
@@ -228,20 +229,20 @@ public class DevItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setDeviceId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setDeviceSize(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setDeviceSizeUsed(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setOptimalIoAlignment(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18));
-        setOptimalIoWidth(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1c));
-        setMinimalIoSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20));
-        setType(BlockGroupFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x24)));
-        setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x2c));
-        setStartOffset(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x34));
-        setDevGroup(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3c));
-        setSeekSpeed(buffer[offset + 0x40]);
-        setBandwidth(buffer[offset + 0x41]);
-        setDeviceUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x42));
-        setFsUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x52));
+        deviceId = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        deviceSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        deviceSizeUsed = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        optimalIoAlignment = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18);
+        optimalIoWidth = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1c);
+        minimalIoSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
+        type = BlockGroupFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x24));
+        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x2c);
+        startOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x34);
+        devGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3c);
+        seekSpeed = buffer[offset + 0x40];
+        bandwidth = buffer[offset + 0x41];
+        deviceUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x42);
+        fsUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x52);
         return size();
     }
 }

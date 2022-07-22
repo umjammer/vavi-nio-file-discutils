@@ -35,37 +35,38 @@ import dotnet4j.io.Stream;
 
 
 public final class RpcTcpTransport implements IRpcTransport {
+
     private static final int RetryLimit = 20;
 
-    private final String _address;
+    private final String address;
 
-    private final int _localPort;
+    private final int localPort;
 
-    private final int _port;
+    private final int port;
 
-    private Socket _socket;
+    private Socket socket;
 
-    private NetworkStream _tcpStream;
+    private NetworkStream tcpStream;
 
     public RpcTcpTransport(String address, int port) {
         this(address, port, 0);
     }
 
     public RpcTcpTransport(String address, int port, int localPort) {
-        _address = address;
-        _port = port;
-        _localPort = localPort;
+        this.address = address;
+        this.port = port;
+        this.localPort = localPort;
     }
 
     public void close() throws IOException {
-        if (_tcpStream != null) {
-            _tcpStream.close();
-            _tcpStream = null;
+        if (tcpStream != null) {
+            tcpStream.close();
+            tcpStream = null;
         }
 
-        if (_socket != null) {
-            _socket.close();
-            _socket = null;
+        if (socket != null) {
+            socket.close();
+            socket = null;
         }
     }
 
@@ -73,34 +74,34 @@ public final class RpcTcpTransport implements IRpcTransport {
         int retries = 0;
         int retryLimit = RetryLimit;
         Exception lastException = null;
-        boolean isNewConnection = _socket == null;
+        boolean isNewConnection = socket == null;
         if (isNewConnection) {
             retryLimit = 1;
         }
 
         byte[] response = null;
         while (response == null && retries < retryLimit) {
-            while (retries < retryLimit && (_socket == null || !_socket.isConnected())) {
+            while (retries < retryLimit && (socket == null || !socket.isConnected())) {
                 try {
-                    if (_tcpStream != null) {
-                        _tcpStream.close();
-                        _tcpStream = null;
+                    if (tcpStream != null) {
+                        tcpStream.close();
+                        tcpStream = null;
                     }
 
-                    if (_socket != null) {
-                        _socket.close();
-                        _socket = null;
+                    if (socket != null) {
+                        socket.close();
+                        socket = null;
                     }
 
-                    _socket = new Socket();
-                    _socket.setReuseAddress(true);
-                    _socket.setTcpNoDelay(true);
-                    if (_localPort != 0) {
-                        _socket.bind(new InetSocketAddress(_localPort));
+                    socket = new Socket();
+                    socket.setReuseAddress(true);
+                    socket.setTcpNoDelay(true);
+                    if (localPort != 0) {
+                        socket.bind(new InetSocketAddress(localPort));
                     }
 
-                    _socket.connect(new InetSocketAddress(_address, _port));
-                    _tcpStream = new NetworkStream(_socket, false);
+                    socket.connect(new InetSocketAddress(address, port));
+                    tcpStream = new NetworkStream(socket, false);
                 } catch (IOException se) {
                     retries++;
                     lastException = se;
@@ -109,17 +110,17 @@ public final class RpcTcpTransport implements IRpcTransport {
                     }
                 }
             }
-            if (_tcpStream != null) {
+            if (tcpStream != null) {
                 try {
-                    send(_tcpStream, message);
+                    send(tcpStream, message);
                     response = receive();
                 } catch (dotnet4j.io.IOException sendReceiveException) {
                     lastException = sendReceiveException;
                     try {
-                        _tcpStream.close();
-                        _tcpStream = null;
-                        _socket.close();
-                        _socket = null;
+                        tcpStream.close();
+                        tcpStream = null;
+                        socket.close();
+                        socket = null;
                     } catch (IOException e) {
                         throw new dotnet4j.io.IOException(e);
                     }
@@ -130,14 +131,14 @@ public final class RpcTcpTransport implements IRpcTransport {
         }
         if (response == null) {
             throw new dotnet4j.io.IOException(String
-                    .format("Unable to send RPC message to %s:%d", _address, _port), lastException);
+                    .format("Unable to send RPC message to %s:%d", address, port), lastException);
         }
 
         return response;
     }
 
     public void send(byte[] message) {
-        send(_tcpStream, message);
+        send(tcpStream, message);
     }
 
     public static void send(Stream stream, byte[] message) {
@@ -149,7 +150,7 @@ public final class RpcTcpTransport implements IRpcTransport {
     }
 
     public byte[] receive() {
-        return receive(_tcpStream);
+        return receive(tcpStream);
     }
 
     public static byte[] receive(Stream stream) {

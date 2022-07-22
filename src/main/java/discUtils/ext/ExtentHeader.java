@@ -27,24 +27,25 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ExtentHeader implements IByteArraySerializable {
+
     public static final short HeaderMagic = (short) 0xf30a;
 
-    public short Depth;
+    public short depth;
 
-    private short Entries;
+    private short entries;
 
     public int getEntries() {
-        return Entries & 0xffff;
+        return entries & 0xffff;
     }
 
-    public int Generation;
+    public int generation;
 
-    public short Magic;
+    public short magic;
 
-    private short MaxEntries;
+    private short maxEntries;
 
     public int getMaxEntries() {
-        return MaxEntries & 0xffff;
+        return maxEntries & 0xffff;
     }
 
     public int size() {
@@ -52,11 +53,11 @@ public class ExtentHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
-        Entries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        MaxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        Depth = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        Generation = (short) EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
+        magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
+        entries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        maxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        depth = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        generation = (short) EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
         return 12;
     }
 

@@ -40,25 +40,26 @@ import dotnet4j.io.Stream;
 
 
 public class Directory implements Closeable {
-    private Stream _dirStream;
 
-    private Directory _parent;
+    private Stream dirStream;
 
-    private long _parentId;
+    private Directory parent;
 
-    private long _endOfEntries;
+    private long parentId;
 
-    private Map<Long, DirectoryEntry> _entries;
+    private long endOfEntries;
 
-    private List<Long> _freeEntries;
+    private Map<Long, DirectoryEntry> entries;
 
-    private DirectoryEntry _parentEntry;
+    private List<Long> freeEntries;
 
-    private long _parentEntryLocation;
+    private DirectoryEntry parentEntry;
 
-    private DirectoryEntry _selfEntry;
+    private long parentEntryLocation;
 
-    private long _selfEntryLocation;
+    private DirectoryEntry selfEntry;
+
+    private long selfEntryLocation;
 
     /**
      * Initializes a new instance of the Directory class. Use this constructor
@@ -69,11 +70,11 @@ public class Directory implements Closeable {
      *            the parent.
      */
     Directory(Directory parent, long parentId) {
-        _fileSystem = parent._fileSystem;
-        _parent = parent;
-        _parentId = parentId;
+        fileSystem = parent.fileSystem;
+        this.parent = parent;
+        this.parentId = parentId;
         DirectoryEntry dirEntry = getParentsChildEntry();
-        _dirStream = new ClusterStream(_fileSystem, FileAccess.ReadWrite, dirEntry.getFirstCluster(), 0xffffffff);
+        dirStream = new ClusterStream(fileSystem, FileAccess.ReadWrite, dirEntry.getFirstCluster(), 0xffffffff);
         loadEntries();
     }
 
@@ -85,28 +86,28 @@ public class Directory implements Closeable {
      * @param dirStream The stream containing the directory info.
      */
     Directory(FatFileSystem fileSystem, Stream dirStream) {
-        _fileSystem = fileSystem;
-        _dirStream = dirStream;
+        this.fileSystem = fileSystem;
+        this.dirStream = dirStream;
         loadEntries();
     }
 
     public List<DirectoryEntry> getEntries() {
-        return new ArrayList<>(_entries.values());
+        return new ArrayList<>(entries.values());
     }
 
-    private FatFileSystem _fileSystem;
+    private FatFileSystem fileSystem;
 
     public FatFileSystem getFileSystem() {
-        return _fileSystem;
+        return fileSystem;
     }
 
     public boolean isEmpty() {
-        return _entries.size() == 0;
+        return entries.size() == 0;
     }
 
     public List<DirectoryEntry> getDirectories() {
-        List<DirectoryEntry> dirs = new ArrayList<>(_entries.size());
-        for (DirectoryEntry dirEntry : _entries.values()) {
+        List<DirectoryEntry> dirs = new ArrayList<>(entries.size());
+        for (DirectoryEntry dirEntry : entries.values()) {
             if (dirEntry.getAttributes().contains(FatAttributes.Directory)) {
                 dirs.add(dirEntry);
             }
@@ -116,8 +117,8 @@ public class Directory implements Closeable {
     }
 
     public List<DirectoryEntry> getFiles() {
-        List<DirectoryEntry> files = new ArrayList<>(_entries.size());
-        for (DirectoryEntry dirEntry : _entries.values()) {
+        List<DirectoryEntry> files = new ArrayList<>(entries.size());
+        for (DirectoryEntry dirEntry : entries.values()) {
             if (Collections.disjoint(dirEntry.getAttributes(), EnumSet.of(FatAttributes.Directory, FatAttributes.VolumeId))) {
                 files.add(dirEntry);
             }
@@ -126,7 +127,7 @@ public class Directory implements Closeable {
     }
 
     public DirectoryEntry getEntry(long id) {
-        return id < 0 ? null : _entries.get(id);
+        return id < 0 ? null : entries.get(id);
     }
 
     public Directory getChildDirectory(FileName name) {
@@ -135,47 +136,47 @@ public class Directory implements Closeable {
             return null;
         }
 
-        if (!_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
+        if (!entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
             return null;
         }
 
-        return _fileSystem.getDirectory(this, id);
+        return fileSystem.getDirectory(this, id);
     }
 
     Directory createChildDirectory(FileName name) {
         long id = findEntry(name);
         if (id >= 0) {
-            if (!_entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
+            if (!entries.get(id).getAttributes().contains(FatAttributes.Directory)) {
                 throw new dotnet4j.io.IOException("A file exists with the same name: " +
                                                   name.getDisplayName(Charset.forName(System.getProperty("file.encoding"))));
             }
 
-            return _fileSystem.getDirectory(this, id);
+            return fileSystem.getDirectory(this, id);
         }
 
         try {
             int[] firstCluster = new int[1];
-            boolean result = !_fileSystem.getFat().tryGetFreeCluster(firstCluster);
+            boolean result = !fileSystem.getFat().tryGetFreeCluster(firstCluster);
             if (result) {
                 throw new dotnet4j.io.IOException("Failed to allocate first cluster for new directory");
             }
 
-            _fileSystem.getFat().setEndOfChain(firstCluster[0]);
-            DirectoryEntry newEntry = new DirectoryEntry(_fileSystem.getFatOptions(),
+            fileSystem.getFat().setEndOfChain(firstCluster[0]);
+            DirectoryEntry newEntry = new DirectoryEntry(fileSystem.getFatOptions(),
                                                          name,
                                                          EnumSet.of(FatAttributes.Directory),
-                                                         _fileSystem.getFatVariant());
+                                                         fileSystem.getFatVariant());
             newEntry.setFirstCluster(firstCluster[0]);
-            newEntry.setCreationTime(_fileSystem.convertFromUtc(System.currentTimeMillis()));
+            newEntry.setCreationTime(fileSystem.convertFromUtc(System.currentTimeMillis()));
             newEntry.setLastWriteTime(newEntry.getCreationTime());
             id = addEntry(newEntry);
             populateNewChildDirectory(newEntry);
-            return _fileSystem.getDirectory(this, id);
+            return fileSystem.getDirectory(this, id);
         } finally {
             // Rather than just creating a new instance, pull it through the
             // fileSystem cache
             // to ensure the cache model is preserved.
-            _fileSystem.getFat().flush();
+            fileSystem.getFat().flush();
         }
     }
 
@@ -194,8 +195,8 @@ public class Directory implements Closeable {
     }
 
     long findVolumeId() {
-        for (long id : _entries.keySet()) {
-            DirectoryEntry focus = _entries.get(id);
+        for (long id : entries.keySet()) {
+            DirectoryEntry focus = entries.get(id);
             if (focus.getAttributes().contains(FatAttributes.VolumeId)) {
                 return id;
             }
@@ -205,8 +206,8 @@ public class Directory implements Closeable {
     }
 
     long findEntry(FileName name) {
-        for (long id : _entries.keySet()) {
-            DirectoryEntry focus = _entries.get(id);
+        for (long id : entries.keySet()) {
+            DirectoryEntry focus = entries.get(id);
             if (focus.getName().equals(name) && !focus.getAttributes().contains(FatAttributes.VolumeId)) {
                 return id;
             }
@@ -228,11 +229,11 @@ public class Directory implements Closeable {
 
         if (mode == FileMode.Open && !exists) {
             throw new FileNotFoundException("File not found " +
-                                            name.getDisplayName(_fileSystem.getFatOptions().getFileNameEncoding()));
+                                            name.getDisplayName(fileSystem.getFatOptions().getFileNameEncoding()));
         }
 
         if ((mode == FileMode.Open || mode == FileMode.OpenOrCreate || mode == FileMode.Create) && exists) {
-            SparseStream stream = new FatFileStream(_fileSystem, this, fileId, fileAccess);
+            SparseStream stream = new FatFileStream(fileSystem, this, fileId, fileAccess);
             if (mode == FileMode.Create) {
                 stream.setLength(0);
             }
@@ -243,16 +244,16 @@ public class Directory implements Closeable {
 
         if ((mode == FileMode.OpenOrCreate || mode == FileMode.CreateNew || mode == FileMode.Create) && !exists) {
             // Create new file
-            DirectoryEntry newEntry = new DirectoryEntry(_fileSystem.getFatOptions(),
+            DirectoryEntry newEntry = new DirectoryEntry(fileSystem.getFatOptions(),
                                                          name,
                                                          EnumSet.of(FatAttributes.Archive),
-                                                         _fileSystem.getFatVariant());
+                                                         fileSystem.getFatVariant());
             newEntry.setFirstCluster(0);
             // i.e. Zero-length
-            newEntry.setCreationTime(_fileSystem.convertFromUtc(System.currentTimeMillis()));
+            newEntry.setCreationTime(fileSystem.convertFromUtc(System.currentTimeMillis()));
             newEntry.setLastWriteTime(newEntry.getCreationTime());
             fileId = addEntry(newEntry);
-            return new FatFileStream(_fileSystem, this, fileId, fileAccess);
+            return new FatFileStream(fileSystem, this, fileId, fileAccess);
         }
 
         throw new UnsupportedOperationException();
@@ -263,19 +264,19 @@ public class Directory implements Closeable {
         // Unlink an entry from the free list (or add to the end of the existing
         // directory)
         long pos;
-        if (_freeEntries.size() > 0) {
-            pos = _freeEntries.get(0);
-            _freeEntries.remove(0);
+        if (freeEntries.size() > 0) {
+            pos = freeEntries.get(0);
+            freeEntries.remove(0);
         } else {
-            pos = _endOfEntries;
-            _endOfEntries += 32;
+            pos = endOfEntries;
+            endOfEntries += 32;
         }
         // Put the new entry into it's slot
-        _dirStream.setPosition(pos);
-        newEntry.writeTo(_dirStream);
+        dirStream.setPosition(pos);
+        newEntry.writeTo(dirStream);
         // Update internal structures to reflect new entry (as if read from
         // disk)
-        _entries.put(pos, newEntry);
+        entries.put(pos, newEntry);
         handleAccessed(true);
         return pos;
     }
@@ -286,20 +287,20 @@ public class Directory implements Closeable {
         }
 
         try {
-            DirectoryEntry entry = _entries.get(id);
+            DirectoryEntry entry = entries.get(id);
             DirectoryEntry copy = new DirectoryEntry(entry);
             copy.setName(entry.getName().deleted());
-            _dirStream.setPosition(id);
-            copy.writeTo(_dirStream);
+            dirStream.setPosition(id);
+            copy.writeTo(dirStream);
             if (releaseContents) {
-                _fileSystem.getFat().freeChain(entry.getFirstCluster());
+                fileSystem.getFat().freeChain(entry.getFirstCluster());
             }
 
-            _entries.remove(id);
-            _freeEntries.add(id);
+            entries.remove(id);
+            freeEntries.add(id);
             handleAccessed(true);
         } finally {
-            _fileSystem.getFat().flush();
+            fileSystem.getFat().flush();
         }
     }
 
@@ -308,46 +309,46 @@ public class Directory implements Closeable {
             throw new dotnet4j.io.IOException("Attempt to update unknown directory entry");
         }
 
-        _dirStream.setPosition(id);
-        entry.writeTo(_dirStream);
-        _entries.put(id, entry);
+        dirStream.setPosition(id);
+        entry.writeTo(dirStream);
+        entries.put(id, entry);
     }
 
     private void loadEntries() {
-        _entries = new HashMap<>();
-        _freeEntries = new ArrayList<>();
-        _selfEntryLocation = -1;
-        _parentEntryLocation = -1;
-        while (_dirStream.getPosition() < _dirStream.getLength()) {
-            long streamPos = _dirStream.getPosition();
-            DirectoryEntry entry = new DirectoryEntry(_fileSystem.getFatOptions(),
-                                                      _dirStream,
-                                                      _fileSystem.getFatVariant());
+        entries = new HashMap<>();
+        freeEntries = new ArrayList<>();
+        selfEntryLocation = -1;
+        parentEntryLocation = -1;
+        while (dirStream.getPosition() < dirStream.getLength()) {
+            long streamPos = dirStream.getPosition();
+            DirectoryEntry entry = new DirectoryEntry(fileSystem.getFatOptions(),
+                    dirStream,
+                                                      fileSystem.getFatVariant());
             if (entry.getAttributes()
                     .containsAll(EnumSet
                             .of(FatAttributes.ReadOnly, FatAttributes.Hidden, FatAttributes.System, FatAttributes.VolumeId))) {
                 // Long File Name entry
             } else if (entry.getName().isDeleted()) {
                 // E5 = Free Entry
-                _freeEntries.add(streamPos);
+                freeEntries.add(streamPos);
             } else if (entry.getName().equals(FileName.SelfEntryName)) {
-                _selfEntry = entry;
-                _selfEntryLocation = streamPos;
+                selfEntry = entry;
+                selfEntryLocation = streamPos;
             } else if (entry.getName().equals(FileName.ParentEntryName)) {
-                _parentEntry = entry;
-                _parentEntryLocation = streamPos;
+                parentEntry = entry;
+                parentEntryLocation = streamPos;
             } else if (entry.getName().isEndMarker()) {
                 // Free Entry, no more entries available
-                _endOfEntries = streamPos;
+                endOfEntries = streamPos;
                 break;
             } else {
-                _entries.put(streamPos, entry);
+                entries.put(streamPos, entry);
             }
         }
     }
 
     private void handleAccessed(boolean forWrite) {
-        if (_fileSystem.canWrite() && _parent != null) {
+        if (fileSystem.canWrite() && parent != null) {
             long now = System.currentTimeMillis();
             DirectoryEntry entry = getSelfEntry();
             long oldAccessTime = entry.getLastAccessTime();
@@ -370,7 +371,7 @@ public class Directory implements Closeable {
     private void populateNewChildDirectory(DirectoryEntry newEntry) {
         // Populate new directory with initial (special) entries. First one is
         // easy, just change the name!
-        try (ClusterStream stream = new ClusterStream(_fileSystem,
+        try (ClusterStream stream = new ClusterStream(fileSystem,
                                                       FileAccess.Write,
                                                       newEntry.getFirstCluster(),
                                                       0xffffffff)) {
@@ -391,59 +392,58 @@ public class Directory implements Closeable {
     }
 
     public void close() throws IOException {
-        _dirStream.close();
+        dirStream.close();
     }
 
     DirectoryEntry getParentsChildEntry() {
-        if (_parent == null) {
-            return new DirectoryEntry(_fileSystem.getFatOptions(),
+        if (parent == null) {
+            return new DirectoryEntry(fileSystem.getFatOptions(),
                                       FileName.ParentEntryName,
                                       EnumSet.of(FatAttributes.Directory),
-                                      _fileSystem.getFatVariant());
+                                      fileSystem.getFatVariant());
         }
 
-        return _parent.getEntry(_parentId);
+        return parent.getEntry(parentId);
     }
 
     void setParentsChildEntry(DirectoryEntry value) {
-        if (_parent != null) {
-            _parent.updateEntry(_parentId, value);
+        if (parent != null) {
+            parent.updateEntry(parentId, value);
         }
-
     }
 
     DirectoryEntry getSelfEntry() {
-        if (_parent == null) {
+        if (parent == null) {
             // If we're the root directory, simulate the parent entry with a
             // dummy record
-            return new DirectoryEntry(_fileSystem.getFatOptions(),
+            return new DirectoryEntry(fileSystem.getFatOptions(),
                                       FileName.Null,
                                       EnumSet.of(FatAttributes.Directory),
-                                      _fileSystem.getFatVariant());
+                                      fileSystem.getFatVariant());
         }
 
-        return _selfEntry;
+        return selfEntry;
     }
 
     void setSelfEntry(DirectoryEntry value) {
-        if (_selfEntryLocation >= 0) {
-            _dirStream.setPosition(_selfEntryLocation);
-            value.writeTo(_dirStream);
-            _selfEntry = value;
+        if (selfEntryLocation >= 0) {
+            dirStream.setPosition(selfEntryLocation);
+            value.writeTo(dirStream);
+            selfEntry = value;
         }
     }
 
     DirectoryEntry getParentEntry() {
-        return _parentEntry;
+        return parentEntry;
     }
 
     void setParentEntry(DirectoryEntry value) {
-        if (_parentEntryLocation < 0) {
+        if (parentEntryLocation < 0) {
             throw new dotnet4j.io.IOException("No parent entry on disk to update");
         }
 
-        _dirStream.setPosition(_parentEntryLocation);
-        value.writeTo(_dirStream);
-        _parentEntry = value;
+        dirStream.setPosition(parentEntryLocation);
+        value.writeTo(dirStream);
+        parentEntry = value;
     }
 }

@@ -31,25 +31,26 @@ import dotnet4j.io.Stream;
 
 
 public final class VirtualRegistryPSDriveInfo extends PSDriveInfo {
-    private Stream _hiveStream;
 
-    private RegistryHive _hive;
+    private Stream hiveStream;
+
+    private RegistryHive hive;
 
     public VirtualRegistryPSDriveInfo(PSDriveInfo toCopy, String root, Stream stream) {
         super(toCopy.getName(), toCopy.getProvider(), root, toCopy.getDescription(), toCopy.getCredential());
-        _hiveStream = stream;
-        _hive = new RegistryHive(_hiveStream, Ownership.Dispose);
+        hiveStream = stream;
+        hive = new RegistryHive(hiveStream, Ownership.Dispose);
     }
 
     public void close() throws IOException {
-        if (_hive != null) {
-            _hive.close();
-            _hive = null;
+        if (hive != null) {
+            hive.close();
+            hive = null;
         }
     }
 
     public RegistryHive getHive() {
-        return _hive;
+        return hive;
     }
 
 }

@@ -31,57 +31,58 @@ import java.util.List;
  * instance.
  */
 public final class ServiceInstanceEndPoint {
-    private List<InetSocketAddress> _ipEndPoints;
+
+    private List<InetSocketAddress> ipEndPoints;
 
     public ServiceInstanceEndPoint(int priority, int weight, int port, String address, List<InetSocketAddress> ipEndPoints) {
-        _priority = priority;
-        _weight = weight;
-        _port = port;
-        _dnsAddress = address;
-        _ipEndPoints = ipEndPoints;
+        this.priority = priority;
+        this.weight = weight;
+        this.port = port;
+        dnsAddress = address;
+        this.ipEndPoints = ipEndPoints;
     }
 
     /**
      * Gets the DNS address of this EndPoint.
      */
-    private String _dnsAddress;
+    private String dnsAddress;
 
     public String getDnsAddress() {
-        return _dnsAddress;
+        return dnsAddress;
     }
 
     /**
      * Gets the IP addresses (as InetSocketAddress instances) of this EndPoint.
      */
     public List<InetSocketAddress> getInetSocketAddresss() {
-        return _ipEndPoints;
+        return ipEndPoints;
     }
 
     /**
      * Gets the port of this EndPoint.
      */
-    private int _port;
+    private int port;
 
     public int getPort() {
-        return _port;
+        return port;
     }
 
     /**
      * Gets the priority of this EndPoint (lower value is higher priority).
      */
-    private int _priority;
+    private int priority;
 
     public int getPriority() {
-        return _priority;
+        return priority;
     }
 
     /**
      * Gets the relative weight of this EndPoint when randomly choosing between
      * EndPoints of equal priority.
      */
-    private int _weight;
+    private int weight;
 
     public int getWeight() {
-        return _weight;
+        return weight;
     }
 }

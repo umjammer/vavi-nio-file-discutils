@@ -46,13 +46,13 @@ import dotnet4j.io.Stream;
 
 public final class DiskImageFile extends VirtualDiskLayer {
 
-    private final Ownership _ownsStream;
+    private final Ownership ownsStream;
 
-    private ResourceFork _resources;
+    private ResourceFork resources;
 
-    private Stream _stream;
+    private Stream stream;
 
-    private final UdifResourceFile _udifHeader;
+    private final UdifResourceFile udifHeader;
 
     /**
      * Initializes a new instance of the DiskImageFile class.
@@ -62,38 +62,38 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            lifetime of the stream.
      */
     public DiskImageFile(Stream stream, Ownership ownsStream) {
-        _udifHeader = new UdifResourceFile();
-        _stream = stream;
-        _ownsStream = ownsStream;
+        udifHeader = new UdifResourceFile();
+        this.stream = stream;
+        this.ownsStream = ownsStream;
 
 Debug.println(Level.FINE, "stream.getLength(): " + stream.getLength());
-Debug.println(Level.FINE, "udifHeader.size(): " + _udifHeader.size());
-        stream.setPosition(stream.getLength() - _udifHeader.size());
-        byte[] data = StreamUtilities.readExact(stream, _udifHeader.size());
+Debug.println(Level.FINE, "udifHeader.size(): " + udifHeader.size());
+        stream.setPosition(stream.getLength() - udifHeader.size());
+        byte[] data = StreamUtilities.readExact(stream, udifHeader.size());
 
-        _udifHeader.readFrom(data, 0);
+        udifHeader.readFrom(data, 0);
 
-        if (_udifHeader.getSignatureValid()) {
-            stream.setPosition(_udifHeader.xmlOffset);
-            byte[] xmlData = StreamUtilities.readExact(stream, (int) _udifHeader.xmlLength);
+        if (udifHeader.getSignatureValid()) {
+            stream.setPosition(udifHeader.xmlOffset);
+            byte[] xmlData = StreamUtilities.readExact(stream, (int) udifHeader.xmlLength);
             Map<String, Object> plist = Plist.parse(new MemoryStream(xmlData));
 
-            _resources = ResourceFork.fromPlist(plist);
-            _buffer = new UdifBuffer(stream, _resources, _udifHeader.sectorCount);
+            resources = ResourceFork.fromPlist(plist);
+            buffer = new UdifBuffer(stream, resources, udifHeader.sectorCount);
         } else {
             // TODO fat32 dmg doesn't have udif header
-Debug.printf(Level.WARNING, "_udifHeader: %08x\n", _udifHeader.signature);
+Debug.printf(Level.WARNING, "udifHeader: %08x\n", udifHeader.signature);
         }
     }
 
-    private UdifBuffer _buffer;
+    private UdifBuffer buffer;
 
     public UdifBuffer getBuffer() {
-        return _buffer;
+        return buffer;
     }
 
     public long getCapacity() {
-        return _buffer == null ? _stream.getLength() : _buffer.getCapacity();
+        return buffer == null ? stream.getLength() : buffer.getCapacity();
     }
 
     /**
@@ -104,7 +104,7 @@ Debug.printf(Level.WARNING, "_udifHeader: %08x\n", _udifHeader.signature);
     }
 
     public boolean isSparse() {
-        return _buffer != null;
+        return buffer != null;
     }
 
     /**
@@ -127,12 +127,12 @@ Debug.printf(Level.WARNING, "_udifHeader: %08x\n", _udifHeader.signature);
             }
         }
 
-        if (_buffer != null) {
-            SparseStream rawStream = new BufferStream(_buffer, FileAccess.Read);
+        if (buffer != null) {
+            SparseStream rawStream = new BufferStream(buffer, FileAccess.Read);
             return new BlockCacheStream(rawStream, Ownership.Dispose);
         }
 
-        return SparseStream.fromStream(_stream, Ownership.None);
+        return SparseStream.fromStream(stream, Ownership.None);
     }
 
     /**
@@ -145,10 +145,10 @@ Debug.printf(Level.WARNING, "_udifHeader: %08x\n", _udifHeader.signature);
     }
 
     public void close() throws IOException {
-        if (_stream != null && _ownsStream == Ownership.Dispose) {
-            _stream.close();
+        if (stream != null && ownsStream == Ownership.Dispose) {
+            stream.close();
         }
 
-        _stream = null;
+        stream = null;
     }
 }

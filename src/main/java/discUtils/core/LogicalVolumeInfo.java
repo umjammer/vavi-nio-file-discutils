@@ -33,13 +33,14 @@ import discUtils.streams.SparseStreamOpenDelegate;
  * physical volumes.
  */
 public final class LogicalVolumeInfo extends VolumeInfo {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
-    private UUID _guid;
+    private UUID guid;
 
-    private final SparseStreamOpenDelegate _opener;
+    private final SparseStreamOpenDelegate opener;
 
-    private final PhysicalVolumeInfo _physicalVol;
+    private final PhysicalVolumeInfo physicalVol;
 
     public LogicalVolumeInfo(UUID guid,
             PhysicalVolumeInfo physicalVolume,
@@ -47,12 +48,12 @@ public final class LogicalVolumeInfo extends VolumeInfo {
             long length,
             byte biosType,
             LogicalVolumeStatus status) {
-        _guid = guid;
-        _physicalVol = physicalVolume;
-        _opener = opener;
-        _length = length;
-        _biosType = biosType;
-        _status = status;
+        this.guid = guid;
+        physicalVol = physicalVolume;
+        this.opener = opener;
+        this.length = length;
+        this.biosType = biosType;
+        this.status = status;
     }
 
     /**
@@ -60,16 +61,16 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * calls), may be null.
      */
     public Geometry getBiosGeometry() {
-        return _physicalVol == null ? Geometry.getNull() : _physicalVol.getBiosGeometry();
+        return physicalVol == null ? Geometry.getNull() : physicalVol.getBiosGeometry();
     }
 
     /**
      * Gets the one-byte BIOS type for this volume, which indicates the content.
      */
-    private byte _biosType;
+    private byte biosType;
 
     public byte getBiosType() {
-        return _biosType;
+        return biosType;
     }
 
     /**
@@ -80,20 +81,20 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * stability of this identity is paramount.
      */
     public String getIdentity() {
-        if (!_guid.equals(EMPTY)) {
-            return "VLG" + String.format("{%s}", _guid);
+        if (!guid.equals(EMPTY)) {
+            return "VLG" + String.format("{%s}", guid);
         }
 
-        return "VLP:" + _physicalVol.getIdentity();
+        return "VLP:" + physicalVol.getIdentity();
     }
 
     /**
      * Gets the length of the volume (in bytes).
      */
-    private long _length;
+    private long length;
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     /**
@@ -101,7 +102,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * Geometry.Null).
      */
     public Geometry getPhysicalGeometry() {
-        return _physicalVol == null ? Geometry.getNull() : _physicalVol.getPhysicalGeometry();
+        return physicalVol == null ? Geometry.getNull() : physicalVol.getPhysicalGeometry();
     }
 
     /**
@@ -109,23 +110,23 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * (may be Zero).
      */
     public long getPhysicalStartSector() {
-        return _physicalVol == null ? 0 : _physicalVol.getPhysicalStartSector();
+        return physicalVol == null ? 0 : physicalVol.getPhysicalStartSector();
     }
 
     /**
      * Gets the status of the logical volume, indicating volume health.
      */
-    private LogicalVolumeStatus _status = LogicalVolumeStatus.Healthy;
+    private LogicalVolumeStatus status = LogicalVolumeStatus.Healthy;
 
     public LogicalVolumeStatus getStatus() {
-        return _status;
+        return status;
     }
 
     /**
      * Gets the underlying physical volume info
      */
     public PhysicalVolumeInfo getPhysicalVolume() {
-        return _physicalVol;
+        return physicalVol;
     }
 
     /**
@@ -134,11 +135,11 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * @return The volume's content as a stream.
      */
     public SparseStream open() {
-        return _opener.invoke();
+        return opener.invoke();
     }
 
     @Override
     public String toString() {
-        return getIdentity() + ": " + getPhysicalStartSector() + ", " + _length;
+        return getIdentity() + ": " + getPhysicalStartSector() + ", " + length;
     }
 }

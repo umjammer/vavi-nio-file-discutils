@@ -44,13 +44,14 @@ import dotnet4j.io.MemoryStream;
 
 
 public final class MonolithicSparseExtentBuilder extends StreamBuilder {
-    private final SparseStream _content;
 
-    private final DescriptorFile _descriptor;
+    private final SparseStream content;
+
+    private final DescriptorFile descriptor;
 
     public MonolithicSparseExtentBuilder(SparseStream content, DescriptorFile descriptor) {
-        _content = content;
-        _descriptor = descriptor;
+        this.content = content;
+        this.descriptor = descriptor;
     }
 
     /**
@@ -59,12 +60,12 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
         MemoryStream descriptorStream = new MemoryStream();
-        _descriptor.write(descriptorStream);
+        descriptor.write(descriptorStream);
         // Figure out grain size and number of grain tables, and adjust actual extent size to be a multiple
         // of grain size
         final int GtesPerGt = 512;
         long grainSize = 128;
-        int numGrainTables = (int) MathUtilities.ceil(_content.getLength(), grainSize * GtesPerGt * Sizes.Sector);
+        int numGrainTables = (int) MathUtilities.ceil(content.getLength(), grainSize * GtesPerGt * Sizes.Sector);
         long descriptorLength = 10 * Sizes.OneKiB;
         // MathUtilities.roundUp(descriptorStream.length, Sizes.Sector);
         long descriptorStart = 0;
@@ -84,15 +85,15 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
                                                grainSize);
         // Generate the header, and write it
         HostedSparseExtentHeader header = new HostedSparseExtentHeader();
-        header.Flags = EnumSet.of(HostedSparseExtentFlags.ValidLineDetectionTest, HostedSparseExtentFlags.RedundantGrainTable);
-        header.Capacity = MathUtilities.roundUp(_content.getLength(), grainSize * Sizes.Sector) / Sizes.Sector;
-        header.GrainSize = grainSize;
-        header.DescriptorOffset = descriptorStart;
-        header.DescriptorSize = descriptorLength / Sizes.Sector;
-        header.NumGTEsPerGT = GtesPerGt;
-        header.RgdOffset = redundantGrainDirStart;
-        header.GdOffset = grainDirStart;
-        header.Overhead = dataStart;
+        header.flags = EnumSet.of(HostedSparseExtentFlags.ValidLineDetectionTest, HostedSparseExtentFlags.RedundantGrainTable);
+        header.capacity = MathUtilities.roundUp(content.getLength(), grainSize * Sizes.Sector) / Sizes.Sector;
+        header.grainSize = grainSize;
+        header.descriptorOffset = descriptorStart;
+        header.descriptorSize = descriptorLength / Sizes.Sector;
+        header.numGTEsPerGT = GtesPerGt;
+        header.rgdOffset = redundantGrainDirStart;
+        header.gdOffset = grainDirStart;
+        header.overhead = dataStart;
         extents.add(new BuilderBytesExtent(0, header.getBytes()));
         // The descriptor extent
         if (descriptorLength > 0) {
@@ -108,10 +109,10 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
         // For each graintable span that's present...
         long dataSectorsUsed = 0;
         long gtSpan = GtesPerGt * grainSize * Sizes.Sector;
-        for (Range gtRange : StreamExtent.blocks(_content.getExtents(), grainSize * GtesPerGt * Sizes.Sector)) {
+        for (Range gtRange : StreamExtent.blocks(content.getExtents(), grainSize * GtesPerGt * Sizes.Sector)) {
             for (long i = 0; i < gtRange.getCount(); ++i) {
                 int gt = (int) (gtRange.getOffset() + i);
-                SubStream gtStream = new SubStream(_content, gt * gtSpan, Math.min(gtSpan, _content.getLength() - gt * gtSpan));
+                SubStream gtStream = new SubStream(content, gt * gtSpan, Math.min(gtSpan, content.getLength() - gt * gtSpan));
                 GrainTableDataExtent dataExtent = new GrainTableDataExtent((dataStart + dataSectorsUsed) * Sizes.Sector,
                                                                            gtStream,
                                                                            grainSize);
@@ -138,44 +139,45 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
     }
 
     private static class GrainDirectoryExtent extends BuilderBytesExtent {
-        private final long _grainTablesStart;
 
-        private final int _gtesPerGt;
+        private final long grainTablesStart;
 
-        private final int _numGrainTables;
+        private final int gtesPerGt;
+
+        private final int numGrainTables;
 
         public GrainDirectoryExtent(long start, long grainTablesStart, int numGrainTables, int gtesPerGt) {
             super(start, MathUtilities.roundUp(numGrainTables * 4, Sizes.Sector));
-            _grainTablesStart = grainTablesStart;
-            _numGrainTables = numGrainTables;
-            _gtesPerGt = gtesPerGt;
+            this.grainTablesStart = grainTablesStart;
+            this.numGrainTables = numGrainTables;
+            this.gtesPerGt = gtesPerGt;
         }
 
         public void prepareForRead() {
-            _data = new byte[(int) getLength()];
-            for (int i = 0; i < _numGrainTables; ++i) {
+            data = new byte[(int) getLength()];
+            for (int i = 0; i < numGrainTables; ++i) {
                 EndianUtilities.writeBytesLittleEndian(
-                                                       (int) (_grainTablesStart +
-                                                              i * MathUtilities.ceil(_gtesPerGt * 4, Sizes.Sector)),
-                                                       _data,
-                                                       i * 4);
+                        (int) (grainTablesStart +
+                                i * MathUtilities.ceil(gtesPerGt * 4, Sizes.Sector)),
+                        data,
+                        i * 4);
             }
         }
 
         public void disposeReadState() {
-            _data = null;
+            data = null;
         }
-
     }
 
     private static class GrainTableExtent extends BuilderBytesExtent {
-        private final SparseStream _content;
 
-        private final long _dataStart;
+        private final SparseStream content;
 
-        private final long _grainSize;
+        private final long dataStart;
 
-        private final int _gtesPerGt;
+        private final long grainSize;
+
+        private final int gtesPerGt;
 
         public GrainTableExtent(long start,
                 SparseStream content,
@@ -183,42 +185,42 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
                 int gtesPerGt,
                 long grainSize) {
             super(start, gtesPerGt * 4L);
-            _content = content;
-            _grainSize = grainSize;
-            _gtesPerGt = gtesPerGt;
-            _dataStart = dataStart;
+            this.content = content;
+            this.grainSize = grainSize;
+            this.gtesPerGt = gtesPerGt;
+            this.dataStart = dataStart;
         }
 
         public void prepareForRead() {
-            _data = new byte[_gtesPerGt * 4];
-            long gtSpan = _gtesPerGt * _grainSize * Sizes.Sector;
+            data = new byte[gtesPerGt * 4];
+            long gtSpan = gtesPerGt * grainSize * Sizes.Sector;
             long sectorsAllocated = 0;
-            for (Range block : StreamExtent.blocks(_content.getExtents(), _grainSize * Sizes.Sector)) {
+            for (Range block : StreamExtent.blocks(content.getExtents(), grainSize * Sizes.Sector)) {
                 for (int i = 0; i < block.getCount(); ++i) {
-                    EndianUtilities.writeBytesLittleEndian((int) (_dataStart + sectorsAllocated),
-                                                           _data,
+                    EndianUtilities.writeBytesLittleEndian((int) (dataStart + sectorsAllocated),
+                            data,
                                                            (int) ((block.getOffset() + i) * 4));
-                    sectorsAllocated += _grainSize;
+                    sectorsAllocated += grainSize;
                 }
             }
         }
 
         public void disposeReadState() {
-            _data = null;
+            data = null;
         }
-
     }
 
     private static class GrainTableDataExtent extends BuilderExtent {
-        private SparseStream _content;
 
-        private final Ownership _contentOwnership;
+        private SparseStream content;
 
-        private int[] _grainMapOffsets = new int[] {};
+        private final Ownership contentOwnership;
 
-        private Range[] _grainMapRanges;
+        private int[] grainMapOffsets = new int[] {};
 
-        private final long _grainSize;
+        private Range[] grainMapRanges;
+
+        private final long grainSize;
 
         public GrainTableDataExtent(long start, SparseStream content, long grainSize) {
             this(start, content, Ownership.None, grainSize);
@@ -229,26 +231,26 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
                 Ownership contentOwnership,
                 long grainSize) {
             super(start, sectorsPresent(content, grainSize) * Sizes.Sector);
-            _content = content;
-            _contentOwnership = contentOwnership;
-            _grainSize = grainSize;
+            this.content = content;
+            this.contentOwnership = contentOwnership;
+            this.grainSize = grainSize;
         }
 
         public void close() throws IOException {
-            if (_content != null && _contentOwnership != Ownership.Dispose) {
-                _content.close();
-                _content = null;
+            if (content != null && contentOwnership != Ownership.Dispose) {
+                content.close();
+                content = null;
             }
         }
 
         public void prepareForRead() {
             long outputGrain = 0;
-            _grainMapOffsets = new int[(int) (getLength() / (_grainSize * Sizes.Sector))];
-            _grainMapRanges = new Range[_grainMapOffsets.length];
-            for (Range grainRange : StreamExtent.blocks(_content.getExtents(), _grainSize * Sizes.Sector)) {
+            grainMapOffsets = new int[(int) (getLength() / (grainSize * Sizes.Sector))];
+            grainMapRanges = new Range[grainMapOffsets.length];
+            for (Range grainRange : StreamExtent.blocks(content.getExtents(), grainSize * Sizes.Sector)) {
                 for (int i = 0; i < grainRange.getCount(); ++i) {
-                    _grainMapOffsets[(int) outputGrain] = i;
-                    _grainMapRanges[(int) outputGrain] = grainRange;
+                    grainMapOffsets[(int) outputGrain] = i;
+                    grainMapRanges[(int) outputGrain] = grainRange;
                     outputGrain++;
                 }
             }
@@ -256,27 +258,27 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
             long start = diskOffset - getStart();
-            long grainSizeBytes = _grainSize * Sizes.Sector;
+            long grainSizeBytes = grainSize * Sizes.Sector;
             long outputGrain = start / grainSizeBytes;
             long outputGrainOffset = start % grainSizeBytes;
-            long grainStart = (_grainMapRanges[(int) outputGrain].getOffset() + _grainMapOffsets[(int) outputGrain]) *
+            long grainStart = (grainMapRanges[(int) outputGrain].getOffset() + grainMapOffsets[(int) outputGrain]) *
                               grainSizeBytes;
-            long maxRead = (_grainMapRanges[(int) outputGrain].getCount() - _grainMapOffsets[(int) outputGrain]) *
+            long maxRead = (grainMapRanges[(int) outputGrain].getCount() - grainMapOffsets[(int) outputGrain]) *
                            grainSizeBytes;
             long readStart = grainStart + outputGrainOffset;
             int toRead = (int) Math.min(count, maxRead - outputGrainOffset);
-            if (readStart > _content.getLength()) {
+            if (readStart > content.getLength()) {
                 Arrays.fill(block, offset, offset + toRead, (byte) 0);
                 return toRead;
             }
 
-            _content.setPosition(readStart);
-            return _content.read(block, offset, toRead);
+            content.setPosition(readStart);
+            return content.read(block, offset, toRead);
         }
 
         public void disposeReadState() {
-            _grainMapOffsets = null;
-            _grainMapRanges = null;
+            grainMapOffsets = null;
+            grainMapRanges = null;
         }
 
         private static long sectorsPresent(SparseStream content, long grainSize) {

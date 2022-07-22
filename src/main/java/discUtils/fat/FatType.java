@@ -39,16 +39,16 @@ public enum FatType {
         @Override public boolean isEndOfChain(int val) {
             throw new IllegalStateException("Unknown FAT type");
         }
-        @Override public int getNumEntries(byte[] _buffer) {
+        @Override public int getNumEntries(byte[] buffer) {
             throw new IllegalStateException("Unknown FAT type");
         }
         @Override public boolean isBadCluster(int val) {
             throw new IllegalStateException("Unknown FAT type");
         }
-        @Override public int getNext(int cluster, byte[] _buffer) {
+        @Override public int getNext(int cluster, byte[] buffer) {
             throw new IllegalStateException("Unknown FAT type");
         }
-        @Override public void setNext(int cluster, int next, byte[] _buffer, Consumer<Integer> markDirty) {
+        @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
             throw new IllegalStateException("Unknown FAT type");
         }
     },
@@ -59,20 +59,20 @@ public enum FatType {
         @Override public boolean isEndOfChain(int val) {
             return (val & 0x0fff) >= 0x0ff8;
         }
-        @Override public int getNumEntries(byte[] _buffer) {
-            return _buffer.length / 3 * 2;
+        @Override public int getNumEntries(byte[] buffer) {
+            return buffer.length / 3 * 2;
         }
         @Override public boolean isBadCluster(int val) {
             return (val & 0x0fff) == 0x0ff7;
         }
-        @Override public int getNext(int cluster, byte[] _buffer) {
+        @Override public int getNext(int cluster, byte[] buffer) {
             if ((cluster & 1) != 0) {
-                return (EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) >>> 4) & 0x0fff;
+                return (EndianUtilities.toUInt16LittleEndian(buffer, cluster + cluster / 2) >>> 4) & 0x0fff;
             } else {
-                return EndianUtilities.toUInt16LittleEndian(_buffer, cluster + cluster / 2) & 0x0fff;
+                return EndianUtilities.toUInt16LittleEndian(buffer, cluster + cluster / 2) & 0x0fff;
             }
         }
-        @Override public void setNext(int cluster, int next, byte[] _buffer, Consumer<Integer> markDirty) {
+        @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
             int offset = cluster + cluster / 2;
             markDirty.accept(offset);
             markDirty.accept(offset + 1);
@@ -80,13 +80,13 @@ public enum FatType {
             short maskedOldVal;
             if ((cluster & 1) != 0) {
                 next = next << 4;
-                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(_buffer, offset) & 0x000f);
+                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(buffer, offset) & 0x000f);
             } else {
                 next = next & 0x0fff;
-                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(_buffer, offset) & 0xf000);
+                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(buffer, offset) & 0xf000);
             }
             short newVal = (short) (maskedOldVal | next);
-            EndianUtilities.writeBytesLittleEndian(newVal, _buffer, offset);
+            EndianUtilities.writeBytesLittleEndian(newVal, buffer, offset);
         }
     },
     /**
@@ -96,18 +96,18 @@ public enum FatType {
         @Override public boolean isEndOfChain(int val) {
             return (val & 0xffff) >= 0xfff8;
         }
-        @Override public int getNumEntries(byte[] _buffer) {
-            return _buffer.length / 2;
+        @Override public int getNumEntries(byte[] buffer) {
+            return buffer.length / 2;
         }
         @Override public boolean isBadCluster(int val) {
             return (val & 0xffff) == 0xfff7;
         }
-        @Override public int getNext(int cluster, byte[] _buffer) {
-            return EndianUtilities.toUInt16LittleEndian(_buffer, cluster * 2);
+        @Override public int getNext(int cluster, byte[] buffer) {
+            return EndianUtilities.toUInt16LittleEndian(buffer, cluster * 2);
         }
-        @Override public void setNext(int cluster, int next, byte[] _buffer, Consumer<Integer> markDirty) {
+        @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
             markDirty.accept(cluster * 2);
-            EndianUtilities.writeBytesLittleEndian((short) next, _buffer, cluster * 2);
+            EndianUtilities.writeBytesLittleEndian((short) next, buffer, cluster * 2);
         }
     },
     /**
@@ -117,20 +117,20 @@ public enum FatType {
         @Override public boolean isEndOfChain(int val) {
             return (val & 0x0fff_fff8) >= 0x0fff_fff8;
         }
-        @Override public int getNumEntries(byte[] _buffer) {
-            return _buffer.length / 4;
+        @Override public int getNumEntries(byte[] buffer) {
+            return buffer.length / 4;
         }
         @Override public boolean isBadCluster(int val) {
             return (val & 0x0fff_ffff) == 0x0fff_fff7; // TODO bug report
         }
-        @Override public int getNext(int cluster, byte[] _buffer) {
-            return EndianUtilities.toUInt32LittleEndian(_buffer, cluster * 4) & 0x0fff_ffff;
+        @Override public int getNext(int cluster, byte[] buffer) {
+            return EndianUtilities.toUInt32LittleEndian(buffer, cluster * 4) & 0x0fff_ffff;
         }
-        @Override public void setNext(int cluster, int next, byte[] _buffer, Consumer<Integer> markDirty) {
+        @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
             markDirty.accept(cluster * 4);
-            int oldVal = EndianUtilities.toUInt32LittleEndian(_buffer, cluster * 4);
+            int oldVal = EndianUtilities.toUInt32LittleEndian(buffer, cluster * 4);
             int newVal = (oldVal & 0xf000_0000) | (next & 0x0fff_ffff);
-            EndianUtilities.writeBytesLittleEndian(newVal, _buffer, cluster * 4);
+            EndianUtilities.writeBytesLittleEndian(newVal, buffer, cluster * 4);
         }
     };
 
@@ -145,15 +145,15 @@ public enum FatType {
         return friendlyName;
     }
 
-    public abstract int getNumEntries(byte[] _buffer);
+    public abstract int getNumEntries(byte[] buffer);
 
     public abstract boolean isEndOfChain(int val);
 
     public abstract boolean isBadCluster(int val);
 
-    public abstract int getNext(int cluster, byte[] _buffer);
+    public abstract int getNext(int cluster, byte[] buffer);
 
-    public abstract void setNext(int cluster, int next, byte[] _buffer, Consumer<Integer> markDirty);
+    public abstract void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty);
 
     FatType(int value, String friendlyName) {
         this.value = value;

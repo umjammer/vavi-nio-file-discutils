@@ -27,20 +27,21 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class CatalogThread implements IByteArraySerializable {
-    public String Name;
 
-    public CatalogNodeId ParentId;
+    public String name;
 
-    public CatalogRecordType RecordType = CatalogRecordType.None;
+    public CatalogNodeId parentId;
+
+    public CatalogRecordType recordType = CatalogRecordType.None;
 
     public int size() {
         return 0;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        RecordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
-        ParentId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        Name = HfsPlusUtilities.readUniStr255(buffer, offset + 8);
+        recordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
+        parentId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
+        name = HfsPlusUtilities.readUniStr255(buffer, offset + 8);
 
         return 0;
     }

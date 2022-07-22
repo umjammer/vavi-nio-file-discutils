@@ -26,29 +26,30 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class LogoutResponse extends BaseResponse {
-    public LogoutResponseCode Response = LogoutResponseCode.ClosedSuccessfully;
 
-    public short Time2Retain;
+    public LogoutResponseCode response = LogoutResponseCode.ClosedSuccessfully;
 
-    public short Time2Wait;
+    public short time2Retain;
+
+    public short time2Wait;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 
     public void parse(byte[] headerData, int headerOffset) {
-        BasicHeaderSegment _headerSegment = new BasicHeaderSegment();
-        _headerSegment.readFrom(headerData, headerOffset);
-        if (_headerSegment._OpCode != OpCode.LogoutResponse) {
+        BasicHeaderSegment headerSegment = new BasicHeaderSegment();
+        headerSegment.readFrom(headerData, headerOffset);
+        if (headerSegment.opCode != OpCode.LogoutResponse) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.LogoutResponse + " was " +
-                                               _headerSegment._OpCode);
+                                               headerSegment.opCode);
         }
 
-        Response = LogoutResponseCode.values()[headerData[headerOffset + 2]];
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        Time2Wait = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 40);
-        Time2Retain = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 42);
+        response = LogoutResponseCode.values()[headerData[headerOffset + 2]];
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        time2Wait = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 40);
+        time2Retain = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 42);
     }
 }

@@ -28,15 +28,16 @@ import com.sun.jna.Pointer;
 
 
 public final class VolumeStream extends UnbufferedNativeStream {
-    private long _length;
+
+    private long length;
 
     public VolumeStream(Pointer handle) {
         super(handle);
         NtfsVolumeData volInfo = Win32Wrapper.getNtfsVolumeData(handle);
-        _length = volInfo.TotalClusters * volInfo.BytesPerCluster;
+        length = volInfo.totalClusters * volInfo.bytesPerCluster;
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 }

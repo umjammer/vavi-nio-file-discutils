@@ -25,24 +25,24 @@ package discUtils.powerShell.virtualDiskProvider;
 import java.util.concurrent.Semaphore; // TODO
 
 public class NewDriveParameters {
-    private Semaphore __ReadWrite;
+
+    private Semaphore readWrite;
 
     public Semaphore getReadWrite() {
-        return __ReadWrite;
+        return readWrite;
     }
 
     public void setReadWrite(Semaphore value) {
-        __ReadWrite = value;
+        readWrite = value;
     }
 
-    private String __DiskType;
+    private String diskType;
 
     public String getDiskType() {
-        return __DiskType;
+        return diskType;
     }
 
     public void setDiskType(String value) {
-        __DiskType = value;
+        diskType = value;
     }
-
 }

@@ -45,26 +45,26 @@ public class Nfs3DirectoryEntryTest {
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
         entry.setCookie(1);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.BytesUsed = 2;
-        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.bytesUsed = 2;
+        attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.FileId = 3;
-        attributes.FileSystemId = 4;
-        attributes.Gid = 5;
-        attributes.LinkCount = 6;
-        attributes.Mode = UnixFilePermissions.GroupAll;
-        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.fileId = 3;
+        attributes.fileSystemId = 4;
+        attributes.gid = 5;
+        attributes.linkCount = 6;
+        attributes.mode = UnixFilePermissions.GroupAll;
+        attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.RdevMajor = 7;
-        attributes.RdevMinor = 8;
-        attributes.Size = 9;
-        attributes.Type = Nfs3FileType.NamedPipe;
-        attributes.Uid = 10;
+        attributes.rdevMajor = 7;
+        attributes.rdevMinor = 8;
+        attributes.size = 9;
+        attributes.type = Nfs3FileType.NamedPipe;
+        attributes.uid = 10;
         entry.setFileAttributes(attributes);
         entry.setName("test");
 

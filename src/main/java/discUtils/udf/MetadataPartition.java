@@ -29,31 +29,32 @@ import dotnet4j.io.IOException;
 
 
 public class MetadataPartition extends LogicalPartition {
-    private final File _metadataFile;
+
+    private final File metadataFile;
 
     @SuppressWarnings("unused")
-    private MetadataPartitionMap _partitionMap;
+    private MetadataPartitionMap partitionMap;
 
     public MetadataPartition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, MetadataPartitionMap partitionMap) {
         super(context, volumeDescriptor);
-        _partitionMap = partitionMap;
-        PhysicalPartition physical = context.PhysicalPartitions.get(partitionMap.PartitionNumber);
-        long fileEntryPos = partitionMap.MetadataFileLocation * (long) volumeDescriptor.LogicalBlockSize;
-        byte[] entryData = StreamUtilities.readExact(physical.getContent(), fileEntryPos, _context.PhysicalSectorSize);
+        this.partitionMap = partitionMap;
+        PhysicalPartition physical = context.physicalPartitions.get(partitionMap.partitionNumber);
+        long fileEntryPos = partitionMap.metadataFileLocation * (long) volumeDescriptor.logicalBlockSize;
+        byte[] entryData = StreamUtilities.readExact(physical.getContent(), fileEntryPos, this.context.physicalSectorSize);
         if (!DescriptorTag.isValid(entryData, 0)) {
             throw new IOException("Invalid descriptor tag looking for Metadata file entry");
         }
 
         DescriptorTag dt = EndianUtilities.toStruct(DescriptorTag.class, entryData, 0);
-        if (dt._TagIdentifier == TagIdentifier.ExtendedFileEntry) {
+        if (dt.tagIdentifier == TagIdentifier.ExtendedFileEntry) {
             ExtendedFileEntry efe = EndianUtilities.toStruct(ExtendedFileEntry.class, entryData, 0);
-            _metadataFile = new File(context, physical, efe, _volumeDescriptor.LogicalBlockSize);
+            metadataFile = new File(context, physical, efe, this.volumeDescriptor.logicalBlockSize);
         } else {
             throw new UnsupportedOperationException("Only EFE implemented for Metadata file entry");
         }
     }
 
     public IBuffer getContent() {
-        return _metadataFile.getFileContent();
+        return metadataFile.getFileContent();
     }
 }

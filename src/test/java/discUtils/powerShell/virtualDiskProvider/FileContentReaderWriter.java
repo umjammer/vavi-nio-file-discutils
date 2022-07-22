@@ -40,34 +40,34 @@ import dotnet4j.io.StreamWriter;
 
 public final class FileContentReaderWriter implements IContentWriter, IContentReader {
 
-    private Provider _provider;
+    private Provider provider;
 
-    private Stream _contentStream;
+    private Stream contentStream;
 
-    private ContentEncoding _encoding = ContentEncoding.Unknown;
+    private ContentEncoding encoding = ContentEncoding.Unknown;
 
-    private StreamReader _reader;
+    private StreamReader reader;
 
-    private StreamWriter _writer;
+    private StreamWriter writer;
 
     public FileContentReaderWriter(Provider provider, Stream contentStream, ContentParameters dynParams) {
-        _provider = provider;
-        _contentStream = contentStream;
-        _contentStream.setPosition(0);
+        this.provider = provider;
+        this.contentStream = contentStream;
+        this.contentStream.setPosition(0);
         if (dynParams != null) {
-            _encoding = dynParams.getEncoding();
+            encoding = dynParams.getEncoding();
         }
     }
 
     public void close() {
-        if (_writer != null) {
-            _writer.flush();
+        if (writer != null) {
+            writer.flush();
         }
 
         try {
-            _contentStream.close();
+            contentStream.close();
         } catch (Exception e) {
-            _provider.writeError(new ErrorRecord(new IOException("Failure using virtual disk", e),
+            provider.writeError(new ErrorRecord(new IOException("Failure using virtual disk", e),
                                                  "CloseFailed",
                                                  ErrorCategory.WriteError,
                                                  null));
@@ -75,20 +75,20 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
     }
 
     public void seek(long offset, SeekOrigin origin) {
-        _contentStream.seek(offset, origin);
+        contentStream.seek(offset, origin);
     }
 
     public List<?> read(long readCount) {
         try {
-            if (_encoding == ContentEncoding.Byte) {
+            if (encoding == ContentEncoding.Byte) {
                 if (readCount <= 0) {
                     readCount = Long.MAX_VALUE;
                 }
 
-                int maxToRead = (int) Math.min(Math.min(readCount, _contentStream.getLength() - _contentStream.getPosition()),
+                int maxToRead = (int) Math.min(Math.min(readCount, contentStream.getLength() - contentStream.getPosition()),
                                                Integer.MAX_VALUE);
                 byte[] fileContent = new byte[maxToRead];
-                int numRead = _contentStream.read(fileContent, 0, maxToRead);
+                int numRead = contentStream.read(fileContent, 0, maxToRead);
                 Object[] result = new Object[numRead];
                 for (int i = 0; i < numRead; ++i) {
                     result[i] = fileContent[i];
@@ -96,21 +96,21 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                 return Arrays.asList(result);
             } else {
                 List<Object> result = new ArrayList<>();
-                if (_reader == null) {
-                    if (_encoding == ContentEncoding.Unknown) {
-                        _reader = new StreamReader(_contentStream, StandardCharsets.US_ASCII, true);
+                if (reader == null) {
+                    if (encoding == ContentEncoding.Unknown) {
+                        reader = new StreamReader(contentStream, StandardCharsets.US_ASCII, true);
                     } else {
-                        _reader = new StreamReader(_contentStream, getEncoding(StandardCharsets.US_ASCII));
+                        reader = new StreamReader(contentStream, getEncoding(StandardCharsets.US_ASCII));
                     }
                 }
 
-                while ((result.size() < readCount || readCount <= 0) && !_reader.isEndOfStream()) {
-                    result.add(_reader.readLine());
+                while ((result.size() < readCount || readCount <= 0) && !reader.isEndOfStream()) {
+                    result.add(reader.readLine());
                 }
                 return result;
             }
         } catch (Exception e) {
-            _provider.writeError(new ErrorRecord(new IOException("Failure reading from virtual disk" + e, e),
+            provider.writeError(new ErrorRecord(new IOException("Failure reading from virtual disk" + e, e),
                                                  "ReadFailed",
                                                  ErrorCategory.readError,
                                                  null));
@@ -130,10 +130,10 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                 for (int i = 0; i < buffer.length; ++i) {
                     buffer[i] = (byte) content.get(i);
                 }
-                _contentStream.write(buffer, 0, buffer.length);
+                contentStream.write(buffer, 0, buffer.length);
                 return content;
             } else if ((content.get(0) instanceof String ? (String) content.get(0) : (String) null) != null) {
-                if (_writer == null) {
+                if (writer == null) {
                     String initialContent = (String) content.get(0);
                     boolean foundExtended = false;
                     int toInspect = Math.min(20, initialContent.length());
@@ -144,7 +144,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                             break;
                         }
                     }
-                    _writer = new StreamWriter(_contentStream,
+                    writer = new StreamWriter(contentStream,
                                                getEncoding(foundExtended ? Charset.forName("Unicode")
                                                                          : StandardCharsets.US_ASCII));
                 }
@@ -152,16 +152,16 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
                 String lastLine = null;
                 for (Object s_ : content) {
                     String s = s_.toString();
-                    _writer.println(s);
+                    writer.println(s);
                     lastLine = s;
                 }
-                _writer.flush();
+                writer.flush();
                 return content;
             } else {
                 return null;
             }
         } catch (Exception e) {
-            _provider.writeError(new ErrorRecord(new IOException("Failure writing to virtual disk", e),
+            provider.writeError(new ErrorRecord(new IOException("Failure writing to virtual disk", e),
                                                  "WriteFailed",
                                                  ErrorCategory.WriteError,
                                                  null));
@@ -171,16 +171,16 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
     }
 
     protected void finalize() throws Throwable {
-        if (_writer != null) {
-            _writer.close();
+        if (writer != null) {
+            writer.close();
         }
 
-        if (_reader != null) {
-            _reader.close();
+        if (reader != null) {
+            reader.close();
         }
 
-        if (_contentStream != null) {
-            _contentStream.close();
+        if (contentStream != null) {
+            contentStream.close();
         }
     }
 
@@ -189,7 +189,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
      * @see "https://ja.osdn.net/projects/sfnet_jutf7/"
      */
     private Charset getEncoding(Charset defEncoding) {
-        switch (_encoding) {
+        switch (encoding) {
         case UTF16:
             return StandardCharsets.UTF_16;
         case UTF8:

@@ -27,21 +27,22 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class PhysicalVolumeLabel implements IByteArraySerializable {
+
     public static final String LABEL_ID = "LABELONE";
 
     public static final String LVM2_LABEL = "LVM2 001";
 
-    public String Label;
+    public String label;
 
-    public long Sector;
+    public long sector;
 
-    public long Crc;
+    public long crc;
 
-    public long CalculatedCrc;
+    public long calculatedCrc;
 
-    public long Offset;
+    public long offset;
 
-    public String Label2;
+    public String label2;
 
     /* */
     public int size() {
@@ -50,12 +51,12 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
 
     /* */
     public int readFrom(byte[] buffer, int offset) {
-        Label = EndianUtilities.bytesToString(buffer, offset, 0x8);
-        Sector = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        Crc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        CalculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x14, PhysicalVolume.SECTOR_SIZE - 0x14);
-        Offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
-        Label2 = EndianUtilities.bytesToString(buffer, offset + 0x18, 0x8);
+        label = EndianUtilities.bytesToString(buffer, offset, 0x8);
+        sector = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
+        calculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x14, PhysicalVolume.SECTOR_SIZE - 0x14);
+        this.offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
+        label2 = EndianUtilities.bytesToString(buffer, offset + 0x18, 0x8);
         return size();
     }
 

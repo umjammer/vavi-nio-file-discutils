@@ -26,36 +26,37 @@ import java.util.Arrays;
 
 
 public final class InverseBurrowsWheeler extends DataBlockTransform {
-    private final int[] _nextPos;
 
-    private final int[] _pointers;
+    private final int[] nextPos;
+
+    private final int[] pointers;
 
     public InverseBurrowsWheeler(int bufferSize) {
-        _pointers = new int[bufferSize];
-        _nextPos = new int[256];
+        pointers = new int[bufferSize];
+        nextPos = new int[256];
     }
 
     protected boolean getBuffersMustNotOverlap() {
         return true;
     }
 
-    private int _originalIndex;
+    private int originalIndex;
 
     public int getOriginalIndex() {
-        return _originalIndex;
+        return originalIndex;
     }
 
     public void setOriginalIndex(int value) {
-        _originalIndex = value;
+        originalIndex = value;
     }
 
     protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
         int outputCount = inputCount;
 
         // First find the frequency of each value
-        Arrays.fill(_nextPos, 0, _nextPos.length, 0);
+        Arrays.fill(nextPos, 0, nextPos.length, 0);
         for (int i = inputOffset; i < inputOffset + inputCount; ++i) {
-            _nextPos[input[i]]++;
+            nextPos[input[i]]++;
         }
 
         // We know they're 'sorted' in the first column, so now can figure
@@ -63,24 +64,24 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
         int sum = 0;
         for (int i = 0; i < 256; ++i) {
             int tempSum = sum;
-            sum += _nextPos[i];
-            _nextPos[i] = tempSum;
+            sum += nextPos[i];
+            nextPos[i] = tempSum;
         }
 
         // For each value in the final column, put a pointer to to the
         // 'next' character in the first (sorted) column.
         for (int i = 0; i < inputCount; ++i) {
-            _pointers[_nextPos[input[inputOffset + i]]++] = i;
+            pointers[nextPos[input[inputOffset + i]]++] = i;
         }
 
         // The 'next' character after the end of the original string is the
         // first character of the original string.
-        int focus = _pointers[getOriginalIndex()];
+        int focus = pointers[getOriginalIndex()];
 
         // We can now just walk the pointers to reconstruct the original string
         for (int i = 0; i < outputCount; ++i) {
             output[outputOffset + i] = input[inputOffset + focus];
-            focus = _pointers[focus];
+            focus = pointers[focus];
         }
 
         return outputCount;

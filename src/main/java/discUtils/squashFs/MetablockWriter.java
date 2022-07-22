@@ -33,80 +33,81 @@ import dotnet4j.io.compression.CompressionMode;
 
 
 final class MetablockWriter implements Closeable {
-    private MemoryStream _buffer;
 
-    private final byte[] _currentBlock;
+    private MemoryStream buffer;
 
-    private int _currentBlockNum;
+    private final byte[] currentBlock;
 
-    private int _currentOffset;
+    private int currentBlockNum;
+
+    private int currentOffset;
 
     public MetablockWriter() {
-        _currentBlock = new byte[8 * 1024];
-        _buffer = new MemoryStream();
+        currentBlock = new byte[8 * 1024];
+        buffer = new MemoryStream();
     }
 
     public MetadataRef getPosition() {
-        return new MetadataRef(_currentBlockNum, _currentOffset);
+        return new MetadataRef(currentBlockNum, currentOffset);
     }
 
     public void close() throws IOException {
-        if (_buffer != null) {
-            _buffer.close();
-            _buffer = null;
+        if (buffer != null) {
+            buffer.close();
+            buffer = null;
         }
     }
 
     public void write(byte[] buffer, int offset, int count) {
         int totalStored = 0;
         while (totalStored < count) {
-            int toCopy = Math.min(_currentBlock.length - _currentOffset, count - totalStored);
-            System.arraycopy(buffer, offset + totalStored, _currentBlock, _currentOffset, toCopy);
-            _currentOffset += toCopy;
+            int toCopy = Math.min(currentBlock.length - currentOffset, count - totalStored);
+            System.arraycopy(buffer, offset + totalStored, currentBlock, currentOffset, toCopy);
+            currentOffset += toCopy;
             totalStored += toCopy;
-            if (_currentOffset == _currentBlock.length) {
+            if (currentOffset == currentBlock.length) {
                 nextBlock();
-                _currentOffset = 0;
+                currentOffset = 0;
             }
         }
     }
 
     void persist(Stream output) {
-        if (_currentOffset > 0) {
+        if (currentOffset > 0) {
             nextBlock();
         }
 
-        output.write(_buffer.toArray(), 0, (int) _buffer.getLength());
+        output.write(buffer.toArray(), 0, (int) buffer.getLength());
     }
 
     long distanceFrom(MetadataRef startPos) {
-        return (_currentBlockNum - startPos.getBlock()) * VfsSquashFileSystemReader.MetadataBufferSize +
-            (_currentOffset - startPos.getOffset());
+        return (currentBlockNum - startPos.getBlock()) * VfsSquashFileSystemReader.MetadataBufferSize +
+            (currentOffset - startPos.getOffset());
     }
 
     private void nextBlock() {
         MemoryStream compressed = new MemoryStream();
         try (ZlibStream compStream = new ZlibStream(compressed, CompressionMode.Compress, true)) {
-            compStream.write(_currentBlock, 0, _currentOffset);
+            compStream.write(currentBlock, 0, currentOffset);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
 
         byte[] writeData;
         int writeLen;
-        if (compressed.getLength() < _currentOffset) {
+        if (compressed.getLength() < currentOffset) {
             writeData = compressed.toArray();
             writeLen = (int) (compressed.getLength() & 0xffff);
         } else {
-            writeData = _currentBlock;
-            writeLen = _currentOffset | 0x8000;
+            writeData = currentBlock;
+            writeLen = currentOffset | 0x8000;
         }
 
         byte[] header = new byte[2];
         EndianUtilities.writeBytesLittleEndian((short) writeLen, header, 0);
-        _buffer.write(header, 0, 2);
-        _buffer.write(writeData, 0, writeLen & 0x7FFF);
+        buffer.write(header, 0, 2);
+        buffer.write(writeData, 0, writeLen & 0x7FFF);
 
-        ++_currentBlockNum;
+        ++currentBlockNum;
     }
 }

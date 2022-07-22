@@ -26,34 +26,35 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<CatalogKey> {
-    private short _keyLength;
+
+    private short keyLength;
 
     public CatalogKey() {
     }
 
     public CatalogKey(CatalogNodeId nodeId, String name) {
-        _nodeId = nodeId;
-        _name = name;
+        this.nodeId = nodeId;
+        this.name = name;
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
-    private CatalogNodeId _nodeId;
+    private CatalogNodeId nodeId;
 
     public CatalogNodeId getNodeId() {
-        return _nodeId;
+        return nodeId;
     }
 
     public void setNodeId(CatalogNodeId value) {
-        _nodeId = value;
+        nodeId = value;
     }
 
     public int size() {
@@ -65,19 +66,19 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
             throw new NullPointerException("other");
         }
 
-        if (!_nodeId.equals(other._nodeId)) {
-            return _nodeId.getId() < other._nodeId.getId() ? -1 : 1;
+        if (!nodeId.equals(other.nodeId)) {
+            return nodeId.getId() < other.nodeId.getId() ? -1 : 1;
         }
 
-        return HfsPlusUtilities.fastUnicodeCompare(_name, other._name);
+        return HfsPlusUtilities.fastUnicodeCompare(name, other.name);
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        _nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 2));
-        _name = HfsPlusUtilities.readUniStr255(buffer, offset + 6);
+        keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 2));
+        name = HfsPlusUtilities.readUniStr255(buffer, offset + 6);
 
-        return (_keyLength & 0xffff) + 2;
+        return (keyLength & 0xffff) + 2;
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -89,6 +90,6 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
     }
 
     public String toString() {
-        return _name + " (" + _nodeId + ")";
+        return name + " (" + nodeId + ")";
     }
 }

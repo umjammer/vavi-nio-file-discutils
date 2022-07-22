@@ -28,96 +28,96 @@ import java.util.EnumSet;
  * Information about a file or directory common to most Unix systems.
  */
 public final class UnixFileSystemInfo {
+
     /**
      * Gets or sets the device id of the referenced device (for character and
      * block devices).
      */
-    private long __DeviceId;
+    private long deviceId;
 
     public long getDeviceId() {
-        return __DeviceId;
+        return deviceId;
     }
 
     public void setDeviceId(long value) {
-        __DeviceId = value;
+        deviceId = value;
     }
 
     /**
      * Gets or sets the file's type.
      */
-    private UnixFileType __FileType = UnixFileType.None;
+    private UnixFileType fileType = UnixFileType.None;
 
     public UnixFileType getFileType() {
-        return __FileType;
+        return fileType;
     }
 
     public void setFileType(UnixFileType value) {
-        __FileType = value;
+        fileType = value;
     }
 
     /**
      * Gets or sets the group that owns this file or directory.
      */
-    private int __GroupId;
+    private int groupId;
 
     public int getGroupId() {
-        return __GroupId;
+        return groupId;
     }
 
     public void setGroupId(int value) {
-        __GroupId = value;
+        groupId = value;
     }
 
     /**
      * Gets or sets the file's serial number (unique within file system).
      */
-    private long __Inode;
+    private long inode;
 
     public long getInode() {
-        return __Inode;
+        return inode;
     }
 
     public void setInode(long value) {
-        __Inode = value;
+        inode = value;
     }
 
     /**
      * Gets or sets the number of hard links to this file.
      */
-    private int __LinkCount;
+    private int linkCount;
 
     public int getLinkCount() {
-        return __LinkCount;
+        return linkCount;
     }
 
     public void setLinkCount(int value) {
-        __LinkCount = value;
+        linkCount = value;
     }
 
     /**
      * Gets or sets the file permissions (aka flags) for this file or directory.
      */
-    private EnumSet<UnixFilePermissions> __Permissions;
+    private EnumSet<UnixFilePermissions> permissions;
 
     public EnumSet<UnixFilePermissions> getPermissions() {
-        return __Permissions;
+        return permissions;
     }
 
     public void setPermissions(EnumSet<UnixFilePermissions> value) {
-        __Permissions = value;
+        permissions = value;
     }
 
     /**
      * Gets or sets the user that owns this file or directory.
      */
-    private int __UserId;
+    private int userId;
 
     public int getUserId() {
-        return __UserId;
+        return userId;
     }
 
     public void setUserId(int value) {
-        __UserId = value;
+        userId = value;
     }
-
 }

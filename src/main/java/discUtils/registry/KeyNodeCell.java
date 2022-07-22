@@ -30,58 +30,59 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class KeyNodeCell extends Cell {
-    public int ClassNameIndex;
 
-    public int ClassNameLength;
+    public int classNameIndex;
 
-    public EnumSet<RegistryKeyFlags> Flags;
+    public int classNameLength;
 
-    public int IndexInParent;
+    public EnumSet<RegistryKeyFlags> flags;
+
+    public int indexInParent;
 
     /**
      * Number of bytes to represent largest subkey name in Unicode - no null
      * terminator.
      */
-    public int MaxSubKeyNameBytes;
+    public int maxSubKeyNameBytes;
 
     /**
      * Number of bytes to represent largest value content (strings in Unicode,
      * with null terminator - if stored).
      */
-    public int MaxValDataBytes;
+    public int maxValDataBytes;
 
     /**
      * Number of bytes to represent largest value name in Unicode - no null
      * terminator.
      */
-    public int MaxValNameBytes;
+    public int maxValNameBytes;
 
-    public String Name;
+    public String name;
 
-    public int NumSubKeys;
+    public int numSubKeys;
 
-    public int NumValues;
+    public int numValues;
 
-    public int ParentIndex;
+    public int parentIndex;
 
-    public int SecurityIndex;
+    public int securityIndex;
 
-    public int SubKeysIndex;
+    public int subKeysIndex;
 
-    public long Timestamp;
+    public long timestamp;
 
-    public int ValueListIndex;
+    public int valueListIndex;
 
     public KeyNodeCell(String name, int parentCellIndex) {
         this(-1);
-        Flags = EnumSet.of(RegistryKeyFlags.Normal);
-        Timestamp = System.currentTimeMillis();
-        ParentIndex = parentCellIndex;
-        SubKeysIndex = -1;
-        ValueListIndex = -1;
-        SecurityIndex = -1;
-        ClassNameIndex = -1;
-        Name = name;
+        flags = EnumSet.of(RegistryKeyFlags.Normal);
+        timestamp = System.currentTimeMillis();
+        parentIndex = parentCellIndex;
+        subKeysIndex = -1;
+        valueListIndex = -1;
+        securityIndex = -1;
+        classNameIndex = -1;
+        this.name = name;
     }
 
     public KeyNodeCell(int index) {
@@ -89,47 +90,47 @@ public final class KeyNodeCell extends Cell {
     }
 
     public int size() {
-        return 0x4C + Name.length();
+        return 0x4C + name.length();
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Flags = RegistryKeyFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02));
-        Timestamp = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x04));
-        ParentIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
-        NumSubKeys = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x14);
-        SubKeysIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x1C);
-        NumValues = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x24);
-        ValueListIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x28);
-        SecurityIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x2C);
-        ClassNameIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x30);
-        MaxSubKeyNameBytes = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x34);
-        MaxValNameBytes = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x3C);
-        MaxValDataBytes = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x40);
-        IndexInParent = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x44);
+        flags = RegistryKeyFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02));
+        timestamp = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x04));
+        parentIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
+        numSubKeys = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x14);
+        subKeysIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x1C);
+        numValues = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x24);
+        valueListIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x28);
+        securityIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x2C);
+        classNameIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x30);
+        maxSubKeyNameBytes = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x34);
+        maxValNameBytes = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x3C);
+        maxValDataBytes = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x40);
+        indexInParent = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x44);
         int nameLength = EndianUtilities.toInt16LittleEndian(buffer, offset + 0x48);
-        ClassNameLength = EndianUtilities.toInt16LittleEndian(buffer, offset + 0x4A);
-        Name = EndianUtilities.bytesToString(buffer, offset + 0x4C, nameLength);
+        classNameLength = EndianUtilities.toInt16LittleEndian(buffer, offset + 0x4A);
+        name = EndianUtilities.bytesToString(buffer, offset + 0x4C, nameLength);
         return 0x4C + nameLength;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes("nk", buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian((short) RegistryKeyFlags.valueOf(Flags), buffer, offset + 0x02);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(Timestamp), buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(ParentIndex, buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(NumSubKeys, buffer, offset + 0x14);
-        EndianUtilities.writeBytesLittleEndian(SubKeysIndex, buffer, offset + 0x1C);
-        EndianUtilities.writeBytesLittleEndian(NumValues, buffer, offset + 0x24);
-        EndianUtilities.writeBytesLittleEndian(ValueListIndex, buffer, offset + 0x28);
-        EndianUtilities.writeBytesLittleEndian(SecurityIndex, buffer, offset + 0x2C);
-        EndianUtilities.writeBytesLittleEndian(ClassNameIndex, buffer, offset + 0x30);
-        EndianUtilities.writeBytesLittleEndian(IndexInParent, buffer, offset + 0x44);
-        EndianUtilities.writeBytesLittleEndian((short) Name.length(), buffer, offset + 0x48);
-        EndianUtilities.writeBytesLittleEndian(ClassNameLength, buffer, offset + 0x4A);
-        EndianUtilities.stringToBytes(Name, buffer, offset + 0x4C, Name.length());
+        EndianUtilities.writeBytesLittleEndian((short) RegistryKeyFlags.valueOf(flags), buffer, offset + 0x02);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(timestamp), buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(parentIndex, buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(numSubKeys, buffer, offset + 0x14);
+        EndianUtilities.writeBytesLittleEndian(subKeysIndex, buffer, offset + 0x1C);
+        EndianUtilities.writeBytesLittleEndian(numValues, buffer, offset + 0x24);
+        EndianUtilities.writeBytesLittleEndian(valueListIndex, buffer, offset + 0x28);
+        EndianUtilities.writeBytesLittleEndian(securityIndex, buffer, offset + 0x2C);
+        EndianUtilities.writeBytesLittleEndian(classNameIndex, buffer, offset + 0x30);
+        EndianUtilities.writeBytesLittleEndian(indexInParent, buffer, offset + 0x44);
+        EndianUtilities.writeBytesLittleEndian((short) name.length(), buffer, offset + 0x48);
+        EndianUtilities.writeBytesLittleEndian(classNameLength, buffer, offset + 0x4A);
+        EndianUtilities.stringToBytes(name, buffer, offset + 0x4C, name.length());
     }
 
     public String toString() {
-        return "Key: " + Name + " " + Flags + " <" + Timestamp + ">";
+        return "Key: " + name + " " + flags + " <" + timestamp + ">";
     }
 }

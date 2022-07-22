@@ -29,80 +29,81 @@ import discUtils.streams.util.Sizes;
 
 
 public class HostedSparseExtentHeader extends CommonSparseExtentHeader {
+
     public static final int VmdkMagicNumber = 0x564d444b;
 
-    public short CompressAlgorithm;
+    public short compressAlgorithm;
 
-    public long DescriptorOffset;
+    public long descriptorOffset;
 
-    public long DescriptorSize;
+    public long descriptorSize;
 
-    public byte DoubleEndLineChar1;
+    public byte doubleEndLineChar1;
 
-    public byte DoubleEndLineChar2;
+    public byte doubleEndLineChar2;
 
-    public EnumSet<HostedSparseExtentFlags> Flags;
+    public EnumSet<HostedSparseExtentFlags> flags;
 
-    public byte NonEndLineChar;
+    public byte nonEndLineChar;
 
-    public long Overhead;
+    public long overhead;
 
-    public long RgdOffset;
+    public long rgdOffset;
 
-    public byte SingleEndLineChar;
+    public byte singleEndLineChar;
 
-    public byte UncleanShutdown;
+    public byte uncleanShutdown;
 
     public HostedSparseExtentHeader() {
-        MagicNumber = VmdkMagicNumber;
-        Version = 1;
-        SingleEndLineChar = (byte) '\n';
-        NonEndLineChar = (byte) ' ';
-        DoubleEndLineChar1 = (byte) '\r';
-        DoubleEndLineChar2 = (byte) '\n';
+        magicNumber = VmdkMagicNumber;
+        version = 1;
+        singleEndLineChar = (byte) '\n';
+        nonEndLineChar = (byte) ' ';
+        doubleEndLineChar1 = (byte) '\r';
+        doubleEndLineChar2 = (byte) '\n';
     }
 
     public static HostedSparseExtentHeader read(byte[] buffer, int offset) {
         HostedSparseExtentHeader hdr = new HostedSparseExtentHeader();
-        hdr.MagicNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        hdr.Version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        hdr.Flags = HostedSparseExtentFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8));
-        hdr.Capacity = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x0C);
-        hdr.GrainSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x14);
-        hdr.DescriptorOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x1C);
-        hdr.DescriptorSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x24);
-        hdr.NumGTEsPerGT = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x2C);
-        hdr.RgdOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x30);
-        hdr.GdOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38);
-        hdr.Overhead = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x40);
-        hdr.UncleanShutdown = buffer[offset + 0x48];
-        hdr.SingleEndLineChar = buffer[offset + 0x49];
-        hdr.NonEndLineChar = buffer[offset + 0x4A];
-        hdr.DoubleEndLineChar1 = buffer[offset + 0x4B];
-        hdr.DoubleEndLineChar2 = buffer[offset + 0x4C];
-        hdr.CompressAlgorithm = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x4D);
+        hdr.magicNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        hdr.version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        hdr.flags = HostedSparseExtentFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8));
+        hdr.capacity = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x0C);
+        hdr.grainSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x14);
+        hdr.descriptorOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x1C);
+        hdr.descriptorSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x24);
+        hdr.numGTEsPerGT = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x2C);
+        hdr.rgdOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x30);
+        hdr.gdOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38);
+        hdr.overhead = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x40);
+        hdr.uncleanShutdown = buffer[offset + 0x48];
+        hdr.singleEndLineChar = buffer[offset + 0x49];
+        hdr.nonEndLineChar = buffer[offset + 0x4A];
+        hdr.doubleEndLineChar1 = buffer[offset + 0x4B];
+        hdr.doubleEndLineChar2 = buffer[offset + 0x4C];
+        hdr.compressAlgorithm = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x4D);
         return hdr;
     }
 
     public byte[] getBytes() {
         byte[] buffer = new byte[Sizes.Sector];
-        EndianUtilities.writeBytesLittleEndian(MagicNumber, buffer, 0x00);
-        EndianUtilities.writeBytesLittleEndian(Version, buffer, 0x04);
-        EndianUtilities.writeBytesLittleEndian((int) HostedSparseExtentFlags.valueOf(Flags), buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(Capacity, buffer, 0x0C);
-        EndianUtilities.writeBytesLittleEndian(GrainSize, buffer, 0x14);
-        EndianUtilities.writeBytesLittleEndian(DescriptorOffset, buffer, 0x1C);
-        EndianUtilities.writeBytesLittleEndian(DescriptorSize, buffer, 0x24);
-        EndianUtilities.writeBytesLittleEndian(NumGTEsPerGT, buffer, 0x2C);
-        EndianUtilities.writeBytesLittleEndian(RgdOffset, buffer, 0x30);
-        EndianUtilities.writeBytesLittleEndian(GdOffset, buffer, 0x38);
-        EndianUtilities.writeBytesLittleEndian(Overhead, buffer, 0x40);
-        buffer[0x48] = UncleanShutdown;
-        buffer[0x49] = SingleEndLineChar;
-        buffer[0x4A] = NonEndLineChar;
-        buffer[0x4B] = DoubleEndLineChar1;
-        buffer[0x4C] = DoubleEndLineChar2;
-        EndianUtilities.writeBytesLittleEndian(CompressAlgorithm, buffer, 0x4D);
+        EndianUtilities.writeBytesLittleEndian(magicNumber, buffer, 0x00);
+        EndianUtilities.writeBytesLittleEndian(version, buffer, 0x04);
+        EndianUtilities.writeBytesLittleEndian((int) HostedSparseExtentFlags.valueOf(flags), buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian(capacity, buffer, 0x0C);
+        EndianUtilities.writeBytesLittleEndian(grainSize, buffer, 0x14);
+        EndianUtilities.writeBytesLittleEndian(descriptorOffset, buffer, 0x1C);
+        EndianUtilities.writeBytesLittleEndian(descriptorSize, buffer, 0x24);
+        EndianUtilities.writeBytesLittleEndian(numGTEsPerGT, buffer, 0x2C);
+        EndianUtilities.writeBytesLittleEndian(rgdOffset, buffer, 0x30);
+        EndianUtilities.writeBytesLittleEndian(gdOffset, buffer, 0x38);
+        EndianUtilities.writeBytesLittleEndian(overhead, buffer, 0x40);
+        buffer[0x48] = uncleanShutdown;
+        buffer[0x49] = singleEndLineChar;
+        buffer[0x4A] = nonEndLineChar;
+        buffer[0x4B] = doubleEndLineChar1;
+        buffer[0x4C] = doubleEndLineChar2;
+        EndianUtilities.writeBytesLittleEndian(compressAlgorithm, buffer, 0x4D);
         return buffer;
     }
 }

@@ -27,26 +27,27 @@ import discUtils.streams.buffer.SubBuffer;
 
 
 public class PhysicalPartition extends Partition {
-    @SuppressWarnings("unused")
-    private PartitionDescriptor _descriptor;
-
-    private final IBuffer _parentBuffer;
 
     @SuppressWarnings("unused")
-    private short _partitionNumber;
+    private PartitionDescriptor descriptor;
+
+    private final IBuffer parentBuffer;
+
+    @SuppressWarnings("unused")
+    private short partitionNumber;
 
     public PhysicalPartition(PartitionDescriptor descriptor, IBuffer buffer, int sectorSize) {
-        _partitionNumber = descriptor.PartitionNumber;
-        _parentBuffer = buffer;
-        _content = new SubBuffer(_parentBuffer,
-                                  descriptor.PartitionStartingLocation * (long) sectorSize,
-                                  descriptor.PartitionLength * (long) sectorSize);
-        _descriptor = descriptor;
+        partitionNumber = descriptor.partitionNumber;
+        parentBuffer = buffer;
+        content = new SubBuffer(parentBuffer,
+                                  descriptor.partitionStartingLocation * (long) sectorSize,
+                                  descriptor.partitionLength * (long) sectorSize);
+        this.descriptor = descriptor;
     }
 
-    private IBuffer _content;
+    private IBuffer content;
 
     public IBuffer getContent() {
-        return _content;
+        return content;
     }
 }

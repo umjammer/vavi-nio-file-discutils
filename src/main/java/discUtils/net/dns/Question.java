@@ -23,34 +23,35 @@
 package discUtils.net.dns;
 
 final class Question {
-    private RecordClass _class = RecordClass.None;
+
+    private RecordClass clazz = RecordClass.None;
 
     public RecordClass getClass_() {
-        return _class;
+        return clazz;
     }
 
     public void setClass(RecordClass value) {
-        _class = value;
+        clazz = value;
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
-    private RecordType _type = RecordType.None;
+    private RecordType type = RecordType.None;
 
     public RecordType getType() {
-        return _type;
+        return type;
     }
 
     public void setType(RecordType value) {
-        _type = value;
+        type = value;
     }
 
     public static Question readFrom(PacketReader reader) {

@@ -39,71 +39,72 @@ import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 final class SecurityDescriptors implements IDiagnosticTraceable {
+
     // File consists of pairs of duplicate blocks (one after the other), providing
     // redundancy. When a pair is full, the next pair is used.
     private static final int BlockSize = 0x40000;
 
-    private final File _file;
+    private final File file;
 
-    private final IndexView<discUtils.ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> _hashIndex;
+    private final IndexView<discUtils.ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> hashIndex;
 
-    private final IndexView<discUtils.ntfs.SecurityDescriptors.IdIndexKey, discUtils.ntfs.SecurityDescriptors.IdIndexData> _idIndex;
+    private final IndexView<discUtils.ntfs.SecurityDescriptors.IdIndexKey, discUtils.ntfs.SecurityDescriptors.IdIndexData> idIndex;
 
-    private int _nextId;
+    private int nextId;
 
-    private long _nextSpace;
+    private long nextSpace;
 
     public SecurityDescriptors(File file) {
-        _file = file;
-        _hashIndex = new IndexView<>(discUtils.ntfs.SecurityDescriptors.HashIndexKey.class,
+        this.file = file;
+        hashIndex = new IndexView<>(discUtils.ntfs.SecurityDescriptors.HashIndexKey.class,
                                      HashIndexData.class,
                                      file.getIndex("$SDH"));
-        _idIndex = new IndexView<>(discUtils.ntfs.SecurityDescriptors.IdIndexKey.class,
+        idIndex = new IndexView<>(discUtils.ntfs.SecurityDescriptors.IdIndexKey.class,
                                    discUtils.ntfs.SecurityDescriptors.IdIndexData.class,
                                    file.getIndex("$SII"));
-        for (Tuple<discUtils.ntfs.SecurityDescriptors.IdIndexKey, discUtils.ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
+        for (Tuple<discUtils.ntfs.SecurityDescriptors.IdIndexKey, discUtils.ntfs.SecurityDescriptors.IdIndexData> entry : idIndex
                 .getEntries()) {
-            if (entry.getKey()._id > _nextId) {
-                _nextId = entry.getKey()._id;
+            if (entry.getKey().id > nextId) {
+                nextId = entry.getKey().id;
             }
 
-            long end = entry.getValue()._sdsOffset + entry.getValue()._sdsLength;
-            if (end > _nextSpace) {
-                _nextSpace = end;
+            long end = entry.getValue().sdsOffset + entry.getValue().sdsLength;
+            if (end > nextSpace) {
+                nextSpace = end;
             }
 
         }
-        if (_nextId == 0) {
-            _nextId = 256;
+        if (nextId == 0) {
+            nextId = 256;
         } else {
-            _nextId++;
+            nextId++;
         }
-        _nextSpace = MathUtilities.roundUp(_nextSpace, 16);
+        nextSpace = MathUtilities.roundUp(nextSpace, 16);
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "SECURITY DESCRIPTORS");
-        try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
+        try (Stream s = file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
-            for (Tuple<discUtils.ntfs.SecurityDescriptors.IdIndexKey, discUtils.ntfs.SecurityDescriptors.IdIndexData> entry : _idIndex
+            for (Tuple<discUtils.ntfs.SecurityDescriptors.IdIndexKey, discUtils.ntfs.SecurityDescriptors.IdIndexData> entry : idIndex
                     .getEntries()) {
-                int pos = (int) entry.getValue()._sdsOffset;
+                int pos = (int) entry.getValue().sdsOffset;
                 SecurityDescriptorRecord rec = new SecurityDescriptorRecord();
                 if (!rec.read(buffer, pos)) {
                     break;
                 }
 
                 String secDescStr = "--unknown--";
-                if (rec._securityDescriptor[0] != 0) {
-                    RawSecurityDescriptor sd = new RawSecurityDescriptor(rec._securityDescriptor, 0);
+                if (rec.securityDescriptor[0] != 0) {
+                    RawSecurityDescriptor sd = new RawSecurityDescriptor(rec.securityDescriptor, 0);
                     secDescStr = sd.getSddlForm(AccessControlSections.All);
                 }
 
                 writer.println(indent + "  SECURITY DESCRIPTOR RECORD");
-                writer.println(indent + "           Hash: " + rec._hash);
-                writer.println(indent + "             Id: " + rec._id);
-                writer.println(indent + "    File Offset: " + rec._offsetInFile);
-                writer.println(indent + "           Size: " + rec._entrySize);
+                writer.println(indent + "           Hash: " + rec.hash);
+                writer.println(indent + "             Id: " + rec.id);
+                writer.println(indent + "    File Offset: " + rec.offsetInFile);
+                writer.println(indent + "           Size: " + rec.entrySize);
                 writer.println(indent + "          Value: " + secDescStr);
             }
         } catch (IOException e) {
@@ -126,7 +127,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         // Make the next descriptor land at the end of this one
         // Update the indexes
         IdIndexData[] data = new IdIndexData[1];
-        if (_idIndex.tryGetValue(new discUtils.ntfs.SecurityDescriptors.IdIndexKey(id), data)) {
+        if (idIndex.tryGetValue(new discUtils.ntfs.SecurityDescriptors.IdIndexKey(id), data)) {
             return readDescriptor(data[0]).getDescriptor();
         }
 
@@ -138,140 +139,144 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         int newHash = newDescObj.calcHash();
         byte[] newByteForm = new byte[newDescObj.size()];
         newDescObj.writeTo(newByteForm, 0);
-        for (Tuple<discUtils.ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> entry : _hashIndex
+        for (Tuple<discUtils.ntfs.SecurityDescriptors.HashIndexKey, HashIndexData> entry : hashIndex
                 .findAll(new HashFinder(newHash))) {
             SecurityDescriptor stored = readDescriptor(entry.getValue());
             byte[] storedByteForm = new byte[stored.size()];
             stored.writeTo(storedByteForm, 0);
             if (Utilities.areEqual(newByteForm, storedByteForm)) {
-                return entry.getValue()._id;
+                return entry.getValue().id;
             }
         }
-        long offset = _nextSpace;
+        long offset = nextSpace;
         SecurityDescriptorRecord record = new SecurityDescriptorRecord();
-        record._securityDescriptor = newByteForm;
-        record._hash = newHash;
-        record._id = _nextId;
+        record.securityDescriptor = newByteForm;
+        record.hash = newHash;
+        record.id = nextId;
         if ((offset + record.size()) / BlockSize % 2 == 1) {
-            _nextSpace = MathUtilities.roundUp(offset, BlockSize * 2);
-            offset = _nextSpace;
+            nextSpace = MathUtilities.roundUp(offset, BlockSize * 2);
+            offset = nextSpace;
         }
 
-        record._offsetInFile = offset;
+        record.offsetInFile = offset;
         byte[] buffer = new byte[record.size()];
         record.writeTo(buffer, 0);
-        try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.ReadWrite)) {
-            s.setPosition(_nextSpace);
+        try (Stream s = file.openStream(AttributeType.Data, "$SDS", FileAccess.ReadWrite)) {
+            s.setPosition(nextSpace);
             s.write(buffer, 0, buffer.length);
-            s.setPosition(BlockSize + _nextSpace);
+            s.setPosition(BlockSize + nextSpace);
             s.write(buffer, 0, buffer.length);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
-        _nextSpace = MathUtilities.roundUp(_nextSpace + buffer.length, 16);
-        _nextId++;
+        nextSpace = MathUtilities.roundUp(nextSpace + buffer.length, 16);
+        nextId++;
         HashIndexData hashIndexData = new HashIndexData();
-        hashIndexData._hash = record._hash;
-        hashIndexData._id = record._id;
-        hashIndexData._sdsOffset = record._offsetInFile;
-        hashIndexData._sdsLength = record._entrySize;
+        hashIndexData.hash = record.hash;
+        hashIndexData.id = record.id;
+        hashIndexData.sdsOffset = record.offsetInFile;
+        hashIndexData.sdsLength = record.entrySize;
         discUtils.ntfs.SecurityDescriptors.HashIndexKey hashIndexKey = new discUtils.ntfs.SecurityDescriptors.HashIndexKey();
-        hashIndexKey._hash = record._hash;
-        hashIndexKey._id = record._id;
-        _hashIndex.put(hashIndexKey, hashIndexData);
+        hashIndexKey.hash = record.hash;
+        hashIndexKey.id = record.id;
+        hashIndex.put(hashIndexKey, hashIndexData);
         discUtils.ntfs.SecurityDescriptors.IdIndexData idIndexData = new discUtils.ntfs.SecurityDescriptors.IdIndexData();
-        idIndexData._hash = record._hash;
-        idIndexData._id = record._id;
-        idIndexData._sdsOffset = record._offsetInFile;
-        idIndexData._sdsLength = record._entrySize;
+        idIndexData.hash = record.hash;
+        idIndexData.id = record.id;
+        idIndexData.sdsOffset = record.offsetInFile;
+        idIndexData.sdsLength = record.entrySize;
         discUtils.ntfs.SecurityDescriptors.IdIndexKey idIndexKey = new discUtils.ntfs.SecurityDescriptors.IdIndexKey();
-        idIndexKey._id = record._id;
-        _idIndex.put(idIndexKey, idIndexData);
-        _file.updateRecordInMft();
-        return record._id;
+        idIndexKey.id = record.id;
+        idIndex.put(idIndexKey, idIndexData);
+        file.updateRecordInMft();
+        return record.id;
     }
 
     private SecurityDescriptor readDescriptor(IndexData data) {
-        try (Stream s = _file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
-            s.setPosition(data._sdsOffset);
-            byte[] buffer = StreamUtilities.readExact(s, data._sdsLength);
+        try (Stream s = file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
+            s.setPosition(data.sdsOffset);
+            byte[] buffer = StreamUtilities.readExact(s, data.sdsLength);
             SecurityDescriptorRecord record = new SecurityDescriptorRecord();
             record.read(buffer, 0);
-            return new SecurityDescriptor(new RawSecurityDescriptor(record._securityDescriptor, 0));
+            return new SecurityDescriptor(new RawSecurityDescriptor(record.securityDescriptor, 0));
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
     }
 
     abstract static class IndexData implements IByteArraySerializable {
-        public int _hash;
 
-        public int _id;
+        public int hash;
 
-        public int _sdsLength;
+        public int id;
 
-        public long _sdsOffset;
+        public int sdsLength;
+
+        public long sdsOffset;
 
         public String toString() {
-            return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", _hash, _id, _sdsOffset, _sdsLength);
+            return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", hash, id, sdsOffset, sdsLength);
         }
     }
 
     final static class HashIndexKey implements IByteArraySerializable {
-        public int _hash;
 
-        public int _id;
+        public int hash;
+
+        public int id;
 
         public int size() {
             return 8;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-            _id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+            hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+            id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
             return 8;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_hash, buffer, offset + 0);
-            EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 4);
+            EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0);
+            EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 4);
         }
 
         public String toString() {
-            return String.format("[Key-Hash:%x,Id:%d]", _hash, _id);
+            return String.format("[Key-Hash:%x,Id:%d]", hash, id);
         }
     }
 
     final static class HashIndexData extends IndexData implements IByteArraySerializable {
+
         public int size() {
             return 0x14;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
-            _id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
-            _sdsOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-            _sdsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
+            hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
+            id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
+            sdsOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
+            sdsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
             return 0x14;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_hash, buffer, offset + 0x00);
-            EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 0x04);
-            EndianUtilities.writeBytesLittleEndian(_sdsOffset, buffer, offset + 0x08);
-            EndianUtilities.writeBytesLittleEndian(_sdsLength, buffer, offset + 0x10);
+            EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0x00);
+            EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0x04);
+            EndianUtilities.writeBytesLittleEndian(sdsOffset, buffer, offset + 0x08);
+            EndianUtilities.writeBytesLittleEndian(sdsLength, buffer, offset + 0x10);
 //            System.arraycopy(new byte[] { (byte) 'I', 0, (byte) 'I', 0 }, 0, buffer, offset + 0x14, 4);
         }
     }
 
     final static class IdIndexKey implements IByteArraySerializable {
-        public int _id;
+
+        public int id;
 
         public IdIndexKey() {
         }
 
         public IdIndexKey(int id) {
-            _id = id;
+            this.id = id;
         }
 
         public int size() {
@@ -279,54 +284,55 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+            id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
             return 4;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 0);
+            EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0);
         }
 
         public String toString() {
-            return String.format("[Key-Id:%d]", _id);
+            return String.format("[Key-Id:%d]", id);
         }
     }
 
     final static class IdIndexData extends IndexData implements IByteArraySerializable {
+
         public int size() {
             return 0x14;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
-            _id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
-            _sdsOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-            _sdsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
+            hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
+            id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
+            sdsOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
+            sdsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
             return 0x14;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_hash, buffer, offset + 0x00);
-            EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 0x04);
-            EndianUtilities.writeBytesLittleEndian(_sdsOffset, buffer, offset + 0x08);
-            EndianUtilities.writeBytesLittleEndian(_sdsLength, buffer, offset + 0x10);
+            EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0x00);
+            EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0x04);
+            EndianUtilities.writeBytesLittleEndian(sdsOffset, buffer, offset + 0x08);
+            EndianUtilities.writeBytesLittleEndian(sdsLength, buffer, offset + 0x10);
         }
     }
 
     private static class HashFinder implements Comparable<discUtils.ntfs.SecurityDescriptors.HashIndexKey> {
-        private final int _toMatch;
+
+        private final int toMatch;
 
         public HashFinder(int toMatch) {
-            _toMatch = toMatch;
+            this.toMatch = toMatch;
         }
 
         public int compareTo(discUtils.ntfs.SecurityDescriptors.HashIndexKey other) {
-            return compareTo(other._hash);
+            return compareTo(other.hash);
         }
 
         public int compareTo(int otherHash) {
-            return Integer.compare(_toMatch, otherHash);
-
+            return Integer.compare(toMatch, otherHash);
         }
     }
 }

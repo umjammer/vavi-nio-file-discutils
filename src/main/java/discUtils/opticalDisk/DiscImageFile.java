@@ -42,13 +42,14 @@ import dotnet4j.io.Stream;
  * Represents a single optical disc image file.
  */
 public final class DiscImageFile extends VirtualDiskLayer {
+
     public static final int Mode1SectorSize = 2048;
 
     public static final int Mode2SectorSize = 2352;
 
-    private final OpticalFormat _format;
+    private final OpticalFormat format;
 
-    private Closeable _toDispose;
+    private Closeable toDispose;
 
     /**
      * Initializes a new instance of the DiscImageFile class.
@@ -69,19 +70,19 @@ public final class DiscImageFile extends VirtualDiskLayer {
      */
     public DiscImageFile(Stream stream, Ownership ownsStream, OpticalFormat format) {
         if (ownsStream == Ownership.Dispose) {
-            _toDispose = stream;
+            toDispose = stream;
         }
 
         if (format == OpticalFormat.None) {
             if (stream.getLength() % Mode1SectorSize == 0 && stream.getLength() % Mode2SectorSize != 0) {
-                _format = OpticalFormat.Mode1;
+                this.format = OpticalFormat.Mode1;
             } else if (stream.getLength() % Mode1SectorSize != 0 && stream.getLength() % Mode2SectorSize == 0) {
-                _format = OpticalFormat.Mode2;
+                this.format = OpticalFormat.Mode2;
             } else {
                 throw new dotnet4j.io.IOException("Unable to detect optical disk format");
             }
         } else {
-            _format = format;
+            this.format = format;
         }
 
         setContent(stream instanceof SparseStream ? (SparseStream) stream : null);
@@ -89,7 +90,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
             setContent(SparseStream.fromStream(stream, Ownership.None));
         }
 
-        if (_format == OpticalFormat.Mode2) {
+        if (this.format == OpticalFormat.Mode2) {
             Mode2Buffer converter = new Mode2Buffer(new StreamBuffer(getContent(), Ownership.None));
             setContent(new BufferStream(converter, FileAccess.Read));
         }
@@ -99,14 +100,14 @@ public final class DiscImageFile extends VirtualDiskLayer {
         return getContent().getLength();
     }
 
-    private SparseStream _content;
+    private SparseStream content;
 
     SparseStream getContent() {
-        return _content;
+        return content;
     }
 
     void setContent(SparseStream value) {
-        _content = value;
+        content = value;
     }
 
     /**
@@ -171,9 +172,9 @@ public final class DiscImageFile extends VirtualDiskLayer {
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        if (_toDispose != null) {
-            _toDispose.close();
-            _toDispose = null;
+        if (toDispose != null) {
+            toDispose.close();
+            toDispose = null;
         }
 
         if (getContent() != null) {

@@ -27,9 +27,10 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DiskArea implements IByteArraySerializable {
-    public long Offset;
 
-    public long Length;
+    public long offset;
+
+    public long length;
 
     /**
      *
@@ -42,8 +43,8 @@ public class DiskArea implements IByteArraySerializable {
      *
      */
     public int readFrom(byte[] buffer, int offset) {
-        Offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        Length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        this.offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
         return size();
     }
 

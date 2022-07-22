@@ -48,15 +48,16 @@ import dotnet4j.security.accessControl.RegistrySecurity;
  * A registry hive.
  */
 public final class RegistryHive implements Closeable {
+
     private static final long BinStart = 4 * Sizes.OneKiB;
 
-    private final List<BinHeader> _bins;
+    private final List<BinHeader> bins;
 
-    private Stream _fileStream;
+    private Stream fileStream;
 
-    private final HiveHeader _header;
+    private final HiveHeader header;
 
-    private final Ownership _ownsStream;
+    private final Ownership ownsStream;
 
     /**
      * Initializes a new instance of the RegistryHive class.
@@ -75,25 +76,25 @@ public final class RegistryHive implements Closeable {
      * @param ownership Whether the new object assumes object of the stream.
      */
     public RegistryHive(Stream hive, Ownership ownership) {
-        _fileStream = hive;
-        _fileStream.setPosition(0);
-        _ownsStream = ownership;
+        fileStream = hive;
+        fileStream.setPosition(0);
+        ownsStream = ownership;
 
-        byte[] buffer = StreamUtilities.readExact(_fileStream, HiveHeader.HeaderSize);
+        byte[] buffer = StreamUtilities.readExact(fileStream, HiveHeader.HeaderSize);
 
-        _header = new HiveHeader();
-        _header.readFrom(buffer, 0);
+        header = new HiveHeader();
+        header.readFrom(buffer, 0);
 
-        _bins = new ArrayList<>();
+        bins = new ArrayList<>();
         int pos = 0;
-        while (pos < _header.Length) {
-            _fileStream.setPosition(BinStart + pos);
-            byte[] headerBuffer = StreamUtilities.readExact(_fileStream, BinHeader.HeaderSize);
+        while (pos < header.length) {
+            fileStream.setPosition(BinStart + pos);
+            byte[] headerBuffer = StreamUtilities.readExact(fileStream, BinHeader.HeaderSize);
             BinHeader header = new BinHeader();
             header.readFrom(headerBuffer, 0);
-            _bins.add(header);
+            bins.add(header);
 
-            pos += header.BinSize;
+            pos += header.binSize;
         }
     }
 
@@ -101,7 +102,7 @@ public final class RegistryHive implements Closeable {
      * Gets the root key in the registry hive.
      */
     public RegistryKey getRoot() {
-        return new RegistryKey(this, getCell(_header.RootCell));
+        return new RegistryKey(this, getCell(header.rootCell));
     }
 
     /**
@@ -110,9 +111,9 @@ public final class RegistryHive implements Closeable {
      * @throws IOException
      */
     public void close() throws IOException {
-        if (_fileStream != null && _ownsStream == Ownership.Dispose) {
-            _fileStream.close();
-            _fileStream = null;
+        if (fileStream != null && ownsStream == Ownership.Dispose) {
+            fileStream.close();
+            fileStream = null;
         }
     }
 
@@ -141,11 +142,11 @@ public final class RegistryHive implements Closeable {
 
         // Construct a file with minimal structure - hive header, plus one (empty) bin
         BinHeader binHeader = new BinHeader();
-        binHeader.FileOffset = 0;
-        binHeader.BinSize = (int) (4 * Sizes.OneKiB);
+        binHeader.fileOffset = 0;
+        binHeader.binSize = (int) (4 * Sizes.OneKiB);
 
         HiveHeader hiveHeader = new HiveHeader();
-        hiveHeader.Length = binHeader.BinSize;
+        hiveHeader.length = binHeader.binSize;
 
         stream.setPosition(0);
 
@@ -159,17 +160,17 @@ public final class RegistryHive implements Closeable {
         stream.write(buffer, 0, buffer.length);
 
         buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(binHeader.BinSize - binHeader.size(), buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(binHeader.binSize - binHeader.size(), buffer, 0);
         stream.write(buffer, 0, buffer.length);
 
         // Make sure the file is initialized out to the end of the firs bin
-        stream.setPosition(BinStart + binHeader.BinSize - 1);
+        stream.setPosition(BinStart + binHeader.binSize - 1);
         stream.writeByte((byte) 0);
 
         // Temporary hive to perform construction of higher-level structures
         RegistryHive newHive = new RegistryHive(stream);
         KeyNodeCell rootCell = new KeyNodeCell("root", -1);
-        rootCell.Flags = EnumSet.of(RegistryKeyFlags.Normal, RegistryKeyFlags.Root);
+        rootCell.flags = EnumSet.of(RegistryKeyFlags.Normal, RegistryKeyFlags.Root);
         newHive.updateCell(rootCell, true);
 
         RegistrySecurity sd = new RegistrySecurity();
@@ -180,11 +181,11 @@ public final class RegistryHive implements Closeable {
         secCell.setPreviousIndex(secCell.getIndex());
         newHive.updateCell(secCell, false);
 
-        rootCell.SecurityIndex = secCell.getIndex();
+        rootCell.securityIndex = secCell.getIndex();
         newHive.updateCell(rootCell, false);
 
         // Ref the root cell from the hive header
-        hiveHeader.RootCell = rootCell.getIndex();
+        hiveHeader.rootCell = rootCell.getIndex();
         buffer = new byte[hiveHeader.size()];
         hiveHeader.writeTo(buffer, 0);
         stream.setPosition(0);
@@ -273,7 +274,7 @@ public final class RegistryHive implements Closeable {
         int minSize = MathUtilities.roundUp(capacity + 4, 8);
 
         // Incredibly inefficient algorithm...
-        for (BinHeader binHeader : _bins) {
+        for (BinHeader binHeader : bins) {
             Bin bin = loadBin(binHeader);
             int cellIndex = bin.allocateCell(minSize);
 
@@ -288,9 +289,9 @@ public final class RegistryHive implements Closeable {
     }
 
     private BinHeader findBin(int index) {
-        int binsIdx = Collections.binarySearch(_bins, null, new BinFinder(index));
+        int binsIdx = Collections.binarySearch(bins, null, new BinFinder(index));
         if (binsIdx >= 0) {
-            return _bins.get(binsIdx);
+            return bins.get(binsIdx);
         }
 
         return null;
@@ -306,57 +307,58 @@ public final class RegistryHive implements Closeable {
     }
 
     private Bin loadBin(BinHeader binHeader) {
-        _fileStream.setPosition(BinStart + binHeader.FileOffset);
-        return new Bin(this, _fileStream);
+        fileStream.setPosition(BinStart + binHeader.fileOffset);
+        return new Bin(this, fileStream);
     }
 
     private BinHeader allocateBin(int minSize) {
-        BinHeader lastBin = _bins.get(_bins.size() - 1);
+        BinHeader lastBin = bins.get(bins.size() - 1);
 
         BinHeader newBinHeader = new BinHeader();
-        newBinHeader.FileOffset = lastBin.FileOffset + lastBin.BinSize;
-        newBinHeader.BinSize = MathUtilities.roundUp(minSize + newBinHeader.size(), 4 * (int) Sizes.OneKiB);
+        newBinHeader.fileOffset = lastBin.fileOffset + lastBin.binSize;
+        newBinHeader.binSize = MathUtilities.roundUp(minSize + newBinHeader.size(), 4 * (int) Sizes.OneKiB);
 
         byte[] buffer = new byte[newBinHeader.size()];
         newBinHeader.writeTo(buffer, 0);
-        _fileStream.setPosition(BinStart + newBinHeader.FileOffset);
-        _fileStream.write(buffer, 0, buffer.length);
+        fileStream.setPosition(BinStart + newBinHeader.fileOffset);
+        fileStream.write(buffer, 0, buffer.length);
 
         byte[] cellHeader = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(newBinHeader.BinSize - newBinHeader.size(), cellHeader, 0);
-        _fileStream.write(cellHeader, 0, 4);
+        EndianUtilities.writeBytesLittleEndian(newBinHeader.binSize - newBinHeader.size(), cellHeader, 0);
+        fileStream.write(cellHeader, 0, 4);
 
         // Update hive with new length
-        _header.Length = newBinHeader.FileOffset + newBinHeader.BinSize;
-        _header.Timestamp = System.currentTimeMillis();
-        _header.Sequence1++;
-        _header.Sequence2++;
-        _fileStream.setPosition(0);
-        byte[] hiveHeader = StreamUtilities.readExact(_fileStream, _header.size());
-        _header.writeTo(hiveHeader, 0);
-        _fileStream.setPosition(0);
-        _fileStream.write(hiveHeader, 0, hiveHeader.length);
+        header.length = newBinHeader.fileOffset + newBinHeader.binSize;
+        header.timestamp = System.currentTimeMillis();
+        header.sequence1++;
+        header.sequence2++;
+        fileStream.setPosition(0);
+        byte[] hiveHeader = StreamUtilities.readExact(fileStream, header.size());
+        header.writeTo(hiveHeader, 0);
+        fileStream.setPosition(0);
+        fileStream.write(hiveHeader, 0, hiveHeader.length);
 
         // Make sure the file is initialized to desired position
-        _fileStream.setPosition(BinStart + _header.Length - 1);
-        _fileStream.writeByte((byte) 0);
+        fileStream.setPosition(BinStart + header.length - 1);
+        fileStream.writeByte((byte) 0);
 
-        _bins.add(newBinHeader);
+        bins.add(newBinHeader);
         return newBinHeader;
     }
 
     private static class BinFinder implements Comparator<BinHeader> {
-        private final int _index;
+
+        private final int index;
 
         public BinFinder(int index) {
-            _index = index;
+            this.index = index;
         }
 
         public int compare(BinHeader x, BinHeader y) {
-            if (x.FileOffset + x.BinSize < _index) {
+            if (x.fileOffset + x.binSize < index) {
                 return -1;
             }
-            if (x.FileOffset > _index) {
+            if (x.fileOffset > index) {
                 return 1;
             }
             return 0;

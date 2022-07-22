@@ -26,38 +26,39 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ReadyToTransferPacket extends BaseResponse {
-    public int BufferOffset;
 
-    public int DesiredTransferLength;
+    public int bufferOffset;
 
-    public BasicHeaderSegment Header;
+    public int desiredTransferLength;
 
-    public long Lun;
+    public BasicHeaderSegment header;
 
-    public int ReadyToTransferSequenceNumber;
+    public long lun;
 
-    public int TargetTransferTag;
+    public int readyToTransferSequenceNumber;
+
+    public int targetTransferTag;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 
     public void parse(byte[] headerData, int headerOffset) {
-        StatusPresent = false;
-        Header = new BasicHeaderSegment();
-        Header.readFrom(headerData, headerOffset);
-        if (Header._OpCode != OpCode.ReadyToTransfer) {
+        statusPresent = false;
+        header = new BasicHeaderSegment();
+        header.readFrom(headerData, headerOffset);
+        if (header.opCode != OpCode.ReadyToTransfer) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.ReadyToTransfer + " was " +
-                                               Header._OpCode);
+                                               header.opCode);
         }
 
-        Lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
-        TargetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        ReadyToTransferSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
-        BufferOffset = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
-        DesiredTransferLength = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
+        lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
+        targetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        readyToTransferSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
+        bufferOffset = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
+        desiredTransferLength = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
     }
 }

@@ -41,14 +41,14 @@ public final class PartitionMapFactory implements PartitionTableFactory {
 
         BlockZero b0 = new BlockZero();
         b0.readFrom(initialBytes, 0);
-        if (b0.Signature != 0x4552) {
+        if (b0.signature != 0x4552) {
             return false;
         }
 
         PartitionMapEntry initialPart = new PartitionMapEntry(s);
         initialPart.readFrom(initialBytes, 512);
 
-        return initialPart.Signature == 0x504d;
+        return initialPart.signature == 0x504d;
     }
 
     public PartitionTable detectPartitionTable(VirtualDisk disk) {

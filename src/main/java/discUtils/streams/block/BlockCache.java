@@ -31,51 +31,52 @@ import java.util.Map;
 
 
 public class BlockCache<T extends Block> {
-    private final Map<Long, T> _blocks;
 
-    private int _blocksCreated;
+    private final Map<Long, T> blocks;
 
-    private final int _blockSize;
+    private int blocksCreated;
 
-    private final List<T> _freeBlocks;
+    private final int blockSize;
 
-    private final LinkedList<T> _lru;
+    private final List<T> freeBlocks;
 
-    private final int _totalBlocks;
+    private final LinkedList<T> lru;
+
+    private final int totalBlocks;
 
     public BlockCache(int blockSize, int blockCount) {
-        _blockSize = blockSize;
-        _totalBlocks = blockCount;
+        this.blockSize = blockSize;
+        totalBlocks = blockCount;
 
-        _blocks = new HashMap<>();
-        _lru = new LinkedList<>();
-        _freeBlocks = new ArrayList<>(_totalBlocks);
+        blocks = new HashMap<>();
+        lru = new LinkedList<>();
+        freeBlocks = new ArrayList<>(totalBlocks);
 
-        _freeBlockCount = _totalBlocks;
+        freeBlockCount = totalBlocks;
     }
 
-    private int _freeBlockCount;
+    private int freeBlockCount;
 
     public int getFreeBlockCount() {
-        return _freeBlockCount;
+        return freeBlockCount;
     }
 
     public void setFreeBlockCount(int value) {
-        _freeBlockCount = value;
+        freeBlockCount = value;
     }
 
     public boolean containsBlock(long position) {
-        return _blocks.containsKey(position);
+        return blocks.containsKey(position);
     }
 
     /**
      * @param block {@cs out}
      */
     public boolean tryGetBlock(long position, T[] block) {
-        if (_blocks.containsKey(position)) {
-            block[0] = _blocks.get(position);
-            _lru.remove(block[0]);
-            _lru.addFirst(block[0]);
+        if (blocks.containsKey(position)) {
+            block[0] = blocks.get(position);
+            lru.remove(block[0]);
+            lru.addFirst(block[0]);
             return true;
         }
 
@@ -86,7 +87,7 @@ public class BlockCache<T extends Block> {
         T result;
 
         if (containsBlock(position)) {
-            result = _blocks.get(position);
+            result = blocks.get(position);
             return result;
         }
 
@@ -99,41 +100,41 @@ public class BlockCache<T extends Block> {
     }
 
     public void releaseBlock(long position) {
-        if (_blocks.containsKey(position)) {
-            T block = _blocks.get(position);
-            _blocks.remove(position);
-            _lru.remove(block);
-            _freeBlocks.add(block);
-            _freeBlockCount++;
+        if (blocks.containsKey(position)) {
+            T block = blocks.get(position);
+            blocks.remove(position);
+            lru.remove(block);
+            freeBlocks.add(block);
+            freeBlockCount++;
         }
     }
 
     private void storeBlock(T block) {
-        _blocks.put(block.getPosition(), block);
-        _lru.addFirst(block);
+        blocks.put(block.getPosition(), block);
+        lru.addFirst(block);
     }
 
     private T getFreeBlock(Class<T> c) {
         T block;
 
-        if (_freeBlocks.size() > 0) {
-            int idx = _freeBlocks.size() - 1;
-            block = _freeBlocks.get(idx);
-            _freeBlocks.remove(idx);
-            _freeBlockCount--;
-        } else if (_blocksCreated < _totalBlocks) {
+        if (freeBlocks.size() > 0) {
+            int idx = freeBlocks.size() - 1;
+            block = freeBlocks.get(idx);
+            freeBlocks.remove(idx);
+            freeBlockCount--;
+        } else if (blocksCreated < totalBlocks) {
             try {
                 block = c.getDeclaredConstructor().newInstance();
-                block.setData(new byte[_blockSize]);
-                _blocksCreated++;
-                _freeBlockCount--;
+                block.setData(new byte[blockSize]);
+                blocksCreated++;
+                freeBlockCount--;
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 throw new IllegalStateException(e);
             }
         } else {
-            block = _lru.getLast();
-            _lru.removeLast();
-            _blocks.remove(block.getPosition());
+            block = lru.getLast();
+            lru.removeLast();
+            blocks.remove(block.getPosition());
         }
 
         return block;

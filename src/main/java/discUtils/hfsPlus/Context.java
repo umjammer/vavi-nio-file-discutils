@@ -27,53 +27,54 @@ import dotnet4j.io.Stream;
 
 
 final class Context extends VfsContext {
-    private BTree<AttributeKey> _attribute;
+
+    private BTree<AttributeKey> attribute;
 
     public BTree<AttributeKey> getAttributes() {
-        return _attribute;
+        return attribute;
     }
 
     public void setAttributes(BTree<AttributeKey> value) {
-        _attribute = value;
+        attribute = value;
     }
 
-    private BTree<CatalogKey> _catalog;
+    private BTree<CatalogKey> catalog;
 
     public BTree<CatalogKey> getCatalog() {
-        return _catalog;
+        return catalog;
     }
 
     public void setCatalog(BTree<CatalogKey> value) {
-        _catalog = value;
+        catalog = value;
     }
 
-    private BTree<ExtentKey> _extentsOverflow;
+    private BTree<ExtentKey> extentsOverflow;
 
     public BTree<ExtentKey> getExtentsOverflow() {
-        return _extentsOverflow;
+        return extentsOverflow;
     }
 
     public void setExtentsOverflow(BTree<ExtentKey> value) {
-        _extentsOverflow = value;
+        extentsOverflow = value;
     }
 
-    private VolumeHeader _volumeHeader;
+    private VolumeHeader volumeHeader;
 
     public VolumeHeader getVolumeHeader() {
-        return _volumeHeader;
+        return volumeHeader;
     }
 
     public void setVolumeHeader(VolumeHeader value) {
-        _volumeHeader = value;
+        volumeHeader = value;
     }
 
-    private Stream _volumeStream;
+    private Stream volumeStream;
 
     public Stream getVolumeStream() {
-        return _volumeStream;
+        return volumeStream;
     }
 
     public void setVolumeStream(Stream value) {
-        _volumeStream = value;
+        volumeStream = value;
     }
 }

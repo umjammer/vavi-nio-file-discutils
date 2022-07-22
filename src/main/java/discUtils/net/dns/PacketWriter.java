@@ -29,12 +29,13 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class PacketWriter {
-    private final byte[] _data;
 
-    private int _pos;
+    private final byte[] data;
+
+    private int pos;
 
     public PacketWriter(int maxSize) {
-        _data = new byte[maxSize];
+        data = new byte[maxSize];
     }
 
     public void writeName(String name) {
@@ -47,22 +48,22 @@ public final class PacketWriter {
                 throw new IllegalArgumentException("Invalid DNS label - more than 63 octets '" + label + "' in '" + name + "'");
             }
 
-            _data[_pos++] = (byte) labelBytes.length;
-            System.arraycopy(labelBytes, 0, _data, _pos, labelBytes.length);
-            _pos += labelBytes.length;
+            data[pos++] = (byte) labelBytes.length;
+            System.arraycopy(labelBytes, 0, data, pos, labelBytes.length);
+            pos += labelBytes.length;
         }
 
-        _data[_pos++] = 0;
+        data[pos++] = 0;
     }
 
     public void write(short val) {
-        EndianUtilities.writeBytesBigEndian(val, _data, _pos);
-        _pos += 2;
+        EndianUtilities.writeBytesBigEndian(val, data, pos);
+        pos += 2;
     }
 
     public byte[] getBytes() {
-        byte[] result = new byte[_pos];
-        System.arraycopy(_data, 0, result, 0, _pos);
+        byte[] result = new byte[pos];
+        System.arraycopy(data, 0, result, 0, pos);
         return result;
     }
 }

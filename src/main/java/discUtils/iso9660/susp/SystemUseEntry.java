@@ -28,9 +28,10 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class SystemUseEntry {
-    public String _name;
 
-    public byte _version;
+    public String name;
+
+    public byte version;
 
     /**
      * @param length {@cs out}
@@ -79,14 +80,14 @@ public abstract class SystemUseEntry {
 
     protected void checkAndSetCommonProperties(String name, byte length, byte version, byte minLength, byte maxVersion) {
         if ((length & 0xff) < (minLength & 0xff)) {
-            throw new IllegalArgumentException("Invalid SUSP " + _name + " entry - too short, only " + length + " bytes");
+            throw new IllegalArgumentException("Invalid SUSP " + this.name + " entry - too short, only " + length + " bytes");
         }
 
         if ((version & 0xff) > (maxVersion & 0xff) || version == 0) {
-            throw new UnsupportedOperationException("Unknown SUSP " + _name + " entry version: " + version);
+            throw new UnsupportedOperationException("Unknown SUSP " + this.name + " entry version: " + version);
         }
 
-        _name = name;
-        _version = version;
+        this.name = name;
+        this.version = version;
     }
 }

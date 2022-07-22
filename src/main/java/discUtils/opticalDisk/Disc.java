@@ -45,7 +45,8 @@ import dotnet4j.io.Stream;
  * Represents an optical disc image.
  */
 public final class Disc extends VirtualDisk {
-    private DiscImageFile _file;
+
+    private DiscImageFile file;
 
     /**
      * Initializes a new instance of the Disc class.
@@ -67,7 +68,7 @@ public final class Disc extends VirtualDisk {
      * @param format The disk image format.
      */
     public Disc(Stream stream, Ownership ownsStream, OpticalFormat format) {
-        _file = new DiscImageFile(stream, ownsStream, format);
+        file = new DiscImageFile(stream, ownsStream, format);
     }
 
     /**
@@ -88,7 +89,7 @@ public final class Disc extends VirtualDisk {
     public Disc(String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         LocalFileLocator locator = new LocalFileLocator("");
-        _file = new DiscImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose, OpticalFormat.None);
+        file = new DiscImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose, OpticalFormat.None);
     }
 
     /**
@@ -102,7 +103,7 @@ public final class Disc extends VirtualDisk {
      * Gets the capacity of the disc (in bytes).
      */
     public long getCapacity() {
-        return _file.getCapacity();
+        return file.getCapacity();
     }
 
     /**
@@ -115,7 +116,7 @@ public final class Disc extends VirtualDisk {
      * accessing the stream.
      */
     public SparseStream getContent() {
-        return _file.getContent();
+        return file.getContent();
     }
 
     /**
@@ -139,14 +140,14 @@ public final class Disc extends VirtualDisk {
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _file.getGeometry();
+        return file.getGeometry();
     }
 
     /**
      * Gets the layers that make up the disc.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Collections.singletonList(_file);
+        return Collections.singletonList(file);
     }
 
     /**
@@ -175,10 +176,10 @@ public final class Disc extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_file != null) {
-                _file.close();
+            if (file != null) {
+                file.close();
             }
-            _file = null;
+            file = null;
         } finally {
             super.close();
         }

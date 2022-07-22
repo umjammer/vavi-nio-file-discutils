@@ -26,14 +26,15 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DirectoryInode extends Inode implements IDirectoryInode {
-    private short _fileSize;
+
+    private short fileSize;
 
     public int size() {
         return 32;
     }
 
     public long getFileSize() {
-        return _fileSize & 0xffff;
+        return fileSize & 0xffff;
     }
 
     public void setFileSize(long value) {
@@ -41,47 +42,47 @@ public class DirectoryInode extends Inode implements IDirectoryInode {
             throw new IndexOutOfBoundsException("File size greater than " + 0xffff);
         }
 
-        _fileSize = (short) value;
+        fileSize = (short) value;
     }
 
-    private int _startBlock;
+    private int startBlock;
 
     public int getStartBlock() {
-        return _startBlock;
+        return startBlock;
     }
 
     public void setStartBlock(int value) {
-        _startBlock = value;
+        startBlock = value;
     }
 
-    private int _parentInode;
+    private int parentInode;
 
     public int getParentInode() {
-        return _parentInode;
+        return parentInode;
     }
 
     public void setParentInode(int value) {
-        _parentInode = value;
+        parentInode = value;
     }
 
-    private short _offset;
+    private short offset;
 
     public int getOffset() {
-        return _offset & 0xffff;
+        return offset & 0xffff;
     }
 
     public void setOffset(short value) {
-        _offset = value;
+        offset = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
 
-        _startBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        _numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 20);
-        _fileSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        _offset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
-        _parentInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
+        startBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 20);
+        fileSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
+        this.offset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
+        parentInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
 
         return 32;
     }
@@ -89,10 +90,10 @@ public class DirectoryInode extends Inode implements IDirectoryInode {
     public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
 
-        EndianUtilities.writeBytesLittleEndian(_startBlock, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(_numLinks, buffer, offset + 20);
-        EndianUtilities.writeBytesLittleEndian(_fileSize, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(_offset, buffer, offset + 26);
-        EndianUtilities.writeBytesLittleEndian(_parentInode, buffer, offset + 28);
+        EndianUtilities.writeBytesLittleEndian(startBlock, buffer, offset + 16);
+        EndianUtilities.writeBytesLittleEndian(numLinks, buffer, offset + 20);
+        EndianUtilities.writeBytesLittleEndian(fileSize, buffer, offset + 24);
+        EndianUtilities.writeBytesLittleEndian(this.offset, buffer, offset + 26);
+        EndianUtilities.writeBytesLittleEndian(parentInode, buffer, offset + 28);
     }
 }

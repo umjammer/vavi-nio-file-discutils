@@ -9,24 +9,25 @@ import dotnet4j.util.compat.StringUtilities;
 
 
 class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
-    private List<MyDirEntry> _entries = new ArrayList<>();
+
+    private List<MyDirEntry> entries = new ArrayList<>();
 
     public MyDirectory(MyDirEntry dirEntry, boolean isRoot) {
         super(dirEntry);
-        _entries = new ArrayList<>();
+        entries = new ArrayList<>();
         if (isRoot) {
             for (int i = 0; i < 4; ++i) {
-                _entries.add(new MyDirEntry("DIR" + i, true));
+                entries.add(new MyDirEntry("DIR" + i, true));
             }
         }
 
         for (int i = 0; i < 6; ++i) {
-            _entries.add(new MyDirEntry("FILE" + i, false));
+            entries.add(new MyDirEntry("FILE" + i, false));
         }
     }
 
     public List<MyDirEntry> getAllEntries() {
-        return _entries;
+        return entries;
     }
 
     public MyDirEntry getSelf() {
@@ -34,7 +35,7 @@ class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
     }
 
     public MyDirEntry getEntryByName(String name) {
-        for (MyDirEntry entry : _entries) {
+        for (MyDirEntry entry : entries) {
             if (StringUtilities.compare(name, entry.getFileName(), true) == 0) {
                 return entry;
             }

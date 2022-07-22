@@ -58,27 +58,27 @@ public class FatBuffer {
 
     private static final int DirtyRegionSize = 512;
 
-    private final byte[] _buffer;
+    private final byte[] buffer;
 
-    private final Map<Integer, Integer> _dirtySectors;
+    private final Map<Integer, Integer> dirtySectors;
 
-    private FatType _type = FatType.None;
+    private FatType type = FatType.None;
 
-    private int _nextFreeCandidate;
+    private int nextFreeCandidate;
 
     public FatBuffer(FatType type, byte[] buffer) {
-        _type = type;
-        _buffer = buffer;
-        _dirtySectors = new HashMap<>();
+        this.type = type;
+        this.buffer = buffer;
+        dirtySectors = new HashMap<>();
     }
 
     public int getNumEntries() {
-        return _type.getNumEntries(_buffer);
+        return type.getNumEntries(buffer);
     }
 
     // FAT32
     public long getSize() {
-        return _buffer.length;
+        return buffer.length;
     }
 
     public boolean isFree(int val) {
@@ -86,15 +86,15 @@ public class FatBuffer {
     }
 
     public boolean isEndOfChain(int val) {
-        return _type.isEndOfChain(val);
+        return type.isEndOfChain(val);
     }
 
     public boolean isBadCluster(int val) {
-        return _type.isBadCluster(val);
+        return type.isBadCluster(val);
     }
 
     public int getNext(int cluster) {
-        return _type.getNext(cluster, _buffer);
+        return type.getNext(cluster, buffer);
     }
 
     public void setEndOfChain(int cluster) {
@@ -106,15 +106,15 @@ public class FatBuffer {
     }
 
     public void setFree(int cluster) {
-        if (cluster < _nextFreeCandidate) {
-            _nextFreeCandidate = cluster;
+        if (cluster < nextFreeCandidate) {
+            nextFreeCandidate = cluster;
         }
 
         setNext(cluster, FreeCluster);
     }
 
     public void setNext(int cluster, int next) {
-        _type.setNext(cluster, next, _buffer, this::markDirty);
+        type.setNext(cluster, next, buffer, this::markDirty);
     }
 
     /**
@@ -122,12 +122,12 @@ public class FatBuffer {
      */
     public boolean tryGetFreeCluster(int[] cluster) {
         // Simple scan - don't hold a free list...
-        int numEntries = _type.getNumEntries(_buffer);
+        int numEntries = type.getNumEntries(buffer);
         for (int i = 0; i < numEntries; i++) {
-            int candidate = (i + _nextFreeCandidate) % numEntries;
-            if (isFree(_type.getNext(candidate, _buffer))) {
+            int candidate = (i + nextFreeCandidate) % numEntries;
+            if (isFree(type.getNext(candidate, buffer))) {
                 cluster[0] = candidate;
-                _nextFreeCandidate = candidate + 1;
+                nextFreeCandidate = candidate + 1;
                 return true;
             }
 
@@ -146,26 +146,26 @@ public class FatBuffer {
         List<Integer> result = new ArrayList<>();
         if (head != 0) {
             int focus = head;
-            while (!_type.isEndOfChain(focus)) {
+            while (!type.isEndOfChain(focus)) {
                 result.add(focus);
-                focus = _type.getNext(focus, _buffer);
+                focus = type.getNext(focus, buffer);
             }
         }
         return result;
     }
 
     private void markDirty(int offset) {
-        _dirtySectors.put(offset / DirtyRegionSize, offset / DirtyRegionSize);
+        dirtySectors.put(offset / DirtyRegionSize, offset / DirtyRegionSize);
     }
 
     public void writeDirtyRegions(Stream stream, long position) {
-        for (int val : _dirtySectors.values()) {
+        for (int val : dirtySectors.values()) {
             stream.setPosition(position + (long) val * DirtyRegionSize);
-            stream.write(_buffer, val * DirtyRegionSize, DirtyRegionSize);
+            stream.write(buffer, val * DirtyRegionSize, DirtyRegionSize);
         }
     }
 
     public void clearDirtyRegions() {
-        _dirtySectors.clear();
+        dirtySectors.clear();
     }
 }

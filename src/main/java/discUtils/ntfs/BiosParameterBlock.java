@@ -31,110 +31,111 @@ import discUtils.streams.util.Sizes;
 
 
 class BiosParameterBlock {
+
     static final String NTFS_OEM_ID = "NTFS    ";
 
     // Value: 0x80 (first hard disk)
-    public byte _biosDriveNumber;
+    public byte biosDriveNumber;
 
-    private short _bytesPerSector;
+    private short bytesPerSector;
 
     public int getBytesPerSector() {
-        return _bytesPerSector & 0xffff;
+        return bytesPerSector & 0xffff;
     }
 
     // Value: 0x00
-    public byte _chkDskFlags;
+    public byte chkDskFlags;
 
     // Must be 0
-    public short _fatRootEntriesCount;
+    public short fatRootEntriesCount;
 
     // Must be 0
-    public short _fatSize16;
+    public short fatSize16;
 
     // Value: 0x3F 0x00 0x00 0x00
-    public int _hiddenSectors;
+    public int hiddenSectors;
 
     // Must be 0xF8
-    public byte _media;
+    public byte media;
 
-    public long _mftCluster;
+    public long mftCluster;
 
-    public long _mftMirrorCluster;
+    public long mftMirrorCluster;
 
     // Must be 0
-    public byte _numFats;
+    public byte numFats;
 
     // Value: 0xFF 0x00
-    public short _numHeads;
+    public short numHeads;
 
-    public String _oemId;
+    public String oemId;
 
     // Value: 0x00
-    public byte _paddingByte;
+    public byte paddingByte;
 
-    public byte _rawIndexBufferSize;
+    public byte rawIndexBufferSize;
 
-    public byte _rawMftRecordSize;
+    public byte rawMftRecordSize;
 
     // Must be 0
-    public short _reservedSectors;
+    public short reservedSectors;
 
-    private byte _sectorsPerCluster;
+    private byte sectorsPerCluster;
 
     public int getSectorsPerCluster() {
-        return _sectorsPerCluster & 0xff;
+        return sectorsPerCluster & 0xff;
     }
 
     // Value: 0x3F 0x00
-    public short _sectorsPerTrack;
+    public short sectorsPerTrack;
 
     // Value: 0x80
-    public byte _signatureByte;
+    public byte signatureByte;
 
     // Must be 0
-    public short _totalSectors16;
+    public short totalSectors16;
 
     // Must be 0
-    public int _totalSectors32;
+    public int totalSectors32;
 
-    public long _totalSectors64;
+    public long totalSectors64;
 
-    public long _volumeSerialNumber;
+    public long volumeSerialNumber;
 
     public int getBytesPerCluster() {
         return getBytesPerSector() * getSectorsPerCluster();
     }
 
     public int getIndexBufferSize() {
-        return calcRecordSize(_rawIndexBufferSize);
+        return calcRecordSize(rawIndexBufferSize);
     }
 
     public int getMftRecordSize() {
-        return calcRecordSize(_rawMftRecordSize);
+        return calcRecordSize(rawMftRecordSize);
     }
 
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "BIOS PARAMETER BLOCK (BPB)");
-        writer.println(linePrefix + "                OEM ID: " + _oemId);
-        writer.println(linePrefix + "      Bytes per Sector: " + _bytesPerSector);
-        writer.println(linePrefix + "   Sectors per Cluster: " + _sectorsPerCluster);
-        writer.println(linePrefix + "      Reserved Sectors: " + _reservedSectors);
-        writer.println(linePrefix + "                # FATs: " + _numFats);
-        writer.println(linePrefix + "    # FAT Root Entries: " + _fatRootEntriesCount);
-        writer.println(linePrefix + "   Total Sectors (16b): " + _totalSectors16);
-        writer.println(linePrefix + "                 Media: " + Integer.toHexString(_media) + "h");
-        writer.println(linePrefix + "        FAT size (16b): " + _fatSize16);
-        writer.println(linePrefix + "     Sectors per Track: " + _sectorsPerTrack);
-        writer.println(linePrefix + "               # Heads: " + _numHeads);
-        writer.println(linePrefix + "        Hidden Sectors: " + _hiddenSectors);
-        writer.println(linePrefix + "   Total Sectors (32b): " + _totalSectors32);
-        writer.println(linePrefix + "     BIOS Drive Number: " + _biosDriveNumber);
-        writer.println(linePrefix + "          Chkdsk Flags: " + _chkDskFlags);
-        writer.println(linePrefix + "        Signature Byte: " + _signatureByte);
-        writer.println(linePrefix + "   Total Sectors (64b): " + _totalSectors64);
-        writer.println(linePrefix + "       MFT Record Size: " + _rawMftRecordSize);
-        writer.println(linePrefix + "     Index buffer Size: " + _rawIndexBufferSize);
-        writer.println(linePrefix + "  Volume Serial Number: " + _volumeSerialNumber);
+        writer.println(linePrefix + "                OEM ID: " + oemId);
+        writer.println(linePrefix + "      Bytes per Sector: " + bytesPerSector);
+        writer.println(linePrefix + "   Sectors per Cluster: " + sectorsPerCluster);
+        writer.println(linePrefix + "      Reserved Sectors: " + reservedSectors);
+        writer.println(linePrefix + "                # FATs: " + numFats);
+        writer.println(linePrefix + "    # FAT Root Entries: " + fatRootEntriesCount);
+        writer.println(linePrefix + "   Total Sectors (16b): " + totalSectors16);
+        writer.println(linePrefix + "                 Media: " + Integer.toHexString(media) + "h");
+        writer.println(linePrefix + "        FAT size (16b): " + fatSize16);
+        writer.println(linePrefix + "     Sectors per Track: " + sectorsPerTrack);
+        writer.println(linePrefix + "               # Heads: " + numHeads);
+        writer.println(linePrefix + "        Hidden Sectors: " + hiddenSectors);
+        writer.println(linePrefix + "   Total Sectors (32b): " + totalSectors32);
+        writer.println(linePrefix + "     BIOS Drive Number: " + biosDriveNumber);
+        writer.println(linePrefix + "          Chkdsk flags: " + chkDskFlags);
+        writer.println(linePrefix + "        Signature Byte: " + signatureByte);
+        writer.println(linePrefix + "   Total Sectors (64b): " + totalSectors64);
+        writer.println(linePrefix + "       MFT Record Size: " + rawMftRecordSize);
+        writer.println(linePrefix + "     Index buffer Size: " + rawIndexBufferSize);
+        writer.println(linePrefix + "  Volume Serial Number: " + volumeSerialNumber);
     }
 
     static BiosParameterBlock initialized(Geometry diskGeometry,
@@ -144,87 +145,87 @@ class BiosParameterBlock {
                                                  int mftRecordSize,
                                                  int indexBufferSize) {
         BiosParameterBlock bpb = new BiosParameterBlock();
-        bpb._oemId = NTFS_OEM_ID;
-        bpb._bytesPerSector = Sizes.Sector;
-        bpb._sectorsPerCluster = (byte) (clusterSize / bpb.getBytesPerSector());
-        bpb._reservedSectors = 0;
-        bpb._numFats = 0;
-        bpb._fatRootEntriesCount = 0;
-        bpb._totalSectors16 = 0;
-        bpb._media = (byte) 0xF8;
-        bpb._fatSize16 = 0;
-        bpb._sectorsPerTrack = (short) diskGeometry.getSectorsPerTrack();
-        bpb._numHeads = (short) diskGeometry.getHeadsPerCylinder();
-        bpb._hiddenSectors = partitionStartLba;
-        bpb._totalSectors32 = 0;
-        bpb._biosDriveNumber = (byte) 0x80;
-        bpb._chkDskFlags = 0;
-        bpb._signatureByte = (byte) 0x80;
-        bpb._paddingByte = 0;
-        bpb._totalSectors64 = partitionSizeLba - 1;
-        bpb._rawMftRecordSize = bpb.codeRecordSize(mftRecordSize);
-        bpb._rawIndexBufferSize = bpb.codeRecordSize(indexBufferSize);
-        bpb._volumeSerialNumber = genSerialNumber();
+        bpb.oemId = NTFS_OEM_ID;
+        bpb.bytesPerSector = Sizes.Sector;
+        bpb.sectorsPerCluster = (byte) (clusterSize / bpb.getBytesPerSector());
+        bpb.reservedSectors = 0;
+        bpb.numFats = 0;
+        bpb.fatRootEntriesCount = 0;
+        bpb.totalSectors16 = 0;
+        bpb.media = (byte) 0xF8;
+        bpb.fatSize16 = 0;
+        bpb.sectorsPerTrack = (short) diskGeometry.getSectorsPerTrack();
+        bpb.numHeads = (short) diskGeometry.getHeadsPerCylinder();
+        bpb.hiddenSectors = partitionStartLba;
+        bpb.totalSectors32 = 0;
+        bpb.biosDriveNumber = (byte) 0x80;
+        bpb.chkDskFlags = 0;
+        bpb.signatureByte = (byte) 0x80;
+        bpb.paddingByte = 0;
+        bpb.totalSectors64 = partitionSizeLba - 1;
+        bpb.rawMftRecordSize = bpb.codeRecordSize(mftRecordSize);
+        bpb.rawIndexBufferSize = bpb.codeRecordSize(indexBufferSize);
+        bpb.volumeSerialNumber = genSerialNumber();
 
         return bpb;
     }
 
     static BiosParameterBlock fromBytes(byte[] bytes, int offset) {
         BiosParameterBlock bpb = new BiosParameterBlock();
-        bpb._oemId = EndianUtilities.bytesToString(bytes, offset + 0x03, 8);
-        bpb._bytesPerSector = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0B);
-        bpb._totalSectors16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x13);
-        bpb._totalSectors32 = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x20);
-        bpb._signatureByte = bytes[offset + 0x26];
-        bpb._totalSectors64 = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x28);
-        bpb._mftCluster = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x30);
-        bpb._rawMftRecordSize = bytes[offset + 0x40];
-        bpb._sectorsPerCluster = bytes[offset + 0x0D];
+        bpb.oemId = EndianUtilities.bytesToString(bytes, offset + 0x03, 8);
+        bpb.bytesPerSector = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0B);
+        bpb.totalSectors16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x13);
+        bpb.totalSectors32 = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x20);
+        bpb.signatureByte = bytes[offset + 0x26];
+        bpb.totalSectors64 = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x28);
+        bpb.mftCluster = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x30);
+        bpb.rawMftRecordSize = bytes[offset + 0x40];
+        bpb.sectorsPerCluster = bytes[offset + 0x0D];
         if (!bpb.isValid(Long.MAX_VALUE))
             return bpb;
 
-        bpb._reservedSectors = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0E);
-        bpb._numFats = bytes[offset + 0x10];
-        bpb._fatRootEntriesCount = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x11);
-        bpb._media = bytes[offset + 0x15];
-        bpb._fatSize16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x16);
-        bpb._sectorsPerTrack = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x18);
-        bpb._numHeads = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x1A);
-        bpb._hiddenSectors = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x1C);
-        bpb._biosDriveNumber = bytes[offset + 0x24];
-        bpb._chkDskFlags = bytes[offset + 0x25];
-        bpb._paddingByte = bytes[offset + 0x27];
-        bpb._mftMirrorCluster = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x38);
-        bpb._rawIndexBufferSize = bytes[offset + 0x44];
-        bpb._volumeSerialNumber = EndianUtilities.toUInt64LittleEndian(bytes, offset + 0x48);
+        bpb.reservedSectors = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0E);
+        bpb.numFats = bytes[offset + 0x10];
+        bpb.fatRootEntriesCount = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x11);
+        bpb.media = bytes[offset + 0x15];
+        bpb.fatSize16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x16);
+        bpb.sectorsPerTrack = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x18);
+        bpb.numHeads = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x1A);
+        bpb.hiddenSectors = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x1C);
+        bpb.biosDriveNumber = bytes[offset + 0x24];
+        bpb.chkDskFlags = bytes[offset + 0x25];
+        bpb.paddingByte = bytes[offset + 0x27];
+        bpb.mftMirrorCluster = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x38);
+        bpb.rawIndexBufferSize = bytes[offset + 0x44];
+        bpb.volumeSerialNumber = EndianUtilities.toUInt64LittleEndian(bytes, offset + 0x48);
 
         return bpb;
     }
 
     void toBytes(byte[] buffer, int offset) {
-        EndianUtilities.stringToBytes(_oemId, buffer, offset + 0x03, 8);
-        EndianUtilities.writeBytesLittleEndian(_bytesPerSector, buffer, offset + 0x0B);
-        buffer[offset + 0x0D] = _sectorsPerCluster;
-        EndianUtilities.writeBytesLittleEndian(_reservedSectors, buffer, offset + 0x0E);
-        buffer[offset + 0x10] = _numFats;
-        EndianUtilities.writeBytesLittleEndian(_fatRootEntriesCount, buffer, offset + 0x11);
-        EndianUtilities.writeBytesLittleEndian(_totalSectors16, buffer, offset + 0x13);
-        buffer[offset + 0x15] = _media;
-        EndianUtilities.writeBytesLittleEndian(_fatSize16, buffer, offset + 0x16);
-        EndianUtilities.writeBytesLittleEndian(_sectorsPerTrack, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(_numHeads, buffer, offset + 0x1A);
-        EndianUtilities.writeBytesLittleEndian(_hiddenSectors, buffer, offset + 0x1C);
-        EndianUtilities.writeBytesLittleEndian(_totalSectors32, buffer, offset + 0x20);
-        buffer[offset + 0x24] = _biosDriveNumber;
-        buffer[offset + 0x25] = _chkDskFlags;
-        buffer[offset + 0x26] = _signatureByte;
-        buffer[offset + 0x27] = _paddingByte;
-        EndianUtilities.writeBytesLittleEndian(_totalSectors64, buffer, offset + 0x28);
-        EndianUtilities.writeBytesLittleEndian(_mftCluster, buffer, offset + 0x30);
-        EndianUtilities.writeBytesLittleEndian(_mftMirrorCluster, buffer, offset + 0x38);
-        buffer[offset + 0x40] = _rawMftRecordSize;
-        buffer[offset + 0x44] = _rawIndexBufferSize;
-        EndianUtilities.writeBytesLittleEndian(_volumeSerialNumber, buffer, offset + 0x48);
+        EndianUtilities.stringToBytes(oemId, buffer, offset + 0x03, 8);
+        EndianUtilities.writeBytesLittleEndian(bytesPerSector, buffer, offset + 0x0B);
+        buffer[offset + 0x0D] = sectorsPerCluster;
+        EndianUtilities.writeBytesLittleEndian(reservedSectors, buffer, offset + 0x0E);
+        buffer[offset + 0x10] = numFats;
+        EndianUtilities.writeBytesLittleEndian(fatRootEntriesCount, buffer, offset + 0x11);
+        EndianUtilities.writeBytesLittleEndian(totalSectors16, buffer, offset + 0x13);
+        buffer[offset + 0x15] = media;
+        EndianUtilities.writeBytesLittleEndian(fatSize16, buffer, offset + 0x16);
+        EndianUtilities.writeBytesLittleEndian(sectorsPerTrack, buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(numHeads, buffer, offset + 0x1A);
+        EndianUtilities.writeBytesLittleEndian(hiddenSectors, buffer, offset + 0x1C);
+        EndianUtilities.writeBytesLittleEndian(totalSectors32, buffer, offset + 0x20);
+        buffer[offset + 0x24] = biosDriveNumber;
+        buffer[offset + 0x25] = chkDskFlags;
+        buffer[offset + 0x26] = signatureByte;
+        buffer[offset + 0x27] = paddingByte;
+        EndianUtilities.writeBytesLittleEndian(totalSectors64, buffer, offset + 0x28);
+        EndianUtilities.writeBytesLittleEndian(mftCluster, buffer, offset + 0x30);
+        EndianUtilities.writeBytesLittleEndian(mftMirrorCluster, buffer, offset + 0x38);
+        buffer[offset + 0x40] = rawMftRecordSize;
+        buffer[offset + 0x44] = rawIndexBufferSize;
+        EndianUtilities.writeBytesLittleEndian(volumeSerialNumber, buffer, offset + 0x48);
     }
 
     int calcRecordSize(byte rawSize) {
@@ -236,8 +237,8 @@ class BiosParameterBlock {
     }
 
     boolean isValidOemId() {
-        return (_oemId != null && !_oemId.isEmpty() && _oemId.length() == NTFS_OEM_ID.length() &&
-                _oemId.compareTo(NTFS_OEM_ID) == 0);
+        return (oemId != null && !oemId.isEmpty() && oemId.length() == NTFS_OEM_ID.length() &&
+                oemId.compareTo(NTFS_OEM_ID) == 0);
     }
 
     boolean isValid(long volumeSize) {
@@ -245,13 +246,13 @@ class BiosParameterBlock {
         // set the Signature byte to 0x80 (Version "8.0" NTFS BPB).
         //
         // Let's rather check OemId here, so we don't fail hard.
-        if (!isValidOemId() || _totalSectors16 != 0 || _totalSectors32 != 0 || _totalSectors64 == 0 || getMftRecordSize() == 0 ||
-            _mftCluster == 0 || _bytesPerSector == 0) {
+        if (!isValidOemId() || totalSectors16 != 0 || totalSectors32 != 0 || totalSectors64 == 0 || getMftRecordSize() == 0 ||
+            mftCluster == 0 || bytesPerSector == 0) {
             return false;
         }
 
-        long mftPos = _mftCluster * getSectorsPerCluster() * getBytesPerSector();
-        return mftPos < _totalSectors64 * getBytesPerSector() && mftPos < volumeSize;
+        long mftPos = mftCluster * getSectorsPerCluster() * getBytesPerSector();
+        return mftPos < totalSectors64 * getBytesPerSector() && mftPos < volumeSize;
     }
 
     private static long genSerialNumber() {

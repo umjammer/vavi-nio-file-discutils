@@ -28,11 +28,12 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BootInitialEntry {
-    public byte BootIndicator;
 
-    public BootDeviceEmulation BootMediaType = BootDeviceEmulation.NoEmulation;
+    public byte bootIndicator;
 
-    public int ImageStart;
+    public BootDeviceEmulation bootMediaType = BootDeviceEmulation.NoEmulation;
+
+    public int imageStart;
 
     private short loadSegment;
 
@@ -54,27 +55,27 @@ public class BootInitialEntry {
         sectorCount = value;
     }
 
-    public byte SystemType;
+    public byte systemType;
 
     public BootInitialEntry() {
     }
 
     public BootInitialEntry(byte[] buffer, int offset) {
-        BootIndicator = buffer[offset + 0x00];
-        BootMediaType = BootDeviceEmulation.values()[buffer[offset + 0x01]];
+        bootIndicator = buffer[offset + 0x00];
+        bootMediaType = BootDeviceEmulation.values()[buffer[offset + 0x01]];
         loadSegment = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
-        SystemType = buffer[offset + 0x04];
+        systemType = buffer[offset + 0x04];
         sectorCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06);
-        ImageStart = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
+        imageStart = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + 0x20, (byte) 0);
-        buffer[offset + 0x00] = BootIndicator;
-        buffer[offset + 0x01] = (byte) BootMediaType.ordinal();
+        buffer[offset + 0x00] = bootIndicator;
+        buffer[offset + 0x01] = (byte) bootMediaType.ordinal();
         EndianUtilities.writeBytesLittleEndian(loadSegment, buffer, offset + 0x02);
-        buffer[offset + 0x04] = SystemType;
+        buffer[offset + 0x04] = systemType;
         EndianUtilities.writeBytesLittleEndian(sectorCount, buffer, offset + 0x06);
-        EndianUtilities.writeBytesLittleEndian(ImageStart, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(imageStart, buffer, offset + 0x08);
     }
 }

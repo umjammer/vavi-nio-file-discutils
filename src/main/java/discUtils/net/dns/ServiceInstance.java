@@ -30,56 +30,57 @@ import java.util.Map;
  * Represents an instance of a type of DNS-SD service.
  */
 public final class ServiceInstance {
+
     public ServiceInstance(String name) {
-        _name = name;
+        this.name = name;
     }
 
     /**
      * Gets the display name for the service instance.
      */
-    private String _displayName;
+    private String displayName;
 
     public String getDisplayName() {
-        return _displayName;
+        return displayName;
     }
 
     public void setDisplayName(String value) {
-        _displayName = value;
+        displayName = value;
     }
 
     /**
      * Gets the EndPoints that service this instance.
      */
-    private List<ServiceInstanceEndPoint> _endPoints;
+    private List<ServiceInstanceEndPoint> endpoints;
 
     public List<ServiceInstanceEndPoint> getEndPoints() {
-        return _endPoints;
+        return endpoints;
     }
 
     public void setEndPoints(List<ServiceInstanceEndPoint> value) {
-        _endPoints = value;
+        endpoints = value;
     }
 
     /**
      * Gets the network name for the service instance (think of this as the
      * unique key).
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     /**
      * Gets the parameters of the service instance.
      */
-    private Map<String, byte[]> _parameters;
+    private Map<String, byte[]> parameters;
 
     public Map<String, byte[]> getParameters() {
-        return _parameters;
+        return parameters;
     }
 
     public void setParameters(Map<String, byte[]> value) {
-        _parameters = value;
+        parameters = value;
     }
 }

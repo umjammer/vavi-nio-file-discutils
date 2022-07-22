@@ -39,13 +39,14 @@ import dotnet4j.io.Stream;
  * SDI files are primitive disk images, containing multiple blobs.
  */
 public final class SdiFile implements Closeable {
-    private final FileHeader _header;
 
-    private final Ownership _ownership;
+    private final FileHeader header;
 
-    private final List<SectionRecord> _sections;
+    private final Ownership ownership;
 
-    private Stream _stream;
+    private final List<SectionRecord> sections;
+
+    private Stream stream;
 
     /**
      * Initializes a new instance of the SdiFile class.
@@ -65,19 +66,19 @@ public final class SdiFile implements Closeable {
      *            to the new instance.
      */
     public SdiFile(Stream stream, Ownership ownership) {
-        _stream = stream;
-        _ownership = ownership;
-        byte[] page = StreamUtilities.readExact(_stream, 512);
-        _header = new FileHeader();
-        _header.readFrom(page, 0);
-        _stream.setPosition(_header.PageAlignment * 512);
-        byte[] toc = StreamUtilities.readExact(_stream, (int) (_header.PageAlignment * 512));
-        _sections = new ArrayList<>();
+        this.stream = stream;
+        this.ownership = ownership;
+        byte[] page = StreamUtilities.readExact(this.stream, 512);
+        header = new FileHeader();
+        header.readFrom(page, 0);
+        this.stream.setPosition(header.pageAlignment * 512);
+        byte[] toc = StreamUtilities.readExact(this.stream, (int) (header.pageAlignment * 512));
+        sections = new ArrayList<>();
         int pos = 0;
         while (EndianUtilities.toUInt64LittleEndian(toc, pos) != 0) {
             SectionRecord record = new SectionRecord();
             record.readFrom(toc, pos);
-            _sections.add(record);
+            sections.add(record);
             pos += SectionRecord.RecordSize;
         }
     }
@@ -88,7 +89,7 @@ public final class SdiFile implements Closeable {
     public List<Section> getSections() {
         List<Section> result = new ArrayList<>();
         int i = 0;
-        for (SectionRecord section : _sections) {
+        for (SectionRecord section : sections) {
             result.add(new Section(section, i++));
         }
         return result;
@@ -98,9 +99,9 @@ public final class SdiFile implements Closeable {
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_ownership == Ownership.Dispose && _stream != null) {
-            _stream.close();
-            _stream = null;
+        if (ownership == Ownership.Dispose && stream != null) {
+            stream.close();
+            stream = null;
         }
     }
 
@@ -111,6 +112,6 @@ public final class SdiFile implements Closeable {
      * @return A stream that can be used to access the section.
      */
     public Stream openSection(int index) {
-        return new SubStream(_stream, _sections.get(index).Offset, _sections.get(index).Size);
+        return new SubStream(stream, sections.get(index).offset, sections.get(index).size);
     }
 }

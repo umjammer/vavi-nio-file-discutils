@@ -28,24 +28,25 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class DatabaseRecord {
-    public int Counter;
 
-    public int DataLength;
+    public int counter;
 
-    public int Flags;
+    public int dataLength;
 
-    public long Id;
+    public int flags;
 
-    public int Label;
+    public long id;
 
-    public String Name;
+    public int label;
 
-    public RecordType _RecordType;
+    public String name;
 
-    public String Signature;
+    public RecordType recordType;
 
-    // VBLK
-    public int Valid;
+    public String signature;
+
+    /** VBLK */
+    public int valid;
 
     public static DatabaseRecord readFrom(byte[] buffer, int[] offset) {
         DatabaseRecord result = null;
@@ -130,12 +131,12 @@ public abstract class DatabaseRecord {
     }
 
     protected void doReadFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
-        Label = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
-        Counter = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
-        Valid = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
-        Flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
-        _RecordType = RecordType.values()[Flags & 0xF];
-        DataLength = EndianUtilities.toUInt32BigEndian(buffer, 0x14);
+        signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
+        label = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
+        counter = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
+        valid = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
+        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
+        recordType = RecordType.values()[flags & 0xF];
+        dataLength = EndianUtilities.toUInt32BigEndian(buffer, 0x14);
     }
 }

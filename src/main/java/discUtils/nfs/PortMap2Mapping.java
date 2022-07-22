@@ -31,6 +31,7 @@ package discUtils.nfs;
  * every system.
  */
 public class PortMap2Mapping {
+
     public PortMap2Mapping() {
     }
 
@@ -41,44 +42,44 @@ public class PortMap2Mapping {
         setPort(reader.readUInt32());
     }
 
-    private int _program;
+    private int program;
 
     public int getProgram() {
-        return _program;
+        return program;
     }
 
     public void setProgram(int value) {
-        _program = value;
+        program = value;
     }
 
-    private int _version;
+    private int version;
 
     public int getVersion() {
-        return _version;
+        return version;
     }
 
     public void setVersion(int value) {
-        _version = value;
+        version = value;
     }
 
-    private PortMap2Protocol _protocol = PortMap2Protocol.Tcp;
+    private PortMap2Protocol protocol = PortMap2Protocol.Tcp;
 
     public PortMap2Protocol getProtocol() {
-        return _protocol;
+        return protocol;
     }
 
     public void setProtocol(PortMap2Protocol value) {
-        _protocol = value;
+        protocol = value;
     }
 
-    private int _port;
+    private int port;
 
     public int getPort() {
-        return _port;
+        return port;
     }
 
     public void setPort(int value) {
-        _port = value;
+        port = value;
     }
 
     public void write(XdrDataWriter writer) {
@@ -97,11 +98,11 @@ public class PortMap2Mapping {
             return false;
         }
 
-        return other.getProgram() == getProgram() && other.getVersion() == getVersion() &&
-               other.getProtocol() == getProtocol() && other.getPort() == getPort();
+        return other.program == program && other.version == version &&
+               other.protocol == protocol && other.port == port;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getProgram(), getVersion(), getProtocol(), getPort());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(program, version, protocol, port);
     }
 }

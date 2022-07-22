@@ -39,32 +39,33 @@ import discUtils.streams.util.MathUtilities;
  * Represents a directory that will be built into the ISO image.
  */
 public final class BuildDirectoryInfo extends BuildDirectoryMember {
+
     public static final Comparator<BuildDirectoryInfo> PathTableSortComparison = new PathTableComparison();
 
-    private final Map<String, BuildDirectoryMember> _members;
+    private final Map<String, BuildDirectoryMember> members;
 
-    private final BuildDirectoryInfo _parent;
+    private final BuildDirectoryInfo parent;
 
-    private List<BuildDirectoryMember> _sortedMembers;
+    private List<BuildDirectoryMember> sortedMembers;
 
     BuildDirectoryInfo(String name, BuildDirectoryInfo parent) {
         super(name, makeShortDirName(name, parent));
-        _parent = parent == null ? this : parent;
-        _hierarchyDepth = parent == null ? 0 : parent.getHierarchyDepth() + 1;
-        _members = new HashMap<>();
+        this.parent = parent == null ? this : parent;
+        hierarchyDepth = parent == null ? 0 : parent.getHierarchyDepth() + 1;
+        members = new HashMap<>();
     }
 
-    private int _hierarchyDepth;
+    private int hierarchyDepth;
 
     public int getHierarchyDepth() {
-        return _hierarchyDepth;
+        return hierarchyDepth;
     }
 
     /**
      * The parent directory, or {@code null} if none.
      */
     public BuildDirectoryInfo getParent() {
-        return _parent;
+        return parent;
     }
 
     /**
@@ -75,14 +76,14 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
      * @return {@code true} if the specified member was found.
      */
     boolean tryGetMember(String name, BuildDirectoryMember[] member) {
-        boolean result = _members.containsKey(name);
-        member[0] = _members.get(name);
+        boolean result = members.containsKey(name);
+        member[0] = members.get(name);
         return result;
     }
 
     void add(BuildDirectoryMember member) {
-        _members.put(member.getName(), member);
-        _sortedMembers = null;
+        members.put(member.getName(), member);
+        sortedMembers = null;
     }
 
     long getDataSize(Charset enc) {
@@ -119,7 +120,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
 
         // Two pseudo entries, effectively '.' and '..'
         pos += writeMember(this, "\0", StandardCharsets.US_ASCII, buffer, offset + pos, locationTable, enc);
-        pos += writeMember(_parent, "\01", StandardCharsets.US_ASCII, buffer, offset + pos, locationTable, enc);
+        pos += writeMember(parent, "\01", StandardCharsets.US_ASCII, buffer, offset + pos, locationTable, enc);
         for (BuildDirectoryMember m : sorted) {
             int recordSize = m.getDirectoryRecordSize(enc);
 
@@ -147,11 +148,11 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
                                    Map<BuildDirectoryMember, Integer> locationTable,
                                    Charset dataEnc) {
         DirectoryRecord dr = new DirectoryRecord();
-        dr.FileIdentifier = m.pickName(nameOverride, nameEnc);
-        dr.LocationOfExtent = locationTable.get(m);
-        dr.DataLength = (int) m.getDataSize(dataEnc);
-        dr.RecordingDateAndTime = m.getCreationTime();
-        dr.Flags = m instanceof BuildDirectoryInfo ? EnumSet.of(FileFlags.Directory) : EnumSet.noneOf(FileFlags.class);
+        dr.fileIdentifier = m.pickName(nameOverride, nameEnc);
+        dr.locationOfExtent = locationTable.get(m);
+        dr.dataLength = (int) m.getDataSize(dataEnc);
+        dr.recordingDateAndTime = m.getCreationTime();
+        dr.flags = m instanceof BuildDirectoryInfo ? EnumSet.of(FileFlags.Directory) : EnumSet.noneOf(FileFlags.class);
         return dr.writeTo(buffer, offset, nameEnc);
     }
 
@@ -171,13 +172,13 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
     }
 
     private List<BuildDirectoryMember> getSortedMembers() {
-        if (_sortedMembers == null) {
-            List<BuildDirectoryMember> sorted = new ArrayList<>(_members.values());
+        if (sortedMembers == null) {
+            List<BuildDirectoryMember> sorted = new ArrayList<>(members.values());
             sorted.sort(SortedComparison);
-            _sortedMembers = sorted;
+            sortedMembers = sorted;
         }
 
-        return _sortedMembers;
+        return sortedMembers;
     }
 
     private static class PathTableComparison implements Comparator<BuildDirectoryInfo> {

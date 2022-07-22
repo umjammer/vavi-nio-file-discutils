@@ -26,96 +26,97 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DatabaseHeader {
-    // 00 00 00 80
-    public int BlockSize;
 
-    // 0xA
-    public long CommittedSequence;
+    /** 00 00 00 80 */
+    public int blockSize;
 
-    public String DiskGroupId;
+    /** 0xA */
+    public long committedSequence;
 
-    public String GroupName;
+    public String diskGroupId;
 
-    // 00 00 02 00
-    public int HeaderSize;
+    public String groupName;
 
-    // 00 00 17 24
-    public int NumVBlks;
+    /** 00 00 02 00 */
+    public int headerSize;
 
-    // 0xA
-    public long PendingSequence;
+    /** 00 00 17 24 */
+    public int numVBlks;
 
-    // VMDB
-    public String Signature;
+    /** 0xA */
+    public long pendingSequence;
 
-    public long Timestamp;
+    /** VMDB */
+    public String signature;
 
-    // 00 01
-    public short Unknown1;
+    public long timestamp;
 
-    // 1
-    public int Unknown2;
+    /** 00 01 */
+    public short unknown1;
 
-    // 1
-    public int Unknown3;
+    /** 1 */
+    public int unknown2;
 
-    // 3
-    public int Unknown4;
+    /** 1 */
+    public int unknown3;
 
-    // 3
-    public int Unknown5;
+    /** 3 */
+    public int unknown4;
 
-    // 0
-    public long Unknown6;
+    /** 3 */
+    public int unknown5;
 
-    // 1
-    public long Unknown7;
+    /** 0 */
+    public long unknown6;
 
-    // 1
-    public int Unknown8;
+    /** 1 */
+    public long unknown7;
 
-    // 3
-    public int Unknown9;
+    /** 1 */
+    public int unknown8;
 
-    // 3
-    public int UnknownA;
+    /** 3 */
+    public int unknown9;
 
-    // 0
-    public long UnknownB;
+    /** 3 */
+    public int unknownA;
 
-    // 0
-    public int UnknownC;
+    /** 0 */
+    public long unknownB;
 
-    // 00 0a
-    public short VersionDenom;
+    /** 0 */
+    public int unknownC;
 
-    // 00 04
-    public short VersionNum;
+    /** 00 0a */
+    public short versionDenom;
+
+    /** 00 04 */
+    public short versionNum;
 
     public void readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
-        NumVBlks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
-        BlockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
-        HeaderSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
-        Unknown1 = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x10);
-        VersionNum = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x12);
-        VersionDenom = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x14);
-        GroupName = EndianUtilities.bytesToString(buffer, offset + 0x16, 31).replaceFirst("\0*$", "");
-        DiskGroupId = EndianUtilities.bytesToString(buffer, offset + 0x35, 0x40).replaceFirst("\0*$", "");
+        signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
+        numVBlks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
+        blockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
+        headerSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
+        unknown1 = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x10);
+        versionNum = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x12);
+        versionDenom = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x14);
+        groupName = EndianUtilities.bytesToString(buffer, offset + 0x16, 31).replaceFirst("\0*$", "");
+        diskGroupId = EndianUtilities.bytesToString(buffer, offset + 0x35, 0x40).replaceFirst("\0*$", "");
         // May be wrong way round...
-        CommittedSequence = EndianUtilities.toInt64BigEndian(buffer, offset + 0x75);
-        PendingSequence = EndianUtilities.toInt64BigEndian(buffer, offset + 0x7D);
-        Unknown2 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x85);
-        Unknown3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x89);
-        Unknown4 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8D);
-        Unknown5 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x91);
-        Unknown6 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x95);
-        Unknown7 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x9D);
-        Unknown8 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xA5);
-        Unknown9 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xA9);
-        UnknownA = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xAD);
-        UnknownB = EndianUtilities.toInt64BigEndian(buffer, offset + 0xB1);
-        UnknownC = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB9);
-        Timestamp = EndianUtilities.toInt64BigEndian(buffer, offset + 0xBD);
+        committedSequence = EndianUtilities.toInt64BigEndian(buffer, offset + 0x75);
+        pendingSequence = EndianUtilities.toInt64BigEndian(buffer, offset + 0x7D);
+        unknown2 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x85);
+        unknown3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x89);
+        unknown4 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8D);
+        unknown5 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x91);
+        unknown6 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x95);
+        unknown7 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x9D);
+        unknown8 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xA5);
+        unknown9 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xA9);
+        unknownA = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xAD);
+        unknownB = EndianUtilities.toInt64BigEndian(buffer, offset + 0xB1);
+        unknownC = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB9);
+        timestamp = EndianUtilities.toInt64BigEndian(buffer, offset + 0xBD);
     }
 }

@@ -29,32 +29,33 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class LogEntryHeader implements IByteArraySerializable {
+
     public static final int LogEntrySignature = 0x65676F6C;
 
-    private byte[] _data;
+    private byte[] data;
 
-    public int Checksum;
+    public int checksum;
 
-    public int DescriptorCount;
+    public int descriptorCount;
 
-    public int EntryLength;
+    public int entryLength;
 
-    public long FlushedFileOffset;
+    public long flushedFileOffset;
 
-    public long LastFileOffset;
+    public long lastFileOffset;
 
-    public UUID LogGuid;
+    public UUID logGuid;
 
-    public int Reserved;
+    public int reserved;
 
-    public long SequenceNumber;
+    public long sequenceNumber;
 
-    public int Signature;
+    public int signature;
 
-    public int Tail;
+    public int tail;
 
     public boolean isValid() {
-        return Signature == LogEntrySignature;
+        return signature == LogEntrySignature;
     }
 
     public int size() {
@@ -62,18 +63,18 @@ public final class LogEntryHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _data = new byte[size()];
-        System.arraycopy(buffer, offset, _data, 0, size());
-        Signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        Checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        EntryLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        Tail = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
-        SequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-        DescriptorCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        Reserved = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
-        LogGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 32);
-        FlushedFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
-        LastFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
+        data = new byte[size()];
+        System.arraycopy(buffer, offset, data, 0, size());
+        signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        entryLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
+        tail = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
+        sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
+        descriptorCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
+        reserved = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
+        logGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 32);
+        flushedFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
+        lastFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
         return size();
     }
 

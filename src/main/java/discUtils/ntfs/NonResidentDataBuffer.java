@@ -34,39 +34,40 @@ import dotnet4j.io.IOException;
 
 
 public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
-    protected ClusterStream _activeStream;
 
-    protected long _bytesPerCluster;
+    protected ClusterStream activeStream;
 
-    protected INtfsContext _context;
+    protected long bytesPerCluster;
 
-    protected CookedDataRuns _cookedRuns;
+    protected INtfsContext context;
 
-    protected byte[] _ioBuffer;
+    protected CookedDataRuns cookedRuns;
 
-    protected RawClusterStream _rawStream;
+    protected byte[] ioBuffer;
+
+    protected RawClusterStream rawStream;
 
     public NonResidentDataBuffer(INtfsContext context, NonResidentAttributeRecord record) {
         this(context, new CookedDataRuns(record.getDataRuns(), record), false);
     }
 
     public NonResidentDataBuffer(INtfsContext context, CookedDataRuns cookedRuns, boolean isMft) {
-        _context = context;
-        _cookedRuns = cookedRuns;
+        this.context = context;
+        this.cookedRuns = cookedRuns;
 
-        _rawStream = new RawClusterStream(_context, _cookedRuns, isMft);
-        _activeStream = _rawStream;
+        rawStream = new RawClusterStream(this.context, this.cookedRuns, isMft);
+        activeStream = rawStream;
 
-        _bytesPerCluster = _context.getBiosParameterBlock().getBytesPerCluster();
-        _ioBuffer = new byte[(int) _bytesPerCluster];
+        bytesPerCluster = this.context.getBiosParameterBlock().getBytesPerCluster();
+        ioBuffer = new byte[(int) bytesPerCluster];
     }
 
     public long getVirtualClusterCount() {
-        return _cookedRuns.getNextVirtualCluster();
+        return cookedRuns.getNextVirtualCluster();
     }
 
     public boolean canRead() {
-        return _context.getRawStream().canRead();
+        return context.getRawStream().canRead();
     }
 
     public boolean canWrite() {
@@ -74,13 +75,13 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
     }
 
     public long getCapacity() {
-        return getVirtualClusterCount() * _bytesPerCluster;
+        return getVirtualClusterCount() * bytesPerCluster;
     }
 
     public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
-        for (Range range : _activeStream.getStoredClusters()) {
-            extents.add(new StreamExtent(range.getOffset() * _bytesPerCluster, range.getCount() * _bytesPerCluster));
+        for (Range range : activeStream.getStoredClusters()) {
+            extents.add(new StreamExtent(range.getOffset() * bytesPerCluster, range.getCount() * bytesPerCluster));
         }
 //Debug.println(extents + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(extents, new StreamExtent(0, getCapacity()));
@@ -92,14 +93,14 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
     }
 
     public long mapPosition(long pos) {
-        long vcn = pos / _bytesPerCluster;
-        int dataRunIdx = _cookedRuns.findDataRun(vcn, 0);
+        long vcn = pos / bytesPerCluster;
+        int dataRunIdx = cookedRuns.findDataRun(vcn, 0);
 
-        if (_cookedRuns.get(dataRunIdx).isSparse()) {
+        if (cookedRuns.get(dataRunIdx).isSparse()) {
             return -1;
         }
-        return _cookedRuns.get(dataRunIdx).getStartLcn() * _bytesPerCluster +
-               (pos - _cookedRuns.get(dataRunIdx).getStartVcn() * _bytesPerCluster);
+        return cookedRuns.get(dataRunIdx).getStartLcn() * bytesPerCluster +
+               (pos - cookedRuns.get(dataRunIdx).getStartVcn() * bytesPerCluster);
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
@@ -117,25 +118,25 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
 
         long focusPos = pos;
         while (focusPos < pos + totalToRead) {
-            long vcn = focusPos / _bytesPerCluster;
+            long vcn = focusPos / bytesPerCluster;
             long remaining = pos + totalToRead - focusPos;
-            long clusterOffset = focusPos - vcn * _bytesPerCluster;
+            long clusterOffset = focusPos - vcn * bytesPerCluster;
 
-            if (vcn * _bytesPerCluster != focusPos || remaining < _bytesPerCluster) {
+            if (vcn * bytesPerCluster != focusPos || remaining < bytesPerCluster) {
                 // Unaligned or short read
-                _activeStream.readClusters(vcn, 1, _ioBuffer, 0);
+                activeStream.readClusters(vcn, 1, ioBuffer, 0);
 
-                int toRead = (int) Math.min(remaining, _bytesPerCluster - clusterOffset);
+                int toRead = (int) Math.min(remaining, bytesPerCluster - clusterOffset);
 
-                System.arraycopy(_ioBuffer, (int) clusterOffset, buffer, (int) (offset + (focusPos - pos)), toRead);
+                System.arraycopy(ioBuffer, (int) clusterOffset, buffer, (int) (offset + (focusPos - pos)), toRead);
 
                 focusPos += toRead;
             } else {
                 // Aligned, full cluster reads...
-                int fullClusters = (int) (remaining / _bytesPerCluster);
-                _activeStream.readClusters(vcn, fullClusters, buffer, (int) (offset + (focusPos - pos)));
+                int fullClusters = (int) (remaining / bytesPerCluster);
+                activeStream.readClusters(vcn, fullClusters, buffer, (int) (offset + (focusPos - pos)));
 
-                focusPos += fullClusters * _bytesPerCluster;
+                focusPos += fullClusters * bytesPerCluster;
             }
         }
 

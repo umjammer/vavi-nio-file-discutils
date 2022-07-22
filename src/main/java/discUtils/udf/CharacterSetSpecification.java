@@ -27,7 +27,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class CharacterSetSpecification implements IByteArraySerializable {
-    public byte[] Information;
+
+    public byte[] information;
 
     public CharacterSetType Type = CharacterSetType.CharacterSet0;
 
@@ -37,7 +38,7 @@ public class CharacterSetSpecification implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         Type = CharacterSetType.values()[buffer[offset]];
-        Information = EndianUtilities.toByteArray(buffer, offset + 1, 63);
+        information = EndianUtilities.toByteArray(buffer, offset + 1, 63);
         return 64;
     }
 

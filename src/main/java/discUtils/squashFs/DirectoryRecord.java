@@ -27,9 +27,10 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DirectoryRecord implements IByteArraySerializable {
-    public short InodeNumber;
 
-    public String Name;
+    public short inodeNumber;
+
+    public String name;
 
     private short offset;
 
@@ -41,10 +42,10 @@ public class DirectoryRecord implements IByteArraySerializable {
         offset = value;
     }
 
-    public InodeType Type;
+    public InodeType type;
 
     public int size() {
-        return 8 + Name.length();
+        return 8 + name.length();
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -53,19 +54,19 @@ public class DirectoryRecord implements IByteArraySerializable {
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(this.offset, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(InodeNumber, buffer, offset + 2);
-        EndianUtilities.writeBytesLittleEndian((short) Type.ordinal(), buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian((short) (Name.length() - 1), buffer, offset + 6);
-        EndianUtilities.stringToBytes(Name, buffer, offset + 8, Name.length());
+        EndianUtilities.writeBytesLittleEndian(inodeNumber, buffer, offset + 2);
+        EndianUtilities.writeBytesLittleEndian((short) type.ordinal(), buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian((short) (name.length() - 1), buffer, offset + 6);
+        EndianUtilities.stringToBytes(name, buffer, offset + 8, name.length());
     }
 
     public static DirectoryRecord readFrom(MetablockReader reader) {
         DirectoryRecord result = new DirectoryRecord();
         result.offset = reader.readUShort();
-        result.InodeNumber = reader.readShort();
-        result.Type = InodeType.values()[reader.readUShort()];
+        result.inodeNumber = reader.readShort();
+        result.type = InodeType.values()[reader.readUShort()];
         short size = reader.readUShort();
-        result.Name = reader.readString(size + 1);
+        result.name = reader.readString(size + 1);
 //Debug.println(result.Name);
         return result;
     }

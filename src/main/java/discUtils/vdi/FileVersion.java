@@ -23,24 +23,25 @@
 package discUtils.vdi;
 
 public class FileVersion {
+
     public FileVersion() {
     }
 
     public FileVersion(int value) {
-        _value = value;
+        this.value = value;
     }
 
     public int getMajor() {
-        return _value >>> 16;
+        return value >>> 16;
     }
 
     public int getMinor() {
-        return _value & 0xFFFF;
+        return value & 0xFFFF;
     }
 
-    private int _value;
+    private int value;
 
     public int getValue() {
-        return _value;
+        return value;
     }
 }

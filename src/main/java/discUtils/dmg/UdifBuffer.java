@@ -41,32 +41,33 @@ import dotnet4j.io.compression.DeflateStream;
 
 
 public class UdifBuffer extends Buffer {
-    private CompressedRun _activeRun;
 
-    private long _activeRunOffset;
+    private CompressedRun activeRun;
 
-    private byte[] _decompBuffer;
+    private long activeRunOffset;
 
-    private final ResourceFork _resources;
+    private byte[] decompBuffer;
 
-    private final long _sectorCount;
+    private final ResourceFork resources;
 
-    private final Stream _stream;
+    private final long sectorCount;
+
+    private final Stream stream;
 
     public UdifBuffer(Stream stream, ResourceFork resources, long sectorCount) {
-        _stream = stream;
-        _resources = resources;
-        _sectorCount = sectorCount;
-        _blocks = new ArrayList<>();
-        for (Resource resource : _resources.getAllResources("blkx")) {
-            _blocks.add(((BlkxResource) resource).getBlock());
+        this.stream = stream;
+        this.resources = resources;
+        this.sectorCount = sectorCount;
+        blocks = new ArrayList<>();
+        for (Resource resource : this.resources.getAllResources("blkx")) {
+            blocks.add(((BlkxResource) resource).getBlock());
         }
     }
 
-    private List<CompressedBlock> _blocks;
+    private List<CompressedBlock> blocks;
 
     public List<CompressedBlock> getBlocks() {
-        return _blocks;
+        return blocks;
     }
 
     public boolean canRead() {
@@ -78,7 +79,7 @@ public class UdifBuffer extends Buffer {
     }
 
     public long getCapacity() {
-        return _sectorCount * Sizes.Sector;
+        return sectorCount * Sizes.Sector;
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
@@ -86,23 +87,23 @@ public class UdifBuffer extends Buffer {
         long currentPos = pos;
         while (totalCopied < count && currentPos < getCapacity()) {
             loadRun(currentPos);
-            int bufferOffset = (int) (currentPos - (_activeRunOffset + _activeRun.SectorStart * Sizes.Sector));
-            int toCopy = (int) Math.min(_activeRun.SectorCount * Sizes.Sector - bufferOffset, count - totalCopied);
-            switch (_activeRun.Type) {
+            int bufferOffset = (int) (currentPos - (activeRunOffset + activeRun.sectorStart * Sizes.Sector));
+            int toCopy = (int) Math.min(activeRun.sectorCount * Sizes.Sector - bufferOffset, count - totalCopied);
+            switch (activeRun.type) {
             case Zeros:
                 Arrays.fill(buffer, offset + totalCopied, offset + totalCopied + toCopy, (byte) 0);
                 break;
             case Raw:
-                _stream.setPosition(_activeRun.CompOffset + bufferOffset);
-                StreamUtilities.readExact(_stream, buffer, offset + totalCopied, toCopy);
+                stream.setPosition(activeRun.compOffset + bufferOffset);
+                StreamUtilities.readExact(stream, buffer, offset + totalCopied, toCopy);
                 break;
             case AdcCompressed:
             case ZlibCompressed:
             case BZlibCompressed:
-                System.arraycopy(_decompBuffer, bufferOffset, buffer, offset + totalCopied, toCopy);
+                System.arraycopy(decompBuffer, bufferOffset, buffer, offset + totalCopied, toCopy);
                 break;
             default:
-                throw new UnsupportedOperationException("Reading from run of type " + _activeRun.Type);
+                throw new UnsupportedOperationException("Reading from run of type " + activeRun.type);
 
             }
             currentPos += toCopy;
@@ -134,9 +135,9 @@ public class UdifBuffer extends Buffer {
 
             for (CompressedRun run : block.runs) {
                 // Skip blocks after end of range
-                if (run.SectorCount > 0 && run.Type != RunType.Zeros) {
-                    long thisRunStart = (block.firstSector + run.SectorStart) * Sizes.Sector;
-                    long thisRunEnd = thisRunStart + run.SectorCount * Sizes.Sector;
+                if (run.sectorCount > 0 && run.type != RunType.Zeros) {
+                    long thisRunStart = (block.firstSector + run.sectorStart) * Sizes.Sector;
+                    long thisRunEnd = thisRunStart + run.sectorCount * Sizes.Sector;
                     thisRunStart = Math.max(thisRunStart, start);
                     thisRunEnd = Math.min(thisRunEnd, start + count);
                     long thisRunLength = thisRunEnd - thisRunStart;
@@ -199,8 +200,8 @@ public class UdifBuffer extends Buffer {
     }
 
     private void loadRun(long pos) {
-        if (_activeRun != null && pos >= _activeRunOffset + _activeRun.SectorStart * Sizes.Sector &&
-            pos < _activeRunOffset + (_activeRun.SectorStart + _activeRun.SectorCount) * Sizes.Sector) {
+        if (activeRun != null && pos >= activeRunOffset + activeRun.sectorStart * Sizes.Sector &&
+            pos < activeRunOffset + (activeRun.sectorStart + activeRun.sectorCount) * Sizes.Sector) {
             return;
         }
 
@@ -208,15 +209,15 @@ public class UdifBuffer extends Buffer {
         for (CompressedBlock block : getBlocks()) {
             if (block.firstSector <= findSector && block.firstSector + block.sectorCount > findSector) {
                 // Make sure the decompression buffer is big enough
-                if (_decompBuffer == null || _decompBuffer.length < block.decompressBufferRequested * Sizes.Sector) {
-                    _decompBuffer = new byte[block.decompressBufferRequested * Sizes.Sector];
+                if (decompBuffer == null || decompBuffer.length < block.decompressBufferRequested * Sizes.Sector) {
+                    decompBuffer = new byte[block.decompressBufferRequested * Sizes.Sector];
                 }
 
                 for (CompressedRun run : block.runs) {
-                    if (block.firstSector + run.SectorStart <= findSector &&
-                        block.firstSector + run.SectorStart + run.SectorCount > findSector) {
+                    if (block.firstSector + run.sectorStart <= findSector &&
+                        block.firstSector + run.sectorStart + run.sectorCount > findSector) {
                         loadRun(run);
-                        _activeRunOffset = block.firstSector * Sizes.Sector;
+                        activeRunOffset = block.firstSector * Sizes.Sector;
                         return;
                     }
 
@@ -230,19 +231,19 @@ public class UdifBuffer extends Buffer {
     }
 
     private void loadRun(CompressedRun run) {
-        int toCopy = (int) (run.SectorCount * Sizes.Sector);
+        int toCopy = (int) (run.sectorCount * Sizes.Sector);
 
-        switch (run.Type) {
+        switch (run.type) {
         case ZlibCompressed: {
             /*
              * *** WARNING ***
              * DeflateStream decompression needs zip header (0x78, 0x9c)
              * so spec. is different from original C# DeflateStream
              */
-            _stream.setPosition(run.CompOffset);
+            stream.setPosition(run.compOffset);
 
-            try (DeflateStream ds = new DeflateStream(_stream, CompressionMode.Decompress, true)) {
-                StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
+            try (DeflateStream ds = new DeflateStream(stream, CompressionMode.Decompress, true)) {
+                StreamUtilities.readExact(ds, decompBuffer, 0, toCopy);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
@@ -250,18 +251,18 @@ public class UdifBuffer extends Buffer {
             break;
 
         case AdcCompressed: {
-            _stream.setPosition(run.CompOffset);
-            byte[] compressed = StreamUtilities.readExact(_stream, (int) run.CompLength);
-            if (aDCDecompress(compressed, 0, compressed.length, _decompBuffer, 0) != toCopy) {
+            stream.setPosition(run.compOffset);
+            byte[] compressed = StreamUtilities.readExact(stream, (int) run.compLength);
+            if (aDCDecompress(compressed, 0, compressed.length, decompBuffer, 0) != toCopy) {
                 throw new IllegalArgumentException("Run too short when decompressed");
             }
         }
             break;
 
         case BZlibCompressed: {
-            try (BZip2DecoderStream ds = new BZip2DecoderStream(new SubStream(_stream, run.CompOffset, run.CompLength),
+            try (BZip2DecoderStream ds = new BZip2DecoderStream(new SubStream(stream, run.compOffset, run.compLength),
                                                                 Ownership.None)) {
-                StreamUtilities.readExact(ds, _decompBuffer, 0, toCopy);
+                StreamUtilities.readExact(ds, decompBuffer, 0, toCopy);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
@@ -273,9 +274,9 @@ public class UdifBuffer extends Buffer {
             break;
 
         default:
-            throw new UnsupportedOperationException("Unrecognized run type " + run.Type);
+            throw new UnsupportedOperationException("Unrecognized run type " + run.type);
         }
 
-        _activeRun = run;
+        activeRun = run;
     }
 }

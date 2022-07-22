@@ -28,49 +28,49 @@ import java.util.List;
 
 public final class Nfs3MountResult extends Nfs3CallResult {
     public Nfs3MountResult(XdrDataReader reader) {
-        setStatus(Nfs3Status.valueOf(reader.readInt32()));
-        if (getStatus() == Nfs3Status.Ok) {
-            setFileHandle(new Nfs3FileHandle(reader));
+        status = Nfs3Status.valueOf(reader.readInt32());
+        if (status == Nfs3Status.Ok) {
+            fileHandle = new Nfs3FileHandle(reader);
             int numAuthFlavours = reader.readInt32();
-            setAuthFlavours(new ArrayList<>(numAuthFlavours));
+            authFlavours = new ArrayList<>(numAuthFlavours);
             for (int i = 0; i < numAuthFlavours; ++i) {
-                getAuthFlavours().add(RpcAuthFlavour.values()[reader.readInt32()]);
+                authFlavours.add(RpcAuthFlavour.values()[reader.readInt32()]);
             }
         } else {
-            throw new Nfs3Exception(getStatus());
+            throw new Nfs3Exception(status);
         }
     }
 
     public Nfs3MountResult() {
     }
 
-    private List<RpcAuthFlavour> _authFlavours;
+    private List<RpcAuthFlavour> authFlavours;
 
     public List<RpcAuthFlavour> getAuthFlavours() {
-        return _authFlavours;
+        return authFlavours;
     }
 
     public void setAuthFlavours(List<RpcAuthFlavour> value) {
-        _authFlavours = value;
+        authFlavours = value;
     }
 
-    private Nfs3FileHandle _fileHandle;
+    private Nfs3FileHandle fileHandle;
 
     public Nfs3FileHandle getFileHandle() {
-        return _fileHandle;
+        return fileHandle;
     }
 
     public void setFileHandle(Nfs3FileHandle value) {
-        _fileHandle = value;
+        fileHandle = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        if (getStatus() == Nfs3Status.Ok) {
-            getFileHandle().write(writer);
-            writer.write(getAuthFlavours().size());
-            for (int i = 0; i < getAuthFlavours().size(); i++) {
-                writer.write(getAuthFlavours().get(i).ordinal());
+        writer.write(status.getValue());
+        if (status == Nfs3Status.Ok) {
+            fileHandle.write(writer);
+            writer.write(authFlavours.size());
+            for (RpcAuthFlavour authFlavour : authFlavours) {
+                writer.write(authFlavour.ordinal());
             }
         }
     }
@@ -84,11 +84,11 @@ public final class Nfs3MountResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && other.getAuthFlavours().equals(getAuthFlavours()) &&
-               other.getFileHandle().equals(getFileHandle());
+        return other.status == status && other.authFlavours.equals(authFlavours) &&
+               other.fileHandle.equals(fileHandle);
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getStatus(), getFileHandle(), getAuthFlavours());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, fileHandle, authFlavours);
     }
 }

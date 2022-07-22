@@ -28,190 +28,191 @@ import discUtils.core.UnixFilePermissions;
 
 
 public final class Nfs3SetAttributes {
+
     public Nfs3SetAttributes() {
     }
 
     public Nfs3SetAttributes(XdrDataReader reader) {
         setSetMode(reader.readBool());
-        if (_setMode) {
-            _mode = UnixFilePermissions.valueOf(reader.readInt32());
+        if (setMode) {
+            mode = UnixFilePermissions.valueOf(reader.readInt32());
         }
 
         setSetUid(reader.readBool());
-        if (_setUid) {
-            _uid = reader.readUInt32();
+        if (setUid) {
+            uid = reader.readUInt32();
         }
 
         setSetGid(reader.readBool());
-        if (_setGid) {
-            _gid = reader.readUInt32();
+        if (setGid) {
+            gid = reader.readUInt32();
         }
 
         setSetSize(reader.readBool());
-        if (_setSize) {
-            _size = reader.readInt64();
+        if (setSize) {
+            size = reader.readInt64();
         }
 
         setSetAccessTime(Nfs3SetTimeMethod.values()[reader.readInt32()]);
-        if (_setAccessTime == Nfs3SetTimeMethod.ClientTime) {
-            _accessTime = new Nfs3FileTime(reader);
+        if (setAccessTime == Nfs3SetTimeMethod.ClientTime) {
+            accessTime = new Nfs3FileTime(reader);
         }
 
         setSetModifyTime(Nfs3SetTimeMethod.values()[reader.readInt32()]);
-        if (_setModifyTime == Nfs3SetTimeMethod.ClientTime) {
-            _modifyTime = new Nfs3FileTime(reader);
+        if (setModifyTime == Nfs3SetTimeMethod.ClientTime) {
+            modifyTime = new Nfs3FileTime(reader);
         }
     }
 
-    private Nfs3FileTime _accessTime;
+    private Nfs3FileTime accessTime;
 
     public Nfs3FileTime getAccessTime() {
-        return _accessTime;
+        return accessTime;
     }
 
     public void setAccessTime(Nfs3FileTime value) {
-        _accessTime = value;
+        accessTime = value;
     }
 
-    private int _gid;
+    private int gid;
 
     public int getGid() {
-        return _gid;
+        return gid;
     }
 
     public void setGid(int value) {
-        _gid = value;
+        gid = value;
     }
 
-    private EnumSet<UnixFilePermissions> _mode;
+    private EnumSet<UnixFilePermissions> mode;
 
     public EnumSet<UnixFilePermissions> getMode() {
-        return _mode;
+        return mode;
     }
 
     public void setMode(EnumSet<UnixFilePermissions> value) {
-        _mode = value;
+        mode = value;
     }
 
-    private Nfs3FileTime _modifyTime;
+    private Nfs3FileTime modifyTime;
 
     public Nfs3FileTime getModifyTime() {
-        return _modifyTime;
+        return modifyTime;
     }
 
     public void setModifyTime(Nfs3FileTime value) {
-        _modifyTime = value;
+        modifyTime = value;
     }
 
-    private Nfs3SetTimeMethod _setAccessTime = Nfs3SetTimeMethod.NoChange;
+    private Nfs3SetTimeMethod setAccessTime = Nfs3SetTimeMethod.NoChange;
 
     public Nfs3SetTimeMethod getSetAccessTime() {
-        return _setAccessTime;
+        return setAccessTime;
     }
 
     public void setSetAccessTime(Nfs3SetTimeMethod value) {
-        _setAccessTime = value;
+        setAccessTime = value;
     }
 
-    private boolean _setGid;
+    private boolean setGid;
 
     public boolean getSetGid() {
-        return _setGid;
+        return setGid;
     }
 
     public void setSetGid(boolean value) {
-        _setGid = value;
+        setGid = value;
     }
 
-    private boolean _setMode;
+    private boolean setMode;
 
     public boolean getSetMode() {
-        return _setMode;
+        return setMode;
     }
 
     public void setSetMode(boolean value) {
-        _setMode = value;
+        setMode = value;
     }
 
-    private Nfs3SetTimeMethod _setModifyTime = Nfs3SetTimeMethod.NoChange;
+    private Nfs3SetTimeMethod setModifyTime = Nfs3SetTimeMethod.NoChange;
 
     public Nfs3SetTimeMethod getSetModifyTime() {
-        return _setModifyTime;
+        return setModifyTime;
     }
 
     public void setSetModifyTime(Nfs3SetTimeMethod value) {
-        _setModifyTime = value;
+        setModifyTime = value;
     }
 
-    private boolean _setSize;
+    private boolean setSize;
 
     public boolean getSetSize() {
-        return _setSize;
+        return setSize;
     }
 
     public void setSetSize(boolean value) {
-        _setSize = value;
+        setSize = value;
     }
 
-    private boolean _setUid;
+    private boolean setUid;
 
     public boolean getSetUid() {
-        return _setUid;
+        return setUid;
     }
 
     public void setSetUid(boolean value) {
-        _setUid = value;
+        setUid = value;
     }
 
-    private long _size;
+    private long size;
 
     public long getSize() {
-        return _size;
+        return size;
     }
 
     public void setSize(long value) {
-        _size = value;
+        size = value;
     }
 
-    private int _uid;
+    private int uid;
 
     public int getUid() {
-        return _uid;
+        return uid;
     }
 
     public void setUid(int value) {
-        _uid = value;
+        uid = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_setMode);
-        if (_setMode) {
-            writer.write((int) UnixFilePermissions.valueOf(_mode));
+        writer.write(setMode);
+        if (setMode) {
+            writer.write((int) UnixFilePermissions.valueOf(mode));
         }
 
-        writer.write(_setUid);
-        if (_setUid) {
-            writer.write(_uid);
+        writer.write(setUid);
+        if (setUid) {
+            writer.write(uid);
         }
 
-        writer.write(_setGid);
-        if (_setGid) {
-            writer.write(_gid);
+        writer.write(setGid);
+        if (setGid) {
+            writer.write(gid);
         }
 
-        writer.write(_setSize);
-        if (_setSize) {
-            writer.write(_size);
+        writer.write(setSize);
+        if (setSize) {
+            writer.write(size);
         }
 
-        writer.write(_setAccessTime.ordinal());
-        if (_setAccessTime == Nfs3SetTimeMethod.ClientTime) {
-            _accessTime.write(writer);
+        writer.write(setAccessTime.ordinal());
+        if (setAccessTime == Nfs3SetTimeMethod.ClientTime) {
+            accessTime.write(writer);
         }
 
-        writer.write(_setModifyTime.ordinal());
-        if (_setModifyTime == Nfs3SetTimeMethod.ClientTime) {
-            _modifyTime.write(writer);
+        writer.write(setModifyTime.ordinal());
+        if (setModifyTime == Nfs3SetTimeMethod.ClientTime) {
+            modifyTime.write(writer);
         }
     }
 
@@ -230,27 +231,27 @@ public final class Nfs3SetAttributes {
             return false;
         }
 
-        return other._setMode == _setMode && other._mode.equals(_mode) && other._setUid == _setUid &&
-               other._uid == _uid && other._setGid == _setGid && other._gid == _gid &&
-               other._setSize == _setSize && other._size == _size &&
-               other._setAccessTime == _setAccessTime && other._accessTime.equals(_accessTime) &&
-               other._setModifyTime == _setModifyTime && other._modifyTime.equals(_modifyTime);
+        return other.setMode == setMode && other.mode.equals(mode) && other.setUid == setUid &&
+               other.uid == uid && other.setGid == setGid && other.gid == gid &&
+               other.setSize == setSize && other.size == size &&
+               other.setAccessTime == setAccessTime && other.accessTime.equals(accessTime) &&
+               other.setModifyTime == setModifyTime && other.modifyTime.equals(modifyTime);
     }
 
     public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(
                 dotnet4j.util.compat.Utilities.getCombinedHashCode(
-                        _setMode,
-                        _modifyTime,
-                        _setUid,
-                        _uid,
-                        _setGid,
-                        _gid,
-                        _setSize,
-                        _size),
-                _setAccessTime,
-                _accessTime,
-                _setModifyTime,
-                _modifyTime);
+                        setMode,
+                        modifyTime,
+                        setUid,
+                        uid,
+                        setGid,
+                        gid,
+                        setSize,
+                        size),
+                setAccessTime,
+                accessTime,
+                setModifyTime,
+                modifyTime);
     }
 }

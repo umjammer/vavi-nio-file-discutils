@@ -42,7 +42,7 @@ public final class Nfs3ModifyResult extends Nfs3CallResult {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
+        writer.write(status.getValue());
         getCacheConsistency().write(writer);
     }
 

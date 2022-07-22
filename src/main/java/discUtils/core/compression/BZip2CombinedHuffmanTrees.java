@@ -31,65 +31,66 @@ package discUtils.core.compression;
  * stream.
  */
 public class BZip2CombinedHuffmanTrees {
-    private HuffmanTree _activeTree;
 
-    private final BitStream _bitstream;
+    private HuffmanTree activeTree;
 
-    private int _nextSelector;
+    private final BitStream bitStream;
 
-    private byte[] _selectors;
+    private int nextSelector;
 
-    private int _symbolsToNextSelector;
+    private byte[] selectors;
 
-    private HuffmanTree[] _trees;
+    private int symbolsToNextSelector;
+
+    private HuffmanTree[] trees;
 
     public BZip2CombinedHuffmanTrees(BitStream bitstream, int maxSymbols) {
-        _bitstream = bitstream;
+        bitStream = bitstream;
 
         initialize(maxSymbols);
     }
 
     public int nextSymbol() {
-        if (_symbolsToNextSelector == 0) {
-            _symbolsToNextSelector = 50;
-            _activeTree = _trees[_selectors[_nextSelector]];
-            _nextSelector++;
+        if (symbolsToNextSelector == 0) {
+            symbolsToNextSelector = 50;
+            activeTree = trees[selectors[nextSelector]];
+            nextSelector++;
         }
 
-        _symbolsToNextSelector--;
+        symbolsToNextSelector--;
 
-        return _activeTree.nextSymbol(_bitstream);
+        return activeTree.nextSymbol(bitStream);
     }
 
     private void initialize(int maxSymbols) {
-        int numTrees = _bitstream.read(3);
+        int numTrees = bitStream.read(3);
         if (numTrees < 2 || numTrees > 6) {
             throw new dotnet4j.io.IOException("Invalid number of tables");
         }
 
-        int numSelectors = _bitstream.read(15);
+        int numSelectors = bitStream.read(15);
         if (numSelectors < 1) {
             throw new dotnet4j.io.IOException("Invalid number of selectors");
         }
 
-        _selectors = new byte[numSelectors];
+        selectors = new byte[numSelectors];
         MoveToFront mtf = new MoveToFront(numTrees, true);
         for (int i = 0; i < numSelectors; ++i) {
-            _selectors[i] = mtf.getAndMove(countSetBits(numTrees));
+            selectors[i] = mtf.getAndMove(countSetBits(numTrees));
         }
 
-        _trees = new HuffmanTree[numTrees];
+        trees = new HuffmanTree[numTrees];
         for (int t = 0; t < numTrees; ++t) {
             int[] lengths = new int[maxSymbols];
 
-            int len = _bitstream.read(5);
+            int len = bitStream.read(5);
             for (int i = 0; i < maxSymbols; ++i) {
                 if (len < 1 || len > 20) {
                     throw new dotnet4j.io.IOException("Invalid length constructing Huffman tree");
                 }
 
-                while (_bitstream.read(1) != 0) {
-                    len = _bitstream.read(1) == 0 ? len + 1 : len - 1;
+                while (bitStream.read(1) != 0) {
+                    len = bitStream.read(1) == 0 ? len + 1 : len - 1;
                     if (len < 1 || len > 20) {
                         throw new dotnet4j.io.IOException("Invalid length constructing Huffman tree");
                     }
@@ -99,16 +100,16 @@ public class BZip2CombinedHuffmanTrees {
                 lengths[i] = len;
             }
 
-            _trees[t] = new HuffmanTree(lengths);
+            trees[t] = new HuffmanTree(lengths);
         }
 
-        _symbolsToNextSelector = 0;
-        _nextSelector = 0;
+        symbolsToNextSelector = 0;
+        nextSelector = 0;
     }
 
     private byte countSetBits(int max) {
         byte val = 0;
-        while (_bitstream.read(1) != 0) {
+        while (bitStream.read(1) != 0) {
             val++;
             if (val >= max) {
                 throw new dotnet4j.io.IOException("Exceeded max number of consecutive bits");

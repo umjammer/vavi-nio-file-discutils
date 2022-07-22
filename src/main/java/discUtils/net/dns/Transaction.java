@@ -30,31 +30,32 @@ import java.util.concurrent.CountDownLatch;
 
 
 final class Transaction implements Closeable {
+
     public Transaction() {
-        _answers = new ArrayList<>();
-        _completeEvent = new CountDownLatch(1);
+        answers = new ArrayList<>();
+        completeEvent = new CountDownLatch(1);
     }
 
-    private List<ResourceRecord> _answers;
+    private List<ResourceRecord> answers;
 
     public List<ResourceRecord> getAnswers() {
-        return _answers;
+        return answers;
     }
 
-    private CountDownLatch _completeEvent;
+    private CountDownLatch completeEvent;
 
     public CountDownLatch getCompleteEvent() {
-        return _completeEvent;
+        return completeEvent;
     }
 
     public void setCompleteEvent(CountDownLatch value) {
-        _completeEvent = value;
+        completeEvent = value;
     }
 
     public void close() throws IOException {
-        if (_completeEvent != null) {
-            _completeEvent.countDown();
-            _completeEvent = null;
+        if (completeEvent != null) {
+            completeEvent.countDown();
+            completeEvent = null;
         }
     }
 }

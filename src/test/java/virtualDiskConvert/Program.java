@@ -50,24 +50,25 @@ import dotnet4j.util.compat.Utilities;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "in_file", description = "Path to the source disk.", args = 1, required = true)
-    private String _inFile;
+    private String inFile;
 
     @Option(option = "out_file", description = "Path to the output disk.", args = 1, required = true)
-    private String _outFile;
+    private String outFile;
 
     @Option(option = "t",
             argName = "translation {mode}",
             description = "Indicates the geometry adjustment to apply for bootable disks.  " +
                           "Set this parameter to match the translation configured in the BIOS of the machine " +
                           "that will boot from the disk - auto should work in most cases for modern BIOS.")
-    private GeometryTranslation _translation = GeometryTranslation.None;
+    private GeometryTranslation translation = GeometryTranslation.None;
 
     @Option(option = "w",
             argName = "wipe",
             description = "Write zero's to all unused parts of the disk.  " +
                           "This option only makes sense when converting to an iSCSI LUN which may be dirty.")
-    private boolean _wipe;
+    private boolean wipe;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -77,7 +78,7 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
 
-        try (VirtualDisk inDisk = VirtualDisk.openDisk(_inFile, FileAccess.Read, getUserName(), getPassword())) {
+        try (VirtualDisk inDisk = VirtualDisk.openDisk(inFile, FileAccess.Read, getUserName(), getPassword())) {
             VirtualDiskParameters diskParams = inDisk.getParameters();
             diskParams.adapterType = getAdapterType();
             VirtualDiskTypeInfo diskTypeInfo = VirtualDisk.getDiskType(getOutputDiskType(), getOutputDiskVariant());
@@ -85,8 +86,8 @@ public class Program extends ProgramBase {
                 diskParams.geometry = diskTypeInfo.getCalcGeometry().invoke(diskParams.getCapacity());
             }
 
-            if (_translation != null && _translation != GeometryTranslation.None) {
-                diskParams.setBiosGeometry(diskParams.getGeometry().translateToBios(diskParams.getCapacity(), _translation));
+            if (translation != null && translation != GeometryTranslation.None) {
+                diskParams.setBiosGeometry(diskParams.getGeometry().translateToBios(diskParams.getCapacity(), translation));
             } else if (!inDisk.getDiskTypeInfo().getPreservesBiosGeometry()) {
                 // In case the BIOS geometry was just a default, it's better
                 // to override based on the physical geometry
@@ -96,7 +97,7 @@ public class Program extends ProgramBase {
 
             try (VirtualDisk outDisk = VirtualDisk.createDisk(getOutputDiskType(),
                                                               getOutputDiskVariant(),
-                                                              _outFile,
+                    outFile,
                                                               diskParams,
                                                               getUserName(),
                                                               getPassword())) {
@@ -105,7 +106,7 @@ public class Program extends ProgramBase {
                 }
 
                 SparseStream contentStream = inDisk.getContent();
-                if (_translation != null && _translation != GeometryTranslation.None) {
+                if (translation != null && translation != GeometryTranslation.None) {
                     SnapshotStream ssStream = new SnapshotStream(contentStream, Ownership.None);
                     ssStream.snapshot();
                     updateBiosGeometry(ssStream, inDisk.getBiosGeometry(), diskParams.getBiosGeometry());
@@ -115,7 +116,7 @@ public class Program extends ProgramBase {
                 StreamPump pump = new StreamPump();
                 if (!getQuiet()) {
                     long totalBytes = contentStream.getLength();
-                    if (!_wipe) {
+                    if (!wipe) {
                         totalBytes = 0;
                         for (StreamExtent se : contentStream.getExtents()) {
                             totalBytes += se.getLength();
@@ -124,7 +125,7 @@ public class Program extends ProgramBase {
 
                     long now = System.currentTimeMillis();
                     long totalBytes_ = totalBytes;
-                    pump.ProgressEvent = (o, e) -> showProgress("Progress", totalBytes_, now, o, e);
+                    pump.progressEvent = (o, e) -> showProgress("Progress", totalBytes_, now, o, e);
                 }
 
                 pump.run();

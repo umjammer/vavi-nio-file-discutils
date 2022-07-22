@@ -42,13 +42,13 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
         byte[] blockData = new byte[blockSize];
         int relBlock = 0;
         long pos = 0;
-        while (pos < getInode().FileSize) {
+        while (pos < getInode().fileSize) {
             StreamUtilities.readMaximum(content, blockSize * (long) relBlock, blockData, 0, blockSize);
             int blockPos = 0;
             while (blockPos < blockSize) {
                 DirectoryRecord r = new DirectoryRecord(getContext().getOptions().getFileNameEncoding());
                 int numRead = r.readFrom(blockData, blockPos);
-                if (r.Inode != 0 && !r.Name.equals(".") && !r.Name.equals("..")) {
+                if (r.inode != 0 && !r.name.equals(".") && !r.name.equals("..")) {
                     dirEntries.add(new DirEntry(r));
                 }
 

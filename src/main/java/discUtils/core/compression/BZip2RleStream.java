@@ -33,22 +33,22 @@ import dotnet4j.io.Stream;
 
 public class BZip2RleStream extends Stream {
 
-    private byte[] _blockBuffer;
+    private byte[] blockBuffer;
 
-    private int _blockOffset;
+    private int blockOffset;
 
-    private int _blockRemaining;
+    private int blockRemaining;
 
-    private byte _lastByte;
+    private byte lastByte;
 
-    private int _numSame;
+    private int numSame;
 
-    private long _position;
+    private long position;
 
-    private int _runBytesOutstanding;
+    private int runBytesOutstanding;
 
     public boolean getAtEof() {
-        return _runBytesOutstanding == 0 && _blockRemaining == 0;
+        return runBytesOutstanding == 0 && blockRemaining == 0;
     }
 
     public boolean canRead() {
@@ -68,7 +68,7 @@ public class BZip2RleStream extends Stream {
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
@@ -76,13 +76,13 @@ public class BZip2RleStream extends Stream {
     }
 
     public void reset(byte[] buffer, int offset, int count) {
-        _position = 0;
-        _blockBuffer = buffer;
-        _blockOffset = offset;
-        _blockRemaining = count;
-        _numSame = -1;
-        _lastByte = 0;
-        _runBytesOutstanding = 0;
+        position = 0;
+        blockBuffer = buffer;
+        blockOffset = offset;
+        blockRemaining = count;
+        numSame = -1;
+        lastByte = 0;
+        runBytesOutstanding = 0;
     }
 
     public void flush() {
@@ -91,42 +91,42 @@ public class BZip2RleStream extends Stream {
 
     public int read(byte[] buffer, int offset, int count) {
         int numRead = 0;
-        while (numRead < count && _runBytesOutstanding > 0) {
-            int runCount = Math.min(_runBytesOutstanding, count);
+        while (numRead < count && runBytesOutstanding > 0) {
+            int runCount = Math.min(runBytesOutstanding, count);
             for (int i = 0; i < runCount; ++i) {
-                buffer[offset + numRead] = _lastByte;
+                buffer[offset + numRead] = lastByte;
             }
 
-            _runBytesOutstanding -= runCount;
+            runBytesOutstanding -= runCount;
             numRead += runCount;
         }
-        while (numRead < count && _blockRemaining > 0) {
-            byte b = _blockBuffer[_blockOffset];
-            ++_blockOffset;
-            --_blockRemaining;
+        while (numRead < count && blockRemaining > 0) {
+            byte b = blockBuffer[blockOffset];
+            ++blockOffset;
+            --blockRemaining;
 
-            if (_numSame == 4) {
+            if (numSame == 4) {
                 int runCount = Math.min(b, count - numRead);
                 for (int i = 0; i < runCount; ++i) {
-                    buffer[offset + numRead] = _lastByte;
+                    buffer[offset + numRead] = lastByte;
                     numRead++;
                 }
 
-                _runBytesOutstanding = b - runCount;
-                _numSame = 0;
+                runBytesOutstanding = b - runCount;
+                numSame = 0;
             } else {
-                if (b != _lastByte || _numSame <= 0) {
-                    _lastByte = b;
-                    _numSame = 0;
+                if (b != lastByte || numSame <= 0) {
+                    lastByte = b;
+                    numSame = 0;
                 }
 
                 buffer[offset + numRead] = b;
                 numRead++;
-                _numSame++;
+                numSame++;
             }
         }
 
-        _position += numRead;
+        position += numRead;
         return numRead;
     }
 

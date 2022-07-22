@@ -41,20 +41,21 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "disk", description = "Paths to the disks to inspect.", args = 1, required = true)
-    private String _diskFile; // TODO array
+    private String diskFile; // TODO array
 
     @Option(option = "H", argName = "hidden",
             description = "Don't hide files and directories with the hidden attribute set in the directory listing.")
-    private boolean _showHidden;
+    private boolean showHidden;
 
     @Option(option = "S", argName = "system",
             description = "Don't hide files and directories with the system attribute set in the directory listing.")
-    private boolean _showSystem;
+    private boolean showSystem;
 
     @Option(option = "M", argName = "meta",
             description = "Don't hide files and directories that are part of the file system itself in the directory listing.")
-    private boolean _showMeta;
+    private boolean showMeta;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -66,8 +67,8 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
-String[] _diskFiles = new String[] { _diskFile };
-        for (String disk : _diskFiles) {
+String[] diskFiles = new String[] {diskFile};
+        for (String disk : diskFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(disk, FileAccess.Read, getUserName(), getPassword()));
         }
         Stream partitionStream = null;
@@ -81,9 +82,9 @@ String[] _diskFiles = new String[] { _diskFile };
         SparseStream cacheStream = SparseStream.fromStream(partitionStream, Ownership.None);
         cacheStream = new BlockCacheStream(cacheStream, Ownership.None);
         NtfsFileSystem fs = new NtfsFileSystem(cacheStream);
-        fs.getNtfsOptions().setHideHiddenFiles(!_showHidden);
-        fs.getNtfsOptions().setHideSystemFiles(!_showSystem);
-        fs.getNtfsOptions().setHideMetafiles(!_showMeta);
+        fs.getNtfsOptions().setHideHiddenFiles(!showHidden);
+        fs.getNtfsOptions().setHideSystemFiles(!showSystem);
+        fs.getNtfsOptions().setHideMetafiles(!showMeta);
         fs.dump(new PrintWriter(System.err), "");
     }
 }

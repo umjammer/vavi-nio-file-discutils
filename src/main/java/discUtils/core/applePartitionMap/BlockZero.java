@@ -27,32 +27,33 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class BlockZero implements IByteArraySerializable {
-    public int BlockCount;
 
-    public short BlockSize;
+    public int blockCount;
 
-    public short DeviceId;
+    public short blockSize;
 
-    public short DeviceType;
+    public short deviceId;
 
-    public short DriverCount;
+    public short deviceType;
 
-    public int DriverData;
+    public short driverCount;
 
-    public short Signature;
+    public int driverData;
+
+    public short signature;
 
     public int size() {
         return 512;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        BlockSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        BlockCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        DeviceType = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
-        DeviceId = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
-        DriverData = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        DriverCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
+        signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        blockSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
+        blockCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        deviceType = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
+        deviceId = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
+        driverData = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        driverCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
         return 512;
     }
 

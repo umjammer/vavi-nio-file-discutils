@@ -23,62 +23,63 @@
 package discUtils.ntfs;
 
 class CookedDataRun {
+
     public CookedDataRun(DataRun raw, long startVcn, long prevLcn, NonResidentAttributeRecord attributeExtent) {
-        _dataRun = raw;
-        _startVcn = startVcn;
-        _startLcn = prevLcn + raw.getRunOffset();
-        _attributeExtent = attributeExtent;
+        dataRun = raw;
+        this.startVcn = startVcn;
+        startLcn = prevLcn + raw.getRunOffset();
+        this.attributeExtent = attributeExtent;
 
         if (startVcn < 0) {
             throw new IndexOutOfBoundsException("startVcn: VCN must be >= 0: " + startVcn);
         }
 
-        if (_startLcn < 0) {
+        if (startLcn < 0) {
             throw new IndexOutOfBoundsException("prevLcn: LCN must be >= 0: " + prevLcn);
         }
     }
 
-    private NonResidentAttributeRecord _attributeExtent;
+    private NonResidentAttributeRecord attributeExtent;
 
     public NonResidentAttributeRecord getAttributeExtent() {
-        return _attributeExtent;
+        return attributeExtent;
     }
 
-    private DataRun _dataRun;
+    private DataRun dataRun;
 
     public DataRun getDataRun() {
-        return _dataRun;
+        return dataRun;
     }
 
     public boolean isSparse() {
-        return _dataRun.isSparse();
+        return dataRun.isSparse();
     }
 
     public long getLength() {
-        return _dataRun.getRunLength();
+        return dataRun.getRunLength();
     }
 
     public void setLength(long value) {
-        _dataRun.setRunLength(value);
+        dataRun.setRunLength(value);
     }
 
-    private long _startLcn;
+    private long startLcn;
 
     public long getStartLcn() {
-        return _startLcn;
+        return startLcn;
     }
 
     public void setStartLcn(long value) {
-        _startLcn = value;
+        startLcn = value;
     }
 
-    private long _startVcn;
+    private long startVcn;
 
     public long getStartVcn() {
-        return _startVcn;
+        return startVcn;
     }
 
     public String toString() {
-        return "🍳{" + _startVcn + ", " + getLength() + "}";
+        return "🍳{" + startVcn + ", " + getLength() + "}";
     }
 }

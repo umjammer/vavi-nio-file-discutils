@@ -32,6 +32,7 @@ import discUtils.streams.util.EndianUtilities;
  * From an inode to a name in a directory
  */
 public class InodeRef extends BaseItem {
+
     public InodeRef(Key key) {
         super(key);
     }
@@ -39,40 +40,40 @@ public class InodeRef extends BaseItem {
     /**
      * index in the directory
      */
-    private long _index;
+    private long index;
 
     public long getIndex() {
-        return _index;
+        return index;
     }
 
     public void setIndex(long value) {
-        _index = value;
+        index = value;
     }
 
     /**
      * (n)
      */
-    private short _nameLength;
+    private short nameLength;
 
     public int getNameLength() {
-        return _nameLength & 0xffff;
+        return nameLength & 0xffff;
     }
 
     public void setNameLength(short value) {
-        _nameLength = value;
+        nameLength = value;
     }
 
     /**
      * name in the directory
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     public int size() {
@@ -80,9 +81,9 @@ public class InodeRef extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setIndex(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x8));
-        setName(new String(buffer, offset + 0xa, getNameLength(), StandardCharsets.UTF_8));
+        index = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        nameLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x8);
+        name = new String(buffer, offset + 0xa, getNameLength(), StandardCharsets.UTF_8);
         return size();
     }
 }

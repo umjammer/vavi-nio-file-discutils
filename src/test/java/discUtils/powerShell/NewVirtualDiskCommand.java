@@ -108,11 +108,9 @@ public class NewVirtualDiskCommand extends PSCmdlet {
             return;
         }
 
-        long size;
-        Long[] refVar___0 = new Long[1];
-        boolean boolVar___0 = !discUtils.common.Utilities.tryParseDiskSize(getSize(), refVar___0);
-        size = refVar___0.getValue();
-        if (boolVar___0) {
+        long[] size = new long[1];
+        boolean r = !discUtils.common.Utilities.tryParseDiskSize(getSize(), size);
+        if (r) {
             writeError(new ErrorRecord(new IllegalArgumentException("Unable to parse the disk size"),
                                        "BadDiskSize",
                                        ErrorCategory.InvalidArgument,
@@ -122,20 +120,18 @@ public class NewVirtualDiskCommand extends PSCmdlet {
 
         String type = typeAndVariant[0];
         String variant = typeAndVariant.length > 1 ? typeAndVariant[1] : null;
-        String child;
-        String[] refVar___1 = new String[1];
-        PSObject parentObj = resolveNewDiskPath(refVar___1);
-        child = refVar___1.getValue();
+        String[] child = new String[1];
+        PSObject parentObj = resolveNewDiskPath(child);
         VirtualDisk disk = null;
         if (parentObj.BaseObject instanceof DirectoryInfo) {
-            String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
-            try (VirtualDisk realDisk = VirtualDisk.createDisk(type, variant, path, size, null, null)) {
+            String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child[0]);
+            try (VirtualDisk realDisk = VirtualDisk.createDisk(type, variant, path, size[0], null, null)) {
             }
             disk = new OnDemandVirtualDisk(path, FileAccess.ReadWrite);
         } else if (parentObj.BaseObject instanceof DiscDirectoryInfo) {
             DiscDirectoryInfo ddi = (DiscDirectoryInfo) parentObj.BaseObject;
             String path = Paths.get(ddi.getFullName(), child).toString();
-            try (VirtualDisk realDisk = VirtualDisk.createDisk(ddi.getFileSystem(), type, variant, path, size, null, null)) {
+            try (VirtualDisk realDisk = VirtualDisk.createDisk(ddi.getFileSystem(), type, variant, path, size[0], null, null)) {
             }
             disk = new OnDemandVirtualDisk(ddi.getFileSystem(), path, FileAccess.ReadWrite);
         } else {
@@ -149,10 +145,8 @@ public class NewVirtualDiskCommand extends PSCmdlet {
     }
 
     private void createDiffDisk() throws IOException {
-        String child;
-        String[] refVar___2 = new String[1];
-        PSObject parentObj = resolveNewDiskPath(refVar___2);
-        child = refVar___2.getValue();
+        String[] child = new String[1];
+        PSObject parentObj = resolveNewDiskPath(child);
         PSObject baseDiskObj = SessionState.InvokeProvider.Item.get(new String[] {
             getBaseDisk()
         }, false, true)[0];
@@ -173,13 +167,13 @@ public class NewVirtualDiskCommand extends PSCmdlet {
             VirtualDisk newDisk = null;
             if (parentObj.BaseObject instanceof DirectoryInfo) {
                 String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
-                try (Closeable __newVar0 = baseDisk.createDifferencingDisk(path)) {
+                try (Closeable ignored = baseDisk.createDifferencingDisk(path)) {
                 }
                 newDisk = new OnDemandVirtualDisk(path, FileAccess.ReadWrite);
             } else if (parentObj.BaseObject instanceof DiscDirectoryInfo) {
                 DiscDirectoryInfo ddi = (DiscDirectoryInfo) parentObj.BaseObject;
                 String path = Paths.get(ddi.getFullName(), child).toString();
-                try (Closeable __newVar1 = baseDisk.createDifferencingDisk(ddi.getFileSystem(), path)) {
+                try (Closeable ignored = baseDisk.createDifferencingDisk(ddi.getFileSystem(), path)) {
                 }
                 newDisk = new OnDemandVirtualDisk(ddi.getFileSystem(), path, FileAccess.ReadWrite);
             } else {

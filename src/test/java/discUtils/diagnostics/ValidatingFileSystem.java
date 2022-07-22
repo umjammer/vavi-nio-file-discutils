@@ -92,7 +92,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
 
     private static final String FS = java.io.File.separator;
 
-    private Stream _baseStream;
+    private Stream baseStream;
 
     // -------------------------------------
     // CONFIG
@@ -100,36 +100,36 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * How often a check point is run (in number of 'activities').
      */
-    private int _checkpointPeriod = 1;
+    private int checkpointPeriod = 1;
 
     /**
      * Indicates if a read/write trace should run all the time.
      */
-    private boolean _runGlobalTrace;
+    private boolean runGlobalTrace;
 
     /**
      * Indicates whether to capture full stack traces when doing a global trace.
      */
-    private boolean _globalTraceCaptureStackTraces;
+    private boolean globalTraceCaptureStackTraces;
 
     // -------------------------------------
     // INITIALIZED STATE
 
-    private SnapshotStream _snapStream;
+    private SnapshotStream snapStream;
 
-    private TFileSystem _liveTarget;
+    private TFileSystem liveTarget;
 
-    private boolean _initialized;
+    private boolean initialized;
 
-    private Map<String, Object> _activityContext;
+    private Map<String, Object> activityContext;
 
-    private TracingStream _globalTrace;
+    private TracingStream globalTrace;
 
     /**
      * The random number generator used to generate seeds for
      * checkpoint-specific generators.
      */
-    private Random _masterRng;
+    private Random masterRng;
 
     // -------------------------------------
     // RUNNING STATE
@@ -138,35 +138,35 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Activities get logged here until a checkpoint is hit, so we can replay
      * between checkpoints.
      */
-    private List<Activity<TFileSystem>> _checkpointBuffer;
+    private List<Activity<TFileSystem>> checkpointBuffer;
 
     /**
      * The random number generator seed value (set at checkpoint).
      */
-    private int _checkpointRngSeed;
+    private int checkpointRngSeed;
 
     /**
      * The last verification report generated at a scheduled checkpoint.
      */
-    private String _lastCheckpointReport;
+    private String lastCheckpointReport;
 
     /**
      * Flag set when a validation failure is observed, preventing further file
      * system activity.
      */
-    private boolean _lockdown;
+    private boolean lockdown;
 
     /**
      * The exception (if any) that indicated the file system was corrupt.
      */
-    private Exception _failureException;
+    private Exception failureException;
 
     /**
      * The total number of events carried out before lock-down occured.
      */
-    private long _totalEventsBeforeLockDown;
+    private long totalEventsBeforeLockDown;
 
-    private int _numScheduledCheckpoints;
+    private int numScheduledCheckpoints;
 
     private Class<TFileSystem> fileSystemClass;
 
@@ -179,7 +179,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *            instance does not take ownership of the stream.
      */
     public ValidatingFileSystem(Class<TFileSystem> fileSystemClass, Class<TChecker> checkerClass, Stream stream) {
-        _baseStream = stream;
+        baseStream = stream;
         this.fileSystemClass = fileSystemClass;
         this.checkerClass = checkerClass;
     }
@@ -191,8 +191,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         try {
             checkpointAndThrow();
         } finally {
-            if (_globalTrace != null) {
-                _globalTrace.close();
+            if (globalTrace != null) {
+                globalTrace.close();
             }
         }
 
@@ -206,11 +206,11 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * DiscFileSystem counts as an operation.
      */
     public int getCheckpointInterval() {
-        return _checkpointPeriod;
+        return checkpointPeriod;
     }
 
     public void setCheckpointInterval(int value) {
-        _checkpointPeriod = value;
+        checkpointPeriod = value;
     }
 
     /**
@@ -218,11 +218,11 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * non-reproducible failures).
      */
     public boolean getRunGlobalIOTrace() {
-        return _runGlobalTrace;
+        return runGlobalTrace;
     }
 
     public void setRunGlobalIOTrace(boolean value) {
-        _runGlobalTrace = value;
+        runGlobalTrace = value;
     }
 
     /**
@@ -230,11 +230,11 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * non-reproducible failures).
      */
     public boolean getGlobalIOTraceCapturesStackTraces() {
-        return _globalTraceCaptureStackTraces;
+        return globalTraceCaptureStackTraces;
     }
 
     public void setGlobalIOTraceCapturesStackTraces(boolean value) {
-        _globalTraceCaptureStackTraces = value;
+        globalTraceCaptureStackTraces = value;
     }
 
     /**
@@ -253,15 +253,15 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      */
     public Stream openStreamView(StreamView view, boolean readOnly) {
         // Prevent further changes.
-        _lockdown = true;
+        lockdown = true;
         Stream s;
         // Perversely, the snap stream has the current view (squirrelled away in
         // it's delta). The base stream is actually the stream state back at the
         // last checkpoint.
         if (view == StreamView.Current) {
-            s = _snapStream;
+            s = snapStream;
         } else {
-            s = _baseStream;
+            s = baseStream;
         }
         // Return a protective wrapping stream, so the original stream is
         // preserved.
@@ -289,31 +289,31 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      */
     public boolean verify(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         boolean ok = true;
-        _snapStream.freeze();
+        snapStream.freeze();
         // Note the trace stream means that we can guarantee no further stream
         // access after the file system object is disposed - when we dispose it,
         // it forcibly severes the connection to the snapshot stream.
-        try (TracingStream traceStream = new TracingStream(_snapStream, Ownership.None)) {
+        try (TracingStream traceStream = new TracingStream(snapStream, Ownership.None)) {
             try {
 //Debug.println(checkerClass);
                 if (!doVerify(checkerClass, traceStream, reportOutput, levels)) {
                     ok = false;
                 }
             } catch (Exception e) {
-                _failureException = e;
+                failureException = e;
                 ok = false;
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
         if (ok) {
-            _snapStream.thaw();
+            snapStream.thaw();
             return true;
         } else {
-            _lockdown = true;
-            if (_runGlobalTrace) {
-                _globalTrace.stop();
-                _globalTrace.writeToFile(null);
+            lockdown = true;
+            if (runGlobalTrace) {
+                globalTrace.stop();
+                globalTrace.writeToFile(null);
             }
 
             return false;
@@ -338,16 +338,16 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         }
 
         // Since the file system is OK, reset the snapshot (keeping changes).
-        _snapStream.forgetSnapshot();
-        _snapStream.snapshot();
-        _checkpointBuffer.clear();
+        snapStream.forgetSnapshot();
+        snapStream.snapshot();
+        checkpointBuffer.clear();
         // Set the file system's RNG to a known, but unpredictable, state.
-        _checkpointRngSeed = _masterRng.nextInt();
-        _liveTarget.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
+        checkpointRngSeed = masterRng.nextInt();
+        liveTarget.getOptions().setRandomNumberGenerator(new Random(checkpointRngSeed));
         // Reset the global trace stream - no longer interested in what it
         // captured.
-        if (_runGlobalTrace) {
-            _globalTrace.reset(_runGlobalTrace);
+        if (runGlobalTrace) {
+            globalTrace.reset(runGlobalTrace);
         }
 
         return true;
@@ -365,7 +365,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         // TODO: do full replay, check for failure - is this reproducible?
         // Binary chop for activity that causes failure
         int lowPoint = 0;
-        int highPoint = _checkpointBuffer.size();
+        int highPoint = checkpointBuffer.size();
         int midPoint = highPoint / 2;
         while (highPoint - lowPoint > 1) {
             if (doReplayAndVerify(midPoint)) {
@@ -378,7 +378,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
             midPoint = lowPoint + ((highPoint - lowPoint) / 2);
         }
         // Replay again, up to lowPoint - capturing all info desired
-        try (SnapshotStream replayCapture = new SnapshotStream(_baseStream, Ownership.None)) {
+        try (SnapshotStream replayCapture = new SnapshotStream(baseStream, Ownership.None)) {
             // Preserve the base stream
             replayCapture.snapshot();
             // Use tracing to capture changes to the stream
@@ -390,15 +390,15 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                         // Re-init the RNG to it's state when the checkpoint
                         // started, so we get
                         // reproducibility.
-                        replayFs.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
+                        replayFs.getOptions().setRandomNumberGenerator(new Random(checkpointRngSeed));
                         Map<String, Object> replayContext = new HashMap<>();
                         for (int i = 0; i < lowPoint - 1; ++i) {
-                            _checkpointBuffer.get(i).invoke(replayFs, replayContext);
+                            checkpointBuffer.get(i).invoke(replayFs, replayContext);
                         }
                         doVerify(checkerClass, ts, new PrintWriter(preVerificationReport), ReportLevels.All);
                         ts.setCaptureStackTraces(true);
                         ts.start();
-                        _checkpointBuffer.get(lowPoint).invoke(replayFs, replayContext);
+                        checkpointBuffer.get(lowPoint).invoke(replayFs, replayContext);
                         ts.stop();
                     }
                     preVerificationReportString = preVerificationReport.getBuffer().toString();
@@ -411,17 +411,17 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                                                               ts,
                                                               new PrintWriter(verificationReport),
                                                               ReportLevels.All);
-                return new ReplayReport(_failureException,
+                return new ReplayReport(failureException,
                                         replayException,
-                                        _globalTrace,
+                        globalTrace,
                                         ts,
-                                        _checkpointBuffer.size(),
+                                        checkpointBuffer.size(),
                                         lowPoint + 1,
-                                        _totalEventsBeforeLockDown,
+                        totalEventsBeforeLockDown,
                                         preVerificationReportString,
                                         failedVerificationOnReplay,
                                         verificationReport.getBuffer().toString(),
-                                        _lastCheckpointReport);
+                        lastCheckpointReport);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -432,7 +432,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Indicates if we're in lock-down (i.e. corruption has been detected).
      */
     boolean getInLockdown() {
-        return _lockdown;
+        return lockdown;
     }
 
     /**
@@ -441,7 +441,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param activityCount Number of activities to replay
      */
     private boolean doReplayAndVerify(int activityCount) {
-        try (SnapshotStream replayCapture = new SnapshotStream(_baseStream, Ownership.None)) {
+        try (SnapshotStream replayCapture = new SnapshotStream(baseStream, Ownership.None)) {
             // Preserve the base stream
             replayCapture.snapshot();
             try {
@@ -449,10 +449,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
                     // Re-init the RNG to it's state when the checkpoint
                     // started, so we get
                     // reproducibility.
-                    replayFs.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
+                    replayFs.getOptions().setRandomNumberGenerator(new Random(checkpointRngSeed));
                     Map<String, Object> replayContext = new HashMap<>();
                     for (int i = 0; i < activityCount; ++i) {
-                        _checkpointBuffer.get(i).invoke(replayFs, replayContext);
+                        checkpointBuffer.get(i).invoke(replayFs, replayContext);
                     }
                     return doVerify(checkerClass, replayCapture, null, EnumSet.of(ReportLevels.None));
                 }
@@ -477,27 +477,27 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return The value returned from the activity delegate
      */
     public Object performActivity(Activity<TFileSystem> activity) {
-        if (_lockdown) {
+        if (lockdown) {
             throw new IllegalStateException("Validator in lock-down, file system corruption has been detected.");
         }
 
-        if (!_initialized) {
+        if (!initialized) {
             initialize();
         }
 
-        _totalEventsBeforeLockDown++;
-        _checkpointBuffer.add(activity);
+        totalEventsBeforeLockDown++;
+        checkpointBuffer.add(activity);
         boolean doCheckpoint = false;
         try {
-            Object retVal = activity.invoke(_liveTarget, _activityContext);
+            Object retVal = activity.invoke(liveTarget, activityContext);
             doCheckpoint = true;
             return retVal;
         } finally {
             // If a checkpoint is due...
-            if (_checkpointBuffer.size() >= _checkpointPeriod) {
+            if (checkpointBuffer.size() >= checkpointPeriod) {
                 // Roll over the on-disk trace
-                if (_runGlobalTrace) {
-                    _globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", _numScheduledCheckpoints++));
+                if (runGlobalTrace) {
+                    globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", numScheduledCheckpoints++));
                 }
 
                 // We only do a full checkpoint, if the activity didn't throw an
@@ -515,31 +515,31 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     }
 
     private void initialize() {
-        if (_initialized) {
+        if (initialized) {
             throw new IllegalStateException();
         }
 
-        _snapStream = new SnapshotStream(_baseStream, Ownership.None);
-        Stream focusStream = _snapStream;
-        _masterRng = new Random(56456456);
-        if (_runGlobalTrace) {
-            _globalTrace = new TracingStream(_snapStream, Ownership.None);
-            _globalTrace.setCaptureStackTraces(_globalTraceCaptureStackTraces);
-            _globalTrace.reset(_runGlobalTrace);
-            _globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", _numScheduledCheckpoints++));
-            focusStream = _globalTrace;
+        snapStream = new SnapshotStream(baseStream, Ownership.None);
+        Stream focusStream = snapStream;
+        masterRng = new Random(56456456);
+        if (runGlobalTrace) {
+            globalTrace = new TracingStream(snapStream, Ownership.None);
+            globalTrace.setCaptureStackTraces(globalTraceCaptureStackTraces);
+            globalTrace.reset(runGlobalTrace);
+            globalTrace.writeToFile(String.format("C:" + FS + "temp" + FS + "working" + FS + "trace%3X.log", numScheduledCheckpoints++));
+            focusStream = globalTrace;
         }
 
-        _checkpointRngSeed = _masterRng.nextInt();
-        _activityContext = new HashMap<>();
-        _checkpointBuffer = new ArrayList<>();
-        _liveTarget = createFileSystem(fileSystemClass, focusStream);
-        _liveTarget.getOptions().setRandomNumberGenerator(new Random(_checkpointRngSeed));
+        checkpointRngSeed = masterRng.nextInt();
+        activityContext = new HashMap<>();
+        checkpointBuffer = new ArrayList<>();
+        liveTarget = createFileSystem(fileSystemClass, focusStream);
+        liveTarget.getOptions().setRandomNumberGenerator(new Random(checkpointRngSeed));
         // Take a snapshot, to preserve the stream state before we perform
         // an operation (assumption is that merely creating a file system object
         // (above) is not significant...
-        _snapStream.snapshot();
-        _initialized = true;
+        snapStream.snapshot();
+        initialized = true;
         // Preliminary test, lets make sure we think the file system's good
         // before we start...
         verifyAndThrow();
@@ -562,10 +562,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     private void checkpointAndThrow() {
         try (StringWriter writer = new StringWriter()) {
             boolean passed = checkpoint(new PrintWriter(writer), EnumSet.of(ReportLevels.Errors));
-            _lastCheckpointReport = writer.getBuffer().toString();
+            lastCheckpointReport = writer.getBuffer().toString();
             if (!passed) {
-                throw new IllegalStateException("File system failed verification:\n" + _lastCheckpointReport,
-                                                _failureException);
+                throw new IllegalStateException("File system failed verification:\n" + lastCheckpointReport,
+                        failureException);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -575,9 +575,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     private void verifyAndThrow() {
         try (StringWriter writer = new StringWriter()) {
             boolean passed = verify(new PrintWriter(writer), EnumSet.of(ReportLevels.Errors));
-            _lastCheckpointReport = writer.getBuffer().toString();
+            lastCheckpointReport = writer.getBuffer().toString();
             if (!passed) {
-                throw new IllegalStateException("File system failed verification ", _failureException);
+                throw new IllegalStateException("File system failed verification ", failureException);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

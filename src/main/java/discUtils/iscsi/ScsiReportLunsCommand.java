@@ -26,13 +26,14 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ScsiReportLunsCommand extends ScsiCommand {
+
     public static final int InitialResponseSize = 16;
 
-    private final int _expected;
+    private final int expected;
 
     public ScsiReportLunsCommand(int expected) {
         super(0);
-        _expected = expected;
+        this.expected = expected;
     }
 
     public int size() {
@@ -55,7 +56,7 @@ public class ScsiReportLunsCommand extends ScsiCommand {
         // Reserved
         buffer[offset + 5] = 0;
         // Reserved
-        EndianUtilities.writeBytesBigEndian(_expected, buffer, offset + 6);
+        EndianUtilities.writeBytesBigEndian(expected, buffer, offset + 6);
         buffer[offset + 10] = 0;
         // Reserved
         buffer[offset + 11] = 0;

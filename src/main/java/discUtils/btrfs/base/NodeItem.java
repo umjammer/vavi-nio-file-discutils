@@ -27,36 +27,37 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class NodeItem implements IByteArraySerializable {
+
     public static final int Length = Key.Length + 0x8;
 
-    private Key _key;
+    private Key key;
 
     public Key getKey() {
-        return _key;
+        return key;
     }
 
     public void setKey(Key value) {
-        _key = value;
+        key = value;
     }
 
-    private int _dataOffset;
+    private int dataOffset;
 
     public int getDataOffset() {
-        return _dataOffset;
+        return dataOffset;
     }
 
     public void setDataOffset(int value) {
-        _dataOffset = value;
+        dataOffset = value;
     }
 
-    private int _dataSize;
+    private int dataSize;
 
     public int getDataSize() {
-        return _dataSize;
+        return dataSize;
     }
 
     public void setDataSize(int value) {
-        _dataSize = value;
+        dataSize = value;
     }
 
     public int size() {
@@ -64,10 +65,10 @@ public class NodeItem implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setKey(new Key());
+        key = new Key();
         offset += getKey().readFrom(buffer, offset);
-        setDataOffset(EndianUtilities.toUInt32LittleEndian(buffer, offset));
-        setDataSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4));
+        dataOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        dataSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4);
         return size();
     }
 
@@ -76,6 +77,6 @@ public class NodeItem implements IByteArraySerializable {
     }
 
     public String toString() {
-        return getKey().toString();
+        return key.toString();
     }
 }

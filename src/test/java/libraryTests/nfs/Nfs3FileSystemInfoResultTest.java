@@ -60,26 +60,26 @@ public class Nfs3FileSystemInfoResultTest {
         info.setWritePreferredBytes(10);
         result.setFileSystemInfo(info);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.BytesUsed = 2;
-        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.bytesUsed = 2;
+        attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.FileId = 4;
-        attributes.FileSystemId = 5;
-        attributes.Gid = 6;
-        attributes.LinkCount = 7;
-        attributes.Mode = EnumSet.of(UnixFilePermissions.OthersExecute);
-        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 8, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.fileId = 4;
+        attributes.fileSystemId = 5;
+        attributes.gid = 6;
+        attributes.linkCount = 7;
+        attributes.mode = EnumSet.of(UnixFilePermissions.OthersExecute);
+        attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 8, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.RdevMajor = 9;
-        attributes.RdevMinor = 10;
-        attributes.Size = 11;
-        attributes.Type = Nfs3FileType.BlockDevice;
-        attributes.Uid = 12;
+        attributes.rdevMajor = 9;
+        attributes.rdevMinor = 10;
+        attributes.size = 11;
+        attributes.type = Nfs3FileType.BlockDevice;
+        attributes.uid = 12;
         result.setPostOpAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
 

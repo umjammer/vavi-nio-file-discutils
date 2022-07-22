@@ -24,15 +24,15 @@ package diskClone;
 import com.sun.jna.Pointer;
 
 public final class DiskStream extends UnbufferedNativeStream {
-    private long _length;
+
+    private long length;
 
     public DiskStream(Pointer handle) {
         super(handle);
-        _length = Win32Wrapper.getDiskCapacity(handle);
+        length = Win32Wrapper.getDiskCapacity(handle);
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
-
 }

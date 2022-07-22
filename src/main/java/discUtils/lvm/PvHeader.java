@@ -30,13 +30,14 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class PvHeader implements IByteArraySerializable {
-    public String Uuid;
 
-    public long DeviceSize;
+    public String uuid;
 
-    public List<DiskArea> DiskAreas;
+    public long deviceSize;
 
-    public List<DiskArea> MetadataDiskAreas;
+    public List<DiskArea> diskAreas;
+
+    public List<DiskArea> metadataDiskAreas;
 
     /**
      *
@@ -49,29 +50,29 @@ public class PvHeader implements IByteArraySerializable {
      *
      */
     public int readFrom(byte[] buffer, int offset) {
-        Uuid = readUuid(buffer, offset);
-        DeviceSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
+        uuid = readUuid(buffer, offset);
+        deviceSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
         List<DiskArea> areas = new ArrayList<>();
         long areaOffset = offset + 0x28;
         while (true) {
             DiskArea area = new DiskArea();
             areaOffset += area.readFrom(buffer, (int) areaOffset);
-            if (area.Offset == 0 && area.Length == 0)
+            if (area.offset == 0 && area.length == 0)
                 break;
 
             areas.add(area);
         }
-        DiskAreas = areas;
+        diskAreas = areas;
         areas = new ArrayList<>();
         while (true) {
             DiskArea area = new DiskArea();
             areaOffset += area.readFrom(buffer, (int) areaOffset);
-            if (area.Offset == 0 && area.Length == 0)
+            if (area.offset == 0 && area.length == 0)
                 break;
 
             areas.add(area);
         }
-        MetadataDiskAreas = areas;
+        metadataDiskAreas = areas;
         return size();
     }
 

@@ -27,44 +27,45 @@ import discUtils.streams.util.MathUtilities;
 
 
 public class TextRequest {
-    private int _commandSequenceNumber;
+
+    private int commandSequenceNumber;
 
     // Per-session
-    private final Connection _connection;
+    private final Connection connection;
 
-    private boolean _continue;
+    private boolean continue_;
 
-    private int _expectedStatusSequenceNumber;
+    private int expectedStatusSequenceNumber;
 
     // Per-connection (ack)
     @SuppressWarnings("unused")
-    private long _lun;
+    private long lun;
 
-    private final int _targetTransferTag = 0xFFFFFFFF;
+    private final int targetTransferTag = 0xFFFF_FFFF;
 
     public TextRequest(Connection connection) {
-        _connection = connection;
+        this.connection = connection;
     }
 
     public byte[] getBytes(long lun, byte[] data, int offset, int count, boolean isFinalData) {
-        BasicHeaderSegment _basicHeader = new BasicHeaderSegment();
-        _basicHeader.Immediate = true;
-        _basicHeader._OpCode = OpCode.TextRequest;
-        _basicHeader.FinalPdu = isFinalData;
-        _basicHeader.TotalAhsLength = 0;
-        _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
-        _continue = !isFinalData;
-        _lun = lun;
-        _commandSequenceNumber = _connection.getSession().getCommandSequenceNumber();
-        _expectedStatusSequenceNumber = _connection.getExpectedStatusSequenceNumber();
+        BasicHeaderSegment basicHeader = new BasicHeaderSegment();
+        basicHeader.immediate = true;
+        basicHeader.opCode = OpCode.TextRequest;
+        basicHeader.finalPdu = isFinalData;
+        basicHeader.totalAhsLength = 0;
+        basicHeader.dataSegmentLength = count;
+        basicHeader.initiatorTaskTag = connection.getSession().getCurrentTaskTag();
+        continue_ = !isFinalData;
+        this.lun = lun;
+        commandSequenceNumber = connection.getSession().getCommandSequenceNumber();
+        expectedStatusSequenceNumber = connection.getExpectedStatusSequenceNumber();
         byte[] buffer = new byte[MathUtilities.roundUp(48 + count, 4)];
-        _basicHeader.writeTo(buffer, 0);
-        buffer[1] |= (byte) (_continue ? 0x40 : 0x00);
+        basicHeader.writeTo(buffer, 0);
+        buffer[1] |= (byte) (continue_ ? 0x40 : 0x00);
         EndianUtilities.writeBytesBigEndian(lun, buffer, 8);
-        EndianUtilities.writeBytesBigEndian(_targetTransferTag, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_commandSequenceNumber, buffer, 24);
-        EndianUtilities.writeBytesBigEndian(_expectedStatusSequenceNumber, buffer, 28);
+        EndianUtilities.writeBytesBigEndian(targetTransferTag, buffer, 20);
+        EndianUtilities.writeBytesBigEndian(commandSequenceNumber, buffer, 24);
+        EndianUtilities.writeBytesBigEndian(expectedStatusSequenceNumber, buffer, 28);
         System.arraycopy(data, offset, buffer, 48, count);
         return buffer;
     }

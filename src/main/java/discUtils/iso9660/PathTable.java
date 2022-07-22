@@ -33,15 +33,16 @@ import discUtils.streams.builder.BuilderExtent;
 
 
 class PathTable extends BuilderExtent {
-    private final boolean _byteSwap;
 
-    private final List<BuildDirectoryInfo> _dirs;
+    private final boolean byteSwap;
 
-    private final Charset _enc;
+    private final List<BuildDirectoryInfo> dirs;
 
-    private final Map<BuildDirectoryMember, Integer> _locations;
+    private final Charset enc;
 
-    private byte[] _readCache;
+    private final Map<BuildDirectoryMember, Integer> locations;
+
+    private byte[] readCache;
 
     public PathTable(boolean byteSwap,
             Charset enc,
@@ -49,41 +50,41 @@ class PathTable extends BuilderExtent {
             Map<BuildDirectoryMember, Integer> locations,
             long start) {
         super(start, calcLength(enc, dirs));
-        _byteSwap = byteSwap;
-        _enc = enc;
-        _dirs = dirs;
-        _locations = locations;
+        this.byteSwap = byteSwap;
+        this.enc = enc;
+        this.dirs = dirs;
+        this.locations = locations;
     }
 
     public void close() throws IOException {
     }
 
     public void prepareForRead() {
-        _readCache = new byte[(int) getLength()];
+        readCache = new byte[(int) getLength()];
         int pos = 0;
-        List<BuildDirectoryInfo> sortedList = new ArrayList<>(_dirs);
+        List<BuildDirectoryInfo> sortedList = new ArrayList<>(dirs);
         sortedList.sort(BuildDirectoryInfo.PathTableSortComparison);
-        Map<BuildDirectoryInfo, Short> dirNumbers = new HashMap<>(_dirs.size());
+        Map<BuildDirectoryInfo, Short> dirNumbers = new HashMap<>(dirs.size());
         short i = 1;
         for (BuildDirectoryInfo di : sortedList) {
             dirNumbers.put(di, i++);
             PathTableRecord ptr = new PathTableRecord();
-            ptr.DirectoryIdentifier = di.pickName(null, _enc);
-            ptr.LocationOfExtent = _locations.get(di);
-            ptr.ParentDirectoryNumber = dirNumbers.get(di.getParent());
-            pos += ptr.write(_byteSwap, _enc, _readCache, pos);
+            ptr.directoryIdentifier = di.pickName(null, enc);
+            ptr.locationOfExtent = locations.get(di);
+            ptr.parentDirectoryNumber = dirNumbers.get(di.getParent());
+            pos += ptr.write(byteSwap, enc, readCache, pos);
         }
     }
 
     public int read(long diskOffset, byte[] buffer, int offset, int count) {
         long relPos = diskOffset - getStart();
-        int numRead = (int) Math.min(count, _readCache.length - relPos);
-        System.arraycopy(_readCache, (int) relPos, buffer, offset, numRead);
+        int numRead = (int) Math.min(count, readCache.length - relPos);
+        System.arraycopy(readCache, (int) relPos, buffer, offset, numRead);
         return numRead;
     }
 
     public void disposeReadState() {
-        _readCache = null;
+        readCache = null;
     }
 
     private static int calcLength(Charset enc, List<BuildDirectoryInfo> dirs) {

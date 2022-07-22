@@ -29,12 +29,13 @@ import discUtils.core.vfs.IVfsDirectory;
 
 
 public class Directory extends File implements IVfsDirectory<DirectoryEntry, File> {
-    private final IDirectoryInode _dirInode;
+
+    private final IDirectoryInode dirInode;
 
     public Directory(Context context, Inode inode, MetadataRef inodeRef) {
         super(context, inode, inodeRef);
-        _dirInode = inode instanceof IDirectoryInode ? (IDirectoryInode) inode : null;
-        if (_dirInode == null) {
+        dirInode = inode instanceof IDirectoryInode ? (IDirectoryInode) inode : null;
+        if (dirInode == null) {
             throw new IllegalArgumentException("Inode is not a directory");
         }
     }
@@ -42,11 +43,11 @@ public class Directory extends File implements IVfsDirectory<DirectoryEntry, Fil
     public List<DirectoryEntry> getAllEntries() {
         List<DirectoryEntry> records = new ArrayList<>();
         MetablockReader reader = getContext().getDirectoryReader();
-        reader.setPosition(_dirInode.getStartBlock(), _dirInode.getOffset());
-        while (reader.distanceFrom(_dirInode.getStartBlock(), _dirInode.getOffset()) < _dirInode.getFileSize() - 3) {
+        reader.setPosition(dirInode.getStartBlock(), dirInode.getOffset());
+        while (reader.distanceFrom(dirInode.getStartBlock(), dirInode.getOffset()) < dirInode.getFileSize() - 3) {
             // For some reason, always 3 greater than actual..
             DirectoryHeader header = DirectoryHeader.readFrom(reader);
-            for (int i = 0; i < header.Count + 1; ++i) {
+            for (int i = 0; i < header.count + 1; ++i) {
                 DirectoryRecord record = DirectoryRecord.readFrom(reader);
                 records.add(new DirectoryEntry(header, record));
             }

@@ -29,17 +29,18 @@ import discUtils.streams.builder.BuilderBufferExtent;
 
 
 public final class TarHeaderExtent extends BuilderBufferExtent {
-    private final long _fileLength;
 
-    private final String _fileName;
+    private final long fileLength;
 
-    private final int _groupId;
+    private final String fileName;
 
-    private final EnumSet<UnixFilePermissions> _mode;
+    private final int groupId;
 
-    private final long _modificationTime;
+    private final EnumSet<UnixFilePermissions> mode;
 
-    private final int _ownerId;
+    private final long modificationTime;
+
+    private final int ownerId;
 
     public TarHeaderExtent(long start,
             String fileName,
@@ -49,12 +50,12 @@ public final class TarHeaderExtent extends BuilderBufferExtent {
             int groupId,
             long modificationTime) {
         super(start, 512);
-        _fileName = fileName;
-        _fileLength = fileLength;
-        _mode = mode;
-        _ownerId = ownerId;
-        _groupId = groupId;
-        _modificationTime = modificationTime;
+        this.fileName = fileName;
+        this.fileLength = fileLength;
+        this.mode = mode;
+        this.ownerId = ownerId;
+        this.groupId = groupId;
+        this.modificationTime = modificationTime;
     }
 
     public TarHeaderExtent(long start, String fileName, long fileLength) {
@@ -64,12 +65,12 @@ public final class TarHeaderExtent extends BuilderBufferExtent {
     protected byte[] getBuffer() {
         byte[] buffer = new byte[TarHeader.Length];
         TarHeader header = new TarHeader();
-        header.FileName = _fileName;
-        header.FileLength = _fileLength;
-        header.FileMode = _mode;
-        header.OwnerId = _ownerId;
-        header.GroupId = _groupId;
-        header.ModificationTime = _modificationTime;
+        header.fileName = fileName;
+        header.fileLength = fileLength;
+        header.fileMode = mode;
+        header.ownerId = ownerId;
+        header.groupId = groupId;
+        header.modificationTime = modificationTime;
         header.writeTo(buffer, 0);
         return buffer;
     }

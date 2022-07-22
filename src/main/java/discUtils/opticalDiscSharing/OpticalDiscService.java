@@ -54,13 +54,14 @@ import okhttp3.Response;
  * Represents a particular Optical Disc Sharing service (typically a Mac or PC).
  */
 public final class OpticalDiscService {
-    private String _askToken;
 
-    private ServiceInstance _instance;
+    private String askToken;
 
-    private final ServiceDiscoveryClient _sdClient;
+    private ServiceInstance instance;
 
-    private String _userName;
+    private final ServiceDiscoveryClient sdClient;
+
+    private String userName;
 
     static OkHttpClient client;
 
@@ -69,8 +70,8 @@ public final class OpticalDiscService {
     }
 
     public OpticalDiscService(ServiceInstance instance, ServiceDiscoveryClient sdClient) {
-        _sdClient = sdClient;
-        _instance = instance;
+        this.sdClient = sdClient;
+        this.instance = instance;
     }
 
     /**
@@ -78,7 +79,7 @@ public final class OpticalDiscService {
      */
     public List<DiscInfo> getAdvertisedDiscs() {
         List<DiscInfo> result = new ArrayList<>();
-        for (Map.Entry<String, byte[]> sdParam : _instance.getParameters().entrySet()) {
+        for (Map.Entry<String, byte[]> sdParam : instance.getParameters().entrySet()) {
             if (sdParam.getKey().startsWith("disk")) {
                 Map<String, String> diskParams = getParams(sdParam.getKey());
                 String infoVal;
@@ -106,7 +107,7 @@ public final class OpticalDiscService {
      * Gets the display name of this service.
      */
     public String getDisplayName() {
-        return _instance.getDisplayName();
+        return instance.getDisplayName();
     }
 
     /**
@@ -130,15 +131,15 @@ public final class OpticalDiscService {
         }
 
         if ((volFlags & 0x200) != 0) {
-            _userName = userName;
+            this.userName = userName;
             askForAccess(userName, computerName, maxWaitSeconds);
 
             // Flush any stale mDNS data - the server advertises extra info
             // (such as the discs available) after a client is granted
             // permission to access a disc.
-            _sdClient.flushCache();
+            sdClient.flushCache();
 
-            _instance = _sdClient.lookupInstance(_instance.getName(), ServiceInstanceFields.All);
+            instance = sdClient.lookupInstance(instance.getName(), ServiceInstanceFields.All);
         }
     }
 
@@ -149,12 +150,12 @@ public final class OpticalDiscService {
      * @return The virtual disk.
      */
     public VirtualDisk openDisc(String name) {
-        ServiceInstanceEndPoint siep = _instance.getEndPoints().get(0);
+        ServiceInstanceEndPoint siep = instance.getEndPoints().get(0);
         List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
 
         URI uri = URI
                 .create("http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort() + "/" + name + ".dmg");
-        return new Disc(uri, _userName, _askToken);
+        return new Disc(uri, userName, askToken);
     }
 
     private static String getAskToken(String askId, URI uri, int maxWaitSecs) {
@@ -245,21 +246,21 @@ public final class OpticalDiscService {
     }
 
     private void askForAccess(String userName, String computerName, int maxWaitSecs) {
-        ServiceInstanceEndPoint siep = _instance.getEndPoints().get(0);
+        ServiceInstanceEndPoint siep = instance.getEndPoints().get(0);
         List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
 
         URI uri = URI.create("http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort());
 
         String askId = initiateAsk(userName, computerName, uri);
 
-        _askToken = getAskToken(askId, uri, maxWaitSecs);
+        askToken = getAskToken(askId, uri, maxWaitSecs);
     }
 
     private Map<String, String> getParams(String section) {
         Map<String, String> result = new HashMap<>();
 
-        if (_instance.getParameters().containsKey(section)) {
-            byte[] data = _instance.getParameters().get(section);
+        if (instance.getParameters().containsKey(section)) {
+            byte[] data = instance.getParameters().get(section);
             String asString = new String(data, StandardCharsets.US_ASCII);
             String[] nvPairs = asString.split(",");
 

@@ -31,6 +31,7 @@ import discUtils.core.VirtualDiskParameters;
  * The parameters used to create a new VMDK file.
  */
 public final class DiskParameters {
+
     /**
      * Initializes a new instance of the DiskParameters class with default
      * values.
@@ -73,66 +74,65 @@ public final class DiskParameters {
     /**
      * Gets or sets the type of emulated disk adapter.
      */
-    private DiskAdapterType _adapterType = DiskAdapterType.None;
+    private DiskAdapterType adapterType = DiskAdapterType.None;
 
     public DiskAdapterType getAdapterType() {
-        return _adapterType;
+        return adapterType;
     }
 
     public void setAdapterType(DiskAdapterType value) {
-        _adapterType = value;
+        adapterType = value;
     }
 
     /**
      * Gets or sets the BIOS Geometry of the virtual disk.
      */
-    private Geometry _biosGeometry;
+    private Geometry biosGeometry;
 
     public Geometry getBiosGeometry() {
-        return _biosGeometry;
+        return biosGeometry;
     }
 
     public void setBiosGeometry(Geometry value) {
-        _biosGeometry = value;
+        biosGeometry = value;
     }
 
     /**
      * Gets or sets the capacity of the virtual disk.
      */
-    private long _capacity;
+    private long capacity;
 
     public long getCapacity() {
-        return _capacity;
+        return capacity;
     }
 
     public void setCapacity(long value) {
-        _capacity = value;
+        capacity = value;
     }
 
     /**
      * Gets or sets the type of VMDK file to create.
      */
-    private DiskCreateType _createType = DiskCreateType.None;
+    private DiskCreateType createType = DiskCreateType.None;
 
     public DiskCreateType getCreateType() {
-        return _createType;
+        return createType;
     }
 
     public void setCreateType(DiskCreateType value) {
-        _createType = value;
+        createType = value;
     }
 
     /**
      * Gets or sets the Physical Geometry of the virtual disk.
      */
-    private Geometry _geometry;
+    private Geometry geometry;
 
     public Geometry getGeometry() {
-        return _geometry;
+        return geometry;
     }
 
     public void setGeometry(Geometry value) {
-        _geometry = value;
+        geometry = value;
     }
-
 }

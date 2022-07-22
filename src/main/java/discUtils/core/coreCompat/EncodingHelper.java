@@ -12,7 +12,8 @@ import vavi.util.StringUtil;
 
 
 public class EncodingHelper {
-    private static boolean _registered;
+
+    private static boolean registered;
 
     static List<CodePage> codePages;
 
@@ -25,10 +26,10 @@ public class EncodingHelper {
     }
 
     public static void registerEncodings() {
-        if (_registered)
+        if (registered)
             return;
 
-        _registered = true;
+        registered = true;
     }
 
     @CsvEntity(url = "classpath:codepage.csv")

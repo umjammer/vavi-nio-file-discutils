@@ -47,10 +47,7 @@ public final class SquashFileSystemBuilderTest {
     public void singleFile() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
-        builder.addFile("file",
-                        new MemoryStream(new byte[] {
-                            1, 2, 3, 4
-                        }));
+        builder.addFile("file", new MemoryStream(new byte[] { 1, 2, 3, 4 }));
         builder.build(fsImage);
 
 //Debug.println("\n" + StringUtil.getDump(fsImage.toArray()));
@@ -66,10 +63,8 @@ public final class SquashFileSystemBuilderTest {
     public void createDirs() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
-                        new MemoryStream(new byte[] {
-                            1, 2, 3, 4
-                        }));
         builder.addFile(FS + "adir" + FS + "anotherdir" + FS + "file",
+                        new MemoryStream(new byte[] { 1, 2, 3, 4 }));
         builder.build(fsImage);
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);
         assertTrue(reader.directoryExists("adir"));
@@ -81,10 +76,7 @@ public final class SquashFileSystemBuilderTest {
     public void defaults() throws Exception {
         MemoryStream fsImage = new MemoryStream();
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
-        builder.addFile("file",
-                        new MemoryStream(new byte[] {
-                            1, 2, 3, 4
-                        }));
+        builder.addFile("file", new MemoryStream(new byte[] { 1, 2, 3, 4 }));
         builder.addDirectory("dir");
         builder.setDefaultUser(1000);
         builder.setDefaultGroup(1234);
@@ -122,10 +114,7 @@ public final class SquashFileSystemBuilderTest {
         MemoryStream fsImage = new MemoryStream();
 
         SquashFileSystemBuilder builder = new SquashFileSystemBuilder();
-        builder.addFile("file",
-                        new MemoryStream(new byte[] {
-                            1, 2, 3, 4
-                        }));
+        builder.addFile("file", new MemoryStream(new byte[] { 1, 2, 3, 4 }));
         builder.build(fsImage);
 
         SquashFileSystemReader reader = new SquashFileSystemReader(fsImage);

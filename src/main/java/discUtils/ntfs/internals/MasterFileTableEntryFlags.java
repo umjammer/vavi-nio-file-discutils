@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 import discUtils.core.coreCompat.EnumSettable;
 
 /**
- * Flags indicating the nature of a Master File Table entry.
+ * flags indicating the nature of a Master File Table entry.
  */
 public enum MasterFileTableEntryFlags implements EnumSettable {
     /**

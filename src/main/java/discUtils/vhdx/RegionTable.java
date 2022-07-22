@@ -43,31 +43,31 @@ public final class RegionTable implements IByteArraySerializable {
 
     public static final UUID MetadataRegionGuid = UUID.fromString("8B7CA206-4790-4B9A-B8FE-575F050F886E");
 
-    private final byte[] _data = new byte[FixedSize];
+    private final byte[] data = new byte[FixedSize];
 
-    public int Checksum;
+    public int checksum;
 
-    public int EntryCount;
+    public int entryCount;
 
-    public Map<UUID, RegionEntry> Regions = new HashMap<>();
+    public Map<UUID, RegionEntry> regions = new HashMap<>();
 
-    public int Reserved;
+    public int reserved;
 
-    public int Signature = RegionTableSignature;
+    public int signature = RegionTableSignature;
 
     public boolean isValid() {
-        if (Signature != RegionTableSignature) {
+        if (signature != RegionTableSignature) {
             return false;
         }
 
-        if (EntryCount > 2047) {
+        if (entryCount > 2047) {
             return false;
         }
 
         byte[] checkData = new byte[FixedSize];
-        System.arraycopy(_data, 0, checkData, 0, FixedSize);
+        System.arraycopy(data, 0, checkData, 0, FixedSize);
         EndianUtilities.writeBytesLittleEndian(0, checkData, 4);
-        return Checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, FixedSize);
+        return checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, FixedSize);
     }
 
     public int size() {
@@ -75,16 +75,16 @@ public final class RegionTable implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        System.arraycopy(buffer, offset, _data, 0, FixedSize);
-        Signature = EndianUtilities.toUInt32LittleEndian(_data, 0);
-        Checksum = EndianUtilities.toUInt32LittleEndian(_data, 4);
-        EntryCount = EndianUtilities.toUInt32LittleEndian(_data, 8);
-        Reserved = EndianUtilities.toUInt32LittleEndian(_data, 12);
-        Regions = new HashMap<>();
+        System.arraycopy(buffer, offset, data, 0, FixedSize);
+        signature = EndianUtilities.toUInt32LittleEndian(data, 0);
+        checksum = EndianUtilities.toUInt32LittleEndian(data, 4);
+        entryCount = EndianUtilities.toUInt32LittleEndian(data, 8);
+        reserved = EndianUtilities.toUInt32LittleEndian(data, 12);
+        regions = new HashMap<>();
         if (isValid()) {
-            for (int i = 0; i < EntryCount; ++i) {
-                RegionEntry entry = EndianUtilities.toStruct(RegionEntry.class, _data, 16 + 32 * i);
-                Regions.put(entry.guid, entry);
+            for (int i = 0; i < entryCount; ++i) {
+                RegionEntry entry = EndianUtilities.toStruct(RegionEntry.class, data, 16 + 32 * i);
+                regions.put(entry.guid, entry);
             }
         }
 
@@ -92,18 +92,18 @@ public final class RegionTable implements IByteArraySerializable {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EntryCount = Regions.size();
-        Checksum = 0;
-        EndianUtilities.writeBytesLittleEndian(Signature, _data, 0);
-        EndianUtilities.writeBytesLittleEndian(Checksum, _data, 4);
-        EndianUtilities.writeBytesLittleEndian(EntryCount, _data, 8);
+        entryCount = regions.size();
+        checksum = 0;
+        EndianUtilities.writeBytesLittleEndian(signature, data, 0);
+        EndianUtilities.writeBytesLittleEndian(checksum, data, 4);
+        EndianUtilities.writeBytesLittleEndian(entryCount, data, 8);
         int dataOffset = 16;
-        for (Map.Entry<UUID, RegionEntry> region : Regions.entrySet()) {
-            region.getValue().writeTo(_data, dataOffset);
+        for (Map.Entry<UUID, RegionEntry> region : regions.entrySet()) {
+            region.getValue().writeTo(data, dataOffset);
             dataOffset += 32;
         }
-        Checksum = Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, _data, 0, FixedSize);
-        EndianUtilities.writeBytesLittleEndian(Checksum, _data, 4);
-        System.arraycopy(_data, 0, buffer, offset, FixedSize);
+        checksum = Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, data, 0, FixedSize);
+        EndianUtilities.writeBytesLittleEndian(checksum, data, 4);
+        System.arraycopy(data, 0, buffer, offset, FixedSize);
     }
 }

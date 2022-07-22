@@ -32,19 +32,20 @@ import discUtils.streams.buffer.IBuffer;
 
 
 public class File implements IVfsFile {
-    protected final Context Context;
 
-    protected final Inode Inode;
+    protected final Context context;
 
-    private IBuffer _content;
+    protected final Inode inode;
+
+    private IBuffer content;
 
     public File(Context context, Inode inode) {
-        Context = context;
-        Inode = inode;
+        this.context = context;
+        this.inode = inode;
     }
 
     public long getLastAccessTimeUtc() {
-        return Inode.getAccessTime();
+        return inode.getAccessTime();
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -52,7 +53,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return Inode.getModificationTime();
+        return inode.getModificationTime();
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -60,7 +61,7 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return Inode.getCreationTime();
+        return inode.getCreationTime();
     }
 
     public void setCreationTimeUtc(long value) {
@@ -68,7 +69,7 @@ public class File implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return UnixFileType.toFileAttributes(Inode.getFileType());
+        return UnixFileType.toFileAttributes(inode.getFileType());
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
@@ -76,14 +77,14 @@ public class File implements IVfsFile {
     }
 
     public long getFileLength() {
-        return Inode.getLength();
+        return inode.getLength();
     }
 
     public IBuffer getFileContent() {
-        if (_content == null) {
-            _content = Inode.getContentBuffer(Context);
+        if (content == null) {
+            content = inode.getContentBuffer(context);
         }
 
-        return _content;
+        return content;
     }
 }

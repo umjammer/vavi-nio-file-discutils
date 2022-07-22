@@ -30,72 +30,75 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class ReparsePoints {
-    private final File _file;
 
-    private final IndexView<discUtils.ntfs.ReparsePoints.Key, discUtils.ntfs.ReparsePoints.Data> _index;
+    private final File file;
+
+    private final IndexView<discUtils.ntfs.ReparsePoints.Key, discUtils.ntfs.ReparsePoints.Data> index;
 
     public ReparsePoints(File file) {
-        _file = file;
-        _index = new IndexView<>(discUtils.ntfs.ReparsePoints.Key.class,
+        this.file = file;
+        index = new IndexView<>(discUtils.ntfs.ReparsePoints.Key.class,
                                  discUtils.ntfs.ReparsePoints.Data.class,
                                  file.getIndex("$R"));
     }
 
     public void add(int tag, FileRecordReference file) {
         discUtils.ntfs.ReparsePoints.Key newKey = new discUtils.ntfs.ReparsePoints.Key();
-        newKey.Tag = tag;
-        newKey.File = file;
+        newKey.tag = tag;
+        newKey.file = file;
         discUtils.ntfs.ReparsePoints.Data data = new discUtils.ntfs.ReparsePoints.Data();
-        _index.put(newKey, data);
-        _file.updateRecordInMft();
+        index.put(newKey, data);
+        this.file.updateRecordInMft();
     }
 
     public void remove(int tag, FileRecordReference file) {
         discUtils.ntfs.ReparsePoints.Key key = new discUtils.ntfs.ReparsePoints.Key();
-        key.Tag = tag;
-        key.File = file;
-        _index.remove(key);
-        _file.updateRecordInMft();
+        key.tag = tag;
+        key.file = file;
+        index.remove(key);
+        this.file.updateRecordInMft();
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "REPARSE POINT INDEX");
-        for (Tuple<discUtils.ntfs.ReparsePoints.Key, discUtils.ntfs.ReparsePoints.Data> entry : _index.getEntries()) {
+        for (Tuple<discUtils.ntfs.ReparsePoints.Key, discUtils.ntfs.ReparsePoints.Data> entry : index.getEntries()) {
             writer.println(indent + "  REPARSE POINT INDEX ENTRY");
-            writer.println(indent + "            Tag: " + String.format("%02x", entry.getKey().Tag));
-            writer.println(indent + "  MFT Reference: " + entry.getKey().File);
+            writer.println(indent + "            Tag: " + String.format("%02x", entry.getKey().tag));
+            writer.println(indent + "  MFT Reference: " + entry.getKey().file);
         }
     }
 
     public final static class Key implements IByteArraySerializable {
-        public FileRecordReference File = new FileRecordReference();
 
-        public int Tag;
+        public FileRecordReference file = new FileRecordReference();
+
+        public int tag;
 
         public int size() {
             return 12;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            Tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-            File = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 4));
+            tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+            file = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 4));
             return 12;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(Tag, buffer, offset);
-            EndianUtilities.writeBytesLittleEndian(File.getValue(), buffer, offset + 4);
+            EndianUtilities.writeBytesLittleEndian(tag, buffer, offset);
+            EndianUtilities.writeBytesLittleEndian(file.getValue(), buffer, offset + 4);
         }
 
         /**
          * /utilities.WriteBytesLittleEndian((int)0, buffer, offset + 12);
          */
         public String toString() {
-            return String.format("%x:", Tag) + File;
+            return String.format("%x:", tag) + file;
         }
     }
 
     public final static class Data implements IByteArraySerializable {
+
         public int size() {
             return 0;
         }

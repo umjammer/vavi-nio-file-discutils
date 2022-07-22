@@ -33,29 +33,30 @@ import dotnet4j.io.Stream;
 
 
 public class StripedStream extends SparseStream {
-    private final boolean _canRead;
 
-    private final boolean _canWrite;
+    private final boolean canRead;
 
-    private final long _length;
+    private final boolean canWrite;
 
-    private final Ownership _ownsWrapped;
+    private final long length;
 
-    private long _position;
+    private final Ownership ownsWrapped;
 
-    private final long _stripeSize;
+    private long position;
 
-    private List<SparseStream> _wrapped;
+    private final long stripeSize;
+
+    private List<SparseStream> wrapped;
 
     public StripedStream(long stripeSize, Ownership ownsWrapped, List<SparseStream> wrapped) {
-        _wrapped = new ArrayList<>(wrapped);
-        _stripeSize = stripeSize;
-        _ownsWrapped = ownsWrapped;
-        _canRead = _wrapped.get(0).canRead();
-        _canWrite = _wrapped.get(0).canWrite();
-        long subStreamLength = _wrapped.get(0).getLength();
-        for (SparseStream stream : _wrapped) {
-            if (stream.canRead() != _canRead || stream.canWrite() != _canWrite) {
+        this.wrapped = new ArrayList<>(wrapped);
+        this.stripeSize = stripeSize;
+        this.ownsWrapped = ownsWrapped;
+        canRead = this.wrapped.get(0).canRead();
+        canWrite = this.wrapped.get(0).canWrite();
+        long subStreamLength = this.wrapped.get(0).getLength();
+        for (SparseStream stream : this.wrapped) {
+            if (stream.canRead() != canRead || stream.canWrite() != canWrite) {
                 throw new IllegalArgumentException("All striped streams must have the same read/write permissions");
             }
 
@@ -64,11 +65,11 @@ public class StripedStream extends SparseStream {
             }
 
         }
-        _length = subStreamLength * wrapped.size();
+        length = subStreamLength * wrapped.size();
     }
 
     public boolean canRead() {
-        return _canRead;
+        return canRead;
     }
 
     public boolean canSeek() {
@@ -76,29 +77,29 @@ public class StripedStream extends SparseStream {
     }
 
     public boolean canWrite() {
-        return _canWrite;
+        return canWrite;
     }
 
     public List<StreamExtent> getExtents() {
-        return Collections.singletonList(new StreamExtent(0, _length));
+        return Collections.singletonList(new StreamExtent(0, length));
     }
 
     // Temporary, indicate there are no 'unstored' extents.
     // Consider combining extent information from all wrapped streams in future.
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
-        for (SparseStream stream : _wrapped) {
+        for (SparseStream stream : wrapped) {
             stream.flush();
         }
     }
@@ -108,18 +109,18 @@ public class StripedStream extends SparseStream {
             throw new UnsupportedOperationException("Attempt to read to non-readable stream");
         }
 
-        int maxToRead = (int) Math.min(_length - _position, count);
+        int maxToRead = (int) Math.min(length - position, count);
         int totalRead = 0;
         while (totalRead < maxToRead) {
-            long stripe = _position / _stripeSize;
-            long stripeOffset = _position % _stripeSize;
-            int stripeToRead = (int) Math.min(maxToRead - totalRead, _stripeSize - stripeOffset);
-            int streamIdx = (int) (stripe % _wrapped.size());
-            long streamStripe = stripe / _wrapped.size();
-            Stream targetStream = _wrapped.get(streamIdx);
-            targetStream.setPosition(streamStripe * _stripeSize + stripeOffset);
+            long stripe = position / stripeSize;
+            long stripeOffset = position % stripeSize;
+            int stripeToRead = (int) Math.min(maxToRead - totalRead, stripeSize - stripeOffset);
+            int streamIdx = (int) (stripe % wrapped.size());
+            long streamStripe = stripe / wrapped.size();
+            Stream targetStream = wrapped.get(streamIdx);
+            targetStream.setPosition(streamStripe * stripeSize + stripeOffset);
             int numRead = targetStream.read(buffer, offset + totalRead, stripeToRead);
-            _position += numRead;
+            position += numRead;
             totalRead += numRead;
         }
         return totalRead;
@@ -128,21 +129,21 @@ public class StripedStream extends SparseStream {
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _length;
+            effectiveOffset += length;
         }
 
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
 
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public void setLength(long value) {
-        if (value != _length) {
+        if (value != length) {
             throw new UnsupportedOperationException("Changing the stream length is not permitted for striped streams");
         }
 
@@ -153,31 +154,31 @@ public class StripedStream extends SparseStream {
             throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
 
-        if (_position + count > _length) {
+        if (position + count > length) {
             throw new dotnet4j.io.IOException("Attempt to write beyond end of stream");
         }
 
         int totalWritten = 0;
         while (totalWritten < count) {
-            long stripe = _position / _stripeSize;
-            long stripeOffset = _position % _stripeSize;
-            int stripeToWrite = (int) Math.min(count - totalWritten, _stripeSize - stripeOffset);
-            int streamIdx = (int) (stripe % _wrapped.size());
-            long streamStripe = stripe / _wrapped.size();
-            Stream targetStream = _wrapped.get(streamIdx);
-            targetStream.setPosition(streamStripe * _stripeSize + stripeOffset);
+            long stripe = position / stripeSize;
+            long stripeOffset = position % stripeSize;
+            int stripeToWrite = (int) Math.min(count - totalWritten, stripeSize - stripeOffset);
+            int streamIdx = (int) (stripe % wrapped.size());
+            long streamStripe = stripe / wrapped.size();
+            Stream targetStream = wrapped.get(streamIdx);
+            targetStream.setPosition(streamStripe * stripeSize + stripeOffset);
             targetStream.write(buffer, offset + totalWritten, stripeToWrite);
-            _position += stripeToWrite;
+            position += stripeToWrite;
             totalWritten += stripeToWrite;
         }
     }
 
     public void close() throws IOException {
-        if (_ownsWrapped == Ownership.Dispose && _wrapped != null) {
-            for (SparseStream stream : _wrapped) {
+        if (ownsWrapped == Ownership.Dispose && wrapped != null) {
+            for (SparseStream stream : wrapped) {
                 stream.close();
             }
-            _wrapped = null;
+            wrapped = null;
         }
     }
 }

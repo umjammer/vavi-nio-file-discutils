@@ -82,14 +82,14 @@ public final class NtfsFileSystem extends DiscFileSystem implements
     private static final EnumSet<FileAttributes> NonSettableFileAttributes = EnumSet
             .of(FileAttributes.Directory, FileAttributes.Offline, FileAttributes.ReparsePoint);
 
-    private final NtfsContext _context;
+    private final NtfsContext context;
 
     // Top-level file system structures
 
     // Working state
-    private final ObjectCache<Long, File> _fileCache;
+    private final ObjectCache<Long, File> fileCache;
 
-    private final VolumeInformation _volumeInfo;
+    private final VolumeInformation volumeInfo;
 
     /**
      * Initializes a new instance of the NtfsFileSystem class.
@@ -98,64 +98,64 @@ public final class NtfsFileSystem extends DiscFileSystem implements
      */
     public NtfsFileSystem(Stream stream) {
         super(new NtfsOptions());
-        _context = new NtfsContext();
-        _context.setRawStream(stream);
-        _context.setOptions(getNtfsOptions());
+        context = new NtfsContext();
+        context.setRawStream(stream);
+        context.setOptions(getNtfsOptions());
 
-        _context.setGetFileByIndex(this::getFile);
-        _context.setGetFileByRef(this::getFile);
-        _context.setGetDirectoryByRef(this::getDirectory);
-        _context.setGetDirectoryByIndex(this::getDirectory);
-        _context.setAllocateFile(this::allocateFile);
-        _context.setForgetFile(this::forgetFile);
-        _context.setReadOnly(!stream.canWrite());
+        context.setGetFileByIndex(this::getFile);
+        context.setGetFileByRef(this::getFile);
+        context.setGetDirectoryByRef(this::getDirectory);
+        context.setGetDirectoryByIndex(this::getDirectory);
+        context.setAllocateFile(this::allocateFile);
+        context.setForgetFile(this::forgetFile);
+        context.setReadOnly(!stream.canWrite());
 
-        _fileCache = new ObjectCache<>();
+        fileCache = new ObjectCache<>();
 
         stream.setPosition(0);
         byte[] bytes = StreamUtilities.readExact(stream, 512);
 
-        _context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
-        if (!_context.getBiosParameterBlock().isValid(stream.getLength())) {
+        context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
+        if (!context.getBiosParameterBlock().isValid(stream.getLength())) {
             throw new InvalidFileSystemException("BIOS Parameter block is invalid for an NTFS file system");
         }
 
         if (getNtfsOptions().getReadCacheEnabled()) {
             BlockCacheSettings cacheSettings = new BlockCacheSettings();
-            cacheSettings.setBlockSize(_context.getBiosParameterBlock().getBytesPerCluster());
-            _context.setRawStream(new BlockCacheStream(SparseStream.fromStream(stream, Ownership.None),
+            cacheSettings.setBlockSize(context.getBiosParameterBlock().getBytesPerCluster());
+            context.setRawStream(new BlockCacheStream(SparseStream.fromStream(stream, Ownership.None),
                                                        Ownership.None,
                                                        cacheSettings));
         }
 
         // Bootstrap the Master File Table
-        _context.setMft(new MasterFileTable(_context));
-        File mftFile = new File(_context, _context.getMft().getBootstrapRecord());
-        _fileCache.put(MasterFileTable.MftIndex, mftFile);
-        _context.getMft().initialize(mftFile);
+        context.setMft(new MasterFileTable(context));
+        File mftFile = new File(context, context.getMft().getBootstrapRecord());
+        fileCache.put(MasterFileTable.MftIndex, mftFile);
+        context.getMft().initialize(mftFile);
 
         // Get volume information (includes version number)
         File volumeInfoFile = getFile(MasterFileTable.VolumeIndex);
-        _volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
-Debug.println(Level.FINE, _volumeInfo);
+        volumeInfo = volumeInfoFile.getStream(AttributeType.VolumeInformation, null).getContent(VolumeInformation.class);
+Debug.println(Level.FINE, volumeInfo);
 
         // Initialize access to the other well-known metadata files
-        _context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
-        _context.setAttributeDefinitions(new AttributeDefinitions(getFile(MasterFileTable.AttrDefIndex)));
-        _context.setUpperCase(new UpperCase(getFile(MasterFileTable.UpCaseIndex)));
+        context.setClusterBitmap(new ClusterBitmap(getFile(MasterFileTable.BitmapIndex)));
+        context.setAttributeDefinitions(new AttributeDefinitions(getFile(MasterFileTable.AttrDefIndex)));
+        context.setUpperCase(new UpperCase(getFile(MasterFileTable.UpCaseIndex)));
 
-        if (_volumeInfo.getVersion() >= VolumeInformation.VersionW2k) {
-            _context.setSecurityDescriptors(new SecurityDescriptors(getFile(MasterFileTable.SecureIndex)));
-            _context.setObjectIds(new ObjectIds(getFile(getDirectoryEntry("$Extend" + FS + "$ObjId").getReference())));
-            _context.setReparsePoints(new ReparsePoints(getFile(getDirectoryEntry("$Extend" + FS + "$Reparse").getReference())));
-            _context.setQuotas(new Quotas(getFile(getDirectoryEntry("$Extend" + FS + "$Quota").getReference())));
+        if (volumeInfo.getVersion() >= VolumeInformation.VersionW2k) {
+            context.setSecurityDescriptors(new SecurityDescriptors(getFile(MasterFileTable.SecureIndex)));
+            context.setObjectIds(new ObjectIds(getFile(getDirectoryEntry("$Extend" + FS + "$ObjId").getReference())));
+            context.setReparsePoints(new ReparsePoints(getFile(getDirectoryEntry("$Extend" + FS + "$Reparse").getReference())));
+            context.setQuotas(new Quotas(getFile(getDirectoryEntry("$Extend" + FS + "$Quota").getReference())));
         }
     }
 
     private boolean getCreateShortNames() {
-        return _context.getOptions().getShortNameCreation() == ShortFileNameOption.Enabled ||
-               (_context.getOptions().getShortNameCreation() == ShortFileNameOption.UseVolumeFlag &&
-                !_volumeInfo.getFlags().contains(VolumeInformationFlags.DisableShortNameCreation));
+        return context.getOptions().getShortNameCreation() == ShortFileNameOption.Enabled ||
+               (context.getOptions().getShortNameCreation() == ShortFileNameOption.UseVolumeFlag &&
+                !volumeInfo.getFlags().contains(VolumeInformationFlags.DisableShortNameCreation));
     }
 
     /**
@@ -186,22 +186,22 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public boolean canWrite() {
         // For now, we don't...
-        return !_context.getReadOnly();
+        return !context.getReadOnly();
     }
 
     /**
      * Gets the size of each cluster (in bytes).
      */
     public long getClusterSize() {
-        return _context.getBiosParameterBlock().getBytesPerCluster();
+        return context.getBiosParameterBlock().getBytesPerCluster();
     }
 
     /**
      * Gets the total number of clusters managed by the file system.
      */
     public long getTotalClusters() {
-        return MathUtilities.ceil(_context.getBiosParameterBlock()._totalSectors64,
-                                  _context.getBiosParameterBlock().getSectorsPerCluster());
+        return MathUtilities.ceil(context.getBiosParameterBlock().totalSectors64,
+                                  context.getBiosParameterBlock().getSectorsPerCluster());
     }
 
     /**
@@ -253,7 +253,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 }
             }
 
-            File newFile = File.createNew(_context, destParentDir.getStandardInformation()._fileAttributes);
+            File newFile = File.createNew(context, destParentDir.getStandardInformation().fileAttributeFlags);
             for (NtfsStream origStream : origFile.getAllStreams()) {
                 NtfsStream newStream = newFile.getStream(origStream.getAttributeType(), origStream.getName());
 
@@ -468,7 +468,7 @@ Debug.println(Level.FINE, _volumeInfo);
             }
 
             Directory parentDir = getDirectory(parentDirEntry.getReference());
-            return parentDir.getAllEntries(true).stream().map(m -> Utilities.combinePaths(path, m.getDetails()._fileName)).collect(Collectors.toList());
+            return parentDir.getAllEntries(true).stream().map(m -> Utilities.combinePaths(path, m.getDetails().fileName)).collect(Collectors.toList());
         }
     }
 
@@ -494,8 +494,8 @@ Debug.println(Level.FINE, _volumeInfo);
             Directory parentDir = getDirectory(parentDirEntry.getReference());
             List<String> result = new ArrayList<>();
             for (DirectoryEntry dirEntry : parentDir.getAllEntries(true)) {
-                if (re.matcher(dirEntry.getDetails()._fileName).find()) {
-                    result.add(Utilities.combinePaths(path, dirEntry.getDetails()._fileName));
+                if (re.matcher(dirEntry.getDetails().fileName).find()) {
+                    result.add(Utilities.combinePaths(path, dirEntry.getDetails().fileName));
                 }
             }
             return result;
@@ -537,7 +537,7 @@ Debug.println(Level.FINE, _volumeInfo);
                     throw new dotnet4j.io.IOException("Destination directory already exists");
                 }
 
-                removeFileFromDirectory(sourceParentDir, file, sourceEntry.getDetails()._fileName);
+                removeFileFromDirectory(sourceParentDir, file, sourceEntry.getDetails().fileName);
                 addFileToDirectory(file, destParentDir, Utilities.getFileFromPath(destinationDirectoryName), null);
             }
         }
@@ -587,7 +587,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 }
             }
 
-            removeFileFromDirectory(sourceParentDir, file, sourceEntry.getDetails()._fileName);
+            removeFileFromDirectory(sourceParentDir, file, sourceEntry.getDetails().fileName);
             addFileToDirectory(file, destParentDir, Utilities.getFileFromPath(destinationName), null);
         }
     }
@@ -687,7 +687,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 }
             }
 
-            updateStandardInformation(dirEntry, file, si -> si._fileAttributes = FileNameRecord.setAttributes(_newValue, si._fileAttributes));
+            updateStandardInformation(dirEntry, file, si -> si.fileAttributeFlags = FileNameRecord.setAttributes(_newValue, si.fileAttributeFlags));
         }
     }
 
@@ -704,7 +704,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 throw new FileNotFoundException("File not found " + path);
             }
 
-            return dirEntry.getDetails()._creationTime;
+            return dirEntry.getDetails().creationTime;
         }
     }
 
@@ -716,7 +716,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void setCreationTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            updateStandardInformation(path, si -> si._creationTime = newTime);
+            updateStandardInformation(path, si -> si.creationTime = newTime);
         }
     }
 
@@ -733,7 +733,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 throw new FileNotFoundException("File not found " + path);
             }
 
-            return dirEntry.getDetails()._lastAccessTime;
+            return dirEntry.getDetails().lastAccessTime;
         }
     }
 
@@ -745,7 +745,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void setLastAccessTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            updateStandardInformation(path, si -> si._lastAccessTime = newTime);
+            updateStandardInformation(path, si -> si.lastAccessTime = newTime);
         }
     }
 
@@ -762,7 +762,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 throw new FileNotFoundException("File not found" + path);
             }
 
-            return dirEntry.getDetails()._modificationTime;
+            return dirEntry.getDetails().modificationTime;
         }
     }
 
@@ -774,7 +774,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public void setLastWriteTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
-            updateStandardInformation(path, si -> si._modificationTime = newTime);
+            updateStandardInformation(path, si -> si.modificationTime = newTime);
         }
     }
 
@@ -798,7 +798,7 @@ Debug.println(Level.FINE, _volumeInfo);
             // efficiency - if allowed
             if (getNtfsOptions().getFileLengthFromDirectoryEntries() && attributeName[0] == null &&
                 attributeType[0] == AttributeType.Data) {
-                return dirEntry.getDetails()._realSize;
+                return dirEntry.getDetails().realSize;
             }
 
             // Alternate stream / attribute, pull info from attribute record
@@ -900,7 +900,7 @@ Debug.println(Level.FINE, _volumeInfo);
      * @return The cluster map.
      */
     public ClusterMap buildClusterMap() {
-        return _context.getMft().getClusterMap();
+        return context.getMft().getClusterMap();
     }
 
     /**
@@ -927,28 +927,28 @@ Debug.println(Level.FINE, _volumeInfo);
         writer.println(linePrefix + "NTFS File System Dump");
         writer.println(linePrefix + "=====================");
 
-//        _context.getMft().dump(writer, linePrefix);
+//        context.getMft().dump(writer, linePrefix);
         writer.println(linePrefix);
-        _context.getBiosParameterBlock().dump(writer, linePrefix);
+        context.getBiosParameterBlock().dump(writer, linePrefix);
 
-        if (_context.getSecurityDescriptors() != null) {
+        if (context.getSecurityDescriptors() != null) {
             writer.println(linePrefix);
-            _context.getSecurityDescriptors().dump(writer, linePrefix);
+            context.getSecurityDescriptors().dump(writer, linePrefix);
         }
 
-        if (_context.getObjectIds() != null) {
+        if (context.getObjectIds() != null) {
             writer.println(linePrefix);
-            _context.getObjectIds().dump(writer, linePrefix);
+            context.getObjectIds().dump(writer, linePrefix);
         }
 
-        if (_context.getReparsePoints() != null) {
+        if (context.getReparsePoints() != null) {
             writer.println(linePrefix);
-            _context.getReparsePoints().dump(writer, linePrefix);
+            context.getReparsePoints().dump(writer, linePrefix);
         }
 
-        if (_context.getQuotas() != null) {
+        if (context.getQuotas() != null) {
             writer.println(linePrefix);
-            _context.getQuotas().dump(writer, linePrefix);
+            context.getQuotas().dump(writer, linePrefix);
         }
 
         writer.println(linePrefix);
@@ -956,10 +956,10 @@ Debug.println(Level.FINE, _volumeInfo);
 
         writer.println(linePrefix);
         writer.println(linePrefix + "FULL FILE LISTING");
-        for (FileRecord record : _context.getMft().getRecords()) {
+        for (FileRecord record : context.getMft().getRecords()) {
             // Don't go through cache - these are short-lived, and this is
             // (just!) diagnostics
-            File f = new File(_context, record);
+            File f = new File(context, record);
             f.dump(writer, linePrefix);
 
             for (NtfsStream stream : f.getAllStreams()) {
@@ -1049,7 +1049,7 @@ Debug.println(Level.FINE, _volumeInfo);
                     byte[] oldRpBuffer = StreamUtilities.readExact(contentStream, (int) contentStream.getLength());
                     ReparsePointRecord rp = new ReparsePointRecord();
                     rp.readFrom(oldRpBuffer, 0);
-                    _context.getReparsePoints().remove(rp.Tag, dirEntry.getReference());
+                    context.getReparsePoints().remove(rp.tag, dirEntry.getReference());
                 }
             } else {
                 stream = file.createStream(AttributeType.ReparsePoint, null);
@@ -1057,8 +1057,8 @@ Debug.println(Level.FINE, _volumeInfo);
 
             // Set the new content
             ReparsePointRecord newRp = new ReparsePointRecord();
-            newRp.Tag = reparsePoint.getTag();
-            newRp.Content = reparsePoint.getContent();
+            newRp.tag = reparsePoint.getTag();
+            newRp.content = reparsePoint.getContent();
 
             byte[] contentBuffer = new byte[newRp.size()];
             newRp.writeTo(contentBuffer, 0);
@@ -1071,19 +1071,19 @@ Debug.println(Level.FINE, _volumeInfo);
             // actual file state
             NtfsStream stdInfoStream = file.getStream(AttributeType.StandardInformation, null);
             StandardInformation si = stdInfoStream.getContent(StandardInformation.class);
-            si._fileAttributes.add(FileAttributeFlags.ReparsePoint);
+            si.fileAttributeFlags.add(FileAttributeFlags.ReparsePoint);
             stdInfoStream.setContent(si);
 
             // Update the directory entry used to open the file, so it's
             // accurate
-            dirEntry.getDetails()._eaSizeOrReparsePointTag = newRp.Tag;
+            dirEntry.getDetails().eaSizeOrReparsePointTag = newRp.tag;
             dirEntry.updateFrom(file);
 
             // Write attribute changes back to the Master File Table
             file.updateRecordInMft();
 
             // Add the reparse point to the index
-            _context.getReparsePoints().add(newRp.Tag, dirEntry.getReference());
+            context.getReparsePoints().add(newRp.tag, dirEntry.getReference());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -1109,7 +1109,7 @@ Debug.println(Level.FINE, _volumeInfo);
                 try (Stream contentStream = stream.open(FileAccess.Read)) {
                     byte[] buffer = StreamUtilities.readExact(contentStream, (int) contentStream.getLength());
                     rp.readFrom(buffer, 0);
-                    return new ReparsePoint(rp.Tag, rp.Content);
+                    return new ReparsePoint(rp.tag, rp.content);
                 }
             }
 
@@ -1173,17 +1173,17 @@ Debug.println(Level.FINE, _volumeInfo);
                 throw new FileNotFoundException("Path not found " + path);
             }
 
-            if (givenEntry.getDetails()._fileNameNamespace == FileNameNamespace.Dos) {
-                return givenEntry.getDetails()._fileName;
+            if (givenEntry.getDetails().fileNameNamespace == FileNameNamespace.Dos) {
+                return givenEntry.getDetails().fileName;
             }
-            if (givenEntry.getDetails()._fileNameNamespace == FileNameNamespace.Win32) {
+            if (givenEntry.getDetails().fileNameNamespace == FileNameNamespace.Win32) {
                 File file = getFile(givenEntry.getReference());
 
                 for (NtfsStream stream : file.getStreams(AttributeType.FileName, null)) {
                     FileNameRecord fnr = stream.getContent(FileNameRecord.class);
-                    if (fnr._parentDirectory.equals(givenEntry.getDetails()._parentDirectory) &&
-                        fnr._fileNameNamespace == FileNameNamespace.Dos) {
-                        return fnr._fileName;
+                    if (fnr.parentDirectory.equals(givenEntry.getDetails().parentDirectory) &&
+                        fnr.fileNameNamespace == FileNameNamespace.Dos) {
+                        return fnr.fileName;
                     }
                 }
             }
@@ -1203,7 +1203,7 @@ Debug.println(Level.FINE, _volumeInfo);
             throw new IllegalArgumentException("Short name is not a valid 8.3 file name");
         }
 
-        try (Closeable __newVar27 = new NtfsTransaction()) {
+        try (NtfsTransaction ignored = new NtfsTransaction()) {
             String parentPath = Utilities.getDirectoryFromPath(path);
             DirectoryEntry parentEntry = getDirectoryEntry(parentPath);
             if (parentEntry == null || !parentEntry.getDetails().getFileAttributes().contains(FileAttributes.Directory)) {
@@ -1220,25 +1220,25 @@ Debug.println(Level.FINE, _volumeInfo);
                 throw new FileNotFoundException("Path not found " + path);
             }
 
-            FileNameNamespace givenNamespace = givenEntry.getDetails()._fileNameNamespace;
+            FileNameNamespace givenNamespace = givenEntry.getDetails().fileNameNamespace;
             File file = getFile(givenEntry.getReference());
             if (givenNamespace == FileNameNamespace.Posix && file.getHasWin32OrDosName()) {
                 throw new UnsupportedOperationException("Cannot set a short name on hard links");
             }
 
             // Convert Posix/Win32AndDos to just Win32
-            if (givenEntry.getDetails()._fileNameNamespace != FileNameNamespace.Win32) {
+            if (givenEntry.getDetails().fileNameNamespace != FileNameNamespace.Win32) {
                 dir.removeEntry(givenEntry);
-                dir.addEntry(file, givenEntry.getDetails()._fileName, FileNameNamespace.Win32);
+                dir.addEntry(file, givenEntry.getDetails().fileName, FileNameNamespace.Win32);
             }
 
             // Remove any existing Dos names, and set the new one
             List<NtfsStream> nameStreams = new ArrayList<>(file.getStreams(AttributeType.FileName, null));
             for (NtfsStream stream : nameStreams) {
                 FileNameRecord fnr = stream.getContent(FileNameRecord.class);
-                if (fnr._parentDirectory.equals(givenEntry.getDetails()._parentDirectory) &&
-                    fnr._fileNameNamespace == FileNameNamespace.Dos) {
-                    DirectoryEntry oldEntry = dir.getEntryByName(fnr._fileName);
+                if (fnr.parentDirectory.equals(givenEntry.getDetails().parentDirectory) &&
+                    fnr.fileNameNamespace == FileNameNamespace.Dos) {
+                    DirectoryEntry oldEntry = dir.getEntryByName(fnr.fileName);
                     dir.removeEntry(oldEntry);
                 }
             }
@@ -1246,8 +1246,6 @@ Debug.println(Level.FINE, _volumeInfo);
             dir.addEntry(file, shortName, FileNameNamespace.Dos);
 
             parentEntry.updateFrom(dir);
-        } catch (IOException e) {
-            throw new dotnet4j.io.IOException(e);
         }
     }
 
@@ -1268,11 +1266,11 @@ Debug.println(Level.FINE, _volumeInfo);
             StandardInformation si = file.getStandardInformation();
 
             WindowsFileInformation wfi = new WindowsFileInformation();
-            wfi.setCreationTime(si._creationTime);
-            wfi.setLastAccessTime(si._lastAccessTime);
-            wfi.setChangeTime(si._mftChangedTime);
-            wfi.setLastWriteTime(si._modificationTime);
-            wfi.setFileAttributes(StandardInformation.convertFlags(si._fileAttributes, file.isDirectory()));
+            wfi.setCreationTime(si.creationTime);
+            wfi.setLastAccessTime(si.lastAccessTime);
+            wfi.setChangeTime(si.mftChangedTime);
+            wfi.setLastWriteTime(si.modificationTime);
+            wfi.setFileAttributes(StandardInformation.convertFlags(si.fileAttributeFlags, file.isDirectory()));
             return wfi;
         }
     }
@@ -1286,11 +1284,11 @@ Debug.println(Level.FINE, _volumeInfo);
     public void setFileStandardInformation(String path, WindowsFileInformation info) {
         try (Closeable ntfs = new NtfsTransaction()) {
             updateStandardInformation(path, si -> {
-                si._creationTime = info.getCreationTime();
-                si._lastAccessTime = info.getLastAccessTime();
-                si._mftChangedTime = info.getChangeTime();
-                si._modificationTime = info.getLastWriteTime();
-                si._fileAttributes = StandardInformation.setFileAttributes(info.getFileAttributes(), si._fileAttributes);
+                si.creationTime = info.getCreationTime();
+                si.lastAccessTime = info.getLastAccessTime();
+                si.mftChangedTime = info.getChangeTime();
+                si.modificationTime = info.getLastWriteTime();
+                si.fileAttributeFlags = StandardInformation.setFileAttributes(info.getFileAttributes(), si.fileAttributeFlags);
             });
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -1506,7 +1504,7 @@ Debug.println(Level.FINE, _volumeInfo);
      * @return The Master File Table.
      */
     public discUtils.ntfs.internals.MasterFileTable getMasterFileTable() {
-        return new discUtils.ntfs.internals.MasterFileTable(_context, _context.getMft());
+        return new discUtils.ntfs.internals.MasterFileTable(context, context.getMft());
     }
 
     /**
@@ -1528,7 +1526,7 @@ Debug.println(Level.FINE, _volumeInfo);
             for (String pathElement : pathElements) {
                 DirectoryEntry childDirEntry = focusDir.getEntryByName(pathElement);
                 if (childDirEntry == null) {
-                    EnumSet<FileAttributeFlags> newDirAttrs = focusDir.getStandardInformation()._fileAttributes;
+                    EnumSet<FileAttributeFlags> newDirAttrs = focusDir.getStandardInformation().fileAttributeFlags;
                     if (options != null && options.getCompressed().isPresent()) {
                         if (options.getCompressed().get()) {
                             newDirAttrs.add(FileAttributeFlags.Compressed);
@@ -1537,7 +1535,7 @@ Debug.println(Level.FINE, _volumeInfo);
                         }
                     }
 
-                    Directory childDir = Directory.createNew(_context, newDirAttrs);
+                    Directory childDir = Directory.createNew(context, newDirAttrs);
                     try {
                         childDirEntry = addFileToDirectory(childDir, focusDir, pathElement, options);
                         RawSecurityDescriptor parentSd = doGetSecurity(focusDir);
@@ -1695,14 +1693,14 @@ Debug.println(Level.FINE, _volumeInfo);
             }
 
             File file = getFile(dirEntry.getReference());
-            if (!_context.getOptions().hideDosFileNames()) {
+            if (!context.getOptions().hideDosFileNames()) {
                 return file.getHardLinkCount();
             }
 
             int numHardLinks = 0;
             for (NtfsStream fnStream : file.getStreams(AttributeType.FileName, null)) {
                 FileNameRecord fnr = fnStream.getContent(FileNameRecord.class);
-                if (fnr._fileNameNamespace != FileNameNamespace.Dos) {
+                if (fnr.fileNameNamespace != FileNameNamespace.Dos) {
                     ++numHardLinks;
                 }
             }
@@ -1719,13 +1717,13 @@ Debug.println(Level.FINE, _volumeInfo);
      *            (e.g. Windows XP).
      */
     public void updateBiosGeometry(Geometry geometry) {
-        _context.getBiosParameterBlock()._sectorsPerTrack = (short) geometry.getSectorsPerTrack();
-        _context.getBiosParameterBlock()._numHeads = (short) geometry.getHeadsPerCylinder();
-        _context.getRawStream().setPosition(0);
-        byte[] bpbSector = StreamUtilities.readExact(_context.getRawStream(), 512);
-        _context.getBiosParameterBlock().toBytes(bpbSector, 0);
-        _context.getRawStream().setPosition(0);
-        _context.getRawStream().write(bpbSector, 0, bpbSector.length);
+        context.getBiosParameterBlock().sectorsPerTrack = (short) geometry.getSectorsPerTrack();
+        context.getBiosParameterBlock().numHeads = (short) geometry.getHeadsPerCylinder();
+        context.getRawStream().setPosition(0);
+        byte[] bpbSector = StreamUtilities.readExact(context.getRawStream(), 512);
+        context.getBiosParameterBlock().toBytes(bpbSector, 0);
+        context.getRawStream().setPosition(0);
+        context.getRawStream().write(bpbSector, 0, bpbSector.length);
     }
 
     DirectoryEntry getDirectoryEntry(String path) {
@@ -1736,16 +1734,16 @@ Debug.println(Level.FINE, _volumeInfo);
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_context != null && _context.getMft() != null) {
-            _context.getMft().close();
-            _context.setMft(null);
+        if (context != null && context.getMft() != null) {
+            context.getMft().close();
+            context.setMft(null);
         }
 
-        BlockCompressor _disposableCompressor = _context.getOptions().getCompressor();
+        BlockCompressor _disposableCompressor = context.getOptions().getCompressor();
         if (_disposableCompressor instanceof Closeable) {
             Closeable disposableCompressor = (Closeable) _disposableCompressor;
             disposableCompressor.close();
-            _context.getOptions().setCompressor(null);
+            context.getOptions().setCompressor(null);
         }
 
         super.close();
@@ -1754,13 +1752,13 @@ Debug.println(Level.FINE, _volumeInfo);
     private static void removeFileFromDirectory(Directory dir, File file, String name) {
         List<String> aliases = new ArrayList<>();
         DirectoryEntry dirEntry = dir.getEntryByName(name);
-        if (dirEntry.getDetails()._fileNameNamespace == FileNameNamespace.Dos ||
-            dirEntry.getDetails()._fileNameNamespace == FileNameNamespace.Win32) {
+        if (dirEntry.getDetails().fileNameNamespace == FileNameNamespace.Dos ||
+            dirEntry.getDetails().fileNameNamespace == FileNameNamespace.Win32) {
             for (NtfsStream fnStream : file.getStreams(AttributeType.FileName, null)) {
                 FileNameRecord fnr = fnStream.getContent(FileNameRecord.class);
-                if ((fnr._fileNameNamespace == FileNameNamespace.Win32 || fnr._fileNameNamespace == FileNameNamespace.Dos) &&
-                    fnr._parentDirectory.getValue() == dir.getMftReference().getValue()) {
-                    aliases.add(fnr._fileName);
+                if ((fnr.fileNameNamespace == FileNameNamespace.Win32 || fnr.fileNameNamespace == FileNameNamespace.Dos) &&
+                    fnr.parentDirectory.getValue() == dir.getMftReference().getValue()) {
+                    aliases.add(fnr.fileName);
                 }
             }
         } else {
@@ -1804,7 +1802,7 @@ Debug.println(Level.FINE, _volumeInfo);
         DirectoryEntry result;
         DirectoryEntry parentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(path));
         Directory parentDir = getDirectory(parentDirEntry.getReference());
-        EnumSet<FileAttributeFlags> newFileAttrs = parentDir.getStandardInformation()._fileAttributes;
+        EnumSet<FileAttributeFlags> newFileAttrs = parentDir.getStandardInformation().fileAttributeFlags;
         if (options != null && options.getCompressed().isPresent()) {
             if (options.getCompressed().get()) {
                 newFileAttrs.add(FileAttributeFlags.Compressed);
@@ -1813,7 +1811,7 @@ Debug.println(Level.FINE, _volumeInfo);
             }
         }
 
-        File file = File.createNew(_context, newFileAttrs);
+        File file = File.createNew(context, newFileAttrs);
         try {
             result = addFileToDirectory(file, parentDir, Utilities.getFileFromPath(path), options);
             RawSecurityDescriptor parentSd = doGetSecurity(parentDir);
@@ -1856,12 +1854,12 @@ Debug.println(Level.FINE, _volumeInfo);
             boolean isDir = de.getDetails().getFileAttributes().contains(FileAttributes.Directory);
             if ((isDir && dirs) || (!isDir && files)) {
                 if (regex.matcher(de.getSearchName()).find()) {
-                    results.add(Utilities.combinePaths(path, de.getDetails()._fileName));
+                    results.add(Utilities.combinePaths(path, de.getDetails().fileName));
                 }
             }
 
             if (subFolders && isDir) {
-                doSearch(results, Utilities.combinePaths(path, de.getDetails()._fileName), regex, subFolders, dirs, files);
+                doSearch(results, Utilities.combinePaths(path, de.getDetails().fileName), regex, subFolders, dirs, files);
             }
         }
     }
@@ -1922,10 +1920,10 @@ Debug.println(Level.FINE, _volumeInfo);
             // actual file state
             NtfsStream stdInfoStream = file.getStream(AttributeType.StandardInformation, null);
             StandardInformation si = stdInfoStream.getContent(StandardInformation.class);
-            si._fileAttributes.remove(FileAttributeFlags.ReparsePoint);
+            si.fileAttributeFlags.remove(FileAttributeFlags.ReparsePoint);
             stdInfoStream.setContent(si);
             // Remove the reparse point from the index
-            _context.getReparsePoints().remove(rp.Tag, file.getMftReference());
+            context.getReparsePoints().remove(rp.tag, file.getMftReference());
         }
     }
 
@@ -1936,7 +1934,7 @@ Debug.println(Level.FINE, _volumeInfo);
         }
 
         StandardInformation si = file.getStandardInformation();
-        return _context.getSecurityDescriptors().getDescriptorById(si._securityId);
+        return context.getSecurityDescriptors().getDescriptorById(si.securityId);
     }
 
     private void doSetSecurity(File file, RawSecurityDescriptor securityDescriptor) {
@@ -1946,12 +1944,12 @@ Debug.println(Level.FINE, _volumeInfo);
             sd.setDescriptor(securityDescriptor);
             legacyStream.setContent(sd);
         } else {
-            int id = _context.getSecurityDescriptors().addDescriptor(securityDescriptor);
+            int id = context.getSecurityDescriptors().addDescriptor(securityDescriptor);
             // Update the standard information attribute - so it reflects the
             // actual file state
             NtfsStream stream = file.getStream(AttributeType.StandardInformation, null);
             StandardInformation si = stream.getContent(StandardInformation.class);
-            si._securityId = id;
+            si.securityId = id;
             stream.setContent(si);
             // Write attribute changes back to the Master File Table
             file.updateRecordInMft();
@@ -1997,7 +1995,7 @@ Debug.println(Level.FINE, _volumeInfo);
 
         if (fileNameElements.length > 2) {
             String typeName = fileNameElements[2];
-            AttributeDefinitionRecord typeDefn = _context.getAttributeDefinitions().lookup(typeName);
+            AttributeDefinitionRecord typeDefn = context.getAttributeDefinitions().lookup(typeName);
             if (typeDefn == null) {
                 throw new FileNotFoundException(String.format("No such attribute type '%s'", typeName));
             }
@@ -2028,7 +2026,7 @@ Debug.println(Level.FINE, _volumeInfo);
     }
 
     File getFile(FileRecordReference fileReference) {
-        FileRecord record = _context.getMft().getRecord(fileReference);
+        FileRecord record = context.getMft().getRecord(fileReference);
         if (record == null) {
             return null;
         }
@@ -2039,25 +2037,25 @@ Debug.println(Level.FINE, _volumeInfo);
             return null;
         }
 
-        File file = _fileCache.get(fileReference.getMftIndex());
+        File file = fileCache.get(fileReference.getMftIndex());
         if (file != null && file.getMftReference().getSequenceNumber() != fileReference.getSequenceNumber()) {
             file = null;
         }
 
         if (file == null) {
             if (record.getFlags().contains(FileRecordFlags.IsDirectory)) {
-                file = new Directory(_context, record);
+                file = new Directory(context, record);
             } else {
-                file = new File(_context, record);
+                file = new File(context, record);
             }
-            _fileCache.put(fileReference.getMftIndex(), file);
+            fileCache.put(fileReference.getMftIndex(), file);
         }
 
         return file;
     }
 
     File getFile(long index) {
-        FileRecord record = _context.getMft().getRecord(index, false);
+        FileRecord record = context.getMft().getRecord(index, false);
         if (record == null) {
             return null;
         }
@@ -2068,19 +2066,19 @@ Debug.println(Level.FINE, _volumeInfo);
             return null;
         }
 
-        File file = _fileCache.get(index);
+        File file = fileCache.get(index);
         if (file != null && file.getMftReference().getSequenceNumber() != record.getSequenceNumber()) {
             file = null;
         }
 
         if (file == null) {
             if (record.getFlags().contains(FileRecordFlags.IsDirectory)) {
-                file = new Directory(_context, record);
+                file = new Directory(context, record);
             } else {
-                file = new File(_context, record);
+                file = new File(context, record);
             }
 
-            _fileCache.put(index, file);
+            fileCache.put(index, file);
         }
 
         return file;
@@ -2089,17 +2087,17 @@ Debug.println(Level.FINE, _volumeInfo);
     File allocateFile(EnumSet<FileRecordFlags> flags) {
         File result = null;
         if (flags.contains(FileRecordFlags.IsDirectory)) {
-            result = new Directory(_context, _context.getMft().allocateRecord(flags, false));
+            result = new Directory(context, context.getMft().allocateRecord(flags, false));
         } else {
-            result = new File(_context, _context.getMft().allocateRecord(flags, false));
+            result = new File(context, context.getMft().allocateRecord(flags, false));
         }
 
-        _fileCache.put(result.getMftReference().getMftIndex(), result);
+        fileCache.put(result.getMftReference().getMftIndex(), result);
         return result;
     }
 
     void forgetFile(File file) {
-        _fileCache.remove((long) file.getIndexInMft());
+        fileCache.remove((long) file.getIndexInMft());
     }
 
     /**
@@ -2114,7 +2112,7 @@ Debug.println(Level.FINE, _volumeInfo);
      */
     public long getUsedSpace() {
         long usedCluster = 0;
-        Bitmap bitmap = _context.getClusterBitmap().getBitmap();
+        Bitmap bitmap = context.getClusterBitmap().getBitmap();
         long processed = 0L;
         while (processed < bitmap.getSize()) {
             byte[] buffer = new byte[(int) (4 * Sizes.OneKiB)];

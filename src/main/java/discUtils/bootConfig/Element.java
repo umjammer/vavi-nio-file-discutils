@@ -34,53 +34,54 @@ import java.util.UUID;
  * Represents an element in a Boot Configuration Database object.
  */
 public class Element {
-    private ApplicationType _appType = ApplicationType.None;
 
-    private final int _identifier;
+    private ApplicationType appType = ApplicationType.None;
 
-    private final UUID _obj;
+    private final int identifier;
 
-    private final BaseStorage _storage;
+    private final UUID obj;
 
-    private ElementValue _value;
+    private final BaseStorage storage;
+
+    private ElementValue value;
 
     public Element(BaseStorage storage, UUID obj, ApplicationType appType, int identifier) {
-        _storage = storage;
-        _obj = obj;
-        _appType = appType;
-        _identifier = identifier;
+        this.storage = storage;
+        this.obj = obj;
+        this.appType = appType;
+        this.identifier = identifier;
     }
 
     /**
      * Gets the class of the element.
      */
     public ElementClass getClass_() {
-        return ElementClass.valueOf((_identifier >>> 28) & 0xF);
+        return ElementClass.valueOf((identifier >>> 28) & 0xF);
     }
 
     /**
      * Gets the element's format.
      */
     public ElementFormat getFormat() {
-        return ElementFormat.valueOf((_identifier >>> 24) & 0xF);
+        return ElementFormat.valueOf((identifier >>> 24) & 0xF);
     }
 
     /**
      * Gets the friendly name of the element, if any.
      */
     public String getFriendlyName() {
-        return "{" + identifierToName(_appType, _identifier) + "}";
+        return "{" + identifierToName(appType, identifier) + "}";
     }
 
     /**
      * Gets or sets the element's value.
      */
     public ElementValue getValue() {
-        if (_value == null) {
-            _value = loadValue();
+        if (value == null) {
+            value = loadValue();
         }
 
-        return _value;
+        return value;
     }
 
     public void setValue(ElementValue value) {
@@ -89,7 +90,7 @@ public class Element {
                     .format("Attempt to assign %2$s value to %1$s format element", getFormat(), value.getFormat()));
         }
 
-        _value = value;
+        this.value = value;
         writeValue();
     }
 
@@ -99,7 +100,7 @@ public class Element {
      * @return A hex string.
      */
     public String toString() {
-        return String.format("%8x", _identifier);
+        return String.format("%8x", identifier);
     }
 
     @SuppressWarnings("incomplete-switch")
@@ -378,44 +379,44 @@ public class Element {
 //Debug.println("getFormat():" + getFormat());
         switch (getFormat()) {
         case Boolean:
-            return new BooleanElementValue(_storage.getBinary(_obj, _identifier));
+            return new BooleanElementValue(storage.getBinary(obj, identifier));
         case Device:
-            return new DeviceElementValue(_storage.getBinary(_obj, _identifier));
+            return new DeviceElementValue(storage.getBinary(obj, identifier));
         case Guid:
-            return new GuidElementValue(_storage.getString(_obj, _identifier));
+            return new GuidElementValue(storage.getString(obj, identifier));
         case GuidList:
-            return new GuidListElementValue(_storage.getMultiString(_obj, _identifier));
+            return new GuidListElementValue(storage.getMultiString(obj, identifier));
         case Integer:
-            return new IntegerElementValue(_storage.getBinary(_obj, _identifier));
+            return new IntegerElementValue(storage.getBinary(obj, identifier));
         case IntegerList:
-            return new IntegerListElementValue(_storage.getBinary(_obj, _identifier));
+            return new IntegerListElementValue(storage.getBinary(obj, identifier));
         case String:
-            return new StringElementValue(_storage.getString(_obj, _identifier));
+            return new StringElementValue(storage.getString(obj, identifier));
         default:
             throw new IllegalArgumentException("Unknown element format: " + getFormat());
         }
     }
 
     private void writeValue() {
-        switch (_value.getFormat()) {
+        switch (value.getFormat()) {
         case Boolean:
-            _storage.setBinary(_obj, _identifier, ((BooleanElementValue) _value).getBytes());
+            storage.setBinary(obj, identifier, ((BooleanElementValue) value).getBytes());
             break;
         case Device:
-            _storage.setBinary(_obj, _identifier, ((DeviceElementValue) _value).getBytes());
+            storage.setBinary(obj, identifier, ((DeviceElementValue) value).getBytes());
             break;
         case GuidList:
-            _storage.setMultiString(_obj, _identifier, ((GuidListElementValue) _value).getGuidStrings());
+            storage.setMultiString(obj, identifier, ((GuidListElementValue) value).getGuidStrings());
             break;
         case Integer:
-            _storage.setBinary(_obj, _identifier, ((IntegerElementValue) _value).getBytes());
+            storage.setBinary(obj, identifier, ((IntegerElementValue) value).getBytes());
             break;
         case IntegerList:
-            _storage.setBinary(_obj, _identifier, ((IntegerListElementValue) _value).getBytes());
+            storage.setBinary(obj, identifier, ((IntegerListElementValue) value).getBytes());
             break;
         case Guid:
         case String:
-            _storage.setString(_obj, _identifier, _value.toString());
+            storage.setString(obj, identifier, value.toString());
             break;
         default:
             throw new IllegalArgumentException("Unknown element format: " + getFormat());

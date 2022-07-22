@@ -31,53 +31,54 @@ import discUtils.core.vfs.VfsDirEntry;
 
 
 public class DirEntry extends VfsDirEntry {
-    private IDirectoryEntry _entry;
 
-    private final Context _context;
+    private IDirectoryEntry entry;
 
-    private String _name;
+    private final Context context;
 
-    private Directory __CachedDirectory;
+    private String name;
+
+    private Directory cachedDirectory;
 
     public Directory getCachedDirectory() {
-        return __CachedDirectory;
+        return cachedDirectory;
     }
 
     public void setCachedDirectory(Directory value) {
-        __CachedDirectory = value;
+        cachedDirectory = value;
     }
 
     private DirEntry(Context context) {
-        _context = context;
+        this.context = context;
     }
 
     public DirEntry(IDirectoryEntry entry, Context context) {
         this(context);
-        _entry = entry;
-        _name = new String(_entry.getName(), _context.getOptions().getFileNameEncoding());
-        setInode(_context.getInode(_entry.getInode()));
+        this.entry = entry;
+        name = new String(this.entry.getName(), this.context.getOptions().getFileNameEncoding());
+        setInode(this.context.getInode(this.entry.getInode()));
     }
 
-    private Inode __Inode;
+    private Inode inode;
 
     public Inode getInode() {
-        return __Inode;
+        return inode;
     }
 
     public void setInode(Inode value) {
-        __Inode = value;
+        inode = value;
     }
 
     public boolean isDirectory() {
-        return getInode().getFileType() == UnixFileType.Directory;
+        return inode.getFileType() == UnixFileType.Directory;
     }
 
     public boolean isSymlink() {
-        return getInode().getFileType() == UnixFileType.Link;
+        return inode.getFileType() == UnixFileType.Link;
     }
 
     public String getFileName() {
-        return _name;
+        return name;
     }
 
     public boolean hasVfsTimeInfo() {
@@ -85,15 +86,15 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public long getLastAccessTimeUtc() {
-        return getInode().getAccessTime();
+        return inode.getAccessTime();
     }
 
     public long getLastWriteTimeUtc() {
-        return getInode().getModificationTime();
+        return inode.getModificationTime();
     }
 
     public long getCreationTimeUtc() {
-        return getInode().getCreationTime();
+        return inode.getCreationTime();
     }
 
     public boolean hasVfsFileAttributes() {
@@ -101,10 +102,10 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return UnixFileType.toFileAttributes(getInode().getFileType());
+        return UnixFileType.toFileAttributes(inode.getFileType());
     }
 
     public long getUniqueCacheId() {
-        return ((long) getInode().getAllocationGroup()) << 32 | getInode().getRelativeInodeNumber();
+        return ((long) inode.getAllocationGroup()) << 32 | inode.getRelativeInodeNumber();
     }
 }

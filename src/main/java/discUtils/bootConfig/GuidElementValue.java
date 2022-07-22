@@ -23,10 +23,11 @@
 package discUtils.bootConfig;
 
 public class GuidElementValue extends ElementValue {
-    private final String _value;
+
+    private final String value;
 
     public GuidElementValue(String value) {
-        _value = value;
+        this.value = value;
     }
 
     public ElementFormat getFormat() {
@@ -34,10 +35,10 @@ public class GuidElementValue extends ElementValue {
     }
 
     public String toString() {
-        if (_value == null || _value.isEmpty()) {
+        if (value == null || value.isEmpty()) {
             return "<none>";
         }
 
-        return _value;
+        return value;
     }
 }

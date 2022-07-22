@@ -26,40 +26,41 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<AttributeKey> {
-    private short _keyLength;
+
+    private short keyLength;
 
     @SuppressWarnings("unused")
-    private short _pad;
+    private short pad;
 
     @SuppressWarnings("unused")
-    private int _startBlock;
+    private int startBlock;
 
     public AttributeKey() {
     }
 
     public AttributeKey(CatalogNodeId nodeId, String name) {
-        _fileId = nodeId;
-        _name = name;
+        fileId = nodeId;
+        this.name = name;
     }
 
-    private CatalogNodeId _fileId;
+    private CatalogNodeId fileId;
 
     public CatalogNodeId getFileId() {
-        return _fileId;
+        return fileId;
     }
 
     public void setFileId(CatalogNodeId value) {
-        _fileId = value;
+        fileId = value;
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     public int size() {
@@ -67,13 +68,13 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        _pad = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        _fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        _startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        _name = HfsPlusUtilities.readUniStr255(buffer, offset + 12);
+        keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        pad = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
+        fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
+        startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        name = HfsPlusUtilities.readUniStr255(buffer, offset + 12);
 
-        return _keyLength + 2;
+        return keyLength + 2;
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -89,14 +90,14 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
             throw new NullPointerException("other");
         }
 
-        if (!_fileId.equals(other._fileId)) {
-            return _fileId.getId() < other._fileId.getId() ? -1 : 1;
+        if (!fileId.equals(other.fileId)) {
+            return fileId.getId() < other.fileId.getId() ? -1 : 1;
         }
 
-        return HfsPlusUtilities.fastUnicodeCompare(_name, other._name);
+        return HfsPlusUtilities.fastUnicodeCompare(name, other.name);
     }
 
     public String toString() {
-        return _name + " (" + _fileId + ")";
+        return name + " (" + fileId + ")";
     }
 }

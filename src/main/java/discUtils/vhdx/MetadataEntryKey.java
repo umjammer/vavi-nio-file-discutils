@@ -26,21 +26,22 @@ import java.util.UUID;
 
 
 public final class MetadataEntryKey {
-    private UUID _itemId;
+
+    private UUID itemId;
 
     public MetadataEntryKey(UUID itemId, boolean isUser) {
-        _itemId = itemId;
-        __IsUser = isUser;
+        this.itemId = itemId;
+        this.isUser = isUser;
     }
 
-    private boolean __IsUser;
+    private boolean isUser;
 
     public boolean isUser() {
-        return __IsUser;
+        return isUser;
     }
 
     public UUID getItemId() {
-        return _itemId;
+        return itemId;
     }
 
     public boolean equals(MetadataEntryKey other) {
@@ -48,11 +49,11 @@ public final class MetadataEntryKey {
             return false;
         }
 
-        return _itemId.equals(other._itemId) && isUser() == other.isUser();
+        return itemId.equals(other.itemId) && isUser == other.isUser;
     }
 
     public static MetadataEntryKey fromEntry(MetadataEntry entry) {
-        return new MetadataEntryKey(entry.ItemId, entry.Flags.contains(MetadataEntryFlags.IsUser));
+        return new MetadataEntryKey(entry.itemId, entry.flags.contains(MetadataEntryFlags.IsUser));
     }
 
     public boolean equals(Object other) {
@@ -65,10 +66,10 @@ public final class MetadataEntryKey {
     }
 
     public int hashCode() {
-        return _itemId.hashCode() ^ (isUser() ? 0x3C13A5 : 0);
+        return itemId.hashCode() ^ (isUser ? 0x3C13A5 : 0);
     }
 
     public String toString() {
-        return _itemId + (isUser() ? " - User" : " - System");
+        return itemId + (isUser ? " - User" : " - System");
     }
 }

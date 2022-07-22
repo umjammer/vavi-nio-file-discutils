@@ -28,16 +28,16 @@ import discUtils.streams.util.EndianUtilities;
 
 public class GeometryRecord {
 
-    public int Cylinders;
+    public int cylinders;
 
-    public int Heads;
+    public int heads;
 
-    public int Sectors;
+    public int sectors;
 
-    public int SectorSize;
+    public int sectorSize;
 
     public GeometryRecord() {
-        SectorSize = 512;
+        sectorSize = 512;
     }
 
     public static GeometryRecord fromCapacity(long capacity) {
@@ -45,43 +45,43 @@ public class GeometryRecord {
 
         long totalSectors = capacity / 512;
         if (totalSectors / (16 * 63) <= 1024) {
-            result.Cylinders = (int) Math.max(totalSectors / (16 * 63), 1);
-            result.Heads = 16;
+            result.cylinders = (int) Math.max(totalSectors / (16 * 63), 1);
+            result.heads = 16;
         } else if (totalSectors / (32 * 63) <= 1024) {
-            result.Cylinders = (int) Math.max(totalSectors / (32 * 63), 1);
-            result.Heads = 32;
+            result.cylinders = (int) Math.max(totalSectors / (32 * 63), 1);
+            result.heads = 32;
         } else if (totalSectors / (64 * 63) <= 1024) {
-            result.Cylinders = (int) (totalSectors / (64 * 63));
-            result.Heads = 64;
+            result.cylinders = (int) (totalSectors / (64 * 63));
+            result.heads = 64;
         } else if (totalSectors / (128 * 63) <= 1024) {
-            result.Cylinders = (int) (totalSectors / (128 * 63));
-            result.Heads = 128;
+            result.cylinders = (int) (totalSectors / (128 * 63));
+            result.heads = 128;
         } else {
-            result.Cylinders = (int) Math.min(totalSectors / (255 * 63), 1024);
-            result.Heads = 255;
+            result.cylinders = (int) Math.min(totalSectors / (255 * 63), 1024);
+            result.heads = 255;
         }
 
-        result.Sectors = 63;
+        result.sectors = 63;
 
         return result;
     }
 
     public void read(byte[] buffer, int offset) {
-        Cylinders = EndianUtilities.toInt32LittleEndian(buffer, offset + 0);
-        Heads = EndianUtilities.toInt32LittleEndian(buffer, offset + 4);
-        Sectors = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
-        SectorSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
+        cylinders = EndianUtilities.toInt32LittleEndian(buffer, offset + 0);
+        heads = EndianUtilities.toInt32LittleEndian(buffer, offset + 4);
+        sectors = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
+        sectorSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
     }
 
     public void write(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Cylinders, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(Heads, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(Sectors, buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(SectorSize, buffer, offset + 12);
+        EndianUtilities.writeBytesLittleEndian(cylinders, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(heads, buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian(sectors, buffer, offset + 8);
+        EndianUtilities.writeBytesLittleEndian(sectorSize, buffer, offset + 12);
     }
 
     public Geometry toGeometry(long actualCapacity) {
-        long cylinderCapacity = SectorSize * (long) Sectors * Heads;
-        return new Geometry((int) (actualCapacity / cylinderCapacity), Heads, Sectors, SectorSize);
+        long cylinderCapacity = sectorSize * (long) sectors * heads;
+        return new Geometry((int) (actualCapacity / cylinderCapacity), heads, sectors, sectorSize);
     }
 }

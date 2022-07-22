@@ -32,29 +32,30 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileContentBuffer implements IBuffer {
+
     private static final int InvalidFragmentKey = 0xFFFFFFFF;
 
-    private final int[] _blockLengths;
+    private final int[] blockLengths;
 
-    private final Context _context;
+    private final Context context;
 
-    private final RegularInode _inode;
+    private final RegularInode inode;
 
     public FileContentBuffer(Context context, RegularInode inode, MetadataRef inodeRef) {
-        _context = context;
-        _inode = inode;
+        this.context = context;
+        this.inode = inode;
         context.getInodeReader().setPosition(inodeRef);
-        context.getInodeReader().skip(_inode.size());
-        int numBlocks = (int) (_inode.getFileSize() / _context.getSuperBlock().BlockSize);
-        if (_inode.getFileSize() % _context.getSuperBlock().BlockSize != 0 && _inode.FragmentKey == InvalidFragmentKey) {
+        context.getInodeReader().skip(this.inode.size());
+        int numBlocks = (int) (this.inode.getFileSize() / this.context.getSuperBlock().blockSize);
+        if (this.inode.getFileSize() % this.context.getSuperBlock().blockSize != 0 && this.inode.fragmentKey == InvalidFragmentKey) {
             ++numBlocks;
         }
 
         byte[] lengthData = new byte[numBlocks * 4];
         context.getInodeReader().read(lengthData, 0, lengthData.length);
-        _blockLengths = new int[numBlocks];
+        blockLengths = new int[numBlocks];
         for (int i = 0; i < numBlocks; ++i) {
-            _blockLengths[i] = EndianUtilities.toInt32LittleEndian(lengthData, i * 4);
+            blockLengths[i] = EndianUtilities.toInt32LittleEndian(lengthData, i * 4);
         }
     }
 
@@ -67,7 +68,7 @@ public class FileContentBuffer implements IBuffer {
     }
 
     public long getCapacity() {
-        return _inode.getFileSize();
+        return inode.getFileSize();
     }
 
     public List<StreamExtent> getExtents() {
@@ -75,29 +76,29 @@ public class FileContentBuffer implements IBuffer {
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        if (pos > _inode.getFileSize()) {
+        if (pos > inode.getFileSize()) {
             return 0;
         }
 
-        long startOfFragment = (long) _blockLengths.length * _context.getSuperBlock().BlockSize;
+        long startOfFragment = (long) blockLengths.length * context.getSuperBlock().blockSize;
         long currentPos = pos;
         int totalRead = 0;
-        int totalToRead = (int) Math.min(_inode.getFileSize() - pos, count);
+        int totalToRead = (int) Math.min(inode.getFileSize() - pos, count);
         int currentBlock = 0;
-        long currentBlockDiskStart = _inode.StartBlock;
+        long currentBlockDiskStart = inode.startBlock;
         while (totalRead < totalToRead) {
             if (currentPos >= startOfFragment) {
                 int read = readFrag((int) (currentPos - startOfFragment), buffer, offset + totalRead, totalToRead - totalRead);
                 return totalRead + read;
             }
 
-            int targetBlock = (int) (currentPos / _context.getSuperBlock().BlockSize);
+            int targetBlock = (int) (currentPos / context.getSuperBlock().blockSize);
             while (currentBlock < targetBlock) {
-                currentBlockDiskStart += _blockLengths[currentBlock] & 0x7FFFFF;
+                currentBlockDiskStart += blockLengths[currentBlock] & 0x7FFFFF;
                 ++currentBlock;
             }
-            int blockOffset = (int) (pos % _context.getSuperBlock().BlockSize);
-            Block block = _context.getReadBlock().invoke((int) currentBlockDiskStart, _blockLengths[currentBlock]);
+            int blockOffset = (int) (pos % context.getSuperBlock().blockSize);
+            Block block = context.getReadBlock().invoke((int) currentBlockDiskStart, blockLengths[currentBlock]);
             int toCopy = Math.min(block.getAvailable() - blockOffset, totalToRead - totalRead);
             System.arraycopy(block.getData(), blockOffset, buffer, offset + totalRead, toCopy);
             totalRead += toCopy;
@@ -127,21 +128,21 @@ public class FileContentBuffer implements IBuffer {
 
     private int readFrag(int pos, byte[] buffer, int offset, int count) {
         int fragRecordsPerBlock = 8192 / FragmentRecord.RecordSize;
-        int fragTable = _inode.FragmentKey / fragRecordsPerBlock;
-        int recordOffset = _inode.FragmentKey % fragRecordsPerBlock * FragmentRecord.RecordSize;
+        int fragTable = inode.fragmentKey / fragRecordsPerBlock;
+        int recordOffset = inode.fragmentKey % fragRecordsPerBlock * FragmentRecord.RecordSize;
         byte[] fragRecordData = new byte[FragmentRecord.RecordSize];
-        _context.getFragmentTableReaders()[fragTable].setPosition(0, recordOffset);
-        _context.getFragmentTableReaders()[fragTable].read(fragRecordData, 0, fragRecordData.length);
+        context.getFragmentTableReaders()[fragTable].setPosition(0, recordOffset);
+        context.getFragmentTableReaders()[fragTable].read(fragRecordData, 0, fragRecordData.length);
         FragmentRecord fragRecord = new FragmentRecord();
         fragRecord.readFrom(fragRecordData, 0);
-        Block frag = _context.getReadBlock().invoke(fragRecord.StartBlock, fragRecord.CompressedSize);
+        Block frag = context.getReadBlock().invoke(fragRecord.startBlock, fragRecord.compressedSize);
         // Attempt to read data beyond end of fragment
         if (pos > frag.getAvailable()) {
             return 0;
         }
 
-        int toCopy = Math.min(frag.getAvailable() - (_inode.FragmentOffset + pos), count);
-        System.arraycopy(frag.getData(), _inode.FragmentOffset + pos, buffer, offset, toCopy);
+        int toCopy = Math.min(frag.getAvailable() - (inode.fragmentOffset + pos), count);
+        System.arraycopy(frag.getData(), inode.fragmentOffset + pos, buffer, offset, toCopy);
         return toCopy;
     }
 }

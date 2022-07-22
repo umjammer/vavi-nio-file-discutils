@@ -23,30 +23,31 @@
 package discUtils.nfs;
 
 public class RpcRejectedReplyHeader {
-    public RpcAuthenticationStatus AuthenticationStatus = RpcAuthenticationStatus.None;
 
-    public RpcMismatchInfo MismatchInfo;
+    public RpcAuthenticationStatus authenticationStatus = RpcAuthenticationStatus.None;
 
-    public RpcRejectedStatus Status = RpcRejectedStatus.RpcMismatch;
+    public RpcMismatchInfo mismatchInfo;
+
+    public RpcRejectedStatus status = RpcRejectedStatus.RpcMismatch;
 
     public RpcRejectedReplyHeader() {
     }
 
     public RpcRejectedReplyHeader(XdrDataReader reader) {
-        Status = RpcRejectedStatus.values()[reader.readInt32()];
-        if (Status == RpcRejectedStatus.RpcMismatch) {
-            MismatchInfo = new RpcMismatchInfo(reader);
+        status = RpcRejectedStatus.values()[reader.readInt32()];
+        if (status == RpcRejectedStatus.RpcMismatch) {
+            mismatchInfo = new RpcMismatchInfo(reader);
         } else {
-            AuthenticationStatus = RpcAuthenticationStatus.values()[reader.readInt32()];
+            authenticationStatus = RpcAuthenticationStatus.values()[reader.readInt32()];
         }
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(Status.ordinal());
-        if (Status == RpcRejectedStatus.RpcMismatch) {
-            MismatchInfo.write(writer);
+        writer.write(status.ordinal());
+        if (status == RpcRejectedStatus.RpcMismatch) {
+            mismatchInfo.write(writer);
         } else {
-            writer.write(AuthenticationStatus.ordinal());
+            writer.write(authenticationStatus.ordinal());
         }
     }
 
@@ -59,11 +60,11 @@ public class RpcRejectedReplyHeader {
             return false;
         }
 
-        return other.Status == Status && other.MismatchInfo.equals(MismatchInfo) &&
-               other.AuthenticationStatus == AuthenticationStatus;
+        return other.status == status && other.mismatchInfo.equals(mismatchInfo) &&
+               other.authenticationStatus == authenticationStatus;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(Status, MismatchInfo, AuthenticationStatus);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, mismatchInfo, authenticationStatus);
     }
 }

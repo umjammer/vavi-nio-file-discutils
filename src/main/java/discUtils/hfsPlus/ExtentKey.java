@@ -28,31 +28,32 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentKey> {
+
     // 0 is data, 0xff is rsrc
-    private byte _forkType;
+    private byte forkType;
 
-    private short _keyLength;
+    private short keyLength;
 
-    private int _startBlock;
+    private int startBlock;
 
     public ExtentKey() {
     }
 
     public ExtentKey(CatalogNodeId cnid, int startBlock, boolean resource_fork) {
-        _keyLength = 10;
-        _nodeId = cnid;
-        _startBlock = startBlock;
-        _forkType = (byte) (resource_fork ? 0xff : 0x00);
+        keyLength = 10;
+        nodeId = cnid;
+        this.startBlock = startBlock;
+        forkType = (byte) (resource_fork ? 0xff : 0x00);
     }
 
-    private CatalogNodeId _nodeId;
+    private CatalogNodeId nodeId;
 
     public CatalogNodeId getNodeId() {
-        return _nodeId;
+        return nodeId;
     }
 
     public void setNodeId(CatalogNodeId value) {
-        _nodeId = value;
+        nodeId = value;
     }
 
     public int size() {
@@ -65,28 +66,28 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         }
 
         // Sort by file id, fork type, then starting block
-        if (!_nodeId.equals(other._nodeId)) {
-            return _nodeId.getId() < other._nodeId.getId() ? -1 : 1;
+        if (!nodeId.equals(other.nodeId)) {
+            return nodeId.getId() < other.nodeId.getId() ? -1 : 1;
         }
 
-        if (_forkType != other._forkType) {
-            return _forkType < other._forkType ? -1 : 1;
+        if (forkType != other.forkType) {
+            return forkType < other.forkType ? -1 : 1;
         }
 
-        if (_startBlock != other._startBlock) {
-            return _startBlock < other._startBlock ? -1 : 1;
+        if (startBlock != other.startBlock) {
+            return startBlock < other.startBlock ? -1 : 1;
         }
 
         return 0;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        _forkType = buffer[offset + 2];
-        _nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        _startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-Debug.println((_keyLength & 0xffff) + 2);
-        return (_keyLength & 0xffff) + 2;
+        keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        forkType = buffer[offset + 2];
+        nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
+        startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+Debug.println((keyLength & 0xffff) + 2);
+        return (keyLength & 0xffff) + 2;
     }
 
     public void writeTo(byte[] buffer, int offset) {
@@ -98,6 +99,6 @@ Debug.println((_keyLength & 0xffff) + 2);
     }
 
     public String toString() {
-        return "ExtentKey (" + _nodeId + " - " + _startBlock + ")";
+        return "ExtentKey (" + nodeId + " - " + startBlock + ")";
     }
 }

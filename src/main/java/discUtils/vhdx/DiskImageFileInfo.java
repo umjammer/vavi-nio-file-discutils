@@ -35,17 +35,18 @@ import discUtils.streams.util.EndianUtilities;
  * Detailed information about a VHDX file.
  */
 public final class DiskImageFileInfo {
-    private final LogSequence _activeLogSequence;
 
-    private final FileHeader _fileHeader;
+    private final LogSequence activeLogSequence;
 
-    private final Metadata _metadata;
+    private final FileHeader fileHeader;
 
-    private final RegionTable _regions;
+    private final Metadata metadata;
 
-    private final VhdxHeader _vhdxHeader1;
+    private final RegionTable regions;
 
-    private final VhdxHeader _vhdxHeader2;
+    private final VhdxHeader vhdxHeader1;
+
+    private final VhdxHeader vhdxHeader2;
 
     public DiskImageFileInfo(FileHeader fileHeader,
             VhdxHeader vhdxHeader1,
@@ -53,39 +54,39 @@ public final class DiskImageFileInfo {
             RegionTable regions,
             Metadata metadata,
             LogSequence activeLogSequence) {
-        _fileHeader = fileHeader;
-        _vhdxHeader1 = vhdxHeader1;
-        _vhdxHeader2 = vhdxHeader2;
-        _regions = regions;
-        _metadata = metadata;
-        _activeLogSequence = activeLogSequence;
+        this.fileHeader = fileHeader;
+        this.vhdxHeader1 = vhdxHeader1;
+        this.vhdxHeader2 = vhdxHeader2;
+        this.regions = regions;
+        this.metadata = metadata;
+        this.activeLogSequence = activeLogSequence;
     }
 
     /**
      * Gets the active header for the VHDX file.
      */
     public HeaderInfo getActiveHeader() {
-        if (_vhdxHeader1 == null) {
-            if (_vhdxHeader2 == null) {
+        if (vhdxHeader1 == null) {
+            if (vhdxHeader2 == null) {
                 return null;
             }
 
-            return new HeaderInfo(_vhdxHeader2);
+            return new HeaderInfo(vhdxHeader2);
         }
 
-        if (_vhdxHeader2 == null) {
-            return new HeaderInfo(_vhdxHeader1);
+        if (vhdxHeader2 == null) {
+            return new HeaderInfo(vhdxHeader1);
         }
 
-        return new HeaderInfo(_vhdxHeader1.SequenceNumber > _vhdxHeader2.SequenceNumber ? _vhdxHeader1 : _vhdxHeader2);
+        return new HeaderInfo(vhdxHeader1.sequenceNumber > vhdxHeader2.sequenceNumber ? vhdxHeader1 : vhdxHeader2);
     }
 
     /**
      * Gets the active log sequence for this VHDX file.
      */
     public List<LogEntryInfo> getActiveLogSequence() {
-        if (_activeLogSequence != null) {
-            return _activeLogSequence.stream().map(LogEntryInfo::new).collect(Collectors.toList());
+        if (activeLogSequence != null) {
+            return activeLogSequence.stream().map(LogEntryInfo::new).collect(Collectors.toList());
         } else {
             return Collections.EMPTY_LIST;
         }
@@ -95,28 +96,28 @@ public final class DiskImageFileInfo {
      * Gets the block size of the VHDX file.
      */
     public long getBlockSize() {
-        return _metadata.getFileParameters().BlockSize;
+        return metadata.getFileParameters().blockSize;
     }
 
     /**
      * Gets the VHDX 'parser' that created the VHDX file.
      */
     public String getCreator() {
-        return _fileHeader.Creator;
+        return fileHeader.creator;
     }
 
     /**
      * Gets the logical size of the disk represented by the VHDX file.
      */
     public long getDiskSize() {
-        return _metadata.getDiskSize();
+        return metadata.getDiskSize();
     }
 
     /**
      * Gets the first header (by file location) of the VHDX file.
      */
     public HeaderInfo getFirstHeader() {
-        return new HeaderInfo(_vhdxHeader1);
+        return new HeaderInfo(vhdxHeader1);
     }
 
     /**
@@ -124,7 +125,7 @@ public final class DiskImageFileInfo {
      * a differencing file).
      */
     public boolean hasParent()  {
-        return _metadata.getFileParameters().Flags.contains(FileParametersFlags.HasParent);
+        return metadata.getFileParameters().flags.contains(FileParametersFlags.HasParent);
     }
 
     /**
@@ -132,56 +133,56 @@ public final class DiskImageFileInfo {
      * the file.
      */
     public boolean leaveBlocksAllocated() {
-        return _metadata.getFileParameters().Flags.contains(FileParametersFlags.LeaveBlocksAllocated);
+        return metadata.getFileParameters().flags.contains(FileParametersFlags.LeaveBlocksAllocated);
     }
 
     /**
      * Gets the logical sector size of the disk represented by the VHDX file.
      */
     public long getLogicalSectorSize() {
-        return _metadata.getLogicalSectorSize();
+        return metadata.getLogicalSectorSize();
     }
 
     /**
      * Gets the metadata table of the VHDX file.
      */
     public MetadataTableInfo getMetadataTable() {
-        return new MetadataTableInfo(_metadata.getTable());
+        return new MetadataTableInfo(metadata.getTable());
     }
 
     /**
      * Gets the set of parent locators, for differencing files.
      */
     public Map<String, String> getParentLocatorEntries() {
-        return _metadata.getParentLocator() != null ? _metadata.getParentLocator().getEntries() : Collections.EMPTY_MAP;
+        return metadata.getParentLocator() != null ? metadata.getParentLocator().getEntries() : Collections.EMPTY_MAP;
     }
 
     /**
      * Gets the parent locator type, for differencing files.
      */
     public UUID getParentLocatorType() {
-        return _metadata.getParentLocator() != null ? _metadata.getParentLocator().locatorType : new UUID(0L, 0L);
+        return metadata.getParentLocator() != null ? metadata.getParentLocator().locatorType : new UUID(0L, 0L);
     }
 
     /**
      * Gets the physical sector size of disk represented by the VHDX file.
      */
     public long getPhysicalSectorSize() {
-        return _metadata.getPhysicalSectorSize();
+        return metadata.getPhysicalSectorSize();
     }
 
     /**
      * Gets the region table of the VHDX file.
      */
     public RegionTableInfo getRegionTable() {
-        return new RegionTableInfo(_regions);
+        return new RegionTableInfo(regions);
     }
 
     /**
      * Gets the second header (by file location) of the VHDX file.
      */
     public HeaderInfo getSecondHeader() {
-        return new HeaderInfo(_vhdxHeader2);
+        return new HeaderInfo(vhdxHeader2);
     }
 
     /**
@@ -189,8 +190,7 @@ public final class DiskImageFileInfo {
      */
     public String getSignature() {
         byte[] buffer = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(_fileHeader.Signature, buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(fileHeader.signature, buffer, 0);
         return EndianUtilities.bytesToString(buffer, 0, 8);
     }
-
 }

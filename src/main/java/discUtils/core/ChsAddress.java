@@ -28,6 +28,7 @@ package discUtils.core;
  * disk. Instances of this class are immutable.
  */
 public final class ChsAddress {
+
     /**
      * The address of the first sector on any disk.
      */
@@ -42,37 +43,37 @@ public final class ChsAddress {
      */
     public ChsAddress(int cylinder, int head, int sector) {
         assert cylinder >= 0 && head >= 0 && sector >= 0;
-        _cylinder = cylinder;
-        _head = head;
-        _sector = sector;
+        this.cylinder = cylinder;
+        this.head = head;
+        this.sector = sector;
 //Debug.print(this);
     }
 
     /**
      * Gets the cylinder number (zero-based).
      */
-    private int _cylinder;
+    private int cylinder;
 
     public int getCylinder() {
-        return _cylinder;
+        return cylinder;
     }
 
     /**
      * Gets the head (zero-based).
      */
-    private int _head;
+    private int head;
 
     public int getHead() {
-        return _head;
+        return head;
     }
 
     /**
      * Gets the sector number (one-based).
      */
-    private int _sector;
+    private int sector;
 
     public int getSector() {
-        return _sector;
+        return sector;
     }
 
     /**
@@ -88,7 +89,7 @@ public final class ChsAddress {
         }
 
         ChsAddress other = (ChsAddress) obj;
-        return _cylinder == other._cylinder && _head == other._head && _sector == other._sector;
+        return cylinder == other.cylinder && head == other.head && sector == other.sector;
     }
 
     /**
@@ -97,7 +98,7 @@ public final class ChsAddress {
      * @return The hash code.
      */
     public int hashCode() {
-        return _cylinder ^ _head ^ _sector;
+        return cylinder ^ head ^ sector;
     }
 
     /**
@@ -106,6 +107,6 @@ public final class ChsAddress {
      * @return The string representation.
      */
     public String toString() {
-        return "(" + _cylinder + "/" + _head + "/" + _sector + ")";
+        return "(" + cylinder + "/" + head + "/" + sector + ")";
     }
 }

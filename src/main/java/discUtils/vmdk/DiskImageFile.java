@@ -60,25 +60,26 @@ import dotnet4j.io.Stream;
  * Represents a single VMDK file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
-    private static final Random _rng = new Random();
 
-    private final FileAccess _access;
+    private static final Random rng = new Random();
 
-    private SparseStream _contentStream;
+    private final FileAccess access;
 
-    private DescriptorFile _descriptor;
+    private SparseStream contentStream;
 
-    private FileLocator _fileLocator;
+    private DescriptorFile descriptor;
+
+    private FileLocator fileLocator;
 
     /**
      * The stream containing the VMDK disk, if this is a monolithic disk.
      */
-    private Stream _monolithicStream;
+    private Stream monolithicStream;
 
     /**
-     * Indicates if this instance controls lifetime of _monolithicStream.
+     * Indicates if this instance controls lifetime of monolithicStream.
      */
-    private Ownership _ownsMonolithicStream;
+    private Ownership ownsMonolithicStream;
 
     /**
      * Initializes a new instance of the DiskImageFile class.
@@ -87,27 +88,27 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param access The desired access to the disk.
      */
     public DiskImageFile(String path, FileAccess access) throws IOException {
-        _access = access;
+        this.access = access;
         FileAccess fileAccess = FileAccess.Read;
         FileShare fileShare = FileShare.Read;
-        if (_access != FileAccess.Read) {
+        if (this.access != FileAccess.Read) {
             fileAccess = FileAccess.ReadWrite;
             fileShare = FileShare.None;
         }
 
         Stream fileStream = null;
         Path parent = Paths.get(path).getParent();
-        _fileLocator = new LocalFileLocator(parent == null ? "" : parent.toString());
+        fileLocator = new LocalFileLocator(parent == null ? "" : parent.toString());
         try {
-            fileStream = _fileLocator.open(Utilities.getFileFromPath(path), FileMode.Open, fileAccess, fileShare);
+            fileStream = fileLocator.open(Utilities.getFileFromPath(path), FileMode.Open, fileAccess, fileShare);
             loadDescriptor(fileStream);
             // For monolithic disks, keep hold of the stream - we won't try to use the file name
             // from the embedded descriptor because the file may have been renamed, making the
             // descriptor out of date.
-            if (_descriptor.getCreateType() == DiskCreateType.StreamOptimized ||
-                _descriptor.getCreateType() == DiskCreateType.MonolithicSparse) {
-                _monolithicStream = fileStream;
-                _ownsMonolithicStream = Ownership.Dispose;
+            if (descriptor.getCreateType() == DiskCreateType.StreamOptimized ||
+                descriptor.getCreateType() == DiskCreateType.MonolithicSparse) {
+                monolithicStream = fileStream;
+                ownsMonolithicStream = Ownership.Dispose;
                 fileStream = null;
             }
         } finally {
@@ -125,18 +126,18 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            stream.
      */
     public DiskImageFile(Stream stream, Ownership ownsStream) {
-        _access = stream.canWrite() ? FileAccess.ReadWrite : FileAccess.Read;
+        access = stream.canWrite() ? FileAccess.ReadWrite : FileAccess.Read;
         loadDescriptor(stream);
-        boolean createTypeIsSparse = _descriptor.getCreateType() == DiskCreateType.MonolithicSparse ||
-                                     _descriptor.getCreateType() == DiskCreateType.StreamOptimized;
-        if (!createTypeIsSparse || _descriptor.getExtents().size() != 1 ||
-            _descriptor.getExtents().get(0).getType() != ExtentType.Sparse ||
-            _descriptor.getParentContentId() != 0xffffffff) {
+        boolean createTypeIsSparse = descriptor.getCreateType() == DiskCreateType.MonolithicSparse ||
+                                     descriptor.getCreateType() == DiskCreateType.StreamOptimized;
+        if (!createTypeIsSparse || descriptor.getExtents().size() != 1 ||
+            descriptor.getExtents().get(0).getType() != ExtentType.Sparse ||
+            descriptor.getParentContentId() != 0xffffffff) {
             throw new IllegalArgumentException("Only Monolithic Sparse and Streaming Optimized disks can be accessed via a stream");
         }
 
-        _monolithicStream = stream;
-        _ownsMonolithicStream = ownsStream;
+        monolithicStream = stream;
+        ownsMonolithicStream = ownsStream;
     }
 
     /**
@@ -147,10 +148,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param access The type of access desired.
      */
     DiskImageFile(FileLocator fileLocator, String file, FileAccess access) {
-        _access = access;
+        this.access = access;
         FileAccess fileAccess = FileAccess.Read;
         FileShare fileShare = FileShare.Read;
-        if (_access != FileAccess.Read) {
+        if (this.access != FileAccess.Read) {
             fileAccess = FileAccess.ReadWrite;
             fileShare = FileShare.None;
         }
@@ -160,29 +161,29 @@ public final class DiskImageFile extends VirtualDiskLayer {
             // For monolithic disks, keep hold of the stream - we won't try to use the file name
             // from the embedded descriptor because the file may have been renamed, making the
             // descriptor out of date.
-            if (_descriptor.getCreateType() == DiskCreateType.StreamOptimized ||
-                _descriptor.getCreateType() == DiskCreateType.MonolithicSparse) {
-                _monolithicStream = fileStream;
-                _ownsMonolithicStream = Ownership.Dispose;
+            if (descriptor.getCreateType() == DiskCreateType.StreamOptimized ||
+                descriptor.getCreateType() == DiskCreateType.MonolithicSparse) {
+                monolithicStream = fileStream;
+                ownsMonolithicStream = Ownership.Dispose;
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
-        _fileLocator = fileLocator.getRelativeLocator(fileLocator.getDirectoryFromPath(file));
+        this.fileLocator = fileLocator.getRelativeLocator(fileLocator.getDirectoryFromPath(file));
     }
 
     /**
      * Gets the IDE/SCSI adapter type of the disk.
      */
     DiskAdapterType getAdapterType() {
-        return _descriptor.getAdapterType();
+        return descriptor.getAdapterType();
     }
 
     /**
      * Gets the BIOS geometry of this disk.
      */
     Geometry getBiosGeometry() {
-        return _descriptor.getBiosGeometry();
+        return descriptor.getBiosGeometry();
     }
 
     /**
@@ -190,41 +191,41 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     public long getCapacity() {
         long result = 0;
-        for (ExtentDescriptor extent : _descriptor.getExtents()) {
+        for (ExtentDescriptor extent : descriptor.getExtents()) {
             result += extent.getSizeInSectors() * Sizes.Sector;
         }
         return result;
     }
 
     int getContentId() {
-        return _descriptor.getContentId();
+        return descriptor.getContentId();
     }
 
     /**
      * Gets the 'CreateType' of this disk.
      */
     DiskCreateType getCreateType() {
-        return _descriptor.getCreateType();
+        return descriptor.getCreateType();
     }
 
     /**
      * Gets the relative paths to all of the disk's extents.
      */
     public List<String> getExtentPaths() {
-        return _descriptor.getExtents().stream().map(ExtentDescriptor::getFileName).collect(Collectors.toList());
+        return descriptor.getExtents().stream().map(ExtentDescriptor::getFileName).collect(Collectors.toList());
     }
 
     /**
      * Gets the extents that comprise this file.
      */
     public List<VirtualDiskExtent> getExtents() {
-        List<VirtualDiskExtent> extents = new ArrayList<>(_descriptor.getExtents().size());
-        if (_monolithicStream != null) {
-            extents.add(new DiskExtent(_descriptor.getExtents().get(0), 0, _monolithicStream));
+        List<VirtualDiskExtent> extents = new ArrayList<>(descriptor.getExtents().size());
+        if (monolithicStream != null) {
+            extents.add(new DiskExtent(descriptor.getExtents().get(0), 0, monolithicStream));
         } else {
             long pos = 0;
-            for (ExtentDescriptor record : _descriptor.getExtents()) {
-                extents.add(new DiskExtent(record, pos, _fileLocator, _access));
+            for (ExtentDescriptor record : descriptor.getExtents()) {
+                extents.add(new DiskExtent(record, pos, fileLocator, access));
                 pos += record.getSizeInSectors() * Sizes.Sector;
             }
         }
@@ -235,23 +236,23 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the Geometry of this disk.
      */
     public Geometry getGeometry() {
-        return _descriptor.getDiskGeometry();
+        return descriptor.getDiskGeometry();
     }
 
     /**
      * Gets an indication as to whether the disk file is sparse.
      */
     public boolean isSparse() {
-        return _descriptor.getCreateType() == DiskCreateType.MonolithicSparse ||
-               _descriptor.getCreateType() == DiskCreateType.TwoGbMaxExtentSparse ||
-               _descriptor.getCreateType() == DiskCreateType.VmfsSparse;
+        return descriptor.getCreateType() == DiskCreateType.MonolithicSparse ||
+               descriptor.getCreateType() == DiskCreateType.TwoGbMaxExtentSparse ||
+               descriptor.getCreateType() == DiskCreateType.VmfsSparse;
     }
 
     /**
      * Gets a value indicating whether this disk is a linked differencing disk.
      */
     public boolean needsParent() {
-        return _descriptor.getParentContentId() != 0xffffffff;
+        return descriptor.getParentContentId() != 0xffffffff;
     }
 
     /**
@@ -264,7 +265,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Typically used to locate parent disks.
      */
     public FileLocator getRelativeFileLocator() {
-        return _fileLocator;
+        return fileLocator;
     }
 
     /**
@@ -464,7 +465,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The stream containing the disk contents.
      */
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
-        if (_descriptor.getParentContentId() == 0xffffffff) {
+        if (descriptor.getParentContentId() == 0xffffffff) {
             if (parent != null && ownsParent == Ownership.Dispose) {
                 try {
                     parent.close();
@@ -481,22 +482,22 @@ public final class DiskImageFile extends VirtualDiskLayer {
             ownsParent = Ownership.Dispose;
         }
 
-        if (_descriptor.getExtents().size() == 1) {
-            if (_monolithicStream != null) {
-                return new HostedSparseExtentStream(_monolithicStream, Ownership.None, 0, parent, ownsParent);
+        if (descriptor.getExtents().size() == 1) {
+            if (monolithicStream != null) {
+                return new HostedSparseExtentStream(monolithicStream, Ownership.None, 0, parent, ownsParent);
             }
 
-            return openExtent(_descriptor.getExtents().get(0), 0, parent, ownsParent);
+            return openExtent(descriptor.getExtents().get(0), 0, parent, ownsParent);
         }
 
         long extentStart = 0;
-        List<SparseStream> streams = new ArrayList<>(_descriptor.getExtents().size());
-        for (int i = 0; i < _descriptor.getExtents().size(); ++i) {
-            streams.add(i, openExtent(_descriptor.getExtents().get(i),
+        List<SparseStream> streams = new ArrayList<>(descriptor.getExtents().size());
+        for (int i = 0; i < descriptor.getExtents().size(); ++i) {
+            streams.add(i, openExtent(descriptor.getExtents().get(i),
                                     extentStart,
                                     parent,
                                     i == streams.size() - 1 ? ownsParent : Ownership.None));
-            extentStart += _descriptor.getExtents().get(i).getSizeInSectors() * Sizes.Sector;
+            extentStart += descriptor.getExtents().get(i).getSizeInSectors() * Sizes.Sector;
         }
         return new ConcatStream(Ownership.Dispose, streams);
     }
@@ -507,7 +508,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return The parent locations as an array.
      */
     public List<String> getParentLocations() {
-        return Collections.singletonList(_descriptor.getParentFileNameHint());
+        return Collections.singletonList(descriptor.getParentFileNameHint());
     }
 
     /**
@@ -564,7 +565,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         DescriptorFile baseDescriptor = new DescriptorFile();
         baseDescriptor.setDiskGeometry(geometry);
         baseDescriptor.setBiosGeometry(biosGeometery);
-        baseDescriptor.setContentId(_rng.nextInt());
+        baseDescriptor.setContentId(rng.nextInt());
         baseDescriptor.setCreateType(createType);
         baseDescriptor.setUniqueId(UUID.randomUUID());
         baseDescriptor.setHardwareVersion("4");
@@ -576,11 +577,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
         int numSectors = (int) MathUtilities.ceil(size, Sizes.Sector);
         int numGDEntries = (int) MathUtilities.ceil(numSectors * (long) Sizes.Sector, 2 * Sizes.OneMiB);
         ServerSparseExtentHeader header = new ServerSparseExtentHeader();
-        header.Capacity = numSectors;
-        header.GrainSize = 1;
-        header.GdOffset = 4;
-        header.NumGdEntries = numGDEntries;
-        header.FreeSector = (int) (header.GdOffset + MathUtilities.ceil(numGDEntries * 4, Sizes.Sector));
+        header.capacity = numSectors;
+        header.grainSize = 1;
+        header.gdOffset = 4;
+        header.numGdEntries = numGDEntries;
+        header.freeSector = (int) (header.gdOffset + MathUtilities.ceil(numGDEntries * 4, Sizes.Sector));
         return header;
     }
 
@@ -588,14 +589,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_contentStream != null) {
-            _contentStream.close();
-            _contentStream = null;
+        if (contentStream != null) {
+            contentStream.close();
+            contentStream = null;
         }
 
-        if (_ownsMonolithicStream == Ownership.Dispose && _monolithicStream != null) {
-            _monolithicStream.close();
-            _monolithicStream = null;
+        if (ownsMonolithicStream == Ownership.Dispose && monolithicStream != null) {
+            monolithicStream.close();
+            monolithicStream = null;
         }
     }
 
@@ -712,15 +713,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                grainSize);
         // Generate the header, and write it
         HostedSparseExtentHeader header = new HostedSparseExtentHeader();
-        header.Flags = EnumSet.of(HostedSparseExtentFlags.ValidLineDetectionTest, HostedSparseExtentFlags.RedundantGrainTable);
-        header.Capacity = MathUtilities.roundUp(size, grainSize * Sizes.Sector) / Sizes.Sector;
-        header.GrainSize = grainSize;
-        header.DescriptorOffset = descriptorStart[0];
-        header.DescriptorSize = descriptorLength / Sizes.Sector;
-        header.NumGTEsPerGT = GtesPerGt;
-        header.RgdOffset = redundantGrainDirStart;
-        header.GdOffset = grainDirStart;
-        header.Overhead = dataStart;
+        header.flags = EnumSet.of(HostedSparseExtentFlags.ValidLineDetectionTest, HostedSparseExtentFlags.RedundantGrainTable);
+        header.capacity = MathUtilities.roundUp(size, grainSize * Sizes.Sector) / Sizes.Sector;
+        header.grainSize = grainSize;
+        header.descriptorOffset = descriptorStart[0];
+        header.descriptorSize = descriptorLength / Sizes.Sector;
+        header.numGTEsPerGT = GtesPerGt;
+        header.rgdOffset = redundantGrainDirStart;
+        header.gdOffset = grainDirStart;
+        header.overhead = dataStart;
         extentStream.setPosition(0);
         extentStream.write(header.getBytes(), 0, Sizes.Sector);
         // Zero-out the descriptor space
@@ -794,7 +795,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             ServerSparseExtentHeader header = createServerSparseExtentHeader(size);
             extentStream.setPosition(0);
             extentStream.write(header.getBytes(), 0, 4 * Sizes.Sector);
-            byte[] blankGlobalDirectory = new byte[header.NumGdEntries * 4];
+            byte[] blankGlobalDirectory = new byte[header.numGdEntries * 4];
             extentStream.write(blankGlobalDirectory, 0, blankGlobalDirectory.length);
             descriptorStart[0] = 0;
         } else {
@@ -839,7 +840,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                                    DiskImageFile parent,
                                                                    String parentPath) {
         DescriptorFile baseDescriptor = new DescriptorFile();
-        baseDescriptor.setContentId(_rng.nextInt());
+        baseDescriptor.setContentId(rng.nextInt());
         baseDescriptor.setParentContentId(parent.getContentId());
         baseDescriptor.setParentFileNameHint(parentPath);
         baseDescriptor.setCreateType(type);
@@ -852,7 +853,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                     Ownership ownsParent) {
         FileAccess access = FileAccess.Read;
         FileShare share = FileShare.Read;
-        if (extent.getAccess() == ExtentAccess.ReadWrite && _access != FileAccess.Read) {
+        if (extent.getAccess() == ExtentAccess.ReadWrite && this.access != FileAccess.Read) {
             access = FileAccess.ReadWrite;
             share = FileShare.None;
         }
@@ -870,14 +871,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         switch (extent.getType()) {
         case Flat:
         case Vmfs:
-            return SparseStream.fromStream(_fileLocator.open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose);
+            return SparseStream.fromStream(fileLocator.open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose);
         case Zero:
             return new ZeroStream(extent.getSizeInSectors() * Sizes.Sector);
         case Sparse:
-            return new HostedSparseExtentStream(_fileLocator
+            return new HostedSparseExtentStream(fileLocator
                     .open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose, extentStart, parent, ownsParent);
         case VmfsSparse:
-            return new ServerSparseExtentStream(_fileLocator
+            return new ServerSparseExtentStream(fileLocator
                     .open(extent.getFileName(), FileMode.Open, access, share), Ownership.Dispose, extentStart, parent, ownsParent);
         default:
             throw new UnsupportedOperationException();
@@ -890,26 +891,26 @@ public final class DiskImageFile extends VirtualDiskLayer {
         if (header.length < Sizes.Sector ||
             EndianUtilities.toUInt32LittleEndian(header, 0) != HostedSparseExtentHeader.VmdkMagicNumber) {
             s.setPosition(0);
-            _descriptor = new DescriptorFile(s);
-            if (_access != FileAccess.Read) {
-                _descriptor.setContentId(_rng.nextInt());
+            descriptor = new DescriptorFile(s);
+            if (access != FileAccess.Read) {
+                descriptor.setContentId(rng.nextInt());
                 s.setPosition(0);
-                _descriptor.write(s);
+                descriptor.write(s);
                 s.setLength(s.getPosition());
             }
 
         } else {
             // This is a sparse disk extent, hopefully with embedded descriptor...
             HostedSparseExtentHeader hdr = HostedSparseExtentHeader.read(header, 0);
-            if (hdr.DescriptorOffset != 0) {
+            if (hdr.descriptorOffset != 0) {
                 Stream descriptorStream = new SubStream(s,
-                                                                  hdr.DescriptorOffset * Sizes.Sector,
-                                                                  hdr.DescriptorSize * Sizes.Sector);
-                _descriptor = new DescriptorFile(descriptorStream);
-                if (_access != FileAccess.Read) {
-                    _descriptor.setContentId(_rng.nextInt());
+                                                                  hdr.descriptorOffset * Sizes.Sector,
+                                                                  hdr.descriptorSize * Sizes.Sector);
+                descriptor = new DescriptorFile(descriptorStream);
+                if (access != FileAccess.Read) {
+                    descriptor.setContentId(rng.nextInt());
                     descriptorStream.setPosition(0);
-                    _descriptor.write(descriptorStream);
+                    descriptor.write(descriptorStream);
                     byte[] blank = new byte[(int) (descriptorStream.getLength() - descriptorStream.getPosition())];
                     descriptorStream.write(blank, 0, blank.length);
                 }

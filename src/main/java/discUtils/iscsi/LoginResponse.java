@@ -26,55 +26,56 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class LoginResponse extends BaseResponse {
-    public byte ActiveVersion;
 
-    public boolean Continue;
+    public byte activeVersion;
 
-    public LoginStages CurrentStage = LoginStages.SecurityNegotiation;
+    public boolean continue_;
 
-    public byte MaxVersion;
+    public LoginStages currentStage = LoginStages.SecurityNegotiation;
 
-    public LoginStages NextStage = LoginStages.SecurityNegotiation;
+    public byte maxVersion;
 
-    public byte StatusClass;
+    public LoginStages nextStage = LoginStages.SecurityNegotiation;
 
-    public LoginStatusCode StatusCode = LoginStatusCode.Success;
+    public byte statusClass;
 
-    public short TargetSessionId;
+    public LoginStatusCode statusCode = LoginStatusCode.Success;
 
-    public byte[] TextData;
+    public short targetSessionId;
 
-    public boolean Transit;
+    public byte[] textData;
+
+    public boolean transit;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 
     public void parse(byte[] headerData, int headerOffset, byte[] bodyData) {
-        BasicHeaderSegment _headerSegment = new BasicHeaderSegment();
-        _headerSegment.readFrom(headerData, headerOffset);
-        if (_headerSegment._OpCode != OpCode.LoginResponse) {
+        BasicHeaderSegment headerSegment = new BasicHeaderSegment();
+        headerSegment.readFrom(headerData, headerOffset);
+        if (headerSegment.opCode != OpCode.LoginResponse) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.LoginResponse + " was " +
-                                               _headerSegment._OpCode);
+                                               headerSegment.opCode);
         }
 
         unpackState(headerData[headerOffset + 1]);
-        MaxVersion = headerData[headerOffset + 2];
-        ActiveVersion = headerData[headerOffset + 3];
-        TargetSessionId = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 14);
-        StatusPresent = true;
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        StatusClass = headerData[headerOffset + 36];
-        StatusCode = LoginStatusCode.valueOf(EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 36));
-        TextData = bodyData;
+        maxVersion = headerData[headerOffset + 2];
+        activeVersion = headerData[headerOffset + 3];
+        targetSessionId = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 14);
+        statusPresent = true;
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        statusClass = headerData[headerOffset + 36];
+        statusCode = LoginStatusCode.valueOf(EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 36));
+        textData = bodyData;
     }
 
     private void unpackState(byte value) {
-        Transit = (value & 0x80) != 0;
-        Continue = (value & 0x40) != 0;
-        CurrentStage = LoginStages.values()[(value >>> 2) & 0x3];
-        NextStage = LoginStages.values()[value & 0x3];
+        transit = (value & 0x80) != 0;
+        continue_ = (value & 0x40) != 0;
+        currentStage = LoginStages.values()[(value >>> 2) & 0x3];
+        nextStage = LoginStages.values()[value & 0x3];
     }
 }

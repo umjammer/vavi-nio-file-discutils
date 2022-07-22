@@ -127,7 +127,7 @@ public class DynamicStreamTest {
         try {
             contentStream.setPosition(0);
             fail();
-        } catch (IOException __dummyCatchVar0) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -141,7 +141,7 @@ public class DynamicStreamTest {
         try {
             contentStream.setPosition(0);
             fail();
-        } catch (IOException __dummyCatchVar1) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -245,7 +245,7 @@ public class DynamicStreamTest {
         try {
             contentStream.setPosition(0);
             fail();
-        } catch (IOException __dummyCatchVar2) {
+        } catch (IOException ignored) {
         }
     }
 

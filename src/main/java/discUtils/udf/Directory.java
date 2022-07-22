@@ -32,7 +32,8 @@ import discUtils.streams.util.StreamUtilities;
 
 
 public class Directory extends File implements IVfsDirectory<FileIdentifier, File> {
-    private final List<FileIdentifier> _entries;
+
+    private final List<FileIdentifier> entries;
 
     public Directory(UdfContext context, LogicalPartition partition, FileEntry fileEntry) {
         super(context, partition, fileEntry, (int) partition.getLogicalBlockSize());
@@ -41,7 +42,7 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
             throw new UnsupportedOperationException("Very large directory");
         }
 
-        _entries = new ArrayList<>();
+        entries = new ArrayList<>();
 
         byte[] contentBytes = StreamUtilities.readExact(getFileContent(), 0, (int) getFileContent().getCapacity());
 
@@ -50,8 +51,8 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
             FileIdentifier id = new FileIdentifier();
             int size = id.readFrom(contentBytes, pos);
 
-            if (Collections.disjoint(id._fileCharacteristics, EnumSet.of(FileCharacteristic.Deleted, FileCharacteristic.Parent))) {
-                _entries.add(id);
+            if (Collections.disjoint(id.fileCharacteristics, EnumSet.of(FileCharacteristic.Deleted, FileCharacteristic.Parent))) {
+                entries.add(id);
             }
 
             pos += size;
@@ -59,7 +60,7 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
     }
 
     public List<FileIdentifier> getAllEntries() {
-        return _entries;
+        return entries;
     }
 
     public FileIdentifier getSelf() {
@@ -71,8 +72,8 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
     }
 
     public FileIdentifier getEntryByName(String name) {
-        for (FileIdentifier entry : _entries) {
-            if (entry.Name.compareTo(name) == 0) {
+        for (FileIdentifier entry : entries) {
+            if (entry.name.compareTo(name) == 0) {
                 return entry;
             }
         }

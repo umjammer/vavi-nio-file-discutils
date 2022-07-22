@@ -31,30 +31,31 @@ import discUtils.streams.buffer.IBuffer;
 
 
 public class File implements IVfsFile {
-    private FileContentBuffer _content;
 
-    private final MetadataRef _inodeRef;
+    private FileContentBuffer content;
+
+    private final MetadataRef inodeRef;
 
     public File(Context context, Inode inode, MetadataRef inodeRef) {
-        __Context = context;
-        __Inode = inode;
-        _inodeRef = inodeRef;
+        this.context = context;
+        this.inode = inode;
+        this.inodeRef = inodeRef;
     }
 
-    private Context __Context;
+    private Context context;
 
     protected Context getContext() {
-        return __Context;
+        return context;
     }
 
-    private Inode __Inode;
+    private Inode inode;
 
     public Inode getInode() {
-        return __Inode;
+        return inode;
     }
 
     public long getLastAccessTimeUtc() {
-        return getInode()._modificationTime;
+        return getInode().modificationTime;
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -62,7 +63,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return getInode()._modificationTime;
+        return getInode().modificationTime;
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -70,7 +71,7 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        return getInode()._modificationTime;
+        return getInode().modificationTime;
     }
 
     public void setCreationTimeUtc(long value) {
@@ -78,7 +79,7 @@ public class File implements IVfsFile {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(getInode()._type);
+        UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(getInode().type);
         return UnixFileType.toFileAttributes(fileType);
     }
 
@@ -91,10 +92,10 @@ public class File implements IVfsFile {
     }
 
     public IBuffer getFileContent() {
-        if (_content == null) {
-            _content = new FileContentBuffer(getContext(), (RegularInode) getInode(), _inodeRef);
+        if (content == null) {
+            content = new FileContentBuffer(context, (RegularInode) inode, inodeRef);
         }
 
-        return _content;
+        return content;
     }
 }

@@ -26,20 +26,21 @@ package discUtils.net.dns;
  * Represents a DNS SRV record.
  */
 public final class ServiceRecord extends ResourceRecord {
-    private final short _port;
 
-    private final short _priority;
+    private final short port;
 
-    private final short _weight;
+    private final short priority;
+
+    private final short weight;
 
     public ServiceRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
-        _priority = reader.readUShort();
-        _weight = reader.readUShort();
-        _port = reader.readUShort();
-        _target = reader.readName();
+        priority = reader.readUShort();
+        weight = reader.readUShort();
+        port = reader.readUShort();
+        target = reader.readName();
         reader.setPosition(pos + dataLen);
     }
 
@@ -47,7 +48,7 @@ public final class ServiceRecord extends ResourceRecord {
      * Gets the network port at which the service can be accessed.
      */
     public int getPort() {
-        return _port & 0xffff;
+        return port & 0xffff;
     }
 
     /**
@@ -55,16 +56,16 @@ public final class ServiceRecord extends ResourceRecord {
      * higher priority).
      */
     public int getPriority() {
-        return _priority & 0xffff;
+        return priority & 0xffff;
     }
 
     /**
      * Gets the DNS name at which the service can be accessed.
      */
-    private String _target;
+    private String target;
 
     public String getTarget() {
-        return _target;
+        return target;
     }
 
     /**
@@ -72,6 +73,6 @@ public final class ServiceRecord extends ResourceRecord {
      * randomly choosing between records of equal priority.
      */
     public int getWeight() {
-        return _weight & 0xffff;
+        return weight & 0xffff;
     }
 }

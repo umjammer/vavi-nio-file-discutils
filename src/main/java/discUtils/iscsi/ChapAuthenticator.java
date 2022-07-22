@@ -28,22 +28,23 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class ChapAuthenticator extends Authenticator {
-    private int _algorithm;
 
-    private byte[] _challenge;
+    private int algorithm;
 
-    private byte _identifier;
+    private byte[] challenge;
 
-    private final String _name;
+    private byte identifier;
 
-    private final String _password;
+    private final String name;
 
-    private State _state = State.SendAlgorithm;
+    private final String password;
+
+    private State state = State.SendAlgorithm;
 
     public ChapAuthenticator(String name, String password) {
-        _name = name;
-        _password = password;
-        _state = State.SendAlgorithm;
+        this.name = name;
+        this.password = password;
+        state = State.SendAlgorithm;
     }
 
     public String getIdentifier() {
@@ -51,34 +52,34 @@ public class ChapAuthenticator extends Authenticator {
     }
 
     public boolean getParameters(TextBuffer textBuffer) {
-        switch (_state) {
+        switch (state) {
         case SendAlgorithm:
             textBuffer.add("CHAP_A", "5");
-            _state = State.ReceiveChallenge;
+            state = State.ReceiveChallenge;
             return false;
         case SendResponse:
-            textBuffer.add("CHAP_N", _name);
+            textBuffer.add("CHAP_N", name);
             textBuffer.add("CHAP_R", calcResponse());
-            _state = State.Finished;
+            state = State.Finished;
             return true;
         default:
-            throw new UnsupportedOperationException("Unknown authentication state: " + _state);
+            throw new UnsupportedOperationException("Unknown authentication state: " + state);
         }
     }
 
     public void setParameters(TextBuffer textBuffer) {
-        switch (_state) {
+        switch (state) {
         case ReceiveChallenge:
-            _algorithm = Integer.parseInt(textBuffer.get("CHAP_A"));
-            _identifier = Byte.parseByte(textBuffer.get("CHAP_I"));
-            _challenge = parseByteString(textBuffer.get("CHAP_C"));
-            _state = State.SendResponse;
-            if (_algorithm != 0x5) {
-                throw new LoginException("Unexpected CHAP authentication algorithm: " + _algorithm);
+            algorithm = Integer.parseInt(textBuffer.get("CHAP_A"));
+            identifier = Byte.parseByte(textBuffer.get("CHAP_I"));
+            challenge = parseByteString(textBuffer.get("CHAP_C"));
+            state = State.SendResponse;
+            if (algorithm != 0x5) {
+                throw new LoginException("Unexpected CHAP authentication algorithm: " + algorithm);
             }
             return;
         default:
-            throw new UnsupportedOperationException("Unknown authentication state: " + _state);
+            throw new UnsupportedOperationException("Unknown authentication state: " + state);
 
         }
     }
@@ -98,11 +99,11 @@ public class ChapAuthenticator extends Authenticator {
     private String calcResponse() {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
-            byte[] toHash = new byte[1 + _password.length() + _challenge.length];
-            toHash[0] = _identifier;
-            byte[] bytes = _password.getBytes(StandardCharsets.US_ASCII);
+            byte[] toHash = new byte[1 + password.length() + challenge.length];
+            toHash[0] = identifier;
+            byte[] bytes = password.getBytes(StandardCharsets.US_ASCII);
             System.arraycopy(bytes, 0, toHash, 1, bytes.length);
-            System.arraycopy(_challenge, 0, toHash, _password.length() + 1, _challenge.length);
+            System.arraycopy(challenge, 0, toHash, password.length() + 1, challenge.length);
             byte[] hash = md5.digest(toHash);
             StringBuilder result = new StringBuilder("0x");
             for (byte b : hash) {

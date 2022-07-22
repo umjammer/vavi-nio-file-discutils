@@ -22,7 +22,6 @@
 
 package fileExtract;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.klab.commons.cli.Option;
@@ -44,22 +43,23 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
-    @Option(option = "f", argName = "_diskFile", description = "The disks to inspect.", args = 1, required = true)
-    private String _diskFile;
 
-    @Option(option = "d", argName = "_inFilePath", description = "The path of the file to extract.", args = 1, required = true)
-    private String _inFilePath;
+    @Option(option = "f", argName = "diskFile", description = "The disks to inspect.", args = 1, required = true)
+    private String diskFile;
 
-    @Option(option = "o", argName = "_outFilePath", description = "The output file to be written.", args = 1, required = true)
-    private String _outFilePath;
+    @Option(option = "d", argName = "inFilePath", description = "The path of the file to extract.", args = 1, required = true)
+    private String inFilePath;
 
-    @Option(option = "dt", argName = "_diskType", description = "Force the type of disk - use a file extension (one of TODO)")
-    private String _diskType;
+    @Option(option = "o", argName = "outFilePath", description = "The output file to be written.", args = 1, required = true)
+    private String outFilePath;
+
+    @Option(option = "dt", argName = "diskType", description = "Force the type of disk - use a file extension (one of TODO)")
+    private String diskType;
 
     @Option(option = "hd",
-            argName = "_hexDump",
+            argName = "hexDump",
             description = "Output a HexDump of the NTFS stream to the console, in addition to writing it to the output file.")
-    private boolean _hexDump;
+    private boolean hexDump;
 
     public static void main(String[] args) throws Exception {
         System.err.println("SupportedDiskTypes: " + String.join(", ", VirtualDiskManager.getSupportedDiskTypes()));
@@ -70,8 +70,8 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
-System.err.println("file: " + _diskFile);
-        volMgr.addDisk(VirtualDisk.openDisk(_diskFile, _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword()));
+System.err.println("file: " + diskFile);
+        volMgr.addDisk(VirtualDisk.openDisk(diskFile, diskType != null ? diskType : null, FileAccess.Read, getUserName(), getPassword()));
         VolumeInfo volInfo = null;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             volInfo = volMgr.getVolume(getVolumeId());
@@ -84,12 +84,12 @@ System.err.println("file: " + _diskFile);
 
         try (DiscFileSystem fs = fsInfo.open(volInfo, getFileSystemParameters())) {
 
-            try (Stream source = fs.openFile(_inFilePath, FileMode.Open, FileAccess.Read)) {
+            try (Stream source = fs.openFile(inFilePath, FileMode.Open, FileAccess.Read)) {
 
-                try (FileStream outFile = new FileStream(_outFilePath, FileMode.Create, FileAccess.ReadWrite)) {
+                try (FileStream outFile = new FileStream(outFilePath, FileMode.Create, FileAccess.ReadWrite)) {
                     pumpStreams(source, outFile);
                 }
-                if (_hexDump) {
+                if (hexDump) {
                     source.setPosition(0);
                     HexDump.generate(source, System.out);
                 }

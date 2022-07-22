@@ -23,16 +23,17 @@
 package discUtils.lvm;
 
 public class MetadataStripe {
-    public String PhysicalVolumeName;
 
-    public long StartExtentNumber;
+    public String physicalVolumeName;
+
+    public long startExtentNumber;
 
     public void parse(String line) {
         String[] parts = line.split(",");
         if (parts.length != 2)
             throw new IllegalArgumentException("invalid stripe format: " + line);
 
-        PhysicalVolumeName = Metadata.parseStringValue(parts[0]);
-        StartExtentNumber = Metadata.parseNumericValue(parts[1]);
+        physicalVolumeName = Metadata.parseStringValue(parts[0]);
+        startExtentNumber = Metadata.parseNumericValue(parts[1]);
     }
 }

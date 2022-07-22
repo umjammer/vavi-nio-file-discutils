@@ -30,7 +30,8 @@ import java.nio.charset.Charset;
  * Note - not all parameters apply to all types of file system.
  */
 public final class FileSystemParameters {
-    private Charset _fileNameEncoding;
+
+    private Charset fileNameEncoding;
 
     /**
      * Gets or sets the character encoding for file names, or
@@ -43,14 +44,14 @@ public final class FileSystemParameters {
      * file systems.
      */
     public Charset getFileNameEncoding() {
-        return _fileNameEncoding;
+        return fileNameEncoding;
     }
 
     public void setFileNameEncoding(Charset value) {
-        _fileNameEncoding = value;
+        fileNameEncoding = value;
     }
 
-    private TimeConverter _timeConverter;
+    private TimeConverter timeConverter;
 
     /**
      * Gets or sets the algorithm to convert file system time to UTC.
@@ -61,10 +62,10 @@ public final class FileSystemParameters {
      * the algorithm to use.
      */
     public TimeConverter getTimeConverter() {
-        return _timeConverter;
+        return timeConverter;
     }
 
     public void setTimeConverter(TimeConverter value) {
-        _timeConverter = value;
+        timeConverter = value;
     }
 }

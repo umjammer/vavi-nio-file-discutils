@@ -34,7 +34,7 @@ public final class PointerRecord extends ResourceRecord {
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
 
-        _targetName = reader.readName();
+        targetName = reader.readName();
 
         reader.setPosition(pos + dataLen);
     }
@@ -42,9 +42,9 @@ public final class PointerRecord extends ResourceRecord {
     /**
      * Gets the DNS name pointed to.
      */
-    private String _targetName;
+    private String targetName;
 
     public String getTargetName() {
-        return _targetName;
+        return targetName;
     }
 }

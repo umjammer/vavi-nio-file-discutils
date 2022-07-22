@@ -26,183 +26,184 @@ import dotnet4j.io.Stream;
 
 
 public final class NtfsContext implements INtfsContext {
-    private Stream _rawStream;
+
+    private Stream rawStream;
 
     public Stream getRawStream() {
-        return _rawStream;
+        return rawStream;
     }
 
     public void setRawStream(Stream value) {
-        _rawStream = value;
+        rawStream = value;
     }
 
-    private AttributeDefinitions _attributeDefinitions;
+    private AttributeDefinitions attributeDefinitions;
 
     public AttributeDefinitions getAttributeDefinitions() {
-        return _attributeDefinitions;
+        return attributeDefinitions;
     }
 
     public void setAttributeDefinitions(AttributeDefinitions value) {
-        _attributeDefinitions = value;
+        attributeDefinitions = value;
     }
 
-    private UpperCase _upperCase;
+    private UpperCase upperCase;
 
     public UpperCase getUpperCase() {
-        return _upperCase;
+        return upperCase;
     }
 
     public void setUpperCase(UpperCase value) {
-        _upperCase = value;
+        upperCase = value;
     }
 
-    private BiosParameterBlock _biosParameterBlock;
+    private BiosParameterBlock biosParameterBlock;
 
     public BiosParameterBlock getBiosParameterBlock() {
-        return _biosParameterBlock;
+        return biosParameterBlock;
     }
 
     public void setBiosParameterBlock(BiosParameterBlock value) {
-        _biosParameterBlock = value;
+        biosParameterBlock = value;
     }
 
-    private MasterFileTable _mft;
+    private MasterFileTable mft;
 
     public MasterFileTable getMft() {
-        return _mft;
+        return mft;
     }
 
     public void setMft(MasterFileTable value) {
-        _mft = value;
+        mft = value;
     }
 
-    private ClusterBitmap _clusterBitmap;
+    private ClusterBitmap clusterBitmap;
 
     public ClusterBitmap getClusterBitmap() {
-        return _clusterBitmap;
+        return clusterBitmap;
     }
 
     public void setClusterBitmap(ClusterBitmap value) {
-        _clusterBitmap = value;
+        clusterBitmap = value;
     }
 
-    private SecurityDescriptors _securityDescriptors;
+    private SecurityDescriptors securityDescriptors;
 
     public SecurityDescriptors getSecurityDescriptors() {
-        return _securityDescriptors;
+        return securityDescriptors;
     }
 
     public void setSecurityDescriptors(SecurityDescriptors value) {
-        _securityDescriptors = value;
+        securityDescriptors = value;
     }
 
-    private ObjectIds _objectIds;
+    private ObjectIds objectIds;
 
     public ObjectIds getObjectIds() {
-        return _objectIds;
+        return objectIds;
     }
 
     public void setObjectIds(ObjectIds value) {
-        _objectIds = value;
+        objectIds = value;
     }
 
-    private ReparsePoints _reparsePoints;
+    private ReparsePoints reparsePoints;
 
     public ReparsePoints getReparsePoints() {
-        return _reparsePoints;
+        return reparsePoints;
     }
 
     public void setReparsePoints(ReparsePoints value) {
-        _reparsePoints = value;
+        reparsePoints = value;
     }
 
-    private Quotas _quotas;
+    private Quotas quotas;
 
     public Quotas getQuotas() {
-        return _quotas;
+        return quotas;
     }
 
     public void setQuotas(Quotas value) {
-        _quotas = value;
+        quotas = value;
     }
 
-    private NtfsOptions _options;
+    private NtfsOptions options;
 
     public NtfsOptions getOptions() {
-        return _options;
+        return options;
     }
 
     public void setOptions(NtfsOptions value) {
-        _options = value;
+        options = value;
     }
 
-    private GetFileByIndexFn _getFileByIndex;
+    private GetFileByIndexFn getFileByIndex;
 
     public GetFileByIndexFn getGetFileByIndex() {
-        return _getFileByIndex;
+        return getFileByIndex;
     }
 
     public void setGetFileByIndex(GetFileByIndexFn value) {
-        _getFileByIndex = value;
+        getFileByIndex = value;
     }
 
-    private GetFileByRefFn _getFileByRef;
+    private GetFileByRefFn getFileByRef;
 
     public GetFileByRefFn getGetFileByRef() {
-        return _getFileByRef;
+        return getFileByRef;
     }
 
     public void setGetFileByRef(GetFileByRefFn value) {
-        _getFileByRef = value;
+        getFileByRef = value;
     }
 
-    private GetDirectoryByIndexFn _getDirectoryByIndex;
+    private GetDirectoryByIndexFn getDirectoryByIndex;
 
     public GetDirectoryByIndexFn getGetDirectoryByIndex() {
-        return _getDirectoryByIndex;
+        return getDirectoryByIndex;
     }
 
     public void setGetDirectoryByIndex(GetDirectoryByIndexFn value) {
-        _getDirectoryByIndex = value;
+        getDirectoryByIndex = value;
     }
 
-    private GetDirectoryByRefFn _getDirectoryByRef;
+    private GetDirectoryByRefFn getDirectoryByRef;
 
     public GetDirectoryByRefFn getGetDirectoryByRef() {
-        return _getDirectoryByRef;
+        return getDirectoryByRef;
     }
 
     public void setGetDirectoryByRef(GetDirectoryByRefFn value) {
-        _getDirectoryByRef = value;
+        getDirectoryByRef = value;
     }
 
-    private AllocateFileFn _allocateFile;
+    private AllocateFileFn allocateFile;
 
     public AllocateFileFn getAllocateFile() {
-        return _allocateFile;
+        return allocateFile;
     }
 
     public void setAllocateFile(AllocateFileFn value) {
-        _allocateFile = value;
+        allocateFile = value;
     }
 
-    private ForgetFileFn _forgetFile;
+    private ForgetFileFn forgetFile;
 
     public ForgetFileFn getForgetFile() {
-        return _forgetFile;
+        return forgetFile;
     }
 
     public void setForgetFile(ForgetFileFn value) {
-        _forgetFile = value;
+        forgetFile = value;
     }
 
-    private boolean _readOnly;
+    private boolean readOnly;
 
     public boolean getReadOnly() {
-        return _readOnly;
+        return readOnly;
     }
 
     public void setReadOnly(boolean value) {
-        _readOnly = value;
+        readOnly = value;
     }
 }

@@ -32,6 +32,7 @@ import discUtils.streams.util.Sizes;
 
 
 public final class MetadataTable implements IByteArraySerializable {
+
     public static final int FixedSize = (int) (64 * Sizes.OneKiB);
 
     public static final long MetadataTableSignature = 0x617461646174656DL;
@@ -50,26 +51,26 @@ public final class MetadataTable implements IByteArraySerializable {
 
     private static final Map<UUID, Object> KnownMetadata = initMetadataTable();
 
-    private final byte[] _headerData = new byte[32];
+    private final byte[] headerData = new byte[32];
 
-    public Map<MetadataEntryKey, MetadataEntry> Entries = new HashMap<>();
+    public Map<MetadataEntryKey, MetadataEntry> entries = new HashMap<>();
 
-    public short EntryCount;
+    public short entryCount;
 
-    public long Signature = MetadataTableSignature;
+    public long signature = MetadataTableSignature;
 
     public boolean getIsValid() {
-        if (Signature != MetadataTableSignature) {
+        if (signature != MetadataTableSignature) {
             return false;
         }
 
-        if ((EntryCount & 0xffff) > 2047) {
+        if ((entryCount & 0xffff) > 2047) {
             return false;
         }
 
-        for (MetadataEntry entry : Entries.values()) {
-            if (entry.Flags.contains(MetadataEntryFlags.IsRequired)) {
-                if (!KnownMetadata.containsKey(entry.ItemId)) {
+        for (MetadataEntry entry : entries.values()) {
+            if (entry.flags.contains(MetadataEntryFlags.IsRequired)) {
+                if (!KnownMetadata.containsKey(entry.itemId)) {
                     return false;
                 }
             }
@@ -82,14 +83,14 @@ public final class MetadataTable implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        System.arraycopy(buffer, offset, _headerData, 0, 32);
-        Signature = EndianUtilities.toUInt64LittleEndian(_headerData, 0);
-        EntryCount = EndianUtilities.toUInt16LittleEndian(_headerData, 10);
-        Entries = new HashMap<>();
+        System.arraycopy(buffer, offset, headerData, 0, 32);
+        signature = EndianUtilities.toUInt64LittleEndian(headerData, 0);
+        entryCount = EndianUtilities.toUInt16LittleEndian(headerData, 10);
+        entries = new HashMap<>();
         if (getIsValid()) {
-            for (int i = 0; i < EntryCount; ++i) {
+            for (int i = 0; i < entryCount; ++i) {
                 MetadataEntry entry = EndianUtilities.toStruct(MetadataEntry.class, buffer, offset + 32 + i * 32);
-                Entries.put(MetadataEntryKey.fromEntry(entry), entry);
+                entries.put(MetadataEntryKey.fromEntry(entry), entry);
             }
         }
 
@@ -97,12 +98,12 @@ public final class MetadataTable implements IByteArraySerializable {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EntryCount = (short) Entries.size();
-        EndianUtilities.writeBytesLittleEndian(Signature, _headerData, 0);
-        EndianUtilities.writeBytesLittleEndian(EntryCount, _headerData, 10);
-        System.arraycopy(_headerData, 0, buffer, offset, 32);
+        entryCount = (short) entries.size();
+        EndianUtilities.writeBytesLittleEndian(signature, headerData, 0);
+        EndianUtilities.writeBytesLittleEndian(entryCount, headerData, 10);
+        System.arraycopy(headerData, 0, buffer, offset, 32);
         int bufferOffset = 32 + offset;
-        for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : Entries.entrySet()) {
+        for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : entries.entrySet()) {
             entry.getValue().writeTo(buffer, bufferOffset);
             bufferOffset += 32;
         }

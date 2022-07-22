@@ -31,86 +31,87 @@ import discUtils.streams.util.MathUtilities;
 
 
 public class IndexEntry {
+
     public static final int EndNodeSize = 0x18;
 
-    protected byte[] _dataBuffer;
+    protected byte[] dataBuffer;
 
-    protected EnumSet<IndexEntryFlags> _flags;
+    protected EnumSet<IndexEntryFlags> flags;
 
-    protected byte[] _keyBuffer;
+    protected byte[] keyBuffer;
 
     // Only valid if Node flag set
-    protected long _vcn;
+    protected long vcn;
 
     public IndexEntry(boolean isFileIndexEntry) {
-        _isFileIndexEntry = isFileIndexEntry;
-        _flags = EnumSet.noneOf(IndexEntryFlags.class);
+        this.isFileIndexEntry = isFileIndexEntry;
+        flags = EnumSet.noneOf(IndexEntryFlags.class);
     }
 
     public IndexEntry(IndexEntry toCopy, byte[] newKey, byte[] newData) {
-        _isFileIndexEntry = toCopy.isFileIndexEntry();
-        _flags = toCopy._flags;
-        _vcn = toCopy._vcn;
-        _keyBuffer = newKey;
-        _dataBuffer = newData;
+        isFileIndexEntry = toCopy.isFileIndexEntry();
+        flags = toCopy.flags;
+        vcn = toCopy.vcn;
+        keyBuffer = newKey;
+        dataBuffer = newData;
     }
 
     public IndexEntry(byte[] key, byte[] data, boolean isFileIndexEntry) {
-        _isFileIndexEntry = isFileIndexEntry;
-        _flags = EnumSet.noneOf(IndexEntryFlags.class);
-        _keyBuffer = key;
-        _dataBuffer = data;
+        this.isFileIndexEntry = isFileIndexEntry;
+        flags = EnumSet.noneOf(IndexEntryFlags.class);
+        keyBuffer = key;
+        dataBuffer = data;
     }
 
     public long getChildrenVirtualCluster() {
-        return _vcn;
+        return vcn;
     }
 
     public void setChildrenVirtualCluster(long value) {
-        _vcn = value;
+        vcn = value;
     }
 
     public byte[] getDataBuffer() {
-        return _dataBuffer;
+        return dataBuffer;
     }
 
     public void setDataBuffer(byte[] value) {
-        _dataBuffer = value;
+        dataBuffer = value;
     }
 
     public EnumSet<IndexEntryFlags> getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(EnumSet<IndexEntryFlags> value) {
-        _flags = value;
+        flags = value;
     }
 
-    private boolean _isFileIndexEntry;
+    private boolean isFileIndexEntry;
 
     protected boolean isFileIndexEntry() {
-        return _isFileIndexEntry;
+        return isFileIndexEntry;
     }
 
     public byte[] getKeyBuffer() {
-        return _keyBuffer;
+        return keyBuffer;
     }
 
     public void setKeyBuffer(byte[] value) {
-        _keyBuffer = value;
+        keyBuffer = value;
     }
 
     public int getSize() {
         int size = 0x10; // start of variable data
 
-        if (!_flags.contains(IndexEntryFlags.End)) {
-            size += _keyBuffer.length;
-            size += isFileIndexEntry() ? 0 : _dataBuffer.length;
+        if (!flags.contains(IndexEntryFlags.End)) {
+            size += keyBuffer.length;
+            size += isFileIndexEntry() ? 0 : dataBuffer.length;
         }
 
         size = MathUtilities.roundUp(size, 8);
 
-        if (_flags.contains(IndexEntryFlags.Node)) {
+        if (flags.contains(IndexEntryFlags.Node)) {
             size += 8;
         }
 
@@ -124,47 +125,47 @@ public class IndexEntry {
         short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
         short keyLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
 //        assert dataLength >= 0 && length >=0 && keyLength >= 0;
-        _flags = IndexEntryFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
+        flags = IndexEntryFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
 
-        if (!_flags.contains(IndexEntryFlags.End)) {
-            _keyBuffer = new byte[keyLength];
-            System.arraycopy(buffer, offset + 0x10, _keyBuffer, 0, keyLength);
+        if (!flags.contains(IndexEntryFlags.End)) {
+            keyBuffer = new byte[keyLength];
+            System.arraycopy(buffer, offset + 0x10, keyBuffer, 0, keyLength);
 
             if (isFileIndexEntry()) {
                 // Special case, for file indexes, the MFT ref is held where the data offset & length go
-                _dataBuffer = new byte[8];
-                System.arraycopy(buffer, offset + 0x00, _dataBuffer, 0, 8);
+                dataBuffer = new byte[8];
+                System.arraycopy(buffer, offset + 0x00, dataBuffer, 0, 8);
             } else {
-                _dataBuffer = new byte[dataLength];
-                System.arraycopy(buffer, offset + 0x10 + keyLength, _dataBuffer, 0, dataLength);
+                dataBuffer = new byte[dataLength];
+                System.arraycopy(buffer, offset + 0x10 + keyLength, dataBuffer, 0, dataLength);
             }
         }
 
-        if (_flags.contains(IndexEntryFlags.Node)) {
-            _vcn = EndianUtilities.toInt64LittleEndian(buffer, offset + length - 8);
+        if (flags.contains(IndexEntryFlags.Node)) {
+            vcn = EndianUtilities.toInt64LittleEndian(buffer, offset + length - 8);
         }
     }
 
     public void writeTo(byte[] buffer, int offset) {
         int length = getSize();
 
-        if (!_flags.contains(IndexEntryFlags.End)) {
-            int keyLength = _keyBuffer.length;
+        if (!flags.contains(IndexEntryFlags.End)) {
+            int keyLength = keyBuffer.length;
 
             if (isFileIndexEntry()) {
-                System.arraycopy(_dataBuffer, 0, buffer, offset + 0x00, 8);
+                System.arraycopy(dataBuffer, 0, buffer, offset + 0x00, 8);
             } else {
                 int dataOffset = isFileIndexEntry() ? 0 : 0x10 + keyLength;
-                int dataLength = _dataBuffer.length;
+                int dataLength = dataBuffer.length;
 
                 EndianUtilities.writeBytesLittleEndian((short) dataOffset, buffer, offset + 0x00);
                 EndianUtilities.writeBytesLittleEndian((short) dataLength, buffer, offset + 0x02);
-                System.arraycopy(_dataBuffer, 0, buffer, offset + dataOffset, _dataBuffer.length);
+                System.arraycopy(dataBuffer, 0, buffer, offset + dataOffset, dataBuffer.length);
             }
             EndianUtilities.writeBytesLittleEndian((short) keyLength, buffer, offset + 0x0A);
-//Debug.println(_keyBuffer.length + " | " + buffer.length + ", " + (offset + 0x10));
-            assert buffer.length > offset  + 0x10 + _keyBuffer.length : buffer.length + ", " + (offset + 0x10) + ", " + _keyBuffer.length;
-            System.arraycopy(_keyBuffer, 0, buffer, offset + 0x10, _keyBuffer.length);
+//Debug.println(keyBuffer.length + " | " + buffer.length + ", " + (offset + 0x10));
+            assert buffer.length > offset  + 0x10 + keyBuffer.length : buffer.length + ", " + (offset + 0x10) + ", " + keyBuffer.length;
+            System.arraycopy(keyBuffer, 0, buffer, offset + 0x10, keyBuffer.length);
         } else {
             EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x00); // dataOffset
             EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x02); // dataLength
@@ -172,16 +173,16 @@ public class IndexEntry {
         }
 
         EndianUtilities.writeBytesLittleEndian((short) length, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian((short) IndexEntryFlags.valueOf(_flags), buffer, offset + 0x0C);
-        if (_flags.contains(IndexEntryFlags.Node)) {
-            EndianUtilities.writeBytesLittleEndian(_vcn, buffer, offset + length - 8);
+        EndianUtilities.writeBytesLittleEndian((short) IndexEntryFlags.valueOf(flags), buffer, offset + 0x0C);
+        if (flags.contains(IndexEntryFlags.Node)) {
+            EndianUtilities.writeBytesLittleEndian(vcn, buffer, offset + length - 8);
         }
     }
 
     public String toString() {
         try {
-            return (_keyBuffer != null ? new String(_keyBuffer, StandardCharsets.US_ASCII) : "null") + ": " +
-                   (_dataBuffer != null ? Arrays.toString(_dataBuffer) : "null");
+            return (keyBuffer != null ? new String(keyBuffer, StandardCharsets.US_ASCII) : "null") + ": " +
+                   (dataBuffer != null ? Arrays.toString(dataBuffer) : "null");
         } catch (Exception e) {
             e.printStackTrace();
             return super.toString();

@@ -25,14 +25,15 @@ package discUtils.streams.readerWriter;
 import dotnet4j.io.Stream;
 
 public abstract class DataWriter {
-    private static final int _bufferSize = 8; // sizeof(UInt64)
 
-    protected final Stream _stream;
+    private static final int bufferSize = 8; // sizeof(UInt64)
 
-    protected byte[] _buffer;
+    protected final Stream stream;
+
+    protected byte[] buffer;
 
     public DataWriter(Stream stream) {
-        _stream = stream;
+        this.stream = stream;
     }
 
     public abstract void write(short value);
@@ -42,24 +43,24 @@ public abstract class DataWriter {
     public abstract void write(long value);
 
     public void writeBytes(byte[] value, int offset, int count) {
-        _stream.write(value, offset, count);
+        stream.write(value, offset, count);
     }
 
     public void writeBytes(byte[] value) {
-        _stream.write(value, 0, value.length);
+        stream.write(value, 0, value.length);
     }
 
     public void flush() {
-        _stream.flush();
+        stream.flush();
     }
 
     protected void ensureBuffer() {
-        if (_buffer == null) {
-            _buffer = new byte[_bufferSize];
+        if (buffer == null) {
+            buffer = new byte[bufferSize];
         }
     }
 
     protected void flushBuffer(int count) {
-        _stream.write(_buffer, 0, count);
+        stream.write(buffer, 0, count);
     }
 }

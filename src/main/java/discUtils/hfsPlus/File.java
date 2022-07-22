@@ -44,33 +44,34 @@ import dotnet4j.io.compression.DeflateStream;
 
 
 class File implements IVfsFileWithStreams {
+
     private static final String CompressionAttributeName = "com.apple.decmpfs";
 
-    private final CommonCatalogFileInfo _catalogInfo;
+    private final CommonCatalogFileInfo catalogInfo;
 
-    private final boolean _hasCompressionAttribute;
+    private final boolean hasCompressionAttribute;
 
     public File(Context context, CatalogNodeId nodeId, CommonCatalogFileInfo catalogInfo) {
-        _context = context;
-        _nodeId = nodeId;
-        _catalogInfo = catalogInfo;
-        _hasCompressionAttribute = _context.getAttributes().find(new AttributeKey(_nodeId, CompressionAttributeName)) != null;
+        this.context = context;
+        this.nodeId = nodeId;
+        this.catalogInfo = catalogInfo;
+        hasCompressionAttribute = this.context.getAttributes().find(new AttributeKey(this.nodeId, CompressionAttributeName)) != null;
     }
 
-    private Context _context;
+    private Context context;
 
     protected Context getContext() {
-        return _context;
+        return context;
     }
 
-    private CatalogNodeId _nodeId;
+    private CatalogNodeId nodeId;
 
     protected CatalogNodeId getNodeId() {
-        return _nodeId;
+        return nodeId;
     }
 
     public long getLastAccessTimeUtc() {
-        return _catalogInfo.AccessTime;
+        return catalogInfo.accessTime;
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -78,7 +79,7 @@ class File implements IVfsFileWithStreams {
     }
 
     public long getLastWriteTimeUtc() {
-        return _catalogInfo.ContentModifyTime;
+        return catalogInfo.contentModifyTime;
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -86,7 +87,7 @@ class File implements IVfsFileWithStreams {
     }
 
     public long getCreationTimeUtc() {
-        return _catalogInfo.CreateTime;
+        return catalogInfo.createTime;
     }
 
     public void setCreationTimeUtc(long value) {
@@ -94,7 +95,7 @@ class File implements IVfsFileWithStreams {
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return UnixFileType.toFileAttributes(_catalogInfo.FileSystemInfo.getFileType());
+        return UnixFileType.toFileAttributes(catalogInfo.fileSystemInfo.getFileType());
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
@@ -102,26 +103,26 @@ class File implements IVfsFileWithStreams {
     }
 
     public long getFileLength() {
-        CatalogFileInfo fileInfo = _catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) _catalogInfo
+        CatalogFileInfo fileInfo = catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) catalogInfo
                                                                            : null;
         if (fileInfo == null) {
             throw new UnsupportedOperationException();
         }
 
-        return fileInfo.DataFork.LogicalSize;
+        return fileInfo.dataFork.logicalSize;
     }
 
     public IBuffer getFileContent() {
-        CatalogFileInfo fileInfo = _catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) _catalogInfo
+        CatalogFileInfo fileInfo = catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) catalogInfo
                                                                            : null;
         if (fileInfo == null) {
             throw new UnsupportedOperationException();
         }
 
-        if (_hasCompressionAttribute) {
+        if (hasCompressionAttribute) {
             // Open the compression attribute
             byte[] compressionAttributeData = getContext().getAttributes()
-                    .find(new AttributeKey(_catalogInfo.FileId, "com.apple.decmpfs"));
+                    .find(new AttributeKey(catalogInfo.fileId, "com.apple.decmpfs"));
             CompressionAttribute compressionAttribute = new CompressionAttribute();
             compressionAttribute.readFrom(compressionAttributeData, 0);
 
@@ -155,7 +156,7 @@ class File implements IVfsFileWithStreams {
             }
             if (compressionAttribute.getCompressionType() == 4) {
                 // The data is stored in the resource fork.
-                FileBuffer buffer = new FileBuffer(getContext(), fileInfo.ResourceFork, fileInfo.FileId);
+                FileBuffer buffer = new FileBuffer(getContext(), fileInfo.resourceFork, fileInfo.fileId);
                 CompressionResourceHeader compressionFork = new CompressionResourceHeader();
                 byte[] compressionForkData = new byte[CompressionResourceHeader.getSize()];
                 buffer.read(0, compressionForkData, 0, CompressionResourceHeader.getSize());
@@ -214,10 +215,10 @@ class File implements IVfsFileWithStreams {
             }
 
             // Fall back to the default behavior.
-            return new FileBuffer(getContext(), fileInfo.DataFork, fileInfo.FileId);
+            return new FileBuffer(getContext(), fileInfo.dataFork, fileInfo.fileId);
         }
 
-        return new FileBuffer(getContext(), fileInfo.DataFork, fileInfo.FileId);
+        return new FileBuffer(getContext(), fileInfo.dataFork, fileInfo.fileId);
     }
 
     public SparseStream createStream(String name) {

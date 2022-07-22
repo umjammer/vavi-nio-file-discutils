@@ -29,9 +29,10 @@ import discUtils.core.vfs.VfsContext;
 
 
 public class UdfContext extends VfsContext {
-    public List<LogicalPartition> LogicalPartitions;
 
-    public Map<Short, PhysicalPartition> PhysicalPartitions;
+    public List<LogicalPartition> logicalPartitions;
 
-    public int PhysicalSectorSize;
+    public Map<Short, PhysicalPartition> physicalPartitions;
+
+    public int physicalSectorSize;
 }

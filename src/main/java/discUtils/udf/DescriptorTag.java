@@ -29,36 +29,37 @@ import dotnet4j.io.Stream;
 
 
 public class DescriptorTag implements IByteArraySerializable {
-    public short DescriptorCrc;
 
-    private short DescriptorCrcLength;
+    public short descriptorCrc;
+
+    private short descriptorCrcLength;
 
     public int getDescriptorCrcLength() {
-        return DescriptorCrcLength;
+        return descriptorCrcLength;
     }
 
-    public short DescriptorVersion;
+    public short descriptorVersion;
 
-    public byte TagChecksum;
+    public byte tagChecksum;
 
-    public TagIdentifier _TagIdentifier;
+    public TagIdentifier tagIdentifier;
 
-    public int TagLocation;
+    public int tagLocation;
 
-    public short TagSerialNumber;
+    public short tagSerialNumber;
 
     public int size() {
         return 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _TagIdentifier = TagIdentifier.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset));
-        DescriptorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        TagChecksum = buffer[offset + 4];
-        TagSerialNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        DescriptorCrc = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
-        DescriptorCrcLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 10);
-        TagLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
+        tagIdentifier = TagIdentifier.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset));
+        descriptorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        tagChecksum = buffer[offset + 4];
+        tagSerialNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        descriptorCrc = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        descriptorCrcLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 10);
+        tagLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         return 16;
     }
 

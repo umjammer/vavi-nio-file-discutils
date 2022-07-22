@@ -32,10 +32,11 @@ import discUtils.streams.util.Range;
  * Provides information about a entry in the VHDX log.
  */
 public final class LogEntryInfo {
-    private final LogEntry _entry;
+
+    private final LogEntry entry;
 
     public LogEntryInfo(LogEntry entry) {
-        _entry = entry;
+        this.entry = entry;
     }
 
     /**
@@ -45,7 +46,7 @@ public final class LogEntryInfo {
      * (smaller) size.
      */
     public long getFlushedFileOffset() {
-        return _entry.getFlushedFileOffset();
+        return entry.getFlushedFileOffset();
     }
 
     /**
@@ -53,7 +54,7 @@ public final class LogEntryInfo {
      * (or zero) descriptors.
      */
     public boolean getIsEmpty() {
-        return _entry.isEmpty();
+        return entry.isEmpty();
     }
 
     /**
@@ -61,14 +62,14 @@ public final class LogEntryInfo {
      * into, at the time the log entry was written.
      */
     public long getLastFileOffset() {
-        return _entry.getLastFileOffset();
+        return entry.getLastFileOffset();
     }
 
     /**
      * Gets the file extents that would be modified by replaying this log entry.
      */
     public List<Range> getModifiedExtents() {
-        return _entry.getModifiedExtents().stream().map(r -> new Range(r.getOffset(), r.getCount())).collect(Collectors.toList());
+        return entry.getModifiedExtents().stream().map(r -> new Range(r.getOffset(), r.getCount())).collect(Collectors.toList());
     }
 
     /**
@@ -76,7 +77,7 @@ public final class LogEntryInfo {
      * Consecutively numbered log entries form a sequence.
      */
     public long getSequenceNumber() {
-        return _entry.getSequenceNumber();
+        return entry.getSequenceNumber();
     }
 
     /**
@@ -85,7 +86,7 @@ public final class LogEntryInfo {
      * to fully recreate the state of the VHDX file's metadata.
      */
     public int getTail() {
-        return _entry.getTail();
+        return entry.getTail();
     }
 
 }

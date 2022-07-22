@@ -43,11 +43,12 @@ import dotnet4j.io.StreamReader;
  * Provides access to the contents of WIM (Windows Imaging) files.
  */
 public class WimFile {
-    private final FileHeader _fileHeader;
 
-    private final Stream _fileStream;
+    private final FileHeader fileHeader;
 
-    private Map<Integer, List<ResourceInfo>> _resources;
+    private final Stream fileStream;
+
+    private Map<Integer, List<ResourceInfo>> resources;
 
     /**
      * Initializes a new instance of the WimFile class.
@@ -55,15 +56,15 @@ public class WimFile {
      * @param stream A stream of the WIM file contents.
      */
     public WimFile(Stream stream) {
-        _fileStream = stream;
+        fileStream = stream;
         byte[] buffer = StreamUtilities.readExact(stream, 512);
-        _fileHeader = new FileHeader();
-        _fileHeader.read(buffer, 0);
-        if (!_fileHeader.isValid()) {
+        fileHeader = new FileHeader();
+        fileHeader.read(buffer, 0);
+        if (!fileHeader.isValid()) {
             throw new dotnet4j.io.IOException("Not a valid WIM file");
         }
 
-        if (_fileHeader.TotalParts != 1) {
+        if (fileHeader.totalParts != 1) {
             throw new UnsupportedOperationException("Multi-part WIM file");
         }
 
@@ -74,35 +75,35 @@ public class WimFile {
      * Gets the (zero-based) index of the bootable image.
      */
     public int getBootImage() {
-        return _fileHeader.BootIndex;
+        return fileHeader.bootIndex;
     }
 
     /**
      * Gets the version of the file format.
      */
     public int getFileFormatVersion() {
-        return _fileHeader.Version;
+        return fileHeader.version;
     }
 
     /**
      * Gets the identifying GUID for this WIM file.
      */
     public UUID getGuid() {
-        return _fileHeader.WimGuid;
+        return fileHeader.wimGuid;
     }
 
     /**
      * Gets the number of disk images within this file.
      */
     public int getImageCount() {
-        return _fileHeader.ImageCount;
+        return fileHeader.imageCount;
     }
 
     /**
      * Gets the embedded manifest describing the file and the contained images.
      */
     public String getManifest() {
-        try (StreamReader reader = new StreamReader(openResourceStream(_fileHeader.XmlDataHeader), true)) {
+        try (StreamReader reader = new StreamReader(openResourceStream(fileHeader.xmlDataHeader), true)) {
             return reader.readToEnd();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -124,16 +125,16 @@ public class WimFile {
 
     public ShortResourceHeader locateImage(int index) {
         int i = 0;
-        try (Stream s = openResourceStream(_fileHeader.OffsetTableHeader)) {
+        try (Stream s = openResourceStream(fileHeader.offsetTableHeader)) {
             long numRead = 0;
             while (numRead < s.getLength()) {
                 byte[] resBuffer = StreamUtilities.readExact(s, ResourceInfo.Size);
                 numRead += ResourceInfo.Size;
                 ResourceInfo info = new ResourceInfo();
                 info.read(resBuffer, 0);
-                if (info.Header.Flags.contains(ResourceFlags.MetaData)) {
+                if (info.header.flags.contains(ResourceFlags.MetaData)) {
                     if (i == index) {
-                        return info.Header;
+                        return info.header;
                     }
 
                     ++i;
@@ -147,45 +148,45 @@ public class WimFile {
 
     public ShortResourceHeader locateResource(byte[] hash) {
         int hashHash = EndianUtilities.toUInt32LittleEndian(hash, 0);
-        if (!_resources.containsKey(hashHash)) {
+        if (!resources.containsKey(hashHash)) {
             return null;
         }
 
-        for (ResourceInfo header : _resources.get(hashHash)) {
-            if (Utilities.areEqual(header.Hash, hash)) {
-                return header.Header;
+        for (ResourceInfo header : resources.get(hashHash)) {
+            if (Utilities.areEqual(header.hash, hash)) {
+                return header.header;
             }
         }
         return null;
     }
 
     public SparseStream openResourceStream(ShortResourceHeader hdr) {
-        SparseStream fileSectionStream = new SubStream(_fileStream, Ownership.None, hdr.FileOffset, hdr.CompressedSize);
-        if (!hdr.Flags.contains(ResourceFlags.Compressed)) {
+        SparseStream fileSectionStream = new SubStream(fileStream, Ownership.None, hdr.fileOffset, hdr.compressedSize);
+        if (!hdr.flags.contains(ResourceFlags.Compressed)) {
             return fileSectionStream;
         }
 
         return new FileResourceStream(fileSectionStream,
                                       hdr,
-                                      _fileHeader.Flags.contains(FileFlags.LzxCompression),
-                                      _fileHeader.CompressionSize);
+                                      fileHeader.flags.contains(FileFlags.LzxCompression),
+                                      fileHeader.compressionSize);
     }
 
     private void readResourceTable() {
-        _resources = new HashMap<>();
-        try (Stream s = openResourceStream(_fileHeader.OffsetTableHeader)) {
+        resources = new HashMap<>();
+        try (Stream s = openResourceStream(fileHeader.offsetTableHeader)) {
             long numRead = 0;
             while (numRead < s.getLength()) {
                 byte[] resBuffer = StreamUtilities.readExact(s, ResourceInfo.Size);
                 numRead += ResourceInfo.Size;
                 ResourceInfo info = new ResourceInfo();
                 info.read(resBuffer, 0);
-                int hashHash = EndianUtilities.toUInt32LittleEndian(info.Hash, 0);
-                if (!_resources.containsKey(hashHash)) {
-                    _resources.put(hashHash, new ArrayList<>(1));
+                int hashHash = EndianUtilities.toUInt32LittleEndian(info.hash, 0);
+                if (!resources.containsKey(hashHash)) {
+                    resources.put(hashHash, new ArrayList<>(1));
                 }
 
-                _resources.get(hashHash).add(info);
+                resources.get(hashHash).add(info);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);

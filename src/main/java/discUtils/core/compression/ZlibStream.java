@@ -37,13 +37,14 @@ import dotnet4j.io.compression.DeflateStream;
  * currently implemented.
  */
 public class ZlibStream extends Stream {
-    private final Adler32 _adler32;
 
-    private final DeflateStream _deflateStream;
+    private final Adler32 adler32;
 
-    private final CompressionMode _mode;
+    private final DeflateStream deflateStream;
 
-    private final Stream _stream;
+    private final CompressionMode mode;
+
+    private final Stream stream;
 
     /**
      * Initializes a new instance of the ZlibStream class.
@@ -54,8 +55,8 @@ public class ZlibStream extends Stream {
      *            open.
      */
     public ZlibStream(Stream stream, CompressionMode mode, boolean leaveOpen) {
-        _stream = stream;
-        _mode = mode;
+        this.stream = stream;
+        this.mode = mode;
         //
         // *** WARNING ***
         // {@link DeflateStream} needs zip header (0x78, 0x9c)
@@ -87,15 +88,15 @@ public class ZlibStream extends Stream {
 //            stream.write(headerBuffer, 0, 2);
 //        }
 
-        _deflateStream = new DeflateStream(stream, mode, leaveOpen);
-        _adler32 = new Adler32();
+        deflateStream = new DeflateStream(stream, mode, leaveOpen);
+        adler32 = new Adler32();
     }
 
     /**
      * Gets whether the stream can be read.
      */
     public boolean canRead() {
-        return _deflateStream.canRead();
+        return deflateStream.canRead();
     }
 
     /**
@@ -109,7 +110,7 @@ public class ZlibStream extends Stream {
      * Gets whether the stream can be written to.
      */
     public boolean canWrite() {
-        return _deflateStream.canWrite();
+        return deflateStream.canWrite();
     }
 
     /**
@@ -134,27 +135,27 @@ public class ZlibStream extends Stream {
      * Closes the stream.
      */
     public void close() throws IOException {
-        if (_mode == CompressionMode.Decompress) {
+        if (mode == CompressionMode.Decompress) {
             // Can only check Adler checksum on seekable streams. Since
             // DeflateStream aggresively caches input, it normally has already
             // consumed the footer.
-            if (_stream.canSeek()) {
-                _stream.seek(-4, SeekOrigin.End);
-                byte[] footerBuffer = StreamUtilities.readExact(_stream, 4);
-                if (EndianUtilities.toInt32BigEndian(footerBuffer, 0) != _adler32.getValue()) {
-//Debug.printf("R: %08x, %08x\n", EndianUtilities.toInt32BigEndian(footerBuffer, 0), _adler32.getValue());
+            if (stream.canSeek()) {
+                stream.seek(-4, SeekOrigin.End);
+                byte[] footerBuffer = StreamUtilities.readExact(stream, 4);
+                if (EndianUtilities.toInt32BigEndian(footerBuffer, 0) != adler32.getValue()) {
+//Debug.printf("R: %08x, %08x\n", EndianUtilities.toInt32BigEndian(footerBuffer, 0), adler32.getValue());
                     throw new dotnet4j.io.IOException("Corrupt decompressed data detected");
                 }
             }
 
-            _deflateStream.close();
+            deflateStream.close();
         } else {
-            _deflateStream.close();
+            deflateStream.close();
 
             byte[] footerBuffer = new byte[4];
-            EndianUtilities.writeBytesBigEndian(_adler32.getValue(), footerBuffer, 0);
-//Debug.printf("W: %08x, %s\n", _adler32.getValue(), _stream);
-            _stream.write(footerBuffer, 0, 4);
+            EndianUtilities.writeBytesBigEndian(adler32.getValue(), footerBuffer, 0);
+//Debug.printf("W: %08x, %s\n", adler32.getValue(), stream);
+            stream.write(footerBuffer, 0, 4);
         }
     }
 
@@ -162,7 +163,7 @@ public class ZlibStream extends Stream {
      * Flushes the stream.
      */
     public void flush() {
-        _deflateStream.flush();
+        deflateStream.flush();
     }
 
     /**
@@ -176,9 +177,9 @@ public class ZlibStream extends Stream {
     public int read(byte[] buffer, int offset, int count) {
         checkParams(buffer, offset, count);
 
-        int numRead = _deflateStream.read(buffer, offset, count);
+        int numRead = deflateStream.read(buffer, offset, count);
 //Debug.printf("r: %d\n", numRead);
-        _adler32.process(buffer, offset, numRead);
+        adler32.process(buffer, offset, numRead);
         return numRead;
     }
 
@@ -212,10 +213,10 @@ public class ZlibStream extends Stream {
     public void write(byte[] buffer, int offset, int count) {
         checkParams(buffer, offset, count);
 
-        _adler32.process(buffer, offset, count);
-//Debug.println("w: " + count + ", " + _deflateStream);
-        _deflateStream.write(buffer, offset, count);
-        _deflateStream.flush();
+        adler32.process(buffer, offset, count);
+//Debug.println("w: " + count + ", " + deflateStream);
+        deflateStream.write(buffer, offset, count);
+        deflateStream.flush();
     }
 
     private static void checkParams(byte[] buffer, int offset, int count) {

@@ -56,9 +56,9 @@ final class Directory extends File implements IVfsDirectory<DirEntry, File> {
         CatalogThread dirThread = new CatalogThread();
         dirThread.readFrom(dirThreadData, 0);
 
-        byte[] dirEntryData = getContext().getCatalog().find(new CatalogKey(dirThread.ParentId, dirThread.Name));
+        byte[] dirEntryData = getContext().getCatalog().find(new CatalogKey(dirThread.parentId, dirThread.name));
 
-        return new DirEntry(dirThread.Name, dirEntryData);
+        return new DirEntry(dirThread.name, dirEntryData);
     }
 
     public DirEntry getEntryByName(String name) {

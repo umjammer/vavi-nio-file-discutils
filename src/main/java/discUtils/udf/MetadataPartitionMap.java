@@ -26,35 +26,36 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class MetadataPartitionMap extends PartitionMap {
-    public short AlignmentUnitSize;
 
-    public int AllocationUnitSize;
+    public short alignmentUnitSize;
 
-    public byte Flags;
+    public int allocationUnitSize;
 
-    public int MetadataBitmapFileLocation;
+    public byte flags;
 
-    public int MetadataFileLocation;
+    public int metadataBitmapFileLocation;
 
-    public int MetadataMirrorFileLocation;
+    public int metadataFileLocation;
 
-    public short PartitionNumber;
+    public int metadataMirrorFileLocation;
 
-    public short VolumeSequenceNumber;
+    public short partitionNumber;
+
+    public short volumeSequenceNumber;
 
     public int size() {
         return 64;
     }
 
     protected int parse(byte[] buffer, int offset) {
-        VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
-        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
-        MetadataFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        MetadataMirrorFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        MetadataBitmapFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
-        AllocationUnitSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 52);
-        AlignmentUnitSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
-        Flags = buffer[offset + 58];
+        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
+        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
+        metadataFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
+        metadataMirrorFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
+        metadataBitmapFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
+        allocationUnitSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 52);
+        alignmentUnitSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
+        flags = buffer[offset + 58];
         return 64;
     }
 }

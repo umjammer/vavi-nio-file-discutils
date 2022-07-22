@@ -23,23 +23,24 @@
 package discUtils.btrfs;
 
 public class Subvolume {
-    private long _id;
+
+    private long id;
 
     public long getId() {
-        return _id;
+        return id;
     }
 
     public void setId(long value) {
-        _id = value;
+        id = value;
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 }

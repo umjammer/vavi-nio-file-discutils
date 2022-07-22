@@ -27,13 +27,14 @@ import discUtils.streams.util.MathUtilities;
 
 
 public class DataOutPacket {
-    private final Connection _connection;
 
-    private final long _lun;
+    private final Connection connection;
+
+    private final long lun;
 
     public DataOutPacket(Connection connection, long lun) {
-        _connection = connection;
-        _lun = lun;
+        this.connection = connection;
+        this.lun = lun;
     }
 
     public byte[] getBytes(byte[] data,
@@ -43,19 +44,19 @@ public class DataOutPacket {
                            int dataSeqNumber,
                            int bufferOffset,
                            int targetTransferTag) {
-        BasicHeaderSegment _basicHeader = new BasicHeaderSegment();
-        _basicHeader.Immediate = false;
-        _basicHeader._OpCode = OpCode.ScsiDataOut;
-        _basicHeader.FinalPdu = isFinalData;
-        _basicHeader.TotalAhsLength = 0;
-        _basicHeader.DataSegmentLength = count;
-        _basicHeader.InitiatorTaskTag = _connection.getSession().getCurrentTaskTag();
+        BasicHeaderSegment basicHeader = new BasicHeaderSegment();
+        basicHeader.immediate = false;
+        basicHeader.opCode = OpCode.ScsiDataOut;
+        basicHeader.finalPdu = isFinalData;
+        basicHeader.totalAhsLength = 0;
+        basicHeader.dataSegmentLength = count;
+        basicHeader.initiatorTaskTag = connection.getSession().getCurrentTaskTag();
         byte[] buffer = new byte[48 + MathUtilities.roundUp(count, 4)];
-        _basicHeader.writeTo(buffer, 0);
+        basicHeader.writeTo(buffer, 0);
         buffer[1] = (byte) (isFinalData ? 0x80 : 0x00);
-        EndianUtilities.writeBytesBigEndian(_lun, buffer, 8);
+        EndianUtilities.writeBytesBigEndian(lun, buffer, 8);
         EndianUtilities.writeBytesBigEndian(targetTransferTag, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(_connection.getExpectedStatusSequenceNumber(), buffer, 28);
+        EndianUtilities.writeBytesBigEndian(connection.getExpectedStatusSequenceNumber(), buffer, 28);
         EndianUtilities.writeBytesBigEndian(dataSeqNumber, buffer, 36);
         EndianUtilities.writeBytesBigEndian(bufferOffset, buffer, 40);
         System.arraycopy(data, offset, buffer, 48, count);

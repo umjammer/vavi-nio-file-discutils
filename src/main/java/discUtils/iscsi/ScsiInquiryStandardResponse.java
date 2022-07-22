@@ -26,87 +26,88 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ScsiInquiryStandardResponse extends ScsiResponse {
-    private boolean _truncated;
 
-    private LunClass _deviceType = LunClass.BlockStorage;
+    private boolean truncated;
+
+    private LunClass deviceType = LunClass.BlockStorage;
 
     public LunClass getDeviceType() {
-        return _deviceType;
+        return deviceType;
     }
 
     public void setDeviceType(LunClass value) {
-        _deviceType = value;
+        deviceType = value;
     }
 
     public int getNeededDataLength() {
         return 36;
     }
 
-    private String _productId;
+    private String productId;
 
     public String getProductId() {
-        return _productId;
+        return productId;
     }
 
     public void setProductId(String value) {
-        _productId = value;
+        productId = value;
     }
 
-    private String _productRevision;
+    private String productRevision;
 
     public String getProductRevision() {
-        return _productRevision;
+        return productRevision;
     }
 
     public void setProductRevision(String value) {
-        _productRevision = value;
+        productRevision = value;
     }
 
-    private boolean _removable;
+    private boolean removable;
 
     public boolean getRemovable() {
-        return _removable;
+        return removable;
     }
 
     public void setRemovable(boolean value) {
-        _removable = value;
+        removable = value;
     }
 
-    private byte _specificationVersion;
+    private byte specificationVersion;
 
     public byte getSpecificationVersion() {
-        return _specificationVersion;
+        return specificationVersion;
     }
 
     public void setSpecificationVersion(byte value) {
-        _specificationVersion = value;
+        specificationVersion = value;
     }
 
     public boolean getTruncated() {
-        return _truncated;
+        return truncated;
     }
 
-    private String _vendorId;
+    private String vendorId;
 
     public String getVendorId() {
-        return _vendorId;
+        return vendorId;
     }
 
     public void setVendorId(String value) {
-        _vendorId = value;
+        vendorId = value;
     }
 
     public void readFrom(byte[] buffer, int offset, int count) {
         if (count < 36) {
-            _truncated = true;
+            truncated = true;
             return;
         }
 
-        setDeviceType(LunClass.valueOf(buffer[0] & 0x1F));
-        setRemovable((buffer[1] & 0x80) != 0);
-        setSpecificationVersion(buffer[2]);
-        setVendorId(EndianUtilities.bytesToString(buffer, 8, 8));
-        setProductId(EndianUtilities.bytesToString(buffer, 16, 16));
-        setProductRevision(EndianUtilities.bytesToString(buffer, 32, 4));
+        deviceType = LunClass.valueOf(buffer[0] & 0x1F);
+        removable = (buffer[1] & 0x80) != 0;
+        specificationVersion = buffer[2];
+        vendorId = EndianUtilities.bytesToString(buffer, 8, 8);
+        productId = EndianUtilities.bytesToString(buffer, 16, 16);
+        productRevision = EndianUtilities.bytesToString(buffer, 32, 4);
     }
 }

@@ -26,13 +26,14 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class CatalogFileInfo extends CommonCatalogFileInfo {
-    public ForkData DataFork;
 
-    public FileInfo FileInfo;
+    public ForkData dataFork;
 
-    public short Flags;
+    public FileInfo fileInfo;
 
-    public ForkData ResourceFork;
+    public short flags;
+
+    public ForkData resourceFork;
 
     public int size() {
         throw new UnsupportedOperationException();
@@ -41,11 +42,11 @@ final class CatalogFileInfo extends CommonCatalogFileInfo {
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
 
-        Flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        FileInfo = EndianUtilities.toStruct(FileInfo.class, buffer, offset + 48);
+        flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
+        fileInfo = EndianUtilities.toStruct(FileInfo.class, buffer, offset + 48);
 
-        DataFork = EndianUtilities.toStruct(ForkData.class, buffer, offset + 88);
-        ResourceFork = EndianUtilities.toStruct(ForkData.class, buffer, offset + 168);
+        dataFork = EndianUtilities.toStruct(ForkData.class, buffer, offset + 88);
+        resourceFork = EndianUtilities.toStruct(ForkData.class, buffer, offset + 168);
 
         return 0;
     }

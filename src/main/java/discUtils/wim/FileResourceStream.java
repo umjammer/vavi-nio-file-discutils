@@ -41,47 +41,48 @@ import dotnet4j.io.Stream;
  * Stream access must be strictly sequential.
  */
 public class FileResourceStream extends SparseStream {
+
     private static final int E8DecodeFileSize = 12000000;
 
-    private final Stream _baseStream;
+    private final Stream baseStream;
 
-    private final long[] _chunkLength;
+    private final long[] chunkLength;
 
-    private final long[] _chunkOffsets;
+    private final long[] chunkOffsets;
 
-    private final int _chunkSize;
+    private final int chunkSize;
 
-    private int _currentChunk;
+    private int currentChunk;
 
-    private Stream _currentChunkStream;
+    private Stream currentChunkStream;
 
-    private final ShortResourceHeader _header;
+    private final ShortResourceHeader header;
 
-    private final boolean _lzxCompression;
+    private final boolean lzxCompression;
 
-    private final long _offsetDelta;
+    private final long offsetDelta;
 
-    private long _position;
+    private long position;
 
     public FileResourceStream(Stream baseStream, ShortResourceHeader header, boolean lzxCompression, int chunkSize) {
-        _baseStream = baseStream;
-        _header = header;
-        _lzxCompression = lzxCompression;
-        _chunkSize = chunkSize;
+        this.baseStream = baseStream;
+        this.header = header;
+        this.lzxCompression = lzxCompression;
+        this.chunkSize = chunkSize;
         if (baseStream.getLength() > 0xffff_ffffL) {
             throw new UnsupportedOperationException("Large files >4GB");
         }
 
-        int numChunks = (int) MathUtilities.ceil(header.OriginalSize, _chunkSize);
-        _chunkOffsets = new long[numChunks];
-        _chunkLength = new long[numChunks];
+        int numChunks = (int) MathUtilities.ceil(header.originalSize, this.chunkSize);
+        chunkOffsets = new long[numChunks];
+        chunkLength = new long[numChunks];
         for (int i = 1; i < numChunks; ++i) {
-            _chunkOffsets[i] = EndianUtilities.toUInt32LittleEndian(StreamUtilities.readExact(_baseStream, 4), 0);
-            _chunkLength[i - 1] = _chunkOffsets[i] - _chunkOffsets[i - 1];
+            chunkOffsets[i] = EndianUtilities.toUInt32LittleEndian(StreamUtilities.readExact(this.baseStream, 4), 0);
+            chunkLength[i - 1] = chunkOffsets[i] - chunkOffsets[i - 1];
         }
-        _chunkLength[numChunks - 1] = _baseStream.getLength() - _baseStream.getPosition() - _chunkOffsets[numChunks - 1];
-        _offsetDelta = _baseStream.getPosition();
-        _currentChunk = -1;
+        chunkLength[numChunks - 1] = this.baseStream.getLength() - this.baseStream.getPosition() - chunkOffsets[numChunks - 1];
+        offsetDelta = this.baseStream.getPosition();
+        currentChunk = -1;
     }
 
     public boolean canRead() {
@@ -101,43 +102,43 @@ public class FileResourceStream extends SparseStream {
     }
 
     public long getLength() {
-        return _header.OriginalSize;
+        return header.originalSize;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position >= getLength()) {
+        if (position >= getLength()) {
             return 0;
         }
 
-        int maxToRead = (int) Math.min(getLength() - _position, count);
+        int maxToRead = (int) Math.min(getLength() - position, count);
         int totalRead = 0;
         while (totalRead < maxToRead) {
-            int chunk = (int) (_position / _chunkSize);
-            int chunkOffset = (int) (_position % _chunkSize);
-            int numToRead = Math.min(maxToRead - totalRead, _chunkSize - chunkOffset);
-            if (_currentChunk != chunk) {
-                _currentChunkStream = openChunkStream(chunk);
-                _currentChunk = chunk;
+            int chunk = (int) (position / chunkSize);
+            int chunkOffset = (int) (position % chunkSize);
+            int numToRead = Math.min(maxToRead - totalRead, chunkSize - chunkOffset);
+            if (currentChunk != chunk) {
+                currentChunkStream = openChunkStream(chunk);
+                currentChunk = chunk;
             }
 
-            _currentChunkStream.setPosition(chunkOffset);
-            int numRead = _currentChunkStream.read(buffer, offset + totalRead, numToRead);
+            currentChunkStream.setPosition(chunkOffset);
+            int numRead = currentChunkStream.read(buffer, offset + totalRead, numToRead);
             if (numRead == 0) {
                 return totalRead;
             }
 
-            _position += numRead;
+            position += numRead;
             totalRead += numRead;
         }
         return totalRead;
@@ -156,14 +157,14 @@ public class FileResourceStream extends SparseStream {
     }
 
     private Stream openChunkStream(int chunk) {
-        int targetUncompressed = _chunkSize;
-        if (chunk == _chunkLength.length - 1) {
-            targetUncompressed = (int) (getLength() - _position);
+        int targetUncompressed = chunkSize;
+        if (chunk == chunkLength.length - 1) {
+            targetUncompressed = (int) (getLength() - position);
         }
 
-        Stream rawChunkStream = new SubStream(_baseStream, _offsetDelta + _chunkOffsets[chunk], _chunkLength[chunk]);
-        if (_header.Flags.contains(ResourceFlags.Compressed) && _chunkLength[chunk] != targetUncompressed) {
-            if (_lzxCompression) {
+        Stream rawChunkStream = new SubStream(baseStream, offsetDelta + chunkOffsets[chunk], chunkLength[chunk]);
+        if (header.flags.contains(ResourceFlags.Compressed) && chunkLength[chunk] != targetUncompressed) {
+            if (lzxCompression) {
                 return new LzxStream(rawChunkStream, 15, E8DecodeFileSize);
             }
 
@@ -175,6 +176,6 @@ public class FileResourceStream extends SparseStream {
 
     @Override
     public void close() throws IOException {
-        _currentChunkStream.close();
+        currentChunkStream.close();
     }
 }

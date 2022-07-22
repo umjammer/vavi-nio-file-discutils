@@ -26,43 +26,44 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class PartitionDescriptor extends TaggedDescriptor<PartitionDescriptor> {
-    public int AccessType;
 
-    public EntityIdentifier ImplementationIdentifier;
+    public int accessType;
 
-    public byte[] ImplementationUse;
+    public EntityIdentifier implementationIdentifier;
 
-    public EntityIdentifier PartitionContents;
+    public byte[] implementationUse;
 
-    public byte[] PartitionContentsUse;
+    public EntityIdentifier partitionContents;
 
-    public short PartitionFlags;
+    public byte[] partitionContentsUse;
 
-    public int PartitionLength;
+    public short partitionFlags;
 
-    public short PartitionNumber;
+    public int partitionLength;
 
-    public int PartitionStartingLocation;
+    public short partitionNumber;
 
-    public int VolumeDescriptorSequenceNumber;
+    public int partitionStartingLocation;
+
+    public int volumeDescriptorSequenceNumber;
 
     public PartitionDescriptor() {
         super(TagIdentifier.PartitionDescriptor);
     }
 
     public int parse(byte[] buffer, int offset) {
-        VolumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        PartitionFlags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
-        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
-        PartitionContents = EndianUtilities
+        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        partitionFlags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
+        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
+        partitionContents = EndianUtilities
                 .toStruct(ApplicationEntityIdentifier.class, buffer, offset + 24);
-        PartitionContentsUse = EndianUtilities.toByteArray(buffer, offset + 56, 128);
-        AccessType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 184);
-        PartitionStartingLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 188);
-        PartitionLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 192);
-        ImplementationIdentifier = EndianUtilities
+        partitionContentsUse = EndianUtilities.toByteArray(buffer, offset + 56, 128);
+        accessType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 184);
+        partitionStartingLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 188);
+        partitionLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 192);
+        implementationIdentifier = EndianUtilities
                 .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 196);
-        ImplementationUse = EndianUtilities.toByteArray(buffer, offset + 228, 128);
+        implementationUse = EndianUtilities.toByteArray(buffer, offset + 228, 128);
         return 512;
     }
 }

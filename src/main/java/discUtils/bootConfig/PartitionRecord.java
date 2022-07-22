@@ -29,34 +29,35 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class PartitionRecord extends DeviceRecord {
-    private byte[] _diskIdentity;
+
+    private byte[] diskIdentity;
 
     public byte[] getDiskIdentity() {
-        return _diskIdentity;
+        return diskIdentity;
     }
 
     public void setDiskIdentity(byte[] value) {
-        _diskIdentity = value;
+        diskIdentity = value;
     }
 
-    private byte[] _partitionIdentity;
+    private byte[] partitionIdentity;
 
     public byte[] getPartitionIdentity() {
-        return _partitionIdentity;
+        return partitionIdentity;
     }
 
     public void setPartitionIdentity(byte[] value) {
-        _partitionIdentity = value;
+        partitionIdentity = value;
     }
 
-    private int _partitionType;
+    private int partitionType;
 
     public int getPartitionType() {
-        return _partitionType;
+        return partitionType;
     }
 
     public void setPartitionType(int value) {
-        _partitionType = value;
+        partitionType = value;
     }
 
     public int getSize() {

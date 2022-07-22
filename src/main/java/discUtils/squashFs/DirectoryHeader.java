@@ -27,11 +27,12 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DirectoryHeader implements IByteArraySerializable {
-    public int Count;
 
-    public int InodeNumber;
+    public int count;
 
-    public int StartBlock;
+    public int inodeNumber;
+
+    public int startBlock;
 
     public int size() {
         return 12;
@@ -42,16 +43,16 @@ public class DirectoryHeader implements IByteArraySerializable {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Count, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(StartBlock, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(InodeNumber, buffer, offset + 8);
+        EndianUtilities.writeBytesLittleEndian(count, buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(startBlock, buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian(inodeNumber, buffer, offset + 8);
     }
 
     public static DirectoryHeader readFrom(MetablockReader reader) {
         DirectoryHeader result = new DirectoryHeader();
-        result.Count = reader.readInt();
-        result.StartBlock = reader.readInt();
-        result.InodeNumber = reader.readInt();
+        result.count = reader.readInt();
+        result.startBlock = reader.readInt();
+        result.inodeNumber = reader.readInt();
         return result;
     }
 }

@@ -29,24 +29,25 @@ import java.util.UUID;
  * Class representing a region in a VHDX file.
  */
 public final class RegionInfo {
-    private final RegionEntry _entry;
+
+    private final RegionEntry entry;
 
     public RegionInfo(RegionEntry entry) {
-        _entry = entry;
+        this.entry = entry;
     }
 
     /**
      * Gets the file offset of this region within the VHDX file.
      */
     public long getFileOffset() {
-        return _entry.fileOffset;
+        return entry.fileOffset;
     }
 
     /**
      * Gets the unique identifier for this region.
      */
     public UUID getGuid() {
-        return _entry.guid;
+        return entry.guid;
     }
 
     /**
@@ -56,14 +57,14 @@ public final class RegionInfo {
      * marked as required.
      */
     public boolean isRequired() {
-        return _entry.flags == RegionFlags.Required;
+        return entry.flags == RegionFlags.Required;
     }
 
     /**
      * Gets the length of this region within the VHDX file.
      */
     public long getLength() {
-        return _entry.getLength();
+        return entry.getLength();
     }
 
     /**
@@ -73,11 +74,11 @@ public final class RegionInfo {
      * regions will return as {@code null} .
      */
     public String getWellKnownName() {
-        if (_entry.guid.equals(RegionEntry.BatGuid)) {
+        if (entry.guid.equals(RegionEntry.BatGuid)) {
             return "BAT";
         }
 
-        if (_entry.guid.equals(RegionEntry.MetadataRegionGuid)) {
+        if (entry.guid.equals(RegionEntry.MetadataRegionGuid)) {
             return "Metadata Region";
         }
 

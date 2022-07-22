@@ -40,21 +40,22 @@ import dotnet4j.io.SeekOrigin;
 
 
 public final class OnDemandVirtualDisk extends VirtualDisk {
-    private DiscFileSystem _fileSystem;
 
-    private String _path;
+    private DiscFileSystem fileSystem;
 
-    private FileAccess _access;
+    private String path;
+
+    private FileAccess access;
 
     public OnDemandVirtualDisk(String path, FileAccess access) {
-        _path = path;
-        _access = access;
+        this.path = path;
+        this.access = access;
     }
 
     public OnDemandVirtualDisk(DiscFileSystem fileSystem, String path, FileAccess access) {
-        _fileSystem = fileSystem;
-        _path = path;
-        _access = access;
+        this.fileSystem = fileSystem;
+        this.path = path;
+        this.access = access;
     }
 
     public boolean getIsValid() {
@@ -62,7 +63,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             try (VirtualDisk disk = openDisk()) {
                 return disk != null;
             }
-        } catch (IOException __dummyCatchVar0) {
+        } catch (IOException e) {
             return false;
         }
     }
@@ -76,7 +77,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
@@ -90,7 +91,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
@@ -104,7 +105,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
@@ -118,13 +119,13 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
 
     public SparseStream getContent() {
-        return new StreamWrapper(_fileSystem, _path, _access);
+        return new StreamWrapper(fileSystem, path, access);
     }
 
     public List<VirtualDiskLayer> getLayers() {
@@ -140,7 +141,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
@@ -156,7 +157,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
@@ -172,32 +173,33 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
     }
 
     private VirtualDisk openDisk() {
         try {
-            return VirtualDisk.openDisk(_fileSystem, _path, _access);
+            return VirtualDisk.openDisk(fileSystem, path, access);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
     }
 
     private static class StreamWrapper extends SparseStream {
-        private DiscFileSystem _fileSystem;
 
-        private String _path;
+        private DiscFileSystem fileSystem;
 
-        private FileAccess _access;
+        private String path;
 
-        private long _position;
+        private FileAccess access;
+
+        private long position;
 
         public StreamWrapper(DiscFileSystem fileSystem, String path, FileAccess access) {
-            _fileSystem = fileSystem;
-            _path = path;
-            _access = access;
+            this.fileSystem = fileSystem;
+            this.path = path;
+            this.access = access;
         }
 
         public List<StreamExtent> getExtents() {
@@ -209,7 +211,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
@@ -223,7 +225,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
@@ -237,7 +239,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
@@ -251,7 +253,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
@@ -268,30 +270,30 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
 
         public long getPosition() {
-            return _position;
+            return position;
         }
 
         public void setPosition(long value) {
-            _position = value;
+            position = value;
         }
 
         public int read(byte[] buffer, int offset, int count) {
             VirtualDisk disk = openDisk();
             try {
-                disk.getContent().setPosition(_position);
+                disk.getContent().setPosition(position);
                 return disk.getContent().read(buffer, offset, count);
             } finally {
                 if (disk != null)
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
@@ -299,7 +301,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         public long seek(long offset, SeekOrigin origin) {
             long effectiveOffset = offset;
             if (origin == SeekOrigin.Current) {
-                effectiveOffset += _position;
+                effectiveOffset += position;
             } else if (origin == SeekOrigin.End) {
                 effectiveOffset += getLength();
             }
@@ -307,8 +309,8 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             if (effectiveOffset < 0) {
                 throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
             } else {
-                _position = effectiveOffset;
-                return _position;
+                position = effectiveOffset;
+                return position;
             }
         }
 
@@ -321,7 +323,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
@@ -329,21 +331,21 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         public void write(byte[] buffer, int offset, int count) {
             VirtualDisk disk = openDisk();
             try {
-                disk.getContent().setPosition(_position);
+                disk.getContent().setPosition(position);
                 disk.getContent().write(buffer, offset, count);
             } finally {
                 if (disk != null)
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        throw new dotnet4j.io.IOException(e);
+                        e.printStackTrace();
                     }
             }
         }
 
         private VirtualDisk openDisk() {
             try {
-                return VirtualDisk.openDisk(_fileSystem, _path, _access);
+                return VirtualDisk.openDisk(fileSystem, path, access);
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }

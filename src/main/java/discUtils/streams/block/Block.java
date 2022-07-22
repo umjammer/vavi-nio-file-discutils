@@ -24,37 +24,38 @@ package discUtils.streams.block;
 
 
 public class Block {
-    private int _available;
+
+    private int available;
 
     public int getAvailable() {
-        return _available;
+        return available;
     }
 
     public void setAvailable(int value) {
-        _available = value;
+        available = value;
     }
 
-    private byte[] _data;
+    private byte[] data;
 
     public byte[] getData() {
-        return _data;
+        return data;
     }
 
     public void setData(byte[] value) {
-        _data = value;
+        data = value;
     }
 
-    private long _position;
+    private long position;
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public boolean equals(Block other) {
-        return _position == other._position;
+        return position == other.position;
     }
 }

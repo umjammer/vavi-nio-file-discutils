@@ -29,56 +29,57 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class BTreeExtentHeader implements IByteArraySerializable {
+
     public static final int BtreeMagic = 0x424d4150;
 
-    private int _magic;
+    private int magic;
 
     public int getMagic() {
-        return _magic;
+        return magic;
     }
 
     public void setMagic(int value) {
-        _magic = value;
+        magic = value;
     }
 
-    private short _level;
+    private short level;
 
     public short getLevel() {
-        return _level;
+        return level;
     }
 
     public void setLevel(short value) {
-        _level = value;
+        level = value;
     }
 
-    private short _numberOfRecords;
+    private short numberOfRecords;
 
     public int getNumberOfRecords() {
-        return _numberOfRecords & 0xffff;
+        return numberOfRecords & 0xffff;
     }
 
     public void setNumberOfRecords(short value) {
-        _numberOfRecords = value;
+        numberOfRecords = value;
     }
 
-    private long _leftSibling;
+    private long leftSibling;
 
     public long getLeftSibling() {
-        return _leftSibling;
+        return leftSibling;
     }
 
     public void setLeftSibling(long value) {
-        _leftSibling = value;
+        leftSibling = value;
     }
 
-    private long _rightSibling;
+    private long rightSibling;
 
     public long getRightSibling() {
-        return _rightSibling;
+        return rightSibling;
     }
 
     public void setRightSibling(long value) {
-        _rightSibling = value;
+        rightSibling = value;
     }
 
     public int size() {
@@ -86,11 +87,11 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        _level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
-        _numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
-        _leftSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0x8);
-        _rightSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0xC);
+        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
+        numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
+        leftSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0x8);
+        rightSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0xC);
         return 24;
     }
 

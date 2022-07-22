@@ -23,15 +23,16 @@
 package discUtils.vmdk;
 
 public class CommonSparseExtentHeader {
-    public long Capacity;
 
-    public long GdOffset;
+    public long capacity;
 
-    public long GrainSize;
+    public long gdOffset;
 
-    public int MagicNumber;
+    public long grainSize;
 
-    public int NumGTEsPerGT;
+    public int magicNumber;
 
-    public int Version;
+    public int numGTEsPerGT;
+
+    public int version;
 }

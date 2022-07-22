@@ -36,23 +36,24 @@ import dotnet4j.io.Stream;
  * Provides read access to detailed information about a VHD file.
  */
 public class DiskImageFileInfo {
-    private final Footer _footer;
 
-    private final DynamicHeader _header;
+    private final Footer footer;
 
-    private final Stream _vhdStream;
+    private final DynamicHeader header;
+
+    private final Stream vhdStream;
 
     public DiskImageFileInfo(Footer footer, DynamicHeader header, Stream vhdStream) {
-        _footer = footer;
-        _header = header;
-        _vhdStream = vhdStream;
+        this.footer = footer;
+        this.header = header;
+        this.vhdStream = vhdStream;
     }
 
     /**
      * Gets the cookie indicating this is a VHD file (should be "conectix").
      */
     public String getCookie() {
-        return _footer.Cookie;
+        return footer.cookie;
     }
 
     /**
@@ -60,14 +61,14 @@ public class DiskImageFileInfo {
      * time).
      */
     public long getCreationTimestamp() {
-        return _footer.Timestamp;
+        return footer.timestamp;
     }
 
     /**
      * Gets the application used to create the file.
      */
     public String getCreatorApp() {
-        return _footer.CreatorApp;
+        return footer.creatorApp;
     }
 
     /**
@@ -75,7 +76,7 @@ public class DiskImageFileInfo {
      * file.
      */
     public String getCreatorHostOS() {
-        return _footer.CreatorHostOS;
+        return footer.creatorHostOS;
     }
 
     /**
@@ -83,56 +84,56 @@ public class DiskImageFileInfo {
      * integer.
      */
     public int getCreatorVersion() {
-        return _footer.CreatorVersion;
+        return footer.creatorVersion;
     }
 
     /**
      * Gets the current size of the disk (in bytes).
      */
     public long getCurrentSize() {
-        return _footer.CurrentSize;
+        return footer.currentSize;
     }
 
     /**
      * Gets the type of the disk.
      */
     public FileType getDiskType() {
-        return _footer.DiskType;
+        return footer.diskType;
     }
 
     /**
      * Gets the number of sparse blocks the file is divided into.
      */
     public long getDynamicBlockCount() {
-        return _header.MaxTableEntries;
+        return header.maxTableEntries;
     }
 
     /**
      * Gets the size of a sparse allocation block, in bytes.
      */
     public long getDynamicBlockSize() {
-        return _header.BlockSize;
+        return header.blockSize;
     }
 
     /**
      * Gets the checksum value of the dynamic header structure.
      */
     public int getDynamicChecksum() {
-        return _header.Checksum;
+        return header.checksum;
     }
 
     /**
      * Gets the cookie indicating a dynamic disk header (should be "cxsparse").
      */
     public String getDynamicCookie() {
-        return _header.Cookie;
+        return header.cookie;
     }
 
     /**
      * Gets the version of the dynamic header structure, packed as an integer.
      */
     public int getDynamicHeaderVersion() {
-        return _header.HeaderVersion;
+        return header.headerVersion;
     }
 
     /**
@@ -140,11 +141,11 @@ public class DiskImageFileInfo {
      */
     public List<String> getDynamicParentLocators() {
         List<String> vals = new ArrayList<>(8);
-        for (ParentLocator pl : _header.ParentLocators) {
-            if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.PlatformCode) ||
-                ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.PlatformCode)) {
-                _vhdStream.setPosition(pl.PlatformDataOffset);
-                byte[] buffer = StreamUtilities.readExact(_vhdStream, pl.PlatformDataLength);
+        for (ParentLocator pl : header.parentLocators) {
+            if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.platformCode) ||
+                ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.platformCode)) {
+                vhdStream.setPosition(pl.platformDataOffset);
+                byte[] buffer = StreamUtilities.readExact(vhdStream, pl.platformDataLength);
                 vals.add(new String(buffer, StandardCharsets.UTF_16LE));
             }
 
@@ -157,70 +158,70 @@ public class DiskImageFileInfo {
      * disks).
      */
     public long getDynamicParentTimestamp() {
-        return _header.ParentTimestamp;
+        return header.parentTimestamp;
     }
 
     /**
      * Gets the unicode name of the parent file (for differencing disks).
      */
     public String getDynamicParentUnicodeName() {
-        return _header.ParentUnicodeName;
+        return header.parentUnicodeName;
     }
 
     /**
      * Gets the unique id of the parent file (for differencing disks).
      */
     public UUID getDynamicParentUniqueId() {
-        return _header.ParentUniqueId;
+        return header.parentUniqueId;
     }
 
     /**
-     * Gets the Features bit field.
+     * Gets the features bit field.
      */
     public int getFeatures() {
-        return _footer.Features;
+        return footer.features;
     }
 
     /**
      * Gets the file format version packed as an integer.
      */
     public int getFileFormatVersion() {
-        return _footer.FileFormatVersion;
+        return footer.fileFormatVersion;
     }
 
     /**
      * Gets the checksum of the file's 'footer'.
      */
     public int getFooterChecksum() {
-        return _footer.Checksum;
+        return footer.checksum;
     }
 
     /**
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _footer.Geometry;
+        return footer.geometry;
     }
 
     /**
      * Gets the original size of the disk (in bytes).
      */
     public long getOriginalSize() {
-        return _footer.OriginalSize;
+        return footer.originalSize;
     }
 
     /**
      * Gets a flag indicating if the disk has associated saved VM memory state.
      */
     public byte getSavedState() {
-        return _footer.SavedState;
+        return footer.savedState;
     }
 
     /**
      * Gets the unique identity of this disk.
      */
     public UUID getUniqueId() {
-        return _footer.UniqueId;
+        return footer.uniqueId;
     }
 
 }

@@ -28,21 +28,22 @@ import dotnet4j.io.Stream;
 
 
 public class ProtocolDataUnit {
+
     public ProtocolDataUnit(byte[] headerData, byte[] contentData) {
-        _headerData = headerData;
-        _contentData = contentData;
+        this.headerData = headerData;
+        this.contentData = contentData;
     }
 
-    private byte[] _contentData;
+    private byte[] contentData;
 
     public byte[] getContentData() {
-        return _contentData;
+        return contentData;
     }
 
-    private byte[] _headerData;
+    private byte[] headerData;
 
     public byte[] getHeaderData() {
-        return _headerData;
+        return headerData;
     }
 
     public OpCode getOpCode() {
@@ -62,9 +63,9 @@ public class ProtocolDataUnit {
 
         BasicHeaderSegment bhs = new BasicHeaderSegment();
         bhs.readFrom(headerData, 0);
-        if (bhs.DataSegmentLength > 0) {
-            contentData = StreamUtilities.readExact(stream, bhs.DataSegmentLength);
-            numRead += bhs.DataSegmentLength;
+        if (bhs.dataSegmentLength > 0) {
+            contentData = StreamUtilities.readExact(stream, bhs.dataSegmentLength);
+            numRead += bhs.dataSegmentLength;
             if (dataDigestEnabled) {
                 @SuppressWarnings("unused")
                 int digest = readDigest(stream);

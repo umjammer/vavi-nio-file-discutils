@@ -27,13 +27,13 @@ import java.nio.charset.Charset;
 
 public final class GenericSuspExtension extends SuspExtension {
     public GenericSuspExtension(String identifier) {
-        __Identifier = identifier;
+        this.identifier = identifier;
     }
 
-    private String __Identifier;
+    private String identifier;
 
     public String getIdentifier() {
-        return __Identifier;
+        return identifier;
     }
 
     public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {

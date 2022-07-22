@@ -35,9 +35,10 @@ import dotnet4j.io.Stream;
  * Converts a Stream into an IBuffer instance.
  */
 public final class StreamBuffer extends Buffer implements Closeable {
-    private final Ownership _ownership;
 
-    private SparseStream _stream;
+    private final Ownership ownership;
+
+    private SparseStream stream;
 
     /**
      * Initializes a new instance of the StreamBuffer class.
@@ -50,12 +51,12 @@ public final class StreamBuffer extends Buffer implements Closeable {
             throw new IllegalArgumentException("stream");
         }
 
-        _stream = stream instanceof SparseStream ? (SparseStream) stream : null;
-        if (_stream == null) {
-            _stream = SparseStream.fromStream(stream, ownership);
-            _ownership = Ownership.Dispose;
+        this.stream = stream instanceof SparseStream ? (SparseStream) stream : null;
+        if (this.stream == null) {
+            this.stream = SparseStream.fromStream(stream, ownership);
+            this.ownership = Ownership.Dispose;
         } else {
-            _ownership = ownership;
+            this.ownership = ownership;
         }
     }
 
@@ -63,21 +64,21 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * Can this buffer be read.
      */
     public boolean canRead() {
-        return _stream.canRead();
+        return stream.canRead();
     }
 
     /**
      * Can this buffer be written.
      */
     public boolean canWrite() {
-        return _stream.canWrite();
+        return stream.canWrite();
     }
 
     /**
      * Gets the current capacity of the buffer, in bytes.
      */
     public long getCapacity() {
-        return _stream.getLength();
+        return stream.getLength();
     }
 
     /**
@@ -85,17 +86,17 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * This may be an empty enumeration if all bytes are zero.
      */
     public List<StreamExtent> getExtents() {
-        return _stream.getExtents();
+        return stream.getExtents();
     }
 
     /**
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_ownership == Ownership.Dispose) {
-            if (_stream != null) {
-                _stream.close();
-                _stream = null;
+        if (ownership == Ownership.Dispose) {
+            if (stream != null) {
+                stream.close();
+                stream = null;
             }
         }
     }
@@ -110,8 +111,8 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @return The actual number of bytes read.
      */
     public int read(long pos, byte[] buffer, int offset, int count) {
-        _stream.setPosition(pos);
-        return _stream.read(buffer, offset, count);
+        stream.setPosition(pos);
+        return stream.read(buffer, offset, count);
     }
 
     /**
@@ -123,15 +124,15 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @param count The number of bytes to write.
      */
     public void write(long pos, byte[] buffer, int offset, int count) {
-        _stream.setPosition(pos);
-        _stream.write(buffer, offset, count);
+        stream.setPosition(pos);
+        stream.write(buffer, offset, count);
     }
 
     /**
      * Flushes all data to the underlying storage.
      */
     public void flush() {
-        _stream.flush();
+        stream.flush();
     }
 
     /**
@@ -140,7 +141,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @param value The desired capacity of the buffer.
      */
     public void setCapacity(long value) {
-        _stream.setLength(value);
+        stream.setLength(value);
     }
 
     /**
@@ -151,6 +152,6 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return _stream.getExtentsInRange(start, count);
+        return stream.getExtentsInRange(start, count);
     }
 }

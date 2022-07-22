@@ -33,137 +33,138 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class NodeHeader implements IByteArraySerializable {
+
     public static final int Length = 0x65;
 
     /**
      * Checksum of everything past this field (from 20 to the end of the node)
      */
-    private byte[] _checksum;
+    private byte[] checksum;
 
     public byte[] getChecksum() {
-        return _checksum;
+        return checksum;
     }
 
     public void setChecksum(byte[] value) {
-        _checksum = value;
+        checksum = value;
     }
 
     /**
      * FS UUID
      */
-    private UUID _fsUuid;
+    private UUID fsUuid;
 
     public UUID getFsUuid() {
-        return _fsUuid;
+        return fsUuid;
     }
 
     public void setFsUuid(UUID value) {
-        _fsUuid = value;
+        fsUuid = value;
     }
 
     /**
      * Logical address of this node
      */
-    private long _logicalAddress;
+    private long logicalAddress;
 
     public long getLogicalAddress() {
-        return _logicalAddress;
+        return logicalAddress;
     }
 
     public void setLogicalAddress(long value) {
-        _logicalAddress = value;
+        logicalAddress = value;
     }
 
     /**
-     * Flags
+     * flags
      */
-    private long _flags;
+    private long flags;
 
     public long getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(long value) {
-        _flags = value;
+        flags = value;
     }
 
     /**
      * Backref. Rev.: always 1 (MIXED) for new filesystems; 0 (OLD) indicates an
      * old filesystem.
      */
-    private byte _backrefRevision;
+    private byte backrefRevision;
 
     public byte getBackrefRevision() {
-        return _backrefRevision;
+        return backrefRevision;
     }
 
     public void setBackrefRevision(byte value) {
-        _backrefRevision = value;
+        backrefRevision = value;
     }
 
     /**
      * Chunk tree UUID
      */
-    private UUID _chunkTreeUuid;
+    private UUID chunkTreeUuid;
 
     public UUID getChunkTreeUuid() {
-        return _chunkTreeUuid;
+        return chunkTreeUuid;
     }
 
     public void setChunkTreeUuid(UUID value) {
-        _chunkTreeUuid = value;
+        chunkTreeUuid = value;
     }
 
     /**
      * Logical address of this node
      */
-    private long _generation;
+    private long generation;
 
     public long getGeneration() {
-        return _generation;
+        return generation;
     }
 
     public void setGeneration(long value) {
-        _generation = value;
+        generation = value;
     }
 
     /**
      * The ID of the tree that contains this node
      */
-    private long _treeId;
+    private long treeId;
 
     public long getTreeId() {
-        return _treeId;
+        return treeId;
     }
 
     public void setTreeId(long value) {
-        _treeId = value;
+        treeId = value;
     }
 
     /**
      * Number of items
      */
-    private int _itemCount;
+    private int itemCount;
 
     public int getItemCount() {
-        return _itemCount;
+        return itemCount;
     }
 
     public void setItemCount(int value) {
-        _itemCount = value;
+        itemCount = value;
     }
 
     /**
      * Level (0 for leaf nodes)
      */
-    private byte _level;
+    private byte level;
 
     public int getLevel() {
-        return _level & 0xff;
+        return level & 0xff;
     }
 
     public void setLevel(byte value) {
-        _level = value;
+        level = value;
     }
 
     public int size() {
@@ -171,17 +172,17 @@ public abstract class NodeHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setChecksum(EndianUtilities.toByteArray(buffer, offset, 0x20));
-        setFsUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20));
-        setLogicalAddress(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30));
+        checksum = EndianUtilities.toByteArray(buffer, offset, 0x20);
+        fsUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20);
+        logicalAddress = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
         // TODO: validate shift
-        setFlags(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38) >>> 8);
-        setBackrefRevision(buffer[offset + 0x3f]);
-        setChunkTreeUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x40));
-        setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x50));
-        setTreeId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x58));
-        setItemCount(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x60));
-        setLevel(buffer[offset + 0x64]);
+        flags = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38) >>> 8;
+        backrefRevision = buffer[offset + 0x3f];
+        chunkTreeUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x40);
+        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x50);
+        treeId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x58);
+        itemCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x60);
+        level = buffer[offset + 0x64];
         return Length;
     }
 

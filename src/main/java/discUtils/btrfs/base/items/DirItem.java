@@ -33,6 +33,7 @@ import discUtils.streams.util.EndianUtilities;
  * From an inode to a name in a directory
  */
 public class DirItem extends BaseItem {
+
     public DirItem(Key key) {
         super(key);
     }
@@ -42,92 +43,92 @@ public class DirItem extends BaseItem {
      * entry. Unused and zeroed out when the entry describes an extended
      * attribute.
      */
-    private Key _childLocation;
+    private Key childLocation;
 
     public Key getChildLocation() {
-        return _childLocation;
+        return childLocation;
     }
 
     public void setChildLocation(Key value) {
-        _childLocation = value;
+        childLocation = value;
     }
 
     /**
      * transid
      */
-    private long _transId;
+    private long transId;
 
     public long getTransId() {
-        return _transId;
+        return transId;
     }
 
     public void setTransId(long value) {
-        _transId = value;
+        transId = value;
     }
 
     /**
      * (m)
      */
-    private short _dataLength;
+    private short dataLength;
 
     public int getDataLength() {
-        return _dataLength & 0xffff;
+        return dataLength & 0xffff;
     }
 
     public void setDataLength(short value) {
-        _dataLength = value;
+        dataLength = value;
     }
 
     /**
      * (n)
      */
-    private short _nameLength;
+    private short nameLength;
 
     public int getNameLength() {
-        return _nameLength & 0xffff;
+        return nameLength & 0xffff;
     }
 
     public void setNameLength(short value) {
-        _nameLength = value;
+        nameLength = value;
     }
 
     /**
      * type of child
      */
-    private DirItemChildType _childType = DirItemChildType.Unknown;
+    private DirItemChildType childType = DirItemChildType.Unknown;
 
     public DirItemChildType getChildType() {
-        return _childType;
+        return childType;
     }
 
     public void setChildType(DirItemChildType value) {
-        _childType = value;
+        childType = value;
     }
 
     /**
      * name of item in directory
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     /**
      * data of item in directory (empty for normal directory items)
      */
-    private byte[] _data;
+    private byte[] data;
 
     public byte[] getData() {
-        return _data;
+        return data;
     }
 
     public void setData(byte[] value) {
-        _data = value;
+        data = value;
     }
 
     public int size() {
@@ -135,13 +136,13 @@ public class DirItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setChildLocation(EndianUtilities.toStruct(Key.class, buffer, offset));
-        setTransId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x11));
-        setDataLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19));
-        setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b));
-        setChildType(DirItemChildType.values()[buffer[offset + 0x1d]]);
-        setName(new String(buffer, offset + 0x1e, getNameLength(), StandardCharsets.UTF_8));
-        setData(EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength()));
+        childLocation = EndianUtilities.toStruct(Key.class, buffer, offset);
+        transId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x11);
+        dataLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19);
+        nameLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b);
+        childType = DirItemChildType.values()[buffer[offset + 0x1d]];
+        name = new String(buffer, offset + 0x1e, getNameLength(), StandardCharsets.UTF_8);
+        data = EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength());
         return size();
     }
 }

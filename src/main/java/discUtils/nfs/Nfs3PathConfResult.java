@@ -23,59 +23,60 @@
 package discUtils.nfs;
 
 public class Nfs3PathConfResult extends Nfs3CallResult {
+
     public Nfs3PathConfResult() {
     }
 
     public Nfs3PathConfResult(XdrDataReader reader) {
-        _status = Nfs3Status.valueOf(reader.readInt32());
-        _objectAttributes = new Nfs3FileAttributes(reader);
-        if (_status == Nfs3Status.Ok) {
-            _linkMax = reader.readUInt32();
-            _nameMax = reader.readUInt32();
-            _noTrunc = reader.readBool();
-            _chownRestricted = reader.readBool();
-            _caseInsensitive = reader.readBool();
-            _casePreserving = reader.readBool();
+        status = Nfs3Status.valueOf(reader.readInt32());
+        objectAttributes = new Nfs3FileAttributes(reader);
+        if (status == Nfs3Status.Ok) {
+            linkMax = reader.readUInt32();
+            nameMax = reader.readUInt32();
+            noTrunc = reader.readBool();
+            chownRestricted = reader.readBool();
+            caseInsensitive = reader.readBool();
+            casePreserving = reader.readBool();
         }
     }
 
     /**
      * Gets or sets the attributes of the object specified by object.
      */
-    private Nfs3FileAttributes _objectAttributes;
+    private Nfs3FileAttributes objectAttributes;
 
     public Nfs3FileAttributes getObjectAttributes() {
-        return _objectAttributes;
+        return objectAttributes;
     }
 
     public void setObjectAttributes(Nfs3FileAttributes value) {
-        _objectAttributes = value;
+        objectAttributes = value;
     }
 
     /**
      * Gets or sets the maximum number of hard links to an object.
      */
-    private int _linkMax;
+    private int linkMax;
 
     public int getLinkMax() {
-        return _linkMax;
+        return linkMax;
     }
 
     public void setLinkMax(int value) {
-        _linkMax = value;
+        linkMax = value;
     }
 
     /**
      * Gets or sets the maximum length of a component of a filename.
      */
-    private int _nameMax;
+    private int nameMax;
 
     public int getNameMax() {
-        return _nameMax;
+        return nameMax;
     }
 
     public void setNameMax(int value) {
-        _nameMax = value;
+        nameMax = value;
     }
 
     /**
@@ -84,14 +85,14 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
      * NFS3ERR_NAMETOOLONG.If FALSE, any length name over name_max bytes will be
      * silently truncated to name_max bytes.
      */
-    private boolean _noTrunc;
+    private boolean noTrunc;
 
     public boolean getNoTrunc() {
-        return _noTrunc;
+        return noTrunc;
     }
 
     public void setNoTrunc(boolean value) {
-        _noTrunc = value;
+        noTrunc = value;
     }
 
     /**
@@ -99,28 +100,28 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
      * change either the owner or the group associated with a file if the caller
      * is not the privileged user. (Uid 0.)
      */
-    private boolean _chownRestricted;
+    private boolean chownRestricted;
 
     public boolean getChownRestricted() {
-        return _chownRestricted;
+        return chownRestricted;
     }
 
     public void setChownRestricted(boolean value) {
-        _chownRestricted = value;
+        chownRestricted = value;
     }
 
     /**
      * Gets or sets a value indicating whether the server file system does not
      * distinguish case when interpreting filenames.
      */
-    private boolean _caseInsensitive;
+    private boolean caseInsensitive;
 
     public boolean getCaseInsensitive() {
-        return _caseInsensitive;
+        return caseInsensitive;
     }
 
     public void setCaseInsensitive(boolean value) {
-        _caseInsensitive = value;
+        caseInsensitive = value;
     }
 
     /**
@@ -128,26 +129,26 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
      * preserve the case of a name during a CREATE, MKDIR, MKNOD, SYMLINK,
      * RENAME, or LINK operation.
      */
-    private boolean _casePreserving;
+    private boolean casePreserving;
 
     public boolean getCasePreserving() {
-        return _casePreserving;
+        return casePreserving;
     }
 
     public void setCasePreserving(boolean value) {
-        _casePreserving = value;
+        casePreserving = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        _objectAttributes.write(writer);
-        if (_status == Nfs3Status.Ok) {
-            writer.write(_linkMax);
-            writer.write(_nameMax);
-            writer.write(_noTrunc);
-            writer.write(_chownRestricted);
-            writer.write(_caseInsensitive);
-            writer.write(_casePreserving);
+        writer.write(status.getValue());
+        objectAttributes.write(writer);
+        if (status == Nfs3Status.Ok) {
+            writer.write(linkMax);
+            writer.write(nameMax);
+            writer.write(noTrunc);
+            writer.write(chownRestricted);
+            writer.write(caseInsensitive);
+            writer.write(casePreserving);
         }
     }
 
@@ -160,18 +161,18 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
             return false;
         }
 
-        return other._status == _status && other._linkMax == _linkMax && other._nameMax == _nameMax &&
-               other._noTrunc == _noTrunc && other._chownRestricted == _chownRestricted &&
-               other._caseInsensitive == _caseInsensitive && other._casePreserving == _casePreserving;
+        return other.status == status && other.linkMax == linkMax && other.nameMax == nameMax &&
+               other.noTrunc == noTrunc && other.chownRestricted == chownRestricted &&
+               other.caseInsensitive == caseInsensitive && other.casePreserving == casePreserving;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(_status,
-                                                                _linkMax,
-                                                                _nameMax,
-                                                                _noTrunc,
-                                                                _chownRestricted,
-                                                                _caseInsensitive,
-                                                                _casePreserving);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status,
+                linkMax,
+                nameMax,
+                noTrunc,
+                chownRestricted,
+                caseInsensitive,
+                casePreserving);
     }
 }

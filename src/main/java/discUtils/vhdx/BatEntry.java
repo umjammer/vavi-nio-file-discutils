@@ -27,37 +27,38 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BatEntry implements IByteArraySerializable {
+
     public BatEntry() {
     }
 
-    private long _value;
+    private long value;
 
     public BatEntry(byte[] buffer, int offset) {
-        _value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
     }
 
     public PayloadBlockStatus getPayloadBlockStatus() {
-        return PayloadBlockStatus.values()[(int) _value & 0x7];
+        return PayloadBlockStatus.values()[(int) value & 0x7];
     }
 
     public void setPayloadBlockStatus(PayloadBlockStatus value) {
-        _value = (_value & ~0x7L) | value.ordinal();
+        this.value = (this.value & ~0x7L) | value.ordinal();
     }
 
     public boolean getBitmapBlockPresent() {
-        return (_value & 0x7) == 6;
+        return (value & 0x7) == 6;
     }
 
     public void setBitmapBlockPresent(boolean value) {
-        _value = (_value & ~0x7L) | (value ? 6 : 0);
+        this.value = (this.value & ~0x7L) | (value ? 6 : 0);
     }
 
     public long getFileOffsetMB() {
-        return _value >>> 20 & 0xFFFFFFFFFFFL;
+        return value >>> 20 & 0xFFFFFFFFFFFL;
     }
 
     public void setFileOffsetMB(long value) {
-        _value = (_value & 0xFFFFF) | value << 20;
+        this.value = (this.value & 0xFFFFF) | value << 20;
     }
 
     public int size() {
@@ -65,11 +66,11 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
         return 8;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(_value, buffer, offset);
+        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
     }
 }

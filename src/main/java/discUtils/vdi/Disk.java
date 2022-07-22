@@ -45,9 +45,10 @@ import dotnet4j.io.Stream;
  * Represents a disk stored in VirtualBox (Sun xVM) format.
  */
 public final class Disk extends VirtualDisk {
-    private SparseStream _content;
 
-    private final DiskImageFile _diskImage;
+    private SparseStream content;
+
+    private final DiskImageFile diskImage;
 
     /**
      * Initializes a new instance of the Disk class.
@@ -58,7 +59,7 @@ public final class Disk extends VirtualDisk {
     public Disk(String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         FileLocator locator = new LocalFileLocator("");
-        _diskImage = new DiskImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose);
+        diskImage = new DiskImageFile(locator.open(path, FileMode.Open, access, share), Ownership.Dispose);
     }
 
     /**
@@ -67,7 +68,7 @@ public final class Disk extends VirtualDisk {
      * @param file The file containing the disk image.
      */
     public Disk(DiskImageFile file) {
-        _diskImage = file;
+        diskImage = file;
     }
 
     /**
@@ -77,7 +78,7 @@ public final class Disk extends VirtualDisk {
      * @param stream The stream to read.
      */
     public Disk(Stream stream) {
-        _diskImage = new DiskImageFile(stream);
+        diskImage = new DiskImageFile(stream);
     }
 
     /**
@@ -89,14 +90,14 @@ public final class Disk extends VirtualDisk {
      *            {@code stream} lifetime.
      */
     public Disk(Stream stream, Ownership ownsStream) {
-        _diskImage = new DiskImageFile(stream, ownsStream);
+        diskImage = new DiskImageFile(stream, ownsStream);
     }
 
     /**
      * Gets the capacity of the disk (in bytes).
      */
     public long getCapacity() {
-        return _diskImage.getCapacity();
+        return diskImage.getCapacity();
     }
 
     /**
@@ -109,11 +110,11 @@ public final class Disk extends VirtualDisk {
      * accessing the stream.
      */
     public SparseStream getContent() {
-        if (_content == null) {
-            _content = _diskImage.openContent(null, Ownership.None);
+        if (content == null) {
+            content = diskImage.openContent(null, Ownership.None);
         }
 
-        return _content;
+        return content;
     }
 
     /**
@@ -129,14 +130,14 @@ public final class Disk extends VirtualDisk {
      * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
-        return DiskFactory.makeDiskTypeInfo(_diskImage.isSparse() ? "dynamic" : "fixed");
+        return DiskFactory.makeDiskTypeInfo(diskImage.isSparse() ? "dynamic" : "fixed");
     }
 
     /**
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _diskImage.getGeometry();
+        return diskImage.getGeometry();
     }
 
     /**
@@ -198,13 +199,13 @@ public final class Disk extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_content != null) {
-                _content.close();
-                _content = null;
+            if (content != null) {
+                content.close();
+                content = null;
             }
 
-            if (_diskImage != null) {
-                _diskImage.close();
+            if (diskImage != null) {
+                diskImage.close();
             }
         } finally {
             super.close();

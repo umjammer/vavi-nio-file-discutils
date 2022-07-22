@@ -27,17 +27,17 @@ import discUtils.streams.IByteArraySerializable;
 
 public abstract class ScsiCommand implements IByteArraySerializable {
     public ScsiCommand(long targetLun) {
-        __TargetLun = targetLun;
+        this.targetLun = targetLun;
     }
 
     public boolean getImmediateDelivery() {
         return false;
     }
 
-    private long __TargetLun;
+    private long targetLun;
 
     public long getTargetLun() {
-        return __TargetLun;
+        return targetLun;
     }
 
     public TaskAttributes getTaskAttributes() {

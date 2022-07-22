@@ -32,17 +32,18 @@ package discUtils.core.compression;
  * lookups O(1), but is inefficient overall.
  */
 public final class HuffmanTree {
-    private final int[] _buffer;
+
+    private final int[] buffer;
 
     // Max bits per symbol
-    private final int _numBits;
+    private final int numBits;
 
     // Max symbols
-    private final int _numSymbols;
+    private final int numSymbols;
 
     public HuffmanTree(int[] lengths) {
-        _lengths = lengths;
-        _numSymbols = lengths.length;
+        this.lengths = lengths;
+        numSymbols = lengths.length;
 
         int maxLength = 0;
         for (int i = 0; i < getLengths().length; ++i) {
@@ -51,20 +52,20 @@ public final class HuffmanTree {
             }
         }
 
-        _numBits = maxLength;
-        _buffer = new int[1 << _numBits];
+        numBits = maxLength;
+        buffer = new int[1 << numBits];
 
         build();
     }
 
-    private int[] _lengths;
+    private int[] lengths;
 
     public int[] getLengths() {
-        return _lengths;
+        return lengths;
     }
 
     public int nextSymbol(BitStream bitStream) {
-        int symbol = _buffer[bitStream.peek(_numBits)];
+        int symbol = buffer[bitStream.peek(numBits)];
 
         // We may have over-read, reset bitstream position
         bitStream.consume(getLengths()[symbol]);
@@ -76,13 +77,13 @@ public final class HuffmanTree {
         int position = 0;
 
         // For each bit-length...
-        for (int i = 1; i <= _numBits; ++i) {
+        for (int i = 1; i <= numBits; ++i) {
             // Check each symbol
-            for (int symbol = 0; symbol < _numSymbols; ++symbol) {
+            for (int symbol = 0; symbol < numSymbols; ++symbol) {
                 if (getLengths()[symbol] == i) {
-                    int numToFill = 1 << (_numBits - i);
+                    int numToFill = 1 << (numBits - i);
                     for (int n = 0; n < numToFill; ++n) {
-                        _buffer[position + n] = symbol;
+                        buffer[position + n] = symbol;
                     }
 
                     position += numToFill;
@@ -90,8 +91,8 @@ public final class HuffmanTree {
             }
         }
 
-        for (int i = position; i < _buffer.length; ++i) {
-            _buffer[i] = 0xffffffff;
+        for (int i = position; i < buffer.length; ++i) {
+            buffer[i] = 0xffff_ffff;
         }
     }
 }

@@ -32,16 +32,17 @@ import dotnet4j.io.Stream;
 
 
 final class FileBuffer extends Buffer {
-    private final ForkData _baseData;
 
-    private final CatalogNodeId _cnid;
+    private final ForkData baseData;
 
-    private final Context _context;
+    private final CatalogNodeId cnid;
+
+    private final Context context;
 
     public FileBuffer(Context context, ForkData baseData, CatalogNodeId catalogNodeId) {
-        _context = context;
-        _baseData = baseData;
-        _cnid = catalogNodeId;
+        this.context = context;
+        this.baseData = baseData;
+        cnid = catalogNodeId;
     }
 
     public boolean canRead() {
@@ -53,7 +54,7 @@ final class FileBuffer extends Buffer {
     }
 
     public long getCapacity() {
-        return _baseData.LogicalSize;
+        return baseData.logicalSize;
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
@@ -64,8 +65,8 @@ final class FileBuffer extends Buffer {
         while (totalRead < limitedCount) {
             long[] extentLogicalStart = new long[1];
             ExtentDescriptor extent = findExtent(pos, extentLogicalStart);
-            long extentStreamStart = extent.StartBlock * (long) _context.getVolumeHeader().BlockSize;
-            long extentSize = extent.BlockCount * (long) _context.getVolumeHeader().BlockSize;
+            long extentStreamStart = extent.startBlock * (long) context.getVolumeHeader().blockSize;
+            long extentSize = extent.blockCount * (long) context.getVolumeHeader().blockSize;
 
             long extentOffset = pos + totalRead - extentLogicalStart[0];
             int toRead = (int) Math.min(limitedCount - totalRead, extentSize - extentOffset);
@@ -76,7 +77,7 @@ final class FileBuffer extends Buffer {
                 break;
             }
 
-            Stream volStream = _context.getVolumeStream();
+            Stream volStream = context.getVolumeStream();
             volStream.setPosition(extentStreamStart + extentOffset);
             int numRead = volStream.read(buffer, offset + totalRead, toRead);
 
@@ -103,18 +104,18 @@ final class FileBuffer extends Buffer {
      */
     private ExtentDescriptor findExtent(long pos, long[] extentLogicalStart) {
         int blocksSeen = 0;
-        int block = (int) (pos / _context.getVolumeHeader().BlockSize);
-        for (int i = 0; i < _baseData.Extents.length; ++i) {
-            if (blocksSeen + _baseData.Extents[i].BlockCount > block) {
-                extentLogicalStart[0] = blocksSeen * (long) _context.getVolumeHeader().BlockSize;
-                return _baseData.Extents[i];
+        int block = (int) (pos / context.getVolumeHeader().blockSize);
+        for (int i = 0; i < baseData.extents.length; ++i) {
+            if (blocksSeen + baseData.extents[i].blockCount > block) {
+                extentLogicalStart[0] = blocksSeen * (long) context.getVolumeHeader().blockSize;
+                return baseData.extents[i];
             }
 
-            blocksSeen += _baseData.Extents[i].BlockCount;
+            blocksSeen += baseData.extents[i].blockCount;
         }
 
-        while (blocksSeen < _baseData.TotalBlocks) {
-            byte[] extentData = _context.getExtentsOverflow().find(new ExtentKey(_cnid, blocksSeen, false));
+        while (blocksSeen < baseData.totalBlocks) {
+            byte[] extentData = context.getExtentsOverflow().find(new ExtentKey(cnid, blocksSeen, false));
 
             if (extentData != null) {
                 int extentDescriptorCount = extentData.length / 8;
@@ -123,15 +124,15 @@ final class FileBuffer extends Buffer {
                     @SuppressWarnings("unused")
                     int bytesRead = extentDescriptor.readFrom(extentData, a * 8);
 
-                    if (blocksSeen + extentDescriptor.BlockCount > block) {
-                        extentLogicalStart[0] = blocksSeen * (long) _context.getVolumeHeader().BlockSize;
+                    if (blocksSeen + extentDescriptor.blockCount > block) {
+                        extentLogicalStart[0] = blocksSeen * (long) context.getVolumeHeader().blockSize;
                         return extentDescriptor;
                     }
 
-                    blocksSeen += extentDescriptor.BlockCount;
+                    blocksSeen += extentDescriptor.blockCount;
                 }
             } else {
-                throw new IOException("Missing extent from extent overflow file: cnid=" + _cnid + ", blocksSeen=" + blocksSeen);
+                throw new IOException("Missing extent from extent overflow file: cnid=" + cnid + ", blocksSeen=" + blocksSeen);
             }
         }
 

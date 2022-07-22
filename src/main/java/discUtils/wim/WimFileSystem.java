@@ -58,26 +58,26 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     private static final String FS = File.separator;
 
-    private final ObjectCache<Long, List<DirectoryEntry>> _dirCache;
+    private final ObjectCache<Long, List<DirectoryEntry>> dirCache;
 
-    private WimFile _file;
+    private WimFile file;
 
-    private Stream _metaDataStream;
+    private Stream metaDataStream;
 
-    private long _rootDirPos;
+    private long rootDirPos;
 
-    private List<RawSecurityDescriptor> _securityDescriptors;
+    private List<RawSecurityDescriptor> securityDescriptors;
 
     WimFileSystem(WimFile file, int index) {
-        _file = file;
-        ShortResourceHeader metaDataFileInfo = _file.locateImage(index);
+        this.file = file;
+        ShortResourceHeader metaDataFileInfo = this.file.locateImage(index);
         if (metaDataFileInfo == null) {
             throw new IllegalArgumentException("No such image: " + index);
         }
 
-        _metaDataStream = _file.openResourceStream(metaDataFileInfo);
+        metaDataStream = this.file.openResourceStream(metaDataFileInfo);
         readSecurityDescriptors();
-        _dirCache = new ObjectCache<>();
+        dirCache = new ObjectCache<>();
     }
 
     /**
@@ -94,13 +94,13 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @return The security descriptor.
      */
     public RawSecurityDescriptor getSecurity(String path) {
-        int id = getEntry(path).SecurityId;
-        if (id == 0xffffffff) {
+        int id = getEntry(path).securityId;
+        if (id == 0xffff_ffff) {
             return null;
         }
 
-        if (id >= 0 && id < _securityDescriptors.size()) {
-            return _securityDescriptors.get(id);
+        if (id >= 0 && id < securityDescriptors.size()) {
+            return securityDescriptors.get(id);
         }
 
         throw new UnsupportedOperationException();
@@ -126,15 +126,15 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public ReparsePoint getReparsePoint(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        ShortResourceHeader hdr = _file.locateResource(dirEntry.Hash);
+        ShortResourceHeader hdr = file.locateResource(dirEntry.hash);
         if (hdr == null) {
             throw new dotnet4j.io.IOException("No reparse point");
         }
 
-        try (Stream s = _file.openResourceStream(hdr)) {
+        try (Stream s = file.openResourceStream(hdr)) {
             byte[] buffer = new byte[(int) s.getLength()];
             s.read(buffer, 0, buffer.length);
-            return new ReparsePoint(dirEntry.ReparseTag, buffer);
+            return new ReparsePoint(dirEntry.reparseTag, buffer);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -172,7 +172,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public String getShortName(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry.ShortName;
+        return dirEntry.shortName;
     }
 
     /**
@@ -194,12 +194,12 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     public WindowsFileInformation getFileStandardInformation(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         WindowsFileInformation wfi = new WindowsFileInformation();
-        wfi.setCreationTime(DateUtil.fromFileTime(dirEntry.CreationTime));
-        wfi.setLastAccessTime(DateUtil.fromFileTime(dirEntry.LastAccessTime));
+        wfi.setCreationTime(DateUtil.fromFileTime(dirEntry.creationTime));
+        wfi.setLastAccessTime(DateUtil.fromFileTime(dirEntry.lastAccessTime));
         wfi.setChangeTime(DateUtil
-                .fromFileTime(Math.max(dirEntry.LastWriteTime, Math.max(dirEntry.CreationTime, dirEntry.LastAccessTime))));
-        wfi.setLastWriteTime(DateUtil.fromFileTime(dirEntry.LastWriteTime));
-        wfi.setFileAttributes(dirEntry.Attributes);
+                .fromFileTime(Math.max(dirEntry.lastWriteTime, Math.max(dirEntry.creationTime, dirEntry.lastAccessTime))));
+        wfi.setLastWriteTime(DateUtil.fromFileTime(dirEntry.lastWriteTime));
+        wfi.setFileAttributes(dirEntry.attributes);
         return wfi;
     }
 
@@ -224,8 +224,8 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     public List<String> getAlternateDataStreams(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         List<String> names = new ArrayList<>();
-        if (dirEntry.AlternateStreams != null) {
-            for (Map.Entry<String, AlternateStreamEntry> altStream : dirEntry.AlternateStreams.entrySet()) {
+        if (dirEntry.alternateStreams != null) {
+            for (Map.Entry<String, AlternateStreamEntry> altStream : dirEntry.alternateStreams.entrySet()) {
                 if (altStream.getKey() != null && altStream.getKey().isEmpty()) {
                     names.add(altStream.getKey());
                 }
@@ -246,7 +246,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public long getFileId(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry.HardLink == 0 ? -1 : (long) dirEntry.HardLink;
+        return dirEntry.hardLink == 0 ? -1 : (long) dirEntry.hardLink;
     }
 
     /**
@@ -257,7 +257,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public boolean hasHardLinks(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry.HardLink != 0;
+        return dirEntry.hardLink != 0;
     }
 
     /**
@@ -268,7 +268,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public boolean directoryExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry != null && dirEntry.Attributes.contains(FileAttributes.Directory);
+        return dirEntry != null && dirEntry.attributes.contains(FileAttributes.Directory);
     }
 
     /**
@@ -279,7 +279,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public boolean fileExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
-        return dirEntry != null && !dirEntry.Attributes.contains(FileAttributes.Directory);
+        return dirEntry != null && !dirEntry.attributes.contains(FileAttributes.Directory);
     }
 
     /**
@@ -328,8 +328,8 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
         }
 
-        List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.SubdirOffset);
-        return parentDir.stream().map(m -> Utilities.combinePaths(path, m.FileName)).collect(Collectors.toList());
+        List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.subdirOffset);
+        return parentDir.stream().map(m -> Utilities.combinePaths(path, m.fileName)).collect(Collectors.toList());
     }
 
     /**
@@ -347,11 +347,11 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
         }
 
-        List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.SubdirOffset);
+        List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.subdirOffset);
         List<String> result = new ArrayList<>();
         for (DirectoryEntry dirEntry : parentDir) {
-            if (re.matcher(dirEntry.FileName).find()) {
-                result.add(Utilities.combinePaths(path, dirEntry.FileName));
+            if (re.matcher(dirEntry.fileName).find()) {
+                result.add(Utilities.combinePaths(path, dirEntry.fileName));
             }
 
         }
@@ -376,7 +376,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         }
 
         byte[] streamHash = getFileHash(path);
-        ShortResourceHeader hdr = _file.locateResource(streamHash);
+        ShortResourceHeader hdr = file.locateResource(streamHash);
         if (hdr == null) {
             if (Utilities.isAllZeros(streamHash, 0, streamHash.length)) {
                 return new ZeroStream(0);
@@ -385,7 +385,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new dotnet4j.io.IOException("Unable to locate file contents");
         }
 
-        return _file.openResourceStream(hdr);
+        return file.openResourceStream(hdr);
     }
 
     /**
@@ -400,7 +400,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException("No such file or directory " + path);
         }
 
-        return FileAttributes.toMap(dirEntry.Attributes);
+        return FileAttributes.toMap(dirEntry.attributes);
     }
 
     /**
@@ -415,7 +415,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException("No such file or directory " + path);
         }
 
-        return DateUtil.filetimeToLong(dirEntry.CreationTime);
+        return DateUtil.filetimeToLong(dirEntry.creationTime);
     }
 
     /**
@@ -430,7 +430,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException("No such file or directory " + path);
         }
 
-        return DateUtil.filetimeToLong(dirEntry.LastAccessTime);
+        return DateUtil.filetimeToLong(dirEntry.lastAccessTime);
     }
 
     /**
@@ -445,7 +445,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
             throw new FileNotFoundException("No such file or directory " + path);
         }
 
-        return DateUtil.filetimeToLong(dirEntry.LastWriteTime);
+        return DateUtil.filetimeToLong(dirEntry.lastWriteTime);
     }
 
     /**
@@ -515,9 +515,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      */
     public void close() throws IOException {
         try {
-            _metaDataStream.close();
-            _metaDataStream = null;
-            _file = null;
+            metaDataStream.close();
+            metaDataStream = null;
+            file = null;
         } finally {
             super.close();
         }
@@ -539,24 +539,24 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     }
 
     private List<DirectoryEntry> getDirectory(long id) {
-        List<DirectoryEntry> dir = _dirCache.get(id);
+        List<DirectoryEntry> dir = dirCache.get(id);
         if (dir == null) {
-            _metaDataStream.setPosition(id == 0 ? _rootDirPos : id);
-            LittleEndianDataReader reader = new LittleEndianDataReader(_metaDataStream);
+            metaDataStream.setPosition(id == 0 ? rootDirPos : id);
+            LittleEndianDataReader reader = new LittleEndianDataReader(metaDataStream);
             dir = new ArrayList<>();
             DirectoryEntry entry = DirectoryEntry.readFrom(reader);
             while (entry != null) {
                 dir.add(entry);
                 entry = DirectoryEntry.readFrom(reader);
             }
-            _dirCache.put(id, dir);
+            dirCache.put(id, dir);
         }
 
         return dir;
     }
 
     private void readSecurityDescriptors() {
-        LittleEndianDataReader reader = new LittleEndianDataReader(_metaDataStream);
+        LittleEndianDataReader reader = new LittleEndianDataReader(metaDataStream);
         long startPos = reader.getPosition();
         int totalLength = reader.readUInt32();
         int numEntries = reader.readUInt32();
@@ -564,15 +564,15 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         for (int i = 0; i < numEntries; ++i) {
             sdLengths[i] = reader.readUInt64();
         }
-        _securityDescriptors = new ArrayList<>(numEntries);
+        securityDescriptors = new ArrayList<>(numEntries);
         for (int i = 0; i < numEntries; ++i) {
-            _securityDescriptors.add(new RawSecurityDescriptor(reader.readBytes((int) sdLengths[i]), 0));
+            securityDescriptors.add(new RawSecurityDescriptor(reader.readBytes((int) sdLengths[i]), 0));
         }
         if (reader.getPosition() < startPos + totalLength) {
             reader.skip((int) (startPos + totalLength - reader.getPosition()));
         }
 
-        _rootDirPos = MathUtilities.roundUp(startPos + totalLength, 8);
+        rootDirPos = MathUtilities.roundUp(startPos + totalLength, 8);
     }
 
     private DirectoryEntry getEntry(String path) {
@@ -593,8 +593,8 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         for (String s : path) {
             nextEntry = null;
             for (DirectoryEntry entry : currentDir) {
-                if (s.equals(entry.FileName) ||
-                        (entry.ShortName != null && !entry.ShortName.isEmpty() && s.equals(entry.ShortName))) {
+                if (s.equals(entry.fileName) ||
+                        (entry.shortName != null && !entry.shortName.isEmpty() && s.equals(entry.shortName))) {
                     nextEntry = entry;
                     break;
                 }
@@ -603,8 +603,8 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
                 return null;
             }
 
-            if (nextEntry.SubdirOffset != 0) {
-                currentDir = getDirectory(nextEntry.SubdirOffset);
+            if (nextEntry.subdirOffset != 0) {
+                currentDir = getDirectory(nextEntry.subdirOffset);
             }
         }
         return nextEntry;
@@ -613,23 +613,23 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     private void doSearch(List<String> results, String path, Pattern regex, boolean subFolders, boolean dirs, boolean files) {
         DirectoryEntry parentDirEntry = getEntry(path);
 
-        if (parentDirEntry.SubdirOffset == 0) {
+        if (parentDirEntry.subdirOffset == 0) {
             return;
         }
 
-        List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.SubdirOffset);
+        List<DirectoryEntry> parentDir = getDirectory(parentDirEntry.subdirOffset);
 
         for (DirectoryEntry de : parentDir) {
-            boolean isDir = de.Attributes.contains(FileAttributes.Directory);
+            boolean isDir = de.attributes.contains(FileAttributes.Directory);
 
             if ((isDir && dirs) || (!isDir && files)) {
                 if (regex.matcher(de.getSearchName()).find()) {
-                    results.add(Utilities.combinePaths(path, de.FileName));
+                    results.add(Utilities.combinePaths(path, de.fileName));
                 }
             }
 
             if (subFolders && isDir) {
-                doSearch(results, Utilities.combinePaths(path, de.FileName), regex, subFolders, dirs, files);
+                doSearch(results, Utilities.combinePaths(path, de.fileName), regex, subFolders, dirs, files);
             }
         }
     }

@@ -40,9 +40,9 @@ public abstract class TaggedDescriptor<T extends BaseTaggedDescriptor> extends B
             byte[] buffer = StreamUtilities.readExact(stream, 512);
             T result = clazz.getDeclaredConstructor().newInstance();
             result.readFrom(buffer, 0);
-            if (result.Tag._TagIdentifier != result.RequiredTagIdentifier || result.Tag.TagLocation != sector) {
+            if (result.tag.tagIdentifier != result.requiredTagIdentifier || result.tag.tagLocation != sector) {
                 throw new IllegalStateException(String.format("Corrupt UDF file system, unable to read %s tag at sector %d",
-                                                              result.RequiredTagIdentifier,
+                                                              result.requiredTagIdentifier,
                                                               sector));
             }
 

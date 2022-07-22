@@ -28,6 +28,7 @@ import dotnet4j.io.MemoryStream;
 
 
 public final class Nfs3 extends RpcProgram {
+
     public static final int ProgramIdentifier = RpcIdentifiers.Nfs3ProgramIdentifier;
 
     public static final int ProgramVersion = RpcIdentifiers.Nfs3ProgramVersion;
@@ -54,7 +55,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3GetAttributesResult getAttributes(Nfs3FileHandle handle) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.GetAttr);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.GetAttr);
         handle.write(writer);
         writer.write(false);
         RpcReply reply = doSend(ms);
@@ -67,7 +68,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3ModifyResult setAttributes(Nfs3FileHandle handle, Nfs3SetAttributes newAttributes) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.SetAttr);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.SetAttr);
         handle.write(writer);
         newAttributes.write(writer);
         writer.write(false);
@@ -81,7 +82,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3LookupResult lookup(Nfs3FileHandle dir, String name) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Lookup);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Lookup);
         dir.write(writer);
         writer.write(name);
         RpcReply reply = doSend(ms);
@@ -94,7 +95,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3AccessResult access(Nfs3FileHandle handle, EnumSet<Nfs3AccessPermissions> requested) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Access);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Access);
         handle.write(writer);
         writer.write((int) Nfs3AccessPermissions.valueOf(requested));
         RpcReply reply = doSend(ms);
@@ -107,7 +108,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3ReadResult read(Nfs3FileHandle handle, long position, int count) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Read);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Read);
         handle.write(writer);
         writer.write(position);
         writer.write(count);
@@ -121,7 +122,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3WriteResult write(Nfs3FileHandle handle, long position, byte[] buffer, int bufferOffset, int count) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Write);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Write);
         handle.write(writer);
         writer.write(position);
         writer.write(count);
@@ -137,7 +138,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3CreateResult create(Nfs3FileHandle dirHandle, String name, boolean createNew, Nfs3SetAttributes attributes) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Create);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Create);
         dirHandle.write(writer);
         writer.write(name);
         writer.write(createNew ? 1 : 0);
@@ -152,7 +153,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3CreateResult makeDirectory(Nfs3FileHandle dirHandle, String name, Nfs3SetAttributes attributes) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Mkdir);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Mkdir);
         dirHandle.write(writer);
         writer.write(name);
         attributes.write(writer);
@@ -166,7 +167,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3ModifyResult remove(Nfs3FileHandle dirHandle, String name) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Remove);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Remove);
         dirHandle.write(writer);
         writer.write(name);
         RpcReply reply = doSend(ms);
@@ -179,7 +180,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3ModifyResult removeDirectory(Nfs3FileHandle dirHandle, String name) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Rmdir);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Rmdir);
         dirHandle.write(writer);
         writer.write(name);
         RpcReply reply = doSend(ms);
@@ -192,7 +193,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3RenameResult rename(Nfs3FileHandle fromDirHandle, String fromName, Nfs3FileHandle toDirHandle, String toName) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Rename);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Rename);
         fromDirHandle.write(writer);
         writer.write(fromName);
         toDirHandle.write(writer);
@@ -207,7 +208,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3ReadDirPlusResult readDirPlus(Nfs3FileHandle dir, long cookie, long cookieVerifier, int dirCount, int maxCount) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.ReadDirPlus);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.ReadDirPlus);
         dir.write(writer);
         writer.write(cookie);
         writer.write(cookieVerifier);
@@ -223,7 +224,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3FileSystemInfoResult fileSystemInfo(Nfs3FileHandle fileHandle) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Fsinfo);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Fsinfo);
         fileHandle.write(writer);
         RpcReply reply = doSend(ms);
         if (reply.getHeader().isSuccess()) {
@@ -240,7 +241,7 @@ public final class Nfs3 extends RpcProgram {
 
     public Nfs3FileSystemStatResult fileSystemStat(Nfs3FileHandle fileHandle) {
         MemoryStream ms = new MemoryStream();
-        XdrDataWriter writer = startCallMessage(ms, _client.getCredentials(), NfsProc3.Fsstat);
+        XdrDataWriter writer = startCallMessage(ms, client.getCredentials(), NfsProc3.Fsstat);
         fileHandle.write(writer);
         RpcReply reply = doSend(ms);
         if (reply.getHeader().isSuccess()) {

@@ -31,27 +31,27 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class SubKeyIndirectListCell extends ListCell {
-    private final RegistryHive _hive;
+    private final RegistryHive hive;
 
     public SubKeyIndirectListCell(RegistryHive hive, int index) {
         super(index);
-        _hive = hive;
+        this.hive = hive;
     }
 
-    private List<Integer> __CellIndexes;
+    private List<Integer> cellIndexes;
 
     public List<Integer> getCellIndexes() {
-        return __CellIndexes;
+        return cellIndexes;
     }
 
     public void setCellIndexes(List<Integer> value) {
-        __CellIndexes = value;
+        cellIndexes = value;
     }
 
     int getCount() {
         int total = 0;
         for (int cellIndex : getCellIndexes()) {
-            Cell cell = _hive.getCell(cellIndex);
+            Cell cell = hive.getCell(cellIndex);
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             if (listCell != null) {
                 total += listCell.getCount();
@@ -62,35 +62,35 @@ final class SubKeyIndirectListCell extends ListCell {
         return total;
     }
 
-    private String __ListType;
+    private String listType;
 
     public String getListType() {
-        return __ListType;
+        return listType;
     }
 
     public void setListType(String value) {
-        __ListType = value;
+        listType = value;
     }
 
     public int size() {
-        return 4 + getCellIndexes().size() * 4;
+        return 4 + cellIndexes.size() * 4;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setListType(EndianUtilities.bytesToString(buffer, offset, 2));
+        listType = EndianUtilities.bytesToString(buffer, offset, 2);
         int numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
-        setCellIndexes(new ArrayList<>(numElements));
+        cellIndexes = new ArrayList<>(numElements);
         for (int i = 0; i < numElements; ++i) {
-            getCellIndexes().add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x4));
+            cellIndexes.add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x4));
         }
-        return 4 + getCellIndexes().size() * 4;
+        return 4 + cellIndexes.size() * 4;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.stringToBytes(getListType(), buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian((short) getCellIndexes().size(), buffer, offset + 2);
-        for (int i = 0; i < getCellIndexes().size(); ++i) {
-            EndianUtilities.writeBytesLittleEndian(getCellIndexes().get(i), buffer, offset + 4 + i * 4);
+        EndianUtilities.stringToBytes(listType, buffer, offset, 2);
+        EndianUtilities.writeBytesLittleEndian((short) cellIndexes.size(), buffer, offset + 2);
+        for (int i = 0; i < cellIndexes.size(); ++i) {
+            EndianUtilities.writeBytesLittleEndian(cellIndexes.get(i), buffer, offset + 4 + i * 4);
         }
     }
 
@@ -98,7 +98,7 @@ final class SubKeyIndirectListCell extends ListCell {
      * @param cellIndex {@cs out}
      */
     int findKey(String name, int[] cellIndex) {
-        if (getCellIndexes().size() <= 0) {
+        if (cellIndexes.size() <= 0) {
             cellIndex[0] = 0;
             return -1;
         }
@@ -111,34 +111,34 @@ final class SubKeyIndirectListCell extends ListCell {
             return result;
         }
 
-        result = doFindKey(name, getCellIndexes().size() - 1, found);
+        result = doFindKey(name, cellIndexes.size() - 1, found);
         cellIndex[0] = found[0];
         if (result >= 0) {
             return result;
         }
 
-        KeyFinder finder = new KeyFinder(_hive, name);
-        int idx = Collections.binarySearch(getCellIndexes(), -1, finder);
+        KeyFinder finder = new KeyFinder(hive, name);
+        int idx = Collections.binarySearch(cellIndexes, -1, finder);
         cellIndex[0] = finder.getCellIndex();
         return idx < 0 ? -1 : 0;
     }
 
     void enumerateKeys(List<String> names) {
-        for (int i = 0; i < getCellIndexes().size(); ++i) {
-            Cell cell = _hive.getCell(getCellIndexes().get(i));
+        for (Integer cellIndex : cellIndexes) {
+            Cell cell = hive.getCell(cellIndex);
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             if (listCell != null) {
                 listCell.enumerateKeys(names);
             } else {
-                names.add(((KeyNodeCell) cell).Name);
+                names.add(((KeyNodeCell) cell).name);
             }
         }
     }
 
     List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
-        for (int i = 0; i < getCellIndexes().size(); ++i) {
-            Cell cell = _hive.getCell(getCellIndexes().get(i));
+        for (Integer cellIndex : cellIndexes) {
+            Cell cell = hive.getCell(cellIndex);
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             if (listCell != null) {
                 result.addAll(listCell.enumerateKeys());
@@ -151,63 +151,63 @@ final class SubKeyIndirectListCell extends ListCell {
 
     int linkSubKey(String name, int cellIndex) {
         // Look for the first sublist that has a subkey name greater than name
-        if (getListType().equals("ri")) {
-            if (getCellIndexes().size() == 0) {
+        if (listType.equals("ri")) {
+            if (cellIndexes.size() == 0) {
                 throw new UnsupportedOperationException("Empty indirect list");
             }
 
-            for (int i = 0; i < getCellIndexes().size() - 1; ++i) {
-                ListCell cell = _hive.getCell(getCellIndexes().get(i));
+            for (int i = 0; i < cellIndexes.size() - 1; ++i) {
+                ListCell cell = hive.getCell(cellIndexes.get(i));
                 int[] tempIndex = new int[1];
                 if (cell.findKey(name, tempIndex) <= 0) {
-                    getCellIndexes().set(i, cell.linkSubKey(name, cellIndex));
-                    return _hive.updateCell(this, false);
+                    cellIndexes.set(i, cell.linkSubKey(name, cellIndex));
+                    return hive.updateCell(this, false);
                 }
 
             }
-            ListCell lastCell = _hive.getCell(getCellIndexes().get(getCellIndexes().size() - 1));
-            getCellIndexes().set(getCellIndexes().size() - 1, lastCell.linkSubKey(name, cellIndex));
-            return _hive.updateCell(this, false);
+            ListCell lastCell = hive.getCell(cellIndexes.get(cellIndexes.size() - 1));
+            cellIndexes.set(cellIndexes.size() - 1, lastCell.linkSubKey(name, cellIndex));
+            return hive.updateCell(this, false);
         }
 
-        for (int i = 0; i < getCellIndexes().size(); ++i) {
-            KeyNodeCell cell = _hive.
-                    getCell(getCellIndexes().get(i));
-            if (name.compareTo(cell.Name) < 0) {
-                getCellIndexes().add(i, cellIndex);
-                return _hive.updateCell(this, true);
+        for (int i = 0; i < cellIndexes.size(); ++i) {
+            KeyNodeCell cell = hive.
+                    getCell(cellIndexes.get(i));
+            if (name.compareTo(cell.name) < 0) {
+                cellIndexes.add(i, cellIndex);
+                return hive.updateCell(this, true);
             }
 
         }
-        getCellIndexes().add(cellIndex);
-        return _hive.updateCell(this, true);
+        cellIndexes.add(cellIndex);
+        return hive.updateCell(this, true);
     }
 
     int unlinkSubKey(String name) {
-        if (getListType().equals("ri")) {
-            if (getCellIndexes().size() == 0) {
+        if (listType.equals("ri")) {
+            if (cellIndexes.size() == 0) {
                 throw new UnsupportedOperationException("Empty indirect list");
             }
 
-            for (int i = 0; i < getCellIndexes().size(); ++i) {
-                ListCell cell = _hive.getCell(getCellIndexes().get(i));
+            for (int i = 0; i < cellIndexes.size(); ++i) {
+                ListCell cell = hive.getCell(cellIndexes.get(i));
                 int[] tempIndex = new int[1];
                 boolean result = cell.findKey(name, tempIndex) <= 0;
                 if (result) {
-                    getCellIndexes().set(i, cell.unlinkSubKey(name));
+                    cellIndexes.set(i, cell.unlinkSubKey(name));
                     if (cell.getCount() == 0) {
-                        _hive.freeCell(getCellIndexes().get(i));
-                        getCellIndexes().remove(i);
+                        hive.freeCell(cellIndexes.get(i));
+                        cellIndexes.remove(i);
                     }
-                    return _hive.updateCell(this, false);
+                    return hive.updateCell(this, false);
                 }
             }
         } else {
-            for (int i = 0; i < getCellIndexes().size(); ++i) {
-                KeyNodeCell cell = _hive.getCell(getCellIndexes().get(i));
-                if (name.compareTo(cell.Name) == 0) {
-                    getCellIndexes().remove(i);
-                    return _hive.updateCell(this, true);
+            for (int i = 0; i < cellIndexes.size(); ++i) {
+                KeyNodeCell cell = hive.getCell(cellIndexes.get(i));
+                if (name.compareTo(cell.name) == 0) {
+                    cellIndexes.remove(i);
+                    return hive.updateCell(this, true);
                 }
             }
         }
@@ -218,7 +218,7 @@ final class SubKeyIndirectListCell extends ListCell {
      * @param cellIndex {@cs out}
      */
     private int doFindKey(String name, int listIndex, int[] cellIndex) {
-        Cell cell = _hive.getCell(getCellIndexes().get(listIndex));
+        Cell cell = hive.getCell(cellIndexes.get(listIndex));
         ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
         if (listCell != null) {
             int[] found = new int[1];
@@ -227,47 +227,47 @@ final class SubKeyIndirectListCell extends ListCell {
             return result;
         }
 
-        cellIndex[0] = getCellIndexes().get(listIndex);
-        return name.compareTo(((KeyNodeCell) cell).Name);
+        cellIndex[0] = cellIndexes.get(listIndex);
+        return name.compareTo(((KeyNodeCell) cell).name);
     }
 
     private static class KeyFinder implements Comparator<Integer> {
-        private final RegistryHive _hive;
+        private final RegistryHive hive;
 
-        private final String _searchName;
+        private final String searchName;
 
         public KeyFinder(RegistryHive hive, String searchName) {
-            _hive = hive;
-            _searchName = searchName;
+            this.hive = hive;
+            this.searchName = searchName;
         }
 
-        private int __CellIndex;
+        private int cellIndex;
 
         public int getCellIndex() {
-            return __CellIndex;
+            return cellIndex;
         }
 
         public void setCellIndex(int value) {
-            __CellIndex = value;
+            cellIndex = value;
         }
 
         public int compare(Integer x, Integer y) {
-            Cell cell = _hive.getCell(x);
+            Cell cell = hive.getCell(x);
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             int result;
             if (listCell != null) {
                 int[] cellIndex = new int[1];
-                result = listCell.findKey(_searchName, cellIndex);
+                result = listCell.findKey(searchName, cellIndex);
                 if (result == 0) {
-                    setCellIndex(cellIndex[0]);
+                    this.cellIndex = cellIndex[0];
                 }
 
                 return -result;
             }
 
-            result = ((KeyNodeCell) cell).Name.compareTo(_searchName);
+            result = ((KeyNodeCell) cell).name.compareTo(searchName);
             if (result == 0) {
-                setCellIndex(x);
+                cellIndex = x;
             }
 
             return result;

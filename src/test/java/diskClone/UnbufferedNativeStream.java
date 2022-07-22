@@ -44,30 +44,30 @@ public class UnbufferedNativeStream extends SparseStream {
 
     private static final int Alignment = 512;
 
-    private long _position;
+    private long position;
 
-    private Pointer _handle;
+    private Pointer handle;
 
-    private int _bufferAllocHandle;
+    private int bufferAllocHandle;
 
-    private int[] _buffer;
+    private int[] buffer;
 
     public UnbufferedNativeStream(Pointer handle) {
-        _handle = handle;
-        _bufferAllocHandle = Marshal.AllocHGlobal(BufferSize + Alignment);
-        _buffer = new IntPtr(((_bufferAllocHandle.ToInt64() + Alignment - 1) / Alignment) * Alignment);
-        _position = 0;
+        this.handle = handle;
+        bufferAllocHandle = Marshal.AllocHGlobal(BufferSize + Alignment);
+        buffer = new IntPtr(((bufferAllocHandle.ToInt64() + Alignment - 1) / Alignment) * Alignment);
+        position = 0;
     }
 
     public void close() throws IOException {
-        if (_bufferAllocHandle != IntPtr.Zero) {
-            Marshal.FreeHGlobal(_bufferAllocHandle);
-            _bufferAllocHandle = IntPtr.Zero;
-            _bufferAllocHandle = IntPtr.Zero;
+        if (bufferAllocHandle != IntPtr.Zero) {
+            Marshal.FreeHGlobal(bufferAllocHandle);
+            bufferAllocHandle = IntPtr.Zero;
+            bufferAllocHandle = IntPtr.Zero;
         }
 
-        if (!_handle.IsClosed) {
-            _handle.close();
+        if (!handle.IsClosed) {
+            handle.close();
         }
     }
 
@@ -89,7 +89,7 @@ public class UnbufferedNativeStream extends SparseStream {
     public long getLength() {
         long result;
         long[] refVar___0 = new long[1];
-        boolean boolVar___0 = NativeMethods.INSTANCE.getFileSizeEx(_handle, refVar___0);
+        boolean boolVar___0 = NativeMethods.INSTANCE.getFileSizeEx(handle, refVar___0);
         result = refVar___0[0];
         if (boolVar___0) {
             return result;
@@ -99,27 +99,27 @@ public class UnbufferedNativeStream extends SparseStream {
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public int read(byte[] buffer, int offset, int count) {
         int totalBytesRead = 0;
         long length = getLength();
         while (totalBytesRead < count) {
-            long alignedStart = (_position / Alignment) * Alignment;
-            int alignmentOffset = (int) (_position - alignedStart);
+            long alignedStart = (position / Alignment) * Alignment;
+            int alignmentOffset = (int) (position - alignedStart);
             long[] newPos = new long[1];
-            if (!NativeMethods.INSTANCE.setFilePointerEx(_handle, alignedStart, newPos, 0)) {
+            if (!NativeMethods.INSTANCE.setFilePointerEx(handle, alignedStart, newPos, 0)) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
 
             int toRead = (int) Math.min(length - alignedStart, BufferSize);
             int[] numRead = new int[1];
-            if (!NativeMethods.INSTANCE.readFile(_handle, _buffer, toRead, numRead, null)) {
+            if (!NativeMethods.INSTANCE.readFile(handle, this.buffer, toRead, numRead, null)) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
 
@@ -129,9 +129,9 @@ public class UnbufferedNativeStream extends SparseStream {
             }
 
             int toCopy = Math.min(count - totalBytesRead, usefulData);
-            System.arraycopy(_buffer, alignmentOffset, buffer, offset + totalBytesRead, toCopy);
+            System.arraycopy(this.buffer, alignmentOffset, buffer, offset + totalBytesRead, toCopy);
             totalBytesRead += toCopy;
-            _position += toCopy;
+            position += toCopy;
         }
         return totalBytesRead;
     }
@@ -139,7 +139,7 @@ public class UnbufferedNativeStream extends SparseStream {
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += getLength();
         }
@@ -147,8 +147,8 @@ public class UnbufferedNativeStream extends SparseStream {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         } else {
-            _position = effectiveOffset;
-            return _position;
+            position = effectiveOffset;
+            return position;
         }
     }
 

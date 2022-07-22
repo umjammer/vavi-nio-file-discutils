@@ -57,7 +57,7 @@ public class NativeFileSystem extends DiscFileSystem {
 
     private static final String FS = File.separator;
 
-    private final boolean _readOnly;
+    private final boolean readOnly;
 
     /**
      * Initializes a new instance of the NativeFileSystem class.
@@ -66,21 +66,21 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param readOnly Only permit 'read' activities.
      */
     public NativeFileSystem(String basePath, boolean readOnly) {
-        _basePath = basePath;
-        if (!_basePath.endsWith(FS)) {
-            _basePath += FS;
+        this.basePath = basePath;
+        if (!this.basePath.endsWith(FS)) {
+            this.basePath += FS;
         }
 
-        _readOnly = readOnly;
+        this.readOnly = readOnly;
     }
 
     /**
      * Gets the base path used to create the file system.
      */
-    private String _basePath;
+    private String basePath;
 
     public String getBasePath() {
-        return _basePath;
+        return basePath;
     }
 
     /**
@@ -89,7 +89,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @return true if the file system is read-write.
      */
     public boolean canWrite() {
-        return !_readOnly;
+        return !readOnly;
     }
 
     /**
@@ -142,7 +142,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @throws IOException
      */
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -164,7 +164,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @throws IOException
      */
     public void createDirectory(String path) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -182,7 +182,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @throws IOException
      */
     public void deleteDirectory(String path) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -220,7 +220,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @throws IOException
      */
     public void deleteFile(String path) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -406,7 +406,7 @@ Debug.printStackTrace(e);
      * @throws IOException
      */
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -440,7 +440,7 @@ Debug.printStackTrace(e);
      * @throws IOException
      */
     public void moveFile(String sourceName, String destinationName, boolean overwrite) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -484,7 +484,7 @@ Debug.printStackTrace(e);
      * @throws IOException
      */
     public SparseStream openFile(String path, FileMode mode, FileAccess access) throws IOException {
-        if (_readOnly && access != FileAccess.Read) {
+        if (readOnly && access != FileAccess.Read) {
             throw new IOException("read only");
         }
 
@@ -526,7 +526,7 @@ Debug.printStackTrace(e);
      * @param newValue The new attributes of the file or directory.
      */
     public void setAttributes(String path, Map<String, Object> newValue) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -581,7 +581,7 @@ Debug.printStackTrace(e);
      * @param newTime The new time to set.
      */
     public void setCreationTimeUtc(String path, long newTime) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -633,7 +633,7 @@ Debug.printStackTrace(e);
      * @param newTime The new time to set.
      */
     public void setLastAccessTimeUtc(String path, long newTime) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 
@@ -685,7 +685,7 @@ Debug.printStackTrace(e);
      * @param newTime The new time to set.
      */
     public void setLastWriteTimeUtc(String path, long newTime) throws IOException {
-        if (_readOnly) {
+        if (readOnly) {
             throw new IOException("read only");
         }
 

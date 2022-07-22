@@ -26,23 +26,24 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class SectionRecord {
+
     public static final int RecordSize = 64;
 
-    public long Attr;
+    public long attr;
 
-    public long Offset;
+    public long offset;
 
-    public long PartitionType;
+    public long partitionType;
 
-    public String SectionType;
+    public String sectionType;
 
-    public long Size;
+    public long size;
 
     public void readFrom(byte[] buffer, int offset) {
-        SectionType = EndianUtilities.bytesToString(buffer, offset, 8).replaceFirst("\0*$", "");
-        Attr = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-        Offset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
-        Size = EndianUtilities.toInt64LittleEndian(buffer, offset + 24);
-        PartitionType = EndianUtilities.toUInt64LittleEndian(buffer, offset + 32);
+        sectionType = EndianUtilities.bytesToString(buffer, offset, 8).replaceFirst("\0*$", "");
+        attr = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
+        this.offset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
+        size = EndianUtilities.toInt64LittleEndian(buffer, offset + 24);
+        partitionType = EndianUtilities.toUInt64LittleEndian(buffer, offset + 32);
     }
 }

@@ -27,28 +27,29 @@ import java.util.List;
 
 
 public final class Nfs3ExportResult extends Nfs3CallResult {
+
     public Nfs3ExportResult(XdrDataReader reader) {
-        _exports = new ArrayList<>();
+        exports = new ArrayList<>();
         while (reader.readBool()) {
-            _exports.add(new Nfs3Export(reader));
+            exports.add(new Nfs3Export(reader));
         }
     }
 
     public Nfs3ExportResult() {
     }
 
-    private List<Nfs3Export> _exports;
+    private List<Nfs3Export> exports;
 
     public List<Nfs3Export> getExports() {
-        return _exports;
+        return exports;
     }
 
     public void setExports(List<Nfs3Export> value) {
-        _exports = value;
+        exports = value;
     }
 
     public void write(XdrDataWriter writer) {
-        for (Nfs3Export export : _exports) {
+        for (Nfs3Export export : exports) {
             writer.write(true);
             export.write(writer);
         }
@@ -64,16 +65,16 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
             return false;
         }
 
-        if (other.getExports() == null || _exports == null) {
+        if (other.getExports() == null || exports == null) {
             return false;
         }
 
-        if (other.getExports().size() != _exports.size()) {
+        if (other.getExports().size() != exports.size()) {
             return false;
         }
 
         for (int i = 0; i < getExports().size(); i++) {
-            if (!other.getExports().get(i).equals(_exports.get(i))) {
+            if (!other.getExports().get(i).equals(exports.get(i))) {
                 return false;
             }
         }
@@ -81,6 +82,6 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
     }
 
     public int hashCode() {
-        return _exports.hashCode();
+        return exports.hashCode();
     }
 }

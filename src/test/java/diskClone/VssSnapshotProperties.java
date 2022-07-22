@@ -25,29 +25,30 @@ package diskClone;
 import java.util.UUID;
 
 public class VssSnapshotProperties {
-    public UUID SnapshotId;
 
-    public UUID SnapshotSetId;
+    public UUID snapshotId;
 
-    public int SnapshotsCount;
+    public UUID snapshotSetId;
 
-    public String SnapshotDeviceObject;
+    public int snapshotsCount;
 
-    public String OriginalVolumeName;
+    public String snapshotDeviceObject;
 
-    public String OriginatingMachine;
+    public String originalVolumeName;
 
-    public String ServiceMachine;
+    public String originatingMachine;
 
-    public String ExposedName;
+    public String serviceMachine;
 
-    public String ExposedPath;
+    public String exposedName;
 
-    public UUID ProviderId;
+    public String exposedPath;
 
-    public int SnapshotAttributes;
+    public UUID providerId;
 
-    public long CreationTimestamp;
+    public int snapshotAttributes;
 
-    public int SnapshotState;
+    public long creationTimestamp;
+
+    public int snapshotState;
 }

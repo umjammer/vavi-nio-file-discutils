@@ -39,29 +39,30 @@ import dotnet4j.io.Stream;
 
 
 public final class ContentStream extends MappedStream {
-    private boolean _atEof;
 
-    private final Stream _batStream;
+    private boolean atEof;
 
-    private final boolean _canWrite;
+    private final Stream batStream;
 
-    private final ObjectCache<Integer, Chunk> _chunks;
+    private final boolean canWrite;
 
-    private final FileParameters _fileParameters;
+    private final ObjectCache<Integer, Chunk> chunks;
 
-    private final SparseStream _fileStream;
+    private final FileParameters fileParameters;
 
-    private final FreeSpaceTable _freeSpaceTable;
+    private final SparseStream fileStream;
 
-    private final long _length;
+    private final FreeSpaceTable freeSpaceTable;
 
-    private final Metadata _metadata;
+    private final long length;
 
-    private final Ownership _ownsParent;
+    private final Metadata metadata;
 
-    private SparseStream _parentStream;
+    private final Ownership ownsParent;
 
-    private long _position;
+    private SparseStream parentStream;
+
+    private long position;
 
     public ContentStream(SparseStream fileStream,
             boolean canWrite,
@@ -71,17 +72,17 @@ public final class ContentStream extends MappedStream {
             long length,
             SparseStream parentStream,
             Ownership ownsParent) {
-        _fileStream = fileStream;
-        _canWrite = canWrite;
-        _batStream = batStream;
-        _freeSpaceTable = freeSpaceTable;
-        _metadata = metadata;
-        _fileParameters = _metadata.getFileParameters();
-        _length = length;
-        _parentStream = parentStream;
-        _ownsParent = ownsParent;
+        this.fileStream = fileStream;
+        this.canWrite = canWrite;
+        this.batStream = batStream;
+        this.freeSpaceTable = freeSpaceTable;
+        this.metadata = metadata;
+        fileParameters = this.metadata.getFileParameters();
+        this.length = length;
+        this.parentStream = parentStream;
+        this.ownsParent = ownsParent;
 
-        _chunks = new ObjectCache<>();
+        chunks = new ObjectCache<>();
     }
 
     public boolean canRead() {
@@ -99,7 +100,7 @@ public final class ContentStream extends MappedStream {
     public boolean canWrite() {
         checkDisposed();
 
-        return _canWrite /* ?? _fileStream.canWrite() */;
+        return canWrite /* ?? fileStream.canWrite() */;
     }
 
     public List<StreamExtent> getExtents() {
@@ -111,18 +112,18 @@ public final class ContentStream extends MappedStream {
 
     public long getLength() {
         checkDisposed();
-        return _length;
+        return length;
     }
 
     public long getPosition() {
         checkDisposed();
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
         checkDisposed();
-        _atEof = false;
-        _position = value;
+        atEof = false;
+        position = value;
     }
 
     public void flush() {
@@ -141,43 +142,43 @@ public final class ContentStream extends MappedStream {
         checkDisposed();
 
         return StreamExtent
-                .intersect(StreamExtent.union(getExtentsRaw(start, count), _parentStream.getExtentsInRange(start, count)),
+                .intersect(StreamExtent.union(getExtentsRaw(start, count), parentStream.getExtentsInRange(start, count)),
                            new StreamExtent(start, count));
     }
 
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
-        if (_atEof || _position > _length) {
-            _atEof = true;
+        if (atEof || position > length) {
+            atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
-        if (_position == _length) {
-            _atEof = true;
+        if (position == length) {
+            atEof = true;
             return 0;
         }
 
-        if (_position % _metadata.getLogicalSectorSize() != 0 || count % _metadata.getLogicalSectorSize() != 0) {
+        if (position % metadata.getLogicalSectorSize() != 0 || count % metadata.getLogicalSectorSize() != 0) {
             throw new dotnet4j.io.IOException("Unaligned read");
         }
 
-        int totalToRead = (int) Math.min(_length - _position, count);
+        int totalToRead = (int) Math.min(length - position, count);
         int totalRead = 0;
 
         while (totalRead < totalToRead) {
             int[] chunkIndex = new int[1];
             int[] blockIndex = new int[1];
             int[] sectorIndex = new int[1];
-            Chunk chunk = getChunk(_position + totalRead, chunkIndex, blockIndex, sectorIndex);
+            Chunk chunk = getChunk(position + totalRead, chunkIndex, blockIndex, sectorIndex);
 
-            int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
-            int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
+            int blockOffset = sectorIndex[0] * metadata.getLogicalSectorSize();
+            int blockBytesRemaining = fileParameters.blockSize - blockOffset;
 
             PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus == PayloadBlockStatus.FullyPresent) {
-                _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
-                int read = StreamUtilities.readMaximum(_fileStream,
+                fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+                int read = StreamUtilities.readMaximum(fileStream,
                                                        buffer,
                                                        offset + totalRead,
                                                        Math.min(blockBytesRemaining, totalToRead - totalRead));
@@ -188,20 +189,20 @@ public final class ContentStream extends MappedStream {
 
                 boolean[] present = new boolean[1];
                 int numSectors = bitmap.contiguousSectors(sectorIndex[0], present);
-                int toRead = Math.min(numSectors * _metadata.getLogicalSectorSize(), totalToRead - totalRead);
+                int toRead = Math.min(numSectors * metadata.getLogicalSectorSize(), totalToRead - totalRead);
                 int read;
 
                 if (present[0]) {
-                    _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
-                    read = StreamUtilities.readMaximum(_fileStream, buffer, offset + totalRead, toRead);
+                    fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+                    read = StreamUtilities.readMaximum(fileStream, buffer, offset + totalRead, toRead);
                 } else {
-                    _parentStream.setPosition(_position + totalRead);
-                    read = StreamUtilities.readMaximum(_parentStream, buffer, offset + totalRead, toRead);
+                    parentStream.setPosition(position + totalRead);
+                    read = StreamUtilities.readMaximum(parentStream, buffer, offset + totalRead, toRead);
                 }
                 totalRead += read;
             } else if (blockStatus == PayloadBlockStatus.NotPresent) {
-                _parentStream.setPosition(_position + totalRead);
-                int read = StreamUtilities.readMaximum(_parentStream,
+                parentStream.setPosition(position + totalRead);
+                int read = StreamUtilities.readMaximum(parentStream,
                                                        buffer,
                                                        offset + totalRead,
                                                        Math.min(blockBytesRemaining, totalToRead - totalRead));
@@ -214,7 +215,7 @@ public final class ContentStream extends MappedStream {
             }
         }
 
-        _position += totalRead;
+        position += totalRead;
         return totalRead;
     }
 
@@ -223,18 +224,18 @@ public final class ContentStream extends MappedStream {
 
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _length;
+            effectiveOffset += length;
         }
 
-        _atEof = false;
+        atEof = false;
 
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public void setLength(long value) {
@@ -250,7 +251,7 @@ public final class ContentStream extends MappedStream {
             throw new dotnet4j.io.IOException("Attempt to write to read-only VHDX");
         }
 
-        if (_position % _metadata.getLogicalSectorSize() != 0 || count % _metadata.getLogicalSectorSize() != 0) {
+        if (position % metadata.getLogicalSectorSize() != 0 || count % metadata.getLogicalSectorSize() != 0) {
             throw new dotnet4j.io.IOException("Unaligned read");
         }
 
@@ -260,10 +261,10 @@ public final class ContentStream extends MappedStream {
             int[] chunkIndex = new int[1];
             int[] blockIndex = new int[1];
             int[] sectorIndex = new int[1];
-            Chunk chunk = getChunk(_position + totalWritten, chunkIndex, blockIndex, sectorIndex);
+            Chunk chunk = getChunk(position + totalWritten, chunkIndex, blockIndex, sectorIndex);
 
-            int blockOffset = sectorIndex[0] * _metadata.getLogicalSectorSize();
-            int blockBytesRemaining = _fileParameters.BlockSize - blockOffset;
+            int blockOffset = sectorIndex[0] * metadata.getLogicalSectorSize();
+            int blockBytesRemaining = fileParameters.blockSize - blockOffset;
 
             PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus != PayloadBlockStatus.FullyPresent && blockStatus != PayloadBlockStatus.PartiallyPresent) {
@@ -271,12 +272,12 @@ public final class ContentStream extends MappedStream {
             }
 
             int toWrite = Math.min(blockBytesRemaining, count - totalWritten);
-            _fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
-            _fileStream.write(buffer, offset + totalWritten, toWrite);
+            fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+            fileStream.write(buffer, offset + totalWritten, toWrite);
 
             if (blockStatus == PayloadBlockStatus.PartiallyPresent) {
                 BlockBitmap bitmap = chunk.getBlockBitmap(blockIndex[0]);
-                boolean changed = bitmap.markSectorsPresent(sectorIndex[0], toWrite / _metadata.getLogicalSectorSize());
+                boolean changed = bitmap.markSectorsPresent(sectorIndex[0], toWrite / metadata.getLogicalSectorSize());
 
                 if (changed) {
                     chunk.writeBlockBitmap(blockIndex[0]);
@@ -286,23 +287,23 @@ public final class ContentStream extends MappedStream {
             totalWritten += toWrite;
         }
 
-        _position += totalWritten;
+        position += totalWritten;
     }
 
     public void close() throws IOException {
-        if (_parentStream != null) {
-            if (_ownsParent == Ownership.Dispose) {
-                _parentStream.close();
+        if (parentStream != null) {
+            if (ownsParent == Ownership.Dispose) {
+                parentStream.close();
             }
 
-            _parentStream = null;
+            parentStream = null;
         }
     }
 
     private List<StreamExtent> getExtentsRaw(long start, long count) {
         List<StreamExtent> result = new ArrayList<>();
-        long chunkSize = (1L << 23) * _metadata.getLogicalSectorSize();
-        int chunkRatio = (int) (chunkSize / _metadata.getFileParameters().BlockSize);
+        long chunkSize = (1L << 23) * metadata.getLogicalSectorSize();
+        int chunkRatio = (int) (chunkSize / metadata.getFileParameters().blockSize);
 
         long pos = MathUtilities.roundDown(start, chunkSize);
 
@@ -321,8 +322,8 @@ public final class ContentStream extends MappedStream {
                 case Zero:
                     break;
                 default:
-                    result.add(new StreamExtent(pos + (long) i * _metadata.getFileParameters().BlockSize,
-                                                _metadata.getFileParameters().BlockSize));
+                    result.add(new StreamExtent(pos + (long) i * metadata.getFileParameters().blockSize,
+                                                metadata.getFileParameters().blockSize));
                     break;
                 }
             }
@@ -339,28 +340,28 @@ public final class ContentStream extends MappedStream {
      * @param sector {@cs out}
      */
     private Chunk getChunk(long position, int[] chunk, int[] block, int[] sector) {
-        long chunkSize = (1L << 23) * _metadata.getLogicalSectorSize();
-        int chunkRatio = (int) (chunkSize / _metadata.getFileParameters().BlockSize);
+        long chunkSize = (1L << 23) * metadata.getLogicalSectorSize();
+        int chunkRatio = (int) (chunkSize / metadata.getFileParameters().blockSize);
 
         chunk[0] = (int) (position / chunkSize);
         long chunkOffset = position % chunkSize;
 
-        block[0] = (int) (chunkOffset / _fileParameters.BlockSize);
-        int blockOffset = (int) (chunkOffset % _fileParameters.BlockSize);
+        block[0] = (int) (chunkOffset / fileParameters.blockSize);
+        int blockOffset = (int) (chunkOffset % fileParameters.blockSize);
 
-        sector[0] = blockOffset / _metadata.getLogicalSectorSize();
+        sector[0] = blockOffset / metadata.getLogicalSectorSize();
 
-        Chunk result = _chunks.get(chunk[0]);
+        Chunk result = chunks.get(chunk[0]);
         if (result == null) {
-            result = new Chunk(_batStream, _fileStream, _freeSpaceTable, _fileParameters, chunk[0], chunkRatio);
-            _chunks.put(chunk[0], result);
+            result = new Chunk(batStream, fileStream, freeSpaceTable, fileParameters, chunk[0], chunkRatio);
+            chunks.put(chunk[0], result);
         }
 
         return result;
     }
 
     private void checkDisposed() {
-        if (_parentStream == null) {
+        if (parentStream == null) {
             throw new dotnet4j.io.IOException("ContentStream: Attempt to use closed stream");
         }
     }

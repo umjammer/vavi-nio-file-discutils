@@ -31,25 +31,26 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class IndexView<K extends IByteArraySerializable, D extends IByteArraySerializable> {
+
     private Class<K> keyClass;
 
     private Class<D> valueClass;
 
-    private final Index _index;
+    private final Index index;
 
     public IndexView(Class<K> keyClass, Class<D> valueClass, Index index) {
-        _index = index;
+        this.index = index;
         this.keyClass = keyClass;
         this.valueClass = valueClass;
     }
 
     public int getCount() {
-        return _index.getCount();
+        return index.getCount();
     }
 
     public List<Tuple<K, D>> getEntries() {
         List<Tuple<K, D>> result = new ArrayList<>();
-        for (Tuple<byte[], byte[]> entry : _index.getEntries()) {
+        for (Tuple<byte[], byte[]> entry : index.getEntries()) {
             result.add(new Tuple<>(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue())));
         }
         return result;
@@ -57,16 +58,16 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
 
     @SuppressWarnings("unchecked")
     public D get(K key) {
-        return (D) convert(keyClass, _index.get(unconvert(key)));
+        return (D) convert(keyClass, index.get(unconvert(key)));
     }
 
     public void put(K key, D value) {
-        _index.put(unconvert(key), unconvert(value));
+        index.put(unconvert(key), unconvert(value));
     }
 
     public List<Tuple<K, D>> findAll_(Comparable<byte[]> query) {
         List<Tuple<K, D>> result = new ArrayList<>();
-        for (Tuple<byte[], byte[]> entry : _index.findAll(query)) {
+        for (Tuple<byte[], byte[]> entry : index.findAll(query)) {
             result.add(new Tuple<>(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue())));
         }
         return result;
@@ -81,7 +82,7 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
 
     public List<Tuple<K, D>> findAll(Comparable<K> query) {
         List<Tuple<K, D>> result = new ArrayList<>();
-        for (Tuple<byte[], byte[]> entry : _index.findAll(new ComparableConverter(query))) {
+        for (Tuple<byte[], byte[]> entry : index.findAll(new ComparableConverter(query))) {
             result.add(new Tuple<>(convert(keyClass, entry.getKey()), convert(valueClass, entry.getValue())));
         }
         return result;
@@ -100,7 +101,7 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
      */
     public boolean tryGetValue(K key, D[] data) {
         byte[][] value = new byte[1][];
-        if (_index.tryGetValue(unconvert(key), value)) {
+        if (index.tryGetValue(unconvert(key), value)) {
             data[0] = convert(valueClass, value[0]);
             return true;
         }
@@ -109,11 +110,11 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
     }
 
     public boolean containsKey(K key) {
-        return _index.containsKey(unconvert(key));
+        return index.containsKey(unconvert(key));
     }
 
     public void remove(K key) {
-        _index.remove(unconvert(key));
+        index.remove(unconvert(key));
     }
 
     private static <T extends IByteArraySerializable> T convert(Class<T> clazz, byte[] data) {
@@ -133,14 +134,15 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
     }
 
     private class ComparableConverter implements Comparable<byte[]> {
-        private final Comparable<K> _wrapped;
+
+        private final Comparable<K> wrapped;
 
         public ComparableConverter(Comparable<K> toWrap) {
-            _wrapped = toWrap;
+            wrapped = toWrap;
         }
 
         public int compareTo(byte[] other) {
-            return _wrapped.compareTo(convert(keyClass, other));
+            return wrapped.compareTo(convert(keyClass, other));
         }
     }
 

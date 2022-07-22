@@ -42,16 +42,17 @@ import dotnet4j.io.MemoryStream;
 
 
 public final class DynamicDiskBuilder extends StreamBuilder {
-    private final int _blockSize;
 
-    private final SparseStream _content;
+    private final int blockSize;
 
-    private final Footer _footer;
+    private final SparseStream content;
+
+    private final Footer footer;
 
     public DynamicDiskBuilder(SparseStream content, Footer footer, int blockSize) {
-        _content = content;
-        _footer = footer;
-        _blockSize = blockSize;
+        this.content = content;
+        this.footer = footer;
+        this.blockSize = blockSize;
     }
 
     /**
@@ -63,23 +64,23 @@ public final class DynamicDiskBuilder extends StreamBuilder {
 
         List<BuilderExtent> extents = new ArrayList<>();
 
-        _footer.DataOffset = FooterSize;
+        footer.dataOffset = FooterSize;
 
-        DynamicHeader dynHeader = new DynamicHeader(-1, FooterSize + DynHeaderSize, _blockSize, _footer.CurrentSize);
+        DynamicHeader dynHeader = new DynamicHeader(-1, FooterSize + DynHeaderSize, blockSize, footer.currentSize);
 
         BlockAllocationTableExtent batExtent = new BlockAllocationTableExtent(FooterSize + DynHeaderSize,
-                                                                              dynHeader.MaxTableEntries);
+                                                                              dynHeader.maxTableEntries);
         long streamPos = batExtent.getStart() + batExtent.getLength();
 
-        for (Range blockRange : StreamExtent.blocks(_content.getExtents(), _blockSize)) {
+        for (Range blockRange : StreamExtent.blocks(content.getExtents(), blockSize)) {
             for (int i = 0; i < blockRange.getCount(); ++i) {
                 long block = blockRange.getOffset() + i;
-                long blockStart = block * _blockSize;
+                long blockStart = block * blockSize;
                 DataBlockExtent dataExtent = new DataBlockExtent(streamPos,
-                                                                 new SubStream(_content,
+                                                                 new SubStream(content,
                                                                                blockStart,
-                                                                               Math.min(_blockSize,
-                                                                                        _content.getLength() - blockStart)));
+                                                                               Math.min(blockSize,
+                                                                                        content.getLength() - blockStart)));
                 extents.add(dataExtent);
 
                 batExtent.setEntry((int) block, (int) (streamPos / Sizes.Sector));
@@ -88,11 +89,11 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             }
         }
 
-        _footer.updateChecksum();
+        footer.updateChecksum();
         dynHeader.updateChecksum();
 
         byte[] footerBuffer = new byte[FooterSize];
-        _footer.toBytes(footerBuffer, 0);
+        footer.toBytes(footerBuffer, 0);
 
         byte[] dynHeaderBuffer = new byte[DynHeaderSize];
         dynHeader.toBytes(dynHeaderBuffer, 0);
@@ -115,57 +116,59 @@ public final class DynamicDiskBuilder extends StreamBuilder {
     }
 
     private static class BlockAllocationTableExtent extends BuilderExtent {
-        private MemoryStream _dataStream;
 
-        private final int[] _entries;
+        private MemoryStream dataStream;
+
+        private final int[] entries;
 
         public BlockAllocationTableExtent(long start, int maxEntries) {
             super(start, MathUtilities.roundUp(maxEntries * 4, 512));
 
-            _entries = new int[(int) (getLength() / 4)];
-            Arrays.fill(_entries, 0xFFFFFFFF);
+            entries = new int[(int) (getLength() / 4)];
+            Arrays.fill(entries, 0xFFFFFFFF);
         }
 
         public void close() throws IOException {
-            if (_dataStream != null) {
-                _dataStream.close();
-                _dataStream = null;
+            if (dataStream != null) {
+                dataStream.close();
+                dataStream = null;
             }
         }
 
         public void setEntry(int index, int fileSector) {
-            _entries[index] = fileSector;
+            entries[index] = fileSector;
         }
 
         public void prepareForRead() {
             byte[] buffer = new byte[(int) getLength()];
 
-            for (int i = 0; i < _entries.length; ++i) {
-                EndianUtilities.writeBytesBigEndian(_entries[i], buffer, i * 4);
+            for (int i = 0; i < entries.length; ++i) {
+                EndianUtilities.writeBytesBigEndian(entries[i], buffer, i * 4);
             }
 
-            _dataStream = new MemoryStream(buffer, false);
+            dataStream = new MemoryStream(buffer, false);
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
-            _dataStream.setPosition(diskOffset - getStart());
-            return _dataStream.read(block, offset, count);
+            dataStream.setPosition(diskOffset - getStart());
+            return dataStream.read(block, offset, count);
         }
 
         public void disposeReadState() {
-            if (_dataStream != null) {
-                _dataStream.close();
-                _dataStream = null;
+            if (dataStream != null) {
+                dataStream.close();
+                dataStream = null;
             }
         }
     }
 
     private static class DataBlockExtent extends BuilderExtent {
-        private MemoryStream _bitmapStream;
 
-        private SparseStream _content;
+        private MemoryStream bitmapStream;
 
-        private final Ownership _ownership;
+        private SparseStream content;
+
+        private final Ownership ownership;
 
         public DataBlockExtent(long start, SparseStream content) {
             this(start, content, Ownership.None);
@@ -175,50 +178,50 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             super(start,
                   MathUtilities.roundUp(MathUtilities.ceil(content.getLength(), Sizes.Sector) / 8, Sizes.Sector) +
                          MathUtilities.roundUp(content.getLength(), Sizes.Sector));
-            _content = content;
-            _ownership = ownership;
+            this.content = content;
+            this.ownership = ownership;
         }
 
         public void close() throws IOException {
-            if (_content != null && _ownership == Ownership.Dispose) {
-                _content.close();
-                _content = null;
+            if (content != null && ownership == Ownership.Dispose) {
+                content.close();
+                content = null;
             }
 
-            if (_bitmapStream != null) {
-                _bitmapStream.close();
-                _bitmapStream = null;
+            if (bitmapStream != null) {
+                bitmapStream.close();
+                bitmapStream = null;
             }
         }
 
         public void prepareForRead() {
-            byte[] bitmap = new byte[(int) MathUtilities.roundUp(MathUtilities.ceil(_content.getLength(), Sizes.Sector) / 8,
+            byte[] bitmap = new byte[(int) MathUtilities.roundUp(MathUtilities.ceil(content.getLength(), Sizes.Sector) / 8,
                                                                  Sizes.Sector)];
 
-            for (Range range: StreamExtent.blocks(_content.getExtents(), Sizes.Sector)) {
+            for (Range range: StreamExtent.blocks(content.getExtents(), Sizes.Sector)) {
                 for (int i = 0; i < range.getCount(); ++i) {
                     byte mask = (byte) (1 << (7 - (int) ((range.getOffset() + i) % 8)));
                     bitmap[(int) ((range.getOffset() + i) / 8)] |= mask;
                 }
             }
 
-            _bitmapStream = new MemoryStream(bitmap, false);
+            bitmapStream = new MemoryStream(bitmap, false);
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
             long position = diskOffset - getStart();
-            if (position < _bitmapStream.getLength()) {
-                _bitmapStream.setPosition(position);
-                return _bitmapStream.read(block, offset, count);
+            if (position < bitmapStream.getLength()) {
+                bitmapStream.setPosition(position);
+                return bitmapStream.read(block, offset, count);
             }
-            _content.setPosition(position - _bitmapStream.getLength());
-            return _content.read(block, offset, count);
+            content.setPosition(position - bitmapStream.getLength());
+            return content.read(block, offset, count);
         }
 
         public void disposeReadState() {
-            if (_bitmapStream != null) {
-                _bitmapStream.close();
-                _bitmapStream = null;
+            if (bitmapStream != null) {
+                bitmapStream.close();
+                bitmapStream = null;
             }
         }
     }

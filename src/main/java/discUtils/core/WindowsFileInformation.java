@@ -31,68 +31,69 @@ import discUtils.core.coreCompat.FileAttributes;
  * common information for Windows files.
  */
 public class WindowsFileInformation {
+
     /**
      * Gets or sets the last time the file was changed.
      */
-    private long _changeTime;
+    private long changeTime;
 
     public long getChangeTime() {
-        return _changeTime;
+        return changeTime;
     }
 
     public void setChangeTime(long value) {
-        _changeTime = value;
+        changeTime = value;
     }
 
     /**
      * Gets or sets the creation time of the file.
      */
-    private long _creationTime;
+    private long creationTime;
 
     public long getCreationTime() {
-        return _creationTime;
+        return creationTime;
     }
 
     public void setCreationTime(long value) {
-        _creationTime = value;
+        creationTime = value;
     }
 
     /**
      * Gets or sets the file attributes.
      */
-    private EnumSet<FileAttributes> _fileAttributes;
+    private EnumSet<FileAttributes> fileAttributes;
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return _fileAttributes;
+        return fileAttributes;
     }
 
     public void setFileAttributes(EnumSet<FileAttributes> value) {
-        _fileAttributes = value;
+        fileAttributes = value;
     }
 
     /**
      * Gets or sets the last access time of the file.
      */
-    private long _lastAccessTime;
+    private long lastAccessTime;
 
     public long getLastAccessTime() {
-        return _lastAccessTime;
+        return lastAccessTime;
     }
 
     public void setLastAccessTime(long value) {
-        _lastAccessTime = value;
+        lastAccessTime = value;
     }
 
     /**
      * Gets or sets the modification time of the file.
      */
-    private long _lastWriteTime;
+    private long lastWriteTime;
 
     public long getLastWriteTime() {
-        return _lastWriteTime;
+        return lastWriteTime;
     }
 
     public void setLastWriteTime(long value) {
-        _lastWriteTime = value;
+        lastWriteTime = value;
     }
 }

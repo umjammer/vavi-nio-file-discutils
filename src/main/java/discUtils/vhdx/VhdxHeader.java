@@ -32,56 +32,57 @@ import discUtils.streams.util.Sizes;
 
 
 public final class VhdxHeader implements IByteArraySerializable {
+
     public static final int VhdxHeaderSignature = 0x64616568;
 
-    private final byte[] _data = new byte[4096];
+    private final byte[] data = new byte[4096];
 
-    public int Checksum;
+    public int checksum;
 
-    public UUID FileWriteGuid;
+    public UUID fileWriteGuid;
 
-    public UUID DataWriteGuid;
+    public UUID dataWriteGuid;
 
-    public UUID LogGuid;
+    public UUID logGuid;
 
-    public int LogLength;
+    public int logLength;
 
-    public long LogOffset;
+    public long logOffset;
 
-    public short LogVersion;
+    public short logVersion;
 
-    public long SequenceNumber;
+    public long sequenceNumber;
 
-    public int Signature = VhdxHeaderSignature;
+    public int signature = VhdxHeaderSignature;
 
-    public short Version;
+    public short version;
 
     public VhdxHeader() {
     }
 
     public VhdxHeader(VhdxHeader header) {
-        System.arraycopy(header._data, 0, _data, 0, 4096);
-        Signature = header.Signature;
-        Checksum = header.Checksum;
-        SequenceNumber = header.SequenceNumber;
-        FileWriteGuid = header.FileWriteGuid;
-        DataWriteGuid = header.DataWriteGuid;
-        LogGuid = header.LogGuid;
-        LogVersion = header.LogVersion;
-        Version = header.Version;
-        LogLength = header.LogLength;
-        LogOffset = header.LogOffset;
+        System.arraycopy(header.data, 0, data, 0, 4096);
+        signature = header.signature;
+        checksum = header.checksum;
+        sequenceNumber = header.sequenceNumber;
+        fileWriteGuid = header.fileWriteGuid;
+        dataWriteGuid = header.dataWriteGuid;
+        logGuid = header.logGuid;
+        logVersion = header.logVersion;
+        version = header.version;
+        logLength = header.logLength;
+        logOffset = header.logOffset;
     }
 
     public boolean isValid() {
-        if (Signature != VhdxHeaderSignature) {
+        if (signature != VhdxHeaderSignature) {
             return false;
         }
 
         byte[] checkData = new byte[4096];
-        System.arraycopy(_data, 0, checkData, 0, 4096);
+        System.arraycopy(data, 0, checkData, 0, 4096);
         EndianUtilities.writeBytesLittleEndian(0, checkData, 4);
-        return Checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, 4096);
+        return checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, 4096);
     }
 
     public int size() {
@@ -89,41 +90,41 @@ public final class VhdxHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        System.arraycopy(buffer, offset, _data, 0, 4096);
-        Signature = EndianUtilities.toUInt32LittleEndian(_data, 0);
-        Checksum = EndianUtilities.toUInt32LittleEndian(_data, 4);
-        SequenceNumber = EndianUtilities.toUInt64LittleEndian(_data, 8);
-        FileWriteGuid = EndianUtilities.toGuidLittleEndian(_data, 16);
-        DataWriteGuid = EndianUtilities.toGuidLittleEndian(_data, 32);
-        LogGuid = EndianUtilities.toGuidLittleEndian(_data, 48);
-        LogVersion = EndianUtilities.toUInt16LittleEndian(_data, 64);
-        Version = EndianUtilities.toUInt16LittleEndian(_data, 66);
-        LogLength = EndianUtilities.toUInt32LittleEndian(_data, 68);
-        LogOffset = EndianUtilities.toUInt64LittleEndian(_data, 72);
+        System.arraycopy(buffer, offset, data, 0, 4096);
+        signature = EndianUtilities.toUInt32LittleEndian(data, 0);
+        checksum = EndianUtilities.toUInt32LittleEndian(data, 4);
+        sequenceNumber = EndianUtilities.toUInt64LittleEndian(data, 8);
+        fileWriteGuid = EndianUtilities.toGuidLittleEndian(data, 16);
+        dataWriteGuid = EndianUtilities.toGuidLittleEndian(data, 32);
+        logGuid = EndianUtilities.toGuidLittleEndian(data, 48);
+        logVersion = EndianUtilities.toUInt16LittleEndian(data, 64);
+        version = EndianUtilities.toUInt16LittleEndian(data, 66);
+        logLength = EndianUtilities.toUInt32LittleEndian(data, 68);
+        logOffset = EndianUtilities.toUInt64LittleEndian(data, 72);
         return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {
         refreshData();
-        System.arraycopy(_data, 0, buffer, offset, (int) (4 * Sizes.OneKiB));
+        System.arraycopy(data, 0, buffer, offset, (int) (4 * Sizes.OneKiB));
     }
 
     public void calcChecksum() {
-        Checksum = 0;
+        checksum = 0;
         refreshData();
-        Checksum = Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, _data, 0, 4096);
+        checksum = Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, data, 0, 4096);
     }
 
     private void refreshData() {
-        EndianUtilities.writeBytesLittleEndian(Signature, _data, 0);
-        EndianUtilities.writeBytesLittleEndian(Checksum, _data, 4);
-        EndianUtilities.writeBytesLittleEndian(SequenceNumber, _data, 8);
-        EndianUtilities.writeBytesLittleEndian(FileWriteGuid, _data, 16);
-        EndianUtilities.writeBytesLittleEndian(DataWriteGuid, _data, 32);
-        EndianUtilities.writeBytesLittleEndian(LogGuid, _data, 48);
-        EndianUtilities.writeBytesLittleEndian(LogVersion, _data, 64);
-        EndianUtilities.writeBytesLittleEndian(Version, _data, 66);
-        EndianUtilities.writeBytesLittleEndian(LogLength, _data, 68);
-        EndianUtilities.writeBytesLittleEndian(LogOffset, _data, 72);
+        EndianUtilities.writeBytesLittleEndian(signature, data, 0);
+        EndianUtilities.writeBytesLittleEndian(checksum, data, 4);
+        EndianUtilities.writeBytesLittleEndian(sequenceNumber, data, 8);
+        EndianUtilities.writeBytesLittleEndian(fileWriteGuid, data, 16);
+        EndianUtilities.writeBytesLittleEndian(dataWriteGuid, data, 32);
+        EndianUtilities.writeBytesLittleEndian(logGuid, data, 48);
+        EndianUtilities.writeBytesLittleEndian(logVersion, data, 64);
+        EndianUtilities.writeBytesLittleEndian(version, data, 66);
+        EndianUtilities.writeBytesLittleEndian(logLength, data, 68);
+        EndianUtilities.writeBytesLittleEndian(logOffset, data, 72);
     }
 }

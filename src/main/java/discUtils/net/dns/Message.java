@@ -27,55 +27,56 @@ import java.util.List;
 
 
 public class Message {
+
     public Message() {
-        _questions = new ArrayList<>();
-        _answers = new ArrayList<>();
-        _authorityRecords = new ArrayList<>();
-        _additionalRecords = new ArrayList<>();
+        questions = new ArrayList<>();
+        answers = new ArrayList<>();
+        authorityRecords = new ArrayList<>();
+        additionalRecords = new ArrayList<>();
     }
 
-    private List<ResourceRecord> _additionalRecords;
+    private List<ResourceRecord> additionalRecords;
 
     public List<ResourceRecord> getAdditionalRecords() {
-        return _additionalRecords;
+        return additionalRecords;
     }
 
-    private List<ResourceRecord> _answers;
+    private List<ResourceRecord> answers;
 
     public List<ResourceRecord> getAnswers() {
-        return _answers;
+        return answers;
     }
 
-    private List<ResourceRecord> _authorityRecords;
+    private List<ResourceRecord> authorityRecords;
 
     public List<ResourceRecord> getAuthorityRecords() {
-        return _authorityRecords;
+        return authorityRecords;
     }
 
-    private MessageFlags _flags;
+    private MessageFlags flags;
 
     public MessageFlags getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(MessageFlags value) {
-        _flags = value;
+        flags = value;
     }
 
-    private List<Question> _questions;
+    private List<Question> questions;
 
     public List<Question> getQuestions() {
-        return _questions;
+        return questions;
     }
 
-    private short _transactionId;
+    private short transactionId;
 
     public short getTransactionId() {
-        return _transactionId;
+        return transactionId;
     }
 
     public void setTransactionId(short value) {
-        _transactionId = value;
+        transactionId = value;
     }
 
     public static Message read(PacketReader reader) {
@@ -87,28 +88,28 @@ public class Message {
         short authorityRecords = reader.readUShort();
         short additionalRecords = reader.readUShort();
         for (int i = 0; i < questions; ++i) {
-            result.getQuestions().add(Question.readFrom(reader));
+            result.questions.add(Question.readFrom(reader));
         }
         for (int i = 0; i < answers; ++i) {
-            result.getAnswers().add(ResourceRecord.readFrom(reader));
+            result.answers.add(ResourceRecord.readFrom(reader));
         }
         for (int i = 0; i < authorityRecords; ++i) {
-            result.getAuthorityRecords().add(ResourceRecord.readFrom(reader));
+            result.authorityRecords.add(ResourceRecord.readFrom(reader));
         }
         for (int i = 0; i < additionalRecords; ++i) {
-            result.getAdditionalRecords().add(ResourceRecord.readFrom(reader));
+            result.additionalRecords.add(ResourceRecord.readFrom(reader));
         }
         return result;
     }
 
     public void writeTo(PacketWriter writer) {
-        writer.write(getTransactionId());
-        writer.write(getFlags().getValue());
-        writer.write((short) getQuestions().size());
+        writer.write(transactionId);
+        writer.write(flags.getValue());
+        writer.write((short) questions.size());
         writer.write((byte) 0);
         writer.write((byte) 0);
         writer.write((byte) 0);
-        for (Question question : getQuestions()) {
+        for (Question question : questions) {
             question.writeTo(writer);
         }
     }

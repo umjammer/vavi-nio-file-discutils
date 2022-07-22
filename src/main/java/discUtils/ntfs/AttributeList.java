@@ -34,41 +34,41 @@ import discUtils.streams.IByteArraySerializable;
 
 
 public class AttributeList implements IByteArraySerializable, IDiagnosticTraceable, Iterable<AttributeListRecord> {
-    private final List<AttributeListRecord> _records;
+    private final List<AttributeListRecord> records;
 
     public AttributeList() {
-        _records = new ArrayList<>();
+        records = new ArrayList<>();
     }
 
     public int size() {
         int total = 0;
-        for (AttributeListRecord record : _records) {
+        for (AttributeListRecord record : records) {
             total += record.size();
         }
         return total;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _records.clear();
+        records.clear();
         int pos = 0;
         while (pos < buffer.length) {
             AttributeListRecord r = new AttributeListRecord();
             pos += r.readFrom(buffer, offset + pos);
-            _records.add(r);
+            records.add(r);
         }
         return pos;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         int pos = offset;
-        for (AttributeListRecord record : _records) {
+        for (AttributeListRecord record : records) {
             record.writeTo(buffer, offset + pos);
             pos += record.size();
         }
     }
 
     public int getCount() {
-        return _records.size();
+        return records.size();
     }
 
     public boolean isReadOnly() {
@@ -76,43 +76,39 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
     }
 
     public void add(AttributeListRecord item) {
-        _records.add(item);
-        Collections.sort(_records);
+        records.add(item);
+        Collections.sort(records);
     }
 
     public void clear() {
-        _records.clear();
+        records.clear();
     }
 
     public boolean contains(AttributeListRecord item) {
-        return _records.contains(item);
+        return records.contains(item);
     }
 
     public void copyTo(List<AttributeListRecord> array, int arrayIndex) {
-        array.addAll(arrayIndex, _records);
+        array.addAll(arrayIndex, records);
     }
 
     public boolean remove(AttributeListRecord item) {
-        return _records.remove(item);
+        return records.remove(item);
     }
 
-    public Enumeration<AttributeListRecord> getEnumerator() {
-        return Collections.enumeration(_records);
-    }
-
-    Enumeration<?> iEnumerable___GetEnumerator() {
-        return Collections.enumeration(_records);
+    public Enumeration<AttributeListRecord> enumerator() {
+        return Collections.enumeration(records);
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "ATTRIBUTE LIST RECORDS");
-        for (AttributeListRecord r : _records) {
+        for (AttributeListRecord r : records) {
             r.dump(writer, indent + "  ");
         }
     }
 
     @Override
     public Iterator<AttributeListRecord> iterator() {
-        return _records.iterator();
+        return records.iterator();
     }
 }

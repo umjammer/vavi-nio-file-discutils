@@ -28,41 +28,42 @@ import discUtils.core.internal.Utilities;
 
 
 public class PathTableRecord {
+
     public PathTableRecord() {
     }
 
-//    public byte ExtendedAttributeRecordLength;
+//    public byte extendedAttributeRecordLength;
 
-    public int LocationOfExtent;
+    public int locationOfExtent;
 
-    public short ParentDirectoryNumber;
+    public short parentDirectoryNumber;
 
-    public String DirectoryIdentifier;
+    public String directoryIdentifier;
 
 //    public static int readFrom(byte[] src, int offset, boolean byteSwap, Charset enc, PathTableRecord[] record) {
 //        byte directoryIdentifierLength = src[offset + 0];
-//        record[0].ExtendedAttributeRecordLength = src[offset + 1];
-//        record[0].LocationOfExtent = EndianUtilities.toUInt32LittleEndian(src, offset + 2);
-//        record[0].ParentDirectoryNumber = EndianUtilities.toUInt16LittleEndian(src, offset + 6);
-//        record[0].DirectoryIdentifier = IsoUtilities.readChars(src, offset + 8, directoryIdentifierLength, enc);
+//        record[0].extendedAttributeRecordLength = src[offset + 1];
+//        record[0].locationOfExtent = EndianUtilities.toUInt32LittleEndian(src, offset + 2);
+//        record[0].parentDirectoryNumber = EndianUtilities.toUInt16LittleEndian(src, offset + 6);
+//        record[0].directoryIdentifier = IsoUtilities.readChars(src, offset + 8, directoryIdentifierLength, enc);
 //
 //        if (byteSwap) {
-//            record[0].LocationOfExtent = utilities.bitSwap(record.LocationOfExtent);
-//            record[0].ParentDirectoryNumber = utilities.bitSwap(record.ParentDirectoryNumber);
+//            record[0].locationOfExtent = utilities.bitSwap(record.locationOfExtent);
+//            record[0].parentDirectoryNumber = utilities.bitSwap(record.parentDirectoryNumber);
 //        }
 //
 //        return directoryIdentifierLength + 8 + (((directoryIdentifierLength & 1) == 1) ? 1 : 0);
 //    }
 
     public int write(boolean byteSwap, Charset enc, byte[] buffer, int offset) {
-        int nameBytes = DirectoryIdentifier.getBytes(enc).length;
+        int nameBytes = directoryIdentifier.getBytes(enc).length;
         buffer[offset + 0] = (byte) nameBytes;
-        buffer[offset + 1] = 0; // ExtendedAttributeRecordLength;
-        IsoUtilities.toBytesFromUInt32(buffer, offset + 2, byteSwap ? Utilities.bitSwap(LocationOfExtent) : LocationOfExtent);
+        buffer[offset + 1] = 0; // extendedAttributeRecordLength;
+        IsoUtilities.toBytesFromUInt32(buffer, offset + 2, byteSwap ? Utilities.bitSwap(locationOfExtent) : locationOfExtent);
         IsoUtilities.toBytesFromUInt16(buffer,
                                        offset + 6,
-                                       byteSwap ? Utilities.bitSwap(ParentDirectoryNumber) : ParentDirectoryNumber);
-        IsoUtilities.writeString(buffer, offset + 8, nameBytes, false, DirectoryIdentifier, enc);
+                                       byteSwap ? Utilities.bitSwap(parentDirectoryNumber) : parentDirectoryNumber);
+        IsoUtilities.writeString(buffer, offset + 8, nameBytes, false, directoryIdentifier, enc);
         if ((nameBytes & 1) == 1) {
             buffer[offset + 8 + nameBytes] = 0;
         }

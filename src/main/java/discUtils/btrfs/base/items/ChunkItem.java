@@ -34,6 +34,7 @@ import discUtils.streams.util.EndianUtilities;
  * Maps logical address to physical
  */
 public class ChunkItem extends BaseItem {
+
     public ChunkItem(Key key) {
         super(key);
     }
@@ -41,128 +42,128 @@ public class ChunkItem extends BaseItem {
     /**
      * size of chunk (bytes)
      */
-    private long _chunkSize;
+    private long chunkSize;
 
     public long getChunkSize() {
-        return _chunkSize;
+        return chunkSize;
     }
 
     public void setChunkSize(long value) {
-        _chunkSize = value;
+        chunkSize = value;
     }
 
     /**
      * root referencing this chunk (2)
      */
-    private long _objectId;
+    private long objectId;
 
     public long getObjectId() {
-        return _objectId;
+        return objectId;
     }
 
     public void setObjectId(long value) {
-        _objectId = value;
+        objectId = value;
     }
 
     /**
      * stripe length
      */
-    private long _stripeLength;
+    private long stripeLength;
 
     public long getStripeLength() {
-        return _stripeLength;
+        return stripeLength;
     }
 
     public void setStripeLength(long value) {
-        _stripeLength = value;
+        stripeLength = value;
     }
 
     /**
      * type (same as flags for block group?)
      */
-    private EnumSet<BlockGroupFlag> _type;
+    private EnumSet<BlockGroupFlag> type;
 
     public EnumSet<BlockGroupFlag> getType() {
-        return _type;
+        return type;
     }
 
     public void setType(EnumSet<BlockGroupFlag> value) {
-        _type = value;
+        type = value;
     }
 
     /**
      * optimal io alignment
      */
-    private int _optimalIoAlignment;
+    private int optimalIoAlignment;
 
     public int getOptimalIoAlignment() {
-        return _optimalIoAlignment;
+        return optimalIoAlignment;
     }
 
     public void setOptimalIoAlignment(int value) {
-        _optimalIoAlignment = value;
+        optimalIoAlignment = value;
     }
 
     /**
      * optimal io width
      */
-    private int _optimalIoWidth;
+    private int optimalIoWidth;
 
     public int getOptimalIoWidth() {
-        return _optimalIoWidth;
+        return optimalIoWidth;
     }
 
     public void setOptimalIoWidth(int value) {
-        _optimalIoWidth = value;
+        optimalIoWidth = value;
     }
 
     /**
      * minimal io size (sector size)
      */
-    private int _minimalIoSize;
+    private int minimalIoSize;
 
     public int getMinimalIoSize() {
-        return _minimalIoSize;
+        return minimalIoSize;
     }
 
     public void setMinimalIoSize(int value) {
-        _minimalIoSize = value;
+        minimalIoSize = value;
     }
 
     /**
      * number of stripes
      */
-    private short _stripeCount;
+    private short stripeCount;
 
     public int getStripeCount() {
-        return _stripeCount & 0xffff;
+        return stripeCount & 0xffff;
     }
 
     public void setStripeCount(short value) {
-        _stripeCount = value;
+        stripeCount = value;
     }
 
     /**
      * sub stripes
      */
-    private short _subStripes;
+    private short subStripes;
 
     public int getSubStripes() {
-        return _subStripes & 0xffff;
+        return subStripes & 0xffff;
     }
 
     public void setSubStripes(short value) {
-        _subStripes = value;
+        subStripes = value;
     }
 
-    private Stripe[] _stripes;
+    private Stripe[] stripes;
 
     public Stripe[] getStripes() {
-        return _stripes;
+        return stripes;
     }
 
     public void setStripes(Stripe[] value) {
-        _stripes = value;
+        stripes = value;
     }
 
     public int size() {
@@ -170,20 +171,20 @@ public class ChunkItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setChunkSize(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setObjectId(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setStripeLength(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10));
-        setType(BlockGroupFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18)));
-        setOptimalIoAlignment(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20));
-        setOptimalIoWidth(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24));
-        setMinimalIoSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28));
-        setStripeCount(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2c));
-        setSubStripes(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2e));
-        setStripes(new Stripe[getStripeCount()]);
+        chunkSize = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        objectId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        stripeLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
+        type = BlockGroupFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18));
+        optimalIoAlignment = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
+        optimalIoWidth = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
+        minimalIoSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
+        stripeCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2c);
+        subStripes = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2e);
+        stripes = new Stripe[getStripeCount()];
         offset += 0x30;
         for (int i = 0; i < getStripeCount(); i++) {
-            getStripes()[i] = new Stripe();
-            offset += getStripes()[i].readFrom(buffer, offset);
+            stripes[i] = new Stripe();
+            offset += stripes[i].readFrom(buffer, offset);
         }
         return size();
     }

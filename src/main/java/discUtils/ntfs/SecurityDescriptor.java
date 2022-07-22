@@ -38,6 +38,7 @@ import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 
 public final class SecurityDescriptor implements IByteArraySerializable, IDiagnosticTraceable {
+
     public SecurityDescriptor() {
     }
 
@@ -45,14 +46,14 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         setDescriptor(secDesc);
     }
 
-    private RawSecurityDescriptor _descriptor;
+    private RawSecurityDescriptor descriptor;
 
     public RawSecurityDescriptor getDescriptor() {
-        return _descriptor;
+        return descriptor;
     }
 
     public void setDescriptor(RawSecurityDescriptor value) {
-        _descriptor = value;
+        descriptor = value;
     }
 
     public int size() {

@@ -28,9 +28,10 @@ import dotnet4j.io.IOException;
 
 
 public class JournalSuperBlock implements IByteArraySerializable {
-    public int BlockSize;
 
-    public int MaxLength;
+    public int blockSize;
+
+    public int maxLength;
 
     public static final int Magic = 0xC03B3998;
 
@@ -50,13 +51,13 @@ public class JournalSuperBlock implements IByteArraySerializable {
             throw new IOException("Invalid journal magic - probably not an ext file system");
         }
 
-        int blocktype = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
-        if (blocktype != 3 && blocktype != 4) {
+        int blockType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        if (blockType != 3 && blockType != 4) {
             throw new IOException("Invalid journal block type - no superblock found");
         }
 
-        BlockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xc);
-        MaxLength = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
+        blockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xc);
+        maxLength = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
         return 1024;
     }
 

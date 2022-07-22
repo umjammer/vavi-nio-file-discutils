@@ -30,105 +30,106 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class MetadataSegmentSection {
-    public String Name;
 
-    public long StartExtent;
+    public String name;
 
-    public long ExtentCount;
+    public long startExtent;
 
-    public SegmentType Type = SegmentType.None;
+    public long extentCount;
 
-    public long StripeCount;
+    public SegmentType type = SegmentType.None;
 
-    public List<MetadataStripe> Stripes;
+    public long stripeCount;
+
+    public List<MetadataStripe> stripes;
 
     void parse(String head, Scanner data) {
-        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
+        name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while (data.hasNextLine()) {
             line = Metadata.readLine(data);
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
             if (line.contains("=")) {
                 Tuple<String, String> parameter = Metadata.parseParameter(line);
                 switch(parameter.getKey().trim().toLowerCase()) {
                 case "start_extent":
-                    StartExtent = Metadata.parseNumericValue(parameter.getValue());
+                    startExtent = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "extent_count":
-                    ExtentCount = Metadata.parseNumericValue(parameter.getValue());
+                    extentCount = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "type":
                     String value = Metadata.parseStringValue(parameter.getValue());
                     switch (value) {
                     case "striped":
-                        Type = SegmentType.Striped;
+                        type = SegmentType.Striped;
                         break;
                     case "zero":
-                        Type = SegmentType.Zero;
+                        type = SegmentType.Zero;
                         break;
                     case "error":
-                        Type = SegmentType.Error;
+                        type = SegmentType.Error;
                         break;
                     case "free":
-                        Type = SegmentType.Free;
+                        type = SegmentType.Free;
                         break;
                     case "snapshot":
-                        Type = SegmentType.Snapshot;
+                        type = SegmentType.Snapshot;
                         break;
                     case "mirror":
-                        Type = SegmentType.Mirror;
+                        type = SegmentType.Mirror;
                         break;
                     case "raid1":
-                        Type = SegmentType.Raid1;
+                        type = SegmentType.Raid1;
                         break;
                     case "raid10":
-                        Type = SegmentType.Raid10;
+                        type = SegmentType.Raid10;
                         break;
                     case "raid4":
-                        Type = SegmentType.Raid4;
+                        type = SegmentType.Raid4;
                         break;
                     case "raid5":
-                        Type = SegmentType.Raid5;
+                        type = SegmentType.Raid5;
                         break;
                     case "raid5_la":
-                        Type = SegmentType.Raid5La;
+                        type = SegmentType.Raid5La;
                         break;
                     case "raid5_ra":
-                        Type = SegmentType.Raid5Ra;
+                        type = SegmentType.Raid5Ra;
                         break;
                     case "raid5_ls":
-                        Type = SegmentType.Raid5Ls;
+                        type = SegmentType.Raid5Ls;
                         break;
                     case "raid5_rs":
-                        Type = SegmentType.Raid5Rs;
+                        type = SegmentType.Raid5Rs;
                         break;
                     case "raid6":
-                        Type = SegmentType.Raid6;
+                        type = SegmentType.Raid6;
                         break;
                     case "raid6_zr":
-                        Type = SegmentType.Raid6Zr;
+                        type = SegmentType.Raid6Zr;
                         break;
                     case "raid6_nr":
-                        Type = SegmentType.Raid6Nr;
+                        type = SegmentType.Raid6Nr;
                         break;
                     case "raid6_nc":
-                        Type = SegmentType.Raid6Nc;
+                        type = SegmentType.Raid6Nc;
                         break;
                     case "thin-pool":
-                        Type = SegmentType.ThinPool;
+                        type = SegmentType.ThinPool;
                         break;
                     case "thin":
-                        Type = SegmentType.Thin;
+                        type = SegmentType.Thin;
                         break;
                     }
                     break;
                 case "stripe_count":
-                    StripeCount = Metadata.parseNumericValue(parameter.getValue());
+                    stripeCount = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "stripes":
                     if (parameter.getValue().trim().equals("[")) {
-                        Stripes = parseStripesSection(data);
+                        stripes = parseStripesSection(data);
                     }
                     break;
                 default:
@@ -147,7 +148,7 @@ public class MetadataSegmentSection {
         String line;
         while (data.hasNextLine()) {
             line = Metadata.readLine(data);
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
             if (line.endsWith("]")) {
                 return result;

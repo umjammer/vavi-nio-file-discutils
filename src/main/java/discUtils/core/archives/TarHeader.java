@@ -30,37 +30,38 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class TarHeader {
+
     public static final int Length = 512;
 
-    public long FileLength;
+    public long fileLength;
 
-    public EnumSet<UnixFilePermissions> FileMode;
+    public EnumSet<UnixFilePermissions> fileMode;
 
-    public String FileName;
+    public String fileName;
 
-    public int GroupId;
+    public int groupId;
 
-    public long ModificationTime;
+    public long modificationTime;
 
-    public int OwnerId;
+    public int ownerId;
 
     public void readFrom(byte[] buffer, int offset) {
-        FileName = readNullTerminatedString(buffer, offset + 0, 100);
-        FileMode = UnixFilePermissions.valueOf((int) octalToLong(readNullTerminatedString(buffer, offset + 100, 8)));
-        OwnerId = (int) octalToLong(readNullTerminatedString(buffer, offset + 108, 8));
-        GroupId = (int) octalToLong(readNullTerminatedString(buffer, offset + 116, 8));
-        FileLength = octalToLong(readNullTerminatedString(buffer, offset + 124, 12));
-        ModificationTime = octalToLong(readNullTerminatedString(buffer, offset + 136, 12));
+        fileName = readNullTerminatedString(buffer, offset + 0, 100);
+        fileMode = UnixFilePermissions.valueOf((int) octalToLong(readNullTerminatedString(buffer, offset + 100, 8)));
+        ownerId = (int) octalToLong(readNullTerminatedString(buffer, offset + 108, 8));
+        groupId = (int) octalToLong(readNullTerminatedString(buffer, offset + 116, 8));
+        fileLength = octalToLong(readNullTerminatedString(buffer, offset + 124, 12));
+        modificationTime = octalToLong(readNullTerminatedString(buffer, offset + 136, 12));
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + Length, (byte) 0);
-        EndianUtilities.stringToBytes(FileName, buffer, offset, 99);
-        EndianUtilities.stringToBytes(longToOctal(UnixFilePermissions.valueOf(FileMode), 7), buffer, offset + 100, 7);
-        EndianUtilities.stringToBytes(longToOctal(OwnerId, 7), buffer, offset + 108, 7);
-        EndianUtilities.stringToBytes(longToOctal(GroupId, 7), buffer, offset + 116, 7);
-        EndianUtilities.stringToBytes(longToOctal(FileLength, 11), buffer, offset + 124, 11);
-        EndianUtilities.stringToBytes(longToOctal(ModificationTime, 11), buffer, offset + 136, 11);
+        EndianUtilities.stringToBytes(fileName, buffer, offset, 99);
+        EndianUtilities.stringToBytes(longToOctal(UnixFilePermissions.valueOf(fileMode), 7), buffer, offset + 100, 7);
+        EndianUtilities.stringToBytes(longToOctal(ownerId, 7), buffer, offset + 108, 7);
+        EndianUtilities.stringToBytes(longToOctal(groupId, 7), buffer, offset + 116, 7);
+        EndianUtilities.stringToBytes(longToOctal(fileLength, 11), buffer, offset + 124, 11);
+        EndianUtilities.stringToBytes(longToOctal(modificationTime, 11), buffer, offset + 136, 11);
         // Checksum
         EndianUtilities.stringToBytes("        ", buffer, offset + 148, 8);
         long checkSum = 0;

@@ -36,10 +36,11 @@ import dotnet4j.io.Stream;
 
 
 public final class AttributeDefinitions {
-    private final Map<AttributeType, AttributeDefinitionRecord> _attrDefs;
+
+    private final Map<AttributeType, AttributeDefinitionRecord> attrDefs;
 
     public AttributeDefinitions() {
-        _attrDefs = new HashMap<>();
+        attrDefs = new HashMap<>();
         add(AttributeType.StandardInformation,
             "$STANDARD_INFORMATION",
             EnumSet.of(AttributeTypeFlags.MustBeResident),
@@ -74,7 +75,7 @@ public final class AttributeDefinitions {
     }
 
     public AttributeDefinitions(File file) {
-        _attrDefs = new HashMap<>();
+        attrDefs = new HashMap<>();
 
         byte[] buffer = new byte[AttributeDefinitionRecord.Size];
         try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.Read)) {
@@ -84,7 +85,7 @@ public final class AttributeDefinitions {
 
                 // NULL terminator record
                 if (record.type != AttributeType.None) {
-                    _attrDefs.put(record.type, record);
+                    attrDefs.put(record.type, record);
                 }
             }
         } catch (IOException e) {
@@ -93,14 +94,14 @@ public final class AttributeDefinitions {
     }
 
     public void writeTo(File file) {
-        List<AttributeType> attribs = new ArrayList<>(_attrDefs.keySet());
+        List<AttributeType> attribs = new ArrayList<>(attrDefs.keySet());
         Collections.sort(attribs);
 
         try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
             byte[] buffer;
             for (AttributeType attrib : attribs) {
                 buffer = new byte[AttributeDefinitionRecord.Size];
-                AttributeDefinitionRecord attrDef = _attrDefs.get(attrib);
+                AttributeDefinitionRecord attrDef = attrDefs.get(attrib);
                 attrDef.write(buffer, 0);
 
                 s.write(buffer, 0, buffer.length);
@@ -114,7 +115,7 @@ public final class AttributeDefinitions {
     }
 
     public AttributeDefinitionRecord lookup(String name) {
-        for (AttributeDefinitionRecord record : _attrDefs.values()) {
+        for (AttributeDefinitionRecord record : attrDefs.values()) {
             if (name.compareTo(record.name) == 0) {
                 return record;
             }
@@ -124,8 +125,8 @@ public final class AttributeDefinitions {
     }
 
     public boolean mustBeResident(AttributeType attributeType) {
-        if (_attrDefs.containsKey(attributeType)) {
-            AttributeDefinitionRecord record = _attrDefs.get(attributeType);
+        if (attrDefs.containsKey(attributeType)) {
+            AttributeDefinitionRecord record = attrDefs.get(attributeType);
             return record.flags.contains(AttributeTypeFlags.MustBeResident);
         }
 
@@ -133,8 +134,8 @@ public final class AttributeDefinitions {
     }
 
     public boolean isIndexed(AttributeType attributeType) {
-        if (_attrDefs.containsKey(attributeType)) {
-            AttributeDefinitionRecord record = _attrDefs.get(attributeType);
+        if (attrDefs.containsKey(attributeType)) {
+            AttributeDefinitionRecord record = attrDefs.get(attributeType);
             return record.flags.contains(AttributeTypeFlags.Indexed);
         }
 
@@ -152,6 +153,6 @@ public final class AttributeDefinitions {
         adr.flags = attributeTypeFlags;
         adr.minSize = minSize;
         adr.maxSize = maxSize;
-        _attrDefs.put(attributeType, adr);
+        attrDefs.put(attributeType, adr);
     }
 }

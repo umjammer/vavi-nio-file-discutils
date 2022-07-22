@@ -26,125 +26,126 @@ package discUtils.streams.block;
  * Statistical information about the effectiveness of a BlockCache instance.
  */
 public final class BlockCacheStatistics {
-    private int _freeReadBlocks;
+
+    private int freeReadBlocks;
 
     /**
      * Gets the number of free blocks in the read cache.
      */
     public int getFreeReadBlocks() {
-        return _freeReadBlocks;
+        return freeReadBlocks;
     }
 
     public void setFreeReadBlocks(int value) {
-        _freeReadBlocks = value;
+        freeReadBlocks = value;
     }
 
-    private long _largeReadsIn;
+    private long largeReadsIn;
 
     /**
      * Gets the number of requested 'large' reads, as defined by the
      * LargeReadSize setting.
      */
     public long getLargeReadsIn() {
-        return _largeReadsIn;
+        return largeReadsIn;
     }
 
     public void setLargeReadsIn(long value) {
-        _largeReadsIn = value;
+        largeReadsIn = value;
     }
 
-    private long _readCacheHits;
+    private long readCacheHits;
 
     /**
      * Gets the number of times a read request was serviced (in part or whole)
      * from the cache.
      */
     public long getReadCacheHits() {
-        return _readCacheHits;
+        return readCacheHits;
     }
 
     public void setReadCacheHits(long value) {
-        _readCacheHits = value;
+        readCacheHits = value;
     }
 
-    private long _readCacheMisses;
+    private long readCacheMisses;
 
     /**
      * Gets the number of time a read request was serviced (in part or whole)
      * from the wrapped stream.
      */
     public long getReadCacheMisses() {
-        return _readCacheMisses;
+        return readCacheMisses;
     }
 
     public void setReadCacheMisses(long value) {
-        _readCacheMisses = value;
+        readCacheMisses = value;
     }
 
-    private long _totalReadsIn;
+    private long totalReadsIn;
 
     /**
      * Gets the total number of requested reads.
      */
     public long getTotalReadsIn() {
-        return _totalReadsIn;
+        return totalReadsIn;
     }
 
     public void setTotalReadsIn(long value) {
-        _totalReadsIn = value;
+        totalReadsIn = value;
     }
 
-    private long _totalReadsOut;
+    private long totalReadsOut;
 
     /**
      * Gets the total number of reads passed on by the cache.
      */
     public long getTotalReadsOut() {
-        return _totalReadsOut;
+        return totalReadsOut;
     }
 
     public void setTotalReadsOut(long value) {
-        _totalReadsOut = value;
+        totalReadsOut = value;
     }
 
-    private long _totalWritesIn;
+    private long totalWritesIn;
 
     /**
      * Gets the total number of requested writes.
      */
     public long getTotalWritesIn() {
-        return _totalWritesIn;
+        return totalWritesIn;
     }
 
     public void setTotalWritesIn(long value) {
-        _totalWritesIn = value;
+        totalWritesIn = value;
     }
 
-    private long _unalignedReadsIn;
+    private long unalignedReadsIn;
 
     /**
      * Gets the number of requested unaligned reads. Unaligned reads are reads
      * where the read doesn't start on a multiple of the block size.
      */
     public long getUnalignedReadsIn() {
-        return _unalignedReadsIn;
+        return unalignedReadsIn;
     }
 
     public void setUnalignedReadsIn(long value) {
-        _unalignedReadsIn = value;
+        unalignedReadsIn = value;
     }
 
-    private long _unalignedWritesIn;
+    private long unalignedWritesIn;
 
     /**
      * Gets the number of requested unaligned writes. Unaligned writes are
      * writes where the write doesn't start on a multiple of the block size.
      */
     public long getUnalignedWritesIn() {
-        return _unalignedWritesIn;
+        return unalignedWritesIn;
     }
 
     public void setUnalignedWritesIn(long value) {
-        _unalignedWritesIn = value;
+        unalignedWritesIn = value;
     }
 }

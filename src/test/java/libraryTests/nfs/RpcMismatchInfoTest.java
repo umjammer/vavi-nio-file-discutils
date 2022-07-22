@@ -36,8 +36,8 @@ public class RpcMismatchInfoTest {
     @Test
     public void roundTripTest() throws Exception {
         RpcMismatchInfo info = new RpcMismatchInfo();
-        info.High = 1;
-        info.Low = 2;
+        info.high = 1;
+        info.low = 2;
 
         RpcMismatchInfo clone = null;
 

@@ -40,33 +40,34 @@ import dotnet4j.io.Stream;
  * into the wrapped stream.
  */
 public final class SnapshotStream extends SparseStream {
-    private Stream _baseStream;
 
-    private final Ownership _baseStreamOwnership;
+    private Stream baseStream;
+
+    private final Ownership baseStreamOwnership;
 
     /**
      * Records which byte ranges in diffStream hold changes.
-     * Can't use _diffStream's own tracking because that's based on it's
+     * Can't use diffStream's own tracking because that's based on it's
      * internal block size, not on the _actual_ bytes stored.
      */
-    private List<StreamExtent> _diffExtents;
+    private List<StreamExtent> diffExtents;
 
     /**
      * Captures changes to the base stream (when enabled).
      */
-    private SparseMemoryStream _diffStream;
+    private SparseMemoryStream diffStream;
 
     /**
      * Indicates that no writes should be permitted.
      */
-    private boolean _frozen;
+    private boolean frozen;
 
-    private long _position;
+    private long position;
 
     /**
      * The saved stream position (if the diffStream is active).
      */
-    private long _savedPosition;
+    private long savedPosition;
 
     /**
      * Initializes a new instance of the SnapshotStream class.
@@ -76,23 +77,23 @@ public final class SnapshotStream extends SparseStream {
      *            baseStream.
      */
     public SnapshotStream(Stream baseStream, Ownership owns) {
-        _baseStream = baseStream;
-        _baseStreamOwnership = owns;
-        _diffExtents = new ArrayList<>();
+        this.baseStream = baseStream;
+        baseStreamOwnership = owns;
+        diffExtents = new ArrayList<>();
     }
 
     /**
      * Gets an indication as to whether the stream can be read.
      */
     public boolean canRead() {
-        return _baseStream.canRead();
+        return baseStream.canRead();
     }
 
     /**
      * Gets an indication as to whether the stream position can be changed.
      */
     public boolean canSeek() {
-        return _baseStream.canSeek();
+        return baseStream.canSeek();
     }
 
     /**
@@ -104,7 +105,7 @@ public final class SnapshotStream extends SparseStream {
      * .
      */
     public boolean canWrite() {
-        return _diffStream != null ? true : _baseStream.canWrite();
+        return diffStream != null ? true : baseStream.canWrite();
     }
 
     /**
@@ -112,8 +113,8 @@ public final class SnapshotStream extends SparseStream {
      * data.
      */
     public List<StreamExtent> getExtents() {
-        if (_baseStream instanceof SparseStream) {
-            return StreamExtent.union(((SparseStream) _baseStream).getExtents(), _diffExtents);
+        if (baseStream instanceof SparseStream) {
+            return StreamExtent.union(((SparseStream) baseStream).getExtents(), diffExtents);
         }
         return Collections.singletonList(new StreamExtent(0, getLength()));
     }
@@ -122,22 +123,22 @@ public final class SnapshotStream extends SparseStream {
      * Gets the length of the stream.
      */
     public long getLength() {
-        if (_diffStream != null) {
-            return _diffStream.getLength();
+        if (diffStream != null) {
+            return diffStream.getLength();
         }
 
-        return _baseStream.getLength();
+        return baseStream.getLength();
     }
 
     /**
      * Gets and sets the current stream position.
      */
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     /**
@@ -145,28 +146,28 @@ public final class SnapshotStream extends SparseStream {
      * Useful to prevent changes whilst inspecting the stream.
      */
     public void freeze() {
-        _frozen = true;
+        frozen = true;
     }
 
     /**
      * Re-permits write operations to the stream.
      */
     public void thaw() {
-        _frozen = false;
+        frozen = false;
     }
 
     /**
      * Takes a snapshot of the current stream contents.
      */
     public void snapshot() {
-        if (_diffStream != null) {
+        if (diffStream != null) {
             throw new IllegalStateException("Already have a snapshot");
         }
 
-        _savedPosition = _position;
-        _diffExtents = new ArrayList<>();
-        _diffStream = new SparseMemoryStream();
-        _diffStream.setLength(_baseStream.getLength());
+        savedPosition = position;
+        diffExtents = new ArrayList<>();
+        diffStream = new SparseMemoryStream();
+        diffStream.setLength(baseStream.getLength());
     }
 
     /**
@@ -174,13 +175,13 @@ public final class SnapshotStream extends SparseStream {
      * stream.
      */
     public void revertToSnapshot() {
-        if (_diffStream == null) {
+        if (diffStream == null) {
             throw new IllegalStateException("No snapshot");
         }
 
-        _diffStream = null;
-        _diffExtents = null;
-        _position = _savedPosition;
+        diffStream = null;
+        diffExtents = null;
+        position = savedPosition;
     }
 
     /**
@@ -188,24 +189,24 @@ public final class SnapshotStream extends SparseStream {
      * kept.
      */
     public void forgetSnapshot() {
-        if (_diffStream == null) {
+        if (diffStream == null) {
             throw new IllegalStateException("No snapshot");
         }
 
         byte[] buffer = new byte[8192];
-        for (StreamExtent extent : _diffExtents) {
-            _diffStream.setPosition(extent.getStart());
-            _baseStream.setPosition(extent.getStart());
+        for (StreamExtent extent : diffExtents) {
+            diffStream.setPosition(extent.getStart());
+            baseStream.setPosition(extent.getStart());
             int totalRead = 0;
             while (totalRead < extent.getLength()) {
                 int toRead = (int) Math.min(extent.getLength() - totalRead, buffer.length);
-                int read = _diffStream.read(buffer, 0, toRead);
-                _baseStream.write(buffer, 0, read);
+                int read = diffStream.read(buffer, 0, toRead);
+                baseStream.write(buffer, 0, read);
                 totalRead += read;
             }
         }
-        _diffStream = null;
-        _diffExtents = null;
+        diffStream = null;
+        diffExtents = null;
     }
 
     /**
@@ -213,7 +214,7 @@ public final class SnapshotStream extends SparseStream {
      */
     public void flush() {
         checkFrozen();
-        _baseStream.flush();
+        baseStream.flush();
     }
 
     /**
@@ -227,36 +228,36 @@ public final class SnapshotStream extends SparseStream {
     public int read(byte[] buffer, int offset, int count) {
         int numRead;
 
-        if (_diffStream == null) {
-            _baseStream.setPosition(_position);
-            numRead = _baseStream.read(buffer, offset, count);
+        if (diffStream == null) {
+            baseStream.setPosition(position);
+            numRead = baseStream.read(buffer, offset, count);
         } else {
-            if (_position > _diffStream.getLength()) {
+            if (position > diffStream.getLength()) {
                 throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
             }
 
-            int toRead = (int) Math.min(count, _diffStream.getLength() - _position);
+            int toRead = (int) Math.min(count, diffStream.getLength() - position);
 
             // If the read is within the base stream's range, then touch it first to get the
             // (potentially) stale data.
-            if (_position < _baseStream.getLength()) {
-                int baseToRead = (int) Math.min(toRead, _baseStream.getLength() - _position);
-                _baseStream.setPosition(_position);
+            if (position < baseStream.getLength()) {
+                int baseToRead = (int) Math.min(toRead, baseStream.getLength() - position);
+                baseStream.setPosition(position);
 
                 int totalBaseRead = 0;
                 while (totalBaseRead < baseToRead) {
-                    totalBaseRead += _baseStream.read(buffer, offset + totalBaseRead, baseToRead - totalBaseRead);
+                    totalBaseRead += baseStream.read(buffer, offset + totalBaseRead, baseToRead - totalBaseRead);
                 }
             }
 
             // Now overlay any data from the overlay stream (if any)
-            List<StreamExtent> overlayExtents = StreamExtent.intersect(_diffExtents, new StreamExtent(_position, toRead));
+            List<StreamExtent> overlayExtents = StreamExtent.intersect(diffExtents, new StreamExtent(position, toRead));
             for (StreamExtent extent : overlayExtents) {
-                _diffStream.setPosition(extent.getStart());
+                diffStream.setPosition(extent.getStart());
                 int overlayNumRead = 0;
                 while (overlayNumRead < extent.getLength()) {
-                    overlayNumRead += _diffStream.read(buffer,
-                                                       (int) (offset + (extent.getStart() - _position) + overlayNumRead),
+                    overlayNumRead += diffStream.read(buffer,
+                                                       (int) (offset + (extent.getStart() - position) + overlayNumRead),
                                                        (int) (extent.getLength() - overlayNumRead));
                 }
             }
@@ -264,7 +265,7 @@ public final class SnapshotStream extends SparseStream {
             numRead = toRead;
         }
 
-        _position += numRead;
+        position += numRead;
 
         return numRead;
     }
@@ -280,7 +281,7 @@ public final class SnapshotStream extends SparseStream {
         checkFrozen();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += getLength();
         }
@@ -289,8 +290,8 @@ public final class SnapshotStream extends SparseStream {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     /**
@@ -300,10 +301,10 @@ public final class SnapshotStream extends SparseStream {
      */
     public void setLength(long value) {
         checkFrozen();
-        if (_diffStream != null) {
-            _diffStream.setLength(value);
+        if (diffStream != null) {
+            diffStream.setLength(value);
         } else {
-            _baseStream.setLength(value);
+            baseStream.setLength(value);
         }
     }
 
@@ -317,19 +318,19 @@ public final class SnapshotStream extends SparseStream {
     public void write(byte[] buffer, int offset, int count) {
         checkFrozen();
 
-        if (_diffStream != null) {
-            _diffStream.setPosition(_position);
-            _diffStream.write(buffer, offset, count);
+        if (diffStream != null) {
+            diffStream.setPosition(position);
+            diffStream.write(buffer, offset, count);
 
             // Beware of Linq's delayed model - force execution now by placing into a list.
             // Without this, large execution chains can build up (v. slow) and potential for stack overflow.
-            _diffExtents = new ArrayList<>(StreamExtent.union(_diffExtents, new StreamExtent(_position, count)));
+            diffExtents = new ArrayList<>(StreamExtent.union(diffExtents, new StreamExtent(position, count)));
 
-            _position += count;
+            position += count;
         } else {
-            _baseStream.setPosition(_position);
-            _baseStream.write(buffer, offset, count);
-            _position += count;
+            baseStream.setPosition(position);
+            baseStream.write(buffer, offset, count);
+            position += count;
         }
     }
 
@@ -337,20 +338,20 @@ public final class SnapshotStream extends SparseStream {
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_baseStreamOwnership == Ownership.Dispose && _baseStream != null) {
-            _baseStream.close();
+        if (baseStreamOwnership == Ownership.Dispose && baseStream != null) {
+            baseStream.close();
         }
 
-        _baseStream = null;
-        if (_diffStream != null) {
-            _diffStream.close();
+        baseStream = null;
+        if (diffStream != null) {
+            diffStream.close();
         }
 
-        _diffStream = null;
+        diffStream = null;
     }
 
     private void checkFrozen() {
-        if (_frozen) {
+        if (frozen) {
             throw new UnsupportedOperationException("The stream is frozen");
         }
     }

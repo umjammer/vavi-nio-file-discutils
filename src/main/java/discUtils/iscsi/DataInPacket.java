@@ -26,60 +26,61 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DataInPacket extends BaseResponse {
-    public boolean Acknowledge;
 
-    public int BufferOffset;
+    public boolean acknowledge;
 
-    public int DataSequenceNumber;
+    public int bufferOffset;
 
-    public BasicHeaderSegment Header;
+    public int dataSequenceNumber;
 
-    public long Lun;
+    public BasicHeaderSegment header;
 
-    public boolean O;
+    public long lun;
 
-    public byte[] ReadData;
+    public boolean o;
 
-    public int ResidualCount;
+    public byte[] readData;
 
-    public ScsiStatus Status = ScsiStatus.Good;
+    public int residualCount;
 
-    public int TargetTransferTag;
+    public ScsiStatus status = ScsiStatus.Good;
 
-    public boolean U;
+    public int targetTransferTag;
+
+    public boolean u;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 
     public void parse(byte[] headerData, int headerOffset, byte[] bodyData) {
-        Header = new BasicHeaderSegment();
-        Header.readFrom(headerData, headerOffset);
-        if (Header._OpCode != OpCode.ScsiDataIn) {
+        header = new BasicHeaderSegment();
+        header.readFrom(headerData, headerOffset);
+        if (header.opCode != OpCode.ScsiDataIn) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.ScsiDataIn + " was " +
-                                               Header._OpCode);
+                                               header.opCode);
         }
 
         unpackFlags(headerData[headerOffset + 1]);
-        if (StatusPresent) {
-            Status = ScsiStatus.valueOf(headerData[headerOffset + 3]);
+        if (statusPresent) {
+            status = ScsiStatus.valueOf(headerData[headerOffset + 3]);
         }
 
-        Lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
-        TargetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        DataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
-        BufferOffset = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
-        ResidualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
-        ReadData = bodyData;
+        lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
+        targetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        dataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
+        bufferOffset = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
+        residualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
+        readData = bodyData;
     }
 
     private void unpackFlags(byte value) {
-        Acknowledge = (value & 0x40) != 0;
-        O = (value & 0x04) != 0;
-        U = (value & 0x02) != 0;
-        StatusPresent = (value & 0x01) != 0;
+        acknowledge = (value & 0x40) != 0;
+        o = (value & 0x04) != 0;
+        u = (value & 0x02) != 0;
+        statusPresent = (value & 0x01) != 0;
     }
 }

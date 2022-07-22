@@ -35,27 +35,28 @@ import dotnet4j.io.Stream;
 
 
 public final class Metadata {
-    private final Stream _regionStream;
+
+    private final Stream regionStream;
 
     @SuppressWarnings("unused")
-    private UUID _page83Data;
+    private UUID page83Data;
 
     public Metadata(Stream regionStream) {
-        _regionStream = regionStream;
-        _regionStream.setPosition(0);
-        _table = StreamUtilities.readStruct(MetadataTable.class, _regionStream);
-        _fileParameters = readStruct(FileParameters.class, MetadataTable.FileParametersGuid, false);
-        _diskSize = readValue(MetadataTable.VirtualDiskSizeGuid, false, Long.TYPE, EndianUtilities::toUInt64LittleEndian);
-        _page83Data = readValue(MetadataTable.Page83DataGuid, false, UUID.class, EndianUtilities::toGuidLittleEndian);
-        _logicalSectorSize = readValue(MetadataTable.LogicalSectorSizeGuid,
+        this.regionStream = regionStream;
+        this.regionStream.setPosition(0);
+        table = StreamUtilities.readStruct(MetadataTable.class, this.regionStream);
+        fileParameters = readStruct(FileParameters.class, MetadataTable.FileParametersGuid, false);
+        diskSize = readValue(MetadataTable.VirtualDiskSizeGuid, false, Long.TYPE, EndianUtilities::toUInt64LittleEndian);
+        page83Data = readValue(MetadataTable.Page83DataGuid, false, UUID.class, EndianUtilities::toGuidLittleEndian);
+        logicalSectorSize = readValue(MetadataTable.LogicalSectorSizeGuid,
                                        false,
                                        Integer.TYPE,
                                        EndianUtilities::toUInt32LittleEndian);
-        _physicalSectorSize = readValue(MetadataTable.PhysicalSectorSizeGuid,
+        physicalSectorSize = readValue(MetadataTable.PhysicalSectorSizeGuid,
                                         false,
                                         Integer.TYPE,
                                         EndianUtilities::toUInt32LittleEndian);
-        _parentLocator = readStruct(ParentLocator.class, MetadataTable.ParentLocatorGuid, false);
+        parentLocator = readStruct(ParentLocator.class, MetadataTable.ParentLocatorGuid, false);
     }
 
     @FunctionalInterface
@@ -70,40 +71,40 @@ public final class Metadata {
         void invoke(T val, byte[] buffer, int offset);
     }
 
-    private MetadataTable _table;
+    private MetadataTable table;
 
     public MetadataTable getTable() {
-        return _table;
+        return table;
     }
 
-    private FileParameters _fileParameters;
+    private FileParameters fileParameters;
 
     public FileParameters getFileParameters() {
-        return _fileParameters;
+        return fileParameters;
     }
 
-    private long _diskSize;
+    private long diskSize;
 
     public long getDiskSize() {
-        return _diskSize;
+        return diskSize;
     }
 
-    private int _logicalSectorSize;
+    private int logicalSectorSize;
 
     public int getLogicalSectorSize() {
-        return _logicalSectorSize;
+        return logicalSectorSize;
     }
 
-    private int _physicalSectorSize;
+    private int physicalSectorSize;
 
     public int getPhysicalSectorSize() {
-        return _physicalSectorSize;
+        return physicalSectorSize;
     }
 
-    private ParentLocator _parentLocator;
+    private ParentLocator parentLocator;
 
     public ParentLocator getParentLocator() {
-        return _parentLocator;
+        return parentLocator;
     }
 
     static Metadata initialize(Stream metadataStream,
@@ -170,16 +171,16 @@ public final class Metadata {
                                                                          Stream stream) {
         MetadataEntryKey key = new MetadataEntryKey(id, flags.contains(MetadataEntryFlags.IsUser));
         MetadataEntry entry = new MetadataEntry();
-        entry.ItemId = id;
-        entry.Offset = dataOffset;
-        entry.Length = data.size();
-        entry.Flags = flags;
-        header.Entries.put(key, entry);
+        entry.itemId = id;
+        entry.offset = dataOffset;
+        entry.length = data.size();
+        entry.flags = flags;
+        header.entries.put(key, entry);
 
         stream.setPosition(dataOffset);
         StreamUtilities.writeStruct(stream, data);
 
-        return entry.Length;
+        return entry.length;
     }
 
     private static <T extends Serializable> int addEntryValue(T data,
@@ -191,28 +192,28 @@ public final class Metadata {
                                                               Stream stream) {
         MetadataEntryKey key = new MetadataEntryKey(id, flags.contains(MetadataEntryFlags.IsUser));
         MetadataEntry entry = new MetadataEntry();
-        entry.ItemId = id;
-        entry.Offset = dataOffset;
-        entry.Length = ReflectionHelper.sizeOf(data.getClass());
-        entry.Flags = flags;
+        entry.itemId = id;
+        entry.offset = dataOffset;
+        entry.length = ReflectionHelper.sizeOf(data.getClass());
+        entry.flags = flags;
 
-        header.Entries.put(key, entry);
+        header.entries.put(key, entry);
 
         stream.setPosition(dataOffset);
 
-        byte[] buffer = new byte[entry.Length];
+        byte[] buffer = new byte[entry.length];
         writer.invoke(data, buffer, 0);
         stream.write(buffer, 0, buffer.length);
 
-        return entry.Length;
+        return entry.length;
     }
 
     private <T extends IByteArraySerializable> T readStruct(Class<T> c, UUID itemId, boolean isUser) {
         MetadataEntryKey key = new MetadataEntryKey(itemId, isUser);
-        if (getTable().Entries.containsKey(key)) {
-            MetadataEntry entry = getTable().Entries.get(key);
-            _regionStream.setPosition(entry.Offset);
-            return StreamUtilities.readStruct(c, _regionStream, entry.Length);
+        if (getTable().entries.containsKey(key)) {
+            MetadataEntry entry = getTable().entries.get(key);
+            regionStream.setPosition(entry.offset);
+            return StreamUtilities.readStruct(c, regionStream, entry.length);
         }
 
         return null;
@@ -220,9 +221,9 @@ public final class Metadata {
 
     private <T extends Serializable> T readValue(UUID itemId, boolean isUser, Class<T> c, Reader<T> reader) {
         MetadataEntryKey key = new MetadataEntryKey(itemId, isUser);
-        if (getTable().Entries.containsKey(key)) {
-            _regionStream.setPosition(getTable().Entries.get(key).Offset);
-            byte[] data = StreamUtilities.readExact(_regionStream, ReflectionHelper.sizeOf(c));
+        if (getTable().entries.containsKey(key)) {
+            regionStream.setPosition(getTable().entries.get(key).offset);
+            byte[] data = StreamUtilities.readExact(regionStream, ReflectionHelper.sizeOf(c));
             return reader.invoke(data, 0);
         }
 

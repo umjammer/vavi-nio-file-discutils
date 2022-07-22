@@ -32,12 +32,13 @@ import dotnet4j.io.IOException;
  * Represents a DNS A record.
  */
 public final class IP4AddressRecord extends ResourceRecord {
+
     public IP4AddressRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
         try {
             short dataLen = reader.readUShort();
             int pos = reader.getPosition();
-            _address = Inet4Address.getByAddress(reader.readBytes(dataLen));
+            address = Inet4Address.getByAddress(reader.readBytes(dataLen));
             reader.setPosition(pos + dataLen);
         } catch (UnknownHostException e) {
             throw new IOException(e);
@@ -47,9 +48,9 @@ public final class IP4AddressRecord extends ResourceRecord {
     /**
      * Gets the IPv4 address.
      */
-    private InetAddress _address;
+    private InetAddress address;
 
     public InetAddress getAddress() {
-        return _address;
+        return address;
     }
 }

@@ -33,32 +33,33 @@ import dotnet4j.io.SeekOrigin;
 
 
 public class FatFileStream extends SparseStream {
-    private final Directory _dir;
 
-    private final long _dirId;
+    private final Directory dir;
 
-    private final ClusterStream _stream;
+    private final long dirId;
+
+    private final ClusterStream stream;
 
     private boolean didWrite;
 
     public FatFileStream(FatFileSystem fileSystem, Directory dir, long fileId, FileAccess access) {
-        _dir = dir;
-        _dirId = fileId;
-        DirectoryEntry dirEntry = _dir.getEntry(_dirId);
-        _stream = new ClusterStream(fileSystem, access, dirEntry.getFirstCluster(), dirEntry.getFileSize());
-        _stream.FirstClusterChanged = this::firstClusterAllocatedHandler;
+        this.dir = dir;
+        dirId = fileId;
+        DirectoryEntry dirEntry = this.dir.getEntry(dirId);
+        stream = new ClusterStream(fileSystem, access, dirEntry.getFirstCluster(), dirEntry.getFileSize());
+        stream.firstClusterChanged = this::firstClusterAllocatedHandler;
     }
 
     public boolean canRead() {
-        return _stream.canRead();
+        return stream.canRead();
     }
 
     public boolean canSeek() {
-        return _stream.canSeek();
+        return stream.canSeek();
     }
 
     public boolean canWrite() {
-        return _stream.canWrite();
+        return stream.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
@@ -66,56 +67,56 @@ public class FatFileStream extends SparseStream {
     }
 
     public long getLength() {
-        return _stream.getLength();
+        return stream.getLength();
     }
 
     public long getPosition() {
-        return _stream.getPosition();
+        return stream.getPosition();
     }
 
     public void setPosition(long value) {
-        _stream.setPosition(value);
+        stream.setPosition(value);
     }
 
     public void close() throws IOException {
-        if (_dir.getFileSystem().canWrite()) {
-            long now = _dir.getFileSystem().convertFromUtc(System.currentTimeMillis());
-            DirectoryEntry dirEntry = _dir.getEntry(_dirId);
+        if (dir.getFileSystem().canWrite()) {
+            long now = dir.getFileSystem().convertFromUtc(System.currentTimeMillis());
+            DirectoryEntry dirEntry = dir.getEntry(dirId);
             dirEntry.setLastAccessTime(now);
             if (didWrite) {
-                dirEntry.setFileSize((int) _stream.getLength());
+                dirEntry.setFileSize((int) stream.getLength());
                 dirEntry.setLastWriteTime(now);
             }
 
-            _dir.updateEntry(_dirId, dirEntry);
+            dir.updateEntry(dirId, dirEntry);
         }
     }
 
     public void setLength(long value) {
         didWrite = true;
-        _stream.setLength(value);
+        stream.setLength(value);
     }
 
     public void write(byte[] buffer, int offset, int count) {
         didWrite = true;
-        _stream.write(buffer, offset, count);
+        stream.write(buffer, offset, count);
     }
 
     public void flush() {
-        _stream.flush();
+        stream.flush();
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        return _stream.read(buffer, offset, count);
+        return stream.read(buffer, offset, count);
     }
 
     public long seek(long offset, SeekOrigin origin) {
-        return _stream.seek(offset, origin);
+        return stream.seek(offset, origin);
     }
 
     private void firstClusterAllocatedHandler(int cluster) {
-        DirectoryEntry dirEntry = _dir.getEntry(_dirId);
+        DirectoryEntry dirEntry = dir.getEntry(dirId);
         dirEntry.setFirstCluster(cluster);
-        _dir.updateEntry(_dirId, dirEntry);
+        dir.updateEntry(dirId, dirEntry);
     }
 }

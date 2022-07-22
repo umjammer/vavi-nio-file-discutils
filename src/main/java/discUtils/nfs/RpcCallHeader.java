@@ -24,6 +24,7 @@
 package discUtils.nfs;
 
 public class RpcCallHeader {
+
     public RpcCallHeader() {
     }
 
@@ -36,73 +37,73 @@ public class RpcCallHeader {
         setVerifier(new RpcAuthentication(reader));
     }
 
-    private RpcAuthentication _credentials;
+    private RpcAuthentication credentials;
 
     public RpcAuthentication getCredentials() {
-        return _credentials;
+        return credentials;
     }
 
     public void setCredentials(RpcAuthentication value) {
-        _credentials = value;
+        credentials = value;
     }
 
-    private int _proc;
+    private int proc;
 
     public int getProc() {
-        return _proc;
+        return proc;
     }
 
     public void setProc(int value) {
-        _proc = value;
+        proc = value;
     }
 
-    private int _program;
+    private int program;
 
     public int getProgram() {
-        return _program;
+        return program;
     }
 
     public void setProgram(int value) {
-        _program = value;
+        program = value;
     }
 
-    private int _rpcVersion;
+    private int rpcVersion;
 
     public int getRpcVersion() {
-        return _rpcVersion;
+        return rpcVersion;
     }
 
     public void setRpcVersion(int value) {
-        _rpcVersion = value;
+        rpcVersion = value;
     }
 
-    private RpcAuthentication _verifier;
+    private RpcAuthentication verifier;
 
     public RpcAuthentication getVerifier() {
-        return _verifier;
+        return verifier;
     }
 
     public void setVerifier(RpcAuthentication value) {
-        _verifier = value;
+        verifier = value;
     }
 
-    private int _version;
+    private int version;
 
     public int getVersion() {
-        return _version;
+        return version;
     }
 
     public void setVersion(int value) {
-        _version = value;
+        version = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getRpcVersion());
-        writer.write(getProgram());
-        writer.write(getVersion());
-        writer.write(getProc());
-        getCredentials().write(writer);
-        getVerifier().write(writer);
+        writer.write(rpcVersion);
+        writer.write(program);
+        writer.write(version);
+        writer.write(proc);
+        credentials.write(writer);
+        verifier.write(writer);
     }
 
     public boolean equals(Object obj) {
@@ -114,12 +115,12 @@ public class RpcCallHeader {
             return false;
         }
 
-        return other.getCredentials().equals(getCredentials()) && other.getProc() == getProc() &&
-               other.getProgram() == getProgram() && other.getRpcVersion() == getRpcVersion() &&
-               other.getVerifier().equals(getVerifier()) && other.getVersion() == getVersion();
+        return other.credentials.equals(credentials) && other.proc == proc &&
+               other.program == program && other.rpcVersion == rpcVersion &&
+               other.verifier.equals(verifier) && other.version == version;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getCredentials(), getProc(), getProgram(), getRpcVersion(), getVerifier(), getVersion());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(credentials, proc, program, rpcVersion, verifier, version);
     }
 }

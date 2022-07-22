@@ -27,69 +27,70 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileSetDescriptor implements IByteArraySerializable {
-    public String AbstractFileIdentifier;
 
-    public int CharacterSetList;
+    public String abstractFileIdentifier;
 
-    public String CopyrightFileIdentifier;
+    public int characterSetList;
 
-    public DescriptorTag DescriptorTag;
+    public String copyrightFileIdentifier;
 
-    public DomainEntityIdentifier DomainIdentifier;
+    public DescriptorTag descriptorTag;
 
-    public CharacterSetSpecification FileSetCharset;
+    public DomainEntityIdentifier domainIdentifier;
 
-    public int FileSetDescriptorNumber;
+    public CharacterSetSpecification fileSetCharset;
 
-    public String FileSetIdentifier;
+    public int fileSetDescriptorNumber;
 
-    public int FileSetNumber;
+    public String fileSetIdentifier;
 
-    public short InterchangeLevel;
+    public int fileSetNumber;
 
-    public String LogicalVolumeIdentifier;
+    public short interchangeLevel;
 
-    public CharacterSetSpecification LogicalVolumeIdentifierCharset;
+    public String logicalVolumeIdentifier;
 
-    public int MaximumCharacterSetList;
+    public CharacterSetSpecification logicalVolumeIdentifierCharset;
 
-    public short MaximumInterchangeLevel;
+    public int maximumCharacterSetList;
 
-    public LongAllocationDescriptor NextExtent;
+    public short maximumInterchangeLevel;
 
-    public long RecordingTime;
+    public LongAllocationDescriptor nextExtent;
 
-    public LongAllocationDescriptor RootDirectoryIcb;
+    public long recordingTime;
 
-    public LongAllocationDescriptor SystemStreamDirectoryIcb;
+    public LongAllocationDescriptor rootDirectoryIcb;
+
+    public LongAllocationDescriptor systemStreamDirectoryIcb;
 
     public int size() {
         return 512;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        DescriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
-        RecordingTime = UdfUtilities.parseTimestamp(buffer, offset + 16);
-        InterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
-        MaximumInterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
-        CharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 32);
-        MaximumCharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
-        FileSetNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        FileSetDescriptorNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        LogicalVolumeIdentifierCharset = EndianUtilities
+        descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
+        recordingTime = UdfUtilities.parseTimestamp(buffer, offset + 16);
+        interchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
+        maximumInterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
+        characterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 32);
+        maximumCharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
+        fileSetNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
+        fileSetDescriptorNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
+        logicalVolumeIdentifierCharset = EndianUtilities
                 .toStruct(CharacterSetSpecification.class, buffer, offset + 48);
-        LogicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 112, 128);
-        FileSetCharset = EndianUtilities
+        logicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 112, 128);
+        fileSetCharset = EndianUtilities
                 .toStruct(CharacterSetSpecification.class, buffer, offset + 240);
-        FileSetIdentifier = UdfUtilities.readDString(buffer, offset + 304, 32);
-        CopyrightFileIdentifier = UdfUtilities.readDString(buffer, offset + 336, 32);
-        AbstractFileIdentifier = UdfUtilities.readDString(buffer, offset + 368, 32);
-        RootDirectoryIcb = EndianUtilities
+        fileSetIdentifier = UdfUtilities.readDString(buffer, offset + 304, 32);
+        copyrightFileIdentifier = UdfUtilities.readDString(buffer, offset + 336, 32);
+        abstractFileIdentifier = UdfUtilities.readDString(buffer, offset + 368, 32);
+        rootDirectoryIcb = EndianUtilities
                 .toStruct(LongAllocationDescriptor.class, buffer, offset + 400);
-        DomainIdentifier = EndianUtilities
+        domainIdentifier = EndianUtilities
                 .toStruct(DomainEntityIdentifier.class, buffer, offset + 416);
-        NextExtent = EndianUtilities.toStruct(LongAllocationDescriptor.class, buffer, offset + 448);
-        SystemStreamDirectoryIcb = EndianUtilities
+        nextExtent = EndianUtilities.toStruct(LongAllocationDescriptor.class, buffer, offset + 448);
+        systemStreamDirectoryIcb = EndianUtilities
                 .toStruct(LongAllocationDescriptor.class, buffer, offset + 464);
         return 512;
     }

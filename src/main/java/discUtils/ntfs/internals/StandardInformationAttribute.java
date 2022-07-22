@@ -39,34 +39,35 @@ import discUtils.streams.util.StreamUtilities;
  * FileNameAttribute attribute holds a 'cache' of some of the information.
  */
 public final class StandardInformationAttribute extends GenericAttribute {
-    private final StandardInformation _si;
+
+    private final StandardInformation si;
 
     public StandardInformationAttribute(INtfsContext context, AttributeRecord record) {
         super(context, record);
         byte[] content = StreamUtilities.readAll(getContent());
-        _si = new StandardInformation();
-        _si.readFrom(content, 0);
+        si = new StandardInformation();
+        si.readFrom(content, 0);
     }
 
     /**
      * Gets the Unknown.
      */
     public long getClassId() {
-        return _si._classId;
+        return si.classId;
     }
 
     /**
      * Gets the creation time of the file.
      */
     public long getCreationTime() {
-        return _si._creationTime;
+        return si.creationTime;
     }
 
     /**
      * Gets the attributes of the file, as stored by NTFS.
      */
     public EnumSet<NtfsFileAttributes> getFileAttributes() {
-        return FileAttributeFlags.cast(NtfsFileAttributes.class, _si._fileAttributes);
+        return FileAttributeFlags.cast(NtfsFileAttributes.class, si.fileAttributeFlags);
     }
 
     /**
@@ -74,49 +75,49 @@ public final class StandardInformationAttribute extends GenericAttribute {
      * user-readable journal).
      */
     public long getJournalSequenceNumber() {
-        return _si._updateSequenceNumber;
+        return si.updateSequenceNumber;
     }
 
     /**
      * Gets the last access time of the file.
      */
     public long getLastAccessTime() {
-        return _si._lastAccessTime;
+        return si.lastAccessTime;
     }
 
     /**
      * Gets the last time the Master File Table entry for the file was changed.
      */
     public long getMasterFileTableChangedTime() {
-        return _si._mftChangedTime;
+        return si.mftChangedTime;
     }
 
     /**
      * Gets the maximum number of file versions (normally 0).
      */
     public long getMaxVersions() {
-        return _si._maxVersions;
+        return si.maxVersions;
     }
 
     /**
      * Gets the modification time of the file.
      */
     public long getModificationTime() {
-        return _si._modificationTime;
+        return si.modificationTime;
     }
 
     /**
      * Gets the owner identity, for the purposes of quota allocation.
      */
     public long getOwnerId() {
-        return _si._ownerId;
+        return si.ownerId;
     }
 
     /**
      * Gets the amount charged to the owners quota for this file.
      */
     public long getQuotaCharged() {
-        return _si._quotaCharged;
+        return si.quotaCharged;
     }
 
     /**
@@ -125,13 +126,13 @@ public final class StandardInformationAttribute extends GenericAttribute {
      * Security Descriptors are stored in the \$Secure meta-data file.
      */
     public long getSecurityId() {
-        return _si._securityId;
+        return si.securityId;
     }
 
     /**
      * Gets the version number of the file (normally 0).
      */
     public long getVersion() {
-        return _si._version;
+        return si.version;
     }
 }

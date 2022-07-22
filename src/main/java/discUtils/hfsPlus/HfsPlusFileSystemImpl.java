@@ -45,21 +45,21 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
         getContext().setVolumeStream(s);
         getContext().setVolumeHeader(hdr);
 
-        FileBuffer catalogBuffer = new FileBuffer(getContext(), hdr.CatalogFile, CatalogNodeId.CatalogFileId);
+        FileBuffer catalogBuffer = new FileBuffer(getContext(), hdr.catalogFile, CatalogNodeId.CatalogFileId);
         getContext().setCatalog(new BTree<>(CatalogKey.class, catalogBuffer));
 
-        FileBuffer extentsBuffer = new FileBuffer(getContext(), hdr.ExtentsFile, CatalogNodeId.ExtentsFileId);
+        FileBuffer extentsBuffer = new FileBuffer(getContext(), hdr.extentsFile, CatalogNodeId.ExtentsFileId);
         getContext().setExtentsOverflow(new BTree<>(ExtentKey.class, extentsBuffer));
 
-        FileBuffer attributesBuffer = new FileBuffer(getContext(), hdr.AttributesFile, CatalogNodeId.AttributesFileId);
+        FileBuffer attributesBuffer = new FileBuffer(getContext(), hdr.attributesFile, CatalogNodeId.AttributesFileId);
         getContext().setAttributes(new BTree<>(AttributeKey.class, attributesBuffer));
 
         // Establish Root directory
         byte[] rootThreadData = getContext().getCatalog().find(new CatalogKey(CatalogNodeId.RootFolderId, ""));
         CatalogThread rootThread = new CatalogThread();
         rootThread.readFrom(rootThreadData, 0);
-        byte[] rootDirEntryData = getContext().getCatalog().find(new CatalogKey(rootThread.ParentId, rootThread.Name));
-        DirEntry rootDirEntry = new DirEntry(rootThread.Name, rootDirEntryData);
+        byte[] rootDirEntryData = getContext().getCatalog().find(new CatalogKey(rootThread.parentId, rootThread.name));
+        DirEntry rootDirEntry = new DirEntry(rootThread.name, rootDirEntryData);
         setRootDirectory((Directory) getFile(rootDirEntry));
     }
 
@@ -72,7 +72,7 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
         CatalogThread rootThread = new CatalogThread();
         rootThread.readFrom(rootThreadData, 0);
 
-        return rootThread.Name;
+        return rootThread.name;
     }
 
     public boolean canWrite() {
@@ -85,7 +85,7 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
             throw new FileNotFoundException("No such file or directory " + path);
         }
 
-        return dirEntry.getCatalogFileInfo().FileSystemInfo;
+        return dirEntry.getCatalogFileInfo().fileSystemInfo;
     }
 
     protected File convertDirEntryToFile(DirEntry dirEntry) {

@@ -40,26 +40,27 @@ import dotnet4j.io.FileAccess;
 
 
 public final class DiscImageFile extends VirtualDiskLayer {
+
     public static final int Mode1SectorSize = 2048;
 
     public DiscImageFile(URI uri, String userName, String password) {
-        _content = new BufferStream(new DiscContentBuffer(uri, userName, password), FileAccess.Read);
+        content = new BufferStream(new DiscContentBuffer(uri, userName, password), FileAccess.Read);
 
         BlockCacheSettings cacheSettings = new BlockCacheSettings();
         cacheSettings.setBlockSize((int) (32 * Sizes.OneKiB));
         cacheSettings.setOptimumReadSize((int) (128 * Sizes.OneKiB));
 
-        _content = new BlockCacheStream(getContent(), Ownership.Dispose);
+        content = new BlockCacheStream(getContent(), Ownership.Dispose);
     }
 
     public long getCapacity() {
         return getContent().getLength();
     }
 
-    private SparseStream _content;
+    private SparseStream content;
 
     public SparseStream getContent() {
-        return _content;
+        return content;
     }
 
     // Note external sector size is always 2048

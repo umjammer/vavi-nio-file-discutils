@@ -42,9 +42,9 @@ public class RpcReplyHeaderTest {
         RpcReplyHeader header = new RpcReplyHeader();
         RpcAcceptedReplyHeader accepted = new RpcAcceptedReplyHeader();
         accepted.AcceptStatus = RpcAcceptStatus.Success;
-        accepted.MismatchInfo = null;
-        accepted.Verifier = new RpcAuthentication(new RpcUnixCredential(1, 2));
-        header.AcceptReply = accepted;
+        accepted.mismatchInfo = null;
+        accepted.verifier = new RpcAuthentication(new RpcUnixCredential(1, 2));
+        header.acceptReply = accepted;
 
         RpcReplyHeader clone = null;
 

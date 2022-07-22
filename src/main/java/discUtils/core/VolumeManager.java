@@ -52,25 +52,26 @@ import dotnet4j.io.Stream;
  * redundancy or other purposes.
  */
 public final class VolumeManager implements Serializable {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
-    private static ServiceLoader<LogicalVolumeFactory> s_logicalVolumeFactories;
+    private static final ServiceLoader<LogicalVolumeFactory> logicalVolumeFactories;
 
-    private final List<VirtualDisk> _disks;
+    private final List<VirtualDisk> disks;
 
-    private boolean _needScan;
+    private boolean needScan;
 
-    private Map<String, PhysicalVolumeInfo> _physicalVolumes;
+    private Map<String, PhysicalVolumeInfo> physicalVolumes;
 
-    private Map<String, LogicalVolumeInfo> _logicalVolumes;
+    private Map<String, LogicalVolumeInfo> logicalVolumes;
 
     /**
      * Initializes a new instance of the VolumeManager class.
      */
     public VolumeManager() {
-        _disks = new ArrayList<>();
-        _physicalVolumes = new TreeMap<>();
-        _logicalVolumes = new TreeMap<>();
+        disks = new ArrayList<>();
+        physicalVolumes = new TreeMap<>();
+        logicalVolumes = new TreeMap<>();
     }
 
     /**
@@ -93,11 +94,11 @@ public final class VolumeManager implements Serializable {
         addDisk(initialDiskContent);
     }
 
-    /**
+    /*
      * Register new LogicalVolumeFactories detected in an assembly
      */
     static {
-        s_logicalVolumeFactories = ServiceLoader.load(LogicalVolumeFactory.class);
+        logicalVolumeFactories = ServiceLoader.load(LogicalVolumeFactory.class);
     }
 
     /**
@@ -130,9 +131,9 @@ public final class VolumeManager implements Serializable {
      * @return The GUID the volume manager will use to identify the disk.
      */
     public String addDisk(VirtualDisk disk) {
-        _needScan = true;
-        int ordinal = _disks.size();
-        _disks.add(disk);
+        needScan = true;
+        int ordinal = disks.size();
+        disks.add(disk);
         return getDiskId(ordinal);
     }
 
@@ -152,11 +153,11 @@ public final class VolumeManager implements Serializable {
      * @return An array of physical volumes.
      */
     public List<PhysicalVolumeInfo> getPhysicalVolumes() {
-        if (_needScan) {
+        if (needScan) {
             scan();
         }
 
-        return new ArrayList<>(_physicalVolumes.values());
+        return new ArrayList<>(physicalVolumes.values());
     }
 
     /**
@@ -165,11 +166,11 @@ public final class VolumeManager implements Serializable {
      * @return An array of logical volumes.
      */
     public List<LogicalVolumeInfo> getLogicalVolumes() {
-        if (_needScan) {
+        if (needScan) {
             scan();
         }
 
-        return new ArrayList<>(_logicalVolumes.values());
+        return new ArrayList<>(logicalVolumes.values());
     }
 
     /**
@@ -179,16 +180,16 @@ public final class VolumeManager implements Serializable {
      * @return The volume information for the volume, or returns {@code null} .
      */
     public VolumeInfo getVolume(String identity) throws IOException {
-        if (_needScan) {
+        if (needScan) {
             scan();
         }
 
-        if (_physicalVolumes.containsKey(identity)) {
-            return _physicalVolumes.get(identity);
+        if (physicalVolumes.containsKey(identity)) {
+            return physicalVolumes.get(identity);
         }
 
-        if (_logicalVolumes.containsKey(identity)) {
-            return _logicalVolumes.get(identity);
+        if (logicalVolumes.containsKey(identity)) {
+            return logicalVolumes.get(identity);
         }
 
         return null;
@@ -215,10 +216,10 @@ Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
         Map<String, PhysicalVolumeInfo> newPhysicalVolumes = scanForPhysicalVolumes();
         Map<String, LogicalVolumeInfo> newLogicalVolumes = scanForLogicalVolumes(newPhysicalVolumes.values());
 
-        _physicalVolumes = newPhysicalVolumes;
-        _logicalVolumes = newLogicalVolumes;
+        physicalVolumes = newPhysicalVolumes;
+        logicalVolumes = newLogicalVolumes;
 
-        _needScan = false;
+        needScan = false;
     }
 
     private Map<String, LogicalVolumeInfo> scanForLogicalVolumes(Collection<PhysicalVolumeInfo> physicalVols) {
@@ -227,7 +228,7 @@ Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
 
         for (PhysicalVolumeInfo pvi : physicalVols) {
             boolean handled = false;
-            for (LogicalVolumeFactory volFactory : s_logicalVolumeFactories) {
+            for (LogicalVolumeFactory volFactory : logicalVolumeFactories) {
                 if (volFactory.handlesPhysicalVolume(pvi)) {
                     handled = true;
                     break;
@@ -241,8 +242,8 @@ Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
 
         mapPhysicalVolumes(unhandledPhysical, result);
 
-        for (LogicalVolumeFactory volFactory : s_logicalVolumeFactories) {
-            volFactory.mapDisks(_disks, result);
+        for (LogicalVolumeFactory volFactory : logicalVolumeFactories) {
+            volFactory.mapDisks(disks, result);
         }
 
         return result;
@@ -251,9 +252,9 @@ Debug.println(Level.FINE, "Lp: " + lvi.getIdentity());
     private Map<String, PhysicalVolumeInfo> scanForPhysicalVolumes() {
         Map<String, PhysicalVolumeInfo> result = new LinkedHashMap<>();
 
-        for (int i = 0; i < _disks.size(); ++i) {
+        for (int i = 0; i < disks.size(); ++i) {
             // First scan physical volumes
-            VirtualDisk disk = _disks.get(i);
+            VirtualDisk disk = disks.get(i);
             String diskId = getDiskId(i);
 
             if (PartitionTable.isPartitioned(disk.getContent())) {
@@ -275,7 +276,7 @@ Debug.println(Level.FINE, "P: " + pvi.getIdentity());
     }
 
     private String getDiskId(int ordinal) {
-        VirtualDisk disk = _disks.get(ordinal);
+        VirtualDisk disk = disks.get(ordinal);
         if (disk.isPartitioned()) {
             UUID guid = disk.getPartitions().getDiskGuid();
 Debug.println(Level.FINER, "guid: " + guid);

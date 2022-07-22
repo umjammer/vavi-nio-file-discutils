@@ -26,9 +26,10 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class CatalogDirInfo extends CommonCatalogFileInfo {
-    public short Flags;
 
-    public int Valence;
+    public short flags;
+
+    public int valence;
 
     public int size() {
         throw new UnsupportedOperationException();
@@ -37,8 +38,8 @@ final class CatalogDirInfo extends CommonCatalogFileInfo {
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
 
-        Flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        Valence = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
+        valence = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
 
         return 0;
     }

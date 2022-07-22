@@ -27,18 +27,19 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ExtentIndex implements IByteArraySerializable {
-    public int FirstLogicalBlock;
 
-    private short LeafPhysicalBlockHi;
+    public int firstLogicalBlock;
+
+    private short leafPhysicalBlockHi;
 
     public int getLeafPhysicalBlockHi() {
-        return LeafPhysicalBlockHi & 0xffff;
+        return leafPhysicalBlockHi & 0xffff;
     }
 
-    private int LeafPhysicalBlockLo;
+    private int leafPhysicalBlockLo;
 
     public long getLeafPhysicalBlockLo() {
-        return LeafPhysicalBlockLo & 0xffff_ffffL;
+        return leafPhysicalBlockLo & 0xffff_ffffL;
     }
 
     public long getLeafPhysicalBlock() {
@@ -50,9 +51,9 @@ public class ExtentIndex implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        FirstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        LeafPhysicalBlockLo = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        LeafPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        firstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        leafPhysicalBlockLo = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        leafPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
         return 12;
     }
 

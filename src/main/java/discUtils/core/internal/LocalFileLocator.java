@@ -38,26 +38,26 @@ public final class LocalFileLocator extends FileLocator {
 
     private static final String FS = File.separator;
 
-    private final String _dir;
+    private final String dir;
 
     public LocalFileLocator(String dir) {
-        _dir = dir;
+        this.dir = dir;
     }
 
     public boolean exists(String fileName) {
-        return Files.exists(Paths.get(Utilities.combinePaths(_dir, fileName)));
+        return Files.exists(Paths.get(Utilities.combinePaths(dir, fileName)));
     }
 
     protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
-        return new FileStream(Utilities.combinePaths(_dir, fileName), mode, access, share);
+        return new FileStream(Utilities.combinePaths(dir, fileName), mode, access, share);
     }
 
     public FileLocator getRelativeLocator(String path) {
-        return new LocalFileLocator(Utilities.combinePaths(_dir, path));
+        return new LocalFileLocator(Utilities.combinePaths(dir, path));
     }
 
     public String getFullPath(String path) {
-        String combinedPath = Utilities.combinePaths(_dir, path);
+        String combinedPath = Utilities.combinePaths(dir, path);
         if (combinedPath.isEmpty()) {
             return System.getProperty("user.dir").replace(File.separator, FS);
         }
@@ -75,7 +75,7 @@ public final class LocalFileLocator extends FileLocator {
 
     public long getLastWriteTimeUtc(String path) {
         try {
-            return Files.getLastModifiedTime(Paths.get(_dir, path)).toMillis();
+            return Files.getLastModifiedTime(Paths.get(dir, path)).toMillis();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -88,10 +88,10 @@ public final class LocalFileLocator extends FileLocator {
 
         // If the paths have drive specifiers, then common root depends on them having a common
         // drive letter.
-        String otherDir = ((LocalFileLocator) other)._dir;
-        if (otherDir.length() >= 2 && _dir.length() >= 2) {
-            if (otherDir.charAt(1) == ':' && _dir.charAt(1) == ':') {
-                return Character.toUpperCase(otherDir.charAt(0)) == Character.toUpperCase(_dir.charAt(0));
+        String otherDir = ((LocalFileLocator) other).dir;
+        if (otherDir.length() >= 2 && dir.length() >= 2) {
+            if (otherDir.charAt(1) == ':' && dir.charAt(1) == ':') {
+                return Character.toUpperCase(otherDir.charAt(0)) == Character.toUpperCase(dir.charAt(0));
             }
         }
 
@@ -99,6 +99,6 @@ public final class LocalFileLocator extends FileLocator {
     }
 
     public String resolveRelativePath(String path) {
-        return Utilities.resolveRelativePath(_dir, path);
+        return Utilities.resolveRelativePath(dir, path);
     }
 }

@@ -29,10 +29,11 @@ import java.util.UUID;
  * Class representing an individual metadata item.
  */
 public final class MetadataInfo {
-    private final MetadataEntry _entry;
+
+    private final MetadataEntry entry;
 
     public MetadataInfo(MetadataEntry entry) {
-        _entry = entry;
+        this.entry = entry;
     }
 
     /**
@@ -40,14 +41,14 @@ public final class MetadataInfo {
      * the VHDX file.
      */
     public boolean isRequired() {
-        return _entry.Flags.contains(MetadataEntryFlags.IsRequired);
+        return entry.flags.contains(MetadataEntryFlags.IsRequired);
     }
 
     /**
      * Gets a value indicating whether this is system or user metadata.
      */
     public boolean isUser() {
-        return _entry.Flags.contains(MetadataEntryFlags.IsUser);
+        return entry.flags.contains(MetadataEntryFlags.IsUser);
     }
 
     /**
@@ -55,55 +56,55 @@ public final class MetadataInfo {
      * file metadata.
      */
     public boolean isVirtualDisk() {
-        return _entry.Flags.contains(MetadataEntryFlags.IsVirtualDisk);
+        return entry.flags.contains(MetadataEntryFlags.IsVirtualDisk);
     }
 
     /**
      * Gets the unique identifier for the metadata.
      */
     public UUID getItemId() {
-        return _entry.ItemId;
+        return entry.itemId;
     }
 
     /**
      * Gets the length of the metadata.
      */
     public long getLength() {
-        return _entry.Length;
+        return entry.length;
     }
 
     /**
      * Gets the offset within the metadata region of the metadata.
      */
     public long getOffset() {
-        return _entry.Offset;
+        return entry.offset;
     }
 
     /**
      * Gets the descriptive name for well-known metadata.
      */
     public String getWellKnownName() {
-        if (_entry.ItemId.equals(MetadataTable.FileParametersGuid)) {
+        if (entry.itemId.equals(MetadataTable.FileParametersGuid)) {
             return "File Parameters";
         }
 
-        if (_entry.ItemId.equals(MetadataTable.LogicalSectorSizeGuid)) {
+        if (entry.itemId.equals(MetadataTable.LogicalSectorSizeGuid)) {
             return "Logical Sector Size";
         }
 
-        if (_entry.ItemId.equals(MetadataTable.Page83DataGuid)) {
+        if (entry.itemId.equals(MetadataTable.Page83DataGuid)) {
             return "SCSI Page 83 Data";
         }
 
-        if (_entry.ItemId.equals(MetadataTable.ParentLocatorGuid)) {
+        if (entry.itemId.equals(MetadataTable.ParentLocatorGuid)) {
             return "Parent Locator";
         }
 
-        if (_entry.ItemId.equals(MetadataTable.PhysicalSectorSizeGuid)) {
+        if (entry.itemId.equals(MetadataTable.PhysicalSectorSizeGuid)) {
             return "Physical Sector Size";
         }
 
-        if (_entry.ItemId.equals(MetadataTable.VirtualDiskSizeGuid)) {
+        if (entry.itemId.equals(MetadataTable.VirtualDiskSizeGuid)) {
             return "Virtual Disk Size";
         }
 

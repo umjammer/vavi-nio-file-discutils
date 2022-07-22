@@ -26,24 +26,25 @@ import discUtils.streams.util.EndianUtilities;
 
 
 class CompressionResourceBlockHead {
-    private int _dataSize;
+
+    private int dataSize;
 
     public int getDataSize() {
-        return _dataSize;
+        return dataSize;
     }
 
     public void setDataSize(int value) {
-        _dataSize = value;
+        dataSize = value;
     }
 
-    private int _numBlocks;
+    private int numBlocks;
 
     public int getNumBlocks() {
-        return _numBlocks;
+        return numBlocks;
     }
 
     public void setNumBlocks(int value) {
-        _numBlocks = value;
+        numBlocks = value;
     }
 
     public static int getSize() {
@@ -51,8 +52,8 @@ class CompressionResourceBlockHead {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setDataSize(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        setNumBlocks(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
+        dataSize = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        numBlocks = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
 
         return getSize();
     }

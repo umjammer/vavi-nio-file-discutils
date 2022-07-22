@@ -32,20 +32,21 @@ import discUtils.streams.SparseStream;
  * Provides access to partition records in a GUID partition table.
  */
 public final class GuidPartitionInfo extends PartitionInfo {
-    private final GptEntry _entry;
 
-    private final GuidPartitionTable _table;
+    private final GptEntry entry;
+
+    private final GuidPartitionTable table;
 
     public GuidPartitionInfo(GuidPartitionTable table, GptEntry entry) {
-        _table = table;
-        _entry = entry;
+        this.table = table;
+        this.entry = entry;
     }
 
     /**
      * Gets the attributes of the partition.
      */
     public long getAttributes() {
-        return _entry.attributes;
+        return entry.attributes;
     }
 
     /**
@@ -60,21 +61,21 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Logical block Address.
      */
     public long getFirstSector() {
-        return _entry.firstUsedLogicalBlock;
+        return entry.firstUsedLogicalBlock;
     }
 
     /**
      * Gets the type of the partition, as a GUID.
      */
     public UUID getGuidType() {
-        return _entry.partitionType;
+        return entry.partitionType;
     }
 
     /**
      * Gets the unique identity of this specific partition.
      */
     public UUID getIdentity() {
-        return _entry.identity;
+        return entry.identity;
     }
 
     /**
@@ -82,21 +83,21 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Logical block Address (inclusive).
      */
     public long getLastSector() {
-        return _entry.lastUsedLogicalBlock;
+        return entry.lastUsedLogicalBlock;
     }
 
     /**
      * Gets the name of the partition.
      */
     public String getName() {
-        return _entry.name;
+        return entry.name;
     }
 
     /**
      * Gets the type of the partition as a string.
      */
     public String getTypeAsString() {
-        return _entry.getFriendlyPartitionType();
+        return entry.getFriendlyPartitionType();
     }
 
     public PhysicalVolumeType getVolumeType() {
@@ -109,7 +110,7 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * @return The new stream.
      */
     public SparseStream open() {
-        return _table.open(_entry);
+        return table.open(entry);
     }
 
 }

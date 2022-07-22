@@ -23,28 +23,29 @@
 package discUtils.squashFs;
 
 public class MetadataRef {
+
     public MetadataRef() {
     }
 
     public MetadataRef(long value) {
-        __Value = value;
+        this.value = value;
     }
 
     public MetadataRef(long block, int offset) {
-        __Value = (block << 16) | offset & 0xFFFF;
+        value = (block << 16) | offset & 0xFFFF;
     }
 
     public long getBlock() {
-        return (getValue() >>> 16) & 0xFFFFFFFFFFFFL;
+        return (getValue() >>> 16) & 0xFFFF_FFFF_FFFFL;
     }
 
     public int getOffset() {
         return (int) (getValue() & 0xFFFF);
     }
 
-    private long __Value;
+    private long value;
 
     public long getValue() {
-        return __Value;
+        return value;
     }
 }

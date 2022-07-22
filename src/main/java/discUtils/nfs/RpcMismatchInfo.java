@@ -24,21 +24,22 @@
 package discUtils.nfs;
 
 public class RpcMismatchInfo {
-    public int High;
 
-    public int Low;
+    public int high;
+
+    public int low;
 
     public RpcMismatchInfo() {
     }
 
     public RpcMismatchInfo(XdrDataReader reader) {
-        Low = reader.readUInt32();
-        High = reader.readUInt32();
+        low = reader.readUInt32();
+        high = reader.readUInt32();
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(Low);
-        writer.write(High);
+        writer.write(low);
+        writer.write(high);
     }
 
     public boolean equals(Object obj) {
@@ -50,10 +51,10 @@ public class RpcMismatchInfo {
             return false;
         }
 
-        return other.High == High && other.Low == Low;
+        return other.high == high && other.low == low;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(High, Low);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(high, low);
     }
 }

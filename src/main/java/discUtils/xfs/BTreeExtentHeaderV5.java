@@ -28,56 +28,57 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
+
     public static final int BtreeMagicV5 = 0x424d4133;
 
-    private long __BlockNumber;
+    private long blockNumber;
 
     public long getBlockNumber() {
-        return __BlockNumber;
+        return blockNumber;
     }
 
     public void setBlockNumber(long value) {
-        __BlockNumber = value;
+        blockNumber = value;
     }
 
-    private long __LogSequenceNumber;
+    private long logSequenceNumber;
 
     public long getLogSequenceNumber() {
-        return __LogSequenceNumber;
+        return logSequenceNumber;
     }
 
     public void setLogSequenceNumber(long value) {
-        __LogSequenceNumber = value;
+        logSequenceNumber = value;
     }
 
-    private UUID __Uuid;
+    private UUID uuid;
 
     public UUID getUuid() {
-        return __Uuid;
+        return uuid;
     }
 
     public void setUuid(UUID value) {
-        __Uuid = value;
+        uuid = value;
     }
 
-    private long __Owner;
+    private long owner;
 
     public long getOwner() {
-        return __Owner;
+        return owner;
     }
 
     public void setOwner(long value) {
-        __Owner = value;
+        owner = value;
     }
 
-    private int __Crc;
+    private int crc;
 
     public int getCrc() {
-        return __Crc;
+        return crc;
     }
 
     public void setCrc(int value) {
-        __Crc = value;
+        crc = value;
     }
 
     public int size() {
@@ -86,11 +87,11 @@ public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
 
     public int readFrom(byte[] buffer, int offset) {
         offset += super.readFrom(buffer, offset);
-        setBlockNumber(EndianUtilities.toUInt64BigEndian(buffer, offset));
-        setLogSequenceNumber(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8));
-        setUuid(EndianUtilities.toGuidBigEndian(buffer, offset + 0x10));
-        setOwner(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x20));
-        setCrc(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28));
+        blockNumber = EndianUtilities.toUInt64BigEndian(buffer, offset);
+        logSequenceNumber = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
+        uuid = EndianUtilities.toGuidBigEndian(buffer, offset + 0x10);
+        owner = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x20);
+        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
         return super.size() + 48;
     }
 }

@@ -40,34 +40,35 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class MetadataLogicalVolumeSection {
-    public String Name;
 
-    public String Id;
+    public String name;
 
-    public UUID Identity;
+    public String id;
 
-    public EnumSet<LogicalVolumeStatus> Status = EnumSet.noneOf(LogicalVolumeStatus.class);
+    public UUID identity;
 
-    public String[] Flags;
+    public EnumSet<LogicalVolumeStatus> status = EnumSet.noneOf(LogicalVolumeStatus.class);
 
-    public String CreationHost;
+    public String[] flags;
 
-    public long CreationTime;
+    public String creationHost;
 
-    public long SegmentCount;
+    public long creationTime;
 
-    public List<MetadataSegmentSection> Segments;
+    public long segmentCount;
 
-    private Map<String, PhysicalVolume> _pvs;
+    public List<MetadataSegmentSection> segments;
 
-    private long _extentSize;
+    private Map<String, PhysicalVolume> pvs;
+
+    private long extentSize;
 
     public void parse(String head, Scanner data) {
         List<MetadataSegmentSection> segments = new ArrayList<>();
-        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
+        name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while ((line = Metadata.readLine(data)) != null) {
-            if (line.equals(""))
+            if (line.isEmpty())
                 continue;
 
             if (line.contains("=")) {
@@ -75,40 +76,44 @@ public class MetadataLogicalVolumeSection {
                 String paramValue = parameter.getKey().trim().toLowerCase();
                 switch (paramValue) {
                 case "id":
-                    Id = Metadata.parseStringValue(parameter.getValue());
+                    id = Metadata.parseStringValue(parameter.getValue());
                     byte[] guid = new byte[16];
-                    EndianUtilities.stringToBytes(Id.replace("-", ""), guid, 0, 16);
+                    EndianUtilities.stringToBytes(id.replace("-", ""), guid, 0, 16);
                     // Mark it as a version 4 GUID
                     guid[7] = (byte) ((guid[7] | (byte) 0x40) & (byte) 0x4f);
                     guid[8] = (byte) ((guid[8] | (byte) 0x80) & (byte) 0xbf);
-                    Identity = UUID.nameUUIDFromBytes(guid);
+                    identity = UUID.nameUUIDFromBytes(guid);
                     break;
                 case "status":
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
-                        if (statusValue.equals("read")) {
-                            Status.add(LogicalVolumeStatus.Read);
-                        } else if (statusValue.equals("write")) {
-                            Status.add(LogicalVolumeStatus.Write);
-                        } else if (statusValue.equals("visible")) {
-                            Status.add(LogicalVolumeStatus.Visible);
-                        } else {
+                        switch (statusValue) {
+                        case "read":
+                            status.add(LogicalVolumeStatus.Read);
+                            break;
+                        case "write":
+                            status.add(LogicalVolumeStatus.Write);
+                            break;
+                        case "visible":
+                            status.add(LogicalVolumeStatus.Visible);
+                            break;
+                        default:
                             throw new IndexOutOfBoundsException("Unexpected status in physical volume metadata");
                         }
                     }
                     break;
                 case "flags":
-                    Flags = Metadata.parseArrayValue(parameter.getValue());
+                    flags = Metadata.parseArrayValue(parameter.getValue());
                     break;
                 case "creation_host":
-                    CreationHost = Metadata.parseStringValue(parameter.getValue());
+                    creationHost = Metadata.parseStringValue(parameter.getValue());
                     break;
                 case "creation_time":
-                    CreationTime = Metadata.parseDateTimeValue(parameter.getValue());
+                    creationTime = Metadata.parseDateTimeValue(parameter.getValue());
                     break;
                 case "segment_count":
-                    SegmentCount = Metadata.parseNumericValue(parameter.getValue());
+                    segmentCount = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata " + parameter.getKey());
@@ -123,30 +128,30 @@ public class MetadataLogicalVolumeSection {
                 throw new IndexOutOfBoundsException("unexpected input " + line);
             }
         }
-        Segments = segments;
+        this.segments = segments;
     }
 
     public long getExtentCount() {
         long length = 0L;
-        for (MetadataSegmentSection segment : Segments) {
-            length += segment.ExtentCount;
+        for (MetadataSegmentSection segment : segments) {
+            length += segment.extentCount;
         }
         return length;
     }
 
     public SparseStreamOpenDelegate open(Map<String, PhysicalVolume> availablePvs, long extentSize) {
-        _pvs = availablePvs;
-        _extentSize = extentSize;
+        pvs = availablePvs;
+        this.extentSize = extentSize;
         return this::open;
     }
 
     private SparseStream open() {
-        if (!Status.contains(LogicalVolumeStatus.Read))
+        if (!status.contains(LogicalVolumeStatus.Read))
             throw new dotnet4j.io.IOException("volume is not readable");
 
         List<MetadataSegmentSection> segments = new ArrayList<>();
-        for (MetadataSegmentSection segment : Segments) {
-            if (segment.Type != SegmentType.Striped)
+        for (MetadataSegmentSection segment : this.segments) {
+            if (segment.type != SegmentType.Striped)
                 throw new dotnet4j.io.IOException("unsupported segment type");
 
             segments.add(segment);
@@ -155,11 +160,11 @@ public class MetadataLogicalVolumeSection {
         // Sanity Check...
         long pos = 0;
         for (MetadataSegmentSection segment : segments) {
-            if (segment.StartExtent != pos) {
+            if (segment.startExtent != pos) {
                 throw new dotnet4j.io.IOException("Volume extents are non-contiguous");
             }
 
-            pos += segment.ExtentCount;
+            pos += segment.extentCount;
         }
         List<SparseStream> streams = new ArrayList<>();
         for (MetadataSegmentSection segment : segments) {
@@ -169,31 +174,31 @@ public class MetadataLogicalVolumeSection {
     }
 
     private SparseStream openSegment(MetadataSegmentSection segment) {
-        if (segment.Stripes.size() != 1) {
+        if (segment.stripes.size() != 1) {
             throw new dotnet4j.io.IOException("invalid number of stripes");
         }
 
-        MetadataStripe stripe = segment.Stripes.get(0);
+        MetadataStripe stripe = segment.stripes.get(0);
         PhysicalVolume pv;
-        if (!_pvs.containsKey(stripe.PhysicalVolumeName)) {
+        if (!pvs.containsKey(stripe.physicalVolumeName)) {
             throw new dotnet4j.io.IOException("missing pv");
         }
-        pv = _pvs.get(stripe.PhysicalVolumeName);
+        pv = pvs.get(stripe.physicalVolumeName);
 
-        if (pv.PvHeader.DiskAreas.size() != 1) {
+        if (pv.pvHeader.diskAreas.size() != 1) {
             throw new dotnet4j.io.IOException("invalid number od pv data areas");
         }
 
-        DiskArea dataArea = pv.PvHeader.DiskAreas.get(0);
-        long start = dataArea.Offset + (stripe.StartExtentNumber * _extentSize * PhysicalVolume.SECTOR_SIZE);
-        long length = segment.ExtentCount * _extentSize * PhysicalVolume.SECTOR_SIZE;
+        DiskArea dataArea = pv.pvHeader.diskAreas.get(0);
+        long start = dataArea.offset + (stripe.startExtentNumber * extentSize * PhysicalVolume.SECTOR_SIZE);
+        long length = segment.extentCount * extentSize * PhysicalVolume.SECTOR_SIZE;
         return new SubStream(pv.getContent(), Ownership.None, start, length);
     }
 
     private Comparator<MetadataSegmentSection> compareSegments = (x, y) -> {
-        if (x.StartExtent > y.StartExtent) {
+        if (x.startExtent > y.startExtent) {
             return 1;
-        } else if (x.StartExtent < y.StartExtent) {
+        } else if (x.startExtent < y.startExtent) {
             return -1;
         }
 

@@ -51,7 +51,8 @@ import dotnet4j.io.FileAccess;
  * base class representing virtual hard disks.
  */
 public abstract class VirtualDisk implements Serializable, Closeable {
-    private VirtualDiskTransport _transport;
+
+    private VirtualDiskTransport transport;
 
     /**
      * Finalizes an instance of the VirtualDisk class.
@@ -376,7 +377,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                         diskParameters);
         }
         if (result != null) {
-            result._transport = transport;
+            result.transport = transport;
         }
 
         return result;
@@ -455,7 +456,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
             }
         }
         if (result != null) {
-            result._transport = transport;
+            result.transport = transport;
         }
 
         return result;
@@ -556,11 +557,11 @@ Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        if (_transport != null) {
-            _transport.close();
+        if (transport != null) {
+            transport.close();
         }
 
-        _transport = null;
+        transport = null;
     }
 
     private static URI pathToUri(String path) {

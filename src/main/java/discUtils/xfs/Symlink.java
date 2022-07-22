@@ -34,12 +34,12 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
     }
 
     public String getTargetPath() {
-        if (Inode.getFormat() != InodeFormat.Local && Inode.getFormat() != InodeFormat.Extents) {
+        if (inode.getFormat() != InodeFormat.Local && inode.getFormat() != InodeFormat.Extents) {
             throw new IOException("invalid Inode format for symlink");
         }
 
         IBuffer content = getFileContent();
-        byte[] data = StreamUtilities.readExact(content, 0, (int) Inode.getLength());
-        return new String(data, 0, data.length, Context.getOptions().getFileNameEncoding()).replace('/', java.io.File.separatorChar);
+        byte[] data = StreamUtilities.readExact(content, 0, (int) inode.getLength());
+        return new String(data, 0, data.length, context.getOptions().getFileNameEncoding()).replace('/', java.io.File.separatorChar);
     }
 }

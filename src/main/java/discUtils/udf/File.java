@@ -32,38 +32,39 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class File implements IVfsFile {
-    protected int _blockSize;
 
-    protected IBuffer _content;
+    protected int blockSize;
 
-    protected UdfContext _context;
+    protected IBuffer content;
 
-    protected FileEntry _fileEntry;
+    protected UdfContext context;
 
-    protected Partition _partition;
+    protected FileEntry fileEntry;
+
+    protected Partition partition;
 
     public File(UdfContext context, Partition partition, FileEntry fileEntry, int blockSize) {
-        _context = context;
-        _partition = partition;
-        _fileEntry = fileEntry;
-        _blockSize = blockSize;
+        this.context = context;
+        this.partition = partition;
+        this.fileEntry = fileEntry;
+        this.blockSize = blockSize;
     }
 
     public List<ExtendedAttributeRecord> getExtendedAttributes() {
-        return _fileEntry.ExtendedAttributes;
+        return fileEntry.extendedAttributes;
     }
 
     public IBuffer getFileContent() {
-        if (_content != null) {
-            return _content;
+        if (content != null) {
+            return content;
         }
 
-        _content = new FileContentBuffer(_context, _partition, _fileEntry, _blockSize);
-        return _content;
+        content = new FileContentBuffer(context, partition, fileEntry, blockSize);
+        return content;
     }
 
     public long getLastAccessTimeUtc() {
-        return _fileEntry.AccessTime;
+        return fileEntry.accessTime;
     }
 
     public void setLastAccessTimeUtc(long value) {
@@ -71,7 +72,7 @@ public class File implements IVfsFile {
     }
 
     public long getLastWriteTimeUtc() {
-        return _fileEntry.ModificationTime;
+        return fileEntry.modificationTime;
     }
 
     public void setLastWriteTimeUtc(long value) {
@@ -79,10 +80,10 @@ public class File implements IVfsFile {
     }
 
     public long getCreationTimeUtc() {
-        ExtendedFileEntry efe = _fileEntry instanceof ExtendedFileEntry ? (ExtendedFileEntry) _fileEntry
+        ExtendedFileEntry efe = fileEntry instanceof ExtendedFileEntry ? (ExtendedFileEntry) fileEntry
                                                                         : null;
         if (efe != null) {
-            return efe.CreationTime;
+            return efe.creationTime;
         }
 
         return getLastWriteTimeUtc();
@@ -94,14 +95,14 @@ public class File implements IVfsFile {
 
     public EnumSet<FileAttributes> getFileAttributes() {
         EnumSet<FileAttributes> attribs = EnumSet.noneOf(FileAttributes.class);
-        EnumSet<InformationControlBlockFlags> flags = _fileEntry.InformationControlBlock.Flags;
-        if (_fileEntry.InformationControlBlock._FileType == FileType.Directory) {
+        EnumSet<InformationControlBlockFlags> flags = fileEntry.informationControlBlock.flags;
+        if (fileEntry.informationControlBlock.fileType == FileType.Directory) {
             attribs.add(FileAttributes.Directory);
-        } else if (_fileEntry.InformationControlBlock._FileType == FileType.Fifo ||
-                   _fileEntry.InformationControlBlock._FileType == FileType.Socket ||
-                   _fileEntry.InformationControlBlock._FileType == FileType.SpecialBlockDevice ||
-                   _fileEntry.InformationControlBlock._FileType == FileType.SpecialCharacterDevice ||
-                   _fileEntry.InformationControlBlock._FileType == FileType.TerminalEntry) {
+        } else if (fileEntry.informationControlBlock.fileType == FileType.Fifo ||
+                   fileEntry.informationControlBlock.fileType == FileType.Socket ||
+                   fileEntry.informationControlBlock.fileType == FileType.SpecialBlockDevice ||
+                   fileEntry.informationControlBlock.fileType == FileType.SpecialCharacterDevice ||
+                   fileEntry.informationControlBlock.fileType == FileType.TerminalEntry) {
             attribs.add(FileAttributes.Device);
         }
 
@@ -126,25 +127,25 @@ public class File implements IVfsFile {
     }
 
     public long getFileLength() {
-        return _fileEntry.InformationLength;
+        return fileEntry.informationLength;
     }
 
     public static File fromDescriptor(UdfContext context, LongAllocationDescriptor icb) {
-        LogicalPartition partition = context.LogicalPartitions.get(icb.ExtentLocation.getPartition());
+        LogicalPartition partition = context.logicalPartitions.get(icb.extentLocation.getPartition());
         byte[] rootDirData = UdfUtilities.readExtent(context, icb);
         DescriptorTag rootDirTag = EndianUtilities.toStruct(DescriptorTag.class, rootDirData, 0);
-        if (rootDirTag._TagIdentifier == TagIdentifier.ExtendedFileEntry) {
+        if (rootDirTag.tagIdentifier == TagIdentifier.ExtendedFileEntry) {
             ExtendedFileEntry fileEntry = EndianUtilities.toStruct(ExtendedFileEntry.class, rootDirData, 0);
-            if (fileEntry.InformationControlBlock._FileType == FileType.Directory) {
+            if (fileEntry.informationControlBlock.fileType == FileType.Directory) {
                 return new Directory(context, partition, fileEntry);
             }
 
             return new File(context, partition, fileEntry, (int) partition.getLogicalBlockSize());
         }
 
-        if (rootDirTag._TagIdentifier == TagIdentifier.FileEntry) {
+        if (rootDirTag.tagIdentifier == TagIdentifier.FileEntry) {
             FileEntry fileEntry = EndianUtilities.toStruct(FileEntry.class, rootDirData, 0);
-            if (fileEntry.InformationControlBlock._FileType == FileType.Directory) {
+            if (fileEntry.informationControlBlock.fileType == FileType.Directory) {
                 return new Directory(context, partition, fileEntry);
             }
 

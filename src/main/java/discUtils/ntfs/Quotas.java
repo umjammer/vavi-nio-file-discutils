@@ -34,15 +34,16 @@ import dotnet4j.security.principal.WellKnownSidType;
 
 
 public final class Quotas {
-    private final IndexView<discUtils.ntfs.Quotas.OwnerKey, discUtils.ntfs.Quotas.OwnerRecord> _ownerIndex;
 
-    private final IndexView<discUtils.ntfs.Quotas.OwnerRecord, discUtils.ntfs.Quotas.QuotaRecord> _quotaIndex;
+    private final IndexView<discUtils.ntfs.Quotas.OwnerKey, discUtils.ntfs.Quotas.OwnerRecord> ownerIndex;
+
+    private final IndexView<discUtils.ntfs.Quotas.OwnerRecord, discUtils.ntfs.Quotas.QuotaRecord> quotaIndex;
 
     public Quotas(File file) {
-        _ownerIndex = new IndexView<>(discUtils.ntfs.Quotas.OwnerKey.class,
+        ownerIndex = new IndexView<>(discUtils.ntfs.Quotas.OwnerKey.class,
                                       discUtils.ntfs.Quotas.OwnerRecord.class,
                                       file.getIndex("$O"));
-        _quotaIndex = new IndexView<>(discUtils.ntfs.Quotas.OwnerRecord.class,
+        quotaIndex = new IndexView<>(discUtils.ntfs.Quotas.OwnerRecord.class,
                                       discUtils.ntfs.Quotas.QuotaRecord.class,
                                       file.getIndex("$Q"));
     }
@@ -61,69 +62,71 @@ public final class Quotas {
         discUtils.ntfs.Quotas.OwnerRecord adminOwnerId = new discUtils.ntfs.Quotas.OwnerRecord(256);
         ownerIndexView.put(adminSid, adminOwnerId);
         quotaIndexView.put(new discUtils.ntfs.Quotas.OwnerRecord(1), new discUtils.ntfs.Quotas.QuotaRecord(null));
-        quotaIndexView.put(adminOwnerId, new discUtils.ntfs.Quotas.QuotaRecord(adminSid._sid));
+        quotaIndexView.put(adminOwnerId, new discUtils.ntfs.Quotas.QuotaRecord(adminSid.sid));
         return new Quotas(file);
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "QUOTAS");
         writer.println(indent + "  OWNER INDEX");
-        for (Tuple<discUtils.ntfs.Quotas.OwnerKey, discUtils.ntfs.Quotas.OwnerRecord> entry : _ownerIndex.getEntries()) {
+        for (Tuple<discUtils.ntfs.Quotas.OwnerKey, discUtils.ntfs.Quotas.OwnerRecord> entry : ownerIndex.getEntries()) {
             writer.println(indent + "    OWNER INDEX ENTRY");
-            writer.println(indent + "            SID: " + entry.getKey()._sid);
-            writer.println(indent + "       Owner Id: " + entry.getValue()._ownerId);
+            writer.println(indent + "            SID: " + entry.getKey().sid);
+            writer.println(indent + "       Owner Id: " + entry.getValue().ownerId);
         }
         writer.println(indent + "  QUOTA INDEX");
-        for (Tuple<discUtils.ntfs.Quotas.OwnerRecord, discUtils.ntfs.Quotas.QuotaRecord> entry : _quotaIndex.getEntries()) {
+        for (Tuple<discUtils.ntfs.Quotas.OwnerRecord, discUtils.ntfs.Quotas.QuotaRecord> entry : quotaIndex.getEntries()) {
             writer.println(indent + "    QUOTA INDEX ENTRY");
-            writer.println(indent + "           Owner Id: " + entry.getKey()._ownerId);
-            writer.println(indent + "           User SID: " + entry.getValue()._sid);
-            writer.println(indent + "            Changed: " + entry.getValue()._changeTime);
-            writer.println(indent + "           Exceeded: " + entry.getValue()._exceededTime);
-            writer.println(indent + "         Bytes Used: " + entry.getValue()._bytesUsed);
-            writer.println(indent + "              Flags: " + entry.getValue()._flags);
-            writer.println(indent + "         Hard Limit: " + entry.getValue()._hardLimit);
-            writer.println(indent + "      Warning Limit: " + entry.getValue()._warningLimit);
-            writer.println(indent + "            Version: " + entry.getValue()._version);
+            writer.println(indent + "           Owner Id: " + entry.getKey().ownerId);
+            writer.println(indent + "           User SID: " + entry.getValue().sid);
+            writer.println(indent + "            Changed: " + entry.getValue().changeTime);
+            writer.println(indent + "           Exceeded: " + entry.getValue().exceededTime);
+            writer.println(indent + "         Bytes Used: " + entry.getValue().bytesUsed);
+            writer.println(indent + "              flags: " + entry.getValue().flags);
+            writer.println(indent + "         Hard Limit: " + entry.getValue().hardLimit);
+            writer.println(indent + "      Warning Limit: " + entry.getValue().warningLimit);
+            writer.println(indent + "            Version: " + entry.getValue().version);
         }
     }
 
     public final static class OwnerKey implements IByteArraySerializable {
-        public SecurityIdentifier _sid;
+
+        public SecurityIdentifier sid;
 
         public OwnerKey() {
         }
 
         public OwnerKey(SecurityIdentifier sid) {
-            _sid = sid;
+            this.sid = sid;
         }
 
         public int size() {
-            return _sid.getBinaryLength();
+            return sid.getBinaryLength();
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _sid = new SecurityIdentifier(buffer, offset);
-            return _sid.getBinaryLength();
+            sid = new SecurityIdentifier(buffer, offset);
+            return sid.getBinaryLength();
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            _sid.getBinaryForm(buffer, offset);
+            sid.getBinaryForm(buffer, offset);
         }
 
         public String toString() {
-            return String.format("[Sid:%s]", _sid);
+            return String.format("[Sid:%s]", sid);
         }
     }
 
     public final static class OwnerRecord implements IByteArraySerializable {
-        public int _ownerId;
+
+        public int ownerId;
 
         public OwnerRecord() {
         }
 
         public OwnerRecord(int ownerId) {
-            _ownerId = ownerId;
+            this.ownerId = ownerId;
         }
 
         public int size() {
@@ -131,85 +134,86 @@ public final class Quotas {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _ownerId = EndianUtilities.toInt32LittleEndian(buffer, offset);
+            ownerId = EndianUtilities.toInt32LittleEndian(buffer, offset);
             return 4;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_ownerId, buffer, offset);
+            EndianUtilities.writeBytesLittleEndian(ownerId, buffer, offset);
         }
 
         public String toString() {
-            return "[OwnerId:" + _ownerId + "]";
+            return "[OwnerId:" + ownerId + "]";
         }
     }
 
     public final static class QuotaRecord implements IByteArraySerializable {
-        public long _bytesUsed;
 
-        public long _changeTime;
+        public long bytesUsed;
 
-        public long _exceededTime;
+        public long changeTime;
 
-        public int _flags;
+        public long exceededTime;
 
-        public long _hardLimit;
+        public int flags;
 
-        public SecurityIdentifier _sid;
+        public long hardLimit;
 
-        public int _version;
+        public SecurityIdentifier sid;
 
-        public long _warningLimit;
+        public int version;
+
+        public long warningLimit;
 
         public QuotaRecord() {
         }
 
         public QuotaRecord(SecurityIdentifier sid) {
-            _version = 2;
-            _flags = 1;
-            _changeTime = System.currentTimeMillis();
-            _warningLimit = -1;
-            _hardLimit = -1;
-            _sid = sid;
+            version = 2;
+            flags = 1;
+            changeTime = System.currentTimeMillis();
+            warningLimit = -1;
+            hardLimit = -1;
+            this.sid = sid;
         }
 
         public int size() {
-            return 0x30 + (_sid == null ? 0 : _sid.getBinaryLength());
+            return 0x30 + (sid == null ? 0 : sid.getBinaryLength());
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _version = EndianUtilities.toInt32LittleEndian(buffer, offset);
-            _flags = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
-            _bytesUsed = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-            _changeTime = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x10));
-            _warningLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x18);
-            _hardLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x20);
-            _exceededTime = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x28);
+            version = EndianUtilities.toInt32LittleEndian(buffer, offset);
+            flags = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
+            bytesUsed = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
+            changeTime = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x10));
+            warningLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x18);
+            hardLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x20);
+            exceededTime = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x28);
             if (buffer.length - offset > 0x30) {
-                _sid = new SecurityIdentifier(buffer, offset + 0x30);
-                return 0x30 + _sid.getBinaryLength();
+                sid = new SecurityIdentifier(buffer, offset + 0x30);
+                return 0x30 + sid.getBinaryLength();
             }
 
             return 0x30;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_version, buffer, offset);
-            EndianUtilities.writeBytesLittleEndian(_flags, buffer, offset + 0x04);
-            EndianUtilities.writeBytesLittleEndian(_bytesUsed, buffer, offset + 0x08);
+            EndianUtilities.writeBytesLittleEndian(version, buffer, offset);
+            EndianUtilities.writeBytesLittleEndian(flags, buffer, offset + 0x04);
+            EndianUtilities.writeBytesLittleEndian(bytesUsed, buffer, offset + 0x08);
             EndianUtilities
-                    .writeBytesLittleEndian(DateUtil.toFileTime(_changeTime), buffer, offset + 0x10);
-            EndianUtilities.writeBytesLittleEndian(_warningLimit, buffer, offset + 0x18);
-            EndianUtilities.writeBytesLittleEndian(_hardLimit, buffer, offset + 0x20);
-            EndianUtilities.writeBytesLittleEndian(_exceededTime, buffer, offset + 0x28);
-            if (_sid != null) {
-                _sid.getBinaryForm(buffer, offset + 0x30);
+                    .writeBytesLittleEndian(DateUtil.toFileTime(changeTime), buffer, offset + 0x10);
+            EndianUtilities.writeBytesLittleEndian(warningLimit, buffer, offset + 0x18);
+            EndianUtilities.writeBytesLittleEndian(hardLimit, buffer, offset + 0x20);
+            EndianUtilities.writeBytesLittleEndian(exceededTime, buffer, offset + 0x28);
+            if (sid != null) {
+                sid.getBinaryForm(buffer, offset + 0x30);
             }
         }
 
         public String toString() {
-            return "[V:" + _version + ",F:" + _flags + ",BU:" + _bytesUsed + ",CT:" + _changeTime + ",WL:" + _warningLimit + ",HL:" +
-                   _hardLimit + ",ET:" + _exceededTime + ",SID:" + _sid + "]";
+            return "[V:" + version + ",F:" + flags + ",BU:" + bytesUsed + ",CT:" + changeTime + ",WL:" + warningLimit + ",HL:" +
+                    hardLimit + ",ET:" + exceededTime + ",SID:" + sid + "]";
         }
     }
 }

@@ -26,16 +26,17 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class RegularInode extends Inode {
-    private int _fileSize;
 
-    public int FragmentKey;
+    private int fileSize;
 
-    public int FragmentOffset;
+    public int fragmentKey;
 
-    public int StartBlock;
+    public int fragmentOffset;
+
+    public int startBlock;
 
     public long getFileSize() {
-        return _fileSize;
+        return fileSize;
     }
 
     public void setFileSize(long value) {
@@ -43,7 +44,7 @@ public class RegularInode extends Inode {
             throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffL);
         }
 
-        _fileSize = (int) value;
+        fileSize = (int) value;
     }
 
     public int size() {
@@ -52,19 +53,19 @@ public class RegularInode extends Inode {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        _numLinks = 1;
-        StartBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        FragmentKey = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        FragmentOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        _fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
+        numLinks = 1;
+        startBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        fragmentKey = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        fragmentOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
+        fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
         return 32;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
-        EndianUtilities.writeBytesLittleEndian(StartBlock, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(FragmentKey, buffer, offset + 20);
-        EndianUtilities.writeBytesLittleEndian(FragmentOffset, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(_fileSize, buffer, offset + 28);
+        EndianUtilities.writeBytesLittleEndian(startBlock, buffer, offset + 16);
+        EndianUtilities.writeBytesLittleEndian(fragmentKey, buffer, offset + 20);
+        EndianUtilities.writeBytesLittleEndian(fragmentOffset, buffer, offset + 24);
+        EndianUtilities.writeBytesLittleEndian(fileSize, buffer, offset + 28);
     }
 }

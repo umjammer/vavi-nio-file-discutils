@@ -30,6 +30,7 @@ import discUtils.streams.IByteArraySerializable;
 
 
 public final class VolumeName implements IByteArraySerializable, IDiagnosticTraceable {
+
     public VolumeName() {
     }
 
@@ -37,14 +38,14 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
         setName(name);
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     public int size() {
@@ -62,6 +63,6 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "  Volume Name: " + _name);
+        writer.println(indent + "  Volume Name: " + name);
     }
 }

@@ -26,13 +26,14 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BlockGroup64 extends BlockGroup {
-    private int _descriptorSize;
 
-    public int BlockBitmapBlockHigh;
+    private int descriptorSize;
 
-    public int InodeBitmapBlockHigh;
+    public int blockBitmapBlockHigh;
 
-    public int InodeTableBlockHigh;
+    public int inodeBitmapBlockHigh;
+
+    public int inodeTableBlockHigh;
 
     public short freeBlocksCountHigh;
 
@@ -40,26 +41,26 @@ public class BlockGroup64 extends BlockGroup {
         return freeBlocksCountHigh & 0xffff;
     }
 
-    public short FreeInodesCountHigh;
+    public short freeInodesCountHigh;
 
-    public short UsedDirsCountHigh;
+    public short usedDirsCountHigh;
 
     public BlockGroup64(int descriptorSize) {
-        this._descriptorSize = descriptorSize;
+        this.descriptorSize = descriptorSize;
     }
 
     public int size() {
-        return this._descriptorSize;
+        return this.descriptorSize;
     }
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        BlockBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
-        InodeBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
-        InodeTableBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
+        blockBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
+        inodeBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
+        inodeTableBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
         freeBlocksCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2C);
-        FreeInodesCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2E);
-        UsedDirsCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x30);
-        return this._descriptorSize;
+        freeInodesCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2E);
+        usedDirsCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x30);
+        return this.descriptorSize;
     }
 }

@@ -26,60 +26,61 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDirectoryEntry {
-    private final boolean _ftype;
 
-    private long _inode;
+    private final boolean ftype;
+
+    private long inode;
 
     public long getInode() {
-        return _inode;
+        return inode;
     }
 
     public void setInode(long value) {
-        _inode = value;
+        inode = value;
     }
 
-    private byte _nameLength;
+    private byte nameLength;
 
     public int getNameLength() {
-        return _nameLength & 0xff;
+        return nameLength & 0xff;
     }
 
     public void setNameLength(byte value) {
-        _nameLength = value;
+        nameLength = value;
     }
 
-    private byte[] _name;
+    private byte[] name;
 
     public byte[] getName() {
-        return _name;
+        return name;
     }
 
     public void setName(byte[] value) {
-        _name = value;
+        name = value;
     }
 
-    private short _tag;
+    private short tag;
 
     public short getTag() {
-        return _tag;
+        return tag;
     }
 
     public void setTag(short value) {
-        _tag = value;
+        tag = value;
     }
 
-    private DirectoryFType _fType = DirectoryFType.File;
+    private DirectoryFType fType = DirectoryFType.File;
 
     public DirectoryFType getFType() {
-        return _fType;
+        return fType;
     }
 
     public void setFType(DirectoryFType value) {
-        _fType = value;
+        fType = value;
     }
 
     public int size() {
-        int size = 0xb + getNameLength() + (_ftype ? 1 : 0);
+        int size = 0xb + getNameLength() + (ftype ? 1 : 0);
         int padding = size % 8;
         if (padding != 0)
             return size + (8 - padding);
@@ -88,25 +89,25 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
     }
 
     public BlockDirectoryDataEntry(Context context) {
-        _ftype = context.getSuperBlock().hasFType();
+        ftype = context.getSuperBlock().hasFType();
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setInode(EndianUtilities.toUInt64BigEndian(buffer, offset));
-        setNameLength(buffer[offset + 0x8]);
-        setName(EndianUtilities.toByteArray(buffer, offset + 0x9, getNameLength()));
+        inode = EndianUtilities.toUInt64BigEndian(buffer, offset);
+        nameLength = buffer[offset + 0x8];
+        name = EndianUtilities.toByteArray(buffer, offset + 0x9, getNameLength());
         offset += 0x9 + getNameLength();
-        if (_ftype) {
-            setFType(DirectoryFType.values()[buffer[offset]]);
+        if (ftype) {
+            fType = DirectoryFType.values()[buffer[offset]];
             offset++;
         }
 
-        int padding = 6 - ((getNameLength() + (_ftype ? 2 : 1)) % 8);
+        int padding = 6 - ((getNameLength() + (ftype ? 2 : 1)) % 8);
         if (padding < 0)
             padding += 8;
 
         offset += padding;
-        setTag(EndianUtilities.toUInt16BigEndian(buffer, offset));
+        tag = EndianUtilities.toUInt16BigEndian(buffer, offset);
         return size();
     }
 
@@ -114,6 +115,6 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
      *
      */
     public String toString() {
-        return String.format("%d : %s", _inode, EndianUtilities.bytesToString(_name, 0, _nameLength));
+        return String.format("%d : %s", inode, EndianUtilities.bytesToString(name, 0, nameLength));
     }
 }

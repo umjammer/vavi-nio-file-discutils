@@ -37,35 +37,36 @@ import dotnet4j.io.Stream;
  * Bins are divided into multiple cells, that contain actual registry data.
  */
 public final class Bin {
-    private final byte[] _buffer;
 
-    private final Stream _fileStream;
+    private final byte[] buffer;
 
-    private final List<Range> _freeCells;
+    private final Stream fileStream;
 
-    private final BinHeader _header;
+    private final List<Range> freeCells;
 
-    private final RegistryHive _hive;
+    private final BinHeader header;
 
-    private final long _streamPos;
+    private final RegistryHive hive;
+
+    private final long streamPos;
 
     public Bin(RegistryHive hive, Stream stream) {
-        _hive = hive;
-        _fileStream = stream;
-        _streamPos = stream.getPosition();
-        stream.setPosition(_streamPos);
+        this.hive = hive;
+        fileStream = stream;
+        streamPos = stream.getPosition();
+        stream.setPosition(streamPos);
         byte[] buffer = StreamUtilities.readExact(stream, 0x20);
-        _header = new BinHeader();
-        _header.readFrom(buffer, 0);
-        _fileStream.setPosition(_streamPos);
-        _buffer = StreamUtilities.readExact(_fileStream, _header.BinSize);
+        header = new BinHeader();
+        header.readFrom(buffer, 0);
+        fileStream.setPosition(streamPos);
+        this.buffer = StreamUtilities.readExact(fileStream, header.binSize);
         // Gather list of all free cells.
-        _freeCells = new ArrayList<>();
+        freeCells = new ArrayList<>();
         int pos = 0x20;
-        while (pos < _buffer.length) {
-            int size = EndianUtilities.toInt32LittleEndian(_buffer, pos);
+        while (pos < this.buffer.length) {
+            int size = EndianUtilities.toInt32LittleEndian(this.buffer, pos);
             if (size > 0) {
-                _freeCells.add(new Range(pos, size));
+                freeCells.add(new Range(pos, size));
             }
 
             pos += Math.abs(size);
@@ -73,17 +74,17 @@ public final class Bin {
     }
 
     public Cell tryGetCell(int index) {
-        int size = EndianUtilities.toInt32LittleEndian(_buffer, index - _header.FileOffset);
+        int size = EndianUtilities.toInt32LittleEndian(buffer, index - header.fileOffset);
         if (size >= 0) {
             return null;
         }
 
-        return Cell.parse(_hive, index, _buffer, index + 4 - _header.FileOffset);
+        return Cell.parse(hive, index, buffer, index + 4 - header.fileOffset);
     }
 
     public void freeCell(int index) {
-        int freeIndex = index - _header.FileOffset;
-        int len = EndianUtilities.toInt32LittleEndian(_buffer, freeIndex);
+        int freeIndex = index - header.fileOffset;
+        int len = EndianUtilities.toInt32LittleEndian(buffer, freeIndex);
         if (len >= 0) {
             throw new IllegalArgumentException("Attempt to free non-allocated cell");
         }
@@ -91,62 +92,62 @@ public final class Bin {
         len = Math.abs(len);
         // If there's a free cell before this one, combine
         int i = 0;
-        while (i < _freeCells.size() && _freeCells.get(i).getOffset() < freeIndex) {
-            if (_freeCells.get(i).getOffset() + _freeCells.get(i).getCount() == freeIndex) {
-                freeIndex = (int) _freeCells.get(i).getOffset();
-                len += _freeCells.get(i).getCount();
-                _freeCells.remove(i);
+        while (i < freeCells.size() && freeCells.get(i).getOffset() < freeIndex) {
+            if (freeCells.get(i).getOffset() + freeCells.get(i).getCount() == freeIndex) {
+                freeIndex = (int) freeCells.get(i).getOffset();
+                len += freeCells.get(i).getCount();
+                freeCells.remove(i);
             } else {
                 ++i;
             }
         }
         // If there's a free cell after this one, combine
-        if (i < _freeCells.size() && _freeCells.get(i).getOffset() == freeIndex + len) {
-            len += _freeCells.get(i).getCount();
-            _freeCells.remove(i);
+        if (i < freeCells.size() && freeCells.get(i).getOffset() == freeIndex + len) {
+            len += freeCells.get(i).getCount();
+            freeCells.remove(i);
         }
 
         // Record the new free cell
-        _freeCells.add(i, new Range(freeIndex, len));
+        freeCells.add(i, new Range(freeIndex, len));
         // Free cells are indicated by length > 0
-        EndianUtilities.writeBytesLittleEndian(len, _buffer, freeIndex);
-        _fileStream.setPosition(_streamPos + freeIndex);
-        _fileStream.write(_buffer, freeIndex, 4);
+        EndianUtilities.writeBytesLittleEndian(len, buffer, freeIndex);
+        fileStream.setPosition(streamPos + freeIndex);
+        fileStream.write(buffer, freeIndex, 4);
     }
 
     public boolean updateCell(Cell cell) {
-        int index = cell.getIndex() - _header.FileOffset;
-        int allocSize = Math.abs(EndianUtilities.toInt32LittleEndian(_buffer, index));
+        int index = cell.getIndex() - header.fileOffset;
+        int allocSize = Math.abs(EndianUtilities.toInt32LittleEndian(buffer, index));
         int newSize = cell.size() + 4;
         if (newSize > allocSize) {
             return false;
         }
 
-        cell.writeTo(_buffer, index + 4);
-        _fileStream.setPosition(_streamPos + index);
-        _fileStream.write(_buffer, index, newSize);
+        cell.writeTo(buffer, index + 4);
+        fileStream.setPosition(streamPos + index);
+        fileStream.write(buffer, index, newSize);
         return true;
     }
 
     public byte[] readRawCellData(int cellIndex, int maxBytes) {
-        int index = cellIndex - _header.FileOffset;
-        int len = Math.abs(EndianUtilities.toInt32LittleEndian(_buffer, index));
+        int index = cellIndex - header.fileOffset;
+        int len = Math.abs(EndianUtilities.toInt32LittleEndian(buffer, index));
         byte[] result = new byte[Math.min(len - 4, maxBytes)];
-        System.arraycopy(_buffer, index + 4, result, 0, result.length);
+        System.arraycopy(buffer, index + 4, result, 0, result.length);
         return result;
     }
 
     public boolean writeRawCellData(int cellIndex, byte[] data, int offset, int count) {
-        int index = cellIndex - _header.FileOffset;
-        int allocSize = Math.abs(EndianUtilities.toInt32LittleEndian(_buffer, index));
+        int index = cellIndex - header.fileOffset;
+        int allocSize = Math.abs(EndianUtilities.toInt32LittleEndian(buffer, index));
         int newSize = count + 4;
         if (newSize > allocSize) {
             return false;
         }
 
-        System.arraycopy(data, offset, _buffer, index + 4, count);
-        _fileStream.setPosition(_streamPos + index);
-        _fileStream.write(_buffer, index, newSize);
+        System.arraycopy(data, offset, buffer, index + 4, count);
+        fileStream.setPosition(streamPos + index);
+        fileStream.write(buffer, index, newSize);
         return true;
     }
 
@@ -155,29 +156,29 @@ public final class Bin {
             throw new IllegalArgumentException("Invalid cell size");
         }
 
-        for (int i = 0; i < _freeCells.size(); ++i) {
+        for (int i = 0; i < freeCells.size(); ++i) {
             // Very inefficient algorithm - will lead to fragmentation
-            int result = (int) (_freeCells.get(i).getOffset() + _header.FileOffset);
-            if (_freeCells.get(i).getCount() > size) {
+            int result = (int) (freeCells.get(i).getOffset() + header.fileOffset);
+            if (freeCells.get(i).getCount() > size) {
                 // Record the newly allocated cell
-                EndianUtilities.writeBytesLittleEndian(-size, _buffer, (int) _freeCells.get(i).getOffset());
-                _fileStream.setPosition(_streamPos + _freeCells.get(i).getOffset());
-                _fileStream.write(_buffer, (int) _freeCells.get(i).getOffset(), 4);
+                EndianUtilities.writeBytesLittleEndian(-size, buffer, (int) freeCells.get(i).getOffset());
+                fileStream.setPosition(streamPos + freeCells.get(i).getOffset());
+                fileStream.write(buffer, (int) freeCells.get(i).getOffset(), 4);
                 // Keep the remainder of the free buffer as unallocated
-                _freeCells.set(i, new Range(_freeCells.get(i).getOffset() + size, _freeCells.get(i).getCount() - size));
+                freeCells.set(i, new Range(freeCells.get(i).getOffset() + size, freeCells.get(i).getCount() - size));
                 EndianUtilities
-                        .writeBytesLittleEndian(_freeCells.get(i).getCount(), _buffer, (int) _freeCells.get(i).getOffset());
-                _fileStream.setPosition(_streamPos + _freeCells.get(i).getOffset());
-                _fileStream.write(_buffer, (int) _freeCells.get(i).getOffset(), 4);
+                        .writeBytesLittleEndian(freeCells.get(i).getCount(), buffer, (int) freeCells.get(i).getOffset());
+                fileStream.setPosition(streamPos + freeCells.get(i).getOffset());
+                fileStream.write(buffer, (int) freeCells.get(i).getOffset(), 4);
                 return result;
             }
 
-            if (_freeCells.get(i).getCount() == size) {
+            if (freeCells.get(i).getCount() == size) {
                 // Record the whole of the free buffer as a newly allocated cell
-                EndianUtilities.writeBytesLittleEndian(-size, _buffer, (int) _freeCells.get(i).getOffset());
-                _fileStream.setPosition(_streamPos + _freeCells.get(i).getOffset());
-                _fileStream.write(_buffer, (int) _freeCells.get(i).getOffset(), 4);
-                _freeCells.remove(i);
+                EndianUtilities.writeBytesLittleEndian(-size, buffer, (int) freeCells.get(i).getOffset());
+                fileStream.setPosition(streamPos + freeCells.get(i).getOffset());
+                fileStream.write(buffer, (int) freeCells.get(i).getOffset(), 4);
+                freeCells.remove(i);
                 return result;
             }
         }

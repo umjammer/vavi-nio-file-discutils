@@ -29,24 +29,25 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class MetadataPhysicalVolumeSection {
-    public String Name;
 
-    public String Id;
+    public String name;
 
-    public String Device;
+    public String id;
 
-    public EnumSet<PhysicalVolumeStatus> Status = EnumSet.noneOf(PhysicalVolumeStatus.class);
+    public String device;
 
-    public String[] Flags;
+    public EnumSet<PhysicalVolumeStatus> status = EnumSet.noneOf(PhysicalVolumeStatus.class);
 
-    public long DeviceSize;
+    public String[] flags;
 
-    public long PeStart;
+    public long deviceSize;
 
-    public long PeCount;
+    public long peStart;
+
+    public long peCount;
 
     public void parse(String head, Scanner data) {
-        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
+        name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while ((line = Metadata.readLine(data)) != null) {
             if (line.isEmpty())
@@ -57,37 +58,41 @@ public class MetadataPhysicalVolumeSection {
                 String paramValue = parameter.getKey().trim().toLowerCase();
                 switch (paramValue) {
                 case "id":
-                    Id = Metadata.parseStringValue(parameter.getValue());
+                    id = Metadata.parseStringValue(parameter.getValue());
                     break;
                 case "device":
-                    Device = Metadata.parseStringValue(parameter.getValue());
+                    device = Metadata.parseStringValue(parameter.getValue());
                     break;
                 case "status":
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
-                        if (statusValue.equals("read")) {
-                            Status.add(PhysicalVolumeStatus.Read);
-                        } else if (statusValue.equals("write")) {
-                            Status.add(PhysicalVolumeStatus.Write);
-                        } else if (statusValue.equals("allocatable")) {
-                            Status.add(PhysicalVolumeStatus.Allocatable);
-                        } else {
+                        switch (statusValue) {
+                        case "read":
+                            status.add(PhysicalVolumeStatus.Read);
+                            break;
+                        case "write":
+                            status.add(PhysicalVolumeStatus.Write);
+                            break;
+                        case "allocatable":
+                            status.add(PhysicalVolumeStatus.Allocatable);
+                            break;
+                        default:
                             throw new IndexOutOfBoundsException("Unexpected status in physical volume metadata");
                         }
                     }
                     break;
                 case "flags":
-                    Flags = Metadata.parseArrayValue(parameter.getValue());
+                    flags = Metadata.parseArrayValue(parameter.getValue());
                     break;
                 case "dev_size":
-                    DeviceSize = Metadata.parseNumericValue(parameter.getValue());
+                    deviceSize = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "pe_start":
-                    PeStart = Metadata.parseNumericValue(parameter.getValue());
+                    peStart = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "pe_count":
-                    PeCount = Metadata.parseNumericValue(parameter.getValue());
+                    peCount = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata");

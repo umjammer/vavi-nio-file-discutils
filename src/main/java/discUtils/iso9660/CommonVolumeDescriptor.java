@@ -30,89 +30,90 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
-    public String AbstractFileIdentifier;
 
-    public String ApplicationIdentifier;
+    public String abstractFileIdentifier;
 
-    public String BibliographicFileIdentifier;
+    public String applicationIdentifier;
 
-    public Charset CharacterEncoding;
+    public String bibliographicFileIdentifier;
 
-    public String CopyrightFileIdentifier;
+    public Charset characterEncoding;
 
-    public long CreationDateAndTime;
+    public String copyrightFileIdentifier;
 
-    public String DataPreparerIdentifier;
+    public long creationDateAndTime;
 
-    public long EffectiveDateAndTime;
+    public String dataPreparerIdentifier;
 
-    public long ExpirationDateAndTime;
+    public long effectiveDateAndTime;
 
-    public byte FileStructureVersion;
+    public long expirationDateAndTime;
 
-    protected short LogicalBlockSize;
+    public byte fileStructureVersion;
+
+    protected short logicalBlockSize;
 
     public int getLogicalBlockSize() {
-        return LogicalBlockSize;
+        return logicalBlockSize;
     }
 
-    public long ModificationDateAndTime;
+    public long modificationDateAndTime;
 
-    public int OptionalTypeLPathTableLocation;
+    public int optionalTypeLPathTableLocation;
 
-    public int OptionalTypeMPathTableLocation;
+    public int optionalTypeMPathTableLocation;
 
-    public int PathTableSize;
+    public int pathTableSize;
 
-    public String PublisherIdentifier;
+    public String publisherIdentifier;
 
-    public DirectoryRecord RootDirectory;
+    public DirectoryRecord rootDirectory;
 
-    public String SystemIdentifier;
+    public String systemIdentifier;
 
-    public int TypeLPathTableLocation;
+    public int typeLPathTableLocation;
 
-    public int TypeMPathTableLocation;
+    public int typeMPathTableLocation;
 
-    public String VolumeIdentifier;
+    public String volumeIdentifier;
 
-    public short VolumeSequenceNumber;
+    public short volumeSequenceNumber;
 
-    public String VolumeSetIdentifier;
+    public String volumeSetIdentifier;
 
-    public short VolumeSetSize;
+    public short volumeSetSize;
 
-    public int VolumeSpaceSize;
+    public int volumeSpaceSize;
 
     public CommonVolumeDescriptor(byte[] src, int offset, Charset enc) {
         super(src, offset);
-        CharacterEncoding = enc;
-        SystemIdentifier = IsoUtilities.readChars(src, offset + 8, 32, CharacterEncoding);
-        VolumeIdentifier = IsoUtilities.readChars(src, offset + 40, 32, CharacterEncoding);
-        VolumeSpaceSize = IsoUtilities.toUInt32FromBoth(src, offset + 80);
-        VolumeSetSize = IsoUtilities.toUInt16FromBoth(src, offset + 120);
-        VolumeSequenceNumber = IsoUtilities.toUInt16FromBoth(src, offset + 124);
-        LogicalBlockSize = IsoUtilities.toUInt16FromBoth(src, offset + 128);
-        PathTableSize = IsoUtilities.toUInt32FromBoth(src, offset + 132);
-        TypeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 140);
-        OptionalTypeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 144);
-        TypeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 148));
-        OptionalTypeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 152));
+        characterEncoding = enc;
+        systemIdentifier = IsoUtilities.readChars(src, offset + 8, 32, characterEncoding);
+        volumeIdentifier = IsoUtilities.readChars(src, offset + 40, 32, characterEncoding);
+        volumeSpaceSize = IsoUtilities.toUInt32FromBoth(src, offset + 80);
+        volumeSetSize = IsoUtilities.toUInt16FromBoth(src, offset + 120);
+        volumeSequenceNumber = IsoUtilities.toUInt16FromBoth(src, offset + 124);
+        logicalBlockSize = IsoUtilities.toUInt16FromBoth(src, offset + 128);
+        pathTableSize = IsoUtilities.toUInt32FromBoth(src, offset + 132);
+        typeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 140);
+        optionalTypeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 144);
+        typeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 148));
+        optionalTypeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 152));
         DirectoryRecord[] directoryRecord = new DirectoryRecord[1];
-        DirectoryRecord.readFrom(src, offset + 156, CharacterEncoding, directoryRecord);
-        RootDirectory = directoryRecord[0];
-        VolumeSetIdentifier = IsoUtilities.readChars(src, offset + 190, 318 - 190, CharacterEncoding);
-        PublisherIdentifier = IsoUtilities.readChars(src, offset + 318, 446 - 318, CharacterEncoding);
-        DataPreparerIdentifier = IsoUtilities.readChars(src, offset + 446, 574 - 446, CharacterEncoding);
-        ApplicationIdentifier = IsoUtilities.readChars(src, offset + 574, 702 - 574, CharacterEncoding);
-        CopyrightFileIdentifier = IsoUtilities.readChars(src, offset + 702, 739 - 702, CharacterEncoding);
-        AbstractFileIdentifier = IsoUtilities.readChars(src, offset + 739, 776 - 739, CharacterEncoding);
-        BibliographicFileIdentifier = IsoUtilities.readChars(src, offset + 776, 813 - 776, CharacterEncoding);
-        CreationDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 813);
-        ModificationDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 830);
-        ExpirationDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 847);
-        EffectiveDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 864);
-        FileStructureVersion = src[offset + 881];
+        DirectoryRecord.readFrom(src, offset + 156, characterEncoding, directoryRecord);
+        rootDirectory = directoryRecord[0];
+        volumeSetIdentifier = IsoUtilities.readChars(src, offset + 190, 318 - 190, characterEncoding);
+        publisherIdentifier = IsoUtilities.readChars(src, offset + 318, 446 - 318, characterEncoding);
+        dataPreparerIdentifier = IsoUtilities.readChars(src, offset + 446, 574 - 446, characterEncoding);
+        applicationIdentifier = IsoUtilities.readChars(src, offset + 574, 702 - 574, characterEncoding);
+        copyrightFileIdentifier = IsoUtilities.readChars(src, offset + 702, 739 - 702, characterEncoding);
+        abstractFileIdentifier = IsoUtilities.readChars(src, offset + 739, 776 - 739, characterEncoding);
+        bibliographicFileIdentifier = IsoUtilities.readChars(src, offset + 776, 813 - 776, characterEncoding);
+        creationDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 813);
+        modificationDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 830);
+        expirationDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 847);
+        effectiveDateAndTime = IsoUtilities.toDateTimeFromVolumeDescriptorTime(src, offset + 864);
+        fileStructureVersion = src[offset + 881];
     }
 
     public CommonVolumeDescriptor(VolumeDescriptorType type,
@@ -126,40 +127,40 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
             long buildTime,
             Charset enc) {
         super(type, version);
-        CharacterEncoding = enc;
-        SystemIdentifier = "";
-        VolumeIdentifier = "";
-        VolumeSpaceSize = volumeSpaceSize;
-        VolumeSetSize = 1;
-        VolumeSequenceNumber = 1;
-        LogicalBlockSize = IsoUtilities.SectorSize;
-        PathTableSize = pathTableSize;
-        TypeLPathTableLocation = typeLPathTableLocation;
-//        OptionalTypeLPathTableLocation = 0;
-        TypeMPathTableLocation = typeMPathTableLocation;
-//        OptionalTypeMPathTableLocation = 0;
-        RootDirectory = new DirectoryRecord();
-        RootDirectory.ExtendedAttributeRecordLength = 0;
-        RootDirectory.LocationOfExtent = rootDirExtentLocation;
-        RootDirectory.DataLength = rootDirDataLength;
-        RootDirectory.RecordingDateAndTime = buildTime;
-        RootDirectory.Flags = EnumSet.of(FileFlags.Directory);
-        RootDirectory.FileUnitSize = 0;
-        RootDirectory.InterleaveGapSize = 0;
-        RootDirectory.VolumeSequenceNumber = 1;
-        RootDirectory.FileIdentifier = "\0";
-        VolumeSetIdentifier = "";
-        PublisherIdentifier = "";
-        DataPreparerIdentifier = "";
-        ApplicationIdentifier = "";
-        CopyrightFileIdentifier = "";
-        AbstractFileIdentifier = "";
-        BibliographicFileIdentifier = "";
-        CreationDateAndTime = buildTime;
-        ModificationDateAndTime = buildTime;
-        ExpirationDateAndTime = Long.MIN_VALUE;
-        EffectiveDateAndTime = buildTime;
-        FileStructureVersion = 1; // V1
+        characterEncoding = enc;
+        systemIdentifier = "";
+        volumeIdentifier = "";
+        this.volumeSpaceSize = volumeSpaceSize;
+        volumeSetSize = 1;
+        volumeSequenceNumber = 1;
+        logicalBlockSize = IsoUtilities.SectorSize;
+        this.pathTableSize = pathTableSize;
+        this.typeLPathTableLocation = typeLPathTableLocation;
+//        optionalTypeLPathTableLocation = 0;
+        this.typeMPathTableLocation = typeMPathTableLocation;
+//        optionalTypeMPathTableLocation = 0;
+        rootDirectory = new DirectoryRecord();
+        rootDirectory.extendedAttributeRecordLength = 0;
+        rootDirectory.locationOfExtent = rootDirExtentLocation;
+        rootDirectory.dataLength = rootDirDataLength;
+        rootDirectory.recordingDateAndTime = buildTime;
+        rootDirectory.flags = EnumSet.of(FileFlags.Directory);
+        rootDirectory.fileUnitSize = 0;
+        rootDirectory.interleaveGapSize = 0;
+        rootDirectory.volumeSequenceNumber = 1;
+        rootDirectory.fileIdentifier = "\0";
+        volumeSetIdentifier = "";
+        publisherIdentifier = "";
+        dataPreparerIdentifier = "";
+        applicationIdentifier = "";
+        copyrightFileIdentifier = "";
+        abstractFileIdentifier = "";
+        bibliographicFileIdentifier = "";
+        creationDateAndTime = buildTime;
+        modificationDateAndTime = buildTime;
+        expirationDateAndTime = Long.MIN_VALUE;
+        effectiveDateAndTime = buildTime;
+        fileStructureVersion = 1; // V1
     }
 }
 

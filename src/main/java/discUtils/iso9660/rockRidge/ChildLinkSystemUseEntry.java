@@ -26,10 +26,11 @@ import discUtils.iso9660.IsoUtilities;
 import discUtils.iso9660.susp.SystemUseEntry;
 
 public final class ChildLinkSystemUseEntry extends SystemUseEntry {
-    public int ChildDirLocation;
+
+    public int childDirLocation;
 
     public ChildLinkSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 12, (byte) 1);
-        ChildDirLocation = IsoUtilities.toUInt32FromBoth(data, offset + 4);
+        childDirLocation = IsoUtilities.toUInt32FromBoth(data, offset + 4);
     }
 }

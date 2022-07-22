@@ -45,6 +45,7 @@ import discUtils.streams.util.EndianUtilities;
  * decompression.
  */
 public final class LZNT1 extends BlockCompressor {
+
     private static final short SubBlockIsCompressedFlag = (short) 0x8000;
 
     private static final short SubBlockSizeMask = 0x0fff;
@@ -54,7 +55,7 @@ public final class LZNT1 extends BlockCompressor {
     // we assume each block is 4KB on decode also.
     private static final int FixedBlockSize = 0x1000;
 
-    private static final byte[] _compressionBits = calcCompressionBits();
+    private static final byte[] compressionBits = calcCompressionBits();
 
     public LZNT1() {
         setBlockSize(4096);
@@ -96,8 +97,8 @@ public final class LZNT1 extends BlockCompressor {
                 compressedSize++;
                 destPointer++;
                 for (int i = 0; i < 8; i++) {
-                    int lengthBits = 16 - _compressionBits[sourcePointer - subBlock];
-                    short lengthMask = (short) ((1 << _compressionBits[sourcePointer - subBlock]) - 1);
+                    int lengthBits = 16 - compressionBits[sourcePointer - subBlock];
+                    short lengthMask = (short) ((1 << compressionBits[sourcePointer - subBlock]) - 1);
                     lzMap.setMaxMatchAmount(Math.min(1 << lengthBits, getBlockSize() - 1));
                     int[] lzSearchMatch = lzMap
                             .search(source, sourceOffset + subBlock, sourcePointer - subBlock, decompressedSize);
@@ -224,7 +225,7 @@ public final class LZNT1 extends BlockCompressor {
                             ++destIdx;
                             ++sourceIdx;
                         } else {
-                            short lengthBits = (short) (16 - _compressionBits[destIdx - destSubBlockStart]);
+                            short lengthBits = (short) (16 - compressionBits[destIdx - destSubBlockStart]);
                             short lengthMask = (short) ((1 << lengthBits) - 1);
                             short phraseToken = EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
                             sourceIdx += 2;

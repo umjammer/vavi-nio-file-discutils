@@ -34,7 +34,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 class HfsPlusUtilities {
-    private static final int[] _lowerCaseTable = {
+
+    private static final int[] lowerCaseTable = {
         0x0100, 0x0200, 0x0000, 0x0300, 0x0400, 0x0500, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
         0x0000, 0x0600, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
         0x0000, 0x0000, 0x0700, 0x0800, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
@@ -268,17 +269,17 @@ class HfsPlusUtilities {
 
             while (aPos < a.length() && aChar == '\0') {
                 aChar = a.charAt(aPos++);
-                int temp = _lowerCaseTable[(aChar >>> 8) & 0xFF];
+                int temp = lowerCaseTable[(aChar >>> 8) & 0xFF];
                 if (temp != 0) {
-                    aChar = (char) _lowerCaseTable[temp + (aChar & 0xFF)];
+                    aChar = (char) lowerCaseTable[temp + (aChar & 0xFF)];
                 }
             }
 
             while (bPos < b.length() && bChar == '\0') {
                 bChar = b.charAt(bPos++);
-                int temp = _lowerCaseTable[(bChar >>> 8) & 0xFF];
+                int temp = lowerCaseTable[(bChar >>> 8) & 0xFF];
                 if (temp != 0) {
-                    bChar = (char) _lowerCaseTable[temp + (bChar & 0xFF)];
+                    bChar = (char) lowerCaseTable[temp + (bChar & 0xFF)];
                 }
             }
 

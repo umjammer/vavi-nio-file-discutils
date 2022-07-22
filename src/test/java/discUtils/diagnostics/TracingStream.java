@@ -41,24 +41,25 @@ import dotnet4j.io.StreamWriter;
  * Stream wrapper that traces all read and write activity.
  */
 public final class TracingStream extends Stream {
-    private Stream _wrapped;
 
-    private Ownership _ownsWrapped;
+    private Stream wrapped;
 
-    private List<StreamTraceRecord> _records;
+    private Ownership ownsWrapped;
 
-    private boolean _active;
+    private List<StreamTraceRecord> records;
 
-    private boolean _captureStack;
+    private boolean active;
+
+    private boolean captureStack;
 
     @SuppressWarnings("unused")
-    private boolean _captureStackFileDetails = false;
+    private boolean captureStackFileDetails = false;
 
-    private boolean _traceReads;
+    private boolean traceReads;
 
-    private boolean _traceWrites = true;
+    private boolean traceWrites = true;
 
-    private StreamWriter _fileOut;
+    private StreamWriter fileOut;
 
     /**
      * Creates a new instance, wrapping an existing stream.
@@ -67,32 +68,32 @@ public final class TracingStream extends Stream {
      * @param ownsWrapped Indicates if this stream controls toWrap's lifetime
      */
     public TracingStream(Stream toWrap, Ownership ownsWrapped) {
-        _wrapped = toWrap;
-        _ownsWrapped = ownsWrapped;
-        _records = new ArrayList<>();
+        wrapped = toWrap;
+        this.ownsWrapped = ownsWrapped;
+        records = new ArrayList<>();
     }
 
     /**
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_ownsWrapped == Ownership.Dispose && _wrapped != null) {
-            _wrapped.close();
+        if (ownsWrapped == Ownership.Dispose && wrapped != null) {
+            wrapped.close();
         }
 
-        _wrapped = null;
-        if (_fileOut != null) {
-            _fileOut.close();
+        wrapped = null;
+        if (fileOut != null) {
+            fileOut.close();
         }
 
-        _fileOut = null;
+        fileOut = null;
     }
 
     /**
      * Starts tracing stream activity.
      */
     public void start() {
-        _active = true;
+        active = true;
     }
 
     /**
@@ -102,7 +103,7 @@ public final class TracingStream extends Stream {
      * to resume the trace
      */
     public void stop() {
-        _active = false;
+        active = false;
     }
 
     /**
@@ -112,8 +113,8 @@ public final class TracingStream extends Stream {
      *            completes
      */
     public void reset(boolean start) {
-        _active = false;
-        _records.clear();
+        active = false;
+        records.clear();
         if (start) {
             start();
         }
@@ -123,33 +124,33 @@ public final class TracingStream extends Stream {
      * Gets and sets whether to capture stack traces for every read/write
      */
     public boolean getCaptureStackTraces() {
-        return _captureStack;
+        return captureStack;
     }
 
     public void setCaptureStackTraces(boolean value) {
-        _captureStack = value;
+        captureStack = value;
     }
 
     /**
      * Gets and sets whether to trace read activity (default is false).
      */
     public boolean getTraceReads() {
-        return _traceReads;
+        return traceReads;
     }
 
     public void setTraceReads(boolean value) {
-        _traceReads = value;
+        traceReads = value;
     }
 
     /**
      * Gets and sets whether to trace write activity (default is true).
      */
     public boolean getTraceWrites() {
-        return _traceWrites;
+        return traceWrites;
     }
 
     public void setTraceWrites(boolean value) {
-        _traceWrites = value;
+        traceWrites = value;
     }
 
     /**
@@ -160,18 +161,18 @@ public final class TracingStream extends Stream {
      *            output file.
      */
     public void writeToFile(String path) {
-        if (_fileOut != null) {
+        if (fileOut != null) {
             try {
-                _fileOut.close();
+                fileOut.close();
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-            _fileOut = null;
+            fileOut = null;
         }
 
         if (path != null && !path.isEmpty()) {
             LocalFileLocator locator = new LocalFileLocator("");
-            _fileOut = new StreamWriter(locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite));
+            fileOut = new StreamWriter(locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite));
         }
     }
 
@@ -179,53 +180,53 @@ public final class TracingStream extends Stream {
      * Gets a log of all recorded stream activity.
      */
     public List<StreamTraceRecord> getLog() {
-        return _records;
+        return records;
     }
 
     /**
      * Gets an indication as to whether the stream can be read.
      */
     public boolean canRead() {
-        return _wrapped.canRead();
+        return wrapped.canRead();
     }
 
     /**
      * Gets an indication as to whether the stream position can be changed.
      */
     public boolean canSeek() {
-        return _wrapped.canSeek();
+        return wrapped.canSeek();
     }
 
     /**
      * Gets an indication as to whether the stream can be written to.
      */
     public boolean canWrite() {
-        return _wrapped.canWrite();
+        return wrapped.canWrite();
     }
 
     /**
      * Flushes the stream.
      */
     public void flush() {
-        _wrapped.flush();
+        wrapped.flush();
     }
 
     /**
      * Gets the length of the stream.
      */
     public long getLength() {
-        return _wrapped.getLength();
+        return wrapped.getLength();
     }
 
     /**
      * Gets and sets the current stream position.
      */
     public long getPosition() {
-        return _wrapped.getPosition();
+        return wrapped.getPosition();
     }
 
     public void setPosition(long value) {
-        _wrapped.setPosition(value);
+        wrapped.setPosition(value);
     }
 
     /**
@@ -237,16 +238,16 @@ public final class TracingStream extends Stream {
      * @return The number of bytes read
      */
     public int read(byte[] buffer, int offset, int count) {
-        long position = _wrapped.getPosition();
+        long position = wrapped.getPosition();
         try {
-            int result = _wrapped.read(buffer, offset, count);
-            if (_active && _traceReads) {
+            int result = wrapped.read(buffer, offset, count);
+            if (active && traceReads) {
                 createAndAddRecord("READ", position, count, result);
             }
 
             return result;
         } catch (Exception e) {
-            if (_active && _traceReads) {
+            if (active && traceReads) {
                 createAndAddRecord("READ", position, count, e);
             }
 
@@ -262,7 +263,7 @@ public final class TracingStream extends Stream {
      * @return The new absolute stream position
      */
     public long seek(long offset, SeekOrigin origin) {
-        return _wrapped.seek(offset, origin);
+        return wrapped.seek(offset, origin);
     }
 
     /**
@@ -271,7 +272,7 @@ public final class TracingStream extends Stream {
      * @param value The new length
      */
     public void setLength(long value) {
-        _wrapped.setLength(value);
+        wrapped.setLength(value);
     }
 
     /**
@@ -282,15 +283,15 @@ public final class TracingStream extends Stream {
      * @param count The number of bytes to write
      */
     public void write(byte[] buffer, int offset, int count) {
-        long position = _wrapped.getPosition();
+        long position = wrapped.getPosition();
         try {
-            _wrapped.write(buffer, offset, count);
-            if (_active && _traceWrites) {
+            wrapped.write(buffer, offset, count);
+            if (active && traceWrites) {
                 createAndAddRecord("WRITE", position, count);
             }
 
         } catch (Exception e) {
-            if (_active && _traceWrites) {
+            if (active && traceWrites) {
                 createAndAddRecord("WRITE", position, count, e);
             }
 
@@ -313,23 +314,23 @@ public final class TracingStream extends Stream {
     private StreamTraceRecord createAndAddRecord(String activity, long position, long count, int result, Exception ex) {
         try {
             // Note: Not sure about the 'ex' parameter to StackTrace, but the new StackTrace does not accept a frameCount
-            StackTraceElement[] trace = _captureStack ? ex.getStackTrace(/*_captureStackFileDetails*/) : null;
-            StreamTraceRecord record = new StreamTraceRecord(_records.size(), activity, position, trace);
+            StackTraceElement[] trace = captureStack ? ex.getStackTrace(/*captureStackFileDetails*/) : null;
+            StreamTraceRecord record = new StreamTraceRecord(records.size(), activity, position, trace);
             record.setCountArg(count);
             record.setResult(result);
             record.setExceptionThrown(ex);
-            _records.add(record);
-            if (_fileOut != null) {
-                _fileOut.writeLine(record);
+            records.add(record);
+            if (fileOut != null) {
+                fileOut.writeLine(record);
                 if (trace != null) {
-                    _fileOut.write(Arrays.toString(trace));
+                    fileOut.write(Arrays.toString(trace));
                 }
 
                 if (ex != null) {
-                    _fileOut.writeLine(ex);
+                    fileOut.writeLine(ex);
                 }
 
-                _fileOut.flush();
+                fileOut.flush();
             }
 
             return record;

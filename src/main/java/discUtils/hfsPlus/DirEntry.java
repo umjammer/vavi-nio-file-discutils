@@ -31,29 +31,30 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class DirEntry extends VfsDirEntry {
+
     public DirEntry(String name, byte[] dirEntryData) {
-        _fileName = name;
-        _catalogFileInfo = parseDirEntryData(dirEntryData);
+        fileName = name;
+        catalogFileInfo = parseDirEntryData(dirEntryData);
     }
 
-    private CommonCatalogFileInfo _catalogFileInfo;
+    private CommonCatalogFileInfo catalogFileInfo;
 
     public CommonCatalogFileInfo getCatalogFileInfo() {
-        return _catalogFileInfo;
+        return catalogFileInfo;
     }
 
     public long getCreationTimeUtc() {
-        return getCatalogFileInfo().CreateTime;
+        return getCatalogFileInfo().createTime;
     }
 
     public EnumSet<FileAttributes> getFileAttributes() {
-        return UnixFileType.toFileAttributes(getCatalogFileInfo().FileSystemInfo.getFileType());
+        return UnixFileType.toFileAttributes(getCatalogFileInfo().fileSystemInfo.getFileType());
     }
 
-    private String _fileName;
+    private String fileName;
 
     public String getFileName() {
-        return _fileName;
+        return fileName;
     }
 
     public boolean hasVfsFileAttributes() {
@@ -65,28 +66,28 @@ final class DirEntry extends VfsDirEntry {
     }
 
     public boolean isDirectory() {
-        return getCatalogFileInfo().RecordType == CatalogRecordType.FolderRecord;
+        return getCatalogFileInfo().recordType == CatalogRecordType.FolderRecord;
     }
 
     public boolean isSymlink() {
         return !isDirectory() &&
-               ((CatalogFileInfo) getCatalogFileInfo()).FileInfo.FileType == FileTypeFlags.SymLinkFileType.getValue();
+               ((CatalogFileInfo) getCatalogFileInfo()).fileInfo.fileType == FileTypeFlags.SymLinkFileType.getValue();
     }
 
     public long getLastAccessTimeUtc() {
-        return getCatalogFileInfo().AccessTime;
+        return getCatalogFileInfo().accessTime;
     }
 
     public long getLastWriteTimeUtc() {
-        return getCatalogFileInfo().ContentModifyTime;
+        return getCatalogFileInfo().contentModifyTime;
     }
 
     public CatalogNodeId getNodeId() {
-        return getCatalogFileInfo().FileId;
+        return getCatalogFileInfo().fileId;
     }
 
     public long getUniqueCacheId() {
-        return getCatalogFileInfo().FileId.getId();
+        return getCatalogFileInfo().fileId.getId();
     }
 
     static boolean isFileOrDirectory(byte[] dirEntryData) {

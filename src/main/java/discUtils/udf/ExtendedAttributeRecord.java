@@ -27,22 +27,23 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ExtendedAttributeRecord implements IByteArraySerializable {
-    public byte[] AttributeData;
 
-    public byte AttributeSubType;
+    public byte[] attributeData;
 
-    public int AttributeType;
+    public byte attributeSubType;
+
+    public int attributeType;
 
     public int size() {
-        return 12 + AttributeData.length;
+        return 12 + attributeData.length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        AttributeType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        AttributeSubType = buffer[offset + 4];
+        attributeType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        attributeSubType = buffer[offset + 4];
         int dataLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 8) - 12;
-        AttributeData = new byte[dataLength];
-        System.arraycopy(buffer, offset + 12, AttributeData, 0, dataLength);
+        attributeData = new byte[dataLength];
+        System.arraycopy(buffer, offset + 12, attributeData, 0, dataLength);
         return 12 + dataLength;
     }
 

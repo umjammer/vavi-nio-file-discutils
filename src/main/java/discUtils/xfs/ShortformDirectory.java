@@ -27,59 +27,60 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ShortformDirectory implements IByteArraySerializable {
-    private final Context _context;
 
-    private boolean _useShortInode;
+    private final Context context;
+
+    private boolean useShortInode;
 
     /**
      * Number of directory entries.
      */
-    private byte _count4Bytes;
+    private byte count4Bytes;
 
     public int getCount4Bytes() {
-        return _count4Bytes & 0xff;
+        return count4Bytes & 0xff;
     }
 
     public void setCount4Bytes(byte value) {
-        _count4Bytes = value;
+        count4Bytes = value;
     }
 
     /**
      * Number of directory entries requiring 64-bit entries, if any inode
      * numbers require 64-bits. Zero otherwise.
      */
-    private byte _count8Bytes;
+    private byte count8Bytes;
 
     public int getCount8Bytes() {
-        return _count8Bytes & 0xff;
+        return count8Bytes & 0xff;
     }
 
     public void setCount8Bytes(byte value) {
-        _count8Bytes = value;
+        count8Bytes = value;
     }
 
-    private long _parent;
+    private long parent;
 
     public long getParent() {
-        return _parent;
+        return parent;
     }
 
     public void setParent(long value) {
-        _parent = value;
+        parent = value;
     }
 
-    private ShortformDirectoryEntry[] _entries;
+    private ShortformDirectoryEntry[] entries;
 
     public ShortformDirectoryEntry[] getEntries() {
-        return _entries;
+        return entries;
     }
 
     public void setEntries(ShortformDirectoryEntry[] value) {
-        _entries = value;
+        entries = value;
     }
 
     public ShortformDirectory(Context context) {
-        _context = context;
+        this.context = context;
     }
 
     public int size() {
@@ -91,24 +92,24 @@ public class ShortformDirectory implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _count4Bytes = buffer[offset];
-        _count8Bytes = buffer[offset + 0x1];
+        count4Bytes = buffer[offset];
+        count8Bytes = buffer[offset + 0x1];
         int count = getCount4Bytes();
-        _useShortInode = getCount8Bytes() == 0;
+        useShortInode = getCount8Bytes() == 0;
         offset += 0x2;
-        if (_useShortInode) {
-            _parent = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        if (useShortInode) {
+            parent = EndianUtilities.toUInt32BigEndian(buffer, offset);
             offset += 0x4;
         } else {
-            _parent = EndianUtilities.toUInt64BigEndian(buffer, offset);
+            parent = EndianUtilities.toUInt64BigEndian(buffer, offset);
             offset += 0x8;
         }
-        _entries = new ShortformDirectoryEntry[count];
+        entries = new ShortformDirectoryEntry[count];
         for (int i = 0; i < count; i++) {
-            ShortformDirectoryEntry entry = new ShortformDirectoryEntry(_useShortInode, _context);
+            ShortformDirectoryEntry entry = new ShortformDirectoryEntry(useShortInode, context);
             entry.readFrom(buffer, offset);
             offset += entry.size();
-            _entries[i] = entry;
+            entries[i] = entry;
         }
         return size();
     }

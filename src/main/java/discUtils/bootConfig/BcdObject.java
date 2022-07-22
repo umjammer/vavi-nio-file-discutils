@@ -124,19 +124,19 @@ public class BcdObject {
      */
     public static final String CurrentBootEntryId = "{FA926493-6F1C-4193-A414-58F0B2456D1E}";
 
-    private static final Map<String, UUID> _nameToGuid;
+    private static final Map<String, UUID> nameToGuid;
 
-    private static final Map<UUID, String> _guidToName;
+    private static final Map<UUID, String> guidToName;
 
-    private UUID _id;
+    private UUID id;
 
-    private final BaseStorage _storage;
+    private final BaseStorage storage;
 
-    private final int _type;
+    private final int type;
 
     static {
-        _nameToGuid = new HashMap<>();
-        _guidToName = new HashMap<>();
+        nameToGuid = new HashMap<>();
+        guidToName = new HashMap<>();
         addMapping("{emssettings}", EmsSettingsGroupId);
         addMapping("{resumeloadersettings}", ResumeLoaderSettingsGroupId);
         addMapping("{default}", DefaultBootEntryId);
@@ -154,23 +154,23 @@ public class BcdObject {
     }
 
     public BcdObject(BaseStorage store, UUID id) {
-        _storage = store;
-        _id = id;
-        _type = _storage.getObjectType(id);
+        storage = store;
+        this.id = id;
+        type = storage.getObjectType(id);
     }
 
     /**
      * Gets the image type for this application.
      */
     public ApplicationImageType getApplicationImageType() {
-        return isApplication() ? ApplicationImageType.values()[((_type & 0x00F00000) >>> 20)] : ApplicationImageType.None;
+        return isApplication() ? ApplicationImageType.values()[((type & 0x00F00000) >>> 20)] : ApplicationImageType.None;
     }
 
     /**
      * Gets the application type for this application.
      */
     public ApplicationType getApplicationType() {
-        return isApplication() ? ApplicationType.values()[(_type & 0xFFFFF)] : ApplicationType.None;
+        return isApplication() ? ApplicationType.values()[(type & 0xFFFFF)] : ApplicationType.None;
     }
 
     /**
@@ -178,8 +178,8 @@ public class BcdObject {
      */
     public List<Element> getElements() {
         List<Element> result = new ArrayList<>();
-        for (int el : _storage.enumerateElements(_id)) {
-            result.add(new Element(_storage, _id, getApplicationType(), el));
+        for (int el : storage.enumerateElements(id)) {
+            result.add(new Element(storage, id, getApplicationType(), el));
         }
         return result;
     }
@@ -188,18 +188,18 @@ public class BcdObject {
      * Gets the friendly name for this object, if known.
      */
     public String getFriendlyName() {
-        if (_guidToName.containsKey(_id)) {
-            return _guidToName.get(_id);
+        if (guidToName.containsKey(id)) {
+            return guidToName.get(id);
         }
 
-        return String.format("{%s}", _id);
+        return String.format("{%s}", id);
     }
 
     /**
      * Gets the identity of this object.
      */
     public UUID getIdentity() {
-        return _id;
+        return id;
     }
 
     private boolean isApplication() {
@@ -210,7 +210,7 @@ public class BcdObject {
      * Gets the object type for this object.
      */
     public ObjectType getObjectType() {
-        return ObjectType.values()[((_type >>> 28) & 0xF)];
+        return ObjectType.values()[((type >>> 28) & 0xF)];
     }
 
     /**
@@ -228,7 +228,7 @@ public class BcdObject {
             return false;
         }
 
-        InheritType setting = InheritType.values()[((_type & 0x00F00000) >>> 20)];
+        InheritType setting = InheritType.values()[((this.type & 0x00F00000) >>> 20)];
         return setting == InheritType.AnyObject ||
             (setting == InheritType.ApplicationObjects && type == ObjectType.Application) ||
             (setting == InheritType.DeviceObjects && type == ObjectType.Device);
@@ -241,7 +241,7 @@ public class BcdObject {
      * @return {@code true} if present, else {@code false} .
      */
     public boolean hasElement(int id) {
-        return _storage.hasValue(_id, id);
+        return storage.hasValue(this.id, id);
     }
 
     /**
@@ -262,7 +262,7 @@ public class BcdObject {
      */
     public Element getElement(int id) {
         if (hasElement(id)) {
-            return new Element(_storage, _id, getApplicationType(), id);
+            return new Element(storage, this.id, getApplicationType(), id);
         }
 
         return null;
@@ -286,8 +286,8 @@ public class BcdObject {
      * @return The element object.
      */
     public Element addElement(int id, ElementValue initialValue) {
-        _storage.createElement(_id, id);
-        Element el = new Element(_storage, _id, getApplicationType(), id);
+        storage.createElement(this.id, id);
+        Element el = new Element(storage, this.id, getApplicationType(), id);
         el.setValue(initialValue);
         return el;
     }
@@ -309,7 +309,7 @@ public class BcdObject {
      * @param id The element to remove.
      */
     public void removeElement(int id) {
-        _storage.deleteElement(_id, id);
+        storage.deleteElement(this.id, id);
     }
 
     /**
@@ -327,7 +327,7 @@ public class BcdObject {
      * @return A string representation, with surrounding curly braces.
      */
     public String toString() {
-        return String.format("{%s}", _id);
+        return String.format("{%s}", id);
     }
 
     public static int makeApplicationType(ApplicationImageType imageType, ApplicationType appType) {
@@ -340,7 +340,7 @@ public class BcdObject {
 
     private static void addMapping(String name, String id) {
         UUID guid = UUID.fromString(id.replaceAll("(^\\{|\\}$)", ""));
-        _nameToGuid.put(name, guid);
-        _guidToName.put(guid, name);
+        nameToGuid.put(name, guid);
+        guidToName.put(guid, name);
     }
 }

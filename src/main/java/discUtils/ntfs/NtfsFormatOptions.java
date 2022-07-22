@@ -32,14 +32,14 @@ public final class NtfsFormatOptions {
     /**
      * Gets or sets the NTFS bootloader code to put in the formatted file system.
      */
-    private byte[] __BootCode;
+    private byte[] bootCode;
 
     public byte[] getBootCode() {
-        return __BootCode;
+        return bootCode;
     }
 
     public void setBootCode(byte[] value) {
-        __BootCode = value;
+        bootCode = value;
     }
 
     /**
@@ -49,13 +49,13 @@ public final class NtfsFormatOptions {
      * Certain ACLs in the file system will refer to the 'local' administrator of
      * the indicated computer account.
      */
-    private SecurityIdentifier __ComputerAccount;
+    private SecurityIdentifier computerAccount;
 
     public SecurityIdentifier getComputerAccount() {
-        return __ComputerAccount;
+        return computerAccount;
     }
 
     public void setComputerAccount(SecurityIdentifier value) {
-        __ComputerAccount = value;
+        computerAccount = value;
     }
 }

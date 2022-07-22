@@ -23,11 +23,12 @@
 package discUtils.net.dns;
 
 public class MessageFlags {
+
     public MessageFlags() {
     }
 
     public MessageFlags(short value) {
-        _value = value;
+        this.value = value;
     }
 
     public MessageFlags(boolean isResponse,
@@ -45,40 +46,40 @@ public class MessageFlags {
         val |= recursionDesired ? 0x0100 : 0x0000;
         val |= recursionAvailable ? 0x0080 : 0x0000;
         val |= responseCode.ordinal() & 0xF;
-        _value = (short) val;
+        value = (short) val;
     }
 
-    private short _value;
+    private short value;
 
     public short getValue() {
-        return _value;
+        return value;
     }
 
     public boolean isResponse() {
-        return (_value & 0x8000) != 0;
+        return (value & 0x8000) != 0;
     }
 
     public OpCode getOpCode() {
-        return OpCode.values()[(_value >>> 11) & 0xF];
+        return OpCode.values()[(value >>> 11) & 0xF];
     }
 
     public boolean isAuthorative() {
-        return (_value & 0x0400) != 0;
+        return (value & 0x0400) != 0;
     }
 
     public boolean isTruncated() {
-        return (_value & 0x0200) != 0;
+        return (value & 0x0200) != 0;
     }
 
     public boolean getRecursionDesired() {
-        return (_value & 0x0100) != 0;
+        return (value & 0x0100) != 0;
     }
 
     public boolean getRecursionAvailable() {
-        return (_value & 0x0080) != 0;
+        return (value & 0x0080) != 0;
     }
 
     public ResponseCode getResponseCode() {
-        return ResponseCode.values()[_value & 0x000F];
+        return ResponseCode.values()[value & 0x000F];
     }
 }

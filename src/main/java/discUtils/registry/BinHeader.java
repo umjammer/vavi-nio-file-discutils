@@ -32,13 +32,14 @@ import dotnet4j.io.IOException;
 
 
 public final class BinHeader implements IByteArraySerializable {
+
     public static final int HeaderSize = 0x20;
 
     private static final int Signature = 0x6E696268;
 
-    public int BinSize;
+    public int binSize;
 
-    public int FileOffset;
+    public int fileOffset;
 
     public int size() {
         return HeaderSize;
@@ -51,8 +52,8 @@ Debug.printf(Level.SEVERE, "%x\n", sig);
             throw new IOException("Invalid signature for registry bin");
         }
 
-        FileOffset = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
-        BinSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
+        fileOffset = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
+        binSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
         long unknown = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x0C);
         long unknown1 = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x14);
         int unknown2 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x1C);
@@ -61,7 +62,7 @@ Debug.printf(Level.SEVERE, "%x\n", sig);
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(FileOffset, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(BinSize, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(fileOffset, buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(binSize, buffer, offset + 0x08);
     }
 }

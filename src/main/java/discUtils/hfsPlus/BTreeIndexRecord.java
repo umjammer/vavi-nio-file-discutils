@@ -28,37 +28,38 @@ import discUtils.streams.util.EndianUtilities;
 
 
 final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
-    private final int _size;
+
+    private final int size;
 
     private Class<TKey> clazz;
 
     public BTreeIndexRecord(Class<TKey> clazz, int size) {
-        _size = size;
+        this.size = size;
         this.clazz = clazz;
     }
 
-    private int _childId;
+    private int childId;
 
     public int getChildId() {
-        return _childId;
+        return childId;
     }
 
     public void setChildId(int value) {
-        _childId = value;
+        childId = value;
     }
 
-    private TKey _key;
+    private TKey key;
 
     public TKey getKey() {
-        return _key;
+        return key;
     }
 
     public void setKey(TKey value) {
-        _key = value;
+        key = value;
     }
 
     public int size() {
-        return _size;
+        return size;
     }
 
     public int readFrom(byte[] buffer, int offset) {
@@ -72,7 +73,7 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
 
             setChildId(EndianUtilities.toUInt32BigEndian(buffer, offset + keySize));
 
-            return _size;
+            return size;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
@@ -83,6 +84,6 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
     }
 
     public String toString() {
-        return _key + ":" + _childId;
+        return key + ":" + childId;
     }
 }

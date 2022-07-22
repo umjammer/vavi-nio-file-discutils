@@ -34,56 +34,56 @@ import dotnet4j.io.SeekOrigin;
 
 
 public class DiskStream extends SparseStream {
-    private final int _blockSize;
+    private final int blockSize;
 
-    private final long _length;
+    private final long length;
 
-    private final long _lun;
+    private final long lun;
 
-    private long _position;
+    private long position;
 
-    private final Session _session;
+    private final Session session;
 
     public DiskStream(Session session, long lun, FileAccess access) {
-        _session = session;
-        _lun = lun;
+        this.session = session;
+        this.lun = lun;
         LunCapacity capacity = session.getCapacity(lun);
-        _blockSize = capacity.getBlockSize();
-        _length = capacity.getLogicalBlockCount() * capacity.getBlockSize();
-        __CanWrite = access != FileAccess.Read;
-        __CanRead = access != FileAccess.Write;
+        blockSize = capacity.getBlockSize();
+        length = capacity.getLogicalBlockCount() * capacity.getBlockSize();
+        canWrite = access != FileAccess.Read;
+        canRead = access != FileAccess.Write;
     }
 
-    private boolean __CanRead;
+    private boolean canRead;
 
     public boolean canRead() {
-        return __CanRead;
+        return canRead;
     }
 
     public boolean canSeek() {
         return true;
     }
 
-    private boolean __CanWrite;
+    private boolean canWrite;
 
     public boolean canWrite() {
-        return __CanWrite;
+        return canWrite;
     }
 
     public List<StreamExtent> getExtents() {
-        return Collections.singletonList(new StreamExtent(0, _length));
+        return Collections.singletonList(new StreamExtent(0, length));
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
@@ -94,31 +94,31 @@ public class DiskStream extends SparseStream {
             throw new UnsupportedOperationException("Attempt to read from read-only stream");
         }
 
-        int maxToRead = (int) Math.min(_length - _position, count);
-        long firstBlock = _position / _blockSize;
-        long lastBlock = MathUtilities.ceil(_position + maxToRead, _blockSize);
-        byte[] tempBuffer = new byte[(int) (lastBlock - firstBlock) * _blockSize];
-        int numRead = _session.read(_lun, firstBlock, (short) (lastBlock - firstBlock), tempBuffer, 0);
+        int maxToRead = (int) Math.min(length - position, count);
+        long firstBlock = position / blockSize;
+        long lastBlock = MathUtilities.ceil(position + maxToRead, blockSize);
+        byte[] tempBuffer = new byte[(int) (lastBlock - firstBlock) * blockSize];
+        int numRead = session.read(lun, firstBlock, (short) (lastBlock - firstBlock), tempBuffer, 0);
         int numCopied = Math.min(maxToRead, numRead);
-        System.arraycopy(tempBuffer, (int) (_position - firstBlock * _blockSize), buffer, offset, numCopied);
-        _position += numCopied;
+        System.arraycopy(tempBuffer, (int) (position - firstBlock * blockSize), buffer, offset, numCopied);
+        position += numCopied;
         return numCopied;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _length;
+            effectiveOffset += length;
         }
 
         if (effectiveOffset < 0) {
             throw new IOException("Attempt to move before beginning of disk");
         }
 
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public void setLength(long value) {
@@ -130,41 +130,41 @@ public class DiskStream extends SparseStream {
             throw new IOException("Attempt to write to read-only stream");
         }
 
-        if (_position + count > _length) {
+        if (position + count > length) {
             throw new IOException("Attempt to write beyond end of stream");
         }
 
         int numWritten = 0;
         while (numWritten < count) {
-            long block = _position / _blockSize;
-            int offsetInBlock = (int) (_position % _blockSize);
+            long block = position / blockSize;
+            int offsetInBlock = (int) (position % blockSize);
             int toWrite = count - numWritten;
             // Need to read - we're not handling a full block
-            if (offsetInBlock != 0 || toWrite < _blockSize) {
-                toWrite = Math.min(toWrite, _blockSize - offsetInBlock);
-                byte[] blockBuffer = new byte[_blockSize];
-                int numRead = _session.read(_lun, block, (short) 1, blockBuffer, 0);
-                if (numRead != _blockSize) {
+            if (offsetInBlock != 0 || toWrite < blockSize) {
+                toWrite = Math.min(toWrite, blockSize - offsetInBlock);
+                byte[] blockBuffer = new byte[blockSize];
+                int numRead = session.read(lun, block, (short) 1, blockBuffer, 0);
+                if (numRead != blockSize) {
                     throw new IOException("Incomplete read, received " + numRead + " bytes from 1 block");
                 }
 
                 // Overlay as much data as we have for this block
                 System.arraycopy(buffer, offset + numWritten, blockBuffer, offsetInBlock, toWrite);
                 // Write the block back
-                _session.write(_lun, block, (short) 1, _blockSize, blockBuffer, 0);
+                session.write(lun, block, (short) 1, blockSize, blockBuffer, 0);
             } else {
                 // Processing at least one whole block, just write (after making sure to trim any partial sectors from the end)...
-                short numBlocks = (short) (toWrite / _blockSize);
-                toWrite = numBlocks * _blockSize;
-                _session.write(_lun, block, numBlocks, _blockSize, buffer, offset + numWritten);
+                short numBlocks = (short) (toWrite / blockSize);
+                toWrite = numBlocks * blockSize;
+                session.write(lun, block, numBlocks, blockSize, buffer, offset + numWritten);
             }
             numWritten += toWrite;
-            _position += toWrite;
+            position += toWrite;
         }
     }
 
     @Override
     public void close() throws java.io.IOException {
-        _session.close();
+        session.close();
     }
 }

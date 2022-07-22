@@ -29,56 +29,57 @@ import discUtils.streams.util.Range;
 
 
 public final class SparseClusterStream extends ClusterStream {
-    private final NtfsAttribute _attr;
 
-    private final RawClusterStream _rawStream;
+    private final NtfsAttribute attr;
+
+    private final RawClusterStream rawStream;
 
     public SparseClusterStream(NtfsAttribute attr, RawClusterStream rawStream) {
-        _attr = attr;
-        _rawStream = rawStream;
+        this.attr = attr;
+        this.rawStream = rawStream;
     }
 
     public long getAllocatedClusterCount() {
-        return _rawStream.getAllocatedClusterCount();
+        return rawStream.getAllocatedClusterCount();
     }
 
     public List<Range> getStoredClusters() {
-        return _rawStream.getStoredClusters();
+        return rawStream.getStoredClusters();
     }
 
     public boolean isClusterStored(long vcn) {
-        return _rawStream.isClusterStored(vcn);
+        return rawStream.isClusterStored(vcn);
     }
 
     public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
-        _rawStream.expandToClusters(compressionStart(numVirtualClusters), extent, false);
+        rawStream.expandToClusters(compressionStart(numVirtualClusters), extent, false);
     }
 
     public void truncateToClusters(long numVirtualClusters) {
         long alignedNum = compressionStart(numVirtualClusters);
-        _rawStream.truncateToClusters(alignedNum);
+        rawStream.truncateToClusters(alignedNum);
         if (alignedNum != numVirtualClusters) {
-            _rawStream.releaseClusters(numVirtualClusters, (int) (alignedNum - numVirtualClusters));
+            rawStream.releaseClusters(numVirtualClusters, (int) (alignedNum - numVirtualClusters));
         }
 
     }
 
     public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
-        _rawStream.readClusters(startVcn, count, buffer, offset);
+        rawStream.readClusters(startVcn, count, buffer, offset);
     }
 
     public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
         int clustersAllocated = 0;
-        clustersAllocated += _rawStream.allocateClusters(startVcn, count);
-        clustersAllocated += _rawStream.writeClusters(startVcn, count, buffer, offset);
+        clustersAllocated += rawStream.allocateClusters(startVcn, count);
+        clustersAllocated += rawStream.writeClusters(startVcn, count, buffer, offset);
         return clustersAllocated;
     }
 
     public int clearClusters(long startVcn, int count) {
-        return _rawStream.releaseClusters(startVcn, count);
+        return rawStream.releaseClusters(startVcn, count);
     }
 
     private long compressionStart(long vcn) {
-        return MathUtilities.roundUp(vcn, _attr.getCompressionUnitSize());
+        return MathUtilities.roundUp(vcn, attr.getCompressionUnitSize());
     }
 }

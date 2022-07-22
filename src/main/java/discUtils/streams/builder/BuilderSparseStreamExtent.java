@@ -31,9 +31,10 @@ import discUtils.streams.util.Ownership;
 
 
 public class BuilderSparseStreamExtent extends BuilderExtent {
-    private final Ownership _ownership;
 
-    private SparseStream _stream;
+    private final Ownership ownership;
+
+    private SparseStream stream;
 
     public BuilderSparseStreamExtent(long start, SparseStream stream) {
         this(start, stream, Ownership.None);
@@ -41,31 +42,29 @@ public class BuilderSparseStreamExtent extends BuilderExtent {
 
     public BuilderSparseStreamExtent(long start, SparseStream stream, Ownership ownership) {
         super(start, stream.getLength());
-        _stream = stream;
-        _ownership = ownership;
+        this.stream = stream;
+        this.ownership = ownership;
     }
 
     public List<StreamExtent> getStreamExtents() {
-        return StreamExtent.offset(_stream.getExtents(), getStart());
+        return StreamExtent.offset(stream.getExtents(), getStart());
     }
 
     public void close() throws IOException {
-        if (_stream != null && _ownership == Ownership.Dispose) {
-            _stream.close();
-            _stream = null;
+        if (stream != null && ownership == Ownership.Dispose) {
+            stream.close();
+            stream = null;
         }
-
     }
 
     public void prepareForRead() {
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        _stream.setPosition(diskOffset - getStart());
-        return _stream.read(block, offset, count);
+        stream.setPosition(diskOffset - getStart());
+        return stream.read(block, offset, count);
     }
 
     public void disposeReadState() {
     }
-
 }

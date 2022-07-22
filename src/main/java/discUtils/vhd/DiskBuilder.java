@@ -44,18 +44,19 @@ import dotnet4j.io.Stream;
  * @version 0.00 2019/07/29 umjammer initial version <br>
  */
 public class DiskBuilder extends DiskImageBuilder {
+
     /**
      * Gets or sets the type of VHD file to build.
      */
     public FileType getDiskType() {
-        return _diskType;
+        return fileType;
     }
 
     public void setDiskType(FileType fileType) {
-        _diskType = fileType;
+        this.fileType = fileType;
     }
 
-    private FileType _diskType = FileType.Dynamic;
+    private FileType fileType = FileType.Dynamic;
 
     /**
      * Initiates the build process.
@@ -80,9 +81,9 @@ public class DiskBuilder extends DiskImageBuilder {
 
         Geometry geometry = Geometry.fromCapacity(getContent().getLength());
 
-        Footer footer = new Footer(geometry, getContent().getLength(), _diskType);
+        Footer footer = new Footer(geometry, getContent().getLength(), fileType);
 
-        if (_diskType == FileType.Fixed) {
+        if (fileType == FileType.Fixed) {
             footer.updateChecksum();
 
             byte[] footerSector = new byte[Sizes.Sector];
@@ -91,7 +92,7 @@ public class DiskBuilder extends DiskImageBuilder {
             SparseStream footerStream = SparseStream.fromStream(new MemoryStream(footerSector, false), Ownership.None);
             Stream imageStream = new ConcatStream(Ownership.None, getContent(), footerStream);
             fileSpecs.add(new DiskImageFileSpecification(baseName + ".vhd", new PassthroughStreamBuilder(imageStream)));
-        } else if (_diskType == FileType.Dynamic) {
+        } else if (fileType == FileType.Dynamic) {
             fileSpecs.add(new DiskImageFileSpecification(baseName + ".vhd",
                                                          new DynamicDiskBuilder(getContent(), footer, (int) Sizes.OneMiB * 2)));
         } else {

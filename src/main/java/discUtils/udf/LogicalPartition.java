@@ -23,21 +23,22 @@
 package discUtils.udf;
 
 public abstract class LogicalPartition extends Partition {
-    protected UdfContext _context;
 
-    protected LogicalVolumeDescriptor _volumeDescriptor;
+    protected UdfContext context;
+
+    protected LogicalVolumeDescriptor volumeDescriptor;
 
     protected LogicalPartition(UdfContext context, LogicalVolumeDescriptor volumeDescriptor) {
-        _context = context;
-        _volumeDescriptor = volumeDescriptor;
+        this.context = context;
+        this.volumeDescriptor = volumeDescriptor;
     }
 
     public long getLogicalBlockSize() {
-        return _volumeDescriptor.LogicalBlockSize;
+        return volumeDescriptor.logicalBlockSize;
     }
 
     public static LogicalPartition fromDescriptor(UdfContext context, LogicalVolumeDescriptor volumeDescriptor, int index) {
-        PartitionMap map = volumeDescriptor.PartitionMaps[index];
+        PartitionMap map = volumeDescriptor.partitionMaps[index];
         Type1PartitionMap asType1 = map instanceof Type1PartitionMap ? (Type1PartitionMap) map : null;
         if (asType1 != null) {
             return new Type1Partition(context, volumeDescriptor, asType1);
@@ -51,5 +52,4 @@ public abstract class LogicalPartition extends Partition {
 
         throw new UnsupportedOperationException("Unrecognized partition map type");
     }
-
 }

@@ -23,53 +23,54 @@
 package discUtils.core.logicalDiskManager;
 
 public final class ComponentRecord extends DatabaseRecord {
-    // Identical on mirrors
-    public int LinkId;
 
-    // (02 Spanned, Simple, Mirrored)  (01 on striped)
-    public ExtentMergeType MergeType = ExtentMergeType.None;
+    /** Identical on mirrors */
+    public int linkId;
 
-    // Could be num disks
-    public long NumExtents;
+    /** (02 Spanned, Simple, Mirrored)  (01 on striped) */
+    public ExtentMergeType mergeType = ExtentMergeType.None;
 
-    public String StatusString;
+    /** Could be num disks */
+    public long numExtents;
 
-    public long StripeSizeSectors;
+    public String statusString;
 
-    // aka num partitions
-    public long StripeStride;
+    public long stripeSizeSectors;
 
-    // Zero
-    public int Unknown1;
+    /** aka num partitions */
+    public long stripeStride;
 
-    // Zero
-    public int Unknown2;
+    /** Zero */
+    public int unknown1;
 
-    // 00 .. 00
-    public long Unknown3;
+    /** Zero */
+    public int unknown2;
 
-    // ??
-    public long Unknown4;
+    /** 00 .. 00 */
+    public long unknown3;
 
-    public long VolumeId;
+    /** ?? */
+    public long unknown4;
+
+    public long volumeId;
 
     protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
         int[] pos = new int[] { offset + 0x18 };
-        Id = readVarULong(buffer, pos);
-        Name = readVarString(buffer, pos);
-        StatusString = readVarString(buffer, pos);
-        MergeType = ExtentMergeType.values()[readByte(buffer, pos)];
-        Unknown1 = readUInt(buffer, pos); // Zero
-        NumExtents = readVarULong(buffer, pos);
-        Unknown2 = readUInt(buffer, pos);
-        LinkId = readUInt(buffer, pos);
-        Unknown3 = readULong(buffer, pos); // Zero
-        VolumeId = readVarULong(buffer, pos);
-        Unknown4 = readVarULong(buffer, pos); // Zero
-        if ((Flags & 0x1000) != 0) {
-            StripeSizeSectors = readVarLong(buffer, pos);
-            StripeStride = readVarLong(buffer, pos);
+        id = readVarULong(buffer, pos);
+        name = readVarString(buffer, pos);
+        statusString = readVarString(buffer, pos);
+        mergeType = ExtentMergeType.values()[readByte(buffer, pos)];
+        unknown1 = readUInt(buffer, pos); // Zero
+        numExtents = readVarULong(buffer, pos);
+        unknown2 = readUInt(buffer, pos);
+        linkId = readUInt(buffer, pos);
+        unknown3 = readULong(buffer, pos); // Zero
+        volumeId = readVarULong(buffer, pos);
+        unknown4 = readVarULong(buffer, pos); // Zero
+        if ((flags & 0x1000) != 0) {
+            stripeSizeSectors = readVarLong(buffer, pos);
+            stripeStride = readVarLong(buffer, pos);
         }
     }
 }

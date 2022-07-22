@@ -42,7 +42,7 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public String getFileName() {
-        return getRecord().Name;
+        return getRecord().name;
     }
 
     public boolean hasVfsFileAttributes() {
@@ -54,11 +54,11 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public boolean isDirectory() {
-        return getRecord().FileType == DirectoryRecord.FileTypeDirectory;
+        return getRecord().fileType == DirectoryRecord.FileTypeDirectory;
     }
 
     public boolean isSymlink() {
-        return getRecord().FileType == DirectoryRecord.FileTypeSymlink;
+        return getRecord().fileType == DirectoryRecord.FileTypeSymlink;
     }
 
     public long getLastAccessTimeUtc() {
@@ -76,10 +76,10 @@ public class DirEntry extends VfsDirEntry {
     }
 
     public long getUniqueCacheId() {
-        return getRecord().Inode;
+        return getRecord().inode;
     }
 
     public String toString() {
-        return getRecord().Name != null ? getRecord().Name : "(no name)";
+        return getRecord().name != null ? getRecord().name : "(no name)";
     }
 }

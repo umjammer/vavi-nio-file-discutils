@@ -32,79 +32,80 @@ import dotnet4j.io.Stream;
  * Event arguments for opening a file
  */
 public class FileOpenEventArgs /* extends EventArgs */ {
-    private FileOpenDelegate _opener;
+
+    private FileOpenDelegate opener;
 
     public FileOpenEventArgs(String fileName, FileMode mode, FileAccess access, FileShare share, FileOpenDelegate opener) {
-        _fileName = fileName;
-        _fileMode = mode;
-        _fileAccess = access;
-        _fileShare = share;
-        _opener = opener;
+        this.fileName = fileName;
+        fileMode = mode;
+        fileAccess = access;
+        fileShare = share;
+        this.opener = opener;
     }
 
-    private String _fileName;
+    private String fileName;
 
     public String getFileName() {
-        return _fileName;
+        return fileName;
     }
 
     public void setFileName(String value) {
-        _fileName = value;
+        fileName = value;
     }
 
-    private FileMode _fileMode;
+    private FileMode fileMode;
 
     /**
      * Gets or sets the {@link FileMode}
      */
     public FileMode getFileMode() {
-        return _fileMode;
+        return fileMode;
     }
 
     public void setFileMode(FileMode value) {
-        _fileMode = value;
+        fileMode = value;
     }
 
-    private FileAccess _fileAccess;
+    private FileAccess fileAccess;
 
     /**
      * Gets or sets the {@link FileAccess}
      */
     public FileAccess getFileAccess() {
-        return _fileAccess;
+        return fileAccess;
     }
 
     public void setFileAccess(FileAccess value) {
-        _fileAccess = value;
+        fileAccess = value;
     }
 
-    private FileShare _fileShare;
+    private FileShare fileShare;
 
     /**
      * Gets or sets the {@link FileShare}
      */
     public FileShare getFileShare() {
-        return _fileShare;
+        return fileShare;
     }
 
     public void setFileShare(FileShare value) {
-        _fileShare = value;
+        fileShare = value;
     }
 
-    private Stream _result;
+    private Stream result;
 
     /**
      * The resulting stream.
      *
      * If this is set to a non null value, this stream is used instead of opening
-     * the supplied {@link #_fileName}
+     * the supplied {@link #fileName}
      */
     public Stream getResult() {
-        return _result;
+        return result;
     }
 
     public void setResult(Stream value) {
-        _result = value;
+        result = value;
     }
 
     /**
@@ -113,6 +114,6 @@ public class FileOpenEventArgs /* extends EventArgs */ {
      * @return
      */
     public Stream getFileStream() {
-        return _opener.invoke(_fileName, _fileMode, _fileAccess, _fileShare);
+        return opener.invoke(fileName, fileMode, fileAccess, fileShare);
     }
 }

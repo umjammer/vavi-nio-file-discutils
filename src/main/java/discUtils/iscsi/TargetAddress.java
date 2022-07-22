@@ -33,6 +33,7 @@ import dotnet4j.util.compat.StringUtilities;
  * A target contains zero or more LUNs.
  */
 public class TargetAddress {
+
     public static final int DefaultPort = 3260;
 
     /**
@@ -43,36 +44,36 @@ public class TargetAddress {
      * @param targetGroupTag The Group Tag of the Target.
      */
     public TargetAddress(String address, int port, String targetGroupTag) {
-        _networkAddress = address;
-        _networkPort = port;
-        _targetGroupTag = targetGroupTag;
+        networkAddress = address;
+        networkPort = port;
+        this.targetGroupTag = targetGroupTag;
     }
 
     /**
      * Gets the IP address (or FQDN) of the Target.
      */
-    private String _networkAddress;
+    private String networkAddress;
 
     public String getNetworkAddress() {
-        return _networkAddress;
+        return networkAddress;
     }
 
     /**
      * Gets the network port of the Target.
      */
-    private int _networkPort;
+    private int networkPort;
 
     public int getNetworkPort() {
-        return _networkPort;
+        return networkPort;
     }
 
     /**
      * Gets the Group Tag of the Target.
      */
-    private String _targetGroupTag;
+    private String targetGroupTag;
 
     public String getTargetGroupTag() {
-        return _targetGroupTag;
+        return targetGroupTag;
     }
 
     /**

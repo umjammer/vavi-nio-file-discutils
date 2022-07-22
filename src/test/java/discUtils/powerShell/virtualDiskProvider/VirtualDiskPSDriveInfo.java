@@ -38,65 +38,66 @@ import discUtils.powerShell.conpat.PSDriveInfo;
 
 
 public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
-    private VirtualDisk _disk;
 
-    private VolumeManager _volMgr;
+    private VirtualDisk disk;
 
-    private Map<String, DiscFileSystem> _fsCache;
+    private VolumeManager volMgr;
+
+    private Map<String, DiscFileSystem> fsCache;
 
     public VirtualDiskPSDriveInfo(PSDriveInfo toCopy, String root, VirtualDisk disk) {
         super(toCopy.getName(), toCopy.getProvider(), root, toCopy.getDescription(), toCopy.getCredential());
-        _disk = disk;
-        _volMgr = new VolumeManager(_disk);
-        _fsCache = new HashMap<>();
+        this.disk = disk;
+        volMgr = new VolumeManager(this.disk);
+        fsCache = new HashMap<>();
     }
 
     public VirtualDisk getDisk() {
-        return _disk;
+        return disk;
     }
 
     public VolumeManager getVolumeManager() {
-        return _volMgr;
+        return volMgr;
     }
 
     public DiscFileSystem getFileSystem(VolumeInfo volInfo) {
 //        SetupHelper.setupFileSystems();
         DiscFileSystem result;
-        if (!_fsCache.containsKey(volInfo.getIdentity())) {
+        if (!fsCache.containsKey(volInfo.getIdentity())) {
             List<FileSystemInfo> fsInfo = FileSystemManager.detectFileSystems(volInfo);
             if (fsInfo != null && fsInfo.size() > 0) {
                 result = fsInfo.get(0).open(volInfo);
-                _fsCache.put(volInfo.getIdentity(), result);
+                fsCache.put(volInfo.getIdentity(), result);
             }
 
         }
-        result = _fsCache.get(volInfo.getIdentity());
+        result = fsCache.get(volInfo.getIdentity());
 
         return result;
     }
 
     public void rescanVolumes() throws IOException {
-        VolumeManager newVolMgr = new VolumeManager(_disk);
+        VolumeManager newVolMgr = new VolumeManager(disk);
         Map<String, DiscFileSystem> newFsCache = new HashMap<>();
-        Map<String, DiscFileSystem> deadFileSystems = new HashMap<>(_fsCache);
+        Map<String, DiscFileSystem> deadFileSystems = new HashMap<>(fsCache);
         for (LogicalVolumeInfo volInfo : newVolMgr.getLogicalVolumes()) {
-            if (_fsCache.containsKey(volInfo.getIdentity())) {
-                newFsCache.put(volInfo.getIdentity(), _fsCache.get(volInfo.getIdentity()));
+            if (fsCache.containsKey(volInfo.getIdentity())) {
+                newFsCache.put(volInfo.getIdentity(), fsCache.get(volInfo.getIdentity()));
                 deadFileSystems.remove(volInfo.getIdentity());
             }
         }
         for (DiscFileSystem deadFs : deadFileSystems.values()) {
             deadFs.close();
         }
-        _volMgr = newVolMgr;
-        _fsCache = newFsCache;
+        volMgr = newVolMgr;
+        fsCache = newFsCache;
     }
 
     public void uncacheFileSystem(String volId) throws IOException {
-        if (_fsCache.containsKey(volId)) {
-            DiscFileSystem fs = _fsCache.get(volId);
+        if (fsCache.containsKey(volId)) {
+            DiscFileSystem fs = fsCache.get(volId);
             fs.close();
-            _fsCache.remove(volId);
+            fsCache.remove(volId);
         }
     }
 }

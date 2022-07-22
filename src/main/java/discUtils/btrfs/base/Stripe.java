@@ -37,40 +37,40 @@ public class Stripe implements IByteArraySerializable {
     /**
      * device id
      */
-    private long __DeviceId;
+    private long deviceId;
 
     public long getDeviceId() {
-        return __DeviceId;
+        return deviceId;
     }
 
     public void setDeviceId(long value) {
-        __DeviceId = value;
+        deviceId = value;
     }
 
     /**
      * offset
      */
-    private long __Offset;
+    private long offset;
 
     public long getOffset() {
-        return __Offset;
+        return offset;
     }
 
     public void setOffset(long value) {
-        __Offset = value;
+        offset = value;
     }
 
     /**
      * device UUID
      */
-    private UUID __DeviceUuid;
+    private UUID deviceUuid;
 
     public UUID getDeviceUuid() {
-        return __DeviceUuid;
+        return deviceUuid;
     }
 
     public void setDeviceUuid(UUID value) {
-        __DeviceUuid = value;
+        deviceUuid = value;
     }
 
     public int size() {

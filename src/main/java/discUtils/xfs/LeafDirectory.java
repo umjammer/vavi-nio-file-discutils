@@ -30,40 +30,41 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class LeafDirectory implements IByteArraySerializable {
-    private final Context _context;
+
+    private final Context context;
 
     public static final int HeaderMagic = 0x58443244;
 
     public static final long LeafOffset = (1 * (1L << (32 + 3)));
 
-    private int _magic;
+    private int magic;
 
     public int getMagic() {
-        return _magic;
+        return magic;
     }
 
     public void setMagic(int value) {
-        _magic = value;
+        magic = value;
     }
 
-    private BlockDirectoryDataFree[] _bestFree;
+    private BlockDirectoryDataFree[] bestFree;
 
     public BlockDirectoryDataFree[] getBestFree() {
-        return _bestFree;
+        return bestFree;
     }
 
     public void setBestFree(BlockDirectoryDataFree[] value) {
-        _bestFree = value;
+        bestFree = value;
     }
 
-    private List<BlockDirectoryData> _entries;
+    private List<BlockDirectoryData> entries;
 
     public List<BlockDirectoryData> getEntries() {
-        return _entries;
+        return entries;
     }
 
     public void setEntries(List<BlockDirectoryData> value) {
-        _entries = value;
+        entries = value;
     }
 
     public int size() {
@@ -71,7 +72,7 @@ public class LeafDirectory implements IByteArraySerializable {
     }
 
     protected int readHeader(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
+        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
         return 0x4;
     }
 
@@ -80,7 +81,7 @@ public class LeafDirectory implements IByteArraySerializable {
     }
 
     public LeafDirectory(Context context) {
-        _context = context;
+        this.context = context;
     }
 
     public boolean getHasValidMagic() {
@@ -89,7 +90,7 @@ public class LeafDirectory implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         offset += readHeader(buffer, offset);
-        setBestFree(new BlockDirectoryDataFree[3]);
+        bestFree = new BlockDirectoryDataFree[3];
         for (int i = 0; i < getBestFree().length; i++) {
             BlockDirectoryDataFree free = new BlockDirectoryDataFree();
             offset += free.readFrom(buffer, offset);
@@ -104,12 +105,12 @@ public class LeafDirectory implements IByteArraySerializable {
                 //unused
                 entry = new BlockDirectoryDataUnused();
             } else {
-                entry = new BlockDirectoryDataEntry(_context);
+                entry = new BlockDirectoryDataEntry(context);
             }
             offset += entry.readFrom(buffer, offset);
             entries.add(entry);
         }
-        setEntries(entries);
+        this.entries = entries;
         return buffer.length - offset;
     }
 

@@ -38,23 +38,24 @@ import discUtils.streams.util.Ownership;
  * XVA only supports a single layer.
  */
 public final class DiskLayer extends VirtualDiskLayer {
-    private final long _capacity;
 
-    private final String _location;
+    private final long capacity;
 
-    private final VirtualMachine _vm;
+    private final String location;
+
+    private final VirtualMachine vm;
 
     public DiskLayer(VirtualMachine vm, long capacity, String location) {
-        _vm = vm;
-        _capacity = capacity;
-        _location = location;
+        this.vm = vm;
+        this.capacity = capacity;
+        this.location = location;
     }
 
     /**
      * Gets the capacity of the layer (in bytes).
      */
     public long getCapacity() {
-        return _capacity;
+        return capacity;
     }
 
     /**
@@ -63,7 +64,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      * a guess of the actual geometry.
      */
     public Geometry getGeometry() {
-        return Geometry.fromCapacity(_capacity);
+        return Geometry.fromCapacity(capacity);
     }
 
     /**
@@ -102,7 +103,7 @@ public final class DiskLayer extends VirtualDiskLayer {
             }
         }
 
-        return new DiskStream(_vm.getArchive(), _capacity, _location);
+        return new DiskStream(vm.getArchive(), capacity, location);
     }
 
     /**

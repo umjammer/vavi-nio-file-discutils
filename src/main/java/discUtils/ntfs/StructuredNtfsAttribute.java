@@ -34,16 +34,17 @@ import dotnet4j.io.Stream;
 
 
 public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnosticTraceable> extends NtfsAttribute {
-    private boolean _hasContent;
 
-    private boolean _initialized;
+    private boolean hasContent;
 
-    private T _structure;
+    private boolean initialized;
+
+    private T structure;
 
     public StructuredNtfsAttribute(Class<T> clazz, File file, FileRecordReference containingFile, AttributeRecord record) {
         super(file, containingFile, record);
         try {
-            _structure = clazz.getDeclaredConstructor().newInstance();
+            structure = clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new IllegalStateException(e);
         }
@@ -51,23 +52,23 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
 
     public T getContent() {
         initialize();
-        return _structure;
+        return structure;
     }
 
     public void setContent(T value) {
-        _structure = value;
-        _hasContent = true;
+        structure = value;
+        hasContent = true;
     }
 
     public boolean getHasContent() {
         initialize();
-        return _hasContent;
+        return hasContent;
     }
 
     public void save() {
         try (Stream s = open(FileAccess.Write)) {
-            byte[] buffer = new byte[_structure.size()];
-            _structure.writeTo(buffer, 0);
+            byte[] buffer = new byte[structure.size()];
+            structure.writeTo(buffer, 0);
             s.write(buffer, 0, buffer.length);
             s.setLength(buffer.length);
         } catch (IOException e) {
@@ -77,28 +78,28 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
 
     public String toString() {
         initialize();
-        return _structure.toString();
+        return structure.toString();
     }
 
     public void dump(PrintWriter writer, String indent) {
         initialize();
         writer.println(indent + getAttributeTypeName() + " ATTRIBUTE (" + (getName() == null ? "No Name" : getName()) + ")");
-        _structure.dump(writer, indent + "  ");
-        _primaryRecord.dump(writer, indent + "  ");
+        structure.dump(writer, indent + "  ");
+        primaryRecord.dump(writer, indent + "  ");
     }
 
     private void initialize() {
-        if (!_initialized) {
+        if (!initialized) {
             try (Stream s = open(FileAccess.Read)) {
                 {
                     byte[] buffer = StreamUtilities.readExact(s, (int) getLength());
-                    _structure.readFrom(buffer, 0);
-                    _hasContent = s.getLength() != 0;
+                    structure.readFrom(buffer, 0);
+                    hasContent = s.getLength() != 0;
                 }
             } catch (IOException e) {
                 throw new dotnet4j.io.IOException(e);
             }
-            _initialized = true;
+            initialized = true;
         }
     }
 }

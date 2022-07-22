@@ -42,57 +42,57 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
     public Nfs3ReadResult() {
     }
 
-    private int _count;
+    private int count;
 
     public int getCount() {
-        return _count;
+        return count;
     }
 
     public void setCount(int value) {
-        _count = value;
+        count = value;
     }
 
-    private byte[] _data;
+    private byte[] data;
 
     public byte[] getData() {
-        return _data;
+        return data;
     }
 
     public void setData(byte[] value) {
-        _data = value;
+        data = value;
     }
 
-    private boolean _eof;
+    private boolean eof;
 
     public boolean getEof() {
-        return _eof;
+        return eof;
     }
 
     public void setEof(boolean value) {
-        _eof = value;
+        eof = value;
     }
 
-    private Nfs3FileAttributes _fileAttributes;
+    private Nfs3FileAttributes fileAttributes;
 
     public Nfs3FileAttributes getFileAttributes() {
-        return _fileAttributes;
+        return fileAttributes;
     }
 
     public void setFileAttributes(Nfs3FileAttributes value) {
-        _fileAttributes = value;
+        fileAttributes = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        writer.write(getFileAttributes() != null);
-        if (getFileAttributes() != null) {
-            getFileAttributes().write(writer);
+        writer.write(status.getValue());
+        writer.write(fileAttributes != null);
+        if (fileAttributes != null) {
+            fileAttributes.write(writer);
         }
 
-        if (getStatus() == Nfs3Status.Ok) {
-            writer.write(getCount());
-            writer.write(getEof());
-            writer.writeBuffer(getData());
+        if (status == Nfs3Status.Ok) {
+            writer.write(count);
+            writer.write(eof);
+            writer.writeBuffer(data);
         }
     }
 
@@ -105,11 +105,11 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
             return false;
         }
 
-        return other.getStatus() == getStatus() && dotnet4j.util.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes())
-                && other.getCount() == getCount() && Arrays.equals(other.getData(), getData()) && other.getEof() == getEof();
+        return other.status == status && dotnet4j.util.compat.Utilities.equals(other.fileAttributes, fileAttributes)
+                && other.count == count && Arrays.equals(other.data, data) && other.eof == eof;
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(getStatus(), getFileAttributes(), getCount(), getEof(), getData());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, fileAttributes, count, eof, data);
     }
 }

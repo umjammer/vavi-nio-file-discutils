@@ -33,79 +33,80 @@ import dotnet4j.io.Stream;
 
 
 public class SubStream extends MappedStream {
-    private final long _first;
 
-    private final long _length;
+    private final long first;
 
-    private final Ownership _ownsParent;
+    private final long length;
 
-    private final Stream _parent;
+    private final Ownership ownsParent;
 
-    private long _position;
+    private final Stream parent;
+
+    private long position;
 
     public SubStream(Stream parent, long first, long length) {
-        _parent = parent;
-        _first = first;
-        _length = length;
-        _ownsParent = Ownership.None;
+        this.parent = parent;
+        this.first = first;
+        this.length = length;
+        ownsParent = Ownership.None;
 
-        if (_first + _length > _parent.getLength()) {
+        if (this.first + this.length > this.parent.getLength()) {
             throw new IllegalArgumentException("Substream extends beyond end of parent stream");
         }
     }
 
     public SubStream(Stream parent, Ownership ownsParent, long first, long length) {
-        _parent = parent;
-        _ownsParent = ownsParent;
-        _first = first;
-        _length = length;
+        this.parent = parent;
+        this.ownsParent = ownsParent;
+        this.first = first;
+        this.length = length;
 
-        if (_first + _length > _parent.getLength()) {
+        if (this.first + this.length > this.parent.getLength()) {
             throw new IllegalArgumentException("Substream extends beyond end of parent stream");
         }
     }
 
     public boolean canRead() {
-        return _parent.canRead();
+        return parent.canRead();
     }
 
     public boolean canSeek() {
-        return _parent.canSeek();
+        return parent.canSeek();
     }
 
     public boolean canWrite() {
-        return _parent.canWrite();
+        return parent.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
-        if (_parent instanceof SparseStream) {
-            return offsetExtents(((SparseStream) _parent).getExtentsInRange(_first, _length));
+        if (parent instanceof SparseStream) {
+            return offsetExtents(((SparseStream) parent).getExtentsInRange(first, length));
         }
-        return Collections.singletonList(new StreamExtent(0, _length));
+        return Collections.singletonList(new StreamExtent(0, length));
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        if (value <= _length) {
-            _position = value;
+        if (value <= length) {
+            position = value;
         } else {
             throw new IllegalArgumentException("value: Attempt to move beyond end of stream");
         }
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
-        return Collections.singletonList(new StreamExtent(start + _first, length));
+        return Collections.singletonList(new StreamExtent(start + first, length));
     }
 
     public void flush() {
-        _parent.flush();
+        parent.flush();
     }
 
     public int read(byte[] buffer, int offset, int count) {
@@ -113,31 +114,31 @@ public class SubStream extends MappedStream {
             throw new IllegalArgumentException("count: Attempt to read negative bytes");
         }
 
-        if (_position > _length) {
+        if (position > length) {
             return 0;
         }
 
-        _parent.setPosition(_first + _position);
-        int numRead = _parent.read(buffer, offset, (int) Math.min(count, Math.min(_length - _position, Integer.MAX_VALUE)));
-//if (numRead > 1) Debug.println(_parent + ", " + _first + ", " + _position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
-        _position += numRead;
+        parent.setPosition(first + position);
+        int numRead = parent.read(buffer, offset, (int) Math.min(count, Math.min(length - position, Integer.MAX_VALUE)));
+//if (numRead > 1) Debug.println(parent + ", " + first + ", " + position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
+        position += numRead;
         return numRead;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         long absNewPos = offset;
         if (origin == SeekOrigin.Current) {
-            absNewPos += _position;
+            absNewPos += position;
         } else if (origin == SeekOrigin.End) {
-            absNewPos += _length;
+            absNewPos += length;
         }
 
         if (absNewPos < 0) {
             throw new IllegalArgumentException("offset: Attempt to move before start of stream");
         }
 
-        _position = absNewPos;
-        return _position;
+        position = absNewPos;
+        return position;
     }
 
     public void setLength(long value) {
@@ -149,22 +150,22 @@ public class SubStream extends MappedStream {
             throw new IllegalArgumentException("count: Attempt to write negative bytes");
         }
 
-        if (_position + count > _length) {
+        if (position + count > length) {
             throw new IllegalArgumentException("count: Attempt to write beyond end of substream");
         }
 
-        _parent.setPosition(_first + _position);
-        _parent.write(buffer, offset, count);
-        _position += count;
+        parent.setPosition(first + position);
+        parent.write(buffer, offset, count);
+        position += count;
     }
 
     public void close() throws IOException {
-        if (_ownsParent == Ownership.Dispose) {
-            _parent.close();
+        if (ownsParent == Ownership.Dispose) {
+            parent.close();
         }
     }
 
     private List<StreamExtent> offsetExtents(List<StreamExtent> src) {
-        return src.stream().map(e -> new StreamExtent(e.getStart() - _first, e.getLength())).collect(Collectors.toList());
+        return src.stream().map(e -> new StreamExtent(e.getStart() - first, e.getLength())).collect(Collectors.toList());
     }
 }

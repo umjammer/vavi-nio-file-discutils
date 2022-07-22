@@ -34,23 +34,24 @@ import dotnet4j.io.FileAccess;
 
 @VirtualDiskTransportAttribute(scheme = "iscsi")
 public final class DiskTransport extends VirtualDiskTransport {
-    private LunInfo _lunInfo;
 
-    private Session _session;
+    private LunInfo lunInfo;
+
+    private Session session;
 
     public boolean isRawDisk() {
         return true;
     }
 
     public void connect(URI uri, String username, String password) {
-        _lunInfo = LunInfo.parseUri(uri.toString());
+        lunInfo = LunInfo.parseUri(uri.toString());
         Initiator initiator = new Initiator();
         initiator.setCredentials(username, password);
-        _session = initiator.connectTo(_lunInfo.getTarget());
+        session = initiator.connectTo(lunInfo.getTarget());
     }
 
     public VirtualDisk openDisk(FileAccess access) {
-        return _session.openDisk(_lunInfo.getLun(), access);
+        return session.openDisk(lunInfo.getLun(), access);
     }
 
     public FileLocator getFileLocator() {
@@ -66,10 +67,10 @@ public final class DiskTransport extends VirtualDiskTransport {
     }
 
     public void close() throws IOException {
-        if (_session != null) {
-            _session.close();
+        if (session != null) {
+            session.close();
         }
 
-        _session = null;
+        session = null;
     }
 }

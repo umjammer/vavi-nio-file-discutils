@@ -25,31 +25,30 @@ package discUtils.nfs;
 
 
 public class RpcAcceptedReplyHeader {
+
     public RpcAcceptStatus AcceptStatus = RpcAcceptStatus.Success;
 
-    public RpcMismatchInfo MismatchInfo;
+    public RpcMismatchInfo mismatchInfo;
 
-    public RpcAuthentication Verifier;
+    public RpcAuthentication verifier;
 
     public RpcAcceptedReplyHeader() {
     }
 
     public RpcAcceptedReplyHeader(XdrDataReader reader) {
-        Verifier = new RpcAuthentication(reader);
+        verifier = new RpcAuthentication(reader);
         AcceptStatus = RpcAcceptStatus.values()[reader.readInt32()];
         if (AcceptStatus == RpcAcceptStatus.ProgramVersionMismatch) {
-            MismatchInfo = new RpcMismatchInfo(reader);
+            mismatchInfo = new RpcMismatchInfo(reader);
         }
-
     }
 
     public void write(XdrDataWriter writer) {
-        Verifier.write(writer);
+        verifier.write(writer);
         writer.write(AcceptStatus.ordinal());
         if (AcceptStatus == RpcAcceptStatus.ProgramVersionMismatch) {
-            MismatchInfo.write(writer);
+            mismatchInfo.write(writer);
         }
-
     }
 
     public boolean equals(Object obj) {
@@ -61,11 +60,11 @@ public class RpcAcceptedReplyHeader {
             return false;
         }
 
-        return dotnet4j.util.compat.Utilities.equals(other.Verifier, Verifier) && other.AcceptStatus == AcceptStatus
-                && dotnet4j.util.compat.Utilities.equals(other.MismatchInfo, MismatchInfo);
+        return dotnet4j.util.compat.Utilities.equals(other.verifier, verifier) && other.AcceptStatus == AcceptStatus
+                && dotnet4j.util.compat.Utilities.equals(other.mismatchInfo, mismatchInfo);
     }
 
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(Verifier, AcceptStatus, MismatchInfo);
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(verifier, AcceptStatus, mismatchInfo);
     }
 }

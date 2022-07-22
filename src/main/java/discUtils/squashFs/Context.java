@@ -27,83 +27,84 @@ import dotnet4j.io.Stream;
 
 
 public class Context extends VfsContext {
-    private MetablockReader __DirectoryReader;
+
+    private MetablockReader directoryReader;
 
     public MetablockReader getDirectoryReader() {
-        return __DirectoryReader;
+        return directoryReader;
     }
 
     public void setDirectoryReader(MetablockReader value) {
-        __DirectoryReader = value;
+        directoryReader = value;
     }
 
-    private MetablockReader[] __FragmentTableReaders;
+    private MetablockReader[] fragmentTableReaders;
 
     public MetablockReader[] getFragmentTableReaders() {
-        return __FragmentTableReaders;
+        return fragmentTableReaders;
     }
 
     public void setFragmentTableReaders(MetablockReader[] value) {
-        __FragmentTableReaders = value;
+        fragmentTableReaders = value;
     }
 
-    private MetablockReader __InodeReader;
+    private MetablockReader inodeReader;
 
     public MetablockReader getInodeReader() {
-        return __InodeReader;
+        return inodeReader;
     }
 
     public void setInodeReader(MetablockReader value) {
-        __InodeReader = value;
+        inodeReader = value;
     }
 
-    private Stream __RawStream;
+    private Stream rawStream;
 
     public Stream getRawStream() {
-        return __RawStream;
+        return rawStream;
     }
 
     public void setRawStream(Stream value) {
-        __RawStream = value;
+        rawStream = value;
     }
 
-    private ReadBlock __ReadBlock;
+    private ReadBlock readBlock;
 
     public ReadBlock getReadBlock() {
-        return __ReadBlock;
+        return readBlock;
     }
 
     public void setReadBlock(ReadBlock value) {
-        __ReadBlock = value;
+        readBlock = value;
     }
 
-    private ReadMetaBlock __ReadMetaBlock;
+    private ReadMetaBlock readMetaBlock;
 
     public ReadMetaBlock getReadMetaBlock() {
-        return __ReadMetaBlock;
+        return readMetaBlock;
     }
 
     public void setReadMetaBlock(ReadMetaBlock value) {
-        __ReadMetaBlock = value;
+        readMetaBlock = value;
     }
 
-    private SuperBlock __SuperBlock;
+    private SuperBlock superBlock;
 
     public SuperBlock getSuperBlock() {
-        return __SuperBlock;
+        return superBlock;
     }
 
     public void setSuperBlock(SuperBlock value) {
-        __SuperBlock = value;
+        superBlock = value;
     }
 
-    private MetablockReader[] __UidGidTableReaders;
+    private MetablockReader[] uidGidTableReaders;
 
     public MetablockReader[] getUidGidTableReaders() {
-        return __UidGidTableReaders;
+        return uidGidTableReaders;
     }
 
     public void setUidGidTableReaders(MetablockReader[] value) {
-        __UidGidTableReaders = value;
+        uidGidTableReaders = value;
     }
 }

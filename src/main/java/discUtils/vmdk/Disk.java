@@ -51,6 +51,7 @@ import dotnet4j.io.Stream;
  * Represents a VMDK-backed disk.
  */
 public final class Disk extends VirtualDisk {
+
     public static final String ExtendedParameterKeyAdapterType = "VMDK.AdapterType";
 
     public static final String ExtendedParameterKeyCreateType = "VMDK.CreateType";
@@ -58,14 +59,14 @@ public final class Disk extends VirtualDisk {
     /**
      * The stream representing the content of this disk.
      */
-    private SparseStream _content;
+    private SparseStream content;
 
     /**
      * The list of files that make up the disk.
      */
-    private final List<Tuple<VirtualDiskLayer, Ownership>> _files;
+    private final List<Tuple<VirtualDiskLayer, Ownership>> files;
 
-    private String _path;
+    private String path;
 
     /**
      * Initializes a new instance of the Disk class.
@@ -85,10 +86,10 @@ public final class Disk extends VirtualDisk {
      * @param access The access requested to the disk.
      */
     public Disk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
-        _path = path;
+        this.path = path;
         FileLocator fileLocator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(new DiskImageFile(fileLocator,
+        files = new ArrayList<>();
+        files.add(new Tuple<>(new DiskImageFile(fileLocator,
                 Utilities.getFileFromPath(path),
                 access),
                 Ownership.Dispose));
@@ -104,23 +105,23 @@ public final class Disk extends VirtualDisk {
      */
     public Disk(Stream stream, Ownership ownsStream) {
         if (stream instanceof FileStream) {
-            _path = ((FileStream) stream).getName();
+            path = ((FileStream) stream).getName();
         }
 
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
     }
 
     Disk(DiskImageFile file, Ownership ownsStream) throws IOException {
-        _files = new ArrayList<>();
-        boolean add = _files.add(new Tuple<>(file, ownsStream));
+        files = new ArrayList<>();
+        boolean add = files.add(new Tuple<>(file, ownsStream));
         resolveFileChain();
     }
 
     Disk(FileLocator layerLocator, String path, FileAccess access) throws IOException {
-        _path = path;
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(new DiskImageFile(layerLocator, path, access), Ownership.Dispose));
+        this.path = path;
+        files = new ArrayList<>();
+        files.add(new Tuple<>(new DiskImageFile(layerLocator, path, access), Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -129,7 +130,7 @@ public final class Disk extends VirtualDisk {
      * represent it.
      */
     public Geometry getBiosGeometry() {
-        VirtualDiskLayer item1 = _files.get(_files.size() - 1).getItem1();
+        VirtualDiskLayer item1 = files.get(files.size() - 1).getItem1();
         if (item1 instanceof DiskImageFile) {
             return ((DiskImageFile) item1).getBiosGeometry();
         } else {
@@ -141,7 +142,7 @@ public final class Disk extends VirtualDisk {
      * Gets the capacity of this disk (in bytes).
      */
     public long getCapacity() {
-        return _files.get(0).getItem1().getCapacity();
+        return files.get(0).getItem1().getCapacity();
     }
 
     /**
@@ -152,16 +153,16 @@ public final class Disk extends VirtualDisk {
      * stream position before accessing the stream.
      */
     public SparseStream getContent() {
-        if (_content == null) {
+        if (content == null) {
             SparseStream stream = null;
-            for (int i = _files.size() - 1; i >= 0; --i) {
-                stream = _files.get(i).getItem1().openContent(stream, Ownership.Dispose);
+            for (int i = files.size() - 1; i >= 0; --i) {
+                stream = files.get(i).getItem1().openContent(stream, Ownership.Dispose);
             }
 
-            _content = stream;
+            content = stream;
         }
 
-        return _content;
+        return content;
     }
 
     /**
@@ -177,28 +178,28 @@ public final class Disk extends VirtualDisk {
      * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
-        return DiskFactory.makeDiskTypeInfo(((DiskImageFile) _files.get(_files.size() - 1).getItem1()).getCreateType());
+        return DiskFactory.makeDiskTypeInfo(((DiskImageFile) files.get(files.size() - 1).getItem1()).getCreateType());
     }
 
     /**
      * Gets the Geometry of this disk.
      */
     public Geometry getGeometry() {
-        return _files.get(_files.size() - 1).getItem1().getGeometry();
+        return files.get(files.size() - 1).getItem1().getGeometry();
     }
 
     /**
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return _files.stream().map(file -> file.getItem1()).collect(Collectors.toList());
+        return files.stream().map(file -> file.getItem1()).collect(Collectors.toList());
     }
 
     /**
      * Gets the links that make up the disk (type-safe version of Layers).
      */
     public List<DiskImageFile> getLinks() {
-        return _files.stream().map(file -> (DiskImageFile) file.getItem1()).collect(Collectors.toList());
+        return files.stream().map(file -> (DiskImageFile) file.getItem1()).collect(Collectors.toList());
     }
 
     /**
@@ -206,7 +207,7 @@ public final class Disk extends VirtualDisk {
      * available individually, such as DiskType and Capacity.
      */
     public VirtualDiskParameters getParameters() {
-        DiskImageFile file = (DiskImageFile) _files.get(_files.size() - 1).getItem1();
+        DiskImageFile file = (DiskImageFile) files.get(files.size() - 1).getItem1();
 
         VirtualDiskParameters diskParams = new VirtualDiskParameters();
         diskParams.setDiskType(getDiskClass());
@@ -364,7 +365,7 @@ public final class Disk extends VirtualDisk {
      * @return The newly created disk.
      */
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
-        return initializeDifferencing(fileSystem, path, diffDiskCreateType(_files.get(0).getItem1()), _path);
+        return initializeDifferencing(fileSystem, path, diffDiskCreateType(files.get(0).getItem1()), this.path);
     }
 
     /**
@@ -374,10 +375,10 @@ public final class Disk extends VirtualDisk {
      * @return The newly created disk.
      */
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
-        VirtualDiskLayer firstLayer = _files.get(0).getItem1();
+        VirtualDiskLayer firstLayer = files.get(0).getItem1();
         return initializeDifferencing(path,
                                       diffDiskCreateType(firstLayer),
-                                      firstLayer.getRelativeFileLocator().getFullPath(_path));
+                                      firstLayer.getRelativeFileLocator().getFullPath(this.path));
     }
 
     static Disk initialize(FileLocator fileLocator, String path, DiskParameters parameters) throws IOException {
@@ -389,11 +390,11 @@ public final class Disk extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_content != null) {
-                _content.close();
-                _content = null;
+            if (content != null) {
+                content.close();
+                content = null;
 
-                for (Tuple<VirtualDiskLayer, Ownership> file : _files) {
+                for (Tuple<VirtualDiskLayer, Ownership> file : files) {
                     if (file.getItem2() == Ownership.Dispose) {
                         file.getItem1().close();
                     }
@@ -425,7 +426,7 @@ public final class Disk extends VirtualDisk {
     }
 
     private void resolveFileChain() throws IOException {
-        VirtualDiskLayer file = _files.get(_files.size() - 1).getItem1();
+        VirtualDiskLayer file = files.get(files.size() - 1).getItem1();
 
         while (file.needsParent()) {
             boolean foundParent = false;
@@ -434,7 +435,7 @@ public final class Disk extends VirtualDisk {
             for (String posParent : file.getParentLocations()) {
                 if (locator.exists(posParent)) {
                     file = openDiskLayer(file.getRelativeFileLocator(), posParent, FileAccess.Read);
-                    _files.add(new Tuple<>(file, Ownership.Dispose));
+                    files.add(new Tuple<>(file, Ownership.Dispose));
                     foundParent = true;
                     break;
                 }

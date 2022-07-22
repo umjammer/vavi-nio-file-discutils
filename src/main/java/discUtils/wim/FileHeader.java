@@ -29,56 +29,57 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileHeader {
-    public int BootIndex;
 
-    public ShortResourceHeader BootMetaData;
+    public int bootIndex;
 
-    public int CompressionSize;
+    public ShortResourceHeader bootMetaData;
 
-    public EnumSet<FileFlags> Flags;
+    public int compressionSize;
 
-    public int HeaderSize;
+    public EnumSet<FileFlags> flags;
 
-    public int ImageCount;
+    public int headerSize;
 
-    public ShortResourceHeader IntegrityHeader;
+    public int imageCount;
 
-    public ShortResourceHeader OffsetTableHeader;
+    public ShortResourceHeader integrityHeader;
 
-    public short PartNumber;
+    public ShortResourceHeader offsetTableHeader;
 
-    public String Tag;
+    public short partNumber;
 
-    public short TotalParts;
+    public String tag;
 
-    public int Version;
+    public short totalParts;
 
-    public UUID WimGuid;
+    public int version;
 
-    public ShortResourceHeader XmlDataHeader;
+    public UUID wimGuid;
+
+    public ShortResourceHeader xmlDataHeader;
 
     public void read(byte[] buffer, int offset) {
-        Tag = EndianUtilities.bytesToString(buffer, offset, 8);
-        HeaderSize = EndianUtilities.toUInt32LittleEndian(buffer, 8);
-        Version = EndianUtilities.toUInt32LittleEndian(buffer, 12);
-        Flags = FileFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 16));
-        CompressionSize = EndianUtilities.toInt32LittleEndian(buffer, 20);
-        WimGuid = EndianUtilities.toGuidLittleEndian(buffer, 24);
-        PartNumber = EndianUtilities.toUInt16LittleEndian(buffer, 40);
-        TotalParts = EndianUtilities.toUInt16LittleEndian(buffer, 42);
-        ImageCount = EndianUtilities.toUInt32LittleEndian(buffer, 44);
-        OffsetTableHeader = new ShortResourceHeader();
-        OffsetTableHeader.read(buffer, 48);
-        XmlDataHeader = new ShortResourceHeader();
-        XmlDataHeader.read(buffer, 72);
-        BootMetaData = new ShortResourceHeader();
-        BootMetaData.read(buffer, 96);
-        BootIndex = EndianUtilities.toUInt32LittleEndian(buffer, 120);
-        IntegrityHeader = new ShortResourceHeader();
-        IntegrityHeader.read(buffer, 124);
+        tag = EndianUtilities.bytesToString(buffer, offset, 8);
+        headerSize = EndianUtilities.toUInt32LittleEndian(buffer, 8);
+        version = EndianUtilities.toUInt32LittleEndian(buffer, 12);
+        flags = FileFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 16));
+        compressionSize = EndianUtilities.toInt32LittleEndian(buffer, 20);
+        wimGuid = EndianUtilities.toGuidLittleEndian(buffer, 24);
+        partNumber = EndianUtilities.toUInt16LittleEndian(buffer, 40);
+        totalParts = EndianUtilities.toUInt16LittleEndian(buffer, 42);
+        imageCount = EndianUtilities.toUInt32LittleEndian(buffer, 44);
+        offsetTableHeader = new ShortResourceHeader();
+        offsetTableHeader.read(buffer, 48);
+        xmlDataHeader = new ShortResourceHeader();
+        xmlDataHeader.read(buffer, 72);
+        bootMetaData = new ShortResourceHeader();
+        bootMetaData.read(buffer, 96);
+        bootIndex = EndianUtilities.toUInt32LittleEndian(buffer, 120);
+        integrityHeader = new ShortResourceHeader();
+        integrityHeader.read(buffer, 124);
     }
 
     public boolean isValid() {
-        return Tag.equals("MSWIM\0\0\0") && HeaderSize >= 148;
+        return tag.equals("MSWIM\0\0\0") && headerSize >= 148;
     }
 }

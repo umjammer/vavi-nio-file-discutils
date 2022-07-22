@@ -29,19 +29,20 @@ import java.util.Random;
  * common file system options. Not all options are honoured by all file systems.
  */
 public class DiscFileSystemOptions {
+
     /**
      * Gets or sets the random number generator the file system should use. This
      * option is normally {@code null} , which is fine for most purposes. Use this
      * option when you need to finely control the filesystem for reproducibility of
      * behaviour (for example in a test harness).
      */
-    private Random _randomNumberGenerator;
+    private Random randomNumberGenerator;
 
     public Random getRandomNumberGenerator() {
-        return _randomNumberGenerator;
+        return randomNumberGenerator;
     }
 
     public void setRandomNumberGenerator(Random value) {
-        _randomNumberGenerator = value;
+        randomNumberGenerator = value;
     }
 }

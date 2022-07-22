@@ -75,18 +75,18 @@ public final class RpcException extends IOException {
 
     private static String generateMessage(RpcReplyHeader reply) {
         if (reply.Status == RpcReplyStatus.Accepted) {
-            switch (reply.AcceptReply.AcceptStatus) {
+            switch (reply.acceptReply.AcceptStatus) {
             case Success:
                 return "RPC success";
             case ProgramUnavailable:
                 return "RPC program unavailable";
             case ProgramVersionMismatch:
-                if (reply.AcceptReply.MismatchInfo.Low == reply.AcceptReply.MismatchInfo.High) {
-                    return "RPC program version mismatch, server supports version " + reply.AcceptReply.MismatchInfo.Low;
+                if (reply.acceptReply.mismatchInfo.low == reply.acceptReply.mismatchInfo.high) {
+                    return "RPC program version mismatch, server supports version " + reply.acceptReply.mismatchInfo.low;
                 }
 
-                return "RPC program version mismatch, server supports versions " + reply.AcceptReply.MismatchInfo.Low +
-                       " through " + reply.AcceptReply.MismatchInfo.High;
+                return "RPC program version mismatch, server supports versions " + reply.acceptReply.mismatchInfo.low +
+                       " through " + reply.acceptReply.mismatchInfo.high;
             case ProcedureUnavailable:
                 return "RPC procedure unavailable";
             case GarbageArguments:
@@ -97,8 +97,8 @@ public final class RpcException extends IOException {
             }
         }
 
-        if (reply.RejectedReply.Status == RpcRejectedStatus.AuthError) {
-            switch (reply.RejectedReply.AuthenticationStatus) {
+        if (reply.rejectedReply.status == RpcRejectedStatus.AuthError) {
+            switch (reply.rejectedReply.authenticationStatus) {
             case BadCredentials:
                 return "RPC authentication credentials bad";
             case RejectedCredentials:
@@ -114,10 +114,10 @@ public final class RpcException extends IOException {
             }
         }
 
-        if (reply.RejectedReply.MismatchInfo != null) {
+        if (reply.rejectedReply.mismatchInfo != null) {
             return String.format("RPC protocol version mismatch, server supports versions %d through %d",
-                                 reply.RejectedReply.MismatchInfo.Low,
-                                 reply.RejectedReply.MismatchInfo.High);
+                                 reply.rejectedReply.mismatchInfo.low,
+                                 reply.rejectedReply.mismatchInfo.high);
         }
 
         return "RPC protocol version mismatch, server didn't indicate supported versions";

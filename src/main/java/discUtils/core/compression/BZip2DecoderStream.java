@@ -40,29 +40,30 @@ import dotnet4j.io.Stream;
  * Implementation of a BZip2 decoder.
  */
 public final class BZip2DecoderStream extends Stream {
-    private final BitStream _bitstream;
 
-    private final byte[] _blockBuffer;
+    private final BitStream bitStream;
 
-    private int _blockCrc;
+    private final byte[] blockBuffer;
 
-    private final BZip2BlockDecoder _blockDecoder;
+    private int blockCrc;
 
-    private Crc32 _calcBlockCrc;
+    private final BZip2BlockDecoder blockDecoder;
 
-    private int _calcCompoundCrc;
+    private Crc32 calcBlockCrc;
 
-    private int _compoundCrc;
+    private int calcCompoundCrc;
 
-    private Stream _compressedStream;
+    private int compoundCrc;
 
-    private boolean _eof;
+    private Stream compressedStream;
 
-    private final Ownership _ownsCompressed;
+    private boolean eof;
 
-    private long _position;
+    private final Ownership ownsCompressed;
 
-    private BZip2RleStream _rleStream;
+    private long position;
+
+    private BZip2RleStream rleStream;
 
     /**
      * Initializes a new instance of the BZip2DecoderStream class.
@@ -71,34 +72,34 @@ public final class BZip2DecoderStream extends Stream {
      * @param ownsStream Whether ownership of stream passes to the new instance.
      */
     public BZip2DecoderStream(Stream stream, Ownership ownsStream) {
-        _compressedStream = stream;
-        _ownsCompressed = ownsStream;
+        compressedStream = stream;
+        ownsCompressed = ownsStream;
 
-        _bitstream = new BigEndianBitStream(new BufferedStream(stream));
+        bitStream = new BigEndianBitStream(new BufferedStream(stream));
 
         // The Magic BZh
         byte[] magic = new byte[3];
-        magic[0] = (byte) _bitstream.read(8);
-        magic[1] = (byte) _bitstream.read(8);
-        magic[2] = (byte) _bitstream.read(8);
+        magic[0] = (byte) bitStream.read(8);
+        magic[1] = (byte) bitStream.read(8);
+        magic[2] = (byte) bitStream.read(8);
         if (magic[0] != 0x42 || magic[1] != 0x5A || magic[2] != 0x68) {
             throw new dotnet4j.io.IOException("Bad magic at start of stream");
         }
 
         // The size of the decompression blocks in multiples of 100,000
-        int blockSize = _bitstream.read(8) - 0x30;
+        int blockSize = bitStream.read(8) - 0x30;
         if (blockSize < 1 || blockSize > 9) {
             throw new dotnet4j.io.IOException("Unexpected block size in header: " + blockSize);
         }
 
         blockSize *= 100000;
 
-        _rleStream = new BZip2RleStream();
-        _blockDecoder = new BZip2BlockDecoder(blockSize);
-        _blockBuffer = new byte[blockSize];
+        rleStream = new BZip2RleStream();
+        blockDecoder = new BZip2BlockDecoder(blockSize);
+        blockBuffer = new byte[blockSize];
 
         if (readBlock() == 0) {
-            _eof = true;
+            eof = true;
         }
     }
 
@@ -134,7 +135,7 @@ public final class BZip2DecoderStream extends Stream {
      * Gets and sets the current position within the stream.
      */
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
@@ -173,7 +174,7 @@ public final class BZip2DecoderStream extends Stream {
             throw new IllegalArgumentException("Count less than zero");
         }
 
-        if (_eof) {
+        if (eof) {
             return 0;
         }
 
@@ -181,45 +182,45 @@ public final class BZip2DecoderStream extends Stream {
             return 0;
         }
 
-        int numRead = _rleStream.read(buffer, offset, count);
+        int numRead = rleStream.read(buffer, offset, count);
         if (numRead == 0) {
             // If there was an existing block, check it's crc.
-            if (_calcBlockCrc != null) {
-                if (_blockCrc != _calcBlockCrc.getValue()) {
+            if (calcBlockCrc != null) {
+                if (blockCrc != calcBlockCrc.getValue()) {
                     throw new dotnet4j.io.IOException("Decompression failed - block CRC mismatch");
                 }
 
-                _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >>> 31)) ^ _blockCrc;
+                calcCompoundCrc = ((calcCompoundCrc << 1) | (calcCompoundCrc >>> 31)) ^ blockCrc;
             }
 
             // Read a new block (if any), if none - check the overall CRC before returning
             if (readBlock() == 0) {
-                _eof = true;
-                if (_calcCompoundCrc != _compoundCrc) {
+                eof = true;
+                if (calcCompoundCrc != compoundCrc) {
                     throw new dotnet4j.io.IOException("Decompression failed - compound CRC");
                 }
 
                 return 0;
             }
 
-            numRead = _rleStream.read(buffer, offset, count);
+            numRead = rleStream.read(buffer, offset, count);
         }
 
-        _calcBlockCrc.process(buffer, offset, numRead);
+        calcBlockCrc.process(buffer, offset, numRead);
         // Pre-read next block, so a client that knows the decompressed length will still
         // have the overall CRC calculated.
-        if (_rleStream.getAtEof()) {
+        if (rleStream.getAtEof()) {
             // If there was an existing block, check it's crc.
-            if (_calcBlockCrc != null) {
-                if (_blockCrc != _calcBlockCrc.getValue()) {
+            if (calcBlockCrc != null) {
+                if (blockCrc != calcBlockCrc.getValue()) {
                     throw new dotnet4j.io.IOException("Decompression failed - block CRC mismatch");
                 }
             }
 
-            _calcCompoundCrc = ((_calcCompoundCrc << 1) | (_calcCompoundCrc >>> 31)) ^ _blockCrc;
+            calcCompoundCrc = ((calcCompoundCrc << 1) | (calcCompoundCrc >>> 31)) ^ blockCrc;
             if (readBlock() == 0) {
-                _eof = true;
-                if (_calcCompoundCrc != _compoundCrc) {
+                eof = true;
+                if (calcCompoundCrc != compoundCrc) {
                     throw new dotnet4j.io.IOException("Decompression failed - compound CRC mismatch");
                 }
 
@@ -227,7 +228,7 @@ public final class BZip2DecoderStream extends Stream {
             }
         }
 
-        _position += numRead;
+        position += numRead;
         return numRead;
     }
 
@@ -266,29 +267,29 @@ public final class BZip2DecoderStream extends Stream {
      * Releases underlying resources.
      */
     public void close() throws IOException {
-        if (_compressedStream != null && _ownsCompressed == Ownership.Dispose) {
-            _compressedStream.close();
+        if (compressedStream != null && ownsCompressed == Ownership.Dispose) {
+            compressedStream.close();
         }
 
-        _compressedStream = null;
+        compressedStream = null;
 
-        if (_rleStream != null) {
-            _rleStream.close();
-            _rleStream = null;
+        if (rleStream != null) {
+            rleStream.close();
+            rleStream = null;
         }
     }
 
     private int readBlock() {
         long marker = readMarker();
         if (marker == 0x314159265359L) {
-            int blockSize = _blockDecoder.process(_bitstream, _blockBuffer, 0);
-            _rleStream.reset(_blockBuffer, 0, blockSize);
-            _blockCrc = _blockDecoder.getCrc();
-            _calcBlockCrc = new Crc32BigEndian(Crc32Algorithm.Common);
+            int blockSize = blockDecoder.process(bitStream, blockBuffer, 0);
+            rleStream.reset(blockBuffer, 0, blockSize);
+            blockCrc = blockDecoder.getCrc();
+            calcBlockCrc = new Crc32BigEndian(Crc32Algorithm.Common);
             return blockSize;
         }
         if (marker == 0x177245385090L) {
-            _compoundCrc = readUint();
+            compoundCrc = readUint();
             return 0;
         }
         throw new dotnet4j.io.IOException("Found invalid marker in stream");
@@ -298,7 +299,7 @@ public final class BZip2DecoderStream extends Stream {
         int val = 0;
 
         for (int i = 0; i < 4; ++i) {
-            val = (val << 8) | _bitstream.read(8);
+            val = (val << 8) | bitStream.read(8);
         }
 
         return val;
@@ -308,7 +309,7 @@ public final class BZip2DecoderStream extends Stream {
         long marker = 0;
 
         for (int i = 0; i < 6; ++i) {
-            marker = (marker << 8) | _bitstream.read(8);
+            marker = (marker << 8) | bitStream.read(8);
         }
 
         return marker;

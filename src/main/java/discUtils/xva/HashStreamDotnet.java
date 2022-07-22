@@ -31,77 +31,78 @@ import dotnet4j.io.Stream;
 
 
 public class HashStreamDotnet extends Stream {
-    private Stream _wrapped;
 
-    private Ownership _ownWrapped;
+    private Stream wrapped;
 
-    private MessageDigest _hashAlg;
+    private Ownership ownWrapped;
 
-    private long _hashPos;
+    private MessageDigest hashAlg;
+
+    private long hashPos;
 
     public HashStreamDotnet(Stream wrapped, Ownership ownsWrapped, MessageDigest hashAlg) {
-        _wrapped = wrapped;
-        _ownWrapped = ownsWrapped;
-        _hashAlg = hashAlg;
+        this.wrapped = wrapped;
+        ownWrapped = ownsWrapped;
+        this.hashAlg = hashAlg;
     }
 
     public boolean canRead() {
-        return _wrapped.canRead();
+        return wrapped.canRead();
     }
 
     public boolean canSeek() {
-        return _wrapped.canSeek();
+        return wrapped.canSeek();
     }
 
     public boolean canWrite() {
-        return _wrapped.canWrite();
+        return wrapped.canWrite();
     }
 
     public long getLength() {
-        return _wrapped.getLength();
+        return wrapped.getLength();
     }
 
     public long getPosition() {
-        return _wrapped.getPosition();
+        return wrapped.getPosition();
     }
 
     public void setPosition(long value) {
-        _wrapped.setPosition(value);
+        wrapped.setPosition(value);
     }
 
     public void flush() {
-        _wrapped.flush();
+        wrapped.flush();
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (getPosition() != _hashPos) {
+        if (getPosition() != hashPos) {
             throw new UnsupportedOperationException("Reads must be contiguous");
         }
 
-        int numRead = _wrapped.read(buffer, offset, count);
+        int numRead = wrapped.read(buffer, offset, count);
 
-        _hashAlg.update(buffer, offset, numRead);
-        _hashPos += numRead;
+        hashAlg.update(buffer, offset, numRead);
+        hashPos += numRead;
 
         return numRead;
     }
 
     public long seek(long offset, SeekOrigin origin) {
-        return _wrapped.seek(offset, origin);
+        return wrapped.seek(offset, origin);
     }
 
     public void setLength(long value) {
-        _wrapped.setLength(value);
+        wrapped.setLength(value);
     }
 
     public void write(byte[] buffer, int offset, int count) {
-        _wrapped.write(buffer, offset, count);
+        wrapped.write(buffer, offset, count);
     }
 
     public void close() throws IOException {
-        if (_ownWrapped == Ownership.Dispose && _wrapped != null) {
-            _wrapped.close();
-            _wrapped = null;
+        if (ownWrapped == Ownership.Dispose && wrapped != null) {
+            wrapped.close();
+            wrapped = null;
         }
     }
 }

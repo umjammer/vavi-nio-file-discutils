@@ -26,55 +26,56 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class CompressionResourceHeader {
-    private int _dataSize;
+
+    private int dataSize;
 
     public int getDataSize() {
-        return _dataSize;
+        return dataSize;
     }
 
     public void setDataSize(int value) {
-        _dataSize = value;
+        dataSize = value;
     }
 
-    private int _flags;
+    private int flags;
 
     public int getFlags() {
-        return _flags;
+        return flags;
     }
 
     public void setFlags(int value) {
-        _flags = value;
+        flags = value;
     }
 
-    private int _headerSize;
+    private int headerSize;
 
     public int getHeaderSize() {
-        return _headerSize;
+        return headerSize;
     }
 
     public void setHeaderSize(int value) {
-        _headerSize = value;
+        headerSize = value;
     }
 
     public static int getSize() {
         return 16;
     }
 
-    private int _totalSize;
+    private int totalSize;
 
     public int getTotalSize() {
-        return _totalSize;
+        return totalSize;
     }
 
     public void setTotalSize(int value) {
-        _totalSize = value;
+        totalSize = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setHeaderSize(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        setTotalSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        setDataSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 8));
-        setFlags(EndianUtilities.toUInt32BigEndian(buffer, offset + 12));
+        headerSize = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        totalSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        dataSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
 
         return getSize();
     }

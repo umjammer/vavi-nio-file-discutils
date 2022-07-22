@@ -43,27 +43,28 @@ import discUtils.streams.util.StreamUtilities;
  * information.
  */
 public final class FileNameAttribute extends GenericAttribute {
-    private final FileNameRecord _fnr;
+
+    private final FileNameRecord fnr;
 
     public FileNameAttribute(INtfsContext context, AttributeRecord record) {
         super(context, record);
         byte[] content = StreamUtilities.readAll(getContent());
-        _fnr = new FileNameRecord();
-        _fnr.readFrom(content, 0);
+        fnr = new FileNameRecord();
+        fnr.readFrom(content, 0);
     }
 
     /**
      * Gets the amount of disk space allocated for the file.
      */
     public long getAllocatedSize() {
-        return _fnr._allocatedSize;
+        return fnr.allocatedSize;
     }
 
     /**
      * Gets the creation time of the file.
      */
     public long getCreationTime() {
-        return _fnr._creationTime;
+        return fnr.creationTime;
     }
 
     /**
@@ -71,49 +72,49 @@ public final class FileNameAttribute extends GenericAttribute {
      * nature of the file.
      */
     public long getExtendedAttributesSizeOrReparsePointTag() {
-        return _fnr._eaSizeOrReparsePointTag;
+        return fnr.eaSizeOrReparsePointTag;
     }
 
     /**
      * Gets the attributes of the file, as stored by NTFS.
      */
     public EnumSet<NtfsFileAttributes> getFileAttributes() {
-        return FileAttributeFlags.cast(NtfsFileAttributes.class, _fnr._flags);
+        return FileAttributeFlags.cast(NtfsFileAttributes.class, fnr.flags);
     }
 
     /**
      * Gets the name of the file within the parent directory.
      */
     public String getFileName() {
-        return _fnr._fileName;
+        return fnr.fileName;
     }
 
     /**
      * Gets the namespace of the FileName property.
      */
     public NtfsNamespace getFileNameNamespace() {
-        return FileNameNamespace.cast(NtfsNamespace.class, _fnr._fileNameNamespace);
+        return FileNameNamespace.cast(NtfsNamespace.class, fnr.fileNameNamespace);
     }
 
     /**
      * Gets the last access time of the file.
      */
     public long getLastAccessTime() {
-        return _fnr._lastAccessTime;
+        return fnr.lastAccessTime;
     }
 
     /**
      * Gets the last time the Master File Table entry for the file was changed.
      */
     public long getMasterFileTableChangedTime() {
-        return _fnr._mftChangedTime;
+        return fnr.mftChangedTime;
     }
 
     /**
      * Gets the modification time of the file.
      */
     public long getModificationTime() {
-        return _fnr._modificationTime;
+        return fnr.modificationTime;
     }
 
     /**
@@ -123,14 +124,14 @@ public final class FileNameAttribute extends GenericAttribute {
      * provides the link back to the directory.
      */
     public MasterFileTableReference getParentDirectory() {
-        return new MasterFileTableReference(_fnr._parentDirectory);
+        return new MasterFileTableReference(fnr.parentDirectory);
     }
 
     /**
      * Gets the amount of data stored in the file.
      */
     public long getRealSize() {
-        return _fnr._realSize;
+        return fnr.realSize;
     }
 
 }

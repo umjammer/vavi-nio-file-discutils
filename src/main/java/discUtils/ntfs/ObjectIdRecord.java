@@ -29,39 +29,40 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ObjectIdRecord implements IByteArraySerializable {
-    public UUID BirthDomainId;
 
-    public UUID BirthObjectId;
+    public UUID birthDomainId;
 
-    public UUID BirthVolumeId;
+    public UUID birthObjectId;
 
-    public FileRecordReference MftReference;
+    public UUID birthVolumeId;
+
+    public FileRecordReference mftReference;
 
     public int size() {
         return 0x38;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        MftReference = new FileRecordReference();
-        MftReference.readFrom(buffer, offset);
-        BirthVolumeId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x08);
-        BirthObjectId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x18);
-        BirthDomainId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x28);
+        mftReference = new FileRecordReference();
+        mftReference.readFrom(buffer, offset);
+        birthVolumeId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x08);
+        birthObjectId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x18);
+        birthDomainId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x28);
         return 0x38;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        MftReference.writeTo(buffer, offset);
-        EndianUtilities.writeBytesLittleEndian(BirthVolumeId, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(BirthObjectId, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(BirthDomainId, buffer, offset + 0x28);
+        mftReference.writeTo(buffer, offset);
+        EndianUtilities.writeBytesLittleEndian(birthVolumeId, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(birthObjectId, buffer, offset + 0x18);
+        EndianUtilities.writeBytesLittleEndian(birthDomainId, buffer, offset + 0x28);
     }
 
     public String toString() {
         return String.format("[Data-MftRef:%s,BirthVolId:%s,BirthObjId:%s,BirthDomId:%s]",
-                             MftReference,
-                             BirthVolumeId,
-                             BirthObjectId,
-                             BirthDomainId);
+                mftReference,
+                birthVolumeId,
+                birthObjectId,
+                birthDomainId);
     }
 }

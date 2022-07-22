@@ -31,18 +31,17 @@ import discUtils.iso9660.susp.SystemUseEntry;
 
 public final class RockRidgeExtension extends SuspExtension {
     public RockRidgeExtension(String identifier) {
-        __Identifier = identifier;
+        this.identifier = identifier;
     }
 
-    private String __Identifier;
+    private String identifier;
 
     public String getIdentifier() {
-        return __Identifier;
+        return identifier;
     }
 
     public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
-        String __dummyScrutVar0 = name;
-        switch (__dummyScrutVar0) {
+        switch (name) {
         case "PX":
             return new PosixFileInfoSystemUseEntry(name, length, version, data, offset);
         case "NM":

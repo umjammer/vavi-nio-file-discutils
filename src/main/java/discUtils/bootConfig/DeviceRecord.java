@@ -26,26 +26,27 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class DeviceRecord {
-    private int _length;
+
+    private int length;
 
     public int getLength() {
-        return _length;
+        return length;
     }
 
     public void setLength(int value) {
-        _length = value;
+        length = value;
     }
 
     public abstract int getSize();
 
-    private int _type;
+    private int type;
 
     public int getType() {
-        return _type;
+        return type;
     }
 
     public void setType(int value) {
-        _type = value;
+        type = value;
     }
 
     public static DeviceRecord parse(byte[] data, int offset) {

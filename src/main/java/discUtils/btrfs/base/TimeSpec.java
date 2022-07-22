@@ -28,36 +28,37 @@ import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
 
 public class TimeSpec implements IByteArraySerializable {
+
     public static final int Length = 0xc;
 
     /**
     * Number of seconds since 1970-01-01T00:00:00Z.
     */
-    private long _seconds;
+    private long seconds;
 
     public long getSeconds() {
-        return _seconds;
+        return seconds;
     }
 
     public void setSeconds(long value) {
-        _seconds = value;
+        seconds = value;
     }
 
     /**
      * Number of nanoseconds since the beginning of the second.
      */
-    private int _nanoseconds;
+    private int nanoseconds;
 
     public int getNanoseconds() {
-        return _nanoseconds;
+        return nanoseconds;
     }
 
     public void setNanoseconds(int value) {
-        _nanoseconds = value;
+        nanoseconds = value;
     }
 
     public long getValue() {
-        return Instant.ofEpochSecond(getSeconds(), getNanoseconds()).toEpochMilli();
+        return Instant.ofEpochSecond(seconds, nanoseconds).toEpochMilli();
     }
 
     public int size() {
@@ -65,12 +66,12 @@ public class TimeSpec implements IByteArraySerializable {
     }
 
     public long getDateTime() {
-        return Instant.ofEpochSecond(getSeconds(), getNanoseconds()).toEpochMilli();
+        return Instant.ofEpochSecond(seconds, nanoseconds).toEpochMilli();
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setSeconds(EndianUtilities.toInt64LittleEndian(buffer, offset));
-        setNanoseconds(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8));
+        seconds = EndianUtilities.toInt64LittleEndian(buffer, offset);
+        nanoseconds = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8);
         return size();
     }
 

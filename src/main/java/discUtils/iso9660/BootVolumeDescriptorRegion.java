@@ -23,16 +23,17 @@
 package discUtils.iso9660;
 
 public class BootVolumeDescriptorRegion extends VolumeDescriptorDiskRegion {
-    private final BootVolumeDescriptor _descriptor;
+
+    private final BootVolumeDescriptor descriptor;
 
     public BootVolumeDescriptorRegion(BootVolumeDescriptor descriptor, long start) {
         super(start);
-        _descriptor = descriptor;
+        this.descriptor = descriptor;
     }
 
     protected byte[] getBlockData() {
         byte[] buffer = new byte[IsoUtilities.SectorSize];
-        _descriptor.writeTo(buffer, 0);
+        descriptor.writeTo(buffer, 0);
         return buffer;
     }
 }

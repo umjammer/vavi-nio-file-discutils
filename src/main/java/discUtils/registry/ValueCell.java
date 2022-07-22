@@ -28,7 +28,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ValueCell extends Cell {
-    private EnumSet<ValueFlags> _flags = EnumSet.noneOf(ValueFlags.class);
+
+    private EnumSet<ValueFlags> flags = EnumSet.noneOf(ValueFlags.class);
 
     public ValueCell(String name) {
         this(-1);
@@ -40,44 +41,44 @@ public final class ValueCell extends Cell {
         setDataIndex(-1);
     }
 
-    private int _dataIndex;
+    private int dataIndex;
 
     public int getDataIndex() {
-        return _dataIndex;
+        return dataIndex;
     }
 
     public void setDataIndex(int value) {
-        _dataIndex = value;
+        dataIndex = value;
     }
 
-    private int _dataLength;
+    private int dataLength;
 
     public int getDataLength() {
-        return _dataLength;
+        return dataLength;
     }
 
     public void setDataLength(int value) {
-        _dataLength = value;
+        dataLength = value;
     }
 
-    private RegistryValueType _dataType = RegistryValueType.None;
+    private RegistryValueType dataType = RegistryValueType.None;
 
     public RegistryValueType getDataType() {
-        return _dataType;
+        return dataType;
     }
 
     public void setDataType(RegistryValueType value) {
-        _dataType = value;
+        dataType = value;
     }
 
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     public int size() {
@@ -86,12 +87,12 @@ public final class ValueCell extends Cell {
 
     public int readFrom(byte[] buffer, int offset) {
         int nameLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
-        setDataLength(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04));
-        setDataIndex(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08));
-        setDataType(RegistryValueType.values()[EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C)]);
-        _flags = ValueFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
-        if (_flags.contains(ValueFlags.Named)) {
-            setName(EndianUtilities.bytesToString(buffer, offset + 0x14, nameLen).replaceAll("(^\0*|\0*$)", ""));
+        dataLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
+        dataIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
+        dataType = RegistryValueType.values()[EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C)];
+        flags = ValueFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
+        if (flags.contains(ValueFlags.Named)) {
+            name = EndianUtilities.bytesToString(buffer, offset + 0x14, nameLen).replaceAll("(^\0*|\0*$)", "");
         }
 
         return 0x14 + nameLen;
@@ -99,25 +100,25 @@ public final class ValueCell extends Cell {
 
     public void writeTo(byte[] buffer, int offset) {
         int nameLen;
-        if (getName() == null || getName().isEmpty()) {
-            _flags.remove(ValueFlags.Named);
+        if (name == null || name.isEmpty()) {
+            flags.remove(ValueFlags.Named);
             nameLen = 0;
         } else {
-            _flags.add(ValueFlags.Named);
-            nameLen = getName().length();
+            flags.add(ValueFlags.Named);
+            nameLen = name.length();
         }
         EndianUtilities.stringToBytes("vk", buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian(nameLen, buffer, offset + 0x02);
-        EndianUtilities.writeBytesLittleEndian(getDataLength(), buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(getDataIndex(), buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(getDataType().ordinal(), buffer, offset + 0x0C);
-        EndianUtilities.writeBytesLittleEndian((short) ValueFlags.valueOf(_flags), buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian((short) nameLen, buffer, offset + 0x02);
+        EndianUtilities.writeBytesLittleEndian(dataLength, buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(dataIndex, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(dataType.ordinal(), buffer, offset + 0x0C);
+        EndianUtilities.writeBytesLittleEndian((short) ValueFlags.valueOf(flags), buffer, offset + 0x10);
         if (nameLen != 0) {
             EndianUtilities.stringToBytes(getName(), buffer, offset + 0x14, nameLen);
         }
     }
 
     public String toString() {
-        return "ValueCell{" + _name + ", " + _dataType + "}";
+        return "ValueCell{" + name + ", " + dataType + "}";
     }
 }

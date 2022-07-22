@@ -45,9 +45,10 @@ import discUtils.core.partitions.PartitionInfo;
  * logical volumes.
  */
 public class LogicalVolumeManager {
-    private List<PhysicalVolume> _devices;
 
-    private List<MetadataVolumeGroupSection> _volumeGroups;
+    private List<PhysicalVolume> devices;
+
+    private List<MetadataVolumeGroupSection> volumeGroups;
 
     /**
      * Initializes a new instance of the LogicalVolumeManager class.
@@ -55,28 +56,28 @@ public class LogicalVolumeManager {
      * @param disks The initial set of disks to manage.
      */
     public LogicalVolumeManager(List<VirtualDisk> disks) {
-        _devices = new ArrayList<>();
-        _volumeGroups = new ArrayList<>();
+        devices = new ArrayList<>();
+        volumeGroups = new ArrayList<>();
         for (VirtualDisk disk : disks) {
             if (disk.isPartitioned()) {
                 for (PartitionInfo partition : disk.getPartitions().getPartitions()) {
                     PhysicalVolume[] pv = new PhysicalVolume[1];
                     if (PhysicalVolume.tryOpen(partition, pv)) {
-                        _devices.add(pv[0]);
+                        devices.add(pv[0]);
                     }
                 }
             } else {
                 PhysicalVolume[] pv = new PhysicalVolume[1];
                 if (PhysicalVolume.tryOpen(disk.getContent(), pv)) {
-                    _devices.add(pv[0]);
+                    devices.add(pv[0]);
                 }
             }
         }
-        for (PhysicalVolume device : _devices) {
-            for (MetadataVolumeGroupSection vg : device.VgMetadata.ParsedMetadata.VolumeGroupSections) {
-                if (Collections.binarySearch(_volumeGroups, vg, Comparator.comparing(x -> x.Id)) < 0) {
-                    _volumeGroups.add(vg);
-Debug.println(Level.FINE, "Lg: " + vg.Id);
+        for (PhysicalVolume device : devices) {
+            for (MetadataVolumeGroupSection vg : device.vgMetadata.parsedMetadata.volumeGroupSections) {
+                if (Collections.binarySearch(volumeGroups, vg, Comparator.comparing(x -> x.id)) < 0) {
+                    volumeGroups.add(vg);
+Debug.println(Level.FINE, "Lg: " + vg.id);
                 }
             }
         }
@@ -104,43 +105,43 @@ Debug.println(Level.FINE, "Lg: " + vg.Id);
      */
     public List<LogicalVolumeInfo> getLogicalVolumes() {
         List<LogicalVolumeInfo> result = new ArrayList<>();
-        for (MetadataVolumeGroupSection vg : _volumeGroups) {
-            for (MetadataLogicalVolumeSection lv : vg.LogicalVolumes) {
+        for (MetadataVolumeGroupSection vg : volumeGroups) {
+            for (MetadataLogicalVolumeSection lv : vg.logicalVolumes) {
                 Map<String, PhysicalVolume> pvs = new HashMap<>();
                 boolean allPvsAvailable = true;
                 boolean segmentTypesSupported = true;
-                for (MetadataSegmentSection segment : lv.Segments) {
-                    if (segment.Type != SegmentType.Striped)
+                for (MetadataSegmentSection segment : lv.segments) {
+                    if (segment.type != SegmentType.Striped)
                         segmentTypesSupported = false;
-                    for (MetadataStripe stripe : segment.Stripes) {
-                        String pvAlias = stripe.PhysicalVolumeName;
+                    for (MetadataStripe stripe : segment.stripes) {
+                        String pvAlias = stripe.physicalVolumeName;
                         if (!pvs.containsKey(pvAlias)) {
                             MetadataPhysicalVolumeSection pvm = getPhysicalVolumeMetadata(vg, pvAlias);
                             if (pvm == null) {
                                 allPvsAvailable = false;
                                 break;
                             }
-                            PhysicalVolume pv = getPhysicalVolume(pvm.Id);
+                            PhysicalVolume pv = getPhysicalVolume(pvm.id);
                             if (pv == null) {
                                 allPvsAvailable = false;
                                 break;
                             }
-                            pvs.put(pvm.Name, pv);
+                            pvs.put(pvm.name, pv);
                         }
                     }
                     if (!allPvsAvailable || !segmentTypesSupported)
                         break;
                 }
                 if (allPvsAvailable && segmentTypesSupported) {
-                    LogicalVolumeInfo lvi = new LogicalVolumeInfo(lv.Identity,
+                    LogicalVolumeInfo lvi = new LogicalVolumeInfo(lv.identity,
                                                                   null,
-                                                                  lv.open(pvs, vg.ExtentSize),
-                                                                  lv.getExtentCount() * vg.ExtentSize *
+                                                                  lv.open(pvs, vg.extentSize),
+                                                                  lv.getExtentCount() * vg.extentSize *
                                                                                                PhysicalVolume.SECTOR_SIZE,
                                                                   (byte) 0,
                                                                   discUtils.core.LogicalVolumeStatus.Healthy);
                     result.add(lvi);
-Debug.println(Level.FINE, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.ExtentSize * PhysicalVolume.SECTOR_SIZE);
+Debug.println(Level.FINE, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount() * vg.extentSize * PhysicalVolume.SECTOR_SIZE);
                 }
             }
         }
@@ -148,16 +149,16 @@ Debug.println(Level.FINE, "Lv: " + lvi.getIdentity() + ", " + lv.getExtentCount(
     }
 
     private PhysicalVolume getPhysicalVolume(String id) {
-        for (PhysicalVolume pv : _devices) {
-            if (pv.PvHeader.Uuid.equals(id))
+        for (PhysicalVolume pv : devices) {
+            if (pv.pvHeader.uuid.equals(id))
                 return pv;
         }
         return null;
     }
 
     private MetadataPhysicalVolumeSection getPhysicalVolumeMetadata(MetadataVolumeGroupSection vg, String name) {
-        for (MetadataPhysicalVolumeSection pv : vg.PhysicalVolumes) {
-            if (pv.Name.equals(name))
+        for (MetadataPhysicalVolumeSection pv : vg.physicalVolumes) {
+            if (pv.name.equals(name))
                 return pv;
         }
         return null;

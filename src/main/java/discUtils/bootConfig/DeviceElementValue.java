@@ -30,21 +30,22 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class DeviceElementValue extends ElementValue {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
-    private final UUID _parentObject;
+    private final UUID parentObject;
 
-    private final DeviceRecord _record;
+    private final DeviceRecord record;
 
     public DeviceElementValue() {
-        _parentObject = EMPTY;
+        parentObject = EMPTY;
         PartitionRecord record = new PartitionRecord();
         record.setType(5);
-        _record = record;
+        this.record = record;
     }
 
     public DeviceElementValue(UUID parentObject, PhysicalVolumeInfo pvi) {
-        _parentObject = parentObject;
+        this.parentObject = parentObject;
         PartitionRecord record = new PartitionRecord();
         record.setType(6);
         if (pvi.getVolumeType() == PhysicalVolumeType.BiosPartition) {
@@ -63,12 +64,12 @@ public class DeviceElementValue extends ElementValue {
             throw new IllegalArgumentException(String.format("Unknown how to convert volume type %s to a Device element",
                                                              pvi.getVolumeType()));
         }
-        _record = record;
+        this.record = record;
     }
 
     public DeviceElementValue(byte[] value) {
-        _parentObject = EndianUtilities.toGuidLittleEndian(value, 0x00);
-        _record = DeviceRecord.parse(value, 0x10);
+        parentObject = EndianUtilities.toGuidLittleEndian(value, 0x00);
+        record = DeviceRecord.parse(value, 0x10);
     }
 
     public ElementFormat getFormat() {
@@ -76,25 +77,25 @@ public class DeviceElementValue extends ElementValue {
     }
 
     public UUID getParentObject() {
-        return _parentObject;
+        return parentObject;
     }
 
     public String toString() {
-        if (!_parentObject.equals(EMPTY)) {
-            return _parentObject + ":" + _record;
+        if (!parentObject.equals(EMPTY)) {
+            return parentObject + ":" + record;
         }
 
-        if (_record != null) {
-            return _record.toString();
+        if (record != null) {
+            return record.toString();
         }
 
         return "<unknown>";
     }
 
     public byte[] getBytes() {
-        byte[] buffer = new byte[_record.getSize() + 0x10];
-        EndianUtilities.writeBytesLittleEndian(_parentObject, buffer, 0);
-        _record.getBytes(buffer, 0x10);
+        byte[] buffer = new byte[record.getSize() + 0x10];
+        EndianUtilities.writeBytesLittleEndian(parentObject, buffer, 0);
+        record.getBytes(buffer, 0x10);
         return buffer;
     }
 }

@@ -33,19 +33,20 @@ import discUtils.core.partitions.WellKnownPartitionType;
 
 
 public class UdifPartitionTable extends PartitionTable {
-    private final UdifBuffer _buffer;
 
-    private final Disk _disk;
+    private final UdifBuffer buffer;
 
-    private final List<PartitionInfo> _partitions;
+    private final Disk disk;
+
+    private final List<PartitionInfo> partitions;
 
     public UdifPartitionTable(Disk disk, UdifBuffer buffer) {
-        _buffer = buffer;
-        _partitions = new ArrayList<>();
-        _disk = disk;
-        for (CompressedBlock block : _buffer.getBlocks()) {
-            UdifPartitionInfo partition = new UdifPartitionInfo(_disk, block);
-            _partitions.add(partition);
+        this.buffer = buffer;
+        partitions = new ArrayList<>();
+        this.disk = disk;
+        for (CompressedBlock block : this.buffer.getBlocks()) {
+            UdifPartitionInfo partition = new UdifPartitionInfo(this.disk, block);
+            partitions.add(partition);
         }
     }
 
@@ -57,7 +58,7 @@ public class UdifPartitionTable extends PartitionTable {
      * Gets the partitions present on the disk.
      */
     public List<PartitionInfo> getPartitions() {
-        return Collections.unmodifiableList(_partitions);
+        return Collections.unmodifiableList(partitions);
     }
 
     public void delete(int index) {

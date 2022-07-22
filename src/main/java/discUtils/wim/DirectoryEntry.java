@@ -34,43 +34,44 @@ import dotnet4j.io.FileNotFoundException;
 
 
 public class DirectoryEntry {
-    public Map<String, AlternateStreamEntry> AlternateStreams;
 
-    public EnumSet<FileAttributes> Attributes;
+    public Map<String, AlternateStreamEntry> alternateStreams;
 
-    /** FILETIME raw data */
-    public long CreationTime;
-
-    public String FileName;
-
-    public int HardLink;
-
-    public byte[] Hash;
+    public EnumSet<FileAttributes> attributes;
 
     /** FILETIME raw data */
-    public long LastAccessTime;
+    public long creationTime;
+
+    public String fileName;
+
+    public int hardLink;
+
+    public byte[] hash;
 
     /** FILETIME raw data */
-    public long LastWriteTime;
+    public long lastAccessTime;
 
-    public long Length;
+    /** FILETIME raw data */
+    public long lastWriteTime;
 
-    public int ReparseTag;
+    public long length;
 
-    public int SecurityId;
+    public int reparseTag;
 
-    public String ShortName;
+    public int securityId;
 
-    public short StreamCount;
+    public String shortName;
 
-    public long SubdirOffset;
+    public short streamCount;
+
+    public long subdirOffset;
 
     public String getSearchName() {
-        if (FileName.indexOf('.') == -1) {
-            return FileName + ".";
+        if (fileName.indexOf('.') == -1) {
+            return fileName + ".";
         }
 
-        return FileName;
+        return fileName;
     }
 
     public static DirectoryEntry readFrom(DataReader reader) {
@@ -81,43 +82,43 @@ public class DirectoryEntry {
         }
 
         DirectoryEntry result = new DirectoryEntry();
-        result.Length = length;
-        result.Attributes = FileAttributes.valueOf(reader.readUInt32());
-        result.SecurityId = reader.readUInt32();
-        result.SubdirOffset = reader.readInt64();
+        result.length = length;
+        result.attributes = FileAttributes.valueOf(reader.readUInt32());
+        result.securityId = reader.readUInt32();
+        result.subdirOffset = reader.readInt64();
         reader.skip(16);
-        result.CreationTime = reader.readInt64();
-        result.LastAccessTime = reader.readInt64();
-        result.LastWriteTime = reader.readInt64();
-        result.Hash = reader.readBytes(20);
+        result.creationTime = reader.readInt64();
+        result.lastAccessTime = reader.readInt64();
+        result.lastWriteTime = reader.readInt64();
+        result.hash = reader.readBytes(20);
         reader.skip(4);
-        result.ReparseTag = reader.readUInt32();
-        result.HardLink = reader.readUInt32();
-        result.StreamCount = reader.readUInt16();
+        result.reparseTag = reader.readUInt32();
+        result.hardLink = reader.readUInt32();
+        result.streamCount = reader.readUInt16();
         int shortNameLength = reader.readUInt16();
         int fileNameLength = reader.readUInt16();
         if (fileNameLength > 0) {
-            result.FileName = new String(reader.readBytes(fileNameLength + 2), StandardCharsets.UTF_16LE).replaceFirst("\0*$",
+            result.fileName = new String(reader.readBytes(fileNameLength + 2), StandardCharsets.UTF_16LE).replaceFirst("\0*$",
                                                                                                                          "");
         } else {
-            result.FileName = "";
+            result.fileName = "";
         }
         if (shortNameLength > 0) {
-            result.ShortName = new String(reader.readBytes(shortNameLength + 2), StandardCharsets.UTF_16LE)
+            result.shortName = new String(reader.readBytes(shortNameLength + 2), StandardCharsets.UTF_16LE)
                     .replaceFirst("\0*$", "");
         } else {
-            result.ShortName = null;
+            result.shortName = null;
         }
         if (startPos + length > reader.getPosition()) {
             int toRead = (int) (startPos + length - reader.getPosition());
             reader.skip(toRead);
         }
 
-        if (result.StreamCount > 0) {
-            result.AlternateStreams = new HashMap<>();
-            for (int i = 0; i < result.StreamCount; ++i) {
+        if (result.streamCount > 0) {
+            result.alternateStreams = new HashMap<>();
+            for (int i = 0; i < result.streamCount; ++i) {
                 AlternateStreamEntry stream = AlternateStreamEntry.readFrom(reader);
-                result.AlternateStreams.put(stream.Name, stream);
+                result.alternateStreams.put(stream.name, stream);
             }
         }
 
@@ -126,14 +127,14 @@ public class DirectoryEntry {
 
     public byte[] getStreamHash(String streamName) {
         if (streamName != null && streamName.isEmpty()) {
-            if (!Utilities.isAllZeros(Hash, 0, 20)) {
-                return Hash;
+            if (!Utilities.isAllZeros(hash, 0, 20)) {
+                return hash;
             }
         }
 
-        if (AlternateStreams != null && AlternateStreams.containsKey(streamName)) {
-            AlternateStreamEntry streamEntry = AlternateStreams.get(streamName);
-            return streamEntry.Hash;
+        if (alternateStreams != null && alternateStreams.containsKey(streamName)) {
+            AlternateStreamEntry streamEntry = alternateStreams.get(streamName);
+            return streamEntry.hash;
         }
 
         return new byte[20];
@@ -141,14 +142,14 @@ public class DirectoryEntry {
 
     public long getLength(String streamName) {
         if (streamName != null && streamName.isEmpty()) {
-            return Length;
+            return length;
         }
 
-        if (AlternateStreams != null && AlternateStreams.containsKey(streamName)) {
-            AlternateStreamEntry streamEntry = AlternateStreams.get(streamName);
-            return streamEntry.Length;
+        if (alternateStreams != null && alternateStreams.containsKey(streamName)) {
+            AlternateStreamEntry streamEntry = alternateStreams.get(streamName);
+            return streamEntry.length;
         }
 
-        throw new FileNotFoundException(String.format("No such alternate stream '%s' in file '%s'", streamName, FileName));
+        throw new FileNotFoundException(String.format("No such alternate stream '%s' in file '%s'", streamName, fileName));
     }
 }

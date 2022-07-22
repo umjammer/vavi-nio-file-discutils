@@ -24,6 +24,7 @@ package discUtils.nfs;
 
 
 public final class Nfs3FileSystemInfo {
+
     public Nfs3FileSystemInfo(XdrDataReader reader) {
         setReadMaxBytes(reader.readUInt32());
         setReadPreferredBytes(reader.readUInt32());
@@ -113,14 +114,14 @@ public final class Nfs3FileSystemInfo {
      * the same as rtmax unless there is a clear benefit in
      * performance or efficiency.
      */
-    private int __ReadPreferredBytes;
+    private int readPreferredBytes;
 
     public int getReadPreferredBytes() {
-        return __ReadPreferredBytes;
+        return readPreferredBytes;
     }
 
     public void setReadPreferredBytes(int value) {
-        __ReadPreferredBytes = value;
+        readPreferredBytes = value;
     }
 
     /**
@@ -188,16 +189,16 @@ public final class Nfs3FileSystemInfo {
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(getReadMaxBytes());
-        writer.write(getReadPreferredBytes());
-        writer.write(getReadMultipleSize());
-        writer.write(getWriteMaxBytes());
-        writer.write(getWritePreferredBytes());
-        writer.write(getWriteMultipleSize());
-        writer.write(getDirectoryPreferredBytes());
-        writer.write(getMaxFileSize());
-        getTimePrecision().write(writer);
-        writer.write(getFileSystemProperties().ordinal());
+        writer.write(readMaxBytes);
+        writer.write(readPreferredBytes);
+        writer.write(readMultipleSize);
+        writer.write(writeMaxBytes);
+        writer.write(writePreferredBytes);
+        writer.write(writeMultipleSize);
+        writer.write(directoryPreferredBytes);
+        writer.write(maxFileSize);
+        timePrecision.write(writer);
+        writer.write(fileSystemProperties.ordinal());
     }
 
     public boolean equals(Object obj) {
@@ -209,27 +210,27 @@ public final class Nfs3FileSystemInfo {
             return false;
         }
 
-        return other.getReadMaxBytes() == getReadMaxBytes() && other.getReadPreferredBytes() == getReadPreferredBytes() &&
-               other.getReadMultipleSize() == getReadMultipleSize() && other.getWriteMaxBytes() == getWriteMaxBytes() &&
-               other.getWritePreferredBytes() == getWritePreferredBytes() &&
-               other.getWriteMultipleSize() == getWriteMultipleSize() &&
-               other.getDirectoryPreferredBytes() == getDirectoryPreferredBytes() &&
-               other.getMaxFileSize() == getMaxFileSize() && other.getTimePrecision().equals(getTimePrecision()) &&
-               other.getFileSystemProperties() == getFileSystemProperties();
+        return other.readMaxBytes == readMaxBytes && other.readPreferredBytes == readPreferredBytes &&
+               other.readMultipleSize == readMultipleSize && other.writeMaxBytes == writeMaxBytes &&
+               other.writePreferredBytes == writePreferredBytes &&
+               other.writeMultipleSize == writeMultipleSize &&
+               other.directoryPreferredBytes == directoryPreferredBytes &&
+               other.maxFileSize == maxFileSize && other.timePrecision.equals(timePrecision) &&
+               other.fileSystemProperties == fileSystemProperties;
     }
 
     public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(
                 dotnet4j.util.compat.Utilities.getCombinedHashCode(
-                        getReadMaxBytes(),
-                        getReadPreferredBytes(),
-                        getReadMultipleSize(),
-                        getWriteMaxBytes(),
-                        getWritePreferredBytes(),
-                        getWriteMultipleSize(),
-                        getDirectoryPreferredBytes(),
-                        getMaxFileSize()),
-                getTimePrecision(),
-                getFileSystemProperties());
+                        readMaxBytes,
+                        readPreferredBytes,
+                        readMultipleSize,
+                        writeMaxBytes,
+                        writePreferredBytes,
+                        writeMultipleSize,
+                        directoryPreferredBytes,
+                        maxFileSize),
+                timePrecision,
+                fileSystemProperties);
     }
 }

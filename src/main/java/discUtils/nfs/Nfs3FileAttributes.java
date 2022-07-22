@@ -28,69 +28,70 @@ import discUtils.core.UnixFilePermissions;
 
 
 public final class Nfs3FileAttributes {
-    public Nfs3FileTime AccessTime;
 
-    public long BytesUsed;
+    public Nfs3FileTime accessTime;
 
-    public Nfs3FileTime ChangeTime;
+    public long bytesUsed;
 
-    public long FileId;
+    public Nfs3FileTime changeTime;
 
-    public long FileSystemId;
+    public long fileId;
 
-    public int Gid;
+    public long fileSystemId;
 
-    public int LinkCount;
+    public int gid;
 
-    public EnumSet<UnixFilePermissions> Mode = EnumSet.noneOf(UnixFilePermissions.class);
+    public int linkCount;
 
-    public Nfs3FileTime ModifyTime;
+    public EnumSet<UnixFilePermissions> mode = EnumSet.noneOf(UnixFilePermissions.class);
 
-    public int RdevMajor;
+    public Nfs3FileTime modifyTime;
 
-    public int RdevMinor;
+    public int rdevMajor;
 
-    public long Size;
+    public int rdevMinor;
 
-    public Nfs3FileType Type = Nfs3FileType.None;
+    public long size;
 
-    public int Uid;
+    public Nfs3FileType type = Nfs3FileType.None;
+
+    public int uid;
 
     public Nfs3FileAttributes() {
     }
 
     public Nfs3FileAttributes(XdrDataReader reader) {
-        Type = Nfs3FileType.valueOf(reader.readInt32());
-        Mode = UnixFilePermissions.valueOf(reader.readInt32());
-        LinkCount = reader.readUInt32();
-        Uid = reader.readUInt32();
-        Gid = reader.readUInt32();
-        Size = reader.readInt64();
-        BytesUsed = reader.readInt64();
-        RdevMajor = reader.readUInt32();
-        RdevMinor = reader.readUInt32();
-        FileSystemId = reader.readUInt64();
-        FileId = reader.readUInt64();
-        AccessTime = new Nfs3FileTime(reader);
-        ModifyTime = new Nfs3FileTime(reader);
-        ChangeTime = new Nfs3FileTime(reader);
+        type = Nfs3FileType.valueOf(reader.readInt32());
+        mode = UnixFilePermissions.valueOf(reader.readInt32());
+        linkCount = reader.readUInt32();
+        uid = reader.readUInt32();
+        gid = reader.readUInt32();
+        size = reader.readInt64();
+        bytesUsed = reader.readInt64();
+        rdevMajor = reader.readUInt32();
+        rdevMinor = reader.readUInt32();
+        fileSystemId = reader.readUInt64();
+        fileId = reader.readUInt64();
+        accessTime = new Nfs3FileTime(reader);
+        modifyTime = new Nfs3FileTime(reader);
+        changeTime = new Nfs3FileTime(reader);
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(Type.ordinal());
-        writer.write((int) UnixFilePermissions.valueOf(Mode));
-        writer.write(LinkCount);
-        writer.write(Uid);
-        writer.write(Gid);
-        writer.write(Size);
-        writer.write(BytesUsed);
-        writer.write(RdevMajor);
-        writer.write(RdevMinor);
-        writer.write(FileSystemId);
-        writer.write(FileId);
-        AccessTime.write(writer);
-        ModifyTime.write(writer);
-        ChangeTime.write(writer);
+        writer.write(type.ordinal());
+        writer.write((int) UnixFilePermissions.valueOf(mode));
+        writer.write(linkCount);
+        writer.write(uid);
+        writer.write(gid);
+        writer.write(size);
+        writer.write(bytesUsed);
+        writer.write(rdevMajor);
+        writer.write(rdevMinor);
+        writer.write(fileSystemId);
+        writer.write(fileId);
+        accessTime.write(writer);
+        modifyTime.write(writer);
+        changeTime.write(writer);
     }
 
     public boolean equals(Object obj) {
@@ -101,21 +102,21 @@ public final class Nfs3FileAttributes {
         if (other == null) {
             return false;
         }
-        return other.Type == Type && other.Mode.equals(Mode) && other.LinkCount == LinkCount && other.Uid == Uid &&
-               other.Gid == Gid && other.Size == Size && other.BytesUsed == BytesUsed && other.RdevMajor == RdevMajor &&
-               other.RdevMinor == RdevMinor && other.FileSystemId == FileSystemId && other.FileId == FileId &&
-               other.AccessTime.equals(AccessTime) && other.ModifyTime.equals(ModifyTime) &&
-               other.ChangeTime.equals(ChangeTime);
+        return other.type == type && other.mode.equals(mode) && other.linkCount == linkCount && other.uid == uid &&
+               other.gid == gid && other.size == size && other.bytesUsed == bytesUsed && other.rdevMajor == rdevMajor &&
+               other.rdevMinor == rdevMinor && other.fileSystemId == fileSystemId && other.fileId == fileId &&
+               other.accessTime.equals(accessTime) && other.modifyTime.equals(modifyTime) &&
+               other.changeTime.equals(changeTime);
     }
 
     public int hashCode() {
         return dotnet4j.util.compat.Utilities
-                .getCombinedHashCode(dotnet4j.util.compat.Utilities.getCombinedHashCode(Type, Mode, LinkCount, Uid, Gid, Size, BytesUsed, RdevMajor),
-                                  RdevMinor,
-                                  FileSystemId,
-                                  FileId,
-                                  AccessTime,
-                                  ModifyTime,
-                                  ChangeTime);
+                .getCombinedHashCode(dotnet4j.util.compat.Utilities.getCombinedHashCode(type, mode, linkCount, uid, gid, size, bytesUsed, rdevMajor),
+                        rdevMinor,
+                        fileSystemId,
+                        fileId,
+                        accessTime,
+                        modifyTime,
+                        changeTime);
     }
 }

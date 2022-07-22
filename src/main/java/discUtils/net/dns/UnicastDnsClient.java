@@ -54,11 +54,12 @@ import javax.naming.directory.InitialDirContext;
  * Implements the (conventional) unicast DNS protocol.
  */
 public final class UnicastDnsClient extends DnsClient {
+
     private static final Logger logger = Logger.getLogger(UnicastDnsClient.class.getName());
 
-    private short _nextTransId;
+    private short nextTransId;
 
-    private final InetSocketAddress[] _servers;
+    private final InetSocketAddress[] servers;
 
     private static final int maxRetries = 3;
 
@@ -83,8 +84,8 @@ public final class UnicastDnsClient extends DnsClient {
      * @param servers The servers to use (non-standard ports may be specified).
      */
     public UnicastDnsClient(InetSocketAddress... servers) {
-        _nextTransId = (short) random.nextInt();
-        _servers = servers;
+        nextTransId = (short) random.nextInt();
+        this.servers = servers;
     }
 
     /**
@@ -94,10 +95,10 @@ public final class UnicastDnsClient extends DnsClient {
      * @param servers The servers to use (the default DNS port, 53, is used).
      */
     public UnicastDnsClient(InetAddress... servers) {
-        _nextTransId = (short) random.nextInt();
-        _servers = new InetSocketAddress[servers.length];
+        nextTransId = (short) random.nextInt();
+        this.servers = new InetSocketAddress[servers.length];
         for (int i = 0; i < servers.length; ++i) {
-            _servers[i] = new InetSocketAddress(servers[i], 53);
+            this.servers[i] = new InetSocketAddress(servers[i], 53);
         }
     }
 
@@ -116,7 +117,7 @@ public final class UnicastDnsClient extends DnsClient {
      * @return The records returned by the DNS server, if any.
      */
     public ResourceRecord[] lookup(String name, RecordType type) {
-        short transactionId = _nextTransId++;
+        short transactionId = nextTransId++;
         String normName = normalizeDomainName(name);
 
         try (DatagramChannel udpClient = DatagramChannel.open()) {
@@ -136,7 +137,7 @@ public final class UnicastDnsClient extends DnsClient {
 
             byte[] msgBytes = writer.getBytes();
 
-            for (InetSocketAddress server : _servers) {
+            for (InetSocketAddress server : servers) {
                 udpClient.send(ByteBuffer.wrap(msgBytes), server);
             }
 
@@ -184,8 +185,8 @@ public final class UnicastDnsClient extends DnsClient {
                     env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
                     DirContext ictx = new InitialDirContext(env);
                     String dnsServers = (String) ictx.getEnvironment().get("java.naming.provider.url");
-                    for (String _address : dnsServers.split(" ")) {
-                        URI uri = URI.create(_address);
+                    for (String url : dnsServers.split(" ")) {
+                        URI uri = URI.create(url);
                         InetSocketAddress address = new InetSocketAddress(uri.getHost(), uri.getPort() == -1 ? 53 : uri.getPort());
                         if (!addresses.containsKey(address)) {
                             addresses.put(address, null);

@@ -50,29 +50,30 @@ import dotnet4j.io.Stream;
  * </ul>
  */
 final class RawClusterStream extends ClusterStream {
-    private final int _bytesPerCluster;
 
-    private final INtfsContext _context;
+    private final int bytesPerCluster;
 
-    private final CookedDataRuns _cookedRuns;
+    private final INtfsContext context;
 
-    private final Stream _fsStream;
+    private final CookedDataRuns cookedRuns;
 
-    private final boolean _isMft;
+    private final Stream fsStream;
+
+    private final boolean isMft;
 
     public RawClusterStream(INtfsContext context, CookedDataRuns cookedRuns, boolean isMft) {
-        _context = context;
-        _cookedRuns = cookedRuns;
-        _isMft = isMft;
+        this.context = context;
+        this.cookedRuns = cookedRuns;
+        this.isMft = isMft;
 
-        _fsStream = _context.getRawStream();
-        _bytesPerCluster = context.getBiosParameterBlock().getBytesPerCluster();
+        fsStream = this.context.getRawStream();
+        bytesPerCluster = context.getBiosParameterBlock().getBytesPerCluster();
     }
 
     public long getAllocatedClusterCount() {
         long total = 0;
-        for (int i = 0; i < _cookedRuns.getCount(); ++i) {
-            CookedDataRun run = _cookedRuns.get(i);
+        for (int i = 0; i < cookedRuns.getCount(); ++i) {
+            CookedDataRun run = cookedRuns.get(i);
             total += run.isSparse() ? 0 : run.getLength();
         }
 
@@ -83,9 +84,9 @@ final class RawClusterStream extends ClusterStream {
         Range lastVcnRange = null;
         List<Range> ranges = new ArrayList<>();
 
-        int runCount = _cookedRuns.getCount();
+        int runCount = cookedRuns.getCount();
         for (int i = 0; i < runCount; i++) {
-            CookedDataRun cookedRun = _cookedRuns.get(i);
+            CookedDataRun cookedRun = cookedRuns.get(i);
             if (!cookedRun.isSparse()) {
                 long startPos = cookedRun.getStartVcn();
                 if (lastVcnRange != null && lastVcnRange.getOffset() + lastVcnRange.getCount() == startPos) {
@@ -102,17 +103,17 @@ final class RawClusterStream extends ClusterStream {
     }
 
     public boolean isClusterStored(long vcn) {
-        int runIdx = _cookedRuns.findDataRun(vcn, 0);
-        return !_cookedRuns.get(runIdx).isSparse();
+        int runIdx = cookedRuns.findDataRun(vcn, 0);
+        return !cookedRuns.get(runIdx).isSparse();
     }
 
     public boolean areAllClustersStored(long vcn, int count) {
         int runIdx = 0;
         long focusVcn = vcn;
         while (focusVcn < vcn + count) {
-            runIdx = _cookedRuns.findDataRun(focusVcn, runIdx);
+            runIdx = cookedRuns.findDataRun(focusVcn, runIdx);
 
-            CookedDataRun run = _cookedRuns.get(runIdx);
+            CookedDataRun run = cookedRuns.get(runIdx);
             if (run.isSparse()) {
                 return false;
             }
@@ -124,16 +125,16 @@ final class RawClusterStream extends ClusterStream {
     }
 
     public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
-        long totalVirtualClusters = _cookedRuns.getNextVirtualCluster();
+        long totalVirtualClusters = cookedRuns.getNextVirtualCluster();
         if (totalVirtualClusters < numVirtualClusters) {
             NonResidentAttributeRecord realExtent = extent;
             if (realExtent == null) {
-                realExtent = _cookedRuns.getLast().getAttributeExtent();
+                realExtent = cookedRuns.getLast().getAttributeExtent();
             }
 
             DataRun newRun = new DataRun(0, numVirtualClusters - totalVirtualClusters, true);
             realExtent.getDataRuns().add(newRun);
-            _cookedRuns.append(newRun, extent);
+            cookedRuns.append(newRun, extent);
             realExtent.setLastVcn(numVirtualClusters - 1);
         }
 
@@ -143,22 +144,22 @@ final class RawClusterStream extends ClusterStream {
     }
 
     public void truncateToClusters(long numVirtualClusters) {
-        if (numVirtualClusters < _cookedRuns.getNextVirtualCluster()) {
-            releaseClusters(numVirtualClusters, (int) (_cookedRuns.getNextVirtualCluster() - numVirtualClusters));
+        if (numVirtualClusters < cookedRuns.getNextVirtualCluster()) {
+            releaseClusters(numVirtualClusters, (int) (cookedRuns.getNextVirtualCluster() - numVirtualClusters));
 
-            int runIdx = _cookedRuns.findDataRun(numVirtualClusters, 0);
+            int runIdx = cookedRuns.findDataRun(numVirtualClusters, 0);
 
-            if (numVirtualClusters != _cookedRuns.get(runIdx).getStartVcn()) {
-                _cookedRuns.splitRun(runIdx, numVirtualClusters);
+            if (numVirtualClusters != cookedRuns.get(runIdx).getStartVcn()) {
+                cookedRuns.splitRun(runIdx, numVirtualClusters);
                 runIdx++;
             }
 
-            _cookedRuns.truncateAt(runIdx);
+            cookedRuns.truncateAt(runIdx);
         }
     }
 
     public int allocateClusters(long startVcn, int count) {
-        if (startVcn + count > _cookedRuns.getNextVirtualCluster()) {
+        if (startVcn + count > cookedRuns.getNextVirtualCluster()) {
             throw new IOException("Attempt to allocate unknown clusters");
         }
 
@@ -167,42 +168,42 @@ final class RawClusterStream extends ClusterStream {
 
         long focus = startVcn;
         while (focus < startVcn + count) {
-            runIdx = _cookedRuns.findDataRun(focus, runIdx);
-            CookedDataRun run = _cookedRuns.get(runIdx);
+            runIdx = cookedRuns.findDataRun(focus, runIdx);
+            CookedDataRun run = cookedRuns.get(runIdx);
 
             if (run.isSparse()) {
                 if (focus != run.getStartVcn()) {
-                    _cookedRuns.splitRun(runIdx, focus);
+                    cookedRuns.splitRun(runIdx, focus);
                     runIdx++;
-                    run = _cookedRuns.get(runIdx);
+                    run = cookedRuns.get(runIdx);
                 }
 
                 long numClusters = Math.min(startVcn + count - focus, run.getLength());
                 if (numClusters != run.getLength()) {
-                    _cookedRuns.splitRun(runIdx, focus + numClusters);
-                    run = _cookedRuns.get(runIdx);
+                    cookedRuns.splitRun(runIdx, focus + numClusters);
+                    run = cookedRuns.get(runIdx);
                 }
 
                 long nextCluster = -1;
                 for (int i = runIdx - 1; i >= 0; --i) {
-                    if (!_cookedRuns.get(i).isSparse()) {
-                        nextCluster = _cookedRuns.get(i).getStartLcn() + _cookedRuns.get(i).getLength();
+                    if (!cookedRuns.get(i).isSparse()) {
+                        nextCluster = cookedRuns.get(i).getStartLcn() + cookedRuns.get(i).getLength();
                         break;
                     }
                 }
 
-                List<Tuple<Long, Long>> alloced = _context.getClusterBitmap()
-                        .allocateClusters(numClusters, nextCluster, _isMft, getAllocatedClusterCount());
+                List<Tuple<Long, Long>> alloced = context.getClusterBitmap()
+                        .allocateClusters(numClusters, nextCluster, isMft, getAllocatedClusterCount());
 
                 List<DataRun> runs = new ArrayList<>();
 
-                long lcn = runIdx == 0 ? 0 : _cookedRuns.get(runIdx - 1).getStartLcn();
+                long lcn = runIdx == 0 ? 0 : cookedRuns.get(runIdx - 1).getStartLcn();
                 for (Tuple<Long, Long> allocation : alloced) {
                     runs.add(new DataRun(allocation.getItem1() - lcn, allocation.getItem2(), false));
                     lcn = allocation.getItem1();
                 }
 
-                _cookedRuns.makeNonSparse(runIdx, runs);
+                cookedRuns.makeNonSparse(runIdx, runs);
 
                 totalAllocated += (int) numClusters;
                 focus += numClusters;
@@ -221,26 +222,26 @@ final class RawClusterStream extends ClusterStream {
 
         long focus = startVcn;
         while (focus < startVcn + count) {
-            runIdx = _cookedRuns.findDataRun(focus, runIdx);
-            CookedDataRun run = _cookedRuns.get(runIdx);
+            runIdx = cookedRuns.findDataRun(focus, runIdx);
+            CookedDataRun run = cookedRuns.get(runIdx);
 
             if (run.isSparse()) {
                 focus += run.getLength();
             } else {
                 if (focus != run.getStartVcn()) {
-                    _cookedRuns.splitRun(runIdx, focus);
+                    cookedRuns.splitRun(runIdx, focus);
                     runIdx++;
-                    run = _cookedRuns.get(runIdx);
+                    run = cookedRuns.get(runIdx);
                 }
 
                 long numClusters = Math.min(startVcn + count - focus, run.getLength());
                 if (numClusters != run.getLength()) {
-                    _cookedRuns.splitRun(runIdx, focus + numClusters);
-                    run = _cookedRuns.get(runIdx);
+                    cookedRuns.splitRun(runIdx, focus + numClusters);
+                    run = cookedRuns.get(runIdx);
                 }
 
-                _context.getClusterBitmap().freeClusters(new Range(run.getStartLcn(), run.getLength()));
-                _cookedRuns.makeSparse(runIdx);
+                context.getClusterBitmap().freeClusters(new Range(run.getStartLcn(), run.getLength()));
+                cookedRuns.makeSparse(runIdx);
                 totalReleased += (int) run.getLength();
 
                 focus += numClusters;
@@ -251,27 +252,27 @@ final class RawClusterStream extends ClusterStream {
     }
 
     public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
-        StreamUtilities.assertBufferParameters(buffer, offset, count * _bytesPerCluster);
+        StreamUtilities.assertBufferParameters(buffer, offset, count * bytesPerCluster);
 
         int runIdx = 0;
         int totalRead = 0;
         while (totalRead < count) {
             long focusVcn = startVcn + totalRead;
 
-            runIdx = _cookedRuns.findDataRun(focusVcn, runIdx);
-            CookedDataRun run = _cookedRuns.get(runIdx);
+            runIdx = cookedRuns.findDataRun(focusVcn, runIdx);
+            CookedDataRun run = cookedRuns.get(runIdx);
 
             int toRead = (int) Math.min(count - totalRead, run.getLength() - (focusVcn - run.getStartVcn()));
 
             if (run.isSparse()) {
                 Arrays.fill(buffer,
-                            offset + totalRead * _bytesPerCluster,
-                            offset + totalRead * _bytesPerCluster + toRead * _bytesPerCluster,
+                            offset + totalRead * bytesPerCluster,
+                            offset + totalRead * bytesPerCluster + toRead * bytesPerCluster,
                             (byte) 0);
             } else {
-                long lcn = _cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
-                _fsStream.setPosition(lcn * _bytesPerCluster);
-                StreamUtilities.readExact(_fsStream, buffer, offset + totalRead * _bytesPerCluster, toRead * _bytesPerCluster);
+                long lcn = cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
+                fsStream.setPosition(lcn * bytesPerCluster);
+                StreamUtilities.readExact(fsStream, buffer, offset + totalRead * bytesPerCluster, toRead * bytesPerCluster);
             }
 
             totalRead += toRead;
@@ -279,15 +280,15 @@ final class RawClusterStream extends ClusterStream {
     }
 
     public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
-        StreamUtilities.assertBufferParameters(buffer, offset, count * _bytesPerCluster);
+        StreamUtilities.assertBufferParameters(buffer, offset, count * bytesPerCluster);
 
         int runIdx = 0;
         int totalWritten = 0;
         while (totalWritten < count) {
             long focusVcn = startVcn + totalWritten;
 
-            runIdx = _cookedRuns.findDataRun(focusVcn, runIdx);
-            CookedDataRun run = _cookedRuns.get(runIdx);
+            runIdx = cookedRuns.findDataRun(focusVcn, runIdx);
+            CookedDataRun run = cookedRuns.get(runIdx);
 
             if (run.isSparse()) {
                 throw new UnsupportedOperationException("Writing to sparse datarun");
@@ -295,9 +296,9 @@ final class RawClusterStream extends ClusterStream {
 
             int toWrite = (int) Math.min(count - totalWritten, run.getLength() - (focusVcn - run.getStartVcn()));
 
-            long lcn = _cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
-            _fsStream.setPosition(lcn * _bytesPerCluster);
-            _fsStream.write(buffer, offset + totalWritten * _bytesPerCluster, toWrite * _bytesPerCluster);
+            long lcn = cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
+            fsStream.setPosition(lcn * bytesPerCluster);
+            fsStream.write(buffer, offset + totalWritten * bytesPerCluster, toWrite * bytesPerCluster);
 
             totalWritten += toWrite;
         }
@@ -306,7 +307,7 @@ final class RawClusterStream extends ClusterStream {
     }
 
     public int clearClusters(long startVcn, int count) {
-        byte[] zeroBuffer = new byte[16 * _bytesPerCluster];
+        byte[] zeroBuffer = new byte[16 * bytesPerCluster];
 
         int clustersAllocated = 0;
 

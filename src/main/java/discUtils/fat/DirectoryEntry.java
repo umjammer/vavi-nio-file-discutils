@@ -33,72 +33,73 @@ import dotnet4j.io.Stream;
 
 
 public class DirectoryEntry {
-    private FatType _fatVariant = FatType.None;
 
-    private FatFileSystemOptions _options;
+    private FatType fatVariant = FatType.None;
 
-    private byte _attr;
+    private FatFileSystemOptions options;
 
-    private short _creationDate;
+    private byte attr;
 
-    private short _creationTime;
+    private short creationDate;
 
-    private byte _creationTimeTenth;
+    private short creationTime;
 
-    private int _fileSize;
+    private byte creationTimeTenth;
 
-    private short _firstClusterHi;
+    private int fileSize;
 
-    private short _firstClusterLo;
+    private short firstClusterHi;
 
-    private short _lastAccessDate;
+    private short firstClusterLo;
 
-    private short _lastWriteDate;
+    private short lastAccessDate;
 
-    private short _lastWriteTime;
+    private short lastWriteDate;
+
+    private short lastWriteTime;
 
     public DirectoryEntry(FatFileSystemOptions options, Stream stream, FatType fatVariant) {
-        _options = options;
-        _fatVariant = fatVariant;
+        this.options = options;
+        this.fatVariant = fatVariant;
         byte[] buffer = StreamUtilities.readExact(stream, 32);
         load(buffer, 0);
     }
 
     public DirectoryEntry(FatFileSystemOptions options, FileName name, EnumSet<FatAttributes> attrs, FatType fatVariant) {
-        _options = options;
-        _fatVariant = fatVariant;
-        _name = name;
-        _attr = (byte) (FatAttributes.valueOf(attrs) & 0xff);
+        this.options = options;
+        this.fatVariant = fatVariant;
+        this.name = name;
+        attr = (byte) (FatAttributes.valueOf(attrs) & 0xff);
     }
 
     public DirectoryEntry(DirectoryEntry toCopy) {
-        _options = toCopy._options;
-        _fatVariant = toCopy._fatVariant;
-        _name = toCopy.getName();
-        _attr = toCopy._attr;
-        _creationTimeTenth = toCopy._creationTimeTenth;
-        _creationTime = toCopy._creationTime;
-        _creationDate = toCopy._creationDate;
-        _lastAccessDate = toCopy._lastAccessDate;
-        _firstClusterHi = toCopy._firstClusterHi;
-        _lastWriteTime = toCopy._lastWriteTime;
-        _firstClusterLo = toCopy._firstClusterLo;
-        _fileSize = toCopy._fileSize;
+        options = toCopy.options;
+        fatVariant = toCopy.fatVariant;
+        name = toCopy.getName();
+        attr = toCopy.attr;
+        creationTimeTenth = toCopy.creationTimeTenth;
+        creationTime = toCopy.creationTime;
+        creationDate = toCopy.creationDate;
+        lastAccessDate = toCopy.lastAccessDate;
+        firstClusterHi = toCopy.firstClusterHi;
+        lastWriteTime = toCopy.lastWriteTime;
+        firstClusterLo = toCopy.firstClusterLo;
+        fileSize = toCopy.fileSize;
     }
 
     public EnumSet<FatAttributes> getAttributes() {
-        return FatAttributes.valueOf(_attr);
+        return FatAttributes.valueOf(attr);
     }
 
     public void setAttributes(EnumSet<FatAttributes> value) {
-        _attr = (byte) FatAttributes.valueOf(value);
+        attr = (byte) FatAttributes.valueOf(value);
     }
 
     /**
      * @return epoch millis at system default zone
      */
     public long getCreationTime() {
-        return fileTimeToDateTime(_creationDate, _creationTime, _creationTimeTenth);
+        return fileTimeToDateTime(creationDate, creationTime, creationTimeTenth);
     }
 
     /**
@@ -109,40 +110,40 @@ public class DirectoryEntry {
         short[] creationTime = new short[1];
         byte[] creationTimeTenth = new byte[1];
         dateTimeToFileTime(value, creationDate, creationTime, creationTimeTenth);
-        _creationDate = creationDate[0];
-        _creationTime = creationTime[0];
-        _creationTimeTenth = creationTimeTenth[0];
+        this.creationDate = creationDate[0];
+        this.creationTime = creationTime[0];
+        this.creationTimeTenth = creationTimeTenth[0];
     }
 
     public int getFileSize() {
-        return _fileSize;
+        return fileSize;
     }
 
     public void setFileSize(int value) {
-        _fileSize = value;
+        fileSize = value;
     }
 
     public int getFirstCluster() {
-        if (_fatVariant == FatType.Fat32) {
-            return (_firstClusterHi & 0xffff) << 16 | (_firstClusterLo & 0xffff);
+        if (fatVariant == FatType.Fat32) {
+            return (firstClusterHi & 0xffff) << 16 | (firstClusterLo & 0xffff);
         }
 
-        return _firstClusterLo;
+        return firstClusterLo;
     }
 
     public void setFirstCluster(int value) {
-        if (_fatVariant == FatType.Fat32) {
-            _firstClusterHi = (short) ((value >>> 16) & 0xFFFF);
+        if (fatVariant == FatType.Fat32) {
+            firstClusterHi = (short) ((value >>> 16) & 0xFFFF);
         }
 
-        _firstClusterLo = (short) (value & 0xFFFF);
+        firstClusterLo = (short) (value & 0xFFFF);
     }
 
     /**
      * @return epoch millis at system default zone
      */
     public long getLastAccessTime() {
-        return fileTimeToDateTime(_lastAccessDate, (short) 0, (byte) 0);
+        return fileTimeToDateTime(lastAccessDate, (short) 0, (byte) 0);
     }
 
     /**
@@ -151,14 +152,14 @@ public class DirectoryEntry {
     public void setLastAccessTime(long value) {
         short[] date = new short[1];
         dateTimeToFileTime(value, date);
-        _lastAccessDate = date[0];
+        lastAccessDate = date[0];
     }
 
     /**
      * @return epoch millis at system default zone
      */
     public long getLastWriteTime() {
-        return fileTimeToDateTime(_lastWriteDate, _lastWriteTime, (byte) 0);
+        return fileTimeToDateTime(lastWriteDate, lastWriteTime, (byte) 0);
     }
 
     /**
@@ -168,33 +169,33 @@ public class DirectoryEntry {
         short[] date = new short[1];
         short[] time = new short[1];
         dateTimeToFileTime(value, date, time);
-        _lastWriteDate = date[0];
-        _lastWriteTime = time[0];
+        lastWriteDate = date[0];
+        lastWriteTime = time[0];
     }
 
-    private FileName _name;
+    private FileName name;
 
     public FileName getName() {
-        return _name;
+        return name;
     }
 
     public void setName(FileName value) {
-        _name = value;
+        name = value;
     }
 
     public void writeTo(Stream stream) {
         byte[] buffer = new byte[32];
         getName().getBytes(buffer, 0);
-        buffer[11] = _attr;
-        buffer[13] = _creationTimeTenth;
-        EndianUtilities.writeBytesLittleEndian(_creationTime, buffer, 14);
-        EndianUtilities.writeBytesLittleEndian(_creationDate, buffer, 16);
-        EndianUtilities.writeBytesLittleEndian(_lastAccessDate, buffer, 18);
-        EndianUtilities.writeBytesLittleEndian(_firstClusterHi, buffer, 20);
-        EndianUtilities.writeBytesLittleEndian(_lastWriteTime, buffer, 22);
-        EndianUtilities.writeBytesLittleEndian(_lastWriteDate, buffer, 24);
-        EndianUtilities.writeBytesLittleEndian(_firstClusterLo, buffer, 26);
-        EndianUtilities.writeBytesLittleEndian(_fileSize, buffer, 28);
+        buffer[11] = attr;
+        buffer[13] = creationTimeTenth;
+        EndianUtilities.writeBytesLittleEndian(creationTime, buffer, 14);
+        EndianUtilities.writeBytesLittleEndian(creationDate, buffer, 16);
+        EndianUtilities.writeBytesLittleEndian(lastAccessDate, buffer, 18);
+        EndianUtilities.writeBytesLittleEndian(firstClusterHi, buffer, 20);
+        EndianUtilities.writeBytesLittleEndian(lastWriteTime, buffer, 22);
+        EndianUtilities.writeBytesLittleEndian(lastWriteDate, buffer, 24);
+        EndianUtilities.writeBytesLittleEndian(firstClusterLo, buffer, 26);
+        EndianUtilities.writeBytesLittleEndian(fileSize, buffer, 28);
         stream.write(buffer, 0, buffer.length);
     }
 
@@ -202,7 +203,7 @@ public class DirectoryEntry {
      * @return epoch millis at system default zone
      */
     private static long fileTimeToDateTime(short date, short time, byte tenths) {
-        if (date == 0 || date == 0xFFFF) {
+        if (date == 0 || date == (short) 0xFFFF) {
             return FatFileSystem.Epoch;
         }
 
@@ -257,16 +258,16 @@ public class DirectoryEntry {
     }
 
     private void load(byte[] data, int offset) {
-        _name = new FileName(data, offset);
-        _attr = data[offset + 11];
-        _creationTimeTenth = data[offset + 13];
-        _creationTime = EndianUtilities.toUInt16LittleEndian(data, offset + 14);
-        _creationDate = EndianUtilities.toUInt16LittleEndian(data, offset + 16);
-        _lastAccessDate = EndianUtilities.toUInt16LittleEndian(data, offset + 18);
-        _firstClusterHi = EndianUtilities.toUInt16LittleEndian(data, offset + 20);
-        _lastWriteTime = EndianUtilities.toUInt16LittleEndian(data, offset + 22);
-        _lastWriteDate = EndianUtilities.toUInt16LittleEndian(data, offset + 24);
-        _firstClusterLo = EndianUtilities.toUInt16LittleEndian(data, offset + 26);
-        _fileSize = EndianUtilities.toUInt32LittleEndian(data, offset + 28);
+        name = new FileName(data, offset);
+        attr = data[offset + 11];
+        creationTimeTenth = data[offset + 13];
+        creationTime = EndianUtilities.toUInt16LittleEndian(data, offset + 14);
+        creationDate = EndianUtilities.toUInt16LittleEndian(data, offset + 16);
+        lastAccessDate = EndianUtilities.toUInt16LittleEndian(data, offset + 18);
+        firstClusterHi = EndianUtilities.toUInt16LittleEndian(data, offset + 20);
+        lastWriteTime = EndianUtilities.toUInt16LittleEndian(data, offset + 22);
+        lastWriteDate = EndianUtilities.toUInt16LittleEndian(data, offset + 24);
+        firstClusterLo = EndianUtilities.toUInt16LittleEndian(data, offset + 26);
+        fileSize = EndianUtilities.toUInt32LittleEndian(data, offset + 28);
     }
 }

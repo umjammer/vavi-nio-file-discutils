@@ -39,9 +39,10 @@ import discUtils.streams.buffer.Buffer;
  * zero).
  */
 public final class SparseMemoryBuffer extends Buffer {
-    private final Map<Integer, byte[]> _buffers;
 
-    private long _capacity;
+    private final Map<Integer, byte[]> buffers;
+
+    private long capacity;
 
     /**
      * Initializes a new instance of the SparseMemoryBuffer class.
@@ -49,8 +50,8 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param chunkSize The size of each allocation chunk.
      */
     public SparseMemoryBuffer(int chunkSize) {
-        _chunkSize = chunkSize;
-        _buffers = new HashMap<>();
+        this.chunkSize = chunkSize;
+        buffers = new HashMap<>();
     }
 
     /**
@@ -64,7 +65,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @return An enumeration of chunk indexes.
      */
     public List<Integer> getAllocatedChunks() {
-        List<Integer> keys = new ArrayList<>(_buffers.keySet());
+        List<Integer> keys = new ArrayList<>(buffers.keySet());
         Collections.sort(keys);
         return keys;
     }
@@ -88,16 +89,16 @@ public final class SparseMemoryBuffer extends Buffer {
      * stored).
      */
     public long getCapacity() {
-        return _capacity;
+        return capacity;
     }
 
     /**
      * Gets the size of each allocation chunk.
      */
-    private int _chunkSize;
+    private int chunkSize;
 
     public int getChunkSize() {
-        return _chunkSize;
+        return chunkSize;
     }
 
     /**
@@ -133,14 +134,14 @@ public final class SparseMemoryBuffer extends Buffer {
      */
     public int read(long pos, byte[] buffer, int offset, int count) {
         int totalRead = 0;
-        while (count > 0 && pos < _capacity) {
+        while (count > 0 && pos < capacity) {
             int chunk = (int) (pos / getChunkSize());
             int chunkOffset = (int) (pos % getChunkSize());
-            int numToRead = (int) Math.min(Math.min(getChunkSize() - chunkOffset, _capacity - pos), count);
-            if (!_buffers.containsKey(chunk)) {
+            int numToRead = (int) Math.min(Math.min(getChunkSize() - chunkOffset, capacity - pos), count);
+            if (!buffers.containsKey(chunk)) {
                 Arrays.fill(buffer, offset, offset + numToRead, (byte) 0);
             } else {
-                byte[] chunkBuffer = _buffers.get(chunk);
+                byte[] chunkBuffer = buffers.get(chunk);
                 System.arraycopy(chunkBuffer, chunkOffset, buffer, offset, numToRead);
             }
             totalRead += numToRead;
@@ -165,18 +166,18 @@ public final class SparseMemoryBuffer extends Buffer {
             int chunkOffset = (int) (pos % getChunkSize());
             int numToWrite = Math.min(getChunkSize() - chunkOffset, count);
             byte[] chunkBuffer;
-            if (!_buffers.containsKey(chunk)) {
+            if (!buffers.containsKey(chunk)) {
                 chunkBuffer = new byte[getChunkSize()];
-                _buffers.put(chunk, chunkBuffer);
+                buffers.put(chunk, chunkBuffer);
             }
-            chunkBuffer = _buffers.get(chunk);
+            chunkBuffer = buffers.get(chunk);
 
             System.arraycopy(buffer, offset, chunkBuffer, chunkOffset, numToWrite);
             offset += numToWrite;
             count -= numToWrite;
             pos += numToWrite;
         }
-        _capacity = Math.max(_capacity, pos);
+        capacity = Math.max(capacity, pos);
     }
 
     /**
@@ -190,11 +191,11 @@ public final class SparseMemoryBuffer extends Buffer {
             int chunk = (int) (pos / getChunkSize());
             int chunkOffset = (int) (pos % getChunkSize());
             int numToClear = Math.min(getChunkSize() - chunkOffset, count);
-            if (_buffers.containsKey(chunk)) {
+            if (buffers.containsKey(chunk)) {
                 if (chunkOffset == 0 && numToClear == getChunkSize()) {
-                    _buffers.remove(chunk);
+                    buffers.remove(chunk);
                 } else {
-                    byte[] chunkBuffer = _buffers.get(chunk);
+                    byte[] chunkBuffer = buffers.get(chunk);
                     Arrays.fill(chunkBuffer, chunkOffset, chunkOffset + numToClear, (byte) 0);
                 }
             }
@@ -202,7 +203,7 @@ public final class SparseMemoryBuffer extends Buffer {
             count -= numToClear;
             pos += numToClear;
         }
-        _capacity = Math.max(_capacity, pos);
+        capacity = Math.max(capacity, pos);
     }
 
     /**
@@ -215,7 +216,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param value The desired capacity of the buffer.
      */
     public void setCapacity(long value) {
-        _capacity = value;
+        capacity = value;
     }
 
     /**

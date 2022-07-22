@@ -29,43 +29,44 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BTreeInodeRecord implements IByteArraySerializable {
+
     /**
      * specifies the starting inode number for the chunk
      */
-    private int __StartInode;
+    private int startInode;
 
     public int getStartInode() {
-        return __StartInode;
+        return startInode;
     }
 
     public void setStartInode(int value) {
-        __StartInode = value;
+        startInode = value;
     }
 
     /**
      * specifies the number of free entries in the chuck
      */
-    private int __FreeCount;
+    private int freeCount;
 
     public int getFreeCount() {
-        return __FreeCount;
+        return freeCount;
     }
 
     public void setFreeCount(int value) {
-        __FreeCount = value;
+        freeCount = value;
     }
 
     /**
      * 64 element bit array specifying which entries are free in the chunk
      */
-    private BitSet __Free;
+    private BitSet free;
 
     public BitSet getFree() {
-        return __Free;
+        return free;
     }
 
     public void setFree(BitSet value) {
-        __Free = value;
+        free = value;
     }
 
     public int size() {
@@ -73,9 +74,9 @@ public class BTreeInodeRecord implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setStartInode(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        setFreeCount(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4));
-        setFree(BitSet.valueOf(EndianUtilities.toByteArray(buffer, offset + 0x8, 0x8)));
+        startInode = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        freeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        free = BitSet.valueOf(EndianUtilities.toByteArray(buffer, offset + 0x8, 0x8));
         return size();
     }
 

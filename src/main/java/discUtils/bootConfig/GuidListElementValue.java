@@ -24,10 +24,11 @@ package discUtils.bootConfig;
 
 
 public class GuidListElementValue extends ElementValue {
-    private final String[] _values;
+
+    private final String[] values;
 
     public GuidListElementValue(String[] values) {
-        _values = values;
+        this.values = values;
     }
 
     public ElementFormat getFormat() {
@@ -35,18 +36,18 @@ public class GuidListElementValue extends ElementValue {
     }
 
     public String toString() {
-        if (_values == null || _values.length == 0) {
+        if (values == null || values.length == 0) {
             return "<none>";
         }
 
-        StringBuilder result = new StringBuilder(_values[0]);
-        for (int i = 1; i < _values.length; ++i) {
-            result.append(",").append(_values[i]);
+        StringBuilder result = new StringBuilder(values[0]);
+        for (int i = 1; i < values.length; ++i) {
+            result.append(",").append(values[i]);
         }
         return result.toString();
     }
 
     public String[] getGuidStrings() {
-        return _values;
+        return values;
     }
 }

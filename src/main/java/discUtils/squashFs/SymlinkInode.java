@@ -26,7 +26,8 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class SymlinkInode extends Inode {
-    public int SymlinkSize;
+
+    public int symlinkSize;
 
     public int size() {
         return 24;
@@ -34,8 +35,8 @@ public class SymlinkInode extends Inode {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        _numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
-        SymlinkSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
+        symlinkSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         return 24;
     }
 }

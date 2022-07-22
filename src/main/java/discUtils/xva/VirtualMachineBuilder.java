@@ -60,49 +60,49 @@ import dotnet4j.io.Stream;
 public final class VirtualMachineBuilder extends StreamBuilder implements Closeable {
 
     static class DiskRecord {
-        String Item1;
+        String item1;
 
-        SparseStream Item2;
+        SparseStream item2;
 
-        Ownership Item3;
+        Ownership item3;
 
         public DiskRecord(String label, SparseStream stream, Ownership ownership) {
-            this.Item1 = label;
-            this.Item2 = stream;
-            this.Item3 = ownership;
+            this.item1 = label;
+            this.item2 = stream;
+            this.item3 = ownership;
         }
     }
 
-    private final List<DiskRecord> _disks;
+    private final List<DiskRecord> disks;
 
     /**
      * Initializes a new instance of the VirtualMachineBuilder class.
      */
     public VirtualMachineBuilder() {
-        _disks = new ArrayList<>();
+        disks = new ArrayList<>();
         setDisplayName("VM");
     }
 
     /**
      * Gets or sets the display name of the VM.
      */
-    private String __DisplayName;
+    private String displayName;
 
     public String getDisplayName() {
-        return __DisplayName;
+        return displayName;
     }
 
     public void setDisplayName(String value) {
-        __DisplayName = value;
+        displayName = value;
     }
 
     /**
      * Disposes this instance, including any underlying resources.
      */
     public void close() throws IOException {
-        for (DiskRecord r : _disks) {
-            if (r.Item3 == Ownership.Dispose) {
-                r.Item2.close();
+        for (DiskRecord r : disks) {
+            if (r.item3 == Ownership.Dispose) {
+                r.item2.close();
             }
         }
     }
@@ -115,7 +115,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
      * @param ownsContent Indicates if ownership of content is transfered.
      */
     public void addDisk(String label, SparseStream content, Ownership ownsContent) {
-        _disks.add(new DiskRecord(label, content, ownsContent));
+        disks.add(new DiskRecord(label, content, ownsContent));
     }
 
     /**
@@ -126,7 +126,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
      * @param ownsContent Indicates if ownership of content is transfered.
      */
     public void addDisk(String label, Stream content, Ownership ownsContent) {
-        _disks.add(new DiskRecord(label, SparseStream.fromStream(content, ownsContent), Ownership.Dispose));
+        disks.add(new DiskRecord(label, SparseStream.fromStream(content, ownsContent), Ownership.Dispose));
     }
 
     /**
@@ -142,8 +142,8 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
 //Debug.println(ovaFileContent);
             tarBuilder.addFile("ova.xml", ovaFileContent.getBytes(StandardCharsets.US_ASCII));
             int diskIdx = 0;
-            for (DiskRecord diskRec : _disks) {
-                SparseStream diskStream = diskRec.Item2;
+            for (DiskRecord diskRec : disks) {
+                SparseStream diskStream = diskRec.item2;
                 List<StreamExtent> extents = diskStream.getExtents();
                 int lastChunkAdded = -1;
                 for (StreamExtent extent : extents) {
@@ -233,20 +233,20 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         String vmName = getDisplayName();
         int vmId = id++;
         // Establish per-disk info
-        UUID[] vbdGuids = new UUID[_disks.size()];
-        int[] vbdIds = new int[_disks.size()];
-        UUID[] vdiGuids = new UUID[_disks.size()];
-        String[] vdiNames = new String[_disks.size()];
-        int[] vdiIds = new int[_disks.size()];
-        long[] vdiSizes = new long[_disks.size()];
+        UUID[] vbdGuids = new UUID[disks.size()];
+        int[] vbdIds = new int[disks.size()];
+        UUID[] vdiGuids = new UUID[disks.size()];
+        String[] vdiNames = new String[disks.size()];
+        int[] vdiIds = new int[disks.size()];
+        long[] vdiSizes = new long[disks.size()];
         int diskIdx = 0;
-        for (DiskRecord disk : _disks) {
+        for (DiskRecord disk : disks) {
             vbdGuids[diskIdx] = UUID.randomUUID();
             vbdIds[diskIdx] = id++;
             vdiGuids[diskIdx] = UUID.randomUUID();
             vdiIds[diskIdx] = id++;
-            vdiNames[diskIdx] = disk.Item1;
-            vdiSizes[diskIdx] = MathUtilities.roundUp(disk.Item2.getLength(), Sizes.OneMiB);
+            vdiNames[diskIdx] = disk.item1;
+            vdiSizes[diskIdx] = MathUtilities.roundUp(disk.item2.getLength(), Sizes.OneMiB);
             diskIdx++;
         }
         // Establish SR info
@@ -255,20 +255,20 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         int srId = id++;
         StringBuilder vbdRefs = new StringBuilder();
         Map<String, String> staticStrings = getStaticStrings();
-        for (int i = 0; i < _disks.size(); ++i) {
+        for (int i = 0; i < disks.size(); ++i) {
             vbdRefs.append(String.format(staticStrings.get("XVA_ova_ref"), "Ref:" + vbdIds[i]));
         }
         StringBuilder vdiRefs = new StringBuilder();
-        for (int i = 0; i < _disks.size(); ++i) {
+        for (int i = 0; i < disks.size(); ++i) {
             vdiRefs.append(String.format(staticStrings.get("XVA_ova_ref"), "Ref:" + vdiIds[i]));
         }
         StringBuilder objectsString = new StringBuilder();
         objectsString.append(String.format(staticStrings.get("XVA_ova_vm"), "Ref:" + vmId, vmGuid, vmName, vbdRefs));
-        for (int i = 0; i < _disks.size(); ++i) {
+        for (int i = 0; i < disks.size(); ++i) {
             objectsString.append(String
                     .format(staticStrings.get("XVA_ova_vbd"), "Ref:" + vbdIds[i], vbdGuids[i], "Ref:" + vmId, "Ref:" + vdiIds[i], i));
         }
-        for (int i = 0; i < _disks.size(); ++i) {
+        for (int i = 0; i < disks.size(); ++i) {
             objectsString.append(String.format(staticStrings.get("XVA_ova_vdi"),
                                                "Ref:" + vdiIds[i],
                                                vdiGuids[i],

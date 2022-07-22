@@ -45,7 +45,7 @@ public class NewVirtualRegistryCommand extends PSCmdlet {
     protected void processRecord() throws IOException {
         try (Stream hiveStream = Utilities.createPsPath(SessionState, getLiteralPath())) {
             hiveStream.setLength(0);
-            try (Closeable __newVar0 = RegistryHive.create(hiveStream)) {
+            try (Closeable ignored = RegistryHive.create(hiveStream)) {
             }
         }
     }

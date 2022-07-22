@@ -26,32 +26,33 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class TextResponse extends BaseResponse {
-    private long _lun;
 
-    private int _targetTransferTag = 0xFFFFFFFF;
+    private long lun;
 
-    public boolean Continue;
+    private int targetTransferTag = 0xFFFF_FFFF;
 
-    public byte[] TextData;
+    public boolean continue_;
+
+    public byte[] textData;
 
     public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 
     public void parse(byte[] headerData, int headerOffset, byte[] bodyData) {
-        BasicHeaderSegment _headerSegment = new BasicHeaderSegment();
-        _headerSegment.readFrom(headerData, headerOffset);
-        if (_headerSegment._OpCode != OpCode.TextResponse) {
+        BasicHeaderSegment headerSegment = new BasicHeaderSegment();
+        headerSegment.readFrom(headerData, headerOffset);
+        if (headerSegment.opCode != OpCode.TextResponse) {
             throw new IllegalArgumentException("Invalid opcode in response, expected " + OpCode.TextResponse + " was " +
-                                               _headerSegment._OpCode);
+                                               headerSegment.opCode);
         }
 
-        Continue = (headerData[headerOffset + 1] & 0x40) != 0;
-        _lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
-        _targetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
-        StatusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        ExpectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        MaxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        TextData = bodyData;
+        continue_ = (headerData[headerOffset + 1] & 0x40) != 0;
+        lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
+        targetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
+        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        textData = bodyData;
     }
 }

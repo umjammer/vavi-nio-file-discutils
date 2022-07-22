@@ -26,17 +26,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class Type1PartitionMap extends PartitionMap {
-    public short PartitionNumber;
 
-    public short VolumeSequenceNumber;
+    public short partitionNumber;
+
+    public short volumeSequenceNumber;
 
     public int size() {
         return 6;
     }
 
     protected int parse(byte[] buffer, int offset) {
-        VolumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        PartitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
         return 6;
     }
 }

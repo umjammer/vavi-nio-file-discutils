@@ -29,26 +29,26 @@ import discUtils.streams.util.Ownership;
 
 
 public final class DiskExtent extends VirtualDiskExtent {
-    private final DiskImageFile _file;
+
+    private final DiskImageFile file;
 
     public DiskExtent(DiskImageFile file) {
-        _file = file;
+        this.file = file;
     }
 
     public long getCapacity() {
-        return _file.getCapacity();
+        return file.getCapacity();
     }
 
     public boolean isSparse() {
-        return _file.isSparse();
+        return file.isSparse();
     }
 
     public long getStoredSize() {
-        return _file.getStoredSize();
+        return file.getStoredSize();
     }
 
     public MappedStream openContent(SparseStream parent, Ownership ownsParent) {
-        return _file.doOpenContent(parent, ownsParent);
+        return file.doOpenContent(parent, ownsParent);
     }
-
 }

@@ -29,20 +29,21 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class EntityIdentifier implements IByteArraySerializable {
-    public byte Flags;
 
-    public String Identifier;
+    public byte flags;
 
-    public byte[] Suffix;
+    public String identifier;
+
+    public byte[] suffix;
 
     public int size() {
         return 32;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Flags = buffer[offset];
-        Identifier = new String(buffer, offset + 1, 23, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
-        Suffix = EndianUtilities.toByteArray(buffer, offset + 24, 8);
+        flags = buffer[offset];
+        identifier = new String(buffer, offset + 1, 23, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        suffix = EndianUtilities.toByteArray(buffer, offset + 24, 8);
         return 32;
     }
 

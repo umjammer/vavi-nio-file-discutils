@@ -26,20 +26,21 @@ package discUtils.net.dns;
  * Represents a DNS CNAME record.
  */
 public final class CanonicalNameRecord extends ResourceRecord {
+
     public CanonicalNameRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
-        _canonicalName = reader.readName();
+        canonicalName = reader.readName();
         reader.setPosition(pos + dataLen);
     }
 
     /**
      * Gets the canonical name.
      */
-    private String _canonicalName;
+    private String canonicalName;
 
     public String getCanonicalName() {
-        return _canonicalName;
+        return canonicalName;
     }
 }

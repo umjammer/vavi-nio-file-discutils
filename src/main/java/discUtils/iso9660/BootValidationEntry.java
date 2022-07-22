@@ -28,41 +28,42 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BootValidationEntry {
-    private byte[] _data;
 
-    public byte HeaderId;
+    private byte[] data;
 
-    public String ManfId;
+    public byte headerId;
 
-    public byte PlatformId;
+    public String manfId;
+
+    public byte platformId;
 
     public BootValidationEntry() {
-        HeaderId = 1;
-        PlatformId = 0;
-        ManfId = ".Net DiscUtils";
+        headerId = 1;
+        platformId = 0;
+        manfId = ".Net DiscUtils";
     }
 
     public BootValidationEntry(byte[] src, int offset) {
-        _data = new byte[32];
-        System.arraycopy(src, offset, _data, 0, 32);
-        HeaderId = _data[0];
-        PlatformId = _data[1];
-        ManfId = EndianUtilities.bytesToString(_data, 4, 24).replaceFirst("[\0 ]*$", "");
+        data = new byte[32];
+        System.arraycopy(src, offset, data, 0, 32);
+        headerId = data[0];
+        platformId = data[1];
+        manfId = EndianUtilities.bytesToString(data, 4, 24).replaceFirst("[\0 ]*$", "");
     }
 
     public boolean getChecksumValid() {
         short total = 0;
         for (int i = 0; i < 16; ++i) {
-            total += EndianUtilities.toUInt16LittleEndian(_data, i * 2);
+            total += EndianUtilities.toUInt16LittleEndian(data, i * 2);
         }
         return total == 0;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + 0x20, (byte) 0);
-        buffer[offset + 0x00] = HeaderId;
-        buffer[offset + 0x01] = PlatformId;
-        EndianUtilities.stringToBytes(ManfId, buffer, offset + 0x04, 24);
+        buffer[offset + 0x00] = headerId;
+        buffer[offset + 0x01] = platformId;
+        EndianUtilities.stringToBytes(manfId, buffer, offset + 0x04, 24);
         buffer[offset + 0x1E] = 0x55;
         buffer[offset + 0x1F] = (byte) 0xAA;
         EndianUtilities.writeBytesLittleEndian(calcChecksum(buffer, offset), buffer, offset + 0x1C);

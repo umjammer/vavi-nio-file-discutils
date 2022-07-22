@@ -39,22 +39,22 @@ import discUtils.net.dns.ServiceInstanceFields;
  */
 public final class OpticalDiscServiceClient implements Closeable {
 
-    private ServiceDiscoveryClient _sdClient;
+    private ServiceDiscoveryClient sdClient;
 
     /**
      * Initializes a new instance of the OpticalDiscServiceClient class.
      */
     public OpticalDiscServiceClient() {
-        _sdClient = new ServiceDiscoveryClient();
+        sdClient = new ServiceDiscoveryClient();
     }
 
     /**
      * Disposes of this instance.
      */
     public void close() throws IOException {
-        if (_sdClient != null) {
-            _sdClient.close();
-            _sdClient = null;
+        if (sdClient != null) {
+            sdClient.close();
+            sdClient = null;
         }
     }
 
@@ -75,8 +75,8 @@ public final class OpticalDiscServiceClient implements Closeable {
      */
     public List<OpticalDiscService> lookupServices(String domain) {
         List<OpticalDiscService> services = new ArrayList<>();
-        for (ServiceInstance instance : _sdClient.lookupInstances("_odisk._tcp", domain, ServiceInstanceFields.All)) {
-            services.add(new OpticalDiscService(instance, _sdClient));
+        for (ServiceInstance instance : sdClient.lookupInstances("_odisk._tcp", domain, ServiceInstanceFields.All)) {
+            services.add(new OpticalDiscService(instance, sdClient));
         }
 Debug.println("services: " + services.size());
         return services;

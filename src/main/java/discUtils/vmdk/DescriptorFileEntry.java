@@ -23,28 +23,29 @@
 package discUtils.vmdk;
 
 public class DescriptorFileEntry {
-    private final DescriptorFileEntryType _type;
+
+    private final DescriptorFileEntryType type;
 
     public DescriptorFileEntry(String key, String value, DescriptorFileEntryType type) {
-        _key = key;
-        _value = value;
-        _type = type;
+        this.key = key;
+        this.value = value;
+        this.type = type;
     }
 
-    private String _key;
+    private String key;
 
     public String getKey() {
-        return _key;
+        return key;
     }
 
-    private String _value;
+    private String value;
 
     public String getValue() {
-        return _value;
+        return value;
     }
 
     public void setValue(String value) {
-        _value = value;
+        this.value = value;
     }
 
     public static DescriptorFileEntry parse(String value) {
@@ -70,7 +71,7 @@ public class DescriptorFileEntry {
     public String toString(boolean spaceOut) {
         // VMware workstation appears to be sensitive to spaces, wants them for 'header' values, not for DiskDataBase...
         String sep = spaceOut ? " " : "";
-        switch (_type) {
+        switch (type) {
         case NoValue:
             return getKey();
         case Plain:
@@ -78,7 +79,7 @@ public class DescriptorFileEntry {
         case Quoted:
             return getKey() + sep + "=" + sep + "\"" + getValue() + "\"";
         default:
-            throw new IllegalStateException(String.format("Unknown type: %s", _type));
+            throw new IllegalStateException(String.format("Unknown type: %s", type));
         }
     }
 }

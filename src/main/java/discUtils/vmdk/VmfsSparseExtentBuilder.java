@@ -41,10 +41,11 @@ import dotnet4j.io.MemoryStream;
 
 
 public final class VmfsSparseExtentBuilder extends StreamBuilder {
-    private final SparseStream _content;
+
+    private final SparseStream content;
 
     public VmfsSparseExtentBuilder(SparseStream content) {
-        _content = content;
+        this.content = content;
     }
 
     /**
@@ -53,21 +54,21 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
 
-        ServerSparseExtentHeader header = DiskImageFile.createServerSparseExtentHeader(_content.getLength());
+        ServerSparseExtentHeader header = DiskImageFile.createServerSparseExtentHeader(content.getLength());
         GlobalDirectoryExtent gdExtent = new GlobalDirectoryExtent(header);
 
-        long grainTableStart = header.GdOffset * Sizes.Sector + gdExtent.getLength();
-        long grainTableCoverage = header.NumGTEsPerGT * header.GrainSize * Sizes.Sector;
+        long grainTableStart = header.gdOffset * Sizes.Sector + gdExtent.getLength();
+        long grainTableCoverage = header.numGTEsPerGT * header.grainSize * Sizes.Sector;
 
-        for (Range grainTableRange : StreamExtent.blocks(_content.getExtents(), grainTableCoverage)) {
+        for (Range grainTableRange : StreamExtent.blocks(content.getExtents(), grainTableCoverage)) {
             for (int i = 0; i < grainTableRange.getCount(); ++i) {
                 long grainTable = grainTableRange.getOffset() + i;
                 long dataStart = grainTable * grainTableCoverage;
                 GrainTableExtent gtExtent = new GrainTableExtent(grainTableStart,
-                                                                 new SubStream(_content,
+                                                                 new SubStream(content,
                                                                                dataStart,
                                                                                Math.min(grainTableCoverage,
-                                                                                        _content.getLength() - dataStart)),
+                                                                                        content.getLength() - dataStart)),
                                                                  header);
                 extents.add(gtExtent);
                 gdExtent.setEntry((int) grainTable, (int) (grainTableStart / Sizes.Sector));
@@ -78,7 +79,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
 
         extents.add(0, gdExtent);
 
-        header.FreeSector = (int) (grainTableStart / Sizes.Sector);
+        header.freeSector = (int) (grainTableStart / Sizes.Sector);
 
         byte[] buffer = header.getBytes();
         extents.add(0, new BuilderBufferExtent(0, buffer));
@@ -89,56 +90,58 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
     }
 
     private static class GlobalDirectoryExtent extends BuilderExtent {
-        private final byte[] _buffer;
 
-        private MemoryStream _streamView;
+        private final byte[] buffer;
+
+        private MemoryStream streamView;
 
         public GlobalDirectoryExtent(ServerSparseExtentHeader header) {
-            super(header.GdOffset * Sizes.Sector, MathUtilities.roundUp(header.NumGdEntries * 4, Sizes.Sector));
-            _buffer = new byte[(int) getLength()];
+            super(header.gdOffset * Sizes.Sector, MathUtilities.roundUp(header.numGdEntries * 4, Sizes.Sector));
+            buffer = new byte[(int) getLength()];
         }
 
         public void close() throws IOException {
-            if (_streamView != null) {
-                _streamView.close();
-                _streamView = null;
+            if (streamView != null) {
+                streamView.close();
+                streamView = null;
             }
 
         }
 
         public void setEntry(int index, int grainTableSector) {
-            EndianUtilities.writeBytesLittleEndian(grainTableSector, _buffer, index * 4);
+            EndianUtilities.writeBytesLittleEndian(grainTableSector, buffer, index * 4);
         }
 
         public void prepareForRead() {
-            _streamView = new MemoryStream(_buffer, false);
+            streamView = new MemoryStream(buffer, false);
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
-            _streamView.setPosition(diskOffset - getStart());
-            return _streamView.read(block, offset, count);
+            streamView.setPosition(diskOffset - getStart());
+            return streamView.read(block, offset, count);
         }
 
         public void disposeReadState() {
-            if (_streamView != null) {
-                _streamView.close();
-                _streamView = null;
+            if (streamView != null) {
+                streamView.close();
+                streamView = null;
             }
         }
     }
 
     private static class GrainTableExtent extends BuilderExtent {
-        private SparseStream _content;
 
-        private final Ownership _contentOwnership;
+        private SparseStream content;
 
-        private List<Long> _grainContiguousRangeMapping;
+        private final Ownership contentOwnership;
 
-        private List<Long> _grainMapping;
+        private List<Long> grainContiguousRangeMapping;
 
-        private MemoryStream _grainTableStream;
+        private List<Long> grainMapping;
 
-        private final ServerSparseExtentHeader _header;
+        private MemoryStream grainTableStream;
+
+        private final ServerSparseExtentHeader header;
 
         public GrainTableExtent(long outputStart, SparseStream content, ServerSparseExtentHeader header) {
             this(outputStart, content, Ownership.None, header);
@@ -149,69 +152,69 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
                 Ownership contentOwnership,
                 ServerSparseExtentHeader header) {
             super(outputStart, calcSize(content, header));
-            _content = content;
-            _contentOwnership = contentOwnership;
-            _header = header;
+            this.content = content;
+            this.contentOwnership = contentOwnership;
+            this.header = header;
         }
 
         public void close() throws IOException {
-            if (_content != null && _contentOwnership == Ownership.Dispose) {
-                _content.close();
-                _content = null;
+            if (content != null && contentOwnership == Ownership.Dispose) {
+                content.close();
+                content = null;
             }
 
-            if (_grainTableStream != null) {
-                _grainTableStream.close();
-                _grainTableStream = null;
+            if (grainTableStream != null) {
+                grainTableStream.close();
+                grainTableStream = null;
             }
         }
 
         public void prepareForRead() {
-            byte[] grainTable = new byte[MathUtilities.roundUp(_header.NumGTEsPerGT * 4, Sizes.Sector)];
+            byte[] grainTable = new byte[MathUtilities.roundUp(header.numGTEsPerGT * 4, Sizes.Sector)];
             long dataSector = (getStart() + grainTable.length) / Sizes.Sector;
-            _grainMapping = new ArrayList<>();
-            _grainContiguousRangeMapping = new ArrayList<>();
-            for (Range grainRange : StreamExtent.blocks(_content.getExtents(), _header.GrainSize * Sizes.Sector)) {
+            grainMapping = new ArrayList<>();
+            grainContiguousRangeMapping = new ArrayList<>();
+            for (Range grainRange : StreamExtent.blocks(content.getExtents(), header.grainSize * Sizes.Sector)) {
                 for (int i = 0; i < grainRange.getCount(); ++i) {
                     EndianUtilities
                             .writeBytesLittleEndian((int) dataSector, grainTable, (int) (4 * (grainRange.getOffset() + i)));
-                    dataSector += _header.GrainSize;
-                    _grainMapping.add(grainRange.getOffset() + i);
-                    _grainContiguousRangeMapping.add(grainRange.getCount() - i);
+                    dataSector += header.grainSize;
+                    grainMapping.add(grainRange.getOffset() + i);
+                    grainContiguousRangeMapping.add(grainRange.getCount() - i);
                 }
             }
-            _grainTableStream = new MemoryStream(grainTable, false);
+            grainTableStream = new MemoryStream(grainTable, false);
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
             long relOffset = diskOffset - getStart();
-            if (relOffset < _grainTableStream.getLength()) {
-                _grainTableStream.setPosition(relOffset);
-                return _grainTableStream.read(block, offset, count);
+            if (relOffset < grainTableStream.getLength()) {
+                grainTableStream.setPosition(relOffset);
+                return grainTableStream.read(block, offset, count);
             }
 
-            long grainSize = _header.GrainSize * Sizes.Sector;
-            int grainIdx = (int) ((relOffset - _grainTableStream.getLength()) / grainSize);
-            long grainOffset = relOffset - _grainTableStream.getLength() - grainIdx * grainSize;
-            int maxToRead = (int) Math.min(count, grainSize * _grainContiguousRangeMapping.get(grainIdx) - grainOffset);
-            _content.setPosition(_grainMapping.get(grainIdx) * grainSize + grainOffset);
-            return _content.read(block, offset, maxToRead);
+            long grainSize = header.grainSize * Sizes.Sector;
+            int grainIdx = (int) ((relOffset - grainTableStream.getLength()) / grainSize);
+            long grainOffset = relOffset - grainTableStream.getLength() - grainIdx * grainSize;
+            int maxToRead = (int) Math.min(count, grainSize * grainContiguousRangeMapping.get(grainIdx) - grainOffset);
+            content.setPosition(grainMapping.get(grainIdx) * grainSize + grainOffset);
+            return content.read(block, offset, maxToRead);
         }
 
         public void disposeReadState() {
-            if (_grainTableStream != null) {
-                _grainTableStream.close();
-                _grainTableStream = null;
+            if (grainTableStream != null) {
+                grainTableStream.close();
+                grainTableStream = null;
             }
 
-            _grainMapping = null;
-            _grainContiguousRangeMapping = null;
+            grainMapping = null;
+            grainContiguousRangeMapping = null;
         }
 
         private static long calcSize(SparseStream content, ServerSparseExtentHeader header) {
-            long numDataGrains = StreamExtent.blockCount(content.getExtents(), header.GrainSize * Sizes.Sector);
-            long grainTableSectors = MathUtilities.ceil(header.NumGTEsPerGT * 4, Sizes.Sector);
-            return (grainTableSectors + numDataGrains * header.GrainSize) * Sizes.Sector;
+            long numDataGrains = StreamExtent.blockCount(content.getExtents(), header.grainSize * Sizes.Sector);
+            long grainTableSectors = MathUtilities.ceil(header.numGTEsPerGT * 4, Sizes.Sector);
+            return (grainTableSectors + numDataGrains * header.grainSize) * Sizes.Sector;
         }
     }
 }

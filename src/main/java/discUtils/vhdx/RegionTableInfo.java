@@ -35,21 +35,22 @@ import discUtils.streams.util.EndianUtilities;
  * Class providing information about a VHDX region table.
  */
 public final class RegionTableInfo implements Iterable<RegionInfo> {
-    private final RegionTable _table;
+
+    private final RegionTable table;
 
     public RegionTableInfo(RegionTable table) {
-        _table = table;
+        this.table = table;
     }
 
     /**
      * Gets the checksum of the region table.
      */
     public int getChecksum() {
-        return _table.Checksum;
+        return table.checksum;
     }
 
     private List<RegionInfo> getEntries() {
-        return _table.Regions.values().stream().map(RegionInfo::new).collect(Collectors.toList());
+        return table.regions.values().stream().map(RegionInfo::new).collect(Collectors.toList());
     }
 
     /**
@@ -57,7 +58,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      */
     public String getSignature() {
         byte[] buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(_table.Signature, buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(table.signature, buffer, 0);
         return EndianUtilities.bytesToString(buffer, 0, 4);
     }
 
@@ -65,7 +66,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      * Gets the number of metadata items present.
      */
     public int getCount() {
-        return _table.EntryCount;
+        return table.entryCount;
     }
 
     /**
@@ -100,7 +101,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      * @return {@code true} if present, else {@code false}.
      */
     public boolean contains(RegionInfo item) {
-        for (Map.Entry<UUID, RegionEntry> entry : _table.Regions.entrySet()) {
+        for (Map.Entry<UUID, RegionEntry> entry : table.regions.entrySet()) {
             if (entry.getKey().equals(item.getGuid())) {
                 return true;
             }
@@ -116,7 +117,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      */
     public void copyTo(RegionInfo[] array, int arrayIndex) {
         int offset = 0;
-        for (Map.Entry<UUID, RegionEntry> entry : _table.Regions.entrySet()) {
+        for (Map.Entry<UUID, RegionEntry> entry : table.regions.entrySet()) {
             array[arrayIndex + offset] = new RegionInfo(entry.getValue());
             ++offset;
         }

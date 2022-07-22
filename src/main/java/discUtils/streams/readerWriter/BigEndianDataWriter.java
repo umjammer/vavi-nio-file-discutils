@@ -27,25 +27,26 @@ import dotnet4j.io.Stream;
 
 
 public class BigEndianDataWriter extends DataWriter {
+
     public BigEndianDataWriter(Stream stream) {
         super(stream);
     }
 
     public void write(short value) {
         ensureBuffer();
-        EndianUtilities.writeBytesBigEndian(value, _buffer, 0);
+        EndianUtilities.writeBytesBigEndian(value, buffer, 0);
         flushBuffer(2);
     }
 
     public void write(int value) {
         ensureBuffer();
-        EndianUtilities.writeBytesBigEndian(value, _buffer, 0);
+        EndianUtilities.writeBytesBigEndian(value, buffer, 0);
         flushBuffer(4);
     }
 
     public void write(long value) {
         ensureBuffer();
-        EndianUtilities.writeBytesBigEndian(value, _buffer, 0);
+        EndianUtilities.writeBytesBigEndian(value, buffer, 0);
         flushBuffer(8);
     }
 }

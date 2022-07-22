@@ -33,7 +33,7 @@ import dotnet4j.io.Stream;
 
 
 public final class UnixBuildFileRecord {
-    private final BuilderExtentSource _source;
+    private final BuilderExtentSource source;
 
     public UnixBuildFileRecord(String name, byte[] buffer) {
         this(name, new BuilderBufferExtentSource(buffer), EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0L /* UnixEpoch */);
@@ -67,45 +67,45 @@ public final class UnixBuildFileRecord {
             int ownerId,
             int groupId,
             long modificationTime) {
-        __Name = name;
-        _source = fileSource;
-        __FileMode = fileMode;
-        __OwnerId = ownerId;
-        __GroupId = groupId;
-        __ModificationTime = modificationTime;
+        this.name = name;
+        source = fileSource;
+        this.fileMode = fileMode;
+        this.ownerId = ownerId;
+        this.groupId = groupId;
+        this.modificationTime = modificationTime;
     }
 
-    private EnumSet<UnixFilePermissions> __FileMode;
+    private EnumSet<UnixFilePermissions> fileMode;
 
     public EnumSet<UnixFilePermissions> getFileMode() {
-        return __FileMode;
+        return fileMode;
     }
 
-    private int __GroupId;
+    private int groupId;
 
     public int getGroupId() {
-        return __GroupId;
+        return groupId;
     }
 
-    private long __ModificationTime;
+    private long modificationTime;
 
     public long getModificationTime() {
-        return __ModificationTime;
+        return modificationTime;
     }
 
-    private String __Name;
+    private String name;
 
     public String getName() {
-        return __Name;
+        return name;
     }
 
-    private int __OwnerId;
+    private int ownerId;
 
     public int getOwnerId() {
-        return __OwnerId;
+        return ownerId;
     }
 
     public BuilderExtent fix(long pos) {
-        return _source.fix(pos);
+        return source.fix(pos);
     }
 }

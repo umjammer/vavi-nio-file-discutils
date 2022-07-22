@@ -38,17 +38,18 @@ import dotnet4j.io.Stream;
 
 
 public class NtfsStream {
-    private final File _file;
+
+    private final File file;
 
     public NtfsStream(File file, NtfsAttribute attr) {
-        _file = file;
-        _attribute = attr;
+        this.file = file;
+        attribute = attr;
     }
 
-    private NtfsAttribute _attribute;
+    private NtfsAttribute attribute;
 
     public NtfsAttribute getAttribute() {
-        return _attribute;
+        return attribute;
     }
 
     public AttributeType getAttributeType() {
@@ -107,7 +108,7 @@ public class NtfsStream {
 
     public List<StreamExtent> getAbsoluteExtents() {
         List<StreamExtent> result = new ArrayList<>();
-        long clusterSize = _file.getContext().getBiosParameterBlock().getBytesPerCluster();
+        long clusterSize = file.getContext().getBiosParameterBlock().getBytesPerCluster();
         if (getAttribute().isNonResident()) {
             List<Range> clusters = getAttribute().getClusters();
             for (Range clusterRange : clusters) {

@@ -41,10 +41,11 @@ import dotnet4j.io.IOException;
  * of disk formats.
  */
 public class InMemoryFileSystem extends DiscFileSystem {
-    private Map<String, SparseMemoryBuffer> _files;
+
+    private Map<String, SparseMemoryBuffer> files;
 
     public InMemoryFileSystem() {
-        _files = new HashMap<>();
+        files = new HashMap<>();
     }
 
     public String getFriendlyName() {
@@ -88,7 +89,7 @@ public class InMemoryFileSystem extends DiscFileSystem {
     }
 
     public boolean fileExists(String path) {
-        return _files.containsKey(path);
+        return files.containsKey(path);
     }
 
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
@@ -116,16 +117,16 @@ public class InMemoryFileSystem extends DiscFileSystem {
     }
 
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
-        if (_files.containsKey(path)) {
+        if (files.containsKey(path)) {
             if (mode == FileMode.CreateNew) {
                 throw new IOException("File already exists");
             }
 
-            return new SparseMemoryStream(_files.get(path), access);
+            return new SparseMemoryStream(files.get(path), access);
         } else if (mode == FileMode.Create || mode == FileMode.CreateNew || mode == FileMode.OpenOrCreate ||
                    mode == FileMode.Truncate) {
-            _files.put(path, new SparseMemoryBuffer(16 * 1024));
-            return new SparseMemoryStream(_files.get(path), access);
+            files.put(path, new SparseMemoryBuffer(16 * 1024));
+            return new SparseMemoryStream(files.get(path), access);
         } else {
             throw new FileNotFoundException();
         }
@@ -164,8 +165,8 @@ public class InMemoryFileSystem extends DiscFileSystem {
     }
 
     public long getFileLength(String path) {
-        if (_files.containsKey(path)) {
-            return _files.get(path).getCapacity();
+        if (files.containsKey(path)) {
+            return files.get(path).getCapacity();
         } else {
             throw new FileNotFoundException("No such file " + path);
         }

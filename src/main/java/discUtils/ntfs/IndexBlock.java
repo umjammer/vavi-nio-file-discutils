@@ -28,51 +28,52 @@ import dotnet4j.io.Stream;
 
 
 public class IndexBlock extends FixupRecordBase {
+
     /**
      * Size of meta-data placed at start of a block.
      */
     private static final int FieldSize = 0x18;
 
-    private final Index _index;
+    private final Index index;
 
     // Virtual Cluster Number (maybe in sectors sometimes...?)
-    private long _indexBlockVcn;
+    private long indexBlockVcn;
 
-    private final boolean _isRoot;
+    private final boolean isRoot;
 
-    private long _logSequenceNumber;
+    private long logSequenceNumber;
 
-    private final long _streamPosition;
+    private final long streamPosition;
 
     public IndexBlock(Index index, boolean isRoot, IndexEntry parentEntry, BiosParameterBlock bpb) {
         super("INDX", bpb.getBytesPerSector());
-        _index = index;
-        _isRoot = isRoot;
+        this.index = index;
+        this.isRoot = isRoot;
         Stream stream = index.getAllocationStream();
-        _streamPosition = index.indexBlockVcnToPosition(parentEntry.getChildrenVirtualCluster());
-        stream.setPosition(_streamPosition);
+        streamPosition = index.indexBlockVcnToPosition(parentEntry.getChildrenVirtualCluster());
+        stream.setPosition(streamPosition);
         byte[] buffer = StreamUtilities.readExact(stream, index.getIndexBufferSize());
         fromBytes(buffer, 0);
     }
 
     private IndexBlock(Index index, boolean isRoot, long vcn, BiosParameterBlock bpb) {
         super("INDX", bpb.getBytesPerSector(), bpb.getIndexBufferSize());
-        _index = index;
-        _isRoot = isRoot;
-        _indexBlockVcn = vcn;
-        _streamPosition = vcn * bpb.getBytesPerSector() * bpb.getSectorsPerCluster();
-        setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), _index, isRoot, bpb.getIndexBufferSize() - FieldSize));
+        this.index = index;
+        this.isRoot = isRoot;
+        indexBlockVcn = vcn;
+        streamPosition = vcn * bpb.getBytesPerSector() * bpb.getSectorsPerCluster();
+        setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), this.index, isRoot, bpb.getIndexBufferSize() - FieldSize));
         writeToDisk();
     }
 
-    private IndexNode _node;
+    private IndexNode node;
 
     public IndexNode getNode() {
-        return _node;
+        return node;
     }
 
     public void setNode(IndexNode value) {
-        _node = value;
+        node = value;
     }
 
     public static IndexBlock initialize(Index index, boolean isRoot, IndexEntry parentEntry, BiosParameterBlock bpb) {
@@ -80,24 +81,24 @@ public class IndexBlock extends FixupRecordBase {
     }
 
     public void writeToDisk() {
-        byte[] buffer = new byte[_index.getIndexBufferSize()];
+        byte[] buffer = new byte[index.getIndexBufferSize()];
         toBytes(buffer, 0);
-        Stream stream = _index.getAllocationStream();
-        stream.setPosition(_streamPosition);
+        Stream stream = index.getAllocationStream();
+        stream.setPosition(streamPosition);
         stream.write(buffer, 0, buffer.length);
         stream.flush();
     }
 
     protected void read(byte[] buffer, int offset) {
         // Skip FixupRecord fields...
-        _logSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
-        _indexBlockVcn = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
-        setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), _index, _isRoot, buffer, offset + FieldSize));
+        logSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
+        indexBlockVcn = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
+        setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), index, isRoot, buffer, offset + FieldSize));
     }
 
     protected short write(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(_logSequenceNumber, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(_indexBlockVcn, buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian(logSequenceNumber, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(indexBlockVcn, buffer, offset + 0x10);
         return (short) (FieldSize + getNode().writeTo(buffer, offset + FieldSize));
     }
 

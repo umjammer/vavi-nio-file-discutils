@@ -29,9 +29,10 @@ import dotnet4j.io.Stream;
 
 
 public class BuilderStreamExtent extends BuilderExtent {
-    private final Ownership _ownership;
 
-    private Stream _source;
+    private final Ownership ownership;
+
+    private Stream source;
 
     public BuilderStreamExtent(long start, Stream source) {
         this(start, source, Ownership.None);
@@ -39,14 +40,14 @@ public class BuilderStreamExtent extends BuilderExtent {
 
     public BuilderStreamExtent(long start, Stream source, Ownership ownership) {
         super(start, source.getLength());
-        _source = source;
-        _ownership = ownership;
+        this.source = source;
+        this.ownership = ownership;
     }
 
     public void close() throws IOException {
-        if (_source != null && _ownership == Ownership.Dispose) {
-            _source.close();
-            _source = null;
+        if (source != null && ownership == Ownership.Dispose) {
+            source.close();
+            source = null;
         }
     }
 
@@ -54,8 +55,8 @@ public class BuilderStreamExtent extends BuilderExtent {
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        _source.setPosition(diskOffset - _start);
-        return _source.read(block, offset, count);
+        source.setPosition(diskOffset - start);
+        return source.read(block, offset, count);
     }
 
     public void disposeReadState() {

@@ -79,7 +79,7 @@ public class ThreadSafeStreamTest {
         try {
             tss.setLength(10);
             fail("SetLength should fail");
-        } catch (UnsupportedOperationException __dummyCatchVar0) {
+        } catch (UnsupportedOperationException ignored) {
         }
     }
 
@@ -123,7 +123,7 @@ public class ThreadSafeStreamTest {
         try {
             altView.readByte();
             fail("Disposed stream didn't stop view");
-        } catch (IOException __dummyCatchVar1) {
+        } catch (IOException ignored) {
         }
     }
 

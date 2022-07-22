@@ -23,40 +23,41 @@
 package discUtils.streams.builder;
 
 public class BuilderBufferExtent extends BuilderExtent {
-    private byte[] _buffer;
 
-    private final boolean _fixedBuffer;
+    private byte[] buffer;
+
+    private final boolean fixedBuffer;
 
     public BuilderBufferExtent(long start, long length)  {
         super(start, length);
-        _fixedBuffer = false;
+        fixedBuffer = false;
     }
 
     public BuilderBufferExtent(long start, byte[] buffer)  {
         super(start, buffer.length);
-        _fixedBuffer = true;
-        _buffer = buffer;
+        fixedBuffer = true;
+        this.buffer = buffer;
     }
 
     public void close() {
     }
 
     public void prepareForRead() {
-        if (!_fixedBuffer) {
-            _buffer = getBuffer();
+        if (!fixedBuffer) {
+            buffer = getBuffer();
         }
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        int startOffset = (int) (diskOffset - _start);
-        int numBytes = (int) Math.min(_length - startOffset, count);
-        System.arraycopy(_buffer, startOffset, block, offset, numBytes);
+        int startOffset = (int) (diskOffset - start);
+        int numBytes = (int) Math.min(length - startOffset, count);
+        System.arraycopy(buffer, startOffset, block, offset, numBytes);
         return numBytes;
     }
 
     public void disposeReadState() {
-        if (!_fixedBuffer) {
-            _buffer = null;
+        if (!fixedBuffer) {
+            buffer = null;
         }
     }
 

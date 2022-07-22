@@ -31,21 +31,22 @@ import discUtils.streams.StreamExtent;
 
 
 public abstract class BuilderExtent implements Closeable {
+
     public BuilderExtent(long start, long length) {
-        _start = start;
-        _length = length;
+        this.start = start;
+        this.length = length;
     }
 
-    protected long _length;
+    protected long length;
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
-    protected long _start;
+    protected long start;
 
     public long getStart() {
-        return _start;
+        return start;
     }
 
     /**
@@ -53,7 +54,7 @@ public abstract class BuilderExtent implements Closeable {
      * This may be an empty enumeration if all bytes are zero.
      */
     public List<StreamExtent> getStreamExtents() {
-        return Collections.singletonList(new StreamExtent(_start, _length));
+        return Collections.singletonList(new StreamExtent(start, length));
     }
 
     public abstract void close() throws IOException;
@@ -65,6 +66,6 @@ public abstract class BuilderExtent implements Closeable {
     public abstract void disposeReadState();
 
     public String toString() {
-        return getClass().getSimpleName() + "@" + hashCode() + ": {start: " + _start + ", length: " + _length + "}";
+        return getClass().getSimpleName() + "@" + hashCode() + ": {start: " + start + ", length: " + length + "}";
     }
 }

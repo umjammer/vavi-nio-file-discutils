@@ -43,48 +43,48 @@ import discUtils.streams.PumpProgressEventArgs;
 @HelpOption(option = "h", argName = "help", description = "Show this help.", helpHandler = ProgramBase.class)
 public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
 
-    private String _outputDiskType;
+    private String outputDiskType;
 
-    private String _outputDiskVariant;
+    private String outputDiskVariant;
 
     protected String getUserName() {
-        return _userName;
+        return userName;
     }
 
     protected String getPassword() {
-        return _password;
+        return password;
     }
 
     protected String getOutputDiskType() {
-        return _outputDiskType;
+        return outputDiskType;
     }
 
     protected String getOutputDiskVariant() {
-        return _outputDiskVariant;
+        return outputDiskVariant;
     }
 
     protected GenericDiskAdapterType getAdapterType() {
-        return _adapterType;
+        return adapterType;
     }
 
     protected boolean getQuiet() {
-        return _quiet;
+        return quiet;
     }
 
     protected boolean getVerbose() {
-        return _verbose;
+        return verbose;
     }
 
     protected int getPartition() {
-        return _partition;
+        return partition;
     }
 
     protected String getVolumeId() {
-        return _volumeId;
+        return volumeId;
     }
 
     protected long getDiskSize() {
-        return _diskSize;
+        return diskSize;
     }
 
     protected VirtualDiskParameters getDiskParameters() {
@@ -98,59 +98,59 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
     protected void doRun() throws IOException {
     }
 
-    @Option(option = "a", argName = "_adapterType", args = 1,
+    @Option(option = "a", argName = "adapterType", args = 1,
             description = "Some disk formats encode the disk type (IDE or SCSI) into the disk image, this parameter specifies the type of adaptor to encode.")
-    GenericDiskAdapterType _adapterType = GenericDiskAdapterType.Ide;
+    GenericDiskAdapterType adapterType = GenericDiskAdapterType.Ide;
 
-    @Option(option = "sz", argName = "_diskSize", args = 1,
+    @Option(option = "sz", argName = "diskSize", args = 1,
             description = "The size of the output disk.  Use B, KB, MB, GB to specify units (units default to bytes if not specified).")
-    int _diskSize;
+    int diskSize;
 
-    @Option(option = "ne", argName = "_filenameEncoding", args = 1,
+    @Option(option = "ne", argName = "filenameEncoding", args = 1,
             description = "The encoding used for filenames in the file system (aka the codepage), e.g. UTF-8 or IBM437.  This is ignored for file systems have fixed/defined encodings.")
-    String _filenameEncoding;
+    String filenameEncoding;
 
-    @Option(option = "p", argName = "_partition", args = 1,
+    @Option(option = "p", argName = "partition", args = 1,
             description = "The number of the partition to inspect, in the range 0-n.  If not specified, 0 (the first partition) is the default.")
-    int _partition = -1;
+    int partition = -1;
 
-    @Option(option = "i", argName = "_volumeId", args = 1,
+    @Option(option = "i", argName = "volumeId", args = 1,
             description = "The volume id of the volume to access, use the volInfo tool to discover this id.  If specified, the partition parameter is ignored.")
-    String _volumeId;
+    String volumeId;
 
-    @Option(option = "u", argName = "_userName", args = 1,
+    @Option(option = "u", argName = "userName", args = 1,
             description = "If using an iSCSI source or target, optionally use this parameter to specify the user name to authenticate with.  If this parameter is specified without a password, you will be prompted to supply the password.")
-    String _userName;
+    String userName;
 
-    @Option(option = "pw", argName = "_password", args = 1,
+    @Option(option = "pw", argName = "password", args = 1,
             description = "If using an iSCSI source or target, optionally use this parameter to specify the password to authenticate with.")
-    String _password;
+    String password;
 
-    @Option(option = "v", argName = "_verbose", description = "Show detailed information.")
-    boolean _verbose;
+    @Option(option = "v", argName = "verbose", description = "Show detailed information.")
+    boolean verbose;
 
-    @Option(option = "q", argName = "_quiet", description = "Run quietly.")
-    boolean _quiet;
+    @Option(option = "q", argName = "quiet", description = "Run quietly.")
+    boolean quiet;
 
-    @Option(option = "time", argName = "_time", description = "Times how long this program takes to execute.")
-    boolean _time;
+    @Option(option = "time", argName = "time", description = "Times how long this program takes to execute.")
+    boolean time;
 
-    @Option(option = "of", argName = "_outFormat", args = 1,
+    @Option(option = "of", argName = "outFormat", args = 1,
             description = "Mandatory - the type of disk to output, one of ..." + " or " + ".")
-    String _outFormat;
+    String outFormat;
 
     protected void run(String[] args) throws IOException {
-        if (!_quiet) {
+        if (!quiet) {
             displayHeader();
         }
 
-        if (_outFormat != null) {
-            String[] typeAndVariant = _outFormat.split("-");
-            _outputDiskType = typeAndVariant[0];
-            _outputDiskVariant = (typeAndVariant.length > 1) ? typeAndVariant[1] : "";
+        if (outFormat != null) {
+            String[] typeAndVariant = outFormat.split("-");
+            outputDiskType = typeAndVariant[0];
+            outputDiskVariant = (typeAndVariant.length > 1) ? typeAndVariant[1] : "";
         }
 
-        if (_time) {
+        if (time) {
             long stopWatch = System.currentTimeMillis();
             doRun();
             System.err.println();

@@ -23,32 +23,33 @@
 package discUtils.ntfs;
 
 public class DirectoryEntry {
-    private final Directory _directory;
+
+    private final Directory directory;
 
     public DirectoryEntry(Directory directory, FileRecordReference fileReference, FileNameRecord fileDetails) {
-        _directory = directory;
-        _reference = fileReference;
-        _details = fileDetails;
+        this.directory = directory;
+        reference = fileReference;
+        details = fileDetails;
     }
 
-    private FileNameRecord _details;
+    private FileNameRecord details;
 
     public FileNameRecord getDetails() {
-        return _details;
+        return details;
     }
 
     public boolean isDirectory() {
-        return getDetails()._flags.contains(FileAttributeFlags.Directory);
+        return getDetails().flags.contains(FileAttributeFlags.Directory);
     }
 
-    private FileRecordReference _reference;
+    private FileRecordReference reference;
 
     public FileRecordReference getReference() {
-        return _reference;
+        return reference;
     }
 
     public String getSearchName() {
-        String fileName = _details._fileName;
+        String fileName = details.fileName;
         if (fileName.indexOf('.') == -1) {
             return fileName + ".";
         }
@@ -57,11 +58,11 @@ public class DirectoryEntry {
     }
 
     public void updateFrom(File file) {
-        file.freshenFileName(_details, true);
-        _directory.updateEntry(this);
+        file.freshenFileName(details, true);
+        directory.updateEntry(this);
     }
 
     public String toString() {
-        return _details._fileName;
+        return details.fileName;
     }
 }

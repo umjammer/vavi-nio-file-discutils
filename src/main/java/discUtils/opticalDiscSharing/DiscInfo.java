@@ -27,43 +27,44 @@ package discUtils.opticalDiscSharing;
  * Information about a shared Optical Disc.
  */
 public final class DiscInfo {
+
     /**
      * Gets or sets the name of the disc (unique within an instance of
      * OpticalDiscService).
      */
-    private String _name;
+    private String name;
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String value) {
-        _name = value;
+        name = value;
     }
 
     /**
      * Gets or sets the displayable volume label for the disc.
      */
-    private String _volumeLabel;
+    private String volumeLabel;
 
     public String getVolumeLabel() {
-        return _volumeLabel;
+        return volumeLabel;
     }
 
     public void setVolumeLabel(String value) {
-        _volumeLabel = value;
+        volumeLabel = value;
     }
 
     /**
      * Gets or sets the volume type of the disc.
      */
-    private String _volumeType;
+    private String volumeType;
 
     public String getVolumeType() {
-        return _volumeType;
+        return volumeType;
     }
 
     public void setVolumeType(String value) {
-        _volumeType = value;
+        volumeType = value;
     }
 }

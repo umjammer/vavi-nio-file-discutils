@@ -30,75 +30,76 @@ import discUtils.streams.util.EndianUtilities;
 
 
 class CompressionAttribute {
-    @SuppressWarnings("unused")
-    private byte _attrData1;
 
     @SuppressWarnings("unused")
-    private byte _attrData2;
-
-    private int _compressionMagic;
+    private byte attrData1;
 
     @SuppressWarnings("unused")
-    private int _recordType;
+    private byte attrData2;
+
+    private int compressionMagic;
 
     @SuppressWarnings("unused")
-    private int _reserved1;
+    private int recordType;
 
     @SuppressWarnings("unused")
-    private int _reserved2;
+    private int reserved1;
 
     @SuppressWarnings("unused")
-    private int _reserved3;
+    private int reserved2;
 
-    private int _attrSize;
+    @SuppressWarnings("unused")
+    private int reserved3;
+
+    private int attrSize;
 
     public int getAttrSize() {
-        return _attrSize;
+        return attrSize;
     }
 
     public void setAttrSize(int value) {
-        _attrSize = value;
+        attrSize = value;
     }
 
     public String getCompressionMagic() {
         ByteBuffer buffer = ByteBuffer.allocate(4).order(ByteOrder.nativeOrder());
-        buffer.putInt(_compressionMagic);
+        buffer.putInt(compressionMagic);
         return new String(buffer.array(), StandardCharsets.US_ASCII);
     }
 
-    private int _compressionType;
+    private int compressionType;
 
     public int getCompressionType() {
-        return _compressionType;
+        return compressionType;
     }
 
     public void setCompressionType(int value) {
-        _compressionType = value;
+        compressionType = value;
     }
 
     public static int getSize() {
         return 32;
     }
 
-    private int _uncompressedSize;
+    private int uncompressedSize;
 
     public int getUncompressedSize() {
-        return _uncompressedSize;
+        return uncompressedSize;
     }
 
     public void setUncompressedSize(int value) {
-        _uncompressedSize = value;
+        uncompressedSize = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _recordType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        _reserved1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        _reserved1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        setAttrSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 12));
-        _compressionMagic = EndianUtilities.toUInt32BigEndian(buffer, offset + 16);
-        setCompressionType(EndianUtilities.toUInt32LittleEndian(buffer, offset + 20));
-        setUncompressedSize(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
-        _reserved3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 28);
+        recordType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
+        reserved1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        reserved1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        attrSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        compressionMagic = EndianUtilities.toUInt32BigEndian(buffer, offset + 16);
+        compressionType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        uncompressedSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
+        reserved3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 28);
 
         return getSize();
     }

@@ -38,38 +38,39 @@ import discUtils.core.vfs.IVfsDirectory;
 
 
 public class Directory extends File implements IVfsDirectory<DirEntry, File> {
+
     public Directory(DirEntry dirEntry, Context context) {
         super(dirEntry, context);
     }
 
-    private Map<String, DirEntry> _allEntries;
+    private Map<String, DirEntry> allEntries;
 
     public List<DirEntry> getAllEntries() {
-        if (_allEntries != null)
-            return new ArrayList<>(_allEntries.values());
+        if (allEntries != null)
+            return new ArrayList<>(allEntries.values());
 
         Map<String, DirEntry> result = new HashMap<>();
-        long treeId = DirEntry.getTreeId();
-        long objectId = DirEntry.getObjectId();
-        if (DirEntry.isSubtree()) {
+        long treeId = dirEntry.getTreeId();
+        long objectId = dirEntry.getObjectId();
+        if (dirEntry.isSubtree()) {
             treeId = objectId;
-            RootItem rootItem = Context.getRootTreeRoot()
-                    .findFirst(RootItem.class, new Key(treeId, ItemType.RootItem), Context);
+            RootItem rootItem = context.getRootTreeRoot()
+                    .findFirst(RootItem.class, new Key(treeId, ItemType.RootItem), context);
             objectId = rootItem.getRootDirId();
         }
 
-        NodeHeader tree = Context.getFsTree(treeId);
-        List<DirIndex> items = tree.find(DirIndex.class, new Key(objectId, ItemType.DirIndex), Context);
+        NodeHeader tree = context.getFsTree(treeId);
+        List<DirIndex> items = tree.find(DirIndex.class, new Key(objectId, ItemType.DirIndex), context);
         for (DirIndex item : items) {
-            BaseItem inode = tree.findFirst(item.getChildLocation(), Context);
+            BaseItem inode = tree.findFirst(item.getChildLocation(), context);
             result.put(item.getName(), new DirEntry(treeId, item, (InodeItem) inode));
         }
-        _allEntries = result;
+        allEntries = result;
         return new ArrayList<>(result.values());
     }
 
     public DirEntry getSelf() {
-        return DirEntry;
+        return dirEntry;
     }
 
     public DirEntry getEntryByName(String name) {

@@ -74,6 +74,6 @@ public final class ExtFileSystem extends VfsFileSystemFacade implements IUnixFil
         byte[] superblockData = StreamUtilities.readExact(stream, 1024);
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);
-        return superblock.Magic == SuperBlock.Ext2Magic;
+        return superblock.magic == SuperBlock.Ext2Magic;
     }
 }

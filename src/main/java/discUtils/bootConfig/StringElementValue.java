@@ -23,10 +23,11 @@
 package discUtils.bootConfig;
 
 public class StringElementValue extends ElementValue {
-    private final String _value;
+
+    private final String value;
 
     public StringElementValue(String value) {
-        _value = value;
+        this.value = value;
     }
 
     public ElementFormat getFormat() {
@@ -34,6 +35,6 @@ public class StringElementValue extends ElementValue {
     }
 
     public String toString() {
-        return _value;
+        return value;
     }
 }

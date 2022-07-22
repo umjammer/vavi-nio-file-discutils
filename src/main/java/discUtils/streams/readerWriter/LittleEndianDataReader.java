@@ -36,26 +36,26 @@ public class LittleEndianDataReader extends DataReader {
 
     public short readUInt16() {
         readToBuffer(2);
-        return EndianUtilities.toUInt16LittleEndian(_buffer, 0);
+        return EndianUtilities.toUInt16LittleEndian(buffer, 0);
     }
 
     public int readInt32() {
         readToBuffer(4);
-        return EndianUtilities.toInt32LittleEndian(_buffer, 0);
+        return EndianUtilities.toInt32LittleEndian(buffer, 0);
     }
 
     public int readUInt32() {
         readToBuffer(4);
-        return EndianUtilities.toUInt32LittleEndian(_buffer, 0);
+        return EndianUtilities.toUInt32LittleEndian(buffer, 0);
     }
 
     public long readInt64() {
         readToBuffer(8);
-        return EndianUtilities.toInt64LittleEndian(_buffer, 0);
+        return EndianUtilities.toInt64LittleEndian(buffer, 0);
     }
 
     public long readUInt64() {
         readToBuffer(8);
-        return EndianUtilities.toUInt64LittleEndian(_buffer, 0);
+        return EndianUtilities.toUInt64LittleEndian(buffer, 0);
     }
 }

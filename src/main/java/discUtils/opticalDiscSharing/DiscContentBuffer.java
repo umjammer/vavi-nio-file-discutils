@@ -42,23 +42,24 @@ import okhttp3.Response;
 
 
 public final class DiscContentBuffer extends Buffer {
-    private String _authHeader;
 
-    private String _password;
+    private String authHeader;
 
-    private URI _uri;
+    private String password;
 
-    private String _userName;
+    private URI uri;
+
+    private String userName;
 
     OkHttpClient client;
 
     public DiscContentBuffer(URI uri, String userName, String password) {
-        _uri = uri;
-        _userName = userName;
-        _password = password;
+        this.uri = uri;
+        this.userName = userName;
+        this.password = password;
         client = new OkHttpClient().newBuilder().followRedirects(false).followSslRedirects(false).build();
         Response response = sendRequest(() -> new Request.Builder().url(uri.toString()).head().build());
-        _capacity = response.body().contentLength();
+        capacity = response.body().contentLength();
     }
 
     public boolean canRead() {
@@ -69,14 +70,14 @@ public final class DiscContentBuffer extends Buffer {
         return false;
     }
 
-    private long _capacity;
+    private long capacity;
 
     public long getCapacity() {
-        return _capacity;
+        return capacity;
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        Response response = sendRequest(() -> new Request.Builder().url(_uri.toString())
+        Response response = sendRequest(() -> new Request.Builder().url(uri.toString())
                 .get()
                 .addHeader("Range", String.format("bytes=%d-%d", (int) pos, (int) (pos + count - 1)))
                 .build());
@@ -101,7 +102,7 @@ public final class DiscContentBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, _capacity)),
+        return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, capacity)),
                 Collections.singletonList(new StreamExtent(start, count)));
     }
 
@@ -136,8 +137,8 @@ public final class DiscContentBuffer extends Buffer {
 
     private Response sendRequest(WebRequestCreator wrc) {
         Request wr = wrc.invoke();
-        if (_authHeader != null) {
-            wr = wr.newBuilder().addHeader("Authorization", _authHeader).build();
+        if (authHeader != null) {
+            wr = wr.newBuilder().addHeader("Authorization", authHeader).build();
         }
 
         Response wresp = null;
@@ -156,10 +157,10 @@ public final class DiscContentBuffer extends Buffer {
                                                  wr.url().uri().getPath(),
                                                  wr.method(),
                                                  authParams.get("realm"));
-                _authHeader = "Digest username=\"" + _userName + "\", realm=\"ODS\", nonce=\"" + authParams.get("nonce") +
+                authHeader = "Digest username=\"" + userName + "\", realm=\"ODS\", nonce=\"" + authParams.get("nonce") +
                               "\", uri=\"" + wr.url().uri().getPath() + "\", response=\"" + resp + "\"";
                 wr = wrc.invoke();
-                wr = wr.newBuilder().addHeader("Authorization", _authHeader).build();
+                wr = wr.newBuilder().addHeader("Authorization", authHeader).build();
                 try {
                     return client.newCall(wr).execute();
                 } catch (IOException e) {
@@ -178,7 +179,7 @@ public final class DiscContentBuffer extends Buffer {
             String a2 = method + ":" + uriPath;
             MessageDigest ha2hash = MessageDigest.getInstance("MD5");
             String ha2 = toHexString(ha2hash.digest(a2.getBytes(StandardCharsets.US_ASCII)));
-            String a1 = _userName + ":" + realm + ":" + _password;
+            String a1 = userName + ":" + realm + ":" + password;
             MessageDigest ha1hash = MessageDigest.getInstance("MD5");
             String ha1 = toHexString(ha1hash.digest(a1.getBytes(StandardCharsets.US_ASCII)));
             String toHash = ha1 + ":" + nonce + ":" + ha2;

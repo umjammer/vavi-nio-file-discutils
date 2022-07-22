@@ -23,14 +23,14 @@
 package discUtils.streams.builder;
 
 public class BuilderBufferExtentSource extends BuilderExtentSource {
-    private final byte[] _buffer;
+
+    private final byte[] buffer;
 
     public BuilderBufferExtentSource(byte[] buffer) {
-        _buffer = buffer;
+        this.buffer = buffer;
     }
 
     public BuilderExtent fix(long pos) {
-        return new BuilderBufferExtent(pos, _buffer);
+        return new BuilderBufferExtent(pos, buffer);
     }
-
 }

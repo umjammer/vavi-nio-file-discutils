@@ -353,7 +353,7 @@ e.printStackTrace();
     }
 
     static boolean isSpecialDirectory(DirectoryRecord r) {
-        return r.FileIdentifier.equals("\0") || r.FileIdentifier.equals("\01");
+        return r.fileIdentifier.equals("\0") || r.fileIdentifier.equals("\01");
     }
 
     private static int safeParseInt(int minVal, int maxVal, String str) {

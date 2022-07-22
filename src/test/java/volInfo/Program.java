@@ -37,8 +37,9 @@ import dotnet4j.io.FileAccess;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "disk", description = "Paths to the disks to inspect.", args = 1, required = true)
-    private String _inFile; // TODO array
+    private String inFile; // TODO array
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -48,8 +49,8 @@ public class Program extends ProgramBase {
 
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
-String[] _inFiles = new String[] { _inFile };
-        for (String path : _inFiles) {
+String[] inFiles = new String[] {inFile};
+        for (String path : inFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(path, FileAccess.Read, getUserName(), getPassword()));
         }
         System.err.println("PHYSICAL VOLUMES");

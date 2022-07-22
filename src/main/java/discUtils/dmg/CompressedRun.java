@@ -27,26 +27,27 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class CompressedRun implements IByteArraySerializable {
-    public long CompLength;
 
-    public long CompOffset;
+    public long compLength;
 
-    public long SectorCount;
+    public long compOffset;
 
-    public long SectorStart;
+    public long sectorCount;
 
-    public RunType Type;
+    public long sectorStart;
+
+    public RunType type;
 
     public int size() {
         return 40;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Type = RunType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0));
-        SectorStart = EndianUtilities.toInt64BigEndian(buffer, offset + 8);
-        SectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
-        CompOffset = EndianUtilities.toInt64BigEndian(buffer, offset + 24);
-        CompLength = EndianUtilities.toInt64BigEndian(buffer, offset + 32);
+        type = RunType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0));
+        sectorStart = EndianUtilities.toInt64BigEndian(buffer, offset + 8);
+        sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
+        compOffset = EndianUtilities.toInt64BigEndian(buffer, offset + 24);
+        compLength = EndianUtilities.toInt64BigEndian(buffer, offset + 32);
         return 40;
     }
 

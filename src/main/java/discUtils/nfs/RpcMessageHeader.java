@@ -39,7 +39,7 @@ public class RpcMessageHeader {
 
     public boolean isSuccess() {
         return replyHeader != null && replyHeader.Status == RpcReplyStatus.Accepted
-                && replyHeader.AcceptReply.AcceptStatus == RpcAcceptStatus.Success;
+                && replyHeader.acceptReply.AcceptStatus == RpcAcceptStatus.Success;
     }
 
     private RpcReplyHeader replyHeader;
@@ -92,8 +92,8 @@ public class RpcMessageHeader {
         replyHeader.Status = RpcReplyStatus.Accepted;
         RpcAcceptedReplyHeader acceptedReplyHeader = new RpcAcceptedReplyHeader();
         acceptedReplyHeader.AcceptStatus = RpcAcceptStatus.Success;
-        acceptedReplyHeader.Verifier = RpcAuthentication.null_();
-        replyHeader.AcceptReply = acceptedReplyHeader;
+        acceptedReplyHeader.verifier = RpcAuthentication.null_();
+        replyHeader.acceptReply = acceptedReplyHeader;
         header.setReplyHeader(replyHeader);
         return header;
     }
@@ -105,9 +105,9 @@ public class RpcMessageHeader {
         replyHeader.Status = RpcReplyStatus.Accepted;
         RpcAcceptedReplyHeader acceptedReplyHeader = new RpcAcceptedReplyHeader();
         acceptedReplyHeader.AcceptStatus = RpcAcceptStatus.ProcedureUnavailable;
-        acceptedReplyHeader.MismatchInfo = new RpcMismatchInfo();
-        acceptedReplyHeader.Verifier = RpcAuthentication.null_();
-        replyHeader.AcceptReply = acceptedReplyHeader;
+        acceptedReplyHeader.mismatchInfo = new RpcMismatchInfo();
+        acceptedReplyHeader.verifier = RpcAuthentication.null_();
+        replyHeader.acceptReply = acceptedReplyHeader;
         header.setReplyHeader(replyHeader);
         return header;
     }

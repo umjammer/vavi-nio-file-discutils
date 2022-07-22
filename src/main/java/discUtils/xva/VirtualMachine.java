@@ -61,9 +61,9 @@ public final class VirtualMachine implements Closeable {
 
     private static final String GetDiskCapacity = "member[child::name='snapshot']/value/struct/member[child::name='virtual_size']/value";
 
-    private final Ownership _ownership;
+    private final Ownership ownership;
 
-    private Stream _fileStream;
+    private Stream fileStream;
 
     /**
      * Initializes a new instance of the VirtualMachine class.
@@ -83,16 +83,16 @@ public final class VirtualMachine implements Closeable {
      *            the new instance.
      */
     public VirtualMachine(Stream fileStream, Ownership ownership) {
-        _fileStream = fileStream;
-        _ownership = ownership;
-        _fileStream.setPosition(0);
-        _archive = new TarFile(fileStream);
+        this.fileStream = fileStream;
+        this.ownership = ownership;
+        this.fileStream.setPosition(0);
+        archive = new TarFile(fileStream);
     }
 
-    private TarFile _archive;
+    private TarFile archive;
 
     public TarFile getArchive() {
-        return _archive;
+        return archive;
     }
 
     /**
@@ -131,9 +131,9 @@ public final class VirtualMachine implements Closeable {
      * Disposes of this object, freeing any owned resources.
      */
     public void close() throws IOException {
-        if (_ownership == Ownership.Dispose && _fileStream != null) {
-            _fileStream.close();
-            _fileStream = null;
+        if (ownership == Ownership.Dispose && fileStream != null) {
+            fileStream.close();
+            fileStream = null;
         }
     }
 }

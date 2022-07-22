@@ -86,53 +86,56 @@ public interface NativeMethods extends Library {
     boolean readFile(Pointer handle, int[] buffer, int count, int[] numRead, int[] overlapped);
 
     class NtfsVolumeData {
-        public long VolumeSerialNumber;
 
-        public long NumberSectors;
+        public long volumeSerialNumber;
 
-        public long TotalClusters;
+        public long numberSectors;
 
-        public long FreeClusters;
+        public long totalClusters;
 
-        public long TotalReserved;
+        public long freeClusters;
 
-        public int BytesPerSector;
+        public long totalReserved;
 
-        public int BytesPerCluster;
+        public int bytesPerSector;
 
-        public int BytesPerFileRecordSegment;
+        public int bytesPerCluster;
 
-        public int ClustersPerFileRecordSegment;
+        public int bytesPerFileRecordSegment;
 
-        public long MftValidDataLength;
+        public int clustersPerFileRecordSegment;
 
-        public long MftStartLcn;
+        public long mftValidDataLength;
 
-        public long Mft2StartLcn;
+        public long mftStartLcn;
 
-        public long MftZoneStart;
+        public long mft2StartLcn;
 
-        public long MftZoneEnd;
+        public long mftZoneStart;
+
+        public long mftZoneEnd;
     }
 
     class DiskExtent {
-        public int DiskNumber;
 
-        public long StartingOffset;
+        public int diskNumber;
 
-        public long ExtentLength;
+        public long startingOffset;
+
+        public long extentLength;
     }
 
     class DiskGeometry {
-        public long Cylinders;
 
-        public int MediaType;
+        public long cylinders;
 
-        public int TracksPerCylinder;
+        public int mediaType;
 
-        public int SectorsPerTrack;
+        public int tracksPerCylinder;
 
-        public int BytesPerSector;
+        public int sectorsPerTrack;
+
+        public int bytesPerSector;
     }
 
     int ERROR_MORE_DATA = 234;

@@ -43,11 +43,12 @@ import dotnet4j.io.FileNotFoundException;
 
 @VirtualDiskTransportAttribute(scheme = "ods")
 public final class DiscTransport extends VirtualDiskTransport {
-    private String _disk;
 
-    private OpticalDiscServiceClient _odsClient;
+    private String disk;
 
-    private OpticalDiscService _service;
+    private OpticalDiscServiceClient odsClient;
+
+    private OpticalDiscService service;
 
     public boolean isRawDisk() {
         return true;
@@ -63,22 +64,22 @@ public final class DiscTransport extends VirtualDiskTransport {
             String instance = pathParts[0];
             String volName = pathParts[1];
 
-            _odsClient = new OpticalDiscServiceClient();
-            for (OpticalDiscService service : _odsClient.lookupServices(domain)) {
+            odsClient = new OpticalDiscServiceClient();
+            for (OpticalDiscService service : odsClient.lookupServices(domain)) {
 Debug.println("service: " + service.getDisplayName());
                 if (service.getDisplayName().equals(instance)) {
-                    _service = service;
-                    _service.connect(System.getProperty("user.name"), InetAddress.getLocalHost().getHostName(), 30);
+                    this.service = service;
+                    this.service.connect(System.getProperty("user.name"), InetAddress.getLocalHost().getHostName(), 30);
 
-                    for (DiscInfo disk : _service.getAdvertisedDiscs()) {
+                    for (DiscInfo disk : this.service.getAdvertisedDiscs()) {
                         if (disk.getVolumeLabel().equals(volName)) {
-                            _disk = disk.getName();
+                            this.disk = disk.getName();
                         }
                     }
                 }
             }
 
-            if (_disk == null) {
+            if (disk == null) {
                 throw new FileNotFoundException("No such disk " + uri);
             }
         } catch (UnsupportedEncodingException | UnknownHostException e) {
@@ -87,7 +88,7 @@ Debug.println("service: " + service.getDisplayName());
     }
 
     public VirtualDisk openDisk(FileAccess access) {
-        return _service.openDisc(_disk);
+        return service.openDisc(disk);
     }
 
     public FileLocator getFileLocator() {
@@ -103,9 +104,9 @@ Debug.println("service: " + service.getDisplayName());
     }
 
     public void close() throws IOException {
-        if (_odsClient != null) {
-            _odsClient.close();
-            _odsClient = null;
+        if (odsClient != null) {
+            odsClient.close();
+            odsClient = null;
         }
     }
 }

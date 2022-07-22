@@ -36,9 +36,10 @@ import discUtils.streams.util.Range;
 
 
 public final class ResidentAttributeRecord extends AttributeRecord {
-    private byte _indexedFlag;
 
-    private SparseMemoryBuffer _memoryBuffer;
+    private byte indexedFlag;
+
+    private SparseMemoryBuffer memoryBuffer;
 
     public ResidentAttributeRecord(byte[] buffer, int offset, int[] length) {
         read(buffer, offset, length);
@@ -46,9 +47,9 @@ public final class ResidentAttributeRecord extends AttributeRecord {
 
     public ResidentAttributeRecord(AttributeType type, String name, short id, boolean indexed, EnumSet<AttributeFlags> flags) {
         super(type, name, id, flags);
-        _nonResidentFlag = 0;
-        _indexedFlag = (byte) (indexed ? 1 : 0);
-        _memoryBuffer = new SparseMemoryBuffer(1024);
+        nonResidentFlag = 0;
+        indexedFlag = (byte) (indexed ? 1 : 0);
+        memoryBuffer = new SparseMemoryBuffer(1024);
     }
 
     public long getAllocatedLength() {
@@ -60,11 +61,11 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     }
 
     public IBuffer getDataBuffer() {
-        return _memoryBuffer;
+        return memoryBuffer;
     }
 
     public long getDataLength() {
-        return _memoryBuffer.getCapacity();
+        return memoryBuffer.getCapacity();
     }
 
     public void setDataLength(long value) {
@@ -99,7 +100,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         }
 
         short dataOffset = (short) MathUtilities.roundUp(nameOffset + nameLength * 2, 8);
-        return (int) MathUtilities.roundUp(dataOffset + _memoryBuffer.getCapacity(), 8);
+        return (int) MathUtilities.roundUp(dataOffset + memoryBuffer.getCapacity(), 8);
     }
 
     public long getStartVcn() {
@@ -107,7 +108,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     }
 
     public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
-        return _memoryBuffer;
+        return memoryBuffer;
     }
 
     public List<Range> getClusters() {
@@ -123,18 +124,18 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         }
 
         short dataOffset = (short) MathUtilities.roundUp(0x18 + nameLength * 2, 8);
-        int length = (int) MathUtilities.roundUp(dataOffset + _memoryBuffer.getCapacity(), 8);
+        int length = (int) MathUtilities.roundUp(dataOffset + memoryBuffer.getCapacity(), 8);
 
-        EndianUtilities.writeBytesLittleEndian(_type.getValue(), buffer, offset + 0x00);
+        EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset + 0x00);
         EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x04);
-        buffer[offset + 0x08] = _nonResidentFlag;
+        buffer[offset + 0x08] = nonResidentFlag;
         buffer[offset + 0x09] = nameLength;
         EndianUtilities.writeBytesLittleEndian(nameOffset, buffer, offset + 0x0A);
-        EndianUtilities.writeBytesLittleEndian((short) AttributeFlags.valueOf(_flags), buffer, offset + 0x0C);
-        EndianUtilities.writeBytesLittleEndian(_attributeId, buffer, offset + 0x0E);
-        EndianUtilities.writeBytesLittleEndian((int) _memoryBuffer.getCapacity(), buffer, offset + 0x10);
+        EndianUtilities.writeBytesLittleEndian((short) AttributeFlags.valueOf(flags), buffer, offset + 0x0C);
+        EndianUtilities.writeBytesLittleEndian(attributeId, buffer, offset + 0x0E);
+        EndianUtilities.writeBytesLittleEndian((int) memoryBuffer.getCapacity(), buffer, offset + 0x10);
         EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x14);
-        buffer[offset + 0x16] = _indexedFlag;
+        buffer[offset + 0x16] = indexedFlag;
         buffer[offset + 0x17] = 0; // Padding
 
         if (getName() != null) {
@@ -142,7 +143,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
             System.arraycopy(bytes, 0, buffer, offset + nameOffset, bytes.length);
         }
 
-        _memoryBuffer.read(0, buffer, offset + dataOffset, (int) _memoryBuffer.getCapacity());
+        memoryBuffer.read(0, buffer, offset + dataOffset, (int) memoryBuffer.getCapacity());
 
         return length;
     }
@@ -150,7 +151,7 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     public void dump(PrintWriter writer, String indent) {
         super.dump(writer, indent);
         writer.println(indent + "     Data Length: " + getDataLength());
-        writer.println(indent + "         Indexed: " + _indexedFlag);
+        writer.println(indent + "         Indexed: " + indexedFlag);
     }
 
     protected void read(byte[] buffer, int offset, int[] length) {
@@ -158,13 +159,13 @@ public final class ResidentAttributeRecord extends AttributeRecord {
 
         int dataLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
         short dataOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
-        _indexedFlag = buffer[offset + 0x16];
+        indexedFlag = buffer[offset + 0x16];
 
         if (dataOffset + dataLength > length[0]) {
             throw new dotnet4j.io.IOException("Corrupt attribute, data outside of attribute");
         }
 
-        _memoryBuffer = new SparseMemoryBuffer(1024);
-        _memoryBuffer.write(0, buffer, offset + dataOffset, dataLength);
+        memoryBuffer = new SparseMemoryBuffer(1024);
+        memoryBuffer.write(0, buffer, offset + dataOffset, dataLength);
     }
 }

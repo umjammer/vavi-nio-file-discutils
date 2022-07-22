@@ -26,12 +26,13 @@ import discUtils.streams.IByteArraySerializable;
 
 
 public abstract class BaseTaggedDescriptor implements IByteArraySerializable {
-    public final TagIdentifier RequiredTagIdentifier;
 
-    public DescriptorTag Tag;
+    public final TagIdentifier requiredTagIdentifier;
+
+    public DescriptorTag tag;
 
     protected BaseTaggedDescriptor(TagIdentifier id) {
-        RequiredTagIdentifier = id;
+        requiredTagIdentifier = id;
     }
 
     public int size() {
@@ -43,9 +44,9 @@ public abstract class BaseTaggedDescriptor implements IByteArraySerializable {
             throw new IllegalStateException("Invalid Anchor Volume Descriptor Pointer (invalid tag)");
         }
 
-        Tag = new DescriptorTag();
-        Tag.readFrom(buffer, offset);
-        if (UdfUtilities.computeCrc(buffer, offset + Tag.size(), Tag.getDescriptorCrcLength()) != Tag.DescriptorCrc) {
+        tag = new DescriptorTag();
+        tag.readFrom(buffer, offset);
+        if (UdfUtilities.computeCrc(buffer, offset + tag.size(), tag.getDescriptorCrcLength()) != tag.descriptorCrc) {
             throw new IllegalStateException("Invalid Anchor Volume Descriptor Pointer (invalid CRC)");
         }
 

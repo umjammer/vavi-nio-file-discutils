@@ -50,26 +50,26 @@ public class Nfs3ReadResultTest {
         });
         result.setEof(false);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
-        attributes.AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.BytesUsed = 1;
-        attributes.ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.bytesUsed = 1;
+        attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.FileId = 2;
-        attributes.FileSystemId = 3;
-        attributes.Gid = 4;
-        attributes.LinkCount = 5;
-        attributes.Mode = UnixFilePermissions.GroupAll;
-        attributes.ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        attributes.fileId = 2;
+        attributes.fileSystemId = 3;
+        attributes.gid = 4;
+        attributes.linkCount = 5;
+        attributes.mode = UnixFilePermissions.GroupAll;
+        attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        attributes.RdevMajor = 6;
-        attributes.RdevMinor = 7;
-        attributes.Size = 8;
-        attributes.Type = Nfs3FileType.BlockDevice;
-        attributes.Uid = 9;
+        attributes.rdevMajor = 6;
+        attributes.rdevMinor = 7;
+        attributes.size = 8;
+        attributes.type = Nfs3FileType.BlockDevice;
+        attributes.uid = 9;
         result.setFileAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
 

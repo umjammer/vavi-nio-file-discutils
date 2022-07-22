@@ -26,43 +26,44 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ParentLocator {
+
     public static final String PlatformCodeWindowsRelativeUnicode = "W2ru";
 
     public static final String PlatformCodeWindowsAbsoluteUnicode = "W2ku";
 
-    public String PlatformCode;
+    public String platformCode;
 
-    public int PlatformDataLength;
+    public int platformDataLength;
 
-    public long PlatformDataOffset;
+    public long platformDataOffset;
 
-    public int PlatformDataSpace;
+    public int platformDataSpace;
 
     public ParentLocator() {
-        PlatformCode = "";
+        platformCode = "";
     }
 
     public ParentLocator(ParentLocator toCopy) {
-        PlatformCode = toCopy.PlatformCode;
-        PlatformDataSpace = toCopy.PlatformDataSpace;
-        PlatformDataLength = toCopy.PlatformDataLength;
-        PlatformDataOffset = toCopy.PlatformDataOffset;
+        platformCode = toCopy.platformCode;
+        platformDataSpace = toCopy.platformDataSpace;
+        platformDataLength = toCopy.platformDataLength;
+        platformDataOffset = toCopy.platformDataOffset;
     }
 
     public static ParentLocator fromBytes(byte[] data, int offset) {
         ParentLocator result = new ParentLocator();
-        result.PlatformCode = EndianUtilities.bytesToString(data, offset, 4);
-        result.PlatformDataSpace = EndianUtilities.toInt32BigEndian(data, offset + 4);
-        result.PlatformDataLength = EndianUtilities.toInt32BigEndian(data, offset + 8);
-        result.PlatformDataOffset = EndianUtilities.toInt64BigEndian(data, offset + 16);
+        result.platformCode = EndianUtilities.bytesToString(data, offset, 4);
+        result.platformDataSpace = EndianUtilities.toInt32BigEndian(data, offset + 4);
+        result.platformDataLength = EndianUtilities.toInt32BigEndian(data, offset + 8);
+        result.platformDataOffset = EndianUtilities.toInt64BigEndian(data, offset + 16);
         return result;
     }
 
     public void toBytes(byte[] data, int offset) {
-        EndianUtilities.stringToBytes(PlatformCode, data, offset, 4);
-        EndianUtilities.writeBytesBigEndian(PlatformDataSpace, data, offset + 4);
-        EndianUtilities.writeBytesBigEndian(PlatformDataLength, data, offset + 8);
+        EndianUtilities.stringToBytes(platformCode, data, offset, 4);
+        EndianUtilities.writeBytesBigEndian(platformDataSpace, data, offset + 4);
+        EndianUtilities.writeBytesBigEndian(platformDataLength, data, offset + 8);
         EndianUtilities.writeBytesBigEndian(0, data, offset + 12);
-        EndianUtilities.writeBytesBigEndian(PlatformDataOffset, data, offset + 16);
+        EndianUtilities.writeBytesBigEndian(platformDataOffset, data, offset + 16);
     }
 }

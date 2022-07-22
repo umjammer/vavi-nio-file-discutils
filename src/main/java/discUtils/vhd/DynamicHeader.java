@@ -34,6 +34,7 @@ import dotnet4j.io.Stream;
 
 
 public class DynamicHeader {
+
     public static final UUID EMPTY = new UUID(0, 0);
 
     public static final String HeaderCookie = "cxsparse";
@@ -42,124 +43,123 @@ public class DynamicHeader {
 
     public static final int DefaultBlockSize = 0x00200000;
 
-    public int BlockSize;
+    public int blockSize;
 
-    public int Checksum;
+    public int checksum;
 
-    public String Cookie;
+    public String cookie;
 
-    public long DataOffset;
+    public long dataOffset;
 
-    public int HeaderVersion;
+    public int headerVersion;
 
-    public int MaxTableEntries;
+    public int maxTableEntries;
 
-    public ParentLocator[] ParentLocators;
+    public ParentLocator[] parentLocators;
 
-    public long ParentTimestamp;
+    public long parentTimestamp;
 
-    public String ParentUnicodeName;
+    public String parentUnicodeName;
 
-    public UUID ParentUniqueId = EMPTY;
+    public UUID parentUniqueId = EMPTY;
 
-    public long TableOffset;
+    public long tableOffset;
 
     public DynamicHeader() {
     }
 
     public DynamicHeader(long dataOffset, long tableOffset, int blockSize, long diskSize) {
-        Cookie = HeaderCookie;
-        DataOffset = dataOffset;
-        TableOffset = tableOffset;
-        HeaderVersion = Version1;
-        BlockSize = blockSize;
-        MaxTableEntries = (int) ((diskSize + blockSize - 1) / blockSize);
-        ParentTimestamp = Footer.EpochUtc.toEpochMilli();
-        ParentUnicodeName = "";
-        ParentLocators = new ParentLocator[8];
+        cookie = HeaderCookie;
+        this.dataOffset = dataOffset;
+        this.tableOffset = tableOffset;
+        headerVersion = Version1;
+        this.blockSize = blockSize;
+        maxTableEntries = (int) ((diskSize + blockSize - 1) / blockSize);
+        parentTimestamp = Footer.EpochUtc.toEpochMilli();
+        parentUnicodeName = "";
+        parentLocators = new ParentLocator[8];
         for (int i = 0; i < 8; ++i) {
-            ParentLocators[i] = new ParentLocator();
+            parentLocators[i] = new ParentLocator();
         }
     }
 
     public DynamicHeader(DynamicHeader toCopy) {
-        Cookie = toCopy.Cookie;
-        DataOffset = toCopy.DataOffset;
-        TableOffset = toCopy.TableOffset;
-        HeaderVersion = toCopy.HeaderVersion;
-        MaxTableEntries = toCopy.MaxTableEntries;
-        BlockSize = toCopy.BlockSize;
-        Checksum = toCopy.Checksum;
-        ParentUniqueId = toCopy.ParentUniqueId;
-        ParentTimestamp = toCopy.ParentTimestamp;
-        ParentUnicodeName = toCopy.ParentUnicodeName;
-        ParentLocators = new ParentLocator[toCopy.ParentLocators.length];
-        for (int i = 0; i < ParentLocators.length; ++i) {
-            ParentLocators[i] = new ParentLocator(toCopy.ParentLocators[i]);
+        cookie = toCopy.cookie;
+        dataOffset = toCopy.dataOffset;
+        tableOffset = toCopy.tableOffset;
+        headerVersion = toCopy.headerVersion;
+        maxTableEntries = toCopy.maxTableEntries;
+        blockSize = toCopy.blockSize;
+        checksum = toCopy.checksum;
+        parentUniqueId = toCopy.parentUniqueId;
+        parentTimestamp = toCopy.parentTimestamp;
+        parentUnicodeName = toCopy.parentUnicodeName;
+        parentLocators = new ParentLocator[toCopy.parentLocators.length];
+        for (int i = 0; i < parentLocators.length; ++i) {
+            parentLocators[i] = new ParentLocator(toCopy.parentLocators[i]);
         }
     }
 
     public static DynamicHeader fromBytes(byte[] data, int offset) {
         DynamicHeader result = new DynamicHeader();
-        result.Cookie = EndianUtilities.bytesToString(data, offset, 8);
-        result.DataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
-        result.TableOffset = EndianUtilities.toInt64BigEndian(data, offset + 16);
-        result.HeaderVersion = EndianUtilities.toUInt32BigEndian(data, offset + 24);
-        result.MaxTableEntries = EndianUtilities.toInt32BigEndian(data, offset + 28);
-        result.BlockSize = EndianUtilities.toUInt32BigEndian(data, offset + 32);
-        result.Checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
-        result.ParentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
-        result.ParentTimestamp = Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56))
+        result.cookie = EndianUtilities.bytesToString(data, offset, 8);
+        result.dataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
+        result.tableOffset = EndianUtilities.toInt64BigEndian(data, offset + 16);
+        result.headerVersion = EndianUtilities.toUInt32BigEndian(data, offset + 24);
+        result.maxTableEntries = EndianUtilities.toInt32BigEndian(data, offset + 28);
+        result.blockSize = EndianUtilities.toUInt32BigEndian(data, offset + 32);
+        result.checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
+        result.parentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
+        result.parentTimestamp = Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56))
                 .toEpochMilli();
-        result.ParentUnicodeName = new String(data, offset + 64, 512, StandardCharsets.UTF_16BE).replaceFirst("\0*$", "");
+        result.parentUnicodeName = new String(data, offset + 64, 512, StandardCharsets.UTF_16BE).replaceFirst("\0*$", "");
 
-        result.ParentLocators = new ParentLocator[8];
+        result.parentLocators = new ParentLocator[8];
         for (int i = 0; i < 8; ++i) {
-            result.ParentLocators[i] = ParentLocator.fromBytes(data, offset + 576 + i * 24);
+            result.parentLocators[i] = ParentLocator.fromBytes(data, offset + 576 + i * 24);
         }
 
         return result;
     }
 
     public void toBytes(byte[] data, int offset) {
-        EndianUtilities.stringToBytes(Cookie, data, offset, 8);
-        EndianUtilities.writeBytesBigEndian(DataOffset, data, offset + 8);
-        EndianUtilities.writeBytesBigEndian(TableOffset, data, offset + 16);
-        EndianUtilities.writeBytesBigEndian(HeaderVersion, data, offset + 24);
-        EndianUtilities.writeBytesBigEndian(MaxTableEntries, data, offset + 28);
-        EndianUtilities.writeBytesBigEndian(BlockSize, data, offset + 32);
-        EndianUtilities.writeBytesBigEndian(Checksum, data, offset + 36);
-        EndianUtilities.writeBytesBigEndian(ParentUniqueId, data, offset + 40);
-        EndianUtilities.writeBytesBigEndian(
-                                            (int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(ParentTimestamp))
+        EndianUtilities.stringToBytes(cookie, data, offset, 8);
+        EndianUtilities.writeBytesBigEndian(dataOffset, data, offset + 8);
+        EndianUtilities.writeBytesBigEndian(tableOffset, data, offset + 16);
+        EndianUtilities.writeBytesBigEndian(headerVersion, data, offset + 24);
+        EndianUtilities.writeBytesBigEndian(maxTableEntries, data, offset + 28);
+        EndianUtilities.writeBytesBigEndian(blockSize, data, offset + 32);
+        EndianUtilities.writeBytesBigEndian(checksum, data, offset + 36);
+        EndianUtilities.writeBytesBigEndian(parentUniqueId, data, offset + 40);
+        EndianUtilities.writeBytesBigEndian((int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(parentTimestamp))
                                                     .getSeconds(),
                                             data,
                                             offset + 56);
         EndianUtilities.writeBytesBigEndian(0, data, offset + 60);
         Arrays.fill(data, offset + 64, offset + 64 + 512, (byte) 0);
-        byte[] bytes = ParentUnicodeName.getBytes(StandardCharsets.UTF_16BE);
+        byte[] bytes = parentUnicodeName.getBytes(StandardCharsets.UTF_16BE);
         System.arraycopy(bytes, 0, data, offset + 64, bytes.length);
 
         for (int i = 0; i < 8; ++i) {
-            ParentLocators[i].toBytes(data, offset + 576 + i * 24);
+            parentLocators[i].toBytes(data, offset + 576 + i * 24);
         }
 
         Arrays.fill(data, offset + 1024 - 256, offset + 1024, (byte) 0);
     }
 
     public boolean isValid() {
-//Debug.println(HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (HeaderVersion == Version1));
-        return HeaderCookie.equals(Cookie) && isChecksumValid() && HeaderVersion == Version1;
+//Debug.println(HeaderCookie.equals(Cookie) + ", " + isChecksumValid() + ", " + (headerVersion == Version1));
+        return HeaderCookie.equals(cookie) && isChecksumValid() && headerVersion == Version1;
     }
 
     public boolean isChecksumValid() {
 //Debug.println(Checksum == calculateChecksum());
-        return Checksum == calculateChecksum();
+        return checksum == calculateChecksum();
     }
 
     public int updateChecksum() {
-        Checksum = calculateChecksum();
-        return Checksum;
+        checksum = calculateChecksum();
+        return checksum;
     }
 
     public static DynamicHeader fromStream(Stream stream) {
@@ -168,7 +168,7 @@ public class DynamicHeader {
 
     private int calculateChecksum() {
         DynamicHeader copy = new DynamicHeader(this);
-        copy.Checksum = 0;
+        copy.checksum = 0;
         byte[] asBytes = new byte[1024];
         copy.toBytes(asBytes, 0);
         int checksum = 0;

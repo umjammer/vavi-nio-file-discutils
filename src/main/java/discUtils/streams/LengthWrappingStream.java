@@ -34,14 +34,15 @@ import discUtils.streams.util.Ownership;
  * there is no validation of the specified length
  */
 public class LengthWrappingStream extends WrappingStream {
-    private final long _length;
+
+    private final long length;
 
     public LengthWrappingStream(SparseStream toWrap, long length, Ownership ownership) {
         super(toWrap, ownership);
-        _length = length;
+        this.length = length;
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 }

@@ -39,13 +39,13 @@ public class RpcRejectedReplyHeaderTest {
     @Test
     public void roundTripTest() throws Exception {
         RpcRejectedReplyHeader header = new RpcRejectedReplyHeader();
-        header.AuthenticationStatus = RpcAuthenticationStatus.None;
+        header.authenticationStatus = RpcAuthenticationStatus.None;
         RpcMismatchInfo info = new RpcMismatchInfo();
-        info.High = 1;
-        info.Low = 2;
-        header.MismatchInfo = info;
+        info.high = 1;
+        info.low = 2;
+        header.mismatchInfo = info;
 
-        header.Status = RpcRejectedStatus.RpcMismatch;
+        header.status = RpcRejectedStatus.RpcMismatch;
 
         RpcRejectedReplyHeader clone = null;
         try (MemoryStream stream = new MemoryStream()) {

@@ -35,54 +35,55 @@ import dotnet4j.io.Stream;
 
 
 public class BTreeExtentRoot implements IByteArraySerializable {
-    private short _level;
+
+    private short level;
 
     public short getLevel() {
-        return _level;
+        return level;
     }
 
     public void setLevel(short value) {
-        _level = value;
+        level = value;
     }
 
-    private short _numberOfRecords;
+    private short numberOfRecords;
 
     public int getNumberOfRecords() {
-        return _numberOfRecords & 0xffff;
+        return numberOfRecords & 0xffff;
     }
 
     public void setNumberOfRecords(short value) {
-        _numberOfRecords = value;
+        numberOfRecords = value;
     }
 
-    private long[] _keys;
+    private long[] keys;
 
     public long[] getKeys() {
-        return _keys;
+        return keys;
     }
 
     public void setKeys(long[] value) {
-        _keys = value;
+        keys = value;
     }
 
-    private long[] _pointer;
+    private long[] pointer;
 
     public long[] getPointer() {
-        return _pointer;
+        return pointer;
     }
 
     public void setPointer(long[] value) {
-        _pointer = value;
+        pointer = value;
     }
 
-    private Map<Long, BTreeExtentHeader> _children;
+    private Map<Long, BTreeExtentHeader> children;
 
     public Map<Long, BTreeExtentHeader> getChildren() {
-        return _children;
+        return children;
     }
 
     public void setChildren(Map<Long, BTreeExtentHeader> value) {
-        _children = value;
+        children = value;
     }
 
     public int size() {
@@ -90,17 +91,17 @@ public class BTreeExtentRoot implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _level = EndianUtilities.toUInt16BigEndian(buffer, offset);
-        _numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
+        level = EndianUtilities.toUInt16BigEndian(buffer, offset);
+        numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
         offset += 0x4;
-        _keys = new long[getNumberOfRecords()];
-        _pointer = new long[getNumberOfRecords()];
+        keys = new long[getNumberOfRecords()];
+        pointer = new long[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            _keys[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            keys[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
         offset += ((buffer.length - offset) / 16) * 8;
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            _pointer[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            pointer[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
         }
         return size();
     }
@@ -111,10 +112,10 @@ public class BTreeExtentRoot implements IByteArraySerializable {
     }
 
     public void loadBtree(Context context) {
-        setChildren(new HashMap<>(getNumberOfRecords()));
+        children = new HashMap<>(getNumberOfRecords());
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BTreeExtentHeader child;
-            if (getLevel() == 1) {
+            if (level == 1) {
                 if (context.getSuperBlock().getSbVersion() == 5)
                     child = new BTreeExtentLeafV5();
                 else
@@ -126,7 +127,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
                     child = new BTreeExtentNode();
             }
             Stream data = context.getRawStream();
-            data.setPosition(Extent.getOffset(context, getPointer()[i]));
+            data.setPosition(Extent.getOffset(context, pointer[i]));
             byte[] buffer = StreamUtilities.readExact(data, context.getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             if (context.getSuperBlock().getSbVersion() < 5 && child.getMagic() != BTreeExtentHeader.BtreeMagic ||
@@ -135,13 +136,13 @@ public class BTreeExtentRoot implements IByteArraySerializable {
             }
 
             child.loadBtree(context);
-            getChildren().put(getKeys()[i], child);
+            children.put(keys[i], child);
         }
     }
 
     public List<Extent> getExtents() {
         List<Extent> result = new ArrayList<>();
-        for (Map.Entry<Long, BTreeExtentHeader> child : _children.entrySet()) {
+        for (Map.Entry<Long, BTreeExtentHeader> child : children.entrySet()) {
             result.addAll(child.getValue().getExtents());
         }
         return result;

@@ -31,27 +31,28 @@ import discUtils.streams.util.EndianUtilities;
  * A registry value.
  */
 public final class RegistryValue {
-    private final ValueCell _cell;
 
-    private final RegistryHive _hive;
+    private final ValueCell cell;
+
+    private final RegistryHive hive;
 
     public RegistryValue(RegistryHive hive, ValueCell cell) {
-        _hive = hive;
-        _cell = cell;
+        this.hive = hive;
+        this.cell = cell;
     }
 
     /**
      * Gets the type of the value.
      */
     public RegistryValueType getDataType() {
-        return _cell.getDataType();
+        return cell.getDataType();
     }
 
     /**
      * Gets the name of the value, or empty string if unnamed.
      */
     public String getName() {
-        return _cell.getName() != null ? _cell.getName() : "";
+        return cell.getName() != null ? cell.getName() : "";
     }
 
     /**
@@ -80,16 +81,16 @@ public final class RegistryValue {
      * @return The value as a raw byte array.
      */
     public byte[] getData() {
-        if (_cell.getDataLength() < 0) {
-            int len = _cell.getDataLength() & 0x7FFFFFFF;
+        if (cell.getDataLength() < 0) {
+            int len = cell.getDataLength() & 0x7FFFFFFF;
             byte[] buffer = new byte[4];
-            EndianUtilities.writeBytesLittleEndian(_cell.getDataIndex(), buffer, 0);
+            EndianUtilities.writeBytesLittleEndian(cell.getDataIndex(), buffer, 0);
             byte[] result = new byte[len];
             System.arraycopy(buffer, 0, result, 0, len);
             return result;
         }
 
-        return _hive.rawCellData(_cell.getDataIndex(), _cell.getDataLength());
+        return hive.rawCellData(cell.getDataIndex(), cell.getDataLength());
     }
 
     /**
@@ -106,29 +107,29 @@ public final class RegistryValue {
     public void setData(byte[] data, int offset, int count, RegistryValueType valueType) {
         // If we can place the data in the DataIndex field, do that to save space / allocation
         if ((valueType == RegistryValueType.Dword || valueType == RegistryValueType.DwordBigEndian) && count <= 4) {
-            if (_cell.getDataLength() >= 0) {
-                _hive.freeCell(_cell.getDataIndex());
+            if (cell.getDataLength() >= 0) {
+                hive.freeCell(cell.getDataIndex());
             }
 
-            _cell.setDataLength(count | 0x80000000);
-            _cell.setDataIndex(EndianUtilities.toInt32LittleEndian(data, offset));
-            _cell.setDataType(valueType);
+            cell.setDataLength(count | 0x80000000);
+            cell.setDataIndex(EndianUtilities.toInt32LittleEndian(data, offset));
+            cell.setDataType(valueType);
         } else {
-            if (_cell.getDataIndex() == -1 || _cell.getDataLength() < 0) {
-                _cell.setDataIndex(_hive.allocateRawCell(count));
+            if (cell.getDataIndex() == -1 || cell.getDataLength() < 0) {
+                cell.setDataIndex(hive.allocateRawCell(count));
             }
 
-            if (!_hive.writeRawCellData(_cell.getDataIndex(), data, offset, count)) {
-                int newDataIndex = _hive.allocateRawCell(count);
-                _hive.writeRawCellData(newDataIndex, data, offset, count);
-                _hive.freeCell(_cell.getDataIndex());
-                _cell.setDataIndex(newDataIndex);
+            if (!hive.writeRawCellData(cell.getDataIndex(), data, offset, count)) {
+                int newDataIndex = hive.allocateRawCell(count);
+                hive.writeRawCellData(newDataIndex, data, offset, count);
+                hive.freeCell(cell.getDataIndex());
+                cell.setDataIndex(newDataIndex);
             }
 
-            _cell.setDataLength(count);
-            _cell.setDataType(valueType);
+            cell.setDataLength(count);
+            cell.setDataType(valueType);
         }
-        _hive.updateCell(_cell, false);
+        hive.updateCell(cell, false);
     }
 
     /**

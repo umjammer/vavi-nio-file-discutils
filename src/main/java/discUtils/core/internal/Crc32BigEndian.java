@@ -26,7 +26,9 @@ package discUtils.core.internal;
  * Calculates CRC32 of buffers.
  */
 public final class Crc32BigEndian extends Crc32 {
+
     private static final int[][] Tables;
+
     static {
         Tables = new int[4][];
         Tables[Crc32Algorithm.Common.ordinal()] = calcTable(0x04C11DB7);

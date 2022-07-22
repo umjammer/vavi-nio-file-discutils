@@ -38,44 +38,45 @@ import dotnet4j.io.Stream;
 
 
 public final class DiskExtent extends VirtualDiskExtent {
-    private FileAccess _access;
 
-    private final ExtentDescriptor _descriptor;
+    private FileAccess access;
 
-    private final long _diskOffset;
+    private final ExtentDescriptor descriptor;
 
-    private FileLocator _fileLocator;
+    private final long diskOffset;
 
-    private Stream _monolithicStream;
+    private FileLocator fileLocator;
+
+    private Stream monolithicStream;
 
     public DiskExtent(ExtentDescriptor descriptor, long diskOffset, FileLocator fileLocator, FileAccess access) {
-        _descriptor = descriptor;
-        _diskOffset = diskOffset;
-        _fileLocator = fileLocator;
-        _access = access;
+        this.descriptor = descriptor;
+        this.diskOffset = diskOffset;
+        this.fileLocator = fileLocator;
+        this.access = access;
     }
 
     public DiskExtent(ExtentDescriptor descriptor, long diskOffset, Stream monolithicStream) {
-        _descriptor = descriptor;
-        _diskOffset = diskOffset;
-        _monolithicStream = monolithicStream;
+        this.descriptor = descriptor;
+        this.diskOffset = diskOffset;
+        this.monolithicStream = monolithicStream;
     }
 
     public long getCapacity() {
-        return _descriptor.getSizeInSectors() * Sizes.Sector;
+        return descriptor.getSizeInSectors() * Sizes.Sector;
     }
 
     public boolean isSparse() {
-        return _descriptor.getType() == ExtentType.Sparse || _descriptor.getType() == ExtentType.VmfsSparse ||
-               _descriptor.getType() == ExtentType.Zero;
+        return descriptor.getType() == ExtentType.Sparse || descriptor.getType() == ExtentType.VmfsSparse ||
+               descriptor.getType() == ExtentType.Zero;
     }
 
     public long getStoredSize() {
-        if (_monolithicStream != null) {
-            return _monolithicStream.getLength();
+        if (monolithicStream != null) {
+            return monolithicStream.getLength();
         }
 
-        try (Stream s = _fileLocator.open(_descriptor.getFileName(), FileMode.Open, FileAccess.Read, FileShare.Read)) {
+        try (Stream s = fileLocator.open(descriptor.getFileName(), FileMode.Open, FileAccess.Read, FileShare.Read)) {
             return s.getLength();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -85,13 +86,13 @@ public final class DiskExtent extends VirtualDiskExtent {
     public MappedStream openContent(SparseStream parent, Ownership ownsParent) throws IOException {
         FileAccess access = FileAccess.Read;
         FileShare share = FileShare.Read;
-        if (_descriptor.getAccess() == ExtentAccess.ReadWrite && _access != FileAccess.Read) {
+        if (descriptor.getAccess() == ExtentAccess.ReadWrite && this.access != FileAccess.Read) {
             access = FileAccess.ReadWrite;
             share = FileShare.None;
         }
 
-        if (_descriptor.getType() != ExtentType.Sparse && _descriptor.getType() != ExtentType.VmfsSparse &&
-            _descriptor.getType() != ExtentType.Zero) {
+        if (descriptor.getType() != ExtentType.Sparse && descriptor.getType() != ExtentType.VmfsSparse &&
+            descriptor.getType() != ExtentType.Zero) {
             if (ownsParent == Ownership.Dispose && parent != null) {
                 try {
                     parent.close();
@@ -101,31 +102,31 @@ public final class DiskExtent extends VirtualDiskExtent {
             }
 
         } else if (parent == null) {
-            parent = new ZeroStream(_descriptor.getSizeInSectors() * Sizes.Sector);
+            parent = new ZeroStream(descriptor.getSizeInSectors() * Sizes.Sector);
         }
 
-        if (_monolithicStream != null) {
-            return new HostedSparseExtentStream(_monolithicStream, Ownership.None, _diskOffset, parent, ownsParent);
+        if (monolithicStream != null) {
+            return new HostedSparseExtentStream(monolithicStream, Ownership.None, diskOffset, parent, ownsParent);
         }
 
         // Early-out for monolithic VMDKs
-        switch (_descriptor.getType()) {
+        switch (descriptor.getType()) {
         case Flat:
         case Vmfs:
-            return MappedStream.fromStream(_fileLocator.open(_descriptor.getFileName(), FileMode.Open, access, share),
+            return MappedStream.fromStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
                                            Ownership.Dispose);
         case Zero:
-            return new ZeroStream(_descriptor.getSizeInSectors() * Sizes.Sector);
+            return new ZeroStream(descriptor.getSizeInSectors() * Sizes.Sector);
         case Sparse:
-            return new HostedSparseExtentStream(_fileLocator.open(_descriptor.getFileName(), FileMode.Open, access, share),
+            return new HostedSparseExtentStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
                                                 Ownership.Dispose,
-                                                _diskOffset,
+                    diskOffset,
                                                 parent,
                                                 ownsParent);
         case VmfsSparse:
-            return new ServerSparseExtentStream(_fileLocator.open(_descriptor.getFileName(), FileMode.Open, access, share),
+            return new ServerSparseExtentStream(fileLocator.open(descriptor.getFileName(), FileMode.Open, access, share),
                                                 Ownership.Dispose,
-                                                _diskOffset,
+                    diskOffset,
                                                 parent,
                                                 ownsParent);
         default:

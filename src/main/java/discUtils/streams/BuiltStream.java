@@ -34,23 +34,24 @@ import dotnet4j.io.Stream;
 
 
 public class BuiltStream extends SparseStream {
-    private Stream _baseStream;
 
-    private BuilderExtent _currentExtent;
+    private Stream baseStream;
 
-    private final List<BuilderExtent> _extents;
+    private BuilderExtent currentExtent;
 
-    private final long _length;
+    private final List<BuilderExtent> extents;
 
-    private long _position;
+    private final long length;
+
+    private long position;
 
     public BuiltStream(long length, List<BuilderExtent> extents) {
-        _baseStream = new ZeroStream(length);
-        _length = length;
-        _extents = extents;
+        baseStream = new ZeroStream(length);
+        this.length = length;
+        this.extents = extents;
 
         // Make sure the extents are sorted, so binary searches will work.
-        _extents.sort(new ExtentStartComparer());
+        this.extents.sort(new ExtentStartComparer());
     }
 
     public boolean canRead() {
@@ -66,51 +67,51 @@ public class BuiltStream extends SparseStream {
     }
 
     public List<StreamExtent> getExtents() {
-        return _extents.stream().flatMap(extent -> extent.getStreamExtents().stream()).collect(Collectors.toList());
+        return extents.stream().flatMap(extent -> extent.getStreamExtents().stream()).collect(Collectors.toList());
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position >= _length) {
+        if (position >= length) {
             return 0;
         }
 
-        if (_position + count > _length) {
-            count = (int) (_length - _position);
+        if (position + count > length) {
+            count = (int) (length - position);
         }
 
         int totalRead = 0;
-        while (totalRead < count && _position < _length) {
+        while (totalRead < count && position < length) {
             // If current region is outside the area of interest, clean it up
-            if (_currentExtent != null && (_position < _currentExtent.getStart() ||
-                                           _position >= _currentExtent.getStart() + _currentExtent.getLength())) {
-                _currentExtent.disposeReadState();
-                _currentExtent = null;
+            if (currentExtent != null && (position < currentExtent.getStart() ||
+                                           position >= currentExtent.getStart() + currentExtent.getLength())) {
+                currentExtent.disposeReadState();
+                currentExtent = null;
             }
 
             // If we need to find a new region, look for it
-            if (_currentExtent == null) {
-                try (SearchExtent searchExtent = new SearchExtent(_position)) {
-                    int idx = Collections.binarySearch(_extents, searchExtent, new ExtentRangeComparer());
+            if (currentExtent == null) {
+                try (SearchExtent searchExtent = new SearchExtent(position)) {
+                    int idx = Collections.binarySearch(extents, searchExtent, new ExtentRangeComparer());
                     if (idx >= 0) {
-                        BuilderExtent extent = _extents.get(idx);
+                        BuilderExtent extent = extents.get(idx);
 //Debug.println(getPosition() + ", " + offset + ", " + extent);
                         extent.prepareForRead();
-                        _currentExtent = extent;
+                        currentExtent = extent;
                     }
                 }
             }
@@ -118,22 +119,22 @@ public class BuiltStream extends SparseStream {
             int numRead = 0;
 
             // If the block is outside any known extent, defer to base stream.
-            if (_currentExtent == null) {
-                _baseStream.setPosition(_position);
-                BuilderExtent nextExtent = findNext(_position);
+            if (currentExtent == null) {
+                baseStream.setPosition(position);
+                BuilderExtent nextExtent = findNext(position);
                 if (nextExtent != null) {
-                    numRead = _baseStream.read(buffer,
+                    numRead = baseStream.read(buffer,
                                                offset + totalRead,
-                                               (int) Math.min(count - totalRead, nextExtent.getStart() - _position));
+                                               (int) Math.min(count - totalRead, nextExtent.getStart() - position));
                 } else {
-                    numRead = _baseStream.read(buffer, offset + totalRead, count - totalRead);
+                    numRead = baseStream.read(buffer, offset + totalRead, count - totalRead);
                 }
             } else {
-                numRead = _currentExtent.read(_position, buffer, offset + totalRead, count - totalRead);
-//Debug.println(_currentExtent + ", " + _position + ", " + numRead + ", " + count + "\n" + StringUtil.getDump(buffer, offset + totalRead, 64));
+                numRead = currentExtent.read(position, buffer, offset + totalRead, count - totalRead);
+//Debug.println(currentExtent + ", " + position + ", " + numRead + ", " + count + "\n" + StringUtil.getDump(buffer, offset + totalRead, 64));
             }
 
-            _position += numRead;
+            position += numRead;
             totalRead += numRead;
             if (numRead == 0)
                 break;
@@ -145,12 +146,12 @@ public class BuiltStream extends SparseStream {
     public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
-            newPos += _position;
+            newPos += position;
         } else if (origin == SeekOrigin.End) {
-            newPos += _length;
+            newPos += length;
         }
 
-        _position = newPos;
+        position = newPos;
         return newPos;
     }
 
@@ -163,38 +164,38 @@ public class BuiltStream extends SparseStream {
     }
 
     public void close() throws IOException {
-        if (_currentExtent != null) {
-            _currentExtent.disposeReadState();
-            _currentExtent = null;
+        if (currentExtent != null) {
+            currentExtent.disposeReadState();
+            currentExtent = null;
         }
 
-        if (_baseStream != null) {
-            _baseStream.close();
-            _baseStream = null;
+        if (baseStream != null) {
+            baseStream.close();
+            baseStream = null;
         }
     }
 
     private BuilderExtent findNext(long pos) {
         int min = 0;
-        int max = _extents.size() - 1;
+        int max = extents.size() - 1;
 
-        if (_extents.size() == 0 ||
-            _extents.get(_extents.size() - 1).getStart() + _extents.get(_extents.size() - 1).getLength() <= pos) {
+        if (extents.size() == 0 ||
+            extents.get(extents.size() - 1).getStart() + extents.get(extents.size() - 1).getLength() <= pos) {
             return null;
         }
 
         while (true) {
             if (min >= max) {
-                return _extents.get(min);
+                return extents.get(min);
             }
 
             int mid = (max + min) / 2;
-            if (_extents.get(mid).getStart() < pos) {
+            if (extents.get(mid).getStart() < pos) {
                 min = mid + 1;
-            } else if (_extents.get(mid).getStart() > pos) {
+            } else if (extents.get(mid).getStart() > pos) {
                 max = mid;
             } else {
-                return _extents.get(mid);
+                return extents.get(mid);
             }
         }
     }

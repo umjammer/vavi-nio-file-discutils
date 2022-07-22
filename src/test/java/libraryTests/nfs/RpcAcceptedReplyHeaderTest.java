@@ -41,11 +41,11 @@ public class RpcAcceptedReplyHeaderTest {
         RpcAcceptedReplyHeader header = new RpcAcceptedReplyHeader();
         header.AcceptStatus = RpcAcceptStatus.ProgramVersionMismatch;
         RpcMismatchInfo info = new RpcMismatchInfo();
-        info.High = 1;
-        info.Low = 2;
-        header.MismatchInfo = info;
+        info.high = 1;
+        info.low = 2;
+        header.mismatchInfo = info;
 
-        header.Verifier = new RpcAuthentication();
+        header.verifier = new RpcAuthentication();
         RpcAcceptedReplyHeader clone = null;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

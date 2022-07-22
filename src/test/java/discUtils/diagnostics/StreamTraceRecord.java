@@ -26,86 +26,87 @@ package discUtils.diagnostics;
  * A record of an individual stream activity.
  */
 public final class StreamTraceRecord {
-    private int _id;
 
-    private String _fileAction;
+    private int id;
 
-    private long _filePosition;
+    private String fileAction;
 
-    private long _countArg;
+    private long filePosition;
 
-    private long _result;
+    private long countArg;
 
-    private Exception _exThrown;
+    private long result;
 
-    private StackTraceElement[] _stack;
+    private Exception exThrown;
+
+    private StackTraceElement[] stack;
 
     public StreamTraceRecord(int id, String fileAction, long filePosition, StackTraceElement[] stack) {
-        _id = id;
-        _fileAction = fileAction;
-        _filePosition = filePosition;
-        _stack = stack;
+        this.id = id;
+        this.fileAction = fileAction;
+        this.filePosition = filePosition;
+        this.stack = stack;
     }
 
     /**
      * Unique identity for this record.
      */
     public int getId() {
-        return _id;
+        return id;
     }
 
     /**
      * The type of action being performed.
      */
     public String getFileAction() {
-        return _fileAction;
+        return fileAction;
     }
 
     /**
      * The stream position when the action was performed.
      */
     public long getFilePosition() {
-        return _filePosition;
+        return filePosition;
     }
 
     /**
      * The count argument (if relevant) when the action was performed.
      */
     public long getCountArg() {
-        return _countArg;
+        return countArg;
     }
 
     public void setCountArg(long value) {
-        _countArg = value;
+        countArg = value;
     }
 
     /**
      * The return value (if relevant) when the action was performed.
      */
     public long getResult() {
-        return _result;
+        return result;
     }
 
     public void setResult(long value) {
-        _result = value;
+        result = value;
     }
 
     /**
      * The exception thrown during processing of this action.
      */
     public Exception getExceptionThrown() {
-        return _exThrown;
+        return exThrown;
     }
 
     public void setExceptionThrown(Exception value) {
-        _exThrown = value;
+        exThrown = value;
     }
 
     /**
      * A full stack trace at the point the action was performed.
      */
     public StackTraceElement[] getStack() {
-        return _stack;
+        return stack;
     }
 
     /**
@@ -115,11 +116,11 @@ public final class StreamTraceRecord {
      */
     public String toString() {
         return String.format("%3d%1s:%5s  %10x  [count=%d, result=%d]",
-                             _id,
-                             _exThrown != null ? "E" : " ",
-                             _fileAction,
-                             _filePosition,
-                             _countArg,
-                             _result);
+                id,
+                exThrown != null ? "E" : " ",
+                fileAction,
+                filePosition,
+                countArg,
+                result);
     }
 }

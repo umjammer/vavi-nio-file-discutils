@@ -42,21 +42,21 @@ public final class RegistryKey {
 
     private static final String FS = java.io.File.separator;
 
-    private final KeyNodeCell _cell;
+    private final KeyNodeCell cell;
 
-    private final RegistryHive _hive;
+    private final RegistryHive hive;
 
     public RegistryKey(RegistryHive hive, KeyNodeCell cell) {
-        _hive = hive;
-        _cell = cell;
+        this.hive = hive;
+        this.cell = cell;
     }
 
     /**
      * Gets the class name of this registry key. Class name is rarely used.
      */
     public String getClassName() {
-        if (_cell.ClassNameIndex > 0) {
-            return new String(_hive.rawCellData(_cell.ClassNameIndex, _cell.ClassNameLength), StandardCharsets.UTF_16LE);
+        if (cell.classNameIndex > 0) {
+            return new String(hive.rawCellData(cell.classNameIndex, cell.classNameLength), StandardCharsets.UTF_16LE);
         }
 
         return null;
@@ -66,7 +66,7 @@ public final class RegistryKey {
      * Gets the flags of this registry key.
      */
     public EnumSet<RegistryKeyFlags> getFlags() {
-        return _cell.Flags;
+        return cell.flags;
     }
 
     /**
@@ -75,17 +75,17 @@ public final class RegistryKey {
     public String getName() {
         RegistryKey parent = getParent();
         if (parent != null && !parent.getFlags().contains(RegistryKeyFlags.Root)) {
-            return parent.getName() + FS + _cell.Name;
+            return parent.getName() + FS + cell.name;
         }
-        return _cell.Name;
+        return cell.name;
     }
 
     /**
      * Gets the parent key, or {@code null} if this is the root key.
      */
     public RegistryKey getParent() {
-        if (!_cell.Flags.contains(RegistryKeyFlags.Root)) {
-            return new RegistryKey(_hive, _hive.getCell(_cell.ParentIndex));
+        if (!cell.flags.contains(RegistryKeyFlags.Root)) {
+            return new RegistryKey(hive, hive.getCell(cell.parentIndex));
         }
         return null;
     }
@@ -94,7 +94,7 @@ public final class RegistryKey {
      * Gets the number of child keys.
      */
     public int getSubKeyCount() {
-        return _cell.NumSubKeys;
+        return cell.numSubKeys;
     }
 
     /**
@@ -102,10 +102,10 @@ public final class RegistryKey {
      */
     public List<RegistryKey> getSubKeys() {
         List<RegistryKey> result = new ArrayList<>();
-        if (_cell.NumSubKeys != 0) {
-            ListCell list = _hive.getCell(_cell.SubKeysIndex);
+        if (cell.numSubKeys != 0) {
+            ListCell list = hive.getCell(cell.subKeysIndex);
             for (KeyNodeCell key : list.enumerateKeys()) {
-                result.add(new RegistryKey(_hive, key));
+                result.add(new RegistryKey(hive, key));
             }
         }
         return result;
@@ -115,14 +115,14 @@ public final class RegistryKey {
      * Gets the time the key was last modified.
      */
     public long getTimestamp() {
-        return _cell.Timestamp;
+        return cell.timestamp;
     }
 
     /**
      * Gets the number of values in this key.
      */
     public int getValueCount() {
-        return _cell.NumValues;
+        return cell.numValues;
     }
 
     /**
@@ -130,11 +130,11 @@ public final class RegistryKey {
      */
     private List<RegistryValue> getValues() {
         List<RegistryValue> result = new ArrayList<>();
-        if (_cell.NumValues != 0) {
-            byte[] valueList = _hive.rawCellData(_cell.ValueListIndex, _cell.NumValues * 4);
-            for (int i = 0; i < _cell.NumValues; ++i) {
+        if (cell.numValues != 0) {
+            byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
+            for (int i = 0; i < cell.numValues; ++i) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
-                result.add(new RegistryValue(_hive, _hive.getCell(valueIndex)));
+                result.add(new RegistryValue(hive, hive.getCell(valueIndex)));
             }
         }
         return result;
@@ -146,8 +146,8 @@ public final class RegistryKey {
      * @return The security descriptor as a RegistrySecurity instance.
      */
     public RegistrySecurity getAccessControl() {
-        if (_cell.SecurityIndex > 0) {
-            SecurityCell secCell = _hive.getCell(_cell.SecurityIndex);
+        if (cell.securityIndex > 0) {
+            SecurityCell secCell = hive.getCell(cell.securityIndex);
             return secCell.getSecurityDescriptor();
         }
 
@@ -161,8 +161,8 @@ public final class RegistryKey {
      */
     public List<String> getSubKeyNames() {
         List<String> names = new ArrayList<>();
-        if (_cell.NumSubKeys != 0) {
-            ListCell cell = _hive.getCell(_cell.SubKeysIndex);
+        if (cell.numSubKeys != 0) {
+            ListCell cell = hive.getCell(this.cell.subKeysIndex);
             cell.enumerateKeys(names);
         }
 
@@ -239,7 +239,7 @@ public final class RegistryKey {
      * @param name The name of the value to retrieve.
      * @param defaultValue The default value to return, if no existing value is
      *            stored.
-     * @param options Flags controlling how the value is processed before it's
+     * @param options flags controlling how the value is processed before it's
      *            returned.
      * @return The value as a .NET object.
      */
@@ -301,31 +301,31 @@ public final class RegistryKey {
      */
     public void deleteValue(String name, boolean throwOnMissingValue) {
         boolean foundValue = false;
-        if (_cell.NumValues != 0) {
-            byte[] valueList = _hive.rawCellData(_cell.ValueListIndex, _cell.NumValues * 4);
+        if (cell.numValues != 0) {
+            byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
             int i = 0;
-            while (i < _cell.NumValues) {
+            while (i < cell.numValues) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
-                ValueCell valueCell = _hive.getCell(valueIndex);
+                ValueCell valueCell = hive.getCell(valueIndex);
 //Debug.println(valueCell.getName() + ", " + name);
                 if (StringUtilities.compare(valueCell.getName(), name, true) == 0) {
                     foundValue = true;
-                    _hive.freeCell(valueIndex);
-                    _cell.NumValues--;
-                    _hive.updateCell(_cell, false);
+                    hive.freeCell(valueIndex);
+                    cell.numValues--;
+                    hive.updateCell(cell, false);
                     break;
                 }
 
                 ++i;
             }
             // Move following value's to fill gap
-            if (i < _cell.NumValues) {
-                while (i < _cell.NumValues) {
+            if (i < cell.numValues) {
+                while (i < cell.numValues) {
                     int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, (i + 1) * 4);
                     EndianUtilities.writeBytesLittleEndian(valueIndex, valueList, i * 4);
                     ++i;
                 }
-                _hive.writeRawCellData(_cell.ValueListIndex, valueList, 0, _cell.NumValues * 4);
+                hive.writeRawCellData(cell.valueListIndex, valueList, 0, cell.numValues * 4);
             }
 
             // TODO: Update maxbytes for value name and value content if this
@@ -381,24 +381,24 @@ public final class RegistryKey {
         String[] split = subkey.split(StringUtilities.escapeForRegex(FS), 2);
         int cellIndex = findSubKeyCell(split[0]);
         if (cellIndex < 0) {
-            KeyNodeCell newKeyCell = new KeyNodeCell(split[0], _cell.getIndex());
-            newKeyCell.SecurityIndex = _cell.SecurityIndex;
-            referenceSecurityCell(newKeyCell.SecurityIndex);
-            _hive.updateCell(newKeyCell, true);
+            KeyNodeCell newKeyCell = new KeyNodeCell(split[0], cell.getIndex());
+            newKeyCell.securityIndex = cell.securityIndex;
+            referenceSecurityCell(newKeyCell.securityIndex);
+            hive.updateCell(newKeyCell, true);
             linkSubKey(split[0], newKeyCell.getIndex());
             if (split.length == 1) {
-                return new RegistryKey(_hive, newKeyCell);
+                return new RegistryKey(hive, newKeyCell);
             }
 
-            return new RegistryKey(_hive, newKeyCell).createSubKey(split[1]);
+            return new RegistryKey(hive, newKeyCell).createSubKey(split[1]);
         }
 
-        KeyNodeCell cell = _hive.getCell(cellIndex);
+        KeyNodeCell cell = hive.getCell(cellIndex);
         if (split.length == 1) {
-            return new RegistryKey(_hive, cell);
+            return new RegistryKey(hive, cell);
         }
 
-        return new RegistryKey(_hive, cell).createSubKey(split[1]);
+        return new RegistryKey(hive, cell).createSubKey(split[1]);
     }
 
     /**
@@ -419,12 +419,12 @@ public final class RegistryKey {
             return null;
         }
 
-        KeyNodeCell cell = _hive.getCell(cellIndex);
+        KeyNodeCell cell = hive.getCell(cellIndex);
         if (split.length == 1) {
-            return new RegistryKey(_hive, cell);
+            return new RegistryKey(hive, cell);
         }
 
-        return new RegistryKey(_hive, cell).openSubKey(split[1]);
+        return new RegistryKey(hive, cell).openSubKey(split[1]);
     }
 
     /**
@@ -481,36 +481,36 @@ public final class RegistryKey {
             return;
         }
 
-        KeyNodeCell subkeyCell = _hive.getCell(subkeyCellIndex);
+        KeyNodeCell subkeyCell = hive.getCell(subkeyCellIndex);
         if (split.length == 1) {
-            if (subkeyCell.NumSubKeys != 0) {
+            if (subkeyCell.numSubKeys != 0) {
                 throw new UnsupportedOperationException("The registry key has subkeys");
             }
 
-            if (subkeyCell.ClassNameIndex != -1) {
-                _hive.freeCell(subkeyCell.ClassNameIndex);
-                subkeyCell.ClassNameIndex = -1;
-                subkeyCell.ClassNameLength = 0;
+            if (subkeyCell.classNameIndex != -1) {
+                hive.freeCell(subkeyCell.classNameIndex);
+                subkeyCell.classNameIndex = -1;
+                subkeyCell.classNameLength = 0;
             }
 
-            if (subkeyCell.SecurityIndex != -1) {
-                dereferenceSecurityCell(subkeyCell.SecurityIndex);
-                subkeyCell.SecurityIndex = -1;
+            if (subkeyCell.securityIndex != -1) {
+                dereferenceSecurityCell(subkeyCell.securityIndex);
+                subkeyCell.securityIndex = -1;
             }
 
-            if (subkeyCell.SubKeysIndex != -1) {
+            if (subkeyCell.subKeysIndex != -1) {
                 freeSubKeys(subkeyCell);
             }
 
-            if (subkeyCell.ValueListIndex != -1) {
+            if (subkeyCell.valueListIndex != -1) {
                 freeValues(subkeyCell);
             }
 
             unlinkSubKey(subkey);
-            _hive.freeCell(subkeyCellIndex);
-            _hive.updateCell(_cell, false);
+            hive.freeCell(subkeyCellIndex);
+            hive.updateCell(cell, false);
         } else {
-            new RegistryKey(_hive, subkeyCell).deleteSubKey(split[1], throwOnMissingSubKey);
+            new RegistryKey(hive, subkeyCell).deleteSubKey(split[1], throwOnMissingSubKey);
         }
     }
 
@@ -519,14 +519,14 @@ public final class RegistryKey {
             name = null;
         }
 
-        if (_cell.NumValues != 0) {
-            byte[] valueList = _hive.rawCellData(_cell.ValueListIndex, _cell.NumValues * 4);
-            for (int i = 0; i < _cell.NumValues; ++i) {
+        if (cell.numValues != 0) {
+            byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
+            for (int i = 0; i < cell.numValues; ++i) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
-                ValueCell cell = _hive.getCell(valueIndex);
+                ValueCell cell = hive.getCell(valueIndex);
 //Debug.println(name + ", " + cell);
                 if (StringUtilities.compare(cell.getName(), name, true) == 0) {
-                    return new RegistryValue(_hive, cell);
+                    return new RegistryValue(hive, cell);
                 }
             }
         }
@@ -535,54 +535,54 @@ public final class RegistryKey {
     }
 
     private RegistryValue addRegistryValue(String name) {
-        byte[] valueList = _hive.rawCellData(_cell.ValueListIndex, _cell.NumValues * 4);
+        byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
         if (valueList == null) {
             valueList = new byte[0];
         }
 
         int insertIdx = 0;
-        while (insertIdx < _cell.NumValues) {
+        while (insertIdx < cell.numValues) {
             int valueCellIndex = EndianUtilities.toInt32LittleEndian(valueList, insertIdx * 4);
-            ValueCell cell = _hive.getCell(valueCellIndex);
+            ValueCell cell = hive.getCell(valueCellIndex);
             if (StringUtilities.compare(name, cell.getName(), true) < 0) {
                 break;
             }
 
             ++insertIdx;
         }
-        // Allocate a new value cell (note _hive.UpdateCell does actual
+        // Allocate a new value cell (note hive.UpdateCell does actual
         // allocation).
         ValueCell valueCell = new ValueCell(name);
-        _hive.updateCell(valueCell, true);
+        hive.updateCell(valueCell, true);
 
         // Update the value list, re-allocating if necessary
-        byte[] newValueList = new byte[_cell.NumValues * 4 + 4];
+        byte[] newValueList = new byte[cell.numValues * 4 + 4];
         System.arraycopy(valueList, 0, newValueList, 0, insertIdx * 4);
         EndianUtilities.writeBytesLittleEndian(valueCell.getIndex(), newValueList, insertIdx * 4);
-        System.arraycopy(valueList, insertIdx * 4, newValueList, insertIdx * 4 + 4, (_cell.NumValues - insertIdx) * 4);
-        if (_cell.ValueListIndex == -1 || !_hive.writeRawCellData(_cell.ValueListIndex, newValueList, 0, newValueList.length)) {
-            int newListCellIndex = _hive.allocateRawCell(MathUtilities.roundUp(newValueList.length, 8));
-            _hive.writeRawCellData(newListCellIndex, newValueList, 0, newValueList.length);
+        System.arraycopy(valueList, insertIdx * 4, newValueList, insertIdx * 4 + 4, (cell.numValues - insertIdx) * 4);
+        if (cell.valueListIndex == -1 || !hive.writeRawCellData(cell.valueListIndex, newValueList, 0, newValueList.length)) {
+            int newListCellIndex = hive.allocateRawCell(MathUtilities.roundUp(newValueList.length, 8));
+            hive.writeRawCellData(newListCellIndex, newValueList, 0, newValueList.length);
 
-            if (_cell.ValueListIndex != -1) {
-                _hive.freeCell(_cell.ValueListIndex);
+            if (cell.valueListIndex != -1) {
+                hive.freeCell(cell.valueListIndex);
             }
 
-            _cell.ValueListIndex = newListCellIndex;
+            cell.valueListIndex = newListCellIndex;
         }
 
         // Record the new value and save this cell
-        _cell.NumValues++;
-        _hive.updateCell(_cell, false);
+        cell.numValues++;
+        hive.updateCell(cell, false);
 
         // Finally, set the data in the value cell
 //Debug.println(valueCell);
-        return new RegistryValue(_hive, valueCell);
+        return new RegistryValue(hive, valueCell);
     }
 
     private int findSubKeyCell(String name) {
-        if (_cell.NumSubKeys != 0) {
-            ListCell listCell = _hive.getCell(_cell.SubKeysIndex);
+        if (cell.numSubKeys != 0) {
+            ListCell listCell = hive.getCell(cell.subKeysIndex);
             int[] cellIndex = new int[1];
             if (listCell.findKey(name, cellIndex) == 0) {
                 return cellIndex[0];
@@ -593,90 +593,90 @@ public final class RegistryKey {
     }
 
     private void linkSubKey(String name, int cellIndex) {
-        if (_cell.SubKeysIndex == -1) {
-            SubKeyHashedListCell newListCell = new SubKeyHashedListCell(_hive, "lf");
+        if (cell.subKeysIndex == -1) {
+            SubKeyHashedListCell newListCell = new SubKeyHashedListCell(hive, "lf");
             newListCell.add(name, cellIndex);
-            _hive.updateCell(newListCell, true);
-            _cell.NumSubKeys = 1;
-            _cell.SubKeysIndex = newListCell.getIndex();
+            hive.updateCell(newListCell, true);
+            cell.numSubKeys = 1;
+            cell.subKeysIndex = newListCell.getIndex();
         } else {
-            ListCell list = _hive.getCell(_cell.SubKeysIndex);
-            _cell.SubKeysIndex = list.linkSubKey(name, cellIndex);
-            _cell.NumSubKeys++;
+            ListCell list = hive.getCell(cell.subKeysIndex);
+            cell.subKeysIndex = list.linkSubKey(name, cellIndex);
+            cell.numSubKeys++;
         }
-        _hive.updateCell(_cell, false);
+        hive.updateCell(cell, false);
     }
 
     private void unlinkSubKey(String name) {
-        if (_cell.SubKeysIndex == -1 || _cell.NumSubKeys == 0) {
+        if (cell.subKeysIndex == -1 || cell.numSubKeys == 0) {
             throw new UnsupportedOperationException("No subkey list");
         }
 
-        ListCell list = _hive.getCell(_cell.SubKeysIndex);
-        _cell.SubKeysIndex = list.unlinkSubKey(name);
-        _cell.NumSubKeys--;
+        ListCell list = hive.getCell(cell.subKeysIndex);
+        cell.subKeysIndex = list.unlinkSubKey(name);
+        cell.numSubKeys--;
     }
 
     private void referenceSecurityCell(int cellIndex) {
-        SecurityCell sc = _hive.getCell(cellIndex);
+        SecurityCell sc = hive.getCell(cellIndex);
         sc.setUsageCount(sc.getUsageCount() + 1);
-        _hive.updateCell(sc, false);
+        hive.updateCell(sc, false);
     }
 
     private void dereferenceSecurityCell(int cellIndex) {
-        SecurityCell sc = _hive.getCell(cellIndex);
+        SecurityCell sc = hive.getCell(cellIndex);
         sc.setUsageCount(sc.getUsageCount() - 1);
         if (sc.getUsageCount() == 0) {
-            SecurityCell prev = _hive.getCell(sc.getPreviousIndex());
+            SecurityCell prev = hive.getCell(sc.getPreviousIndex());
             prev.setNextIndex(sc.getNextIndex());
-            _hive.updateCell(prev, false);
+            hive.updateCell(prev, false);
 
-            SecurityCell next = _hive.getCell(sc.getNextIndex());
+            SecurityCell next = hive.getCell(sc.getNextIndex());
             next.setPreviousIndex(sc.getPreviousIndex());
-            _hive.updateCell(next, false);
+            hive.updateCell(next, false);
 
-            _hive.freeCell(cellIndex);
+            hive.freeCell(cellIndex);
         } else {
-            _hive.updateCell(sc, false);
+            hive.updateCell(sc, false);
         }
     }
 
     private void freeValues(KeyNodeCell cell) {
-        if (cell.NumValues != 0 && cell.ValueListIndex != -1) {
-            byte[] valueList = _hive.rawCellData(cell.ValueListIndex, cell.NumValues * 4);
+        if (cell.numValues != 0 && cell.valueListIndex != -1) {
+            byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
 
-            for (int i = 0; i < cell.NumValues; ++i) {
+            for (int i = 0; i < cell.numValues; ++i) {
                 int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
-                _hive.freeCell(valueIndex);
+                hive.freeCell(valueIndex);
             }
 
-            _hive.freeCell(cell.ValueListIndex);
-            cell.ValueListIndex = -1;
-            cell.NumValues = 0;
-            cell.MaxValDataBytes = 0;
-            cell.MaxValNameBytes = 0;
+            hive.freeCell(cell.valueListIndex);
+            cell.valueListIndex = -1;
+            cell.numValues = 0;
+            cell.maxValDataBytes = 0;
+            cell.maxValNameBytes = 0;
         }
     }
 
     private void freeSubKeys(KeyNodeCell subkeyCell) {
-        if (subkeyCell.SubKeysIndex == -1) {
+        if (subkeyCell.subKeysIndex == -1) {
             throw new UnsupportedOperationException("No subkey list");
         }
 
-        Cell list = _hive.getCell(subkeyCell.SubKeysIndex);
+        Cell list = hive.getCell(subkeyCell.subKeysIndex);
         if (list instanceof SubKeyIndirectListCell) {
             SubKeyIndirectListCell indirectList = (SubKeyIndirectListCell) list;
             // foreach (int listIndex in indirectList.CellIndexes)
             for (int i = 0; i < indirectList.getCellIndexes().size(); ++i) {
                 int listIndex = indirectList.getCellIndexes().get(i);
-                _hive.freeCell(listIndex);
+                hive.freeCell(listIndex);
             }
         }
 
-        _hive.freeCell(list.getIndex());
+        hive.freeCell(list.getIndex());
     }
 
     public String toString() {
-        return _cell.toString();
+        return cell.toString();
     }
 }

@@ -30,33 +30,34 @@ import discUtils.streams.util.Sizes;
 
 
 public class DynamicVolume {
-    private final DynamicDiskGroup _group;
+
+    private final DynamicDiskGroup group;
 
     public DynamicVolume(DynamicDiskGroup group, UUID volumeId) {
-        _group = group;
-        _identity = volumeId;
+        this.group = group;
+        identity = volumeId;
     }
 
     public byte getBiosType() {
-        return getRecord().BiosType;
+        return getRecord().biosType;
     }
 
-    private UUID _identity;
+    private UUID identity;
 
     public UUID getIdentity() {
-        return _identity;
+        return identity;
     }
 
     public long getLength() {
-        return getRecord().Size * Sizes.Sector;
+        return getRecord().size * Sizes.Sector;
     }
 
     private VolumeRecord getRecord() {
-        return _group.getVolume(getIdentity());
+        return group.getVolume(getIdentity());
     }
 
     public LogicalVolumeStatus getStatus() {
-        return _group.getVolumeStatus(getRecord().Id);
+        return group.getVolumeStatus(getRecord().id);
     }
 
     public SparseStream open() {
@@ -64,6 +65,6 @@ public class DynamicVolume {
             throw new dotnet4j.io.IOException("Attempt to open 'failed' volume");
         }
 
-        return _group.openVolume(getRecord().Id);
+        return group.openVolume(getRecord().id);
     }
 }

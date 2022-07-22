@@ -26,34 +26,35 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BootVolumeDescriptor extends BaseVolumeDescriptor {
+
     public static final String ElToritoSystemIdentifier = "EL TORITO SPECIFICATION";
 
     public BootVolumeDescriptor(int catalogSector) {
         super(VolumeDescriptorType.Boot, (byte) 1);
-        _catalogSector = catalogSector;
+        this.catalogSector = catalogSector;
     }
 
     public BootVolumeDescriptor(byte[] src, int offset) {
         super(src, offset);
-        _systemId = EndianUtilities.bytesToString(src, offset + 0x7, 0x20).replaceFirst("\0*$", "");
-        _catalogSector = EndianUtilities.toUInt32LittleEndian(src, offset + 0x47);
+        systemId = EndianUtilities.bytesToString(src, offset + 0x7, 0x20).replaceFirst("\0*$", "");
+        catalogSector = EndianUtilities.toUInt32LittleEndian(src, offset + 0x47);
     }
 
-    private int _catalogSector;
+    private int catalogSector;
 
     public int getCatalogSector() {
-        return _catalogSector;
+        return catalogSector;
     }
 
-    private String _systemId;
+    private String systemId;
 
     public String getSystemId() {
-        return _systemId;
+        return systemId;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
         EndianUtilities.stringToBytes(ElToritoSystemIdentifier, buffer, offset + 7, 0x20);
-        EndianUtilities.writeBytesLittleEndian(getCatalogSector(), buffer, offset + 0x47);
+        EndianUtilities.writeBytesLittleEndian(catalogSector, buffer, offset + 0x47);
     }
 }

@@ -28,16 +28,17 @@ import dotnet4j.io.Stream;
  * Converts a byte stream into a bit stream.
  */
 public class BigEndianBitStream extends BitStream {
-    private int _buffer;
 
-    private int _bufferAvailable;
+    private int buffer;
 
-    private final Stream _byteStream;
+    private int bufferAvailable;
 
-    private final byte[] _readBuffer = new byte[2];
+    private final Stream byteStream;
+
+    private final byte[] readBuffer = new byte[2];
 
     public BigEndianBitStream(Stream byteStream) {
-        _byteStream = byteStream;
+        this.byteStream = byteStream;
     }
 
     public int getMaxReadAhead() {
@@ -51,29 +52,29 @@ public class BigEndianBitStream extends BitStream {
         }
 
         ensureBufferFilled();
-        _bufferAvailable -= count;
+        bufferAvailable -= count;
         int mask = (1 << count) - 1;
-        return (_buffer >>> _bufferAvailable) & mask;
+        return (buffer >>> bufferAvailable) & mask;
     }
 
     public int peek(int count) {
         ensureBufferFilled();
         int mask = (1 << count) - 1;
-        return (_buffer >>> (_bufferAvailable - count)) & mask;
+        return (buffer >>> (bufferAvailable - count)) & mask;
     }
 
     public void consume(int count) {
         ensureBufferFilled();
-        _bufferAvailable -= count;
+        bufferAvailable -= count;
     }
 
     private void ensureBufferFilled() {
-        if (_bufferAvailable < 16) {
-            _readBuffer[0] = 0;
-            _readBuffer[1] = 0;
-            _byteStream.read(_readBuffer, 0, 2);
-            _buffer = _buffer << 16 | (_readBuffer[0] & 0xff) << 8 | (_readBuffer[1] & 0xff);
-            _bufferAvailable += 16;
+        if (bufferAvailable < 16) {
+            readBuffer[0] = 0;
+            readBuffer[1] = 0;
+            byteStream.read(readBuffer, 0, 2);
+            buffer = buffer << 16 | (readBuffer[0] & 0xff) << 8 | (readBuffer[1] & 0xff);
+            bufferAvailable += 16;
         }
     }
 }

@@ -32,21 +32,22 @@ import dotnet4j.io.Stream;
 
 
 public class BiosExtendedPartitionTable {
-    private final Stream _disk;
 
-    private final int _firstSector;
+    private final Stream disk;
+
+    private final int firstSector;
 
     public BiosExtendedPartitionTable(Stream disk, int firstSector) {
-        _disk = disk;
-        _firstSector = firstSector;
+        this.disk = disk;
+        this.firstSector = firstSector;
     }
 
     public List<BiosPartitionRecord> getPartitions() {
         List<BiosPartitionRecord> result = new ArrayList<>();
-        int partPos = _firstSector;
+        int partPos = firstSector;
         while (partPos != 0) {
-            _disk.setPosition((long) partPos * Sizes.Sector);
-            byte[] sector = StreamUtilities.readExact(_disk, Sizes.Sector);
+            disk.setPosition((long) partPos * Sizes.Sector);
+            byte[] sector = StreamUtilities.readExact(disk, Sizes.Sector);
             if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
                 throw new dotnet4j.io.IOException("Invalid extended partition sector");
             }
@@ -59,7 +60,7 @@ public class BiosExtendedPartitionTable {
                     if (thisPart.getPartitionType() != 0x05 && thisPart.getPartitionType() != 0x0F) {
                         result.add(thisPart);
                     } else {
-                        nextPartPos = _firstSector + (int) thisPart.getLBAStart();
+                        nextPartPos = firstSector + (int) thisPart.getLBAStart();
                     }
                 }
             }
@@ -76,11 +77,11 @@ public class BiosExtendedPartitionTable {
      */
     public List<StreamExtent> getMetadataDiskExtents() {
         List<StreamExtent> extents = new ArrayList<>();
-        int partPos = _firstSector;
+        int partPos = firstSector;
         while (partPos != 0) {
             extents.add(new StreamExtent((long) partPos * Sizes.Sector, Sizes.Sector));
-            _disk.setPosition((long) partPos * Sizes.Sector);
-            byte[] sector = StreamUtilities.readExact(_disk, Sizes.Sector);
+            disk.setPosition((long) partPos * Sizes.Sector);
+            byte[] sector = StreamUtilities.readExact(disk, Sizes.Sector);
             if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
                 throw new dotnet4j.io.IOException("Invalid extended partition sector");
             }
@@ -90,7 +91,7 @@ public class BiosExtendedPartitionTable {
                 BiosPartitionRecord thisPart = new BiosPartitionRecord(sector, offset, partPos, -1);
                 if (thisPart.getStartCylinder() != 0 || thisPart.getStartHead() != 0 || thisPart.getStartSector() != 0) {
                     if (thisPart.getPartitionType() == 0x05 || thisPart.getPartitionType() == 0x0F) {
-                        nextPartPos = _firstSector + (int) thisPart.getLBAStart();
+                        nextPartPos = firstSector + (int) thisPart.getLBAStart();
                         break;
                     }
                 }

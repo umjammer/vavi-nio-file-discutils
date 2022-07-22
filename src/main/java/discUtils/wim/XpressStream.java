@@ -36,11 +36,12 @@ import dotnet4j.io.Stream;
  * fit into memory, it is not suitable for unbounded streams.
  */
 public class XpressStream extends Stream {
-    private final byte[] _buffer;
 
-    private final Stream _compressedStream;
+    private final byte[] buffer;
 
-    private long _position;
+    private final Stream compressedStream;
+
+    private long position;
 
     /**
      * Initializes a new instance of the XpressStream class.
@@ -49,8 +50,8 @@ public class XpressStream extends Stream {
      * @param count The length of this stream (in uncompressed bytes).
      */
     public XpressStream(Stream compressed, int count) {
-        _compressedStream = new BufferedStream(compressed);
-        _buffer = buffer(count);
+        compressedStream = new BufferedStream(compressed);
+        buffer = buffer(count);
     }
 
     public boolean canRead() {
@@ -66,28 +67,28 @@ public class XpressStream extends Stream {
     }
 
     public long getLength() {
-        return _buffer.length;
+        return buffer.length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position > getLength()) {
+        if (position > getLength()) {
             return 0;
         }
 
-        int numToRead = (int) Math.min(count, _buffer.length - _position);
-        System.arraycopy(_buffer, (int) _position, buffer, offset, numToRead);
-        _position += numToRead;
+        int numToRead = (int) Math.min(count, this.buffer.length - position);
+        System.arraycopy(this.buffer, (int) position, buffer, offset, numToRead);
+        position += numToRead;
         return numToRead;
     }
 
@@ -117,7 +118,7 @@ public class XpressStream extends Stream {
         byte[] buffer = new byte[count];
         int numRead = 0;
         HuffmanTree tree = readHuffmanTree();
-        XpressBitStream bitStream = new XpressBitStream(_compressedStream);
+        XpressBitStream bitStream = new XpressBitStream(compressedStream);
         while (numRead < count) {
             int symbol = tree.nextSymbol(bitStream);
             if (symbol < 256) {
@@ -160,7 +161,7 @@ public class XpressStream extends Stream {
     }
 
     private int readCompressedByte() {
-        int b = _compressedStream.readByte();
+        int b = compressedStream.readByte();
         if (b < 0) {
             throw new IllegalStateException("Truncated stream");
         }

@@ -34,32 +34,33 @@ import dotnet4j.io.Stream;
 
 
 public final class PartitionMapEntry extends PartitionInfo implements IByteArraySerializable {
-    private final Stream _diskStream;
 
-    public int BootBlock;
+    private final Stream diskStream;
 
-    public int BootBytes;
+    public int bootBlock;
 
-    public int Flags;
+    public int bootBytes;
 
-    public int LogicalBlocks;
+    public int flags;
 
-    public int LogicalBlockStart;
+    public int logicalBlocks;
 
-    public int MapEntries;
+    public int logicalBlockStart;
 
-    public String Name;
+    public int mapEntries;
 
-    public int PhysicalBlocks;
+    public String name;
 
-    public int PhysicalBlockStart;
+    public int physicalBlocks;
 
-    public short Signature;
+    public int physicalBlockStart;
 
-    public String Type;
+    public short signature;
+
+    public String type;
 
     public PartitionMapEntry(Stream diskStream) {
-        _diskStream = diskStream;
+        this.diskStream = diskStream;
     }
 
     public byte getBiosType() {
@@ -67,7 +68,7 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
     }
 
     public long getFirstSector() {
-        return PhysicalBlockStart;
+        return physicalBlockStart;
     }
 
     public UUID getGuidType() {
@@ -75,11 +76,11 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
     }
 
     public long getLastSector() {
-        return PhysicalBlockStart + PhysicalBlocks - 1;
+        return physicalBlockStart + physicalBlocks - 1;
     }
 
     public String getTypeAsString() {
-        return Type;
+        return type;
     }
 
     public PhysicalVolumeType getVolumeType() {
@@ -91,17 +92,17 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        MapEntries = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        PhysicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        PhysicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        Name = EndianUtilities.bytesToString(buffer, offset + 16, 32).replaceFirst("\0*$", "");
-        Type = EndianUtilities.bytesToString(buffer, offset + 48, 32).replaceFirst("\0*$", "");
-        LogicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 80);
-        LogicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 84);
-        Flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 88);
-        BootBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 92);
-        BootBytes = EndianUtilities.toUInt32BigEndian(buffer, offset + 96);
+        signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        mapEntries = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        physicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        physicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        name = EndianUtilities.bytesToString(buffer, offset + 16, 32).replaceFirst("\0*$", "");
+        type = EndianUtilities.bytesToString(buffer, offset + 48, 32).replaceFirst("\0*$", "");
+        logicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 80);
+        logicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 84);
+        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 88);
+        bootBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 92);
+        bootBytes = EndianUtilities.toUInt32BigEndian(buffer, offset + 96);
 
         return 512;
     }
@@ -111,6 +112,6 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
     }
 
     public SparseStream open() {
-        return new SubStream(_diskStream, PhysicalBlockStart * 512L, PhysicalBlocks * 512L);
+        return new SubStream(diskStream, physicalBlockStart * 512L, physicalBlocks * 512L);
     }
 }

@@ -30,18 +30,19 @@ import discUtils.streams.IByteArraySerializable;
  * Maps logical address to physical
  */
 public abstract class BaseItem implements IByteArraySerializable {
+
     public BaseItem(Key key) {
-        _key = key;
+        this.key = key;
     }
 
-    private Key _key;
+    private Key key;
 
     public Key getKey() {
-        return _key;
+        return key;
     }
 
     public void setKey(Key value) {
-        _key = value;
+        key = value;
     }
 
     public abstract int size();

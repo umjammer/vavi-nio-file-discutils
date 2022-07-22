@@ -41,38 +41,39 @@ import discUtils.streams.SparseStream;
  * Class representing a disk containing within an XVA file.
  */
 public final class Disk extends VirtualDisk {
-    private final long _capacity;
 
-    private final String _location;
+    private final long capacity;
 
-    private final VirtualMachine _vm;
+    private final String location;
 
-    private SparseStream _content;
+    private final VirtualMachine vm;
+
+    private SparseStream content;
 
     public Disk(VirtualMachine vm, String id, String displayname, String location, long capacity) {
-        _vm = vm;
-        __Uuid = id;
-        __DisplayName = displayname;
-        _location = location;
-        _capacity = capacity;
+        this.vm = vm;
+        uuid = id;
+        displayName = displayname;
+        this.location = location;
+        this.capacity = capacity;
     }
 
     /**
      * Gets the disk's capacity (in bytes).
      */
     public long getCapacity() {
-        return _capacity;
+        return capacity;
     }
 
     /**
      * Gets the content of the disk as a stream.
      */
     public SparseStream getContent() {
-        if (_content == null) {
-            _content = new DiskStream(_vm.getArchive(), _capacity, _location);
+        if (content == null) {
+            content = new DiskStream(vm.getArchive(), capacity, location);
         }
 
-        return _content;
+        return content;
     }
 
     /**
@@ -95,10 +96,10 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the display name of the disk, as shown by XenServer.
      */
-    private String __DisplayName;
+    private String displayName;
 
     public String getDisplayName() {
-        return __DisplayName;
+        return displayName;
     }
 
     /**
@@ -107,23 +108,23 @@ public final class Disk extends VirtualDisk {
      * a guess of the actual geometry.
      */
     public Geometry getGeometry() {
-        return Geometry.fromCapacity(_capacity);
+        return Geometry.fromCapacity(capacity);
     }
 
     /**
      * Gets the (single) layer of an XVA disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return Collections.singletonList(new DiskLayer(_vm, _capacity, _location));
+        return Collections.singletonList(new DiskLayer(vm, capacity, location));
     }
 
     /**
      * Gets the Unique id of the disk, as known by XenServer.
      */
-    private String __Uuid;
+    private String uuid;
 
     public String getUuid() {
-        return __Uuid;
+        return uuid;
     }
 
     /**
@@ -151,9 +152,9 @@ public final class Disk extends VirtualDisk {
      * Disposes of this instance, freeing underlying resources.
      */
     public void close() throws IOException {
-        if (_content != null) {
-            _content.close();
-            _content = null;
+        if (content != null) {
+            content.close();
+            content = null;
         }
 
         super.close();

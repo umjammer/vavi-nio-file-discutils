@@ -34,99 +34,100 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class StandardInformation implements IByteArraySerializable, IDiagnosticTraceable {
-    private boolean _haveExtraFields = true;
 
-    public int _classId;
+    private boolean haveExtraFields = true;
 
-    public long _creationTime;
+    public int classId;
 
-    public EnumSet<FileAttributeFlags> _fileAttributes;
+    public long creationTime;
 
-    public long _lastAccessTime;
+    public EnumSet<FileAttributeFlags> fileAttributeFlags;
 
-    public int _maxVersions;
+    public long lastAccessTime;
 
-    public long _mftChangedTime;
+    public int maxVersions;
 
-    public long _modificationTime;
+    public long mftChangedTime;
 
-    public int _ownerId;
+    public long modificationTime;
 
-    public long _quotaCharged;
+    public int ownerId;
 
-    public int _securityId;
+    public long quotaCharged;
 
-    public long _updateSequenceNumber;
+    public int securityId;
 
-    public int _version;
+    public long updateSequenceNumber;
+
+    public int version;
 
     public int size() {
-        return _haveExtraFields ? 0x48 : 0x30;
+        return haveExtraFields ? 0x48 : 0x30;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _creationTime = readDateTime(buffer, 0x00);
-        _modificationTime = readDateTime(buffer, 0x08);
-        _mftChangedTime = readDateTime(buffer, 0x10);
-        _lastAccessTime = readDateTime(buffer, 0x18);
-        _fileAttributes = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x20));
-        _maxVersions = EndianUtilities.toUInt32LittleEndian(buffer, 0x24);
-        _version = EndianUtilities.toUInt32LittleEndian(buffer, 0x28);
-        _classId = EndianUtilities.toUInt32LittleEndian(buffer, 0x2C);
+        creationTime = readDateTime(buffer, 0x00);
+        modificationTime = readDateTime(buffer, 0x08);
+        mftChangedTime = readDateTime(buffer, 0x10);
+        lastAccessTime = readDateTime(buffer, 0x18);
+        fileAttributeFlags = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x20));
+        maxVersions = EndianUtilities.toUInt32LittleEndian(buffer, 0x24);
+        version = EndianUtilities.toUInt32LittleEndian(buffer, 0x28);
+        classId = EndianUtilities.toUInt32LittleEndian(buffer, 0x2C);
         if (buffer.length > 0x30) {
-            _ownerId = EndianUtilities.toUInt32LittleEndian(buffer, 0x30);
-            _securityId = EndianUtilities.toUInt32LittleEndian(buffer, 0x34);
-            _quotaCharged = EndianUtilities.toUInt64LittleEndian(buffer, 0x38);
-            _updateSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, 0x40);
-            _haveExtraFields = true;
+            ownerId = EndianUtilities.toUInt32LittleEndian(buffer, 0x30);
+            securityId = EndianUtilities.toUInt32LittleEndian(buffer, 0x34);
+            quotaCharged = EndianUtilities.toUInt64LittleEndian(buffer, 0x38);
+            updateSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, 0x40);
+            haveExtraFields = true;
             return 0x48;
         }
 
-        _haveExtraFields = false;
+        haveExtraFields = false;
         return 0x30;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_creationTime), buffer, 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_modificationTime), buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_mftChangedTime), buffer, 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(_lastAccessTime), buffer, 0x18);
-        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(_fileAttributes), buffer, 0x20);
-        EndianUtilities.writeBytesLittleEndian(_maxVersions, buffer, 0x24);
-        EndianUtilities.writeBytesLittleEndian(_version, buffer, 0x28);
-        EndianUtilities.writeBytesLittleEndian(_classId, buffer, 0x2C);
-        if (_haveExtraFields) {
-            EndianUtilities.writeBytesLittleEndian(_ownerId, buffer, 0x30);
-            EndianUtilities.writeBytesLittleEndian(_securityId, buffer, 0x34);
-            EndianUtilities.writeBytesLittleEndian(_quotaCharged, buffer, 0x38);
-            EndianUtilities.writeBytesLittleEndian(_updateSequenceNumber, buffer, 0x38);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(creationTime), buffer, 0x00);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(modificationTime), buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(mftChangedTime), buffer, 0x10);
+        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(lastAccessTime), buffer, 0x18);
+        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(fileAttributeFlags), buffer, 0x20);
+        EndianUtilities.writeBytesLittleEndian(maxVersions, buffer, 0x24);
+        EndianUtilities.writeBytesLittleEndian(version, buffer, 0x28);
+        EndianUtilities.writeBytesLittleEndian(classId, buffer, 0x2C);
+        if (haveExtraFields) {
+            EndianUtilities.writeBytesLittleEndian(ownerId, buffer, 0x30);
+            EndianUtilities.writeBytesLittleEndian(securityId, buffer, 0x34);
+            EndianUtilities.writeBytesLittleEndian(quotaCharged, buffer, 0x38);
+            EndianUtilities.writeBytesLittleEndian(updateSequenceNumber, buffer, 0x38);
         }
 
     }
 
     public void dump(PrintWriter writer, String indent) {
-        writer.println(indent + "      Creation Time: " + _creationTime);
-        writer.println(indent + "  Modification Time: " + _modificationTime);
-        writer.println(indent + "   MFT Changed Time: " + _mftChangedTime);
-        writer.println(indent + "   Last Access Time: " + _lastAccessTime);
-        writer.println(indent + "   File Permissions: " + _fileAttributes);
-        writer.println(indent + "       Max Versions: " + _maxVersions);
-        writer.println(indent + "            Version: " + _version);
-        writer.println(indent + "           Class Id: " + _classId);
-        writer.println(indent + "        Security Id: " + _securityId);
-        writer.println(indent + "      Quota Charged: " + _quotaCharged);
-        writer.println(indent + "     Update Seq Num: " + _updateSequenceNumber);
+        writer.println(indent + "      Creation Time: " + creationTime);
+        writer.println(indent + "  Modification Time: " + modificationTime);
+        writer.println(indent + "   MFT Changed Time: " + mftChangedTime);
+        writer.println(indent + "   Last Access Time: " + lastAccessTime);
+        writer.println(indent + "   File Permissions: " + fileAttributeFlags);
+        writer.println(indent + "       Max Versions: " + maxVersions);
+        writer.println(indent + "            Version: " + version);
+        writer.println(indent + "           Class Id: " + classId);
+        writer.println(indent + "        Security Id: " + securityId);
+        writer.println(indent + "      Quota Charged: " + quotaCharged);
+        writer.println(indent + "     Update Seq Num: " + updateSequenceNumber);
     }
 
     public static StandardInformation initializeNewFile(File file, EnumSet<FileAttributeFlags> flags) {
         long now = System.currentTimeMillis();
         NtfsStream siStream = file.createStream(AttributeType.StandardInformation, null);
         StandardInformation si = new StandardInformation();
-        si._creationTime = now;
-        si._modificationTime = now;
-        si._mftChangedTime = now;
-        si._lastAccessTime = now;
-        si._fileAttributes = flags;
+        si.creationTime = now;
+        si.modificationTime = now;
+        si.mftChangedTime = now;
+        si.lastAccessTime = now;
+        si.fileAttributeFlags = flags;
         siStream.setContent(si);
         return si;
     }
@@ -144,7 +145,7 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
                                                                 EnumSet<FileAttributeFlags> existing) {
         int _newAttributes = (int) FileAttributes.valueOf(newAttributes);
         int _existing = (int) FileAttributeFlags.valueOf(existing);
-        return FileAttributeFlags.valueOf((_existing & 0xFFFF0000) | (_newAttributes & 0xFFFF));
+        return FileAttributeFlags.valueOf((_existing & 0xFFFF_0000) | (_newAttributes & 0xFFFF));
     }
 
     private static long readDateTime(byte[] buffer, int offset) {

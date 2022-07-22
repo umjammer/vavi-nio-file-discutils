@@ -39,23 +39,24 @@ import discUtils.core.compression.CompressionResult;
 
 @Disabled("not implemented yet")
 public class LZNT1Test {
-    private byte[] _uncompressedData;
+
+    private byte[] uncompressedData;
 
     public LZNT1Test() {
         Random rng = new Random(3425);
-        _uncompressedData = new byte[64 * 1024];
+        uncompressedData = new byte[64 * 1024];
         for (int i = 0; i < 16 * 4096; ++i) {
             // Some test data that is reproducible, and fairly compressible
             byte b = (byte) (rng.nextInt(26) + 'A');
-            int start = rng.nextInt(_uncompressedData.length);
+            int start = rng.nextInt(uncompressedData.length);
             int len = rng.nextInt(20);
-            for (int j = start; j < _uncompressedData.length && j < start + len; j++) {
-                _uncompressedData[j] = b;
+            for (int j = start; j < uncompressedData.length && j < start + len; j++) {
+                uncompressedData[j] = b;
             }
         }
         for (int i = 5 * 4096; i < 6 * 4096; ++i) {
             // Make one block uncompressible
-            _uncompressedData[i] = (byte) rng.nextInt(256);
+            uncompressedData[i] = (byte) rng.nextInt(256);
         }
     }
 
@@ -72,51 +73,51 @@ public class LZNT1Test {
         };
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
-        byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
-        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        byte[] nativeCompressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
+        assertArrayEquals(uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(4096);
         CompressionResult r = compressor
-                .compress(_uncompressedData, 0, _uncompressedData.length, compressedData, 0, compressedLength);
+                .compress(uncompressedData, 0, uncompressedData.length, compressedData, 0, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        assertArrayEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
-        assertTrue(compressedLength[0] < _uncompressedData.length * 0.66);
+        assertArrayEquals(uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
+        assertTrue(compressedLength[0] < uncompressedData.length * 0.66);
     }
 
     @Test
     public void compressMidSourceBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] inData = new byte[128 * 1024];
-        System.arraycopy(_uncompressedData, 0, inData, 32 * 1024, 64 * 1024);
+        System.arraycopy(uncompressedData, 0, inData, 32 * 1024, 64 * 1024);
         int[] compressedLength = new int[] {
             16 * 4096
         };
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
-        byte[] nativeCompressed = nativeCompress(inData, 32 * 1024, _uncompressedData.length, 4096);
-        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        byte[] nativeCompressed = nativeCompress(inData, 32 * 1024, uncompressedData.length, 4096);
+        assertArrayEquals(uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(4096);
         CompressionResult r = compressor
-                .compress(inData, 32 * 1024, _uncompressedData.length, compressedData, 0, compressedLength);
+                .compress(inData, 32 * 1024, uncompressedData.length, compressedData, 0, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        assertArrayEquals(_uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
+        assertArrayEquals(uncompressedData, nativeDecompress(compressedData, 0, compressedLength[0]));
     }
 
     @Test
     public void compressMidDestBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         // Double-check, make sure native code round-trips
-        byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
-        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        byte[] nativeCompressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
+        assertArrayEquals(uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         int[] compressedLength = new int[] {
             128 * 1024
         };
         byte[] compressedData = new byte[compressedLength[0]];
         compressor.setBlockSize(4096);
         CompressionResult r = compressor
-                .compress(_uncompressedData, 0, _uncompressedData.length, compressedData, 32 * 1024, compressedLength);
+                .compress(uncompressedData, 0, uncompressedData.length, compressedData, 32 * 1024, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        assertTrue(compressedLength[0] < _uncompressedData.length);
-        assertArrayEquals(_uncompressedData, nativeDecompress(compressedData, 32 * 1024, compressedLength[0]));
+        assertTrue(compressedLength[0] < uncompressedData.length);
+        assertArrayEquals(uncompressedData, nativeDecompress(compressedData, 32 * 1024, compressedLength[0]));
     }
 
     @Test
@@ -127,13 +128,13 @@ public class LZNT1Test {
         };
         byte[] compressedData = new byte[compressedLength[0]];
         // Double-check, make sure native code round-trips
-        byte[] nativeCompressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 1024);
-        assertArrayEquals(_uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
+        byte[] nativeCompressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 1024);
+        assertArrayEquals(uncompressedData, nativeDecompress(nativeCompressed, 0, nativeCompressed.length));
         compressor.setBlockSize(1024);
         CompressionResult r = compressor
-                .compress(_uncompressedData, 0, _uncompressedData.length, compressedData, 0, compressedLength);
+                .compress(uncompressedData, 0, uncompressedData.length, compressedData, 0, compressedLength);
         assertEquals(CompressionResult.Compressed, r);
-        byte[] duDecompressed = new byte[_uncompressedData.length];
+        byte[] duDecompressed = new byte[uncompressedData.length];
         int numDuDecompressed = compressor.decompress(compressedData, 0, compressedLength[0], duDecompressed, 0);
         byte[] rightSizedDuDecompressed = new byte[numDuDecompressed];
         System.arraycopy(duDecompressed, 0, rightSizedDuDecompressed, 0, numDuDecompressed);
@@ -147,7 +148,7 @@ public class LZNT1Test {
     public void compress1KBlock() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
         byte[] uncompressed1K = new byte[1024];
-        System.arraycopy(_uncompressedData, 0, uncompressed1K, 0, 1024);
+        System.arraycopy(uncompressedData, 0, uncompressed1K, 0, 1024);
         int[] compressedLength = new int[] {
             1024
         };
@@ -189,52 +190,52 @@ public class LZNT1Test {
     @Test
     public void decompress() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
-        byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
+        byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
-        assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
-        byte[] decompressed = new byte[_uncompressedData.length];
+        assertArrayEquals(uncompressedData, nativeDecompress(compressed, 0, compressed.length));
+        byte[] decompressed = new byte[uncompressedData.length];
         int numDecompressed = compressor.decompress(compressed, 0, compressed.length, decompressed, 0);
-        assertEquals(numDecompressed, _uncompressedData.length);
-        assertArrayEquals(_uncompressedData, decompressed);
+        assertEquals(numDecompressed, uncompressedData.length);
+        assertArrayEquals(uncompressedData, decompressed);
     }
 
     @Test
     public void decompressMidSourceBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
-        byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
+        byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
         byte[] inData = new byte[128 * 1024];
         System.arraycopy(compressed, 0, inData, 32 * 1024, compressed.length);
         // Double-check, make sure native code round-trips
-        assertArrayEquals(_uncompressedData, nativeDecompress(inData, 32 * 1024, compressed.length));
-        byte[] decompressed = new byte[_uncompressedData.length];
+        assertArrayEquals(uncompressedData, nativeDecompress(inData, 32 * 1024, compressed.length));
+        byte[] decompressed = new byte[uncompressedData.length];
         int numDecompressed = compressor.decompress(inData, 32 * 1024, compressed.length, decompressed, 0);
-        assertEquals(numDecompressed, _uncompressedData.length);
-        assertArrayEquals(_uncompressedData, decompressed);
+        assertEquals(numDecompressed, uncompressedData.length);
+        assertArrayEquals(uncompressedData, decompressed);
     }
 
     @Test
     public void decompressMidDestBuffer() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
-        byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 4096);
+        byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 4096);
         // Double-check, make sure native code round-trips
-        assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
+        assertArrayEquals(uncompressedData, nativeDecompress(compressed, 0, compressed.length));
         byte[] outData = new byte[128 * 1024];
         int numDecompressed = compressor.decompress(compressed, 0, compressed.length, outData, 32 * 1024);
-        assertEquals(numDecompressed, _uncompressedData.length);
-        byte[] decompressed = new byte[_uncompressedData.length];
-        System.arraycopy(outData, 32 * 1024, decompressed, 0, _uncompressedData.length);
-        assertArrayEquals(_uncompressedData, decompressed);
+        assertEquals(numDecompressed, uncompressedData.length);
+        byte[] decompressed = new byte[uncompressedData.length];
+        System.arraycopy(outData, 32 * 1024, decompressed, 0, uncompressedData.length);
+        assertArrayEquals(uncompressedData, decompressed);
     }
 
     @Test
     public void decompress1KBlockSize() throws Exception {
         BlockCompressor compressor = createInstance(BlockCompressor.class, "discUtils.ntfs.LZNT1");
-        byte[] compressed = nativeCompress(_uncompressedData, 0, _uncompressedData.length, 1024);
-        assertArrayEquals(_uncompressedData, nativeDecompress(compressed, 0, compressed.length));
-        byte[] decompressed = new byte[_uncompressedData.length];
+        byte[] compressed = nativeCompress(uncompressedData, 0, uncompressedData.length, 1024);
+        assertArrayEquals(uncompressedData, nativeDecompress(compressed, 0, compressed.length));
+        byte[] decompressed = new byte[uncompressedData.length];
         int numDecompressed = compressor.decompress(compressed, 0, compressed.length, decompressed, 0);
-        assertEquals(numDecompressed, _uncompressedData.length);
-        assertArrayEquals(_uncompressedData, decompressed);
+        assertEquals(numDecompressed, uncompressedData.length);
+        assertArrayEquals(uncompressedData, decompressed);
     }
 
     private static byte[] nativeCompress(byte[] data, int offset, int length, int chunkSize) {

@@ -27,17 +27,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ExtentAllocationDescriptor implements IByteArraySerializable {
-    public int ExtentLength;
 
-    public int ExtentLocation;
+    public int extentLength;
+
+    public int extentLocation;
 
     public int size() {
         return 8;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        ExtentLength = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        ExtentLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        extentLength = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        extentLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
         return 8;
     }
 
@@ -46,6 +47,6 @@ public final class ExtentAllocationDescriptor implements IByteArraySerializable 
     }
 
     public String toString() {
-        return ExtentLocation + ":+" + ExtentLength;
+        return extentLocation + ":+" + extentLength;
     }
 }

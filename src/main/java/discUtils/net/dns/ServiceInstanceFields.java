@@ -25,7 +25,7 @@ package discUtils.net.dns;
 import java.util.EnumSet;
 
 /**
- * Flags controlling which details are discovered for a particular DNS-SD
+ * flags controlling which details are discovered for a particular DNS-SD
  * service.
  */
 public enum ServiceInstanceFields {

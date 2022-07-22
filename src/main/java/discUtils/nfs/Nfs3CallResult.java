@@ -22,8 +22,6 @@
 
 package discUtils.nfs;
 
-import java.io.IOException;
-
 import dotnet4j.io.MemoryStream;
 
 
@@ -31,14 +29,15 @@ import dotnet4j.io.MemoryStream;
  * base class for all NFS result structures.
  */
 public abstract class Nfs3CallResult implements IRpcObject {
-    protected Nfs3Status _status = Nfs3Status.Ok;
+
+    protected Nfs3Status status = Nfs3Status.Ok;
 
     public Nfs3Status getStatus() {
-        return _status;
+        return status;
     }
 
     public void setStatus(Nfs3Status value) {
-        _status = value;
+        status = value;
     }
 
     public void write(XdrDataWriter writer) {

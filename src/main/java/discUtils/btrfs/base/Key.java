@@ -27,6 +27,7 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class Key implements IByteArraySerializable {
+
     public static final int Length = 0x11;
 
     public Key() {
@@ -34,9 +35,9 @@ public class Key implements IByteArraySerializable {
 
     public Key(long objectId, ItemType type, long offset) {
         this();
-        _objectId = objectId;
-        _itemType = type;
-        _offset = offset;
+        this.objectId = objectId;
+        itemType = type;
+        this.offset = offset;
     }
 
     public Key(long objectId, ItemType type) {
@@ -50,14 +51,14 @@ public class Key implements IByteArraySerializable {
     /**
      * Object ID. Each tree has its own set of Object IDs.
      */
-    private long _objectId;
+    private long objectId;
 
     public long getObjectId() {
-        return _objectId;
+        return objectId;
     }
 
     public void setObjectId(long value) {
-        _objectId = value;
+        objectId = value;
     }
 
     public ReservedObjectId getReservedObjectId() {
@@ -67,27 +68,27 @@ public class Key implements IByteArraySerializable {
     /**
      * Item type.
      */
-    private ItemType _itemType = ItemType.InodeItem;
+    private ItemType itemType = ItemType.InodeItem;
 
     public ItemType getItemType() {
-        return _itemType;
+        return itemType;
     }
 
     public void setItemType(ItemType value) {
-        _itemType = value;
+        itemType = value;
     }
 
     /**
      * Offset. The meaning depends on the item type.
      */
-    private long _offset;
+    private long offset;
 
     public long getOffset() {
-        return _offset;
+        return offset;
     }
 
     public void setOffset(long value) {
-        _offset = value;
+        offset = value;
     }
 
     public int size() {
@@ -95,9 +96,9 @@ public class Key implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _objectId = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        _itemType = ItemType.valueOf(buffer[offset + 0x8] & 0xff);
-        _offset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x9);
+        objectId = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        itemType = ItemType.valueOf(buffer[offset + 0x8] & 0xff);
+        this.offset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x9);
         return size();
     }
 
@@ -108,9 +109,9 @@ public class Key implements IByteArraySerializable {
     public String toString() {
         try {
             ReservedObjectId.valueOf((int) getObjectId());
-            return String.format("%d|%s|%d", _objectId, _itemType, _offset);
+            return String.format("%d|%s|%d", objectId, itemType, offset);
         } catch (Exception e) {
-            return String.format("%d|%s|%d", _objectId, _itemType, _offset);
+            return String.format("%d|%s|%d", objectId, itemType, offset);
         }
     }
 }

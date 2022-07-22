@@ -23,14 +23,14 @@
 package discUtils.powerShell.virtualDiskProvider;
 
 public class NewHardLinkDynamicParameters {
-    private String __SourcePath;
+
+    private String sourcePath;
 
     public String getSourcePath() {
-        return __SourcePath;
+        return sourcePath;
     }
 
     public void setSourcePath(String value) {
-        __SourcePath = value;
+        sourcePath = value;
     }
-
 }

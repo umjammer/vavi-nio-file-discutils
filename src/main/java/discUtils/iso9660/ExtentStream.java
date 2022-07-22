@@ -29,25 +29,26 @@ import dotnet4j.io.Stream;
 
 
 public class ExtentStream extends Stream {
-    private final long _dataLength;
 
-    private final byte _fileUnitSize;
+    private final long dataLength;
 
-    private final byte _interleaveGapSize;
+    private final byte fileUnitSize;
 
-    private final Stream _isoStream;
+    private final byte interleaveGapSize;
 
-    private long _position;
+    private final Stream isoStream;
 
-    private final int _startBlock;
+    private long position;
+
+    private final int startBlock;
 
     public ExtentStream(Stream isoStream, int startBlock, long dataLength, byte fileUnitSize, byte interleaveGapSize) {
-        _isoStream = isoStream;
-        _startBlock = startBlock;
-        _dataLength = dataLength;
-        _fileUnitSize = fileUnitSize;
-        _interleaveGapSize = interleaveGapSize;
-        if (_fileUnitSize != 0 || _interleaveGapSize != 0) {
+        this.isoStream = isoStream;
+        this.startBlock = startBlock;
+        this.dataLength = dataLength;
+        this.fileUnitSize = fileUnitSize;
+        this.interleaveGapSize = interleaveGapSize;
+        if (this.fileUnitSize != 0 || this.interleaveGapSize != 0) {
             throw new UnsupportedOperationException("Non-contiguous extents not supported");
         }
     }
@@ -65,41 +66,41 @@ public class ExtentStream extends Stream {
     }
 
     public long getLength() {
-        return _dataLength;
+        return dataLength;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     public void flush() {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position > _dataLength) {
+        if (position > dataLength) {
             return 0;
         }
 
-        int toRead = (int) Math.min(count, _dataLength - _position);
-        _isoStream.setPosition(_position + _startBlock * (long) IsoUtilities.SectorSize);
-        int numRead = _isoStream.read(buffer, offset, toRead);
-        _position += numRead;
+        int toRead = (int) Math.min(count, dataLength - position);
+        isoStream.setPosition(position + startBlock * (long) IsoUtilities.SectorSize);
+        int numRead = isoStream.read(buffer, offset, toRead);
+        position += numRead;
         return numRead;
     }
 
     public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
-            newPos += _position;
+            newPos += position;
         } else if (origin == SeekOrigin.End) {
-            newPos += _dataLength;
+            newPos += dataLength;
         }
 
-        _position = newPos;
+        position = newPos;
         return newPos;
     }
 
@@ -113,6 +114,6 @@ public class ExtentStream extends Stream {
 
     @Override
     public void close() throws IOException {
-        _isoStream.close();
+        isoStream.close();
     }
 }

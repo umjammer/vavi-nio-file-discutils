@@ -55,11 +55,12 @@ import dotnet4j.io.SeekOrigin;
  * Note, the stream length cannot be changed.
  */
 public class ThreadSafeStream extends SparseStream {
-    private final CommonState _common;
 
-    private boolean _ownsCommon;
+    private final CommonState common;
 
-    private long _position;
+    private boolean ownsCommon;
+
+    private long position;
 
     /**
      * Initializes a new instance of the ThreadSafeStream class.
@@ -88,15 +89,15 @@ public class ThreadSafeStream extends SparseStream {
             throw new IllegalArgumentException("Wrapped stream must support seeking");
         }
 
-        _common = new CommonState();
-        _common.wrappedStream = toWrap;
-        _common.wrappedStreamOwnership = ownership;
-        _ownsCommon = true;
+        common = new CommonState();
+        common.wrappedStream = toWrap;
+        common.wrappedStreamOwnership = ownership;
+        ownsCommon = true;
     }
 
     private ThreadSafeStream(ThreadSafeStream toClone) {
-        _common = toClone._common;
-        if (_common == null) {
+        common = toClone.common;
+        if (common == null) {
             throw new dotnet4j.io.IOException("toClone");
         }
     }
@@ -105,7 +106,7 @@ public class ThreadSafeStream extends SparseStream {
      * Gets a value indicating if this stream supports reads.
      */
     public boolean canRead() {
-        synchronized (_common) {
+        synchronized (common) {
             return getWrapped().canRead();
         }
     }
@@ -122,7 +123,7 @@ public class ThreadSafeStream extends SparseStream {
      * false).
      */
     public boolean canWrite() {
-        synchronized (_common) {
+        synchronized (common) {
             return getWrapped().canWrite();
         }
     }
@@ -132,7 +133,7 @@ public class ThreadSafeStream extends SparseStream {
      * enumeration if all bytes are zero.
      */
     public List<StreamExtent> getExtents() {
-        synchronized (_common) {
+        synchronized (common) {
             return getWrapped().getExtents();
         }
     }
@@ -141,7 +142,7 @@ public class ThreadSafeStream extends SparseStream {
      * Gets the length of the stream.
      */
     public long getLength() {
-        synchronized (_common) {
+        synchronized (common) {
             return getWrapped().getLength();
         }
     }
@@ -150,15 +151,15 @@ public class ThreadSafeStream extends SparseStream {
      * Gets the current stream position - each 'view' has it's own Position.
      */
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
+        position = value;
     }
 
     private SparseStream getWrapped() {
-        SparseStream wrapped = _common.wrappedStream;
+        SparseStream wrapped = common.wrappedStream;
         if (wrapped == null) {
             throw new dotnet4j.io.IOException("no wrapped stream.");
         }
@@ -183,7 +184,7 @@ public class ThreadSafeStream extends SparseStream {
      * @return An enumeration of stream extents, indicating stored bytes.
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        synchronized (_common) {
+        synchronized (common) {
             return getWrapped().getExtentsInRange(start, count);
         }
     }
@@ -192,7 +193,7 @@ public class ThreadSafeStream extends SparseStream {
      * Causes the stream to flush all changes.
      */
     public void flush() {
-        synchronized (_common) {
+        synchronized (common) {
             getWrapped().flush();
         }
     }
@@ -206,11 +207,11 @@ public class ThreadSafeStream extends SparseStream {
      * @return The actual number of bytes read.
      */
     public int read(byte[] buffer, int offset, int count) {
-        synchronized (_common) {
+        synchronized (common) {
             SparseStream wrapped = getWrapped();
-            wrapped.setPosition(_position);
+            wrapped.setPosition(position);
             int numRead = wrapped.read(buffer, offset, count);
-            _position += numRead;
+            position += numRead;
             return numRead;
         }
     }
@@ -225,7 +226,7 @@ public class ThreadSafeStream extends SparseStream {
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += getLength();
         }
@@ -234,8 +235,8 @@ public class ThreadSafeStream extends SparseStream {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     /**
@@ -255,15 +256,15 @@ public class ThreadSafeStream extends SparseStream {
      * @param count The number of bytes to write.
      */
     public void write(byte[] buffer, int offset, int count) {
-        synchronized (_common) {
+        synchronized (common) {
             SparseStream wrapped = getWrapped();
-            if (_position + count > wrapped.getLength()) {
+            if (position + count > wrapped.getLength()) {
                 throw new dotnet4j.io.IOException("Attempt to extend stream");
             }
 
-            wrapped.setPosition(_position);
+            wrapped.setPosition(position);
             wrapped.write(buffer, offset, count);
-            _position += count;
+            position += count;
         }
     }
 
@@ -273,13 +274,13 @@ public class ThreadSafeStream extends SparseStream {
      * @throws IOException
      */
     public void close() throws IOException {
-        if (_ownsCommon && _common != null) {
-            synchronized (_common) {
-                if (_common.wrappedStreamOwnership == Ownership.Dispose) {
-                    _common.wrappedStream.close();
+        if (ownsCommon && common != null) {
+            synchronized (common) {
+                if (common.wrappedStreamOwnership == Ownership.Dispose) {
+                    common.wrappedStream.close();
                 }
 
-                _common.close();
+                common.close();
             }
         }
     }

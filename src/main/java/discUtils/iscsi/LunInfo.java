@@ -32,6 +32,7 @@ import java.util.List;
  * Provides information about an iSCSI LUN.
  */
 public class LunInfo {
+
     public LunInfo(TargetInfo targetInfo,
             long lun,
             LunClass type,
@@ -39,76 +40,76 @@ public class LunInfo {
             String vendor,
             String product,
             String revision) {
-        _target = targetInfo;
-        _lun = lun;
-        _deviceType = type;
-        _removable = removable;
-        _vendorId = vendor;
-        _productId = product;
-        _productRevision = revision;
+        target = targetInfo;
+        this.lun = lun;
+        deviceType = type;
+        this.removable = removable;
+        vendorId = vendor;
+        productId = product;
+        productRevision = revision;
     }
 
     /**
      * Gets the type (or class) of this device.
      */
-    private LunClass _deviceType = LunClass.BlockStorage;
+    private LunClass deviceType = LunClass.BlockStorage;
 
     public LunClass getDeviceType() {
-        return _deviceType;
+        return deviceType;
     }
 
     /**
      * Gets the Logical Unit Number of this device.
      */
-    private long _lun;
+    private long lun;
 
     public long getLun() {
-        return _lun;
+        return lun;
     }
 
     /**
      * Gets the product id (name) for this device.
      */
-    private String _productId;
+    private String productId;
 
     public String getProductId() {
-        return _productId;
+        return productId;
     }
 
     /**
      * Gets the product revision for this device.
      */
-    private String _productRevision;
+    private String productRevision;
 
     public String getProductRevision() {
-        return _productRevision;
+        return productRevision;
     }
 
     /**
      * Gets a value indicating whether this Lun has removable media.
      */
-    private boolean _removable;
+    private boolean removable;
 
     public boolean getRemovable() {
-        return _removable;
+        return removable;
     }
 
     /**
      * Gets info about the target hosting this LUN.
      */
-    private TargetInfo _target;
+    private TargetInfo target;
 
     public TargetInfo getTarget() {
-        return _target;
+        return target;
     }
 
     /**
      * Gets the vendor id (registered name) for this device.
      */
-    private String _vendorId;
+    private String vendorId;
 
     public String getVendorId() {
-        return _vendorId;
+        return vendorId;
     }
 
     /**
@@ -176,7 +177,7 @@ public class LunInfo {
      * @return The LUN in string form.
      */
     public String toString() {
-        if ((getLun() & 0xFF00000000000000L) == 0) {
+        if ((getLun() & 0xFF00_0000_0000_0000L) == 0) {
             return String.valueOf(getLun() >>> (6 * 8));
         }
         return String.valueOf(getLun());

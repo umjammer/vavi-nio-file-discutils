@@ -27,13 +27,14 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class RawLocation implements IByteArraySerializable {
-    public long Offset;
 
-    public long Length;
+    public long offset;
 
-    public int Checksum;
+    public long length;
 
-    public RawLocationFlags Flags = RawLocationFlags.None;
+    public int checksum;
+
+    public RawLocationFlags flags = RawLocationFlags.None;
 
     /**
      *
@@ -46,10 +47,10 @@ public class RawLocation implements IByteArraySerializable {
      *
      */
     public int readFrom(byte[] buffer, int offset) {
-        Offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        Length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        Checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        Flags = RawLocationFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14)];
+        this.offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
+        flags = RawLocationFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14)];
         return size();
     }
 

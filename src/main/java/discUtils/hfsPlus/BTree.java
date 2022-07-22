@@ -27,49 +27,50 @@ import discUtils.streams.util.StreamUtilities;
 
 
 final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
+
     private Class<TKey> keyClass;
 
-    private final IBuffer _data;
+    private final IBuffer data;
 
-    private final BTreeHeaderRecord _header;
+    private final BTreeHeaderRecord header;
 
-    private BTreeKeyedNode<TKey> _rootNode;
+    private BTreeKeyedNode<TKey> rootNode;
 
     public BTree(Class<TKey> clazz, IBuffer data) {
         keyClass = clazz;
 
-        _data = data;
+        this.data = data;
 
-        byte[] headerInfo = StreamUtilities.readExact(_data, 0, 114);
+        byte[] headerInfo = StreamUtilities.readExact(this.data, 0, 114);
 
-        _header = new BTreeHeaderRecord();
-        _header.readFrom(headerInfo, 14);
+        header = new BTreeHeaderRecord();
+        header.readFrom(headerInfo, 14);
 
-        byte[] node0data = StreamUtilities.readExact(_data, 0, _header.getNodeSize());
+        byte[] node0data = StreamUtilities.readExact(this.data, 0, header.getNodeSize());
 
         BTreeNode<?> node = BTreeNode.readNode(keyClass, this, node0data, 0);
         BTreeHeaderNode<TKey> node0 = (BTreeHeaderNode) node;
         node0.readFrom(node0data, 0);
 
-        if (node0.getHeaderRecord().RootNode != 0) {
-            _rootNode = getKeyedNode(node0.getHeaderRecord().RootNode);
+        if (node0.getHeaderRecord().rootNode != 0) {
+            rootNode = getKeyedNode(node0.getHeaderRecord().rootNode);
         }
     }
 
     int getNodeSize() {
-        return _header.getNodeSize();
+        return header.getNodeSize();
     }
 
     public byte[] find(TKey key) {
-        return _rootNode == null ? null : _rootNode.findKey(key);
+        return rootNode == null ? null : rootNode.findKey(key);
     }
 
     public void visitRange(BTreeVisitor<TKey> visitor) {
-        _rootNode.visitRange(visitor);
+        rootNode.visitRange(visitor);
     }
 
     BTreeKeyedNode<TKey> getKeyedNode(int nodeId) {
-        byte[] nodeData = StreamUtilities.readExact(_data, (long) nodeId * _header.getNodeSize(), _header.getNodeSize());
+        byte[] nodeData = StreamUtilities.readExact(data, (long) nodeId * header.getNodeSize(), header.getNodeSize());
 
         BTreeNode<TKey> node_ = BTreeNode.readNode2(keyClass, this, nodeData, 0);
         BTreeKeyedNode<TKey> node = (BTreeKeyedNode) node_;

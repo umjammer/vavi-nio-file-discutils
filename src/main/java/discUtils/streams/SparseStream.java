@@ -144,21 +144,22 @@ public abstract class SparseStream extends Stream {
     }
 
     private static class SparseReadOnlyWrapperStream extends SparseStream {
-        private final Ownership _ownsWrapped;
 
-        private SparseStream _wrapped;
+        private final Ownership ownsWrapped;
+
+        private SparseStream wrapped;
 
         public SparseReadOnlyWrapperStream(SparseStream wrapped, Ownership ownsWrapped) {
-            _wrapped = wrapped;
-            _ownsWrapped = ownsWrapped;
+            this.wrapped = wrapped;
+            this.ownsWrapped = ownsWrapped;
         }
 
         public boolean canRead() {
-            return _wrapped.canRead();
+            return wrapped.canRead();
         }
 
         public boolean canSeek() {
-            return _wrapped.canSeek();
+            return wrapped.canSeek();
         }
 
         public boolean canWrite() {
@@ -166,30 +167,30 @@ public abstract class SparseStream extends Stream {
         }
 
         public List<StreamExtent> getExtents() {
-            return _wrapped.getExtents();
+            return wrapped.getExtents();
         }
 
         public long getLength() {
-            return _wrapped.getLength();
+            return wrapped.getLength();
         }
 
         public long getPosition() {
-            return _wrapped.getPosition();
+            return wrapped.getPosition();
         }
 
         public void setPosition(long value) {
-            _wrapped.setPosition(value);
+            wrapped.setPosition(value);
         }
 
         public void flush() {
         }
 
         public int read(byte[] buffer, int offset, int count) {
-            return _wrapped.read(buffer, offset, count);
+            return wrapped.read(buffer, offset, count);
         }
 
         public long seek(long offset, SeekOrigin origin) {
-            return _wrapped.seek(offset, origin);
+            return wrapped.seek(offset, origin);
         }
 
         public void setLength(long value) {
@@ -201,89 +202,90 @@ public abstract class SparseStream extends Stream {
         }
 
         public void close() throws IOException {
-            if (_ownsWrapped == Ownership.Dispose && _wrapped != null) {
-                _wrapped.close();
-                _wrapped = null;
+            if (ownsWrapped == Ownership.Dispose && wrapped != null) {
+                wrapped.close();
+                wrapped = null;
             }
         }
     }
 
     private static class SparseWrapperStream extends SparseStream {
-        private List<StreamExtent> _extents;
 
-        private final Ownership _ownsWrapped;
+        private List<StreamExtent> extents;
 
-        private Stream _wrapped;
+        private final Ownership ownsWrapped;
+
+        private Stream wrapped;
 
         public SparseWrapperStream(Stream wrapped, Ownership ownsWrapped, List<StreamExtent> extents) {
-            _wrapped = wrapped;
-            _ownsWrapped = ownsWrapped;
+            this.wrapped = wrapped;
+            this.ownsWrapped = ownsWrapped;
             if (extents != null) {
-                _extents = new ArrayList<>(extents);
+                this.extents = new ArrayList<>(extents);
             }
         }
 
         public boolean canRead() {
-            return _wrapped.canRead();
+            return wrapped.canRead();
         }
 
         public boolean canSeek() {
-            return _wrapped.canSeek();
+            return wrapped.canSeek();
         }
 
         public boolean canWrite() {
-            return _wrapped.canWrite();
+            return wrapped.canWrite();
         }
 
         public List<StreamExtent> getExtents() {
-            if (_extents != null) {
-                return _extents;
+            if (extents != null) {
+                return extents;
             }
-            if (_wrapped instanceof SparseStream) {
-                return ((SparseStream) _wrapped).getExtents();
+            if (wrapped instanceof SparseStream) {
+                return ((SparseStream) wrapped).getExtents();
             }
-            return Collections.singletonList(new StreamExtent(0, _wrapped.getLength()));
+            return Collections.singletonList(new StreamExtent(0, wrapped.getLength()));
         }
 
         public long getLength() {
-            return _wrapped.getLength();
+            return wrapped.getLength();
         }
 
         public long getPosition() {
-            return _wrapped.getPosition();
+            return wrapped.getPosition();
         }
 
         public void setPosition(long value) {
-            _wrapped.setPosition(value);
+            wrapped.setPosition(value);
         }
 
         public void flush() {
         }
 
         public int read(byte[] buffer, int offset, int count) {
-            return _wrapped.read(buffer, offset, count);
+            return wrapped.read(buffer, offset, count);
         }
 
         public long seek(long offset, SeekOrigin origin) {
-            return _wrapped.seek(offset, origin);
+            return wrapped.seek(offset, origin);
         }
 
         public void setLength(long value) {
-            _wrapped.setLength(value);
+            wrapped.setLength(value);
         }
 
         public void write(byte[] buffer, int offset, int count) {
-            if (_extents != null) {
+            if (extents != null) {
                 throw new UnsupportedOperationException("Attempt to write to stream with explicit extents");
             }
 
-            _wrapped.write(buffer, offset, count);
+            wrapped.write(buffer, offset, count);
         }
 
         public void close() throws IOException {
-            if (_ownsWrapped == Ownership.Dispose && _wrapped != null) {
-                _wrapped.close();
-                _wrapped = null;
+            if (ownsWrapped == Ownership.Dispose && wrapped != null) {
+                wrapped.close();
+                wrapped = null;
             }
         }
     }

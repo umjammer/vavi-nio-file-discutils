@@ -35,93 +35,93 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
 
     public static final int AgiMagic = 0x58414749;
 
-    private int _magic;
+    private int magic;
 
     /**
      * Specifies the magic number for the AGI sector: "XAGI" (0x58414749)
      */
     public int getMagic() {
-        return _magic;
+        return magic;
     }
 
-    private int _version;
+    private int version;
 
     /**
      * Set to XFS_AGI_VERSION which is currently 1.
      */
     public int getVersion() {
-        return _version;
+        return version;
     }
 
-    private int _sequenceNumber;
+    private int sequenceNumber;
 
     /**
      * Specifies the AG number for the sector.
      */
     public int getSequenceNumber() {
-        return _sequenceNumber;
+        return sequenceNumber;
     }
 
-    private int _length;
+    private int length;
 
     /**
      * Specifies the size of the AG in filesystem blocks.
      */
     public int getLength() {
-        return _length;
+        return length;
     }
 
-    private int _count;
+    private int count;
 
     /**
      * Specifies the number of inodes allocated for the AG.
      */
     public int getCount() {
-        return _count;
+        return count;
     }
 
-    private int _root;
+    private int root;
 
     /**
      * Specifies the block number in the AG containing the root of the inode
      * B+tree.
      */
     public int getRoot() {
-        return _root;
+        return root;
     }
 
-    private int _level;
+    private int level;
 
     /**
      * Specifies the number of levels in the inode B+tree.
      */
     public int getLevel() {
-        return _level;
+        return level;
     }
 
-    private int _freeCount;
+    private int freeCount;
 
     public void setFreeCount(int freeCount) {
-        _freeCount = freeCount;
+        this.freeCount = freeCount;
     }
 
     /**
      * Specifies the number of free inodes in the AG.
      */
     public int getFreeCount() {
-        return _freeCount;
+        return freeCount;
     }
 
-    private int _newInode;
+    private int newInode;
 
     /**
      * Specifies AG relative inode number most recently allocated.
      */
     public int getNewInode() {
-        return _newInode;
+        return newInode;
     }
 
-    private int _dirInode = -1;
+    private int dirInode = -1;
 
     /**
      * Deprecated and not used, it's always set to NULL (-1).
@@ -129,97 +129,97 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
      * @deprecated
      */
     public int getDirInode() {
-        return _dirInode;
+        return dirInode;
     }
 
-    private int[] _unlinked;
+    private int[] unlinked;
 
     /**
      * Hash table of unlinked (deleted) inodes that are still being referenced.
      */
     public int[] getUnlinked() {
-        return _unlinked;
+        return unlinked;
     }
 
-    private BtreeHeader _rootInodeBtree;
+    private BtreeHeader rootInodeBtree;
 
     /**
      * root of the inode B+tree
      */
     public BtreeHeader getRootInodeBtree() {
-        return _rootInodeBtree;
+        return rootInodeBtree;
     }
 
-    private UUID _uniqueId;
+    private UUID uniqueId;
 
     public UUID getUniqueId() {
-        return _uniqueId;
+        return uniqueId;
     }
 
-    private long _lsn;
+    private long lsn;
 
     /**
      * last write sequence
      */
     public long getLsn() {
-        return _lsn;
+        return lsn;
     }
 
-    private int _crc;
+    private int crc;
 
     public int getCrc() {
-        return _crc;
+        return crc;
     }
 
-    private int _size;
+    private int size;
 
     public int size() {
-        return _size;
+        return size;
     }
 
-    private int _sbVersion;
+    private int sbVersion;
 
     public int getSbVersion() {
-        return _sbVersion;
+        return sbVersion;
     }
 
     public AllocationGroupInodeBtreeInfo(SuperBlock superBlock) {
-        _sbVersion = superBlock.getSbVersion();
-        _size = _sbVersion >= 5 ? 334 : 296;
+        sbVersion = superBlock.getSbVersion();
+        size = sbVersion >= 5 ? 334 : 296;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        _version = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
-        _sequenceNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8);
-        _length = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xc);
-        _count = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
-        _root = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14);
-        _level = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x18);
-        _freeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x1c);
-        _newInode = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x20);
-        _unlinked = new int[64];
-        for (int i = 0; i < _unlinked.length; i++) {
-            _unlinked[i] = EndianUtilities.toInt32BigEndian(buffer, offset + 0x28 + i * 0x4);
+        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        version = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        sequenceNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8);
+        length = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xc);
+        count = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
+        root = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14);
+        level = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x18);
+        freeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x1c);
+        newInode = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x20);
+        unlinked = new int[64];
+        for (int i = 0; i < unlinked.length; i++) {
+            unlinked[i] = EndianUtilities.toInt32BigEndian(buffer, offset + 0x28 + i * 0x4);
         }
-        if (_sbVersion >= 5) {
-            _uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x132);
-            _lsn = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x142);
-            _crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14A);
+        if (sbVersion >= 5) {
+            uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x132);
+            lsn = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x142);
+            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14A);
         }
-        return _size;
+        return size;
     }
 
     public void loadBtree(Context context, long offset) {
         Stream data = context.getRawStream();
-        data.setPosition(offset + context.getSuperBlock().getBlocksize() * (long) _root);
-        if (_level == 1) {
-            _rootInodeBtree = new BTreeInodeLeaf(_sbVersion);
+        data.setPosition(offset + context.getSuperBlock().getBlocksize() * (long) root);
+        if (level == 1) {
+            rootInodeBtree = new BTreeInodeLeaf(sbVersion);
         } else {
-            _rootInodeBtree = new BTreeInodeNode(_sbVersion);
+            rootInodeBtree = new BTreeInodeNode(sbVersion);
         }
         byte[] buffer = StreamUtilities.readExact(data, context.getSuperBlock().getBlocksize());
-        _rootInodeBtree.readFrom(buffer, 0);
+        rootInodeBtree.readFrom(buffer, 0);
     }
 
     public void writeTo(byte[] buffer, int offset) {

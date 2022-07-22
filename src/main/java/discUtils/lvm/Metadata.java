@@ -35,21 +35,22 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class Metadata {
-    public long CreationTime;
 
-    public String CreationHost;
+    public long creationTime;
 
-    public String Description;
+    public String creationHost;
 
-    public String Contents;
+    public String description;
 
-    public int Version;
+    public String contents;
 
-    public List<MetadataVolumeGroupSection> VolumeGroupSections;
+    public int version;
+
+    public List<MetadataVolumeGroupSection> volumeGroupSections;
 
     private static final ZonedDateTime DOTNET_MAX = Instant.parse("9999-12-31T23:59:59.999999900Z").atZone(ZoneId.of("UTC"));
 
-    private static final long _maxSeconds = Duration.between(Instant.EPOCH, DOTNET_MAX).getSeconds();
+    private static final long maxSeconds = Duration.between(Instant.EPOCH, DOTNET_MAX).getSeconds();
 
     public static Metadata parse(String metadata) {
         try (Scanner reader = new Scanner(metadata)) {
@@ -72,19 +73,19 @@ public class Metadata {
                 String paramValue = parameter.getKey().trim().toLowerCase();
                 switch (paramValue) {
                 case "contents":
-                    Contents = parseStringValue(parameter.getValue());
+                    contents = parseStringValue(parameter.getValue());
                     break;
                 case "version":
-                    Version = (int) parseNumericValue(parameter.getValue());
+                    version = (int) parseNumericValue(parameter.getValue());
                     break;
                 case "description":
-                    Description = parseStringValue(parameter.getValue());
+                    description = parseStringValue(parameter.getValue());
                     break;
                 case "creation_host":
-                    CreationHost = parseStringValue(parameter.getValue());
+                    creationHost = parseStringValue(parameter.getValue());
                     break;
                 case "creation_time":
-                    CreationTime = parseDateTimeValue(parameter.getValue());
+                    creationTime = parseDateTimeValue(parameter.getValue());
                     break;
                 default:
                     throw new IndexOutOfBoundsException("Unexpected parameter in global metadata: " + parameter.getKey());
@@ -95,7 +96,7 @@ public class Metadata {
                 vgSection.add(vg);
             }
         }
-        VolumeGroupSections = vgSection;
+        volumeGroupSections = vgSection;
     }
 
     public static String readLine(Scanner data) {
@@ -119,7 +120,7 @@ public class Metadata {
 
     public static long parseDateTimeValue(String value) {
         long numeric = parseNumericValue(value);
-        if (numeric > _maxSeconds)
+        if (numeric > maxSeconds)
             return Long.MAX_VALUE;
 
         return Instant.EPOCH.plusSeconds(numeric).toEpochMilli();

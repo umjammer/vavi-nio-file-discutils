@@ -30,141 +30,142 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class BtreeHeader implements IByteArraySerializable {
-    private int _magic;
+
+    private int magic;
 
     public int getMagic() {
-        return _magic;
+        return magic;
     }
 
     public void setMagic(int value) {
-        _magic = value;
+        magic = value;
     }
 
-    private short _level;
+    private short level;
 
     public short getLevel() {
-        return _level;
+        return level;
     }
 
     public void setLevel(short value) {
-        _level = value;
+        level = value;
     }
 
-    private short _numberOfRecords;
+    private short numberOfRecords;
 
     public int getNumberOfRecords() {
-        return _numberOfRecords & 0xffff;
+        return numberOfRecords & 0xffff;
     }
 
     public void setNumberOfRecords(short value) {
-        _numberOfRecords = value;
+        numberOfRecords = value;
     }
 
-    private int _leftSibling;
+    private int leftSibling;
 
     public int getLeftSibling() {
-        return _leftSibling;
+        return leftSibling;
     }
 
     public void setLeftSibling(int value) {
-        _leftSibling = value;
+        leftSibling = value;
     }
 
-    private int _rightSibling;
+    private int rightSibling;
 
     public int getRightSibling() {
-        return _rightSibling;
+        return rightSibling;
     }
 
     public void setRightSibling(int value) {
-        _rightSibling = value;
+        rightSibling = value;
     }
 
     /**
      * location on disk
      */
-    private long _bno;
+    private long bno;
 
     public long getBno() {
-        return _bno;
+        return bno;
     }
 
     public void setBno(long value) {
-        _bno = value;
+        bno = value;
     }
 
     /**
      * last write sequence
      */
-    private long _lsn;
+    private long lsn;
 
     public long getLsn() {
-        return _lsn;
+        return lsn;
     }
 
     public void setLsn(long value) {
-        _lsn = value;
+        lsn = value;
     }
 
-    private UUID _uniqueId;
+    private UUID uniqueId;
 
     public UUID getUniqueId() {
-        return _uniqueId;
+        return uniqueId;
     }
 
     public void setUniqueId(UUID value) {
-        _uniqueId = value;
+        uniqueId = value;
     }
 
-    private int _owner;
+    private int owner;
 
     public int getOwner() {
-        return _owner;
+        return owner;
     }
 
     public void setOwner(int value) {
-        _owner = value;
+        owner = value;
     }
 
-    private int _crc;
+    private int crc;
 
     public int getCrc() {
-        return _crc;
+        return crc;
     }
 
     public void setCrc(int value) {
-        _crc = value;
+        crc = value;
     }
 
-    private int _size;
+    private int size;
 
     public int size() {
-        return _size;
+        return size;
     }
 
-    private int _sbVersion;
+    private int sbVersion;
 
     protected int getSbVersion() {
-        return _sbVersion;
+        return sbVersion;
     }
 
     public BtreeHeader(int superBlockVersion) {
-        _sbVersion = superBlockVersion;
-        _size = getSbVersion() >= 5 ? 56 : 16;
+        sbVersion = superBlockVersion;
+        size = sbVersion >= 5 ? 56 : 16;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        setLevel(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4));
-        setNumberOfRecords(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6));
-        setLeftSibling(EndianUtilities.toInt32BigEndian(buffer, offset + 0x8));
-        setRightSibling(EndianUtilities.toInt32BigEndian(buffer, offset + 0xC));
-        if (getSbVersion() >= 5) {
-            setBno(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10));
-            setLsn(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x18));
-            setUniqueId(EndianUtilities.toGuidBigEndian(buffer, offset + 0x20));
-            setOwner(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x30));
-            setCrc(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x34));
+        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
+        numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
+        leftSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0x8);
+        rightSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0xC);
+        if (sbVersion >= 5) {
+            bno = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10);
+            lsn = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x18);
+            uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x20);
+            owner = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x30);
+            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x34);
         }
 
         return size();

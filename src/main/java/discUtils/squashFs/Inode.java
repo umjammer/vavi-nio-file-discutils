@@ -30,19 +30,20 @@ import dotnet4j.io.IOException;
 
 
 abstract class Inode implements IByteArraySerializable {
-    public short _gidKey;
 
-    public int _inodeNumber;
+    public short gidKey;
 
-    public short _mode;
+    public int inodeNumber;
 
-    public long _modificationTime;
+    public short mode;
 
-    public int _numLinks;
+    public long modificationTime;
 
-    public InodeType _type = InodeType.Directory;
+    public int numLinks;
 
-    public short _uidKey;
+    public InodeType type = InodeType.Directory;
+
+    public short uidKey;
 
     public long getFileSize() {
         return 0;
@@ -55,22 +56,22 @@ abstract class Inode implements IByteArraySerializable {
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        _type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(buffer, offset + 0)];
-        _mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        _uidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        _gidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        _modificationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
-        _inodeNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
+        type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(buffer, offset + 0)];
+        mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+        uidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        gidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        modificationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
+        inodeNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
         return 16;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian((short) _type.ordinal(), buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(_mode, buffer, offset + 2);
-        EndianUtilities.writeBytesLittleEndian(_uidKey, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(_gidKey, buffer, offset + 6);
-        EndianUtilities.writeBytesLittleEndian(Instant.ofEpochMilli(_modificationTime).getEpochSecond(), buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(_inodeNumber, buffer, offset + 12);
+        EndianUtilities.writeBytesLittleEndian((short) type.ordinal(), buffer, offset + 0);
+        EndianUtilities.writeBytesLittleEndian(mode, buffer, offset + 2);
+        EndianUtilities.writeBytesLittleEndian(uidKey, buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian(gidKey, buffer, offset + 6);
+        EndianUtilities.writeBytesLittleEndian(Instant.ofEpochMilli(modificationTime).getEpochSecond(), buffer, offset + 8);
+        EndianUtilities.writeBytesLittleEndian(inodeNumber, buffer, offset + 12);
     }
 
     public static Inode read(MetablockReader inodeReader) {

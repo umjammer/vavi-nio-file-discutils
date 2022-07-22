@@ -26,7 +26,8 @@ package discUtils.ntfs;
  * Fully-qualified reference to an attribute.
  */
 public class AttributeReference implements Comparable<AttributeReference> {
-    private FileRecordReference _fileReference;
+
+    private FileRecordReference fileReference;
 
     /**
      * Initializes a new instance of the AttributeReference class.
@@ -35,24 +36,24 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @param attributeId The identity of the attribute within the file record.
      */
     public AttributeReference(FileRecordReference fileReference, short attributeId) {
-        _fileReference = fileReference;
-        _attributeId = attributeId;
+        this.fileReference = fileReference;
+        this.attributeId = attributeId;
     }
 
     /**
      * Gets the identity of the attribute within the file record.
      */
-    private short _attributeId;
+    private short attributeId;
 
     public short getAttributeId() {
-        return _attributeId;
+        return attributeId;
     }
 
     /**
      * Gets the file containing the attribute.
      */
     public FileRecordReference getFile() {
-        return _fileReference;
+        return fileReference;
     }
 
     /**
@@ -62,12 +63,12 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @return Zero if references are identical.
      */
     public int compareTo(AttributeReference other) {
-        int refDiff = _fileReference.compareTo(other._fileReference);
+        int refDiff = fileReference.compareTo(other.fileReference);
         if (refDiff != 0) {
             return refDiff;
         }
 
-        return _attributeId - other._attributeId;
+        return attributeId - other.attributeId;
     }
 
     /**
@@ -86,7 +87,7 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @return String representing the attribute.
      */
     public String toString() {
-        return _fileReference + ".attr[" + _attributeId + "]";
+        return fileReference + ".attr[" + attributeId + "]";
     }
 
     /**
@@ -111,6 +112,6 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @return The hash code.
      */
     public int hashCode() {
-        return dotnet4j.util.compat.Utilities.getCombinedHashCode(_fileReference, getAttributeId());
+        return dotnet4j.util.compat.Utilities.getCombinedHashCode(fileReference, getAttributeId());
     }
 }

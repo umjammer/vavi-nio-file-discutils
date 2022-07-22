@@ -72,6 +72,6 @@ public class SquashFileSystemReader extends VfsFileSystemFacade implements IUnix
 
         byte[] buffer = StreamUtilities.readExact(stream, superBlock.size());
         superBlock.readFrom(buffer, 0);
-        return superBlock.Magic == SuperBlock.SquashFsMagic;
+        return superBlock.magic == SuperBlock.SquashFsMagic;
     }
 }

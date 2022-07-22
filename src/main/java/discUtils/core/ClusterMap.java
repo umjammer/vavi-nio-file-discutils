@@ -31,18 +31,19 @@ import java.util.Map;
  * Class that identifies the role of each cluster in a file system.
  */
 public final class ClusterMap {
-    private final Object[] _clusterToFileId;
 
-    private final EnumSet<ClusterRoles>[] _clusterToRole;
+    private final Object[] clusterToFileId;
 
-    private final Map<Object, String[]> _fileIdToPaths;
+    private final EnumSet<ClusterRoles>[] clusterToRole;
+
+    private final Map<Object, String[]> fileIdToPaths;
 
     public ClusterMap(EnumSet<ClusterRoles>[] clusterToRole,
             Object[] clusterToFileId,
             Map<Object, String[]> fileIdToPaths) {
-        _clusterToRole = clusterToRole;
-        _clusterToFileId = clusterToFileId;
-        _fileIdToPaths = fileIdToPaths;
+        this.clusterToRole = clusterToRole;
+        this.clusterToFileId = clusterToFileId;
+        this.fileIdToPaths = fileIdToPaths;
     }
 
     /**
@@ -52,11 +53,11 @@ public final class ClusterMap {
      * @return The clusters role (or roles).
      */
     public EnumSet<ClusterRoles> getRole(int cluster) {
-        if (_clusterToRole == null || _clusterToRole.length < cluster) {
+        if (clusterToRole == null || clusterToRole.length < cluster) {
             return EnumSet.noneOf(ClusterRoles.class);
         }
 
-        return _clusterToRole[cluster];
+        return clusterToRole[cluster];
     }
 
     /**
@@ -70,8 +71,8 @@ public final class ClusterMap {
      */
     public String[] clusterToPaths(int cluster) {
         if (!Collections.disjoint(getRole(cluster), EnumSet.of(ClusterRoles.DataFile, ClusterRoles.SystemFile))) {
-            Object fileId = _clusterToFileId[cluster];
-            return _fileIdToPaths.get(fileId);
+            Object fileId = clusterToFileId[cluster];
+            return fileIdToPaths.get(fileId);
         }
 
         return new String[0];

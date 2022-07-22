@@ -31,19 +31,20 @@ import dotnet4j.io.SeekOrigin;
  * Stream wrapper to allow forward only seeking on not seekable streams
  */
 public class PositionWrappingStream extends WrappingStream {
+
     public PositionWrappingStream(SparseStream toWrap, long currentPosition, Ownership ownership) {
         super(toWrap, ownership);
-        _position = currentPosition;
+        position = currentPosition;
     }
 
-    private long _position;
+    private long position;
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        if (_position == value)
+        if (position == value)
             return;
 
         seek(value, SeekOrigin.Begin);
@@ -56,17 +57,17 @@ public class PositionWrappingStream extends WrappingStream {
 
         switch (origin) {
         case Begin:
-            offset = offset - _position;
+            offset = offset - position;
             break;
         case Current:
-            offset = offset + _position;
+            offset = offset + position;
             break;
         case End:
             offset = getLength() - offset;
             break;
         }
         if (offset == 0)
-            return _position;
+            return position;
 
         if (offset < 0)
             throw new UnsupportedOperationException("backward seeking is not supported");
@@ -76,7 +77,7 @@ public class PositionWrappingStream extends WrappingStream {
             int read = super.read(buffer, 0, (int) Math.min(buffer.length, offset));
             offset -= read;
         }
-        return _position;
+        return position;
     }
 
     public boolean canSeek() {
@@ -85,13 +86,12 @@ public class PositionWrappingStream extends WrappingStream {
 
     public int read(byte[] buffer, int offset, int count) {
         int read = super.read(buffer, offset, count);
-        _position += read;
+        position += read;
         return read;
     }
 
     public void write(byte[] buffer, int offset, int count) {
         super.write(buffer, offset, count);
-        _position += count;
+        position += count;
     }
-
 }

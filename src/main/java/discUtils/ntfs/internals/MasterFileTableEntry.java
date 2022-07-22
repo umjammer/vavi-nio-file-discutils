@@ -36,13 +36,14 @@ import discUtils.ntfs.INtfsContext;
  * An entry within the Master File Table.
  */
 public final class MasterFileTableEntry {
-    private final INtfsContext _context;
 
-    private final FileRecord _fileRecord;
+    private final INtfsContext context;
+
+    private final FileRecord fileRecord;
 
     public MasterFileTableEntry(INtfsContext context, FileRecord fileRecord) {
-        _context = context;
-        _fileRecord = fileRecord;
+        this.context = context;
+        this.fileRecord = fileRecord;
     }
 
     /**
@@ -50,8 +51,8 @@ public final class MasterFileTableEntry {
      */
     public List<GenericAttribute> getAttributes() {
         List<GenericAttribute> result = new ArrayList<>();
-        for (AttributeRecord attr : _fileRecord.getAttributes()) {
-            result.add(GenericAttribute.fromAttributeRecord(_context, attr));
+        for (AttributeRecord attr : fileRecord.getAttributes()) {
+            result.add(GenericAttribute.fromAttributeRecord(context, attr));
         }
         return result;
     }
@@ -64,28 +65,28 @@ public final class MasterFileTableEntry {
      * this property.
      */
     public MasterFileTableReference getBaseRecordReference() {
-        return new MasterFileTableReference(_fileRecord.getBaseFile());
+        return new MasterFileTableReference(fileRecord.getBaseFile());
     }
 
     /**
      * Gets the flags indicating the nature of the entry.
      */
     public EnumSet<MasterFileTableEntryFlags> getFlags() {
-        return FileRecordFlags.cast(MasterFileTableEntryFlags.class, _fileRecord.getFlags());
+        return FileRecordFlags.cast(MasterFileTableEntryFlags.class, fileRecord.getFlags());
     }
 
     /**
      * Gets the number of hard links referencing this file.
      */
     public int getHardLinkCount() {
-        return _fileRecord.getHardLinkCount();
+        return fileRecord.getHardLinkCount();
     }
 
     /**
      * Gets the index of this entry in the Master File Table.
      */
     public long getIndex() {
-        return _fileRecord.getLoadedIndex();
+        return fileRecord.getLoadedIndex();
     }
 
     /**
@@ -96,14 +97,14 @@ public final class MasterFileTableEntry {
      * in the event of a system crash.
      */
     public long getLogFileSequenceNumber() {
-        return _fileRecord.getLogFileSequenceNumber();
+        return fileRecord.getLogFileSequenceNumber();
     }
 
     /**
      * Gets the next attribute identity that will be allocated.
      */
     public int getNextAttributeId() {
-        return _fileRecord.getNextAttributeId();
+        return fileRecord.getNextAttributeId();
     }
 
     /**
@@ -114,7 +115,7 @@ public final class MasterFileTableEntry {
      * Zero.
      */
     public long getSelfIndex() {
-        return _fileRecord.getMasterFileTableIndex();
+        return fileRecord.getMasterFileTableIndex();
     }
 
     /**
@@ -124,6 +125,6 @@ public final class MasterFileTableEntry {
      * incremented by one.
      */
     public int getSequenceNumber() {
-        return _fileRecord.getSequenceNumber();
+        return fileRecord.getSequenceNumber();
     }
 }

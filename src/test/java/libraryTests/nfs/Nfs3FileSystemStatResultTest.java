@@ -52,13 +52,13 @@ public class Nfs3FileSystemStatResultTest {
         result.getFileSystemStat().setInvariant(Duration.ofSeconds(7).toMillis());
         result.getFileSystemStat().setTotalSizeBytes(8);
         result.setPostOpAttributes(new Nfs3FileAttributes());
-        result.getPostOpAttributes().AccessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
+        result.getPostOpAttributes().accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        result.getPostOpAttributes().ChangeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
+        result.getPostOpAttributes().changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        result.getPostOpAttributes().ModifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
+        result.getPostOpAttributes().modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
         Nfs3FileSystemStatResult clone = null;

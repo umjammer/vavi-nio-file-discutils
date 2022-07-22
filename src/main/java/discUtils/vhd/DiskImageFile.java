@@ -53,35 +53,36 @@ import dotnet4j.io.Stream;
  * Represents a single .VHD file.
  */
 public final class DiskImageFile extends VirtualDiskLayer {
+
     /**
      * The VHD file's dynamic header (if not static).
      */
-    private DynamicHeader _dynamicHeader;
+    private DynamicHeader dynamicHeader;
 
     /**
      * The object that can be used to locate relative file paths.
      */
-    private FileLocator _fileLocator;
+    private FileLocator fileLocator;
 
     /**
      * The file name of this VHD.
      */
-    private String _fileName;
+    private String fileName;
 
     /**
      * The stream containing the VHD file.
      */
-    private Stream _fileStream;
+    private Stream fileStream;
 
     /**
      * The VHD file's footer.
      */
-    private Footer _footer;
+    private Footer footer;
 
     /**
      * Indicates if this object controls the lifetime of the stream.
      */
-    private Ownership _ownership;
+    private Ownership ownership;
 
     /**
      * Initializes a new instance of the DiskImageFile class.
@@ -89,7 +90,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param stream The stream to interpret.
      */
     public DiskImageFile(Stream stream) {
-        _fileStream = stream;
+        fileStream = stream;
 
         readFooter(true);
 
@@ -104,8 +105,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            lifetime of the stream.
      */
     public DiskImageFile(Stream stream, Ownership ownership) {
-        _fileStream = stream;
-        _ownership = ownership;
+        fileStream = stream;
+        this.ownership = ownership;
 
         readFooter(true);
 
@@ -125,40 +126,40 @@ public final class DiskImageFile extends VirtualDiskLayer {
     DiskImageFile(FileLocator locator, String path, Stream stream, Ownership ownsStream) {
         this(stream, ownsStream);
 
-        _fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
-        _fileName = locator.getFileFromPath(path);
+        fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
+        fileName = locator.getFileFromPath(path);
     }
 
     DiskImageFile(FileLocator locator, String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
-        _fileStream = locator.open(path, FileMode.Open, access, share);
-        _ownership = Ownership.Dispose;
+        fileStream = locator.open(path, FileMode.Open, access, share);
+        ownership = Ownership.Dispose;
 
         try {
-            _fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
-            _fileName = locator.getFileFromPath(path);
+            fileLocator = locator.getRelativeLocator(locator.getDirectoryFromPath(path));
+            fileName = locator.getFileFromPath(path);
 
             readFooter(true);
 
             readHeaders();
         } finally {
             try {
-                _fileStream.close();
+                fileStream.close();
             } catch (IOException e) {
-                throw new dotnet4j.io.IOException(e);
+                e.printStackTrace();
             }
         }
     }
 
     public long getCapacity() {
-        return _footer.CurrentSize;
+        return footer.currentSize;
     }
 
     /**
      * Gets the timestamp for this file (when it was created).
      */
     public long getCreationTimestamp() {
-        return _footer.Timestamp;
+        return footer.timestamp;
     }
 
     /**
@@ -174,8 +175,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the full path to this disk layer, or empty string.
      */
     public String getFullPath() {
-        if (_fileLocator != null && _fileName != null) {
-            return _fileLocator.getFullPath(_fileName);
+        if (fileLocator != null && fileName != null) {
+            return fileLocator.getFullPath(fileName);
         }
 
         return "";
@@ -185,50 +186,50 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the geometry of the virtual disk.
      */
     public Geometry getGeometry() {
-        return _footer.Geometry;
+        return footer.geometry;
     }
 
     /**
      * Gets detailed information about the VHD file.
      */
     public DiskImageFileInfo getInformation() {
-        return new DiskImageFileInfo(_footer, _dynamicHeader, _fileStream);
+        return new DiskImageFileInfo(footer, dynamicHeader, fileStream);
     }
 
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
     public boolean isSparse() {
-        return _footer.DiskType != FileType.Fixed;
+        return footer.diskType != FileType.Fixed;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
     public boolean needsParent() {
-        return _footer.DiskType == FileType.Differencing;
+        return footer.diskType == FileType.Differencing;
     }
 
     /**
      * Gets the unique id of the parent disk.
      */
     public UUID getParentUniqueId() {
-        return _dynamicHeader == null ? new UUID(0L, 0L) : _dynamicHeader.ParentUniqueId;
+        return dynamicHeader == null ? new UUID(0L, 0L) : dynamicHeader.parentUniqueId;
     }
 
     public FileLocator getRelativeFileLocator() {
-        return _fileLocator;
+        return fileLocator;
     }
 
     long getStoredSize() {
-        return _fileStream.getLength();
+        return fileStream.getLength();
     }
 
     /**
      * Gets the unique id of this file.
      */
     public UUID getUniqueId() {
-        return _footer.UniqueId;
+        return footer.uniqueId;
     }
 
     /**
@@ -365,7 +366,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return Array of candidate file locations.
      */
     public List<String> getParentLocations() {
-        return getParentLocations(_fileLocator);
+        return getParentLocations(fileLocator);
     }
 
     /**
@@ -405,15 +406,15 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
     DiskImageFile createDifferencing(FileLocator fileLocator, String path) {
         Stream stream = fileLocator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
-        String fullPath = _fileLocator.getFullPath(_fileName);
-        String relativePath = fileLocator.makeRelativePath(_fileLocator, _fileName);
-        long lastWriteTime = _fileLocator.getLastWriteTimeUtc(_fileName);
+        String fullPath = this.fileLocator.getFullPath(fileName);
+        String relativePath = fileLocator.makeRelativePath(this.fileLocator, fileName);
+        long lastWriteTime = this.fileLocator.getLastWriteTimeUtc(fileName);
         initializeDifferencingInternal(stream, this, fullPath, relativePath, lastWriteTime);
         return new DiskImageFile(fileLocator, path, stream, Ownership.Dispose);
     }
 
     MappedStream doOpenContent(SparseStream parent, Ownership ownsParent) {
-        if (_footer.DiskType == FileType.Fixed) {
+        if (footer.diskType == FileType.Fixed) {
             if (parent != null && ownsParent == Ownership.Dispose) {
                 try {
                     parent.close();
@@ -422,10 +423,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 }
             }
 
-            return new SubStream(_fileStream, 0, _fileStream.getLength() - 512);
+            return new SubStream(fileStream, 0, fileStream.getLength() - 512);
         }
 
-        if (_footer.DiskType == FileType.Dynamic) {
+        if (footer.diskType == FileType.Dynamic) {
             if (parent != null && ownsParent == Ownership.Dispose) {
                 try {
                     parent.close();
@@ -434,30 +435,30 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 }
             }
 
-            return new DynamicStream(_fileStream,
-                                     _dynamicHeader,
-                                     _footer.CurrentSize,
-                                     new ZeroStream(_footer.CurrentSize),
+            return new DynamicStream(fileStream,
+                    dynamicHeader,
+                                     footer.currentSize,
+                                     new ZeroStream(footer.currentSize),
                                      Ownership.Dispose);
         }
 
         if (parent == null) {
-            parent = new ZeroStream(_footer.CurrentSize);
+            parent = new ZeroStream(footer.currentSize);
             ownsParent = Ownership.Dispose;
         }
 
-        return new DynamicStream(_fileStream, _dynamicHeader, _footer.CurrentSize, parent, ownsParent);
+        return new DynamicStream(fileStream, dynamicHeader, footer.currentSize, parent, ownsParent);
     }
 
     /**
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        if (_ownership == Ownership.Dispose && _fileStream != null) {
-            _fileStream.close();
+        if (ownership == Ownership.Dispose && fileStream != null) {
+            fileStream.close();
         }
 
-        _fileStream = null;
+        fileStream = null;
     }
 
     private static void initializeFixedInternal(Stream stream, long capacity, Geometry geometry) {
@@ -485,7 +486,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
 
         Footer footer = new Footer(geometry, capacity, FileType.Dynamic);
-        footer.DataOffset = 512; // Offset of Dynamic Header
+        footer.dataOffset = 512; // Offset of Dynamic Header
         footer.updateChecksum();
         byte[] footerBlock = new byte[512];
         footer.toBytes(footerBlock, 0);
@@ -495,7 +496,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         byte[] dynamicHeaderBlock = new byte[1024];
         dynamicHeader.toBytes(dynamicHeaderBlock, 0);
 
-        int batSize = (dynamicHeader.MaxTableEntries * 4 + Sizes.Sector - 1) / Sizes.Sector * Sizes.Sector;
+        int batSize = (dynamicHeader.maxTableEntries * 4 + Sizes.Sector - 1) / Sizes.Sector * Sizes.Sector;
         byte[] bat = new byte[batSize];
         Arrays.fill(bat, (byte) 0xFF);
 
@@ -511,30 +512,30 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                        String parentAbsolutePath,
                                                        String parentRelativePath,
                                                        long parentModificationTimeUtc) {
-        Footer footer = new Footer(parent.getGeometry(), parent._footer.CurrentSize, FileType.Differencing);
-        footer.DataOffset = 512; // Offset of Dynamic Header
-        footer.OriginalSize = parent._footer.OriginalSize;
+        Footer footer = new Footer(parent.getGeometry(), parent.footer.currentSize, FileType.Differencing);
+        footer.dataOffset = 512; // Offset of Dynamic Header
+        footer.originalSize = parent.footer.originalSize;
         footer.updateChecksum();
         byte[] footerBlock = new byte[512];
         footer.toBytes(footerBlock, 0);
 
         long tableOffset = 512 + 1024; // Footer + Header
 
-        int blockSize = parent._dynamicHeader == null ? DynamicHeader.DefaultBlockSize : parent._dynamicHeader.BlockSize;
+        int blockSize = parent.dynamicHeader == null ? DynamicHeader.DefaultBlockSize : parent.dynamicHeader.blockSize;
 
-        DynamicHeader dynamicHeader = new DynamicHeader(-1, tableOffset, blockSize, footer.CurrentSize);
-        int batSize = (dynamicHeader.MaxTableEntries * 4 + Sizes.Sector - 1) / Sizes.Sector * Sizes.Sector;
-        dynamicHeader.ParentUniqueId = parent.getUniqueId();
-        dynamicHeader.ParentTimestamp = parentModificationTimeUtc;
-        dynamicHeader.ParentUnicodeName = Utilities.getFileFromPath(parentAbsolutePath);
-        dynamicHeader.ParentLocators[7].PlatformCode = ParentLocator.PlatformCodeWindowsAbsoluteUnicode;
-        dynamicHeader.ParentLocators[7].PlatformDataSpace = 512;
-        dynamicHeader.ParentLocators[7].PlatformDataLength = parentAbsolutePath.length() * 2;
-        dynamicHeader.ParentLocators[7].PlatformDataOffset = tableOffset + batSize;
-        dynamicHeader.ParentLocators[6].PlatformCode = ParentLocator.PlatformCodeWindowsRelativeUnicode;
-        dynamicHeader.ParentLocators[6].PlatformDataSpace = 512;
-        dynamicHeader.ParentLocators[6].PlatformDataLength = parentRelativePath.length() * 2;
-        dynamicHeader.ParentLocators[6].PlatformDataOffset = tableOffset + batSize + 512;
+        DynamicHeader dynamicHeader = new DynamicHeader(-1, tableOffset, blockSize, footer.currentSize);
+        int batSize = (dynamicHeader.maxTableEntries * 4 + Sizes.Sector - 1) / Sizes.Sector * Sizes.Sector;
+        dynamicHeader.parentUniqueId = parent.getUniqueId();
+        dynamicHeader.parentTimestamp = parentModificationTimeUtc;
+        dynamicHeader.parentUnicodeName = Utilities.getFileFromPath(parentAbsolutePath);
+        dynamicHeader.parentLocators[7].platformCode = ParentLocator.PlatformCodeWindowsAbsoluteUnicode;
+        dynamicHeader.parentLocators[7].platformDataSpace = 512;
+        dynamicHeader.parentLocators[7].platformDataLength = parentAbsolutePath.length() * 2;
+        dynamicHeader.parentLocators[7].platformDataOffset = tableOffset + batSize;
+        dynamicHeader.parentLocators[6].platformCode = ParentLocator.PlatformCodeWindowsRelativeUnicode;
+        dynamicHeader.parentLocators[6].platformDataSpace = 512;
+        dynamicHeader.parentLocators[6].platformDataLength = parentRelativePath.length() * 2;
+        dynamicHeader.parentLocators[6].platformDataOffset = tableOffset + batSize + 512;
         dynamicHeader.updateChecksum();
         byte[] dynamicHeaderBlock = new byte[1024];
         dynamicHeader.toBytes(dynamicHeaderBlock, 0);
@@ -576,14 +577,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         List<String> absPaths = new ArrayList<>(8);
         List<String> relPaths = new ArrayList<>(8);
-        for (ParentLocator pl : _dynamicHeader.ParentLocators) {
-            if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.PlatformCode) ||
-                ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.PlatformCode)) {
-                _fileStream.setPosition(pl.PlatformDataOffset);
-                byte[] buffer = StreamUtilities.readExact(_fileStream, pl.PlatformDataLength);
+        for (ParentLocator pl : dynamicHeader.parentLocators) {
+            if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.platformCode) ||
+                ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.platformCode)) {
+                fileStream.setPosition(pl.platformDataOffset);
+                byte[] buffer = StreamUtilities.readExact(fileStream, pl.platformDataLength);
                 String locationVal = new String(buffer, StandardCharsets.UTF_16LE);
-//Debug.println(locationVal + ", " + pl.PlatformCode + ", "+ StringUtil.getDump(locationVal));
-                if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.PlatformCode)) {
+//Debug.println(locationVal + ", " + pl.platformCode + ", "+ StringUtil.getDump(locationVal));
+                if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.platformCode)) {
                     absPaths.add(locationVal);
                 } else {
                     relPaths.add(fileLocator.resolveRelativePath(locationVal));
@@ -598,47 +599,47 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         // As a back-up, try to infer from the parent name...
         if (paths.size() == 0) {
-            paths.add(fileLocator.resolveRelativePath(_dynamicHeader.ParentUnicodeName));
+            paths.add(fileLocator.resolveRelativePath(dynamicHeader.parentUnicodeName));
         }
 
         return paths;
     }
 
     private void readFooter(boolean fallbackToFront) {
-        _fileStream.setPosition(_fileStream.getLength() - Sizes.Sector);
-        byte[] sector = StreamUtilities.readExact(_fileStream, Sizes.Sector);
+        fileStream.setPosition(fileStream.getLength() - Sizes.Sector);
+        byte[] sector = StreamUtilities.readExact(fileStream, Sizes.Sector);
 
-        _footer = Footer.fromBytes(sector, 0);
+        footer = Footer.fromBytes(sector, 0);
 
-        if (!_footer.isValid()) {
+        if (!footer.isValid()) {
             if (!fallbackToFront) {
                 throw new dotnet4j.io.IOException("Corrupt VHD file - invalid footer at end (did not check front of file)");
             }
 
-            _fileStream.setPosition(0);
-            StreamUtilities.readExact(_fileStream, sector, 0, Sizes.Sector);
+            fileStream.setPosition(0);
+            StreamUtilities.readExact(fileStream, sector, 0, Sizes.Sector);
 
-            _footer = Footer.fromBytes(sector, 0);
-            if (!_footer.isValid()) {
+            footer = Footer.fromBytes(sector, 0);
+            if (!footer.isValid()) {
                 throw new dotnet4j.io.IOException("Failed to find a valid VHD footer at start or end of file - VHD file is corrupt");
             }
         }
     }
 
     private void readHeaders() {
-        long pos = _footer.DataOffset;
+        long pos = footer.dataOffset;
         while (pos != -1) {
-            _fileStream.setPosition(pos);
-            Header hdr = Header.fromStream(_fileStream);
-            if (DynamicHeader.HeaderCookie.equals(hdr.Cookie)) {
-                _fileStream.setPosition(pos);
-                _dynamicHeader = DynamicHeader.fromStream(_fileStream);
-                if (!_dynamicHeader.isValid()) {
+            fileStream.setPosition(pos);
+            Header hdr = Header.fromStream(fileStream);
+            if (DynamicHeader.HeaderCookie.equals(hdr.cookie)) {
+                fileStream.setPosition(pos);
+                dynamicHeader = DynamicHeader.fromStream(fileStream);
+                if (!dynamicHeader.isValid()) {
                     throw new dotnet4j.io.IOException("Invalid Dynamic Disc Header");
                 }
             }
 
-            pos = hdr.DataOffset;
+            pos = hdr.dataOffset;
         }
     }
 }

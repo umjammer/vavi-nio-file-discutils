@@ -40,29 +40,30 @@ import dotnet4j.io.Stream;
  * Represents a file that will be built into the ISO image.
  */
 public final class BuildFileInfo extends BuildDirectoryMember {
-    private byte[] _contentData;
 
-    private String _contentPath;
+    private byte[] contentData;
 
-    private long _contentSize;
+    private String contentPath;
 
-    private Stream _contentStream;
+    private long contentSize;
+
+    private Stream contentStream;
 
     BuildFileInfo(String name, BuildDirectoryInfo parent, byte[] content) {
         super(IsoUtilities.normalizeFileName(name), makeShortFileName(name, parent));
-        _parent = parent;
-        _contentData = content;
-        _contentSize = content.length;
+        this.parent = parent;
+        contentData = content;
+        contentSize = content.length;
     }
 
     BuildFileInfo(String name, BuildDirectoryInfo parent, String content) {
         super(IsoUtilities.normalizeFileName(name), makeShortFileName(name, parent));
-        _parent = parent;
-        _contentPath = content;
+        this.parent = parent;
+        contentPath = content;
         try {
-            Path path = Paths.get(_contentPath);
-            _contentSize = Files.size(path);
-            _creationTime = Files.getLastModifiedTime(path).toMillis();
+            Path path = Paths.get(contentPath);
+            contentSize = Files.size(path);
+            creationTime = Files.getLastModifiedTime(path).toMillis();
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
@@ -70,41 +71,41 @@ public final class BuildFileInfo extends BuildDirectoryMember {
 
     BuildFileInfo(String name, BuildDirectoryInfo parent, Stream source) {
         super(IsoUtilities.normalizeFileName(name), makeShortFileName(name, parent));
-        _parent = parent;
-        _contentStream = source;
-        _contentSize = _contentStream.getLength();
+        this.parent = parent;
+        contentStream = source;
+        contentSize = contentStream.getLength();
     }
 
     /**
      * The parent directory, or {@code null} if none.
      */
-    private BuildDirectoryInfo _parent;
+    private BuildDirectoryInfo parent;
 
     public BuildDirectoryInfo getParent() {
-        return _parent;
+        return parent;
     }
 
     long getDataSize(Charset enc) {
-        return _contentSize;
+        return contentSize;
     }
 
     Stream openStream() {
-        if (_contentData != null) {
-            return new MemoryStream(_contentData, false);
+        if (contentData != null) {
+            return new MemoryStream(contentData, false);
         }
 
-        if (_contentPath != null) {
+        if (contentPath != null) {
             LocalFileLocator locator = new LocalFileLocator("");
-            return locator.open(_contentPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return locator.open(contentPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
-        return _contentStream;
+        return contentStream;
     }
 
     void closeStream(Stream s) {
         // Close and dispose the stream, unless it's one we were given to stream
         // in from (we might need it again).
-        if (_contentStream != s) { // TODO object compare
+        if (contentStream != s) { // TODO object compare
             try {
                 s.close();
             } catch (IOException e) {

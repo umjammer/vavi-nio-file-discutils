@@ -48,15 +48,16 @@ import dotnet4j.io.Stream;
  * Represents a VHD-backed disk.
  */
 public final class Disk extends VirtualDisk {
+
     /**
      * The stream representing the disk's contents.
      */
-    private SparseStream _content;
+    private SparseStream content;
 
     /**
      * The list of files that make up the disk.
      */
-    private List<Tuple<DiskImageFile, Ownership>> _files;
+    private List<Tuple<DiskImageFile, Ownership>> files;
 
     /**
      * Initializes a new instance of the Disk class. Differencing disks are not
@@ -67,9 +68,9 @@ public final class Disk extends VirtualDisk {
      *            lifetime of the stream.
      */
     public Disk(Stream stream, Ownership ownsStream) {
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
-        if (_files.get(0).getItem1().needsParent()) {
+        files = new ArrayList<>();
+        files.add(new Tuple<>(new DiskImageFile(stream, ownsStream), Ownership.Dispose));
+        if (files.get(0).getItem1().needsParent()) {
             throw new UnsupportedOperationException("Differencing disks cannot be opened from a stream");
         }
 
@@ -83,8 +84,8 @@ public final class Disk extends VirtualDisk {
      */
     public Disk(String path) throws IOException {
         DiskImageFile file = new DiskImageFile(path, FileAccess.ReadWrite);
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, Ownership.Dispose));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -97,8 +98,8 @@ public final class Disk extends VirtualDisk {
      */
     public Disk(String path, FileAccess access) throws IOException {
         DiskImageFile file = new DiskImageFile(path, access);
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, Ownership.Dispose));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -113,8 +114,8 @@ public final class Disk extends VirtualDisk {
     public Disk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
         FileLocator fileLocator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
         DiskImageFile file = new DiskImageFile(fileLocator, Utilities.getFileFromPath(path), access);
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, Ownership.Dispose));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -152,7 +153,7 @@ public final class Disk extends VirtualDisk {
             tempList.add(new Tuple<>(files.get(i), ownsFiles));
         }
         tempList.add(new Tuple<>(files.get(files.size() - 1), ownsFiles));
-        _files = tempList;
+        this.files = tempList;
     }
 
     /**
@@ -165,8 +166,8 @@ public final class Disk extends VirtualDisk {
      */
     Disk(FileLocator locator, String path, FileAccess access) throws IOException {
         DiskImageFile file = new DiskImageFile(locator, path, access);
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, Ownership.Dispose));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, Ownership.Dispose));
         resolveFileChain();
     }
 
@@ -179,8 +180,8 @@ public final class Disk extends VirtualDisk {
      *            of the file.
      */
     private Disk(DiskImageFile file, Ownership ownsFile) throws IOException {
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, ownsFile));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, ownsFile));
         resolveFileChain();
     }
 
@@ -195,13 +196,12 @@ public final class Disk extends VirtualDisk {
      * @param parentPath Path to the parent disk (if required).
      */
     private Disk(DiskImageFile file, Ownership ownsFile, FileLocator parentLocator, String parentPath) throws IOException {
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, ownsFile));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, ownsFile));
         if (file.needsParent()) {
-            _files.add(new Tuple<>(new DiskImageFile(parentLocator, parentPath, FileAccess.Read), Ownership.Dispose));
+            files.add(new Tuple<>(new DiskImageFile(parentLocator, parentPath, FileAccess.Read), Ownership.Dispose));
             resolveFileChain();
         }
-
     }
 
     /**
@@ -216,10 +216,10 @@ public final class Disk extends VirtualDisk {
      *            lifetime of the parentFile.
      */
     private Disk(DiskImageFile file, Ownership ownsFile, DiskImageFile parentFile, Ownership ownsParent) throws IOException {
-        _files = new ArrayList<>();
-        _files.add(new Tuple<>(file, ownsFile));
+        files = new ArrayList<>();
+        files.add(new Tuple<>(file, ownsFile));
         if (file.needsParent()) {
-            _files.add(new Tuple<>(parentFile, ownsParent));
+            files.add(new Tuple<>(parentFile, ownsParent));
             resolveFileChain();
         } else {
             if (parentFile != null && ownsParent == Ownership.Dispose) {
@@ -257,7 +257,7 @@ public final class Disk extends VirtualDisk {
      * Gets the capacity of the disk (in bytes).
      */
     public long getCapacity() {
-        return _files.get(0).getItem1().getCapacity();
+        return files.get(0).getItem1().getCapacity();
     }
 
     /**
@@ -268,15 +268,15 @@ public final class Disk extends VirtualDisk {
      * stream position before accessing the stream.
      */
     public SparseStream getContent() {
-        if (_content == null) {
+        if (content == null) {
             SparseStream stream = null;
-            for (int i = _files.size() - 1; i >= 0; --i) {
-                stream = _files.get(i).getItem1().openContent(stream, Ownership.Dispose);
+            for (int i = files.size() - 1; i >= 0; --i) {
+                stream = files.get(i).getItem1().openContent(stream, Ownership.Dispose);
             }
-            _content = stream;
+            content = stream;
         }
 
-        return _content;
+        return content;
     }
 
     /**
@@ -292,21 +292,21 @@ public final class Disk extends VirtualDisk {
      * preserved in the disk file.
      */
     public VirtualDiskTypeInfo getDiskTypeInfo() {
-        return DiskFactory.makeDiskTypeInfo(_files.get(_files.size() - 1).getItem1().isSparse() ? "dynamic" : "fixed");
+        return DiskFactory.makeDiskTypeInfo(files.get(files.size() - 1).getItem1().isSparse() ? "dynamic" : "fixed");
     }
 
     /**
      * Gets the geometry of the disk.
      */
     public Geometry getGeometry() {
-        return _files.get(0).getItem1().getGeometry();
+        return files.get(0).getItem1().getGeometry();
     }
 
     /**
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return _files.stream().map(file -> file.getItem1()).collect(Collectors.toList());
+        return files.stream().map(Tuple::getItem1).collect(Collectors.toList());
     }
 
     /**
@@ -450,7 +450,7 @@ public final class Disk extends VirtualDisk {
      */
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
         FileLocator locator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
-        DiskImageFile file = _files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
+        DiskImageFile file = files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
     }
 
@@ -462,7 +462,7 @@ public final class Disk extends VirtualDisk {
      */
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
         FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
-        DiskImageFile file = _files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
+        DiskImageFile file = files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
         return new Disk(file, Ownership.Dispose);
     }
 
@@ -483,19 +483,19 @@ public final class Disk extends VirtualDisk {
      */
     public void close() throws IOException {
         try {
-            if (_content != null) {
-                _content.close();
-                _content = null;
+            if (content != null) {
+                content.close();
+                content = null;
             }
 
-            if (_files != null) {
-                for (Tuple<DiskImageFile, Ownership> record : _files) {
+            if (files != null) {
+                for (Tuple<DiskImageFile, Ownership> record : files) {
                     if (record.getItem2() == Ownership.Dispose) {
                         record.getItem1().close();
                     }
 
                 }
-                _files = null;
+                files = null;
             }
         } finally {
             super.close();
@@ -503,7 +503,7 @@ public final class Disk extends VirtualDisk {
     }
 
     private void resolveFileChain() throws IOException {
-        DiskImageFile file = _files.get(_files.size() - 1).getItem1();
+        DiskImageFile file = files.get(files.size() - 1).getItem1();
         while (file.needsParent()) {
             FileLocator fileLocator = file.getRelativeFileLocator();
             boolean found = false;
@@ -521,7 +521,7 @@ public final class Disk extends VirtualDisk {
                     }
 
                     file = newFile;
-                    _files.add(new Tuple<>(file, Ownership.Dispose));
+                    files.add(new Tuple<>(file, Ownership.Dispose));
                     found = true;
                     break;
                 }

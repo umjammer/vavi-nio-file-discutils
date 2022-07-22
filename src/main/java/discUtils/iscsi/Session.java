@@ -40,104 +40,105 @@ import dotnet4j.io.FileAccess;
  * Represents a connection to a particular Target.
  */
 public final class Session implements Closeable {
-    private static AtomicInteger _nextInitiatorSessionId = new AtomicInteger(new SecureRandom().nextInt());
 
-    private final List<TargetAddress> _addresses;
+    private static AtomicInteger nextInitiatorSessionId = new AtomicInteger(new SecureRandom().nextInt());
+
+    private final List<TargetAddress> addresses;
 
     /**
      * The set of all 'parameters' we've negotiated.
      */
-    private final Map<String, String> _negotiatedParameters;
+    private final Map<String, String> negotiatedParameters;
 
-    private short _nextConnectionId;
+    private short nextConnectionId;
 
     Session(SessionType type, String targetName, List<TargetAddress> addresses) {
         this(type, targetName, null, null, addresses);
     }
 
     Session(SessionType type, String targetName, String userName, String password, List<TargetAddress> addresses) {
-        _initiatorSessionId = _nextInitiatorSessionId.incrementAndGet();
-        _addresses = addresses;
+        initiatorSessionId = nextInitiatorSessionId.incrementAndGet();
+        this.addresses = addresses;
 
-        _sessionType = type;
-        _targetName = targetName;
+        sessionType = type;
+        this.targetName = targetName;
 
         setCommandSequenceNumber(1);
         setCurrentTaskTag(1);
 
         // Default negotiated values...
-        _maxConnections = 1;
-        _initialR2T = true;
-        _immediateData = true;
-        _maxBurstLength = 262144;
-        _firstBurstLength = 65536;
-        _defaultTime2Wait = 0;
-        _defaultTime2Retain = 60;
-        _maxOutstandingR2T = 1;
-        _dataPDUInOrder = true;
-        _dataSequenceInOrder = true;
+        maxConnections = 1;
+        initialR2T = true;
+        immediateData = true;
+        maxBurstLength = 262144;
+        firstBurstLength = 65536;
+        defaultTime2Wait = 0;
+        defaultTime2Retain = 60;
+        maxOutstandingR2T = 1;
+        dataPDUInOrder = true;
+        dataSequenceInOrder = true;
 
-        _negotiatedParameters = new HashMap<>();
+        negotiatedParameters = new HashMap<>();
 
         if (userName == null || userName.isEmpty()) {
             setActiveConnection(new Connection(this,
-                                               _addresses.get(0),
+                                               this.addresses.get(0),
                                                new Authenticator[] {
                                                    new NullAuthenticator()
                                                }));
         } else {
             setActiveConnection(new Connection(this,
-                                               _addresses.get(0),
+                                               this.addresses.get(0),
                                                new Authenticator[] {
                                                    new NullAuthenticator(), new ChapAuthenticator(userName, password)
                                                }));
         }
     }
 
-    private Connection _activeConnection;
+    private Connection activeConnection;
 
     Connection getActiveConnection() {
-        return _activeConnection;
+        return activeConnection;
     }
 
     void setActiveConnection(Connection value) {
-        _activeConnection = value;
+        activeConnection = value;
     }
 
-    private int _commandSequenceNumber;
+    private int commandSequenceNumber;
 
     int getCommandSequenceNumber() {
-        return _commandSequenceNumber;
+        return commandSequenceNumber;
     }
 
     void setCommandSequenceNumber(int value) {
-        _commandSequenceNumber = value;
+        commandSequenceNumber = value;
     }
 
-    private int _currentTaskTag;
+    private int currentTaskTag;
 
     int getCurrentTaskTag() {
-        return _currentTaskTag;
+        return currentTaskTag;
     }
 
     void setCurrentTaskTag(int value) {
-        _currentTaskTag = value;
+        currentTaskTag = value;
     }
 
-    private int _initiatorSessionId;
+    private int initiatorSessionId;
 
     int getInitiatorSessionId() {
-        return _initiatorSessionId;
+        return initiatorSessionId;
     }
 
-    private short _targetSessionId;
+    private short targetSessionId;
 
     short getTargetSessionId() {
-        return _targetSessionId;
+        return targetSessionId;
     }
 
     void setTargetSessionId(short value) {
-        _targetSessionId = value;
+        targetSessionId = value;
     }
 
     /**
@@ -219,7 +220,7 @@ public final class Session implements Closeable {
                                                 0,
                                                 0,
                                                 ScsiInquiryCommand.InitialResponseDataLength);
-        TargetInfo targetInfo = new TargetInfo(_targetName, _addresses);
+        TargetInfo targetInfo = new TargetInfo(targetName, addresses);
         return new LunInfo(targetInfo,
                            lun,
                            resp.getDeviceType(),
@@ -343,15 +344,15 @@ public final class Session implements Closeable {
     }
 
     int nextCommandSequenceNumber() {
-        return ++_commandSequenceNumber;
+        return ++commandSequenceNumber;
     }
 
     int nextTaskTag() {
-        return ++_currentTaskTag;
+        return ++currentTaskTag;
     }
 
     short nextConnectionId() {
-        return ++_nextConnectionId;
+        return ++nextConnectionId;
     }
 
     void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase) {
@@ -364,9 +365,9 @@ public final class Session implements Closeable {
                                                                  value,
                                                                  propInfo.getType(),
                                                                  phase,
-                                                                 _sessionType == SessionType.Discovery)) {
+                                                                 sessionType == SessionType.Discovery)) {
                         parameters.add(attr.name(), ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
-                        _negotiatedParameters.put(attr.name(), "");
+                        negotiatedParameters.put(attr.name(), "");
                     }
                 }
             }
@@ -386,11 +387,11 @@ public final class Session implements Closeable {
                         propInfo.set(this, value);
                         inParameters.remove(attr.name());
 
-                        if (attr.type() == KeyType.Negotiated && !_negotiatedParameters.containsKey(attr.name())) {
+                        if (attr.type() == KeyType.Negotiated && !negotiatedParameters.containsKey(attr.name())) {
                             value = propInfo.get(this);
                             outParameters.add(attr.name(),
                                               ProtocolKeyAttribute.Util.getValueAsString(value, propInfo.getType()));
-                            _negotiatedParameters.put(attr.name(), "");
+                            negotiatedParameters.put(attr.name(), "");
                         }
                     }
                 }
@@ -408,7 +409,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative,
                           usedForDiscovery = true)
-    public String _targetName;
+    public String targetName;
 
     /**
      * Gets the name of the iSCSI initiator seen by the target for this session.
@@ -418,7 +419,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative,
                           usedForDiscovery = true)
-    public String _initiatorName = "iqn.2008-2010-04.discutils.codeplex.com";
+    public String initiatorName = "iqn.2008-2010-04.discutils.codeplex.com";
 
     /**
      * Gets the friendly name of the iSCSI target this session is connected to.
@@ -428,14 +429,14 @@ public final class Session implements Closeable {
                           phase = KeyUsagePhase.All,
                           sender = KeySender.Target,
                           type = KeyType.Declarative)
-    String _targetAlias;
+    String targetAlias;
 
     @ProtocolKeyAttribute(name = "SessionType",
                           phase = KeyUsagePhase.SecurityNegotiation,
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative,
                           usedForDiscovery = true)
-    SessionType _sessionType = SessionType.Discovery;
+    SessionType sessionType = SessionType.Discovery;
 
     @ProtocolKeyAttribute(name = "MaxConnections",
                           defaultValue = "1",
@@ -443,20 +444,20 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _maxConnections;
+    int maxConnections;
 
     @ProtocolKeyAttribute(name = "InitiatorAlias",
                           defaultValue = "",
                           phase = KeyUsagePhase.All,
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative)
-    String _initiatorAlias;
+    String initiatorAlias;
 
     @ProtocolKeyAttribute(name = "TargetPortalGroupTag",
                           phase = KeyUsagePhase.SecurityNegotiation,
                           sender = KeySender.Target,
                           type = KeyType.Declarative)
-    int _targetPortalGroupTag;
+    int targetPortalGroupTag;
 
     @ProtocolKeyAttribute(name = "InitialR2T",
                           defaultValue = "Yes",
@@ -464,7 +465,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    boolean _initialR2T;
+    boolean initialR2T;
 
     @ProtocolKeyAttribute(name = "ImmediateData",
                           defaultValue = "Yes",
@@ -472,7 +473,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    boolean _immediateData;
+    boolean immediateData;
 
     @ProtocolKeyAttribute(name = "MaxBurstLength",
                           defaultValue = "262144",
@@ -480,7 +481,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _maxBurstLength;
+    int maxBurstLength;
 
     @ProtocolKeyAttribute(name = "FirstBurstLength",
                           defaultValue = "65536",
@@ -488,7 +489,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _firstBurstLength;
+    int firstBurstLength;
 
     @ProtocolKeyAttribute(name = "DefaultTime2Wait",
                           defaultValue = "2",
@@ -496,7 +497,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _defaultTime2Wait;
+    int defaultTime2Wait;
 
     @ProtocolKeyAttribute(name = "DefaultTime2Retain",
                           defaultValue = "20",
@@ -504,7 +505,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _defaultTime2Retain;
+    int defaultTime2Retain;
 
     @ProtocolKeyAttribute(name = "MaxOutstandingR2T",
                           defaultValue = "1",
@@ -512,7 +513,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _maxOutstandingR2T;
+    int maxOutstandingR2T;
 
     @ProtocolKeyAttribute(name = "DataPDUInOrder",
                           defaultValue = "Yes",
@@ -520,7 +521,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    boolean _dataPDUInOrder;
+    boolean dataPDUInOrder;
 
     @ProtocolKeyAttribute(name = "DataSequenceInOrder",
                           defaultValue = "Yes",
@@ -528,7 +529,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    boolean _dataSequenceInOrder;
+    boolean dataSequenceInOrder;
 
     @ProtocolKeyAttribute(name = "ErrorRecoveryLevel",
                           defaultValue = "0",
@@ -536,7 +537,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Both,
                           type = KeyType.Negotiated,
                           leadingConnectionOnly = true)
-    int _errorRecoveryLevel;
+    int errorRecoveryLevel;
 
     /**
      * Sends an SCSI command (aka task) to a LUN via the connected target.

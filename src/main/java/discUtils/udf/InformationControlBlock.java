@@ -29,36 +29,37 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class InformationControlBlock implements IByteArraySerializable {
-    public AllocationType _AllocationType = AllocationType.ShortDescriptors;
 
-    public FileType _FileType = FileType.None;
+    public AllocationType allocationType = AllocationType.ShortDescriptors;
 
-    public EnumSet<InformationControlBlockFlags> Flags;
+    public FileType fileType = FileType.None;
 
-    public short MaxEntries;
+    public EnumSet<InformationControlBlockFlags> flags;
 
-    public LogicalBlockAddress ParentICBLocation;
+    public short maxEntries;
 
-    public int PriorDirectEntries;
+    public LogicalBlockAddress parentICBLocation;
 
-    public short StrategyParameter;
+    public int priorDirectEntries;
 
-    public short StrategyType;
+    public short strategyParameter;
+
+    public short strategyType;
 
     public int size() {
         return 20;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        PriorDirectEntries = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        StrategyType = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        StrategyParameter = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        MaxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
-        _FileType = FileType.valueOf(buffer[offset + 11]);
-        ParentICBLocation = EndianUtilities.toStruct(LogicalBlockAddress.class, buffer, offset + 12);
+        priorDirectEntries = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        strategyType = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        strategyParameter = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
+        maxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        fileType = FileType.valueOf(buffer[offset + 11]);
+        parentICBLocation = EndianUtilities.toStruct(LogicalBlockAddress.class, buffer, offset + 12);
         short flagsField = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
-        _AllocationType = AllocationType.values()[flagsField & 0x3];
-        Flags = InformationControlBlockFlags.valueOf(flagsField & 0xFFFC);
+        allocationType = AllocationType.values()[flagsField & 0x3];
+        flags = InformationControlBlockFlags.valueOf(flagsField & 0xFFFC);
         return 20;
     }
 

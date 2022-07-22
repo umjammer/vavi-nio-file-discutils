@@ -51,7 +51,7 @@ import dotnet4j.util.compat.StringUtilities;
  * <pre>
  * {@code
  * CDBuilder builder = new CDBuilder();
- * builder.VolumeIdentifier = "MYISO";
+ * builder.volumeIdentifier = "MYISO";
  * builder.UseJoliet = true;
  * builder.AddFile("Hello.txt", Encoding("ASCII").GetBytes("hello world!"));
  * builder.Build(@"C:\TEMP\myiso.iso");
@@ -64,29 +64,29 @@ public final class CDBuilder extends StreamBuilder {
 
     private static final long DiskStart = 0x8000;
 
-    private BootInitialEntry _bootEntry;
+    private BootInitialEntry bootEntry;
 
-    private Stream _bootImage;
+    private Stream bootImage;
 
-    private final BuildParameters _buildParams;
+    private final BuildParameters buildParams;
 
-    private final List<BuildDirectoryInfo> _dirs;
+    private final List<BuildDirectoryInfo> dirs;
 
-    private final List<BuildFileInfo> _files;
+    private final List<BuildFileInfo> files;
 
-    private final BuildDirectoryInfo _rootDirectory;
+    private final BuildDirectoryInfo rootDirectory;
 
     /**
      * Initializes a new instance of the CDBuilder class.
      */
     public CDBuilder() {
-        _files = new ArrayList<>();
-        _dirs = new ArrayList<>();
-        _rootDirectory = new BuildDirectoryInfo("\0", null);
-        _dirs.add(_rootDirectory);
+        files = new ArrayList<>();
+        dirs = new ArrayList<>();
+        rootDirectory = new BuildDirectoryInfo("\0", null);
+        dirs.add(rootDirectory);
 
-        _buildParams = new BuildParameters();
-        _buildParams.setUseJoliet(true);
+        buildParams = new BuildParameters();
+        buildParams.setUseJoliet(true);
     }
 
     /**
@@ -97,14 +97,14 @@ public final class CDBuilder extends StreamBuilder {
      * verifies the CD has been loaded correctly by the BIOS. This table needs
      * to be updated to match the actual ISO.
      */
-    private boolean _updateIsolinuxBootTable;
+    private boolean updateIsolinuxBootTable;
 
     public boolean getUpdateIsolinuxBootTable() {
-        return _updateIsolinuxBootTable;
+        return updateIsolinuxBootTable;
     }
 
     public void setUpdateIsolinuxBootTable(boolean value) {
-        _updateIsolinuxBootTable = value;
+        updateIsolinuxBootTable = value;
     }
 
     /**
@@ -112,11 +112,11 @@ public final class CDBuilder extends StreamBuilder {
      * should be used.
      */
     public boolean useJoliet() {
-        return _buildParams.useJoliet();
+        return buildParams.useJoliet();
     }
 
     public void setUseJoliet(boolean value) {
-        _buildParams.setUseJoliet(value);
+        buildParams.setUseJoliet(value);
     }
 
     /**
@@ -126,14 +126,14 @@ public final class CDBuilder extends StreamBuilder {
      * or _. Lower-case characters are not permitted.
      */
     public String getVolumeIdentifier() {
-        return _buildParams.getVolumeIdentifier();
+        return buildParams.getVolumeIdentifier();
     }
 
     public void setVolumeIdentifier(String value) {
         if (value.length() > 32) {
             throw new IllegalArgumentException("Not a valid volume identifier");
         }
-        _buildParams.setVolumeIdentifier(value);
+        buildParams.setVolumeIdentifier(value);
     }
 
     /**
@@ -145,16 +145,16 @@ public final class CDBuilder extends StreamBuilder {
      *            default).
      */
     public void setBootImage(Stream image, BootDeviceEmulation emulation, int loadSegment) {
-        if (_bootEntry != null) {
+        if (bootEntry != null) {
             throw new UnsupportedOperationException("Boot image already set");
         }
 
-        _bootEntry = new BootInitialEntry();
-        _bootEntry.BootIndicator = (byte) 0x88;
-        _bootEntry.BootMediaType = emulation;
-        _bootEntry.setLoadSegment((short) loadSegment);
-        _bootEntry.SystemType = 0;
-        _bootImage = image;
+        bootEntry = new BootInitialEntry();
+        bootEntry.bootIndicator = (byte) 0x88;
+        bootEntry.bootMediaType = emulation;
+        bootEntry.setLoadSegment((short) loadSegment);
+        bootEntry.systemType = 0;
+        bootImage = image;
     }
 
     /**
@@ -203,7 +203,7 @@ public final class CDBuilder extends StreamBuilder {
             throw new IOException("File already exists");
         }
         BuildFileInfo fi = new BuildFileInfo(nameElements[nameElements.length - 1], dir, content);
-        _files.add(fi);
+        files.add(fi);
         dir.add(fi);
         return fi;
     }
@@ -235,7 +235,7 @@ public final class CDBuilder extends StreamBuilder {
             throw new IOException("File already exists");
         }
         BuildFileInfo fi = new BuildFileInfo(nameElements[nameElements.length - 1], dir, sourcePath);
-        _files.add(fi);
+        files.add(fi);
         dir.add(fi);
         return fi;
     }
@@ -271,7 +271,7 @@ public final class CDBuilder extends StreamBuilder {
             throw new IOException("File already exists");
         }
         BuildFileInfo fi = new BuildFileInfo(nameElements[nameElements.length - 1], dir, source);
-        _files.add(fi);
+        files.add(fi);
         dir.add(fi);
         return fi;
     }
@@ -284,24 +284,24 @@ public final class CDBuilder extends StreamBuilder {
 
         long buildTime = System.currentTimeMillis();
 
-        Charset suppEncoding = _buildParams.useJoliet() ? StandardCharsets.UTF_16BE : StandardCharsets.US_ASCII;
+        Charset suppEncoding = buildParams.useJoliet() ? StandardCharsets.UTF_16BE : StandardCharsets.US_ASCII;
 
         Map<BuildDirectoryMember, Integer> primaryLocationTable = new HashMap<>();
         Map<BuildDirectoryMember, Integer> supplementaryLocationTable = new HashMap<>();
 
         long focus = DiskStart + 3 * IsoUtilities.SectorSize;
         // Primary, Supplementary, End (fixed at end...)
-        if (_bootEntry != null) {
+        if (bootEntry != null) {
             focus += IsoUtilities.SectorSize;
         }
 
-        // ####################################################################
-        // # 0. Fix boot image location
-        // ####################################################################
+        //
+        // 0. Fix boot image location
+        //
         long bootCatalogPos = 0;
-        if (_bootEntry != null) {
+        if (bootEntry != null) {
             long bootImagePos = focus;
-            Stream realBootImage = patchBootImage(_bootImage,
+            Stream realBootImage = patchBootImage(bootImage,
                                                   (int) (DiskStart / IsoUtilities.SectorSize),
                                                   (int) (bootImagePos / IsoUtilities.SectorSize));
             BuilderStreamExtent bootImageExtent = new BuilderStreamExtent(focus, realBootImage);
@@ -312,19 +312,19 @@ public final class CDBuilder extends StreamBuilder {
             byte[] bootCatalog = new byte[IsoUtilities.SectorSize];
             BootValidationEntry bve = new BootValidationEntry();
             bve.writeTo(bootCatalog, 0x00);
-            _bootEntry.ImageStart = (int) MathUtilities.ceil(bootImagePos, IsoUtilities.SectorSize);
-            _bootEntry.setSectorCount((short) MathUtilities.ceil(_bootImage.getLength(), Sizes.Sector));
-            _bootEntry.writeTo(bootCatalog, 0x20);
+            bootEntry.imageStart = (int) MathUtilities.ceil(bootImagePos, IsoUtilities.SectorSize);
+            bootEntry.setSectorCount((short) MathUtilities.ceil(bootImage.getLength(), Sizes.Sector));
+            bootEntry.writeTo(bootCatalog, 0x20);
             fixedRegions.add(new BuilderBufferExtent(bootCatalogPos, bootCatalog));
             focus += IsoUtilities.SectorSize;
         }
 
-        // ####################################################################
-        // # 1. Fix file locations
-        // ####################################################################
+        //
+        // 1. Fix file locations
+        //
 
         // Find end of the file data, fixing the files in place as we go
-        for (BuildFileInfo fi : _files) {
+        for (BuildFileInfo fi : files) {
             primaryLocationTable.put(fi, (int) (focus / IsoUtilities.SectorSize));
             supplementaryLocationTable.put(fi, (int) (focus / IsoUtilities.SectorSize));
             FileExtent extent = new FileExtent(fi, focus);
@@ -338,9 +338,9 @@ public final class CDBuilder extends StreamBuilder {
             focus += MathUtilities.roundUp(extent.getLength(), IsoUtilities.SectorSize);
         }
 
-        // ####################################################################
-        // # 2. Fix directory locations
-        // ####################################################################
+        //
+        // 2. Fix directory locations
+        //
 
         // There are two directory tables
         // 1. Primary (std ISO9660)
@@ -349,7 +349,7 @@ public final class CDBuilder extends StreamBuilder {
         // Find start of the second set of directory data, fixing ASCII
         // directories in place.
         long startOfFirstDirData = focus;
-        for (BuildDirectoryInfo di : _dirs) {
+        for (BuildDirectoryInfo di : dirs) {
             primaryLocationTable.put(di, (int) (focus / IsoUtilities.SectorSize));
             DirectoryExtent extent = new DirectoryExtent(di, primaryLocationTable, StandardCharsets.US_ASCII, focus);
             fixedRegions.add(extent);
@@ -359,16 +359,16 @@ public final class CDBuilder extends StreamBuilder {
         // Find end of the second directory table, fixing supplementary
         // directories in place.
         long startOfSecondDirData = focus;
-        for (BuildDirectoryInfo di : _dirs) {
+        for (BuildDirectoryInfo di : dirs) {
             supplementaryLocationTable.put(di, (int) (focus / IsoUtilities.SectorSize));
             DirectoryExtent extent = new DirectoryExtent(di, supplementaryLocationTable, suppEncoding, focus);
             fixedRegions.add(extent);
             focus += MathUtilities.roundUp(extent.getLength(), IsoUtilities.SectorSize);
         }
 
-        // ####################################################################
-        // # 3. Fix path tables
-        // ####################################################################
+        //
+        // 3. Fix path tables
+        //
 
         // There are four path tables:
         // 1. LE, ASCII
@@ -378,48 +378,48 @@ public final class CDBuilder extends StreamBuilder {
 
         // Find end of the path table
         long startOfFirstPathTable = focus;
-        PathTable pathTable = new PathTable(false, StandardCharsets.US_ASCII, _dirs, primaryLocationTable, focus);
+        PathTable pathTable = new PathTable(false, StandardCharsets.US_ASCII, dirs, primaryLocationTable, focus);
         fixedRegions.add(pathTable);
         focus += MathUtilities.roundUp(pathTable.getLength(), IsoUtilities.SectorSize);
         long primaryPathTableLength = pathTable.getLength();
 
         long startOfSecondPathTable = focus;
-        pathTable = new PathTable(true, StandardCharsets.US_ASCII, _dirs, primaryLocationTable, focus);
+        pathTable = new PathTable(true, StandardCharsets.US_ASCII, dirs, primaryLocationTable, focus);
         fixedRegions.add(pathTable);
         focus += MathUtilities.roundUp(pathTable.getLength(), IsoUtilities.SectorSize);
 
         long startOfThirdPathTable = focus;
-        pathTable = new PathTable(false, suppEncoding, _dirs, supplementaryLocationTable, focus);
+        pathTable = new PathTable(false, suppEncoding, dirs, supplementaryLocationTable, focus);
         fixedRegions.add(pathTable);
         focus += MathUtilities.roundUp(pathTable.getLength(), IsoUtilities.SectorSize);
         long supplementaryPathTableLength = pathTable.getLength();
 
         long startOfFourthPathTable = focus;
-        pathTable = new PathTable(true, suppEncoding, _dirs, supplementaryLocationTable, focus);
+        pathTable = new PathTable(true, suppEncoding, dirs, supplementaryLocationTable, focus);
         fixedRegions.add(pathTable);
         focus += MathUtilities.roundUp(pathTable.getLength(), IsoUtilities.SectorSize);
 
         // Find the end of the disk
         totalLength[0] = focus;
 
-        // ####################################################################
-        // # 4. Prepare volume descriptors now other structures are fixed
-        // ####################################################################
+        //
+        // 4. Prepare volume descriptors now other structures are fixed
+        //
         int regionIdx = 0;
         focus = DiskStart;
-        PrimaryVolumeDescriptor pvDesc = new PrimaryVolumeDescriptor((int) (totalLength[0] / IsoUtilities.SectorSize), // VolumeSpaceSize
+        PrimaryVolumeDescriptor pvDesc = new PrimaryVolumeDescriptor((int) (totalLength[0] / IsoUtilities.SectorSize), // volumeSpaceSize
                                                                      (int) primaryPathTableLength, // PathTableSize
-                                                                     (int) (startOfFirstPathTable / IsoUtilities.SectorSize), // TypeLPathTableLocation
-                                                                     (int) (startOfSecondPathTable / IsoUtilities.SectorSize), // TypeMPathTableLocation
-                                                                     (int) (startOfFirstDirData / IsoUtilities.SectorSize), // RootDirectory.LocationOfExtent
-                                                                     (int) _rootDirectory.getDataSize(StandardCharsets.US_ASCII), // RootDirectory.DataLength
+                                                                     (int) (startOfFirstPathTable / IsoUtilities.SectorSize), // typeLPathTableLocation
+                                                                     (int) (startOfSecondPathTable / IsoUtilities.SectorSize), // typeMPathTableLocation
+                                                                     (int) (startOfFirstDirData / IsoUtilities.SectorSize), // rootDirectory.locationOfExtent
+                                                                     (int) rootDirectory.getDataSize(StandardCharsets.US_ASCII), // rootDirectory.dataLength
                                                                      buildTime);
-        pvDesc.VolumeIdentifier = _buildParams.getVolumeIdentifier();
+        pvDesc.volumeIdentifier = buildParams.getVolumeIdentifier();
         PrimaryVolumeDescriptorRegion pvdr = new PrimaryVolumeDescriptorRegion(pvDesc, focus);
         fixedRegions.add(regionIdx++, pvdr);
         focus += IsoUtilities.SectorSize;
 
-        if (_bootEntry != null) {
+        if (bootEntry != null) {
             BootVolumeDescriptor bvDesc = new BootVolumeDescriptor((int) (bootCatalogPos / IsoUtilities.SectorSize));
             BootVolumeDescriptorRegion bvdr = new BootVolumeDescriptorRegion(bvDesc, focus);
             fixedRegions.add(regionIdx++, bvdr);
@@ -427,18 +427,18 @@ public final class CDBuilder extends StreamBuilder {
         }
 
         SupplementaryVolumeDescriptor svDesc = new SupplementaryVolumeDescriptor((int) (totalLength[0] /
-                                                                                        IsoUtilities.SectorSize), // VolumeSpaceSize
+                                                                                        IsoUtilities.SectorSize), // volumeSpaceSize
                                                                                  (int) supplementaryPathTableLength, // PathTableSize
                                                                                  (int) (startOfThirdPathTable /
-                                                                                        IsoUtilities.SectorSize), // TypeLPathTableLocation
+                                                                                        IsoUtilities.SectorSize), // typeLPathTableLocation
                                                                                  (int) (startOfFourthPathTable /
-                                                                                        IsoUtilities.SectorSize), // TypeMPathTableLocation
+                                                                                        IsoUtilities.SectorSize), // typeMPathTableLocation
                                                                                  (int) (startOfSecondDirData /
-                                                                                        IsoUtilities.SectorSize), // RootDirectory.LocationOfExtent
-                                                                                 (int) _rootDirectory.getDataSize(suppEncoding), // RootDirectory.DataLength
+                                                                                        IsoUtilities.SectorSize), // rootDirectory.locationOfExtent
+                                                                                 (int) rootDirectory.getDataSize(suppEncoding), // rootDirectory.dataLength
                                                                                  buildTime,
                                                                                  suppEncoding);
-        svDesc.VolumeIdentifier = _buildParams.getVolumeIdentifier();
+        svDesc.volumeIdentifier = buildParams.getVolumeIdentifier();
         SupplementaryVolumeDescriptorRegion svdr = new SupplementaryVolumeDescriptorRegion(svDesc, focus);
         fixedRegions.add(regionIdx++, svdr);
         focus += IsoUtilities.SectorSize;
@@ -494,7 +494,7 @@ public final class CDBuilder extends StreamBuilder {
     }
 
     private BuildDirectoryInfo tryGetDirectory(String[] path, int pathLength, boolean createMissing) {
-        BuildDirectoryInfo focus = _rootDirectory;
+        BuildDirectoryInfo focus = rootDirectory;
 
         for (int i = 0; i < pathLength; ++i) {
             BuildDirectoryMember[] next = new BuildDirectoryMember[1];
@@ -503,7 +503,7 @@ public final class CDBuilder extends StreamBuilder {
                     // This directory doesn't exist, create it...
                     BuildDirectoryInfo di = new BuildDirectoryInfo(path[i], focus);
                     focus.add(di);
-                    _dirs.add(di);
+                    dirs.add(di);
                     focus = di;
                 } else {
                     return null;

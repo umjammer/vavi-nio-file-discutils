@@ -27,32 +27,35 @@ import com.sun.jna.Pointer;
 import java.io.Closeable;
 import java.io.IOException;
 
-import discUtils.core.internal.Utilities;
+import dotnet4j.util.compat.StringUtilities;
 import diskClone.NativeMethods.EIOControlCode;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
 
+import static .escapeForRegex;
+
 
 public final class Volume implements Closeable {
-    private String _path;
 
-    private Pointer _handle;
+    private String path;
 
-    private Stream _stream;
+    private Pointer handle;
 
-    private long _length;
+    private Stream stream;
+
+    private long length;
 
     public Volume(String path, long length) {
-        _path = path.replaceFirst(Utilities.escapeForRegex("\\*$"), "");
-        _length = length;
-        if (!_path.startsWith("\\\\")) {
-            _path = "\\\\.\\" + _path;
+        this.path = path.replaceFirst(StringUtilities.escapeForRegex("\\*$"), "");
+        this.length = length;
+        if (!this.path.startsWith("\\\\")) {
+            this.path = "\\\\.\\" + this.path;
         }
 
-        _handle = NativeMethods.INSTANCE.createFileW(_path, FileAccess.Read, FileShare.ReadWrite, null, FileMode.Open, 0, null);
-        if (_handle.IsInvalid) {
+        handle = NativeMethods.INSTANCE.createFileW(this.path, FileAccess.Read, FileShare.ReadWrite, null, FileMode.Open, 0, null);
+        if (handle.IsInvalid) {
             throw Win32Wrapper.getIOExceptionForLastError();
         }
 
@@ -63,7 +66,7 @@ public final class Volume implements Closeable {
             bytesRet
         };
         boolean boolVar___0 = !NativeMethods.INSTANCE
-                .deviceIoControl(_handle, EIOControlCode.FsctlAllowExtendedDasdIo, null, 0, null, 0, refVar___0, null);
+                .deviceIoControl(handle, EIOControlCode.FsctlAllowExtendedDasdIo, null, 0, null, 0, refVar___0, null);
         bytesRet = refVar___0[0];
         if (boolVar___0) {
             throw Win32Wrapper.getIOExceptionForLastError();
@@ -71,22 +74,22 @@ public final class Volume implements Closeable {
     }
 
     public void close() throws IOException {
-        if (_stream != null) {
-            _stream.close();
-            _stream = null;
+        if (stream != null) {
+            stream.close();
+            stream = null;
         }
 
-        if (!_handle.IsClosed) {
-            _handle.close();
+        if (!handle.IsClosed) {
+            handle.close();
         }
     }
 
     public Stream getContent() {
-        if (_stream == null) {
-            _stream = new VolumeStream(_handle);
+        if (stream == null) {
+            stream = new VolumeStream(handle);
         }
 
-        return _stream;
+        return stream;
     }
 
     public diskClone.NativeMethods.DiskExtent[] getDiskExtents() {
@@ -98,7 +101,7 @@ public final class Volume implements Closeable {
             bytesRet
         };
         boolean boolVar___1 = !NativeMethods.INSTANCE
-                .deviceIoControl(_handle, EIOControlCode.VolumeGetDiskExtents, null, 0, buffer, bufferSize, refVar___1, null);
+                .deviceIoControl(handle, EIOControlCode.VolumeGetDiskExtents, null, 0, buffer, bufferSize, refVar___1, null);
         bytesRet = refVar___1[0];
         if (boolVar___1) {
             if (Marshal.GetLastWin32Error() != NativeMethods.ERROR_MORE_DATA) {
@@ -111,7 +114,7 @@ public final class Volume implements Closeable {
             int[] refVar___2 = new int[] {
                 bytesRet
             };
-            boolean boolVar___2 = !NativeMethods.INSTANCE.deviceIoControl(_handle,
+            boolean boolVar___2 = !NativeMethods.INSTANCE.deviceIoControl(handle,
                                                                           EIOControlCode.VolumeGetDiskExtents,
                                                                           null,
                                                                           0,

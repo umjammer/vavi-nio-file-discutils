@@ -53,11 +53,11 @@ public final class SquashFileSystemBuilder {
 
     private static final int DefaultBlockSize = 131072;
 
-    private BuilderContext _context;
+    private BuilderContext context;
 
-    private int _nextInode;
+    private int nextInode;
 
-    private BuilderDirectory _rootDir;
+    private BuilderDirectory rootDir;
 
     /**
      * Initializes a new instance of the SquashFileSystemBuilder class.
@@ -77,59 +77,59 @@ public final class SquashFileSystemBuilder {
         setDefaultGroup(0);
     }
 
-    private EnumSet<UnixFilePermissions> _defaultDirectoryPermissions;
+    private EnumSet<UnixFilePermissions> defaultDirectoryPermissions;
 
     /**
      * Gets or sets the default permissions used for new directories.
      */
     public EnumSet<UnixFilePermissions> getDefaultDirectoryPermissions() {
-        return _defaultDirectoryPermissions;
+        return defaultDirectoryPermissions;
     }
 
     public void setDefaultDirectoryPermissions(EnumSet<UnixFilePermissions> value) {
-        _defaultDirectoryPermissions = value;
+        defaultDirectoryPermissions = value;
     }
 
-    private EnumSet<UnixFilePermissions> _defaultFilePermissions;
+    private EnumSet<UnixFilePermissions> defaultFilePermissions;
 
     /**
      * Gets or sets the default permissions used for new files.
      */
     public EnumSet<UnixFilePermissions> getDefaultFilePermissions() {
-        return _defaultFilePermissions;
+        return defaultFilePermissions;
     }
 
     public void setDefaultFilePermissions(EnumSet<UnixFilePermissions> value) {
-        _defaultFilePermissions = value;
+        defaultFilePermissions = value;
     }
 
-    private int _defaultGroup;
+    private int defaultGroup;
 
     /**
      * Gets the default group id used for new files and directories.
      */
     public int getDefaultGroup() {
-        return _defaultGroup;
+        return defaultGroup;
     }
 
     /**
      * Sets the default group id used for new files and directories.
      */
     public void setDefaultGroup(int value) {
-        _defaultGroup = value;
+        defaultGroup = value;
     }
 
     /**
      * Gets or sets the default user id used for new files and directories.
      */
-    private int _defaultUser;
+    private int defaultUser;
 
     public int getDefaultUser() {
-        return _defaultUser;
+        return defaultUser;
     }
 
     public void setDefaultUser(int value) {
-        _defaultUser = value;
+        defaultUser = value;
     }
 
     /**
@@ -327,55 +327,55 @@ public final class SquashFileSystemBuilder {
             throw new IllegalArgumentException("Output stream must support seeking: " + output.getClass());
         }
 
-        _context = new BuilderContext();
-        _context.setRawStream(output);
-        _context.setDataBlockSize(DefaultBlockSize);
-        _context.setIoBuffer(new byte[DefaultBlockSize]);
+        context = new BuilderContext();
+        context.setRawStream(output);
+        context.setDataBlockSize(DefaultBlockSize);
+        context.setIoBuffer(new byte[DefaultBlockSize]);
 
         MetablockWriter inodeWriter = new MetablockWriter();
         MetablockWriter dirWriter = new MetablockWriter();
-        FragmentWriter fragWriter = new FragmentWriter(_context);
-        IdTableWriter idWriter = new IdTableWriter(_context);
+        FragmentWriter fragWriter = new FragmentWriter(context);
+        IdTableWriter idWriter = new IdTableWriter(context);
 
-        _context.setAllocateInode(this::allocateInode);
-        _context.setAllocateId(idWriter::allocateId);
-        _context.setWriteDataBlock(this::writeDataBlock);
-        _context.setWriteFragment(fragWriter::writeFragment);
-        _context.setInodeWriter(inodeWriter);
-        _context.setDirectoryWriter(dirWriter);
+        context.setAllocateInode(this::allocateInode);
+        context.setAllocateId(idWriter::allocateId);
+        context.setWriteDataBlock(this::writeDataBlock);
+        context.setWriteFragment(fragWriter::writeFragment);
+        context.setInodeWriter(inodeWriter);
+        context.setDirectoryWriter(dirWriter);
 
-        _nextInode = 1;
+        nextInode = 1;
 
         SuperBlock superBlock = new SuperBlock();
-        superBlock.Magic = SuperBlock.SquashFsMagic;
-        superBlock.CreationTime = System.currentTimeMillis();
-        superBlock.BlockSize = _context.getDataBlockSize();
-        superBlock.Compression = 1; // DEFLATE
-        superBlock.BlockSizeLog2 = (short) MathUtilities.log2(superBlock.BlockSize);
-        superBlock.MajorVersion = 4;
-        superBlock.MinorVersion = 0;
+        superBlock.magic = SuperBlock.SquashFsMagic;
+        superBlock.creationTime = System.currentTimeMillis();
+        superBlock.blockSize = context.getDataBlockSize();
+        superBlock.compression = 1; // DEFLATE
+        superBlock.blockSizeLog2 = (short) MathUtilities.log2(superBlock.blockSize);
+        superBlock.majorVersion = 4;
+        superBlock.minorVersion = 0;
 
         output.setPosition(superBlock.size());
 
         getRoot().reset();
-        getRoot().write(_context);
+        getRoot().write(context);
         fragWriter.flush();
-        superBlock.RootInode = getRoot().getInodeRef();
-        superBlock.InodesCount = _nextInode - 1;
-        superBlock.FragmentsCount = fragWriter.getFragmentCount();
+        superBlock.rootInode = getRoot().getInodeRef();
+        superBlock.inodesCount = nextInode - 1;
+        superBlock.fragmentsCount = fragWriter.getFragmentCount();
         superBlock.setUidGidCount((short) idWriter.getIdCount());
 
-        superBlock.InodeTableStart = output.getPosition();
+        superBlock.inodeTableStart = output.getPosition();
         inodeWriter.persist(output);
 
-        superBlock.DirectoryTableStart = output.getPosition();
+        superBlock.directoryTableStart = output.getPosition();
         dirWriter.persist(output);
 
-        superBlock.FragmentTableStart = fragWriter.persist();
-        superBlock.LookupTableStart = -1;
-        superBlock.UidGidTableStart = idWriter.persist();
-        superBlock.ExtendedAttrsTableStart = -1;
-        superBlock.BytesUsed = output.getPosition();
+        superBlock.fragmentTableStart = fragWriter.persist();
+        superBlock.lookupTableStart = -1;
+        superBlock.uidGidTableStart = idWriter.persist();
+        superBlock.extendedAttrsTableStart = -1;
+        superBlock.bytesUsed = output.getPosition();
 
         // Pad to 4KB
         long end = MathUtilities.roundUp(output.getPosition(), 4 * Sizes.OneKiB);
@@ -412,7 +412,7 @@ public final class SquashFileSystemBuilder {
      * @return The inode identifier.
      */
     private int allocateInode() {
-        return _nextInode++;
+        return nextInode++;
     }
 
     /**
@@ -444,7 +444,7 @@ public final class SquashFileSystemBuilder {
             writeOffset = offset;
             writeLen = count | 0x01000000;
         }
-        _context.getRawStream().write(writeData, writeOffset, writeLen & 0xFFFFFF);
+        context.getRawStream().write(writeData, writeOffset, writeLen & 0xFFFFFF);
         return writeLen;
     }
 
@@ -455,12 +455,12 @@ public final class SquashFileSystemBuilder {
      * @return The root directory.
      */
     private BuilderDirectory getRoot() {
-        if (_rootDir == null) {
-            _rootDir = new BuilderDirectory();
-            _rootDir.setMode(getDefaultDirectoryPermissions());
+        if (rootDir == null) {
+            rootDir = new BuilderDirectory();
+            rootDir.setMode(getDefaultDirectoryPermissions());
         }
 
-        return _rootDir;
+        return rootDir;
     }
 
     private BuilderDirectory createDirectory(String path, int user, int group, EnumSet<UnixFilePermissions> permissions) {
@@ -482,7 +482,7 @@ public final class SquashFileSystemBuilder {
 
                 currentDir.addChild(elems[i], nextDir);
             } else if (nextDir == null) {
-                throw new FileNotFoundException("Found " + nextDirAsNode.getInode()._type + ", expecting Directory " +
+                throw new FileNotFoundException("Found " + nextDirAsNode.getInode().type + ", expecting Directory " +
                                                 String.join(File.separator, Arrays.copyOfRange(elems, 0, i + 1)));
             }
 

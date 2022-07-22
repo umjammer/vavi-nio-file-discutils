@@ -31,32 +31,33 @@ import dotnet4j.util.compat.Tuple;
 
 
 public class MetadataVolumeGroupSection {
-    public String Name;
 
-    public String Id;
+    public String name;
 
-    public long SequenceNumber;
+    public String id;
 
-    public String Format;
+    public long sequenceNumber;
 
-    public EnumSet<VolumeGroupStatus> Status = EnumSet.noneOf(VolumeGroupStatus.class);
+    public String format;
 
-    public String[] Flags;
+    public EnumSet<VolumeGroupStatus> status = EnumSet.noneOf(VolumeGroupStatus.class);
 
-    public long ExtentSize;
+    public String[] flags;
 
-    public long MaxLv;
+    public long extentSize;
 
-    public long MaxPv;
+    public long maxLv;
 
-    public long MetadataCopies;
+    public long maxPv;
 
-    public List<MetadataPhysicalVolumeSection> PhysicalVolumes;
+    public long metadataCopies;
 
-    public List<MetadataLogicalVolumeSection> LogicalVolumes;
+    public List<MetadataPhysicalVolumeSection> physicalVolumes;
+
+    public List<MetadataLogicalVolumeSection> logicalVolumes;
 
     public void parse(String head, Scanner data) {
-        Name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
+        name = head.trim().replaceFirst("\\{*$", "").replaceFirst(" *$", "");
         String line;
         while (data.hasNextLine()) {
             line = Metadata.readLine(data);
@@ -68,43 +69,43 @@ public class MetadataVolumeGroupSection {
                 String paramValue = parameter.getKey().trim().toLowerCase();
                 switch (paramValue) {
                 case "id":
-                    Id = Metadata.parseStringValue(parameter.getValue());
+                    id = Metadata.parseStringValue(parameter.getValue());
                     break;
                 case "seqno":
-                    SequenceNumber = Metadata.parseNumericValue(parameter.getValue());
+                    sequenceNumber = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "format":
-                    Format = Metadata.parseStringValue(parameter.getValue());
+                    format = Metadata.parseStringValue(parameter.getValue());
                     break;
                 case "status":
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
                         if (statusValue.equals("read")) {
-                            Status.add(VolumeGroupStatus.Read);
+                            status.add(VolumeGroupStatus.Read);
                         } else if (statusValue.equals("write")) {
-                            Status.add(VolumeGroupStatus.Write);
+                            status.add(VolumeGroupStatus.Write);
                         } else if (statusValue.equals("resizeable")) {
-                            Status.add(VolumeGroupStatus.Resizeable);
+                            status.add(VolumeGroupStatus.Resizeable);
                         } else {
                             throw new IllegalArgumentException("Unexpected status in volume group metadata: " + statusValue);
                         }
                     }
                     break;
                 case "flags":
-                    Flags = Metadata.parseArrayValue(parameter.getValue());
+                    flags = Metadata.parseArrayValue(parameter.getValue());
                     break;
                 case "extent_size":
-                    ExtentSize = Metadata.parseNumericValue(parameter.getValue());
+                    extentSize = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "max_lv":
-                    MaxLv = Metadata.parseNumericValue(parameter.getValue());
+                    maxLv = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "max_pv":
-                    MaxPv = Metadata.parseNumericValue(parameter.getValue());
+                    maxPv = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 case "metadata_copies":
-                    MetadataCopies = Metadata.parseNumericValue(parameter.getValue());
+                    metadataCopies = Metadata.parseNumericValue(parameter.getValue());
                     break;
                 default:
                     throw new IllegalArgumentException("Unexpected parameter in volume group metadata: " + parameter.getKey());
@@ -112,9 +113,9 @@ public class MetadataVolumeGroupSection {
             } else if (line.endsWith("{")) {
                 String sectionName = line.replaceFirst("\\{*$", "").replaceFirst(" *$", "").toLowerCase();
                 if (sectionName.equals("physical_volumes")) {
-                    PhysicalVolumes = parsePhysicalVolumeSection(data);
+                    physicalVolumes = parsePhysicalVolumeSection(data);
                 } else if (sectionName.equals("logical_volumes")) {
-                    LogicalVolumes = parseLogicalVolumeSection(data);
+                    logicalVolumes = parseLogicalVolumeSection(data);
                 } else {
                     throw new IllegalArgumentException("Unexpected section in volume group metadata: " + sectionName);
                 }

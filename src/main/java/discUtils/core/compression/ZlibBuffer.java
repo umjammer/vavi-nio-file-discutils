@@ -32,29 +32,30 @@ import dotnet4j.io.Stream;
 
 
 public class ZlibBuffer extends Buffer {
-    @SuppressWarnings("unused")
-    private Ownership _ownership;
 
-    private final Stream _stream;
+    @SuppressWarnings("unused")
+    private Ownership ownership;
+
+    private final Stream stream;
 
     private int position;
 
     public ZlibBuffer(Stream stream, Ownership ownership) {
-        _stream = stream;
-        _ownership = ownership;
+        this.stream = stream;
+        this.ownership = ownership;
         position = 0;
     }
 
     public boolean canRead() {
-        return _stream.canRead();
+        return stream.canRead();
     }
 
     public boolean canWrite() {
-        return _stream.canWrite();
+        return stream.canWrite();
     }
 
     public long getCapacity() {
-        return _stream.getLength();
+        return stream.getLength();
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
@@ -62,7 +63,7 @@ public class ZlibBuffer extends Buffer {
             throw new UnsupportedOperationException();
         }
 
-        int read = _stream.read(buffer, offset, count);
+        int read = stream.read(buffer, offset, count);
         position += read;
         return read;
     }
@@ -76,6 +77,6 @@ public class ZlibBuffer extends Buffer {
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-        return Collections.singletonList(new StreamExtent(0, _stream.getLength()));
+        return Collections.singletonList(new StreamExtent(0, stream.getLength()));
     }
 }

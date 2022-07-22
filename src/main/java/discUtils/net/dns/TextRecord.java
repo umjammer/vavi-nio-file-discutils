@@ -31,10 +31,11 @@ import java.util.Map;
  * Represents a DNS TXT record.
  */
 public final class TextRecord extends ResourceRecord {
+
     public TextRecord(String name, RecordType type, RecordClass rClass, long expiry, PacketReader reader) {
         super(name, type, rClass, expiry);
 
-        _values = new HashMap<>();
+        values = new HashMap<>();
 
         short dataLen = reader.readUShort();
         int pos = reader.getPosition();
@@ -51,10 +52,10 @@ public final class TextRecord extends ResourceRecord {
      * For data fidelity, the data is returned in byte form - typically
      * the encoded data is actually ASCII or UTF-8.
      */
-    private Map<String, byte[]> _values;
+    private Map<String, byte[]> values;
 
     public Map<String, byte[]> getValues() {
-        return _values;
+        return values;
     }
 
     private void storeValue(byte[] value) {

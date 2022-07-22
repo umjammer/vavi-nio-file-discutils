@@ -92,7 +92,7 @@ public class UdfUtilities {
         try {
             ZonedDateTime baseTime = ZonedDateTime.of(year, month, day, hour, min, sec, 10 * csec + hmsec / 10, ZoneId.of("UTC"));
             return baseTime.minus(Duration.ofMinutes(minutesWest)).toInstant().toEpochMilli();
-        } catch (IndexOutOfBoundsException __dummyCatchVar0) {
+        } catch (IndexOutOfBoundsException e) {
             return Long.MIN_VALUE;
         }
     }
@@ -132,9 +132,9 @@ public class UdfUtilities {
     }
 
     public static byte[] readExtent(UdfContext context, LongAllocationDescriptor extent) {
-        LogicalPartition partition = context.LogicalPartitions.get(extent.ExtentLocation.getPartition());
-        long pos = extent.ExtentLocation.LogicalBlock * partition.getLogicalBlockSize();
-        return StreamUtilities.readExact(partition.getContent(), pos, extent.ExtentLength);
+        LogicalPartition partition = context.logicalPartitions.get(extent.extentLocation.getPartition());
+        long pos = extent.extentLocation.logicalBlock * partition.getLogicalBlockSize();
+        return StreamUtilities.readExact(partition.getContent(), pos, extent.extentLength);
     }
 
     private static short forceRange(short min, short max, short val) {

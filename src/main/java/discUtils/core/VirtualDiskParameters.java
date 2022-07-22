@@ -32,6 +32,7 @@ import java.util.Map;
  * disk itself.
  */
 public class VirtualDiskParameters {
+
     /**
      * the type of disk adapter.
      */
@@ -66,8 +67,8 @@ public class VirtualDiskParameters {
         return adapterType;
     }
 
-    public void setAdapterType(GenericDiskAdapterType AdapterType) {
-        this.adapterType = AdapterType;
+    public void setAdapterType(GenericDiskAdapterType adapterType) {
+        this.adapterType = adapterType;
     }
 
     public Geometry getBiosGeometry() {

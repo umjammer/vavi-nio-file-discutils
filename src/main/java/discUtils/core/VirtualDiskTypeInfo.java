@@ -26,86 +26,86 @@ package discUtils.core;
  * Information about a type of virtual disk.
  */
 public final class VirtualDiskTypeInfo {
+
     /**
      * Gets or sets the algorithm for determining the geometry for a given disk
      * capacity.
      */
-    private GeometryCalculation __CalcGeometry;
+    private GeometryCalculation calcGeometry;
 
     public GeometryCalculation getCalcGeometry() {
-        return __CalcGeometry;
+        return calcGeometry;
     }
 
     public void setCalcGeometry(GeometryCalculation value) {
-        __CalcGeometry = value;
+        calcGeometry = value;
     }
 
     /**
      * Gets or sets a value indicating whether this disk type can represent hard
      * disks.
      */
-    private boolean __CanBeHardDisk;
+    private boolean canBeHardDisk;
 
     public boolean getCanBeHardDisk() {
-        return __CanBeHardDisk;
+        return canBeHardDisk;
     }
 
     public void setCanBeHardDisk(boolean value) {
-        __CanBeHardDisk = value;
+        canBeHardDisk = value;
     }
 
     /**
      * Gets or sets a value indicating whether this disk type requires a
      * specific geometry for any given disk capacity.
      */
-    private boolean __DeterministicGeometry;
+    private boolean deterministicGeometry;
 
     public boolean getDeterministicGeometry() {
-        return __DeterministicGeometry;
+        return deterministicGeometry;
     }
 
     public void setDeterministicGeometry(boolean value) {
-        __DeterministicGeometry = value;
+        deterministicGeometry = value;
     }
 
     /**
      * Gets or sets the name of the virtual disk type.
      */
-    private String __Name;
+    private String name;
 
     public String getName() {
-        return __Name;
+        return name;
     }
 
     public void setName(String value) {
-        __Name = value;
+        name = value;
     }
 
     /**
      * Gets or sets a value indicating whether this disk type persists the BIOS
      * geometry.
      */
-    private boolean __PreservesBiosGeometry;
+    private boolean preservesBiosGeometry;
 
     public boolean getPreservesBiosGeometry() {
-        return __PreservesBiosGeometry;
+        return preservesBiosGeometry;
     }
 
     public void setPreservesBiosGeometry(boolean value) {
-        __PreservesBiosGeometry = value;
+        preservesBiosGeometry = value;
     }
 
     /**
      * Gets or sets the variant of the virtual disk type.
      */
-    private String __Variant;
+    private String variant;
 
     public String getVariant() {
-        return __Variant;
+        return variant;
     }
 
     public void setVariant(String value) {
-        __Variant = value;
+        variant = value;
     }
-
 }

@@ -26,14 +26,15 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class DeviceInode extends Inode {
-    private int __DeviceId;
+
+    private int deviceId;
 
     public int getDeviceId() {
-        return __DeviceId;
+        return deviceId;
     }
 
     public void setDeviceId(int value) {
-        __DeviceId = value;
+        deviceId = value;
     }
 
     public int size() {
@@ -42,8 +43,8 @@ public final class DeviceInode extends Inode {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        _numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
-        setDeviceId(EndianUtilities.toUInt32LittleEndian(buffer, offset + 20));
+        numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
+        deviceId = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
         return 24;
     }
 }

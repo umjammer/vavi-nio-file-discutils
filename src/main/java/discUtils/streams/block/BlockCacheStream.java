@@ -38,23 +38,24 @@ import dotnet4j.io.SeekOrigin;
  * A stream implementing a block-oriented read cache.
  */
 public final class BlockCacheStream extends SparseStream {
-    private boolean _atEof;
 
-    private final int _blocksInReadBuffer;
+    private boolean atEof;
 
-    private final BlockCache<Block> _cache;
+    private final int blocksInReadBuffer;
 
-    private final Ownership _ownWrapped;
+    private final BlockCache<Block> cache;
 
-    private long _position;
+    private final Ownership ownWrapped;
 
-    private final byte[] _readBuffer;
+    private long position;
 
-    private final BlockCacheSettings _settings;
+    private final byte[] readBuffer;
 
-    private final BlockCacheStatistics _stats;
+    private final BlockCacheSettings settings;
 
-    private SparseStream _wrappedStream;
+    private final BlockCacheStatistics stats;
+
+    private SparseStream wrappedStream;
 
     /**
      * Initializes a new instance of the BlockCacheStream class.
@@ -82,22 +83,22 @@ public final class BlockCacheStream extends SparseStream {
             throw new IllegalArgumentException("The wrapped stream does not support seeking");
         }
 
-        _wrappedStream = toWrap;
-        _ownWrapped = ownership;
-        _settings = new BlockCacheSettings(settings);
+        wrappedStream = toWrap;
+        ownWrapped = ownership;
+        this.settings = new BlockCacheSettings(settings);
 
-        if (_settings.getOptimumReadSize() % _settings.getBlockSize() != 0) {
+        if (this.settings.getOptimumReadSize() % this.settings.getBlockSize() != 0) {
             throw new IllegalArgumentException("Invalid settings, OptimumReadSize must be a multiple of BlockSize");
         }
 
-        _readBuffer = new byte[_settings.getOptimumReadSize()];
-        _blocksInReadBuffer = _settings.getOptimumReadSize() / _settings.getBlockSize();
+        readBuffer = new byte[this.settings.getOptimumReadSize()];
+        blocksInReadBuffer = this.settings.getOptimumReadSize() / this.settings.getBlockSize();
 
-        int totalBlocks = (int) (_settings.getReadCacheSize() / _settings.getBlockSize());
+        int totalBlocks = (int) (this.settings.getReadCacheSize() / this.settings.getBlockSize());
 
-        _cache = new BlockCache<>(_settings.getBlockSize(), totalBlocks);
-        _stats = new BlockCacheStatistics();
-        _stats.setFreeReadBlocks(totalBlocks);
+        cache = new BlockCache<>(this.settings.getBlockSize(), totalBlocks);
+        stats = new BlockCacheStatistics();
+        stats.setFreeReadBlocks(totalBlocks);
     }
 
     /**
@@ -118,7 +119,7 @@ public final class BlockCacheStream extends SparseStream {
      * Gets an indication as to whether the stream can be written to.
      */
     public boolean canWrite() {
-        return _wrappedStream.canWrite();
+        return wrappedStream.canWrite();
     }
 
     /**
@@ -127,7 +128,7 @@ public final class BlockCacheStream extends SparseStream {
      */
     public List<StreamExtent> getExtents() {
         checkDisposed();
-        return _wrappedStream.getExtents();
+        return wrappedStream.getExtents();
     }
 
     /**
@@ -135,7 +136,7 @@ public final class BlockCacheStream extends SparseStream {
      */
     public long getLength() {
         checkDisposed();
-        return _wrappedStream.getLength();
+        return wrappedStream.getLength();
     }
 
     /**
@@ -143,20 +144,20 @@ public final class BlockCacheStream extends SparseStream {
      */
     public long getPosition() {
         checkDisposed();
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
         checkDisposed();
-        _position = value;
+        position = value;
     }
 
     /**
      * Gets the performance statistics for this instance.
      */
     public BlockCacheStatistics getStatistics() {
-        _stats.setFreeReadBlocks(_cache.getFreeBlockCount());
-        return _stats;
+        stats.setFreeReadBlocks(cache.getFreeBlockCount());
+        return stats;
     }
 
     /**
@@ -168,7 +169,7 @@ public final class BlockCacheStream extends SparseStream {
      */
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
-        return _wrappedStream.getExtentsInRange(start, count);
+        return wrappedStream.getExtentsInRange(start, count);
     }
 
     /**
@@ -182,25 +183,25 @@ public final class BlockCacheStream extends SparseStream {
     public synchronized int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
-        if (_position >= getLength()) {
-            if (_atEof) {
+        if (position >= getLength()) {
+            if (atEof) {
                 throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
             }
-            _atEof = true;
+            atEof = true;
             return 0;
         }
 
-        _stats.setTotalReadsIn(_stats.getTotalReadsIn() + 1);
+        stats.setTotalReadsIn(stats.getTotalReadsIn() + 1);
 
-        if (count > _settings.getLargeReadSize()) {
-            _stats.setLargeReadsIn(_stats.getLargeReadsIn() + 1);
-            _stats.setTotalReadsOut(_stats.getTotalReadsOut() + 1);
-            _wrappedStream.setPosition(_position);
-            int numRead = _wrappedStream.read(buffer, offset, count);
-            _position = _wrappedStream.getPosition();
+        if (count > settings.getLargeReadSize()) {
+            stats.setLargeReadsIn(stats.getLargeReadsIn() + 1);
+            stats.setTotalReadsOut(stats.getTotalReadsOut() + 1);
+            wrappedStream.setPosition(position);
+            int numRead = wrappedStream.read(buffer, offset, count);
+            position = wrappedStream.getPosition();
 
-            if (_position >= getLength()) {
-                _atEof = true;
+            if (position >= getLength()) {
+                atEof = true;
             }
 
             return numRead;
@@ -209,15 +210,15 @@ public final class BlockCacheStream extends SparseStream {
         int totalBytesRead = 0;
         boolean servicedFromCache = false;
         boolean servicedOutsideCache = false;
-        int blockSize = _settings.getBlockSize();
+        int blockSize = settings.getBlockSize();
 
-        long firstBlock = _position / blockSize;
-        int offsetInNextBlock = (int) (_position % blockSize);
-        long endBlock = MathUtilities.ceil(Math.min(_position + count, getLength()), blockSize);
+        long firstBlock = position / blockSize;
+        int offsetInNextBlock = (int) (position % blockSize);
+        long endBlock = MathUtilities.ceil(Math.min(position + count, getLength()), blockSize);
         int numBlocks = (int) (endBlock - firstBlock);
 
         if (offsetInNextBlock != 0) {
-            _stats.setUnalignedReadsIn(_stats.getUnalignedReadsIn() + 1);
+            stats.setUnalignedReadsIn(stats.getUnalignedReadsIn() + 1);
         }
 
         int blocksRead = 0;
@@ -225,27 +226,27 @@ public final class BlockCacheStream extends SparseStream {
             Block[] block = new Block[1];
 
             // Read from the cache as much as possible
-            while (blocksRead < numBlocks && _cache.tryGetBlock(firstBlock + blocksRead, block)) {
+            while (blocksRead < numBlocks && cache.tryGetBlock(firstBlock + blocksRead, block)) {
                 int bytesToRead = Math.min(count - totalBytesRead, block[0].getAvailable() - offsetInNextBlock);
 
                 System.arraycopy(block[0].getData(), offsetInNextBlock, buffer, offset + totalBytesRead, bytesToRead);
 
                 offsetInNextBlock = 0;
                 totalBytesRead += bytesToRead;
-                _position += bytesToRead;
+                position += bytesToRead;
                 blocksRead++;
 
                 servicedFromCache = true;
             }
 
             // Now handle a sequence of (one or more) blocks that are not cached
-            if (blocksRead < numBlocks && !_cache.containsBlock(firstBlock + blocksRead)) {
+            if (blocksRead < numBlocks && !cache.containsBlock(firstBlock + blocksRead)) {
                 servicedOutsideCache = true;
 
                 // Figure out how many blocks to read from the wrapped stream
                 int blocksToRead = 0;
-                while (blocksRead + blocksToRead < numBlocks && blocksToRead < _blocksInReadBuffer
-                        && !_cache.containsBlock(firstBlock + blocksRead + blocksToRead)) {
+                while (blocksRead + blocksToRead < numBlocks && blocksToRead < blocksInReadBuffer
+                        && !cache.containsBlock(firstBlock + blocksRead + blocksToRead)) {
                     ++blocksToRead;
                 }
 
@@ -254,18 +255,18 @@ public final class BlockCacheStream extends SparseStream {
                 int bytesRead = (int) Math.min(blocksToRead * (long) blockSize, getLength() - readPosition);
 
                 // Do the read
-                _stats.setTotalReadsOut(_stats.getTotalReadsOut() + 1);
-                _wrappedStream.setPosition(readPosition);
-                StreamUtilities.readExact(_wrappedStream, _readBuffer, 0, bytesRead);
+                stats.setTotalReadsOut(stats.getTotalReadsOut() + 1);
+                wrappedStream.setPosition(readPosition);
+                StreamUtilities.readExact(wrappedStream, readBuffer, 0, bytesRead);
 
                 // Cache the read blocks
                 for (int i = 0; i < blocksToRead; ++i) {
                     int copyBytes = Math.min(blockSize, bytesRead - i * blockSize);
-                    block[0] = _cache.getBlock(firstBlock + blocksRead + i, Block.class);
-                    System.arraycopy(_readBuffer, i * blockSize, block[0].getData(), 0, copyBytes);
+                    block[0] = cache.getBlock(firstBlock + blocksRead + i, Block.class);
+                    System.arraycopy(readBuffer, i * blockSize, block[0].getData(), 0, copyBytes);
                     block[0].setAvailable(copyBytes);
                     if (copyBytes < blockSize) {
-                        Arrays.fill(_readBuffer,
+                        Arrays.fill(readBuffer,
                                     i * blockSize + copyBytes,
                                     (i * blockSize + copyBytes) + (blockSize - copyBytes),
                                     (byte) 0);
@@ -277,23 +278,23 @@ public final class BlockCacheStream extends SparseStream {
 
                 // Propogate the data onto the caller
                 int bytesToCopy = Math.min(count - totalBytesRead, bytesRead - offsetInNextBlock);
-                System.arraycopy(_readBuffer, offsetInNextBlock, buffer, offset + totalBytesRead, bytesToCopy);
+                System.arraycopy(readBuffer, offsetInNextBlock, buffer, offset + totalBytesRead, bytesToCopy);
                 totalBytesRead += bytesToCopy;
-                _position += bytesToCopy;
+                position += bytesToCopy;
                 offsetInNextBlock = 0;
             }
         }
 
-        if (_position >= getLength() && totalBytesRead == 0) {
-            _atEof = true;
+        if (position >= getLength() && totalBytesRead == 0) {
+            atEof = true;
         }
 
         if (servicedFromCache) {
-            _stats.setReadCacheHits(_stats.getReadCacheHits() + 1);
+            stats.setReadCacheHits(stats.getReadCacheHits() + 1);
         }
 
         if (servicedOutsideCache) {
-            _stats.setReadCacheMisses(_stats.getReadCacheMisses() + 1);
+            stats.setReadCacheMisses(stats.getReadCacheMisses() + 1);
         }
 
         return totalBytesRead;
@@ -304,7 +305,7 @@ public final class BlockCacheStream extends SparseStream {
      */
     public void flush() {
         checkDisposed();
-        _wrappedStream.flush();
+        wrappedStream.flush();
     }
 
     /**
@@ -318,18 +319,18 @@ public final class BlockCacheStream extends SparseStream {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += getLength();
         }
 
-        _atEof = false;
+        atEof = false;
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     /**
@@ -339,7 +340,7 @@ public final class BlockCacheStream extends SparseStream {
      */
     public void setLength(long value) {
         checkDisposed();
-        _wrappedStream.setLength(value);
+        wrappedStream.setLength(value);
     }
 
     /**
@@ -352,24 +353,24 @@ public final class BlockCacheStream extends SparseStream {
     public synchronized void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
-        _stats.setTotalWritesIn(_stats.getTotalWritesIn() + 1);
+        stats.setTotalWritesIn(stats.getTotalWritesIn() + 1);
 
-        int blockSize = _settings.getBlockSize();
-        long firstBlock = _position / blockSize;
-        long endBlock = MathUtilities.ceil(Math.min(_position + count, getLength()), blockSize);
+        int blockSize = settings.getBlockSize();
+        long firstBlock = position / blockSize;
+        long endBlock = MathUtilities.ceil(Math.min(position + count, getLength()), blockSize);
         int numBlocks = (int) (endBlock - firstBlock);
 
         try {
-            _wrappedStream.setPosition(_position);
-            _wrappedStream.write(buffer, offset, count);
+            wrappedStream.setPosition(position);
+            wrappedStream.write(buffer, offset, count);
         } catch (Exception e) {
             invalidateBlocks(firstBlock, numBlocks);
             throw e;
         }
 
-        int offsetInNextBlock = (int) (_position % blockSize);
+        int offsetInNextBlock = (int) (position % blockSize);
         if (offsetInNextBlock != 0) {
-            _stats.setUnalignedWritesIn(_stats.getUnalignedWritesIn() + 1);
+            stats.setUnalignedWritesIn(stats.getUnalignedWritesIn() + 1);
         }
 
         // For each block touched, if it's cached, update it
@@ -379,7 +380,7 @@ public final class BlockCacheStream extends SparseStream {
             int bytesThisBlock = Math.min(count - bytesProcessed, blockSize - offsetInNextBlock);
 
             Block[] block = new Block[1];
-            if (_cache.tryGetBlock(firstBlock + i, block)) {
+            if (cache.tryGetBlock(firstBlock + i, block)) {
                 System.arraycopy(buffer, bufferPos, block[0].getData(), offsetInNextBlock, bytesThisBlock);
                 block[0].setAvailable(Math.max(block[0].getAvailable(), offsetInNextBlock + bytesThisBlock));
             }
@@ -387,29 +388,29 @@ public final class BlockCacheStream extends SparseStream {
             offsetInNextBlock = 0;
             bytesProcessed += bytesThisBlock;
         }
-        _position += count;
+        position += count;
     }
 
     /**
      * Disposes of this instance, freeing up associated resources.
      */
     public void close() throws IOException {
-        if (_wrappedStream != null && _ownWrapped == Ownership.Dispose) {
-            _wrappedStream.close();
+        if (wrappedStream != null && ownWrapped == Ownership.Dispose) {
+            wrappedStream.close();
         }
 
-        _wrappedStream = null;
+        wrappedStream = null;
     }
 
     private void checkDisposed() {
-        if (_wrappedStream == null) {
+        if (wrappedStream == null) {
             throw new dotnet4j.io.IOException("it has been closed.");
         }
     }
 
     private void invalidateBlocks(long firstBlock, int numBlocks) {
         for (long i = firstBlock; i < firstBlock + numBlocks; ++i) {
-            _cache.releaseBlock(i);
+            cache.releaseBlock(i);
         }
     }
 }

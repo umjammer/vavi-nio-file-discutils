@@ -22,7 +22,6 @@
 
 package isoCreate;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,17 +40,18 @@ import dotnet4j.io.FileStream;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "iso_file", description = "The ISO file to create.", args = 1, required = false)
-    private String _isoFileParam;
+    private String isoFileParam;
 
     @Option(option = "sourcedir", description = "The directory to be added to the ISO", args = 1, required = false)
-    private String _srcDir;
+    private String srcDir;
 
     @Option(option = "bootimage", description = "The bootable disk image, to create a bootable ISO", args = 1, required = false)
-    private String _bootImage;
+    private String bootImage;
 
     @Option(option = "vl", argName = "vollabel", args = 1, description = "Volume Label for the ISO file.")
-    private String _volLabelSwitch = "label";
+    private String volLabelSwitch = "label";
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -60,25 +60,25 @@ public class Program extends ProgramBase {
     }
 
     protected void doRun() throws IOException {
-        Path di = Paths.get(_srcDir);
+        Path di = Paths.get(srcDir);
         if (!Files.exists(di)) {
             System.err.println("The source directory doesn't exist!");
             System.exit(1);
         }
 
         CDBuilder builder = new CDBuilder();
-        if (_volLabelSwitch != null) {
-            builder.setVolumeIdentifier(_volLabelSwitch);
+        if (volLabelSwitch != null) {
+            builder.setVolumeIdentifier(volLabelSwitch);
         }
 
-        if (_bootImage != null) {
-            builder.setBootImage(new FileStream(_bootImage, FileMode.Open, FileAccess.Read),
+        if (bootImage != null) {
+            builder.setBootImage(new FileStream(bootImage, FileMode.Open, FileAccess.Read),
                                  BootDeviceEmulation.NoEmulation,
                                  0);
         }
 
         populateFromFolder(builder, di, di.toAbsolutePath().toString());
-        builder.build(_isoFileParam);
+        builder.build(isoFileParam);
     }
 
     private static void populateFromFolder(CDBuilder builder, Path di, String basePath) throws IOException {

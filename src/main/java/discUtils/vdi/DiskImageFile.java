@@ -42,22 +42,23 @@ import dotnet4j.io.Stream;
  * Represents a single VirtualBox disk (.vdi file).
  */
 public final class DiskImageFile extends VirtualDiskLayer {
-    private HeaderRecord _header;
+
+    private HeaderRecord header;
 
     /**
      * Indicates if this object controls the lifetime of the stream.
      */
-    private final Ownership _ownsStream;
+    private final Ownership ownsStream;
 
-    private PreHeaderRecord _preHeader;
+    private PreHeaderRecord preHeader;
 
-    private Stream _stream;
+    private Stream stream;
 
     /**
      * Indicates if a write occurred, indicating the marker in the header needs
      * to be updated.
      */
-    private boolean _writeOccurred;
+    private boolean writeOccurred;
 
     /**
      * Initializes a new instance of the DiskImageFile class.
@@ -65,8 +66,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param stream The stream to interpret.
      */
     public DiskImageFile(Stream stream) {
-        _stream = stream;
-        _ownsStream = Ownership.None;
+        this.stream = stream;
+        ownsStream = Ownership.None;
         readHeader();
     }
 
@@ -78,42 +79,42 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            lifetime of the stream.
      */
     public DiskImageFile(Stream stream, Ownership ownsStream) {
-        _stream = stream;
-        _ownsStream = ownsStream;
+        this.stream = stream;
+        this.ownsStream = ownsStream;
         readHeader();
     }
 
     public long getCapacity() {
-        return _header.diskSize;
+        return header.diskSize;
     }
 
     /**
      * Gets (a guess at) the geometry of the virtual disk.
      */
     public Geometry getGeometry() {
-        if (_header.lchsGeometry != null && _header.lchsGeometry.Cylinders != 0) {
-            return _header.lchsGeometry.toGeometry(_header.diskSize);
+        if (header.lchsGeometry != null && header.lchsGeometry.cylinders != 0) {
+            return header.lchsGeometry.toGeometry(header.diskSize);
         }
 
-        if (_header.legacyGeometry.Cylinders != 0) {
-            return _header.legacyGeometry.toGeometry(_header.diskSize);
+        if (header.legacyGeometry.cylinders != 0) {
+            return header.legacyGeometry.toGeometry(header.diskSize);
         }
 
-        return GeometryRecord.fromCapacity(_header.diskSize).toGeometry(_header.diskSize);
+        return GeometryRecord.fromCapacity(header.diskSize).toGeometry(header.diskSize);
     }
 
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
     public boolean isSparse() {
-        return _header.imageType != ImageType.Fixed;
+        return header.imageType != ImageType.Fixed;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
     public boolean needsParent() {
-        return _header.imageType == ImageType.Differencing || _header.imageType == ImageType.Undo;
+        return header.imageType == ImageType.Differencing || header.imageType == ImageType.Undo;
     }
 
     // Differencing disks not yet supported.
@@ -196,8 +197,8 @@ public final class DiskImageFile extends VirtualDiskLayer {
             }
         }
 
-        DiskStream stream = new DiskStream(_stream, Ownership.None, _header);
-        stream.WriteOccurred = onWriteOccurred;
+        DiskStream stream = new DiskStream(this.stream, Ownership.None, header);
+        stream.writeOccurred = onWriteOccurred;
         return stream;
     }
 
@@ -215,25 +216,25 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Disposes of underlying resources.
      */
     public void close() throws IOException {
-        if (_writeOccurred && _stream != null) {
-            _header.modificationId = UUID.randomUUID();
-            _stream.setPosition(PreHeaderRecord.Size);
-            _header.write(_stream);
+        if (writeOccurred && stream != null) {
+            header.modificationId = UUID.randomUUID();
+            stream.setPosition(PreHeaderRecord.Size);
+            header.write(stream);
         }
 
-        if (_ownsStream == Ownership.Dispose && _stream != null) {
-            _stream.close();
-            _stream = null;
+        if (ownsStream == Ownership.Dispose && stream != null) {
+            stream.close();
+            stream = null;
         }
     }
 
     private void readHeader() {
-        _stream.setPosition(0);
-        _preHeader = new PreHeaderRecord();
-        _preHeader.read(_stream);
-        _header = new HeaderRecord();
-        _header.read(_preHeader.Version, _stream);
+        stream.setPosition(0);
+        preHeader = new PreHeaderRecord();
+        preHeader.read(stream);
+        header = new HeaderRecord();
+        header.read(preHeader.version, stream);
     }
 
-    private BiConsumer<Object, Object[]> onWriteOccurred = (sender, e) -> _writeOccurred = true;
+    private BiConsumer<Object, Object[]> onWriteOccurred = (sender, e) -> writeOccurred = true;
 }

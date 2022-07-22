@@ -38,13 +38,14 @@ import discUtils.streams.util.StreamUtilities;
  * data - does not attempt to validate the information.
  */
 class Mode2Buffer implements IBuffer {
-    private final byte[] _iobuffer;
 
-    private final IBuffer _wrapped;
+    private final byte[] iobuffer;
+
+    private final IBuffer wrapped;
 
     public Mode2Buffer(IBuffer toWrap) {
-        _wrapped = toWrap;
-        _iobuffer = new byte[DiscImageFile.Mode2SectorSize];
+        wrapped = toWrap;
+        iobuffer = new byte[DiscImageFile.Mode2SectorSize];
     }
 
     public boolean canRead() {
@@ -56,7 +57,7 @@ class Mode2Buffer implements IBuffer {
     }
 
     public long getCapacity() {
-        return _wrapped.getCapacity() / DiscImageFile.Mode2SectorSize * DiscImageFile.Mode1SectorSize;
+        return wrapped.getCapacity() / DiscImageFile.Mode2SectorSize * DiscImageFile.Mode1SectorSize;
     }
 
     public List<StreamExtent> getExtents() {
@@ -71,9 +72,9 @@ class Mode2Buffer implements IBuffer {
             long sector = thisPos / DiscImageFile.Mode1SectorSize;
             int sectorOffset = (int) (thisPos - sector * DiscImageFile.Mode1SectorSize);
             StreamUtilities
-                    .readExact(_wrapped, sector * DiscImageFile.Mode2SectorSize, _iobuffer, 0, DiscImageFile.Mode2SectorSize);
+                    .readExact(wrapped, sector * DiscImageFile.Mode2SectorSize, iobuffer, 0, DiscImageFile.Mode2SectorSize);
             int bytesToCopy = Math.min(DiscImageFile.Mode1SectorSize - sectorOffset, totalToRead - totalRead);
-            System.arraycopy(_iobuffer, 24 + sectorOffset, buffer, offset + totalRead, bytesToCopy);
+            System.arraycopy(iobuffer, 24 + sectorOffset, buffer, offset + totalRead, bytesToCopy);
             totalRead += bytesToCopy;
         }
         return totalRead;

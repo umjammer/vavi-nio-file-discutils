@@ -26,17 +26,18 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ImplementationUseExtendedAttributeRecord extends ExtendedAttributeRecord {
-    public ImplementationEntityIdentifier ImplementationIdentifier;
 
-    public byte[] ImplementationUseData;
+    public ImplementationEntityIdentifier implementationIdentifier;
+
+    public byte[] implementationUseData;
 
     public int readFrom(byte[] buffer, int offset) {
         int read = super.readFrom(buffer, offset);
         int iuSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
-        ImplementationIdentifier = new ImplementationEntityIdentifier();
-        ImplementationIdentifier.readFrom(buffer, offset + 16);
-        ImplementationUseData = new byte[iuSize];
-        System.arraycopy(buffer, offset + 48, ImplementationUseData, 0, iuSize);
+        implementationIdentifier = new ImplementationEntityIdentifier();
+        implementationIdentifier.readFrom(buffer, offset + 16);
+        implementationUseData = new byte[iuSize];
+        System.arraycopy(buffer, offset + 48, implementationUseData, 0, iuSize);
         return read;
     }
 }

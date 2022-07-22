@@ -27,80 +27,81 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class ShortformDirectoryEntry implements IByteArraySerializable, IDirectoryEntry {
-    private final boolean _useShortInode;
 
-    private final boolean _ftype;
+    private final boolean useShortInode;
+
+    private final boolean ftype;
 
     public ShortformDirectoryEntry(boolean useShortInode, Context context) {
-        _useShortInode = useShortInode;
-        _ftype = context.getSuperBlock().hasFType();
+        this.useShortInode = useShortInode;
+        ftype = context.getSuperBlock().hasFType();
     }
 
-    private byte _nameLength;
+    private byte nameLength;
 
     public int getNameLength() {
-        return _nameLength & 0xff;
+        return nameLength & 0xff;
     }
 
     public void setNameLength(byte value) {
-        _nameLength = value;
+        nameLength = value;
     }
 
-    private short _offset;
+    private short offset;
 
     public int getOffset() {
-        return _offset & 0xffff;
+        return offset & 0xffff;
     }
 
     public void setOffset(short value) {
-        _offset = value;
+        offset = value;
     }
 
-    private byte[] _name;
+    private byte[] name;
 
     public byte[] getName() {
-        return _name;
+        return name;
     }
 
     public void setName(byte[] value) {
-        _name = value;
+        name = value;
     }
 
-    private long _inode;
+    private long inode;
 
     public long getInode() {
-        return _inode;
+        return inode;
     }
 
     public void setInode(long value) {
-        _inode = value;
+        inode = value;
     }
 
-    private DirectoryFType _fType = DirectoryFType.File;
+    private DirectoryFType fType = DirectoryFType.File;
 
     public DirectoryFType getFType() {
-        return _fType;
+        return fType;
     }
 
     public void setFType(DirectoryFType value) {
-        _fType = value;
+        fType = value;
     }
 
     public int size() {
-        return 0x3 + getNameLength() + (_useShortInode ? 4 : 8) + (_ftype ? 1 : 0);
+        return 0x3 + getNameLength() + (useShortInode ? 4 : 8) + (ftype ? 1 : 0);
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _nameLength = buffer[offset];
-        _offset = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x1);
-        _name = EndianUtilities.toByteArray(buffer, offset + 0x3, getNameLength());
+        nameLength = buffer[offset];
+        this.offset = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x1);
+        name = EndianUtilities.toByteArray(buffer, offset + 0x3, getNameLength());
         offset += 0x3 + getNameLength();
-        if (_ftype) {
-            _fType = DirectoryFType.values()[buffer[offset]];
+        if (ftype) {
+            fType = DirectoryFType.values()[buffer[offset]];
             offset++;
         }
 
-        if (_useShortInode) {
+        if (useShortInode) {
             setInode(EndianUtilities.toUInt32BigEndian(buffer, offset));
         } else {
             setInode(EndianUtilities.toUInt64BigEndian(buffer, offset));
@@ -116,6 +117,6 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
      *
      */
     public String toString() {
-        return _inode + ": " + EndianUtilities.bytesToString(_name, 0, getNameLength());
+        return inode + ": " + EndianUtilities.bytesToString(name, 0, getNameLength());
     }
 }

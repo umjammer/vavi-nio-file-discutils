@@ -26,26 +26,27 @@
 package discUtils.core.compression;
 
 public class BZip2BlockDecoder {
-    private final InverseBurrowsWheeler _inverseBurrowsWheeler;
+
+    private final InverseBurrowsWheeler inverseBurrowsWheeler;
 
     public BZip2BlockDecoder(int blockSize) {
-        _inverseBurrowsWheeler = new InverseBurrowsWheeler(blockSize);
+        inverseBurrowsWheeler = new InverseBurrowsWheeler(blockSize);
     }
 
-    private int _crc;
+    private int crc;
 
     public int getCrc() {
-        return _crc;
+        return crc;
     }
 
     public void setCrc(int value) {
-        _crc = value;
+        crc = value;
     }
 
     public int process(BitStream bitstream, byte[] outputBuffer, int outputBufferOffset) {
-        setCrc(0);
+        crc = 0;
         for (int i = 0; i < 4; ++i) {
-            setCrc((getCrc() << 8) | bitstream.read(8));
+            crc = (crc << 8) | bitstream.read(8);
         }
 
         boolean rand = bitstream.read(1) != 0;
@@ -53,8 +54,8 @@ public class BZip2BlockDecoder {
 
         int thisBlockSize = readBuffer(bitstream, outputBuffer, outputBufferOffset);
 
-        _inverseBurrowsWheeler.setOriginalIndex(origPtr);
-        _inverseBurrowsWheeler.process(outputBuffer, outputBufferOffset, thisBlockSize, outputBuffer, outputBufferOffset);
+        inverseBurrowsWheeler.setOriginalIndex(origPtr);
+        inverseBurrowsWheeler.process(outputBuffer, outputBufferOffset, thisBlockSize, outputBuffer, outputBufferOffset);
 
         if (rand) {
             BZip2Randomizer randomizer = new BZip2Randomizer();

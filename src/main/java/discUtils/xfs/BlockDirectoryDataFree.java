@@ -27,24 +27,25 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class BlockDirectoryDataFree implements IByteArraySerializable {
-    private short _offset;
+
+    private short offset;
 
     public int getOffset() {
-        return _offset & 0xffff;
+        return offset & 0xffff;
     }
 
     public void setOffset(short value) {
-        _offset = value;
+        offset = value;
     }
 
-    private short _length;
+    private short length;
 
     public int getLength() {
-        return _length & 0xffff;
+        return length & 0xffff;
     }
 
     public void setLength(short value) {
-        _length = value;
+        length = value;
     }
 
     public int size() {
@@ -52,8 +53,8 @@ public class BlockDirectoryDataFree implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _offset = EndianUtilities.toUInt16BigEndian(buffer, offset);
-        _length = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
+        this.offset = EndianUtilities.toUInt16BigEndian(buffer, offset);
+        length = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
         return size();
     }
 

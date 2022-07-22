@@ -34,14 +34,15 @@ import dotnet4j.io.SeekOrigin;
  * A stream that returns Zero's.
  */
 public class ZeroStream extends MappedStream {
-    private boolean _atEof;
 
-    private final long _length;
+    private boolean atEof;
 
-    private long _position;
+    private final long length;
+
+    private long position;
 
     public ZeroStream(long length) {
-        _length = length;
+        this.length = length;
     }
 
     public boolean canRead() {
@@ -62,16 +63,16 @@ public class ZeroStream extends MappedStream {
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
-        _position = value;
-        _atEof = false;
+        position = value;
+        atEof = false;
     }
 
     public List<StreamExtent> mapContent(long start, long length) {
@@ -82,23 +83,23 @@ public class ZeroStream extends MappedStream {
     }
 
     public int read(byte[] buffer, int offset, int count) {
-        if (_position > _length) {
-            _atEof = true;
+        if (position > length) {
+            atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
         }
 
-        if (_position == _length) {
-            if (_atEof) {
+        if (position == length) {
+            if (atEof) {
                 throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
             }
 
-            _atEof = true;
+            atEof = true;
             return 0;
         }
 
-        int numToClear = (int) Math.min(count, _length - _position);
+        int numToClear = (int) Math.min(count, length - position);
         Arrays.fill(buffer, offset, offset + numToClear, (byte) 0);
-        _position += numToClear;
+        position += numToClear;
 
         return numToClear;
     }
@@ -106,18 +107,18 @@ public class ZeroStream extends MappedStream {
     public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _length;
+            effectiveOffset += length;
         }
 
-        _atEof = false;
+        atEof = false;
 
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of stream");
         }
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public void setLength(long value) {

@@ -23,21 +23,21 @@
 package discUtils.core.logicalDiskManager;
 
 public final class DiskGroupRecord extends DatabaseRecord {
-    public String GroupGuidString;
 
-    public int Unknown1;
+    public String groupGuidString;
+
+    public int unknown1;
 
     protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
         int[] pos = new int[] { offset + 0x18 };
-        Id = readVarULong(buffer, pos);
-        Name = readVarString(buffer, pos);
-        if ((Flags & 0xF0) == 0x40) {
-            GroupGuidString = readBinaryGuid(buffer, pos).toString();
+        id = readVarULong(buffer, pos);
+        name = readVarString(buffer, pos);
+        if ((flags & 0xF0) == 0x40) {
+            groupGuidString = readBinaryGuid(buffer, pos).toString();
         } else {
-            GroupGuidString = readVarString(buffer, pos);
+            groupGuidString = readVarString(buffer, pos);
         }
-        Unknown1 = readUInt(buffer, pos);
+        unknown1 = readUInt(buffer, pos);
     }
-
 }

@@ -34,13 +34,14 @@ import dotnet4j.io.IOException;
 
 
 public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
-    private final NtfsAttribute _attribute;
 
-    private final File _file;
+    private final NtfsAttribute attribute;
+
+    private final File file;
 
     public NtfsAttributeBuffer(File file, NtfsAttribute attribute) {
-        _file = file;
-        _attribute = attribute;
+        this.file = file;
+        this.attribute = attribute;
     }
 
     public boolean canRead() {
@@ -48,24 +49,24 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
     }
 
     public boolean canWrite() {
-        return _file.getContext().getRawStream().canWrite();
+        return file.getContext().getRawStream().canWrite();
     }
 
     public long getCapacity() {
-        return _attribute.getPrimaryRecord().getDataLength();
+        return attribute.getPrimaryRecord().getDataLength();
     }
 
     public long mapPosition(long pos) {
-        if (_attribute.isNonResident()) {
-            return ((IMappedBuffer) _attribute.getRawBuffer()).mapPosition(pos);
+        if (attribute.isNonResident()) {
+            return ((IMappedBuffer) attribute.getRawBuffer()).mapPosition(pos);
         }
 
-        AttributeReference attrRef = new AttributeReference(_file.getMftReference(),
-                                                            _attribute.getPrimaryRecord().getAttributeId());
-        ResidentAttributeRecord attrRecord = (ResidentAttributeRecord) _file.getAttribute(attrRef).getPrimaryRecord();
-        long attrStart = _file.getAttributeOffset(attrRef);
+        AttributeReference attrRef = new AttributeReference(file.getMftReference(),
+                                                            attribute.getPrimaryRecord().getAttributeId());
+        ResidentAttributeRecord attrRecord = (ResidentAttributeRecord) file.getAttribute(attrRef).getPrimaryRecord();
+        long attrStart = file.getAttributeOffset(attrRef);
         long mftPos = attrStart + attrRecord.getDataOffset() + pos;
-        return _file.getContext()
+        return file.getContext()
                 .getGetFileByIndex()
                 .invoke(MasterFileTable.MftIndex)
                 .getAttribute(AttributeType.Data, null)
@@ -73,7 +74,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        AttributeRecord record = _attribute.getPrimaryRecord();
+        AttributeRecord record = attribute.getPrimaryRecord();
         if (!canRead()) {
             throw new IOException("Attempt to read from file not opened for read");
         }
@@ -106,7 +107,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
 
         int numRead = 0;
         while (numRead < toRead) {
-            IBuffer extentBuffer = _attribute.getRawBuffer();
+            IBuffer extentBuffer = attribute.getRawBuffer();
 
             int justRead = extentBuffer.read(pos + numRead, buffer, offset + numRead, toRead - numRead);
             if (justRead == 0) {
@@ -128,12 +129,12 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
             return;
         }
 
-        _attribute.getRawBuffer().setCapacity(value);
-        _file.markMftRecordDirty();
+        attribute.getRawBuffer().setCapacity(value);
+        file.markMftRecordDirty();
     }
 
     public void write(long pos, byte[] buffer, int offset, int count) {
-        AttributeRecord record = _attribute.getPrimaryRecord();
+        AttributeRecord record = attribute.getPrimaryRecord();
 
         if (!canWrite()) {
             throw new IOException("Attempt to write to file not opened for write");
@@ -145,15 +146,15 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
             return;
         }
 
-        _attribute.getRawBuffer().write(pos, buffer, offset, count);
+        attribute.getRawBuffer().write(pos, buffer, offset, count);
 
         if (!record.isNonResident()) {
-            _file.markMftRecordDirty();
+            file.markMftRecordDirty();
         }
     }
 
     public void clear(long pos, int count) {
-        AttributeRecord record = _attribute.getPrimaryRecord();
+        AttributeRecord record = attribute.getPrimaryRecord();
 
         if (!canWrite()) {
             throw new IOException("Attempt to write to file not opened for write");
@@ -163,16 +164,16 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
             return;
         }
 
-        _attribute.getRawBuffer().clear(pos, count);
+        attribute.getRawBuffer().clear(pos, count);
 
         if (!record.isNonResident()) {
-            _file.markMftRecordDirty();
+            file.markMftRecordDirty();
         }
     }
 
     public List<StreamExtent> getExtentsInRange(long start, long count) {
-//Debug.println(count + ", " + _attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
-        return StreamExtent.intersect(_attribute.getRawBuffer().getExtentsInRange(start, count),
+//Debug.println(count + ", " + attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
+        return StreamExtent.intersect(attribute.getRawBuffer().getExtentsInRange(start, count),
                                       new StreamExtent(0, getCapacity()));
     }
 }

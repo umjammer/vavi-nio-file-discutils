@@ -26,25 +26,26 @@ import discUtils.iso9660.IsoUtilities;
 import discUtils.iso9660.susp.SystemUseEntry;
 
 public final class PosixFileInfoSystemUseEntry extends SystemUseEntry {
-    public int FileMode;
 
-    public int GroupId;
+    public int fileMode;
 
-    public int Inode;
+    public int groupId;
 
-    public int NumLinks;
+    public int inode;
 
-    public int UserId;
+    public int numLinks;
+
+    public int userId;
 
     public PosixFileInfoSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 36, (byte) 1);
-        FileMode = IsoUtilities.toUInt32FromBoth(data, offset + 4);
-        NumLinks = IsoUtilities.toUInt32FromBoth(data, offset + 12);
-        UserId = IsoUtilities.toUInt32FromBoth(data, offset + 20);
-        GroupId = IsoUtilities.toUInt32FromBoth(data, offset + 28);
-        Inode = 0;
+        fileMode = IsoUtilities.toUInt32FromBoth(data, offset + 4);
+        numLinks = IsoUtilities.toUInt32FromBoth(data, offset + 12);
+        userId = IsoUtilities.toUInt32FromBoth(data, offset + 20);
+        groupId = IsoUtilities.toUInt32FromBoth(data, offset + 28);
+        inode = 0;
         if (length >= 44) {
-            Inode = IsoUtilities.toUInt32FromBoth(data, offset + 36);
+            inode = IsoUtilities.toUInt32FromBoth(data, offset + 36);
         }
     }
 }

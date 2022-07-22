@@ -23,65 +23,66 @@
 package discUtils.nfs;
 
 public class Nfs3CreateResult extends Nfs3CallResult {
+
     public Nfs3CreateResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
-        if (_status == Nfs3Status.Ok) {
+        if (status == Nfs3Status.Ok) {
             if (reader.readBool()) {
-                _fileHandle = new Nfs3FileHandle(reader);
+                fileHandle = new Nfs3FileHandle(reader);
             }
 
             if (reader.readBool()) {
-                _fileAttributes = new Nfs3FileAttributes(reader);
+                fileAttributes = new Nfs3FileAttributes(reader);
             }
         }
 
-        _cacheConsistency = new Nfs3WeakCacheConsistency(reader);
+        cacheConsistency = new Nfs3WeakCacheConsistency(reader);
     }
 
     public Nfs3CreateResult() {
     }
 
-    private Nfs3WeakCacheConsistency _cacheConsistency;
+    private Nfs3WeakCacheConsistency cacheConsistency;
 
     public Nfs3WeakCacheConsistency getCacheConsistency() {
-        return _cacheConsistency;
+        return cacheConsistency;
     }
 
     public void setCacheConsistency(Nfs3WeakCacheConsistency value) {
-        _cacheConsistency = value;
+        cacheConsistency = value;
     }
 
-    private Nfs3FileAttributes _fileAttributes;
+    private Nfs3FileAttributes fileAttributes;
 
     public Nfs3FileAttributes getFileAttributes() {
-        return _fileAttributes;
+        return fileAttributes;
     }
 
     public void setFileAttributes(Nfs3FileAttributes value) {
-        _fileAttributes = value;
+        fileAttributes = value;
     }
 
-    private Nfs3FileHandle _fileHandle;
+    private Nfs3FileHandle fileHandle;
 
     public Nfs3FileHandle getFileHandle() {
-        return _fileHandle;
+        return fileHandle;
     }
 
     public void setFileHandle(Nfs3FileHandle value) {
-        _fileHandle = value;
+        fileHandle = value;
     }
 
     public void write(XdrDataWriter writer) {
-        writer.write(_status.getValue());
-        if (_status == Nfs3Status.Ok) {
-            writer.write(getFileHandle() != null);
-            if (getFileHandle() != null) {
-                getFileHandle().write(writer);
+        writer.write(status.getValue());
+        if (status == Nfs3Status.Ok) {
+            writer.write(fileHandle != null);
+            if (fileHandle != null) {
+                fileHandle.write(writer);
             }
 
-            writer.write(getFileAttributes() != null);
-            if (getFileAttributes() != null) {
-                getFileAttributes().write(writer);
+            writer.write(fileAttributes != null);
+            if (fileAttributes != null) {
+                fileAttributes.write(writer);
             }
         }
 
@@ -97,13 +98,13 @@ public class Nfs3CreateResult extends Nfs3CallResult {
             return false;
         }
 
-        return other._status == _status && other.getFileHandle().equals(getFileHandle()) &&
-               dotnet4j.util.compat.Utilities.equals(other.getFileAttributes(), getFileAttributes()) &&
-               other.getCacheConsistency().equals(getCacheConsistency());
+        return other.status == status && other.fileHandle.equals(fileHandle) &&
+               dotnet4j.util.compat.Utilities.equals(other.fileAttributes, fileAttributes) &&
+               other.cacheConsistency.equals(cacheConsistency);
     }
 
     public int hashCode() {
         return dotnet4j.util.compat.Utilities
-                .getCombinedHashCode(_status, getFileHandle(), getFileAttributes(), getCacheConsistency());
+                .getCombinedHashCode(status, fileHandle, fileAttributes, cacheConsistency);
     }
 }

@@ -48,8 +48,9 @@ import dotnet4j.io.FileAccess;
 
 @Options
 public class Program extends ProgramBase {
+
     @Option(option = "vhdx_file", description = "Path to the VHDX file to inspect.", args = 1, required = true)
-    private String _vhdxFile;
+    private String vhdxFile;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -60,9 +61,9 @@ public class Program extends ProgramBase {
     static final UUID EMPTY = new UUID(0, 0);
 
     protected void doRun() throws IOException {
-        try (DiskImageFile vhdxFile = new DiskImageFile(_vhdxFile, FileAccess.Read)) {
+        try (DiskImageFile vhdxFile = new DiskImageFile(this.vhdxFile, FileAccess.Read)) {
             DiskImageFileInfo info = vhdxFile.getInformation();
-            Path fileInfo = Paths.get(_vhdxFile);
+            Path fileInfo = Paths.get(this.vhdxFile);
             System.err.println("File Info");
             System.err.println("---------");
             System.err.printf("           File Name: %s\n", fileInfo.toAbsolutePath());

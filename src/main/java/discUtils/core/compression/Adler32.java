@@ -26,22 +26,23 @@ package discUtils.core.compression;
  * Implementation of the Adler-32 checksum algorithm.
  */
 public class Adler32 {
-    private long _a;
 
-    private long _b;
+    private long a;
+
+    private long b;
 
     /**
      * Initializes a new instance of the Adler32 class.
      */
     public Adler32() {
-        _a = 1;
+        a = 1;
     }
 
     /**
      * Gets the checksum of all data processed so far.
      */
     public int getValue() {
-        return (int) (_b << 16 | _a);
+        return (int) (b << 16 | a);
     }
 
     /**
@@ -71,11 +72,11 @@ public class Adler32 {
         while (processed < count) {
             int innerEnd = Math.min(count, processed + 2000);
             while (processed < innerEnd) {
-                _a += buffer[processed++] & 0xff;
-                _b += _a;
+                a += buffer[processed++] & 0xff;
+                b += a;
             }
-            _a %= 65521;
-            _b %= 65521;
+            a %= 65521;
+            b %= 65521;
         }
     }
 }

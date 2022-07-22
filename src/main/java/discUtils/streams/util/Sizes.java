@@ -23,6 +23,7 @@
 package discUtils.streams.util;
 
 public final class Sizes {
+
     public static final long OneKiB = 1024;
 
     public static final long OneMiB = 1024 * OneKiB;

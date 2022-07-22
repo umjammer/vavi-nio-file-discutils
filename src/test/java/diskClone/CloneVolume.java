@@ -26,11 +26,12 @@ import java.util.UUID;
 
 
 public class CloneVolume {
-    public diskClone.NativeMethods.DiskExtent SourceExtent;
 
-    public String Path;
+    public diskClone.NativeMethods.DiskExtent sourceExtent;
 
-    public UUID SnapshotId = UUID.randomUUID();
+    public String path;
 
-    public VssSnapshotProperties SnapshotProperties;
+    public UUID snapshotId = UUID.randomUUID();
+
+    public VssSnapshotProperties snapshotProperties;
 }

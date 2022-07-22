@@ -35,6 +35,7 @@ import dotnet4j.io.StreamReader;
 
 
 public class DescriptorFile {
+
     private static final String HeaderVersion = "version";
 
     private static final String HeaderContentId = "CID";
@@ -65,24 +66,24 @@ public class DescriptorFile {
 
     private static final long MaxSize = 20 * Sizes.OneKiB;
 
-    private final List<DescriptorFileEntry> _diskDataBase;
+    private final List<DescriptorFileEntry> diskDataBase;
 
-    private final List<DescriptorFileEntry> _header;
+    private final List<DescriptorFileEntry> header;
 
     public DescriptorFile() {
-        _header = new ArrayList<>();
-        __Extents = new ArrayList<>();
-        _diskDataBase = new ArrayList<>();
-        _header.add(new DescriptorFileEntry(HeaderVersion, "1", DescriptorFileEntryType.Plain));
-        _header.add(new DescriptorFileEntry(HeaderContentId, "ffffffff", DescriptorFileEntryType.Plain));
-        _header.add(new DescriptorFileEntry(HeaderParentContentId, "ffffffff", DescriptorFileEntryType.Plain));
-        _header.add(new DescriptorFileEntry(HeaderCreateType, "", DescriptorFileEntryType.Quoted));
+        header = new ArrayList<>();
+        extents = new ArrayList<>();
+        diskDataBase = new ArrayList<>();
+        header.add(new DescriptorFileEntry(HeaderVersion, "1", DescriptorFileEntryType.Plain));
+        header.add(new DescriptorFileEntry(HeaderContentId, "ffffffff", DescriptorFileEntryType.Plain));
+        header.add(new DescriptorFileEntry(HeaderParentContentId, "ffffffff", DescriptorFileEntryType.Plain));
+        header.add(new DescriptorFileEntry(HeaderCreateType, "", DescriptorFileEntryType.Quoted));
     }
 
     public DescriptorFile(Stream source) {
-        _header = new ArrayList<>();
-        __Extents = new ArrayList<>();
-        _diskDataBase = new ArrayList<>();
+        header = new ArrayList<>();
+        extents = new ArrayList<>();
+        diskDataBase = new ArrayList<>();
         load(source);
     }
 
@@ -146,10 +147,10 @@ public class DescriptorFile {
         setDiskDatabase(DiskDbSectors, String.valueOf(value.getSectorsPerTrack()));
     }
 
-    private List<ExtentDescriptor> __Extents;
+    private List<ExtentDescriptor> extents;
 
     public List<ExtentDescriptor> getExtents() {
-        return __Extents;
+        return extents;
     }
 
     public String getHardwareVersion() {
@@ -187,7 +188,7 @@ public class DescriptorFile {
     public void write(Stream stream) {
         StringBuilder content = new StringBuilder();
         content.append("# Disk DescriptorFile\n");
-        for (DescriptorFileEntry descriptorFileEntry : _header) {
+        for (DescriptorFileEntry descriptorFileEntry : header) {
             content.append(descriptorFileEntry.toString()).append("\n");
         }
         content.append("\n");
@@ -198,7 +199,7 @@ public class DescriptorFile {
         content.append("\n");
         content.append("# The Disk Data base\n");
         content.append("#DDB\n");
-        for (DescriptorFileEntry descriptorFileEntry : _diskDataBase) {
+        for (DescriptorFileEntry descriptorFileEntry : diskDataBase) {
             content.append(descriptorFileEntry.toString()).append("\n");
         }
         byte[] contentBytes = content.toString().getBytes(StandardCharsets.US_ASCII);
@@ -333,7 +334,7 @@ public class DescriptorFile {
     }
 
     private String getHeader(String key) {
-        for (DescriptorFileEntry entry : _header) {
+        for (DescriptorFileEntry entry : header) {
             if (entry.getKey().equals(key)) {
 //Debug.println(entry.getKey() + ", " + key);
                 return entry.getValue();
@@ -343,17 +344,17 @@ public class DescriptorFile {
     }
 
     private void setHeader(String key, String newValue, DescriptorFileEntryType type) {
-        for (DescriptorFileEntry entry : _header) {
+        for (DescriptorFileEntry entry : header) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(newValue);
                 return;
             }
         }
-        _header.add(new DescriptorFileEntry(key, newValue, type));
+        header.add(new DescriptorFileEntry(key, newValue, type));
     }
 
     private String getDiskDatabase(String key) {
-        for (DescriptorFileEntry entry : _diskDataBase) {
+        for (DescriptorFileEntry entry : diskDataBase) {
             if (entry.getKey().equals(key)) {
                 return entry.getValue();
             }
@@ -362,13 +363,13 @@ public class DescriptorFile {
     }
 
     private void setDiskDatabase(String key, String value) {
-        for (DescriptorFileEntry entry : _diskDataBase) {
+        for (DescriptorFileEntry entry : diskDataBase) {
             if (entry.getKey().equals(key)) {
                 entry.setValue(value);
                 return;
             }
         }
-        _diskDataBase.add(new DescriptorFileEntry(key, value, DescriptorFileEntryType.Quoted));
+        diskDataBase.add(new DescriptorFileEntry(key, value, DescriptorFileEntryType.Quoted));
     }
 
     private void load(Stream source) {
@@ -392,9 +393,9 @@ public class DescriptorFile {
                 } else {
                     DescriptorFileEntry entry = DescriptorFileEntry.parse(line);
                     if (entry.getKey().startsWith("ddb.")) {
-                        _diskDataBase.add(entry);
+                        diskDataBase.add(entry);
                     } else {
-                        _header.add(entry);
+                        header.add(entry);
                     }
                 }
             }

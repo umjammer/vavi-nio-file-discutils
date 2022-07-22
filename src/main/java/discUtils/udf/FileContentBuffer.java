@@ -31,21 +31,22 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class FileContentBuffer implements IBuffer {
-    private final int _blockSize;
 
-    private final UdfContext _context;
+    private final int blockSize;
 
-    private List<CookedExtent> _extents;
+    private final UdfContext context;
 
-    private final FileEntry _fileEntry;
+    private List<CookedExtent> extents;
 
-    private final Partition _partition;
+    private final FileEntry fileEntry;
+
+    private final Partition partition;
 
     public FileContentBuffer(UdfContext context, Partition partition, FileEntry fileEntry, int blockSize) {
-        _context = context;
-        _partition = partition;
-        _fileEntry = fileEntry;
-        _blockSize = blockSize;
+        this.context = context;
+        this.partition = partition;
+        this.fileEntry = fileEntry;
+        this.blockSize = blockSize;
         loadExtents();
     }
 
@@ -58,7 +59,7 @@ public class FileContentBuffer implements IBuffer {
     }
 
     public long getCapacity() {
-        return _fileEntry.InformationLength;
+        return fileEntry.informationLength;
     }
 
     public List<StreamExtent> getExtents() {
@@ -66,8 +67,8 @@ public class FileContentBuffer implements IBuffer {
     }
 
     public int read(long pos, byte[] buffer, int offset, int count) {
-        if (_fileEntry.InformationControlBlock._AllocationType == AllocationType.Embedded) {
-            byte[] srcBuffer = _fileEntry.AllocationDescriptors;
+        if (fileEntry.informationControlBlock.allocationType == AllocationType.Embedded) {
+            byte[] srcBuffer = fileEntry.allocationDescriptors;
             if (pos > srcBuffer.length) {
                 return 0;
             }
@@ -100,10 +101,10 @@ public class FileContentBuffer implements IBuffer {
     }
 
     private void loadExtents() {
-        _extents = new ArrayList<>();
-        byte[] activeBuffer = _fileEntry.AllocationDescriptors;
+        extents = new ArrayList<>();
+        byte[] activeBuffer = fileEntry.allocationDescriptors;
 
-        AllocationType allocType = _fileEntry.InformationControlBlock._AllocationType;
+        AllocationType allocType = fileEntry.informationControlBlock.allocationType;
         if (allocType == AllocationType.ShortDescriptors) {
             long filePos = 0;
 
@@ -111,22 +112,22 @@ public class FileContentBuffer implements IBuffer {
             while (i < activeBuffer.length) {
                 ShortAllocationDescriptor sad =
                         EndianUtilities.toStruct(ShortAllocationDescriptor.class, activeBuffer, i);
-                if (sad.ExtentLength == 0) {
+                if (sad.extentLength == 0) {
                     break;
                 }
 
-                if (sad.Flags != ShortAllocationFlags.RecordedAndAllocated) {
+                if (sad.flags != ShortAllocationFlags.RecordedAndAllocated) {
                     throw new UnsupportedOperationException("Extents that are not 'recorded and allocated' not implemented");
                 }
 
                 CookedExtent newExtent = new CookedExtent();
-                newExtent.FileContentOffset = filePos;
-                newExtent.Partition = Integer.MAX_VALUE;
-                newExtent.StartPos = sad.ExtentLocation * (long)_blockSize;
-                newExtent.Length = sad.ExtentLength;
-                _extents.add(newExtent);
+                newExtent.fileContentOffset = filePos;
+                newExtent.partition = Integer.MAX_VALUE;
+                newExtent.startPos = sad.extentLocation * (long) blockSize;
+                newExtent.length = sad.extentLength;
+                extents.add(newExtent);
 
-                filePos += sad.ExtentLength;
+                filePos += sad.extentLength;
                 i += sad.size();
             }
         } else if (allocType == AllocationType.Embedded) {
@@ -138,22 +139,22 @@ public class FileContentBuffer implements IBuffer {
             while (i < activeBuffer.length) {
                 LongAllocationDescriptor lad = EndianUtilities
                         .toStruct(LongAllocationDescriptor.class, activeBuffer, i);
-                if (lad.ExtentLength == 0) {
+                if (lad.extentLength == 0) {
                     break;
                 }
 
                 CookedExtent newExtent = new CookedExtent();
-                newExtent.FileContentOffset = filePos;
-                newExtent.Partition = lad.ExtentLocation.getPartition();
-                newExtent.StartPos = lad.ExtentLocation.LogicalBlock * (long)_blockSize;
-                newExtent.Length = lad.ExtentLength;
-                _extents.add(newExtent);
+                newExtent.fileContentOffset = filePos;
+                newExtent.partition = lad.extentLocation.getPartition();
+                newExtent.startPos = lad.extentLocation.logicalBlock * (long) blockSize;
+                newExtent.length = lad.extentLength;
+                extents.add(newExtent);
 
-                filePos += lad.ExtentLength;
+                filePos += lad.extentLength;
                 i += lad.size();
             }
         } else {
-            throw new UnsupportedOperationException("Allocation Type: " + _fileEntry.InformationControlBlock._AllocationType);
+            throw new UnsupportedOperationException("Allocation Type: " + fileEntry.informationControlBlock.allocationType);
         }
     }
 
@@ -162,15 +163,15 @@ public class FileContentBuffer implements IBuffer {
         int totalRead = 0;
         while (totalRead < totalToRead) {
             CookedExtent extent = findExtent(pos + totalRead);
-            long extentOffset = pos + totalRead - extent.FileContentOffset;
-            int toRead = (int) Math.min(totalToRead - totalRead, extent.Length - extentOffset);
+            long extentOffset = pos + totalRead - extent.fileContentOffset;
+            int toRead = (int) Math.min(totalToRead - totalRead, extent.length - extentOffset);
             Partition part;
-            if (extent.Partition != Integer.MAX_VALUE) {
-                part = _context.LogicalPartitions.get(extent.Partition);
+            if (extent.partition != Integer.MAX_VALUE) {
+                part = context.logicalPartitions.get(extent.partition);
             } else {
-                part = _partition;
+                part = partition;
             }
-            int numRead = part.getContent().read(extent.StartPos + extentOffset, buffer, offset + totalRead, toRead);
+            int numRead = part.getContent().read(extent.startPos + extentOffset, buffer, offset + totalRead, toRead);
             if (numRead == 0) {
                 return totalRead;
             }
@@ -181,8 +182,8 @@ public class FileContentBuffer implements IBuffer {
     }
 
     private CookedExtent findExtent(long pos) {
-        for (CookedExtent extent : _extents) {
-            if (extent.FileContentOffset + extent.Length > pos) {
+        for (CookedExtent extent : extents) {
+            if (extent.fileContentOffset + extent.length > pos) {
                 return extent;
             }
         }
@@ -190,12 +191,12 @@ public class FileContentBuffer implements IBuffer {
     }
 
     private static class CookedExtent {
-        public long FileContentOffset;
+        public long fileContentOffset;
 
-        public long Length;
+        public long length;
 
-        public int Partition;
+        public int partition;
 
-        public long StartPos;
+        public long startPos;
     }
 }

@@ -28,9 +28,10 @@ import dotnet4j.io.Stream;
 
 
 public class Header {
-    public String Cookie;
 
-    public long DataOffset;
+    public String cookie;
+
+    public long dataOffset;
 
     public static Header fromStream(Stream stream) {
         return fromBytes(StreamUtilities.readExact(stream, 16), 0);
@@ -38,8 +39,8 @@ public class Header {
 
     public static Header fromBytes(byte[] data, int offset) {
         Header result = new Header();
-        result.Cookie = EndianUtilities.bytesToString(data, offset, 8);
-        result.DataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
+        result.cookie = EndianUtilities.bytesToString(data, offset, 8);
+        result.dataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
         return result;
     }
 }

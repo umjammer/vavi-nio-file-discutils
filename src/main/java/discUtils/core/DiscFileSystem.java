@@ -42,7 +42,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Initializes a new instance of the DiscFileSystem class.
      */
     protected DiscFileSystem() {
-        _options = new DiscFileSystemOptions();
+        options = new DiscFileSystemOptions();
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *            instance.
      */
     protected DiscFileSystem(DiscFileSystemOptions defaultOptions) {
-        _options = defaultOptions;
+        options = defaultOptions;
     }
 
     /**
@@ -69,10 +69,10 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets the file system options, which can be modified.
      */
-    private DiscFileSystemOptions _options;
+    private DiscFileSystemOptions options;
 
     public DiscFileSystemOptions getOptions() {
-        return _options;
+        return options;
     }
 
     /**

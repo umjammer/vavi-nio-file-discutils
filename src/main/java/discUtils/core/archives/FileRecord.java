@@ -23,16 +23,16 @@
 package discUtils.core.archives;
 
 public final class FileRecord {
-    public long Length;
 
-    public String Name;
+    public long length;
 
-    public long Start;
+    public String name;
+
+    public long start;
 
     public FileRecord(String name, long start, long length) {
-        Name = name;
-        Start = start;
-        Length = length;
+        this.name = name;
+        this.start = start;
+        this.length = length;
     }
-
 }

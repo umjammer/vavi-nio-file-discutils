@@ -26,9 +26,10 @@ import java.nio.charset.StandardCharsets;
 
 
 public class DeviceAndPathRecord extends DeviceRecord {
-    private DeviceRecord _container;
 
-    private String _path;
+    private DeviceRecord container;
+
+    private String path;
 
     public int getSize() {
         throw new UnsupportedOperationException();
@@ -39,13 +40,13 @@ public class DeviceAndPathRecord extends DeviceRecord {
     }
 
     public String toString() {
-        return _container + ":" + _path;
+        return container + ":" + path;
     }
 
     protected void doParse(byte[] data, int offset) {
         super.doParse(data, offset);
-        _container = parse(data, offset + 0x34);
-        int pathStart = 0x34 + _container.getSize();
-        _path = new String(data, offset + pathStart, getLength() - pathStart, StandardCharsets.UTF_16LE);
+        container = parse(data, offset + 0x34);
+        int pathStart = 0x34 + container.getSize();
+        path = new String(data, offset + pathStart, getLength() - pathStart, StandardCharsets.UTF_16LE);
     }
 }

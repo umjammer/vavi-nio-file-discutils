@@ -29,34 +29,35 @@ import discUtils.streams.util.EndianUtilities;
 
 
 abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializable {
+
     protected Class<TKey> keyClass;
 
     public BTreeNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         keyClass = clazz;
-        _tree = tree;
-        _descriptor = descriptor;
+        this.tree = tree;
+        this.descriptor = descriptor;
     }
 
-    private BTreeNodeDescriptor _descriptor;
+    private BTreeNodeDescriptor descriptor;
 
     protected BTreeNodeDescriptor getDescriptor() {
-        return _descriptor;
+        return descriptor;
     }
 
-    private List<BTreeNodeRecord> _records;
+    private List<BTreeNodeRecord> records;
 
     public List<BTreeNodeRecord> getRecords() {
-        return _records;
+        return records;
     }
 
     public void setRecords(List<BTreeNodeRecord> value) {
-        _records = value;
+        records = value;
     }
 
-    private BTree<?> _tree;
+    private BTree<?> tree;
 
     protected BTree<?> getTree() {
-        return _tree;
+        return tree;
     }
 
     public int size() {
@@ -77,14 +78,14 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
         BTreeNodeDescriptor descriptor = EndianUtilities
                 .toStruct(BTreeNodeDescriptor.class, buffer, offset);
 
-        switch (descriptor.Kind) {
+        switch (descriptor.kind) {
         case HeaderNode:
             return new BTreeHeaderNode<>(clazz, tree, descriptor);
         case IndexNode:
         case LeafNode:
             throw new UnsupportedOperationException("Attempt to read index/leaf node without key and data types");
         default:
-            throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.Kind);
+            throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.kind);
         }
     }
 
@@ -92,7 +93,7 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
         BTreeNodeDescriptor descriptor = EndianUtilities
                 .toStruct(BTreeNodeDescriptor.class, buffer, offset);
 
-        switch (descriptor.Kind) {
+        switch (descriptor.kind) {
         case HeaderNode:
             return new BTreeHeaderNode<>(clazz, tree, descriptor);
         case LeafNode:
@@ -100,7 +101,7 @@ abstract class BTreeNode<TKey extends BTreeKey<?>> implements IByteArraySerializ
         case IndexNode:
             return new BTreeIndexNode<>(clazz, tree, descriptor);
         default:
-            throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.Kind);
+            throw new UnsupportedOperationException("Unrecognized BTree node kind: " + descriptor.kind);
         }
     }
 

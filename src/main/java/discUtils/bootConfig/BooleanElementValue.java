@@ -24,14 +24,15 @@ package discUtils.bootConfig;
 
 
 public class BooleanElementValue extends ElementValue {
-    private final boolean _value;
+
+    private final boolean value;
 
     public BooleanElementValue(byte[] value) {
-        _value = value[0] != 0;
+        this.value = value[0] != 0;
     }
 
     public BooleanElementValue(boolean value) {
-        _value = value;
+        this.value = value;
     }
 
     public ElementFormat getFormat() {
@@ -39,12 +40,12 @@ public class BooleanElementValue extends ElementValue {
     }
 
     public String toString() {
-        return _value ? Boolean.TRUE.toString() : Boolean.FALSE.toString();
+        return value ? Boolean.TRUE.toString() : Boolean.FALSE.toString();
     }
 
     public byte[] getBytes() {
         return new byte[] {
-            _value ? (byte) 1 : (byte) 0
+            value ? (byte) 1 : (byte) 0
         };
     }
 }

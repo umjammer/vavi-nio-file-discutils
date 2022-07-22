@@ -27,14 +27,15 @@ import dotnet4j.io.IOException;
 
 
 public class BTreeInodeLeaf extends BtreeHeader {
-    private BTreeInodeRecord[] __Records;
+
+    private BTreeInodeRecord[] records;
 
     public BTreeInodeRecord[] getRecords() {
-        return __Records;
+        return records;
     }
 
     public void setRecords(BTreeInodeRecord[] value) {
-        __Records = value;
+        records = value;
     }
 
     public int size() {
@@ -51,16 +52,15 @@ public class BTreeInodeLeaf extends BtreeHeader {
         if (getLevel() != 0)
             throw new IOException("invalid B+tree level - expected 1");
 
-        setRecords(new BTreeInodeRecord[getNumberOfRecords()]);
+        records = new BTreeInodeRecord[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BTreeInodeRecord rec = new BTreeInodeRecord();
             offset += rec.readFrom(buffer, offset);
-            getRecords()[i] = rec;
+            records[i] = rec;
         }
         return size();
     }
 
     public void loadBtree(AllocationGroup ag) {
     }
-
 }

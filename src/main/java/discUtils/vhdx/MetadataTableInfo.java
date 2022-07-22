@@ -34,14 +34,15 @@ import discUtils.streams.util.EndianUtilities;
  * Class representing the table of file metadata.
  */
 public final class MetadataTableInfo implements Iterable<MetadataInfo> {
-    private final MetadataTable _table;
+
+    private final MetadataTable table;
 
     public MetadataTableInfo(MetadataTable table) {
-        _table = table;
+        this.table = table;
     }
 
     private List<MetadataInfo> getEntries() {
-        return _table.Entries.values().stream().map(MetadataInfo::new).collect(Collectors.toList());
+        return table.entries.values().stream().map(MetadataInfo::new).collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +50,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      */
     public String getSignature() {
         byte[] buffer = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(_table.Signature, buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(table.signature, buffer, 0);
         return EndianUtilities.bytesToString(buffer, 0, 8);
     }
 
@@ -57,7 +58,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      * Gets the number of metadata items present.
      */
     public int getCount() {
-        return _table.EntryCount;
+        return table.entryCount;
     }
 
     /**
@@ -92,7 +93,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      * @return {@code true} if present, else {@code false} .
      */
     public boolean contains(MetadataInfo item) {
-        for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : _table.Entries.entrySet()) {
+        for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : table.entries.entrySet()) {
             if (entry.getKey().getItemId().equals(item.getItemId()) && entry.getKey().isUser() == item.isUser()) {
                 return true;
             }
@@ -109,7 +110,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      */
     public void copyTo(MetadataInfo[] array, int arrayIndex) {
         int offset = 0;
-        for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : _table.Entries.entrySet()) {
+        for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : table.entries.entrySet()) {
             array[arrayIndex + offset] = new MetadataInfo(entry.getValue());
             ++offset;
         }

@@ -27,54 +27,55 @@ import discUtils.streams.util.Sizes;
 
 
 public class ServerSparseExtentHeader extends CommonSparseExtentHeader {
+
     public static final int CowdMagicNumber = 0x44574f43;
 
-    public int Flags;
+    public int flags;
 
-    public int FreeSector;
+    public int freeSector;
 
-    public int NumGdEntries;
+    public int numGdEntries;
 
-    public int SavedGeneration;
+    public int savedGeneration;
 
-    public int UncleanShutdown;
+    public int uncleanShutdown;
 
     public ServerSparseExtentHeader() {
-        MagicNumber = CowdMagicNumber;
-        Version = 1;
-        GrainSize = 512;
-        NumGTEsPerGT = 4096;
-        Flags = 3;
+        magicNumber = CowdMagicNumber;
+        version = 1;
+        grainSize = 512;
+        numGTEsPerGT = 4096;
+        flags = 3;
     }
 
     public static ServerSparseExtentHeader read(byte[] buffer, int offset) {
         ServerSparseExtentHeader hdr = new ServerSparseExtentHeader();
-        hdr.MagicNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
-        hdr.Version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
-        hdr.Flags = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
-        hdr.Capacity = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x0C);
-        hdr.GrainSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        hdr.GdOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
-        hdr.NumGdEntries = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18);
-        hdr.FreeSector = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1C);
-        hdr.SavedGeneration = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x660);
-        hdr.UncleanShutdown = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x66C);
-        hdr.NumGTEsPerGT = 4096;
+        hdr.magicNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
+        hdr.version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
+        hdr.flags = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
+        hdr.capacity = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x0C);
+        hdr.grainSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
+        hdr.gdOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
+        hdr.numGdEntries = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18);
+        hdr.freeSector = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1C);
+        hdr.savedGeneration = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x660);
+        hdr.uncleanShutdown = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x66C);
+        hdr.numGTEsPerGT = 4096;
         return hdr;
     }
 
     public byte[] getBytes() {
         byte[] buffer = new byte[Sizes.Sector * 4];
-        EndianUtilities.writeBytesLittleEndian(MagicNumber, buffer, 0x00);
-        EndianUtilities.writeBytesLittleEndian(Version, buffer, 0x04);
-        EndianUtilities.writeBytesLittleEndian(Flags, buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian((int) Capacity, buffer, 0x0C);
-        EndianUtilities.writeBytesLittleEndian((int) GrainSize, buffer, 0x10);
-        EndianUtilities.writeBytesLittleEndian((int) GdOffset, buffer, 0x14);
-        EndianUtilities.writeBytesLittleEndian(NumGdEntries, buffer, 0x18);
-        EndianUtilities.writeBytesLittleEndian(FreeSector, buffer, 0x1C);
-        EndianUtilities.writeBytesLittleEndian(SavedGeneration, buffer, 0x660);
-        EndianUtilities.writeBytesLittleEndian(UncleanShutdown, buffer, 0x66C);
+        EndianUtilities.writeBytesLittleEndian(magicNumber, buffer, 0x00);
+        EndianUtilities.writeBytesLittleEndian(version, buffer, 0x04);
+        EndianUtilities.writeBytesLittleEndian(flags, buffer, 0x08);
+        EndianUtilities.writeBytesLittleEndian((int) capacity, buffer, 0x0C);
+        EndianUtilities.writeBytesLittleEndian((int) grainSize, buffer, 0x10);
+        EndianUtilities.writeBytesLittleEndian((int) gdOffset, buffer, 0x14);
+        EndianUtilities.writeBytesLittleEndian(numGdEntries, buffer, 0x18);
+        EndianUtilities.writeBytesLittleEndian(freeSector, buffer, 0x1C);
+        EndianUtilities.writeBytesLittleEndian(savedGeneration, buffer, 0x660);
+        EndianUtilities.writeBytesLittleEndian(uncleanShutdown, buffer, 0x66C);
         return buffer;
     }
 }

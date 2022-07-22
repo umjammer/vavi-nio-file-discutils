@@ -30,35 +30,36 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public final class ReparsePointRecord implements IByteArraySerializable, IDiagnosticTraceable {
-    public byte[] Content;
 
-    public int Tag;
+    public byte[] content;
+
+    public int tag;
 
     public int size() {
-        return 8 + Content.length;
+        return 8 + content.length;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
         short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        Content = new byte[length];
-        System.arraycopy(buffer, offset + 8, Content, 0, length);
+        content = new byte[length];
+        System.arraycopy(buffer, offset + 8, content, 0, length);
         return 8 + length;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Tag, buffer, offset);
-        EndianUtilities.writeBytesLittleEndian((short) Content.length, buffer, offset + 4);
+        EndianUtilities.writeBytesLittleEndian(tag, buffer, offset);
+        EndianUtilities.writeBytesLittleEndian((short) content.length, buffer, offset + 4);
         EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 6);
-        System.arraycopy(Content, 0, buffer, offset + 8, Content.length);
+        System.arraycopy(content, 0, buffer, offset + 8, content.length);
     }
 
     public void dump(PrintWriter writer, String linePrefix) {
-        writer.println(linePrefix + "                Tag: " + Integer.toHexString(Tag));
+        writer.println(linePrefix + "                Tag: " + Integer.toHexString(tag));
         StringBuilder hex = new StringBuilder();
-        for (int i = 0; i < Math.min(Content.length, 32); ++i) {
-            hex.append(String.format(" %02x", Content[i]));
+        for (int i = 0; i < Math.min(content.length, 32); ++i) {
+            hex.append(String.format(" %02x", content[i]));
         }
-        writer.println(linePrefix + "               Data:" + hex + (Content.length > 32 ? "..." : ""));
+        writer.println(linePrefix + "               Data:" + hex + (content.length > 32 ? "..." : ""));
     }
 }

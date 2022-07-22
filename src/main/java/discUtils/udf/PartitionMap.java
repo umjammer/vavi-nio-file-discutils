@@ -27,12 +27,13 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public abstract class PartitionMap implements IByteArraySerializable {
-    public byte Type;
+
+    public byte type;
 
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        Type = buffer[offset];
+        type = buffer[offset];
         return parse(buffer, offset);
     }
 
@@ -47,7 +48,7 @@ public abstract class PartitionMap implements IByteArraySerializable {
             result = new Type1PartitionMap();
         } else if (type == 2) {
             EntityIdentifier id = EndianUtilities.toStruct(UdfEntityIdentifier.class, buffer, offset + 4);
-            switch (id.Identifier) {
+            switch (id.identifier) {
             case "*UDF Virtual Partition":
                 result = new VirtualPartitionMap();
                 break;

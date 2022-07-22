@@ -9,22 +9,23 @@ import discUtils.core.coreCompat.FileAttributes;
 import discUtils.core.vfs.VfsDirEntry;
 
 class MyDirEntry extends VfsDirEntry {
-    private static long _nextId;
 
-    private boolean _isDir;
+    private static long nextId;
 
-    private String _name;
+    private boolean isDir;
 
-    private long _id;
+    private String name;
+
+    private long id;
 
     public MyDirEntry(String name, boolean isDir) {
-        _name = name;
-        _isDir = isDir;
-        _id = _nextId++;
+        this.name = name;
+        this.isDir = isDir;
+        id = nextId++;
     }
 
     public boolean isDirectory() {
-        return _isDir;
+        return isDir;
     }
 
     public boolean isSymlink() {
@@ -32,7 +33,7 @@ class MyDirEntry extends VfsDirEntry {
     }
 
     public String getFileName() {
-        return _name;
+        return name;
     }
 
     public boolean hasVfsTimeInfo() {
@@ -60,7 +61,7 @@ class MyDirEntry extends VfsDirEntry {
     }
 
     public long getUniqueCacheId() {
-        return _id;
+        return id;
     }
 
 }

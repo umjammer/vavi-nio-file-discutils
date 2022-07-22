@@ -46,17 +46,18 @@ import dotnet4j.io.Stream;
 
 @Options
 class Program extends ProgramBase {
+
     @Option(option = "dmg", description = "Path to the .dmg file from which to extract the files", args = 1, required = true)
-    String _dmg;
+    String dmg;
 
     @Option(option = "folder", description = "Paths to the folders from which to extract the files.", args = 1, required = true)
-    String _folder;
+    String folder;
 
     @Option(option = "out", description = "Paths to the folders from which to extract the files.", args = 1)
-    String _out = System.getenv("user.dir");
+    String out = System.getenv("user.dir");
 
     @Option(option = "r", argName = "recursive", description = "Include all subfolders of the folder specified")
-    boolean _recursive;
+    boolean recursive;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -65,21 +66,21 @@ class Program extends ProgramBase {
     }
 
     protected void doRun() throws IOException {
-        try (VirtualDisk disk = VirtualDisk.openDisk(_dmg, FileAccess.Read)) {
+        try (VirtualDisk disk = VirtualDisk.openDisk(dmg, FileAccess.Read)) {
             // Find the first (and supposedly, only, HFS partition)
 
             for (PhysicalVolumeInfo volume : VolumeManager.getPhysicalVolumes(disk)) {
                 for (FileSystemInfo fileSystem : FileSystemManager.detectFileSystems(volume)) {
                     if (fileSystem.getName().equals("HFS+")) {
                         try (HfsPlusFileSystem hfs = (HfsPlusFileSystem) fileSystem.open(volume)) {
-                            DiscDirectoryInfo source = hfs.getDirectoryInfo(_folder);
-                            Path target = Paths.get(_out, source.getFullName());
+                            DiscDirectoryInfo source = hfs.getDirectoryInfo(folder);
+                            Path target = Paths.get(out, source.getFullName());
 
                             Files.deleteIfExists(target);
 
                             Files.createDirectories(target);
 
-                            copyDirectory(source, target, _recursive);
+                            copyDirectory(source, target, recursive);
                         }
                         break;
                     }

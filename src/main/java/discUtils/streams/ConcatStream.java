@@ -35,27 +35,28 @@ import dotnet4j.io.SeekOrigin;
  * The concatenation of multiple streams (read-only, for now).
  */
 public class ConcatStream extends SparseStream {
-    private boolean _canWrite;
 
-    private final Ownership _ownsStreams;
+    private boolean canWrite;
 
-    private long _position;
+    private final Ownership ownsStreams;
 
-    private List<SparseStream> _streams;
+    private long position;
+
+    private List<SparseStream> streams;
 
     public ConcatStream(Ownership ownsStreams, SparseStream... streams) {
         this(ownsStreams, Arrays.asList(streams));
     }
 
     public ConcatStream(Ownership ownsStreams, List<SparseStream> streams) {
-        _ownsStreams = ownsStreams;
-        _streams = streams;
+        this.ownsStreams = ownsStreams;
+        this.streams = streams;
 
         // Only allow writes if all streams can be written
-        _canWrite = true;
+        canWrite = true;
         for (SparseStream stream : streams) {
             if (!stream.canWrite()) {
-                _canWrite = false;
+                canWrite = false;
             }
         }
     }
@@ -72,7 +73,7 @@ public class ConcatStream extends SparseStream {
 
     public boolean canWrite() {
         checkDisposed();
-        return _canWrite;
+        return canWrite;
     }
 
     public List<StreamExtent> getExtents() {
@@ -80,7 +81,7 @@ public class ConcatStream extends SparseStream {
         List<StreamExtent> extents = new ArrayList<>();
 
         long pos = 0;
-        for (SparseStream stream : _streams) {
+        for (SparseStream stream : streams) {
             for (StreamExtent extent : stream.getExtents()) {
                 extents.add(new StreamExtent(extent.getStart() + pos, extent.getLength()));
             }
@@ -94,7 +95,7 @@ public class ConcatStream extends SparseStream {
         checkDisposed();
         long length = 0;
 
-        for (SparseStream stream : _streams) {
+        for (SparseStream stream : streams) {
             length += stream.getLength();
         }
 
@@ -103,17 +104,17 @@ public class ConcatStream extends SparseStream {
 
     public long getPosition() {
         checkDisposed();
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
         checkDisposed();
-        _position = value;
+        position = value;
     }
 
     public void flush() {
         checkDisposed();
-        for (SparseStream stream : _streams) {
+        for (SparseStream stream : streams) {
             stream.flush();
         }
     }
@@ -128,12 +129,12 @@ public class ConcatStream extends SparseStream {
             long[] activeStreamStartPos = new long[1];
             int activeStream = getActiveStream(activeStreamStartPos);
 
-            _streams.get(activeStream).setPosition(_position - activeStreamStartPos[0]);
+            streams.get(activeStream).setPosition(position - activeStreamStartPos[0]);
 
-            numRead = _streams.get(activeStream).read(buffer, offset + totalRead, count - totalRead);
+            numRead = streams.get(activeStream).read(buffer, offset + totalRead, count - totalRead);
 
             totalRead += numRead;
-            _position += numRead;
+            position += numRead;
         } while (numRead != 0);
 
         return totalRead;
@@ -144,7 +145,7 @@ public class ConcatStream extends SparseStream {
 
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += getLength();
         }
@@ -165,7 +166,7 @@ public class ConcatStream extends SparseStream {
             throw new dotnet4j.io.IOException(String.format("Unable to reduce stream length to less than %d", lastStreamOffset));
         }
 
-        _streams.get(lastStream).setLength(value - lastStreamOffset[0]);
+        streams.get(lastStream).setLength(value - lastStreamOffset[0]);
     }
 
     public void write(byte[] buffer, int offset, int count) {
@@ -178,31 +179,31 @@ public class ConcatStream extends SparseStream {
             int streamIdx = getActiveStream(streamOffset);
 
             // Offset within the stream = streamPos
-            long streamPos = _position - streamOffset[0];
-            _streams.get(streamIdx).setPosition(streamPos);
+            long streamPos = position - streamOffset[0];
+            streams.get(streamIdx).setPosition(streamPos);
 
             // Write (limited to the stream's length), except for final stream - that may be
             // extendable
             int numToWrite;
-            if (streamIdx == _streams.size() - 1) {
+            if (streamIdx == streams.size() - 1) {
                 numToWrite = count - totalWritten;
             } else {
-                numToWrite = (int) Math.min(count - totalWritten, _streams.get(streamIdx).getLength() - streamPos);
+                numToWrite = (int) Math.min(count - totalWritten, streams.get(streamIdx).getLength() - streamPos);
             }
 
-            _streams.get(streamIdx).write(buffer, offset + totalWritten, numToWrite);
+            streams.get(streamIdx).write(buffer, offset + totalWritten, numToWrite);
 
             totalWritten += numToWrite;
-            _position += numToWrite;
+            position += numToWrite;
         }
     }
 
     public void close() throws IOException {
-        if (_ownsStreams == Ownership.Dispose && _streams != null) {
-            for (SparseStream stream : _streams) {
+        if (ownsStreams == Ownership.Dispose && streams != null) {
+            for (SparseStream stream : streams) {
                 stream.close();
             }
-            _streams = null;
+            streams = null;
         }
     }
 
@@ -210,18 +211,18 @@ public class ConcatStream extends SparseStream {
      * @param startPos {@cs out}
      */
     private int getActiveStream(long[] startPos) {
-        return getStream(_position, startPos);
+        return getStream(position, startPos);
     }
 
     /**
      * @param streamStartPos {@cs out}
      */
     private int getStream(long targetPos, long[] streamStartPos) {
-        // Find the stream that _position is within
+        // Find the stream that position is within
         streamStartPos[0] = 0;
         int focusStream = 0;
-        while (focusStream < _streams.size() - 1 && streamStartPos[0] + _streams.get(focusStream).getLength() <= targetPos) {
-            streamStartPos[0] = streamStartPos[0] + _streams.get(focusStream).getLength();
+        while (focusStream < streams.size() - 1 && streamStartPos[0] + streams.get(focusStream).getLength() <= targetPos) {
+            streamStartPos[0] = streamStartPos[0] + streams.get(focusStream).getLength();
             focusStream++;
         }
 
@@ -229,7 +230,7 @@ public class ConcatStream extends SparseStream {
     }
 
     private void checkDisposed() {
-        if (_streams == null) {
+        if (streams == null) {
             throw new dotnet4j.io.IOException("it has been closed.");
         }
     }

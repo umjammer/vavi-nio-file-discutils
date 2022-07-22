@@ -55,6 +55,7 @@ import dotnet4j.io.Stream;
 
 @Options
 public class Program extends ProgramBase {
+
     static final String types;
 
     static {
@@ -66,30 +67,30 @@ public class Program extends ProgramBase {
             description = "Paths to the disks to inspect.  Where a volume manager is used to span volumes across multiple virtual disks, specify all disks in the set.",
             args = 1,
             required = false)
-    private String _inFile; // TODO array option
+    private String inFile; // TODO array option
 
     @Option(option = "db", argName = "diskbytes", description = "Includes a hexdump of all disk content in the output")
-    private boolean _showContent;
+    private boolean showContent;
 
     @Option(option = "vb", argName = "volbytes", description = "Includes a hexdump of all volumes content in the output")
-    private boolean _showVolContent;
+    private boolean showVolContent;
 
     @Option(option = "sf", argName = "showfiles", description = "Includes a list of all files found in volumes")
-    private boolean _showFiles;
+    private boolean showFiles;
 
     @Option(option = "bc", argName = "bootcode", description = "Includes a hexdump of the MBR and OS boot code in the output")
-    private boolean _showBootCode;
+    private boolean showBootCode;
 
     @Option(option = "he",
             argName = "hideextents",
             description = "Suppresses display of the stored extents, which can be slow for large disk images")
-    private boolean _hideExtents;
+    private boolean hideExtents;
 
     @Option(option = "dt",
             argName = "disktype",
             args = 1,
             description = "Force the type of disk - use a file extension (one of TODO)")
-    private String _diskType/* = "type" */;
+    private String diskType/* = "type" */;
 
     public static void main(String[] args) throws Exception {
         Program program = new Program();
@@ -103,11 +104,11 @@ public class Program extends ProgramBase {
 //        System.setProperty("file.encoding", StandardCharsets.UTF_8.name());
 
         List<VirtualDisk> disks = new ArrayList<>();
-System.err.println(_inFile);
-String[] _inFiles = new String[] { _inFile };
-        for (String path : _inFiles) {
+System.err.println(inFile);
+String[] inFiles = new String[] {inFile};
+        for (String path : inFiles) {
             VirtualDisk disk = VirtualDisk
-                    .openDisk(path, _diskType != null ? _diskType : null, FileAccess.Read, getUserName(), getPassword());
+                    .openDisk(path, diskType != null ? diskType : null, FileAccess.Read, getUserName(), getPassword());
             disks.add(disk);
 
             System.err.println();
@@ -122,7 +123,7 @@ String[] _inFiles = new String[] { _inFile };
             }
             System.err.println();
 
-            if (!_hideExtents) {
+            if (!hideExtents) {
                 System.err.println();
                 System.err.println("  Stored Extents");
                 System.err.println();
@@ -132,7 +133,7 @@ String[] _inFiles = new String[] { _inFile };
                 System.err.println();
             }
 
-            if (_showBootCode) {
+            if (showBootCode) {
                 System.err.println();
                 System.err.println("  Master Boot Record (MBR)");
                 System.err.println();
@@ -229,7 +230,7 @@ String[] _inFiles = new String[] { _inFile };
 
                 System.err.println();
 
-                if (_showVolContent) {
+                if (showVolContent) {
                     System.err.println("    Binary Contents...");
                     try {
                         try (Stream s = vol.open()) {
@@ -241,7 +242,7 @@ String[] _inFiles = new String[] { _inFile };
                     System.err.println();
                 }
 
-                if (_showBootCode) {
+                if (showBootCode) {
                     for (FileSystemInfo fsi : fileSystemInfos) {
                         System.err.printf("    Boot Code: %s\n", fsi.getName());
                         try {
@@ -261,7 +262,7 @@ String[] _inFiles = new String[] { _inFile };
                     }
                 }
 
-                if (_showFiles) {
+                if (showFiles) {
                     for (FileSystemInfo fsi : fileSystemInfos) {
                         try (DiscFileSystem fs = fsi.open(vol, getFileSystemParameters())) {
                             System.err.printf("    %s Volume Label: %s\n", fsi.getName(), fs.getVolumeLabel());
@@ -295,8 +296,8 @@ String[] _inFiles = new String[] { _inFile };
             e.printStackTrace();
         }
 
-        if (_showContent) {
-            for (String path : _inFiles) {
+        if (showContent) {
+            for (String path : inFiles) {
                 VirtualDisk disk = VirtualDisk.openDisk(path, FileAccess.Read, getUserName(), getPassword());
                 System.err.println();
                 System.err.printf("DISK CONTENTS (%s)\n", path);

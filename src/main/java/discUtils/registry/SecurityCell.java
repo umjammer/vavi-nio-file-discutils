@@ -39,34 +39,34 @@ public final class SecurityCell extends Cell {
         setNextIndex(-1);
     }
 
-    private int __NextIndex;
+    private int nextIndex;
 
     public int getNextIndex() {
-        return __NextIndex;
+        return nextIndex;
     }
 
     public void setNextIndex(int value) {
-        __NextIndex = value;
+        nextIndex = value;
     }
 
-    private int __PreviousIndex;
+    private int previousIndex;
 
     public int getPreviousIndex() {
-        return __PreviousIndex;
+        return previousIndex;
     }
 
     public void setPreviousIndex(int value) {
-        __PreviousIndex = value;
+        previousIndex = value;
     }
 
-    private RegistrySecurity __SecurityDescriptor;
+    private RegistrySecurity securityDescriptor;
 
     public RegistrySecurity getSecurityDescriptor() {
-        return __SecurityDescriptor;
+        return securityDescriptor;
     }
 
     public void setSecurityDescriptor(RegistrySecurity value) {
-        __SecurityDescriptor = value;
+        securityDescriptor = value;
     }
 
     public int size() {
@@ -74,40 +74,40 @@ public final class SecurityCell extends Cell {
         return 0x14 + sdLen;
     }
 
-    private int __UsageCount;
+    private int usageCount;
 
     public int getUsageCount() {
-        return __UsageCount;
+        return usageCount;
     }
 
     public void setUsageCount(int value) {
-        __UsageCount = value;
+        usageCount = value;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setPreviousIndex(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04));
-        setNextIndex(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08));
-        setUsageCount(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C));
+        previousIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
+        nextIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
+        usageCount = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C);
         int secDescSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
         byte[] secDesc = new byte[secDescSize];
         System.arraycopy(buffer, offset + 0x14, secDesc, 0, secDescSize);
-        setSecurityDescriptor(new RegistrySecurity());
-        getSecurityDescriptor().setSecurityDescriptorBinaryForm(secDesc);
+        securityDescriptor = new RegistrySecurity();
+        securityDescriptor.setSecurityDescriptorBinaryForm(secDesc);
         return 0x14 + secDescSize;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        byte[] sd = getSecurityDescriptor().getSecurityDescriptorBinaryForm();
+        byte[] sd = securityDescriptor.getSecurityDescriptorBinaryForm();
         EndianUtilities.stringToBytes("sk", buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian(getPreviousIndex(), buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(getNextIndex(), buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(getUsageCount(), buffer, offset + 0x0C);
+        EndianUtilities.writeBytesLittleEndian(previousIndex, buffer, offset + 0x04);
+        EndianUtilities.writeBytesLittleEndian(nextIndex, buffer, offset + 0x08);
+        EndianUtilities.writeBytesLittleEndian(usageCount, buffer, offset + 0x0C);
         EndianUtilities.writeBytesLittleEndian(sd.length, buffer, offset + 0x10);
         System.arraycopy(sd, 0, buffer, offset + 0x14, sd.length);
     }
 
     public String toString() {
-        return "SecDesc:" + getSecurityDescriptor().getSecurityDescriptorSddlForm(AccessControlSections.All) + " (refCount:" +
-               getUsageCount() + ")";
+        return "SecDesc:" + securityDescriptor.getSecurityDescriptorSddlForm(AccessControlSections.All) +
+                " (refCount:" + usageCount + ")";
     }
 }

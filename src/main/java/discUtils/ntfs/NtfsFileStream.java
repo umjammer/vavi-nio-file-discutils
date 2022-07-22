@@ -33,73 +33,74 @@ import dotnet4j.io.SeekOrigin;
 
 
 final class NtfsFileStream extends SparseStream {
-    private SparseStream _baseStream;
 
-    private final DirectoryEntry _entry;
+    private SparseStream baseStream;
 
-    private final File _file;
+    private final DirectoryEntry entry;
 
-    private boolean _isDirty;
+    private final File file;
+
+    private boolean isDirty;
 
     public NtfsFileStream(NtfsFileSystem fileSystem,
             DirectoryEntry entry,
             AttributeType attrType,
             String attrName,
             FileAccess access) {
-        _entry = entry;
-        _file = fileSystem.getFile(entry.getReference());
-        _baseStream = _file.openStream(attrType, attrName, access);
+        this.entry = entry;
+        file = fileSystem.getFile(entry.getReference());
+        baseStream = file.openStream(attrType, attrName, access);
     }
 
     public boolean canRead() {
         assertOpen();
-        return _baseStream.canRead();
+        return baseStream.canRead();
     }
 
     public boolean canSeek() {
         assertOpen();
-        return _baseStream.canSeek();
+        return baseStream.canSeek();
     }
 
     public boolean canWrite() {
         assertOpen();
-        return _baseStream.canWrite();
+        return baseStream.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
         assertOpen();
-        return _baseStream.getExtents();
+        return baseStream.getExtents();
     }
 
     public long getLength() {
         assertOpen();
-        return _baseStream.getLength();
+        return baseStream.getLength();
     }
 
     public long getPosition() {
         assertOpen();
-        return _baseStream.getPosition();
+        return baseStream.getPosition();
     }
 
     public void setPosition(long value) {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            _baseStream.setPosition(value);
+            baseStream.setPosition(value);
         }
     }
 
     public void close() throws IOException {
-        if (_baseStream == null) {
+        if (baseStream == null) {
             return;
         }
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            _baseStream.close();
+            baseStream.close();
 
             updateMetadata();
 
-            _baseStream = null;
+            baseStream = null;
         }
     }
 
@@ -107,7 +108,7 @@ final class NtfsFileStream extends SparseStream {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            _baseStream.flush();
+            baseStream.flush();
 
             updateMetadata();
         }
@@ -118,7 +119,7 @@ final class NtfsFileStream extends SparseStream {
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            return _baseStream.read(buffer, offset, count);
+            return baseStream.read(buffer, offset, count);
         }
     }
 
@@ -126,7 +127,7 @@ final class NtfsFileStream extends SparseStream {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            return _baseStream.seek(offset, origin);
+            return baseStream.seek(offset, origin);
         }
     }
 
@@ -135,8 +136,8 @@ final class NtfsFileStream extends SparseStream {
 
         try (NtfsTransaction c = new NtfsTransaction()) {
             if (value != getLength()) {
-                _isDirty = true;
-                _baseStream.setLength(value);
+                isDirty = true;
+                baseStream.setLength(value);
             }
         }
     }
@@ -146,8 +147,8 @@ final class NtfsFileStream extends SparseStream {
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            _isDirty = true;
-            _baseStream.write(buffer, offset, count);
+            isDirty = true;
+            baseStream.write(buffer, offset, count);
         }
     }
 
@@ -155,33 +156,33 @@ final class NtfsFileStream extends SparseStream {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            _isDirty = true;
-            _baseStream.clear(count);
+            isDirty = true;
+            baseStream.clear(count);
         }
     }
 
     private void updateMetadata() {
-        if (!_file.getContext().getReadOnly()) {
+        if (!file.getContext().getReadOnly()) {
             // Update the standard information attribute - so it reflects the actual file
             // state
-            if (_isDirty) {
-                _file.modified();
+            if (isDirty) {
+                file.modified();
             } else {
-                _file.accessed();
+                file.accessed();
             }
 
             // Update the directory entry used to open the file, so it's accurate
-            _entry.updateFrom(_file);
+            entry.updateFrom(file);
 
             // Write attribute changes back to the Master File Table
-            _file.updateRecordInMft();
-            _isDirty = false;
+            file.updateRecordInMft();
+            isDirty = false;
         }
     }
 
     private void assertOpen() {
-        if (_baseStream == null) {
-            throw new dotnet4j.io.IOException(_entry.getDetails()._fileName + " Attempt to use closed stream");
+        if (baseStream == null) {
+            throw new dotnet4j.io.IOException(entry.getDetails().fileName + " Attempt to use closed stream");
         }
     }
 }

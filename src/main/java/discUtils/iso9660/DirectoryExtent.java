@@ -30,40 +30,41 @@ import discUtils.streams.builder.BuilderExtent;
 
 
 class DirectoryExtent extends BuilderExtent {
-    private final BuildDirectoryInfo _dirInfo;
 
-    private final Charset _enc;
+    private final BuildDirectoryInfo dirInfo;
 
-    private final Map<BuildDirectoryMember, Integer> _locationTable;
+    private final Charset enc;
 
-    private byte[] _readCache;
+    private final Map<BuildDirectoryMember, Integer> locationTable;
+
+    private byte[] readCache;
 
     public DirectoryExtent(BuildDirectoryInfo dirInfo,
             Map<BuildDirectoryMember, Integer> locationTable,
             Charset enc,
             long start) {
         super(start, dirInfo.getDataSize(enc));
-        _dirInfo = dirInfo;
-        _locationTable = locationTable;
-        _enc = enc;
+        this.dirInfo = dirInfo;
+        this.locationTable = locationTable;
+        this.enc = enc;
     }
 
     public void close() throws IOException {
     }
 
     public void prepareForRead() {
-        _readCache = new byte[(int) getLength()];
-        _dirInfo.write(_readCache, 0, _locationTable, _enc);
+        readCache = new byte[(int) getLength()];
+        dirInfo.write(readCache, 0, locationTable, enc);
     }
 
     public int read(long diskOffset, byte[] buffer, int offset, int count) {
         long relPos = diskOffset - getStart();
-        int numRead = (int) Math.min(count, _readCache.length - relPos);
-        System.arraycopy(_readCache, (int) relPos, buffer, offset, numRead);
+        int numRead = (int) Math.min(count, readCache.length - relPos);
+        System.arraycopy(readCache, (int) relPos, buffer, offset, numRead);
         return numRead;
     }
 
     public void disposeReadState() {
-        _readCache = null;
+        readCache = null;
     }
 }

@@ -41,64 +41,64 @@ public class SwapHeader implements IByteArraySerializable {
 
     public static final int PageSize = 1 << PageShift;
 
-    private int _version;
+    private int version;
 
     public int getVersion() {
-        return _version;
+        return version;
     }
 
     public void setVersion(int value) {
-        _version = value;
+        version = value;
     }
 
-    private int _lastPage;
+    private int lastPage;
 
     public long getLastPage() {
-        return _lastPage & 0xffffffffL;
+        return lastPage & 0xffffffffL;
     }
 
     public void setLastPage(int value) {
-        _lastPage = value;
+        lastPage = value;
     }
 
-    private int _badPages;
+    private int badPages;
 
     public int getBadPages() {
-        return _badPages;
+        return badPages;
     }
 
     public void setBadPages(int value) {
-        _badPages = value;
+        badPages = value;
     }
 
-    private UUID _uuid;
+    private UUID uuid;
 
     public UUID getUuid() {
-        return _uuid;
+        return uuid;
     }
 
     public void setUuid(UUID value) {
-        _uuid = value;
+        uuid = value;
     }
 
-    private String _volume;
+    private String volume;
 
     public String getVolume() {
-        return _volume;
+        return volume;
     }
 
     public void setVolume(String value) {
-        _volume = value;
+        volume = value;
     }
 
-    private String _magic;
+    private String magic;
 
     public String getMagic() {
-        return _magic;
+        return magic;
     }
 
     public void setMagic(String value) {
-        _magic = value;
+        magic = value;
     }
 
     public int size() {
@@ -110,10 +110,10 @@ public class SwapHeader implements IByteArraySerializable {
         if (!getMagic().equals(Magic1) && !getMagic().equals(Magic2))
             return size();
 
-        _version = EndianUtilities.toUInt32LittleEndian(buffer, 0x400);
-        _lastPage = EndianUtilities.toUInt32LittleEndian(buffer, 0x404);
-        _badPages = EndianUtilities.toUInt32LittleEndian(buffer, 0x408);
-        _uuid = EndianUtilities.toGuidLittleEndian(buffer, 0x40c);
+        version = EndianUtilities.toUInt32LittleEndian(buffer, 0x400);
+        lastPage = EndianUtilities.toUInt32LittleEndian(buffer, 0x404);
+        badPages = EndianUtilities.toUInt32LittleEndian(buffer, 0x408);
+        uuid = EndianUtilities.toGuidLittleEndian(buffer, 0x40c);
         byte[] volume = EndianUtilities.toByteArray(buffer, 0x41c, 16);
         OptionalInt nullIndex = IntStream.range(0, volume.length).filter(i -> volume[i] == (byte) 0).findFirst();
         if (nullIndex.isPresent())

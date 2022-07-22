@@ -32,45 +32,46 @@ import dotnet4j.io.Stream;
 
 
 public class ClusterStream extends Stream {
-    private final FileAccess _access;
 
-    private final byte[] _clusterBuffer;
+    private final FileAccess access;
 
-    private final FileAllocationTable _fat;
+    private final byte[] clusterBuffer;
 
-    private final List<Integer> _knownClusters;
+    private final FileAllocationTable fat;
 
-    private final ClusterReader _reader;
+    private final List<Integer> knownClusters;
 
-    private boolean _atEOF;
+    private final ClusterReader reader;
 
-    private int _currentCluster;
+    private boolean atEOF;
 
-    private int _length;
+    private int currentCluster;
 
-    private long _position;
+    private int length;
+
+    private long position;
 
     public ClusterStream(FatFileSystem fileSystem, FileAccess access, int firstCluster, int length) {
-        _access = access;
-        _reader = fileSystem.getClusterReader();
-        _fat = fileSystem.getFat();
-        _length = length;
-        _knownClusters = new ArrayList<>();
+        this.access = access;
+        reader = fileSystem.getClusterReader();
+        fat = fileSystem.getFat();
+        this.length = length;
+        knownClusters = new ArrayList<>();
         if (firstCluster != 0) {
-            _knownClusters.add(firstCluster);
+            knownClusters.add(firstCluster);
         } else {
-            _knownClusters.add(FatBuffer.EndOfChain);
+            knownClusters.add(FatBuffer.EndOfChain);
         }
-        if (_length == 0xffff_ffff) {
-            _length = detectLength();
+        if (this.length == 0xffff_ffff) {
+            this.length = detectLength();
         }
 
-        _currentCluster = 0xffff_ffff;
-        _clusterBuffer = new byte[_reader.getClusterSize()];
+        currentCluster = 0xffff_ffff;
+        clusterBuffer = new byte[reader.getClusterSize()];
     }
 
     public boolean canRead() {
-        return _access == FileAccess.Read || _access == FileAccess.ReadWrite;
+        return access == FileAccess.Read || access == FileAccess.ReadWrite;
     }
 
     public boolean canSeek() {
@@ -78,27 +79,27 @@ public class ClusterStream extends Stream {
     }
 
     public boolean canWrite() {
-        return _access == FileAccess.ReadWrite || _access == FileAccess.Write;
+        return access == FileAccess.ReadWrite || access == FileAccess.Write;
     }
 
     public long getLength() {
-        return _length;
+        return length;
     }
 
     public long getPosition() {
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
         if (value >= 0) {
-            _position = value;
-            _atEOF = false;
+            position = value;
+            atEOF = false;
         } else {
             throw new IndexOutOfBoundsException("Attempt to move before beginning of stream");
         }
     }
 
-    public FirstClusterChangedDelegate FirstClusterChanged;
+    public FirstClusterChangedDelegate firstClusterChanged;
 
     public void flush() {
     }
@@ -108,7 +109,7 @@ public class ClusterStream extends Stream {
             throw new IOException("Attempt to read from file not opened for read");
         }
 
-        if (_position > _length) {
+        if (position > length) {
             throw new IOException("Attempt to read beyond end of file");
         }
 
@@ -117,13 +118,13 @@ public class ClusterStream extends Stream {
         }
 
         int target = count;
-        if (_length - _position < count) {
-            target = (int) (_length - _position);
+        if (length - position < count) {
+            target = (int) (length - position);
         }
 
         if (!tryLoadCurrentCluster()) {
-            if ((_position == _length || _position == detectLength()) && !_atEOF) {
-                _atEOF = true;
+            if ((position == length || position == detectLength()) && !atEOF) {
+                atEOF = true;
                 return 0;
             }
 
@@ -132,13 +133,13 @@ public class ClusterStream extends Stream {
 
         int numRead = 0;
         while (numRead < target) {
-            int clusterOffset = (int) (_position % _reader.getClusterSize());
-            int toCopy = Math.min(_reader.getClusterSize() - clusterOffset, target - numRead);
-            System.arraycopy(_clusterBuffer, clusterOffset, buffer, offset + numRead, toCopy);
+            int clusterOffset = (int) (position % reader.getClusterSize());
+            int toCopy = Math.min(reader.getClusterSize() - clusterOffset, target - numRead);
+            System.arraycopy(clusterBuffer, clusterOffset, buffer, offset + numRead, toCopy);
             // Remember how many we've read in total
             numRead += toCopy;
             // Increment the position
-            _position += toCopy;
+            position += toCopy;
             // Abort if we've hit the end of the file
             if (!tryLoadCurrentCluster()) {
                 break;
@@ -146,7 +147,7 @@ public class ClusterStream extends Stream {
 
         }
         if (numRead == 0) {
-            _atEOF = true;
+            atEOF = true;
         }
 
         return numRead;
@@ -155,19 +156,19 @@ public class ClusterStream extends Stream {
     public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
-            newPos += _position;
+            newPos += position;
         } else if (origin == SeekOrigin.End) {
             newPos += getLength();
         }
 
-        _position = newPos;
-        _atEOF = false;
+        position = newPos;
+        atEOF = false;
         return newPos;
     }
 
     public void setLength(long value) {
-        long desiredNumClusters = (value + _reader.getClusterSize() - 1) / _reader.getClusterSize();
-        long actualNumClusters = (_length + _reader.getClusterSize() - 1) / _reader.getClusterSize();
+        long desiredNumClusters = (value + reader.getClusterSize() - 1) / reader.getClusterSize();
+        long actualNumClusters = (length + reader.getClusterSize() - 1) / reader.getClusterSize();
         if (desiredNumClusters < actualNumClusters) {
             int[] cluster = new int[1];
             boolean result = !tryGetClusterByPosition(value, cluster);
@@ -175,13 +176,13 @@ public class ClusterStream extends Stream {
                 throw new IOException("internal state corrupt - unable to find cluster");
             }
 
-            int firstToFree = _fat.getNext(cluster[0]);
-            _fat.setEndOfChain(cluster[0]);
-            _fat.freeChain(firstToFree);
-            while (_knownClusters.size() > desiredNumClusters) {
-                _knownClusters.remove(_knownClusters.size() - 1);
+            int firstToFree = fat.getNext(cluster[0]);
+            fat.setEndOfChain(cluster[0]);
+            fat.freeChain(firstToFree);
+            while (knownClusters.size() > desiredNumClusters) {
+                knownClusters.remove(knownClusters.size() - 1);
             }
-            _knownClusters.add(FatBuffer.EndOfChain);
+            knownClusters.add(FatBuffer.EndOfChain);
             if (desiredNumClusters == 0) {
                 fireFirstClusterAllocated(0);
             }
@@ -190,14 +191,14 @@ public class ClusterStream extends Stream {
             int[] cluster = new int[1];
             while (!tryGetClusterByPosition(value, cluster)) {
                 cluster[0] = extendChain();
-                _reader.wipeCluster(cluster[0]);
+                reader.wipeCluster(cluster[0]);
             }
         }
 
-        if (_length != value) {
-            _length = (int) value;
-            if (_position > _length) {
-                _position = _length;
+        if (length != value) {
+            length = (int) value;
+            if (position > length) {
+                position = length;
             }
         }
     }
@@ -219,29 +220,29 @@ public class ClusterStream extends Stream {
         try {
             while (bytesRemaining > 0) {
                 // TODO: Free space check...
-                // Extend the stream until it encompasses _position
+                // Extend the stream until it encompasses position
                 int[] cluster = new int[1];
-                while (!tryGetClusterByPosition(_position, cluster)) {
+                while (!tryGetClusterByPosition(position, cluster)) {
                     cluster[0] = extendChain();
-                    _reader.wipeCluster(cluster[0]);
+                    reader.wipeCluster(cluster[0]);
                 }
                 // Fill this cluster with as much data as we can (WriteToCluster
                 // preserves existing cluster
                 // data, if necessary)
                 int numWritten = writeToCluster(cluster[0],
-                                                (int) (_position % _reader.getClusterSize()),
+                                                (int) (position % reader.getClusterSize()),
                                                 buffer,
                                                 offset,
                                                 bytesRemaining);
                 offset += numWritten;
                 bytesRemaining -= numWritten;
-                _position += numWritten;
+                position += numWritten;
             }
-            _length = (int) Math.max(_length, _position);
+            length = (int) Math.max(length, position);
         } finally {
-            _fat.flush();
+            fat.flush();
         }
-        _atEOF = false;
+        atEOF = false;
     }
 
     /**
@@ -257,17 +258,17 @@ public class ClusterStream extends Stream {
      *         fit up to the cluster boundary.
      */
     private int writeToCluster(int cluster, int pos, byte[] buffer, int offset, int count) {
-        if (pos == 0 && count >= _reader.getClusterSize()) {
-            _currentCluster = cluster;
-            System.arraycopy(buffer, offset, _clusterBuffer, 0, _reader.getClusterSize());
+        if (pos == 0 && count >= reader.getClusterSize()) {
+            currentCluster = cluster;
+            System.arraycopy(buffer, offset, clusterBuffer, 0, reader.getClusterSize());
             writeCurrentCluster();
-            return _reader.getClusterSize();
+            return reader.getClusterSize();
         }
 
         // Partial cluster, so need to read existing cluster data first
         loadCluster(cluster);
-        int copyLength = Math.min(count, _reader.getClusterSize() - pos % _reader.getClusterSize());
-        System.arraycopy(buffer, offset, _clusterBuffer, pos, copyLength);
+        int copyLength = Math.min(count, reader.getClusterSize() - pos % reader.getClusterSize());
+        System.arraycopy(buffer, offset, clusterBuffer, pos, copyLength);
         writeCurrentCluster();
         return copyLength;
     }
@@ -283,35 +284,35 @@ public class ClusterStream extends Stream {
      */
     private int extendChain() {
         // Sanity check - make sure the final known cluster is the EOC marker
-        if (!_fat.isEndOfChain(_knownClusters.get(_knownClusters.size() - 1))) {
+        if (!fat.isEndOfChain(knownClusters.get(knownClusters.size() - 1))) {
             throw new IOException("Corrupt file system: final cluster isn't End-of-Chain");
         }
 
         int[] cluster = new int[1];
-        boolean result = !_fat.tryGetFreeCluster(cluster);
+        boolean result = !fat.tryGetFreeCluster(cluster);
         if (result) {
             throw new IOException("Out of disk space");
         }
 
-        _fat.setEndOfChain(cluster[0]);
-        if (_knownClusters.size() == 1) {
+        fat.setEndOfChain(cluster[0]);
+        if (knownClusters.size() == 1) {
             fireFirstClusterAllocated(cluster[0]);
         } else {
-            _fat.setNext(_knownClusters.get(_knownClusters.size() - 2), cluster[0]);
+            fat.setNext(knownClusters.get(knownClusters.size() - 2), cluster[0]);
         }
-        _knownClusters.set(_knownClusters.size() - 1, cluster[0]);
-        _knownClusters.add(_fat.getNext(cluster[0]));
+        knownClusters.set(knownClusters.size() - 1, cluster[0]);
+        knownClusters.add(fat.getNext(cluster[0]));
         return cluster[0];
     }
 
     private void fireFirstClusterAllocated(int cluster) {
-        if (FirstClusterChanged != null) {
-            FirstClusterChanged.invoke(cluster);
+        if (firstClusterChanged != null) {
+            firstClusterChanged.invoke(cluster);
         }
     }
 
     private boolean tryLoadCurrentCluster() {
-        return tryLoadClusterByPosition(_position);
+        return tryLoadClusterByPosition(position);
     }
 
     private boolean tryLoadClusterByPosition(long pos) {
@@ -322,9 +323,9 @@ public class ClusterStream extends Stream {
         }
 
         // Read the cluster, it's different to the one currently loaded
-        if (cluster[0] != _currentCluster) {
-            _reader.readCluster(cluster[0], _clusterBuffer, 0);
-            _currentCluster = cluster[0];
+        if (cluster[0] != currentCluster) {
+            reader.readCluster(cluster[0], clusterBuffer, 0);
+            currentCluster = cluster[0];
         }
 
         return true;
@@ -332,23 +333,23 @@ public class ClusterStream extends Stream {
 
     private void loadCluster(int cluster) {
         // Read the cluster, it's different to the one currently loaded
-        if (cluster != _currentCluster) {
-            _reader.readCluster(cluster, _clusterBuffer, 0);
-            _currentCluster = cluster;
+        if (cluster != currentCluster) {
+            reader.readCluster(cluster, clusterBuffer, 0);
+            currentCluster = cluster;
         }
 
     }
 
     private void writeCurrentCluster() {
-        _reader.writeCluster(_currentCluster, _clusterBuffer, 0);
+        reader.writeCluster(currentCluster, clusterBuffer, 0);
     }
 
     /**
      * @param cluster {@cs out}
      */
     private boolean tryGetClusterByPosition(long pos, int[] cluster) {
-        int index = (int) (pos / _reader.getClusterSize());
-        if (_knownClusters.size() <= index) {
+        int index = (int) (pos / reader.getClusterSize());
+        if (knownClusters.size() <= index) {
             if (!tryPopulateKnownClusters(index)) {
                 cluster[0] = 0xffff_ffff;
                 return false;
@@ -356,15 +357,15 @@ public class ClusterStream extends Stream {
         }
 
         // Chain is shorter than the current stream position
-        if (_knownClusters.size() <= index) {
+        if (knownClusters.size() <= index) {
             cluster[0] = 0xffff_ffff;
             return false;
         }
 
-        cluster[0] = _knownClusters.get(index);
+        cluster[0] = knownClusters.get(index);
         // This is the 'special' End-of-chain cluster identifier, so the stream
         // position is greater than the actual file length.
-        if (_fat.isEndOfChain(cluster[0])) {
+        if (fat.isEndOfChain(cluster[0])) {
             return false;
         }
 
@@ -372,21 +373,21 @@ public class ClusterStream extends Stream {
     }
 
     private boolean tryPopulateKnownClusters(int index) {
-        int lastKnown = _knownClusters.get(_knownClusters.size() - 1);
-        while (!_fat.isEndOfChain(lastKnown) && _knownClusters.size() <= index) {
-            lastKnown = _fat.getNext(lastKnown);
-            _knownClusters.add(lastKnown);
+        int lastKnown = knownClusters.get(knownClusters.size() - 1);
+        while (!fat.isEndOfChain(lastKnown) && knownClusters.size() <= index) {
+            lastKnown = fat.getNext(lastKnown);
+            knownClusters.add(lastKnown);
         }
-        return _knownClusters.size() > index;
+        return knownClusters.size() > index;
     }
 
     private int detectLength() {
-        while (!_fat.isEndOfChain(_knownClusters.get(_knownClusters.size() - 1))) {
-            if (!tryPopulateKnownClusters(_knownClusters.size())) {
+        while (!fat.isEndOfChain(knownClusters.get(knownClusters.size() - 1))) {
+            if (!tryPopulateKnownClusters(knownClusters.size())) {
                 throw new IOException("Corrupt file stream - unable to discover end of cluster chain");
             }
         }
-        return (int) ((_knownClusters.size() - 1) * (long) _reader.getClusterSize());
+        return (int) ((knownClusters.size() - 1) * (long) reader.getClusterSize());
     }
 
     @Override

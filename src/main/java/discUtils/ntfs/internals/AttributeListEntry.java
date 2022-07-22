@@ -33,31 +33,32 @@ import discUtils.ntfs.AttributeType;
  * entries.
  */
 public final class AttributeListEntry {
-    private final AttributeListRecord _record;
+
+    private final AttributeListRecord record;
 
     public AttributeListEntry(AttributeListRecord record) {
-        _record = record;
+        this.record = record;
     }
 
     /**
      * Gets the identifier of the attribute.
      */
     public int getAttributeIdentifier() {
-        return _record.AttributeId;
+        return record.attributeId;
     }
 
     /**
      * Gets the name of the attribute (if any).
      */
     public String getAttributeName() {
-        return _record.Name;
+        return record.name;
     }
 
     /**
      * Gets the type of the attribute.
      */
     public AttributeType getAttributeType() {
-        return _record.Type;
+        return record.type;
     }
 
     /**
@@ -74,14 +75,13 @@ public final class AttributeListEntry {
      * logically represented in the attribute).
      */
     public long getFirstFileCluster() {
-        return _record.StartVcn;
+        return record.startVcn;
     }
 
     /**
      * Gets the Master File Table entry that contains the attribute.
      */
     public MasterFileTableReference getMasterFileTableEntry() {
-        return new MasterFileTableReference(_record.BaseFileReference);
+        return new MasterFileTableReference(record.baseFileReference);
     }
-
 }

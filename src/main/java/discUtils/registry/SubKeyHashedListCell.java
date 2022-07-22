@@ -32,55 +32,56 @@ import dotnet4j.util.compat.StringUtilities;
 
 
 public final class SubKeyHashedListCell extends ListCell {
-    private String _hashType;
 
-    private final RegistryHive _hive;
+    private String hashType;
 
-    private List<Integer> _nameHashes;
+    private final RegistryHive hive;
 
-    private short _numElements;
+    private List<Integer> nameHashes;
 
-    private List<Integer> _subKeyIndexes;
+    private short numElements;
+
+    private List<Integer> subKeyIndexes;
 
     public SubKeyHashedListCell(RegistryHive hive, String hashType) {
         super(-1);
-        _hive = hive;
-        _hashType = hashType;
-        _subKeyIndexes = new ArrayList<>();
-        _nameHashes = new ArrayList<>();
+        this.hive = hive;
+        this.hashType = hashType;
+        subKeyIndexes = new ArrayList<>();
+        nameHashes = new ArrayList<>();
     }
 
     public SubKeyHashedListCell(RegistryHive hive, int index) {
         super(index);
-        _hive = hive;
+        this.hive = hive;
     }
 
     int getCount() {
-        return _subKeyIndexes.size();
+        return subKeyIndexes.size();
     }
 
     public int size() {
-        return 0x4 + _numElements * 0x8;
+        return 0x4 + numElements * 0x8;
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        _hashType = EndianUtilities.bytesToString(buffer, offset, 2);
-        _numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
-        _subKeyIndexes = new ArrayList<>(_numElements);
-        _nameHashes = new ArrayList<>(_numElements);
-        for (int i = 0; i < _numElements; ++i) {
-            _subKeyIndexes.add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x8));
-            _nameHashes.add(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4 + i * 0x8 + 0x4));
+        hashType = EndianUtilities.bytesToString(buffer, offset, 2);
+        numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
+        subKeyIndexes = new ArrayList<>(numElements);
+        nameHashes = new ArrayList<>(numElements);
+        for (int i = 0; i < numElements; ++i) {
+            subKeyIndexes.add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x8));
+            nameHashes.add(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4 + i * 0x8 + 0x4));
         }
-        return 0x4 + _numElements * 0x8;
+        return 0x4 + numElements * 0x8;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.stringToBytes(_hashType, buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian(_numElements, buffer, offset + 0x2);
-        for (int i = 0; i < _numElements; ++i) {
-            EndianUtilities.writeBytesLittleEndian(_subKeyIndexes.get(i), buffer, offset + 0x4 + i * 0x8);
-            EndianUtilities.writeBytesLittleEndian(_nameHashes.get(i), buffer, offset + 0x4 + i * 0x8 + 0x4);
+        EndianUtilities.stringToBytes(hashType, buffer, offset, 2);
+        EndianUtilities.writeBytesLittleEndian(numElements, buffer, offset + 0x2);
+        for (int i = 0; i < numElements; ++i) {
+            EndianUtilities.writeBytesLittleEndian(subKeyIndexes.get(i), buffer, offset + 0x4 + i * 0x8);
+            EndianUtilities.writeBytesLittleEndian(nameHashes.get(i), buffer, offset + 0x4 + i * 0x8 + 0x4);
         }
     }
 
@@ -92,19 +93,19 @@ public final class SubKeyHashedListCell extends ListCell {
      * @return The index of the new entry.
      */
     public int add(String name, int cellIndex) {
-        for (int i = 0; i < _numElements; ++i) {
-            KeyNodeCell cell = _hive.getCell(_subKeyIndexes.get(i));
-            if (cell.Name.compareTo(name) > 0) {
-                _subKeyIndexes.add(i, cellIndex);
-                _nameHashes.add(i, calcHash(name));
-                _numElements++;
+        for (int i = 0; i < numElements; ++i) {
+            KeyNodeCell cell = hive.getCell(subKeyIndexes.get(i));
+            if (cell.name.compareTo(name) > 0) {
+                subKeyIndexes.add(i, cellIndex);
+                nameHashes.add(i, calcHash(name));
+                numElements++;
                 return i;
             }
 
         }
-        _subKeyIndexes.add(cellIndex);
-        _nameHashes.add(calcHash(name));
-        return _numElements++;
+        subKeyIndexes.add(cellIndex);
+        nameHashes.add(calcHash(name));
+        return numElements++;
     }
 
     /**
@@ -119,42 +120,42 @@ public final class SubKeyHashedListCell extends ListCell {
             return result;
         }
 
-        result = findKeyAt(name, _subKeyIndexes.size() - 1, found);
+        result = findKeyAt(name, subKeyIndexes.size() - 1, found);
         cellIndex[0] = found[0];
         if (result >= 0) {
             return result;
         }
 
-        KeyFinder finder = new KeyFinder(_hive, name);
-        int idx = Collections.binarySearch(_subKeyIndexes, -1, finder);
+        KeyFinder finder = new KeyFinder(hive, name);
+        int idx = Collections.binarySearch(subKeyIndexes, -1, finder);
         cellIndex[0] = finder.getCellIndex();
         return idx < 0 ? -1 : 0;
     }
 
     void enumerateKeys(List<String> names) {
-        for (Integer subKeyIndex : _subKeyIndexes) {
-            names.add(_hive.<KeyNodeCell>getCell(subKeyIndex).Name);
+        for (Integer subKeyIndex : subKeyIndexes) {
+            names.add(hive.<KeyNodeCell>getCell(subKeyIndex).name);
         }
     }
 
     List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
-        for (Integer subKeyIndex : _subKeyIndexes) {
-            result.add(_hive.getCell(subKeyIndex));
+        for (Integer subKeyIndex : subKeyIndexes) {
+            result.add(hive.getCell(subKeyIndex));
         }
         return result;
     }
 
     int linkSubKey(String name, int cellIndex) {
         add(name, cellIndex);
-        return _hive.updateCell(this, true);
+        return hive.updateCell(this, true);
     }
 
     int unlinkSubKey(String name) {
         int index = indexOf(name);
         if (index >= 0) {
             removeAt(index);
-            return _hive.updateCell(this, true);
+            return hive.updateCell(this, true);
         }
 
         return getIndex();
@@ -170,8 +171,8 @@ public final class SubKeyHashedListCell extends ListCell {
      */
     public int indexOf(String name) {
         for (int index : find(name, 0)) {
-            KeyNodeCell cell = _hive.getCell(_subKeyIndexes.get(index));
-            if (cell.Name.equalsIgnoreCase(name)) {
+            KeyNodeCell cell = hive.getCell(subKeyIndexes.get(index));
+            if (cell.name.equalsIgnoreCase(name)) {
                 return index;
             }
         }
@@ -179,14 +180,14 @@ public final class SubKeyHashedListCell extends ListCell {
     }
 
     public void removeAt(int index) {
-        _nameHashes.remove(index);
-        _subKeyIndexes.remove(index);
-        _numElements--;
+        nameHashes.remove(index);
+        subKeyIndexes.remove(index);
+        numElements--;
     }
 
     private int calcHash(String name) {
         int hash = 0;
-        if (_hashType.equals("lh")) {
+        if (hashType.equals("lh")) {
             for (int i = 0; i < name.length(); ++i) {
                 hash *= 37;
                 hash += Character.toUpperCase(name.charAt(i));
@@ -204,7 +205,7 @@ public final class SubKeyHashedListCell extends ListCell {
      * @param cellIndex {@cs out}
      */
     private int findKeyAt(String name, int listIndex, int[] cellIndex) {
-        Cell cell = _hive.getCell(_subKeyIndexes.get(listIndex));
+        Cell cell = hive.getCell(subKeyIndexes.get(listIndex));
         if (cell == null) {
             cellIndex[0] = 0;
             return -1;
@@ -215,12 +216,12 @@ public final class SubKeyHashedListCell extends ListCell {
             return listCell.findKey(name, cellIndex);
         }
 
-        cellIndex[0] = _subKeyIndexes.get(listIndex);
-        return StringUtilities.compare(name, ((KeyNodeCell) cell).Name, true);
+        cellIndex[0] = subKeyIndexes.get(listIndex);
+        return StringUtilities.compare(name, ((KeyNodeCell) cell).name, true);
     }
 
     private List<Integer> find(String name, int start) {
-        if (_hashType.equals("lh")) {
+        if (hashType.equals("lh")) {
             return findByHash(name, start);
         }
 
@@ -230,8 +231,8 @@ public final class SubKeyHashedListCell extends ListCell {
     private List<Integer> findByHash(String name, int start) {
         List<Integer> result = new ArrayList<>();
         int hash = calcHash(name);
-        for (int i = start; i < _nameHashes.size(); ++i) {
-            if (_nameHashes.get(i) == hash) {
+        for (int i = start; i < nameHashes.size(); ++i) {
+            if (nameHashes.get(i) == hash) {
                 result.add(i);
             }
         }
@@ -242,9 +243,9 @@ public final class SubKeyHashedListCell extends ListCell {
         int compChars = Math.min(name.length(), 4);
         String compStr = name.substring(0, compChars).toUpperCase() + "\0\0\0\0";
         List<Integer> result = new ArrayList<>();
-        for (int i = start; i < _nameHashes.size(); ++i) {
+        for (int i = start; i < nameHashes.size(); ++i) {
             boolean match = true;
-            int hash = _nameHashes.get(i);
+            int hash = nameHashes.get(i);
             for (int j = 0; j < 4; ++j) {
                 char ch = (char) ((hash >>> (j * 8)) & 0xFF);
                 if (Character.toUpperCase(ch) != compStr.charAt(j)) {
@@ -260,31 +261,31 @@ public final class SubKeyHashedListCell extends ListCell {
     }
 
     private static class KeyFinder implements Comparator<Integer> {
-        private final RegistryHive _hive;
+        private final RegistryHive hive;
 
-        private final String _searchName;
+        private final String searchName;
 
         public KeyFinder(RegistryHive hive, String searchName) {
-            _hive = hive;
-            _searchName = searchName;
+            this.hive = hive;
+            this.searchName = searchName;
         }
 
-        private int __CellIndex;
+        private int cellIndex;
 
         public int getCellIndex() {
-            return __CellIndex;
+            return cellIndex;
         }
 
         public void setCellIndex(int value) {
-            __CellIndex = value;
+            cellIndex = value;
         }
 
         public int compare(Integer x, Integer y) {
             // TODO: Be more efficient at ruling out no-hopes by using the hash values
-            KeyNodeCell cell = _hive.getCell(x);
-            int result = StringUtilities.compare(cell.Name, _searchName, true);
+            KeyNodeCell cell = hive.getCell(x);
+            int result = StringUtilities.compare(cell.name, searchName, true);
             if (result == 0) {
-                setCellIndex(x);
+                cellIndex = x;
             }
 
             return result;

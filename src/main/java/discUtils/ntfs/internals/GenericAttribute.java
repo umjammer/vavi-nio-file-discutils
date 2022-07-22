@@ -37,49 +37,50 @@ import discUtils.streams.buffer.SubBuffer;
  * More specialized base classes are provided for known attribute types.
  */
 public abstract class GenericAttribute {
-    private final INtfsContext _context;
 
-    private final AttributeRecord _record;
+    private final INtfsContext context;
+
+    private final AttributeRecord record;
 
     public GenericAttribute(INtfsContext context, AttributeRecord record) {
-        _context = context;
-        _record = record;
+        this.context = context;
+        this.record = record;
     }
 
     /**
      * Gets the type of the attribute.
      */
     public AttributeType getAttributeType() {
-        return _record.getAttributeType();
+        return record.getAttributeType();
     }
 
     /**
      * Gets a buffer that can access the content of the attribute.
      */
     public IBuffer getContent() {
-        IBuffer rawBuffer = _record.getReadOnlyDataBuffer(_context);
-        return new SubBuffer(rawBuffer, 0, _record.getDataLength());
+        IBuffer rawBuffer = record.getReadOnlyDataBuffer(context);
+        return new SubBuffer(rawBuffer, 0, record.getDataLength());
     }
 
     /**
      * Gets the amount of valid data in the attribute's content.
      */
     public long getContentLength() {
-        return _record.getDataLength();
+        return record.getDataLength();
     }
 
     /**
      * Gets the flags indicating how the content of the attribute is stored.
      */
     public EnumSet<AttributeFlags> getFlags() {
-        return AttributeFlags.valueOf((int) discUtils.ntfs.AttributeFlags.valueOf(_record.getFlags()));
+        return AttributeFlags.valueOf((int) discUtils.ntfs.AttributeFlags.valueOf(record.getFlags()));
     }
 
     /**
      * Gets the unique id of the attribute.
      */
     public int getIdentifier() {
-        return _record.getAttributeId();
+        return record.getAttributeId();
     }
 
     /**
@@ -87,14 +88,14 @@ public abstract class GenericAttribute {
      * MFT record itself.
      */
     public boolean getIsResident() {
-        return !_record.isNonResident();
+        return !record.isNonResident();
     }
 
     /**
      * Gets the name of the attribute (if any).
      */
     public String getName() {
-        return _record.getName();
+        return record.getName();
     }
 
     public static GenericAttribute fromAttributeRecord(INtfsContext context, AttributeRecord record) {

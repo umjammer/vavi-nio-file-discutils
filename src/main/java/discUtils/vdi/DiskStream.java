@@ -39,31 +39,32 @@ import dotnet4j.io.Stream;
 
 
 public class DiskStream extends SparseStream {
+
     private static final int BlockFree = 0xffffffff;
 
     private static final int BlockZero = 0xfffffffe;
 
-    private boolean _atEof;
+    private boolean atEof;
 
-    private int[] _blockTable;
+    private int[] blockTable;
 
-    private final HeaderRecord _fileHeader;
+    private final HeaderRecord fileHeader;
 
-    private Stream _fileStream;
+    private Stream fileStream;
 
-    private boolean _isDisposed;
+    private boolean isDisposed;
 
-    private final Ownership _ownsStream;
+    private final Ownership ownsStream;
 
-    private long _position;
+    private long position;
 
-    private boolean _writeNotified;
+    private boolean writeNotified;
 
     public DiskStream(Stream fileStream, Ownership ownsStream, HeaderRecord fileHeader) {
-        _fileStream = fileStream;
-        _fileHeader = fileHeader;
+        this.fileStream = fileStream;
+        this.fileHeader = fileHeader;
 
-        _ownsStream = ownsStream;
+        this.ownsStream = ownsStream;
 
         readBlockTable();
     }
@@ -80,24 +81,24 @@ public class DiskStream extends SparseStream {
 
     public boolean canWrite() {
         checkDisposed();
-        return _fileStream.canWrite();
+        return fileStream.canWrite();
     }
 
     public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
 
-        long blockSize = _fileHeader.blockSize;
+        long blockSize = fileHeader.blockSize;
         int i = 0;
-        while (i < _blockTable.length) {
+        while (i < blockTable.length) {
             // Find next stored block
-            while (i < _blockTable.length && (_blockTable[i] == BlockZero || _blockTable[i] == BlockFree)) {
+            while (i < blockTable.length && (blockTable[i] == BlockZero || blockTable[i] == BlockFree)) {
                 ++i;
             }
 
             int start = i;
 
             // Find next absent block
-            while (i < _blockTable.length && _blockTable[i] != BlockZero && _blockTable[i] != BlockFree) {
+            while (i < blockTable.length && blockTable[i] != BlockZero && blockTable[i] != BlockFree) {
                 ++i;
             }
 
@@ -111,21 +112,21 @@ public class DiskStream extends SparseStream {
 
     public long getLength() {
         checkDisposed();
-        return _fileHeader.diskSize;
+        return fileHeader.diskSize;
     }
 
     public long getPosition() {
         checkDisposed();
-        return _position;
+        return position;
     }
 
     public void setPosition(long value) {
         checkDisposed();
-        _position = value;
-        _atEof = false;
+        position = value;
+        atEof = false;
     }
 
-    public BiConsumer<Object, Object[]> WriteOccurred;
+    public BiConsumer<Object, Object[]> writeOccurred;
 
     public void flush() {
         checkDisposed();
@@ -134,38 +135,38 @@ public class DiskStream extends SparseStream {
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
-        if (_atEof || _position > _fileHeader.diskSize) {
-            _atEof = true;
+        if (atEof || position > fileHeader.diskSize) {
+            atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
-        if (_position == _fileHeader.diskSize) {
-            _atEof = true;
+        if (position == fileHeader.diskSize) {
+            atEof = true;
             return 0;
         }
 
-        int maxToRead = (int) Math.min(count, _fileHeader.diskSize - _position);
+        int maxToRead = (int) Math.min(count, fileHeader.diskSize - position);
         int numRead = 0;
 
         while (numRead < maxToRead) {
-            int block = (int) (_position / _fileHeader.blockSize);
-            int offsetInBlock = (int) (_position % _fileHeader.blockSize);
+            int block = (int) (position / fileHeader.blockSize);
+            int offsetInBlock = (int) (position % fileHeader.blockSize);
 
-            int toRead = Math.min(maxToRead - numRead, _fileHeader.blockSize - offsetInBlock);
+            int toRead = Math.min(maxToRead - numRead, fileHeader.blockSize - offsetInBlock);
 
-            if (_blockTable[block] == BlockFree) {
+            if (blockTable[block] == BlockFree) {
                 // TODO: Use parent
                 Arrays.fill(buffer, offset + numRead, offset + numRead + toRead, (byte) 0);
-            } else if (_blockTable[block] == BlockZero) {
+            } else if (blockTable[block] == BlockZero) {
                 Arrays.fill(buffer, offset + numRead, offset + numRead + toRead, (byte) 0);
             } else {
-                long blockOffset = (_blockTable[block] & 0xffffffffL) * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
-                long filePos = _fileHeader.dataOffset + _fileHeader.blockExtraSize + blockOffset + offsetInBlock;
-                _fileStream.setPosition(filePos);
-                StreamUtilities.readExact(_fileStream, buffer, offset + numRead, toRead);
+                long blockOffset = (blockTable[block] & 0xffffffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
+                long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
+                fileStream.setPosition(filePos);
+                StreamUtilities.readExact(fileStream, buffer, offset + numRead, toRead);
             }
 
-            _position += toRead;
+            position += toRead;
             numRead += toRead;
         }
 
@@ -176,18 +177,18 @@ public class DiskStream extends SparseStream {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += _position;
+            effectiveOffset += position;
         } else if (origin == SeekOrigin.End) {
-            effectiveOffset += _fileHeader.diskSize;
+            effectiveOffset += fileHeader.diskSize;
         }
 
-        _atEof = false;
+        atEof = false;
 
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        _position = effectiveOffset;
-        return _position;
+        position = effectiveOffset;
+        return position;
     }
 
     public void setLength(long value) {
@@ -206,41 +207,41 @@ public class DiskStream extends SparseStream {
             throw new IndexOutOfBoundsException("Attempt to write negative number of bytes (count)");
         }
 
-        if (_atEof || _position + count > _fileHeader.diskSize) {
-            _atEof = true;
+        if (atEof || position + count > fileHeader.diskSize) {
+            atEof = true;
             throw new dotnet4j.io.IOException("Attempt to write beyond end of file");
         }
 
         // On first write, notify event listeners - they just get to find out that some
         // write occurred, not about each write.
-        if (!_writeNotified) {
+        if (!writeNotified) {
             onWriteOccurred();
-            _writeNotified = true;
+            writeNotified = true;
         }
 
         int numWritten = 0;
         while (numWritten < count) {
-            int block = (int) (_position / _fileHeader.blockSize);
-            int offsetInBlock = (int) (_position % _fileHeader.blockSize);
+            int block = (int) (position / fileHeader.blockSize);
+            int offsetInBlock = (int) (position % fileHeader.blockSize);
 
-            int toWrite = Math.min(count - numWritten, _fileHeader.blockSize - offsetInBlock);
+            int toWrite = Math.min(count - numWritten, fileHeader.blockSize - offsetInBlock);
 
             // Optimize away zero-writes
-            if (_blockTable[block] == BlockZero || (_blockTable[block] == BlockFree && toWrite == _fileHeader.blockSize)) {
+            if (blockTable[block] == BlockZero || (blockTable[block] == BlockFree && toWrite == fileHeader.blockSize)) {
                 if (Utilities.isAllZeros(buffer, offset + numWritten, toWrite)) {
                     numWritten += toWrite;
-                    _position += toWrite;
+                    position += toWrite;
                     continue;
                 }
             }
 
-            if (_blockTable[block] == BlockFree || _blockTable[block] == BlockZero) {
+            if (blockTable[block] == BlockFree || blockTable[block] == BlockZero) {
                 byte[] writeBuffer = buffer;
                 int writeBufferOffset = offset + numWritten;
 
-                if (toWrite != _fileHeader.blockSize) {
-                    writeBuffer = new byte[_fileHeader.blockSize];
-                    if (_blockTable[block] == BlockFree) {
+                if (toWrite != fileHeader.blockSize) {
+                    writeBuffer = new byte[fileHeader.blockSize];
+                    if (blockTable[block] == BlockFree) {
                         // TODO: Use parent stream data...
                     }
 
@@ -249,69 +250,69 @@ public class DiskStream extends SparseStream {
                     writeBufferOffset = 0;
                 }
 
-                long blockOffset = (long) _fileHeader.blocksAllocated * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
-                long filePos = _fileHeader.dataOffset + _fileHeader.blockExtraSize + blockOffset;
+                long blockOffset = (long) fileHeader.blocksAllocated * (fileHeader.blockSize + fileHeader.blockExtraSize);
+                long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset;
 
-                _fileStream.setPosition(filePos);
-                _fileStream.write(writeBuffer, writeBufferOffset, _fileHeader.blockSize);
+                fileStream.setPosition(filePos);
+                fileStream.write(writeBuffer, writeBufferOffset, fileHeader.blockSize);
 
-                _blockTable[block] = _fileHeader.blocksAllocated;
+                blockTable[block] = fileHeader.blocksAllocated;
 
                 // Update the file header on disk, to indicate where the next free block is
-                _fileHeader.blocksAllocated++;
-                _fileStream.setPosition(PreHeaderRecord.Size);
-                _fileHeader.write(_fileStream);
+                fileHeader.blocksAllocated++;
+                fileStream.setPosition(PreHeaderRecord.Size);
+                fileHeader.write(fileStream);
 
                 // Update the block table on disk, to indicate where this block is
                 writeBlockTableEntry(block);
             } else {
                 // Existing block, simply overwrite the existing data
-                long blockOffset = (_blockTable[block] & 0xfffffffL) * (_fileHeader.blockSize + _fileHeader.blockExtraSize);
-                long filePos = _fileHeader.dataOffset + _fileHeader.blockExtraSize + blockOffset + offsetInBlock;
-                _fileStream.setPosition(filePos);
-                _fileStream.write(buffer, offset + numWritten, toWrite);
+                long blockOffset = (blockTable[block] & 0xfffffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
+                long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
+                fileStream.setPosition(filePos);
+                fileStream.write(buffer, offset + numWritten, toWrite);
             }
 
             numWritten += toWrite;
-            _position += toWrite;
+            position += toWrite;
         }
     }
 
     public void close() throws IOException {
-        _isDisposed = true;
-        if (_ownsStream == Ownership.Dispose && _fileStream != null) {
-            _fileStream.close();
-            _fileStream = null;
+        isDisposed = true;
+        if (ownsStream == Ownership.Dispose && fileStream != null) {
+            fileStream.close();
+            fileStream = null;
         }
     }
 
     protected void onWriteOccurred() {
-        if (WriteOccurred != null) {
-            WriteOccurred.accept(this, null);
+        if (writeOccurred != null) {
+            writeOccurred.accept(this, null);
         }
     }
 
     private void readBlockTable() {
-        _fileStream.setPosition(_fileHeader.blocksOffset);
+        fileStream.setPosition(fileHeader.blocksOffset);
 
-        byte[] buffer = StreamUtilities.readExact(_fileStream, _fileHeader.blockCount * 4);
+        byte[] buffer = StreamUtilities.readExact(fileStream, fileHeader.blockCount * 4);
 
-        _blockTable = new int[_fileHeader.blockCount];
-        for (int i = 0; i < _fileHeader.blockCount; ++i) {
-            _blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4);
+        blockTable = new int[fileHeader.blockCount];
+        for (int i = 0; i < fileHeader.blockCount; ++i) {
+            blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4);
         }
     }
 
     private void writeBlockTableEntry(int block) {
         byte[] buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(_blockTable[block], buffer, 0);
+        EndianUtilities.writeBytesLittleEndian(blockTable[block], buffer, 0);
 
-        _fileStream.setPosition(_fileHeader.blocksOffset + block * 4L);
-        _fileStream.write(buffer, 0, 4);
+        fileStream.setPosition(fileHeader.blocksOffset + block * 4L);
+        fileStream.write(buffer, 0, 4);
     }
 
     private void checkDisposed() {
-        if (_isDisposed) {
+        if (isDisposed) {
             throw new dotnet4j.io.IOException("DiskStream: Attempt to use disposed stream");
         }
     }

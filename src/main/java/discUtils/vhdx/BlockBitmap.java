@@ -23,16 +23,17 @@
 package discUtils.vhdx;
 
 public final class BlockBitmap {
-    private final byte[] _data;
 
-    private final int _length;
+    private final byte[] data;
 
-    private final int _offset;
+    private final int length;
+
+    private final int offset;
 
     public BlockBitmap(byte[] data, int offset, int length) {
-        _data = data;
-        _offset = offset;
-        _length = length;
+        this.data = data;
+        this.offset = offset;
+        this.length = length;
     }
 
     /**
@@ -42,21 +43,20 @@ public final class BlockBitmap {
         int matched = 0;
         int bitPos = first % 8;
         int bytePos = first / 8;
-        state[0] = (_data[_offset + bytePos] & (1 << bitPos)) != 0;
+        state[0] = (data[offset + bytePos] & (1 << bitPos)) != 0;
         byte matchByte = state[0] ? (byte) 0xFF : (byte) 0;
-        while (bytePos < _length) {
-            if (_data[_offset + bytePos] == matchByte) {
+        while (bytePos < length) {
+            if (data[offset + bytePos] == matchByte) {
                 matched += 8 - bitPos;
                 bytePos++;
                 bitPos = 0;
-            } else if ((_data[_offset + bytePos] & (1 << bitPos)) != 0 == state[0]) {
+            } else if ((data[offset + bytePos] & (1 << bitPos)) != 0 == state[0]) {
                 matched++;
                 bitPos++;
                 if (bitPos == 8) {
                     bitPos = 0;
                     bytePos++;
                 }
-
             } else {
                 break;
             }
@@ -71,16 +71,16 @@ public final class BlockBitmap {
         int bytePos = first / 8;
         while (marked < count) {
             if (bitPos == 0 && count - marked >= 8) {
-                if ((_data[_offset + bytePos] & 0xff) != 0xFF) {
-                    _data[_offset + bytePos] = (byte) 0xFF;
+                if ((data[offset + bytePos] & 0xff) != 0xFF) {
+                    data[offset + bytePos] = (byte) 0xFF;
                     changed = true;
                 }
 
                 marked += 8;
                 bytePos++;
             } else {
-                if ((_data[_offset + bytePos] & (1 << bitPos)) == 0) {
-                    _data[_offset + bytePos] |= (byte) (1 << bitPos);
+                if ((data[offset + bytePos] & (1 << bitPos)) == 0) {
+                    data[offset + bytePos] |= (byte) (1 << bitPos);
                     changed = true;
                 }
 
@@ -90,10 +90,8 @@ public final class BlockBitmap {
                     bitPos = 0;
                     bytePos++;
                 }
-
             }
         }
         return changed;
     }
-
 }

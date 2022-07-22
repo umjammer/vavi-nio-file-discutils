@@ -26,15 +26,15 @@ import discUtils.streams.util.EndianUtilities;
 
 
 public class CompressedGrainHeader {
+
     public static final int Size = 12;
 
-    public int DataSize;
+    public int dataSize;
 
-    public long LogicalBlockAddress;
+    public long logicalBlockAddress;
 
     public void read(byte[] buffer, int offset) {
-        LogicalBlockAddress = EndianUtilities.toInt64LittleEndian(buffer, offset + 0);
-        DataSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
+        logicalBlockAddress = EndianUtilities.toInt64LittleEndian(buffer, offset + 0);
+        dataSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
     }
-
 }

@@ -27,29 +27,30 @@ import dotnet4j.io.Stream;
 
 
 public final class ClusterReader {
-    private final int _bytesPerSector;
+
+    private final int bytesPerSector;
 
     /**
      * Pre-calculated value because of number of uses of this externally.
      */
-    private final int _clusterSize;
+    private final int clusterSize;
 
-    private final int _firstDataSector;
+    private final int firstDataSector;
 
-    private final int _sectorsPerCluster;
+    private final int sectorsPerCluster;
 
-    private final Stream _stream;
+    private final Stream stream;
 
     public ClusterReader(Stream stream, int firstDataSector, int sectorsPerCluster, int bytesPerSector) {
-        _stream = stream;
-        _firstDataSector = firstDataSector;
-        _sectorsPerCluster = sectorsPerCluster;
-        _bytesPerSector = bytesPerSector;
-        _clusterSize = _sectorsPerCluster * _bytesPerSector;
+        this.stream = stream;
+        this.firstDataSector = firstDataSector;
+        this.sectorsPerCluster = sectorsPerCluster;
+        this.bytesPerSector = bytesPerSector;
+        clusterSize = this.sectorsPerCluster * this.bytesPerSector;
     }
 
     public int getClusterSize() {
-        return _clusterSize;
+        return clusterSize;
     }
 
     public void readCluster(int cluster, byte[] buffer, int offset) {
@@ -57,9 +58,9 @@ public final class ClusterReader {
             throw new IndexOutOfBoundsException("buffer is too small - cluster would overflow buffer");
         }
 
-        int firstSector = (cluster - 2) * _sectorsPerCluster + _firstDataSector;
-        _stream.setPosition((long) firstSector * _bytesPerSector);
-        StreamUtilities.readExact(_stream, buffer, offset, _clusterSize);
+        int firstSector = (cluster - 2) * sectorsPerCluster + firstDataSector;
+        stream.setPosition((long) firstSector * bytesPerSector);
+        StreamUtilities.readExact(stream, buffer, offset, clusterSize);
     }
 
     public void writeCluster(int cluster, byte[] buffer, int offset) {
@@ -67,14 +68,14 @@ public final class ClusterReader {
             throw new IndexOutOfBoundsException("buffer is too small - cluster would overflow buffer");
         }
 
-        int firstSector = (cluster - 2) * _sectorsPerCluster + _firstDataSector;
-        _stream.setPosition((long) firstSector * _bytesPerSector);
-        _stream.write(buffer, offset, _clusterSize);
+        int firstSector = (cluster - 2) * sectorsPerCluster + firstDataSector;
+        stream.setPosition((long) firstSector * bytesPerSector);
+        stream.write(buffer, offset, clusterSize);
     }
 
     public void wipeCluster(int cluster) {
-        int firstSector = (cluster - 2) * _sectorsPerCluster + _firstDataSector;
-        _stream.setPosition((long) firstSector * _bytesPerSector);
-        _stream.write(new byte[_clusterSize], 0, _clusterSize);
+        int firstSector = (cluster - 2) * sectorsPerCluster + firstDataSector;
+        stream.setPosition((long) firstSector * bytesPerSector);
+        stream.write(new byte[clusterSize], 0, clusterSize);
     }
 }

@@ -33,78 +33,80 @@ import dotnet4j.util.compat.Tuple;
 
 
 public final class ObjectIds {
-    private final File _file;
 
-    private final IndexView<discUtils.ntfs.ObjectIds.IndexKey, ObjectIdRecord> _index;
+    private final File file;
+
+    private final IndexView<discUtils.ntfs.ObjectIds.IndexKey, ObjectIdRecord> index;
 
     public ObjectIds(File file) {
-        _file = file;
-        _index = new IndexView<>(discUtils.ntfs.ObjectIds.IndexKey.class, ObjectIdRecord.class, file.getIndex("$O"));
+        this.file = file;
+        index = new IndexView<>(discUtils.ntfs.ObjectIds.IndexKey.class, ObjectIdRecord.class, file.getIndex("$O"));
     }
 
     public Map<UUID, ObjectIdRecord> getAll() {
         Map<UUID, ObjectIdRecord> result = new HashMap<>();
-        for (Tuple<discUtils.ntfs.ObjectIds.IndexKey, ObjectIdRecord> record : _index.getEntries()) {
-            result.put(record.getKey()._id, record.getValue());
+        for (Tuple<discUtils.ntfs.ObjectIds.IndexKey, ObjectIdRecord> record : index.getEntries()) {
+            result.put(record.getKey().id, record.getValue());
         }
         return result;
     }
 
     public void add(UUID objId, FileRecordReference mftRef, UUID birthId, UUID birthVolumeId, UUID birthDomainId) {
         discUtils.ntfs.ObjectIds.IndexKey newKey = new discUtils.ntfs.ObjectIds.IndexKey();
-        newKey._id = objId;
+        newKey.id = objId;
         ObjectIdRecord newData = new ObjectIdRecord();
-        newData.MftReference = mftRef;
-        newData.BirthObjectId = birthId;
-        newData.BirthVolumeId = birthVolumeId;
-        newData.BirthDomainId = birthDomainId;
-        _index.put(newKey, newData);
-        _file.updateRecordInMft();
+        newData.mftReference = mftRef;
+        newData.birthObjectId = birthId;
+        newData.birthVolumeId = birthVolumeId;
+        newData.birthDomainId = birthDomainId;
+        index.put(newKey, newData);
+        file.updateRecordInMft();
     }
 
     public void remove(UUID objId) {
         discUtils.ntfs.ObjectIds.IndexKey key = new discUtils.ntfs.ObjectIds.IndexKey();
-        key._id = objId;
-        _index.remove(key);
-        _file.updateRecordInMft();
+        key.id = objId;
+        index.remove(key);
+        file.updateRecordInMft();
     }
 
     public boolean tryGetValue(UUID objId, ObjectIdRecord[] value) {
         discUtils.ntfs.ObjectIds.IndexKey key = new discUtils.ntfs.ObjectIds.IndexKey();
-        key._id = objId;
-        return _index.tryGetValue(key, value);
+        key.id = objId;
+        return index.tryGetValue(key, value);
     }
 
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "OBJECT ID INDEX");
-        for (Tuple<discUtils.ntfs.ObjectIds.IndexKey, ObjectIdRecord> entry : _index.getEntries()) {
+        for (Tuple<discUtils.ntfs.ObjectIds.IndexKey, ObjectIdRecord> entry : index.getEntries()) {
             writer.println(indent + "  OBJECT ID INDEX ENTRY");
-            writer.println(indent + "             Id: " + entry.getKey()._id);
-            writer.println(indent + "  MFT Reference: " + entry.getValue().MftReference);
-            writer.println(indent + "   Birth Volume: " + entry.getValue().BirthVolumeId);
-            writer.println(indent + "       Birth Id: " + entry.getValue().BirthObjectId);
-            writer.println(indent + "   Birth Domain: " + entry.getValue().BirthDomainId);
+            writer.println(indent + "             Id: " + entry.getKey().id);
+            writer.println(indent + "  MFT Reference: " + entry.getValue().mftReference);
+            writer.println(indent + "   Birth Volume: " + entry.getValue().birthVolumeId);
+            writer.println(indent + "       Birth Id: " + entry.getValue().birthObjectId);
+            writer.println(indent + "   Birth Domain: " + entry.getValue().birthDomainId);
         }
     }
 
     public final static class IndexKey implements IByteArraySerializable {
-        public UUID _id;
+
+        public UUID id;
 
         public int size() {
             return 16;
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            _id = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+            id = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
             return 16;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(_id, buffer, offset + 0);
+            EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0);
         }
 
         public String toString() {
-            return String.format("[Key-Id:%s]", _id);
+            return String.format("[Key-Id:%s]", id);
         }
     }
 }
