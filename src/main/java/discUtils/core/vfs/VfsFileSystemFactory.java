@@ -32,14 +32,15 @@ import dotnet4j.io.Stream;
 /**
  * base class for logic to detect file systems.
  */
-public abstract class VfsFileSystemFactory {
+public interface VfsFileSystemFactory {
+
     /**
      * Detects if a stream contains any known file systems.
      *
      * @param stream The stream to inspect.
      * @return A list of file systems (may be empty).
      */
-    public FileSystemInfo[] detect(Stream stream) {
+    default FileSystemInfo[] detect(Stream stream) {
         return detect(stream, null);
     }
 
@@ -49,7 +50,7 @@ public abstract class VfsFileSystemFactory {
      * @param volume The volume to inspect.
      * @return A list of file systems (may be empty).
      */
-    public FileSystemInfo[] detect(VolumeInfo volume) {
+    default FileSystemInfo[] detect(VolumeInfo volume) {
         try (Stream stream = volume.open()) {
             return detect(stream, volume);
         } catch (IOException e) {
@@ -64,5 +65,5 @@ public abstract class VfsFileSystemFactory {
      * @param volumeInfo Optionally, information about the volume.
      * @return A list of file systems detected (may be empty).
      */
-    public abstract FileSystemInfo[] detect(Stream stream, VolumeInfo volumeInfo);
+    FileSystemInfo[] detect(Stream stream, VolumeInfo volumeInfo);
 }

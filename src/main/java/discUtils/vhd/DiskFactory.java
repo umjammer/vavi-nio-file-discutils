@@ -36,7 +36,8 @@ import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskFactoryAttribute(type = "VHD", fileExtensions = { ".vhd", ".avhd" })
-public final class DiskFactory extends VirtualDiskFactory {
+public final class DiskFactory implements VirtualDiskFactory {
+
     public String[] getVariants() {
         return new String[] { "fixed", "dynamic" };
     }

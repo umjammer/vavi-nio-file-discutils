@@ -39,7 +39,7 @@ import dotnet4j.io.FileShare;
 
 
 @VirtualDiskFactoryAttribute(type = "RAW", fileExtensions = { ".img", ".ima", ".vfd", ".flp", ".bif" })
-public final class DiskFactory extends VirtualDiskFactory {
+public final class DiskFactory implements VirtualDiskFactory {
     public String[] getVariants() {
         return new String[] {};
     }

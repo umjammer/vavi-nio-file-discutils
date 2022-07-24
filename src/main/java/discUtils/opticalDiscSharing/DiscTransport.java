@@ -42,7 +42,7 @@ import dotnet4j.io.FileNotFoundException;
 
 
 @VirtualDiskTransportAttribute(scheme = "ods")
-public final class DiscTransport extends VirtualDiskTransport {
+public final class DiscTransport implements VirtualDiskTransport {
 
     private String disk;
 

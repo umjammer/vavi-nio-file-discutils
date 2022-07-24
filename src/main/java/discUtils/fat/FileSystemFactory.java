@@ -32,7 +32,8 @@ import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
 
 
-public class FileSystemFactory extends VfsFileSystemFactory {
+public class FileSystemFactory implements VfsFileSystemFactory {
+
     public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (FatFileSystem.detect(stream)) {
             return new FileSystemInfo[] {

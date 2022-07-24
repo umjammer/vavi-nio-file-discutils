@@ -36,7 +36,8 @@ import discUtils.udf.UdfReader;
 import dotnet4j.io.Stream;
 
 
-public class FileSystemFactory extends VfsFileSystemFactory {
+public class FileSystemFactory implements VfsFileSystemFactory {
+
     public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         List<FileSystemInfo> detected = new ArrayList<>();
         if (UdfReader.detect(stream)) {

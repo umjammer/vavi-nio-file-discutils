@@ -28,6 +28,7 @@ import discUtils.core.internal.Utilities;
 
 
 public class PrimaryVolumeDescriptor extends CommonVolumeDescriptor {
+
     public PrimaryVolumeDescriptor(byte[] src, int offset) {
         super(src, offset, StandardCharsets.US_ASCII);
     }

@@ -37,7 +37,8 @@ import dotnet4j.io.FileShare;
 
 
 @VirtualDiskFactoryAttribute(type = "Optical", fileExtensions = { ".iso", ".bin" })
-public final class DiscFactory extends VirtualDiskFactory {
+public final class DiscFactory implements VirtualDiskFactory {
+
     public String[] getVariants() {
         return new String[] {};
     }

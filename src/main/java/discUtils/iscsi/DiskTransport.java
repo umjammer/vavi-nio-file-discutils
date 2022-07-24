@@ -33,7 +33,7 @@ import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskTransportAttribute(scheme = "iscsi")
-public final class DiskTransport extends VirtualDiskTransport {
+public final class DiskTransport implements VirtualDiskTransport {
 
     private LunInfo lunInfo;
 

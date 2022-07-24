@@ -33,11 +33,10 @@ import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.PhysicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.internal.LogicalVolumeFactory;
-import discUtils.core.internal.LogicalVolumeFactoryAttribute;
 
 
-@LogicalVolumeFactoryAttribute
-public class LogicalVolumeManagerFactory extends LogicalVolumeFactory {
+public class LogicalVolumeManagerFactory implements LogicalVolumeFactory {
+
     public boolean handlesPhysicalVolume(PhysicalVolumeInfo volume) {
         return LogicalVolumeManager.handlesPhysicalVolume(volume);
     }

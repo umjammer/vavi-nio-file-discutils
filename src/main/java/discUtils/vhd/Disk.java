@@ -73,7 +73,6 @@ public final class Disk extends VirtualDisk {
         if (files.get(0).getItem1().needsParent()) {
             throw new UnsupportedOperationException("Differencing disks cannot be opened from a stream");
         }
-
     }
 
     /**

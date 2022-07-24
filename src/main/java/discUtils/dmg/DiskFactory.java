@@ -38,7 +38,7 @@ import dotnet4j.io.FileShare;
 
 
 @VirtualDiskFactoryAttribute(type = "DMG", fileExtensions = { ".dmg" })
-public final class DiskFactory extends VirtualDiskFactory {
+public final class DiskFactory implements VirtualDiskFactory {
     public String[] getVariants() {
         return new String[] {};
     }

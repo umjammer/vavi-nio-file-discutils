@@ -35,7 +35,7 @@ import dotnet4j.io.FileAccess;
 
 
 @VirtualDiskTransportAttribute(scheme = "file")
-public final class FileTransport extends VirtualDiskTransport {
+public final class FileTransport implements VirtualDiskTransport {
 
     private String extraInfo;
 

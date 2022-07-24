@@ -30,6 +30,7 @@ import dotnet4j.io.Stream;
 
 
 public class IsoContext extends VfsContext {
+
     private Stream dataStream;
 
     public Stream getDataStream() {

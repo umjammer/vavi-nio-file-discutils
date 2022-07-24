@@ -37,34 +37,34 @@ import discUtils.core.VirtualDiskTypeInfo;
 import dotnet4j.io.FileAccess;
 
 
-public abstract class VirtualDiskFactory {
+public interface VirtualDiskFactory {
 
-    public abstract String[] getVariants();
+    String[] getVariants();
 
-    public abstract VirtualDiskTypeInfo getDiskTypeInformation(String variant);
+    VirtualDiskTypeInfo getDiskTypeInformation(String variant);
 
-    public abstract DiskImageBuilder getImageBuilder(String variant);
+    DiskImageBuilder getImageBuilder(String variant);
 
-    public abstract VirtualDisk createDisk(FileLocator locator,
-                                           String variant,
-                                           String path,
-                                           VirtualDiskParameters diskParameters) throws IOException;
+    VirtualDisk createDisk(FileLocator locator,
+                           String variant,
+                           String path,
+                           VirtualDiskParameters diskParameters) throws IOException;
 
-    public abstract VirtualDisk openDisk(String path, FileAccess access) throws IOException;
+    VirtualDisk openDisk(String path, FileAccess access) throws IOException;
 
-    public abstract VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) throws IOException;
+    VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) throws IOException;
 
-    public VirtualDisk openDisk(FileLocator locator,
-                                String path,
-                                String extraInfo,
-                                Map<String, String> parameters,
-                                FileAccess access) throws IOException {
+    default VirtualDisk openDisk(FileLocator locator,
+                                 String path,
+                                 String extraInfo,
+                                 Map<String, String> parameters,
+                                 FileAccess access) throws IOException {
         return openDisk(locator, path, access);
     }
 
-    public VirtualDisk openDisk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
+    default VirtualDisk openDisk(DiscFileSystem fileSystem, String path, FileAccess access) throws IOException {
         return openDisk(new DiscFileLocator(fileSystem, File.separator), path, access);
     }
 
-    public abstract VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) throws IOException;
+    VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) throws IOException;
 }

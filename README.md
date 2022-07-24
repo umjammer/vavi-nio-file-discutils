@@ -58,23 +58,26 @@ The vavi-nio-file-discutils library has been split into 25 independent projects,
 
 To work with this, four Meta packages have been created:
 
-* discUtils.complete: Everything, like before
-* discUtils.containers: such as VMDK, VHD, VHDX
-* discUtils.fileSystems: such as NTFS, FAT, EXT
-* discUtils.Transports: such as NFS
+* complete: Everything, like before
+* containers: such as VMDK, VHD, VHDX
+* fileSystems: such as NTFS, FAT, EXT
+* transports: such as NFS
+* partitions: such as apple, bios, pc98
 
 #### Note on detections
 
-vavi-nio-file-discutils has a number of detection helpers. These provide services like "which filesystem is this stream?". For this to work, you must register your filesystem providers with the discUtils core. To do this, write:
+vavi-nio-file-discutils has a number of detection helpers. These provide services like "which filesystem is this stream?".
+For this to work, you must register your filesystem providers with the discUtils core. To do this, write:
 
     META-INF/services/`class name`
 
-Where `class name` is the classes you wish to register. Note that the metapackages have helpers:
+Where `class name` is the classes you wish to register.:
 
-    META-INF/services/discUtils.core.internal.VirtualDiskFactory // From discUtils.complete
-    META-INF/services/discUtils.core.internal.LogicalVolumeFactory // From discUtils.containers
-    META-INF/services/discUtils.core.vfs.VfsFileSystemFactory // From discUtils.fileSystems
-    META-INF/services/discUtils.core.internal.VirtualDiskTransport // From discUtils.Transports
+    META-INF/services/discUtils.core.internal.VirtualDiskFactory // From complete
+    META-INF/services/discUtils.core.internal.LogicalVolumeFactory // From containers
+    META-INF/services/discUtils.core.vfs.VfsFileSystemFactory // From fileSystems
+    META-INF/services/discUtils.core.internal.VirtualDiskTransport // From transports
+    META-INF/services/discUtils.core.partitions.PartitionTableFactory // From partitions
 
 ## How to use the Library
 

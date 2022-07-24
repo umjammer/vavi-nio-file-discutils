@@ -28,6 +28,7 @@ import discUtils.core.internal.Utilities;
 
 
 public class SupplementaryVolumeDescriptor extends CommonVolumeDescriptor {
+
     public SupplementaryVolumeDescriptor(byte[] src, int offset) {
         super(src, offset, IsoUtilities.encodingFromBytes(src, offset + 88));
     }

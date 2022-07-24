@@ -30,9 +30,9 @@ import discUtils.core.PhysicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 
 
-public abstract class LogicalVolumeFactory {
+public interface LogicalVolumeFactory {
 
-    public abstract boolean handlesPhysicalVolume(PhysicalVolumeInfo volume);
+    boolean handlesPhysicalVolume(PhysicalVolumeInfo volume);
 
-    public abstract void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result);
+    void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result);
 }

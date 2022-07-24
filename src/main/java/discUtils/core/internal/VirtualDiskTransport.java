@@ -31,19 +31,19 @@ import discUtils.core.VirtualDisk;
 import dotnet4j.io.FileAccess;
 
 
-public abstract class VirtualDiskTransport implements Closeable {
+public interface VirtualDiskTransport extends Closeable {
 
-    public abstract boolean isRawDisk();
+    boolean isRawDisk();
 
-    public abstract void close() throws IOException;
+    void close() throws IOException;
 
-    public abstract void connect(URI uri, String username, String password);
+    void connect(URI uri, String username, String password);
 
-    public abstract VirtualDisk openDisk(FileAccess access);
+    VirtualDisk openDisk(FileAccess access);
 
-    public abstract FileLocator getFileLocator();
+    FileLocator getFileLocator();
 
-    public abstract String getFileName();
+    String getFileName();
 
-    public abstract String getExtraInfo();
+    String getExtraInfo();
 }
