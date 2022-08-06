@@ -24,7 +24,6 @@ package discUtils.fat;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -73,49 +72,13 @@ public final class FatFileSystem extends DiscFileSystem {
             .toInstant()
             .toEpochMilli();
 
+    private BootSector bs;
+
     private final Map<Integer, Directory> dirCache;
 
     private Ownership ownsData;
 
     private final TimeConverter timeConverter;
-
-    private byte[] bootSector;
-
-    private short bpbBkBootSec;
-
-    private short bpbBytesPerSec;
-
-    private short bpbExtFlags;
-
-    private short bpbFATSz16;
-
-    private int bpbFATSz32;
-
-    private short bpbFSInfo;
-
-    private short bpbFSVer;
-
-    private int bpbHiddSec;
-
-    private short bpbNumHeads;
-
-    private int bpbRootClus;
-
-    private short bpbRootEntCnt;
-
-    private short bpbRsvdSecCnt;
-
-    private short bpbSecPerTrk;
-
-    private short bpbTotSec16;
-
-    private int bpbTotSec32;
-
-    private byte bsBootSig;
-
-    private int bsVolId;
-
-    private String bsVolLab;
 
     private Stream data;
 
@@ -131,7 +94,7 @@ public final class FatFileSystem extends DiscFileSystem {
         super(new FatFileSystemOptions());
         dirCache = new HashMap<>();
         timeConverter = this::defaultTimeConverter;
-        initialize(data);
+        initialize(data, null);
     }
 
     /**
@@ -139,14 +102,14 @@ public final class FatFileSystem extends DiscFileSystem {
      *
      * @param data The stream containing the file system.
      * @param ownsData Indicates if the new instance should take ownership of
-     *            {@code data} . Local time is the effective timezone of the new
+     *            {@code data}. Local time is the effective timezone of the new
      *            instance.
      */
     public FatFileSystem(Stream data, Ownership ownsData) {
         super(new FatFileSystemOptions());
         dirCache = new HashMap<>();
         timeConverter = this::defaultTimeConverter;
-        initialize(data);
+        initialize(data, null);
         this.ownsData = ownsData;
     }
 
@@ -161,7 +124,7 @@ public final class FatFileSystem extends DiscFileSystem {
         super(new FatFileSystemOptions());
         dirCache = new HashMap<>();
         this.timeConverter = timeConverter;
-        initialize(data);
+        initialize(data, null);
     }
 
     /**
@@ -169,7 +132,7 @@ public final class FatFileSystem extends DiscFileSystem {
      *
      * @param data The stream containing the file system.
      * @param ownsData Indicates if the new instance should take ownership of
-     *            {@code data} .
+     *            {@code data}.
      * @param timeConverter A delegate to convert to/from the file system's
      *            timezone.
      */
@@ -177,7 +140,7 @@ public final class FatFileSystem extends DiscFileSystem {
         super(new FatFileSystemOptions());
         dirCache = new HashMap<>();
         this.timeConverter = timeConverter;
-        initialize(data);
+        initialize(data, null);
         this.ownsData = ownsData;
     }
 
@@ -186,46 +149,19 @@ public final class FatFileSystem extends DiscFileSystem {
      *
      * @param data The stream containing the file system.
      * @param ownsData Indicates if the new instance should take ownership of
-     *            {@code data} .
+     *            {@code data}.
      * @param parameters The parameters for the file system.
      */
-    public FatFileSystem(Stream data, Ownership ownsData, FileSystemParameters parameters) {
-        super(new FatFileSystemOptions(parameters));
+    public FatFileSystem(Stream data, BootSector bs, Ownership ownsData, FileSystemParameters parameters) {
+        super(new FatFileSystemOptions(parameters, bs instanceof ATBootSector));
         dirCache = new HashMap<>();
         if (parameters != null && parameters.getTimeConverter() != null) {
             timeConverter = parameters.getTimeConverter();
         } else {
             timeConverter = this::defaultTimeConverter;
         }
-        initialize(data);
+        initialize(data, bs);
         this.ownsData = ownsData;
-    }
-
-    /**
-     * Gets the active FAT (zero-based index).
-     */
-    public byte getActiveFat() {
-        return (byte) ((bpbExtFlags & 0x08) != 0 ? bpbExtFlags & 0x7 : 0);
-    }
-
-    /**
-     * Gets the Sector location of the backup boot sector (FAT32 only).
-     */
-    public int getBackupBootSector() {
-        return bpbBkBootSec & 0xffff;
-    }
-
-    /**
-     * Gets the BIOS drive number for BIOS Int 13h calls.
-     */
-    private byte biosDriveNumber;
-
-    public int getBiosDriveNumber() {
-        return biosDriveNumber & 0xff;
-    }
-
-    public void setBiosDriveNumber(byte value) {
-        biosDriveNumber = value;
     }
 
     /**
@@ -233,7 +169,7 @@ public final class FatFileSystem extends DiscFileSystem {
      * data).
      */
     public int getBytesPerSector() {
-        return bpbBytesPerSec & 0xffff;
+        return bs.getBytesPerSector();
     }
 
     /**
@@ -253,14 +189,6 @@ public final class FatFileSystem extends DiscFileSystem {
         clusterReader = value;
     }
 
-    /**
-     * Gets a value indicating whether the volumeId, VolumeLabel and
-     * FileSystemType fields are valid.
-     */
-    public boolean getExtendedBootSignaturePresent() {
-        return bsBootSig == 0x29;
-    }
-
     private FileAllocationTable fat;
 
     FileAllocationTable getFat() {
@@ -271,19 +199,6 @@ public final class FatFileSystem extends DiscFileSystem {
         fat = value;
     }
 
-    private byte fatCount;
-
-    /**
-     * Gets the number of FATs present.
-     */
-    public int getFatCount() {
-        return fatCount & 0xff;
-    }
-
-    public void setFatCount(byte value) {
-        fatCount = value;
-    }
-
     /**
      * Gets the FAT file system options, which can be modified.
      */
@@ -292,162 +207,24 @@ public final class FatFileSystem extends DiscFileSystem {
     }
 
     /**
-     * Gets the size of a single FAT, in sectors.
-     */
-    public long getFatSize() {
-        return bpbFATSz16 != 0 ? bpbFATSz16 & 0xffff : bpbFATSz32 & 0xffff_ffffL;
-    }
-
-    private FatType fatVariant = FatType.None;
-
-    /**
      * Gets the FAT variant of the file system.
      */
     public FatType getFatVariant() {
-        return fatVariant;
-    }
-
-    public void setFatVariant(FatType value) {
-        fatVariant = value;
-    }
-
-    /**
-     * Gets the (informational only) file system type recorded in the meta-data.
-     */
-    private String fileSystemType;
-
-    public String getFileSystemType() {
-        return fileSystemType;
-    }
-
-    public void setFileSystemType(String value) {
-        fileSystemType = value;
+        return bs.getFatVariant();
     }
 
     /**
      * Gets the friendly name for the file system, including FAT variant.
      */
     public String getFriendlyName() {
-       return fatVariant.getFriendlyName();
-    }
-
-    /**
-     * Gets the sector location of the FSINFO structure (FAT32 only).
-     */
-    public int getFSInfoSector() {
-        return bpbFSInfo;
-    }
-
-    /**
-     * Gets the number of logical heads.
-     */
-    public int getHeads() {
-        return bpbNumHeads & 0xffff;
-    }
-
-    /**
-     * Gets the number of hidden sectors, hiding partition tables, etc.
-     */
-    public long getHiddenSectors() {
-        return bpbHiddSec;
-    }
-
-    /**
-     * Gets the maximum number of root directory entries (on FAT variants that
-     * have a limit).
-     */
-    public int getMaxRootDirectoryEntries() {
-        return bpbRootEntCnt & 0xffff;
-    }
-
-    private byte media;
-
-    /**
-     * Gets the Media marker byte, which indicates fixed or removable media.
-     */
-    public byte getMedia() {
-        return media;
-    }
-
-    public void setMedia(byte value) {
-        media = value;
-    }
-
-    /**
-     * Gets a value indicating whether FAT changes are mirrored to all copies of
-     * the FAT.
-     */
-    public boolean getMirrorFat() {
-        return (bpbExtFlags & 0x08) == 0;
-    }
-
-    private String oemName;
-
-    /**
-     * Gets the OEM name from the file system.
-     */
-    public String getOemName() {
-        return oemName;
-    }
-
-    public void setOemName(String value) {
-        oemName = value;
-    }
-
-    /**
-     * Gets the number of reserved sectors at the start of the disk.
-     */
-    public int getReservedSectorCount() {
-        return bpbRsvdSecCnt & 0xffff;
-    }
-
-    /**
-     * Gets the cluster number of the first cluster of the root directory (FAT32
-     * only).
-     */
-    public long getRootDirectoryCluster() {
-        return bpbRootClus;
-    }
-
-    private byte sectorsPerCluster;
-
-    /**
-     * Gets the number of contiguous sectors that make up one cluster.
-     */
-    public int getSectorsPerCluster() {
-        return sectorsPerCluster & 0xff;
-    }
-
-    public void setSectorsPerCluster(byte value) {
-        sectorsPerCluster = value;
-    }
-
-    /**
-     * Gets the number of sectors per logical track.
-     */
-    public int getSectorsPerTrack() {
-        return bpbSecPerTrk & 0xffff;
+       return bs.getFatVariant().getFriendlyName();
     }
 
     /**
      * Gets the total number of sectors on the disk.
      */
     public long getTotalSectors() {
-        return bpbTotSec16 != 0 ? bpbTotSec16 & 0xffff : bpbTotSec32 & 0xffff_ffffL;
-    }
-
-    /**
-     * Gets the file-system version (usually 0).
-     */
-    public int getVersion() {
-        return bpbFSVer;
-    }
-
-    /**
-     * Gets the volume serial number.
-     */
-    public int getVolumeId() {
-        return bsVolId;
+        return bs.getTotalSectors();
     }
 
     /**
@@ -456,7 +233,7 @@ public final class FatFileSystem extends DiscFileSystem {
     public String getVolumeLabel() {
         long volId = rootDir.findVolumeId();
         if (volId < 0) {
-            return bsVolLab;
+            return bs.getVolumeLabel();
         }
 
         return rootDir.getEntry(volId).getName().getRawName(getFatOptions().getFileNameEncoding());
@@ -467,10 +244,11 @@ public final class FatFileSystem extends DiscFileSystem {
      *
      * @param stream The stream to inspect.
      * @return {@code true} if the stream appears to be a FAT file system, else
-     *         {@code false} .
+     *         {@code false}.
      */
     public static boolean detect(Stream stream) {
         if (stream.getLength() < 512) {
+Debug.println(Level.FINE, "stream length < 512");
             return false;
         }
 
@@ -478,6 +256,7 @@ public final class FatFileSystem extends DiscFileSystem {
         byte[] bytes = StreamUtilities.readExact(stream, 512);
         short bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bytes, 11);
         if (bpbBytesPerSec != 512) {
+Debug.println(Level.FINE, "bpb bytes per sec != 512");
             return false;
         }
 
@@ -489,10 +268,12 @@ public final class FatFileSystem extends DiscFileSystem {
         short bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bytes, 19);
         int bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bytes, 32);
         if (!((bpbTotSec16 == 0) ^ (bpbTotSec32 == 0))) {
+Debug.println(Level.FINE, "bpb tot sec == 0");
             return false;
         }
 
         int totalSectors = bpbTotSec16 + bpbTotSec32;
+Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerSec <= stream.getLength()), totalSectors, stream.getLength());
         return totalSectors * (long) bpbBytesPerSec <= stream.getLength();
     }
 
@@ -1285,170 +1066,6 @@ public final class FatFileSystem extends DiscFileSystem {
         }
     }
 
-    /**
-     * Writes a FAT12/FAT16 BPB.
-     *
-     * @param bootSector The buffer to fill.
-     * @param sectors The total capacity of the disk (in sectors).
-     * @param fatType The number of bits in each FAT entry.
-     * @param maxRootEntries The maximum number of root directory entries.
-     * @param hiddenSectors The number of hidden sectors before this file system
-     *            (i.e. partition offset).
-     * @param reservedSectors The number of reserved sectors before the FAT.
-     * @param sectorsPerCluster The number of sectors per cluster.
-     * @param diskGeometry The geometry of the disk containing the fat file
-     *            system.
-     * @param isFloppy Indicates if the disk is a removable media (a floppy
-     *            disk).
-     * @param volId The disk's volume Id.
-     * @param label The disk's label (or null).
-     */
-    private static void writeBPB(byte[] bootSector,
-                                 int sectors,
-                                 FatType fatType,
-                                 short maxRootEntries,
-                                 int hiddenSectors,
-                                 short reservedSectors,
-                                 byte sectorsPerCluster,
-                                 Geometry diskGeometry,
-                                 boolean isFloppy,
-                                 int volId,
-                                 String label) {
-        int fatSectors = calcFatSize(sectors, fatType, sectorsPerCluster);
-        bootSector[0] = (byte) 0xEB;
-        bootSector[1] = 0x3C;
-        bootSector[2] = (byte) 0x90;
-        // OEM Name
-        EndianUtilities.stringToBytes("DISCUTIL", bootSector, 3, 8);
-        // Bytes Per Sector (512)
-        bootSector[11] = 0;
-        bootSector[12] = 2;
-        // Sectors Per Cluster
-        bootSector[13] = sectorsPerCluster;
-        // Reserved Sector Count
-        EndianUtilities.writeBytesLittleEndian(reservedSectors, bootSector, 14);
-        // Number of FATs
-        bootSector[16] = 2;
-        // Number of Entries in the root directory
-        EndianUtilities.writeBytesLittleEndian(maxRootEntries, bootSector, 17);
-        // Total number of sectors (small)
-        EndianUtilities.writeBytesLittleEndian((short) (sectors < 0x10000 ? sectors : 0), bootSector, 19);
-        // Media
-        bootSector[21] = (byte) (isFloppy ? 0xF0 : 0xF8);
-        // FAT size (FAT12/FAT16)
-        EndianUtilities.writeBytesLittleEndian((short) (fatType.getValue() < FatType.Fat32.getValue() ? fatSectors : 0),
-                                               bootSector,
-                                               22);
-        // Sectors Per Track
-        EndianUtilities.writeBytesLittleEndian((short) diskGeometry.getSectorsPerTrack(), bootSector, 24);
-        // Heads Per Cylinder
-        EndianUtilities.writeBytesLittleEndian((short) diskGeometry.getHeadsPerCylinder(), bootSector, 26);
-        // Hidden Sectors
-        EndianUtilities.writeBytesLittleEndian(hiddenSectors, bootSector, 28);
-        // Total number of sectors (large)
-        EndianUtilities.writeBytesLittleEndian(sectors >= 0x10000 ? sectors : 0, bootSector, 32);
-        if (fatType.getValue() < FatType.Fat32.getValue()) {
-            writeBS(bootSector, 36, isFloppy, volId, label, fatType);
-        } else {
-            // FAT size (FAT32)
-            EndianUtilities.writeBytesLittleEndian(fatSectors, bootSector, 36);
-            // ext flags: 0x80 = FAT 1 (i.e. Zero) active, mirroring
-            bootSector[40] = 0x00;
-            bootSector[41] = 0x00;
-            // Filesystem version (0.0)
-            bootSector[42] = 0;
-            bootSector[43] = 0;
-            // First cluster of the root directory, always 2 since we don't do
-            // bad
-            // sectors...
-            EndianUtilities.writeBytesLittleEndian(2, bootSector, 44);
-            // Sector number of FSINFO
-            EndianUtilities.writeBytesLittleEndian(1, bootSector, 48);
-            // Sector number of the Backup Boot Sector
-            EndianUtilities.writeBytesLittleEndian(6, bootSector, 50);
-            // Reserved area - must be set to 0
-            Arrays.fill(bootSector, 52, 52 + 12, (byte) 0);
-            writeBS(bootSector, 64, isFloppy, volId, label, fatType);
-        }
-        bootSector[510] = 0x55;
-        bootSector[511] = (byte) 0xAA;
-    }
-
-    private static int calcFatSize(int sectors, FatType fatType, byte sectorsPerCluster) {
-        int numClusters = sectors / sectorsPerCluster;
-        int fatBytes = numClusters * (short) fatType.ordinal() / 8;
-        return (fatBytes + Sizes.Sector - 1) / Sizes.Sector;
-    }
-
-    private static void writeBS(byte[] bootSector, int offset, boolean isFloppy, int volId, String label, FatType fatType) {
-        if (label == null || label.isEmpty()) {
-            label = "NO NAME    ";
-        }
-
-        String fsType = "FAT32   ";
-        if (fatType == FatType.Fat12) {
-            fsType = "FAT12   ";
-        } else if (fatType == FatType.Fat16) {
-            fsType = "FAT16   ";
-        }
-
-        // Drive Number (for BIOS)
-        bootSector[offset + 0] = (byte) (isFloppy ? 0x00 : 0x80);
-        // Reserved
-        bootSector[offset + 1] = 0;
-        // Boot Signature (indicates next 3 fields present)
-        bootSector[offset + 2] = 0x29;
-        // Volume Id
-        EndianUtilities.writeBytesLittleEndian(volId, bootSector, offset + 3);
-        // Volume Label
-        EndianUtilities.stringToBytes(label + "           ", bootSector, offset + 7, 11);
-        // File System Type
-        EndianUtilities.stringToBytes(fsType, bootSector, offset + 18, 8);
-    }
-
-    private static FatType detectFATType(byte[] bpb) {
-        int bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bpb, 11) & 0xffff;
-        if (bpbBytesPerSec == 0) {
-            throw new IllegalStateException("Bytes per sector is 0, invalid or corrupt filesystem.");
-        }
-
-        int bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(bpb, 17) & 0xffff;
-        int bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(bpb, 22) & 0xffff;
-        int bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(bpb, 36);
-        int bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bpb, 19) & 0xffff;
-        int bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bpb, 32);
-        int bpbResvdSecCnt = EndianUtilities.toUInt16LittleEndian(bpb, 14);
-        int bpbNumFATs = bpb[16] & 0xff;
-        int bpbSecPerClus = bpb[13] & 0xff;
-        int rootDirSectors = (bpbRootEntCnt * 32 + bpbBytesPerSec - 1) / bpbBytesPerSec;
-        int fatSz = bpbFATSz16 != 0 ? bpbFATSz16 : bpbFATSz32;
-        int totalSec = bpbTotSec16 != 0 ? bpbTotSec16 : bpbTotSec32;
-        int dataSec = totalSec - (bpbResvdSecCnt + bpbNumFATs * fatSz + rootDirSectors);
-        int countOfClusters = dataSec / bpbSecPerClus;
-//Debug.println(Level.FINE, "bpbBytesPerSec: " + bpbBytesPerSec);
-//Debug.println(Level.FINE, "bpbRootEntCnt: " + bpbRootEntCnt);
-//Debug.println(Level.FINE, "bpbFATSz16: " + bpbFATSz16);
-//Debug.println(Level.FINE, "bpbFATSz32: " + bpbFATSz32);
-//Debug.println(Level.FINE, "bpbTotSec16: " + bpbTotSec16);
-//Debug.println(Level.FINE, "bpbTotSec32: " + bpbTotSec32);
-//Debug.println(Level.FINE, "bpbNumFATs: " + bpbNumFATs);
-//Debug.println(Level.FINE, "bpbSecPerClus: " + bpbSecPerClus);
-//Debug.println(Level.FINE, "rootDirSectors: " + rootDirSectors);
-//Debug.println(Level.FINE, "fatSz: " + fatSz);
-//Debug.println(Level.FINE, "totalSec: " + totalSec);
-//Debug.println(Level.FINE, "dataSec: " + dataSec);
-//Debug.println(Level.FINE, "countOfClusters: " + countOfClusters);
-        if (countOfClusters < 4085) {
-            return FatType.Fat12;
-        }
-
-        if (countOfClusters < 65525) {
-            return FatType.Fat16;
-        }
-
-        return FatType.Fat32;
-    }
-
     private static boolean isRootPath(String path) {
         return (path == null || path.isEmpty()) || path.equals(FS);
     }
@@ -1458,93 +1075,42 @@ public final class FatFileSystem extends DiscFileSystem {
                      : Instant.ofEpochMilli(time).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
-    private void initialize(Stream data) {
+    private void initialize(Stream data, BootSector bs) {
         this.data = data;
-        this.data.setPosition(0);
-        bootSector = StreamUtilities.readSector(this.data);
-//Debug.println(Level.FINE, "\n" + StringUtil.getDump(bootSector, 64));
-        setFatVariant(detectFATType(bootSector));
-        readBPB();
+
+        this.bs = bs != null ? bs : new ATBootSector(data);
+
         loadFAT();
         loadClusterReader();
         loadRootDirectory();
     }
 
     private void loadClusterReader() {
-        int rootDirSectors = ((bpbRootEntCnt & 0xffff) * 32 + ((bpbBytesPerSec & 0xffff) - 1)) / (bpbBytesPerSec & 0xffff);
-        int firstDataSector = (int) ((bpbRsvdSecCnt & 0xffff) + getFatCount() * getFatSize() + rootDirSectors);
-        setClusterReader(new ClusterReader(data, firstDataSector, getSectorsPerCluster(), bpbBytesPerSec & 0xffff));
+        int rootDirSectors = (bs.getMaxRootDirectoryEntries() * 32 + (bs.getBytesPerSector() - 1)) / bs.getBytesPerSector();
+        int firstDataSector = (int) (bs.getReservedSectorCount() + bs.getFatCount() * bs.getFatSize() + rootDirSectors);
+        setClusterReader(new ClusterReader(data, firstDataSector, bs.getSectorsPerCluster(), bs.getBytesPerSector()));
     }
 
     private void loadRootDirectory() {
         Stream fatStream;
-        if (fatVariant != FatType.Fat32) {
-//Debug.printf(Level.FINE, "%016x, %016x\n", ((bpbRsvdSecCnt & 0xffff) + getFatCount() * (bpbFATSz16 & 0xffff)) *
-//             (bpbBytesPerSec & 0xffff), (bpbRootEntCnt & 0xffff) * 32);
+        if (bs.getFatVariant() != FatType.Fat32) {
+//Debug.printf(Level.FINE, "%016x, %016x\n", (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(), bs.getMaxRootDirectoryEntries() * 32L);
             fatStream = new SubStream(data,
-                                      ((bpbRsvdSecCnt & 0xffff) + getFatCount() * (bpbFATSz16 & 0xffff)) *
-                                             (bpbBytesPerSec & 0xffff),
-                                      (bpbRootEntCnt & 0xffff) * 32);
+                    (bs.getReservedSectorCount() + (long) bs.getFatCount() * bs.getFatSize16()) * bs.getBytesPerSector(),
+                    bs.getMaxRootDirectoryEntries() * 32L);
         } else {
-            fatStream = new ClusterStream(this, FileAccess.ReadWrite, bpbRootClus, 0xffffffff);
+            fatStream = new ClusterStream(this, FileAccess.ReadWrite, (int) bs.getRootDirectoryCluster(), 0xffff_ffff);
         }
         rootDir = new Directory(this, fatStream);
     }
 
     private void loadFAT() {
-        setFat(new FileAllocationTable(fatVariant,
+        setFat(new FileAllocationTable(bs.getFatVariant(),
                 data,
-                                       bpbRsvdSecCnt & 0xffff,
-                                       (int) getFatSize(),
-                                       getFatCount(),
-                                       getActiveFat()));
-    }
-
-    private void readBPB() {
-        setOemName(new String(bootSector, 3, 8, StandardCharsets.US_ASCII).replaceFirst("\0*$", ""));
-        bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bootSector, 11);
-        setSectorsPerCluster(bootSector[13]);
-        bpbRsvdSecCnt = EndianUtilities.toUInt16LittleEndian(bootSector, 14);
-        setFatCount(bootSector[16]);
-        bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(bootSector, 17);
-        bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bootSector, 19);
-        setMedia(bootSector[21]);
-        bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(bootSector, 22);
-        bpbSecPerTrk = EndianUtilities.toUInt16LittleEndian(bootSector, 24);
-        bpbNumHeads = EndianUtilities.toUInt16LittleEndian(bootSector, 26);
-        bpbHiddSec = EndianUtilities.toUInt32LittleEndian(bootSector, 28);
-        bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bootSector, 32);
-        if (fatVariant != FatType.Fat32) {
-            readBS(36);
-        } else {
-            bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(bootSector, 36);
-            bpbExtFlags = EndianUtilities.toUInt16LittleEndian(bootSector, 40);
-            bpbFSVer = EndianUtilities.toUInt16LittleEndian(bootSector, 42);
-            bpbRootClus = EndianUtilities.toUInt32LittleEndian(bootSector, 44);
-            bpbFSInfo = EndianUtilities.toUInt16LittleEndian(bootSector, 48);
-            bpbBkBootSec = EndianUtilities.toUInt16LittleEndian(bootSector, 50);
-            readBS(64);
-        }
-//Debug.println(Level.FINE, "bpbBytesPerSec: " + bpbBytesPerSec);
-//Debug.println(Level.FINE, "sectorsPerCluster: " + getSectorsPerCluster());
-//Debug.println(Level.FINE, "bpbRsvdSecCnt: " + bpbRsvdSecCnt);
-//Debug.println(Level.FINE, "fatCount: " + getFatCount());
-//Debug.println(Level.FINE, "bpbRootEntCnt: " + bpbRootEntCnt);
-//Debug.println(Level.FINE, "bpbTotSec16: " + bpbTotSec16);
-Debug.printf(Level.FINE, "media: %02x\n", getMedia());
-//Debug.println(Level.FINE, "bpbFATSz16: " + bpbFATSz16);
-//Debug.println(Level.FINE, "bpbSecPerTrk: " + bpbSecPerTrk);
-//Debug.println(Level.FINE, "bpbNumHeads: " + bpbNumHeads);
-//Debug.println(Level.FINE, "bpbHiddSec: " + bpbHiddSec);
-//Debug.println(Level.FINE, "bpbTotSec32: " + bpbTotSec32);
-    }
-
-    private void readBS(int offset) {
-        setBiosDriveNumber(bootSector[offset]);
-        bsBootSig = bootSector[offset + 2];
-        bsVolId = EndianUtilities.toUInt32LittleEndian(bootSector, offset + 3);
-        bsVolLab = new String(bootSector, offset + 7, 11, StandardCharsets.US_ASCII);
-        setFileSystemType(new String(bootSector, offset + 18, 8, StandardCharsets.US_ASCII));
+                bs.getReservedSectorCount(),
+                (int) bs.getFatSize(),
+                bs.getFatCount(),
+                bs.getActiveFat()));
     }
 
     private long getDirectoryEntry(Directory dir, String path, Directory[] parent) {
@@ -1631,7 +1197,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
      * Size of the Filesystem in bytes
      */
     public long getSize() {
-        return ((getTotalSectors() - getReservedSectorCount() - (getFatSize() * getFatCount())) * getBytesPerSector());
+        return ((getTotalSectors() - bs.getReservedSectorCount() - (bs.getFatSize() * bs.getFatCount())) * getBytesPerSector());
     }
 
     /**
@@ -1645,7 +1211,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
                 usedCluster++;
             }
         }
-        return ((long) usedCluster * getSectorsPerCluster() * getBytesPerSector());
+        return ((long) usedCluster * bs.getSectorsPerCluster() * getBytesPerSector());
     }
 
     /**
@@ -1682,7 +1248,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
         switch (type) {
         case DoubleDensity:
             sectors = 1440;
-            writeBPB(bpb,
+            ATBootSector.writeBPB(bpb,
                      sectors,
                      FatType.Fat12,
                      (short) 224,
@@ -1696,7 +1262,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
             break;
         case HighDensity:
             sectors = 2880;
-            writeBPB(bpb,
+            ATBootSector.writeBPB(bpb,
                      sectors,
                      FatType.Fat12,
                      (short) 224,
@@ -1710,7 +1276,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
             break;
         case Extended:
             sectors = 5760;
-            writeBPB(bpb,
+            ATBootSector.writeBPB(bpb,
                      sectors,
                      FatType.Fat12,
                      (short) 224,
@@ -1729,7 +1295,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
         stream.write(bpb, 0, bpb.length);
 
         // Write both FAT copies
-        int fatSize = calcFatSize(sectors, FatType.Fat12, (byte) 1);
+        int fatSize = ATBootSector.calcFatSize(sectors, FatType.Fat12, (byte) 1);
         byte[] fat = new byte[fatSize * Sizes.Sector];
         FatBuffer fatBuffer = new FatBuffer(FatType.Fat12, fat);
         fatBuffer.setNext(0, 0xFFFFFFF0);
@@ -1801,7 +1367,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
         int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
 
         byte sectorsPerCluster;
-        FatType fatType = FatType.None;
+        FatType fatType;
         short maxRootEntries;
 
         // Write the BIOS Parameter block (BPB) - a single sector
@@ -1844,7 +1410,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
             }
         }
 
-        writeBPB(bpb,
+        ATBootSector.writeBPB(bpb,
                  sectorCount,
                  fatType,
                  maxRootEntries,
@@ -1863,7 +1429,7 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
 
         // Write both FAT copies
 
-        byte[] fat = new byte[calcFatSize(sectorCount, fatType, sectorsPerCluster) * Sizes.Sector];
+        byte[] fat = new byte[ATBootSector.calcFatSize(sectorCount, fatType, sectorsPerCluster) * Sizes.Sector];
         FatBuffer fatBuffer = new FatBuffer(fatType, fat);
         fatBuffer.setNext(0, 0xFFFFFFF8);
         fatBuffer.setEndOfChain(1);
@@ -1902,6 +1468,6 @@ Debug.printf(Level.FINE, "media: %02x\n", getMedia());
 
     @Override
     public String toString() {
-        return getFriendlyName() + ", " + getOemName();
+        return getFriendlyName() + ", " + bs.getOemName();
     }
 }

@@ -34,6 +34,8 @@ import discUtils.core.coreCompat.EncodingHelper;
  */
 public final class FatFileSystemOptions extends DiscFileSystemOptions {
 
+    private boolean isAT = true;
+
     private Charset encoding;
 
     static {
@@ -48,7 +50,8 @@ public final class FatFileSystemOptions extends DiscFileSystemOptions {
         setFileNameEncoding(EncodingHelper.forCodePage(437));
     }
 
-    public FatFileSystemOptions(FileSystemParameters parameters) {
+    public FatFileSystemOptions(FileSystemParameters parameters, boolean isAT) {
+        this.isAT = isAT;
         if (parameters != null && parameters.getFileNameEncoding() != null) {
             setFileNameEncoding(parameters.getFileNameEncoding());
         } else {
@@ -64,7 +67,7 @@ public final class FatFileSystemOptions extends DiscFileSystemOptions {
     }
 
     public void setFileNameEncoding(Charset value) {
-        if (!EncodingHelper.isSingleByte(value.name())) {
+        if (isAT && !EncodingHelper.isSingleByte(value.name())) {
             throw new IllegalArgumentException(value.name() + " is not a single byte encoding");
         }
 

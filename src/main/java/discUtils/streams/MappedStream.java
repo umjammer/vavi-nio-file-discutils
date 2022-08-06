@@ -30,7 +30,7 @@ import dotnet4j.io.Stream;
 
 /**
  * base class for streams that are essentially a mapping onto a parent stream.
- *
+ * <p>
  * This class provides access to the mapping underlying the stream, enabling
  * callers to convert a byte range in this stream into one or more ranges in the
  * parent stream.

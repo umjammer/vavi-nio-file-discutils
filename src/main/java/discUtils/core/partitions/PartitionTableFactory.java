@@ -22,6 +22,8 @@
 
 package discUtils.core.partitions;
 
+import java.util.List;
+
 import discUtils.core.VirtualDisk;
 import dotnet4j.io.Stream;
 
@@ -46,4 +48,7 @@ public interface PartitionTableFactory {
     boolean detectIsPartitioned(Stream s);
 
     PartitionTable detectPartitionTable(VirtualDisk disk);
+
+    default void adhoc(List<PartitionTable> tables) {
+    }
 }

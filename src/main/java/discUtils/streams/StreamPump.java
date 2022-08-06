@@ -31,7 +31,7 @@ import dotnet4j.io.Stream;
 
 /**
  * Utility class for pumping the contents of one stream into another.
- *
+ * <p>
  * This class is aware of sparse streams, and will avoid copying data that is
  * not
  * valid in the source stream. This functionality should normally only be used

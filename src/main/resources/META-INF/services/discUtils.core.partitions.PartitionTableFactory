@@ -1,2 +1,3 @@
 discUtils.core.partitions.DefaultPartitionTableFactory
 discUtils.core.applePartitionMap.PartitionMapFactory
+discUtils.core.pc98.Pc98PartitionTableFactory

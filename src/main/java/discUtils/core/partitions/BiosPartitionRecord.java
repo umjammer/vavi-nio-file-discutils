@@ -88,7 +88,7 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
     }
 
     public boolean isValid() {
-        return endHead != 0 || endSector != 0 || endCylinder != 0 || lbaLength != 0;
+        return partitionType != 0 && (endHead != 0 || endSector != 0 || endCylinder != 0 || lbaLength != 0);
     }
 
     private int lbaLength;
@@ -180,5 +180,23 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         buffer[offset + 7] = (byte) endCylinder;
         EndianUtilities.writeBytesLittleEndian(lbaStart, buffer, offset + 8);
         EndianUtilities.writeBytesLittleEndian(lbaLength, buffer, offset + 12);
+    }
+
+    @Override
+    public String toString() {
+        return "BiosPartitionRecord{" +
+                "lbaOffset=" + lbaOffset +
+                ", endCylinder=" + endCylinder +
+                ", endHead=" + endHead +
+                ", endSector=" + endSector +
+                ", index=" + index +
+                ", lbaLength=" + lbaLength +
+                ", lbaStart=" + lbaStart +
+                ", partitionType=" + partitionType +
+                ", startCylinder=" + startCylinder +
+                ", startHead=" + startHead +
+                ", startSector=" + startSector +
+                ", status=" + status +
+                '}';
     }
 }

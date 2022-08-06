@@ -37,6 +37,7 @@ https://jitpack.io/#umjammer/vavi-nio-file-discutils
 | iSCSI    | 🚫   |        |          |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)   |
 | NFS      | 🚫   |        |          |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)  |
 | ODS      | 🚫   |        |          |      |      |    |       |       |       |        | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)   |
+| EMU      | ✅ (nhd)  |        |          |      |      |    |       |       |       |        | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 
 ## Project Description
 
@@ -169,6 +170,6 @@ Automated CI builds are available on [Github](https://github.com/umjammer/vavi-n
  * ~~https://github.com/AssafTzurEl/discUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43~~
    * img ... https://github.com/hessu/bchunk
  * ~~file separator~~
- * pc98 partition (wip)
+ * ~~pc98 partition~~ (done)
  * d88 floppy disk
  * qcow2

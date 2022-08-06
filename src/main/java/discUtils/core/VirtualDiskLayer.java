@@ -40,6 +40,7 @@ import discUtils.streams.util.Ownership;
  * through to the layer underneath (all other layers).
  */
 public abstract class VirtualDiskLayer implements Closeable {
+
     /**
      * Gets the capacity of the disk (in bytes).
      */
@@ -76,9 +77,9 @@ public abstract class VirtualDiskLayer implements Closeable {
 
     /**
      * Gets a {@link FileLocator} that can resolve relative paths, or
-     * {@code null} .
+     * {@code null}.
      *
-     * Typically used to locate parent disks.
+     * Typically, used to locate parent disks.
      */
     public abstract FileLocator getRelativeFileLocator();
 

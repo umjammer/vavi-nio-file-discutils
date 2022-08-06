@@ -6,3 +6,4 @@ discUtils.vmdk.DiskFactory
 discUtils.vhdx.DiskFactory
 discUtils.vdi.DiskFactory
 discUtils.xva.DiskFactory
+discUtils.emu.DiskFactory

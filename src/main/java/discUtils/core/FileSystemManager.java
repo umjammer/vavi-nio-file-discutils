@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.logging.Level;
 
 import discUtils.core.vfs.VfsFileSystemFactory;
 import dotnet4j.io.BufferedStream;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 /**
@@ -85,8 +87,10 @@ public class FileSystemManager {
         BufferedStream detectStream = new BufferedStream(stream);
         List<FileSystemInfo> detected = new ArrayList<>();
         for (VfsFileSystemFactory factory : factories) {
+Debug.println(Level.FINE, factory);
             detected.addAll(Arrays.asList(factory.detect(detectStream, volume)));
         }
+Debug.println(Level.FINE, detected);
         return detected;
     }
 }

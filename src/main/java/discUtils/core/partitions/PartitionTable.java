@@ -26,11 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import discUtils.core.VirtualDisk;
 import discUtils.core.raw.Disk;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 /**
@@ -115,9 +117,12 @@ public abstract class PartitionTable {
         for (PartitionTableFactory factory : factories) {
             PartitionTable table = factory.detectPartitionTable(disk);
             if (table != null) {
+Debug.println(Level.FINE, factory + ", " + table);
                 tables.add(table);
             }
+            factory.adhoc(tables);
         }
+Debug.println(Level.FINE, tables);
         return tables;
     }
 

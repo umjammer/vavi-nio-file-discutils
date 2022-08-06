@@ -9,8 +9,7 @@ package discUtils.core.pc98;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import discUtils.core.partitions.BiosPartitionTable;
-import discUtils.core.partitions.PartitionTable;
+import discUtils.core.Geometry;
 import vavi.util.Debug;
 import vavix.io.partition.PC98PartitionEntry;
 
@@ -27,19 +26,22 @@ import discUtils.streams.SparseStream;
  */
 public class Pc98PartitionInfo extends PartitionInfo {
 
-    PC98PartitionEntry pe;
+    private PC98PartitionEntry pe;
 
-    public Pc98PartitionInfo(PC98PartitionEntry pe) {
+    public Pc98PartitionInfo(PC98PartitionEntry pe, Pc98PartitionTable table, Geometry geometry) {
         this.pe = pe;
+        this.table = table;
+        this.heads = geometry.getHeadsPerCylinder();
+        this.secs = geometry.getSectorsPerTrack();
     }
 
     private Pc98PartitionTable table;
 
-    int heads = 0, secs = 0;
+    private int heads, secs;
 
-    // TODO
     // @see "https://github.com/aaru-dps/Aaru.Helpers/blob/4640bb88d3eb907d0f0617d5ee5159fbc13c5653/CHS.cs"
     public static int toLBA(int cyl, int head, int sector, int maxHead, int maxSector) {
+//Debug.printf("heads: %d, secs: %d", maxHead, maxSector);
         return maxHead == 0 || maxSector == 0 ? (((cyl * 16)      + head) * 63)        + sector - 1
                                               : (((cyl * maxHead) + head) * maxSector) + sector - 1;
     }
@@ -51,22 +53,18 @@ public class Pc98PartitionInfo extends PartitionInfo {
 
     @Override
     public long getFirstSector() {
-        if (heads != 0 && secs != 0) {
-            return (long) secs * heads * pe.startCylinder;
-        } else {
-Debug.println(Level.WARNING, "@@@@@@@@@@@@@@@@@@@@@@@@ mgick number is used @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-            return 0x100;
-        }
+//Debug.printf("%08x, %08x", secs * heads * pe.startCylinder, toLBA(pe.startCylinder, pe.startHeader, pe.startSector + 1, heads, secs));
+        return toLBA(pe.startCylinder, pe.startHeader, pe.startSector + 1, heads, secs);
     }
 
     @Override
     public UUID getGuidType() {
-        return null;
+        return new UUID(0L, 0L);
     }
 
     @Override
     public long getLastSector() {
-        return toLBA(pe.endCylinder, pe.endHeader, pe.endSector, heads, secs);
+        return toLBA(pe.endCylinder, pe.endHeader, pe.endSector + 1, heads, secs);
     }
 
     @Override

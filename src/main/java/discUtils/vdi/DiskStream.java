@@ -160,7 +160,7 @@ public class DiskStream extends SparseStream {
             } else if (blockTable[block] == BlockZero) {
                 Arrays.fill(buffer, offset + numRead, offset + numRead + toRead, (byte) 0);
             } else {
-                long blockOffset = (blockTable[block] & 0xffffffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
+                long blockOffset = (blockTable[block] & 0xffff_ffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
                 fileStream.setPosition(filePos);
                 StreamUtilities.readExact(fileStream, buffer, offset + numRead, toRead);
@@ -267,7 +267,7 @@ public class DiskStream extends SparseStream {
                 writeBlockTableEntry(block);
             } else {
                 // Existing block, simply overwrite the existing data
-                long blockOffset = (blockTable[block] & 0xfffffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
+                long blockOffset = (blockTable[block] & 0xfff_ffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
                 fileStream.setPosition(filePos);
                 fileStream.write(buffer, offset + numWritten, toWrite);

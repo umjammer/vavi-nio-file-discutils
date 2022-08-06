@@ -22,6 +22,9 @@
 
 package discUtils.fat;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemParameters;
@@ -45,6 +48,7 @@ public class FileSystemFactory implements VfsFileSystemFactory {
     }
 
     private DiscFileSystem open(Stream stream, VolumeInfo volumeInfo, FileSystemParameters parameters) {
-        return new FatFileSystem(stream, Ownership.None, parameters);
+        BootSector bs = new ATBootSector(stream);
+        return new FatFileSystem(stream, bs, Ownership.None, parameters);
     }
 }
