@@ -6,7 +6,7 @@
 
 package vavi.nio.file.du;
 
-import com.github.fge.filesystem.driver.ExtendedFileSystemDriverBase.ExtendsdFileAttributesFactory;
+import com.github.fge.filesystem.driver.ExtendedFileSystemDriverBase.ExtendedFileAttributesFactory;
 
 import discUtils.core.DiscFileSystemInfo;
 
@@ -17,7 +17,7 @@ import discUtils.core.DiscFileSystemInfo;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/11/17 umjammer initial version <br>
  */
-public final class DuFileAttributesFactory extends ExtendsdFileAttributesFactory {
+public final class DuFileAttributesFactory extends ExtendedFileAttributesFactory {
 
     public DuFileAttributesFactory() {
         setMetadataClass(DiscFileSystemInfo.class);

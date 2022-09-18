@@ -171,9 +171,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.umjammer</groupId>
+      <groupId>com.github.fge</groupId>
       <artifactId>java7-fs-base</artifactId>
-      <version>0.0.12v</version>
+      <version>0.0.13v-SNAPSHOT</version>
     </dependency>
 
     <dependency>
