@@ -48,7 +48,7 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
     public DuFileSystemDriver(final FileStore fileStore,
             FileSystemFactoryProvider provider,
             DiscFileSystem fileSystem,
-            Map<String, ?> env) {
+            Map<String, ?> env) throws IOException {
         super(fileStore, provider);
         this.fileSystem = fileSystem;
         setEnv(env);

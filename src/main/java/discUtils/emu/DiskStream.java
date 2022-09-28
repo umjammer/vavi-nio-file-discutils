@@ -68,7 +68,7 @@ public class DiskStream extends SparseStream {
 
         List<StreamExtent> extents = new ArrayList<>();
 
-        long blockSize = disk.getSctorSize();
+        long blockSize = disk.getSectorSize();
         int i = 0;
         extents.add(new StreamExtent(blockSize, i * blockSize));
 
