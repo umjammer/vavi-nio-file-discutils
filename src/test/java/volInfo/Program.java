@@ -23,9 +23,8 @@
 package volInfo;
 
 import java.io.IOException;
-
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import discUtils.common.ProgramBase;
 import discUtils.core.LogicalVolumeInfo;
@@ -33,10 +32,38 @@ import discUtils.core.PhysicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeManager;
 import dotnet4j.io.FileAccess;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
+import vavi.util.properties.annotation.Property;
+import vavi.util.properties.annotation.PropsEntity;
 
 
 @Options
+@EnabledIf("localPropertiesExists")
+@PropsEntity(url = "file://${user.dir}/local.properties")
 public class Program extends ProgramBase {
+
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
+    }
+
+    @BeforeEach
+    public void before() throws Exception {
+        PropsEntity.Util.bind(this);
+    }
+
+    @Property(name = "discImage")
+    String iso;
+
+    @Test
+    void test1() throws Exception {
+        main(new String[] {"-disk", iso});
+    }
+
+    // ----
 
     @Option(option = "disk", description = "Paths to the disks to inspect.", args = 1, required = true)
     private String inFile; // TODO array

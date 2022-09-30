@@ -9,11 +9,15 @@ package vavi.nio.file.du;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -31,12 +35,16 @@ import vavi.util.properties.annotation.PropsEntity;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2021/11/20 umjammer initial version <br>
  */
-@ExtendWith(ExistsLocalPropertiesCondition.class)
+@EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
 public class Main4 {
 
     static {
         System.setProperty("vavi.util.logging.VaviFormatter.extraClassMethod", "co\\.paralleluniverse\\.fuse\\.LoggedFuseFilesystem#log");
+    }
+
+    static boolean localPropertiesExists() {
+        return Files.exists(Paths.get("local.properties"));
     }
 
     @Property
@@ -51,7 +59,7 @@ public class Main4 {
     public void before() throws Exception {
         PropsEntity.Util.bind(this);
 
-        URI uri = URI.create("discutils:file:" + discImage);
+        URI uri = DuFileSystemProvider.createURI(discImage);
 
         Map<String, Object> env = new HashMap<>();
         env.put(CachedFileSystemDriver.ENV_IGNORE_APPLE_DOUBLE, true); // mandatory
@@ -68,6 +76,7 @@ public class Main4 {
         options.put(vavi.net.fuse.javafs.JavaFSFuse.ENV_READ_ONLY, false);
     }
 
+    @Disabled("no reliable writeable devices")
     @ParameterizedTest
     @ValueSource(strings = {
         "vavi.net.fuse.javafs.JavaFSFuseProvider",
@@ -108,7 +117,7 @@ while (true) { // for jnrfuse
         try (Fuse fuse = Fuse.getFuse()) {
             fuse.mount(app.fs, app.mountPoint, app.options);
 while (true) { // for jnrfuse
-    Thread.yield();
+ Thread.yield();
 }
         }
     }
