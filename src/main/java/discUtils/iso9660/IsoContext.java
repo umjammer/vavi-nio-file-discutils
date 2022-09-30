@@ -27,6 +27,7 @@ import java.util.List;
 import discUtils.core.vfs.VfsContext;
 import discUtils.iso9660.susp.SuspExtension;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 public class IsoContext extends VfsContext {
@@ -89,5 +90,6 @@ public class IsoContext extends VfsContext {
 
     public void setVolumeDescriptor(CommonVolumeDescriptor value) {
         volumeDescriptor = value;
+Debug.println(value);
     }
 }

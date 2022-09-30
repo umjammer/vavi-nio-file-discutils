@@ -162,5 +162,39 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
         effectiveDateAndTime = buildTime;
         fileStructureVersion = 1; // V1
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "{" +
+                "abstractFileIdentifier='" + abstractFileIdentifier + '\'' +
+                ", applicationIdentifier='" + applicationIdentifier + '\'' +
+                ", bibliographicFileIdentifier='" + bibliographicFileIdentifier + '\'' +
+                ", characterEncoding=" + characterEncoding +
+                ", copyrightFileIdentifier='" + copyrightFileIdentifier + '\'' +
+                ", creationDateAndTime=" + creationDateAndTime +
+                ", dataPreparerIdentifier='" + dataPreparerIdentifier + '\'' +
+                ", effectiveDateAndTime=" + effectiveDateAndTime +
+                ", expirationDateAndTime=" + expirationDateAndTime +
+                ", fileStructureVersion=" + fileStructureVersion +
+                ", logicalBlockSize=" + logicalBlockSize +
+                ", modificationDateAndTime=" + modificationDateAndTime +
+                ", optionalTypeLPathTableLocation=" + optionalTypeLPathTableLocation +
+                ", optionalTypeMPathTableLocation=" + optionalTypeMPathTableLocation +
+                ", pathTableSize=" + pathTableSize +
+                ", publisherIdentifier='" + publisherIdentifier + '\'' +
+                ", rootDirectory=" + rootDirectory +
+                ", systemIdentifier='" + systemIdentifier + '\'' +
+                ", typeLPathTableLocation=" + typeLPathTableLocation +
+                ", typeMPathTableLocation=" + typeMPathTableLocation +
+                ", volumeIdentifier='" + volumeIdentifier + '\'' +
+                ", volumeSequenceNumber=" + volumeSequenceNumber +
+                ", volumeSetIdentifier='" + volumeSetIdentifier + '\'' +
+                ", volumeSetSize=" + volumeSetSize +
+                ", volumeSpaceSize=" + volumeSpaceSize +
+                ", standardIdentifier='" + standardIdentifier + '\'' +
+                ", volumeDescriptorType=" + volumeDescriptorType +
+                ", volumeDescriptorVersion=" + volumeDescriptorVersion +
+                '}';
+    }
 }
 
