@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>DiscUtils</groupId>
+  <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
   <version>0.14.3-SNAPSHOT</version>
 
@@ -17,31 +17,31 @@
         <jdk>(1.4, 8]</jdk>
       </activation>
       <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <version>3.1.0</version>
-              <executions>
-                <execution>
-                  <id>echo-message</id>
-                  <phase>validate</phase>
-                  <configuration>
-                    <target>
-                      <echo message="@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" />
-                      <echo message="use jdk9 above !!!!" />
-                      <echo message="@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" />
-                      <fail />
-                    </target>
-                  </configuration>
-                  <goals>
-                    <goal>run</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <id>echo-message</id>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <echo message="🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫" />
+                    <echo message="use jdk9 above !!!!" />
+                    <echo message="🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫🚫" />
+                    <fail/>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
 
     <profile>
@@ -49,7 +49,7 @@
       <activation>
         <property>
           <name>spotbugs</name>
-          <value></value>
+          <value/>
         </property>
       </activation>
       <build>
@@ -165,9 +165,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.github.umjammer</groupId>
+      <groupId>vavi</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.6</version>
+      <version>1.1.7-SNAPSHOT</version>
     </dependency>
 
     <dependency>
@@ -208,7 +208,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
-      <version>3.14.9</version>
+      <version>4.10.0</version>
     </dependency>
 
     <dependency>

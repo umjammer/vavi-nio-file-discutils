@@ -1,4 +1,8 @@
-[![Actions Status](https://github.com/umjammer/vavi-nio-file-discutils/workflows/Java%20CI/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions) [![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
+[![Release](https://jitpack.io/v/umjammer/vavi-nio-file-discutils.svg)](https://jitpack.io/#umjammer/vavi-nio-file-discutils)
+[![Actions Status](https://github.com/umjammer/vavi-nio-file-discutils/workflows/Java%20CI/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions)
+[![CodeQL](https://github.com/umjammer/vavi-nio-file/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-nio-file/actions/workflows/codeql-analysis.yml)
+![Java](https://img.shields.io/badge/Java-8-b07219)
+[![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
 
 # vavi-nio-file-discutils
 
@@ -18,25 +22,25 @@ https://jitpack.io/#umjammer/vavi-nio-file-discutils
 
 ## Status
 
-| fs       | list | upload | download | copy | move | rm | mkdir | cache | watch | create | comment |
-|----------|------|--------|----------|------|------|----|-------|-------|-------|--------|---------|
-| UDF      |      |        |          |      |      |    |       |       |       |        |         |
-| FAT      |✅ (RAW)|      |          |      |      |    |       |       |       |        |         |         |
-| NTFS     |✅ (VDI)|      | ✅ (VDI) |      |      |    |       |       |       |        |         |
-| HSF+     |✅ (DMG)|      |          |      |      |    |       |       |       |        | 🚫 (ISO) same error on original |
-| EXT      |🚧 (VDI)|      |          |      |      |    |       |       |       |        |         |
-| XFS      |      |        |          |      |      |    |       |       |       |        |         |
-| ISO      | 🚧   |        |          |      |      |    |       |       |       | ✅     |         |
-| VHD      |      |        |          |      |      |    |       |       |       |        |         |
-| VDI      | ✅   |        |          |      |      |    |       |       |       |        |         |
-| XVA      |      |        |          |      |      |    |       |       |       |        |         |
-| VMDK     |      |        |          |      |      |    |       |       |       |        |         |
-| DMG      | ✅   |        |          |      |      |    |       |       |       |        |         |
-| Registry | ✅   |        |          |      |      |    |       |       |       |        | Windows 10's registry |
-| ├ BCD    | ✅   |        |          |      |      |    |       |       |       |        | Windows XP's bcd   |
-| iSCSI    | 🚫   |        |          |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)   |
-| NFS      | 🚫   |        |          |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)  |
-| ODS      | 🚫   |        |          |      |      |    |       |       |       |        | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)   |
+| fs       | list     | upload | download | copy | move | rm | mkdir | cache | watch | create | comment                                                                                                                                  |
+|----------|----------|--------|----------|------|------|----|-------|-------|-------|--------|------------------------------------------------------------------------------------------------------------------------------------------|
+| UDF      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| FAT      | ✅ (RAW)  |      |          |      |      |    |       |       |       |        |                                                                                                                                          |         |
+| NTFS     | ✅ (VDI)  |      | ✅ (VDI) |      |      |    |       |       |       |        |                                                                                                                                          |
+| HSF+     | ✅ (DMG)  |      |          |      |      |    |       |       |       |        | 🚫 (ISO) same error on original                                                                                                          |
+| EXT      | 🚧 (VDI) |      |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| XFS      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| ISO      | 🚧       |        |          |      |      |    |       |       |       | ✅     |                                                                                                                                          |
+| VHD      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| VDI      | ✅        |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| XVA      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| VMDK     |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| DMG      | ✅        |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| Registry | ✅        |        |          |      |      |    |       |       |       |        | Windows 10's registry                                                                                                                    |
+| ├ BCD    | ✅        |        |          |      |      |    |       |       |       |        | Windows XP's bcd                                                                                                                         |
+| iSCSI    | 🚫       |        |          |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                   |
+| NFS      | 🚫       |        |          |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                          |
+| ODS      | 🚫       |        |          |      |      |    |       |       |       |        | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                          |
 | EMU      | ✅ (nhd)  |        |          |      |      |    |       |       |       |        | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 
 ## Project Description
@@ -87,11 +91,11 @@ Here's a few really simple examples.
 ### How to create a new ISO:
 
 ```Java
-CDBuilder builder = new CDBuilder();
-builder.useJoliet = true;
-builder.volumeIdentifier = "A_SAMPLE_DISK";
-builder.addFile("folder/Hello.txt", "Hello World!".getBytes(Charset.forName("ASCII")));
-builder.build("/tmp/sample.iso");
+ CDBuilder builder = new CDBuilder();
+ builder.useJoliet = true;
+ builder.volumeIdentifier = "A_SAMPLE_DISK";
+ builder.addFile("folder/Hello.txt", "Hello World!".getBytes(Charset.forName("ASCII")));
+ builder.build("/tmp/sample.iso");
 ```
 
 You can add files as byte arrays (shown above), as files from the Windows filesystem, or as a Stream. By using a different form of Build, you can get a Stream to the ISO file, rather than writing it to the Windows filesystem.
@@ -100,11 +104,11 @@ You can add files as byte arrays (shown above), as files from the Windows filesy
 ### How to extract a file from an ISO:
 
 ```Java
-try (FileStream isoStream = File.open("/tmp/sample.iso")) {
-  CDReader cd = new CDReader(isoStream, true);
-  Stream fileStream = cd.openFile("folder/Hello.txt", FileMode.Open);
-  // Use fileStream...
-}
+ try (FileStream isoStream = File.open("/tmp/sample.iso")) {
+   CDReader cd = new CDReader(isoStream, true);
+   Stream fileStream = cd.openFile("folder/Hello.txt", FileMode.Open);
+   // Use fileStream...
+ }
 ```
 
 You can also browse through the directory hierarchy, starting at cd.Root.
@@ -112,15 +116,15 @@ You can also browse through the directory hierarchy, starting at cd.Root.
 ### How to create a virtual hard disk:
 
 ```Java
-long diskSize = 30 * 1024 * 1024; // 30MB
-try (Stream vhdStream = File.create("/tmp/mydisk.vhd")) {
-    Disk disk = Disk.initializeDynamic(vhdStream, diskSize);
-    BiosPartitionTable.initialize(disk, WellKnownPartitionType.WindowsFat);
-    try (FatFileSystem fs = FatFileSystem.formatPartition(disk, 0, null)) {
-        fs.createDirectory("TestDir/CHILD");
-        // do other things with the file system...
-    }
-}
+ long diskSize = 30 * 1024 * 1024; // 30MB
+ try (Stream vhdStream = File.create("/tmp/mydisk.vhd")) {
+     Disk disk = Disk.initializeDynamic(vhdStream, diskSize);
+     BiosPartitionTable.initialize(disk, WellKnownPartitionType.WindowsFat);
+     try (FatFileSystem fs = FatFileSystem.formatPartition(disk, 0, null)) {
+         fs.createDirectory("TestDir/CHILD");
+         // do other things with the file system...
+     }
+ }
 ```
 
 As with ISOs, you can browse the file system, starting at fs.Root.
@@ -129,11 +133,11 @@ As with ISOs, you can browse the file system, starting at fs.Root.
 ### How to create a virtual floppy disk:
 
 ```Java
-try (FileStream fs = File.create("myfloppy.vfd");
-     FatFileSystem floppy = FatFileSystem.formatFloppy(fs, FloppyDiskType.HighDensity, "MY FLOPPY  ");
-     Stream s = floppy.openFile("foo.txt", FileMode.Create)) {
-    // Use stream...
-}
+ try (FileStream fs = File.create("myfloppy.vfd");
+      FatFileSystem floppy = FatFileSystem.formatFloppy(fs, FloppyDiskType.HighDensity, "MY FLOPPY  ");
+      Stream s = floppy.openFile("foo.txt", FileMode.Create)) {
+     // Use stream...
+ }
 ```
 
 Again, start browsing the file system at floppy.Root.
@@ -170,6 +174,11 @@ Automated CI builds are available on [Github](https://github.com/umjammer/vavi-n
  * ~~https://github.com/AssafTzurEl/discUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43~~
    * img ... https://github.com/hessu/bchunk
  * ~~file separator~~
+   * test on windows 
  * ~~pc98 partition~~ (done)
  * d88 floppy disk
- * qcow2
+ * qcow2 (wip, see [aaru](https://github.com/aaru-dps/Aaru))
+ * chd (wip, see aaru)
+   * qlgenerator (wip, see vavi.apps.qlgenerator package)
+ * iso9660
+   * `CommonVolumeDescriptor` as `user:attributes` 
