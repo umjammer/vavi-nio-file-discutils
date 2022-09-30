@@ -1,0 +1,2 @@
+Premain-Class: vavi.apps.qlgenerator.Chd
+Can-Redefine-Classes: true
