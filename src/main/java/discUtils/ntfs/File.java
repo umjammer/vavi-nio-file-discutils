@@ -682,7 +682,7 @@ class File {
             int saved = (int) runs.get(splitIndex).getSize();
             while (splitIndex > 1 && record.getSize() - saved > record.getAllocatedSize()) {
                 --splitIndex;
-                saved += runs.get(splitIndex).getSize();
+                saved += (int) runs.get(splitIndex).getSize();
             }
         }
 
