@@ -1,6 +1,6 @@
 [![Release](https://jitpack.io/v/umjammer/vavi-nio-file-discutils.svg)](https://jitpack.io/#umjammer/vavi-nio-file-discutils)
 [![Actions Status](https://github.com/umjammer/vavi-nio-file-discutils/workflows/Java%20CI/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions)
-[![CodeQL](https://github.com/umjammer/vavi-nio-file/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-nio-file/actions/workflows/codeql-analysis.yml)
+[![CodeQL](https://github.com/umjammer/vavi-nio-file-discutils/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions/workflows/codeql-analysis.yml)
 ![Java](https://img.shields.io/badge/Java-8-b07219)
 [![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
 
@@ -142,30 +142,9 @@ As with ISOs, you can browse the file system, starting at fs.Root.
 
 Again, start browsing the file system at floppy.Root.
 
-## Development releases
-
-Automated CI builds are available on [Github](https://github.com/umjammer/vavi-nio-file-discutils/actions).
-
 ## References
 
  * https://github.com/twiglet/cs2j
-    * getter/setter properties naming
-    * enum with value
-    * injection without constructor
-    * lambda expression
-    * extended for
-    * delegate eliminate listFoo etc.
-    * Encoding
-    * substring 2nd param is index instead of length
-    * Array.Clear 3rd param is index instead of length 
-    * Array.copy, Array.clear
-    * Guid -> UUID
-    * unit test (xUnit -> junit)
-    * assembly -> ServiceLoader
-    * attribute -> annotation
-    * unsigned
-    * object equals
-    * operator overloads
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnet4j)
 
 ## TODO
