@@ -188,7 +188,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         // Write out data first, since we know where it goes...
         int dataLen = 0;
         for (DataRun run : dataRuns) {
-            dataLen += run.getSize();
+            dataLen += (int) run.getSize();
         }
 
         dataLen++; // NULL terminator
