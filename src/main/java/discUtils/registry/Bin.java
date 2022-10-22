@@ -95,7 +95,7 @@ public final class Bin {
         while (i < freeCells.size() && freeCells.get(i).getOffset() < freeIndex) {
             if (freeCells.get(i).getOffset() + freeCells.get(i).getCount() == freeIndex) {
                 freeIndex = (int) freeCells.get(i).getOffset();
-                len += freeCells.get(i).getCount();
+                len += (int) freeCells.get(i).getCount();
                 freeCells.remove(i);
             } else {
                 ++i;
