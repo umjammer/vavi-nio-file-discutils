@@ -103,7 +103,7 @@ public final class Bin {
         }
         // If there's a free cell after this one, combine
         if (i < freeCells.size() && freeCells.get(i).getOffset() == freeIndex + len) {
-            len += freeCells.get(i).getCount();
+            len += (int) freeCells.get(i).getCount();
             freeCells.remove(i);
         }
 
