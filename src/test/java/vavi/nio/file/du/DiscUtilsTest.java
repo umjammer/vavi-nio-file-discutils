@@ -66,6 +66,7 @@ class DiscUtilsTest {
                 e.printStackTrace();
             }
         });
+        fs.close();
     }
 
     @Test
@@ -77,6 +78,7 @@ class DiscUtilsTest {
         env.put("forceType", "RAW");
         FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
         Files.walk(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        fs.close();
     }
 
     // TODO doesn't work, wip
@@ -89,6 +91,7 @@ class DiscUtilsTest {
         env.put("forceType", "RAW");
         FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        fs.close();
     }
 }
 
