@@ -64,7 +64,7 @@ public class Pc98BootSector implements BootSector {
 
     @Override
     public FatType getFatVariant() {
-        return FatType.valueOf(bpb.getFatType().getValue());
+        return FatType.valueOf(bpb.getFatType().getFatSize());
     }
 
     @Override
