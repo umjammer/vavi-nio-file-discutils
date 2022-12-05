@@ -485,7 +485,7 @@ public class DynamicStream extends MappedStream {
         }
 
         // Nothing to do...
-        if (blockAllocationTable[(int) block] == 0xffffffff) { // uint.MAX_VALUE
+        if (blockAllocationTable[(int) block] == 0xffff_ffff) { // uint.MAX_VALUE
             return false;
         }
 
@@ -497,7 +497,7 @@ public class DynamicStream extends MappedStream {
     }
 
     private void allocateBlock(long block) {
-        if (blockAllocationTable[(int) block] != 0xffffffff) { // uint.MAX_VALUE
+        if (blockAllocationTable[(int) block] != 0xffff_ffff) { // uint.MAX_VALUE
             throw new IllegalArgumentException("Attempt to allocate existing block");
         }
 

@@ -11,6 +11,7 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,8 @@ class DiscUtilsTest {
     String discImageDD;
     @Property
     String discImageNHD;
+    @Property(name = "vhd")
+    String discImageVHD;
 
     @BeforeEach
     void before() throws IOException {
@@ -90,6 +93,15 @@ class DiscUtilsTest {
         Map<String, Object> env = new HashMap<>();
         env.put("forceType", "RAW");
         FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
+        Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        fs.close();
+    }
+
+    @Test
+    void test5() throws Exception {
+        String file = discImageVHD;
+        URI uri = DuFileSystemProvider.createURI(file);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Collections.emptyMap());
         Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
         fs.close();
     }

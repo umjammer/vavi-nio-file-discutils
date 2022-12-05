@@ -142,12 +142,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
             readFooter(true);
 
             readHeaders();
-        } finally {
+        } catch (Exception e) {
             try {
                 fileStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException f) {
+                f.printStackTrace();
             }
+            throw e;
         }
     }
 
@@ -436,7 +437,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             }
 
             return new DynamicStream(fileStream,
-                    dynamicHeader,
+                                     dynamicHeader,
                                      footer.currentSize,
                                      new ZeroStream(footer.currentSize),
                                      Ownership.Dispose);

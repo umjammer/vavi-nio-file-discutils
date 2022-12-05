@@ -42,6 +42,7 @@ import discUtils.streams.util.Ownership;
 import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 /**
@@ -249,7 +250,6 @@ public final class Disk extends VirtualDisk {
         if (dynContent != null) {
             dynContent.setAutoCommitFooter(value);
         }
-
     }
 
     /**
@@ -512,6 +512,7 @@ public final class Disk extends VirtualDisk {
 
                     if (!newFile.getUniqueId().equals(file.getParentUniqueId())) {
                         newFile.close(); // TODO check
+Debug.println("close newFile");
                         throw new IOException(String
                                 .format("Invalid disk chain found looking for parent with id %s, found %s with id %s",
                                         file.getParentUniqueId(),
