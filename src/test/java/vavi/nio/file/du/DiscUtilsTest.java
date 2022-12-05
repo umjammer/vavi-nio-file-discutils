@@ -47,6 +47,8 @@ class DiscUtilsTest {
     String discImageNHD;
     @Property(name = "vhd")
     String discImageVHD;
+    @Property
+    String discImageW10Reg = "src/test/resources/ntuser.dat";
 
     @BeforeEach
     void before() throws IOException {
@@ -89,6 +91,19 @@ class DiscUtilsTest {
     @Disabled("doesn't work")
     void test3() throws Exception {
         String file = discImageDD;
+        URI uri = DuFileSystemProvider.createURI(file);
+        Map<String, Object> env = new HashMap<>();
+        env.put("forceType", "RAW");
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
+        Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        fs.close();
+    }
+
+    // TODO doesn't work, wip, not registered as a service provider
+    @Test
+    @Disabled("doesn't work")
+    void test4() throws Exception {
+        String file = discImageW10Reg;
         URI uri = DuFileSystemProvider.createURI(file);
         Map<String, Object> env = new HashMap<>();
         env.put("forceType", "RAW");

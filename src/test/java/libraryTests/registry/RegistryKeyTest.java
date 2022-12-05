@@ -96,10 +96,7 @@ public class RegistryKeyTest {
 
     @Test
     public void setByteArrayValue() throws Exception {
-        hive.getRoot().setValue("value",
-                           new byte[] {
-                               1, 2, 3, 4
-                           });
+        hive.getRoot().setValue("value", new byte[] {1, 2, 3, 4});
         assertEquals(RegistryValueType.Binary, hive.getRoot().getValueType("value"));
         byte[] readVal = (byte[]) hive.getRoot().getValue("value");
         assertEquals(4, readVal.length);
@@ -108,10 +105,7 @@ public class RegistryKeyTest {
 
     @Test
     public void setStringArrayValue() throws Exception {
-        hive.getRoot().setValue("value",
-                           new String[] {
-                               "A", "B", "C"
-                           });
+        hive.getRoot().setValue("value", new String[] {"A", "B", "C"});
         assertEquals(RegistryValueType.MultiString, hive.getRoot().getValueType("value"));
         String[] readVal = (String[]) hive.getRoot().getValue("value");
         assertEquals(3, readVal.length);

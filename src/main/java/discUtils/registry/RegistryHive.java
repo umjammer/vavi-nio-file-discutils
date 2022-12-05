@@ -206,6 +206,7 @@ public final class RegistryHive implements Closeable {
         return create(locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None), Ownership.Dispose);
     }
 
+    @SuppressWarnings("unchecked")
     public <K extends Cell> K getCell(int index) {
         Bin bin = getBin(index);
 
