@@ -115,12 +115,12 @@ public final class ContentStream extends MappedStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         atEof = false;
         position = value;
@@ -177,7 +177,7 @@ public final class ContentStream extends MappedStream {
 
             PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus == PayloadBlockStatus.FullyPresent) {
-                fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+                fileStream.position(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                 int read = StreamUtilities.readMaximum(fileStream,
                                                        buffer,
                                                        offset + totalRead,
@@ -193,15 +193,15 @@ public final class ContentStream extends MappedStream {
                 int read;
 
                 if (present[0]) {
-                    fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+                    fileStream.position(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                     read = StreamUtilities.readMaximum(fileStream, buffer, offset + totalRead, toRead);
                 } else {
-                    parentStream.setPosition(position + totalRead);
+                    parentStream.position(position + totalRead);
                     read = StreamUtilities.readMaximum(parentStream, buffer, offset + totalRead, toRead);
                 }
                 totalRead += read;
             } else if (blockStatus == PayloadBlockStatus.NotPresent) {
-                parentStream.setPosition(position + totalRead);
+                parentStream.position(position + totalRead);
                 int read = StreamUtilities.readMaximum(parentStream,
                                                        buffer,
                                                        offset + totalRead,
@@ -272,7 +272,7 @@ public final class ContentStream extends MappedStream {
             }
 
             int toWrite = Math.min(blockBytesRemaining, count - totalWritten);
-            fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+            fileStream.position(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
             fileStream.write(buffer, offset + totalWritten, toWrite);
 
             if (blockStatus == PayloadBlockStatus.PartiallyPresent) {

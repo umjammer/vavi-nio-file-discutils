@@ -21,10 +21,10 @@ public class BtrfsTest {
     @Test
     public void ignoreInvalidLabelData() throws Exception {
         try (Stream ms = new MemoryStream()) {
-            ms.setPosition(0x20000);
+            ms.position(0x20000);
             //set fs length
             ms.writeByte((byte) 1);
-            ms.setPosition(0x10000L + 0x12b);
+            ms.position(0x10000L + 0x12b);
             //Label offset
             byte[] b = new byte[0x100];
             IntStream.range(1, 0x100).forEach(i -> b[i] = (byte) i);

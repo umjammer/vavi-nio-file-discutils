@@ -67,11 +67,11 @@ public class BZip2RleStream extends Stream {
         throw new UnsupportedOperationException();
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         throw new UnsupportedOperationException();
     }
 

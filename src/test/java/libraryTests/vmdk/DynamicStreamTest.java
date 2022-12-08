@@ -63,13 +63,13 @@ public class DynamicStreamTest {
             }
             Stream s = disk.getContent();
             s.write(content, 10, 40);
-            assertEquals(40, s.getPosition());
+            assertEquals(40, s.position());
             s.write(content, 50, 50);
-            assertEquals(90, s.getPosition());
-            s.setPosition(0);
+            assertEquals(90, s.position());
+            s.position(0);
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 60);
-            assertEquals(60, s.getPosition());
+            assertEquals(60, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -82,7 +82,7 @@ public class DynamicStreamTest {
             Stream s = disk.getContent();
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 20);
-            assertEquals(20, s.getPosition());
+            assertEquals(20, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -104,10 +104,10 @@ public class DynamicStreamTest {
                 content[i * 4 + 3] = (byte) (i & 0xFF);
             }
             Stream s = disk.getContent();
-            s.setPosition(10);
+            s.position(10);
             s.write(content, 0, content.length);
             byte[] buffer = new byte[content.length];
-            s.setPosition(10);
+            s.position(10);
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
@@ -125,7 +125,7 @@ public class DynamicStreamTest {
             contentStream = disk.getContent();
         }
         try {
-            contentStream.setPosition(0);
+            contentStream.position(0);
             fail();
         } catch (IOException ignored) {
         }
@@ -139,7 +139,7 @@ public class DynamicStreamTest {
             contentStream = disk.getContent();
         }
         try {
-            contentStream.setPosition(0);
+            contentStream.position(0);
             fail();
         } catch (IOException ignored) {
         }
@@ -181,13 +181,13 @@ public class DynamicStreamTest {
             }
             Stream s = disk.getContent();
             s.write(content, 10, 40);
-            assertEquals(40, s.getPosition());
+            assertEquals(40, s.position());
             s.write(content, 50, 50);
-            assertEquals(90, s.getPosition());
-            s.setPosition(0);
+            assertEquals(90, s.position());
+            s.position(0);
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 60);
-            assertEquals(60, s.getPosition());
+            assertEquals(60, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -200,7 +200,7 @@ public class DynamicStreamTest {
             Stream s = disk.getContent();
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 20);
-            assertEquals(20, s.getPosition());
+            assertEquals(20, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -222,10 +222,10 @@ public class DynamicStreamTest {
                 content[i * 4 + 3] = (byte) (i & 0xFF);
             }
             Stream s = disk.getContent();
-            s.setPosition(10);
+            s.position(10);
             s.write(content, 0, content.length);
             byte[] buffer = new byte[content.length];
-            s.setPosition(10);
+            s.position(10);
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
@@ -243,7 +243,7 @@ public class DynamicStreamTest {
             contentStream = disk.getContent();
         }
         try {
-            contentStream.setPosition(0);
+            contentStream.position(0);
             fail();
         } catch (IOException ignored) {
         }
@@ -273,7 +273,7 @@ public class DynamicStreamTest {
 
         DiscFileSystem fs = new InMemoryFileSystem();
         try (Disk disk = Disk.initialize(fs, "a.vmdk", 16 * 1024L * 1024 * 1024, DiskCreateType.TwoGbMaxExtentSparse)) {
-            disk.getContent().setPosition(20 * unit);
+            disk.getContent().position(20 * unit);
             disk.getContent().write(new byte[4 * unit], 0, 4 * unit);
 
             // Starts before first extent, ends before end of extent

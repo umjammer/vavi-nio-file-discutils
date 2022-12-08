@@ -62,7 +62,7 @@ public class Nfs3AccessResultTest {
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3AccessResult(reader);
         }

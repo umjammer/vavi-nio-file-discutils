@@ -80,16 +80,16 @@ public class DiskStream extends SparseStream {
         return disk.getLength();
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
-//Debug.printf("GETPOS: %08x", (fileStream.getPosition() - disk.getOffset()));
-        return fileStream.getPosition() - disk.getOffset();
+//Debug.printf("GETPOS: %08x", (fileStream.position() - disk.getOffset()));
+        return fileStream.position() - disk.getOffset();
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
 //Debug.printf("SETPOS: %08x", value);
-        fileStream.setPosition(value + disk.getOffset());
+        fileStream.position(value + disk.getOffset());
         atEof = false;
     }
 
@@ -102,13 +102,13 @@ public class DiskStream extends SparseStream {
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 //new Exception().printStackTrace();
-//Debug.printf("READ: %08x, %d, %d", fileStream.getPosition(), offset, count);
-        if (atEof || fileStream.getPosition() > disk.getLength()) {
+//Debug.printf("READ: %08x, %d, %d", fileStream.position(), offset, count);
+        if (atEof || fileStream.position() > disk.getLength()) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of file");
         }
 
-        if (fileStream.getPosition() == disk.getLength()) {
+        if (fileStream.position() == disk.getLength()) {
             atEof = true;
             return 0;
         }
@@ -122,7 +122,7 @@ public class DiskStream extends SparseStream {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
-            effectiveOffset += fileStream.getPosition();
+            effectiveOffset += fileStream.position();
         } else if (origin == SeekOrigin.End) {
             effectiveOffset += disk.getLength();
         }
@@ -132,8 +132,8 @@ public class DiskStream extends SparseStream {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        fileStream.setPosition(disk.getOffset() + effectiveOffset);
-        return fileStream.getPosition() - disk.getOffset();
+        fileStream.position(disk.getOffset() + effectiveOffset);
+        return fileStream.position() - disk.getOffset();
     }
 
     public void setLength(long value) {
@@ -155,7 +155,7 @@ public class DiskStream extends SparseStream {
             throw new IndexOutOfBoundsException("Attempt to write negative number of bytes (count)");
         }
 
-        if (atEof || fileStream.getPosition() + count > disk.getLength()) {
+        if (atEof || fileStream.position() + count > disk.getLength()) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to write beyond end of file");
         }

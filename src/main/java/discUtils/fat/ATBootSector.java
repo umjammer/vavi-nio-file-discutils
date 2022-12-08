@@ -58,7 +58,7 @@ public class ATBootSector implements BootSector {
     private String bsVolLab;
 
     public ATBootSector(Stream stream) {
-        stream.setPosition(0);
+        stream.position(0);
         bootSector = StreamUtilities.readSector(stream);
 //Debug.println(Level.FINE, "\n" + StringUtil.getDump(bootSector, 64));
         fatVariant = detectFATType(bootSector);

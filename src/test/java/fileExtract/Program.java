@@ -90,7 +90,7 @@ System.err.println("file: " + diskFile);
                     pumpStreams(source, outFile);
                 }
                 if (hexDump) {
-                    source.setPosition(0);
+                    source.position(0);
                     HexDump.generate(source, System.out);
                 }
             }

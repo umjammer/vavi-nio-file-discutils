@@ -964,12 +964,12 @@ class File {
             return wrapped.getLength();
         }
 
-        public long getPosition() {
-            return wrapped.getPosition();
+        @Override public long position() {
+            return wrapped.position();
         }
 
-        public void setPosition(long value) {
-            wrapped.setPosition(value);
+        @Override public void position(long value) {
+            wrapped.position(value);
         }
 
         public void close() throws IOException {
@@ -994,16 +994,16 @@ class File {
         }
 
         public void write(byte[] buffer, int offset, int count) {
-            if (wrapped.getPosition() + count > getLength()) {
-                changeAttributeResidencyByLength(wrapped.getPosition() + count);
+            if (wrapped.position() + count > getLength()) {
+                changeAttributeResidencyByLength(wrapped.position() + count);
             }
 
             wrapped.write(buffer, offset, count);
         }
 
         public void clear(int count) {
-            if (wrapped.getPosition() + count > getLength()) {
-                changeAttributeResidencyByLength(wrapped.getPosition() + count);
+            if (wrapped.position() + count > getLength()) {
+                changeAttributeResidencyByLength(wrapped.position() + count);
             }
 
             wrapped.clear(count);

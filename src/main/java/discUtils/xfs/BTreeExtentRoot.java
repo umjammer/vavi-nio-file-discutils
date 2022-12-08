@@ -127,7 +127,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
                     child = new BTreeExtentNode();
             }
             Stream data = context.getRawStream();
-            data.setPosition(Extent.getOffset(context, pointer[i]));
+            data.position(Extent.getOffset(context, pointer[i]));
             byte[] buffer = StreamUtilities.readExact(data, context.getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             if (context.getSuperBlock().getSbVersion() < 5 && child.getMagic() != BTreeExtentHeader.BtreeMagic ||

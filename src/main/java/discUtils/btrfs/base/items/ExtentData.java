@@ -253,7 +253,7 @@ public class ExtentData extends BaseItem {
             long remaining = logicalSize;
 //Debug.println("remaining: " + remaining + ", " + stream);
             while (processed < totalLength) {
-                stream.setPosition(processed);
+                stream.position(processed);
                 StreamUtilities.readExact(stream, buffer, 0, 4); // sizeof(int)
                 int partLength = EndianUtilities.toUInt32LittleEndian(buffer, 0);
                 processed += 4; // sizeof(int)

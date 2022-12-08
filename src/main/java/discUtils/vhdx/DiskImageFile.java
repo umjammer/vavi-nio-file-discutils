@@ -210,13 +210,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets detailed information about the VHDX file.
      */
     public DiskImageFileInfo getInformation() {
-        fileStream.setPosition(0);
+        fileStream.position(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, fileStream);
 
-        fileStream.setPosition(64 * Sizes.OneKiB);
+        fileStream.position(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
 
-        fileStream.setPosition(128 * Sizes.OneKiB);
+        fileStream.position(128 * Sizes.OneKiB);
         VhdxHeader vhdxHeader2 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
 
         LogSequence activeLogSequence = findActiveLogSequence();
@@ -531,23 +531,23 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         fileEnd += batRegion.getLength();
 
-        stream.setPosition(0);
+        stream.position(0);
         StreamUtilities.writeStruct(stream, fileHeader);
 
-        stream.setPosition(64 * Sizes.OneKiB);
+        stream.position(64 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, header1);
 
-        stream.setPosition(128 * Sizes.OneKiB);
+        stream.position(128 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, header2);
 
-        stream.setPosition(192 * Sizes.OneKiB);
+        stream.position(192 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, regionTable);
 
-        stream.setPosition(256 * Sizes.OneKiB);
+        stream.position(256 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, regionTable);
 
         // Set stream to min size
-        stream.setPosition(fileEnd - 1);
+        stream.position(fileEnd - 1);
         stream.writeByte((byte) 0);
 
         // Metadata
@@ -572,7 +572,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void initialize() {
-        fileStream.setPosition(0);
+        fileStream.position(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, fileStream);
         if (!fileHeader.isValid()) {
             throw new dotnet4j.io.IOException("Invalid VHDX file - file signature mismatch");
@@ -599,7 +599,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private List<StreamExtent> batControlledFileExtents() {
-        batStream.setPosition(0);
+        batStream.position(0);
         byte[] batData = StreamUtilities.readExact(batStream, (int) batStream.getLength());
 
         int blockSize = metadata.getFileParameters().blockSize;
@@ -681,7 +681,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             do {
                 oldTail = currentTail;
 
-                logStream.setPosition(currentTail);
+                logStream.position(currentTail);
                 LogSequence currentSequence = new LogSequence();
 
                 while (LogEntry.tryRead(logStream, logEntry) && logEntry[0].getLogGuid().equals(header.logGuid) &&
@@ -712,7 +712,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void readRegionTable() {
-        fileStream.setPosition(192 * Sizes.OneKiB);
+        fileStream.position(192 * Sizes.OneKiB);
         regionTable = StreamUtilities.readStruct(RegionTable.class, fileStream);
         for (RegionEntry entry : regionTable.regions.values()) {
             if (entry.flags == RegionFlags.Required) {
@@ -730,14 +730,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         activeHeader = 0;
 
-        fileStream.setPosition(64 * Sizes.OneKiB);
+        fileStream.position(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
         if (vhdxHeader1.isValid()) {
             header = vhdxHeader1;
             activeHeader = 1;
         }
 
-        fileStream.setPosition(128 * Sizes.OneKiB);
+        fileStream.position(128 * Sizes.OneKiB);
         VhdxHeader vhdxHeader2 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
         if (vhdxHeader2.isValid() && (activeHeader == 0 || header.sequenceNumber < vhdxHeader2.sequenceNumber)) {
             header = vhdxHeader2;
@@ -756,10 +756,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header.calcChecksum();
 
         if (activeHeader == 1) {
-            fileStream.setPosition(128 * Sizes.OneKiB);
+            fileStream.position(128 * Sizes.OneKiB);
             otherPos = 64 * Sizes.OneKiB;
         } else {
-            fileStream.setPosition(64 * Sizes.OneKiB);
+            fileStream.position(64 * Sizes.OneKiB);
             otherPos = 128 * Sizes.OneKiB;
         }
 
@@ -769,7 +769,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header.sequenceNumber++;
         header.calcChecksum();
 
-        fileStream.setPosition(otherPos);
+        fileStream.position(otherPos);
         StreamUtilities.writeStruct(fileStream, header);
         fileStream.flush();
     }

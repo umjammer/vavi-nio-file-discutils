@@ -72,12 +72,12 @@ public final class IdTableWriter {
             EndianUtilities.writeBytesLittleEndian(ids.get(i), context.getIoBuffer(), i * 4);
         }
         // Persist the actual Id's
-        long blockPos = context.getRawStream().getPosition();
+        long blockPos = context.getRawStream().position();
         MetablockWriter writer = new MetablockWriter();
         writer.write(context.getIoBuffer(), 0, ids.size() * 4);
         writer.persist(context.getRawStream());
         // Persist the table that references the block containing the id's
-        long tablePos = context.getRawStream().getPosition();
+        long tablePos = context.getRawStream().position();
         byte[] tableBuffer = new byte[8];
         EndianUtilities.writeBytesLittleEndian(blockPos, tableBuffer, 0);
         context.getRawStream().write(tableBuffer, 0, 8);

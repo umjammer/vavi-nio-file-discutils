@@ -123,11 +123,11 @@ public class ZlibStream extends Stream {
     /**
      * Gets and sets the stream position.
      */
-    public long getPosition() {
+    @Override public long position() {
         throw new UnsupportedOperationException();
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         throw new UnsupportedOperationException();
     }
 

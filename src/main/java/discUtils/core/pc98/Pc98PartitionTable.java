@@ -56,7 +56,7 @@ public class Pc98PartitionTable extends PartitionTable {
     public Pc98PartitionTable(VirtualDisk disk) {
         byte[] bootSector = new byte[1024];
         diskData = disk.getContent();
-        diskData.setPosition(0);
+        diskData.position(0);
         diskData.read(bootSector, 0, 1024);
         ByteArrayInputStream baos = new ByteArrayInputStream(bootSector, 512, 512);
         for (int i = 0; i < 16; i++) {

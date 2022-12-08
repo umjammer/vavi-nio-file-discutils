@@ -146,7 +146,7 @@ public final class GuidPartitionTable extends PartitionTable {
         // Write the primary header
         byte[] headerBuffer = new byte[diskGeometry.getBytesPerSector()];
         header.writeTo(headerBuffer, 0);
-        disk.setPosition(header.headerLba * diskGeometry.getBytesPerSector());
+        disk.position(header.headerLba * diskGeometry.getBytesPerSector());
         disk.write(headerBuffer, 0, headerBuffer.length);
         // Calc alternate header
         header.headerLba = header.alternateHeaderLba;
@@ -154,7 +154,7 @@ public final class GuidPartitionTable extends PartitionTable {
         header.partitionEntriesLba = header.headerLba - entrySectors;
         // Write the alternate header
         header.writeTo(headerBuffer, 0);
-        disk.setPosition(header.headerLba * diskGeometry.getBytesPerSector());
+        disk.position(header.headerLba * diskGeometry.getBytesPerSector());
         disk.write(headerBuffer, 0, headerBuffer.length);
         return new GuidPartitionTable(disk, diskGeometry);
     }
@@ -335,11 +335,11 @@ public final class GuidPartitionTable extends PartitionTable {
 
         diskData = disk;
         this.diskGeometry = diskGeometry;
-        disk.setPosition(diskGeometry.getBytesPerSector());
+        disk.position(diskGeometry.getBytesPerSector());
         byte[] sector = StreamUtilities.readExact(disk, diskGeometry.getBytesPerSector());
         primaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
         if (!primaryHeader.readFrom(sector, 0) || !readEntries(primaryHeader)) {
-            disk.setPosition(disk.getLength() - diskGeometry.getBytesPerSector());
+            disk.position(disk.getLength() - diskGeometry.getBytesPerSector());
             disk.read(sector, 0, sector.length);
             secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
             if (!secondaryHeader.readFrom(sector, 0) || !readEntries(secondaryHeader)) {
@@ -362,7 +362,7 @@ public final class GuidPartitionTable extends PartitionTable {
 
         if (secondaryHeader == null) {
             secondaryHeader = new GptHeader(diskGeometry.getBytesPerSector());
-            disk.setPosition(disk.getLength() - diskGeometry.getBytesPerSector());
+            disk.position(disk.getLength() - diskGeometry.getBytesPerSector());
             disk.read(sector, 0, sector.length);
             if (!secondaryHeader.readFrom(sector, 0) || !readEntries(secondaryHeader)) {
                 // Generate from the secondary table from the primary one
@@ -480,9 +480,9 @@ public final class GuidPartitionTable extends PartitionTable {
         byte[] buffer = new byte[diskGeometry.getBytesPerSector()];
         primaryHeader.entriesCrc = calcEntriesCrc();
         primaryHeader.writeTo(buffer, 0);
-        diskData.setPosition(diskGeometry.getBytesPerSector());
+        diskData.position(diskGeometry.getBytesPerSector());
         diskData.write(buffer, 0, buffer.length);
-        diskData.setPosition(2L * diskGeometry.getBytesPerSector());
+        diskData.position(2L * diskGeometry.getBytesPerSector());
         diskData.write(entryBuffer, 0, entryBuffer.length);
     }
 
@@ -490,14 +490,14 @@ public final class GuidPartitionTable extends PartitionTable {
         byte[] buffer = new byte[diskGeometry.getBytesPerSector()];
         secondaryHeader.entriesCrc = calcEntriesCrc();
         secondaryHeader.writeTo(buffer, 0);
-        diskData.setPosition(diskData.getLength() - diskGeometry.getBytesPerSector());
+        diskData.position(diskData.getLength() - diskGeometry.getBytesPerSector());
         diskData.write(buffer, 0, buffer.length);
-        diskData.setPosition(secondaryHeader.partitionEntriesLba * diskGeometry.getBytesPerSector());
+        diskData.position(secondaryHeader.partitionEntriesLba * diskGeometry.getBytesPerSector());
         diskData.write(entryBuffer, 0, entryBuffer.length);
     }
 
     private boolean readEntries(GptHeader header) {
-        diskData.setPosition(header.partitionEntriesLba * diskGeometry.getBytesPerSector());
+        diskData.position(header.partitionEntriesLba * diskGeometry.getBytesPerSector());
         entryBuffer = StreamUtilities.readExact(diskData, header.partitionEntrySize * header.partitionEntryCount);
         if (header.entriesCrc != calcEntriesCrc()) {
             return false;

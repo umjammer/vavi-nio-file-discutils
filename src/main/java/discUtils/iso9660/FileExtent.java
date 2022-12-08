@@ -57,8 +57,8 @@ public class FileExtent extends BuilderExtent {
         int totalRead = 0;
         // Don't arbitrarily set position, just in case stream implementation is
         // non-seeking, and we're doing sequential reads
-        if (readStream.getPosition() != relPos) {
-            readStream.setPosition(relPos);
+        if (readStream.position() != relPos) {
+            readStream.position(relPos);
         }
 
         // Read up to EOF

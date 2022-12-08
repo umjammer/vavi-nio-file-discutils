@@ -252,7 +252,7 @@ Debug.println(Level.FINE, "stream length < 512");
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] bytes = StreamUtilities.readExact(stream, 512);
         short bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bytes, 11);
         if (bpbBytesPerSec != 512) {
@@ -1237,7 +1237,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      *         image.
      */
     public static FatFileSystem formatFloppy(Stream stream, FloppyDiskType type, String label) {
-        long pos = stream.getPosition();
+        long pos = stream.position();
 
         long ticks = System.currentTimeMillis();
         int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
@@ -1310,11 +1310,11 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
 
         // Write a single byte at the end of the disk to ensure the stream is at
         // least as big as needed for this disk image.
-        stream.setPosition(pos + sectors * Sizes.Sector - 1);
+        stream.position(pos + sectors * Sizes.Sector - 1);
         stream.writeByte((byte) 0);
 
         // Give the caller access to the new file system
-        stream.setPosition(pos);
+        stream.position(pos);
         return new FatFileSystem(stream);
     }
 
@@ -1361,7 +1361,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
                                                 int firstSector,
                                                 int sectorCount,
                                                 short reservedSectors) {
-        long pos = stream.getPosition();
+        long pos = stream.position();
 
         long ticks = System.currentTimeMillis();
         int volId = (int) ((ticks & 0xFFFF) | (ticks >>> 32));
@@ -1425,7 +1425,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
 
         // Skip the reserved sectors
 
-        stream.setPosition(pos + reservedSectors * Sizes.Sector);
+        stream.position(pos + reservedSectors * Sizes.Sector);
 
         // Write both FAT copies
 
@@ -1462,7 +1462,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
 
         // Give the caller access to the new file system
 
-        stream.setPosition(pos);
+        stream.position(pos);
         return new FatFileSystem(stream);
     }
 

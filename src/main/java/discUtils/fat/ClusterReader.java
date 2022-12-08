@@ -59,7 +59,7 @@ public final class ClusterReader {
         }
 
         int firstSector = (cluster - 2) * sectorsPerCluster + firstDataSector;
-        stream.setPosition((long) firstSector * bytesPerSector);
+        stream.position((long) firstSector * bytesPerSector);
         StreamUtilities.readExact(stream, buffer, offset, clusterSize);
     }
 
@@ -69,13 +69,13 @@ public final class ClusterReader {
         }
 
         int firstSector = (cluster - 2) * sectorsPerCluster + firstDataSector;
-        stream.setPosition((long) firstSector * bytesPerSector);
+        stream.position((long) firstSector * bytesPerSector);
         stream.write(buffer, offset, clusterSize);
     }
 
     public void wipeCluster(int cluster) {
         int firstSector = (cluster - 2) * sectorsPerCluster + firstDataSector;
-        stream.setPosition((long) firstSector * bytesPerSector);
+        stream.position((long) firstSector * bytesPerSector);
         stream.write(new byte[clusterSize], 0, clusterSize);
     }
 }

@@ -43,7 +43,7 @@ public final class Metadata {
 
     public Metadata(Stream regionStream) {
         this.regionStream = regionStream;
-        this.regionStream.setPosition(0);
+        this.regionStream.position(0);
         table = StreamUtilities.readStruct(MetadataTable.class, this.regionStream);
         fileParameters = readStruct(FileParameters.class, MetadataTable.FileParametersGuid, false);
         diskSize = readValue(MetadataTable.VirtualDiskSizeGuid, false, Long.TYPE, EndianUtilities::toUInt64LittleEndian);
@@ -158,7 +158,7 @@ public final class Metadata {
                                          metadataStream);
         }
 
-        metadataStream.setPosition(0);
+        metadataStream.position(0);
         StreamUtilities.writeStruct(metadataStream, header);
         return new Metadata(metadataStream);
     }
@@ -177,7 +177,7 @@ public final class Metadata {
         entry.flags = flags;
         header.entries.put(key, entry);
 
-        stream.setPosition(dataOffset);
+        stream.position(dataOffset);
         StreamUtilities.writeStruct(stream, data);
 
         return entry.length;
@@ -199,7 +199,7 @@ public final class Metadata {
 
         header.entries.put(key, entry);
 
-        stream.setPosition(dataOffset);
+        stream.position(dataOffset);
 
         byte[] buffer = new byte[entry.length];
         writer.invoke(data, buffer, 0);
@@ -212,7 +212,7 @@ public final class Metadata {
         MetadataEntryKey key = new MetadataEntryKey(itemId, isUser);
         if (getTable().entries.containsKey(key)) {
             MetadataEntry entry = getTable().entries.get(key);
-            regionStream.setPosition(entry.offset);
+            regionStream.position(entry.offset);
             return StreamUtilities.readStruct(c, regionStream, entry.length);
         }
 
@@ -222,7 +222,7 @@ public final class Metadata {
     private <T extends Serializable> T readValue(UUID itemId, boolean isUser, Class<T> c, Reader<T> reader) {
         MetadataEntryKey key = new MetadataEntryKey(itemId, isUser);
         if (getTable().entries.containsKey(key)) {
-            regionStream.setPosition(getTable().entries.get(key).offset);
+            regionStream.position(getTable().entries.get(key).offset);
             byte[] data = StreamUtilities.readExact(regionStream, ReflectionHelper.sizeOf(c));
             return reader.invoke(data, 0);
         }

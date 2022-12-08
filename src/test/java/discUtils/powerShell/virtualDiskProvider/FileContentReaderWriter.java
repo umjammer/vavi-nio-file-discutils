@@ -53,7 +53,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
     public FileContentReaderWriter(Provider provider, Stream contentStream, ContentParameters dynParams) {
         this.provider = provider;
         this.contentStream = contentStream;
-        this.contentStream.setPosition(0);
+        this.contentStream.position(0);
         if (dynParams != null) {
             encoding = dynParams.getEncoding();
         }

@@ -77,16 +77,16 @@ final class NtfsFileStream extends SparseStream {
         return baseStream.getLength();
     }
 
-    public long getPosition() {
+    @Override public long position() {
         assertOpen();
-        return baseStream.getPosition();
+        return baseStream.position();
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            baseStream.setPosition(value);
+            baseStream.position(value);
         }
     }
 

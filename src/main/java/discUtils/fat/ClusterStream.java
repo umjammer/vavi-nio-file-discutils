@@ -86,11 +86,11 @@ public class ClusterStream extends Stream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         if (value >= 0) {
             position = value;
             atEOF = false;

@@ -123,7 +123,7 @@ public class DiscFileSystemFileTest {
             }
             s.write(buffer, 0, buffer.length);
             s.write(buffer, 0, buffer.length);
-            assertEquals(1024, s.getPosition());
+            assertEquals(1024, s.position());
             assertEquals(3333, s.getLength());
             s.setLength(512);
             assertEquals(512, s.getLength());

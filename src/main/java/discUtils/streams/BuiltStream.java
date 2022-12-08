@@ -74,11 +74,11 @@ public class BuiltStream extends SparseStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -109,7 +109,7 @@ public class BuiltStream extends SparseStream {
                     int idx = Collections.binarySearch(extents, searchExtent, new ExtentRangeComparer());
                     if (idx >= 0) {
                         BuilderExtent extent = extents.get(idx);
-//Debug.println(getPosition() + ", " + offset + ", " + extent);
+//Debug.println(position() + ", " + offset + ", " + extent);
                         extent.prepareForRead();
                         currentExtent = extent;
                     }
@@ -120,7 +120,7 @@ public class BuiltStream extends SparseStream {
 
             // If the block is outside any known extent, defer to base stream.
             if (currentExtent == null) {
-                baseStream.setPosition(position);
+                baseStream.position(position);
                 BuilderExtent nextExtent = findNext(position);
                 if (nextExtent != null) {
                     numRead = baseStream.read(buffer,

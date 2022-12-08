@@ -112,7 +112,7 @@ public final class NtfsFileSystem extends DiscFileSystem implements
 
         fileCache = new ObjectCache<>();
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] bytes = StreamUtilities.readExact(stream, 512);
 
         context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
@@ -1488,7 +1488,7 @@ Debug.println(Level.FINE, volumeInfo);
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] bytes = StreamUtilities.readExact(stream, 512);
         BiosParameterBlock bpb = BiosParameterBlock.fromBytes(bytes, 0);
 
@@ -1719,10 +1719,10 @@ Debug.println(Level.FINE, volumeInfo);
     public void updateBiosGeometry(Geometry geometry) {
         context.getBiosParameterBlock().sectorsPerTrack = (short) geometry.getSectorsPerTrack();
         context.getBiosParameterBlock().numHeads = (short) geometry.getHeadsPerCylinder();
-        context.getRawStream().setPosition(0);
+        context.getRawStream().position(0);
         byte[] bpbSector = StreamUtilities.readExact(context.getRawStream(), 512);
         context.getBiosParameterBlock().toBytes(bpbSector, 0);
-        context.getRawStream().setPosition(0);
+        context.getRawStream().position(0);
         context.getRawStream().write(bpbSector, 0, bpbSector.length);
     }
 

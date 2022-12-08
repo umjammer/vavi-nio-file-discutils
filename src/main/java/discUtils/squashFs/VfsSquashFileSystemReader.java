@@ -62,7 +62,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         context.setRawStream(stream);
 
         // Read superblock
-        stream.setPosition(0);
+        stream.position(0);
         byte[] buffer = StreamUtilities.readExact(stream, context.getSuperBlock().size());
         context.getSuperBlock().readFrom(buffer, 0);
 
@@ -201,7 +201,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     }
 
     private MetablockReader[] loadIndirectReaders(long pos, int count, int recordSize) {
-        context.getRawStream().setPosition(pos);
+        context.getRawStream().position(pos);
         int numBlocks = MathUtilities.ceil(count * recordSize, MetadataBufferSize);
 
         byte[] tableBytes = StreamUtilities.readExact(context.getRawStream(), numBlocks * 8);
@@ -231,7 +231,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         }
 
         Stream stream = context.getRawStream();
-        stream.setPosition(pos);
+        stream.position(pos);
 
         int readLen = diskLen & 0x00FFFFFF;
         boolean isCompressed = (diskLen & 0x01000000) == 0;
@@ -266,7 +266,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         }
 
         Stream stream = context.getRawStream();
-        stream.setPosition(pos);
+        stream.position(pos);
 
         byte[] buffer = StreamUtilities.readExact(stream, 2);
 

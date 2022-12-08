@@ -77,7 +77,7 @@ public final class RegistryHive implements Closeable {
      */
     public RegistryHive(Stream hive, Ownership ownership) {
         fileStream = hive;
-        fileStream.setPosition(0);
+        fileStream.position(0);
         ownsStream = ownership;
 
         byte[] buffer = StreamUtilities.readExact(fileStream, HiveHeader.HeaderSize);
@@ -88,7 +88,7 @@ public final class RegistryHive implements Closeable {
         bins = new ArrayList<>();
         int pos = 0;
         while (pos < header.length) {
-            fileStream.setPosition(BinStart + pos);
+            fileStream.position(BinStart + pos);
             byte[] headerBuffer = StreamUtilities.readExact(fileStream, BinHeader.HeaderSize);
             BinHeader header = new BinHeader();
             header.readFrom(headerBuffer, 0);
@@ -148,7 +148,7 @@ public final class RegistryHive implements Closeable {
         HiveHeader hiveHeader = new HiveHeader();
         hiveHeader.length = binHeader.binSize;
 
-        stream.setPosition(0);
+        stream.position(0);
 
         byte[] buffer = new byte[hiveHeader.size()];
         hiveHeader.writeTo(buffer, 0);
@@ -156,7 +156,7 @@ public final class RegistryHive implements Closeable {
 
         buffer = new byte[binHeader.size()];
         binHeader.writeTo(buffer, 0);
-        stream.setPosition(BinStart);
+        stream.position(BinStart);
         stream.write(buffer, 0, buffer.length);
 
         buffer = new byte[4];
@@ -164,7 +164,7 @@ public final class RegistryHive implements Closeable {
         stream.write(buffer, 0, buffer.length);
 
         // Make sure the file is initialized out to the end of the firs bin
-        stream.setPosition(BinStart + binHeader.binSize - 1);
+        stream.position(BinStart + binHeader.binSize - 1);
         stream.writeByte((byte) 0);
 
         // Temporary hive to perform construction of higher-level structures
@@ -188,7 +188,7 @@ public final class RegistryHive implements Closeable {
         hiveHeader.rootCell = rootCell.getIndex();
         buffer = new byte[hiveHeader.size()];
         hiveHeader.writeTo(buffer, 0);
-        stream.setPosition(0);
+        stream.position(0);
         stream.write(buffer, 0, buffer.length);
 
         // Finally, return the new hive
@@ -308,7 +308,7 @@ public final class RegistryHive implements Closeable {
     }
 
     private Bin loadBin(BinHeader binHeader) {
-        fileStream.setPosition(BinStart + binHeader.fileOffset);
+        fileStream.position(BinStart + binHeader.fileOffset);
         return new Bin(this, fileStream);
     }
 
@@ -321,7 +321,7 @@ public final class RegistryHive implements Closeable {
 
         byte[] buffer = new byte[newBinHeader.size()];
         newBinHeader.writeTo(buffer, 0);
-        fileStream.setPosition(BinStart + newBinHeader.fileOffset);
+        fileStream.position(BinStart + newBinHeader.fileOffset);
         fileStream.write(buffer, 0, buffer.length);
 
         byte[] cellHeader = new byte[4];
@@ -333,14 +333,14 @@ public final class RegistryHive implements Closeable {
         header.timestamp = System.currentTimeMillis();
         header.sequence1++;
         header.sequence2++;
-        fileStream.setPosition(0);
+        fileStream.position(0);
         byte[] hiveHeader = StreamUtilities.readExact(fileStream, header.size());
         header.writeTo(hiveHeader, 0);
-        fileStream.setPosition(0);
+        fileStream.position(0);
         fileStream.write(hiveHeader, 0, hiveHeader.length);
 
         // Make sure the file is initialized to desired position
-        fileStream.setPosition(BinStart + header.length - 1);
+        fileStream.position(BinStart + header.length - 1);
         fileStream.writeByte((byte) 0);
 
         bins.add(newBinHeader);

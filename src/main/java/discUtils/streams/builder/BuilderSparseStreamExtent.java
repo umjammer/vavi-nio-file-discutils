@@ -61,7 +61,7 @@ public class BuilderSparseStreamExtent extends BuilderExtent {
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        stream.setPosition(diskOffset - getStart());
+        stream.position(diskOffset - getStart());
         return stream.read(block, offset, count);
     }
 

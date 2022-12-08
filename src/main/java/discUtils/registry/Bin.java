@@ -53,12 +53,12 @@ public final class Bin {
     public Bin(RegistryHive hive, Stream stream) {
         this.hive = hive;
         fileStream = stream;
-        streamPos = stream.getPosition();
-        stream.setPosition(streamPos);
+        streamPos = stream.position();
+        stream.position(streamPos);
         byte[] buffer = StreamUtilities.readExact(stream, 0x20);
         header = new BinHeader();
         header.readFrom(buffer, 0);
-        fileStream.setPosition(streamPos);
+        fileStream.position(streamPos);
         this.buffer = StreamUtilities.readExact(fileStream, header.binSize);
         // Gather list of all free cells.
         freeCells = new ArrayList<>();
@@ -111,7 +111,7 @@ public final class Bin {
         freeCells.add(i, new Range(freeIndex, len));
         // Free cells are indicated by length > 0
         EndianUtilities.writeBytesLittleEndian(len, buffer, freeIndex);
-        fileStream.setPosition(streamPos + freeIndex);
+        fileStream.position(streamPos + freeIndex);
         fileStream.write(buffer, freeIndex, 4);
     }
 
@@ -124,7 +124,7 @@ public final class Bin {
         }
 
         cell.writeTo(buffer, index + 4);
-        fileStream.setPosition(streamPos + index);
+        fileStream.position(streamPos + index);
         fileStream.write(buffer, index, newSize);
         return true;
     }
@@ -146,7 +146,7 @@ public final class Bin {
         }
 
         System.arraycopy(data, offset, buffer, index + 4, count);
-        fileStream.setPosition(streamPos + index);
+        fileStream.position(streamPos + index);
         fileStream.write(buffer, index, newSize);
         return true;
     }
@@ -162,13 +162,13 @@ public final class Bin {
             if (freeCells.get(i).getCount() > size) {
                 // Record the newly allocated cell
                 EndianUtilities.writeBytesLittleEndian(-size, buffer, (int) freeCells.get(i).getOffset());
-                fileStream.setPosition(streamPos + freeCells.get(i).getOffset());
+                fileStream.position(streamPos + freeCells.get(i).getOffset());
                 fileStream.write(buffer, (int) freeCells.get(i).getOffset(), 4);
                 // Keep the remainder of the free buffer as unallocated
                 freeCells.set(i, new Range(freeCells.get(i).getOffset() + size, freeCells.get(i).getCount() - size));
                 EndianUtilities
                         .writeBytesLittleEndian(freeCells.get(i).getCount(), buffer, (int) freeCells.get(i).getOffset());
-                fileStream.setPosition(streamPos + freeCells.get(i).getOffset());
+                fileStream.position(streamPos + freeCells.get(i).getOffset());
                 fileStream.write(buffer, (int) freeCells.get(i).getOffset(), 4);
                 return result;
             }
@@ -176,7 +176,7 @@ public final class Bin {
             if (freeCells.get(i).getCount() == size) {
                 // Record the whole of the free buffer as a newly allocated cell
                 EndianUtilities.writeBytesLittleEndian(-size, buffer, (int) freeCells.get(i).getOffset());
-                fileStream.setPosition(streamPos + freeCells.get(i).getOffset());
+                fileStream.position(streamPos + freeCells.get(i).getOffset());
                 fileStream.write(buffer, (int) freeCells.get(i).getOffset(), 4);
                 freeCells.remove(i);
                 return result;

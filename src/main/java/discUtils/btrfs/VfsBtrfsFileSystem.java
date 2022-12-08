@@ -56,7 +56,7 @@ final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Dir
             if (offset + SuperBlock.Length > stream.getLength())
                 break;
 
-            stream.setPosition(offset);
+            stream.position(offset);
             byte[] superblockData = StreamUtilities.readExact(stream, SuperBlock.Length);
             SuperBlock superblock = new SuperBlock();
             superblock.readFrom(superblockData, 0);

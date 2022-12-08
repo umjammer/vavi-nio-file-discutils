@@ -55,7 +55,7 @@ public class BuilderStreamExtent extends BuilderExtent {
     }
 
     public int read(long diskOffset, byte[] block, int offset, int count) {
-        source.setPosition(diskOffset - start);
+        source.position(diskOffset - start);
         return source.read(block, offset, count);
     }
 

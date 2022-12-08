@@ -32,10 +32,11 @@ import dotnet4j.io.Stream;
 
 
 final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Directory, Context> implements IUnixFileSystem {
+
     public HfsPlusFileSystemImpl(Stream s) {
         super(new DiscFileSystemOptions());
 
-        s.setPosition(1024);
+        s.position(1024);
 
         byte[] headerBuf = StreamUtilities.readExact(s, 512);
         VolumeHeader hdr = new VolumeHeader();

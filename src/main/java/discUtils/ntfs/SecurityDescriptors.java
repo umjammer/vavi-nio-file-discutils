@@ -162,9 +162,9 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         byte[] buffer = new byte[record.size()];
         record.writeTo(buffer, 0);
         try (Stream s = file.openStream(AttributeType.Data, "$SDS", FileAccess.ReadWrite)) {
-            s.setPosition(nextSpace);
+            s.position(nextSpace);
             s.write(buffer, 0, buffer.length);
-            s.setPosition(BlockSize + nextSpace);
+            s.position(BlockSize + nextSpace);
             s.write(buffer, 0, buffer.length);
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -194,7 +194,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
 
     private SecurityDescriptor readDescriptor(IndexData data) {
         try (Stream s = file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
-            s.setPosition(data.sdsOffset);
+            s.position(data.sdsOffset);
             byte[] buffer = StreamUtilities.readExact(s, data.sdsLength);
             SecurityDescriptorRecord record = new SecurityDescriptorRecord();
             record.read(buffer, 0);

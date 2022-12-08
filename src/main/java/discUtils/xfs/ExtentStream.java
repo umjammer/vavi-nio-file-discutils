@@ -40,8 +40,8 @@ public class ExtentStream extends BuiltStream {
      *
      */
     public int read(byte[] buffer, int offset, int count) {
-        if (getPosition() + count > getLength()) {
-            count = (int) (getLength() - getPosition());
+        if (position() + count > getLength()) {
+            count = (int) (getLength() - position());
         }
 
         return super.read(buffer, offset, count);

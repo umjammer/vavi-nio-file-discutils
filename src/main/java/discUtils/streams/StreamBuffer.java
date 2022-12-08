@@ -111,7 +111,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @return The actual number of bytes read.
      */
     public int read(long pos, byte[] buffer, int offset, int count) {
-        stream.setPosition(pos);
+        stream.position(pos);
         return stream.read(buffer, offset, count);
     }
 
@@ -124,7 +124,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @param count The number of bytes to write.
      */
     public void write(long pos, byte[] buffer, int offset, int count) {
-        stream.setPosition(pos);
+        stream.position(pos);
         stream.write(buffer, offset, count);
     }
 

@@ -53,9 +53,9 @@ public final class TarFile {
         byte[] hdrBuf = StreamUtilities.readExact(this.fileStream, TarHeader.Length);
         hdr.readFrom(hdrBuf, 0);
         while (hdr.fileLength != 0 || (hdr.fileName != null && !hdr.fileName.isEmpty())) {
-            FileRecord record = new FileRecord(hdr.fileName, this.fileStream.getPosition(), hdr.fileLength);
+            FileRecord record = new FileRecord(hdr.fileName, this.fileStream.position(), hdr.fileLength);
             files.put(record.name, record);
-            this.fileStream.setPosition(this.fileStream.getPosition() + (hdr.fileLength + 511) / 512 * 512);
+            this.fileStream.position(this.fileStream.position() + (hdr.fileLength + 511) / 512 * 512);
             hdrBuf = StreamUtilities.readExact(this.fileStream, TarHeader.Length);
             hdr.readFrom(hdrBuf, 0);
         }

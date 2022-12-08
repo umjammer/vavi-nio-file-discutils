@@ -150,7 +150,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
-            dataStream.setPosition(diskOffset - getStart());
+            dataStream.position(diskOffset - getStart());
             return dataStream.read(block, offset, count);
         }
 
@@ -211,10 +211,10 @@ public final class DynamicDiskBuilder extends StreamBuilder {
         public int read(long diskOffset, byte[] block, int offset, int count) {
             long position = diskOffset - getStart();
             if (position < bitmapStream.getLength()) {
-                bitmapStream.setPosition(position);
+                bitmapStream.position(position);
                 return bitmapStream.read(block, offset, count);
             }
-            content.setPosition(position - bitmapStream.getLength());
+            content.position(position - bitmapStream.getLength());
             return content.read(block, offset, count);
         }
 

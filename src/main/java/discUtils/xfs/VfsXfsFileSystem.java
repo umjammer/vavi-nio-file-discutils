@@ -42,7 +42,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     public VfsXfsFileSystem(Stream stream, FileSystemParameters parameters) {
         super(new XfsFileSystemOptions(parameters));
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] superblockData = StreamUtilities.readExact(stream, 264);
 
         SuperBlock superblock = new SuperBlock();

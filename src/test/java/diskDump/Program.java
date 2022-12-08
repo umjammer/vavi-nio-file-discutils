@@ -139,7 +139,7 @@ String[] inFiles = new String[] {inFile};
                 System.err.println();
                 try {
                     byte[] mbr = new byte[512];
-                    disk.getContent().setPosition(0);
+                    disk.getContent().position(0);
                     disk.getContent().read(mbr, 0, 512);
                     HexDump.generate(mbr, System.err);
                 } catch (Exception e) {

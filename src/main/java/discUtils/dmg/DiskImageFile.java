@@ -68,13 +68,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
 Debug.println(Level.FINE, "stream.getLength(): " + stream.getLength());
 Debug.println(Level.FINE, "udifHeader.size(): " + udifHeader.size());
-        stream.setPosition(stream.getLength() - udifHeader.size());
+        stream.position(stream.getLength() - udifHeader.size());
         byte[] data = StreamUtilities.readExact(stream, udifHeader.size());
 
         udifHeader.readFrom(data, 0);
 
         if (udifHeader.getSignatureValid()) {
-            stream.setPosition(udifHeader.xmlOffset);
+            stream.position(udifHeader.xmlOffset);
             byte[] xmlData = StreamUtilities.readExact(stream, (int) udifHeader.xmlLength);
             Map<String, Object> plist = Plist.parse(new MemoryStream(xmlData));
 

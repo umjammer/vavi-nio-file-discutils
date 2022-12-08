@@ -308,7 +308,7 @@ public class NtfsFormatter {
         BiosParameterBlock bpb = context.getBiosParameterBlock();
         if (wipe) {
             byte[] wipeBuffer = new byte[bpb.getBytesPerCluster()];
-            context.getRawStream().setPosition(firstCluster * bpb.getBytesPerCluster());
+            context.getRawStream().position(firstCluster * bpb.getBytesPerCluster());
             for (long i = 0; i < numClusters; ++i) {
                 context.getRawStream().write(wipeBuffer, 0, wipeBuffer.length);
             }
@@ -372,10 +372,10 @@ public class NtfsFormatter {
         bpb.mftMirrorCluster = mftMirrorCluster;
         bpb.toBytes(bootSectors, 0);
         // Primary goes at the start of the partition
-        stream.setPosition(0);
+        stream.position(0);
         stream.write(bootSectors, 0, bootSectors.length);
         // Backup goes at the end of the data in the partition
-        stream.setPosition((getSectorCount() - 1) * Sizes.Sector);
+        stream.position((getSectorCount() - 1) * Sizes.Sector);
         stream.write(bootSectors, 0, Sizes.Sector);
         context.setBiosParameterBlock(bpb);
     }

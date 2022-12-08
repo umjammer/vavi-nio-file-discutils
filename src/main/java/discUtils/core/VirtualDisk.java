@@ -494,10 +494,10 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      */
     public byte[] getMasterBootRecord() {
         byte[] sector = new byte[Sizes.Sector];
-        long oldPos = getContent().getPosition();
-        getContent().setPosition(0);
+        long oldPos = getContent().position();
+        getContent().position(0);
         StreamUtilities.readExact(getContent(), sector, 0, Sizes.Sector);
-        getContent().setPosition(oldPos);
+        getContent().position(oldPos);
         return sector;
     }
 
@@ -516,10 +516,10 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                                Arrays.toString(data));
         }
 
-        long oldPos = getContent().getPosition();
-        getContent().setPosition(0);
+        long oldPos = getContent().position();
+        getContent().position(0);
         getContent().write(data, 0, Sizes.Sector);
-        getContent().setPosition(oldPos);
+        getContent().position(oldPos);
     }
 
     /**

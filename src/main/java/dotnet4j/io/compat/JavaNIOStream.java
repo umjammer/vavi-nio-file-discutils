@@ -64,7 +64,7 @@ public class JavaNIOStream extends Stream {
     }
 
     @Override
-    public long getPosition() {
+    public long position() {
         try {
             return sbc.position();
         } catch (IOException e) {
@@ -73,7 +73,7 @@ public class JavaNIOStream extends Stream {
     }
 
     @Override
-    public void setPosition(long value) {
+    public void position(long value) {
         try {
             sbc.position(value);
         } catch (IOException e) {

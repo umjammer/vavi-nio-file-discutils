@@ -83,11 +83,11 @@ public class Nfs3FileSystemInfoResultTest {
         result.setPostOpAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3FileSystemInfoResult clone = null;
+        Nfs3FileSystemInfoResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3FileSystemInfoResult(reader);
         }

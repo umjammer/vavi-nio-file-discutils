@@ -70,7 +70,7 @@ public final class ExtFileSystem extends VfsFileSystemFacade implements IUnixFil
             return false;
         }
 
-        stream.setPosition(1024);
+        stream.position(1024);
         byte[] superblockData = StreamUtilities.readExact(stream, 1024);
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);

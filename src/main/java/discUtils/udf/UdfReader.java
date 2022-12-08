@@ -81,7 +81,7 @@ public final class UdfReader extends VfsFileSystemFacade {
         boolean foundUdfMarker = false;
         BaseVolumeDescriptor bvd;
         while (validDescriptor) {
-            data.setPosition(vdpos);
+            data.position(vdpos);
             int numRead = StreamUtilities.readMaximum(data, buffer, 0, IsoUtilities.SectorSize);
             if (numRead != IsoUtilities.SectorSize) {
                 break;
@@ -222,7 +222,7 @@ public final class UdfReader extends VfsFileSystemFacade {
             int sector = avdp.mainDescriptorSequence.location;
             boolean terminatorFound = false;
             while (!terminatorFound) {
-                data.setPosition(sector * (long) sectorSize);
+                data.position(sector * (long) sectorSize);
 
                 DescriptorTag[] dt = new DescriptorTag[1];
                 if (!DescriptorTag.tryFromStream(data, dt)) {
@@ -276,7 +276,7 @@ public final class UdfReader extends VfsFileSystemFacade {
                 return false;
             }
 
-            data.setPosition(256 * (long) size);
+            data.position(256 * (long) size);
             DescriptorTag[] dt = new DescriptorTag[1];
             boolean result = !DescriptorTag.tryFromStream(data, dt);
             if (result) {

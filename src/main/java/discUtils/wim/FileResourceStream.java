@@ -80,8 +80,8 @@ public class FileResourceStream extends SparseStream {
             chunkOffsets[i] = EndianUtilities.toUInt32LittleEndian(StreamUtilities.readExact(this.baseStream, 4), 0);
             chunkLength[i - 1] = chunkOffsets[i] - chunkOffsets[i - 1];
         }
-        chunkLength[numChunks - 1] = this.baseStream.getLength() - this.baseStream.getPosition() - chunkOffsets[numChunks - 1];
-        offsetDelta = this.baseStream.getPosition();
+        chunkLength[numChunks - 1] = this.baseStream.getLength() - this.baseStream.position() - chunkOffsets[numChunks - 1];
+        offsetDelta = this.baseStream.position();
         currentChunk = -1;
     }
 
@@ -105,11 +105,11 @@ public class FileResourceStream extends SparseStream {
         return header.originalSize;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -132,7 +132,7 @@ public class FileResourceStream extends SparseStream {
                 currentChunk = chunk;
             }
 
-            currentChunkStream.setPosition(chunkOffset);
+            currentChunkStream.position(chunkOffset);
             int numRead = currentChunkStream.read(buffer, offset + totalRead, numToRead);
             if (numRead == 0) {
                 return totalRead;

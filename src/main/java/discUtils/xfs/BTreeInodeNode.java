@@ -99,7 +99,7 @@ public class BTreeInodeNode extends BtreeHeader {
                 child = new BTreeInodeNode(super.getSbVersion());
             }
             Stream data = ag.getContext().getRawStream();
-            data.setPosition(((long) getPointer()[i] * ag.getContext().getSuperBlock().getBlocksize()) + ag.getOffset());
+            data.position(((long) getPointer()[i] * ag.getContext().getSuperBlock().getBlocksize()) + ag.getOffset());
             byte[] buffer = StreamUtilities.readExact(data, ag.getContext().getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             child.loadBtree(ag);

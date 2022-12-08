@@ -82,12 +82,12 @@ public class MirrorStream extends SparseStream {
         return length;
     }
 
-    public long getPosition() {
-        return wrapped.get(0).getPosition();
+    @Override public long position() {
+        return wrapped.get(0).position();
     }
 
-    public void setPosition(long value) {
-        wrapped.get(0).setPosition(value);
+    @Override public void position(long value) {
+        wrapped.get(0).position(value);
     }
 
     public void flush() {
@@ -109,25 +109,25 @@ public class MirrorStream extends SparseStream {
     }
 
     public void clear(int count) {
-        long pos = wrapped.get(0).getPosition();
+        long pos = wrapped.get(0).position();
         if (pos + count > length) {
             throw new dotnet4j.io.IOException("Attempt to clear beyond end of mirrored stream");
         }
 
         for (SparseStream stream : wrapped) {
-            stream.setPosition(pos);
+            stream.position(pos);
             stream.clear(count);
         }
     }
 
     public void write(byte[] buffer, int offset, int count) {
-        long pos = wrapped.get(0).getPosition();
+        long pos = wrapped.get(0).position();
         if (pos + count > length) {
             throw new dotnet4j.io.IOException("Attempt to write beyond end of mirrored stream");
         }
 
         for (SparseStream stream  : wrapped) {
-            stream.setPosition(pos);
+            stream.position(pos);
             stream.write(buffer, offset, count);
         }
     }

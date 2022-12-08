@@ -36,7 +36,7 @@ public class AlternateStreamEntry {
     public String name;
 
     public static AlternateStreamEntry readFrom(DataReader reader) {
-        long startPos = reader.getPosition();
+        long startPos = reader.position();
         long length = reader.readInt64();
         if (length == 0) {
             return null;
@@ -52,8 +52,8 @@ public class AlternateStreamEntry {
         } else {
             result.name = "";
         }
-        if (startPos + length > reader.getPosition()) {
-            int toRead = (int) (startPos + length - reader.getPosition());
+        if (startPos + length > reader.position()) {
+            int toRead = (int) (startPos + length - reader.position());
             reader.skip(toRead);
         }
 

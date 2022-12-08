@@ -116,9 +116,9 @@ public class Disk extends VirtualDisk {
         // We don't rely on asking the iSCSI target for the geometry because frequently values are returned
         // that are not valid as BIOS disk geometries.
         Stream stream = getContent();
-        long pos = stream.getPosition();
+        long pos = stream.position();
         Geometry result = BiosPartitionTable.detectGeometry(stream);
-        stream.setPosition(pos);
+        stream.position(pos);
         return result;
     }
 

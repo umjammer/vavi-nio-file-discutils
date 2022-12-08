@@ -46,7 +46,7 @@ public class BiosExtendedPartitionTable {
         List<BiosPartitionRecord> result = new ArrayList<>();
         int partPos = firstSector;
         while (partPos != 0) {
-            disk.setPosition((long) partPos * Sizes.Sector);
+            disk.position((long) partPos * Sizes.Sector);
             byte[] sector = StreamUtilities.readExact(disk, Sizes.Sector);
             if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
                 throw new dotnet4j.io.IOException("Invalid extended partition sector");
@@ -80,7 +80,7 @@ public class BiosExtendedPartitionTable {
         int partPos = firstSector;
         while (partPos != 0) {
             extents.add(new StreamExtent((long) partPos * Sizes.Sector, Sizes.Sector));
-            disk.setPosition((long) partPos * Sizes.Sector);
+            disk.position((long) partPos * Sizes.Sector);
             byte[] sector = StreamUtilities.readExact(disk, Sizes.Sector);
             if ((sector[510] & 0xff) != 0x55 || (sector[511] & 0xff) != 0xAA) {
                 throw new dotnet4j.io.IOException("Invalid extended partition sector");

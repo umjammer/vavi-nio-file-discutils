@@ -60,7 +60,7 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
             return false;
         }
 
-        stream.setPosition(SuperblockOffsets[0]);
+        stream.position(SuperblockOffsets[0]);
         byte[] superblockData = StreamUtilities.readExact(stream, SuperBlock.Length);
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);

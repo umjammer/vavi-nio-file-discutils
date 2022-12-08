@@ -78,11 +78,11 @@ public class DiskStream extends SparseStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 

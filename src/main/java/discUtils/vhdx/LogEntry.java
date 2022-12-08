@@ -101,7 +101,7 @@ public final class LogEntry {
      * @param entry {@cs out}
      */
     public static boolean tryRead(Stream logStream, LogEntry[] entry) {
-        long position = logStream.getPosition();
+        long position = logStream.position();
 
         byte[] sectorBuffer = new byte[LogSectorSize];
         if (StreamUtilities.readMaximum(logStream, sectorBuffer, 0, sectorBuffer.length) != sectorBuffer.length) {

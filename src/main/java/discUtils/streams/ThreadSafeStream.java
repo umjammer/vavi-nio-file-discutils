@@ -150,11 +150,11 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Gets the current stream position - each 'view' has it's own Position.
      */
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -209,7 +209,7 @@ public class ThreadSafeStream extends SparseStream {
     public int read(byte[] buffer, int offset, int count) {
         synchronized (common) {
             SparseStream wrapped = getWrapped();
-            wrapped.setPosition(position);
+            wrapped.position(position);
             int numRead = wrapped.read(buffer, offset, count);
             position += numRead;
             return numRead;
@@ -262,7 +262,7 @@ public class ThreadSafeStream extends SparseStream {
                 throw new dotnet4j.io.IOException("Attempt to extend stream");
             }
 
-            wrapped.setPosition(position);
+            wrapped.position(position);
             wrapped.write(buffer, offset, count);
             position += count;
         }

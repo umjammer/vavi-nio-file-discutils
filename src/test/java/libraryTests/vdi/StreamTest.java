@@ -60,13 +60,13 @@ public class StreamTest {
             }
             Stream s = disk.getContent();
             s.write(content, 10, 40);
-            assertEquals(40, s.getPosition());
+            assertEquals(40, s.position());
             s.write(content, 50, 50);
-            assertEquals(90, s.getPosition());
-            s.setPosition(0);
+            assertEquals(90, s.position());
+            s.position(0);
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 60);
-            assertEquals(60, s.getPosition());
+            assertEquals(60, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -80,7 +80,7 @@ public class StreamTest {
             Stream s = disk.getContent();
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 20);
-            assertEquals(20, s.getPosition());
+            assertEquals(20, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -100,10 +100,10 @@ public class StreamTest {
                 content[i] = (byte) i;
             }
             Stream s = disk.getContent();
-            s.setPosition(10);
+            s.position(10);
             s.write(content, 0, content.length);
             byte[] buffer = new byte[content.length];
-            s.setPosition(10);
+            s.position(10);
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
@@ -123,7 +123,7 @@ public class StreamTest {
         }
 
         assertThrows(dotnet4j.io.IOException.class, () -> {
-            contentStream.setPosition(0);
+            contentStream.position(0);
             fail("Able to use stream after disposed");
         });
     }

@@ -46,7 +46,7 @@ public class BiosPartitionedDiskBuilderTest {
         SparseStream partitionContent = SparseStream
                 .fromStream(new MemoryStream((int) (builder.getPartitionTable().get(0).getSectorCount() * 512)),
                             Ownership.Dispose);
-        partitionContent.setPosition(4053);
+        partitionContent.position(4053);
         partitionContent.writeByte((byte) 0xAf);
         builder.setPartitionContent(0, partitionContent);
         SparseStream constructedStream = builder.build();
@@ -54,7 +54,7 @@ public class BiosPartitionedDiskBuilderTest {
         assertEquals(1, bpt.getCount());
 
         try (Stream builtPartitionStream = bpt.getPartitions().get(0).open()) {
-            builtPartitionStream.setPosition(4053);
+            builtPartitionStream.position(4053);
             assertEquals(0xAf, builtPartitionStream.readByte() & 0xff);
         }
     }

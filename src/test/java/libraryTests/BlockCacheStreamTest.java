@@ -42,7 +42,7 @@ public final class BlockCacheStreamTest {
                                                          settings)) {
             // Pre-load read cache with a 'short' block
             bcs.write(new byte[11], 0, 11);
-            bcs.setPosition(0);
+            bcs.position(0);
             bcs.read(new byte[11], 0, 11);
             for (int i = 0; i < 20; ++i) {
                 // Extend stream
@@ -50,7 +50,7 @@ public final class BlockCacheStreamTest {
             }
             // Try to read from first block beyond length of original cached short length
             // Bug was throwing exception here
-            bcs.setPosition(60);
+            bcs.position(60);
             bcs.read(new byte[20], 0, 20);
         }
     }

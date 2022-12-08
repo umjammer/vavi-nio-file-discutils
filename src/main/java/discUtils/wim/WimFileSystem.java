@@ -541,7 +541,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     private List<DirectoryEntry> getDirectory(long id) {
         List<DirectoryEntry> dir = dirCache.get(id);
         if (dir == null) {
-            metaDataStream.setPosition(id == 0 ? rootDirPos : id);
+            metaDataStream.position(id == 0 ? rootDirPos : id);
             LittleEndianDataReader reader = new LittleEndianDataReader(metaDataStream);
             dir = new ArrayList<>();
             DirectoryEntry entry = DirectoryEntry.readFrom(reader);
@@ -557,7 +557,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
 
     private void readSecurityDescriptors() {
         LittleEndianDataReader reader = new LittleEndianDataReader(metaDataStream);
-        long startPos = reader.getPosition();
+        long startPos = reader.position();
         int totalLength = reader.readUInt32();
         int numEntries = reader.readUInt32();
         long[] sdLengths = new long[numEntries];
@@ -568,8 +568,8 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
         for (int i = 0; i < numEntries; ++i) {
             securityDescriptors.add(new RawSecurityDescriptor(reader.readBytes((int) sdLengths[i]), 0));
         }
-        if (reader.getPosition() < startPos + totalLength) {
-            reader.skip((int) (startPos + totalLength - reader.getPosition()));
+        if (reader.position() < startPos + totalLength) {
+            reader.skip((int) (startPos + totalLength - reader.position()));
         }
 
         rootDirPos = MathUtilities.roundUp(startPos + totalLength, 8);

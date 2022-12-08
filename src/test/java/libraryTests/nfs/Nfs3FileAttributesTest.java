@@ -62,11 +62,11 @@ public class Nfs3FileAttributesTest {
         attributes.size = 9;
         attributes.type = Nfs3FileType.BlockDevice;
         attributes.uid = 11;
-        Nfs3FileAttributes clone = null;
+        Nfs3FileAttributes clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3FileAttributes(reader);
         }

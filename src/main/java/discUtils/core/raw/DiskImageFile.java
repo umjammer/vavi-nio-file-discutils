@@ -137,9 +137,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         stream.setLength(MathUtilities.roundUp(capacity, Sizes.Sector));
 
         // Wipe any pre-existing master boot record / BPB
-        stream.setPosition(0);
+        stream.position(0);
         stream.write(new byte[Sizes.Sector], 0, Sizes.Sector);
-        stream.setPosition(0);
+        stream.position(0);
 
         return new DiskImageFile(stream, ownsStream, geometry);
     }

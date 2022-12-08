@@ -107,7 +107,7 @@ public class Extent implements IByteArraySerializable {
     }
 
     public byte[] getData(Context context, long offset, int count) {
-        context.getRawStream().setPosition(getOffset(context) + offset);
+        context.getRawStream().position(getOffset(context) + offset);
         return StreamUtilities.readExact(context.getRawStream(), count);
     }
 

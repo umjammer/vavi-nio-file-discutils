@@ -212,7 +212,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
 
     public void loadBtree(Context context, long offset) {
         Stream data = context.getRawStream();
-        data.setPosition(offset + context.getSuperBlock().getBlocksize() * (long) root);
+        data.position(offset + context.getSuperBlock().getBlocksize() * (long) root);
         if (level == 1) {
             rootInodeBtree = new BTreeInodeLeaf(sbVersion);
         } else {

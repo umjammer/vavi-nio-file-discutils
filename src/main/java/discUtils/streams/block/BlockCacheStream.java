@@ -142,12 +142,12 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Gets and sets the current stream position.
      */
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
     }
@@ -196,9 +196,9 @@ public final class BlockCacheStream extends SparseStream {
         if (count > settings.getLargeReadSize()) {
             stats.setLargeReadsIn(stats.getLargeReadsIn() + 1);
             stats.setTotalReadsOut(stats.getTotalReadsOut() + 1);
-            wrappedStream.setPosition(position);
+            wrappedStream.position(position);
             int numRead = wrappedStream.read(buffer, offset, count);
-            position = wrappedStream.getPosition();
+            position = wrappedStream.position();
 
             if (position >= getLength()) {
                 atEof = true;
@@ -256,7 +256,7 @@ public final class BlockCacheStream extends SparseStream {
 
                 // Do the read
                 stats.setTotalReadsOut(stats.getTotalReadsOut() + 1);
-                wrappedStream.setPosition(readPosition);
+                wrappedStream.position(readPosition);
                 StreamUtilities.readExact(wrappedStream, readBuffer, 0, bytesRead);
 
                 // Cache the read blocks
@@ -361,7 +361,7 @@ public final class BlockCacheStream extends SparseStream {
         int numBlocks = (int) (endBlock - firstBlock);
 
         try {
-            wrappedStream.setPosition(position);
+            wrappedStream.position(position);
             wrappedStream.write(buffer, offset, count);
         } catch (Exception e) {
             invalidateBlocks(firstBlock, numBlocks);

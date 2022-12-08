@@ -275,18 +275,18 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public long getPosition() {
+        @Override public long position() {
             return position;
         }
 
-        public void setPosition(long value) {
+        @Override public void position(long value) {
             position = value;
         }
 
         public int read(byte[] buffer, int offset, int count) {
             VirtualDisk disk = openDisk();
             try {
-                disk.getContent().setPosition(position);
+                disk.getContent().position(position);
                 return disk.getContent().read(buffer, offset, count);
             } finally {
                 if (disk != null)
@@ -331,7 +331,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         public void write(byte[] buffer, int offset, int count) {
             VirtualDisk disk = openDisk();
             try {
-                disk.getContent().setPosition(position);
+                disk.getContent().position(position);
                 disk.getContent().write(buffer, offset, count);
             } finally {
                 if (disk != null)

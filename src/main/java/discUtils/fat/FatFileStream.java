@@ -70,12 +70,12 @@ public class FatFileStream extends SparseStream {
         return stream.getLength();
     }
 
-    public long getPosition() {
-        return stream.getPosition();
+    @Override public long position() {
+        return stream.position();
     }
 
-    public void setPosition(long value) {
-        stream.setPosition(value);
+    @Override public void position(long value) {
+        stream.position(value);
     }
 
     public void close() throws IOException {

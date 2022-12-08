@@ -115,12 +115,12 @@ public class DiskStream extends SparseStream {
         return fileHeader.diskSize;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
         atEof = false;
@@ -162,7 +162,7 @@ public class DiskStream extends SparseStream {
             } else {
                 long blockOffset = (blockTable[block] & 0xffff_ffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
-                fileStream.setPosition(filePos);
+                fileStream.position(filePos);
                 StreamUtilities.readExact(fileStream, buffer, offset + numRead, toRead);
             }
 
@@ -253,14 +253,14 @@ public class DiskStream extends SparseStream {
                 long blockOffset = (long) fileHeader.blocksAllocated * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset;
 
-                fileStream.setPosition(filePos);
+                fileStream.position(filePos);
                 fileStream.write(writeBuffer, writeBufferOffset, fileHeader.blockSize);
 
                 blockTable[block] = fileHeader.blocksAllocated;
 
                 // Update the file header on disk, to indicate where the next free block is
                 fileHeader.blocksAllocated++;
-                fileStream.setPosition(PreHeaderRecord.Size);
+                fileStream.position(PreHeaderRecord.Size);
                 fileHeader.write(fileStream);
 
                 // Update the block table on disk, to indicate where this block is
@@ -269,7 +269,7 @@ public class DiskStream extends SparseStream {
                 // Existing block, simply overwrite the existing data
                 long blockOffset = (blockTable[block] & 0xfff_ffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
-                fileStream.setPosition(filePos);
+                fileStream.position(filePos);
                 fileStream.write(buffer, offset + numWritten, toWrite);
             }
 
@@ -293,7 +293,7 @@ public class DiskStream extends SparseStream {
     }
 
     private void readBlockTable() {
-        fileStream.setPosition(fileHeader.blocksOffset);
+        fileStream.position(fileHeader.blocksOffset);
 
         byte[] buffer = StreamUtilities.readExact(fileStream, fileHeader.blockCount * 4);
 
@@ -307,7 +307,7 @@ public class DiskStream extends SparseStream {
         byte[] buffer = new byte[4];
         EndianUtilities.writeBytesLittleEndian(blockTable[block], buffer, 0);
 
-        fileStream.setPosition(fileHeader.blocksOffset + block * 4L);
+        fileStream.position(fileHeader.blocksOffset + block * 4L);
         fileStream.write(buffer, 0, 4);
     }
 

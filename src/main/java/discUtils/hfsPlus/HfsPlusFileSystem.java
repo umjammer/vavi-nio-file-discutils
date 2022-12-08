@@ -57,7 +57,7 @@ public class HfsPlusFileSystem extends VfsFileSystemFacade implements IUnixFileS
             return false;
         }
 
-        stream.setPosition(1024);
+        stream.position(1024);
 
         byte[] headerBuf = StreamUtilities.readExact(stream, 512);
         VolumeHeader hdr = new VolumeHeader();

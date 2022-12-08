@@ -46,7 +46,7 @@ public class PortMap2MappingTest {
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new PortMap2Mapping(reader);
         }

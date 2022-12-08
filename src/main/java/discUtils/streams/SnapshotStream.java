@@ -133,11 +133,11 @@ public final class SnapshotStream extends SparseStream {
     /**
      * Gets and sets the current stream position.
      */
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -195,8 +195,8 @@ public final class SnapshotStream extends SparseStream {
 
         byte[] buffer = new byte[8192];
         for (StreamExtent extent : diffExtents) {
-            diffStream.setPosition(extent.getStart());
-            baseStream.setPosition(extent.getStart());
+            diffStream.position(extent.getStart());
+            baseStream.position(extent.getStart());
             int totalRead = 0;
             while (totalRead < extent.getLength()) {
                 int toRead = (int) Math.min(extent.getLength() - totalRead, buffer.length);
@@ -229,7 +229,7 @@ public final class SnapshotStream extends SparseStream {
         int numRead;
 
         if (diffStream == null) {
-            baseStream.setPosition(position);
+            baseStream.position(position);
             numRead = baseStream.read(buffer, offset, count);
         } else {
             if (position > diffStream.getLength()) {
@@ -242,7 +242,7 @@ public final class SnapshotStream extends SparseStream {
             // (potentially) stale data.
             if (position < baseStream.getLength()) {
                 int baseToRead = (int) Math.min(toRead, baseStream.getLength() - position);
-                baseStream.setPosition(position);
+                baseStream.position(position);
 
                 int totalBaseRead = 0;
                 while (totalBaseRead < baseToRead) {
@@ -253,7 +253,7 @@ public final class SnapshotStream extends SparseStream {
             // Now overlay any data from the overlay stream (if any)
             List<StreamExtent> overlayExtents = StreamExtent.intersect(diffExtents, new StreamExtent(position, toRead));
             for (StreamExtent extent : overlayExtents) {
-                diffStream.setPosition(extent.getStart());
+                diffStream.position(extent.getStart());
                 int overlayNumRead = 0;
                 while (overlayNumRead < extent.getLength()) {
                     overlayNumRead += diffStream.read(buffer,
@@ -319,7 +319,7 @@ public final class SnapshotStream extends SparseStream {
         checkFrozen();
 
         if (diffStream != null) {
-            diffStream.setPosition(position);
+            diffStream.position(position);
             diffStream.write(buffer, offset, count);
 
             // Beware of Linq's delayed model - force execution now by placing into a list.
@@ -328,7 +328,7 @@ public final class SnapshotStream extends SparseStream {
 
             position += count;
         } else {
-            baseStream.setPosition(position);
+            baseStream.position(position);
             baseStream.write(buffer, offset, count);
             position += count;
         }

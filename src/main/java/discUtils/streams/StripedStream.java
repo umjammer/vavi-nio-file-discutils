@@ -90,11 +90,11 @@ public class StripedStream extends SparseStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -118,7 +118,7 @@ public class StripedStream extends SparseStream {
             int streamIdx = (int) (stripe % wrapped.size());
             long streamStripe = stripe / wrapped.size();
             Stream targetStream = wrapped.get(streamIdx);
-            targetStream.setPosition(streamStripe * stripeSize + stripeOffset);
+            targetStream.position(streamStripe * stripeSize + stripeOffset);
             int numRead = targetStream.read(buffer, offset + totalRead, stripeToRead);
             position += numRead;
             totalRead += numRead;
@@ -166,7 +166,7 @@ public class StripedStream extends SparseStream {
             int streamIdx = (int) (stripe % wrapped.size());
             long streamStripe = stripe / wrapped.size();
             Stream targetStream = wrapped.get(streamIdx);
-            targetStream.setPosition(streamStripe * stripeSize + stripeOffset);
+            targetStream.position(streamStripe * stripeSize + stripeOffset);
             targetStream.write(buffer, offset + totalWritten, stripeToWrite);
             position += stripeToWrite;
             totalWritten += stripeToWrite;

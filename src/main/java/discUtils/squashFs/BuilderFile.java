@@ -82,11 +82,11 @@ public final class BuilderFile extends BuilderNode {
                 disposeSource = true;
             }
 
-            if (source.getPosition() != 0) {
-                source.setPosition(0);
+            if (source.position() != 0) {
+                source.position(0);
             }
 
-            long startPos = outStream.getPosition();
+            long startPos = outStream.position();
             int bufferedBytes = StreamUtilities.readMaximum(source, context.getIoBuffer(), 0, context.getDataBlockSize());
             if (bufferedBytes < context.getDataBlockSize()) {
                 // Fragment - less than one complete block of data

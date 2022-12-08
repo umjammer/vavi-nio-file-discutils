@@ -117,7 +117,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
         }
 
         public int read(long diskOffset, byte[] block, int offset, int count) {
-            streamView.setPosition(diskOffset - getStart());
+            streamView.position(diskOffset - getStart());
             return streamView.read(block, offset, count);
         }
 
@@ -189,7 +189,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
         public int read(long diskOffset, byte[] block, int offset, int count) {
             long relOffset = diskOffset - getStart();
             if (relOffset < grainTableStream.getLength()) {
-                grainTableStream.setPosition(relOffset);
+                grainTableStream.position(relOffset);
                 return grainTableStream.read(block, offset, count);
             }
 
@@ -197,7 +197,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             int grainIdx = (int) ((relOffset - grainTableStream.getLength()) / grainSize);
             long grainOffset = relOffset - grainTableStream.getLength() - grainIdx * grainSize;
             int maxToRead = (int) Math.min(count, grainSize * grainContiguousRangeMapping.get(grainIdx) - grainOffset);
-            content.setPosition(grainMapping.get(grainIdx) * grainSize + grainOffset);
+            content.position(grainMapping.get(grainIdx) * grainSize + grainOffset);
             return content.read(block, offset, maxToRead);
         }
 

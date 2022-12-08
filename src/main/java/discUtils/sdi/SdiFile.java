@@ -71,7 +71,7 @@ public final class SdiFile implements Closeable {
         byte[] page = StreamUtilities.readExact(this.stream, 512);
         header = new FileHeader();
         header.readFrom(page, 0);
-        this.stream.setPosition(header.pageAlignment * 512);
+        this.stream.position(header.pageAlignment * 512);
         byte[] toc = StreamUtilities.readExact(this.stream, (int) (header.pageAlignment * 512));
         sections = new ArrayList<>();
         int pos = 0;

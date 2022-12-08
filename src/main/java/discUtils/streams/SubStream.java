@@ -89,11 +89,11 @@ public class SubStream extends MappedStream {
         return length;
     }
 
-    public long getPosition() {
+    public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    public void position(long value) {
         if (value <= length) {
             position = value;
         } else {
@@ -118,7 +118,7 @@ public class SubStream extends MappedStream {
             return 0;
         }
 
-        parent.setPosition(first + position);
+        parent.position(first + position);
         int numRead = parent.read(buffer, offset, (int) Math.min(count, Math.min(length - position, Integer.MAX_VALUE)));
 //if (numRead > 1) Debug.println(parent + ", " + first + ", " + position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
         position += numRead;
@@ -154,7 +154,7 @@ public class SubStream extends MappedStream {
             throw new IllegalArgumentException("count: Attempt to write beyond end of substream");
         }
 
-        parent.setPosition(first + position);
+        parent.position(first + position);
         parent.write(buffer, offset, count);
         position += count;
     }

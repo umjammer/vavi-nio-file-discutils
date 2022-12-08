@@ -66,12 +66,12 @@ public class WrappingStream extends SparseStream {
         return wrapped.getLength();
     }
 
-    public long getPosition() {
-        return wrapped.getPosition();
+    @Override public long position() {
+        return wrapped.position();
     }
 
-    public void setPosition(long value) {
-        wrapped.setPosition(value);
+    @Override public void position(long value) {
+        wrapped.position(value);
     }
 
     public void flush() {

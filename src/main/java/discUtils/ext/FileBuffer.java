@@ -73,7 +73,7 @@ public class FileBuffer extends Buffer {
                 logicalBlock -= 12;
                 if (logicalBlock < blockSize / 4) {
                     if (inode.indirectBlock != 0) {
-                        context.getRawStream().setPosition(inode.indirectBlock * (long) blockSize + logicalBlock * 4);
+                        context.getRawStream().position(inode.indirectBlock * (long) blockSize + logicalBlock * 4);
                         byte[] indirectData = StreamUtilities.readExact(context.getRawStream(), 4);
                         physicalBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                     }
@@ -83,13 +83,13 @@ public class FileBuffer extends Buffer {
                     if (logicalBlock < blockSize / 4 * (blockSize / 4)) {
                         if (inode.doubleIndirectBlock != 0) {
                             context.getRawStream()
-                                    .setPosition(inode.doubleIndirectBlock * (long) blockSize +
+                                    .position(inode.doubleIndirectBlock * (long) blockSize +
                                                  logicalBlock / (blockSize / 4) * 4L);
                             byte[] indirectData = StreamUtilities.readExact(context.getRawStream(), 4);
                             int indirectBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                             if (indirectBlock != 0) {
                                 context.getRawStream()
-                                        .setPosition(indirectBlock * (long) blockSize + logicalBlock % (blockSize / 4) * 4);
+                                        .position(indirectBlock * (long) blockSize + logicalBlock % (blockSize / 4) * 4);
                                 StreamUtilities.readExact(context.getRawStream(), indirectData, 0, 4);
                                 physicalBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                             }
@@ -107,7 +107,7 @@ public class FileBuffer extends Buffer {
                 Arrays.fill(buffer, offset + totalRead, offset + totalRead + toRead, (byte) 0);
                 numRead = toRead;
             } else {
-                context.getRawStream().setPosition(physicalBlock * (long) blockSize + blockOffset);
+                context.getRawStream().position(physicalBlock * (long) blockSize + blockOffset);
                 numRead = context.getRawStream().read(buffer, offset + totalRead, toRead);
             }
             totalBytesRemaining -= numRead;

@@ -96,7 +96,7 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
                 child = new BTreeExtentNodeV5();
             }
             Stream data = context.getRawStream();
-            data.setPosition(Extent.getOffset(context, pointer[i]));
+            data.position(Extent.getOffset(context, pointer[i]));
             byte[] buffer = StreamUtilities.readExact(data, context.getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             if (child.getMagic() != BtreeMagicV5) {

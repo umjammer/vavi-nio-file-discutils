@@ -45,7 +45,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         this.diskOffset = diskOffset;
         this.parentDiskStream = parentDiskStream;
         this.ownsParentDiskStream = ownsParentDiskStream;
-        file.setPosition(0);
+        file.position(0);
         byte[] firstSectors = StreamUtilities.readExact(file, Sizes.Sector * 4);
         serverHeader = ServerSparseExtentHeader.read(firstSectors, 0);
         header = serverHeader;
@@ -82,7 +82,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
                 numGrains = 1;
             }
             int numToWrite = Math.min(count - totalWritten, grainSize * numGrains - startGrainOffset);
-            fileStream.setPosition((long) getGrainTableEntry(startGrain) * Sizes.Sector + startGrainOffset);
+            fileStream.position((long) getGrainTableEntry(startGrain) * Sizes.Sector + startGrainOffset);
             fileStream.write(buffer, offset + totalWritten, numToWrite);
             position += numToWrite;
             totalWritten += numToWrite;
@@ -94,14 +94,14 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         // Calculate start pos for new grain
         long grainStartPos = (long) serverHeader.freeSector * Sizes.Sector;
         // Copy-on-write semantics, read the bytes from parent and write them out to this extent.
-        parentDiskStream.setPosition(diskOffset + (grain + (long) header.numGTEsPerGT * grainTable) * header.grainSize * Sizes.Sector);
+        parentDiskStream.position(diskOffset + (grain + (long) header.numGTEsPerGT * grainTable) * header.grainSize * Sizes.Sector);
         byte[] content = StreamUtilities.readExact(parentDiskStream, (int) (header.grainSize * Sizes.Sector * count));
-        fileStream.setPosition(grainStartPos);
+        fileStream.position(grainStartPos);
         fileStream.write(content, 0, content.length);
         // Update next-free-sector in disk header
         serverHeader.freeSector += MathUtilities.ceil(content.length, Sizes.Sector);
         byte[] headerBytes = serverHeader.getBytes();
-        fileStream.setPosition(0);
+        fileStream.position(0);
         fileStream.write(headerBytes, 0, headerBytes.length);
         loadGrainTable(grainTable);
         for (int i = 0; i < count; ++i) {
@@ -114,12 +114,12 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         // Write out new blank grain table.
         int startSector = serverHeader.freeSector;
         byte[] emptyGrainTable = new byte[header.numGTEsPerGT * 4];
-        fileStream.setPosition(startSector * (long) Sizes.Sector);
+        fileStream.position(startSector * (long) Sizes.Sector);
         fileStream.write(emptyGrainTable, 0, emptyGrainTable.length);
         // Update header
         serverHeader.freeSector += MathUtilities.ceil(emptyGrainTable.length, Sizes.Sector);
         byte[] headerBytes = serverHeader.getBytes();
-        fileStream.setPosition(0);
+        fileStream.position(0);
         fileStream.write(headerBytes, 0, headerBytes.length);
         // Update the global directory
         globalDirectory[grainTable] = startSector;
@@ -133,7 +133,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         for (int i = 0; i < globalDirectory.length; ++i) {
             EndianUtilities.writeBytesLittleEndian(globalDirectory[i], buffer, i * 4);
         }
-        fileStream.setPosition(serverHeader.gdOffset * Sizes.Sector);
+        fileStream.position(serverHeader.gdOffset * Sizes.Sector);
         fileStream.write(buffer, 0, buffer.length);
     }
 
@@ -142,7 +142,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
             throw new IllegalStateException("No grain table loaded");
         }
 
-        fileStream.setPosition(globalDirectory[currentGrainTable] * (long) Sizes.Sector);
+        fileStream.position(globalDirectory[currentGrainTable] * (long) Sizes.Sector);
         fileStream.write(grainTable, 0, grainTable.length);
     }
 

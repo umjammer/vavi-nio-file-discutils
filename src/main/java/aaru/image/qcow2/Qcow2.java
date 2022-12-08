@@ -617,13 +617,13 @@ public class Qcow2 {
 
         if (l1Table[(int) l1Off] == 0) {
             writingStream.seek(0, SeekOrigin.End);
-            l1Table[(int) l1Off] = (long) writingStream.getPosition();
+            l1Table[(int) l1Off] = (long) writingStream.position();
             byte[] l2TableB = new byte[l2Size * 8];
             writingStream.seek(0, SeekOrigin.End);
             writingStream.write(l2TableB, 0, l2TableB.length);
         }
 
-        writingStream.setPosition(l1Table[(int) l1Off]);
+        writingStream.position(l1Table[(int) l1Off]);
 
         long l2Off = (byteAddress & l2Mask) >> (int) header.clusterBits;
 

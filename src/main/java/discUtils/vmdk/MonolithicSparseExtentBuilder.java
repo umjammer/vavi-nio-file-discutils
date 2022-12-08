@@ -272,7 +272,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
                 return toRead;
             }
 
-            content.setPosition(readStart);
+            content.position(readStart);
             return content.read(block, offset, toRead);
         }
 

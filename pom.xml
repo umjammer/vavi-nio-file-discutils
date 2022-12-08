@@ -203,9 +203,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.umjammer</groupId>
+      <groupId>moe.yo3explorer</groupId> <!-- moe.yo3explorer -->
       <artifactId>dotnet4j</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>

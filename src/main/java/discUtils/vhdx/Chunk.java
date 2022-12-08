@@ -68,7 +68,7 @@ public final class Chunk {
         this.fileParameters = fileParameters;
         this.chunk = chunk;
         this.blocksPerChunk = blocksPerChunk;
-        this.bat.setPosition((long) this.chunk * (this.blocksPerChunk + 1) * 8);
+        this.bat.position((long) this.chunk * (this.blocksPerChunk + 1) * 8);
         batData = StreamUtilities.readExact(bat, (this.blocksPerChunk + 1) * 8);
     }
 
@@ -106,7 +106,7 @@ public final class Chunk {
     public void writeBlockBitmap(int block) {
         int bytesPerBlock = (int) (Sizes.OneMiB / blocksPerChunk);
         int offset = bytesPerBlock * block;
-        file.setPosition(getSectorBitmapPos() + offset);
+        file.position(getSectorBitmapPos() + offset);
         file.write(sectorBitmap, offset, bytesPerBlock);
     }
 
@@ -137,7 +137,7 @@ public final class Chunk {
         if (dataModified) {
             blockEntry.writeTo(batData, block * 8);
 
-            bat.setPosition((long) chunk * (blocksPerChunk + 1) * 8);
+            bat.position((long) chunk * (blocksPerChunk + 1) * 8);
             bat.write(batData, 0, (blocksPerChunk + 1) * 8);
         }
 
@@ -146,7 +146,7 @@ public final class Chunk {
 
     private byte[] loadSectorBitmap() {
         if (sectorBitmap == null) {
-            file.setPosition(getSectorBitmapPos());
+            file.position(getSectorBitmapPos());
             sectorBitmap = StreamUtilities.readExact(file, (int) Sizes.OneMiB);
         }
 
@@ -160,7 +160,7 @@ public final class Chunk {
             file.setLength(pos[0] + sizeBytes);
             freeSpace.extendTo(pos[0] + sizeBytes, false);
         } else if (zero) {
-            file.setPosition(pos[0]);
+            file.position(pos[0]);
             file.clear(sizeBytes);
         }
 

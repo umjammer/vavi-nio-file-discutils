@@ -35,7 +35,7 @@ public final class PartitionMapFactory implements PartitionTableFactory {
             return false;
         }
 
-        s.setPosition(0);
+        s.position(0);
 
         byte[] initialBytes = StreamUtilities.readExact(s, 1024);
 

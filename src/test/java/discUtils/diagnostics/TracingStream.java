@@ -221,12 +221,12 @@ public final class TracingStream extends Stream {
     /**
      * Gets and sets the current stream position.
      */
-    public long getPosition() {
-        return wrapped.getPosition();
+    @Override public long position() {
+        return wrapped.position();
     }
 
-    public void setPosition(long value) {
-        wrapped.setPosition(value);
+    @Override public void position(long value) {
+        wrapped.position(value);
     }
 
     /**
@@ -238,7 +238,7 @@ public final class TracingStream extends Stream {
      * @return The number of bytes read
      */
     public int read(byte[] buffer, int offset, int count) {
-        long position = wrapped.getPosition();
+        long position = wrapped.position();
         try {
             int result = wrapped.read(buffer, offset, count);
             if (active && traceReads) {
@@ -283,7 +283,7 @@ public final class TracingStream extends Stream {
      * @param count The number of bytes to write
      */
     public void write(byte[] buffer, int offset, int count) {
-        long position = wrapped.getPosition();
+        long position = wrapped.position();
         try {
             wrapped.write(buffer, offset, count);
             if (active && traceWrites) {

@@ -99,10 +99,10 @@ public class DynamicStream extends MappedStream {
         blockBitmapSize = MathUtilities.roundUp(MathUtilities.ceil(this.dynamicHeader.blockSize, Sizes.Sector * 8), Sizes.Sector);
         readBlockAllocationTable();
         // Detect where next block should go (cope if the footer is missing)
-        this.fileStream.setPosition(MathUtilities.roundDown(this.fileStream.getLength(), Sizes.Sector) - Sizes.Sector);
+        this.fileStream.position(MathUtilities.roundDown(this.fileStream.getLength(), Sizes.Sector) - Sizes.Sector);
         byte[] footerBytes = StreamUtilities.readExact(this.fileStream, Sizes.Sector);
         Footer footer = Footer.fromBytes(footerBytes, 0);
-        nextBlockStart = this.fileStream.getPosition() - (footer.isValid() ? Sizes.Sector : 0);
+        nextBlockStart = this.fileStream.position() - (footer.isValid() ? Sizes.Sector : 0);
     }
 
     public boolean getAutoCommitFooter() {
@@ -140,12 +140,12 @@ public class DynamicStream extends MappedStream {
         return length;
     }
 
-    public long getPosition() {
+    public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    public void position(long value) {
         checkDisposed();
         atEof = false;
         position = value;
@@ -244,11 +244,11 @@ public class DynamicStream extends MappedStream {
                 if (offsetInSector != 0 || toRead < Sizes.Sector) {
                     byte mask = (byte) (1 << (7 - sectorInBlock % 8));
                     if ((blockBitmaps[(int) block][sectorInBlock / 8] & mask) != 0) {
-                        fileStream.setPosition((long) (blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
+                        fileStream.position((long) (blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector +
                                 blockBitmapSize + offsetInSector);
                         StreamUtilities.readExact(fileStream, buffer, offset + numRead, toRead);
                     } else {
-                        parentStream.setPosition(position);
+                        parentStream.position(position);
                         StreamUtilities.readExact(parentStream, buffer, offset + numRead, toRead);
                     }
                     numRead += toRead;
@@ -269,11 +269,10 @@ public class DynamicStream extends MappedStream {
                     }
                     toRead = numSectors * Sizes.Sector;
                     if (readFromParent) {
-                        parentStream.setPosition(position);
+                        parentStream.position(position);
                         StreamUtilities.readExact(parentStream, buffer, offset + numRead, toRead);
                     } else {
-                        fileStream
-                                .setPosition((long) (blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + blockBitmapSize);
+                        fileStream.position((long) (blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + blockBitmapSize);
                         StreamUtilities.readExact(fileStream, buffer, offset + numRead, toRead);
                     }
                     numRead += toRead;
@@ -281,7 +280,7 @@ public class DynamicStream extends MappedStream {
                 }
             } else {
                 int toRead = Math.min(maxToRead - numRead, dynamicHeader.blockSize - offsetInBlock);
-                parentStream.setPosition(position);
+                parentStream.position(position);
                 StreamUtilities.readExact(parentStream, buffer, offset + numRead, toRead);
                 numRead += toRead;
                 position += toRead;
@@ -344,16 +343,16 @@ public class DynamicStream extends MappedStream {
                 // Get the existing sector data (if any), or otherwise the parent's content
                 byte[] sectorBuffer;
                 if ((blockBitmaps[(int) block][sectorInBlock / 8] & sectorMask) != 0) {
-                    fileStream.setPosition(sectorStart);
+                    fileStream.position(sectorStart);
                     sectorBuffer = StreamUtilities.readExact(fileStream, Sizes.Sector);
                 } else {
-                    parentStream.setPosition(position / Sizes.Sector * Sizes.Sector);
+                    parentStream.position(position / Sizes.Sector * Sizes.Sector);
                     sectorBuffer = StreamUtilities.readExact(parentStream, Sizes.Sector);
                 }
                 // Overlay as much data as we have for this sector
                 System.arraycopy(buffer, offset + numWritten, sectorBuffer, offsetInSector, toWrite);
                 // Write the sector back
-                fileStream.setPosition(sectorStart);
+                fileStream.position(sectorStart);
                 fileStream.write(sectorBuffer, 0, Sizes.Sector);
                 // Update the in-memory block bitmap
                 if ((blockBitmaps[(int) block][sectorInBlock / 8] & sectorMask) == 0) {
@@ -364,7 +363,7 @@ public class DynamicStream extends MappedStream {
             } else {
                 // Processing at least one whole sector, just write (after making sure to trim any partial sectors from the end)...
                 toWrite = toWrite / Sizes.Sector * Sizes.Sector;
-                fileStream.setPosition((long) (blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + blockBitmapSize);
+                fileStream.position((long) (blockAllocationTable[(int) block] + sectorInBlock) * Sizes.Sector + blockBitmapSize);
                 fileStream.write(buffer, offset + numWritten, toWrite);
                 for (int i = offset; i < offset + toWrite; i += Sizes.Sector) {
                     // Update all of the bits in the block bitmap
@@ -470,7 +469,7 @@ public class DynamicStream extends MappedStream {
     }
 
     private void readBlockAllocationTable() {
-        fileStream.setPosition(dynamicHeader.tableOffset);
+        fileStream.position(dynamicHeader.tableOffset);
         byte[] data = StreamUtilities.readExact(fileStream, dynamicHeader.maxTableEntries * 4);
         int[] bat = new int[dynamicHeader.maxTableEntries];
         for (int i = 0; i < dynamicHeader.maxTableEntries; ++i) {
@@ -491,7 +490,7 @@ public class DynamicStream extends MappedStream {
 
         // No such block stored...
         // Read in bitmap
-        fileStream.setPosition((long) blockAllocationTable[(int) block] * Sizes.Sector);
+        fileStream.position((long) blockAllocationTable[(int) block] * Sizes.Sector);
         blockBitmaps[(int) block] = StreamUtilities.readExact(fileStream, blockBitmapSize);
         return true;
     }
@@ -505,7 +504,7 @@ public class DynamicStream extends MappedStream {
         long newBlockStart = nextBlockStart;
         // Create and write new sector bitmap
         byte[] bitmap = new byte[blockBitmapSize];
-        fileStream.setPosition(newBlockStart);
+        fileStream.position(newBlockStart);
         fileStream.write(bitmap, 0, blockBitmapSize);
         blockBitmaps[(int) block] = bitmap;
         nextBlockStart += blockBitmapSize + dynamicHeader.blockSize;
@@ -516,7 +515,7 @@ public class DynamicStream extends MappedStream {
         // Update the BAT entry for the new block
         byte[] entryBuffer = new byte[4];
         EndianUtilities.writeBytesBigEndian((int) (newBlockStart / 512), entryBuffer, 0);
-        fileStream.setPosition(dynamicHeader.tableOffset + block * 4);
+        fileStream.position(dynamicHeader.tableOffset + block * 4);
         fileStream.write(entryBuffer, 0, 4);
         blockAllocationTable[(int) block] = (int) (newBlockStart / 512);
         if (autoCommitFooter) {
@@ -525,7 +524,7 @@ public class DynamicStream extends MappedStream {
     }
 
     private void writeBlockBitmap(long block) {
-        fileStream.setPosition((long) blockAllocationTable[(int) block] * Sizes.Sector);
+        fileStream.position((long) blockAllocationTable[(int) block] * Sizes.Sector);
         fileStream.write(blockBitmaps[(int) block], 0, blockBitmapSize);
     }
 
@@ -539,11 +538,11 @@ public class DynamicStream extends MappedStream {
         if (newBlocksAllocated) {
             // Update the footer at the end of the file (if we allocated new blocks).
             if (footerCache == null) {
-                fileStream.setPosition(0);
+                fileStream.position(0);
                 footerCache = StreamUtilities.readExact(fileStream, Sizes.Sector);
             }
 
-            fileStream.setPosition(nextBlockStart);
+            fileStream.position(nextBlockStart);
             fileStream.write(footerCache, 0, footerCache.length);
         }
     }

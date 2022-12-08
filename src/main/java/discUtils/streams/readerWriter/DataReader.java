@@ -45,8 +45,8 @@ public abstract class DataReader {
         return stream.getLength();
     }
 
-    public long getPosition() {
-        return stream.getPosition();
+    public long position() {
+        return stream.position();
     }
 
     public void skip(int bytes) {

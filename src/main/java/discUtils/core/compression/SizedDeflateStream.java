@@ -42,12 +42,12 @@ public class SizedDeflateStream extends DeflateStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
-        if (value != getPosition()) {
+    @Override public void position(long value) {
+        if (value != position()) {
             throw new UnsupportedOperationException();
         }
     }

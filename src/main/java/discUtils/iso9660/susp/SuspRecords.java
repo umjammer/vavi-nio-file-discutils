@@ -40,7 +40,7 @@ public final class SuspRecords {
         ContinuationSystemUseEntry contEntry = parse(context, data, offset + context.getSuspSkipBytes());
         while (contEntry != null) {
             context.getDataStream()
-                    .setPosition(contEntry.block * (long) context.getVolumeDescriptor().getLogicalBlockSize() +
+                    .position(contEntry.block * (long) context.getVolumeDescriptor().getLogicalBlockSize() +
                         contEntry.blockOffset);
             byte[] contData = StreamUtilities.readExact(context.getDataStream(), contEntry.length);
             contEntry = parse(context, contData, 0);

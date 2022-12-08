@@ -52,7 +52,7 @@ public class RpcReplyHeaderTest {
             XdrDataWriter writer = new XdrDataWriter(stream);
             header.write(writer);
 
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new RpcReplyHeader(reader);
         }

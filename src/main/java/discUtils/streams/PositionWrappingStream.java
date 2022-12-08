@@ -39,11 +39,11 @@ public class PositionWrappingStream extends WrappingStream {
 
     private long position;
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         if (position == value)
             return;
 

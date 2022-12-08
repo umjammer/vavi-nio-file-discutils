@@ -57,17 +57,17 @@ public class ThreadSafeStreamTest {
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
         SparseStream altView = tss.openView();
         // Check positions are independant
-        tss.setPosition(100);
-        assertEquals(0, altView.getPosition());
-        assertEquals(100, tss.getPosition());
+        tss.position(100);
+        assertEquals(0, altView.position());
+        assertEquals(100, tss.position());
         // Check I/O is synchronous
         byte[] buffer = new byte[200];
         tss.writeByte((byte) 99);
         altView.read(buffer, 0, 200);
         assertEquals(99, buffer[100]);
         // Check positions are updated correctly
-        assertEquals(200, altView.getPosition());
-        assertEquals(101, tss.getPosition());
+        assertEquals(200, altView.position());
+        assertEquals(101, tss.position());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ThreadSafeStreamTest {
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
         SparseStream altView = tss.openView();
-        tss.setPosition(100);
+        tss.position(100);
         tss.writeByte((byte) 99);
         List<StreamExtent> extents = new ArrayList<>(altView.getExtents());
         assertEquals(1, extents.size());
@@ -133,11 +133,11 @@ public class ThreadSafeStreamTest {
         memStream.setLength(1024);
         ThreadSafeStream tss = new ThreadSafeStream(memStream);
         tss.seek(10, SeekOrigin.Begin);
-        assertEquals(10, tss.getPosition());
+        assertEquals(10, tss.position());
         tss.seek(10, SeekOrigin.Current);
-        assertEquals(20, tss.getPosition());
+        assertEquals(20, tss.position());
         tss.seek(-10, SeekOrigin.End);
-        assertEquals(1014, tss.getPosition());
+        assertEquals(1014, tss.position());
     }
 
     @Test

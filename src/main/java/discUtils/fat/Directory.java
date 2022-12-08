@@ -272,7 +272,7 @@ public class Directory implements Closeable {
             endOfEntries += 32;
         }
         // Put the new entry into it's slot
-        dirStream.setPosition(pos);
+        dirStream.position(pos);
         newEntry.writeTo(dirStream);
         // Update internal structures to reflect new entry (as if read from
         // disk)
@@ -290,7 +290,7 @@ public class Directory implements Closeable {
             DirectoryEntry entry = entries.get(id);
             DirectoryEntry copy = new DirectoryEntry(entry);
             copy.setName(entry.getName().deleted());
-            dirStream.setPosition(id);
+            dirStream.position(id);
             copy.writeTo(dirStream);
             if (releaseContents) {
                 fileSystem.getFat().freeChain(entry.getFirstCluster());
@@ -309,7 +309,7 @@ public class Directory implements Closeable {
             throw new dotnet4j.io.IOException("Attempt to update unknown directory entry");
         }
 
-        dirStream.setPosition(id);
+        dirStream.position(id);
         entry.writeTo(dirStream);
         entries.put(id, entry);
     }
@@ -319,8 +319,8 @@ public class Directory implements Closeable {
         freeEntries = new ArrayList<>();
         selfEntryLocation = -1;
         parentEntryLocation = -1;
-        while (dirStream.getPosition() < dirStream.getLength()) {
-            long streamPos = dirStream.getPosition();
+        while (dirStream.position() < dirStream.getLength()) {
+            long streamPos = dirStream.position();
             DirectoryEntry entry = new DirectoryEntry(fileSystem.getFatOptions(),
                     dirStream,
                                                       fileSystem.getFatVariant());
@@ -427,7 +427,7 @@ public class Directory implements Closeable {
 
     void setSelfEntry(DirectoryEntry value) {
         if (selfEntryLocation >= 0) {
-            dirStream.setPosition(selfEntryLocation);
+            dirStream.position(selfEntryLocation);
             value.writeTo(dirStream);
             selfEntry = value;
         }
@@ -442,7 +442,7 @@ public class Directory implements Closeable {
             throw new dotnet4j.io.IOException("No parent entry on disk to update");
         }
 
-        dirStream.setPosition(parentEntryLocation);
+        dirStream.position(parentEntryLocation);
         value.writeTo(dirStream);
         parentEntry = value;
     }

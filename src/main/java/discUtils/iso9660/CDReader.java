@@ -194,7 +194,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
             return false;
         }
 
-        data.setPosition(0x8000);
+        data.position(0x8000);
         int numRead = StreamUtilities.readMaximum(data, buffer, 0, IsoUtilities.SectorSize);
         if (numRead != IsoUtilities.SectorSize) {
             return false;

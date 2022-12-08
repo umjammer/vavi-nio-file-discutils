@@ -78,12 +78,12 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         return wrappedStream.getLength();
     }
 
-    public long getPosition() {
-        return wrappedStream.getPosition();
+    @Override public long position() {
+        return wrappedStream.position();
     }
 
-    public void setPosition(long value) {
-        wrappedStream.setPosition(value);
+    @Override public void position(long value) {
+        wrappedStream.position(value);
     }
 
     private T wrappedStream;

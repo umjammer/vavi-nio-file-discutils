@@ -355,7 +355,7 @@ public final class SquashFileSystemBuilder {
         superBlock.majorVersion = 4;
         superBlock.minorVersion = 0;
 
-        output.setPosition(superBlock.size());
+        output.position(superBlock.size());
 
         getRoot().reset();
         getRoot().write(context);
@@ -365,31 +365,31 @@ public final class SquashFileSystemBuilder {
         superBlock.fragmentsCount = fragWriter.getFragmentCount();
         superBlock.setUidGidCount((short) idWriter.getIdCount());
 
-        superBlock.inodeTableStart = output.getPosition();
+        superBlock.inodeTableStart = output.position();
         inodeWriter.persist(output);
 
-        superBlock.directoryTableStart = output.getPosition();
+        superBlock.directoryTableStart = output.position();
         dirWriter.persist(output);
 
         superBlock.fragmentTableStart = fragWriter.persist();
         superBlock.lookupTableStart = -1;
         superBlock.uidGidTableStart = idWriter.persist();
         superBlock.extendedAttrsTableStart = -1;
-        superBlock.bytesUsed = output.getPosition();
+        superBlock.bytesUsed = output.position();
 
         // Pad to 4KB
-        long end = MathUtilities.roundUp(output.getPosition(), 4 * Sizes.OneKiB);
-        if (end != output.getPosition()) {
-            byte[] padding = new byte[(int) (end - output.getPosition())];
+        long end = MathUtilities.roundUp(output.position(), 4 * Sizes.OneKiB);
+        if (end != output.position()) {
+            byte[] padding = new byte[(int) (end - output.position())];
             output.write(padding, 0, padding.length);
         }
 
         // Go back and write the superblock
-        output.setPosition(0);
+        output.position(0);
         byte[] buffer = new byte[superBlock.size()];
         superBlock.writeTo(buffer, 0);
         output.write(buffer, 0, buffer.length);
-        output.setPosition(end);
+        output.position(end);
     }
 
     /**

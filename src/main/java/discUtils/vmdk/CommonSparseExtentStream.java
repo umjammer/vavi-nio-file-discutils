@@ -137,12 +137,12 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return header.capacity * Sizes.Sector;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
         atEof = false;
@@ -179,7 +179,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
             if (!loadGrainTable(grainTable)) {
                 // Read from parent stream, to at most the end of grain table's coverage
-                parentDiskStream.setPosition(position + diskOffset);
+                parentDiskStream.position(position + diskOffset);
                 numRead = parentDiskStream.read(buffer,
                                                  offset + totalRead,
                                                  (int) Math.min(maxToRead - totalRead, gtCoverage - grainTableOffset));
@@ -191,7 +191,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
                 int numToRead = Math.min(maxToRead - totalRead, grainSize - grainOffset);
 
                 if (getGrainTableEntry(grain) == 0) {
-                    parentDiskStream.setPosition(position + diskOffset);
+                    parentDiskStream.position(position + diskOffset);
                     numRead = parentDiskStream.read(buffer, offset + totalRead, numToRead);
                 } else {
                     int bufferOffset = offset + totalRead;
@@ -308,7 +308,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
                             long grainStart,
                             int grainOffset,
                             int numToRead) {
-        fileStream.setPosition(grainStart + grainOffset);
+        fileStream.position(grainStart + grainOffset);
         return fileStream.read(buffer, bufferOffset, numToRead);
     }
 
@@ -320,7 +320,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         int numGTs = (int) MathUtilities.ceil(header.capacity * Sizes.Sector, gtCoverage);
 
         globalDirectory = new int[numGTs];
-        fileStream.setPosition(header.gdOffset * Sizes.Sector);
+        fileStream.position(header.gdOffset * Sizes.Sector);
         byte[] gdAsBytes = StreamUtilities.readExact(fileStream, numGTs * 4);
         for (int i = 0; i < globalDirectory.length; ++i) {
             globalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
@@ -347,7 +347,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         }
 
         // Not cached, so read
-        fileStream.setPosition((long) globalDirectory[index] * Sizes.Sector);
+        fileStream.position((long) globalDirectory[index] * Sizes.Sector);
         byte[] newGrainTable = StreamUtilities.readExact(fileStream, header.numGTEsPerGT * 4);
         currentGrainTable = index;
         grainTable = newGrainTable;

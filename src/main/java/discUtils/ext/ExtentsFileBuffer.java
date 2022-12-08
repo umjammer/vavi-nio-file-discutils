@@ -83,7 +83,7 @@ public class ExtentsFileBuffer extends Buffer {
                 int toRead = (int) Math
                         .min(totalBytesRemaining,
                              (extent.getNumBlocks() - (logicalBlock - extent.firstLogicalBlock)) * blockSize - blockOffset);
-                context.getRawStream().setPosition(physicalBlock * blockSize + blockOffset);
+                context.getRawStream().position(physicalBlock * blockSize + blockOffset);
                 numRead = context.getRawStream().read(buffer, offset + totalRead, toRead);
             }
             totalBytesRemaining -= numRead;
@@ -159,7 +159,7 @@ public class ExtentsFileBuffer extends Buffer {
 
     private ExtentBlock loadExtentBlock(ExtentIndex idxEntry) {
         int blockSize = context.getSuperBlock().getBlockSize();
-        context.getRawStream().setPosition(idxEntry.getLeafPhysicalBlock() * blockSize);
+        context.getRawStream().position(idxEntry.getLeafPhysicalBlock() * blockSize);
         byte[] buffer = StreamUtilities.readExact(context.getRawStream(), blockSize);
         ExtentBlock subBlock = EndianUtilities.toStruct(ExtentBlock.class, buffer, 0);
         return subBlock;

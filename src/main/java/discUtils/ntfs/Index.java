@@ -403,9 +403,9 @@ class Index implements Closeable {
         root.writeTo(buffer, 0);
         rootNode.writeTo(buffer, root.size());
         try (Stream s = file.openStream(AttributeType.IndexRoot, name, FileAccess.Write)) {
-            s.setPosition(0);
+            s.position(0);
             s.write(buffer, 0, buffer.length);
-            s.setLength(s.getPosition());
+            s.setLength(s.position());
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }

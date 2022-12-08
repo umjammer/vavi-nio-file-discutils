@@ -271,7 +271,7 @@ final class RawClusterStream extends ClusterStream {
                             (byte) 0);
             } else {
                 long lcn = cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
-                fsStream.setPosition(lcn * bytesPerCluster);
+                fsStream.position(lcn * bytesPerCluster);
                 StreamUtilities.readExact(fsStream, buffer, offset + totalRead * bytesPerCluster, toRead * bytesPerCluster);
             }
 
@@ -297,7 +297,7 @@ final class RawClusterStream extends ClusterStream {
             int toWrite = (int) Math.min(count - totalWritten, run.getLength() - (focusVcn - run.getStartVcn()));
 
             long lcn = cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
-            fsStream.setPosition(lcn * bytesPerCluster);
+            fsStream.position(lcn * bytesPerCluster);
             fsStream.write(buffer, offset + totalWritten * bytesPerCluster, toWrite * bytesPerCluster);
 
             totalWritten += toWrite;

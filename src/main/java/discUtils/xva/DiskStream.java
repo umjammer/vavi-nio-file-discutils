@@ -112,11 +112,11 @@ public class DiskStream extends SparseStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         if (value > length) {
             throw new dotnet4j.io.IOException("Attempt to move beyond end of stream");
         }
@@ -159,7 +159,7 @@ public class DiskStream extends SparseStream {
 
         long chunkOffset = position % Sizes.OneMiB;
         int toRead = Math.min((int) Math.min(Sizes.OneMiB - chunkOffset, length - position), count);
-        currentChunkData.setPosition(chunkOffset);
+        currentChunkData.position(chunkOffset);
         int numRead = currentChunkData.read(buffer, offset, toRead);
         position += numRead;
         return numRead;
@@ -177,8 +177,8 @@ public class DiskStream extends SparseStream {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
 
-        setPosition(effectiveOffset);
-        return getPosition();
+        position(effectiveOffset);
+        return position();
     }
 
     public void setLength(long value) {

@@ -54,13 +54,13 @@ public class PhysicalVolume {
     public PhysicalVolume(PhysicalVolumeLabel physicalVolumeLabel, Stream content) {
         this.physicalVolumeLabel = physicalVolumeLabel;
         pvHeader = new PvHeader();
-        content.setPosition(physicalVolumeLabel.sector * SECTOR_SIZE);
+        content.position(physicalVolumeLabel.sector * SECTOR_SIZE);
         byte[] buffer = StreamUtilities.readExact(content, SECTOR_SIZE);
         pvHeader.readFrom(buffer, (int) physicalVolumeLabel.offset);
         if (pvHeader.metadataDiskAreas.size() > 0) {
             DiskArea area = pvHeader.metadataDiskAreas.get(0);
             VolumeGroupMetadata metadata = new VolumeGroupMetadata();
-            content.setPosition(area.offset);
+            content.position(area.offset);
             buffer = StreamUtilities.readExact(content, (int) area.length);
             metadata.readFrom(buffer, 0x0);
             vgMetadata = metadata;
@@ -93,7 +93,7 @@ public class PhysicalVolume {
      */
     private static boolean searchLabel(Stream content, PhysicalVolumeLabel[] pvLabel) {
         pvLabel[0] = null;
-        content.setPosition(0);
+        content.position(0);
         byte[] buffer = new byte[SECTOR_SIZE];
         for (int i = 0; i < 4; i++) {
             if (StreamUtilities.readMaximum(content, buffer, 0, SECTOR_SIZE) != SECTOR_SIZE) {

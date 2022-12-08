@@ -48,7 +48,7 @@ class DynamicDisk implements IDiagnosticTraceable {
         header = getPrivateHeader(this.disk);
         TocBlock toc = getTableOfContents();
         long dbStart = header.configurationStartLba * 512 + toc.item1Start * 512;
-        this.disk.getContent().setPosition(dbStart);
+        this.disk.getContent().position(dbStart);
         database = new Database(this.disk.getContent());
     }
 
@@ -111,7 +111,7 @@ class DynamicDisk implements IDiagnosticTraceable {
             }
 
             if (headerPos != 0) {
-                disk.getContent().setPosition(headerPos);
+                disk.getContent().position(headerPos);
                 byte[] buffer = new byte[Sizes.Sector];
                 disk.getContent().read(buffer, 0, buffer.length);
                 PrivateHeader hdr = new PrivateHeader();
@@ -125,7 +125,7 @@ class DynamicDisk implements IDiagnosticTraceable {
 
     private TocBlock getTableOfContents() {
         byte[] buffer = new byte[(int) header.tocSizeLba * 512];
-        disk.getContent().setPosition(header.configurationStartLba * 512 + 1 * header.tocSizeLba * 512);
+        disk.getContent().position(header.configurationStartLba * 512 + 1 * header.tocSizeLba * 512);
 
         disk.getContent().read(buffer, 0, buffer.length);
         TocBlock tocBlock = new TocBlock();

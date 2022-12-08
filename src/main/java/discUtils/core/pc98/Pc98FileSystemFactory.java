@@ -65,7 +65,7 @@ Debug.println(Level.FINE, "stream length < 512");
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] sector = StreamUtilities.readExact(stream, 512);
         ByteArrayInputStream bais = new ByteArrayInputStream(sector);
 

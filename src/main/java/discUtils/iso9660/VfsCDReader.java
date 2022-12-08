@@ -127,7 +127,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
         BaseVolumeDescriptor bvd;
         do {
-            data.setPosition(vdpos);
+            data.position(vdpos);
             int numRead = data.read(buffer, 0, IsoUtilities.SectorSize);
             if (numRead != IsoUtilities.SectorSize) {
                 break;
@@ -166,7 +166,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             switch (variant) {
             case Joliet:
                 if (svdPos != 0) {
-                    data.setPosition(svdPos);
+                    data.position(svdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     SupplementaryVolumeDescriptor volDesc = new SupplementaryVolumeDescriptor(buffer, 0);
 
@@ -182,7 +182,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             case RockRidge:
             case Iso9660:
                 if (pvdPos != 0) {
-                    data.setPosition(pvdPos);
+                    data.position(pvdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     PrimaryVolumeDescriptor volDesc = new PrimaryVolumeDescriptor(buffer, 0);
 
@@ -456,7 +456,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
     private static DirectoryRecord readRootSelfRecord(IsoContext context) {
         context.getDataStream()
-                .setPosition((long) context.getVolumeDescriptor().rootDirectory.locationOfExtent *
+                .position((long) context.getVolumeDescriptor().rootDirectory.locationOfExtent *
                              context.getVolumeDescriptor().getLogicalBlockSize());
         byte[] firstSector = StreamUtilities.readExact(context.getDataStream(),
                                                        context.getVolumeDescriptor().getLogicalBlockSize());
@@ -481,7 +481,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
     private byte[] getBootCatalog() {
         if (bootCatalog == null && bootVolDesc != null) {
-            data.setPosition((long) bootVolDesc.getCatalogSector() * IsoUtilities.SectorSize);
+            data.position((long) bootVolDesc.getCatalogSector() * IsoUtilities.SectorSize);
             bootCatalog = StreamUtilities.readExact(data, IsoUtilities.SectorSize);
         }
 

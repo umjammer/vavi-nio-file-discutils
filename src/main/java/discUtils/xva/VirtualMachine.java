@@ -85,7 +85,7 @@ public final class VirtualMachine implements Closeable {
     public VirtualMachine(Stream fileStream, Ownership ownership) {
         this.fileStream = fileStream;
         this.ownership = ownership;
-        this.fileStream.setPosition(0);
+        this.fileStream.position(0);
         archive = new TarFile(fileStream);
     }
 

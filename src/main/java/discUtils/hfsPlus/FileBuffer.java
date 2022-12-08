@@ -78,7 +78,7 @@ final class FileBuffer extends Buffer {
             }
 
             Stream volStream = context.getVolumeStream();
-            volStream.setPosition(extentStreamStart + extentOffset);
+            volStream.position(extentStreamStart + extentOffset);
             int numRead = volStream.read(buffer, offset + totalRead, toRead);
 
             totalRead += numRead;

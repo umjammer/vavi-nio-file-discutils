@@ -51,7 +51,7 @@ public final class PartitionMap extends PartitionTable {
     public PartitionMap(Stream stream) {
         this.stream = stream;
 
-        this.stream.setPosition(0);
+        this.stream.position(0);
         byte[] initialBytes = StreamUtilities.readExact(this.stream, 1024);
 
         BlockZero b0 = new BlockZero();

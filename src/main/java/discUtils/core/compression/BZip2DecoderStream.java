@@ -134,11 +134,11 @@ public final class BZip2DecoderStream extends Stream {
     /**
      * Gets and sets the current position within the stream.
      */
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         throw new UnsupportedOperationException();
     }
 

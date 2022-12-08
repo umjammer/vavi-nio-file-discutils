@@ -90,7 +90,7 @@ public final class FragmentWriter {
         }
 
         // Persist the table that references the block containing the fragment records
-        long blockPos = context.getRawStream().getPosition();
+        long blockPos = context.getRawStream().position();
         int recordSize = FragmentRecord.RecordSize;
         byte[] buffer = new byte[fragmentBlocks.size() * recordSize];
         for (int i = 0; i < fragmentBlocks.size(); ++i) {
@@ -101,7 +101,7 @@ public final class FragmentWriter {
         writer.write(buffer, 0, buffer.length);
         writer.persist(context.getRawStream());
 
-        long tablePos = context.getRawStream().getPosition();
+        long tablePos = context.getRawStream().position();
         byte[] tableBuffer = new byte[8];
         EndianUtilities.writeBytesLittleEndian(blockPos, tableBuffer, 0);
         context.getRawStream().write(tableBuffer, 0, 8);
@@ -110,7 +110,7 @@ public final class FragmentWriter {
     }
 
     private void nextBlock() {
-        long position = context.getRawStream().getPosition();
+        long position = context.getRawStream().position();
 
         int writeLen = context.getWriteDataBlock().invoke(currentBlock, 0, currentOffset);
         FragmentRecord blockRecord = new FragmentRecord();

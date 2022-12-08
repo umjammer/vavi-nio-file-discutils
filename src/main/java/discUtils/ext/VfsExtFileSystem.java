@@ -54,7 +54,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
     public VfsExtFileSystem(Stream stream, FileSystemParameters parameters) {
         super(new ExtFileSystemOptions(parameters));
 
-        stream.setPosition(1024);
+        stream.position(1024);
         byte[] superblockData = StreamUtilities.readExact(stream, 1024);
 
         SuperBlock superblock = new SuperBlock();
@@ -81,7 +81,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
         int numGroups = MathUtilities.ceil(superblock.blocksCount, superblock.blocksPerGroup);
         long blockDescStart = (superblock.firstDataBlock + 1) * (long) superblock.getBlockSize();
 
-        stream.setPosition(blockDescStart);
+        stream.position(blockDescStart);
         int bgDescSize = superblock.has64Bit() ? superblock.descriptorSize : BlockGroup.DescriptorSize;
         byte[] blockDescData = StreamUtilities.readExact(stream, numGroups * bgDescSize);
 
@@ -163,7 +163,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
         int blockOffset = groupOffset - block * inodesPerBlock;
 
         getContext().getRawStream()
-                .setPosition((inodeBlockGroup.inodeTableBlock + block) * (long) superBlock.getBlockSize() +
+                .position((inodeBlockGroup.inodeTableBlock + block) * (long) superBlock.getBlockSize() +
                         (long) blockOffset * superBlock.getInodeSize());
         byte[] inodeData = StreamUtilities.readExact(getContext().getRawStream(), superBlock.getInodeSize());
 

@@ -69,11 +69,11 @@ public class ExtentStream extends Stream {
         return dataLength;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -86,7 +86,7 @@ public class ExtentStream extends Stream {
         }
 
         int toRead = (int) Math.min(count, dataLength - position);
-        isoStream.setPosition(position + startBlock * (long) IsoUtilities.SectorSize);
+        isoStream.position(position + startBlock * (long) IsoUtilities.SectorSize);
         int numRead = isoStream.read(buffer, offset, toRead);
         position += numRead;
         return numRead;

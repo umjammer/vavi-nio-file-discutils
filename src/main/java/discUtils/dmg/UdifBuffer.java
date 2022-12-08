@@ -94,7 +94,7 @@ public class UdifBuffer extends Buffer {
                 Arrays.fill(buffer, offset + totalCopied, offset + totalCopied + toCopy, (byte) 0);
                 break;
             case Raw:
-                stream.setPosition(activeRun.compOffset + bufferOffset);
+                stream.position(activeRun.compOffset + bufferOffset);
                 StreamUtilities.readExact(stream, buffer, offset + totalCopied, toCopy);
                 break;
             case AdcCompressed:
@@ -240,7 +240,7 @@ public class UdifBuffer extends Buffer {
              * DeflateStream decompression needs zip header (0x78, 0x9c)
              * so spec. is different from original C# DeflateStream
              */
-            stream.setPosition(run.compOffset);
+            stream.position(run.compOffset);
 
             try (DeflateStream ds = new DeflateStream(stream, CompressionMode.Decompress, true)) {
                 StreamUtilities.readExact(ds, decompBuffer, 0, toCopy);
@@ -251,7 +251,7 @@ public class UdifBuffer extends Buffer {
             break;
 
         case AdcCompressed: {
-            stream.setPosition(run.compOffset);
+            stream.position(run.compOffset);
             byte[] compressed = StreamUtilities.readExact(stream, (int) run.compLength);
             if (aDCDecompress(compressed, 0, compressed.length, decompBuffer, 0) != toCopy) {
                 throw new IllegalArgumentException("Run too short when decompressed");

@@ -174,12 +174,12 @@ public abstract class SparseStream extends Stream {
             return wrapped.getLength();
         }
 
-        public long getPosition() {
-            return wrapped.getPosition();
+        @Override public long position() {
+            return wrapped.position();
         }
 
-        public void setPosition(long value) {
-            wrapped.setPosition(value);
+        @Override public void position(long value) {
+            wrapped.position(value);
         }
 
         public void flush() {
@@ -252,11 +252,11 @@ public abstract class SparseStream extends Stream {
         }
 
         public long getPosition() {
-            return wrapped.getPosition();
+            return wrapped.position();
         }
 
         public void setPosition(long value) {
-            wrapped.setPosition(value);
+            wrapped.position(value);
         }
 
         public void flush() {

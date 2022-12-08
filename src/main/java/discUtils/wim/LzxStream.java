@@ -113,11 +113,11 @@ public class LzxStream extends Stream {
         return bufferCount;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 

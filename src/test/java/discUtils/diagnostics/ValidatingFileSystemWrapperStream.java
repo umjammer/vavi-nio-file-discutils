@@ -107,15 +107,15 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         return (Long) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).getLength());
     }
 
-    public long getPosition() {
+    @Override public long position() {
         long pos = shadowPosition;
-        return (Long) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).getPosition());
+        return (Long) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).position());
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         long pos = shadowPosition;
         fileSystem.performActivity((fs, context) -> {
-            getNativeStream(fs, context, pos).setPosition(value);
+            getNativeStream(fs, context, pos).position(value);
             return 0;
         });
         shadowPosition = value;
@@ -180,8 +180,8 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
             s = openFn.invoke(fs);
             context.put(streamKey,  s);
         }
-        if (shadowPosition != s.getPosition()) {
-            s.setPosition(shadowPosition);
+        if (shadowPosition != s.position()) {
+            s.position(shadowPosition);
         }
 
         return s;

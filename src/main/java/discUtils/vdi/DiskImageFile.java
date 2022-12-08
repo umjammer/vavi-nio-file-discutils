@@ -141,10 +141,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
             EndianUtilities.writeBytesLittleEndian(i, blockTable, i * 4);
         }
         header.blocksAllocated = header.blockCount;
-        stream.setPosition(0);
+        stream.position(0);
         preHeader.write(stream);
         header.write(stream);
-        stream.setPosition(header.blocksOffset);
+        stream.position(header.blocksOffset);
         stream.write(blockTable, 0, blockTable.length);
         long totalSize = header.dataOffset + header.blockSize * (long) header.blockCount;
         if (stream.getLength() < totalSize) {
@@ -171,10 +171,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
         byte[] blockTable = new byte[header.blockCount * 4];
         Arrays.fill(blockTable, (byte) 0xFF);
         header.blocksAllocated = 0;
-        stream.setPosition(0);
+        stream.position(0);
         preHeader.write(stream);
         header.write(stream);
-        stream.setPosition(header.blocksOffset);
+        stream.position(header.blocksOffset);
         stream.write(blockTable, 0, blockTable.length);
         return new DiskImageFile(stream, ownsStream);
     }
@@ -218,7 +218,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     public void close() throws IOException {
         if (writeOccurred && stream != null) {
             header.modificationId = UUID.randomUUID();
-            stream.setPosition(PreHeaderRecord.Size);
+            stream.position(PreHeaderRecord.Size);
             header.write(stream);
         }
 
@@ -229,7 +229,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void readHeader() {
-        stream.setPosition(0);
+        stream.position(0);
         preHeader = new PreHeaderRecord();
         preHeader.read(stream);
         header = new HeaderRecord();

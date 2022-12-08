@@ -40,7 +40,7 @@ public class Nfs3FileTimeTest {
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             time.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3FileTime(reader);
         }

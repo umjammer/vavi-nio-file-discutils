@@ -615,7 +615,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                                ExtentType.Sparse,
                                                                file,
                                                                0);
-                fs.setPosition(descriptorStart[0] * Sizes.Sector);
+                fs.position(descriptorStart[0] * Sizes.Sector);
                 baseDescriptor.getExtents().add(extent);
                 baseDescriptor.write(fs);
             } catch (IOException e) {
@@ -722,12 +722,12 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header.rgdOffset = redundantGrainDirStart;
         header.gdOffset = grainDirStart;
         header.overhead = dataStart;
-        extentStream.setPosition(0);
+        extentStream.position(0);
         extentStream.write(header.getBytes(), 0, Sizes.Sector);
         // Zero-out the descriptor space
         if (descriptorLength > 0) {
             byte[] descriptor = new byte[(int) descriptorLength];
-            extentStream.setPosition(descriptorStart[0] * Sizes.Sector);
+            extentStream.position(descriptorStart[0] * Sizes.Sector);
             extentStream.write(descriptor, 0, descriptor.length);
         }
 
@@ -740,13 +740,12 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                                    grainDir,
                                                    i * 4);
         }
-        extentStream.setPosition(redundantGrainDirStart * Sizes.Sector);
+        extentStream.position(redundantGrainDirStart * Sizes.Sector);
         extentStream.write(grainDir, 0, grainDir.length);
         // Write out the blank grain tables
         byte[] grainTable = new byte[GtesPerGt * 4];
         for (int i = 0; i < numGrainTables; ++i) {
-            extentStream
-                    .setPosition(redundantGrainTablesStart * Sizes.Sector + (long) i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
+            extentStream.position(redundantGrainTablesStart * Sizes.Sector + (long) i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
             extentStream.write(grainTable, 0, grainTable.length);
         }
         for (int i = 0; i < numGrainTables; ++i) {
@@ -756,11 +755,11 @@ public final class DiskImageFile extends VirtualDiskLayer {
                                             grainDir,
                                             i * 4);
         }
-        extentStream.setPosition(grainDirStart * Sizes.Sector);
+        extentStream.position(grainDirStart * Sizes.Sector);
         extentStream.write(grainDir, 0, grainDir.length);
         for (int i = 0; i < numGrainTables; ++i) {
             // Write out the blank grain tables
-            extentStream.setPosition(grainTablesStart * Sizes.Sector + (long) i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
+            extentStream.position(grainTablesStart * Sizes.Sector + (long) i * MathUtilities.roundUp(GtesPerGt * 4, Sizes.Sector));
             extentStream.write(grainTable, 0, grainTable.length);
         }
         // Make sure stream is correct length
@@ -793,7 +792,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             createSparseExtent(extentStream, size, descriptorLength, descriptorStart);
         } else if (type == ExtentType.VmfsSparse) {
             ServerSparseExtentHeader header = createServerSparseExtentHeader(size);
-            extentStream.setPosition(0);
+            extentStream.position(0);
             extentStream.write(header.getBytes(), 0, 4 * Sizes.Sector);
             byte[] blankGlobalDirectory = new byte[header.numGdEntries * 4];
             extentStream.write(blankGlobalDirectory, 0, blankGlobalDirectory.length);
@@ -886,17 +885,17 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void loadDescriptor(Stream s) {
-        s.setPosition(0);
+        s.position(0);
         byte[] header = StreamUtilities.readExact(s, (int) Math.min(Sizes.Sector, s.getLength()));
         if (header.length < Sizes.Sector ||
             EndianUtilities.toUInt32LittleEndian(header, 0) != HostedSparseExtentHeader.VmdkMagicNumber) {
-            s.setPosition(0);
+            s.position(0);
             descriptor = new DescriptorFile(s);
             if (access != FileAccess.Read) {
                 descriptor.setContentId(rng.nextInt());
-                s.setPosition(0);
+                s.position(0);
                 descriptor.write(s);
-                s.setLength(s.getPosition());
+                s.setLength(s.position());
             }
 
         } else {
@@ -909,9 +908,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 descriptor = new DescriptorFile(descriptorStream);
                 if (access != FileAccess.Read) {
                     descriptor.setContentId(rng.nextInt());
-                    descriptorStream.setPosition(0);
+                    descriptorStream.position(0);
                     descriptor.write(descriptorStream);
-                    byte[] blank = new byte[(int) (descriptorStream.getLength() - descriptorStream.getPosition())];
+                    byte[] blank = new byte[(int) (descriptorStream.getLength() - descriptorStream.position())];
                     descriptorStream.write(blank, 0, blank.length);
                 }
             }

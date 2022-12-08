@@ -70,7 +70,7 @@ public final class XfsFileSystem extends VfsFileSystemFacade implements IUnixFil
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] superblockData = StreamUtilities.readExact(stream, 264);
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);

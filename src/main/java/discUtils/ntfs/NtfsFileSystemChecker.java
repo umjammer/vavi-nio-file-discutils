@@ -114,7 +114,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         context = new NtfsContext();
         context.setRawStream(target);
         context.setOptions(new NtfsOptions());
-        context.getRawStream().setPosition(0);
+        context.getRawStream().position(0);
         byte[] bytes = StreamUtilities.readExact(context.getRawStream(), 512);
         context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
         context.setMft(new MasterFileTable(context));
@@ -128,7 +128,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
     }
 
     private void doCheck() {
-        context.getRawStream().setPosition(0);
+        context.getRawStream().position(0);
         byte[] bytes = StreamUtilities.readExact(context.getRawStream(), 512);
 
         context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
@@ -395,7 +395,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
              Bitmap bitmap = new Bitmap(bitmapStream, Long.MAX_VALUE)) {
 
             long index = 0;
-            while (mftStream.getPosition() < mftStream.getLength()) {
+            while (mftStream.position() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, recordLength);
 
                 String magic = EndianUtilities.bytesToString(recordData, 0, 4);
