@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +25,9 @@ import org.junit.jupiter.api.condition.EnabledIf;
 
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
+import vavix.util.Checksum;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -42,11 +47,15 @@ class DiscUtilsTest {
     @Property
     String discImage;
     @Property
+    int volumeNumber;
+    @Property
     String discImageDD;
     @Property
     String discImageNHD;
     @Property(name = "vhd")
     String discImageVHD;
+    @Property(name = "vdi")
+    String discImageVDI;
     @Property
     String discImageW10Reg = "src/test/resources/ntuser.dat";
 
@@ -61,7 +70,7 @@ class DiscUtilsTest {
     void test() throws Exception {
         URI uri = DuFileSystemProvider.createURI(discImage);
         Map<String, Object> env = new HashMap<>();
-        env.put("volumeNumber", 1);
+        env.put("volumeNumber", volumeNumber);
         FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, env);
 //        Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
         Files.list(fs.getRootDirectories().iterator().next()).forEach(p -> {
@@ -113,11 +122,44 @@ class DiscUtilsTest {
     }
 
     @Test
+    @DisplayName("vhd/fat16")
     void test5() throws Exception {
         String file = discImageVHD;
         URI uri = DuFileSystemProvider.createURI(file);
         FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Collections.emptyMap());
-        Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+        Files.walk(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+
+        Path from = fs.getPath("/WINDOWS/USER.DAT");
+        Path to = Paths.get("tmp").resolve(from.getFileName().toString());
+        if (!Files.exists(to.getParent())) {
+            Files.createDirectories(to.getParent());
+        }
+        Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
+        assertEquals(Files.size(from), Files.size(to));
+        assertEquals(Checksum.getChecksum(from), Checksum.getChecksum(to));
+        fs.close();
+    }
+
+    @Test
+    @DisplayName("vdi/fat16")
+    void test6() throws Exception {
+        String file = discImageVDI;
+        URI uri = DuFileSystemProvider.createURI(file);
+        FileSystem fs = new DuFileSystemProvider().newFileSystem(uri, Collections.emptyMap());
+
+        Files.walk(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+
+        Path from = fs.getPath("/WINDOWS/USER.DAT");
+        Path to = Paths.get("tmp").resolve(from.getFileName().toString());
+        if (!Files.exists(to.getParent())) {
+            Files.createDirectories(to.getParent());
+        }
+        Files.copy(from, to, StandardCopyOption.REPLACE_EXISTING);
+        Path original = Paths.get("../../vavi/vavi-apps-registryviewer/src/test/resources/user.dat");
+        assertEquals(Files.size(from), Files.size(to));
+        assertEquals(Files.size(original), Files.size(to));
+        assertEquals(Checksum.getChecksum(from), Checksum.getChecksum(to));
+        assertEquals(Checksum.getChecksum(original), Checksum.getChecksum(to));
         fs.close();
     }
 }

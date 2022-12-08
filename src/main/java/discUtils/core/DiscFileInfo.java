@@ -227,4 +227,11 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     public Stream openWrite() {
         return open(FileMode.Open, FileAccess.Write);
     }
+
+    @Override
+    public String toString() {
+        return "DiscFileInfo{" +
+                "path='" + path + '\'' +
+                '}';
+    }
 }

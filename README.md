@@ -31,8 +31,8 @@ https://jitpack.io/#umjammer/vavi-nio-file-discutils
 | EXT      | 🚧 (VDI) |      |          |      |      |    |       |       |       |        |                                                                                                                                          |
 | XFS      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
 | ISO      | 🚧       |        |          |      |      |    |       |       |       | ✅     |                                                                                                                                          |
-| VHD      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| VDI      | ✅        |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
+| VHD      | ✅ (fat16) |        | ✅ (fat16) |      |      |    |       |       |       |        | ~~🐛 subdir w/ fuse~~                                                                                                                 |
+| VDI      | ✅ (fat16) |        | ✅ (fat16) |      |      |    |       |       |       |        | ~~🐛 copy bytes slip out of place? w/ fuse~~                                                                                          |
 | XVA      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
 | VMDK     |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
 | DMG      | ✅        |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
@@ -161,3 +161,5 @@ Again, start browsing the file system at floppy.Root.
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
  * iso9660
    * `CommonVolumeDescriptor` as `user:attributes` 
+ * ~~registry~~
+ * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
