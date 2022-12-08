@@ -86,9 +86,10 @@ public abstract class VirtualDiskLayer implements Closeable {
     /**
      * Finalizes an instance of the VirtualDiskLayer class.
      */
-    protected void finalize() throws Throwable {
-        close();
-    }
+    // TODO finalizer called unexpected timing w/ fuse
+//    protected void finalize() throws Throwable {
+//        close();
+//    }
 
     /**
      * Gets the content of this layer.
