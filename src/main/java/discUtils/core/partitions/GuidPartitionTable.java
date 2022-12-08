@@ -80,7 +80,7 @@ public final class GuidPartitionTable extends PartitionTable {
     /**
      * Gets the unique GPT identifier for this disk.
      */
-    public UUID getDiskGuid() {
+    @Override public UUID getDiskGuid() {
         return primaryHeader.diskGuid;
     }
 
@@ -102,7 +102,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * Gets a collection of the partitions for storing Operating System
      * file-systems.
      */
-    public List<PartitionInfo> getPartitions() {
+    @Override public List<PartitionInfo> getPartitions() {
         return Collections.unmodifiableList(getAllEntries().stream().map(e -> new GuidPartitionInfo(this, e)).collect(Collectors.toList()));
     }
 
@@ -182,7 +182,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.
      */
-    public int create(WellKnownPartitionType type, boolean active) {
+    @Override public int create(WellKnownPartitionType type, boolean active) {
         List<GptEntry> allEntries = new ArrayList<>(getAllEntries());
         establishReservedPartition(allEntries);
         // Fill the rest of the disk with the requested partition
@@ -199,7 +199,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @return The index of the new partition.
      */
-    public int create(long size, WellKnownPartitionType type, boolean active) {
+    @Override public int create(long size, WellKnownPartitionType type, boolean active) {
         if (size < diskGeometry.getBytesPerSector()) {
             throw new IndexOutOfBoundsException("size must be at least one sector");
         }
@@ -224,7 +224,7 @@ public final class GuidPartitionTable extends PartitionTable {
      * @param alignment The alignment (in bytes).
      * @return The index of the partition.
      */
-    public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
         if (alignment % diskGeometry.getBytesPerSector() != 0) {
             throw new IllegalArgumentException("Alignment is not a multiple of the sector size");
         }
@@ -254,7 +254,7 @@ public final class GuidPartitionTable extends PartitionTable {
      *         with modern storage greater efficiency is achieved by aligning
      *         partitions on large values that are a power of two.
      */
-    public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
         if (size < diskGeometry.getBytesPerSector()) {
             throw new IndexOutOfBoundsException("size must be at least one sector");
         }
@@ -294,7 +294,7 @@ public final class GuidPartitionTable extends PartitionTable {
      *
      * @param index The index of the partition.
      */
-    public void delete(int index) {
+    @Override public void delete(int index) {
         int offset = getPartitionOffset(index);
         Arrays.fill(entryBuffer, offset, offset + primaryHeader.partitionEntrySize, (byte) 0);
         write();
@@ -466,7 +466,6 @@ public final class GuidPartitionTable extends PartitionTable {
             if (entry.lastUsedLogicalBlock > start && entry.firstUsedLogicalBlock <= end) {
                 end = entry.firstUsedLogicalBlock - 1;
             }
-
         }
         return end;
     }

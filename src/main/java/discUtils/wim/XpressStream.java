@@ -54,19 +54,19 @@ public class XpressStream extends Stream {
         buffer = buffer(count);
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return false;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return buffer.length;
     }
 
@@ -78,10 +78,10 @@ public class XpressStream extends Stream {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position > getLength()) {
             return 0;
         }
@@ -92,15 +92,15 @@ public class XpressStream extends Stream {
         return numToRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         throw new UnsupportedOperationException();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 

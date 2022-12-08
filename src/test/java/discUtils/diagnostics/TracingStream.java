@@ -186,35 +186,35 @@ public final class TracingStream extends Stream {
     /**
      * Gets an indication as to whether the stream can be read.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return wrapped.canRead();
     }
 
     /**
      * Gets an indication as to whether the stream position can be changed.
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return wrapped.canSeek();
     }
 
     /**
      * Gets an indication as to whether the stream can be written to.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return wrapped.canWrite();
     }
 
     /**
      * Flushes the stream.
      */
-    public void flush() {
+    @Override public void flush() {
         wrapped.flush();
     }
 
     /**
      * Gets the length of the stream.
      */
-    public long getLength() {
+    @Override public long getLength() {
         return wrapped.getLength();
     }
 
@@ -237,7 +237,7 @@ public final class TracingStream extends Stream {
      * @param count The number of bytes to read
      * @return The number of bytes read
      */
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         long position = wrapped.position();
         try {
             int result = wrapped.read(buffer, offset, count);
@@ -262,7 +262,7 @@ public final class TracingStream extends Stream {
      * @param origin The base location
      * @return The new absolute stream position
      */
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         return wrapped.seek(offset, origin);
     }
 
@@ -271,7 +271,7 @@ public final class TracingStream extends Stream {
      *
      * @param value The new length
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         wrapped.setLength(value);
     }
 
@@ -282,7 +282,7 @@ public final class TracingStream extends Stream {
      * @param offset The first byte to write from buffer
      * @param count The number of bytes to write
      */
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         long position = wrapped.position();
         try {
             wrapped.write(buffer, offset, count);

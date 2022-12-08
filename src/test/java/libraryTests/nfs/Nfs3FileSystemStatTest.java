@@ -45,7 +45,7 @@ public class Nfs3FileSystemStatTest {
         attributes.setFreeSpaceBytes(5);
         attributes.setInvariant(Duration.ofSeconds(7).toMillis());
         attributes.setTotalSizeBytes(8);
-        Nfs3FileSystemStat clone = null;
+        Nfs3FileSystemStat clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);

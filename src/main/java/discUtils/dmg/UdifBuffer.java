@@ -70,19 +70,19 @@ public class UdifBuffer extends Buffer {
         return blocks;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return sectorCount * Sizes.Sector;
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         int totalCopied = 0;
         long currentPos = pos;
         while (totalCopied < count && currentPos < getCapacity()) {
@@ -112,15 +112,15 @@ public class UdifBuffer extends Buffer {
         return totalCopied;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         List<StreamExtent> result = new ArrayList<>();
         StreamExtent lastRun = null;
         for (CompressedBlock block : getBlocks()) {

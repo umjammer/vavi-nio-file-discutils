@@ -255,6 +255,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the capacity of the disk (in bytes).
      */
+    @Override
     public long getCapacity() {
         return files.get(0).getItem1().getCapacity();
     }
@@ -266,6 +267,7 @@ public final class Disk extends VirtualDisk {
      * to the disk contents pass through a single stream instance. Set the
      * stream position before accessing the stream.
      */
+    @Override
     public SparseStream getContent() {
         if (content == null) {
             SparseStream stream = null;
@@ -281,6 +283,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the type of disk represented by this object.
      */
+    @Override
     public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
@@ -290,6 +293,7 @@ public final class Disk extends VirtualDisk {
      * meta-data about the disk format, for example whether the BIOS geometry is
      * preserved in the disk file.
      */
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo(files.get(files.size() - 1).getItem1().isSparse() ? "dynamic" : "fixed");
     }
@@ -297,6 +301,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the geometry of the disk.
      */
+    @Override
     public Geometry getGeometry() {
         return files.get(0).getItem1().getGeometry();
     }
@@ -304,6 +309,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the layers that make up the disk.
      */
+    @Override
     public List<VirtualDiskLayer> getLayers() {
         return files.stream().map(Tuple::getItem1).collect(Collectors.toList());
     }
@@ -447,6 +453,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
         FileLocator locator = new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
         DiskImageFile file = files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
@@ -459,6 +466,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
         FileLocator locator = new LocalFileLocator(Utilities.getDirectoryFromPath(path));
         DiskImageFile file = files.get(0).getItem1().createDifferencing(locator, Utilities.getFileFromPath(path));
@@ -480,6 +488,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Disposes of underlying resources.
      */
+    @Override
     public void close() throws IOException {
         try {
             if (content != null) {
@@ -512,7 +521,7 @@ public final class Disk extends VirtualDisk {
 
                     if (!newFile.getUniqueId().equals(file.getParentUniqueId())) {
                         newFile.close(); // TODO check
-Debug.println("close newFile");
+Debug.println("close newFile: " + newFile);
                         throw new IOException(String
                                 .format("Invalid disk chain found looking for parent with id %s, found %s with id %s",
                                         file.getParentUniqueId(),

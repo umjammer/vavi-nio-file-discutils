@@ -35,6 +35,7 @@ import dotnet4j.io.Stream;
 
 public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Directory, Context>
     implements IUnixFileSystem {
+
     private static final int XFS_ALLOC_AGFL_RESERVE = 4;
 
     private static final int BBSHIFT = 9;
@@ -71,21 +72,15 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         setRootDirectory(new Directory(context, context.getInode(superblock.getRootInode())));
     }
 
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "XFS";
     }
 
-    /**
-     *
-     */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return getContext().getSuperBlock().getFilesystemName();
     }
 
-    /**
-     *
-     */
-    protected File convertDirEntryToFile(DirEntry dirEntry) {
+    @Override protected File convertDirEntryToFile(DirEntry dirEntry) {
         if (dirEntry.isDirectory()) {
             if (dirEntry.getCachedDirectory() != null) {
                 return dirEntry.getCachedDirectory();
@@ -106,7 +101,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         SuperBlock superblock = getContext().getSuperBlock();
         long lsize = superblock.getLogstart() != 0 ? superblock.getLogBlocks() : 0;
         return (superblock.getDataBlocks() - lsize) * superblock.getBlocksize();
@@ -115,14 +110,14 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         return getSize() - getAvailableSpace();
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         SuperBlock superblock = getContext().getSuperBlock();
         long fdblocks = 0;
         for (AllocationGroup agf : getContext().getAllocationGroups()) {
@@ -143,7 +138,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         return (fdblocks - alloc_set_aside) * superblock.getBlocksize();
     }
 
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         throw new UnsupportedOperationException();
     }
 

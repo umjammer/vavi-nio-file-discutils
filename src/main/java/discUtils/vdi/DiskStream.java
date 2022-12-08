@@ -41,7 +41,6 @@ import dotnet4j.io.Stream;
 public class DiskStream extends SparseStream {
 
     private static final int BlockFree = 0xffffffff;
-
     private static final int BlockZero = 0xfffffffe;
 
     private boolean atEof;
@@ -69,22 +68,22 @@ public class DiskStream extends SparseStream {
         readBlockTable();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return fileStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
 
         long blockSize = fileHeader.blockSize;
@@ -110,7 +109,7 @@ public class DiskStream extends SparseStream {
         return extents;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return fileHeader.diskSize;
     }
@@ -128,11 +127,11 @@ public class DiskStream extends SparseStream {
 
     public BiConsumer<Object, Object[]> writeOccurred;
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (atEof || position > fileHeader.diskSize) {
@@ -173,7 +172,7 @@ public class DiskStream extends SparseStream {
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
@@ -191,12 +190,12 @@ public class DiskStream extends SparseStream {
         return position;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (!canWrite()) {
@@ -278,7 +277,7 @@ public class DiskStream extends SparseStream {
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         isDisposed = true;
         if (ownsStream == Ownership.Dispose && fileStream != null) {
             fileStream.close();

@@ -38,7 +38,7 @@ public class SizedDeflateStream extends DeflateStream {
         this.length = length;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -52,7 +52,7 @@ public class SizedDeflateStream extends DeflateStream {
         }
     }
 
-    public int read(byte[] array, int offset, int count) {
+    @Override public int read(byte[] array, int offset, int count) {
         int read = super.read(array, offset, count);
         position += read;
         return read;

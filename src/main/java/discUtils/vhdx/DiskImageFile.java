@@ -175,14 +175,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return metadata.getDiskSize();
     }
 
     /**
      * Gets the extent that comprises this file.
      */
-    public List<VirtualDiskExtent> getExtents() {
+    @Override public List<VirtualDiskExtent> getExtents() {
         List<VirtualDiskExtent> result = new ArrayList<>();
         result.add(new DiskExtent(this));
         return result;
@@ -191,7 +191,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the full path to this disk layer, or empty string.
      */
-    public String getFullPath() {
+    @Override public String getFullPath() {
         if (fileLocator != null && fileName != null) {
             return fileLocator.getFullPath(fileName);
         }
@@ -202,7 +202,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the geometry of the virtual disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return Geometry.fromCapacity(getCapacity(), metadata.getLogicalSectorSize());
     }
 
@@ -227,7 +227,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return true;
     }
 
@@ -378,16 +378,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            stream.
      * @return The new content stream.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         return doOpenContent(parent, ownsParent);
     }
 
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return lsit of candidate file locations.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return getParentLocations(fileLocator);
     }
 
@@ -395,7 +395,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the location of the parent file, given a base path.
      *
      * @param basePath The full path to this file.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     public List<String> getParentLocations(String basePath) {
         return getParentLocations(new LocalFileLocator(basePath));
@@ -457,9 +457,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Disposes of underlying resources.
      *
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (logicalStream != fileStream && logicalStream != null) {
             logicalStream.close();
         }
@@ -778,7 +778,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the locations of the parent file.
      *
      * @param fileLocator The file locator to use.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     private List<String> getParentLocations(FileLocator fileLocator) {
         if (!needsParent()) {

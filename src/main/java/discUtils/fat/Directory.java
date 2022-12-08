@@ -391,7 +391,7 @@ public class Directory implements Closeable {
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         dirStream.close();
     }
 

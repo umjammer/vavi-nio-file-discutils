@@ -188,11 +188,11 @@ public class ExtentData extends BaseItem {
         logicalSize = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return getType() == ExtentDataType.Inline ? getInlineData().length + 0x15 : 0x35;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         generation = EndianUtilities.toUInt64LittleEndian(buffer, offset);
         decodedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
         compression = ExtentDataCompression.values()[buffer[offset + 0x10]];

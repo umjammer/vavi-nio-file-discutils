@@ -113,26 +113,26 @@ public abstract class CommonSparseExtentStream extends MappedStream {
      */
     protected int[] redundantGlobalDirectory;
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return fileStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return getExtentsInRange(0, getLength());
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return header.capacity * Sizes.Sector;
     }
@@ -148,11 +148,11 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         atEof = false;
     }
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (position > getLength()) {
@@ -207,13 +207,13 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return totalRead;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
 
         throw new UnsupportedOperationException();
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
 
         long effectiveOffset = offset;
@@ -232,7 +232,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return position;
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
 
         long maxCount = Math.min(getLength(), start + count) - start;
@@ -248,7 +248,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return result;
     }
 
-    public List<StreamExtent> mapContent(long start, long length) {
+    @Override public List<StreamExtent> mapContent(long start, long length) {
         checkDisposed();
 
         List<StreamExtent> result = new ArrayList<>();
@@ -282,7 +282,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return result;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsFileStream == Ownership.Dispose && fileStream != null) {
             fileStream.close();
         }
@@ -425,5 +425,4 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
         return Math.min(pos, maxPos);
     }
-
 }

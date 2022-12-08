@@ -93,35 +93,35 @@ final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Dir
         setRootDirectory(new Directory(dirEntry, context));
     }
 
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "btrfs";
     }
 
     /**
      * 
      */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return getContext().getSuperBlock().getLabel();
     }
 
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         return getContext().getSuperBlock().getTotalBytes();
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         return getContext().getSuperBlock().getBytesUsed();
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         return getSize() - getUsedSpace();
     }
 
@@ -138,7 +138,7 @@ final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Dir
         return result.toArray(new Subvolume[0]);
     }
 
-    protected File convertDirEntryToFile(DirEntry dirEntry) {
+    @Override protected File convertDirEntryToFile(DirEntry dirEntry) {
         if (dirEntry.isDirectory()) {
             if (dirEntry.getCachedDirectory() != null) {
                 return dirEntry.getCachedDirectory();
@@ -155,7 +155,7 @@ final class VfsBtrfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Dir
         }
     }
 
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         throw new UnsupportedOperationException();
     }
 }

@@ -83,7 +83,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     /**
      * Provides a friendly description of the file system type.
      */
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "Microsoft WIM";
     }
 
@@ -93,7 +93,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    public RawSecurityDescriptor getSecurity(String path) {
+    @Override public RawSecurityDescriptor getSecurity(String path) {
         int id = getEntry(path).securityId;
         if (id == 0xffff_ffff) {
             return null;
@@ -114,7 +114,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
+    @Override public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
         throw new UnsupportedOperationException();
     }
 
@@ -124,7 +124,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file to query.
      * @return The reparse point information.
      */
-    public ReparsePoint getReparsePoint(String path) {
+    @Override public ReparsePoint getReparsePoint(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         ShortResourceHeader hdr = file.locateResource(dirEntry.hash);
         if (hdr == null) {
@@ -146,7 +146,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file to set the reparse point on.
      * @param reparsePoint The new reparse point.
      */
-    public void setReparsePoint(String path, ReparsePoint reparsePoint) {
+    @Override public void setReparsePoint(String path, ReparsePoint reparsePoint) {
         throw new UnsupportedOperationException();
     }
 
@@ -157,7 +157,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path to the file or directory to remove the reparse point
      *            from.
      */
-    public void removeReparsePoint(String path) {
+    @Override public void removeReparsePoint(String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -170,7 +170,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      *         method repeatedly, once for each path segment. If there is no
      *         short name for the given path, {@code null} is returned.
      */
-    public String getShortName(String path) {
+    @Override public String getShortName(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         return dirEntry.shortName;
     }
@@ -181,7 +181,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The full path to the file or directory to change.
      * @param shortName The shortName, which should not include a path.
      */
-    public void setShortName(String path, String shortName) {
+    @Override public void setShortName(String path, String shortName) {
         throw new UnsupportedOperationException();
     }
 
@@ -191,7 +191,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The full path to the file or directory to query.
      * @return The standard file information.
      */
-    public WindowsFileInformation getFileStandardInformation(String path) {
+    @Override public WindowsFileInformation getFileStandardInformation(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         WindowsFileInformation wfi = new WindowsFileInformation();
         wfi.setCreationTime(DateUtil.fromFileTime(dirEntry.creationTime));
@@ -209,7 +209,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The full path to the file or directory to query.
      * @param info The standard file information.
      */
-    public void setFileStandardInformation(String path, WindowsFileInformation info) {
+    @Override public void setFileStandardInformation(String path, WindowsFileInformation info) {
         throw new UnsupportedOperationException();
     }
 
@@ -221,7 +221,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      *         the contents of the alternate streams, use OpenFile(path + ":" +
      *         name, ...).
      */
-    public List<String> getAlternateDataStreams(String path) {
+    @Override public List<String> getAlternateDataStreams(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         List<String> names = new ArrayList<>();
         if (dirEntry.alternateStreams != null) {
@@ -244,7 +244,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      *         -1 indicates no unique identifier is available, and so it can be
      *         assumed the file has no hard links.
      */
-    public long getFileId(String path) {
+    @Override public long getFileId(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         return dirEntry.hardLink == 0 ? -1 : (long) dirEntry.hardLink;
     }
@@ -255,7 +255,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file to inspect.
      * @return {@code true} if the file has other names, else {@code false} .
      */
-    public boolean hasHardLinks(String path) {
+    @Override public boolean hasHardLinks(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         return dirEntry.hardLink != 0;
     }
@@ -266,7 +266,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path to test.
      * @return true if the directory exists.
      */
-    public boolean directoryExists(String path) {
+    @Override public boolean directoryExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         return dirEntry != null && dirEntry.attributes.contains(FileAttributes.Directory);
     }
@@ -277,7 +277,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path to test.
      * @return true if the file exists.
      */
-    public boolean fileExists(String path) {
+    @Override public boolean fileExists(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         return dirEntry != null && !dirEntry.attributes.contains(FileAttributes.Directory);
     }
@@ -290,9 +290,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
-    public List<String> getDirectories(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> dirs = new ArrayList<>();
         doSearch(dirs, path, re, searchOption.equals("AllDirectories"), true, false);
@@ -307,9 +307,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
-    public List<String> getFiles(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getFiles(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> results = new ArrayList<>();
         doSearch(results, path, re, searchOption.equals("AllDirectories"), false, true);
@@ -320,9 +320,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path) {
+    @Override public List<String> getFileSystemEntries(String path) {
         DirectoryEntry parentDirEntry = getEntry(path);
         if (parentDirEntry == null) {
             throw new FileNotFoundException(String.format("The directory '%s' does not exist", path));
@@ -338,9 +338,9 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path, String searchPattern) {
+    @Override public List<String> getFileSystemEntries(String path, String searchPattern) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         DirectoryEntry parentDirEntry = getEntry(path);
         if (parentDirEntry == null) {
@@ -366,7 +366,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
-    public SparseStream openFile(String path, FileMode mode, FileAccess access) {
+    @Override public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         if (mode != FileMode.Open && mode != FileMode.OpenOrCreate) {
             throw new UnsupportedOperationException("No write support for WIM files");
         }
@@ -394,7 +394,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
-    public Map<String, Object> getAttributes(String path) {
+    @Override public Map<String, Object> getAttributes(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("No such file or directory " + path);
@@ -409,7 +409,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path of the file or directory.
      * @return The creation time.
      */
-    public long getCreationTimeUtc(String path) {
+    @Override public long getCreationTimeUtc(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("No such file or directory " + path);
@@ -424,7 +424,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path of the file or directory.
      * @return The last access time.
      */
-    public long getLastAccessTimeUtc(String path) {
+    @Override public long getLastAccessTimeUtc(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("No such file or directory " + path);
@@ -439,7 +439,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path of the file or directory.
      * @return The last write time.
      */
-    public long getLastWriteTimeUtc(String path) {
+    @Override public long getLastWriteTimeUtc(String path) {
         DirectoryEntry dirEntry = getEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("No such file or directory " + path);
@@ -454,7 +454,7 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
      * @param path The path to the file.
      * @return The length in bytes.
      */
-    public long getFileLength(String path) {
+    @Override public long getFileLength(String path) {
         String[] filePart = new String[1];
         String[] altStreamPart = new String[1];
         splitFileName(path, filePart, altStreamPart);
@@ -492,28 +492,28 @@ public class WimFileSystem extends ReadOnlyDiscFileSystem implements IWindowsFil
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         try {
             metaDataStream.close();
             metaDataStream = null;

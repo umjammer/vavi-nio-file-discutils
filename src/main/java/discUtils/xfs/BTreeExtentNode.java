@@ -65,11 +65,11 @@ public class BTreeExtentNode extends BTreeExtentHeader {
         children = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return super.size() + (getNumberOfRecords() * 0x8);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         offset += super.readFrom(buffer, offset);
         if (getLevel() == 0)
             throw new IOException("invalid B+tree level - expected >= 1");
@@ -86,7 +86,7 @@ public class BTreeExtentNode extends BTreeExtentHeader {
         return size();
     }
 
-    public void loadBtree(Context context) {
+    @Override public void loadBtree(Context context) {
         children = new HashMap<>(getNumberOfRecords());
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BTreeExtentHeader child;
@@ -108,10 +108,7 @@ public class BTreeExtentNode extends BTreeExtentHeader {
         }
     }
 
-    /**
-     *
-     */
-    public List<Extent> getExtents() {
+    @Override public List<Extent> getExtents() {
         List<Extent> result = new ArrayList<>();
         for (Map.Entry<Long, BTreeExtentHeader> child : children.entrySet()) {
             result.addAll(child.getValue().getExtents());

@@ -44,14 +44,11 @@ public class Nfs3GetAttributesResultTest {
         Nfs3GetAttributesResult result = new Nfs3GetAttributesResult();
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
         attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         result.setAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
         Nfs3GetAttributesResult clone = null;

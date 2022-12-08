@@ -56,25 +56,25 @@ public class DiskStream extends SparseStream {
 
     private boolean canRead;
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return canRead;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
     private boolean canWrite;
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return canWrite;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, length));
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -86,10 +86,10 @@ public class DiskStream extends SparseStream {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (!canRead()) {
             throw new UnsupportedOperationException("Attempt to read from read-only stream");
         }
@@ -105,7 +105,7 @@ public class DiskStream extends SparseStream {
         return numCopied;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -121,11 +121,11 @@ public class DiskStream extends SparseStream {
         return position;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         if (!canWrite()) {
             throw new IOException("Attempt to write to read-only stream");
         }

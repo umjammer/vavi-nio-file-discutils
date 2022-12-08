@@ -50,7 +50,7 @@ public class PositionWrappingStream extends WrappingStream {
         seek(value, SeekOrigin.Begin);
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         if (super.canSeek()) {
             return super.seek(offset, SeekOrigin.Current);
         }
@@ -80,17 +80,17 @@ public class PositionWrappingStream extends WrappingStream {
         return position;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int read = super.read(buffer, offset, count);
         position += read;
         return read;
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         super.write(buffer, offset, count);
         position += count;
     }

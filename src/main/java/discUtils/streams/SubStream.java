@@ -66,18 +66,22 @@ public class SubStream extends MappedStream {
         }
     }
 
+    @Override
     public boolean canRead() {
         return parent.canRead();
     }
 
+    @Override
     public boolean canSeek() {
         return parent.canSeek();
     }
 
+    @Override
     public boolean canWrite() {
         return parent.canWrite();
     }
 
+    @Override
     public List<StreamExtent> getExtents() {
         if (parent instanceof SparseStream) {
             return offsetExtents(((SparseStream) parent).getExtentsInRange(first, length));
@@ -85,14 +89,17 @@ public class SubStream extends MappedStream {
         return Collections.singletonList(new StreamExtent(0, length));
     }
 
+    @Override
     public long getLength() {
         return length;
     }
 
+    @Override
     public long position() {
         return position;
     }
 
+    @Override
     public void position(long value) {
         if (value <= length) {
             position = value;
@@ -101,14 +108,17 @@ public class SubStream extends MappedStream {
         }
     }
 
+    @Override
     public List<StreamExtent> mapContent(long start, long length) {
         return Collections.singletonList(new StreamExtent(start + first, length));
     }
 
+    @Override
     public void flush() {
         parent.flush();
     }
 
+    @Override
     public int read(byte[] buffer, int offset, int count) {
         if (count < 0) {
             throw new IllegalArgumentException("count: Attempt to read negative bytes");
@@ -125,6 +135,7 @@ public class SubStream extends MappedStream {
         return numRead;
     }
 
+    @Override
     public long seek(long offset, SeekOrigin origin) {
         long absNewPos = offset;
         if (origin == SeekOrigin.Current) {
@@ -141,10 +152,12 @@ public class SubStream extends MappedStream {
         return position;
     }
 
+    @Override
     public void setLength(long value) {
         throw new UnsupportedOperationException("Attempt to change length of a substream");
     }
 
+    @Override
     public void write(byte[] buffer, int offset, int count) {
         if (count < 0) {
             throw new IllegalArgumentException("count: Attempt to write negative bytes");
@@ -159,6 +172,7 @@ public class SubStream extends MappedStream {
         position += count;
     }
 
+    @Override
     public void close() throws IOException {
         if (ownsParent == Ownership.Dispose) {
             parent.close();

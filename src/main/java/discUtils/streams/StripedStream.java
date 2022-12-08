@@ -68,25 +68,25 @@ public class StripedStream extends SparseStream {
         length = subStreamLength * wrapped.size();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return canRead;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return canWrite;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, length));
     }
 
     // Temporary, indicate there are no 'unstored' extents.
     // Consider combining extent information from all wrapped streams in future.
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -98,13 +98,13 @@ public class StripedStream extends SparseStream {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
         for (SparseStream stream : wrapped) {
             stream.flush();
         }
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (!canRead()) {
             throw new UnsupportedOperationException("Attempt to read to non-readable stream");
         }
@@ -126,7 +126,7 @@ public class StripedStream extends SparseStream {
         return totalRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -142,14 +142,13 @@ public class StripedStream extends SparseStream {
         return position;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         if (value != length) {
             throw new UnsupportedOperationException("Changing the stream length is not permitted for striped streams");
         }
-
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         if (!canWrite()) {
             throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
@@ -173,7 +172,7 @@ public class StripedStream extends SparseStream {
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsWrapped == Ownership.Dispose && wrapped != null) {
             for (SparseStream stream : wrapped) {
                 stream.close();

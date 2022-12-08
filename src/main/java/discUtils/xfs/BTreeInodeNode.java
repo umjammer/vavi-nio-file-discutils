@@ -64,7 +64,7 @@ public class BTreeInodeNode extends BtreeHeader {
         children = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return super.size() + (getNumberOfRecords() * 0x8);
     }
 
@@ -72,7 +72,7 @@ public class BTreeInodeNode extends BtreeHeader {
         super(superBlockVersion);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
         offset += super.size();
         if (getLevel() == 0)
@@ -89,7 +89,7 @@ public class BTreeInodeNode extends BtreeHeader {
         return size();
     }
 
-    public void loadBtree(AllocationGroup ag) {
+    @Override public void loadBtree(AllocationGroup ag) {
         children = new HashMap<>(getNumberOfRecords());
         for (int i = 0; i < getNumberOfRecords(); i++) {
             BtreeHeader child;

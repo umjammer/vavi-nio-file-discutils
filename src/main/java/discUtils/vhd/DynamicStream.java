@@ -116,45 +116,54 @@ public class DynamicStream extends MappedStream {
         }
     }
 
+    @Override
     public boolean canRead() {
         checkDisposed();
         return true;
     }
 
+    @Override
     public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
+    @Override
     public boolean canWrite() {
         checkDisposed();
         return fileStream.canWrite();
     }
 
+    @Override
     public List<StreamExtent> getExtents() {
         return getExtentsInRange(0, getLength());
     }
 
+    @Override
     public long getLength() {
         checkDisposed();
         return length;
     }
 
+    @Override
     public long position() {
         checkDisposed();
         return position;
     }
 
+    @Override
     public void position(long value) {
         checkDisposed();
         atEof = false;
         position = value;
     }
 
+    @Override
     public void flush() {
         checkDisposed();
     }
 
+    @Override
     public List<StreamExtent> mapContent(long start, long length) {
         List<StreamExtent> result = new ArrayList<>();
         long position = start;
@@ -219,6 +228,7 @@ public class DynamicStream extends MappedStream {
         return result;
     }
 
+    @Override
     public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (atEof || position > length) {
@@ -289,6 +299,7 @@ public class DynamicStream extends MappedStream {
         return numRead;
     }
 
+    @Override
     public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
@@ -307,11 +318,13 @@ public class DynamicStream extends MappedStream {
         return position;
     }
 
+    @Override
     public void setLength(long value) {
         checkDisposed();
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (!canWrite()) {
@@ -386,6 +399,7 @@ public class DynamicStream extends MappedStream {
         atEof = false;
     }
 
+    @Override
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
         long maxCount = Math.min(getLength(), start + count) - start;
@@ -399,6 +413,7 @@ public class DynamicStream extends MappedStream {
         return result;
     }
 
+    @Override
     public void close() throws IOException {
         updateFooter();
         if (ownsParentStream == Ownership.Dispose && parentStream != null) {

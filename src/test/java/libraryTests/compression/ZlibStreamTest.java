@@ -71,9 +71,7 @@ public class ZlibStreamTest {
         }
 
         compressedStream.seek(-2, SeekOrigin.End);
-        compressedStream.write(new byte[] {
-            0, 0
-        }, 0, 2);
+        compressedStream.write(new byte[] {0, 0}, 0, 2);
 
         compressedStream.position(0);
         assertThrows(IOException.class, () -> {

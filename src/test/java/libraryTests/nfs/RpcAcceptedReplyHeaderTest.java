@@ -46,7 +46,7 @@ public class RpcAcceptedReplyHeaderTest {
         header.mismatchInfo = info;
 
         header.verifier = new RpcAuthentication();
-        RpcAcceptedReplyHeader clone = null;
+        RpcAcceptedReplyHeader clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             header.write(writer);

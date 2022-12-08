@@ -46,19 +46,19 @@ public class HashStreamDotnet extends Stream {
         this.hashAlg = hashAlg;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return wrapped.canRead();
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return wrapped.canSeek();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return wrapped.canWrite();
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return wrapped.getLength();
     }
 
@@ -70,11 +70,11 @@ public class HashStreamDotnet extends Stream {
         wrapped.position(value);
     }
 
-    public void flush() {
+    @Override public void flush() {
         wrapped.flush();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position() != hashPos) {
             throw new UnsupportedOperationException("Reads must be contiguous");
         }
@@ -87,19 +87,19 @@ public class HashStreamDotnet extends Stream {
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         return wrapped.seek(offset, origin);
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         wrapped.setLength(value);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         wrapped.write(buffer, offset, count);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownWrapped == Ownership.Dispose && wrapped != null) {
             wrapped.close();
             wrapped = null;

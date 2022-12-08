@@ -61,7 +61,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the size of the disk's logical blocks (in bytes).
      */
-    public int getBlockSize() {
+    @Override public int getBlockSize() {
         if (capacity == null) {
             capacity = session.getCapacity(lun);
         }
@@ -72,7 +72,7 @@ public class Disk extends VirtualDisk {
     /**
      * The capacity of the disk.
      */
-    public long getCapacity() {
+    @Override public long getCapacity() {
         if (capacity == null) {
             capacity = session.getCapacity(lun);
         }
@@ -83,7 +83,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets a stream that provides access to the disk's content.
      */
-    public SparseStream getContent() {
+    @Override public SparseStream getContent() {
         if (stream == null) {
             stream = new DiskStream(session, lun, access);
         }
@@ -94,7 +94,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the type of disk represented by this object.
      */
-    public VirtualDiskClass getDiskClass() {
+    @Override public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
 
@@ -104,14 +104,14 @@ public class Disk extends VirtualDisk {
      * example whether the
      * BIOS geometry is preserved in the disk file.
      */
-    public VirtualDiskTypeInfo getDiskTypeInfo() {
+    @Override public VirtualDiskTypeInfo getDiskTypeInfo() {
         return new VirtualDiskTypeInfo();
     }
 
     /**
      * The Geometry of the disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         // We detect the geometry (which will return a sensible default if the disk has no partitions).
         // We don't rely on asking the iSCSI target for the geometry because frequently values are returned
         // that are not valid as BIOS disk geometries.
@@ -125,7 +125,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the disk layers that constitute the disk.
      */
-    public List<VirtualDiskLayer> getLayers() {
+    @Override public List<VirtualDiskLayer> getLayers() {
         return Collections.emptyList();
     }
 
@@ -136,7 +136,7 @@ public class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
-    public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
+    @Override public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOperationException("Differencing disks not supported for iSCSI disks");
     }
 
@@ -146,7 +146,7 @@ public class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
-    public VirtualDisk createDifferencingDisk(String path) {
+    @Override public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOperationException("Differencing disks not supported for iSCSI disks");
     }
 }

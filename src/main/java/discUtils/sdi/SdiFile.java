@@ -98,7 +98,7 @@ public final class SdiFile implements Closeable {
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownership == Ownership.Dispose && stream != null) {
             stream.close();
             stream = null;

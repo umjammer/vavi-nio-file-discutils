@@ -57,7 +57,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
         MemoryStream descriptorStream = new MemoryStream();
         descriptor.write(descriptorStream);
@@ -153,7 +153,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             this.gtesPerGt = gtesPerGt;
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             data = new byte[(int) getLength()];
             for (int i = 0; i < numGrainTables; ++i) {
                 EndianUtilities.writeBytesLittleEndian(
@@ -164,7 +164,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             }
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             data = null;
         }
     }
@@ -191,7 +191,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             this.dataStart = dataStart;
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             data = new byte[gtesPerGt * 4];
             long gtSpan = gtesPerGt * grainSize * Sizes.Sector;
             long sectorsAllocated = 0;
@@ -205,7 +205,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             }
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             data = null;
         }
     }
@@ -236,14 +236,14 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             this.grainSize = grainSize;
         }
 
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
             if (content != null && contentOwnership != Ownership.Dispose) {
                 content.close();
                 content = null;
             }
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             long outputGrain = 0;
             grainMapOffsets = new int[(int) (getLength() / (grainSize * Sizes.Sector))];
             grainMapRanges = new Range[grainMapOffsets.length];
@@ -256,7 +256,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             }
         }
 
-        public int read(long diskOffset, byte[] block, int offset, int count) {
+        @Override public int read(long diskOffset, byte[] block, int offset, int count) {
             long start = diskOffset - getStart();
             long grainSizeBytes = grainSize * Sizes.Sector;
             long outputGrain = start / grainSizeBytes;

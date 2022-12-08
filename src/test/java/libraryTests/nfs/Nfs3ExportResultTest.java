@@ -25,15 +25,14 @@ package libraryTests.nfs;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3Export;
 import discUtils.nfs.Nfs3ExportResult;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3ExportResultTest {
@@ -42,9 +41,9 @@ public class Nfs3ExportResultTest {
         Nfs3ExportResult result = new Nfs3ExportResult();
         Nfs3Export export = new Nfs3Export();
         export.setDirPath("export");
-        export.setGroups(Arrays.asList("GroupA","GroupB"));
+        export.setGroups(Arrays.asList("GroupA", "GroupB"));
         result.setExports(Collections.singletonList(export));
-      Nfs3ExportResult clone = null;
+        Nfs3ExportResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

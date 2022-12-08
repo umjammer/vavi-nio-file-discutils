@@ -130,7 +130,7 @@ public final class VirtualMachine implements Closeable {
     /**
      * Disposes of this object, freeing any owned resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownership == Ownership.Dispose && fileStream != null) {
             fileStream.close();
             fileStream = null;

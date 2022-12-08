@@ -161,7 +161,7 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Gets the friendly name for the file system.
      */
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "Microsoft NTFS";
     }
 
@@ -175,7 +175,7 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Gets the volume label.
      */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         File volumeFile = getFile(MasterFileTable.VolumeIndex);
         NtfsStream volNameStream = volumeFile.getStream(AttributeType.VolumeName, null);
         return volNameStream.getContent(VolumeName.class).getName();
@@ -184,7 +184,7 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Indicates if the file system supports write operations.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         // For now, we don't...
         return !context.getReadOnly();
     }
@@ -192,14 +192,14 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Gets the size of each cluster (in bytes).
      */
-    public long getClusterSize() {
+    @Override public long getClusterSize() {
         return context.getBiosParameterBlock().getBytesPerCluster();
     }
 
     /**
      * Gets the total number of clusters managed by the file system.
      */
-    public long getTotalClusters() {
+    @Override public long getTotalClusters() {
         return MathUtilities.ceil(context.getBiosParameterBlock().totalSectors64,
                                   context.getBiosParameterBlock().getSectorsPerCluster());
     }
@@ -213,7 +213,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param overwrite Whether to permit over-writing of an existing file.
      */
     @SuppressWarnings("incomplete-switch")
-    public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
+    @Override public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceFile));
             if (sourceParentDirEntry == null || !sourceParentDirEntry.isDirectory()) {
@@ -295,7 +295,7 @@ Debug.println(Level.FINE, volumeInfo);
      *
      * @param path The path of the new directory.
      */
-    public void createDirectory(String path) {
+    @Override public void createDirectory(String path) {
         createDirectory(path, null);
     }
 
@@ -304,7 +304,7 @@ Debug.println(Level.FINE, volumeInfo);
      *
      * @param path The path of the directory to delete.
      */
-    public void deleteDirectory(String path) {
+    @Override public void deleteDirectory(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             if (path == null || path.isEmpty()) {
                 throw new dotnet4j.io.IOException("Unable to delete root directory");
@@ -343,7 +343,7 @@ Debug.println(Level.FINE, volumeInfo);
      *
      * @param path The path of the file to delete.
      */
-    public void deleteFile(String path) {
+    @Override public void deleteFile(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             String[] attributeName = new String[1];
             AttributeType[] attributeType = new AttributeType[1];
@@ -391,7 +391,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to test.
      * @return true if the directory exists.
      */
-    public boolean directoryExists(String path) {
+    @Override public boolean directoryExists(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             // Special case - root directory
             if (path == null || path.isEmpty()) {
@@ -409,7 +409,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to test.
      * @return true if the file exists.
      */
-    public boolean fileExists(String path) {
+    @Override public boolean fileExists(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             return dirEntry != null && !dirEntry.getDetails().getFileAttributes().contains(FileAttributes.Directory);
@@ -424,9 +424,9 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
-    public List<String> getDirectories(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             List<String> dirs = new ArrayList<>();
@@ -443,9 +443,9 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
-    public List<String> getFiles(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getFiles(String path, String searchPattern, String searchOption) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
             List<String> results = new ArrayList<>();
@@ -458,9 +458,9 @@ Debug.println(Level.FINE, volumeInfo);
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories.
+     * @return list of files and subdirectories.
      */
-    public List<String> getFileSystemEntries(String path) {
+    @Override public List<String> getFileSystemEntries(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry parentDirEntry = getDirectoryEntry(path);
             if (parentDirEntry == null) {
@@ -478,9 +478,9 @@ Debug.println(Level.FINE, volumeInfo);
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path, String searchPattern) {
+    @Override public List<String> getFileSystemEntries(String path, String searchPattern) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             // TODO: Be smarter, use the B*Tree for better performance when the
             // start of the
@@ -508,7 +508,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
-    public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
+    @Override public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         try (NtfsTransaction c1 = new NtfsTransaction()) {
             try (NtfsTransaction c2 = new NtfsTransaction()) {
                 DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceDirectoryName));
@@ -550,7 +550,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
      */
-    public void moveFile(String sourceName, String destinationName, boolean overwrite) {
+    @Override public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry sourceParentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(sourceName));
             if (sourceParentDirEntry == null || !sourceParentDirEntry.isDirectory()) {
@@ -600,7 +600,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param access The access permissions for the returned stream.
      * @return The new stream.
      */
-    public SparseStream openFile(String path, FileMode mode, FileAccess access) {
+    @Override public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         return openFile(path, mode, access, null);
     }
 
@@ -610,7 +610,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
-    public Map<String, Object> getAttributes(String path) {
+    @Override public Map<String, Object> getAttributes(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -627,7 +627,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public void setAttributes(String path, Map<String, Object> newValue) {
+    @Override public void setAttributes(String path, Map<String, Object> newValue) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -697,7 +697,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path of the file or directory.
      * @return The creation time.
      */
-    public long getCreationTimeUtc(String path) {
+    @Override public long getCreationTimeUtc(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -714,7 +714,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setCreationTimeUtc(String path, long newTime) {
+    @Override public void setCreationTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             updateStandardInformation(path, si -> si.creationTime = newTime);
         }
@@ -726,7 +726,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path of the file or directory.
      * @return The last access time.
      */
-    public long getLastAccessTimeUtc(String path) {
+    @Override public long getLastAccessTimeUtc(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -743,7 +743,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastAccessTimeUtc(String path, long newTime) {
+    @Override public void setLastAccessTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             updateStandardInformation(path, si -> si.lastAccessTime = newTime);
         }
@@ -755,7 +755,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path of the file or directory.
      * @return The last write time.
      */
-    public long getLastWriteTimeUtc(String path) {
+    @Override public long getLastWriteTimeUtc(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -772,7 +772,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastWriteTimeUtc(String path, long newTime) {
+    @Override public void setLastWriteTimeUtc(String path, long newTime) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             updateStandardInformation(path, si -> si.modificationTime = newTime);
         }
@@ -784,7 +784,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to the file.
      * @return The length in bytes.
      */
-    public long getFileLength(String path) {
+    @Override public long getFileLength(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             String[] attributeName = new String[1];
             AttributeType[] attributeType = new AttributeType[1];
@@ -820,7 +820,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param cluster The cluster to convert.
      * @return The corresponding absolute byte position.
      */
-    public long clusterToOffset(long cluster) {
+    @Override public long clusterToOffset(long cluster) {
         return cluster * getClusterSize();
     }
 
@@ -844,7 +844,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to inspect.
      * @return The clusters as a list of cluster ranges.
      */
-    public List<Range> pathToClusters(String path) {
+    @Override public List<Range> pathToClusters(String path) {
         String[] plainPath = new String[1];
         String[] attributeName = new String[1];
         splitPath(path, plainPath, attributeName);
@@ -876,7 +876,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @return The file extents, as absolute byte positions in the underlying
      *         stream.
      */
-    public List<StreamExtent> pathToExtents(String path) {
+    @Override public List<StreamExtent> pathToExtents(String path) {
         String[] plainPath = new String[1];
         String[] attributeName = new String[1];
         splitPath(path, plainPath, attributeName);
@@ -899,7 +899,7 @@ Debug.println(Level.FINE, volumeInfo);
      *
      * @return The cluster map.
      */
-    public ClusterMap buildClusterMap() {
+    @Override public ClusterMap buildClusterMap() {
         return context.getMft().getClusterMap();
     }
 
@@ -908,7 +908,7 @@ Debug.println(Level.FINE, volumeInfo);
      *
      * @return The boot code, or {@code null} if not available.
      */
-    public byte[] readBootCode() {
+    @Override public byte[] readBootCode() {
         try (Stream s = openFile(FS + "$Boot", FileMode.Open)) {
             return StreamUtilities.readExact(s, (int) s.getLength());
         } catch (IOException e) {
@@ -923,7 +923,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param linePrefix The indent to apply to the start of each line of
      *            output.
      */
-    public void dump(PrintWriter writer, String linePrefix) {
+    @Override public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "NTFS File System Dump");
         writer.println(linePrefix + "=====================");
 
@@ -987,7 +987,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file to inspect.
      * @return {@code true} if the file has other names, else {@code false} .
      */
-    public boolean hasHardLinks(String path) {
+    @Override public boolean hasHardLinks(String path) {
         return getHardLinkCount(path) > 1;
     }
 
@@ -997,7 +997,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file or directory to inspect.
      * @return The security descriptor.
      */
-    public RawSecurityDescriptor getSecurity(String path) {
+    @Override public RawSecurityDescriptor getSecurity(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1014,7 +1014,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file or directory to change.
      * @param securityDescriptor The new security descriptor.
      */
-    public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
+    @Override public void setSecurity(String path, RawSecurityDescriptor securityDescriptor) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1034,7 +1034,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file to set the reparse point on.
      * @param reparsePoint The new reparse point.
      */
-    public void setReparsePoint(String path, ReparsePoint reparsePoint) {
+    @Override public void setReparsePoint(String path, ReparsePoint reparsePoint) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1095,7 +1095,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The file to query.
      * @return The reparse point information.
      */
-    public ReparsePoint getReparsePoint(String path) {
+    @Override public ReparsePoint getReparsePoint(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1126,7 +1126,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to the file or directory to remove the reparse point
      *            from.
      */
-    public void removeReparsePoint(String path) {
+    @Override public void removeReparsePoint(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1155,7 +1155,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The path to convert.
      * @return The short name.
      */
-    public String getShortName(String path) {
+    @Override public String getShortName(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             String parentPath = Utilities.getDirectoryFromPath(path);
             DirectoryEntry parentEntry = getDirectoryEntry(parentPath);
@@ -1198,7 +1198,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The full path to the file or directory to change.
      * @param shortName The shortName, which should not include a path.
      */
-    public void setShortName(String path, String shortName) {
+    @Override public void setShortName(String path, String shortName) {
         if (!Utilities.is8Dot3(shortName)) {
             throw new IllegalArgumentException("Short name is not a valid 8.3 file name");
         }
@@ -1255,7 +1255,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The full path to the file or directory to query.
      * @return The standard file information.
      */
-    public WindowsFileInformation getFileStandardInformation(String path) {
+    @Override public WindowsFileInformation getFileStandardInformation(String path) {
         try (NtfsTransaction c = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1281,7 +1281,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param path The full path to the file or directory to query.
      * @param info The standard file information.
      */
-    public void setFileStandardInformation(String path, WindowsFileInformation info) {
+    @Override public void setFileStandardInformation(String path, WindowsFileInformation info) {
         try (Closeable ntfs = new NtfsTransaction()) {
             updateStandardInformation(path, si -> {
                 si.creationTime = info.getCreationTime();
@@ -1304,7 +1304,7 @@ Debug.println(Level.FINE, volumeInfo);
      *         determine if two paths refer to the same actual file. The MFT
      *         index is held in the lower 48 bits of the id.
      */
-    public long getFileId(String path) {
+    @Override public long getFileId(String path) {
         try (Closeable ntfs = new NtfsTransaction()) {
             DirectoryEntry dirEntry = getDirectoryEntry(path);
             if (dirEntry == null) {
@@ -1733,7 +1733,7 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (context != null && context.getMft() != null) {
             context.getMft().close();
             context.setMft(null);
@@ -2103,14 +2103,14 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         return getTotalClusters() * getClusterSize();
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         long usedCluster = 0;
         Bitmap bitmap = context.getClusterBitmap().getBitmap();
         long processed = 0L;
@@ -2126,7 +2126,7 @@ Debug.println(Level.FINE, volumeInfo);
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         return getSize() - getUsedSpace();
     }
 }

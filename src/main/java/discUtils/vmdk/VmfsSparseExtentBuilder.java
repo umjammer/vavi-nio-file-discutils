@@ -51,7 +51,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> extents = new ArrayList<>();
 
         ServerSparseExtentHeader header = DiskImageFile.createServerSparseExtentHeader(content.getLength());
@@ -65,11 +65,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
                 long grainTable = grainTableRange.getOffset() + i;
                 long dataStart = grainTable * grainTableCoverage;
                 GrainTableExtent gtExtent = new GrainTableExtent(grainTableStart,
-                                                                 new SubStream(content,
-                                                                               dataStart,
-                                                                               Math.min(grainTableCoverage,
-                                                                                        content.getLength() - dataStart)),
-                                                                 header);
+                        new SubStream(content, dataStart, Math.min(grainTableCoverage, content.getLength() - dataStart)), header);
                 extents.add(gtExtent);
                 gdExtent.setEntry((int) grainTable, (int) (grainTableStart / Sizes.Sector));
 
@@ -100,7 +96,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             buffer = new byte[(int) getLength()];
         }
 
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
             if (streamView != null) {
                 streamView.close();
                 streamView = null;
@@ -112,16 +108,16 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             EndianUtilities.writeBytesLittleEndian(grainTableSector, buffer, index * 4);
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             streamView = new MemoryStream(buffer, false);
         }
 
-        public int read(long diskOffset, byte[] block, int offset, int count) {
+        @Override public int read(long diskOffset, byte[] block, int offset, int count) {
             streamView.position(diskOffset - getStart());
             return streamView.read(block, offset, count);
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             if (streamView != null) {
                 streamView.close();
                 streamView = null;
@@ -157,7 +153,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             this.header = header;
         }
 
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
             if (content != null && contentOwnership == Ownership.Dispose) {
                 content.close();
                 content = null;
@@ -186,7 +182,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             grainTableStream = new MemoryStream(grainTable, false);
         }
 
-        public int read(long diskOffset, byte[] block, int offset, int count) {
+        @Override public int read(long diskOffset, byte[] block, int offset, int count) {
             long relOffset = diskOffset - getStart();
             if (relOffset < grainTableStream.getLength()) {
                 grainTableStream.position(relOffset);
@@ -201,7 +197,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             return content.read(block, offset, maxToRead);
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             if (grainTableStream != null) {
                 grainTableStream.close();
                 grainTableStream = null;

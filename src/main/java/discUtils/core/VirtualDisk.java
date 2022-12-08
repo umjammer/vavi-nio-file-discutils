@@ -556,7 +556,7 @@ Debug.println(extension + " / " + VirtualDiskManager.getExtensionMap());
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (transport != null) {
             transport.close();
         }

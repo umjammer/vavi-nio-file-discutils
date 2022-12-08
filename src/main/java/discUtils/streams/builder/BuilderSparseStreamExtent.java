@@ -46,25 +46,25 @@ public class BuilderSparseStreamExtent extends BuilderExtent {
         this.ownership = ownership;
     }
 
-    public List<StreamExtent> getStreamExtents() {
+    @Override public List<StreamExtent> getStreamExtents() {
         return StreamExtent.offset(stream.getExtents(), getStart());
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (stream != null && ownership == Ownership.Dispose) {
             stream.close();
             stream = null;
         }
     }
 
-    public void prepareForRead() {
+    @Override public void prepareForRead() {
     }
 
-    public int read(long diskOffset, byte[] block, int offset, int count) {
+    @Override public int read(long diskOffset, byte[] block, int offset, int count) {
         stream.position(diskOffset - getStart());
         return stream.read(block, offset, count);
     }
 
-    public void disposeReadState() {
+    @Override public void disposeReadState() {
     }
 }

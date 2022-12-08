@@ -84,8 +84,7 @@ public final class TarFile {
      *
      * @param path The path to the file within the archive.
      * @return A stream containing the file contents.
-     * @throws dotnet4j.io.FileNotFoundException Thrown if the file is not
-     *             found.
+     * @throws dotnet4j.io.FileNotFoundException Thrown if the file is not found.
      */
     public Stream openFile(String path) {
         if (files.containsKey(path)) {
@@ -100,7 +99,7 @@ public final class TarFile {
      * Determines if a given file exists in the archive.
      *
      * @param path The file path to test.
-     * @return {@code true} if the file is present, else {@code false} .
+     * @return {@code true} if the file is present, else {@code false}.
      */
     public boolean fileExists(String path) {
         return files.containsKey(path);
@@ -110,7 +109,7 @@ public final class TarFile {
      * Determines if a given directory exists in the archive.
      *
      * @param path The file path to test.
-     * @return {@code true} if the directory is present, else {@code false} .
+     * @return {@code true} if the directory is present, else {@code false}.
      */
     public boolean dirExists(String path) {
         String searchStr = path;

@@ -48,7 +48,7 @@ final class Bitmap implements Closeable {
         bitmap = new BlockCacheStream(SparseStream.fromStream(stream, Ownership.None), Ownership.None);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (bitmap != null) {
             bitmap.close();
             bitmap = null;

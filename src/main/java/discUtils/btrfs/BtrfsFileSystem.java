@@ -70,7 +70,7 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
     /**
      * retrieve all subvolumes
      *
-     * @return a list of subvolumes with id and name
+     * @return an array of subvolumes with id and name
      */
     public Subvolume[] getSubvolumes() {
         return VfsBtrfsFileSystem.class.cast(getRealFileSystem()).getSubvolumes();

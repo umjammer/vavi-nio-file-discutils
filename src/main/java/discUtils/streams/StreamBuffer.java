@@ -63,21 +63,21 @@ public final class StreamBuffer extends Buffer implements Closeable {
     /**
      * Can this buffer be read.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return stream.canRead();
     }
 
     /**
      * Can this buffer be written.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return stream.canWrite();
     }
 
     /**
      * Gets the current capacity of the buffer, in bytes.
      */
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return stream.getLength();
     }
 
@@ -85,14 +85,14 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * Gets the parts of the stream that are stored.
      * This may be an empty enumeration if all bytes are zero.
      */
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return stream.getExtents();
     }
 
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownership == Ownership.Dispose) {
             if (stream != null) {
                 stream.close();
@@ -110,7 +110,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @param count The number of bytes to read.
      * @return The actual number of bytes read.
      */
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         stream.position(pos);
         return stream.read(buffer, offset, count);
     }
@@ -123,7 +123,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @param offset The start offset within the source byte array.
      * @param count The number of bytes to write.
      */
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         stream.position(pos);
         stream.write(buffer, offset, count);
     }
@@ -131,7 +131,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
     /**
      * Flushes all data to the underlying storage.
      */
-    public void flush() {
+    @Override public void flush() {
         stream.flush();
     }
 
@@ -140,7 +140,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      *
      * @param value The desired capacity of the buffer.
      */
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         stream.setLength(value);
     }
 
@@ -151,7 +151,7 @@ public final class StreamBuffer extends Buffer implements Closeable {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return stream.getExtentsInRange(start, count);
     }
 }

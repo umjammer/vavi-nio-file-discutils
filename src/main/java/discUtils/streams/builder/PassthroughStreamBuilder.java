@@ -39,7 +39,7 @@ public class PassthroughStreamBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         stream.position(0);
         List<BuilderExtent> result = new ArrayList<>();
         result.add(new BuilderStreamExtent(0, stream));

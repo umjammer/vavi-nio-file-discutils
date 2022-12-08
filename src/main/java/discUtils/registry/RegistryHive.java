@@ -108,9 +108,9 @@ public final class RegistryHive implements Closeable {
     /**
      * Disposes of this instance, freeing any underlying stream (if any).
      * 
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (fileStream != null && ownsStream == Ownership.Dispose) {
             fileStream.close();
             fileStream = null;
@@ -355,7 +355,7 @@ public final class RegistryHive implements Closeable {
             this.index = index;
         }
 
-        public int compare(BinHeader x, BinHeader y) {
+        @Override public int compare(BinHeader x, BinHeader y) {
             if (x.fileOffset + x.binSize < index) {
                 return -1;
             }

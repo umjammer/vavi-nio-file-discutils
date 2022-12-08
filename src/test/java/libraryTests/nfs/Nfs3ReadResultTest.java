@@ -45,26 +45,21 @@ public class Nfs3ReadResultTest {
     public void roundTripTest() throws Exception {
         Nfs3ReadResult result = new Nfs3ReadResult();
         result.setCount(1);
-        result.setData(new byte[] {
-            0x02, 0x03
-        });
+        result.setData(new byte[] {0x02, 0x03});
         result.setEof(false);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
         attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.bytesUsed = 1;
         attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.fileId = 2;
         attributes.fileSystemId = 3;
         attributes.gid = 4;
         attributes.linkCount = 5;
         attributes.mode = UnixFilePermissions.GroupAll;
         attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.rdevMajor = 6;
         attributes.rdevMinor = 7;
         attributes.size = 8;
@@ -73,7 +68,7 @@ public class Nfs3ReadResultTest {
         result.setFileAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3ReadResult clone = null;
+        Nfs3ReadResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

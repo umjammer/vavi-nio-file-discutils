@@ -51,23 +51,23 @@ public final class Nfs3FileStream extends SparseStream {
         length = this.client.getAttributes(this.handle).size;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return access != FileAccess.Write;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return access != FileAccess.Read;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -79,10 +79,10 @@ public final class Nfs3FileStream extends SparseStream {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int numToRead = Math.min(client.getFileSystemInfo().getReadMaxBytes(), count);
         Nfs3ReadResult readResult = client.read(handle, position, numToRead);
         int toCopy = Math.min(count, readResult.getCount());
@@ -95,7 +95,7 @@ public final class Nfs3FileStream extends SparseStream {
         return toCopy;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
             newPos += position;
@@ -107,7 +107,7 @@ public final class Nfs3FileStream extends SparseStream {
         return newPos;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         if (canWrite()) {
             client.setAttributes(handle, new Nfs3SetAttributes());
             length = value;
@@ -116,7 +116,7 @@ public final class Nfs3FileStream extends SparseStream {
         }
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         int totalWritten = 0;
         while (totalWritten < count) {
             int numToWrite = Math.min(client.getFileSystemInfo().getWriteMaxBytes(), count - totalWritten);

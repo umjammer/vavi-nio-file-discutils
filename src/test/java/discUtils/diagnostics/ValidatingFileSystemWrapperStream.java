@@ -61,7 +61,7 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         replayHandle = nextReplayHandle.incrementAndGet();
     }
 
-    public void close() {
+    @Override public void close() {
         if (!disposed && !fileSystem.getInLockdown()) {
             long pos = shadowPosition;
             fileSystem.performActivity((fs, context) -> {
@@ -79,22 +79,22 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         // Don't call base.Dispose because it calls close
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         long pos = shadowPosition;
         return (Boolean) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).canRead());
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         long pos = shadowPosition;
         return (Boolean) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).canSeek());
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         long pos = shadowPosition;
         return (Boolean) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).canWrite());
     }
 
-    public void flush() {
+    @Override public void flush() {
         long pos = shadowPosition;
         fileSystem.performActivity((fs, context) -> {
             getNativeStream(fs, context, pos).flush();
@@ -102,7 +102,7 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         });
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         long pos = shadowPosition;
         return (Long) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).getLength());
     }
@@ -121,12 +121,13 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         shadowPosition = value;
     }
 
-    public List<StreamExtent> getExtents() {
+    @SuppressWarnings("unchecked")
+    @Override public List<StreamExtent> getExtents() {
         long pos = shadowPosition;
         return (List) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).getExtents());
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         long pos = shadowPosition;
         // Avoid stomping on buffers we know nothing about by ditching the writes into gash buffer.
         byte[] tempBuffer = new byte[buffer.length];
@@ -136,13 +137,13 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long pos = shadowPosition;
         shadowPosition = (Long) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).seek(offset, origin));
         return shadowPosition;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         long pos = shadowPosition;
         fileSystem.performActivity((fs, context) -> {
             getNativeStream(fs, context, pos).setLength(value);
@@ -150,7 +151,7 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         });
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         long pos = shadowPosition;
         // Take a copy of the buffer - otherwise who knows what we're messing with.
         byte[] tempBuffer = new byte[buffer.length];

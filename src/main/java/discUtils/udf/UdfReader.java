@@ -108,7 +108,7 @@ public final class UdfReader extends VfsFileSystemFacade {
      * Gets UDF extended attributes for a file or directory.
      *
      * @param path Path to the file or directory.
-     * @return Array of extended attributes, which may be empty or {@code null} if
+     * @return list of extended attributes, which may be empty or {@code null} if
      *         there are no extended attributes.
      */
     public List<ExtendedAttribute> getExtendedAttributes(String path) {
@@ -159,11 +159,11 @@ public final class UdfReader extends VfsFileSystemFacade {
             initialize();
         }
 
-        public String getFriendlyName() {
+        @Override public String getFriendlyName() {
             return "OSTA Universal Disk Format";
         }
 
-        public String getVolumeLabel() {
+        @Override public String getVolumeLabel() {
             return lvd.logicalVolumeIdentifier;
         }
 
@@ -185,25 +185,25 @@ public final class UdfReader extends VfsFileSystemFacade {
         /**
          * Size of the Filesystem in bytes
          */
-        public long getSize() {
+        @Override public long getSize() {
             throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
         }
 
         /**
          * Used space of the Filesystem in bytes
          */
-        public long getUsedSpace() {
+        @Override public long getUsedSpace() {
             throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
         }
 
         /**
          * Available space of the Filesystem in bytes
          */
-        public long getAvailableSpace() {
+        @Override public long getAvailableSpace() {
             throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
         }
 
-        protected File convertDirEntryToFile(FileIdentifier dirEntry) {
+        @Override protected File convertDirEntryToFile(FileIdentifier dirEntry) {
             return File.fromDescriptor(getContext(), dirEntry.fileLocation);
         }
 

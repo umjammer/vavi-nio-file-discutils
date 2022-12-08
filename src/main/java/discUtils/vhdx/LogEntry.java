@@ -182,13 +182,13 @@ public final class LogEntry {
 
         public abstract long getFileLength();
 
-        public int size() {
+        @Override public int size() {
             return 32;
         }
 
-        public abstract int readFrom(byte[] buffer, int offset);
+        @Override public abstract int readFrom(byte[] buffer, int offset);
 
-        public abstract void writeTo(byte[] buffer, int offset);
+        @Override public abstract void writeTo(byte[] buffer, int offset);
 
         public abstract boolean isValid(long sequenceNumber);
 
@@ -199,11 +199,11 @@ public final class LogEntry {
 
         public long zeroLength;
 
-        public long getFileLength() {
+        @Override public long getFileLength() {
             return zeroLength;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             zeroLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
             fileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
             sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
@@ -211,15 +211,15 @@ public final class LogEntry {
             return 32;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             throw new UnsupportedOperationException();
         }
 
-        public boolean isValid(long sequenceNumber) {
+        @Override public boolean isValid(long sequenceNumber) {
             return this.sequenceNumber == sequenceNumber;
         }
 
-        public void writeData(Stream target) {
+        @Override public void writeData(Stream target) {
             target.seek(fileOffset, SeekOrigin.Begin);
             byte[] zeroBuffer = new byte[(int) (4 * Sizes.OneKiB)];
             long total = zeroLength;
@@ -250,11 +250,11 @@ public final class LogEntry {
             this.offset = offset;
         }
 
-        public long getFileLength() {
+        @Override public long getFileLength() {
             return LogSectorSize;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             trailingBytes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
             leadingBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
             fileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
@@ -265,11 +265,11 @@ public final class LogEntry {
             return 32;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             throw new UnsupportedOperationException();
         }
 
-        public boolean isValid(long sequenceNumber) {
+        @Override public boolean isValid(long sequenceNumber) {
             return this.sequenceNumber == sequenceNumber && offset + LogSectorSize <= data.length &&
                    (EndianUtilities.toUInt32LittleEndian(data, offset + LogSectorSize - 4) & 0xFFFF_FFFFL) == (sequenceNumber &
                            0xFFFF_FFFFL) &&
@@ -278,7 +278,7 @@ public final class LogEntry {
                    dataSignature == DataSectorSignature;
         }
 
-        public void writeData(Stream target) {
+        @Override public void writeData(Stream target) {
             target.seek(fileOffset, SeekOrigin.Begin);
             byte[] leading = new byte[8];
             EndianUtilities.writeBytesLittleEndian(leadingBytes, leading, 0);

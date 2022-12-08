@@ -51,6 +51,7 @@ public class VirtualMachineBuilderTest {
         List<Disk> disks = new ArrayList<>(vm.getDisks());
         assertEquals(1, disks.size());
         assertEquals(0, disks.get(0).getCapacity());
+        vmb.close();
     }
 
     @Test
@@ -76,5 +77,6 @@ public class VirtualMachineBuilderTest {
                 fail("Mismatch at offset " + i);
             }
         }
+        vmb.close();
     }
 }

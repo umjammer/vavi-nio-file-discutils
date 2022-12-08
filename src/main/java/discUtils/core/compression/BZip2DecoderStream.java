@@ -106,28 +106,28 @@ public final class BZip2DecoderStream extends Stream {
     /**
      * Gets an indication of whether read access is permitted.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
     /**
      * Gets an indication of whether seeking is permitted.
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return false;
     }
 
     /**
      * Gets an indication of whether write access is permitted.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
     /**
      * Gets the length of the stream (the capacity of the underlying buffer).
      */
-    public long getLength() {
+    @Override public long getLength() {
         throw new UnsupportedOperationException();
     }
 
@@ -145,7 +145,7 @@ public final class BZip2DecoderStream extends Stream {
     /**
      * Flushes all data to the underlying storage.
      */
-    public void flush() {
+    @Override public void flush() {
         throw new UnsupportedOperationException();
     }
 
@@ -157,7 +157,7 @@ public final class BZip2DecoderStream extends Stream {
      * @param count The number of bytes to read.
      * @return The number of bytes read.
      */
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (buffer == null) {
             throw new IllegalArgumentException("buffer");
         }
@@ -239,7 +239,7 @@ public final class BZip2DecoderStream extends Stream {
      * @param origin The origin for the stream position.
      * @return The new stream position.
      */
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         throw new UnsupportedOperationException();
     }
 
@@ -248,7 +248,7 @@ public final class BZip2DecoderStream extends Stream {
      *
      * @param value The new length of the stream.
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
@@ -259,14 +259,14 @@ public final class BZip2DecoderStream extends Stream {
      * @param offset The starting offset within buffer.
      * @param count The number of bytes to write.
      */
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Releases underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (compressedStream != null && ownsCompressed == Ownership.Dispose) {
             compressedStream.close();
         }
@@ -314,5 +314,4 @@ public final class BZip2DecoderStream extends Stream {
 
         return marker;
     }
-
 }

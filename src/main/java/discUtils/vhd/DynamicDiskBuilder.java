@@ -58,7 +58,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         final int FooterSize = 512;
         final int DynHeaderSize = 1024;
 
@@ -77,10 +77,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
                 long block = blockRange.getOffset() + i;
                 long blockStart = block * blockSize;
                 DataBlockExtent dataExtent = new DataBlockExtent(streamPos,
-                                                                 new SubStream(content,
-                                                                               blockStart,
-                                                                               Math.min(blockSize,
-                                                                                        content.getLength() - blockStart)));
+                        new SubStream(content, blockStart, Math.min(blockSize, content.getLength() - blockStart)));
                 extents.add(dataExtent);
 
                 batExtent.setEntry((int) block, (int) (streamPos / Sizes.Sector));
@@ -128,7 +125,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             Arrays.fill(entries, 0xFFFFFFFF);
         }
 
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
             if (dataStream != null) {
                 dataStream.close();
                 dataStream = null;
@@ -139,7 +136,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             entries[index] = fileSector;
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             byte[] buffer = new byte[(int) getLength()];
 
             for (int i = 0; i < entries.length; ++i) {
@@ -149,12 +146,12 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             dataStream = new MemoryStream(buffer, false);
         }
 
-        public int read(long diskOffset, byte[] block, int offset, int count) {
+        @Override public int read(long diskOffset, byte[] block, int offset, int count) {
             dataStream.position(diskOffset - getStart());
             return dataStream.read(block, offset, count);
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             if (dataStream != null) {
                 dataStream.close();
                 dataStream = null;
@@ -182,7 +179,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             this.ownership = ownership;
         }
 
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
             if (content != null && ownership == Ownership.Dispose) {
                 content.close();
                 content = null;
@@ -194,7 +191,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             }
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             byte[] bitmap = new byte[(int) MathUtilities.roundUp(MathUtilities.ceil(content.getLength(), Sizes.Sector) / 8,
                                                                  Sizes.Sector)];
 
@@ -208,7 +205,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             bitmapStream = new MemoryStream(bitmap, false);
         }
 
-        public int read(long diskOffset, byte[] block, int offset, int count) {
+        @Override public int read(long diskOffset, byte[] block, int offset, int count) {
             long position = diskOffset - getStart();
             if (position < bitmapStream.getLength()) {
                 bitmapStream.position(position);
@@ -218,7 +215,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             return content.read(block, offset, count);
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             if (bitmapStream != null) {
                 bitmapStream.close();
                 bitmapStream = null;

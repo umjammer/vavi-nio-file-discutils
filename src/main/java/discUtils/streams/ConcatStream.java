@@ -61,22 +61,22 @@ public class ConcatStream extends SparseStream {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return canWrite;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         checkDisposed();
         List<StreamExtent> extents = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class ConcatStream extends SparseStream {
         return extents;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         long length = 0;
 
@@ -112,14 +112,14 @@ public class ConcatStream extends SparseStream {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
         for (SparseStream stream : streams) {
             stream.flush();
         }
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         int totalRead = 0;
@@ -140,7 +140,7 @@ public class ConcatStream extends SparseStream {
         return totalRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
 
         long effectiveOffset = offset;
@@ -157,7 +157,7 @@ public class ConcatStream extends SparseStream {
         return position();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
 
         long[] lastStreamOffset = new long[1];
@@ -169,7 +169,7 @@ public class ConcatStream extends SparseStream {
         streams.get(lastStream).setLength(value - lastStreamOffset[0]);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         int totalWritten = 0;

@@ -944,23 +944,23 @@ class File {
             wrapped = attr.open(access);
         }
 
-        public boolean canRead() {
+        @Override public boolean canRead() {
             return wrapped.canRead();
         }
 
-        public boolean canSeek() {
+        @Override public boolean canSeek() {
             return wrapped.canSeek();
         }
 
-        public boolean canWrite() {
+        @Override public boolean canWrite() {
             return wrapped.canWrite();
         }
 
-        public List<StreamExtent> getExtents() {
+        @Override public List<StreamExtent> getExtents() {
             return wrapped.getExtents();
         }
 
-        public long getLength() {
+        @Override public long getLength() {
             return wrapped.getLength();
         }
 
@@ -972,28 +972,28 @@ class File {
             wrapped.position(value);
         }
 
-        public void close() throws IOException {
+        @Override public void close() throws IOException {
             wrapped.close();
         }
 
-        public void flush() {
+        @Override public void flush() {
             wrapped.flush();
         }
 
-        public int read(byte[] buffer, int offset, int count) {
+        @Override public int read(byte[] buffer, int offset, int count) {
             return wrapped.read(buffer, offset, count);
         }
 
-        public long seek(long offset, SeekOrigin origin) {
+        @Override public long seek(long offset, SeekOrigin origin) {
             return wrapped.seek(offset, origin);
         }
 
-        public void setLength(long value) {
+        @Override public void setLength(long value) {
             changeAttributeResidencyByLength(value);
             wrapped.setLength(value);
         }
 
-        public void write(byte[] buffer, int offset, int count) {
+        @Override public void write(byte[] buffer, int offset, int count) {
             if (wrapped.position() + count > getLength()) {
                 changeAttributeResidencyByLength(wrapped.position() + count);
             }
@@ -1001,7 +1001,7 @@ class File {
             wrapped.write(buffer, offset, count);
         }
 
-        public void clear(int count) {
+        @Override public void clear(int count) {
             if (wrapped.position() + count > getLength()) {
                 changeAttributeResidencyByLength(wrapped.position() + count);
             }
@@ -1009,7 +1009,7 @@ class File {
             wrapped.clear(count);
         }
 
-        public String toString() {
+        @Override public String toString() {
             return file + ".attr[" + attr.getId() + "]";
         }
 

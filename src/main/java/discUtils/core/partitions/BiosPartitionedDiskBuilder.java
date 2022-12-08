@@ -158,7 +158,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         totalLength[0] = capacity;
         List<BuilderExtent> extents = new ArrayList<>();
         for (StreamExtent extent : getPartitionTable().getMetadataDiskExtents()) {

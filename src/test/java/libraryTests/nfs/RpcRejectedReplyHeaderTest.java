@@ -47,7 +47,7 @@ public class RpcRejectedReplyHeaderTest {
 
         header.status = RpcRejectedStatus.RpcMismatch;
 
-        RpcRejectedReplyHeader clone = null;
+        RpcRejectedReplyHeader clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             header.write(writer);

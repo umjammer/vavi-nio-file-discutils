@@ -17,7 +17,6 @@ import discUtils.streams.util.Ownership;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
 
 
 /**
@@ -47,22 +46,22 @@ public class DiskStream extends SparseStream {
         this.ownsStream = ownsStream;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return fileStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         if (true)
             throw new UnsupportedOperationException("not implemented yet");
 
@@ -75,7 +74,7 @@ public class DiskStream extends SparseStream {
         return extents;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return disk.getLength();
     }
@@ -95,11 +94,11 @@ public class DiskStream extends SparseStream {
 
     public BiConsumer<Object, Object[]> writeOccurred;
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 //new Exception().printStackTrace();
 //Debug.printf("READ: %08x, %d, %d", fileStream.position(), offset, count);
@@ -118,7 +117,7 @@ public class DiskStream extends SparseStream {
         return count;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
@@ -136,12 +135,12 @@ public class DiskStream extends SparseStream {
         return fileStream.position() - disk.getOffset();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         if (true)
             throw new UnsupportedOperationException("not implemented yet");
 
@@ -171,7 +170,7 @@ public class DiskStream extends SparseStream {
         fileStream.write(buffer, offset,  count);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         isDisposed = true;
         if (ownsStream == Ownership.Dispose && fileStream != null) {
             fileStream.close();

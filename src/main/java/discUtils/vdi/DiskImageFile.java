@@ -84,14 +84,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         readHeader();
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return header.diskSize;
     }
 
     /**
      * Gets (a guess at) the geometry of the virtual disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         if (header.lchsGeometry != null && header.lchsGeometry.cylinders != 0) {
             return header.lchsGeometry.toGeometry(header.diskSize);
         }
@@ -106,19 +106,19 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return header.imageType != ImageType.Fixed;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean needsParent() {
+    @Override public boolean needsParent() {
         return header.imageType == ImageType.Differencing || header.imageType == ImageType.Undo;
     }
 
     // Differencing disks not yet supported.
-    public FileLocator getRelativeFileLocator() {
+    @Override public FileLocator getRelativeFileLocator() {
         return null;
     }
 
@@ -187,7 +187,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            stream.
      * @return The new content stream.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (parent != null && ownsParent == Ownership.Dispose) {
             try {
                 // Not needed until differencing disks supported.
@@ -205,9 +205,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the possible locations of the parent file (if any).
      *
-     * @return Array of strings, empty if no parent.
+     * @return list of strings, empty if no parent.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         // Until diff/undo supported
         return Collections.emptyList();
     }
@@ -215,7 +215,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (writeOccurred && stream != null) {
             header.modificationId = UUID.randomUUID();
             stream.position(PreHeaderRecord.Size);

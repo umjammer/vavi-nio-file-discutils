@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 
 final class LogSequence extends ArrayList<LogEntry> {
+
     public LogEntry getHead() {
         return size() > 0 ? get(size() - 1) : null;
     }

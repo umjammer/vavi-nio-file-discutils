@@ -64,11 +64,11 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
         setRootDirectory((Directory) getFile(rootDirEntry));
     }
 
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "Apple HFS+";
     }
 
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         byte[] rootThreadData = getContext().getCatalog().find(new CatalogKey(CatalogNodeId.RootFolderId, ""));
         CatalogThread rootThread = new CatalogThread();
         rootThread.readFrom(rootThreadData, 0);
@@ -76,11 +76,11 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
         return rootThread.name;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         DirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("No such file or directory " + path);
@@ -89,7 +89,7 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
         return dirEntry.getCatalogFileInfo().fileSystemInfo;
     }
 
-    protected File convertDirEntryToFile(DirEntry dirEntry) {
+    @Override protected File convertDirEntryToFile(DirEntry dirEntry) {
         if (dirEntry.isDirectory()) {
             return new Directory(getContext(), dirEntry.getNodeId(), dirEntry.getCatalogFileInfo());
         }
@@ -102,21 +102,21 @@ final class HfsPlusFileSystemImpl extends VfsFileSystem<DirEntry, File, Director
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 }

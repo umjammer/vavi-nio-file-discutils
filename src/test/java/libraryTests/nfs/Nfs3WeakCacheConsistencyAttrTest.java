@@ -41,14 +41,12 @@ public class Nfs3WeakCacheConsistencyAttrTest {
     public void roundTripTest() throws Exception {
         Nfs3WeakCacheConsistencyAttr attr = new Nfs3WeakCacheConsistencyAttr();
         attr.setChangeTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli()));
+                .toInstant().toEpochMilli()));
         attr.setModifyTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli()));
+                .toInstant().toEpochMilli()));
         attr.setSize(3);
 
-        Nfs3WeakCacheConsistencyAttr clone = null;
+        Nfs3WeakCacheConsistencyAttr clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attr.write(writer);

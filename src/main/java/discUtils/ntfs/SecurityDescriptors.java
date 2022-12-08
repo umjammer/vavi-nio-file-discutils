@@ -82,7 +82,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
         nextSpace = MathUtilities.roundUp(nextSpace, 16);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "SECURITY DESCRIPTORS");
         try (Stream s = file.openStream(AttributeType.Data, "$SDS", FileAccess.Read)) {
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
@@ -214,7 +214,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
 
         public long sdsOffset;
 
-        public String toString() {
+        @Override public String toString() {
             return String.format("[Data-Hash:%x,Id:%d,SdsOffset:%d,SdsLength:%d]", hash, id, sdsOffset, sdsLength);
         }
     }
@@ -225,33 +225,33 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
 
         public int id;
 
-        public int size() {
+        @Override public int size() {
             return 8;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
             id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
             return 8;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0);
             EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 4);
         }
 
-        public String toString() {
+        @Override public String toString() {
             return String.format("[Key-Hash:%x,Id:%d]", hash, id);
         }
     }
 
     final static class HashIndexData extends IndexData implements IByteArraySerializable {
 
-        public int size() {
+        @Override public int size() {
             return 0x14;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
             id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
             sdsOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
@@ -259,7 +259,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
             return 0x14;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0x00);
             EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0x04);
             EndianUtilities.writeBytesLittleEndian(sdsOffset, buffer, offset + 0x08);
@@ -279,31 +279,31 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
             this.id = id;
         }
 
-        public int size() {
+        @Override public int size() {
             return 4;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
             return 4;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0);
         }
 
-        public String toString() {
+        @Override public String toString() {
             return String.format("[Key-Id:%d]", id);
         }
     }
 
     final static class IdIndexData extends IndexData implements IByteArraySerializable {
 
-        public int size() {
+        @Override public int size() {
             return 0x14;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
             id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
             sdsOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
@@ -311,7 +311,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
             return 0x14;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0x00);
             EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0x04);
             EndianUtilities.writeBytesLittleEndian(sdsOffset, buffer, offset + 0x08);
@@ -327,7 +327,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
             this.toMatch = toMatch;
         }
 
-        public int compareTo(discUtils.ntfs.SecurityDescriptors.HashIndexKey other) {
+        @Override public int compareTo(discUtils.ntfs.SecurityDescriptors.HashIndexKey other) {
             return compareTo(other.hash);
         }
 

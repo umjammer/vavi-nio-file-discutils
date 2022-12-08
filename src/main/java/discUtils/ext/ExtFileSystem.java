@@ -34,6 +34,7 @@ import dotnet4j.io.Stream;
  * Read-only access to ext file system.
  */
 public final class ExtFileSystem extends VfsFileSystemFacade implements IUnixFileSystem {
+
     /**
      * Initializes a new instance of the ExtFileSystem class.
      *
@@ -61,7 +62,7 @@ public final class ExtFileSystem extends VfsFileSystemFacade implements IUnixFil
      * @return Information about the owner, group, permissions and type of the
      *         file or directory.
      */
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         return VfsExtFileSystem.class.cast(getRealFileSystem()).getUnixFileInfo(path);
     }
 

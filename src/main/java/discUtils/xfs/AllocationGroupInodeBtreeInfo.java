@@ -173,7 +173,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
 
     private int size;
 
-    public int size() {
+    @Override public int size() {
         return size;
     }
 
@@ -188,7 +188,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
         size = sbVersion >= 5 ? 334 : 296;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
         version = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
         sequenceNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8);
@@ -222,7 +222,7 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
         rootInodeBtree.readFrom(buffer, 0);
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

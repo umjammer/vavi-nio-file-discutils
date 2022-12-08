@@ -45,24 +45,24 @@ public class ZeroStream extends MappedStream {
         this.length = length;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         // The stream is entirely sparse
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -75,14 +75,14 @@ public class ZeroStream extends MappedStream {
         atEof = false;
     }
 
-    public List<StreamExtent> mapContent(long start, long length) {
-        return Collections.EMPTY_LIST;
+    @Override public List<StreamExtent> mapContent(long start, long length) {
+        return Collections.emptyList();
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position > length) {
             atEof = true;
             throw new dotnet4j.io.IOException("Attempt to read beyond end of stream");
@@ -104,7 +104,7 @@ public class ZeroStream extends MappedStream {
         return numToClear;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -121,11 +121,11 @@ public class ZeroStream extends MappedStream {
         return position;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 

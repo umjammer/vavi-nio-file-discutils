@@ -40,6 +40,7 @@ import com.sun.jna.Pointer;
  * are routed through an appropriately aligned buffer.
  */
 public class UnbufferedNativeStream extends SparseStream {
+
     private static final int BufferSize = 64 * 1024;
 
     private static final int Alignment = 512;
@@ -71,42 +72,40 @@ public class UnbufferedNativeStream extends SparseStream {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public long getLength() {
-        long result;
-        long[] refVar___0 = new long[1];
-        boolean boolVar___0 = NativeMethods.INSTANCE.getFileSizeEx(handle, refVar___0);
-        result = refVar___0[0];
-        if (boolVar___0) {
-            return result;
+    @Override public long getLength() {
+        long[] result = new long[1];
+        NativeMethods.INSTANCE.getFileSizeEx(handle, result);
+        if (result[0] != 0) {
+            return result[0];
         } else {
             throw Win32Wrapper.getIOExceptionForLastError();
         }
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int totalBytesRead = 0;
         long length = getLength();
         while (totalBytesRead < count) {
@@ -136,7 +135,7 @@ public class UnbufferedNativeStream extends SparseStream {
         return totalBytesRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -152,15 +151,15 @@ public class UnbufferedNativeStream extends SparseStream {
         }
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 }

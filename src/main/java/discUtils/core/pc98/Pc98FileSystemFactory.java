@@ -36,7 +36,7 @@ import vavix.io.fat.PC98BiosParameterBlock;
  */
 public class Pc98FileSystemFactory implements VfsFileSystemFactory {
 
-    public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
+    @Override public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (detectFAT(stream)) {
             return new FileSystemInfo[] {
                 new VfsFileSystemInfo("PC98_FAT", "NEC FAT", this::open)

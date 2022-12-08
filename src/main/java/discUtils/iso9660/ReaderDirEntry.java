@@ -111,11 +111,11 @@ public final class ReaderDirEntry extends VfsDirEntry {
 
     private long creationTimeUtc;
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return creationTimeUtc;
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         EnumSet<FileAttributes> attrs = EnumSet.noneOf(FileAttributes.class);
 
         if (context.getRockRidgeIdentifier() != null && !context.getRockRidgeIdentifier().isEmpty()) {
@@ -143,35 +143,35 @@ public final class ReaderDirEntry extends VfsDirEntry {
         return attrs;
     }
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return fileName;
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return true;
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return true;
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return record.flags.contains(FileFlags.Directory);
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return false;
     }
 
     private long lastAccessTimeUtc;
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return lastAccessTimeUtc;
     }
 
     private long lastWriteTimeUtc;
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return lastWriteTimeUtc;
     }
 
@@ -185,11 +185,11 @@ public final class ReaderDirEntry extends VfsDirEntry {
         return suspRecords;
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         return ((record.locationOfExtent & 0xffffffffL) << 32) | record.dataLength;
     }
 
-    public String toString() {
+    @Override public String toString() {
         return fileName;
     }
 }

@@ -74,7 +74,7 @@ class DynamicDisk implements IDiagnosticTraceable {
         return UUID.fromString(header.diskId);
     }
 
-    public void dump(PrintWriter writer, String linePrefix) {
+    @Override public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "DISK (" + header.diskId + ")");
         writer.println(linePrefix + "      Metadata version: " + ((header.version >>> 16) & 0xFFFF) + "." +
                        (header.version & 0xFFFF));

@@ -69,19 +69,19 @@ public class DiskStream extends SparseStream {
         readChunkSkipList();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
 
         long chunkSize = Sizes.OneMiB;
@@ -108,7 +108,7 @@ public class DiskStream extends SparseStream {
         return extents;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -124,10 +124,10 @@ public class DiskStream extends SparseStream {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position == length) {
             return 0;
         }
@@ -165,7 +165,7 @@ public class DiskStream extends SparseStream {
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -181,11 +181,11 @@ public class DiskStream extends SparseStream {
         return position();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 

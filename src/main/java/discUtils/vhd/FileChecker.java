@@ -42,6 +42,7 @@ import dotnet4j.io.Stream;
  * VHD file format verifier, that identifies corrupt VHD files.
  */
 public class FileChecker {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
     private final Stream fileStream;

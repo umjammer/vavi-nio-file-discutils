@@ -92,33 +92,33 @@ Debug.printf(Level.WARNING, "udifHeader: %08x\n", udifHeader.signature);
         return buffer;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return buffer == null ? stream.getLength() : buffer.getCapacity();
     }
 
     /**
      * Gets the geometry of the virtual disk layer.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return Geometry.fromCapacity(getCapacity());
     }
 
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return buffer != null;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean needsParent() {
+    @Override public boolean needsParent() {
         return false;
     }
 
-    public FileLocator getRelativeFileLocator() {
+    @Override public FileLocator getRelativeFileLocator() {
         throw new UnsupportedOperationException();
     }
 
-    public SparseStream openContent(SparseStream parentStream, Ownership ownsStream) {
+    @Override public SparseStream openContent(SparseStream parentStream, Ownership ownsStream) {
         if (parentStream != null && ownsStream == Ownership.Dispose) {
             try {
                 parentStream.close();
@@ -138,13 +138,13 @@ Debug.printf(Level.WARNING, "udifHeader: %08x\n", udifHeader.signature);
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return Collections.emptyList();
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (stream != null && ownsStream == Ownership.Dispose) {
             stream.close();
         }

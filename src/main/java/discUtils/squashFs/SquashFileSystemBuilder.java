@@ -301,7 +301,7 @@ public final class SquashFileSystemBuilder {
                 try {
                     stream.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
             }
         }

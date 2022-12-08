@@ -50,32 +50,24 @@ public class Nfs3ReadDirResultTest {
         result.setCookieVerifier(1);
         Nfs3FileAttributes fileAttrs = new Nfs3FileAttributes();
         fileAttrs.accessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         fileAttrs.changeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         fileAttrs.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         result.setDirAttributes(fileAttrs);
         Nfs3DirectoryEntry entry = new Nfs3DirectoryEntry();
         entry.setCookie(2);
         Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();
         dirAttrs.accessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 2, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         dirAttrs.changeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 2, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         dirAttrs.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 2, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         entry.setFileAttributes(dirAttrs);
         Nfs3FileHandle handle = new Nfs3FileHandle();
-        handle.setValue(new byte[] {
-            0x20, 0x18
-        });
+        handle.setValue(new byte[] {0x20, 0x18});
         entry.setFileHandle(handle);
         entry.setFileId(2018);
         entry.setName("test.bin");

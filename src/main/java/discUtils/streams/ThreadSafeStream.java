@@ -105,7 +105,7 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Gets a value indicating if this stream supports reads.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         synchronized (common) {
             return getWrapped().canRead();
         }
@@ -114,7 +114,7 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Gets a value indicating if this stream supports seeking (always true).
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
@@ -122,7 +122,7 @@ public class ThreadSafeStream extends SparseStream {
      * Gets a value indicating if this stream supports writes (currently, always
      * false).
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         synchronized (common) {
             return getWrapped().canWrite();
         }
@@ -132,7 +132,7 @@ public class ThreadSafeStream extends SparseStream {
      * Gets the parts of the stream that are stored. This may be an empty
      * enumeration if all bytes are zero.
      */
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         synchronized (common) {
             return getWrapped().getExtents();
         }
@@ -141,7 +141,7 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Gets the length of the stream.
      */
-    public long getLength() {
+    @Override public long getLength() {
         synchronized (common) {
             return getWrapped().getLength();
         }
@@ -183,7 +183,7 @@ public class ThreadSafeStream extends SparseStream {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         synchronized (common) {
             return getWrapped().getExtentsInRange(start, count);
         }
@@ -206,7 +206,7 @@ public class ThreadSafeStream extends SparseStream {
      * @param count The requested number of bytes to read.
      * @return The actual number of bytes read.
      */
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         synchronized (common) {
             SparseStream wrapped = getWrapped();
             wrapped.position(position);
@@ -223,7 +223,7 @@ public class ThreadSafeStream extends SparseStream {
      * @param origin The origin of the location.
      * @return The new location as an absolute position.
      */
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -244,7 +244,7 @@ public class ThreadSafeStream extends SparseStream {
      *
      * @param value The new length.
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
@@ -255,7 +255,7 @@ public class ThreadSafeStream extends SparseStream {
      * @param offset The first byte to write.
      * @param count The number of bytes to write.
      */
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         synchronized (common) {
             SparseStream wrapped = getWrapped();
             if (position + count > wrapped.getLength()) {
@@ -271,9 +271,9 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Disposes of this instance, invalidating any remaining views.
      *
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsCommon && common != null) {
             synchronized (common) {
                 if (common.wrappedStreamOwnership == Ownership.Dispose) {

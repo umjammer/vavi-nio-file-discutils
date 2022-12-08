@@ -55,7 +55,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         position = value;
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int startOffset = (int) (position % blockSize);
         if (startOffset == 0 && (count % blockSize == 0 || position + count == getLength())) {
             // Aligned read - pass through to underlying stream.
@@ -84,7 +84,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         return available;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -99,12 +99,12 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         return position;
     }
 
-    public void clear(int count) {
+    @Override public void clear(int count) {
         doOperation((s, opOffset, opCount) -> s.clear(opCount),
                 (buffer, offset, opOffset, opCount) -> Arrays.fill(buffer, offset, offset + opCount, (byte) 0), count);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         doOperation((s, opOffset, opCount) -> s.write(buffer, offset + opOffset, opCount),
                 (tempBuffer, tempOffset, opOffset, opCount) -> System.arraycopy(buffer, offset + opOffset, tempBuffer, tempOffset, opCount), count);
     }

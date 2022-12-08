@@ -299,7 +299,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 try {
                     s.close();
                 } catch (IOException e) {
-                    throw new dotnet4j.io.IOException(e);
+                    e.printStackTrace();
                 }
         }
         Bitmap indexBitmap = null;

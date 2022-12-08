@@ -53,7 +53,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         loadGlobalDirectory();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
         if (position + count > getLength()) {
             throw new dotnet4j.io.IOException("Attempt to write beyond end of stream");
@@ -145,5 +145,4 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
         fileStream.position(globalDirectory[currentGrainTable] * (long) Sizes.Sector);
         fileStream.write(grainTable, 0, grainTable.length);
     }
-
 }

@@ -30,7 +30,8 @@ import dotnet4j.io.Stream;
 
 
 public final class PartitionMapFactory implements PartitionTableFactory {
-    public boolean detectIsPartitioned(Stream s) {
+
+    @Override public boolean detectIsPartitioned(Stream s) {
         if (s.getLength() < 1024) {
             return false;
         }
@@ -51,7 +52,7 @@ public final class PartitionMapFactory implements PartitionTableFactory {
         return initialPart.signature == 0x504d;
     }
 
-    public PartitionTable detectPartitionTable(VirtualDisk disk) {
+    @Override public PartitionTable detectPartitionTable(VirtualDisk disk) {
         if (!detectIsPartitioned(disk.getContent())) {
             return null;
         }

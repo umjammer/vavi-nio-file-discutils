@@ -175,7 +175,7 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Indicates if this file system is read-only or read-write.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return data.canWrite();
     }
 
@@ -216,7 +216,7 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Gets the friendly name for the file system, including FAT variant.
      */
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
        return bs.getFatVariant().getFriendlyName();
     }
 
@@ -230,7 +230,7 @@ public final class FatFileSystem extends DiscFileSystem {
     /**
      * Gets the volume label.
      */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         long volId = rootDir.findVolumeId();
         if (volId < 0) {
             return bs.getVolumeLabel();
@@ -285,7 +285,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param access The desired access.
      * @return The stream to the opened file.
      */
-    public SparseStream openFile(String path, FileMode mode, FileAccess access) {
+    @Override public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         Directory[] parent = new Directory[1];
         long entryId;
         try {
@@ -316,7 +316,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
-    public Map<String, Object> getAttributes(String path) {
+    @Override public Map<String, Object> getAttributes(String path) {
         // Simulate a root directory entry - doesn't really exist though
         if (isRootPath(path)) {
             return FatAttributes.toMap(EnumSet.of(FatAttributes.Directory));
@@ -337,7 +337,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public void setAttributes(String path, Map<String, Object> newValue) {
+    @Override public void setAttributes(String path, Map<String, Object> newValue) {
         if (isRootPath(path)) {
             if (!newValue.containsKey(FatAttributes.Directory.name())) {
                 throw new UnsupportedOperationException("The attributes of the root directory cannot be modified");
@@ -374,7 +374,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @return The creation time.
      */
-    public long getCreationTime(String path) {
+    @Override public long getCreationTime(String path) {
         if (isRootPath(path)) {
             return Epoch;
         }
@@ -388,7 +388,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setCreationTime(String path, long newTime) {
+    @Override public void setCreationTime(String path, long newTime) {
         if (isRootPath(path)) {
             if (newTime != Epoch) {
                 throw new UnsupportedOperationException("The creation time of the root directory cannot be modified");
@@ -406,7 +406,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @return The creation time.
      */
-    public long getCreationTimeUtc(String path) {
+    @Override public long getCreationTimeUtc(String path) {
         if (isRootPath(path)) {
             return convertToUtc(Epoch);
         }
@@ -420,7 +420,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setCreationTimeUtc(String path, long newTime) {
+    @Override public void setCreationTimeUtc(String path, long newTime) {
         if (isRootPath(path)) {
             if (convertFromUtc(newTime) != Epoch) {
                 throw new UnsupportedOperationException("The last write time of the root directory cannot be modified");
@@ -438,7 +438,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @return The time the file or directory was last accessed.
      */
-    public long getLastAccessTime(String path) {
+    @Override public long getLastAccessTime(String path) {
         if (isRootPath(path)) {
             return Epoch;
         }
@@ -452,7 +452,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastAccessTime(String path, long newTime) {
+    @Override public void setLastAccessTime(String path, long newTime) {
         if (isRootPath(path)) {
             if (newTime != Epoch) {
                 throw new UnsupportedOperationException("The last access time of the root directory cannot be modified");
@@ -470,7 +470,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @return The time the file or directory was last accessed.
      */
-    public long getLastAccessTimeUtc(String path) {
+    @Override public long getLastAccessTimeUtc(String path) {
         if (isRootPath(path)) {
             return convertToUtc(Epoch);
         }
@@ -484,7 +484,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastAccessTimeUtc(String path, long newTime) {
+    @Override public void setLastAccessTimeUtc(String path, long newTime) {
         if (isRootPath(path)) {
             if (convertFromUtc(newTime) != Epoch) {
                 throw new UnsupportedOperationException("The last write time of the root directory cannot be modified");
@@ -502,7 +502,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @return The time the file or directory was last modified.
      */
-    public long getLastWriteTime(String path) {
+    @Override public long getLastWriteTime(String path) {
         if (isRootPath(path)) {
             return Epoch;
         }
@@ -516,7 +516,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastWriteTime(String path, long newTime) {
+    @Override public void setLastWriteTime(String path, long newTime) {
         if (isRootPath(path)) {
             if (newTime != Epoch) {
                 throw new UnsupportedOperationException("The last write time of the root directory cannot be modified");
@@ -534,7 +534,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @return The time the file or directory was last modified.
      */
-    public long getLastWriteTimeUtc(String path) {
+    @Override public long getLastWriteTimeUtc(String path) {
         if (isRootPath(path)) {
             return convertToUtc(Epoch);
         }
@@ -548,7 +548,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastWriteTimeUtc(String path, long newTime) {
+    @Override public void setLastWriteTimeUtc(String path, long newTime) {
         if (isRootPath(path)) {
             if (convertFromUtc(newTime) != Epoch) {
                 throw new UnsupportedOperationException("The last write time of the root directory cannot be modified");
@@ -566,7 +566,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path to the file.
      * @return The length in bytes.
      */
-    public long getFileLength(String path) {
+    @Override public long getFileLength(String path) {
         return getDirectoryEntry(path).getFileSize();
     }
 
@@ -578,7 +578,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
-    public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
+    @Override public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         Directory[] sourceDir = new Directory[1];
         long sourceEntryId = getDirectoryEntry(sourceFile, sourceDir);
 
@@ -649,7 +649,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      *
      * @param path The directory to create.
      */
-    public void createDirectory(String path) {
+    @Override public void createDirectory(String path) {
         String[] pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .toArray(String[]::new);
@@ -676,7 +676,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      *
      * @param path The path of the directory to delete.
      */
-    public void deleteDirectory(String path) {
+    @Override public void deleteDirectory(String path) {
         Directory dir = getDirectory(path);
         if (dir == null) {
             throw new FileNotFoundException(String.format("No such directory: %s", path));
@@ -706,7 +706,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      *
      * @param path The path of the file to delete.
      */
-    public void deleteFile(String path) {
+    @Override public void deleteFile(String path) {
         Directory[] parent = new Directory[1];
         long id = getDirectoryEntry(path, parent);
         if (parent[0] == null || id < 0) {
@@ -727,7 +727,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path to test.
      * @return true if the directory exists.
      */
-    public boolean directoryExists(String path) {
+    @Override public boolean directoryExists(String path) {
         // Special case - root directory
         if (path == null || path.isEmpty()) {
             return true;
@@ -743,7 +743,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path to test.
      * @return true if the file exists.
      */
-    public boolean fileExists(String path) {
+    @Override public boolean fileExists(String path) {
         // Special case - root directory
         if (path == null || path.isEmpty()) {
             return true;
@@ -759,7 +759,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path to test.
      * @return true if the file or directory exists.
      */
-    public boolean exists(String path) {
+    @Override public boolean exists(String path) {
         // Special case - root directory
         if (path == null || path.isEmpty()) {
             return true;
@@ -772,9 +772,9 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
-    public List<String> getDirectories(String path) {
+    @Override public List<String> getDirectories(String path) {
         Directory dir = getDirectory(path);
         if (dir == null) {
             throw new FileNotFoundException(String.format("The directory '%s' was not found", path));
@@ -796,9 +796,9 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
-    public List<String> getDirectories(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> dirs = new ArrayList<>();
         doSearch(dirs, path, re, "AllDirectories".equalsIgnoreCase(searchOption), true, false);
@@ -809,9 +809,9 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
-    public List<String> getFiles(String path) {
+    @Override public List<String> getFiles(String path) {
         Directory dir = getDirectory(path);
         List<DirectoryEntry> entries = dir.getFiles();
         List<String> files = new ArrayList<>(entries.size());
@@ -829,9 +829,9 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
-    public List<String> getFiles(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getFiles(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> results = new ArrayList<>();
         doSearch(results, path, re, "AllDirectories".equalsIgnoreCase(searchOption), false, true);
@@ -842,9 +842,9 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path) {
+    @Override public List<String> getFileSystemEntries(String path) {
         Directory dir = getDirectory(path);
         List<DirectoryEntry> entries = dir.getEntries();
         List<String> result = new ArrayList<>(entries.size());
@@ -860,9 +860,9 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path, String searchPattern) {
+    @Override public List<String> getFileSystemEntries(String path, String searchPattern) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         Directory dir = getDirectory(path);
         List<DirectoryEntry> entries = dir.getEntries();
@@ -882,7 +882,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
-    public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
+    @Override public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         if (destinationDirectoryName == null || destinationDirectoryName.isEmpty()) {
             if (destinationDirectoryName == null) {
                 throw new NullPointerException("destinationDirectoryName");
@@ -919,7 +919,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
      */
-    public void moveFile(String sourceName, String destinationName, boolean overwrite) {
+    @Override public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         Directory[] sourceDir = new Directory[1];
         long sourceEntryId = getDirectoryEntry(sourceName, sourceDir);
 
@@ -1051,7 +1051,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         try {
             for (Directory dir : dirCache.values()) {
                 dir.close();
@@ -1217,7 +1217,7 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         return getSize() - getUsedSpace();
     }
 

@@ -91,7 +91,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * Gets the GUID that uniquely identifies this disk, if supported (else
      * returns {@code null} ).
      */
-    public UUID getDiskGuid() {
+    @Override public UUID getDiskGuid() {
         return EMPTY;
     }
 
@@ -99,7 +99,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * Gets a collection of the partitions for storing Operating System
      * file-systems.
      */
-    public List<PartitionInfo> getPartitions() {
+    @Override public List<PartitionInfo> getPartitions() {
         List<PartitionInfo> result = new ArrayList<>();
         for (BiosPartitionRecord r : getAllRecords()) {
             if (r.isValid()) {
@@ -247,7 +247,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.
      */
-    public int create(WellKnownPartitionType type, boolean active) {
+    @Override public int create(WellKnownPartitionType type, boolean active) {
         Geometry allocationGeometry = new Geometry(diskData.getLength(),
                                                    diskGeometry.getHeadsPerCylinder(),
                                                    diskGeometry.getSectorsPerTrack(),
@@ -273,7 +273,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @return The index of the new partition.
      */
-    public int create(long size, WellKnownPartitionType type, boolean active) {
+    @Override public int create(long size, WellKnownPartitionType type, boolean active) {
         int cylinderCapacity = diskGeometry.getSectorsPerTrack() * diskGeometry.getHeadsPerCylinder() *
                                diskGeometry.getBytesPerSector();
         int numCylinders = (int) (size / cylinderCapacity);
@@ -298,7 +298,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param alignment The alignment (in bytes).
      * @return The index of the partition.
      */
-    public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
         Geometry allocationGeometry = new Geometry(diskData.getLength(),
                                                    diskGeometry.getHeadsPerCylinder(),
                                                    diskGeometry.getSectorsPerTrack(),
@@ -330,7 +330,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param alignment The alignment (in bytes).
      * @return The index of the new partition.
      */
-    public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
         if (size < diskGeometry.getBytesPerSector()) {
             throw new IndexOutOfBoundsException("size must be at least one sector");
         }
@@ -354,7 +354,7 @@ public final class BiosPartitionTable extends PartitionTable {
      *
      * @param index The index of the partition.
      */
-    public void delete(int index) {
+    @Override public void delete(int index) {
         writeRecord(index, new BiosPartitionRecord());
     }
 

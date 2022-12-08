@@ -223,5 +223,4 @@ public class DiskImageFileInfo {
     public UUID getUniqueId() {
         return footer.uniqueId;
     }
-
 }
