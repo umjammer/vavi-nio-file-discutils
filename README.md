@@ -8,6 +8,8 @@
 
 A Java NIO FileSystem implementation over [DiscUtils](https://github.com/DiscUtils/DiscUtils)
 
+all formats are mounted by fuse also!
+
 ## Install
 
 https://jitpack.io/#umjammer/vavi-nio-file-discutils
@@ -17,31 +19,34 @@ https://jitpack.io/#umjammer/vavi-nio-file-discutils
 ```Java
  URI uri = URI.create("discutils:file:/Users/foo/bar.vdi");
  FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
+ // use java nio file system
  Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+ // mount as fuse
+ Fuse.getFuse().mount(fs, "/your/mountPoint", Collections.emptyMap());
 ```
 
 ## Status
 
-| fs       | list     | upload | download | copy | move | rm | mkdir | cache | watch | create | comment                                                                                                                                  |
-|----------|----------|--------|----------|------|------|----|-------|-------|-------|--------|------------------------------------------------------------------------------------------------------------------------------------------|
-| UDF      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| FAT      | ✅ (RAW)  |      |          |      |      |    |       |       |       |        |                                                                                                                                          |         |
-| NTFS     | ✅ (VDI)  |      | ✅ (VDI) |      |      |    |       |       |       |        |                                                                                                                                          |
-| HSF+     | ✅ (DMG)  |      |          |      |      |    |       |       |       |        | 🚫 (ISO) same error on original                                                                                                          |
-| EXT      | 🚧 (VDI) |      |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| XFS      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| ISO      | 🚧       |        |          |      |      |    |       |       |       | ✅     |                                                                                                                                          |
+| fs       | list      | upload | download  | copy | move | rm | mkdir | cache | watch | create | comment                                                                                                                               |
+|----------|-----------|--------|-----------|------|------|----|-------|-------|-------|--------|---------------------------------------------------------------------------------------------------------------------------------------|
+| UDF      |           |        |           |      |      |    |       |       |       |        |                                                                                                                                       |
+| FAT      | ✅ (RAW)   |      |           |      |      |    |       |       |       |        |                                                                                                                                       |         |
+| NTFS     | ✅ (VDI)   |      | ✅ (VDI)   |      |      |    |       |       |       |        |                                                                                                                                       |
+| HSF+     | ✅ (DMG)   |      |           |      |      |    |       |       |       |        | 🚫 (ISO) same error on original                                                                                                       |
+| EXT      | 🚧 (VDI)  |      |           |      |      |    |       |       |       |        |                                                                                                                                       |
+| XFS      |           |        |           |      |      |    |       |       |       |        |                                                                                                                                       |
+| ISO      | 🚧        |        |           |      |      |    |       |       |       | ✅     |                                                                                                                                       |
 | VHD      | ✅ (fat16) |        | ✅ (fat16) |      |      |    |       |       |       |        | ~~🐛 subdir w/ fuse~~                                                                                                                 |
 | VDI      | ✅ (fat16) |        | ✅ (fat16) |      |      |    |       |       |       |        | ~~🐛 copy bytes slip out of place? w/ fuse~~                                                                                          |
-| XVA      |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| VMDK     |          |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| DMG      | ✅        |        |          |      |      |    |       |       |       |        |                                                                                                                                          |
-| Registry | ✅        |        |          |      |      |    |       |       |       |        | Windows 10's registry                                                                                                                    |
-| ├ BCD    | ✅        |        |          |      |      |    |       |       |       |        | Windows XP's bcd                                                                                                                         |
-| iSCSI    | 🚫       |        |          |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                   |
-| NFS      | 🚫       |        |          |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                          |
-| ODS      | 🚫       |        |          |      |      |    |       |       |       |        | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                          |
-| EMU      | ✅ (nhd)  |        |          |      |      |    |       |       |       |        | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
+| XVA      |           |        |           |      |      |    |       |       |       |        |                                                                                                                                       |
+| VMDK     |           |        |           |      |      |    |       |       |       |        |                                                                                                                                       |
+| DMG      | ✅         |        |           |      |      |    |       |       |       |        |                                                                                                                                       |
+| Registry | ✅         |        |           |      |      |    |       |       |       |        | Windows 10's registry                                                                                                                 |
+| ├ BCD    | ✅         |        |           |      |      |    |       |       |       |        | Windows XP's bcd                                                                                                                      |
+| iSCSI    | 🚫        |        |           |      |      |    |       |       |       |        | server [jscsi](https://github.com/sebastiangraf/jSCSI)                                                                                |
+| NFS      | 🚫        |        |           |      |      |    |       |       |       |        | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                       |
+| ODS      | 🚫        |        |           |      |      |    |       |       |       |        | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                       |
+| EMU      | ✅ (nhd)   |        |           |      |      |    |       |       |       |        | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
 
 ## Project Description
 
@@ -146,6 +151,7 @@ Again, start browsing the file system at floppy.Root.
 
  * https://github.com/twiglet/cs2j
  * https://github.com/feyris-tan/dotnetIo4j [(vavi patched)](https://github.com/umjammer/dotnet4j)
+ * bcd ... https://thestarman.pcministry.com/asm/mbr/BCD.htm
 
 ## TODO
 
@@ -159,6 +165,7 @@ Again, start browsing the file system at floppy.Root.
  * qcow2 (wip, see [aaru](https://github.com/aaru-dps/Aaru))
  * chd (wip, see aaru)
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
+   * https://mamedev.emulab.it/haze/2012/02/16/chd-v5/
  * iso9660
    * `CommonVolumeDescriptor` as `user:attributes` 
  * ~~registry~~

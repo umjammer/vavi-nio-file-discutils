@@ -6,8 +6,8 @@
   <version>0.14.4</version>
 
   <properties>
-    <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId>
-    <vavi-net-fuse.version>0.1.7</vavi-net-fuse.version>
+    <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId> <!-- com.github.umjammer.vavi-apps-fuse -->
+    <vavi-net-fuse.version>0.1.8</vavi-net-fuse.version>
   </properties>
 
   <profiles>
@@ -57,18 +57,18 @@
           <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>4.4.2.1</version>
+            <version>4.7.3.0</version>
             <dependencies>
               <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
               <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs</artifactId>
-                <version>4.4.2</version>
+                <version>4.7.3</version>
               </dependency>
               <dependency>
                 <groupId>com.formdev</groupId>
                 <artifactId>flatlaf</artifactId>
-                <version>1.6.1</version>
+                <version>2.6</version>
               </dependency>
             </dependencies>
             <configuration>
@@ -198,14 +198,19 @@
 
     <dependency>
       <groupId>com.github.umjammer</groupId>
+      <artifactId>vavi-nio-file</artifactId>
+      <version>0.0.15</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.umjammer</groupId>
       <artifactId>java7-fs-base</artifactId>
       <version>0.0.13v</version>
     </dependency>
 
     <dependency>
-      <groupId>moe.yo3explorer</groupId> <!-- moe.yo3explorer -->
+      <groupId>com.github.umjammer</groupId> <!-- moe.yo3explorer -->
       <artifactId>dotnet4j</artifactId>
-      <version>1.2.2-SNAPSHOT</version>
+      <version>1.2.2</version>
     </dependency>
 
     <dependency>
