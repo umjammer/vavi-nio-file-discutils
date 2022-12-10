@@ -31,6 +31,7 @@ import dotnet4j.io.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
@@ -42,6 +43,7 @@ import vavi.util.properties.annotation.PropsEntity;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (nsano)
  * @version 0.00 2022-12-05 nsano initial version <br>
  */
+@EnabledIf("localPropertiesExists")
 @PropsEntity(url = "file://${user.dir}/local.properties")
 public class Test1 {
 
