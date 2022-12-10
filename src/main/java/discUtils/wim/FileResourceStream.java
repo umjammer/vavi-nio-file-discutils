@@ -80,43 +80,43 @@ public class FileResourceStream extends SparseStream {
             chunkOffsets[i] = EndianUtilities.toUInt32LittleEndian(StreamUtilities.readExact(this.baseStream, 4), 0);
             chunkLength[i - 1] = chunkOffsets[i] - chunkOffsets[i - 1];
         }
-        chunkLength[numChunks - 1] = this.baseStream.getLength() - this.baseStream.getPosition() - chunkOffsets[numChunks - 1];
-        offsetDelta = this.baseStream.getPosition();
+        chunkLength[numChunks - 1] = this.baseStream.getLength() - this.baseStream.position() - chunkOffsets[numChunks - 1];
+        offsetDelta = this.baseStream.position();
         currentChunk = -1;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return false;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return header.originalSize;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position >= getLength()) {
             return 0;
         }
@@ -132,7 +132,7 @@ public class FileResourceStream extends SparseStream {
                 currentChunk = chunk;
             }
 
-            currentChunkStream.setPosition(chunkOffset);
+            currentChunkStream.position(chunkOffset);
             int numRead = currentChunkStream.read(buffer, offset + totalRead, numToRead);
             if (numRead == 0) {
                 return totalRead;
@@ -144,15 +144,15 @@ public class FileResourceStream extends SparseStream {
         return totalRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         throw new UnsupportedOperationException();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 

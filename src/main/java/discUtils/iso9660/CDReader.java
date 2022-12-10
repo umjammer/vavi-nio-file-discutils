@@ -40,6 +40,7 @@ import dotnet4j.io.Stream;
  * Class for reading existing ISO images.
  */
 public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSystem, IUnixFileSystem {
+
     /**
      * Initializes a new instance of the CDReader class.
      *
@@ -101,14 +102,14 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
     /**
      * Gets the size (in bytes) of each cluster.
      */
-    public long getClusterSize() {
+    @Override public long getClusterSize() {
         return VfsCDReader.class.cast(getRealFileSystem()).getClusterSize();
     }
 
     /**
      * Gets the total number of clusters managed by the file system.
      */
-    public long getTotalClusters() {
+    @Override public long getTotalClusters() {
         return VfsCDReader.class.cast(getRealFileSystem()).getTotalClusters();
     }
 
@@ -119,7 +120,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      * @param cluster The cluster to convert.
      * @return The corresponding absolute byte position.
      */
-    public long clusterToOffset(long cluster) {
+    @Override public long clusterToOffset(long cluster) {
         return VfsCDReader.class.cast(getRealFileSystem()).clusterToOffset(cluster);
     }
 
@@ -130,7 +131,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      * @param offset The byte position to convert.
      * @return The cluster containing the specified byte.
      */
-    public long offsetToCluster(long offset) {
+    @Override public long offsetToCluster(long offset) {
         return VfsCDReader.class.cast(getRealFileSystem()).offsetToCluster(offset);
     }
 
@@ -142,7 +143,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      *         have dedicated clusters. Only dedicated clusters will be
      *         returned.
      */
-    public List<Range> pathToClusters(String path) {
+    @Override public List<Range> pathToClusters(String path) {
         return VfsCDReader.class.cast(getRealFileSystem()).pathToClusters(path);
     }
 
@@ -157,7 +158,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      * @return The file extents, as absolute byte positions in the underlying
      *         stream.
      */
-    public List<StreamExtent> pathToExtents(String path) {
+    @Override public List<StreamExtent> pathToExtents(String path) {
         return VfsCDReader.class.cast(getRealFileSystem()).pathToExtents(path);
     }
 
@@ -166,7 +167,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      *
      * @return The cluster map.
      */
-    public ClusterMap buildClusterMap() {
+    @Override public ClusterMap buildClusterMap() {
         return VfsCDReader.class.cast(getRealFileSystem()).buildClusterMap();
     }
 
@@ -177,7 +178,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
      * @return Information about the owner, group, permissions and type of the
      *         file or directory.
      */
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         return VfsCDReader.class.cast(getRealFileSystem()).getUnixFileInfo(path);
     }
 
@@ -194,7 +195,7 @@ public class CDReader extends VfsFileSystemFacade implements IClusterBasedFileSy
             return false;
         }
 
-        data.setPosition(0x8000);
+        data.position(0x8000);
         int numRead = StreamUtilities.readMaximum(data, buffer, 0, IsoUtilities.SectorSize);
         if (numRead != IsoUtilities.SectorSize) {
             return false;

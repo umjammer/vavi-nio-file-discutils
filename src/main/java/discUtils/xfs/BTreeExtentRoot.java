@@ -86,11 +86,11 @@ public class BTreeExtentRoot implements IByteArraySerializable {
         children = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 4 + (0x9 * 0x16);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         level = EndianUtilities.toUInt16BigEndian(buffer, offset);
         numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
         offset += 0x4;
@@ -106,8 +106,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
         return size();
     }
 
-    /* */
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
@@ -127,7 +126,7 @@ public class BTreeExtentRoot implements IByteArraySerializable {
                     child = new BTreeExtentNode();
             }
             Stream data = context.getRawStream();
-            data.setPosition(Extent.getOffset(context, pointer[i]));
+            data.position(Extent.getOffset(context, pointer[i]));
             byte[] buffer = StreamUtilities.readExact(data, context.getSuperBlock().getBlocksize());
             child.readFrom(buffer, 0);
             if (context.getSuperBlock().getSbVersion() < 5 && child.getMagic() != BTreeExtentHeader.BtreeMagic ||

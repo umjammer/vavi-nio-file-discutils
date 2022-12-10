@@ -91,7 +91,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * Gets the GUID that uniquely identifies this disk, if supported (else
      * returns {@code null} ).
      */
-    public UUID getDiskGuid() {
+    @Override public UUID getDiskGuid() {
         return EMPTY;
     }
 
@@ -99,7 +99,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * Gets a collection of the partitions for storing Operating System
      * file-systems.
      */
-    public List<PartitionInfo> getPartitions() {
+    @Override public List<PartitionInfo> getPartitions() {
         List<PartitionInfo> result = new ArrayList<>();
         for (BiosPartitionRecord r : getAllRecords()) {
             if (r.isValid()) {
@@ -118,7 +118,7 @@ public final class BiosPartitionTable extends PartitionTable {
      */
     public static Geometry detectGeometry(Stream disk) {
         if (disk.getLength() >= Sizes.Sector) {
-            disk.setPosition(0);
+            disk.position(0);
             byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
             if ((bootSector[510] & 0xff) == 0x55 && (bootSector[511] & 0xff) == 0xAA) {
                 int maxHead = 0;
@@ -149,7 +149,7 @@ public final class BiosPartitionTable extends PartitionTable {
             return false;
         }
 
-        disk.setPosition(0);
+        disk.position(0);
         byte[] bootSector = StreamUtilities.readExact(disk, Sizes.Sector);
 
         // Check for the 'bootable sector' marker
@@ -218,7 +218,7 @@ public final class BiosPartitionTable extends PartitionTable {
 
         byte[] bootSector;
         if (data.getLength() >= Sizes.Sector) {
-            data.setPosition(0);
+            data.position(0);
             bootSector = StreamUtilities.readExact(data, Sizes.Sector);
         } else {
             bootSector = new byte[Sizes.Sector];
@@ -231,7 +231,7 @@ public final class BiosPartitionTable extends PartitionTable {
         bootSector[510] = 0x55;
         bootSector[511] = (byte) 0xAA;
 
-        data.setPosition(0);
+        data.position(0);
         data.write(bootSector, 0, bootSector.length);
 
         return new BiosPartitionTable(disk, diskGeometry);
@@ -247,7 +247,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @return The index of the partition.
      */
-    public int create(WellKnownPartitionType type, boolean active) {
+    @Override public int create(WellKnownPartitionType type, boolean active) {
         Geometry allocationGeometry = new Geometry(diskData.getLength(),
                                                    diskGeometry.getHeadsPerCylinder(),
                                                    diskGeometry.getSectorsPerTrack(),
@@ -273,7 +273,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param active Whether the partition is active (bootable).
      * @return The index of the new partition.
      */
-    public int create(long size, WellKnownPartitionType type, boolean active) {
+    @Override public int create(long size, WellKnownPartitionType type, boolean active) {
         int cylinderCapacity = diskGeometry.getSectorsPerTrack() * diskGeometry.getHeadsPerCylinder() *
                                diskGeometry.getBytesPerSector();
         int numCylinders = (int) (size / cylinderCapacity);
@@ -298,7 +298,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param alignment The alignment (in bytes).
      * @return The index of the partition.
      */
-    public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
         Geometry allocationGeometry = new Geometry(diskData.getLength(),
                                                    diskGeometry.getHeadsPerCylinder(),
                                                    diskGeometry.getSectorsPerTrack(),
@@ -330,7 +330,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param alignment The alignment (in bytes).
      * @return The index of the new partition.
      */
-    public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
         if (size < diskGeometry.getBytesPerSector()) {
             throw new IndexOutOfBoundsException("size must be at least one sector");
         }
@@ -354,7 +354,7 @@ public final class BiosPartitionTable extends PartitionTable {
      *
      * @param index The index of the partition.
      */
-    public void delete(int index) {
+    @Override public void delete(int index) {
         writeRecord(index, new BiosPartitionRecord());
     }
 
@@ -473,7 +473,7 @@ public final class BiosPartitionTable extends PartitionTable {
     /**
      * Gets all of the disk ranges containing partition table metadata.
      *
-     * @return Set of stream extents, indicated as byte offset from the start of
+     * @return list of stream extents, indicated as byte offset from the start of
      *         the disk.
      */
     public List<StreamExtent> getMetadataDiskExtents() {
@@ -503,7 +503,7 @@ public final class BiosPartitionTable extends PartitionTable {
      * @param geometry The disk's new BIOS geometry.
      */
     public void updateBiosGeometry(Geometry geometry) {
-        diskData.setPosition(0);
+        diskData.position(0);
         byte[] bootSector = StreamUtilities.readExact(diskData, Sizes.Sector);
 
         BiosPartitionRecord[] records = readPrimaryRecords(bootSector);
@@ -593,7 +593,7 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private BiosPartitionRecord[] getPrimaryRecords() {
-        diskData.setPosition(0);
+        diskData.position(0);
         byte[] bootSector = StreamUtilities.readExact(diskData, Sizes.Sector);
         return readPrimaryRecords(bootSector);
     }
@@ -603,10 +603,10 @@ public final class BiosPartitionTable extends PartitionTable {
     }
 
     private void writeRecord(int i, BiosPartitionRecord newRecord) {
-        diskData.setPosition(0);
+        diskData.position(0);
         byte[] bootSector = StreamUtilities.readExact(diskData, Sizes.Sector);
         newRecord.writeTo(bootSector, 0x01BE + i * 16);
-        diskData.setPosition(0);
+        diskData.position(0);
         diskData.write(bootSector, 0, bootSector.length);
     }
 
@@ -670,7 +670,7 @@ public final class BiosPartitionTable extends PartitionTable {
     private void init(Stream disk, Geometry diskGeometry) {
         diskData = disk;
         this.diskGeometry = diskGeometry;
-        diskData.setPosition(0);
+        diskData.position(0);
         byte[] bootSector = StreamUtilities.readExact(diskData, Sizes.Sector);
         if ((bootSector[510] & 0xff) != 0x55 || (bootSector[511] & 0xff) != 0xAA) {
             throw new dotnet4j.io.IOException("Invalid boot sector - no magic number 0xAA55");

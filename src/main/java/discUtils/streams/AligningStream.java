@@ -47,19 +47,19 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         alignmentBuffer = new byte[blockSize];
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int startOffset = (int) (position % blockSize);
         if (startOffset == 0 && (count % blockSize == 0 || position + count == getLength())) {
             // Aligned read - pass through to underlying stream.
-            getWrappedStream().setPosition(position);
+            getWrappedStream().position(position);
             int numRead = getWrappedStream().read(buffer, offset, count);
             position += numRead;
             return numRead;
@@ -74,7 +74,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 
         byte[] tempBuffer = new byte[(int) (endPos - startPos)];
 
-        getWrappedStream().setPosition(startPos);
+        getWrappedStream().position(startPos);
         int read = getWrappedStream().read(tempBuffer, 0, tempBuffer.length);
         int available = Math.min(count, read - startOffset);
 
@@ -84,7 +84,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         return available;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -99,12 +99,12 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         return position;
     }
 
-    public void clear(int count) {
+    @Override public void clear(int count) {
         doOperation((s, opOffset, opCount) -> s.clear(opCount),
                 (buffer, offset, opOffset, opCount) -> Arrays.fill(buffer, offset, offset + opCount, (byte) 0), count);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         doOperation((s, opOffset, opCount) -> s.write(buffer, offset + opOffset, opCount),
                 (tempBuffer, tempOffset, opOffset, opCount) -> System.arraycopy(buffer, offset + opOffset, tempBuffer, tempOffset, opCount), count);
     }
@@ -112,7 +112,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
     private void doOperation(ModifyStream modifyStream, ModifyBuffer modifyBuffer, int count) {
         int startOffset = (int) (position % blockSize);
         if (startOffset == 0 && (count % blockSize == 0 || position + count == getLength())) {
-            getWrappedStream().setPosition(position);
+            getWrappedStream().position(position);
             modifyStream.invoke(getWrappedStream(), 0, count);
             position += count;
             return;
@@ -122,12 +122,12 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
         long alignedPos = MathUtilities.roundDown(position, blockSize);
 
         if (startOffset != 0) {
-            getWrappedStream().setPosition(alignedPos);
+            getWrappedStream().position(alignedPos);
             getWrappedStream().read(alignmentBuffer, 0, blockSize);
 
             modifyBuffer.invoke(alignmentBuffer, startOffset, 0, Math.min(count, blockSize - startOffset));
 
-            getWrappedStream().setPosition(alignedPos);
+            getWrappedStream().position(alignedPos);
             getWrappedStream().write(alignmentBuffer, 0, blockSize);
         }
 
@@ -139,7 +139,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
 
         int passthroughLength = (int) MathUtilities.roundDown(position + count - alignedPos, blockSize);
         if (passthroughLength > 0) {
-            getWrappedStream().setPosition(alignedPos);
+            getWrappedStream().position(alignedPos);
             modifyStream.invoke(getWrappedStream(), (int) (alignedPos - position), passthroughLength);
         }
 
@@ -149,7 +149,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
             return;
         }
 
-        getWrappedStream().setPosition(alignedPos);
+        getWrappedStream().position(alignedPos);
         getWrappedStream().read(alignmentBuffer, 0, blockSize);
 
         modifyBuffer.invoke(alignmentBuffer,
@@ -157,7 +157,7 @@ public final class AligningStream extends WrappingMappedStream<SparseStream> {
                             (int) (alignedPos - position),
                             (int) Math.min(count - (alignedPos - position), unalignedEnd - alignedPos));
 
-        getWrappedStream().setPosition(alignedPos);
+        getWrappedStream().position(alignedPos);
         getWrappedStream().write(alignmentBuffer, 0, blockSize);
 
         position = unalignedEnd;

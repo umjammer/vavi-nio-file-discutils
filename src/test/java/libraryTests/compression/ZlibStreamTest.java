@@ -49,7 +49,7 @@ public class ZlibStreamTest {
         }
 
 //Debug.println("\n" + StringUtil.getDump(compressedStream.toArray()));
-        compressedStream.setPosition(0);
+        compressedStream.position(0);
         try (ZlibStream uzs = new ZlibStream(compressedStream, CompressionMode.Decompress, true)) {
             byte[] outData = new byte[testData.length];
             uzs.read(outData, 0, outData.length);
@@ -71,11 +71,9 @@ public class ZlibStreamTest {
         }
 
         compressedStream.seek(-2, SeekOrigin.End);
-        compressedStream.write(new byte[] {
-            0, 0
-        }, 0, 2);
+        compressedStream.write(new byte[] {0, 0}, 0, 2);
 
-        compressedStream.setPosition(0);
+        compressedStream.position(0);
         assertThrows(IOException.class, () -> {
             try (ZlibStream uzs = new ZlibStream(compressedStream, CompressionMode.Decompress, true)) {
                 byte[] outData = new byte[testData.length];

@@ -46,10 +46,10 @@ public class DiskBuilderTest {
         MemoryStream fileStream = new MemoryStream();
         discUtils.vhd.Disk baseFile = discUtils.vhd.Disk.initializeDynamic(fileStream, Ownership.Dispose, 16 * 1024L * 1024);
         for (int i = 0; i < 8; i += 1024 * 1024) {
-            baseFile.getContent().setPosition(i);
+            baseFile.getContent().position(i);
             baseFile.getContent().writeByte((byte) i);
         }
-        baseFile.getContent().setPosition(15 * 1024 * 1024);
+        baseFile.getContent().position(15 * 1024 * 1024);
         baseFile.getContent().writeByte((byte) 0xFF);
         diskContent = baseFile.getContent();
     }
@@ -65,10 +65,10 @@ public class DiskBuilderTest {
         DiskBuilderFileSystem dbfs = new DiskBuilderFileSystem(fileSpecs);
         try (Disk disk = new Disk(dbfs, "foo.vmdk", FileAccess.Read)) {
             for (int i = 0; i < 8; i += 1024 * 1024) {
-                disk.getContent().setPosition(i);
+                disk.getContent().position(i);
                 assertEquals(i, disk.getContent().readByte());
             }
-            disk.getContent().setPosition(15 * 1024 * 1024);
+            disk.getContent().position(15 * 1024 * 1024);
             assertEquals(0xFF, disk.getContent().readByte() & 0xff);
         }
     }
@@ -84,10 +84,10 @@ public class DiskBuilderTest {
         DiskBuilderFileSystem dbfs = new DiskBuilderFileSystem(fileSpecs);
         try (Disk disk = new Disk(dbfs, "foo.vmdk", FileAccess.Read)) {
             for (int i = 0; i < 8; i += 1024 * 1024) {
-                disk.getContent().setPosition(i);
+                disk.getContent().position(i);
                 assertEquals(i, disk.getContent().readByte());
             }
-            disk.getContent().setPosition(15 * 1024 * 1024);
+            disk.getContent().position(15 * 1024 * 1024);
             assertEquals(0xFF, disk.getContent().readByte() & 0xff);
         }
     }

@@ -48,20 +48,17 @@ public class Nfs3LookupResultTest {
         Nfs3LookupResult result = new Nfs3LookupResult();
         Nfs3FileAttributes dirAttrs = new Nfs3FileAttributes();
         dirAttrs.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         dirAttrs.bytesUsed = 1;
         dirAttrs.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         dirAttrs.fileId = 2;
         dirAttrs.fileSystemId = 3;
         dirAttrs.gid = 4;
         dirAttrs.linkCount = 5;
         dirAttrs.mode = UnixFilePermissions.GroupAll;
         dirAttrs.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         dirAttrs.rdevMajor = 6;
         dirAttrs.rdevMinor = 7;
         dirAttrs.size = 8;
@@ -71,20 +68,17 @@ public class Nfs3LookupResultTest {
 
         Nfs3FileAttributes objAttrs = new Nfs3FileAttributes();
         objAttrs.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 10, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         objAttrs.bytesUsed = 11;
         objAttrs.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 12, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         objAttrs.fileId = 12;
         objAttrs.fileSystemId = 13;
         objAttrs.gid = 14;
         objAttrs.linkCount = 15;
         objAttrs.mode = EnumSet.of(UnixFilePermissions.GroupWrite);
         objAttrs.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 13, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         objAttrs.rdevMajor = 16;
         objAttrs.rdevMinor = 17;
         objAttrs.size = 18;
@@ -92,17 +86,15 @@ public class Nfs3LookupResultTest {
         objAttrs.uid = 19;
         result.setObjectAttributes(objAttrs);
         Nfs3FileHandle handle = new Nfs3FileHandle();
-        handle.setValue(new byte[] {
-            0x20
-        });
+        handle.setValue(new byte[] {0x20});
         result.setObjectHandle(handle);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3LookupResult clone = null;
+        Nfs3LookupResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3LookupResult(reader);
         }

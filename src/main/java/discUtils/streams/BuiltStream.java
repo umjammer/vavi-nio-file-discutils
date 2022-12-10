@@ -54,38 +54,38 @@ public class BuiltStream extends SparseStream {
         this.extents.sort(new ExtentStartComparer());
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return extents.stream().flatMap(extent -> extent.getStreamExtents().stream()).collect(Collectors.toList());
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position >= length) {
             return 0;
         }
@@ -109,7 +109,7 @@ public class BuiltStream extends SparseStream {
                     int idx = Collections.binarySearch(extents, searchExtent, new ExtentRangeComparer());
                     if (idx >= 0) {
                         BuilderExtent extent = extents.get(idx);
-//Debug.println(getPosition() + ", " + offset + ", " + extent);
+//Debug.println(position() + ", " + offset + ", " + extent);
                         extent.prepareForRead();
                         currentExtent = extent;
                     }
@@ -120,7 +120,7 @@ public class BuiltStream extends SparseStream {
 
             // If the block is outside any known extent, defer to base stream.
             if (currentExtent == null) {
-                baseStream.setPosition(position);
+                baseStream.position(position);
                 BuilderExtent nextExtent = findNext(position);
                 if (nextExtent != null) {
                     numRead = baseStream.read(buffer,
@@ -143,7 +143,7 @@ public class BuiltStream extends SparseStream {
         return totalRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
             newPos += position;
@@ -155,15 +155,15 @@ public class BuiltStream extends SparseStream {
         return newPos;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (currentExtent != null) {
             currentExtent.disposeReadState();
             currentExtent = null;
@@ -205,27 +205,27 @@ public class BuiltStream extends SparseStream {
             super(pos, 1);
         }
 
-        public void close() {
+        @Override public void close() {
         }
 
-        public void prepareForRead() {
+        @Override public void prepareForRead() {
             // Not valid to use this 'dummy' extent for actual construction
             throw new UnsupportedOperationException();
         }
 
-        public int read(long diskOffset, byte[] block, int offset, int count) {
+        @Override public int read(long diskOffset, byte[] block, int offset, int count) {
             // Not valid to use this 'dummy' extent for actual construction
             throw new UnsupportedOperationException();
         }
 
-        public void disposeReadState() {
+        @Override public void disposeReadState() {
             // Not valid to use this 'dummy' extent for actual construction
             throw new UnsupportedOperationException();
         }
     }
 
     private static class ExtentRangeComparer implements Comparator<BuilderExtent> {
-        public int compare(BuilderExtent x, BuilderExtent y) {
+        @Override public int compare(BuilderExtent x, BuilderExtent y) {
             if (x == null) {
                 throw new NullPointerException("x");
             }
@@ -250,7 +250,7 @@ public class BuiltStream extends SparseStream {
     }
 
     private static class ExtentStartComparer implements Comparator<BuilderExtent> {
-        public int compare(BuilderExtent x, BuilderExtent y) {
+        @Override public int compare(BuilderExtent x, BuilderExtent y) {
             if (x == null) {
                 throw new NullPointerException("x");
             }

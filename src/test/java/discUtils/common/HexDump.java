@@ -77,15 +77,15 @@ public class HexDump {
      * @param output The destination for the hex dump.
      */
     public static void generate(SparseStream stream, PrintStream output) {
-        stream.setPosition(0);
+        stream.position(0);
         byte[] buffer = new byte[1024 * 1024];
         for (Range block : StreamExtent.blocks(stream.getExtents(), buffer.length)) {
             long startPos = block.getOffset() * buffer.length;
             long endPos = Math.min((block.getOffset() + block.getCount()) * buffer.length, stream.getLength());
-            stream.setPosition(startPos);
-            while (stream.getPosition() < endPos) {
+            stream.position(startPos);
+            while (stream.position() < endPos) {
                 int numLoaded = 0;
-                long readStart = stream.getPosition();
+                long readStart = stream.position();
                 while (numLoaded < buffer.length) {
                     int bytesRead = stream.read(buffer, numLoaded, buffer.length - numLoaded);
                     if (bytesRead == 0) {

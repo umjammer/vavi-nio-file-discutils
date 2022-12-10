@@ -70,27 +70,27 @@ public class ClusterStream extends Stream {
         clusterBuffer = new byte[reader.getClusterSize()];
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return access == FileAccess.Read || access == FileAccess.ReadWrite;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return access == FileAccess.ReadWrite || access == FileAccess.Write;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         if (value >= 0) {
             position = value;
             atEOF = false;
@@ -101,10 +101,10 @@ public class ClusterStream extends Stream {
 
     public FirstClusterChangedDelegate firstClusterChanged;
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (!canRead()) {
             throw new IOException("Attempt to read from file not opened for read");
         }
@@ -153,7 +153,7 @@ public class ClusterStream extends Stream {
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
             newPos += position;
@@ -166,7 +166,7 @@ public class ClusterStream extends Stream {
         return newPos;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         long desiredNumClusters = (value + reader.getClusterSize() - 1) / reader.getClusterSize();
         long actualNumClusters = (length + reader.getClusterSize() - 1) / reader.getClusterSize();
         if (desiredNumClusters < actualNumClusters) {
@@ -203,7 +203,7 @@ public class ClusterStream extends Stream {
         }
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         int bytesRemaining = count;
         if (!canWrite()) {
             throw new IOException("Attempting to write to file not opened for writing");

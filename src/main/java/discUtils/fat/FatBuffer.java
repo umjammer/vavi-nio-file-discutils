@@ -160,7 +160,7 @@ public class FatBuffer {
 
     public void writeDirtyRegions(Stream stream, long position) {
         for (int val : dirtySectors.values()) {
-            stream.setPosition(position + (long) val * DirtyRegionSize);
+            stream.position(position + (long) val * DirtyRegionSize);
             stream.write(buffer, val * DirtyRegionSize, DirtyRegionSize);
         }
     }

@@ -52,45 +52,45 @@ final class NtfsFileStream extends SparseStream {
         baseStream = file.openStream(attrType, attrName, access);
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         assertOpen();
         return baseStream.canRead();
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         assertOpen();
         return baseStream.canSeek();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         assertOpen();
         return baseStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         assertOpen();
         return baseStream.getExtents();
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         assertOpen();
         return baseStream.getLength();
     }
 
-    public long getPosition() {
+    @Override public long position() {
         assertOpen();
-        return baseStream.getPosition();
+        return baseStream.position();
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
-            baseStream.setPosition(value);
+            baseStream.position(value);
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (baseStream == null) {
             return;
         }
@@ -104,7 +104,7 @@ final class NtfsFileStream extends SparseStream {
         }
     }
 
-    public void flush() {
+    @Override public void flush() {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
@@ -114,7 +114,7 @@ final class NtfsFileStream extends SparseStream {
         }
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 
@@ -123,7 +123,7 @@ final class NtfsFileStream extends SparseStream {
         }
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
@@ -131,7 +131,7 @@ final class NtfsFileStream extends SparseStream {
         }
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {
@@ -142,7 +142,7 @@ final class NtfsFileStream extends SparseStream {
         }
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         assertOpen();
         StreamUtilities.assertBufferParameters(buffer, offset, count);
 

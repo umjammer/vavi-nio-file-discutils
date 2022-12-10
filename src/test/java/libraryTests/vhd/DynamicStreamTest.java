@@ -63,13 +63,13 @@ public class DynamicStreamTest {
             }
             Stream s = disk.getContent();
             s.write(content, 10, 40);
-            assertEquals(40, s.getPosition());
+            assertEquals(40, s.position());
             s.write(content, 50, 50);
-            assertEquals(90, s.getPosition());
-            s.setPosition(0);
+            assertEquals(90, s.position());
+            s.position(0);
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 60);
-            assertEquals(60, s.getPosition());
+            assertEquals(60, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -83,7 +83,7 @@ public class DynamicStreamTest {
             Stream s = disk.getContent();
             byte[] buffer = new byte[100];
             s.read(buffer, 10, 20);
-            assertEquals(20, s.getPosition());
+            assertEquals(20, s.position());
             for (int i = 0; i < 10; ++i) {
                 assertEquals(0, buffer[i]);
             }
@@ -102,10 +102,10 @@ public class DynamicStreamTest {
                 content[i] = (byte) i;
             }
             Stream s = disk.getContent();
-            s.setPosition(10);
+            s.position(10);
             s.write(content, 0, content.length);
             byte[] buffer = new byte[content.length];
-            s.setPosition(10);
+            s.position(10);
             s.read(buffer, 0, buffer.length);
             for (int i = 0; i < content.length; ++i) {
                 if (buffer[i] != content[i]) {
@@ -123,9 +123,7 @@ public class DynamicStreamTest {
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.None, 16 * 1024L * 1024 * 1024)) {
             contentStream = disk.getContent();
         }
-        assertThrows(IOException.class, () -> {
-            contentStream.setPosition(0);
-        });
+        assertThrows(IOException.class, () -> contentStream.position(0));
     }
 
     @Test
@@ -148,7 +146,7 @@ public class DynamicStreamTest {
     public void extents() throws Exception {
         MemoryStream stream = new MemoryStream();
         try (Disk disk = Disk.initializeDynamic(stream, Ownership.Dispose, 16 * 1024L * 1024 * 1024)) {
-            disk.getContent().setPosition(20 * 512);
+            disk.getContent().position(20 * 512);
             disk.getContent().write(new byte[4 * 512], 0, 4 * 512);
             // Starts before first extent, ends before end of extent
             List<StreamExtent> extents = disk.getContent().getExtentsInRange(0, 21 * 512);

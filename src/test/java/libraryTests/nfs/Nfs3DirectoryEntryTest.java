@@ -72,7 +72,7 @@ public class Nfs3DirectoryEntryTest {
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             entry.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3DirectoryEntry(reader);
         }

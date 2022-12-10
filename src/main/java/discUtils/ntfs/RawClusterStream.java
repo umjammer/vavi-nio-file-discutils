@@ -70,7 +70,7 @@ final class RawClusterStream extends ClusterStream {
         bytesPerCluster = context.getBiosParameterBlock().getBytesPerCluster();
     }
 
-    public long getAllocatedClusterCount() {
+    @Override public long getAllocatedClusterCount() {
         long total = 0;
         for (int i = 0; i < cookedRuns.getCount(); ++i) {
             CookedDataRun run = cookedRuns.get(i);
@@ -80,7 +80,7 @@ final class RawClusterStream extends ClusterStream {
         return total;
     }
 
-    public List<Range> getStoredClusters() {
+    @Override public List<Range> getStoredClusters() {
         Range lastVcnRange = null;
         List<Range> ranges = new ArrayList<>();
 
@@ -102,7 +102,7 @@ final class RawClusterStream extends ClusterStream {
         return ranges;
     }
 
-    public boolean isClusterStored(long vcn) {
+    @Override public boolean isClusterStored(long vcn) {
         int runIdx = cookedRuns.findDataRun(vcn, 0);
         return !cookedRuns.get(runIdx).isSparse();
     }
@@ -124,7 +124,7 @@ final class RawClusterStream extends ClusterStream {
         return true;
     }
 
-    public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
+    @Override public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
         long totalVirtualClusters = cookedRuns.getNextVirtualCluster();
         if (totalVirtualClusters < numVirtualClusters) {
             NonResidentAttributeRecord realExtent = extent;
@@ -143,7 +143,7 @@ final class RawClusterStream extends ClusterStream {
         }
     }
 
-    public void truncateToClusters(long numVirtualClusters) {
+    @Override public void truncateToClusters(long numVirtualClusters) {
         if (numVirtualClusters < cookedRuns.getNextVirtualCluster()) {
             releaseClusters(numVirtualClusters, (int) (cookedRuns.getNextVirtualCluster() - numVirtualClusters));
 
@@ -251,7 +251,7 @@ final class RawClusterStream extends ClusterStream {
         return totalReleased;
     }
 
-    public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
+    @Override public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
         StreamUtilities.assertBufferParameters(buffer, offset, count * bytesPerCluster);
 
         int runIdx = 0;
@@ -271,7 +271,7 @@ final class RawClusterStream extends ClusterStream {
                             (byte) 0);
             } else {
                 long lcn = cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
-                fsStream.setPosition(lcn * bytesPerCluster);
+                fsStream.position(lcn * bytesPerCluster);
                 StreamUtilities.readExact(fsStream, buffer, offset + totalRead * bytesPerCluster, toRead * bytesPerCluster);
             }
 
@@ -279,7 +279,7 @@ final class RawClusterStream extends ClusterStream {
         }
     }
 
-    public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
+    @Override public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
         StreamUtilities.assertBufferParameters(buffer, offset, count * bytesPerCluster);
 
         int runIdx = 0;
@@ -297,7 +297,7 @@ final class RawClusterStream extends ClusterStream {
             int toWrite = (int) Math.min(count - totalWritten, run.getLength() - (focusVcn - run.getStartVcn()));
 
             long lcn = cookedRuns.get(runIdx).getStartLcn() + (focusVcn - run.getStartVcn());
-            fsStream.setPosition(lcn * bytesPerCluster);
+            fsStream.position(lcn * bytesPerCluster);
             fsStream.write(buffer, offset + totalWritten * bytesPerCluster, toWrite * bytesPerCluster);
 
             totalWritten += toWrite;

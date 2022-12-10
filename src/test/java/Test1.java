@@ -15,19 +15,21 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import discUtils.fat.FatAttributes;
+import discUtils.ntfs.FileAttributeFlags;
+import discUtils.ntfs.internals.NtfsFileAttributes;
+import discUtils.streams.util.EndianUtilities;
+import discUtils.vhd.Footer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import vavi.util.ByteUtil;
+import vavi.util.Debug;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import discUtils.fat.FatAttributes;
-import discUtils.ntfs.FileAttributeFlags;
-import discUtils.ntfs.internals.NtfsFileAttributes;
-import discUtils.streams.util.EndianUtilities;
-import discUtils.vhd.Footer;
 
 
 /**
@@ -36,10 +38,10 @@ import discUtils.vhd.Footer;
  * @author <a href="mailto:umjammer@gmail.com">Naohide Sano</a> (umjammer)
  * @version 0.00 2019/10/07 umjammer initial version <br>
  */
-public class Test1 {
+class Test1 {
 
     @Test
-    public void test1() throws Exception {
+    void test1() throws Exception {
         EnumSet<FileAttributeFlags> set = FileAttributeFlags.valueOf(7);
         assertTrue(set.contains(FileAttributeFlags.ReadOnly));
         assertTrue(set.contains(FileAttributeFlags.Hidden));
@@ -51,14 +53,14 @@ public class Test1 {
     }
 
     @Test
-    public void test2() throws Exception {
+    void test2() throws Exception {
         EnumSet<NtfsFileAttributes> set = FileAttributeFlags.cast(NtfsFileAttributes.class, FileAttributeFlags.valueOf(7));
 //System.err.println(set);
         assertEquals(7, NtfsFileAttributes.valueOf(set));
     }
 
     @Test
-    public void test11() throws Exception {
+    void test11() throws Exception {
         EnumSet<FatAttributes> set = FatAttributes.valueOf(16);
         assertTrue(set.contains(FatAttributes.Directory));
         assertFalse(set.contains(FatAttributes.Archive));
@@ -135,7 +137,7 @@ public class Test1 {
     }
 
     @Test
-    public void test6() {
+    void test6() {
         long t = Footer.EpochUtc.plusSeconds(123456789).toEpochMilli();
 //Debug.println(t);
         byte[] bytes = new byte[4];
@@ -146,7 +148,7 @@ public class Test1 {
     }
 
     @Test
-    public void test7() {
+    void test7() {
         assertEquals(Instant.now().toEpochMilli(), Instant.now().atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
     }
 
@@ -171,6 +173,14 @@ public class Test1 {
         assertEquals((char) 0x80, c);
 
         assertEquals(1, "\01".length());
+    }
+
+    @Test
+    @DisabledIfSystemProperty(named = "vavi.test", matches = "ide")
+    void test10() {
+        byte[] b = new byte[4];
+        ByteUtil.writeLeInt(0x64616568, b);
+Debug.println(new String(b));
     }
 }
 

@@ -33,6 +33,7 @@ import dotnet4j.io.Stream;
  * Class that interprets Apple's HFS+ file system, found in DMG files.
  */
 public class HfsPlusFileSystem extends VfsFileSystemFacade implements IUnixFileSystem {
+
     /**
      * Initializes a new instance of the HfsPlusFileSystem class.
      *
@@ -48,7 +49,7 @@ public class HfsPlusFileSystem extends VfsFileSystemFacade implements IUnixFileS
     *  @param path The path of the file or directory.
     *  @return Unix file information.
     */
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         return HfsPlusFileSystemImpl.class.cast(getRealFileSystem()).getUnixFileInfo(path);
     }
 
@@ -57,7 +58,7 @@ public class HfsPlusFileSystem extends VfsFileSystemFacade implements IUnixFileS
             return false;
         }
 
-        stream.setPosition(1024);
+        stream.position(1024);
 
         byte[] headerBuf = StreamUtilities.readExact(stream, 512);
         VolumeHeader hdr = new VolumeHeader();

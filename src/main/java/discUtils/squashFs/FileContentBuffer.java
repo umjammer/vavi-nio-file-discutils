@@ -33,7 +33,7 @@ import discUtils.streams.util.EndianUtilities;
 
 public class FileContentBuffer implements IBuffer {
 
-    private static final int InvalidFragmentKey = 0xFFFFFFFF;
+    private static final int InvalidFragmentKey = 0xFFFF_FFFF;
 
     private final int[] blockLengths;
 
@@ -59,23 +59,23 @@ public class FileContentBuffer implements IBuffer {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return inode.getFileSize();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, getCapacity()));
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         if (pos > inode.getFileSize()) {
             return 0;
         }
@@ -107,22 +107,22 @@ public class FileContentBuffer implements IBuffer {
         return totalRead;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void clear(long pos, int count) {
+    @Override public void clear(long pos, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return StreamExtent.intersect(getExtents(), new StreamExtent(start, count));
     }
 

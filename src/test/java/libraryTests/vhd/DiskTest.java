@@ -158,7 +158,7 @@ public class DiskTest {
 
         try (Disk disk = new Disk(ms, Ownership.None)) {
             disk.getContent().write(new byte[1024], 0, 1024);
-            ms.setPosition(0);
+            ms.position(0);
             ms.read(firstSector, 0, 512);
             ms.seek(-512, SeekOrigin.End);
             ms.read(lastSector, 0, 512);
@@ -168,16 +168,16 @@ public class DiskTest {
 
         try (Disk disk = new Disk(ms, Ownership.None)) {
             disk.setAutoCommitFooter(false);
-            disk.getContent().setPosition(10 * 1024 * 1024);
+            disk.getContent().position(10 * 1024 * 1024);
             disk.getContent().write(new byte[1024], 0, 1024);
-            ms.setPosition(0);
+            ms.position(0);
             ms.read(firstSector, 0, 512);
             ms.seek(-512, SeekOrigin.End);
             ms.read(lastSector, 0, 512);
             assertNotEquals(firstSector, lastSector);
         }
         // Also check that after disposing, the commit happens
-        ms.setPosition(0);
+        ms.position(0);
         ms.read(firstSector, 0, 512);
         ms.seek(-512, SeekOrigin.End);
         ms.read(lastSector, 0, 512);

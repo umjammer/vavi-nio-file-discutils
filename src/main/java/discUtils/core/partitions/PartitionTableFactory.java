@@ -47,8 +47,10 @@ public interface PartitionTableFactory {
 
     boolean detectIsPartitioned(Stream s);
 
+    /** @return nullable */
     PartitionTable detectPartitionTable(VirtualDisk disk);
 
+    /** TODO adhoc */
     default void adhoc(List<PartitionTable> tables) {
     }
 }

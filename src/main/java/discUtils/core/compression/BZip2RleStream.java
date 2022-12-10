@@ -51,27 +51,27 @@ public class BZip2RleStream extends Stream {
         return runBytesOutstanding == 0 && blockRemaining == 0;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return false;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         throw new UnsupportedOperationException();
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         throw new UnsupportedOperationException();
     }
 
@@ -85,11 +85,11 @@ public class BZip2RleStream extends Stream {
         runBytesOutstanding = 0;
     }
 
-    public void flush() {
+    @Override public void flush() {
         throw new UnsupportedOperationException();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int numRead = 0;
         while (numRead < count && runBytesOutstanding > 0) {
             int runCount = Math.min(runBytesOutstanding, count);
@@ -130,15 +130,15 @@ public class BZip2RleStream extends Stream {
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         throw new UnsupportedOperationException();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 

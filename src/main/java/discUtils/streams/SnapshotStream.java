@@ -85,14 +85,14 @@ public final class SnapshotStream extends SparseStream {
     /**
      * Gets an indication as to whether the stream can be read.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return baseStream.canRead();
     }
 
     /**
      * Gets an indication as to whether the stream position can be changed.
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return baseStream.canSeek();
     }
 
@@ -104,7 +104,7 @@ public final class SnapshotStream extends SparseStream {
      * {@code true}
      * .
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return diffStream != null ? true : baseStream.canWrite();
     }
 
@@ -112,7 +112,7 @@ public final class SnapshotStream extends SparseStream {
      * Returns an enumeration over the parts of the stream that contain real
      * data.
      */
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         if (baseStream instanceof SparseStream) {
             return StreamExtent.union(((SparseStream) baseStream).getExtents(), diffExtents);
         }
@@ -122,7 +122,7 @@ public final class SnapshotStream extends SparseStream {
     /**
      * Gets the length of the stream.
      */
-    public long getLength() {
+    @Override public long getLength() {
         if (diffStream != null) {
             return diffStream.getLength();
         }
@@ -133,11 +133,11 @@ public final class SnapshotStream extends SparseStream {
     /**
      * Gets and sets the current stream position.
      */
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
@@ -195,8 +195,8 @@ public final class SnapshotStream extends SparseStream {
 
         byte[] buffer = new byte[8192];
         for (StreamExtent extent : diffExtents) {
-            diffStream.setPosition(extent.getStart());
-            baseStream.setPosition(extent.getStart());
+            diffStream.position(extent.getStart());
+            baseStream.position(extent.getStart());
             int totalRead = 0;
             while (totalRead < extent.getLength()) {
                 int toRead = (int) Math.min(extent.getLength() - totalRead, buffer.length);
@@ -212,7 +212,7 @@ public final class SnapshotStream extends SparseStream {
     /**
      * Flushes the stream.
      */
-    public void flush() {
+    @Override public void flush() {
         checkFrozen();
         baseStream.flush();
     }
@@ -225,11 +225,11 @@ public final class SnapshotStream extends SparseStream {
      * @param count The number of bytes to read.
      * @return The number of bytes read.
      */
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         int numRead;
 
         if (diffStream == null) {
-            baseStream.setPosition(position);
+            baseStream.position(position);
             numRead = baseStream.read(buffer, offset, count);
         } else {
             if (position > diffStream.getLength()) {
@@ -242,7 +242,7 @@ public final class SnapshotStream extends SparseStream {
             // (potentially) stale data.
             if (position < baseStream.getLength()) {
                 int baseToRead = (int) Math.min(toRead, baseStream.getLength() - position);
-                baseStream.setPosition(position);
+                baseStream.position(position);
 
                 int totalBaseRead = 0;
                 while (totalBaseRead < baseToRead) {
@@ -253,7 +253,7 @@ public final class SnapshotStream extends SparseStream {
             // Now overlay any data from the overlay stream (if any)
             List<StreamExtent> overlayExtents = StreamExtent.intersect(diffExtents, new StreamExtent(position, toRead));
             for (StreamExtent extent : overlayExtents) {
-                diffStream.setPosition(extent.getStart());
+                diffStream.position(extent.getStart());
                 int overlayNumRead = 0;
                 while (overlayNumRead < extent.getLength()) {
                     overlayNumRead += diffStream.read(buffer,
@@ -277,7 +277,7 @@ public final class SnapshotStream extends SparseStream {
      * @param origin The base location.
      * @return The new absolute stream position.
      */
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkFrozen();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
@@ -299,7 +299,7 @@ public final class SnapshotStream extends SparseStream {
      *
      * @param value The new length.
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkFrozen();
         if (diffStream != null) {
             diffStream.setLength(value);
@@ -315,11 +315,11 @@ public final class SnapshotStream extends SparseStream {
      * @param offset The first byte to write from buffer.
      * @param count The number of bytes to write.
      */
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkFrozen();
 
         if (diffStream != null) {
-            diffStream.setPosition(position);
+            diffStream.position(position);
             diffStream.write(buffer, offset, count);
 
             // Beware of Linq's delayed model - force execution now by placing into a list.
@@ -328,7 +328,7 @@ public final class SnapshotStream extends SparseStream {
 
             position += count;
         } else {
-            baseStream.setPosition(position);
+            baseStream.position(position);
             baseStream.write(buffer, offset, count);
             position += count;
         }
@@ -337,7 +337,7 @@ public final class SnapshotStream extends SparseStream {
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (baseStreamOwnership == Ownership.Dispose && baseStream != null) {
             baseStream.close();
         }

@@ -42,12 +42,12 @@ public class Database {
     private final DatabaseHeader vmdb;
 
     public Database(Stream stream) {
-        long dbStart = stream.getPosition();
+        long dbStart = stream.position();
         byte[] buffer = new byte[Sizes.Sector];
         stream.read(buffer, 0, buffer.length);
         vmdb = new DatabaseHeader();
         vmdb.readFrom(buffer, 0);
-        stream.setPosition(dbStart + vmdb.headerSize);
+        stream.position(dbStart + vmdb.headerSize);
         buffer = StreamUtilities.readExact(stream, vmdb.blockSize * vmdb.numVBlks);
         records = new HashMap<>();
         for (int i = 0; i < vmdb.numVBlks; ++i) {

@@ -45,19 +45,19 @@ final class FileBuffer extends Buffer {
         cnid = catalogNodeId;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return baseData.logicalSize;
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         int totalRead = 0;
 
         int limitedCount = (int) Math.min(count, Math.max(0, getCapacity() - pos));
@@ -78,7 +78,7 @@ final class FileBuffer extends Buffer {
             }
 
             Stream volStream = context.getVolumeStream();
-            volStream.setPosition(extentStreamStart + extentOffset);
+            volStream.position(extentStreamStart + extentOffset);
             int numRead = volStream.read(buffer, offset + totalRead, toRead);
 
             totalRead += numRead;
@@ -87,15 +87,15 @@ final class FileBuffer extends Buffer {
         return totalRead;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return Collections.singletonList(new StreamExtent(start, Math.min(start + count, getCapacity()) - start));
     }
 

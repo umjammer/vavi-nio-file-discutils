@@ -83,7 +83,7 @@ public class AllocationGroup {
         Stream data = context.getRawStream();
         SuperBlock superblock = this.context.getSuperBlock();
         freeBlockInfo = new AllocationGroupFreeBlockInfo(superblock);
-        data.setPosition(offset + superblock.getSectorSize());
+        data.position(offset + superblock.getSectorSize());
         byte[] agfData = StreamUtilities.readExact(data, freeBlockInfo.size());
         freeBlockInfo.readFrom(agfData, 0);
         if (freeBlockInfo.getMagic() != AllocationGroupFreeBlockInfo.AgfMagic) {
@@ -91,7 +91,7 @@ public class AllocationGroup {
         }
 
         inodeBtreeInfo = new AllocationGroupInodeBtreeInfo(superblock);
-        data.setPosition(offset + superblock.getSectorSize() * 2L);
+        data.position(offset + superblock.getSectorSize() * 2L);
         byte[] agiData = StreamUtilities.readExact(data, getInodeBtreeInfo().size());
         inodeBtreeInfo.readFrom(agiData, 0);
         if (inodeBtreeInfo.getMagic() != AllocationGroupInodeBtreeInfo.AgiMagic) {
@@ -113,7 +113,7 @@ Debug.printf("%d, %x\n", superblock.getSbVersion(), inodeBtreeInfo.getRootInodeB
     public void loadInode(Inode inode) {
         long offset = this.offset + ((long) inode.getAgBlock() * context.getSuperBlock().getBlocksize()) +
                       ((long) inode.getBlockOffset() * context.getSuperBlock().getInodeSize());
-        context.getRawStream().setPosition(offset);
+        context.getRawStream().position(offset);
         byte[] data = StreamUtilities.readExact(context.getRawStream(), context.getSuperBlock().getInodeSize());
         inode.readFrom(data, 0);
     }

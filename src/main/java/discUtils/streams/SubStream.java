@@ -66,18 +66,22 @@ public class SubStream extends MappedStream {
         }
     }
 
+    @Override
     public boolean canRead() {
         return parent.canRead();
     }
 
+    @Override
     public boolean canSeek() {
         return parent.canSeek();
     }
 
+    @Override
     public boolean canWrite() {
         return parent.canWrite();
     }
 
+    @Override
     public List<StreamExtent> getExtents() {
         if (parent instanceof SparseStream) {
             return offsetExtents(((SparseStream) parent).getExtentsInRange(first, length));
@@ -85,15 +89,18 @@ public class SubStream extends MappedStream {
         return Collections.singletonList(new StreamExtent(0, length));
     }
 
+    @Override
     public long getLength() {
         return length;
     }
 
-    public long getPosition() {
+    @Override
+    public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override
+    public void position(long value) {
         if (value <= length) {
             position = value;
         } else {
@@ -101,14 +108,17 @@ public class SubStream extends MappedStream {
         }
     }
 
+    @Override
     public List<StreamExtent> mapContent(long start, long length) {
         return Collections.singletonList(new StreamExtent(start + first, length));
     }
 
+    @Override
     public void flush() {
         parent.flush();
     }
 
+    @Override
     public int read(byte[] buffer, int offset, int count) {
         if (count < 0) {
             throw new IllegalArgumentException("count: Attempt to read negative bytes");
@@ -118,13 +128,14 @@ public class SubStream extends MappedStream {
             return 0;
         }
 
-        parent.setPosition(first + position);
+        parent.position(first + position);
         int numRead = parent.read(buffer, offset, (int) Math.min(count, Math.min(length - position, Integer.MAX_VALUE)));
 //if (numRead > 1) Debug.println(parent + ", " + first + ", " + position + ", " + numRead + "\n" + StringUtil.getDump(buffer, offset, Math.min(64, numRead)));
         position += numRead;
         return numRead;
     }
 
+    @Override
     public long seek(long offset, SeekOrigin origin) {
         long absNewPos = offset;
         if (origin == SeekOrigin.Current) {
@@ -141,10 +152,12 @@ public class SubStream extends MappedStream {
         return position;
     }
 
+    @Override
     public void setLength(long value) {
         throw new UnsupportedOperationException("Attempt to change length of a substream");
     }
 
+    @Override
     public void write(byte[] buffer, int offset, int count) {
         if (count < 0) {
             throw new IllegalArgumentException("count: Attempt to write negative bytes");
@@ -154,11 +167,12 @@ public class SubStream extends MappedStream {
             throw new IllegalArgumentException("count: Attempt to write beyond end of substream");
         }
 
-        parent.setPosition(first + position);
+        parent.position(first + position);
         parent.write(buffer, offset, count);
         position += count;
     }
 
+    @Override
     public void close() throws IOException {
         if (ownsParent == Ownership.Dispose) {
             parent.close();

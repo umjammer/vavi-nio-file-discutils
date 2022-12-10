@@ -65,6 +65,7 @@ public class DiscFileSystemFileTest {
         try (Stream s = fs.openFile("Foo.txt", FileMode.Open, FileAccess.Read)) {
             assertEquals(1, s.readByte());
         }
+        fs.close();
     }
 
     @ParameterizedTest
@@ -77,6 +78,7 @@ public class DiscFileSystemFileTest {
                 s.writeByte((byte) 1);
             }
         });
+        fs.close();
     }
 
     @ParameterizedTest
@@ -88,6 +90,7 @@ public class DiscFileSystemFileTest {
                 s.writeByte((byte) 1);
             }
         });
+        fs.close();
     }
 
     @ParameterizedTest
@@ -100,6 +103,7 @@ public class DiscFileSystemFileTest {
         DiscFileInfo fi = fs.getFileInfo("foo.txt");
         fi.delete();
         assertEquals(0, fs.getRoot().getFiles().size());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -123,7 +127,7 @@ public class DiscFileSystemFileTest {
             }
             s.write(buffer, 0, buffer.length);
             s.write(buffer, 0, buffer.length);
-            assertEquals(1024, s.getPosition());
+            assertEquals(1024, s.position());
             assertEquals(3333, s.getLength());
             s.setLength(512);
             assertEquals(512, s.getLength());
@@ -140,6 +144,7 @@ public class DiscFileSystemFileTest {
                 assertEquals((byte) i, buffer[i]);
             }
         }
+        fs.close();
     }
 
     @ParameterizedTest
@@ -151,6 +156,7 @@ public class DiscFileSystemFileTest {
             try (Stream s = di.open(FileMode.Open)) {
             }
         });
+        fs.close();
     }
 
     @ParameterizedTest
@@ -165,6 +171,7 @@ public class DiscFileSystemFileTest {
             try (Stream s = di.open(FileMode.CreateNew)) {
             }
         });
+        fs.close();
     }
 
     @ParameterizedTest
@@ -174,6 +181,7 @@ public class DiscFileSystemFileTest {
         fs.createDirectory("FOO.TXT");
         DiscFileInfo di = fs.getFileInfo("foo.txt");
         assertThrows(IOException.class, () -> di.open(FileMode.Create));
+        fs.close();
     }
 
     @ParameterizedTest
@@ -190,6 +198,8 @@ public class DiscFileSystemFileTest {
             assertTrue(s.canRead());
             assertEquals(1, s.readByte());
         }
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -200,6 +210,7 @@ public class DiscFileSystemFileTest {
         try (Stream s = di.open(FileMode.Create, FileAccess.Read)) {
             assertThrows(IOException.class, () -> s.writeByte((byte) 1));
         }
+        fs.close();
     }
 
     @ParameterizedTest
@@ -212,6 +223,7 @@ public class DiscFileSystemFileTest {
             assertFalse(s.canRead());
             s.writeByte((byte) 1);
         }
+        fs.close();
     }
 
     @ParameterizedTest
@@ -228,6 +240,8 @@ public class DiscFileSystemFileTest {
             assertFalse(s.canRead());
             assertThrows(IOException.class, s::readByte);
         }
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -237,6 +251,7 @@ public class DiscFileSystemFileTest {
         assertEquals("foo.txt", fs.getFileInfo("foo.txt").getName());
         assertEquals("foo.txt", fs.getFileInfo("path" + FS + "foo.txt").getName());
         assertEquals("foo.txt", fs.getFileInfo(FS + "foo.txt").getName());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -255,6 +270,8 @@ public class DiscFileSystemFileTest {
         assertEquals(newAttrs, fi.getAttributes());
         // And check persistence to disk
         assertEquals(newAttrs, fs.getFileInfo("foo.txt").getAttributes());
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -269,6 +286,7 @@ public class DiscFileSystemFileTest {
             flags.add(FileAttributes.Directory);
             fi.setAttributes(flags);
         });
+        fs.close();
     }
 
     @ParameterizedTest
@@ -283,6 +301,8 @@ public class DiscFileSystemFileTest {
         assertTrue(fi.exists());
         fs.createDirectory("dir.txt");
         assertFalse(fs.getFileInfo("dir.txt").exists());
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -297,6 +317,8 @@ public class DiscFileSystemFileTest {
         assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTimeUtc(),
                    Instant.now().minus(Duration.ofSeconds(10)) + " <= " + Instant
                            .ofEpochMilli(fs.getFileInfo("foo.txt").getCreationTimeUtc()));
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -309,6 +331,8 @@ public class DiscFileSystemFileTest {
         assertTrue(Instant.now().toEpochMilli() >= fs.getFileInfo("foo.txt").getCreationTime(),
                    Instant.now() + " >= " + Instant.ofEpochMilli(fs.getFileInfo("foo.txt").getCreationTime()));
         assertTrue(Instant.now().minus(Duration.ofSeconds(10)).toEpochMilli() <= fs.getFileInfo("foo.txt").getCreationTime());
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -324,6 +348,8 @@ public class DiscFileSystemFileTest {
         try (Stream s = fs.openFile("foo.txt", FileMode.Open, FileAccess.Read)) {
         }
         assertTrue(baseTime < fi.getLastAccessTime(), baseTime + " < " + fi.getLastAccessTime());
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -340,6 +366,7 @@ public class DiscFileSystemFileTest {
             s.writeByte((byte) 1);
         }
         assertTrue(baseTime < fi.getLastWriteTime(), baseTime + " < " + fi.getLastWriteTime());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -350,6 +377,7 @@ public class DiscFileSystemFileTest {
         }
         fs.getFileInfo("foo.txt").delete();
         assertFalse(fs.fileExists("foo.txt"));
+        fs.close();
     }
 
     @ParameterizedTest
@@ -358,6 +386,7 @@ public class DiscFileSystemFileTest {
         DiscFileSystem fs = fsFactory.invoke();
         fs.createDirectory("foo.txt");
         assertThrows(FileNotFoundException.class, () -> fs.getFileInfo("foo.txt").delete());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -365,6 +394,7 @@ public class DiscFileSystemFileTest {
     public void delete_NoFile(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertThrows(FileNotFoundException.class, () -> fs.getFileInfo("foo.txt").delete());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -391,6 +421,7 @@ public class DiscFileSystemFileTest {
         assertEquals(EnumSet.of(FileAttributes.Hidden, FileAttributes.System), fi.getAttributes());
         fi = fs.getFileInfo("foo.txt");
         assertTrue(fi.exists());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -412,6 +443,7 @@ public class DiscFileSystemFileTest {
         assertEquals(EnumSet.of(FileAttributes.Hidden, FileAttributes.System), fi.getAttributes());
         fi = fs.getFileInfo("foo.txt");
         assertFalse(fi.exists());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -430,6 +462,8 @@ public class DiscFileSystemFileTest {
         assertFalse(fi.exists());
         assertTrue(fi2.exists());
         assertEquals(1, fi2.getLength());
+
+        fs.close();
     }
 
     @ParameterizedTest
@@ -437,6 +471,7 @@ public class DiscFileSystemFileTest {
     public void equals(NewFileSystemDelegate fsFactory) throws Exception {
         DiscFileSystem fs = fsFactory.invoke();
         assertEquals(fs.getFileInfo("foo.txt"), fs.getFileInfo("foo.txt"));
+        fs.close();
     }
 
     @ParameterizedTest
@@ -449,6 +484,7 @@ public class DiscFileSystemFileTest {
         DiscFileInfo fi = fs.getFileInfo("SOMEDIR" + FS + "ADIR" + FS + "FILE.TXT");
         assertEquals(fs.getDirectoryInfo("SOMEDIR" + FS + "ADIR"), fi.getParent());
         assertEquals(fs.getDirectoryInfo("SOMEDIR" + FS + "ADIR"), fi.getDirectory());
+        fs.close();
     }
 
     @ParameterizedTest
@@ -457,5 +493,6 @@ public class DiscFileSystemFileTest {
         DiscFileSystem fs = fsFactory.invoke();
         String volLabel = fs.getVolumeLabel();
         assertNotNull(volLabel);
+        fs.close();
     }
 }

@@ -120,7 +120,7 @@ public abstract class PartitionTable {
 Debug.println(Level.FINE, factory + ", " + table);
                 tables.add(table);
             }
-            factory.adhoc(tables);
+            factory.adhoc(tables); // TODO
         }
 Debug.println(Level.FINE, tables);
         return tables;

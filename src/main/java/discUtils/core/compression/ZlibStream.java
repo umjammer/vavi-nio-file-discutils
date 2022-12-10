@@ -95,46 +95,46 @@ public class ZlibStream extends Stream {
     /**
      * Gets whether the stream can be read.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return deflateStream.canRead();
     }
 
     /**
      * Gets whether the stream pointer can be changed.
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return false;
     }
 
     /**
      * Gets whether the stream can be written to.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return deflateStream.canWrite();
     }
 
     /**
      * Gets the length of the stream.
      */
-    public long getLength() {
+    @Override public long getLength() {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Gets and sets the stream position.
      */
-    public long getPosition() {
+    @Override public long position() {
         throw new UnsupportedOperationException();
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * Closes the stream.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (mode == CompressionMode.Decompress) {
             // Can only check Adler checksum on seekable streams. Since
             // DeflateStream aggresively caches input, it normally has already
@@ -162,7 +162,7 @@ public class ZlibStream extends Stream {
     /**
      * Flushes the stream.
      */
-    public void flush() {
+    @Override public void flush() {
         deflateStream.flush();
     }
 
@@ -174,7 +174,7 @@ public class ZlibStream extends Stream {
      * @param count The number of bytes requested.
      * @return The number of bytes read.
      */
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkParams(buffer, offset, count);
 
         int numRead = deflateStream.read(buffer, offset, count);
@@ -190,7 +190,7 @@ public class ZlibStream extends Stream {
      * @param origin The origin of the seek.
      * @return The new position.
      */
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         throw new UnsupportedOperationException();
     }
 
@@ -199,7 +199,7 @@ public class ZlibStream extends Stream {
      *
      * @param value The new desired length of the stream.
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
@@ -210,7 +210,7 @@ public class ZlibStream extends Stream {
      * @param offset Offset of the first byte to write.
      * @param count Number of bytes to write.
      */
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkParams(buffer, offset, count);
 
         adler32.process(buffer, offset, count);

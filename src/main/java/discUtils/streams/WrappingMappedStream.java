@@ -52,19 +52,19 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return wrappedStream.canRead();
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return wrappedStream.canSeek();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return wrappedStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         if (extents != null) {
             return extents;
         }
@@ -74,16 +74,16 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         return Collections.singletonList(new StreamExtent(0, wrappedStream.getLength()));
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return wrappedStream.getLength();
     }
 
-    public long getPosition() {
-        return wrappedStream.getPosition();
+    @Override public long position() {
+        return wrappedStream.position();
     }
 
-    public void setPosition(long value) {
-        wrappedStream.setPosition(value);
+    @Override public void position(long value) {
+        wrappedStream.position(value);
     }
 
     private T wrappedStream;
@@ -96,30 +96,30 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         wrappedStream = value;
     }
 
-    public List<StreamExtent> mapContent(long start, long length) {
+    @Override public List<StreamExtent> mapContent(long start, long length) {
         if (getWrappedStream() instanceof MappedStream) {
             return ((MappedStream) getWrappedStream()).mapContent(start, length);
         }
         return Collections.singletonList(new StreamExtent(start, length));
     }
 
-    public void flush() {
+    @Override public void flush() {
         getWrappedStream().flush();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         return wrappedStream.read(buffer, offset, count);
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         return wrappedStream.seek(offset, origin);
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         wrappedStream.setLength(value);
     }
 
-    public void clear(int count) {
+    @Override public void clear(int count) {
         if (wrappedStream instanceof SparseStream) {
             ((SparseStream) wrappedStream).clear(count);
         } else {
@@ -127,11 +127,11 @@ public class WrappingMappedStream<T extends Stream> extends MappedStream {
         }
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         wrappedStream.write(buffer, offset, count);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (wrappedStream != null && ownership == Ownership.Dispose) {
             wrappedStream.close();
         }

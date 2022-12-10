@@ -3,11 +3,11 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
-  <version>0.14.3</version>
+  <version>0.14.4</version>
 
   <properties>
-    <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId>
-    <vavi-net-fuse.version>0.1.7</vavi-net-fuse.version>
+    <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId> <!-- com.github.umjammer.vavi-apps-fuse -->
+    <vavi-net-fuse.version>0.1.8</vavi-net-fuse.version>
   </properties>
 
   <profiles>
@@ -57,18 +57,18 @@
           <plugin>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-maven-plugin</artifactId>
-            <version>4.4.2.1</version>
+            <version>4.7.3.0</version>
             <dependencies>
               <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
               <dependency>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs</artifactId>
-                <version>4.4.2</version>
+                <version>4.7.3</version>
               </dependency>
               <dependency>
                 <groupId>com.formdev</groupId>
                 <artifactId>flatlaf</artifactId>
-                <version>1.6.1</version>
+                <version>2.6</version>
               </dependency>
             </dependencies>
             <configuration>
@@ -116,12 +116,38 @@
           <source>1.8</source>
           <target>1.8</target>
           <encoding>utf-8</encoding>
+          <excludes>
+            <exclude>aaru/image/chd/util/**</exclude>
+          </excludes>
           <testExcludes>
             <testExclude>discUtils/powerShell/**</testExclude>
             <testExclude>diskClone/**</testExclude>
             <testExclude>msBuildTask/**</testExclude>
           </testExcludes>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <jar jarfile="${project.build.directory}/vavi-qlgenerator.jar"
+                     manifest="src/qlgenerator/resources/manifest.mf">
+                  <fileset dir="${project.build.outputDirectory}">
+                    <include name="vavi/apps/qlgenerator/*.class" />
+                  </fileset>
+                </jar>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -156,7 +182,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.0</version>
+        <version>5.9.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -167,9 +193,14 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.7</version>
+      <version>1.1.8</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.github.umjammer</groupId>
+      <artifactId>vavi-nio-file</artifactId>
+      <version>0.0.15</version>
+    </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>java7-fs-base</artifactId>
@@ -177,9 +208,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.umjammer</groupId>
+      <groupId>com.github.umjammer</groupId> <!-- moe.yo3explorer -->
       <artifactId>dotnet4j</artifactId>
-      <version>1.2.1</version>
+      <version>1.2.2</version>
     </dependency>
 
     <dependency>
@@ -196,7 +227,7 @@
     <dependency>
       <groupId>vavi</groupId>
       <artifactId>vavi-nio-file-emu</artifactId>
-      <version>2.0.1</version>
+      <version>2.0.2</version>
     </dependency>
 
     <dependency>

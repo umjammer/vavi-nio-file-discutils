@@ -46,59 +46,59 @@ public class WrappingStream extends SparseStream {
         this.ownership = ownership;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return wrapped.canRead();
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return wrapped.canSeek();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return wrapped.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return wrapped.getExtents();
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return wrapped.getLength();
     }
 
-    public long getPosition() {
-        return wrapped.getPosition();
+    @Override public long position() {
+        return wrapped.position();
     }
 
-    public void setPosition(long value) {
-        wrapped.setPosition(value);
+    @Override public void position(long value) {
+        wrapped.position(value);
     }
 
-    public void flush() {
+    @Override public void flush() {
         wrapped.flush();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         return wrapped.read(buffer, offset, count);
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         return wrapped.seek(offset, origin);
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         wrapped.setLength(value);
     }
 
-    public void clear(int count) {
+    @Override public void clear(int count) {
         wrapped.clear(count);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         wrapped.write(buffer, offset, count);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (wrapped != null && ownership == Ownership.Dispose) {
             wrapped.close();
         }

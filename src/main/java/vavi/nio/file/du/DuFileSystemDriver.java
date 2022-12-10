@@ -22,9 +22,6 @@ import java.util.Set;
 import com.github.fge.filesystem.driver.ExtendedFileSystemDriver;
 import com.github.fge.filesystem.exceptions.IsDirectoryException;
 import com.github.fge.filesystem.provider.FileSystemFactoryProvider;
-
-import static vavi.nio.file.Util.toPathString;
-
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
 import discUtils.core.DiscFileSystem;
@@ -33,6 +30,8 @@ import discUtils.core.coreCompat.FileAttributes;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.compat.StreamInputStream;
 import dotnet4j.io.compat.StreamOutputStream;
+
+import static vavi.nio.file.Util.toPathString;
 
 
 /**

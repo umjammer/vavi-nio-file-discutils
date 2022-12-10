@@ -43,13 +43,11 @@ public class Nfs3SetAttributesTest {
     public void roundTripTest() throws Exception {
         Nfs3SetAttributes attributes = new Nfs3SetAttributes();
         attributes.setAccessTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli()));
+                .toInstant().toEpochMilli()));
         attributes.setGid(1);
         attributes.setMode(UnixFilePermissions.GroupAll);
         attributes.setModifyTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli()));
+                .toInstant().toEpochMilli()));
         attributes.setSetAccessTime(Nfs3SetTimeMethod.ClientTime);
         attributes.setSetGid(true);
         attributes.setSetMode(true);
@@ -63,7 +61,7 @@ public class Nfs3SetAttributesTest {
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3SetAttributes(reader);
         }

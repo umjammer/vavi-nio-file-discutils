@@ -43,7 +43,7 @@ public class FileAllocationTable {
         this.numFats = numFats;
 
 //Debug.printf(Level.FINE, "%d, %016x", firstFatSector, (firstFatSector + fatSize * activeFat) * Sizes.Sector);
-        this.stream.setPosition((firstFatSector + (long) fatSize * activeFat) * Sizes.Sector);
+        this.stream.position((firstFatSector + (long) fatSize * activeFat) * Sizes.Sector);
         buffer = new FatBuffer(type, StreamUtilities.readExact(this.stream, fatSize * Sizes.Sector));
     }
 

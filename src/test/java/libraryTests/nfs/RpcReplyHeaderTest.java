@@ -46,13 +46,13 @@ public class RpcReplyHeaderTest {
         accepted.verifier = new RpcAuthentication(new RpcUnixCredential(1, 2));
         header.acceptReply = accepted;
 
-        RpcReplyHeader clone = null;
+        RpcReplyHeader clone;
 
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             header.write(writer);
 
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new RpcReplyHeader(reader);
         }

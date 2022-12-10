@@ -43,30 +43,27 @@ public class Nfs3FileAttributesTest {
     public void roundTripTest() throws Exception {
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
         attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.bytesUsed = 1;
         attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.fileId = 3;
         attributes.fileSystemId = 4;
         attributes.gid = 5;
         attributes.linkCount = 6;
         attributes.mode = UnixFilePermissions.GroupAll;
         attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2018, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.rdevMajor = 7;
         attributes.rdevMinor = 8;
         attributes.size = 9;
         attributes.type = Nfs3FileType.BlockDevice;
         attributes.uid = 11;
-        Nfs3FileAttributes clone = null;
+        Nfs3FileAttributes clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3FileAttributes(reader);
         }

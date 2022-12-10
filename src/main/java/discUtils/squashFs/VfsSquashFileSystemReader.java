@@ -62,7 +62,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         context.setRawStream(stream);
 
         // Read superblock
-        stream.setPosition(0);
+        stream.position(0);
         byte[] buffer = StreamUtilities.readExact(stream, context.getSuperBlock().size());
         context.getSuperBlock().readFrom(buffer, 0);
 
@@ -111,15 +111,15 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         setRootDirectory(new Directory(context, dirInode, context.getSuperBlock().rootInode));
     }
 
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "squashFs";
     }
 
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return "";
     }
 
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         File file = getFile(path);
         Inode inode = file.getInode();
         DeviceInode devInod = inode instanceof DeviceInode ? (DeviceInode) inode : null;
@@ -139,21 +139,21 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
@@ -185,7 +185,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         }
     }
 
-    protected File convertDirEntryToFile(DirectoryEntry dirEntry) {
+    @Override protected File convertDirEntryToFile(DirectoryEntry dirEntry) {
         MetadataRef inodeRef = dirEntry.getInodeReference();
         context.getInodeReader().setPosition(inodeRef);
         Inode inode = Inode.read(context.getInodeReader());
@@ -201,7 +201,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     }
 
     private MetablockReader[] loadIndirectReaders(long pos, int count, int recordSize) {
-        context.getRawStream().setPosition(pos);
+        context.getRawStream().position(pos);
         int numBlocks = MathUtilities.ceil(count * recordSize, MetadataBufferSize);
 
         byte[] tableBytes = StreamUtilities.readExact(context.getRawStream(), numBlocks * 8);
@@ -231,7 +231,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         }
 
         Stream stream = context.getRawStream();
-        stream.setPosition(pos);
+        stream.position(pos);
 
         int readLen = diskLen & 0x00FFFFFF;
         boolean isCompressed = (diskLen & 0x01000000) == 0;
@@ -266,7 +266,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         }
 
         Stream stream = context.getRawStream();
-        stream.setPosition(pos);
+        stream.position(pos);
 
         byte[] buffer = StreamUtilities.readExact(stream, 2);
 

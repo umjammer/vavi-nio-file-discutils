@@ -59,12 +59,10 @@ public class SquashFileSystemReader extends VfsFileSystemFacade implements IUnix
      * Detects if the stream contains a squashFs file system.
      *
      * @param stream The stream to inspect.
-     * @return
-     *         {@code true}
-     *         if stream appears to be a squashFs file system.
+     * @return {@code true} if stream appears to be a squashFs file system.
      */
     public static boolean detect(Stream stream) {
-        stream.setPosition(0);
+        stream.position(0);
         SuperBlock superBlock = new SuperBlock();
         if (stream.getLength() < superBlock.size()) {
             return false;

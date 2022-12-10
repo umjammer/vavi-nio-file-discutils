@@ -51,7 +51,7 @@ public class IndexBlock extends FixupRecordBase {
         this.isRoot = isRoot;
         Stream stream = index.getAllocationStream();
         streamPosition = index.indexBlockVcnToPosition(parentEntry.getChildrenVirtualCluster());
-        stream.setPosition(streamPosition);
+        stream.position(streamPosition);
         byte[] buffer = StreamUtilities.readExact(stream, index.getIndexBufferSize());
         fromBytes(buffer, 0);
     }
@@ -84,7 +84,7 @@ public class IndexBlock extends FixupRecordBase {
         byte[] buffer = new byte[index.getIndexBufferSize()];
         toBytes(buffer, 0);
         Stream stream = index.getAllocationStream();
-        stream.setPosition(streamPosition);
+        stream.position(streamPosition);
         stream.write(buffer, 0, buffer.length);
         stream.flush();
     }

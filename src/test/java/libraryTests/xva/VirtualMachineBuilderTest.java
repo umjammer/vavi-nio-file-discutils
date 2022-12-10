@@ -51,6 +51,7 @@ public class VirtualMachineBuilderTest {
         List<Disk> disks = new ArrayList<>(vm.getDisks());
         assertEquals(1, disks.size());
         assertEquals(0, disks.get(0).getCapacity());
+        vmb.close();
     }
 
     @Test
@@ -59,7 +60,7 @@ public class VirtualMachineBuilderTest {
         VirtualMachineBuilder vmb = new VirtualMachineBuilder();
         MemoryStream ms = new MemoryStream();
         for (int i = 0; i < 1024 * 1024; ++i) {
-            ms.setPosition(i * 10);
+            ms.position(i * 10);
             ms.writeByte((byte) (i ^ (i >>> 8) ^ (i >>> 16) ^ (i >>> 24)));
         }
         vmb.addDisk("Foo", ms, Ownership.Dispose);
@@ -71,10 +72,11 @@ public class VirtualMachineBuilderTest {
         assertEquals(10 * 1024 * 1024, disks.get(0).getCapacity());
         Stream diskContent = disks.get(0).getContent();
         for (int i = 0; i < 1024 * 1024; ++i) {
-            diskContent.setPosition(i * 10);
+            diskContent.position(i * 10);
             if ((byte) (i ^ (i >>> 8) ^ (i >>> 16) ^ (i >>> 24)) != (byte) diskContent.readByte()) {
                 fail("Mismatch at offset " + i);
             }
         }
+        vmb.close();
     }
 }

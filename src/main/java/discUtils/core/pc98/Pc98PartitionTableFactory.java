@@ -47,7 +47,7 @@ Debug.printf(Level.FINE, "Not enough data for detection: %04x/%04x%n", stream.ge
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
 
         byte[] bootSector = StreamUtilities.readExact(stream, Sizes.Sector * 2);
 //Debug.printf(Level.FINE, "%n" + StringUtil.getDump(bootSector, 512));

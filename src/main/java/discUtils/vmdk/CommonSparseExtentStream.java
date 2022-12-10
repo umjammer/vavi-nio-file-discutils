@@ -113,46 +113,46 @@ public abstract class CommonSparseExtentStream extends MappedStream {
      */
     protected int[] redundantGlobalDirectory;
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return fileStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return getExtentsInRange(0, getLength());
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return header.capacity * Sizes.Sector;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
         atEof = false;
     }
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (position > getLength()) {
@@ -179,7 +179,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
             if (!loadGrainTable(grainTable)) {
                 // Read from parent stream, to at most the end of grain table's coverage
-                parentDiskStream.setPosition(position + diskOffset);
+                parentDiskStream.position(position + diskOffset);
                 numRead = parentDiskStream.read(buffer,
                                                  offset + totalRead,
                                                  (int) Math.min(maxToRead - totalRead, gtCoverage - grainTableOffset));
@@ -191,7 +191,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
                 int numToRead = Math.min(maxToRead - totalRead, grainSize - grainOffset);
 
                 if (getGrainTableEntry(grain) == 0) {
-                    parentDiskStream.setPosition(position + diskOffset);
+                    parentDiskStream.position(position + diskOffset);
                     numRead = parentDiskStream.read(buffer, offset + totalRead, numToRead);
                 } else {
                     int bufferOffset = offset + totalRead;
@@ -207,13 +207,13 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return totalRead;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
 
         throw new UnsupportedOperationException();
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
 
         long effectiveOffset = offset;
@@ -232,7 +232,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return position;
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
 
         long maxCount = Math.min(getLength(), start + count) - start;
@@ -248,7 +248,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return result;
     }
 
-    public List<StreamExtent> mapContent(long start, long length) {
+    @Override public List<StreamExtent> mapContent(long start, long length) {
         checkDisposed();
 
         List<StreamExtent> result = new ArrayList<>();
@@ -282,7 +282,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         return result;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsFileStream == Ownership.Dispose && fileStream != null) {
             fileStream.close();
         }
@@ -308,7 +308,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
                             long grainStart,
                             int grainOffset,
                             int numToRead) {
-        fileStream.setPosition(grainStart + grainOffset);
+        fileStream.position(grainStart + grainOffset);
         return fileStream.read(buffer, bufferOffset, numToRead);
     }
 
@@ -320,7 +320,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         int numGTs = (int) MathUtilities.ceil(header.capacity * Sizes.Sector, gtCoverage);
 
         globalDirectory = new int[numGTs];
-        fileStream.setPosition(header.gdOffset * Sizes.Sector);
+        fileStream.position(header.gdOffset * Sizes.Sector);
         byte[] gdAsBytes = StreamUtilities.readExact(fileStream, numGTs * 4);
         for (int i = 0; i < globalDirectory.length; ++i) {
             globalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
@@ -347,7 +347,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         }
 
         // Not cached, so read
-        fileStream.setPosition((long) globalDirectory[index] * Sizes.Sector);
+        fileStream.position((long) globalDirectory[index] * Sizes.Sector);
         byte[] newGrainTable = StreamUtilities.readExact(fileStream, header.numGTEsPerGT * 4);
         currentGrainTable = index;
         grainTable = newGrainTable;
@@ -425,5 +425,4 @@ public abstract class CommonSparseExtentStream extends MappedStream {
 
         return Math.min(pos, maxPos);
     }
-
 }

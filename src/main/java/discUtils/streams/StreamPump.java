@@ -206,8 +206,8 @@ public final class StreamPump {
 
     private void runNonSparse() {
         byte[] copyBuffer = new byte[getBufferSize()];
-        getInputStream().setPosition(0);
-        getOutputStream().setPosition(0);
+        getInputStream().position(0);
+        getOutputStream().position(0);
         int numRead = getInputStream().read(copyBuffer, 0, copyBuffer.length);
         while (numRead > 0) {
             setBytesRead(getBytesRead() + numRead);
@@ -235,7 +235,7 @@ public final class StreamPump {
         setBytesRead(0);
         setBytesWritten(0);
         for (StreamExtent extent  : inStream.getExtents()) {
-            inStream.setPosition(extent.getStart());
+            inStream.position(extent.getStart());
             long extentOffset = 0;
             while (extentOffset < extent.getLength()) {
                 int numRead = (int) Math.min(copyBuffer.length, extent.getLength() - extentOffset);
@@ -245,7 +245,7 @@ public final class StreamPump {
                 for (int i = 0; i < numRead; i += getSparseChunkSize()) {
                     if (isAllZeros(copyBuffer, i, Math.min(getSparseChunkSize(), numRead - i))) {
                         if (copyBufferOffset < i) {
-                            getOutputStream().setPosition(extent.getStart() + extentOffset + copyBufferOffset);
+                            getOutputStream().position(extent.getStart() + extentOffset + copyBufferOffset);
                             getOutputStream().write(copyBuffer, copyBufferOffset, i - copyBufferOffset);
                             setBytesWritten(getBytesWritten() + (i - copyBufferOffset));
                         }
@@ -254,7 +254,7 @@ public final class StreamPump {
                     }
                 }
                 if (copyBufferOffset < numRead) {
-                    getOutputStream().setPosition(extent.getStart() + extentOffset + copyBufferOffset);
+                    getOutputStream().position(extent.getStart() + extentOffset + copyBufferOffset);
                     getOutputStream().write(copyBuffer, copyBufferOffset, numRead - copyBufferOffset);
                     setBytesWritten(getBytesWritten() + (numRead - copyBufferOffset));
                 }
@@ -269,10 +269,10 @@ public final class StreamPump {
         // file stream, then actual clusters will be allocated out to at least the
         // length of the input stream.
         if (getOutputStream().getLength() < inStream.getLength()) {
-            inStream.setPosition(inStream.getLength() - 1);
+            inStream.position(inStream.getLength() - 1);
             int b = inStream.readByte();
             if (b >= 0) {
-                getOutputStream().setPosition(inStream.getLength() - 1);
+                getOutputStream().position(inStream.getLength() - 1);
                 getOutputStream().writeByte((byte) b);
             }
         }
@@ -284,8 +284,8 @@ public final class StreamPump {
             PumpProgressEventArgs args = new PumpProgressEventArgs();
             args.setBytesRead(getBytesRead());
             args.setBytesWritten(getBytesWritten());
-            args.setSourcePosition(getInputStream().getPosition());
-            args.setDestinationPosition(getOutputStream().getPosition());
+            args.setSourcePosition(getInputStream().position());
+            args.setDestinationPosition(getOutputStream().position());
             progressEvent.accept(this, args);
         }
     }

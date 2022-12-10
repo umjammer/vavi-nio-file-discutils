@@ -142,15 +142,18 @@ public final class DiskImageFile extends VirtualDiskLayer {
             readFooter(true);
 
             readHeaders();
-        } finally {
+        } catch (Exception e) {
             try {
                 fileStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException f) {
+                f.printStackTrace();
             }
+            e.printStackTrace();
+            throw e;
         }
     }
 
+    @Override
     public long getCapacity() {
         return footer.currentSize;
     }
@@ -165,6 +168,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the extent that comprises this file.
      */
+    @Override
     public List<VirtualDiskExtent> getExtents() {
         List<VirtualDiskExtent> result = new ArrayList<>();
         result.add(new DiskExtent(this));
@@ -174,6 +178,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the full path to this disk layer, or empty string.
      */
+    @Override
     public String getFullPath() {
         if (fileLocator != null && fileName != null) {
             return fileLocator.getFullPath(fileName);
@@ -185,6 +190,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the geometry of the virtual disk.
      */
+    @Override
     public Geometry getGeometry() {
         return footer.geometry;
     }
@@ -199,6 +205,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
+    @Override
     public boolean isSparse() {
         return footer.diskType != FileType.Fixed;
     }
@@ -206,6 +213,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
+    @Override
     public boolean needsParent() {
         return footer.diskType == FileType.Differencing;
     }
@@ -217,6 +225,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         return dynamicHeader == null ? new UUID(0L, 0L) : dynamicHeader.parentUniqueId;
     }
 
+    @Override
     public FileLocator getRelativeFileLocator() {
         return fileLocator;
     }
@@ -356,6 +365,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            stream.
      * @return The new content stream.
      */
+    @Override
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         return doOpenContent(parent, ownsParent);
     }
@@ -365,6 +375,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *
      * @return Array of candidate file locations.
      */
+    @Override
     public List<String> getParentLocations() {
         return getParentLocations(fileLocator);
     }
@@ -436,7 +447,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             }
 
             return new DynamicStream(fileStream,
-                    dynamicHeader,
+                                     dynamicHeader,
                                      footer.currentSize,
                                      new ZeroStream(footer.currentSize),
                                      Ownership.Dispose);
@@ -453,6 +464,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Disposes of underlying resources.
      */
+    @Override
     public void close() throws IOException {
         if (ownership == Ownership.Dispose && fileStream != null) {
             fileStream.close();
@@ -470,10 +482,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
         footer.updateChecksum();
         byte[] sector = new byte[Sizes.Sector];
         footer.toBytes(sector, 0);
-        stream.setPosition(MathUtilities.roundUp(capacity, Sizes.Sector));
+        stream.position(MathUtilities.roundUp(capacity, Sizes.Sector));
         stream.write(sector, 0, sector.length);
-        stream.setLength(stream.getPosition());
-        stream.setPosition(0);
+        stream.setLength(stream.position());
+        stream.position(0);
     }
 
     private static void initializeDynamicInternal(Stream stream, long capacity, Geometry geometry, long blockSize) {
@@ -500,7 +512,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         byte[] bat = new byte[batSize];
         Arrays.fill(bat, (byte) 0xFF);
 
-        stream.setPosition(0);
+        stream.position(0);
         stream.write(footerBlock, 0, 512);
         stream.write(dynamicHeaderBlock, 0, 1024);
         stream.write(bat, 0, batSize);
@@ -550,7 +562,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         byte[] bat = new byte[batSize];
         Arrays.fill(bat, (byte) 0xFF);
 
-        stream.setPosition(0);
+        stream.position(0);
         stream.write(footerBlock, 0, 512);
         stream.write(dynamicHeaderBlock, 0, 1024);
         stream.write(bat, 0, batSize);
@@ -563,7 +575,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the locations of the parent file.
      *
      * @param fileLocator The file locator to use.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     private List<String> getParentLocations(FileLocator fileLocator) {
         if (!needsParent()) {
@@ -580,7 +592,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         for (ParentLocator pl : dynamicHeader.parentLocators) {
             if (ParentLocator.PlatformCodeWindowsAbsoluteUnicode.equals(pl.platformCode) ||
                 ParentLocator.PlatformCodeWindowsRelativeUnicode.equals(pl.platformCode)) {
-                fileStream.setPosition(pl.platformDataOffset);
+                fileStream.position(pl.platformDataOffset);
                 byte[] buffer = StreamUtilities.readExact(fileStream, pl.platformDataLength);
                 String locationVal = new String(buffer, StandardCharsets.UTF_16LE);
 //Debug.println(locationVal + ", " + pl.platformCode + ", "+ StringUtil.getDump(locationVal));
@@ -606,7 +618,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void readFooter(boolean fallbackToFront) {
-        fileStream.setPosition(fileStream.getLength() - Sizes.Sector);
+        fileStream.position(fileStream.getLength() - Sizes.Sector);
         byte[] sector = StreamUtilities.readExact(fileStream, Sizes.Sector);
 
         footer = Footer.fromBytes(sector, 0);
@@ -616,7 +628,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
                 throw new dotnet4j.io.IOException("Corrupt VHD file - invalid footer at end (did not check front of file)");
             }
 
-            fileStream.setPosition(0);
+            fileStream.position(0);
             StreamUtilities.readExact(fileStream, sector, 0, Sizes.Sector);
 
             footer = Footer.fromBytes(sector, 0);
@@ -629,10 +641,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
     private void readHeaders() {
         long pos = footer.dataOffset;
         while (pos != -1) {
-            fileStream.setPosition(pos);
+            fileStream.position(pos);
             Header hdr = Header.fromStream(fileStream);
             if (DynamicHeader.HeaderCookie.equals(hdr.cookie)) {
-                fileStream.setPosition(pos);
+                fileStream.position(pos);
                 dynamicHeader = DynamicHeader.fromStream(fileStream);
                 if (!dynamicHeader.isValid()) {
                     throw new dotnet4j.io.IOException("Invalid Dynamic Disc Header");

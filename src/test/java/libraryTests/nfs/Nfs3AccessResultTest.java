@@ -47,14 +47,11 @@ public class Nfs3AccessResultTest {
         result.setAccess(EnumSet.of(Nfs3AccessPermissions.Execute));
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
         attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         result.setObjectAttributes(attributes);
         result.setStatus(Nfs3Status.AccessDenied);
 
@@ -62,7 +59,7 @@ public class Nfs3AccessResultTest {
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3AccessResult(reader);
         }

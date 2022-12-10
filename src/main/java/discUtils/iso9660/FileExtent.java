@@ -40,7 +40,7 @@ public class FileExtent extends BuilderExtent {
         this.fileInfo = fileInfo;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (readStream != null) {
             fileInfo.closeStream(readStream);
             readStream = null;
@@ -48,17 +48,17 @@ public class FileExtent extends BuilderExtent {
 
     }
 
-    public void prepareForRead() {
+    @Override public void prepareForRead() {
         readStream = fileInfo.openStream();
     }
 
-    public int read(long diskOffset, byte[] block, int offset, int count) {
+    @Override public int read(long diskOffset, byte[] block, int offset, int count) {
         long relPos = diskOffset - getStart();
         int totalRead = 0;
         // Don't arbitrarily set position, just in case stream implementation is
         // non-seeking, and we're doing sequential reads
-        if (readStream.getPosition() != relPos) {
-            readStream.setPosition(relPos);
+        if (readStream.position() != relPos) {
+            readStream.position(relPos);
         }
 
         // Read up to EOF
@@ -71,7 +71,7 @@ public class FileExtent extends BuilderExtent {
         return totalRead;
     }
 
-    public void disposeReadState() {
+    @Override public void disposeReadState() {
         fileInfo.closeStream(readStream);
         readStream = null;
     }

@@ -41,7 +41,6 @@ import dotnet4j.io.Stream;
 public class DiskStream extends SparseStream {
 
     private static final int BlockFree = 0xffffffff;
-
     private static final int BlockZero = 0xfffffffe;
 
     private boolean atEof;
@@ -69,22 +68,22 @@ public class DiskStream extends SparseStream {
         readBlockTable();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return fileStream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
 
         long blockSize = fileHeader.blockSize;
@@ -110,17 +109,17 @@ public class DiskStream extends SparseStream {
         return extents;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return fileHeader.diskSize;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
         atEof = false;
@@ -128,11 +127,11 @@ public class DiskStream extends SparseStream {
 
     public BiConsumer<Object, Object[]> writeOccurred;
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (atEof || position > fileHeader.diskSize) {
@@ -162,7 +161,7 @@ public class DiskStream extends SparseStream {
             } else {
                 long blockOffset = (blockTable[block] & 0xffff_ffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
-                fileStream.setPosition(filePos);
+                fileStream.position(filePos);
                 StreamUtilities.readExact(fileStream, buffer, offset + numRead, toRead);
             }
 
@@ -173,7 +172,7 @@ public class DiskStream extends SparseStream {
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
@@ -191,12 +190,12 @@ public class DiskStream extends SparseStream {
         return position;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (!canWrite()) {
@@ -253,14 +252,14 @@ public class DiskStream extends SparseStream {
                 long blockOffset = (long) fileHeader.blocksAllocated * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset;
 
-                fileStream.setPosition(filePos);
+                fileStream.position(filePos);
                 fileStream.write(writeBuffer, writeBufferOffset, fileHeader.blockSize);
 
                 blockTable[block] = fileHeader.blocksAllocated;
 
                 // Update the file header on disk, to indicate where the next free block is
                 fileHeader.blocksAllocated++;
-                fileStream.setPosition(PreHeaderRecord.Size);
+                fileStream.position(PreHeaderRecord.Size);
                 fileHeader.write(fileStream);
 
                 // Update the block table on disk, to indicate where this block is
@@ -269,7 +268,7 @@ public class DiskStream extends SparseStream {
                 // Existing block, simply overwrite the existing data
                 long blockOffset = (blockTable[block] & 0xfff_ffffL) * (fileHeader.blockSize + fileHeader.blockExtraSize);
                 long filePos = fileHeader.dataOffset + fileHeader.blockExtraSize + blockOffset + offsetInBlock;
-                fileStream.setPosition(filePos);
+                fileStream.position(filePos);
                 fileStream.write(buffer, offset + numWritten, toWrite);
             }
 
@@ -278,7 +277,7 @@ public class DiskStream extends SparseStream {
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         isDisposed = true;
         if (ownsStream == Ownership.Dispose && fileStream != null) {
             fileStream.close();
@@ -293,7 +292,7 @@ public class DiskStream extends SparseStream {
     }
 
     private void readBlockTable() {
-        fileStream.setPosition(fileHeader.blocksOffset);
+        fileStream.position(fileHeader.blocksOffset);
 
         byte[] buffer = StreamUtilities.readExact(fileStream, fileHeader.blockCount * 4);
 
@@ -307,7 +306,7 @@ public class DiskStream extends SparseStream {
         byte[] buffer = new byte[4];
         EndianUtilities.writeBytesLittleEndian(blockTable[block], buffer, 0);
 
-        fileStream.setPosition(fileHeader.blocksOffset + block * 4L);
+        fileStream.position(fileHeader.blocksOffset + block * 4L);
         fileStream.write(buffer, 0, 4);
     }
 

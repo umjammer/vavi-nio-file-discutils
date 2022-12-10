@@ -42,11 +42,11 @@ public class PortMap2MappingTest {
         attributes.setProtocol(PortMap2Protocol.Tcp);
         attributes.setVersion(4);
 
-        PortMap2Mapping clone = null;
+        PortMap2Mapping clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new PortMap2Mapping(reader);
         }

@@ -44,21 +44,21 @@ public class BuilderStreamExtent extends BuilderExtent {
         this.ownership = ownership;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (source != null && ownership == Ownership.Dispose) {
             source.close();
             source = null;
         }
     }
 
-    public void prepareForRead() {
+    @Override public void prepareForRead() {
     }
 
-    public int read(long diskOffset, byte[] block, int offset, int count) {
-        source.setPosition(diskOffset - start);
+    @Override public int read(long diskOffset, byte[] block, int offset, int count) {
+        source.position(diskOffset - start);
         return source.read(block, offset, count);
     }
 
-    public void disposeReadState() {
+    @Override public void disposeReadState() {
     }
 }

@@ -72,11 +72,11 @@ public class Extent implements IByteArraySerializable {
         flag = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         long lower = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
         long middle = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x6);
         long upper = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
@@ -87,7 +87,7 @@ public class Extent implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
@@ -107,14 +107,14 @@ public class Extent implements IByteArraySerializable {
     }
 
     public byte[] getData(Context context, long offset, int count) {
-        context.getRawStream().setPosition(getOffset(context) + offset);
+        context.getRawStream().position(getOffset(context) + offset);
         return StreamUtilities.readExact(context.getRawStream(), count);
     }
 
     /**
      *
      */
-    public String toString() {
+    @Override public String toString() {
         return String.format("[%d,%d,%d,%s]", startOffset, startBlock, blockCount, flag);
     }
 }

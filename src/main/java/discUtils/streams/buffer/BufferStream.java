@@ -57,53 +57,53 @@ public class BufferStream extends SparseStream {
     /**
      * Gets an indication of whether read access is permitted.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return access != FileAccess.Write;
     }
 
     /**
      * Gets an indication of whether seeking is permitted.
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
     /**
      * Gets an indication of whether write access is permitted.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return access != FileAccess.Read;
     }
 
     /**
      * Gets the stored extents within the sparse stream.
      */
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return buffer.getExtents();
     }
 
     /**
      * Gets the length of the stream (the capacity of the underlying buffer).
      */
-    public long getLength() {
+    @Override public long getLength() {
         return buffer.getCapacity();
     }
 
     /**
      * Gets and sets the current position within the stream.
      */
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
     /**
      * Flushes all data to the underlying storage.
      */
-    public void flush() {
+    @Override public void flush() {
     }
 
     /**
@@ -114,7 +114,7 @@ public class BufferStream extends SparseStream {
      * @param count The number of bytes to read.
      * @return The number of bytes read.
      */
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (!canRead()) {
             throw new dotnet4j.io.IOException("Attempt to read from write-only stream");
         }
@@ -132,7 +132,7 @@ public class BufferStream extends SparseStream {
      * @param origin The origin for the stream position.
      * @return The new stream position.
      */
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
             effectiveOffset += position;
@@ -153,7 +153,7 @@ public class BufferStream extends SparseStream {
      *
      * @param value The new length of the stream.
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         buffer.setCapacity(value);
     }
 
@@ -164,7 +164,7 @@ public class BufferStream extends SparseStream {
      * @param offset The starting offset within buffer.
      * @param count The number of bytes to write.
      */
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         if (!canWrite()) {
             throw new dotnet4j.io.IOException("Attempt to write to read-only stream");
         }
@@ -188,7 +188,7 @@ public class BufferStream extends SparseStream {
      * 
      * @param count The number of bytes (from the current position) to clear.
      */
-    public void clear(int count) {
+    @Override public void clear(int count) {
         if (!canWrite()) {
             throw new dotnet4j.io.IOException("Attempt to erase bytes in a read-only stream");
         }
@@ -204,7 +204,7 @@ public class BufferStream extends SparseStream {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return buffer.getExtentsInRange(start, count);
     }
 

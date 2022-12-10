@@ -43,19 +43,19 @@ public class FileBuffer extends Buffer {
         this.inode = inode;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return inode.fileSize;
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         if (pos > inode.fileSize) {
             return 0;
         }
@@ -73,7 +73,7 @@ public class FileBuffer extends Buffer {
                 logicalBlock -= 12;
                 if (logicalBlock < blockSize / 4) {
                     if (inode.indirectBlock != 0) {
-                        context.getRawStream().setPosition(inode.indirectBlock * (long) blockSize + logicalBlock * 4);
+                        context.getRawStream().position(inode.indirectBlock * (long) blockSize + logicalBlock * 4);
                         byte[] indirectData = StreamUtilities.readExact(context.getRawStream(), 4);
                         physicalBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                     }
@@ -83,13 +83,13 @@ public class FileBuffer extends Buffer {
                     if (logicalBlock < blockSize / 4 * (blockSize / 4)) {
                         if (inode.doubleIndirectBlock != 0) {
                             context.getRawStream()
-                                    .setPosition(inode.doubleIndirectBlock * (long) blockSize +
+                                    .position(inode.doubleIndirectBlock * (long) blockSize +
                                                  logicalBlock / (blockSize / 4) * 4L);
                             byte[] indirectData = StreamUtilities.readExact(context.getRawStream(), 4);
                             int indirectBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                             if (indirectBlock != 0) {
                                 context.getRawStream()
-                                        .setPosition(indirectBlock * (long) blockSize + logicalBlock % (blockSize / 4) * 4);
+                                        .position(indirectBlock * (long) blockSize + logicalBlock % (blockSize / 4) * 4);
                                 StreamUtilities.readExact(context.getRawStream(), indirectData, 0, 4);
                                 physicalBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
                             }
@@ -107,7 +107,7 @@ public class FileBuffer extends Buffer {
                 Arrays.fill(buffer, offset + totalRead, offset + totalRead + toRead, (byte) 0);
                 numRead = toRead;
             } else {
-                context.getRawStream().setPosition(physicalBlock * (long) blockSize + blockOffset);
+                context.getRawStream().position(physicalBlock * (long) blockSize + blockOffset);
                 numRead = context.getRawStream().read(buffer, offset + totalRead, toRead);
             }
             totalBytesRemaining -= numRead;
@@ -116,15 +116,15 @@ public class FileBuffer extends Buffer {
         return totalRead;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
     }
 }

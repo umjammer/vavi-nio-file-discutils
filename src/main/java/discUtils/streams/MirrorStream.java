@@ -62,77 +62,77 @@ public class MirrorStream extends SparseStream {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return canRead;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return canSeek;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return canWrite;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return wrapped.get(0).getExtents();
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
-    public long getPosition() {
-        return wrapped.get(0).getPosition();
+    @Override public long position() {
+        return wrapped.get(0).position();
     }
 
-    public void setPosition(long value) {
-        wrapped.get(0).setPosition(value);
+    @Override public void position(long value) {
+        wrapped.get(0).position(value);
     }
 
-    public void flush() {
+    @Override public void flush() {
         wrapped.get(0).flush();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         return wrapped.get(0).read(buffer, offset, count);
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         return wrapped.get(0).seek(offset, origin);
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         if (value != length) {
             throw new IllegalArgumentException("Changing the stream length is not permitted for mirrored streams");
         }
     }
 
-    public void clear(int count) {
-        long pos = wrapped.get(0).getPosition();
+    @Override public void clear(int count) {
+        long pos = wrapped.get(0).position();
         if (pos + count > length) {
             throw new dotnet4j.io.IOException("Attempt to clear beyond end of mirrored stream");
         }
 
         for (SparseStream stream : wrapped) {
-            stream.setPosition(pos);
+            stream.position(pos);
             stream.clear(count);
         }
     }
 
-    public void write(byte[] buffer, int offset, int count) {
-        long pos = wrapped.get(0).getPosition();
+    @Override public void write(byte[] buffer, int offset, int count) {
+        long pos = wrapped.get(0).position();
         if (pos + count > length) {
             throw new dotnet4j.io.IOException("Attempt to write beyond end of mirrored stream");
         }
 
         for (SparseStream stream  : wrapped) {
-            stream.setPosition(pos);
+            stream.position(pos);
             stream.write(buffer, offset, count);
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsWrapped == Ownership.Dispose && wrapped != null) {
             for (SparseStream stream : wrapped) {
                 stream.close();

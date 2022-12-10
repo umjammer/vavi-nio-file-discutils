@@ -29,6 +29,7 @@ import discUtils.streams.builder.BuilderExtent;
 
 
 public class ExtentStream extends BuiltStream {
+
     /**
      *
      */
@@ -39,9 +40,9 @@ public class ExtentStream extends BuiltStream {
     /**
      *
      */
-    public int read(byte[] buffer, int offset, int count) {
-        if (getPosition() + count > getLength()) {
-            count = (int) (getLength() - getPosition());
+    @Override public int read(byte[] buffer, int offset, int count) {
+        if (position() + count > getLength()) {
+            count = (int) (getLength() - position());
         }
 
         return super.read(buffer, offset, count);

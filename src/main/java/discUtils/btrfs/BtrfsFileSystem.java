@@ -60,7 +60,7 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
             return false;
         }
 
-        stream.setPosition(SuperblockOffsets[0]);
+        stream.position(SuperblockOffsets[0]);
         byte[] superblockData = StreamUtilities.readExact(stream, SuperBlock.Length);
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);
@@ -70,7 +70,7 @@ public final class BtrfsFileSystem extends VfsFileSystemFacade {
     /**
      * retrieve all subvolumes
      *
-     * @return a list of subvolumes with id and name
+     * @return an array of subvolumes with id and name
      */
     public Subvolume[] getSubvolumes() {
         return VfsBtrfsFileSystem.class.cast(getRealFileSystem()).getSubvolumes();

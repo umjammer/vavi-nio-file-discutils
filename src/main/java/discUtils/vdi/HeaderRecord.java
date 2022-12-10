@@ -104,9 +104,9 @@ public class HeaderRecord {
         if (version.getMajor() == 0) {
             headerSize = 348;
         } else {
-            long savedPos = s.getPosition();
+            long savedPos = s.position();
             headerSize = EndianUtilities.toInt32LittleEndian(StreamUtilities.readExact(s, 4), 0);
-            s.setPosition(savedPos);
+            s.position(savedPos);
         }
 
         byte[] buffer = StreamUtilities.readExact(s, headerSize);
@@ -166,7 +166,7 @@ public class HeaderRecord {
     public void write(Stream s) {
         byte[] buffer = new byte[headerSize];
         write(buffer, 0);
-//Debug.println(s.getPosition());
+//Debug.println(s.position());
         s.write(buffer, 0, buffer.length);
     }
 

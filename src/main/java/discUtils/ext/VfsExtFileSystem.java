@@ -54,7 +54,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
     public VfsExtFileSystem(Stream stream, FileSystemParameters parameters) {
         super(new ExtFileSystemOptions(parameters));
 
-        stream.setPosition(1024);
+        stream.position(1024);
         byte[] superblockData = StreamUtilities.readExact(stream, 1024);
 
         SuperBlock superblock = new SuperBlock();
@@ -81,7 +81,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
         int numGroups = MathUtilities.ceil(superblock.blocksCount, superblock.blocksPerGroup);
         long blockDescStart = (superblock.firstDataBlock + 1) * (long) superblock.getBlockSize();
 
-        stream.setPosition(blockDescStart);
+        stream.position(blockDescStart);
         int bgDescSize = superblock.has64Bit() ? superblock.descriptorSize : BlockGroup.DescriptorSize;
         byte[] blockDescData = StreamUtilities.readExact(stream, numGroups * bgDescSize);
 
@@ -104,15 +104,15 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
         setRootDirectory(new Directory(getContext(), 2, getInode(2)));
     }
 
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "EXT-family";
     }
 
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return getContext().getSuperBlock().volumeName;
     }
 
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         File file = getFile(path);
         Inode inode = file.getInode();
 
@@ -138,7 +138,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
         return fileInfo;
     }
 
-    protected File convertDirEntryToFile(DirEntry dirEntry) {
+    @Override protected File convertDirEntryToFile(DirEntry dirEntry) {
         Inode inode = getInode(dirEntry.getRecord().inode);
         if (dirEntry.getRecord().fileType == DirectoryRecord.FileTypeDirectory) {
             return new Directory(getContext(), dirEntry.getRecord().inode, inode);
@@ -163,7 +163,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
         int blockOffset = groupOffset - block * inodesPerBlock;
 
         getContext().getRawStream()
-                .setPosition((inodeBlockGroup.inodeTableBlock + block) * (long) superBlock.getBlockSize() +
+                .position((inodeBlockGroup.inodeTableBlock + block) * (long) superBlock.getBlockSize() +
                         (long) blockOffset * superBlock.getInodeSize());
         byte[] inodeData = StreamUtilities.readExact(getContext().getRawStream(), superBlock.getInodeSize());
 
@@ -177,7 +177,7 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         SuperBlock superBlock = getContext().getSuperBlock();
         long blockCount = ((long) superBlock.blocksCountHigh << 32) | superBlock.blocksCount;
         long inodeSize = (long) superBlock.inodesCount * superBlock.getInodeSize();
@@ -195,14 +195,14 @@ final class VfsExtFileSystem extends VfsReadOnlyFileSystem<DirEntry, File, Direc
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         return getSize() - getAvailableSpace();
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         SuperBlock superBlock = getContext().getSuperBlock();
         if (superBlock.has64Bit()) {
             long free = 0;

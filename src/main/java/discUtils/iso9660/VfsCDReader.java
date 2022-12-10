@@ -127,7 +127,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
         BaseVolumeDescriptor bvd;
         do {
-            data.setPosition(vdpos);
+            data.position(vdpos);
             int numRead = data.read(buffer, 0, IsoUtilities.SectorSize);
             if (numRead != IsoUtilities.SectorSize) {
                 break;
@@ -166,7 +166,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             switch (variant) {
             case Joliet:
                 if (svdPos != 0) {
-                    data.setPosition(svdPos);
+                    data.position(svdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     SupplementaryVolumeDescriptor volDesc = new SupplementaryVolumeDescriptor(buffer, 0);
 
@@ -182,7 +182,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
             case RockRidge:
             case Iso9660:
                 if (pvdPos != 0) {
-                    data.setPosition(pvdPos);
+                    data.position(pvdPos);
                     data.read(buffer, 0, IsoUtilities.SectorSize);
                     PrimaryVolumeDescriptor volDesc = new PrimaryVolumeDescriptor(buffer, 0);
 
@@ -250,7 +250,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
     /**
      * Provides the friendly name for the CD filesystem.
      */
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "ISO 9660 (CD-ROM)";
     }
 
@@ -271,48 +271,48 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
     /**
      * Gets the Volume Identifier.
      */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return getContext().getVolumeDescriptor().volumeIdentifier;
     }
 
-    public long getClusterSize() {
+    @Override public long getClusterSize() {
         return IsoUtilities.SectorSize;
     }
 
-    public long getTotalClusters() {
+    @Override public long getTotalClusters() {
         return getContext().getVolumeDescriptor().volumeSpaceSize;
     }
 
-    public long clusterToOffset(long cluster) {
+    @Override public long clusterToOffset(long cluster) {
         return cluster * getClusterSize();
     }
 
-    public long offsetToCluster(long offset) {
+    @Override public long offsetToCluster(long offset) {
         return offset / getClusterSize();
     }
 
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         throw new UnsupportedOperationException("Filesystem size is not (yet) supported");
     }
 
-    public List<Range> pathToClusters(String path) {
+    @Override public List<Range> pathToClusters(String path) {
         ReaderDirEntry entry = getDirectoryEntry(path);
         if (entry == null) {
             throw new FileNotFoundException("File not found" + path);
@@ -326,7 +326,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 MathUtilities.ceil(entry.getRecord().dataLength, IsoUtilities.SectorSize)));
     }
 
-    public List<StreamExtent> pathToExtents(String path) {
+    @Override public List<StreamExtent> pathToExtents(String path) {
         ReaderDirEntry entry = getDirectoryEntry(path);
         if (entry == null) {
             throw new FileNotFoundException("File not found " + path);
@@ -340,7 +340,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
                 entry.getRecord().dataLength));
     }
 
-    public ClusterMap buildClusterMap() {
+    @Override public ClusterMap buildClusterMap() {
         long totalClusters = getTotalClusters();
         @SuppressWarnings("unchecked")
         EnumSet<ClusterRoles>[] clusterToRole = new EnumSet[(int) totalClusters];
@@ -380,7 +380,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         return new ClusterMap(clusterToRole, clusterToFileId, fileIdToPaths);
     }
 
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         File file = getFile(path);
         return file.getUnixFileInfo();
     }
@@ -396,7 +396,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         throw new UnsupportedOperationException("No valid boot image");
     }
 
-    protected File convertDirEntryToFile(ReaderDirEntry dirEntry) {
+    @Override protected File convertDirEntryToFile(ReaderDirEntry dirEntry) {
         if (dirEntry.isDirectory()) {
             return new ReaderDirectory(getContext(), dirEntry);
         }
@@ -404,7 +404,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         return new File(getContext(), dirEntry);
     }
 
-    protected String formatFileName(String name) {
+    @Override protected String formatFileName(String name) {
         if (hideVersions) {
             int pos = name.lastIndexOf(';');
             if (pos > 0) {
@@ -456,7 +456,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
     private static DirectoryRecord readRootSelfRecord(IsoContext context) {
         context.getDataStream()
-                .setPosition((long) context.getVolumeDescriptor().rootDirectory.locationOfExtent *
+                .position((long) context.getVolumeDescriptor().rootDirectory.locationOfExtent *
                              context.getVolumeDescriptor().getLogicalBlockSize());
         byte[] firstSector = StreamUtilities.readExact(context.getDataStream(),
                                                        context.getVolumeDescriptor().getLogicalBlockSize());
@@ -481,7 +481,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
 
     private byte[] getBootCatalog() {
         if (bootCatalog == null && bootVolDesc != null) {
-            data.setPosition((long) bootVolDesc.getCatalogSector() * IsoUtilities.SectorSize);
+            data.position((long) bootVolDesc.getCatalogSector() * IsoUtilities.SectorSize);
             bootCatalog = StreamUtilities.readExact(data, IsoUtilities.SectorSize);
         }
 

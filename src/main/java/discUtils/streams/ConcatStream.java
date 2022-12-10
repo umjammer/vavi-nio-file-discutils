@@ -61,22 +61,22 @@ public class ConcatStream extends SparseStream {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
         return canWrite;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         checkDisposed();
         List<StreamExtent> extents = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class ConcatStream extends SparseStream {
         return extents;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         long length = 0;
 
@@ -102,24 +102,24 @@ public class ConcatStream extends SparseStream {
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
         for (SparseStream stream : streams) {
             stream.flush();
         }
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         int totalRead = 0;
@@ -129,7 +129,7 @@ public class ConcatStream extends SparseStream {
             long[] activeStreamStartPos = new long[1];
             int activeStream = getActiveStream(activeStreamStartPos);
 
-            streams.get(activeStream).setPosition(position - activeStreamStartPos[0]);
+            streams.get(activeStream).position(position - activeStreamStartPos[0]);
 
             numRead = streams.get(activeStream).read(buffer, offset + totalRead, count - totalRead);
 
@@ -140,7 +140,7 @@ public class ConcatStream extends SparseStream {
         return totalRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
 
         long effectiveOffset = offset;
@@ -153,11 +153,11 @@ public class ConcatStream extends SparseStream {
         if (effectiveOffset < 0) {
             throw new dotnet4j.io.IOException("Attempt to move before beginning of disk");
         }
-        setPosition(effectiveOffset);
-        return getPosition();
+        position(effectiveOffset);
+        return position();
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
 
         long[] lastStreamOffset = new long[1];
@@ -169,7 +169,7 @@ public class ConcatStream extends SparseStream {
         streams.get(lastStream).setLength(value - lastStreamOffset[0]);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         int totalWritten = 0;
@@ -180,7 +180,7 @@ public class ConcatStream extends SparseStream {
 
             // Offset within the stream = streamPos
             long streamPos = position - streamOffset[0];
-            streams.get(streamIdx).setPosition(streamPos);
+            streams.get(streamIdx).position(streamPos);
 
             // Write (limited to the stream's length), except for final stream - that may be
             // extendable

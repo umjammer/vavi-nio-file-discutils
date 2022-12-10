@@ -137,9 +137,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
         stream.setLength(MathUtilities.roundUp(capacity, Sizes.Sector));
 
         // Wipe any pre-existing master boot record / BPB
-        stream.setPosition(0);
+        stream.position(0);
         stream.write(new byte[Sizes.Sector], 0, Sizes.Sector);
-        stream.setPosition(0);
+        stream.position(0);
 
         return new DiskImageFile(stream, ownsStream, geometry);
     }
@@ -164,7 +164,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @param ownsParent Controls ownership of the parent stream.
      * @return The content as a stream.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (ownsParent == Ownership.Dispose && parent != null) {
             try {
                 parent.close();
@@ -179,16 +179,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the possible locations of the parent file (if any).
      *
-     * @return Array of strings, empty if no parent.
+     * @return list of strings, empty if no parent.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return Collections.emptyList();
     }
 
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsContent == Ownership.Dispose && getContent() != null) {
             getContent().close();
         }

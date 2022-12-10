@@ -68,7 +68,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         VirtualDisk disk = openDisk();
         try {
             return disk.getGeometry();
@@ -82,7 +82,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public VirtualDiskClass getDiskClass() {
+    @Override public VirtualDiskClass getDiskClass() {
         VirtualDisk disk = openDisk();
         try {
             return disk.getDiskClass();
@@ -96,7 +96,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         VirtualDisk disk = openDisk();
         try {
             return disk.getCapacity();
@@ -110,7 +110,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public VirtualDiskParameters getParameters() {
+    @Override public VirtualDiskParameters getParameters() {
         VirtualDisk disk = openDisk();
         try {
             return disk.getParameters();
@@ -124,15 +124,15 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public SparseStream getContent() {
+    @Override public SparseStream getContent() {
         return new StreamWrapper(fileSystem, path, access);
     }
 
-    public List<VirtualDiskLayer> getLayers() {
+    @Override public List<VirtualDiskLayer> getLayers() {
         throw new UnsupportedOperationException("Access to virtual disk layers is not implemented for on-demand disks");
     }
 
-    public VirtualDiskTypeInfo getDiskTypeInfo() {
+    @Override public VirtualDiskTypeInfo getDiskTypeInfo() {
         VirtualDisk disk = openDisk();
         try {
             return disk.getDiskTypeInfo();
@@ -146,7 +146,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
+    @Override public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         VirtualDisk disk = openDisk();
         try {
             return disk.createDifferencingDisk(fileSystem, path);
@@ -162,7 +162,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
         }
     }
 
-    public VirtualDisk createDifferencingDisk(String path) {
+    @Override public VirtualDisk createDifferencingDisk(String path) {
         VirtualDisk disk = openDisk();
         try {
             return disk.createDifferencingDisk(path);
@@ -202,7 +202,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             this.access = access;
         }
 
-        public List<StreamExtent> getExtents() {
+        @Override public List<StreamExtent> getExtents() {
             VirtualDisk disk = openDisk();
             try {
                 return new ArrayList<>(disk.getContent().getExtents());
@@ -216,7 +216,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public boolean canRead() {
+        @Override public boolean canRead() {
             VirtualDisk disk = openDisk();
             try {
                 return disk.getContent().canRead();
@@ -230,7 +230,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public boolean canSeek() {
+        @Override public boolean canSeek() {
             VirtualDisk disk = openDisk();
             try {
                 return disk.getContent().canSeek();
@@ -244,7 +244,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public boolean canWrite() {
+        @Override public boolean canWrite() {
             VirtualDisk disk = openDisk();
             try {
                 return disk.getContent().canWrite();
@@ -258,10 +258,10 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public void flush() {
+        @Override public void flush() {
         }
 
-        public long getLength() {
+        @Override public long getLength() {
             VirtualDisk disk = openDisk();
             try {
                 return disk.getContent().getLength();
@@ -275,18 +275,18 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public long getPosition() {
+        @Override public long position() {
             return position;
         }
 
-        public void setPosition(long value) {
+        @Override public void position(long value) {
             position = value;
         }
 
-        public int read(byte[] buffer, int offset, int count) {
+        @Override public int read(byte[] buffer, int offset, int count) {
             VirtualDisk disk = openDisk();
             try {
-                disk.getContent().setPosition(position);
+                disk.getContent().position(position);
                 return disk.getContent().read(buffer, offset, count);
             } finally {
                 if (disk != null)
@@ -298,7 +298,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public long seek(long offset, SeekOrigin origin) {
+        @Override public long seek(long offset, SeekOrigin origin) {
             long effectiveOffset = offset;
             if (origin == SeekOrigin.Current) {
                 effectiveOffset += position;
@@ -314,7 +314,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public void setLength(long value) {
+        @Override public void setLength(long value) {
             VirtualDisk disk = openDisk();
             try {
                 disk.getContent().setLength(value);
@@ -328,10 +328,10 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
             }
         }
 
-        public void write(byte[] buffer, int offset, int count) {
+        @Override public void write(byte[] buffer, int offset, int count) {
             VirtualDisk disk = openDisk();
             try {
-                disk.getContent().setPosition(position);
+                disk.getContent().position(position);
                 disk.getContent().write(buffer, offset, count);
             } finally {
                 if (disk != null)

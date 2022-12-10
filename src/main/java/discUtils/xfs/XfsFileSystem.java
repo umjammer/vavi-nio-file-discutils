@@ -61,7 +61,7 @@ public final class XfsFileSystem extends VfsFileSystemFacade implements IUnixFil
     *  @return Information about the owner, group, permissions and type of the
     * file or directory.
     */
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         return VfsXfsFileSystem.class.cast(getRealFileSystem()).getUnixFileInfo(path);
     }
 
@@ -70,7 +70,7 @@ public final class XfsFileSystem extends VfsFileSystemFacade implements IUnixFil
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] superblockData = StreamUtilities.readExact(stream, 264);
         SuperBlock superblock = new SuperBlock();
         superblock.readFrom(superblockData, 0);

@@ -42,6 +42,7 @@ import dotnet4j.io.Stream;
  * VHD file format verifier, that identifies corrupt VHD files.
  */
 public class FileChecker {
+
     private static final UUID EMPTY = new UUID(0L, 0L);
 
     private final Stream fileStream;
@@ -120,7 +121,7 @@ public class FileChecker {
             return;
         }
 
-        fileStream.setPosition(dynamicHeader.tableOffset);
+        fileStream.position(dynamicHeader.tableOffset);
         byte[] batData = StreamUtilities.readExact(fileStream, batSize);
         int[] bat = new int[batSize / 4];
         for (int i = 0; i < bat.length; ++i) {
@@ -174,14 +175,14 @@ public class FileChecker {
                 reportError("DynHeader: Unaligned header @%s", pos);
             }
 
-            fileStream.setPosition(pos);
+            fileStream.position(pos);
             Header hdr = Header.fromStream(fileStream);
             if ( DynamicHeader.HeaderCookie.equals(hdr.cookie)) {
                 if (dynamicHeader != null) {
                     reportError("DynHeader: Duplicate dynamic header found");
                 }
 
-                fileStream.setPosition(pos);
+                fileStream.position(pos);
                 dynamicHeader = DynamicHeader.fromStream(fileStream);
                 if (pos + 1024 > lastHeaderEnd) {
                     lastHeaderEnd = pos + 1024;
@@ -293,7 +294,7 @@ public class FileChecker {
     }
 
     private void checkFooter() {
-        fileStream.setPosition(fileStream.getLength() - Sizes.Sector);
+        fileStream.position(fileStream.getLength() - Sizes.Sector);
         byte[] sector = StreamUtilities.readExact(fileStream, Sizes.Sector);
         footer = Footer.fromBytes(sector, 0);
         if (!footer.isValid()) {
@@ -302,14 +303,14 @@ public class FileChecker {
     }
 
     private void checkHeader() {
-        fileStream.setPosition(0);
+        fileStream.position(0);
         byte[] headerSector = StreamUtilities.readExact(fileStream, Sizes.Sector);
         Footer header = Footer.fromBytes(headerSector, 0);
         if (!header.isValid()) {
             reportError("Invalid VHD footer at start of file");
         }
 
-        fileStream.setPosition(fileStream.getLength() - Sizes.Sector);
+        fileStream.position(fileStream.getLength() - Sizes.Sector);
         byte[] footerSector = StreamUtilities.readExact(fileStream, Sizes.Sector);
         if (!Utilities.areEqual(footerSector, headerSector)) {
             reportError("Header and footer are different");

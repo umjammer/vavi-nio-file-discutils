@@ -85,60 +85,60 @@ public final class ContentStream extends MappedStream {
         chunks = new ObjectCache<>();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         checkDisposed();
 
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         checkDisposed();
 
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         checkDisposed();
 
         return canWrite /* ?? fileStream.canWrite() */;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         checkDisposed();
 
         // For now, report the complete file contents
         return getExtentsInRange(0, getLength());
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return length;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         atEof = false;
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
 
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> mapContent(long start, long length) {
+    @Override public List<StreamExtent> mapContent(long start, long length) {
         checkDisposed();
 
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
 
         return StreamExtent
@@ -146,7 +146,7 @@ public final class ContentStream extends MappedStream {
                            new StreamExtent(start, count));
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (atEof || position > length) {
@@ -177,7 +177,7 @@ public final class ContentStream extends MappedStream {
 
             PayloadBlockStatus blockStatus = chunk.getBlockStatus(blockIndex[0]);
             if (blockStatus == PayloadBlockStatus.FullyPresent) {
-                fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+                fileStream.position(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                 int read = StreamUtilities.readMaximum(fileStream,
                                                        buffer,
                                                        offset + totalRead,
@@ -193,15 +193,15 @@ public final class ContentStream extends MappedStream {
                 int read;
 
                 if (present[0]) {
-                    fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+                    fileStream.position(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
                     read = StreamUtilities.readMaximum(fileStream, buffer, offset + totalRead, toRead);
                 } else {
-                    parentStream.setPosition(position + totalRead);
+                    parentStream.position(position + totalRead);
                     read = StreamUtilities.readMaximum(parentStream, buffer, offset + totalRead, toRead);
                 }
                 totalRead += read;
             } else if (blockStatus == PayloadBlockStatus.NotPresent) {
-                parentStream.setPosition(position + totalRead);
+                parentStream.position(position + totalRead);
                 int read = StreamUtilities.readMaximum(parentStream,
                                                        buffer,
                                                        offset + totalRead,
@@ -219,7 +219,7 @@ public final class ContentStream extends MappedStream {
         return totalRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         checkDisposed();
 
         long effectiveOffset = offset;
@@ -238,13 +238,13 @@ public final class ContentStream extends MappedStream {
         return position;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
 
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (!canWrite()) {
@@ -272,7 +272,7 @@ public final class ContentStream extends MappedStream {
             }
 
             int toWrite = Math.min(blockBytesRemaining, count - totalWritten);
-            fileStream.setPosition(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
+            fileStream.position(chunk.getBlockPosition(blockIndex[0]) + blockOffset);
             fileStream.write(buffer, offset + totalWritten, toWrite);
 
             if (blockStatus == PayloadBlockStatus.PartiallyPresent) {
@@ -290,7 +290,7 @@ public final class ContentStream extends MappedStream {
         position += totalWritten;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (parentStream != null) {
             if (ownsParent == Ownership.Dispose) {
                 parentStream.close();

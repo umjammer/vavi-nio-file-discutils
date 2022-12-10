@@ -109,9 +109,9 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
         bootSectors = new SparseMemoryStream();
         bootSectors.setLength(capacity);
         for (StreamExtent extent : (new BiosPartitionTable(sourceDisk)).getMetadataDiskExtents()) {
-            sourceDisk.getContent().setPosition(extent.getStart());
+            sourceDisk.getContent().position(extent.getStart());
             byte[] buffer = StreamUtilities.readExact(sourceDisk.getContent(), (int) extent.getLength());
-            bootSectors.setPosition(extent.getStart());
+            bootSectors.position(extent.getStart());
             bootSectors.write(buffer, 0, buffer.length);
         }
         partitionTable = new BiosPartitionTable(bootSectors, biosGeometry);
@@ -158,11 +158,11 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         totalLength[0] = capacity;
         List<BuilderExtent> extents = new ArrayList<>();
         for (StreamExtent extent : getPartitionTable().getMetadataDiskExtents()) {
-            bootSectors.setPosition(extent.getStart());
+            bootSectors.position(extent.getStart());
             byte[] buffer = StreamUtilities.readExact(bootSectors, (int) extent.getLength());
             extents.add(new BuilderBufferExtent(extent.getStart(), buffer));
         }

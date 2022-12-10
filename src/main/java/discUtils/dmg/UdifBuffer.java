@@ -70,19 +70,19 @@ public class UdifBuffer extends Buffer {
         return blocks;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return sectorCount * Sizes.Sector;
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         int totalCopied = 0;
         long currentPos = pos;
         while (totalCopied < count && currentPos < getCapacity()) {
@@ -94,7 +94,7 @@ public class UdifBuffer extends Buffer {
                 Arrays.fill(buffer, offset + totalCopied, offset + totalCopied + toCopy, (byte) 0);
                 break;
             case Raw:
-                stream.setPosition(activeRun.compOffset + bufferOffset);
+                stream.position(activeRun.compOffset + bufferOffset);
                 StreamUtilities.readExact(stream, buffer, offset + totalCopied, toCopy);
                 break;
             case AdcCompressed:
@@ -112,15 +112,15 @@ public class UdifBuffer extends Buffer {
         return totalCopied;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         List<StreamExtent> result = new ArrayList<>();
         StreamExtent lastRun = null;
         for (CompressedBlock block : getBlocks()) {
@@ -240,7 +240,7 @@ public class UdifBuffer extends Buffer {
              * DeflateStream decompression needs zip header (0x78, 0x9c)
              * so spec. is different from original C# DeflateStream
              */
-            stream.setPosition(run.compOffset);
+            stream.position(run.compOffset);
 
             try (DeflateStream ds = new DeflateStream(stream, CompressionMode.Decompress, true)) {
                 StreamUtilities.readExact(ds, decompBuffer, 0, toCopy);
@@ -251,7 +251,7 @@ public class UdifBuffer extends Buffer {
             break;
 
         case AdcCompressed: {
-            stream.setPosition(run.compOffset);
+            stream.position(run.compOffset);
             byte[] compressed = StreamUtilities.readExact(stream, (int) run.compLength);
             if (aDCDecompress(compressed, 0, compressed.length, decompBuffer, 0) != toCopy) {
                 throw new IllegalArgumentException("Run too short when decompressed");

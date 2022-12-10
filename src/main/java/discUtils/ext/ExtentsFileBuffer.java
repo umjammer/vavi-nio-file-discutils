@@ -44,19 +44,19 @@ public class ExtentsFileBuffer extends Buffer {
         this.inode = inode;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return inode.fileSize;
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         if (pos > inode.fileSize) {
             return 0;
         }
@@ -83,7 +83,7 @@ public class ExtentsFileBuffer extends Buffer {
                 int toRead = (int) Math
                         .min(totalBytesRemaining,
                              (extent.getNumBlocks() - (logicalBlock - extent.firstLogicalBlock)) * blockSize - blockOffset);
-                context.getRawStream().setPosition(physicalBlock * blockSize + blockOffset);
+                context.getRawStream().position(physicalBlock * blockSize + blockOffset);
                 numRead = context.getRawStream().read(buffer, offset + totalRead, toRead);
             }
             totalBytesRemaining -= numRead;
@@ -92,15 +92,15 @@ public class ExtentsFileBuffer extends Buffer {
         return totalRead;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, getCapacity())), new StreamExtent(start, count));
     }
 
@@ -159,7 +159,7 @@ public class ExtentsFileBuffer extends Buffer {
 
     private ExtentBlock loadExtentBlock(ExtentIndex idxEntry) {
         int blockSize = context.getSuperBlock().getBlockSize();
-        context.getRawStream().setPosition(idxEntry.getLeafPhysicalBlock() * blockSize);
+        context.getRawStream().position(idxEntry.getLeafPhysicalBlock() * blockSize);
         byte[] buffer = StreamUtilities.readExact(context.getRawStream(), blockSize);
         ExtentBlock subBlock = EndianUtilities.toStruct(ExtentBlock.class, buffer, 0);
         return subBlock;

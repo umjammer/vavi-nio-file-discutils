@@ -47,11 +47,11 @@ public class Nfs3CreateResultTest {
         result.setFileHandle(handle);
         result.setCacheConsistency(new Nfs3WeakCacheConsistency());
 
-        Nfs3CreateResult clone = null;
+        Nfs3CreateResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3CreateResult(reader);
         }

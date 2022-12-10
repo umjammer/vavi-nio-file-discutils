@@ -39,12 +39,12 @@ public class BuiltStreamTest {
         int length = 1024;
         BuilderSparseStreamExtent extent = new BuilderSparseStreamExtent(0, new ZeroStream(2 * length));
         try (BuiltStream stream = new BuiltStream(length, Collections.singletonList(extent))) {
-            assertEquals(0, stream.getPosition());
+            assertEquals(0, stream.position());
             assertEquals(length, stream.getLength());
             byte[] content = new byte[2 * length];
             int read = stream.read(content, 0, content.length);
             assertEquals(length, read);
-            assertEquals(stream.getLength(), stream.getPosition());
+            assertEquals(stream.getLength(), stream.position());
         }
     }
 }

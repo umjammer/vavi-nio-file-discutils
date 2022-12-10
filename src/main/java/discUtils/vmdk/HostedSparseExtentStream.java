@@ -58,14 +58,13 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         this.parentDiskStream = parentDiskStream;
         this.ownsParentDiskStream = ownsParentDiskStream;
 
-        file.setPosition(0);
+        file.position(0);
         byte[] headerSector = StreamUtilities.readExact(file, Sizes.Sector);
         hostedHeader = HostedSparseExtentHeader.read(headerSector, 0);
         if (hostedHeader.gdOffset == -1) {
             // Fall back to secondary copy that (should) be at the end of the
-            // stream, just
-            // before the end-of-stream sector marker
-            file.setPosition(file.getLength() - Sizes.OneKiB);
+            // stream, just before the end-of-stream sector marker
+            file.position(file.getLength() - Sizes.OneKiB);
             headerSector = StreamUtilities.readExact(file, Sizes.Sector);
             hostedHeader = HostedSparseExtentHeader.read(headerSector, 0);
 
@@ -85,14 +84,14 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         loadGlobalDirectory();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         // No write support for streamOptimized disks
         return fileStream.canWrite() &&
                Collections.disjoint(hostedHeader.flags,
                                     EnumSet.of(HostedSparseExtentFlags.CompressedGrains, HostedSparseExtentFlags.MarkersInUse));
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (!canWrite()) {
@@ -116,7 +115,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             }
 
             int numToWrite = Math.min(count - totalWritten, grainSize - grainOffset);
-            fileStream.setPosition((long) getGrainTableEntry(grain) * Sizes.Sector + grainOffset);
+            fileStream.position((long) getGrainTableEntry(grain) * Sizes.Sector + grainOffset);
             fileStream.write(buffer, offset + totalWritten, numToWrite);
             position += numToWrite;
             totalWritten += numToWrite;
@@ -124,9 +123,9 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         atEof = position == getLength();
     }
 
-    protected int readGrain(byte[] buffer, int bufferOffset, long grainStart, int grainOffset, int numToRead) {
+    @Override protected int readGrain(byte[] buffer, int bufferOffset, long grainStart, int grainOffset, int numToRead) {
         if (hostedHeader.flags.contains(HostedSparseExtentFlags.CompressedGrains)) {
-            fileStream.setPosition(grainStart);
+            fileStream.position(grainStart);
 
             byte[] readBuffer = StreamUtilities.readExact(fileStream, CompressedGrainHeader.Size);
             CompressedGrainHeader hdr = new CompressedGrainHeader();
@@ -135,9 +134,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             readBuffer = StreamUtilities.readExact(fileStream, hdr.dataSize);
 
             // This is really a zlib stream, so has header and footer. We ignore
-            // this right
-            // now, but we sanity
-            // check against expected header values...
+            // this right now, but we sanity check against expected header values...
             short header = EndianUtilities.toUInt16BigEndian(readBuffer, 0);
 
             if (header % 31 != 0) {
@@ -164,9 +161,9 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         return super.readGrain(buffer, bufferOffset, grainStart, grainOffset, numToRead);
     }
 
-    protected StreamExtent mapGrain(long grainStart, int grainOffset, int numToRead) {
+    @Override protected StreamExtent mapGrain(long grainStart, int grainOffset, int numToRead) {
         if (hostedHeader.flags.contains(HostedSparseExtentFlags.CompressedGrains)) {
-            fileStream.setPosition(grainStart);
+            fileStream.position(grainStart);
 
             byte[] readBuffer = StreamUtilities.readExact(fileStream, CompressedGrainHeader.Size);
             CompressedGrainHeader hdr = new CompressedGrainHeader();
@@ -177,13 +174,13 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         return super.mapGrain(grainStart, grainOffset, numToRead);
     }
 
-    protected void loadGlobalDirectory() {
+    @Override protected void loadGlobalDirectory() {
         super.loadGlobalDirectory();
 
         if (hostedHeader.flags.contains(HostedSparseExtentFlags.RedundantGrainTable)) {
             int numGTs = (int) MathUtilities.ceil(header.capacity * Sizes.Sector, gtCoverage);
             redundantGlobalDirectory = new int[numGTs];
-            fileStream.setPosition(hostedHeader.rgdOffset * Sizes.Sector);
+            fileStream.position(hostedHeader.rgdOffset * Sizes.Sector);
             byte[] gdAsBytes = StreamUtilities.readExact(fileStream, numGTs * 4);
             for (int i = 0; i < globalDirectory.length; ++i) {
                 redundantGlobalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
@@ -195,12 +192,10 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
         // Calculate start pos for new grain
         long grainStartPos = MathUtilities.roundUp(fileStream.getLength(), header.grainSize * Sizes.Sector);
         // Copy-on-write semantics, read the bytes from parent and write them
-        // out to
-        // this extent.
-        parentDiskStream
-                .setPosition(diskOffset + (grain + (long) header.numGTEsPerGT * grainTable) * header.grainSize * Sizes.Sector);
+        // out to this extent.
+        parentDiskStream.position(diskOffset + (grain + (long) header.numGTEsPerGT * grainTable) * header.grainSize * Sizes.Sector);
         byte[] content = StreamUtilities.readExact(parentDiskStream, (int) header.grainSize * Sizes.Sector);
-        fileStream.setPosition(grainStartPos);
+        fileStream.position(grainStartPos);
         fileStream.write(content, 0, content.length);
         loadGrainTable(grainTable);
         setGrainTableEntry(grain, (int) (grainStartPos / Sizes.Sector));
@@ -212,13 +207,11 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             throw new dotnet4j.io.IOException("No grain table loaded");
         }
 
-        fileStream.setPosition(globalDirectory[currentGrainTable] * (long) Sizes.Sector);
+        fileStream.position(globalDirectory[currentGrainTable] * (long) Sizes.Sector);
         fileStream.write(grainTable, 0, grainTable.length);
         if (redundantGlobalDirectory != null) {
-            fileStream.setPosition(redundantGlobalDirectory[currentGrainTable] * (long) Sizes.Sector);
+            fileStream.position(redundantGlobalDirectory[currentGrainTable] * (long) Sizes.Sector);
             fileStream.write(grainTable, 0, grainTable.length);
         }
-
     }
-
 }

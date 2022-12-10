@@ -188,11 +188,11 @@ public class ExtentData extends BaseItem {
         logicalSize = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return getType() == ExtentDataType.Inline ? getInlineData().length + 0x15 : 0x35;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         generation = EndianUtilities.toUInt64LittleEndian(buffer, offset);
         decodedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
         compression = ExtentDataCompression.values()[buffer[offset + 0x10]];
@@ -253,7 +253,7 @@ public class ExtentData extends BaseItem {
             long remaining = logicalSize;
 //Debug.println("remaining: " + remaining + ", " + stream);
             while (processed < totalLength) {
-                stream.setPosition(processed);
+                stream.position(processed);
                 StreamUtilities.readExact(stream, buffer, 0, 4); // sizeof(int)
                 int partLength = EndianUtilities.toUInt32LittleEndian(buffer, 0);
                 processed += 4; // sizeof(int)

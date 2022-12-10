@@ -33,7 +33,7 @@ public class PhysicalVolume {
 
     public static final short SECTOR_SIZE = 512;
 
-    private static final int INITIAL_CRC = 0xf597a6cf;
+    private static final long INITIAL_CRC = 0xf597a6cfL;
 
     public final PhysicalVolumeLabel physicalVolumeLabel;
 
@@ -54,13 +54,13 @@ public class PhysicalVolume {
     public PhysicalVolume(PhysicalVolumeLabel physicalVolumeLabel, Stream content) {
         this.physicalVolumeLabel = physicalVolumeLabel;
         pvHeader = new PvHeader();
-        content.setPosition(physicalVolumeLabel.sector * SECTOR_SIZE);
+        content.position(physicalVolumeLabel.sector * SECTOR_SIZE);
         byte[] buffer = StreamUtilities.readExact(content, SECTOR_SIZE);
         pvHeader.readFrom(buffer, (int) physicalVolumeLabel.offset);
         if (pvHeader.metadataDiskAreas.size() > 0) {
             DiskArea area = pvHeader.metadataDiskAreas.get(0);
             VolumeGroupMetadata metadata = new VolumeGroupMetadata();
-            content.setPosition(area.offset);
+            content.position(area.offset);
             buffer = StreamUtilities.readExact(content, (int) area.length);
             metadata.readFrom(buffer, 0x0);
             vgMetadata = metadata;
@@ -93,7 +93,7 @@ public class PhysicalVolume {
      */
     private static boolean searchLabel(Stream content, PhysicalVolumeLabel[] pvLabel) {
         pvLabel[0] = null;
-        content.setPosition(0);
+        content.position(0);
         byte[] buffer = new byte[SECTOR_SIZE];
         for (int i = 0; i < 4; i++) {
             if (StreamUtilities.readMaximum(content, buffer, 0, SECTOR_SIZE) != SECTOR_SIZE) {
@@ -129,13 +129,13 @@ public class PhysicalVolume {
         long crc = INITIAL_CRC;
         final long[] crcTab = new long[] {
             0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c, 0xedb88320,
-            0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
+            0xf00f9344L, 0xd6d6a3e8L, 0xcb61b38cL, 0x9b64c2b0L, 0x86d3d2d4L, 0xa00ae278L, 0xbdbdf21cL
         };
         int i = offset;
         while (i < offset + length) {
             crc ^= (buffer[i] & 0xff);
-            crc = ((crc & 0xffffffffL) >>> 4) ^ crcTab[(int) crc & 0xf];
-            crc = ((crc & 0xffffffffL) >>> 4) ^ crcTab[(int) crc & 0xf];
+            crc = ((crc & 0xffff_ffffL) >>> 4) ^ crcTab[(int) crc & 0xf];
+            crc = ((crc & 0xffff_ffffL) >>> 4) ^ crcTab[(int) crc & 0xf];
             i++;
         }
         return (int) crc;

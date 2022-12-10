@@ -49,28 +49,23 @@ public class Nfs3WriteResultTest {
         Nfs3WriteResult result = new Nfs3WriteResult();
         Nfs3WeakCacheConsistencyAttr before = new Nfs3WeakCacheConsistencyAttr();
         before.setChangeTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli()));
+                .toInstant().toEpochMilli()));
         before.setModifyTime(new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli()));
+                .toInstant().toEpochMilli()));
         before.setSize(3);
         Nfs3FileAttributes after = new Nfs3FileAttributes();
         after.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         after.bytesUsed = 2;
         after.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         after.fileId = 3;
         after.fileSystemId = 4;
         after.gid = 5;
         after.linkCount = 6;
         after.mode = UnixFilePermissions.GroupAll;
         after.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         after.rdevMajor = 7;
         after.rdevMinor = 8;
         after.size = 9;
@@ -84,11 +79,11 @@ public class Nfs3WriteResultTest {
         result.setHowCommitted(Nfs3StableHow.Unstable);
         result.setStatus(Nfs3Status.Ok);
         result.setWriteVerifier(3);
-        Nfs3WriteResult clone = null;
+        Nfs3WriteResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3WriteResult(reader);
         }

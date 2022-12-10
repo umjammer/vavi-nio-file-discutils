@@ -36,7 +36,7 @@ import vavix.io.fat.PC98BiosParameterBlock;
  */
 public class Pc98FileSystemFactory implements VfsFileSystemFactory {
 
-    public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
+    @Override public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (detectFAT(stream)) {
             return new FileSystemInfo[] {
                 new VfsFileSystemInfo("PC98_FAT", "NEC FAT", this::open)
@@ -65,7 +65,7 @@ Debug.println(Level.FINE, "stream length < 512");
             return false;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] sector = StreamUtilities.readExact(stream, 512);
         ByteArrayInputStream bais = new ByteArrayInputStream(sector);
 

@@ -53,46 +53,46 @@ public class ExtentStream extends Stream {
         }
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return dataLength;
     }
 
-    public long getPosition() {
+    @Override public long position() {
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         position = value;
     }
 
-    public void flush() {
+    @Override public void flush() {
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         if (position > dataLength) {
             return 0;
         }
 
         int toRead = (int) Math.min(count, dataLength - position);
-        isoStream.setPosition(position + startBlock * (long) IsoUtilities.SectorSize);
+        isoStream.position(position + startBlock * (long) IsoUtilities.SectorSize);
         int numRead = isoStream.read(buffer, offset, toRead);
         position += numRead;
         return numRead;
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         long newPos = offset;
         if (origin == SeekOrigin.Current) {
             newPos += position;
@@ -104,11 +104,11 @@ public class ExtentStream extends Stream {
         return newPos;
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 

@@ -152,7 +152,7 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
         List<FileRecord> result = new ArrayList<>();
         try (Stream mftStream = self.openStream(AttributeType.Data, null, FileAccess.Read)) {
             int index = 0;
-            while (mftStream.getPosition() < mftStream.getLength()) {
+            while (mftStream.position() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
 
 Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytesToString(recordData, 0, 4));
@@ -208,7 +208,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
     }
 
     public FileRecord getBootstrapRecord() {
-        recordStream.setPosition(0);
+        recordStream.position(0);
         byte[] mftSelfRecordData = StreamUtilities.readExact(recordStream, recordSize);
         FileRecord mftSelfRecord = new FileRecord(bytesPerSector);
         mftSelfRecord.fromBytes(mftSelfRecordData, 0);
@@ -274,7 +274,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
         // Write the MFT's own record to itself
         byte[] buffer = new byte[recordSize];
         fileRec.toBytes(buffer, 0);
-        recordStream.setPosition(0);
+        recordStream.position(0);
         recordStream.write(buffer, 0, recordSize);
         recordStream.flush();
 
@@ -378,7 +378,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
             }
 
             if ((index + 1) * recordSize <= recordStream.getLength()) {
-                recordStream.setPosition(index * recordSize);
+                recordStream.position(index * recordSize);
                 byte[] recordBuffer = StreamUtilities.readExact(recordStream, recordSize);
 
                 result = new FileRecord(bytesPerSector);
@@ -404,7 +404,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
         byte[] buffer = new byte[this.recordSize];
         record.toBytes(buffer, 0);
 
-        recordStream.setPosition((long) record.getMasterFileTableIndex() * this.recordSize);
+        recordStream.position((long) record.getMasterFileTableIndex() * this.recordSize);
         recordStream.write(buffer, 0, this.recordSize);
         recordStream.flush();
 
@@ -426,7 +426,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
             File mftMirror = self.getContext().getGetFileByIndex().invoke(MftMirrorIndex);
             if (mftMirror != null) {
                 try (Stream s = mftMirror.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {
-                    s.setPosition((long) record.getMasterFileTableIndex() * this.recordSize);
+                    s.position((long) record.getMasterFileTableIndex() * this.recordSize);
                     s.write(buffer, 0, this.recordSize);
                 } catch (IOException e) {
                     throw new dotnet4j.io.IOException(e);
@@ -498,12 +498,12 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytes
     }
 
     private static void wipe(Stream s) {
-        s.setPosition(0);
+        s.position(0);
 
         byte[] buffer = new byte[(int) (64 * Sizes.OneKiB)];
         int numWiped = 0;
         while (numWiped < s.getLength()) {
-            int toWrite = (int) Math.min(buffer.length, s.getLength() - s.getPosition());
+            int toWrite = (int) Math.min(buffer.length, s.getLength() - s.position());
             s.write(buffer, 0, toWrite);
             numWiped += toWrite;
         }

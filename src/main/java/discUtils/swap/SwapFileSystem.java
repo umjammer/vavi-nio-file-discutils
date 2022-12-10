@@ -35,6 +35,7 @@ import dotnet4j.io.Stream;
  * Class for accessing swap file systems.
  */
 public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVfsFile, IVfsDirectory<VfsDirEntry, IVfsFile>, SwapContext> {
+
     /**
      * Initializes a new instance of the SwapFileSystem class.
      *
@@ -55,14 +56,14 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
     /**
      * Gets the friendly name for the file system.
      */
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "swap";
     }
 
     /**
      * Gets the volume label.
      */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return getContext().getHeader().getVolume();
     }
 
@@ -83,7 +84,7 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
             return null;
         }
 
-        stream.setPosition(0);
+        stream.position(0);
         byte[] headerData = StreamUtilities.readExact(stream, SwapHeader.PageSize);
         SwapHeader header = new SwapHeader();
         header.readFrom(headerData, 0);
@@ -93,25 +94,25 @@ public final class SwapFileSystem extends VfsReadOnlyFileSystem<VfsDirEntry, IVf
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         return getContext().getHeader().getLastPage() * SwapHeader.PageSize;
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() {
+    @Override public long getUsedSpace() {
         return getSize();
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() {
+    @Override public long getAvailableSpace() {
         return 0;
     }
 
-    protected IVfsFile convertDirEntryToFile(VfsDirEntry dirEntry) {
+    @Override protected IVfsFile convertDirEntryToFile(VfsDirEntry dirEntry) {
         throw new UnsupportedOperationException();
     }
 }

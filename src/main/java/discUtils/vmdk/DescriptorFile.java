@@ -373,7 +373,7 @@ public class DescriptorFile {
     }
 
     private void load(Stream source) {
-        if (source.getLength() - source.getPosition() > MaxSize) {
+        if (source.getLength() - source.position() > MaxSize) {
             throw new dotnet4j.io.IOException(String
                     .format("Invalid VMDK descriptor file, more than %s bytes in length", MaxSize));
         }

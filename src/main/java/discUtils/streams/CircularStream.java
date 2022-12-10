@@ -30,22 +30,23 @@ import discUtils.streams.util.Ownership;
  * stream wrap.
  */
 public final class CircularStream extends WrappingStream {
+
     public CircularStream(SparseStream toWrap, Ownership ownership) {
         super(toWrap, ownership);
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         wrapPosition();
-        int read = super.read(buffer, offset, (int) Math.min(getLength() - getPosition(), count));
+        int read = super.read(buffer, offset, (int) Math.min(getLength() - position(), count));
         wrapPosition();
         return read;
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         wrapPosition();
         int totalWritten = 0;
         while (totalWritten < count) {
-            int toWrite = (int) Math.min(count - totalWritten, getLength() - getPosition());
+            int toWrite = (int) Math.min(count - totalWritten, getLength() - position());
             super.write(buffer, offset + totalWritten, toWrite);
             wrapPosition();
             totalWritten += toWrite;
@@ -53,10 +54,10 @@ public final class CircularStream extends WrappingStream {
     }
 
     private void wrapPosition() {
-        long pos = getPosition();
+        long pos = position();
         long length = getLength();
         if (pos >= length) {
-            setPosition(pos % length);
+            position(pos % length);
         }
     }
 }

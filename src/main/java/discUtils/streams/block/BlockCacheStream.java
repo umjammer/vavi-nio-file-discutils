@@ -104,21 +104,21 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Gets an indication as to whether the stream can be read.
      */
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
     /**
      * Gets an indication as to whether the stream position can be changed.
      */
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return true;
     }
 
     /**
      * Gets an indication as to whether the stream can be written to.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return wrappedStream.canWrite();
     }
 
@@ -126,7 +126,7 @@ public final class BlockCacheStream extends SparseStream {
      * Gets the parts of the stream that are stored. This may be an empty
      * enumeration if all bytes are zero.
      */
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         checkDisposed();
         return wrappedStream.getExtents();
     }
@@ -134,7 +134,7 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Gets the length of the stream.
      */
-    public long getLength() {
+    @Override public long getLength() {
         checkDisposed();
         return wrappedStream.getLength();
     }
@@ -142,12 +142,12 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Gets and sets the current stream position.
      */
-    public long getPosition() {
+    @Override public long position() {
         checkDisposed();
         return position;
     }
 
-    public void setPosition(long value) {
+    @Override public void position(long value) {
         checkDisposed();
         position = value;
     }
@@ -167,7 +167,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         checkDisposed();
         return wrappedStream.getExtentsInRange(start, count);
     }
@@ -180,7 +180,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param count  The number of bytes to read.
      * @return The number of bytes read.
      */
-    public synchronized int read(byte[] buffer, int offset, int count) {
+    @Override public synchronized int read(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         if (position >= getLength()) {
@@ -196,9 +196,9 @@ public final class BlockCacheStream extends SparseStream {
         if (count > settings.getLargeReadSize()) {
             stats.setLargeReadsIn(stats.getLargeReadsIn() + 1);
             stats.setTotalReadsOut(stats.getTotalReadsOut() + 1);
-            wrappedStream.setPosition(position);
+            wrappedStream.position(position);
             int numRead = wrappedStream.read(buffer, offset, count);
-            position = wrappedStream.getPosition();
+            position = wrappedStream.position();
 
             if (position >= getLength()) {
                 atEof = true;
@@ -256,7 +256,7 @@ public final class BlockCacheStream extends SparseStream {
 
                 // Do the read
                 stats.setTotalReadsOut(stats.getTotalReadsOut() + 1);
-                wrappedStream.setPosition(readPosition);
+                wrappedStream.position(readPosition);
                 StreamUtilities.readExact(wrappedStream, readBuffer, 0, bytesRead);
 
                 // Cache the read blocks
@@ -303,7 +303,7 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Flushes the stream.
      */
-    public void flush() {
+    @Override public void flush() {
         checkDisposed();
         wrappedStream.flush();
     }
@@ -315,7 +315,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param origin The base location.
      * @return The new absolute stream position.
      */
-    public synchronized long seek(long offset, SeekOrigin origin) {
+    @Override public synchronized long seek(long offset, SeekOrigin origin) {
         checkDisposed();
         long effectiveOffset = offset;
         if (origin == SeekOrigin.Current) {
@@ -338,7 +338,7 @@ public final class BlockCacheStream extends SparseStream {
      *
      * @param value The new length.
      */
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         checkDisposed();
         wrappedStream.setLength(value);
     }
@@ -350,7 +350,7 @@ public final class BlockCacheStream extends SparseStream {
      * @param offset The first byte to write from buffer.
      * @param count  The number of bytes to write.
      */
-    public synchronized void write(byte[] buffer, int offset, int count) {
+    @Override public synchronized void write(byte[] buffer, int offset, int count) {
         checkDisposed();
 
         stats.setTotalWritesIn(stats.getTotalWritesIn() + 1);
@@ -361,7 +361,7 @@ public final class BlockCacheStream extends SparseStream {
         int numBlocks = (int) (endBlock - firstBlock);
 
         try {
-            wrappedStream.setPosition(position);
+            wrappedStream.position(position);
             wrappedStream.write(buffer, offset, count);
         } catch (Exception e) {
             invalidateBlocks(firstBlock, numBlocks);
@@ -394,7 +394,7 @@ public final class BlockCacheStream extends SparseStream {
     /**
      * Disposes of this instance, freeing up associated resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (wrappedStream != null && ownWrapped == Ownership.Dispose) {
             wrappedStream.close();
         }

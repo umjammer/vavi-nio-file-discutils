@@ -29,7 +29,7 @@ import discUtils.streams.util.Ownership;
  * Represents a stream with a specified length
  *
  * since the wrapped stream may not support
- * {@link dotnet4j.io.Stream#getPosition()}
+ * {@link dotnet4j.io.Stream#position()}
  *
  * there is no validation of the specified length
  */
@@ -42,7 +42,7 @@ public class LengthWrappingStream extends WrappingStream {
         this.length = length;
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 }

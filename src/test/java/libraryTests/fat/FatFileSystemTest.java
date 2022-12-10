@@ -241,7 +241,7 @@ public class FatFileSystemTest {
         SparseMemoryStream stream = new SparseMemoryStream();
         byte[] buffer = new byte[1024 * 1024];
         stream.write(buffer, 0, 1024 * 1024);
-        stream.setPosition(0);
+        stream.position(0);
         assertThrows(IllegalStateException.class, () -> { // InvalidFileSystemException
             new FatFileSystem(stream);
         });

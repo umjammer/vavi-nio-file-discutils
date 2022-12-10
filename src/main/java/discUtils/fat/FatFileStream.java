@@ -50,35 +50,35 @@ public class FatFileStream extends SparseStream {
         stream.firstClusterChanged = this::firstClusterAllocatedHandler;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return stream.canRead();
     }
 
-    public boolean canSeek() {
+    @Override public boolean canSeek() {
         return stream.canSeek();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return stream.canWrite();
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, getLength()));
     }
 
-    public long getLength() {
+    @Override public long getLength() {
         return stream.getLength();
     }
 
-    public long getPosition() {
-        return stream.getPosition();
+    @Override public long position() {
+        return stream.position();
     }
 
-    public void setPosition(long value) {
-        stream.setPosition(value);
+    @Override public void position(long value) {
+        stream.position(value);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (dir.getFileSystem().canWrite()) {
             long now = dir.getFileSystem().convertFromUtc(System.currentTimeMillis());
             DirectoryEntry dirEntry = dir.getEntry(dirId);
@@ -92,25 +92,25 @@ public class FatFileStream extends SparseStream {
         }
     }
 
-    public void setLength(long value) {
+    @Override public void setLength(long value) {
         didWrite = true;
         stream.setLength(value);
     }
 
-    public void write(byte[] buffer, int offset, int count) {
+    @Override public void write(byte[] buffer, int offset, int count) {
         didWrite = true;
         stream.write(buffer, offset, count);
     }
 
-    public void flush() {
+    @Override public void flush() {
         stream.flush();
     }
 
-    public int read(byte[] buffer, int offset, int count) {
+    @Override public int read(byte[] buffer, int offset, int count) {
         return stream.read(buffer, offset, count);
     }
 
-    public long seek(long offset, SeekOrigin origin) {
+    @Override public long seek(long offset, SeekOrigin origin) {
         return stream.seek(offset, origin);
     }
 

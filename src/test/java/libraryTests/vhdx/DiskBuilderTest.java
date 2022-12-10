@@ -45,11 +45,11 @@ public class DiskBuilderTest {
         SparseMemoryStream sourceStream = new SparseMemoryStream();
         sourceStream.setLength(160 * 1024L * 1024);
         for (int i = 0; i < 8; ++i) {
-            sourceStream.setPosition(i * 1024L * 1024);
+            sourceStream.position(i * 1024L * 1024);
             sourceStream.writeByte((byte) i);
         }
 
-        sourceStream.setPosition(150 * 1024 * 1024);
+        sourceStream.position(150 * 1024 * 1024);
         sourceStream.writeByte((byte) 0xFF);
 
         diskContent = sourceStream;
@@ -67,11 +67,11 @@ public class DiskBuilderTest {
 
         try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
             for (int i = 0; i < 8; ++i) {
-                disk.getContent().setPosition(i * 1024L * 1024);
+                disk.getContent().position(i * 1024L * 1024);
                 assertEquals(i, disk.getContent().readByte());
             }
 
-            disk.getContent().setPosition(150 * 1024 * 1024);
+            disk.getContent().position(150 * 1024 * 1024);
             assertEquals(0xFF, disk.getContent().readByte());
         }
     }
@@ -103,10 +103,10 @@ public class DiskBuilderTest {
 
         try (Disk disk = new Disk(fileSpecs.get(0).openStream(), Ownership.Dispose)) {
             for (int i = 0; i < 8; ++i) {
-                disk.getContent().setPosition(i * 1024L * 1024);
+                disk.getContent().position(i * 1024L * 1024);
                 assertEquals(i, disk.getContent().readByte());
             }
-            disk.getContent().setPosition(150 * 1024 * 1024);
+            disk.getContent().position(150 * 1024 * 1024);
             assertEquals(0xFF, disk.getContent().readByte());
         }
     }

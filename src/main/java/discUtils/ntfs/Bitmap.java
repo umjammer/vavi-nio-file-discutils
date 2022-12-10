@@ -48,7 +48,7 @@ final class Bitmap implements Closeable {
         bitmap = new BlockCacheStream(SparseStream.fromStream(stream, Ownership.None), Ownership.None);
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (bitmap != null) {
             bitmap.close();
             bitmap = null;
@@ -66,7 +66,7 @@ final class Bitmap implements Closeable {
         byte mask = (byte) (1 << (byte) (index % 8));
 
         if (byteIdx >= bitmap.getLength()) {
-            bitmap.setPosition(MathUtilities.roundUp(byteIdx + 1, 8) - 1);
+            bitmap.position(MathUtilities.roundUp(byteIdx + 1, 8) - 1);
             bitmap.writeByte((byte) 0);
         }
 
@@ -82,7 +82,7 @@ final class Bitmap implements Closeable {
         long lastByte = (index + count - 1) / 8;
 
         if (lastByte >= bitmap.getLength()) {
-            bitmap.setPosition(MathUtilities.roundUp(lastByte + 1, 8) - 1);
+            bitmap.position(MathUtilities.roundUp(lastByte + 1, 8) - 1);
             bitmap.writeByte((byte) 0);
         }
 
@@ -122,7 +122,7 @@ final class Bitmap implements Closeable {
         long firstByte = index / 8;
         long lastByte = (index + count - 1) / 8;
         if (lastByte >= bitmap.getLength()) {
-            bitmap.setPosition(MathUtilities.roundUp(lastByte + 1, 8) - 1);
+            bitmap.position(MathUtilities.roundUp(lastByte + 1, 8) - 1);
             bitmap.writeByte((byte) 0);
         }
 
@@ -176,7 +176,7 @@ final class Bitmap implements Closeable {
         }
 
         byte[] buffer = new byte[1];
-        bitmap.setPosition(index);
+        bitmap.position(index);
         if (bitmap.read(buffer, 0, 1) != 0) {
             return buffer[0];
         }
@@ -189,7 +189,7 @@ final class Bitmap implements Closeable {
             count = (int) (bitmap.getLength() - index);
         if (count <= 0)
             return 0;
-        bitmap.setPosition(index);
+        bitmap.position(index);
         return bitmap.read(buffer, offset, count);
     }
 
@@ -197,13 +197,13 @@ final class Bitmap implements Closeable {
         byte[] buffer = new byte[] {
             value
         };
-        bitmap.setPosition(index);
+        bitmap.position(index);
         bitmap.write(buffer, 0, 1);
         bitmap.flush();
     }
 
     private void setBytes(long index, byte[] buffer) {
-        bitmap.setPosition(index);
+        bitmap.position(index);
         bitmap.write(buffer, 0, buffer.length);
         bitmap.flush();
     }

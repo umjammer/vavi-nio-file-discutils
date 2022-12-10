@@ -36,7 +36,7 @@ public abstract class TaggedDescriptor<T extends BaseTaggedDescriptor> extends B
 
     public static <T extends BaseTaggedDescriptor> T fromStream(Stream stream, int sector, int sectorSize, Class<T> clazz) {
         try {
-            stream.setPosition(sector * (long) sectorSize);
+            stream.position(sector * (long) sectorSize);
             byte[] buffer = StreamUtilities.readExact(stream, 512);
             T result = clazz.getDeclaredConstructor().newInstance();
             result.readFrom(buffer, 0);

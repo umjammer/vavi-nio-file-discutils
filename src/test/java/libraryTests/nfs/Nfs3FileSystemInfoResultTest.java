@@ -61,20 +61,17 @@ public class Nfs3FileSystemInfoResultTest {
         result.setFileSystemInfo(info);
         Nfs3FileAttributes attributes = new Nfs3FileAttributes();
         attributes.accessTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.bytesUsed = 2;
         attributes.changeTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.fileId = 4;
         attributes.fileSystemId = 5;
         attributes.gid = 6;
         attributes.linkCount = 7;
         attributes.mode = EnumSet.of(UnixFilePermissions.OthersExecute);
         attributes.modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 8, 0, 0, 0, 0, ZoneId.of("UTC"))
-                .toInstant()
-                .toEpochMilli());
+                .toInstant().toEpochMilli());
         attributes.rdevMajor = 9;
         attributes.rdevMinor = 10;
         attributes.size = 11;
@@ -83,11 +80,11 @@ public class Nfs3FileSystemInfoResultTest {
         result.setPostOpAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3FileSystemInfoResult clone = null;
+        Nfs3FileSystemInfoResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);
-            stream.setPosition(0);
+            stream.position(0);
             XdrDataReader reader = new XdrDataReader(stream);
             clone = new Nfs3FileSystemInfoResult(reader);
         }

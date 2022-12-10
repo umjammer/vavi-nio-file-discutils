@@ -171,7 +171,7 @@ public class NtfsFileSystemTest {
             List<StreamExtent> extents = ntfs.pathToExtents("file");
             assertEquals(1, extents.size());
             assertEquals(ntfs.getClusterSize(), extents.get(0).getLength());
-            ms.setPosition(extents.get(0).getStart());
+            ms.position(extents.get(0).getStart());
             assertEquals(0xAE, ms.readByte());
             assertEquals(0x3F, ms.readByte());
             assertEquals(0x8D, ms.readByte());
@@ -185,7 +185,7 @@ public class NtfsFileSystemTest {
             assertEquals(1, extents.size());
             assertEquals(3, extents.get(0).getLength());
             byte[] read = new byte[100];
-            ms.setPosition(extents.get(0).getStart());
+            ms.position(extents.get(0).getStart());
             ms.read(read, 0, 100);
             assertEquals((byte) 0xBA, read[0]);
             assertEquals((byte) 0x82, read[1]);
@@ -204,7 +204,7 @@ public class NtfsFileSystemTest {
         }
         try (Stream s = ntfs.openFile("hl35", FileMode.Open, FileAccess.ReadWrite)) {
             assertEquals(32, s.readByte());
-            s.setPosition(0);
+            s.position(0);
             s.writeByte((byte) 12);
         }
         try (Stream s = ntfs.openFile("hl5", FileMode.Open, FileAccess.ReadWrite)) {
@@ -388,14 +388,14 @@ public class NtfsFileSystemTest {
 //Debug.println("T3: ----");
         try (Stream stream = ntfs.openFile("DIR" + FS + "fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
 //NonResidentAttributeBuffer.debug = false;
-            stream.setPosition(stream.getLength() - largeWriteBuffer.length);
+            stream.position(stream.getLength() - largeWriteBuffer.length);
             stream.write(largeWriteBuffer, 0, largeWriteBuffer.length);
         }
 //Debug.println("T4: ----");
         // And a large read
         byte[] largeReadBuffer = new byte[largeWriteBuffer.length];
         try (Stream stream = ntfs.openFile("DIR" + FS + "fragmented.bin", FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
-            stream.setPosition(stream.getLength() - largeReadBuffer.length);
+            stream.position(stream.getLength() - largeReadBuffer.length);
             stream.read(largeReadBuffer, 0, largeReadBuffer.length);
         }
         assertArrayEquals(largeWriteBuffer, largeReadBuffer);
@@ -414,9 +414,9 @@ public class NtfsFileSystemTest {
             Map<String, Object> attrs = ntfs.getAttributes("file.bin");
             attrs.put(FileAttributes.SparseFile.name(), true);
             ntfs.setAttributes("file.bin", attrs);
-            s.setPosition(64 * 1024);
+            s.position(64 * 1024);
             s.clear(128 * 1024);
-            s.setPosition(fileSize - 64 * 1024);
+            s.position(fileSize - 64 * 1024);
             s.clear(128 * 1024);
         }
         try (SparseStream s = ntfs.openFile("file.bin", FileMode.Open)) {
@@ -427,10 +427,10 @@ public class NtfsFileSystemTest {
             assertEquals(64 * 1024, extents.get(0).getLength());
             assertEquals((64 + 128) * 1024, extents.get(1).getStart());
             assertEquals(fileSize - (64 * 1024) - ((64 + 128) * 1024), extents.get(1).getLength());
-            s.setPosition(72 * 1024);
+            s.position(72 * 1024);
             s.writeByte((byte) 99);
             byte[] readBuffer = new byte[fileSize];
-            s.setPosition(0);
+            s.position(0);
             s.read(readBuffer, 0, fileSize);
             for (int i = 64 * 1024; i < (128 + 64) * 1024; ++i) {
                 data[i] = 0;

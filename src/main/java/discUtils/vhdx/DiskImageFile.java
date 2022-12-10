@@ -175,14 +175,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return metadata.getDiskSize();
     }
 
     /**
      * Gets the extent that comprises this file.
      */
-    public List<VirtualDiskExtent> getExtents() {
+    @Override public List<VirtualDiskExtent> getExtents() {
         List<VirtualDiskExtent> result = new ArrayList<>();
         result.add(new DiskExtent(this));
         return result;
@@ -191,7 +191,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the full path to this disk layer, or empty string.
      */
-    public String getFullPath() {
+    @Override public String getFullPath() {
         if (fileLocator != null && fileName != null) {
             return fileLocator.getFullPath(fileName);
         }
@@ -202,7 +202,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the geometry of the virtual disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return Geometry.fromCapacity(getCapacity(), metadata.getLogicalSectorSize());
     }
 
@@ -210,13 +210,13 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets detailed information about the VHDX file.
      */
     public DiskImageFileInfo getInformation() {
-        fileStream.setPosition(0);
+        fileStream.position(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, fileStream);
 
-        fileStream.setPosition(64 * Sizes.OneKiB);
+        fileStream.position(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
 
-        fileStream.setPosition(128 * Sizes.OneKiB);
+        fileStream.position(128 * Sizes.OneKiB);
         VhdxHeader vhdxHeader2 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
 
         LogSequence activeLogSequence = findActiveLogSequence();
@@ -227,7 +227,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return true;
     }
 
@@ -378,16 +378,16 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            stream.
      * @return The new content stream.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         return doOpenContent(parent, ownsParent);
     }
 
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return lsit of candidate file locations.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return getParentLocations(fileLocator);
     }
 
@@ -395,7 +395,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the location of the parent file, given a base path.
      *
      * @param basePath The full path to this file.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     public List<String> getParentLocations(String basePath) {
         return getParentLocations(new LocalFileLocator(basePath));
@@ -457,9 +457,9 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Disposes of underlying resources.
      *
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (logicalStream != fileStream && logicalStream != null) {
             logicalStream.close();
         }
@@ -531,23 +531,23 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         fileEnd += batRegion.getLength();
 
-        stream.setPosition(0);
+        stream.position(0);
         StreamUtilities.writeStruct(stream, fileHeader);
 
-        stream.setPosition(64 * Sizes.OneKiB);
+        stream.position(64 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, header1);
 
-        stream.setPosition(128 * Sizes.OneKiB);
+        stream.position(128 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, header2);
 
-        stream.setPosition(192 * Sizes.OneKiB);
+        stream.position(192 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, regionTable);
 
-        stream.setPosition(256 * Sizes.OneKiB);
+        stream.position(256 * Sizes.OneKiB);
         StreamUtilities.writeStruct(stream, regionTable);
 
         // Set stream to min size
-        stream.setPosition(fileEnd - 1);
+        stream.position(fileEnd - 1);
         stream.writeByte((byte) 0);
 
         // Metadata
@@ -572,7 +572,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void initialize() {
-        fileStream.setPosition(0);
+        fileStream.position(0);
         FileHeader fileHeader = StreamUtilities.readStruct(FileHeader.class, fileStream);
         if (!fileHeader.isValid()) {
             throw new dotnet4j.io.IOException("Invalid VHDX file - file signature mismatch");
@@ -599,7 +599,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private List<StreamExtent> batControlledFileExtents() {
-        batStream.setPosition(0);
+        batStream.position(0);
         byte[] batData = StreamUtilities.readExact(batStream, (int) batStream.getLength());
 
         int blockSize = metadata.getFileParameters().blockSize;
@@ -681,7 +681,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             do {
                 oldTail = currentTail;
 
-                logStream.setPosition(currentTail);
+                logStream.position(currentTail);
                 LogSequence currentSequence = new LogSequence();
 
                 while (LogEntry.tryRead(logStream, logEntry) && logEntry[0].getLogGuid().equals(header.logGuid) &&
@@ -712,7 +712,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private void readRegionTable() {
-        fileStream.setPosition(192 * Sizes.OneKiB);
+        fileStream.position(192 * Sizes.OneKiB);
         regionTable = StreamUtilities.readStruct(RegionTable.class, fileStream);
         for (RegionEntry entry : regionTable.regions.values()) {
             if (entry.flags == RegionFlags.Required) {
@@ -730,14 +730,14 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         activeHeader = 0;
 
-        fileStream.setPosition(64 * Sizes.OneKiB);
+        fileStream.position(64 * Sizes.OneKiB);
         VhdxHeader vhdxHeader1 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
         if (vhdxHeader1.isValid()) {
             header = vhdxHeader1;
             activeHeader = 1;
         }
 
-        fileStream.setPosition(128 * Sizes.OneKiB);
+        fileStream.position(128 * Sizes.OneKiB);
         VhdxHeader vhdxHeader2 = StreamUtilities.readStruct(VhdxHeader.class, fileStream);
         if (vhdxHeader2.isValid() && (activeHeader == 0 || header.sequenceNumber < vhdxHeader2.sequenceNumber)) {
             header = vhdxHeader2;
@@ -756,10 +756,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header.calcChecksum();
 
         if (activeHeader == 1) {
-            fileStream.setPosition(128 * Sizes.OneKiB);
+            fileStream.position(128 * Sizes.OneKiB);
             otherPos = 64 * Sizes.OneKiB;
         } else {
-            fileStream.setPosition(64 * Sizes.OneKiB);
+            fileStream.position(64 * Sizes.OneKiB);
             otherPos = 128 * Sizes.OneKiB;
         }
 
@@ -769,7 +769,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         header.sequenceNumber++;
         header.calcChecksum();
 
-        fileStream.setPosition(otherPos);
+        fileStream.position(otherPos);
         StreamUtilities.writeStruct(fileStream, header);
         fileStream.flush();
     }
@@ -778,7 +778,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the locations of the parent file.
      *
      * @param fileLocator The file locator to use.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     private List<String> getParentLocations(FileLocator fileLocator) {
         if (!needsParent()) {
