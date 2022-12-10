@@ -309,7 +309,7 @@ public class Sector {
         lba -= 150;
 
         if (moreThan90)
-            min += 0x90;
+            min = (byte) (min + 0x90);
 
         sb.append(String.format("Position %2x:%2x:%2x (LBA %d)", min, sec, frame, lba)).append("\n");
 
