@@ -602,7 +602,7 @@ public class Qcow2 {
         }
 
         // Ignore empty sectors
-        if (ArrayHelpers.ArrayIsNullOrEmpty(data))
+        if (ArrayHelpers.isArrayNullOrEmpty(data))
             return true;
 
         long byteAddress = sectorAddress * 512;
@@ -692,7 +692,7 @@ public class Qcow2 {
         }
 
         // Ignore empty sectors
-        if (ArrayHelpers.ArrayIsNullOrEmpty(data))
+        if (ArrayHelpers.isArrayNullOrEmpty(data))
             return true;
 
         for (int i = 0; i < length; i++) {

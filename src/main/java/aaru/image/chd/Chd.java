@@ -244,7 +244,7 @@ Debug.println("version: " + version);
             Debug.printf("CHD plugin: hdrV1.md5 = %d", ByteUtil.toHexString(hdrV1.md5));
 
             Debug.printf("CHD plugin: hdrV1.parentMd5 = %d",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentMd5) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV1.parentMd5) ? "null"
                             : ByteUtil.toHexString(hdrV1.parentMd5));
 
             Debug.printf("CHD plugin: Reading Hunk map.");
@@ -326,7 +326,7 @@ Debug.println("version: " + version);
             Debug.printf("CHD plugin: hdrV2.md5 = %d", ByteUtil.toHexString(hdrV2.md5));
 
             Debug.printf("CHD plugin: hdrV2.parentMd5 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentMd5) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV2.parentMd5) ? "null"
                             : ByteUtil.toHexString(hdrV2.parentMd5));
 
             Debug.printf("CHD plugin: hdrV2.seclen = %d", hdrV2.seclen);
@@ -409,7 +409,7 @@ Debug.println("version: " + version);
             Debug.printf("CHD plugin: hdrV3.md5 = %d", ByteUtil.toHexString(hdrV3.md5));
 
             Debug.printf("CHD plugin: hdrV3.parentMd5 = %d",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentMd5) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV3.parentMd5) ? "null"
                             : ByteUtil.toHexString(hdrV3.parentMd5));
 
             Debug.printf("CHD plugin: hdrV3.hunkBytes = %d", hdrV3.hunkBytes);
@@ -418,7 +418,7 @@ Debug.println("version: " + version);
                     ByteUtil.toHexString(hdrV3.sha1));
 
             Debug.printf("CHD plugin: hdrV3.parentSha1 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentSha1) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV3.parentSha1) ? "null"
                             : ByteUtil.toHexString(hdrV3.parentSha1));
 
             Debug.printf("CHD plugin: Reading Hunk map.");
@@ -469,7 +469,7 @@ Debug.println("version: " + version);
                     ByteUtil.toHexString(hdrV4.sha1));
 
             Debug.printf("CHD plugin: hdrV4.parentSha1 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentSha1) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV4.parentSha1) ? "null"
                             : ByteUtil.toHexString(hdrV4.parentSha1));
 
             Debug.printf("CHD plugin: hdrV4.rawSha1 = %s",
@@ -538,7 +538,7 @@ Debug.println("version: " + version);
                     ByteUtil.toHexString(hdrV5.sha1));
 
             Debug.printf("CHD plugin: hdrV5.parentSha1 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV5.parentsha1) ? "null"
                             : ByteUtil.toHexString(hdrV5.parentsha1));
 
             Debug.printf("CHD plugin: hdrV5.rawSha1 = %s",
