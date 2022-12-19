@@ -22,9 +22,10 @@
 
 package discUtils.lvm;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.core.partitions.PartitionInfo;
 import discUtils.streams.SparseStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 
@@ -100,7 +101,7 @@ public class PhysicalVolume {
                 return false;
             }
 
-            String label = EndianUtilities.bytesToString(buffer, 0x0, 0x8);
+            String label = new String(buffer, 0x0, 0x8, StandardCharsets.US_ASCII);
             if (label.equals(PhysicalVolumeLabel.LABEL_ID)) {
                 pvLabel[0] = new PhysicalVolumeLabel();
                 pvLabel[0].readFrom(buffer, 0x0);

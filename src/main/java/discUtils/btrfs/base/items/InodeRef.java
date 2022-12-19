@@ -25,7 +25,7 @@ package discUtils.btrfs.base.items;
 import java.nio.charset.StandardCharsets;
 
 import discUtils.btrfs.base.Key;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -81,8 +81,8 @@ public class InodeRef extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        index = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        nameLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x8);
+        index = ByteUtil.readLeLong(buffer, offset);
+        nameLength = ByteUtil.readLeShort(buffer, offset + 0x8);
         name = new String(buffer, offset + 0xa, getNameLength(), StandardCharsets.UTF_8);
         return size();
     }

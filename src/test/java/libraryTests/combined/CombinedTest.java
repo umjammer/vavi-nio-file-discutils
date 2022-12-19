@@ -22,10 +22,6 @@
 
 package libraryTests.combined;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.BiosPartitionTable;
 import discUtils.core.partitions.PartitionTable;
@@ -34,6 +30,9 @@ import discUtils.fat.FatFileSystem;
 import discUtils.streams.util.Ownership;
 import discUtils.vhdx.Disk;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class CombinedTest {

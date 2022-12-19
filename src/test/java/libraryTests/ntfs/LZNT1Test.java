@@ -24,17 +24,15 @@ package libraryTests.ntfs;
 
 import java.util.Random;
 
+import com.sun.jna.ptr.IntByReference;
+import discUtils.core.compression.BlockCompressor;
+import discUtils.core.compression.CompressionResult;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import com.sun.jna.ptr.IntByReference;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.compression.BlockCompressor;
-import discUtils.core.compression.CompressionResult;
 
 
 @Disabled("not implemented yet")

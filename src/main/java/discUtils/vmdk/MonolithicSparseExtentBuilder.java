@@ -35,12 +35,12 @@ import discUtils.streams.builder.BuilderBytesExtent;
 import discUtils.streams.builder.BuilderExtent;
 import discUtils.streams.builder.BuilderStreamExtent;
 import discUtils.streams.builder.StreamBuilder;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Range;
 import discUtils.streams.util.Sizes;
 import dotnet4j.io.MemoryStream;
+import vavi.util.ByteUtil;
 
 
 public final class MonolithicSparseExtentBuilder extends StreamBuilder {
@@ -156,9 +156,8 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
         @Override public void prepareForRead() {
             data = new byte[(int) getLength()];
             for (int i = 0; i < numGrainTables; ++i) {
-                EndianUtilities.writeBytesLittleEndian(
-                        (int) (grainTablesStart +
-                                i * MathUtilities.ceil(gtesPerGt * 4, Sizes.Sector)),
+                ByteUtil.writeLeInt(
+                        (int) (grainTablesStart + i * MathUtilities.ceil(gtesPerGt * 4, Sizes.Sector)),
                         data,
                         i * 4);
             }
@@ -197,7 +196,7 @@ public final class MonolithicSparseExtentBuilder extends StreamBuilder {
             long sectorsAllocated = 0;
             for (Range block : StreamExtent.blocks(content.getExtents(), grainSize * Sizes.Sector)) {
                 for (int i = 0; i < block.getCount(); ++i) {
-                    EndianUtilities.writeBytesLittleEndian((int) (dataStart + sectorsAllocated),
+                    ByteUtil.writeLeInt((int) (dataStart + sectorsAllocated),
                             data,
                                                            (int) ((block.getOffset() + i) * 4));
                     sectorsAllocated += grainSize;

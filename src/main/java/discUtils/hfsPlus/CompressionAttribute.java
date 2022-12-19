@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class CompressionAttribute {
@@ -92,14 +92,14 @@ class CompressionAttribute {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        recordType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        reserved1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        reserved1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        attrSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        compressionMagic = EndianUtilities.toUInt32BigEndian(buffer, offset + 16);
-        compressionType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        uncompressedSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        reserved3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 28);
+        recordType = ByteUtil.readBeInt(buffer, offset + 0);
+        reserved1 = ByteUtil.readBeInt(buffer, offset + 4);
+        reserved1 = ByteUtil.readBeInt(buffer, offset + 8);
+        attrSize = ByteUtil.readBeInt(buffer, offset + 12);
+        compressionMagic = ByteUtil.readBeInt(buffer, offset + 16);
+        compressionType = ByteUtil.readLeInt(buffer, offset + 20);
+        uncompressedSize = ByteUtil.readLeInt(buffer, offset + 24);
+        reserved3 = ByteUtil.readBeInt(buffer, offset + 28);
 
         return getSize();
     }

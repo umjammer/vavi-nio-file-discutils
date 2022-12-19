@@ -24,13 +24,12 @@ package discUtils.ntfs;
 
 import java.io.PrintWriter;
 
-import vavi.util.win32.DateUtil;
-
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.security.principal.SecurityIdentifier;
 import dotnet4j.security.principal.WellKnownSidType;
+import dotnet4j.util.compat.Tuple;
+import vavi.util.ByteUtil;
+import vavi.util.win32.DateUtil;
 
 
 public final class Quotas {
@@ -134,12 +133,12 @@ public final class Quotas {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            ownerId = EndianUtilities.toInt32LittleEndian(buffer, offset);
+            ownerId = ByteUtil.readLeInt(buffer, offset);
             return 4;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(ownerId, buffer, offset);
+            ByteUtil.writeLeInt(ownerId, buffer, offset);
         }
 
         public String toString() {
@@ -182,13 +181,13 @@ public final class Quotas {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            version = EndianUtilities.toInt32LittleEndian(buffer, offset);
-            flags = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
-            bytesUsed = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-            changeTime = DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset + 0x10));
-            warningLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x18);
-            hardLimit = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x20);
-            exceededTime = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x28);
+            version = ByteUtil.readLeInt(buffer, offset);
+            flags = ByteUtil.readLeInt(buffer, offset + 0x04);
+            bytesUsed = ByteUtil.readLeLong(buffer, offset + 0x08);
+            changeTime = DateUtil.fromFileTime(ByteUtil.readLeLong(buffer, offset + 0x10));
+            warningLimit = ByteUtil.readLeLong(buffer, offset + 0x18);
+            hardLimit = ByteUtil.readLeLong(buffer, offset + 0x20);
+            exceededTime = ByteUtil.readLeLong(buffer, offset + 0x28);
             if (buffer.length - offset > 0x30) {
                 sid = new SecurityIdentifier(buffer, offset + 0x30);
                 return 0x30 + sid.getBinaryLength();
@@ -198,14 +197,13 @@ public final class Quotas {
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(version, buffer, offset);
-            EndianUtilities.writeBytesLittleEndian(flags, buffer, offset + 0x04);
-            EndianUtilities.writeBytesLittleEndian(bytesUsed, buffer, offset + 0x08);
-            EndianUtilities
-                    .writeBytesLittleEndian(DateUtil.toFileTime(changeTime), buffer, offset + 0x10);
-            EndianUtilities.writeBytesLittleEndian(warningLimit, buffer, offset + 0x18);
-            EndianUtilities.writeBytesLittleEndian(hardLimit, buffer, offset + 0x20);
-            EndianUtilities.writeBytesLittleEndian(exceededTime, buffer, offset + 0x28);
+            ByteUtil.writeLeInt(version, buffer, offset);
+            ByteUtil.writeLeInt(flags, buffer, offset + 0x04);
+            ByteUtil.writeLeLong(bytesUsed, buffer, offset + 0x08);
+            ByteUtil.writeLeLong(DateUtil.toFileTime(changeTime), buffer, offset + 0x10);
+            ByteUtil.writeLeLong(warningLimit, buffer, offset + 0x18);
+            ByteUtil.writeLeLong(hardLimit, buffer, offset + 0x20);
+            ByteUtil.writeLeLong(exceededTime, buffer, offset + 0x28);
             if (sid != null) {
                 sid.getBinaryForm(buffer, offset + 0x30);
             }

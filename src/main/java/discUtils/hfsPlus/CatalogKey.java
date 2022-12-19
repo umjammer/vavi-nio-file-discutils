@@ -22,7 +22,7 @@
 
 package discUtils.hfsPlus;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<CatalogKey> {
@@ -74,8 +74,8 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 2));
+        keyLength = ByteUtil.readBeShort(buffer, offset + 0);
+        nodeId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 2));
         name = HfsPlusUtilities.readUniStr255(buffer, offset + 6);
 
         return (keyLength & 0xffff) + 2;

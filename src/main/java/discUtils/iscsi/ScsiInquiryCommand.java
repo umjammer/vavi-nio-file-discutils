@@ -24,7 +24,7 @@ package discUtils.iscsi;
 
 import java.util.Arrays;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiInquiryCommand extends ScsiCommand {
@@ -67,7 +67,7 @@ public class ScsiInquiryCommand extends ScsiCommand {
         // OpCode
         buffer[offset + 1] = (byte) (askForPage ? 0x01 : 0x00);
         buffer[offset + 2] = pageCode;
-        EndianUtilities.writeBytesBigEndian((short) expected, buffer, offset + 3);
+        ByteUtil.writeBeShort((short) expected, buffer, offset + 3);
         buffer[offset + 5] = 0;
     }
 }

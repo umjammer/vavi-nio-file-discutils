@@ -22,11 +22,10 @@
 
 package libraryTests.buffers;
 
+import discUtils.streams.SparseMemoryBuffer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import discUtils.streams.SparseMemoryBuffer;
 
 
 public class BufferTest {

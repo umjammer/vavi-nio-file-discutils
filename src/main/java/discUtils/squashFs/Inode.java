@@ -25,8 +25,8 @@ package discUtils.squashFs;
 import java.time.Instant;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
+import vavi.util.ByteUtil;
 
 
 abstract class Inode implements IByteArraySerializable {
@@ -56,22 +56,22 @@ abstract class Inode implements IByteArraySerializable {
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(buffer, offset + 0)];
-        mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        uidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        gidKey = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        modificationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
-        inodeNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
+        type = InodeType.values()[ByteUtil.readLeShort(buffer, offset + 0)];
+        mode = ByteUtil.readLeShort(buffer, offset + 2);
+        uidKey = ByteUtil.readLeShort(buffer, offset + 4);
+        gidKey = ByteUtil.readLeShort(buffer, offset + 6);
+        modificationTime = Instant.ofEpochSecond(ByteUtil.readLeInt(buffer, offset + 8)).toEpochMilli();
+        inodeNumber = ByteUtil.readLeInt(buffer, offset + 12);
         return 16;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian((short) type.ordinal(), buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(mode, buffer, offset + 2);
-        EndianUtilities.writeBytesLittleEndian(uidKey, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(gidKey, buffer, offset + 6);
-        EndianUtilities.writeBytesLittleEndian(Instant.ofEpochMilli(modificationTime).getEpochSecond(), buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(inodeNumber, buffer, offset + 12);
+        ByteUtil.writeLeShort((short) type.ordinal(), buffer, offset + 0);
+        ByteUtil.writeLeShort(mode, buffer, offset + 2);
+        ByteUtil.writeLeShort(uidKey, buffer, offset + 4);
+        ByteUtil.writeLeShort(gidKey, buffer, offset + 6);
+        ByteUtil.writeLeInt((int) Instant.ofEpochMilli(modificationTime).getEpochSecond(), buffer, offset + 8);
+        ByteUtil.writeLeInt(inodeNumber, buffer, offset + 12);
     }
 
     public static Inode read(MetablockReader inodeReader) {
@@ -80,7 +80,7 @@ abstract class Inode implements IByteArraySerializable {
             throw new IOException("Unable to read Inode type");
         }
 
-        InodeType type = InodeType.values()[EndianUtilities.toUInt16LittleEndian(typeData, 0)];
+        InodeType type = InodeType.values()[ByteUtil.readLeShort(typeData, 0)];
         Inode inode = instantiateType(type);
 
         byte[] inodeData = new byte[inode.size()];

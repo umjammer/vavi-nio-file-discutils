@@ -25,7 +25,7 @@ package discUtils.squashFs;
 import java.time.Instant;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class SuperBlock implements IByteArraySerializable {
@@ -83,50 +83,50 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        magic = ByteUtil.readLeInt(buffer, offset + 0);
         if (magic != SquashFsMagic)
             return size();
 
-        inodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        creationTime = Instant.ofEpochSecond(EndianUtilities.toUInt32LittleEndian(buffer, offset + 8)).toEpochMilli();
-        blockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
-        fragmentsCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        compression = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
-        blockSizeLog2 = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
-        flags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        uidGidCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
-        majorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
-        minorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
-        rootInode = new MetadataRef(EndianUtilities.toInt64LittleEndian(buffer, offset + 32));
-        bytesUsed = EndianUtilities.toInt64LittleEndian(buffer, offset + 40);
-        uidGidTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 48);
-        extendedAttrsTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 56);
-        inodeTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 64);
-        directoryTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 72);
-        fragmentTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 80);
-        lookupTableStart = EndianUtilities.toInt64LittleEndian(buffer, offset + 88);
+        inodesCount = ByteUtil.readLeInt(buffer, offset + 4);
+        creationTime = Instant.ofEpochSecond(ByteUtil.readLeInt(buffer, offset + 8)).toEpochMilli();
+        blockSize = ByteUtil.readLeInt(buffer, offset + 12);
+        fragmentsCount = ByteUtil.readLeInt(buffer, offset + 16);
+        compression = ByteUtil.readLeShort(buffer, offset + 20);
+        blockSizeLog2 = ByteUtil.readLeShort(buffer, offset + 22);
+        flags = ByteUtil.readLeShort(buffer, offset + 24);
+        uidGidCount = ByteUtil.readLeShort(buffer, offset + 26);
+        majorVersion = ByteUtil.readLeShort(buffer, offset + 28);
+        minorVersion = ByteUtil.readLeShort(buffer, offset + 30);
+        rootInode = new MetadataRef(ByteUtil.readLeLong(buffer, offset + 32));
+        bytesUsed = ByteUtil.readLeLong(buffer, offset + 40);
+        uidGidTableStart = ByteUtil.readLeLong(buffer, offset + 48);
+        extendedAttrsTableStart = ByteUtil.readLeLong(buffer, offset + 56);
+        inodeTableStart = ByteUtil.readLeLong(buffer, offset + 64);
+        directoryTableStart = ByteUtil.readLeLong(buffer, offset + 72);
+        fragmentTableStart = ByteUtil.readLeLong(buffer, offset + 80);
+        lookupTableStart = ByteUtil.readLeLong(buffer, offset + 88);
         return size();
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(magic, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(inodesCount, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(Instant.ofEpochMilli(creationTime).getEpochSecond(), buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(blockSize, buffer, offset + 12);
-        EndianUtilities.writeBytesLittleEndian(fragmentsCount, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(compression, buffer, offset + 20);
-        EndianUtilities.writeBytesLittleEndian(blockSizeLog2, buffer, offset + 22);
-        EndianUtilities.writeBytesLittleEndian(flags, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(uidGidCount, buffer, offset + 26);
-        EndianUtilities.writeBytesLittleEndian(majorVersion, buffer, offset + 28);
-        EndianUtilities.writeBytesLittleEndian(minorVersion, buffer, offset + 30);
-        EndianUtilities.writeBytesLittleEndian(rootInode.getValue(), buffer, offset + 32);
-        EndianUtilities.writeBytesLittleEndian(bytesUsed, buffer, offset + 40);
-        EndianUtilities.writeBytesLittleEndian(uidGidTableStart, buffer, offset + 48);
-        EndianUtilities.writeBytesLittleEndian(extendedAttrsTableStart, buffer, offset + 56);
-        EndianUtilities.writeBytesLittleEndian(inodeTableStart, buffer, offset + 64);
-        EndianUtilities.writeBytesLittleEndian(directoryTableStart, buffer, offset + 72);
-        EndianUtilities.writeBytesLittleEndian(fragmentTableStart, buffer, offset + 80);
-        EndianUtilities.writeBytesLittleEndian(lookupTableStart, buffer, offset + 88);
+        ByteUtil.writeLeInt(magic, buffer, offset + 0);
+        ByteUtil.writeLeInt(inodesCount, buffer, offset + 4);
+        ByteUtil.writeLeInt((int) Instant.ofEpochMilli(creationTime).getEpochSecond(), buffer, offset + 8);
+        ByteUtil.writeLeInt(blockSize, buffer, offset + 12);
+        ByteUtil.writeLeInt(fragmentsCount, buffer, offset + 16);
+        ByteUtil.writeLeShort(compression, buffer, offset + 20);
+        ByteUtil.writeLeShort(blockSizeLog2, buffer, offset + 22);
+        ByteUtil.writeLeShort(flags, buffer, offset + 24);
+        ByteUtil.writeLeShort(uidGidCount, buffer, offset + 26);
+        ByteUtil.writeLeShort(majorVersion, buffer, offset + 28);
+        ByteUtil.writeLeShort(minorVersion, buffer, offset + 30);
+        ByteUtil.writeLeLong(rootInode.getValue(), buffer, offset + 32);
+        ByteUtil.writeLeLong(bytesUsed, buffer, offset + 40);
+        ByteUtil.writeLeLong(uidGidTableStart, buffer, offset + 48);
+        ByteUtil.writeLeLong(extendedAttrsTableStart, buffer, offset + 56);
+        ByteUtil.writeLeLong(inodeTableStart, buffer, offset + 64);
+        ByteUtil.writeLeLong(directoryTableStart, buffer, offset + 72);
+        ByteUtil.writeLeLong(fragmentTableStart, buffer, offset + 80);
+        ByteUtil.writeLeLong(lookupTableStart, buffer, offset + 88);
     }
 }

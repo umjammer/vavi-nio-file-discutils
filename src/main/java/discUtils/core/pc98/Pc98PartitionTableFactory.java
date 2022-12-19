@@ -13,19 +13,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-import vavi.util.ByteUtil;
-import vavi.util.Debug;
-import vavi.util.StringUtil;
-import vavi.util.serdes.Serdes;
-
-import vavix.io.partition.PC98PartitionEntry;
-
 import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.PartitionTable;
 import discUtils.core.partitions.PartitionTableFactory;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
+import vavi.util.Debug;
+import vavi.util.serdes.Serdes;
+import vavix.io.partition.PC98PartitionEntry;
 
 
 /**

@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -78,24 +79,24 @@ public class UdifResourceFile implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        version = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        headerSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        runningDataForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 16);
-        dataForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
-        dataForkLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 32);
-        rsrcForkOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 40);
-        rsrcForkLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 48);
-        segmentNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
-        segmentCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
-        segmentGuid = EndianUtilities.toGuidBigEndian(buffer, offset + 64);
+        signature = ByteUtil.readBeInt(buffer, offset + 0);
+        version = ByteUtil.readBeInt(buffer, offset + 4);
+        headerSize = ByteUtil.readBeInt(buffer, offset + 8);
+        flags = ByteUtil.readBeInt(buffer, offset + 12);
+        runningDataForkOffset = ByteUtil.readBeLong(buffer, offset + 16);
+        dataForkOffset = ByteUtil.readBeLong(buffer, offset + 24);
+        dataForkLength = ByteUtil.readBeLong(buffer, offset + 32);
+        rsrcForkOffset = ByteUtil.readBeLong(buffer, offset + 40);
+        rsrcForkLength = ByteUtil.readBeLong(buffer, offset + 48);
+        segmentNumber = ByteUtil.readBeInt(buffer, offset + 56);
+        segmentCount = ByteUtil.readBeInt(buffer, offset + 60);
+        segmentGuid = ByteUtil.readBeUUID(buffer, offset + 64);
         dataForkChecksum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 80);
-        xmlOffset = EndianUtilities.toUInt64BigEndian(buffer, offset + 216);
-        xmlLength = EndianUtilities.toUInt64BigEndian(buffer, offset + 224);
+        xmlOffset = ByteUtil.readBeLong(buffer, offset + 216);
+        xmlLength = ByteUtil.readBeLong(buffer, offset + 224);
         masterChecksum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 352);
-        imageVariant = EndianUtilities.toUInt32BigEndian(buffer, offset + 488);
-        sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 492);
+        imageVariant = ByteUtil.readBeInt(buffer, offset + 488);
+        sectorCount = ByteUtil.readBeLong(buffer, offset + 492);
         return size();
     }
 

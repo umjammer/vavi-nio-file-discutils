@@ -23,7 +23,7 @@
 package discUtils.xfs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ShortformDirectory implements IByteArraySerializable {
@@ -98,10 +98,10 @@ public class ShortformDirectory implements IByteArraySerializable {
         useShortInode = getCount8Bytes() == 0;
         offset += 0x2;
         if (useShortInode) {
-            parent = EndianUtilities.toUInt32BigEndian(buffer, offset);
+            parent = ByteUtil.readBeInt(buffer, offset);
             offset += 0x4;
         } else {
-            parent = EndianUtilities.toUInt64BigEndian(buffer, offset);
+            parent = ByteUtil.readBeLong(buffer, offset);
             offset += 0x8;
         }
         entries = new ShortformDirectoryEntry[count];

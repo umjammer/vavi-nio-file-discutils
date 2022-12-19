@@ -22,14 +22,13 @@
 
 package libraryTests.squashFs;
 
+import discUtils.squashFs.SquashFileSystemBuilder;
+import discUtils.squashFs.SquashFileSystemReader;
+import dotnet4j.io.MemoryStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.squashFs.SquashFileSystemBuilder;
-import discUtils.squashFs.SquashFileSystemReader;
-import dotnet4j.io.MemoryStream;
 
 
 public final class SquashFileSystemReaderTest {

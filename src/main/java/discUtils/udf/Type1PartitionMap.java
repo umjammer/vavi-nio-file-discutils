@@ -22,7 +22,7 @@
 
 package discUtils.udf;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class Type1PartitionMap extends PartitionMap {
@@ -36,8 +36,8 @@ public final class Type1PartitionMap extends PartitionMap {
     }
 
     protected int parse(byte[] buffer, int offset) {
-        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        volumeSequenceNumber = ByteUtil.readLeShort(buffer, offset + 2);
+        partitionNumber = ByteUtil.readLeShort(buffer, offset + 4);
         return 6;
     }
 }

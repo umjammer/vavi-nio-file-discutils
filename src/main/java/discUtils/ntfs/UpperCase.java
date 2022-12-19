@@ -25,10 +25,10 @@ package discUtils.ntfs;
 import java.io.IOException;
 import java.util.Comparator;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class UpperCase implements Comparator<String> {
@@ -40,7 +40,7 @@ public final class UpperCase implements Comparator<String> {
             table = new char[(int) s.getLength() / 2];
             byte[] buffer = StreamUtilities.readExact(s, (int) s.getLength());
             for (int i = 0; i < table.length; ++i) {
-                table[i] = (char) EndianUtilities.toUInt16LittleEndian(buffer, i * 2);
+                table[i] = (char) ByteUtil.readLeShort(buffer, i * 2);
             }
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
@@ -80,7 +80,7 @@ public final class UpperCase implements Comparator<String> {
     public static UpperCase initialize(File file) {
         byte[] buffer = new byte[(Character.MAX_VALUE + 1) * 2];
         for (int i = Character.MIN_VALUE; i <= Character.MAX_VALUE; ++i) {
-            EndianUtilities.writeBytesLittleEndian((short) Character.toUpperCase((char) i), buffer, i * 2);
+            ByteUtil.writeLeShort((short) Character.toUpperCase((char) i), buffer, i * 2);
         }
 
         try (Stream s = file.openStream(AttributeType.Data, null, FileAccess.ReadWrite)) {

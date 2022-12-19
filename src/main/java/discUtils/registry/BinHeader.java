@@ -24,11 +24,10 @@ package discUtils.registry;
 
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
+import vavi.util.ByteUtil;
+import vavi.util.Debug;
 
 
 public final class BinHeader implements IByteArraySerializable {
@@ -46,23 +45,23 @@ public final class BinHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        int sig = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+        int sig = ByteUtil.readLeInt(buffer, offset + 0);
         if (sig != Signature) {
 Debug.printf(Level.SEVERE, "%x\n", sig);
             throw new IOException("Invalid signature for registry bin");
         }
 
-        fileOffset = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
-        binSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
-        long unknown = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x0C);
-        long unknown1 = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x14);
-        int unknown2 = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x1C);
+        fileOffset = ByteUtil.readLeInt(buffer, offset + 0x04);
+        binSize = ByteUtil.readLeInt(buffer, offset + 0x08);
+        long unknown = ByteUtil.readLeLong(buffer, offset + 0x0C);
+        long unknown1 = ByteUtil.readLeLong(buffer, offset + 0x14);
+        int unknown2 = ByteUtil.readLeInt(buffer, offset + 0x1C);
         return HeaderSize;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Signature, buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(fileOffset, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(binSize, buffer, offset + 0x08);
+        ByteUtil.writeLeInt(Signature, buffer, offset + 0x00);
+        ByteUtil.writeLeInt(fileOffset, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(binSize, buffer, offset + 0x08);
     }
 }

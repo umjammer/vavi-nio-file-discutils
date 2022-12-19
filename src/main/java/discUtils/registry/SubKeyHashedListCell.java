@@ -22,6 +22,7 @@
 
 package discUtils.registry;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ import java.util.List;
 
 import discUtils.streams.util.EndianUtilities;
 import dotnet4j.util.compat.StringUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class SubKeyHashedListCell extends ListCell {
@@ -65,23 +67,23 @@ public final class SubKeyHashedListCell extends ListCell {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        hashType = EndianUtilities.bytesToString(buffer, offset, 2);
-        numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
+        hashType = new String(buffer, offset, 2, StandardCharsets.US_ASCII);
+        numElements = ByteUtil.readLeShort(buffer, offset + 2);
         subKeyIndexes = new ArrayList<>(numElements);
         nameHashes = new ArrayList<>(numElements);
         for (int i = 0; i < numElements; ++i) {
-            subKeyIndexes.add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x8));
-            nameHashes.add(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4 + i * 0x8 + 0x4));
+            subKeyIndexes.add(ByteUtil.readLeInt(buffer, offset + 0x4 + i * 0x8));
+            nameHashes.add(ByteUtil.readLeInt(buffer, offset + 0x4 + i * 0x8 + 0x4));
         }
         return 0x4 + numElements * 0x8;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(hashType, buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian(numElements, buffer, offset + 0x2);
+        ByteUtil.writeLeShort(numElements, buffer, offset + 0x2);
         for (int i = 0; i < numElements; ++i) {
-            EndianUtilities.writeBytesLittleEndian(subKeyIndexes.get(i), buffer, offset + 0x4 + i * 0x8);
-            EndianUtilities.writeBytesLittleEndian(nameHashes.get(i), buffer, offset + 0x4 + i * 0x8 + 0x4);
+            ByteUtil.writeLeInt(subKeyIndexes.get(i), buffer, offset + 0x4 + i * 0x8);
+            ByteUtil.writeLeInt(nameHashes.get(i), buffer, offset + 0x4 + i * 0x8 + 0x4);
         }
     }
 

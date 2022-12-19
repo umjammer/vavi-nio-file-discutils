@@ -18,7 +18,6 @@ import java.util.stream.IntStream;
 import discUtils.fat.FatAttributes;
 import discUtils.ntfs.FileAttributeFlags;
 import discUtils.ntfs.internals.NtfsFileAttributes;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.vhd.Footer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
@@ -141,10 +140,8 @@ class Test1 {
         long t = Footer.EpochUtc.plusSeconds(123456789).toEpochMilli();
 //Debug.println(t);
         byte[] bytes = new byte[4];
-        EndianUtilities
-                .writeBytesBigEndian((int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(t))
-                        .getSeconds(), bytes, 0);
-        assertEquals(t, Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(bytes, 0)).toEpochMilli());
+        ByteUtil.writeBeInt((int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(t)).getSeconds(), bytes, 0);
+        assertEquals(t, Footer.EpochUtc.plusSeconds(ByteUtil.readBeInt(bytes, 0)).toEpochMilli());
     }
 
     @Test

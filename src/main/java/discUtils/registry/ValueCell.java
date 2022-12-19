@@ -22,9 +22,11 @@
 
 package discUtils.registry;
 
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ValueCell extends Cell {
@@ -86,13 +88,13 @@ public final class ValueCell extends Cell {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        int nameLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
-        dataLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
-        dataIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
-        dataType = RegistryValueType.values()[EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C)];
-        flags = ValueFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
+        int nameLen = ByteUtil.readLeShort(buffer, offset + 0x02);
+        dataLength = ByteUtil.readLeInt(buffer, offset + 0x04);
+        dataIndex = ByteUtil.readLeInt(buffer, offset + 0x08);
+        dataType = RegistryValueType.values()[ByteUtil.readLeInt(buffer, offset + 0x0C)];
+        flags = ValueFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x10));
         if (flags.contains(ValueFlags.Named)) {
-            name = EndianUtilities.bytesToString(buffer, offset + 0x14, nameLen).replaceAll("(^\0*|\0*$)", "");
+            name = new String(buffer, offset + 0x14, nameLen, StandardCharsets.US_ASCII).replaceAll("(^\0*|\0*$)", "");
         }
 
         return 0x14 + nameLen;
@@ -108,11 +110,11 @@ public final class ValueCell extends Cell {
             nameLen = name.length();
         }
         EndianUtilities.stringToBytes("vk", buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian((short) nameLen, buffer, offset + 0x02);
-        EndianUtilities.writeBytesLittleEndian(dataLength, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(dataIndex, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(dataType.ordinal(), buffer, offset + 0x0C);
-        EndianUtilities.writeBytesLittleEndian((short) ValueFlags.valueOf(flags), buffer, offset + 0x10);
+        ByteUtil.writeLeShort((short) nameLen, buffer, offset + 0x02);
+        ByteUtil.writeLeInt(dataLength, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(dataIndex, buffer, offset + 0x08);
+        ByteUtil.writeLeInt(dataType.ordinal(), buffer, offset + 0x0C);
+        ByteUtil.writeLeShort((short) ValueFlags.valueOf(flags), buffer, offset + 0x10);
         if (nameLen != 0) {
             EndianUtilities.stringToBytes(getName(), buffer, offset + 0x14, nameLen);
         }

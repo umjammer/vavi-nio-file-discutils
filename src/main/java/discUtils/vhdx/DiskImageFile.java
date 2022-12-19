@@ -44,7 +44,6 @@ import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
 import discUtils.streams.SubStream;
 import discUtils.streams.ZeroStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
@@ -54,6 +53,7 @@ import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -608,7 +608,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
 
         List<StreamExtent> extents = new ArrayList<>();
         for (int i = 0; i < batData.length; i += 8) {
-            long entry = EndianUtilities.toUInt64LittleEndian(batData, i);
+            long entry = ByteUtil.readLeLong(batData, i);
             long filePos = ((entry >>> 20) & 0xFFF_FFFF_FFFFL) * Sizes.OneMiB;
             if (filePos != 0) {
                 if (i % ((chunkRatio + 1) * 8) == chunkRatio * 8) {

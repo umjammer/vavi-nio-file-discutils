@@ -30,9 +30,9 @@ import java.util.List;
 
 import discUtils.streams.SparseMemoryBuffer;
 import discUtils.streams.buffer.IBuffer;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Range;
+import vavi.util.ByteUtil;
 
 
 public final class ResidentAttributeRecord extends AttributeRecord {
@@ -126,15 +126,15 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         short dataOffset = (short) MathUtilities.roundUp(0x18 + nameLength * 2, 8);
         int length = (int) MathUtilities.roundUp(dataOffset + memoryBuffer.getCapacity(), 8);
 
-        EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(type.getValue(), buffer, offset + 0x00);
+        ByteUtil.writeLeInt(length, buffer, offset + 0x04);
         buffer[offset + 0x08] = nonResidentFlag;
         buffer[offset + 0x09] = nameLength;
-        EndianUtilities.writeBytesLittleEndian(nameOffset, buffer, offset + 0x0A);
-        EndianUtilities.writeBytesLittleEndian((short) AttributeFlags.valueOf(flags), buffer, offset + 0x0C);
-        EndianUtilities.writeBytesLittleEndian(attributeId, buffer, offset + 0x0E);
-        EndianUtilities.writeBytesLittleEndian((int) memoryBuffer.getCapacity(), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(dataOffset, buffer, offset + 0x14);
+        ByteUtil.writeLeShort(nameOffset, buffer, offset + 0x0A);
+        ByteUtil.writeLeShort((short) AttributeFlags.valueOf(flags), buffer, offset + 0x0C);
+        ByteUtil.writeLeShort(attributeId, buffer, offset + 0x0E);
+        ByteUtil.writeLeInt((int) memoryBuffer.getCapacity(), buffer, offset + 0x10);
+        ByteUtil.writeLeShort(dataOffset, buffer, offset + 0x14);
         buffer[offset + 0x16] = indexedFlag;
         buffer[offset + 0x17] = 0; // Padding
 
@@ -157,8 +157,8 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     protected void read(byte[] buffer, int offset, int[] length) {
         super.read(buffer, offset, length);
 
-        int dataLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        short dataOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
+        int dataLength = ByteUtil.readLeInt(buffer, offset + 0x10);
+        short dataOffset = ByteUtil.readLeShort(buffer, offset + 0x14);
         indexedFlag = buffer[offset + 0x16];
 
         if (dataOffset + dataLength > length[0]) {

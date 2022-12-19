@@ -27,11 +27,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import vavi.util.Debug;
-
 import discUtils.net.dns.ServiceDiscoveryClient;
 import discUtils.net.dns.ServiceInstance;
 import discUtils.net.dns.ServiceInstanceFields;
+import vavi.util.Debug;
 
 
 /**

@@ -26,10 +26,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import com.sun.jna.Pointer;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
 import dotnet4j.io.SeekOrigin;
-import com.sun.jna.Pointer;
 
 
 /**

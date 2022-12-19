@@ -27,8 +27,8 @@ import java.util.UUID;
 import discUtils.core.internal.Crc32Algorithm;
 import discUtils.core.internal.Crc32LittleEndian;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
+import vavi.util.ByteUtil;
 
 
 public final class VhdxHeader implements IByteArraySerializable {
@@ -81,7 +81,7 @@ public final class VhdxHeader implements IByteArraySerializable {
 
         byte[] checkData = new byte[4096];
         System.arraycopy(data, 0, checkData, 0, 4096);
-        EndianUtilities.writeBytesLittleEndian(0, checkData, 4);
+        ByteUtil.writeLeInt(0, checkData, 4);
         return checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, 4096);
     }
 
@@ -91,16 +91,16 @@ public final class VhdxHeader implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         System.arraycopy(buffer, offset, data, 0, 4096);
-        signature = EndianUtilities.toUInt32LittleEndian(data, 0);
-        checksum = EndianUtilities.toUInt32LittleEndian(data, 4);
-        sequenceNumber = EndianUtilities.toUInt64LittleEndian(data, 8);
-        fileWriteGuid = EndianUtilities.toGuidLittleEndian(data, 16);
-        dataWriteGuid = EndianUtilities.toGuidLittleEndian(data, 32);
-        logGuid = EndianUtilities.toGuidLittleEndian(data, 48);
-        logVersion = EndianUtilities.toUInt16LittleEndian(data, 64);
-        version = EndianUtilities.toUInt16LittleEndian(data, 66);
-        logLength = EndianUtilities.toUInt32LittleEndian(data, 68);
-        logOffset = EndianUtilities.toUInt64LittleEndian(data, 72);
+        signature = ByteUtil.readLeInt(data, 0);
+        checksum = ByteUtil.readLeInt(data, 4);
+        sequenceNumber = ByteUtil.readLeLong(data, 8);
+        fileWriteGuid = ByteUtil.readLeUUID(data, 16);
+        dataWriteGuid = ByteUtil.readLeUUID(data, 32);
+        logGuid = ByteUtil.readLeUUID(data, 48);
+        logVersion = ByteUtil.readLeShort(data, 64);
+        version = ByteUtil.readLeShort(data, 66);
+        logLength = ByteUtil.readLeInt(data, 68);
+        logOffset = ByteUtil.readLeLong(data, 72);
         return size();
     }
 
@@ -116,15 +116,15 @@ public final class VhdxHeader implements IByteArraySerializable {
     }
 
     private void refreshData() {
-        EndianUtilities.writeBytesLittleEndian(signature, data, 0);
-        EndianUtilities.writeBytesLittleEndian(checksum, data, 4);
-        EndianUtilities.writeBytesLittleEndian(sequenceNumber, data, 8);
-        EndianUtilities.writeBytesLittleEndian(fileWriteGuid, data, 16);
-        EndianUtilities.writeBytesLittleEndian(dataWriteGuid, data, 32);
-        EndianUtilities.writeBytesLittleEndian(logGuid, data, 48);
-        EndianUtilities.writeBytesLittleEndian(logVersion, data, 64);
-        EndianUtilities.writeBytesLittleEndian(version, data, 66);
-        EndianUtilities.writeBytesLittleEndian(logLength, data, 68);
-        EndianUtilities.writeBytesLittleEndian(logOffset, data, 72);
+        ByteUtil.writeLeInt(signature, data, 0);
+        ByteUtil.writeLeInt(checksum, data, 4);
+        ByteUtil.writeLeLong(sequenceNumber, data, 8);
+        ByteUtil.writeLeUUID(fileWriteGuid, data, 16);
+        ByteUtil.writeLeUUID(dataWriteGuid, data, 32);
+        ByteUtil.writeLeUUID(logGuid, data, 48);
+        ByteUtil.writeLeShort(logVersion, data, 64);
+        ByteUtil.writeLeShort(version, data, 66);
+        ByteUtil.writeLeInt(logLength, data, 68);
+        ByteUtil.writeLeLong(logOffset, data, 72);
     }
 }

@@ -24,6 +24,7 @@ package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LongAllocationDescriptor implements IByteArraySerializable {
@@ -39,7 +40,7 @@ public class LongAllocationDescriptor implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        extentLength = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        extentLength = ByteUtil.readLeInt(buffer, offset);
         extentLocation = new LogicalBlockAddress();
         extentLocation.readFrom(buffer, offset + 4);
         implementationUse = EndianUtilities.toByteArray(buffer, offset + 10, 6);

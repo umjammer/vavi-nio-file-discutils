@@ -23,7 +23,7 @@
 package discUtils.vhdx;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BatEntry implements IByteArraySerializable {
@@ -34,7 +34,7 @@ public class BatEntry implements IByteArraySerializable {
     private long value;
 
     public BatEntry(byte[] buffer, int offset) {
-        value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        value = ByteUtil.readLeLong(buffer, offset);
     }
 
     public PayloadBlockStatus getPayloadBlockStatus() {
@@ -66,11 +66,11 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        value = ByteUtil.readLeLong(buffer, offset);
         return 8;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
+        ByteUtil.writeLeLong(value, buffer, offset);
     }
 }

@@ -22,17 +22,16 @@
 
 package libraryTests.vdi;
 
+import discUtils.core.Geometry;
+import discUtils.streams.util.Ownership;
+import discUtils.vdi.Disk;
+import dotnet4j.io.MemoryStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.Geometry;
-import discUtils.streams.util.Ownership;
-import discUtils.vdi.Disk;
-import dotnet4j.io.MemoryStream;
 
 
 public class DiskTest {

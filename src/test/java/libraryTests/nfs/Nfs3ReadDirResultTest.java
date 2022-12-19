@@ -26,10 +26,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3DirectoryEntry;
 import discUtils.nfs.Nfs3FileAttributes;
 import discUtils.nfs.Nfs3FileHandle;
@@ -39,6 +35,9 @@ import discUtils.nfs.Nfs3Status;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3ReadDirResultTest {

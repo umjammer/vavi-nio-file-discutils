@@ -25,7 +25,7 @@ package discUtils.vhdx;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class RegionEntry implements IByteArraySerializable {
@@ -54,18 +54,18 @@ public final class RegionEntry implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        guid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        fileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
-        length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        flags = RegionFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 28)];
+        guid = ByteUtil.readLeUUID(buffer, offset + 0);
+        fileOffset = ByteUtil.readLeLong(buffer, offset + 16);
+        length = ByteUtil.readLeInt(buffer, offset + 24);
+        flags = RegionFlags.values()[ByteUtil.readLeInt(buffer, offset + 28)];
         return 32;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(guid, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(fileOffset, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(flags.ordinal(), buffer, offset + 28);
+        ByteUtil.writeLeUUID(guid, buffer, offset + 0);
+        ByteUtil.writeLeLong(fileOffset, buffer, offset + 16);
+        ByteUtil.writeLeInt(length, buffer, offset + 24);
+        ByteUtil.writeLeInt(flags.ordinal(), buffer, offset + 28);
     }
 
     public String toString() {

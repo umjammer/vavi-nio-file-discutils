@@ -24,7 +24,7 @@ package discUtils.xfs;
 
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockDirectoryV5 extends BlockDirectory {
@@ -98,12 +98,12 @@ public class BlockDirectoryV5 extends BlockDirectory {
     }
 
     protected int readHeader(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
-        blockNumber = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x08);
-        logSequenceNumber = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10);
-        uuid = EndianUtilities.toGuidBigEndian(buffer, offset + 0x18);
-        owner = EndianUtilities.toUInt64BigEndian(buffer, 0x28);
+        setMagic(ByteUtil.readBeInt(buffer, offset));
+        crc = ByteUtil.readBeInt(buffer, offset + 0x04);
+        blockNumber = ByteUtil.readBeLong(buffer, offset + 0x08);
+        logSequenceNumber = ByteUtil.readBeLong(buffer, offset + 0x10);
+        uuid = ByteUtil.readBeUUID(buffer, offset + 0x18);
+        owner = ByteUtil.readBeLong(buffer, 0x28);
         return 0x30;
     }
 }

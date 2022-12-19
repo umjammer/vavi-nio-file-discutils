@@ -22,13 +22,12 @@
 
 package libraryTests;
 
-import org.junit.jupiter.api.Test;
-
 import discUtils.streams.SparseStream;
 import discUtils.streams.block.BlockCacheSettings;
 import discUtils.streams.block.BlockCacheStream;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
 
 
 public final class BlockCacheStreamTest {

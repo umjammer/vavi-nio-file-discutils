@@ -23,7 +23,7 @@
 package discUtils.squashFs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DirectoryHeader implements IByteArraySerializable {
@@ -43,9 +43,9 @@ public class DirectoryHeader implements IByteArraySerializable {
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(count, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(startBlock, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(inodeNumber, buffer, offset + 8);
+        ByteUtil.writeLeInt(count, buffer, offset + 0);
+        ByteUtil.writeLeInt(startBlock, buffer, offset + 4);
+        ByteUtil.writeLeInt(inodeNumber, buffer, offset + 8);
     }
 
     public static DirectoryHeader readFrom(MetablockReader reader) {

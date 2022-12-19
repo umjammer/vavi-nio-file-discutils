@@ -24,11 +24,6 @@ package libraryTests.vhdx;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.core.DiskImageFileSpecification;
 import discUtils.streams.SparseMemoryStream;
 import discUtils.streams.SparseStream;
@@ -36,6 +31,10 @@ import discUtils.streams.util.Ownership;
 import discUtils.vhdx.Disk;
 import discUtils.vhdx.DiskBuilder;
 import discUtils.vhdx.DiskType;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class DiskBuilderTest {

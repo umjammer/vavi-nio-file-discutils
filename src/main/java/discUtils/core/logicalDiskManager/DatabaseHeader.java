@@ -22,7 +22,9 @@
 
 package discUtils.core.logicalDiskManager;
 
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
+
+import vavi.util.ByteUtil;
 
 
 public class DatabaseHeader {
@@ -94,29 +96,29 @@ public class DatabaseHeader {
     public short versionNum;
 
     public void readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
-        numVBlks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
-        blockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
-        headerSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
-        unknown1 = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x10);
-        versionNum = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x12);
-        versionDenom = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x14);
-        groupName = EndianUtilities.bytesToString(buffer, offset + 0x16, 31).replaceFirst("\0*$", "");
-        diskGroupId = EndianUtilities.bytesToString(buffer, offset + 0x35, 0x40).replaceFirst("\0*$", "");
+        signature = new String(buffer, offset + 0x00, 4, StandardCharsets.US_ASCII);
+        numVBlks = ByteUtil.readBeInt(buffer, offset + 0x04);
+        blockSize = ByteUtil.readBeInt(buffer, offset + 0x08);
+        headerSize = ByteUtil.readBeInt(buffer, offset + 0x0C);
+        unknown1 = ByteUtil.readBeShort(buffer, offset + 0x10);
+        versionNum = ByteUtil.readBeShort(buffer, offset + 0x12);
+        versionDenom = ByteUtil.readBeShort(buffer, offset + 0x14);
+        groupName = new String(buffer, offset + 0x16, 31, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        diskGroupId = new String(buffer, offset + 0x35, 0x40, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
         // May be wrong way round...
-        committedSequence = EndianUtilities.toInt64BigEndian(buffer, offset + 0x75);
-        pendingSequence = EndianUtilities.toInt64BigEndian(buffer, offset + 0x7D);
-        unknown2 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x85);
-        unknown3 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x89);
-        unknown4 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8D);
-        unknown5 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x91);
-        unknown6 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x95);
-        unknown7 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x9D);
-        unknown8 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xA5);
-        unknown9 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xA9);
-        unknownA = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xAD);
-        unknownB = EndianUtilities.toInt64BigEndian(buffer, offset + 0xB1);
-        unknownC = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB9);
-        timestamp = EndianUtilities.toInt64BigEndian(buffer, offset + 0xBD);
+        committedSequence = ByteUtil.readBeLong(buffer, offset + 0x75);
+        pendingSequence = ByteUtil.readBeLong(buffer, offset + 0x7D);
+        unknown2 = ByteUtil.readBeInt(buffer, offset + 0x85);
+        unknown3 = ByteUtil.readBeInt(buffer, offset + 0x89);
+        unknown4 = ByteUtil.readBeInt(buffer, offset + 0x8D);
+        unknown5 = ByteUtil.readBeInt(buffer, offset + 0x91);
+        unknown6 = ByteUtil.readBeLong(buffer, offset + 0x95);
+        unknown7 = ByteUtil.readBeLong(buffer, offset + 0x9D);
+        unknown8 = ByteUtil.readBeInt(buffer, offset + 0xA5);
+        unknown9 = ByteUtil.readBeInt(buffer, offset + 0xA9);
+        unknownA = ByteUtil.readBeInt(buffer, offset + 0xAD);
+        unknownB = ByteUtil.readBeLong(buffer, offset + 0xB1);
+        unknownC = ByteUtil.readBeInt(buffer, offset + 0xB9);
+        timestamp = ByteUtil.readBeLong(buffer, offset + 0xBD);
     }
 }

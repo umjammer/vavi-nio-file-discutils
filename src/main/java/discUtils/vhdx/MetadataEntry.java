@@ -26,7 +26,7 @@ import java.util.EnumSet;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class MetadataEntry implements IByteArraySerializable {
@@ -46,19 +46,19 @@ public final class MetadataEntry implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        itemId = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        this.offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        length = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        flags = MetadataEntryFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 24));
-        reserved = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
+        itemId = ByteUtil.readLeUUID(buffer, offset + 0);
+        this.offset = ByteUtil.readLeInt(buffer, offset + 16);
+        length = ByteUtil.readLeInt(buffer, offset + 20);
+        flags = MetadataEntryFlags.valueOf(ByteUtil.readLeInt(buffer, offset + 24));
+        reserved = ByteUtil.readLeInt(buffer, offset + 28);
         return 32;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(itemId, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(this.offset, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 20);
-        EndianUtilities.writeBytesLittleEndian((int) MetadataEntryFlags.valueOf(flags), buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(reserved, buffer, offset + 28);
+        ByteUtil.writeLeUUID(itemId, buffer, offset + 0);
+        ByteUtil.writeLeInt(this.offset, buffer, offset + 16);
+        ByteUtil.writeLeInt(length, buffer, offset + 20);
+        ByteUtil.writeLeInt((int) MetadataEntryFlags.valueOf(flags), buffer, offset + 24);
+        ByteUtil.writeLeInt(reserved, buffer, offset + 28);
     }
 }

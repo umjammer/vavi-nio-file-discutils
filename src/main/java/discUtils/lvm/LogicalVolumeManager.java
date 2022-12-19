@@ -30,14 +30,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.PhysicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.BiosPartitionTypes;
 import discUtils.core.partitions.GuidPartitionTypes;
 import discUtils.core.partitions.PartitionInfo;
+import vavi.util.Debug;
 
 
 /**

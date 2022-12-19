@@ -24,6 +24,7 @@ package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ForkData implements IByteArraySerializable {
@@ -43,9 +44,9 @@ public final class ForkData implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        logicalSize = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
-        clumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        totalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        logicalSize = ByteUtil.readBeLong(buffer, offset + 0);
+        clumpSize = ByteUtil.readBeInt(buffer, offset + 8);
+        totalBlocks = ByteUtil.readBeInt(buffer, offset + 12);
 
         extents = new ExtentDescriptor[8];
         for (int i = 0; i < 8; ++i) {

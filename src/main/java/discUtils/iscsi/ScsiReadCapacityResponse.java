@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiReadCapacityResponse extends ScsiResponse {
@@ -62,7 +62,7 @@ public class ScsiReadCapacityResponse extends ScsiResponse {
             return;
         }
 
-        setNumLogicalBlocks(EndianUtilities.toUInt32BigEndian(buffer, offset));
-        setLogicalBlockSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
+        setNumLogicalBlocks(ByteUtil.readBeInt(buffer, offset));
+        setLogicalBlockSize(ByteUtil.readBeInt(buffer, offset + 4));
     }
 }

@@ -29,10 +29,10 @@ import java.util.EnumSet;
 import java.util.List;
 
 import discUtils.streams.buffer.IBuffer;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Range;
 import dotnet4j.io.IOException;
 import dotnet4j.util.compat.StringUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class AttributeRecord implements Comparable<AttributeRecord> {
@@ -119,7 +119,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
      * @param length {@cs out}
      */
     public static AttributeRecord fromBytes(byte[] buffer, int offset, int[] length) {
-        if (EndianUtilities.toUInt32LittleEndian(buffer, offset) == 0xFFFFFFFF) {
+        if (ByteUtil.readLeInt(buffer, offset) == 0xFFFFFFFF) {
             length[0] = 0;
             return null;
         }
@@ -158,14 +158,14 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
      * @param length {@cs out}
      */
     protected void read(byte[] buffer, int offset, int[] length) {
-        type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00));
-        length[0] = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
+        type = AttributeType.valueOf(ByteUtil.readLeInt(buffer, offset + 0x00));
+        length[0] = ByteUtil.readLeInt(buffer, offset + 0x04);
 
         nonResidentFlag = buffer[offset + 0x08];
         int nameLength = buffer[offset + 0x09] & 0xff;
-        int nameOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A) & 0xffff;
-        flags = AttributeFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
-        attributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0E);
+        int nameOffset = ByteUtil.readLeShort(buffer, offset + 0x0A) & 0xffff;
+        flags = AttributeFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x0C));
+        attributeId = ByteUtil.readLeShort(buffer, offset + 0x0E);
 
         if (nameLength != 0x00) {
             if (nameLength + nameOffset > length[0]) {

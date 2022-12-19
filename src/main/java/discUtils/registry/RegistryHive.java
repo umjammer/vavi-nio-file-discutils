@@ -31,7 +31,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import discUtils.core.internal.LocalFileLocator;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
@@ -42,6 +41,7 @@ import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
 import dotnet4j.security.accessControl.AccessControlSections;
 import dotnet4j.security.accessControl.RegistrySecurity;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -160,7 +160,7 @@ public final class RegistryHive implements Closeable {
         stream.write(buffer, 0, buffer.length);
 
         buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(binHeader.binSize - binHeader.size(), buffer, 0);
+        ByteUtil.writeLeInt(binHeader.binSize - binHeader.size(), buffer, 0);
         stream.write(buffer, 0, buffer.length);
 
         // Make sure the file is initialized out to the end of the firs bin
@@ -325,7 +325,7 @@ public final class RegistryHive implements Closeable {
         fileStream.write(buffer, 0, buffer.length);
 
         byte[] cellHeader = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(newBinHeader.binSize - newBinHeader.size(), cellHeader, 0);
+        ByteUtil.writeLeInt(newBinHeader.binSize - newBinHeader.size(), cellHeader, 0);
         fileStream.write(cellHeader, 0, 4);
 
         // Update hive with new length

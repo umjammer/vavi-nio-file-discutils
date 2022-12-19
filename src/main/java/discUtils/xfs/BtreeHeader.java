@@ -26,7 +26,7 @@ package discUtils.xfs;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class BtreeHeader implements IByteArraySerializable {
@@ -155,17 +155,17 @@ public abstract class BtreeHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
-        numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
-        leftSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0x8);
-        rightSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0xC);
+        magic = ByteUtil.readBeInt(buffer, offset);
+        level = ByteUtil.readBeShort(buffer, offset + 0x4);
+        numberOfRecords = ByteUtil.readBeShort(buffer, offset + 0x6);
+        leftSibling = ByteUtil.readBeInt(buffer, offset + 0x8);
+        rightSibling = ByteUtil.readBeInt(buffer, offset + 0xC);
         if (sbVersion >= 5) {
-            bno = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10);
-            lsn = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x18);
-            uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x20);
-            owner = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x30);
-            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x34);
+            bno = ByteUtil.readBeLong(buffer, offset + 0x10);
+            lsn = ByteUtil.readBeLong(buffer, offset + 0x18);
+            uniqueId = ByteUtil.readBeUUID(buffer, offset + 0x20);
+            owner = ByteUtil.readBeInt(buffer, offset + 0x30);
+            crc = ByteUtil.readBeInt(buffer, offset + 0x34);
         }
 
         return size();

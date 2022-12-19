@@ -23,7 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ExtentDescriptor implements IByteArraySerializable {
@@ -37,8 +37,8 @@ public class ExtentDescriptor implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        length = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        location = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        length = ByteUtil.readLeInt(buffer, offset);
+        location = ByteUtil.readLeInt(buffer, offset + 4);
         return 8;
     }
 

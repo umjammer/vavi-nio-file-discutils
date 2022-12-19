@@ -22,9 +22,10 @@
 
 package discUtils.vhdx;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -107,8 +108,8 @@ public final class HeaderInfo {
      */
     public String getSignature() {
         byte[] buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(header.signature, buffer, 0);
-        return EndianUtilities.bytesToString(buffer, 0, 4);
+        ByteUtil.writeLeInt(header.signature, buffer, 0);
+        return new String(buffer, 0, 4, StandardCharsets.US_ASCII);
     }
 
     /**

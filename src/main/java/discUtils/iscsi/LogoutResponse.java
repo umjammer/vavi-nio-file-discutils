@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LogoutResponse extends BaseResponse {
@@ -46,10 +46,10 @@ public class LogoutResponse extends BaseResponse {
         }
 
         response = LogoutResponseCode.values()[headerData[headerOffset + 2]];
-        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        time2Wait = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 40);
-        time2Retain = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 42);
+        statusSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 32);
+        time2Wait = ByteUtil.readBeShort(headerData, headerOffset + 40);
+        time2Retain = ByteUtil.readBeShort(headerData, headerOffset + 42);
     }
 }

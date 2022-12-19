@@ -28,10 +28,10 @@ import java.util.UUID;
 
 import discUtils.core.coreCompat.ReflectionHelper;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class Metadata {
@@ -46,16 +46,16 @@ public final class Metadata {
         this.regionStream.position(0);
         table = StreamUtilities.readStruct(MetadataTable.class, this.regionStream);
         fileParameters = readStruct(FileParameters.class, MetadataTable.FileParametersGuid, false);
-        diskSize = readValue(MetadataTable.VirtualDiskSizeGuid, false, Long.TYPE, EndianUtilities::toUInt64LittleEndian);
-        page83Data = readValue(MetadataTable.Page83DataGuid, false, UUID.class, EndianUtilities::toGuidLittleEndian);
+        diskSize = readValue(MetadataTable.VirtualDiskSizeGuid, false, Long.TYPE, ByteUtil::readLeLong);
+        page83Data = readValue(MetadataTable.Page83DataGuid, false, UUID.class, ByteUtil::readLeUUID);
         logicalSectorSize = readValue(MetadataTable.LogicalSectorSizeGuid,
                                        false,
                                        Integer.TYPE,
-                                       EndianUtilities::toUInt32LittleEndian);
+                                       ByteUtil::readLeInt);
         physicalSectorSize = readValue(MetadataTable.PhysicalSectorSizeGuid,
                                         false,
                                         Integer.TYPE,
-                                        EndianUtilities::toUInt32LittleEndian);
+                                        ByteUtil::readLeInt);
         parentLocator = readStruct(ParentLocator.class, MetadataTable.ParentLocatorGuid, false);
     }
 
@@ -122,28 +122,28 @@ public final class Metadata {
                                      dataOffset,
                                      metadataStream);
         dataOffset += addEntryValue(diskSize,
-                                    EndianUtilities::writeBytesLittleEndian,
+                                    ByteUtil::writeLeLong,
                                     MetadataTable.VirtualDiskSizeGuid,
                                     EnumSet.of(MetadataEntryFlags.IsRequired, MetadataEntryFlags.IsVirtualDisk),
                                     header,
                                     dataOffset,
                                     metadataStream);
         dataOffset += addEntryValue(UUID.randomUUID(),
-                                    EndianUtilities::writeBytesLittleEndian,
+                                    ByteUtil::writeLeUUID,
                                     MetadataTable.Page83DataGuid,
                                     EnumSet.of(MetadataEntryFlags.IsRequired, MetadataEntryFlags.IsVirtualDisk),
                                     header,
                                     dataOffset,
                                     metadataStream);
         dataOffset += addEntryValue(logicalSectorSize,
-                                    EndianUtilities::writeBytesLittleEndian,
+                                    ByteUtil::writeLeInt,
                                     MetadataTable.LogicalSectorSizeGuid,
                                     EnumSet.of(MetadataEntryFlags.IsRequired, MetadataEntryFlags.IsVirtualDisk),
                                     header,
                                     dataOffset,
                                     metadataStream);
         dataOffset += addEntryValue(physicalSectorSize,
-                                    EndianUtilities::writeBytesLittleEndian,
+                                    ByteUtil::writeLeInt,
                                     MetadataTable.PhysicalSectorSizeGuid,
                                     EnumSet.of(MetadataEntryFlags.IsRequired, MetadataEntryFlags.IsVirtualDisk),
                                     header,

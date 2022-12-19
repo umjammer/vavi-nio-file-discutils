@@ -34,9 +34,9 @@ import discUtils.hfsPlus.FileInfo;
 import discUtils.powerShell.conpat.ErrorRecord;
 import discUtils.powerShell.conpat.PSCmdlet;
 import discUtils.powerShell.virtualDiskProvider.OnDemandVirtualDisk;
+import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Path;
-import dotnet4j.io.FileAccess;
 
 
 public class NewVirtualDiskCommand extends PSCmdlet {

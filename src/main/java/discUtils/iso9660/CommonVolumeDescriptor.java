@@ -26,7 +26,7 @@ import java.nio.charset.Charset;
 import java.util.EnumSet;
 
 import discUtils.core.internal.Utilities;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
@@ -95,10 +95,10 @@ public class CommonVolumeDescriptor extends BaseVolumeDescriptor {
         volumeSequenceNumber = IsoUtilities.toUInt16FromBoth(src, offset + 124);
         logicalBlockSize = IsoUtilities.toUInt16FromBoth(src, offset + 128);
         pathTableSize = IsoUtilities.toUInt32FromBoth(src, offset + 132);
-        typeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 140);
-        optionalTypeLPathTableLocation = EndianUtilities.toUInt32LittleEndian(src, offset + 144);
-        typeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 148));
-        optionalTypeMPathTableLocation = Utilities.bitSwap(EndianUtilities.toUInt32LittleEndian(src, offset + 152));
+        typeLPathTableLocation = ByteUtil.readLeInt(src, offset + 140);
+        optionalTypeLPathTableLocation = ByteUtil.readLeInt(src, offset + 144);
+        typeMPathTableLocation = Utilities.bitSwap(ByteUtil.readLeInt(src, offset + 148));
+        optionalTypeMPathTableLocation = Utilities.bitSwap(ByteUtil.readLeInt(src, offset + 152));
         DirectoryRecord[] directoryRecord = new DirectoryRecord[1];
         DirectoryRecord.readFrom(src, offset + 156, characterEncoding, directoryRecord);
         rootDirectory = directoryRecord[0];

@@ -23,7 +23,7 @@
 package discUtils.btrfs.base;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class NodeItem implements IByteArraySerializable {
@@ -67,8 +67,8 @@ public class NodeItem implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         key = new Key();
         offset += getKey().readFrom(buffer, offset);
-        dataOffset = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        dataSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x4);
+        dataOffset = ByteUtil.readLeInt(buffer, offset);
+        dataSize = ByteUtil.readLeInt(buffer, offset + 0x4);
         return size();
     }
 

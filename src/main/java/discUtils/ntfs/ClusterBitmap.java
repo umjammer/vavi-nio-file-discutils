@@ -29,8 +29,8 @@ import java.util.List;
 
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Range;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
+import dotnet4j.util.compat.Tuple;
 
 
 class ClusterBitmap implements Closeable {

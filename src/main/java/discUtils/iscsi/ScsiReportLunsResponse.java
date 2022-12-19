@@ -25,7 +25,7 @@ package discUtils.iscsi;
 import java.util.ArrayList;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiReportLunsResponse extends ScsiResponse {
@@ -59,10 +59,10 @@ public class ScsiReportLunsResponse extends ScsiResponse {
             throw new IllegalArgumentException("Data truncated too far");
         }
 
-        availableLuns = EndianUtilities.toUInt32BigEndian(buffer, offset) / 8;
+        availableLuns = ByteUtil.readBeInt(buffer, offset) / 8;
         int pos = 8;
         while (pos <= count - 8 && luns.size() < availableLuns) {
-            luns.add(EndianUtilities.toUInt64BigEndian(buffer, offset + pos));
+            luns.add(ByteUtil.readBeLong(buffer, offset + pos));
             pos += 8;
         }
     }

@@ -26,6 +26,7 @@ import java.util.EnumSet;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class InformationControlBlock implements IByteArraySerializable {
@@ -51,13 +52,13 @@ public class InformationControlBlock implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        priorDirectEntries = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        strategyType = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        strategyParameter = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        maxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        priorDirectEntries = ByteUtil.readLeInt(buffer, offset);
+        strategyType = ByteUtil.readLeShort(buffer, offset + 4);
+        strategyParameter = ByteUtil.readLeShort(buffer, offset + 6);
+        maxEntries = ByteUtil.readLeShort(buffer, offset + 8);
         fileType = FileType.valueOf(buffer[offset + 11]);
         parentICBLocation = EndianUtilities.toStruct(LogicalBlockAddress.class, buffer, offset + 12);
-        short flagsField = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
+        short flagsField = ByteUtil.readLeShort(buffer, offset + 18);
         allocationType = AllocationType.values()[flagsField & 0x3];
         flags = InformationControlBlockFlags.valueOf(flagsField & 0xFFFC);
         return 20;

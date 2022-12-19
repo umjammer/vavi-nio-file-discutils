@@ -22,8 +22,9 @@
 
 package discUtils.registry;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 
 
 /**
@@ -51,7 +52,7 @@ public abstract class Cell implements IByteArraySerializable {
     public abstract void writeTo(byte[] buffer, int offset);
 
     public static Cell parse(RegistryHive hive, int index, byte[] buffer, int pos) {
-        String type = EndianUtilities.bytesToString(buffer, pos, 2);
+        String type = new String(buffer, pos, 2, StandardCharsets.US_ASCII);
         Cell result;
         switch (type) {
         case "nk":

@@ -26,10 +26,10 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import discUtils.core.compression.ZlibStream;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
+import vavi.util.ByteUtil;
 
 
 final class MetablockWriter implements Closeable {
@@ -104,7 +104,7 @@ final class MetablockWriter implements Closeable {
         }
 
         byte[] header = new byte[2];
-        EndianUtilities.writeBytesLittleEndian((short) writeLen, header, 0);
+        ByteUtil.writeLeShort((short) writeLen, header, 0);
         buffer.write(header, 0, 2);
         buffer.write(writeData, 0, writeLen & 0x7FFF);
 

@@ -22,9 +22,6 @@
 
 package discUtils.fat;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemParameters;

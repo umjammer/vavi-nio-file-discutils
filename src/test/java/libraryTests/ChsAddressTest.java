@@ -22,11 +22,10 @@
 
 package libraryTests;
 
+import discUtils.core.ChsAddress;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import discUtils.core.ChsAddress;
 
 public class ChsAddressTest {
 

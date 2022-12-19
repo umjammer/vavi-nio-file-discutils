@@ -26,6 +26,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import discUtils.core.Geometry;
+import discUtils.streams.util.Ownership;
+import discUtils.vhd.Disk;
+import discUtils.vhd.DiskImageFile;
+import dotnet4j.io.IOException;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.SeekOrigin;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -34,14 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.Geometry;
-import discUtils.streams.util.Ownership;
-import discUtils.vhd.Disk;
-import discUtils.vhd.DiskImageFile;
-import dotnet4j.io.IOException;
-import dotnet4j.io.MemoryStream;
-import dotnet4j.io.SeekOrigin;
 
 
 public class DiskTest {

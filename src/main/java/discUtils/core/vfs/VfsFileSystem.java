@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-
 import discUtils.core.DiscFileSystem;
 import discUtils.core.DiscFileSystemOptions;
 import discUtils.core.coreCompat.FileAttributes;
@@ -42,6 +40,7 @@ import discUtils.streams.buffer.BufferStream;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.util.compat.StringUtilities;
+import vavi.util.Debug;
 
 
 /**

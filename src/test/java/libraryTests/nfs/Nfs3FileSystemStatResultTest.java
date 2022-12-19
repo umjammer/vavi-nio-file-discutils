@@ -26,10 +26,6 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3FileAttributes;
 import discUtils.nfs.Nfs3FileSystemStat;
 import discUtils.nfs.Nfs3FileSystemStatResult;
@@ -37,6 +33,9 @@ import discUtils.nfs.Nfs3FileTime;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3FileSystemStatResultTest {

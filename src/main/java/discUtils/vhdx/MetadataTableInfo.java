@@ -22,12 +22,13 @@
 
 package discUtils.vhdx;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -50,8 +51,8 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      */
     public String getSignature() {
         byte[] buffer = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(table.signature, buffer, 0);
-        return EndianUtilities.bytesToString(buffer, 0, 8);
+        ByteUtil.writeLeLong(table.signature, buffer, 0);
+        return new String(buffer, 0, 8, StandardCharsets.US_ASCII);
     }
 
     /**

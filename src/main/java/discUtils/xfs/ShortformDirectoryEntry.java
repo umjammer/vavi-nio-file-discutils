@@ -22,8 +22,11 @@
 
 package discUtils.xfs;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ShortformDirectoryEntry implements IByteArraySerializable, IDirectoryEntry {
@@ -93,7 +96,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
 
     public int readFrom(byte[] buffer, int offset) {
         nameLength = buffer[offset];
-        this.offset = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x1);
+        this.offset = ByteUtil.readBeShort(buffer, offset + 0x1);
         name = EndianUtilities.toByteArray(buffer, offset + 0x3, getNameLength());
         offset += 0x3 + getNameLength();
         if (ftype) {
@@ -102,9 +105,9 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
         }
 
         if (useShortInode) {
-            setInode(EndianUtilities.toUInt32BigEndian(buffer, offset));
+            setInode(ByteUtil.readBeInt(buffer, offset));
         } else {
-            setInode(EndianUtilities.toUInt64BigEndian(buffer, offset));
+            setInode(ByteUtil.readBeLong(buffer, offset));
         }
         return size();
     }
@@ -117,6 +120,6 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
      *
      */
     public String toString() {
-        return inode + ": " + EndianUtilities.bytesToString(name, 0, getNameLength());
+        return inode + ": " + new String(name, 0, getNameLength(), StandardCharsets.US_ASCII);
     }
 }

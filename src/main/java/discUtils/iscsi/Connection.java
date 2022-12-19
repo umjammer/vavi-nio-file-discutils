@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Map;
 
 import discUtils.core.coreCompat.ReflectionHelper;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.NetworkStream;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 class Connection implements Closeable {
@@ -177,7 +177,7 @@ class Connection implements Closeable {
                 Response resp = parseResponse(Response.class, pdu);
 
                 if (resp.statusPresent && resp.status == ScsiStatus.CheckCondition) {
-                    short senseLength = EndianUtilities.toUInt16BigEndian(pdu.getContentData(), 0);
+                    short senseLength = ByteUtil.readBeShort(pdu.getContentData(), 0);
                     byte[] senseData = new byte[senseLength];
                     System.arraycopy(pdu.getContentData(), 2, senseData, 0, senseLength);
                     throw new ScsiCommandException(resp.status, "Target indicated SCSI failure", senseData);

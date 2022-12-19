@@ -27,7 +27,7 @@ import java.util.EnumSet;
 import discUtils.btrfs.base.BlockGroupFlag;
 import discUtils.btrfs.base.Key;
 import discUtils.btrfs.base.Stripe;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -171,15 +171,15 @@ public class ChunkItem extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        chunkSize = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        objectId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        stripeLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
-        type = BlockGroupFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18));
-        optimalIoAlignment = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
-        optimalIoWidth = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
-        minimalIoSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
-        stripeCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2c);
-        subStripes = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2e);
+        chunkSize = ByteUtil.readLeLong(buffer, offset);
+        objectId = ByteUtil.readLeLong(buffer, offset + 0x8);
+        stripeLength = ByteUtil.readLeLong(buffer, offset + 0x10);
+        type = BlockGroupFlag.valueOf((int) ByteUtil.readLeLong(buffer, offset + 0x18));
+        optimalIoAlignment = ByteUtil.readLeInt(buffer, offset + 0x20);
+        optimalIoWidth = ByteUtil.readLeInt(buffer, offset + 0x24);
+        minimalIoSize = ByteUtil.readLeInt(buffer, offset + 0x28);
+        stripeCount = ByteUtil.readLeShort(buffer, offset + 0x2c);
+        subStripes = ByteUtil.readLeShort(buffer, offset + 0x2e);
         stripes = new Stripe[getStripeCount()];
         offset += 0x30;
         for (int i = 0; i < getStripeCount(); i++) {

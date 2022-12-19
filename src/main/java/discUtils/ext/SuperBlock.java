@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class SuperBlock implements IByteArraySerializable {
@@ -176,78 +177,78 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
+        magic = ByteUtil.readLeShort(buffer, offset + 56);
         if (magic != Ext2Magic)
             return size();
 
-        inodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        blocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        reservedBlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        freeBlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
-        freeInodesCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        firstDataBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        logBlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        logFragSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
-        blocksPerGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 32);
-        fragsPerGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
-        inodesPerGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        mountTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        writeTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
-        mountCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);
-        maxMountCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 54);
-        state = EndianUtilities.toUInt16LittleEndian(buffer, offset + 58);
-        errors = EndianUtilities.toUInt16LittleEndian(buffer, offset + 60);
-        minorRevisionLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 62);
-        lastCheckTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 64);
-        checkInterval = EndianUtilities.toUInt32LittleEndian(buffer, offset + 68);
-        creatorOS = EndianUtilities.toUInt32LittleEndian(buffer, offset + 72);
-        revisionLevel = EndianUtilities.toUInt32LittleEndian(buffer, offset + 76);
-        defaultReservedBlockUid = EndianUtilities.toUInt16LittleEndian(buffer, offset + 80);
-        defaultReservedBlockGid = EndianUtilities.toUInt16LittleEndian(buffer, offset + 82);
-        firstInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 84);
-        inodeSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 88);
-        blockGroupNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 90);
-        compatibleFeatures = CompatibleFeatures.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 92));
-        incompatibleFeatures = IncompatibleFeatures.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 96));
+        inodesCount = ByteUtil.readLeInt(buffer, offset + 0);
+        blocksCount = ByteUtil.readLeInt(buffer, offset + 4);
+        reservedBlocksCount = ByteUtil.readLeInt(buffer, offset + 8);
+        freeBlocksCount = ByteUtil.readLeInt(buffer, offset + 12);
+        freeInodesCount = ByteUtil.readLeInt(buffer, offset + 16);
+        firstDataBlock = ByteUtil.readLeInt(buffer, offset + 20);
+        logBlockSize = ByteUtil.readLeInt(buffer, offset + 24);
+        logFragSize = ByteUtil.readLeInt(buffer, offset + 28);
+        blocksPerGroup = ByteUtil.readLeInt(buffer, offset + 32);
+        fragsPerGroup = ByteUtil.readLeInt(buffer, offset + 36);
+        inodesPerGroup = ByteUtil.readLeInt(buffer, offset + 40);
+        mountTime = ByteUtil.readLeInt(buffer, offset + 44);
+        writeTime = ByteUtil.readLeInt(buffer, offset + 48);
+        mountCount = ByteUtil.readLeShort(buffer, offset + 52);
+        maxMountCount = ByteUtil.readLeShort(buffer, offset + 54);
+        state = ByteUtil.readLeShort(buffer, offset + 58);
+        errors = ByteUtil.readLeShort(buffer, offset + 60);
+        minorRevisionLevel = ByteUtil.readLeShort(buffer, offset + 62);
+        lastCheckTime = ByteUtil.readLeInt(buffer, offset + 64);
+        checkInterval = ByteUtil.readLeInt(buffer, offset + 68);
+        creatorOS = ByteUtil.readLeInt(buffer, offset + 72);
+        revisionLevel = ByteUtil.readLeInt(buffer, offset + 76);
+        defaultReservedBlockUid = ByteUtil.readLeShort(buffer, offset + 80);
+        defaultReservedBlockGid = ByteUtil.readLeShort(buffer, offset + 82);
+        firstInode = ByteUtil.readLeInt(buffer, offset + 84);
+        inodeSize = ByteUtil.readLeShort(buffer, offset + 88);
+        blockGroupNumber = ByteUtil.readLeShort(buffer, offset + 90);
+        compatibleFeatures = CompatibleFeatures.valueOf(ByteUtil.readLeInt(buffer, offset + 92));
+        incompatibleFeatures = IncompatibleFeatures.valueOf(ByteUtil.readLeInt(buffer, offset + 96));
         readOnlyCompatibleFeatures = ReadOnlyCompatibleFeatures
-                .valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 100));
-        uniqueId = EndianUtilities.toGuidLittleEndian(buffer, offset + 104);
+                .valueOf(ByteUtil.readLeInt(buffer, offset + 100));
+        uniqueId = ByteUtil.readLeUUID(buffer, offset + 104);
         volumeName = EndianUtilities.bytesToZString(buffer, offset + 120, 16);
         lastMountPoint = EndianUtilities.bytesToZString(buffer, offset + 136, 64);
-        compressionAlgorithmUsageBitmap = EndianUtilities.toUInt32LittleEndian(buffer, offset + 200);
+        compressionAlgorithmUsageBitmap = ByteUtil.readLeInt(buffer, offset + 200);
         preallocateBlockCount = buffer[offset + 204];
         dirPreallocateBlockCount = buffer[offset + 205];
-        reservedGDTBlocks = EndianUtilities.toUInt16LittleEndian(buffer, offset + 206);
-        journalSuperBlockUniqueId = EndianUtilities.toGuidLittleEndian(buffer, offset + 208);
-        journalInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 224);
-        journalDevice = EndianUtilities.toUInt32LittleEndian(buffer, offset + 228);
-        lastOrphan = EndianUtilities.toUInt32LittleEndian(buffer, offset + 232);
+        reservedGDTBlocks = ByteUtil.readLeShort(buffer, offset + 206);
+        journalSuperBlockUniqueId = ByteUtil.readLeUUID(buffer, offset + 208);
+        journalInode = ByteUtil.readLeInt(buffer, offset + 224);
+        journalDevice = ByteUtil.readLeInt(buffer, offset + 228);
+        lastOrphan = ByteUtil.readLeInt(buffer, offset + 232);
         hashSeed = new int[4];
-        hashSeed[0] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 236);
-        hashSeed[1] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 240);
-        hashSeed[2] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 244);
-        hashSeed[3] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 248);
+        hashSeed[0] = ByteUtil.readLeInt(buffer, offset + 236);
+        hashSeed[1] = ByteUtil.readLeInt(buffer, offset + 240);
+        hashSeed[2] = ByteUtil.readLeInt(buffer, offset + 244);
+        hashSeed[3] = ByteUtil.readLeInt(buffer, offset + 248);
         defaultHashVersion = buffer[offset + 252];
-        descriptorSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 254);
-        defaultMountOptions = EndianUtilities.toUInt32LittleEndian(buffer, offset + 256);
-        firstMetablockBlockGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 260);
-        mkfsTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 264);
+        descriptorSize = ByteUtil.readLeShort(buffer, offset + 254);
+        defaultMountOptions = ByteUtil.readLeInt(buffer, offset + 256);
+        firstMetablockBlockGroup = ByteUtil.readLeInt(buffer, offset + 260);
+        mkfsTime = ByteUtil.readLeInt(buffer, offset + 264);
         journalBackup = new int[17];
         for (int i = 0; i < 17; ++i) {
-            journalBackup[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268 + 4 * i);
+            journalBackup[i] = ByteUtil.readLeInt(buffer, offset + 268 + 4 * i);
         }
-        blocksCountHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 336);
-        reservedBlocksCountHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 340);
-        freeBlocksCountHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 344);
-        minimumExtraInodeSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 348);
-        wantExtraInodeSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 350);
-        flags = EndianUtilities.toUInt32LittleEndian(buffer, offset + 352);
-        raidStride = EndianUtilities.toUInt16LittleEndian(buffer, offset + 356);
-        multiMountProtectionInterval = EndianUtilities.toUInt16LittleEndian(buffer, offset + 358);
-        multiMountProtectionBlock = EndianUtilities.toUInt64LittleEndian(buffer, offset + 360);
-        raidStripeWidth = EndianUtilities.toUInt32LittleEndian(buffer, offset + 368);
+        blocksCountHigh = ByteUtil.readLeInt(buffer, offset + 336);
+        reservedBlocksCountHigh = ByteUtil.readLeInt(buffer, offset + 340);
+        freeBlocksCountHigh = ByteUtil.readLeInt(buffer, offset + 344);
+        minimumExtraInodeSize = ByteUtil.readLeShort(buffer, offset + 348);
+        wantExtraInodeSize = ByteUtil.readLeShort(buffer, offset + 350);
+        flags = ByteUtil.readLeInt(buffer, offset + 352);
+        raidStride = ByteUtil.readLeShort(buffer, offset + 356);
+        multiMountProtectionInterval = ByteUtil.readLeShort(buffer, offset + 358);
+        multiMountProtectionBlock = ByteUtil.readLeLong(buffer, offset + 360);
+        raidStripeWidth = ByteUtil.readLeInt(buffer, offset + 368);
         logGroupsPerFlex = buffer[offset + 372];
-        overheadBlocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 584);
+        overheadBlocksCount = ByteUtil.readLeInt(buffer, offset + 584);
         return 1024;
     }
 

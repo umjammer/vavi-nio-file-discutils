@@ -22,7 +22,7 @@
 
 package discUtils.squashFs;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class SymlinkInode extends Inode {
@@ -35,8 +35,8 @@ public class SymlinkInode extends Inode {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
-        symlinkSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        numLinks = ByteUtil.readLeInt(buffer, offset + 16);
+        symlinkSize = ByteUtil.readLeInt(buffer, offset + 20);
         return 24;
     }
 }

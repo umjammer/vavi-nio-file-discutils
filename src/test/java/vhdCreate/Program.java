@@ -24,9 +24,6 @@ package vhdCreate;
 
 import java.io.IOException;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.streams.util.Ownership;
 import discUtils.vhd.Disk;
@@ -35,6 +32,8 @@ import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.FileStream;
 import dotnet4j.util.compat.Utilities;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options

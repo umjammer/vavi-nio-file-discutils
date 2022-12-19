@@ -25,6 +25,7 @@ package diskClone;
 import java.io.IOException;
 import java.util.List;
 
+import com.sun.jna.Pointer;
 import discUtils.core.DiscFileSystem;
 import discUtils.core.Geometry;
 import discUtils.core.VirtualDisk;
@@ -32,8 +33,6 @@ import discUtils.core.VirtualDiskClass;
 import discUtils.core.VirtualDiskLayer;
 import discUtils.core.VirtualDiskTypeInfo;
 import discUtils.streams.SparseStream;
-
-import com.sun.jna.Pointer;
 
 public class Disk extends VirtualDisk {
 

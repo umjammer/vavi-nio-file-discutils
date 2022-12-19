@@ -25,8 +25,8 @@ package discUtils.ext;
 import java.nio.charset.Charset;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DirectoryRecord implements IByteArraySerializable {
@@ -57,8 +57,8 @@ public class DirectoryRecord implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        inode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        short recordLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        inode = ByteUtil.readLeInt(buffer, offset + 0);
+        short recordLen = ByteUtil.readLeShort(buffer, offset + 4);
         int nameLen = buffer[offset + 6];
         fileType = buffer[offset + 7];
         name = new String(buffer, offset + 8, nameLen, nameEncoding);

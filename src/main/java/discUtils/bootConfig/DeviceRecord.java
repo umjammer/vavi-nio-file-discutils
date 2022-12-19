@@ -22,7 +22,7 @@
 
 package discUtils.bootConfig;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class DeviceRecord {
@@ -50,8 +50,8 @@ public abstract class DeviceRecord {
     }
 
     public static DeviceRecord parse(byte[] data, int offset) {
-        int type = EndianUtilities.toInt32LittleEndian(data, offset);
-        int length = EndianUtilities.toInt32LittleEndian(data, offset + 0x8);
+        int type = ByteUtil.readLeInt(data, offset);
+        int length = ByteUtil.readLeInt(data, offset + 0x8);
         if (offset + length > data.length) {
             throw new IllegalArgumentException("Device record is truncated");
         }
@@ -82,13 +82,13 @@ public abstract class DeviceRecord {
     public abstract void getBytes(byte[] data, int offset);
 
     protected void doParse(byte[] data, int offset) {
-        setType(EndianUtilities.toInt32LittleEndian(data, offset));
-        setLength(EndianUtilities.toInt32LittleEndian(data, offset + 0x8));
+        setType(ByteUtil.readLeInt(data, offset));
+        setLength(ByteUtil.readLeInt(data, offset + 0x8));
     }
 
     protected void writeHeader(byte[] data, int offset) {
         setLength(getSize());
-        EndianUtilities.writeBytesLittleEndian(getType(), data, offset);
-        EndianUtilities.writeBytesLittleEndian(getSize(), data, offset + 0x8);
+        ByteUtil.writeLeInt(getType(), data, offset);
+        ByteUtil.writeLeInt(getSize(), data, offset + 0x8);
     }
 }

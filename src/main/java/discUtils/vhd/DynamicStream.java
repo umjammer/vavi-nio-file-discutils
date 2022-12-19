@@ -30,13 +30,13 @@ import java.util.List;
 import discUtils.streams.MappedStream;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class DynamicStream extends MappedStream {
@@ -488,7 +488,7 @@ public class DynamicStream extends MappedStream {
         byte[] data = StreamUtilities.readExact(fileStream, dynamicHeader.maxTableEntries * 4);
         int[] bat = new int[dynamicHeader.maxTableEntries];
         for (int i = 0; i < dynamicHeader.maxTableEntries; ++i) {
-            bat[i] = EndianUtilities.toUInt32BigEndian(data, i * 4);
+            bat[i] = ByteUtil.readBeInt(data, i * 4);
         }
         blockAllocationTable = bat;
     }
@@ -529,7 +529,7 @@ public class DynamicStream extends MappedStream {
 
         // Update the BAT entry for the new block
         byte[] entryBuffer = new byte[4];
-        EndianUtilities.writeBytesBigEndian((int) (newBlockStart / 512), entryBuffer, 0);
+        ByteUtil.writeBeInt((int) (newBlockStart / 512), entryBuffer, 0);
         fileStream.position(dynamicHeader.tableOffset + block * 4);
         fileStream.write(entryBuffer, 0, 4);
         blockAllocationTable[(int) block] = (int) (newBlockStart / 512);

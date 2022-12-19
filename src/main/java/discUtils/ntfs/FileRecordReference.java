@@ -23,7 +23,7 @@
 package discUtils.ntfs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileRecordReference implements IByteArraySerializable, Comparable<FileRecordReference> {
@@ -66,12 +66,12 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setValue(EndianUtilities.toUInt64LittleEndian(buffer, offset));
+        setValue(ByteUtil.readLeLong(buffer, offset));
         return 8;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
+        ByteUtil.writeLeLong(value, buffer, offset);
     }
 
     public boolean equals(Object obj) {

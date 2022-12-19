@@ -25,7 +25,7 @@ package discUtils.squashFs;
 import java.util.ArrayList;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class FragmentWriter {
@@ -103,7 +103,7 @@ public final class FragmentWriter {
 
         long tablePos = context.getRawStream().position();
         byte[] tableBuffer = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(blockPos, tableBuffer, 0);
+        ByteUtil.writeLeLong(blockPos, tableBuffer, 0);
         context.getRawStream().write(tableBuffer, 0, 8);
 
         return tablePos;

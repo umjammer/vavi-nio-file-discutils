@@ -23,12 +23,12 @@
 package discUtils.vmdk;
 
 import discUtils.streams.SparseStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class ServerSparseExtentStream extends CommonSparseExtentStream {
@@ -131,7 +131,7 @@ public final class ServerSparseExtentStream extends CommonSparseExtentStream {
     private void writeGlobalDirectory() {
         byte[] buffer = new byte[globalDirectory.length * 4];
         for (int i = 0; i < globalDirectory.length; ++i) {
-            EndianUtilities.writeBytesLittleEndian(globalDirectory[i], buffer, i * 4);
+            ByteUtil.writeLeInt(globalDirectory[i], buffer, i * 4);
         }
         fileStream.position(serverHeader.gdOffset * Sizes.Sector);
         fileStream.write(buffer, 0, buffer.length);

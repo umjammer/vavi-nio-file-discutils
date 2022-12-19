@@ -43,7 +43,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;

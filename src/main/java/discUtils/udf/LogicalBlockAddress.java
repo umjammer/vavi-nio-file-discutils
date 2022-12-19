@@ -23,7 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LogicalBlockAddress implements IByteArraySerializable {
@@ -44,8 +44,8 @@ public class LogicalBlockAddress implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        logicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        partition = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+        logicalBlock = ByteUtil.readLeInt(buffer, offset);
+        partition = ByteUtil.readLeShort(buffer, offset + 4);
         return 6;
     }
 

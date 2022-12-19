@@ -25,12 +25,11 @@ package discUtils.ntfs;
 import java.io.PrintWriter;
 import java.util.EnumSet;
 
-import vavi.util.win32.DateUtil;
-
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.core.coreCompat.FileAttributes;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
+import vavi.util.win32.DateUtil;
 
 
 public final class StandardInformation implements IByteArraySerializable, IDiagnosticTraceable {
@@ -70,15 +69,15 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
         modificationTime = readDateTime(buffer, 0x08);
         mftChangedTime = readDateTime(buffer, 0x10);
         lastAccessTime = readDateTime(buffer, 0x18);
-        fileAttributeFlags = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x20));
-        maxVersions = EndianUtilities.toUInt32LittleEndian(buffer, 0x24);
-        version = EndianUtilities.toUInt32LittleEndian(buffer, 0x28);
-        classId = EndianUtilities.toUInt32LittleEndian(buffer, 0x2C);
+        fileAttributeFlags = FileAttributeFlags.valueOf(ByteUtil.readLeInt(buffer, 0x20));
+        maxVersions = ByteUtil.readLeInt(buffer, 0x24);
+        version = ByteUtil.readLeInt(buffer, 0x28);
+        classId = ByteUtil.readLeInt(buffer, 0x2C);
         if (buffer.length > 0x30) {
-            ownerId = EndianUtilities.toUInt32LittleEndian(buffer, 0x30);
-            securityId = EndianUtilities.toUInt32LittleEndian(buffer, 0x34);
-            quotaCharged = EndianUtilities.toUInt64LittleEndian(buffer, 0x38);
-            updateSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, 0x40);
+            ownerId = ByteUtil.readLeInt(buffer, 0x30);
+            securityId = ByteUtil.readLeInt(buffer, 0x34);
+            quotaCharged = ByteUtil.readLeLong(buffer, 0x38);
+            updateSequenceNumber = ByteUtil.readLeLong(buffer, 0x40);
             haveExtraFields = true;
             return 0x48;
         }
@@ -88,19 +87,19 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(creationTime), buffer, 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(modificationTime), buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(mftChangedTime), buffer, 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(lastAccessTime), buffer, 0x18);
-        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(fileAttributeFlags), buffer, 0x20);
-        EndianUtilities.writeBytesLittleEndian(maxVersions, buffer, 0x24);
-        EndianUtilities.writeBytesLittleEndian(version, buffer, 0x28);
-        EndianUtilities.writeBytesLittleEndian(classId, buffer, 0x2C);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(creationTime), buffer, 0x00);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(modificationTime), buffer, 0x08);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(mftChangedTime), buffer, 0x10);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(lastAccessTime), buffer, 0x18);
+        ByteUtil.writeLeInt((int) FileAttributeFlags.valueOf(fileAttributeFlags), buffer, 0x20);
+        ByteUtil.writeLeInt(maxVersions, buffer, 0x24);
+        ByteUtil.writeLeInt(version, buffer, 0x28);
+        ByteUtil.writeLeInt(classId, buffer, 0x2C);
         if (haveExtraFields) {
-            EndianUtilities.writeBytesLittleEndian(ownerId, buffer, 0x30);
-            EndianUtilities.writeBytesLittleEndian(securityId, buffer, 0x34);
-            EndianUtilities.writeBytesLittleEndian(quotaCharged, buffer, 0x38);
-            EndianUtilities.writeBytesLittleEndian(updateSequenceNumber, buffer, 0x38);
+            ByteUtil.writeLeInt(ownerId, buffer, 0x30);
+            ByteUtil.writeLeInt(securityId, buffer, 0x34);
+            ByteUtil.writeLeLong(quotaCharged, buffer, 0x38);
+            ByteUtil.writeLeLong(updateSequenceNumber, buffer, 0x38);
         }
 
     }
@@ -149,6 +148,6 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
     }
 
     private static long readDateTime(byte[] buffer, int offset) {
-        return DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset));
+        return DateUtil.fromFileTime(ByteUtil.readLeLong(buffer, offset));
     }
 }

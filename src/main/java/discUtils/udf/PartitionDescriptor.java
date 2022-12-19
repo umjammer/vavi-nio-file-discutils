@@ -23,6 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class PartitionDescriptor extends TaggedDescriptor<PartitionDescriptor> {
@@ -52,15 +53,15 @@ public class PartitionDescriptor extends TaggedDescriptor<PartitionDescriptor> {
     }
 
     public int parse(byte[] buffer, int offset) {
-        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        partitionFlags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 20);
-        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 22);
+        volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
+        partitionFlags = ByteUtil.readLeShort(buffer, offset + 20);
+        partitionNumber = ByteUtil.readLeShort(buffer, offset + 22);
         partitionContents = EndianUtilities
                 .toStruct(ApplicationEntityIdentifier.class, buffer, offset + 24);
         partitionContentsUse = EndianUtilities.toByteArray(buffer, offset + 56, 128);
-        accessType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 184);
-        partitionStartingLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 188);
-        partitionLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 192);
+        accessType = ByteUtil.readLeInt(buffer, offset + 184);
+        partitionStartingLocation = ByteUtil.readLeInt(buffer, offset + 188);
+        partitionLength = ByteUtil.readLeInt(buffer, offset + 192);
         implementationIdentifier = EndianUtilities
                 .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 196);
         implementationUse = EndianUtilities.toByteArray(buffer, offset + 228, 128);

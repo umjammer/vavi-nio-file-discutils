@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LeafDirectory implements IByteArraySerializable {
@@ -72,7 +72,7 @@ public class LeafDirectory implements IByteArraySerializable {
     }
 
     protected int readHeader(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        magic = ByteUtil.readBeInt(buffer, offset);
         return 0x4;
     }
 

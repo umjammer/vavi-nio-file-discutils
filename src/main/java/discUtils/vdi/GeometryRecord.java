@@ -23,7 +23,7 @@
 package discUtils.vdi;
 
 import discUtils.core.Geometry;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class GeometryRecord {
@@ -67,17 +67,17 @@ public class GeometryRecord {
     }
 
     public void read(byte[] buffer, int offset) {
-        cylinders = EndianUtilities.toInt32LittleEndian(buffer, offset + 0);
-        heads = EndianUtilities.toInt32LittleEndian(buffer, offset + 4);
-        sectors = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
-        sectorSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
+        cylinders = ByteUtil.readLeInt(buffer, offset + 0);
+        heads = ByteUtil.readLeInt(buffer, offset + 4);
+        sectors = ByteUtil.readLeInt(buffer, offset + 8);
+        sectorSize = ByteUtil.readLeInt(buffer, offset + 12);
     }
 
     public void write(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(cylinders, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(heads, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian(sectors, buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(sectorSize, buffer, offset + 12);
+        ByteUtil.writeLeInt(cylinders, buffer, offset + 0);
+        ByteUtil.writeLeInt(heads, buffer, offset + 4);
+        ByteUtil.writeLeInt(sectors, buffer, offset + 8);
+        ByteUtil.writeLeInt(sectorSize, buffer, offset + 12);
     }
 
     public Geometry toGeometry(long actualCapacity) {

@@ -4,14 +4,8 @@ package libraryTests.swap;
 
 import java.io.File;
 import java.net.URI;
-
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import discUtils.complete.SetupHelper;
 import discUtils.core.DiscFileSystem;
@@ -23,8 +17,12 @@ import discUtils.streams.util.Ownership;
 import discUtils.swap.SwapFileSystem;
 import discUtils.vhdx.Disk;
 import discUtils.vhdx.DiskImageFile;
-import libraryTests.utilities.ZipUtilities;
 import dotnet4j.io.Stream;
+import libraryTests.utilities.ZipUtilities;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class SampleDataTests {

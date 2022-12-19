@@ -30,6 +30,7 @@ import java.util.List;
 
 import discUtils.core.coreCompat.IContentReader;
 import discUtils.core.coreCompat.IContentWriter;
+import discUtils.powerShell.conpat.ErrorCategory;
 import discUtils.powerShell.conpat.ErrorRecord;
 import dotnet4j.io.IOException;
 import dotnet4j.io.SeekOrigin;
@@ -168,20 +169,6 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
             return null;
         }
 
-    }
-
-    protected void finalize() throws Throwable {
-        if (writer != null) {
-            writer.close();
-        }
-
-        if (reader != null) {
-            reader.close();
-        }
-
-        if (contentStream != null) {
-            contentStream.close();
-        }
     }
 
     /**

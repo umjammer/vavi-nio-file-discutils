@@ -24,7 +24,7 @@ package discUtils.iso9660;
 
 import java.util.Arrays;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BootInitialEntry {
@@ -63,19 +63,19 @@ public class BootInitialEntry {
     public BootInitialEntry(byte[] buffer, int offset) {
         bootIndicator = buffer[offset + 0x00];
         bootMediaType = BootDeviceEmulation.values()[buffer[offset + 0x01]];
-        loadSegment = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
+        loadSegment = ByteUtil.readLeShort(buffer, offset + 0x02);
         systemType = buffer[offset + 0x04];
-        sectorCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x06);
-        imageStart = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x08);
+        sectorCount = ByteUtil.readLeShort(buffer, offset + 0x06);
+        imageStart = ByteUtil.readLeInt(buffer, offset + 0x08);
     }
 
     public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + 0x20, (byte) 0);
         buffer[offset + 0x00] = bootIndicator;
         buffer[offset + 0x01] = (byte) bootMediaType.ordinal();
-        EndianUtilities.writeBytesLittleEndian(loadSegment, buffer, offset + 0x02);
+        ByteUtil.writeLeShort(loadSegment, buffer, offset + 0x02);
         buffer[offset + 0x04] = systemType;
-        EndianUtilities.writeBytesLittleEndian(sectorCount, buffer, offset + 0x06);
-        EndianUtilities.writeBytesLittleEndian(imageStart, buffer, offset + 0x08);
+        ByteUtil.writeLeShort(sectorCount, buffer, offset + 0x06);
+        ByteUtil.writeLeInt(imageStart, buffer, offset + 0x08);
     }
 }

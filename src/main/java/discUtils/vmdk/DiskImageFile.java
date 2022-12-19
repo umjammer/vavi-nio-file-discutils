@@ -45,7 +45,6 @@ import discUtils.streams.ConcatStream;
 import discUtils.streams.SparseStream;
 import discUtils.streams.SubStream;
 import discUtils.streams.ZeroStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
@@ -54,6 +53,7 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -734,11 +734,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
         // Generate the redundant grain dir, and write it
         byte[] grainDir = new byte[numGrainTables * 4];
         for (int i = 0; i < numGrainTables; ++i) {
-            EndianUtilities.writeBytesLittleEndian(
-                                                   (int) (redundantGrainTablesStart +
-                                                          i * MathUtilities.ceil(GtesPerGt * 4, Sizes.Sector)),
-                                                   grainDir,
-                                                   i * 4);
+            ByteUtil.writeLeShort(
+                    (short) (redundantGrainTablesStart + i * MathUtilities.ceil(GtesPerGt * 4, Sizes.Sector)),
+                    grainDir,
+                    i * 4);
         }
         extentStream.position(redundantGrainDirStart * Sizes.Sector);
         extentStream.write(grainDir, 0, grainDir.length);
@@ -750,8 +749,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         }
         for (int i = 0; i < numGrainTables; ++i) {
             // Generate the main grain dir, and write it
-            EndianUtilities
-                    .writeBytesLittleEndian((int) (grainTablesStart + i * MathUtilities.ceil(GtesPerGt * 4, Sizes.Sector)),
+            ByteUtil.writeLeInt((int) (grainTablesStart + i * MathUtilities.ceil(GtesPerGt * 4, Sizes.Sector)),
                                             grainDir,
                                             i * 4);
         }
@@ -888,7 +886,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         s.position(0);
         byte[] header = StreamUtilities.readExact(s, (int) Math.min(Sizes.Sector, s.getLength()));
         if (header.length < Sizes.Sector ||
-            EndianUtilities.toUInt32LittleEndian(header, 0) != HostedSparseExtentHeader.VmdkMagicNumber) {
+            ByteUtil.readLeInt(header, 0) != HostedSparseExtentHeader.VmdkMagicNumber) {
             s.position(0);
             descriptor = new DescriptorFile(s);
             if (access != FileAccess.Read) {

@@ -28,11 +28,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import discUtils.powerShell.Utilities;
 import discUtils.powerShell.conpat.ErrorRecord;
 import discUtils.powerShell.conpat.NavigationCmdletProvider;
 import discUtils.powerShell.conpat.PSDriveInfo;
 import discUtils.powerShell.conpat.ReturnContainers;
-import discUtils.powerShell.Utilities;
 import discUtils.registry.RegistryHive;
 import discUtils.registry.RegistryKey;
 import discUtils.registry.RegistryValueType;

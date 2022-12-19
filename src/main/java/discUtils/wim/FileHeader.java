@@ -22,10 +22,11 @@
 
 package discUtils.wim;
 
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileHeader {
@@ -59,22 +60,22 @@ public class FileHeader {
     public ShortResourceHeader xmlDataHeader;
 
     public void read(byte[] buffer, int offset) {
-        tag = EndianUtilities.bytesToString(buffer, offset, 8);
-        headerSize = EndianUtilities.toUInt32LittleEndian(buffer, 8);
-        version = EndianUtilities.toUInt32LittleEndian(buffer, 12);
-        flags = FileFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 16));
-        compressionSize = EndianUtilities.toInt32LittleEndian(buffer, 20);
-        wimGuid = EndianUtilities.toGuidLittleEndian(buffer, 24);
-        partNumber = EndianUtilities.toUInt16LittleEndian(buffer, 40);
-        totalParts = EndianUtilities.toUInt16LittleEndian(buffer, 42);
-        imageCount = EndianUtilities.toUInt32LittleEndian(buffer, 44);
+        tag = new String(buffer, offset, 8, StandardCharsets.US_ASCII);
+        headerSize = ByteUtil.readLeInt(buffer, 8);
+        version = ByteUtil.readLeInt(buffer, 12);
+        flags = FileFlags.valueOf(ByteUtil.readLeInt(buffer, 16));
+        compressionSize = ByteUtil.readLeInt(buffer, 20);
+        wimGuid = ByteUtil.readLeUUID(buffer, 24);
+        partNumber = ByteUtil.readLeShort(buffer, 40);
+        totalParts = ByteUtil.readLeShort(buffer, 42);
+        imageCount = ByteUtil.readLeInt(buffer, 44);
         offsetTableHeader = new ShortResourceHeader();
         offsetTableHeader.read(buffer, 48);
         xmlDataHeader = new ShortResourceHeader();
         xmlDataHeader.read(buffer, 72);
         bootMetaData = new ShortResourceHeader();
         bootMetaData.read(buffer, 96);
-        bootIndex = EndianUtilities.toUInt32LittleEndian(buffer, 120);
+        bootIndex = ByteUtil.readLeInt(buffer, 120);
         integrityHeader = new ShortResourceHeader();
         integrityHeader.read(buffer, 124);
     }

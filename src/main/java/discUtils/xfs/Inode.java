@@ -37,6 +37,7 @@ import discUtils.streams.builder.BuilderSparseStreamExtent;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.MemoryStream;
+import vavi.util.ByteUtil;
 
 
 public class Inode implements IByteArraySerializable {
@@ -499,31 +500,31 @@ public class Inode implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt16BigEndian(buffer, offset));
-        setMode(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2));
+        setMagic(ByteUtil.readBeShort(buffer, offset));
+        setMode(ByteUtil.readBeShort(buffer, offset + 0x2));
         setVersion(buffer[offset + 0x4]);
         setFormat(InodeFormat.values()[buffer[offset + 0x5]]);
-        setOnlink(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6));
-        setUserId(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8));
-        setGroupId(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC));
-        setNlink(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10));
-        setProjectId(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x14));
+        setOnlink(ByteUtil.readBeShort(buffer, offset + 0x6));
+        setUserId(ByteUtil.readBeInt(buffer, offset + 0x8));
+        setGroupId(ByteUtil.readBeInt(buffer, offset + 0xC));
+        setNlink(ByteUtil.readBeInt(buffer, offset + 0x10));
+        setProjectId(ByteUtil.readBeShort(buffer, offset + 0x14));
         setPadding(EndianUtilities.toByteArray(buffer, offset + 0x16, 8));
-        setFlushIterator(EndianUtilities.toUInt16BigEndian(buffer, 0x1E));
+        setFlushIterator(ByteUtil.readBeShort(buffer, 0x1E));
         setAccessTime(readTimestamp(buffer, offset + 0x20));
         setModificationTime(readTimestamp(buffer, offset + 0x28));
         setCreationTime(readTimestamp(buffer, offset + 0x30));
-        setLength(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x38));
-        setBlockCount(EndianUtilities.toUInt64BigEndian(buffer, offset + 0x40));
-        setExtentSize(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x48));
-        setExtents(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4C));
-        setAttributeExtents(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x50));
+        setLength(ByteUtil.readBeLong(buffer, offset + 0x38));
+        setBlockCount(ByteUtil.readBeLong(buffer, offset + 0x40));
+        setExtentSize(ByteUtil.readBeInt(buffer, offset + 0x48));
+        setExtents(ByteUtil.readBeInt(buffer, offset + 0x4C));
+        setAttributeExtents(ByteUtil.readBeShort(buffer, offset + 0x50));
         setForkoff(buffer[offset + 0x52]);
         setAttributeFormat(buffer[offset + 0x53]);
-        setDmApiEventMask(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x54));
-        setDmState(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x58));
-        setFlags(InodeFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 0x5A)));
-        setGeneration(EndianUtilities.toUInt32BigEndian(buffer, offset + 0x5C));
+        setDmApiEventMask(ByteUtil.readBeInt(buffer, offset + 0x54));
+        setDmState(ByteUtil.readBeShort(buffer, offset + 0x58));
+        setFlags(InodeFlags.valueOf(ByteUtil.readBeShort(buffer, offset + 0x5A)));
+        setGeneration(ByteUtil.readBeInt(buffer, offset + 0x5C));
         int dfOffset = getVersion() < 3 ? 0x64 : 0xb0;
         int dfLength;
         if (getForkoff() == 0) {
@@ -536,8 +537,8 @@ public class Inode implements IByteArraySerializable {
     }
 
     private long readTimestamp(byte[] buffer, int offset) {
-        long seconds = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        long nanoSeconds = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        long seconds = ByteUtil.readBeInt(buffer, offset);
+        long nanoSeconds = ByteUtil.readBeInt(buffer, offset + 0x4);
         return Instant.ofEpochSecond(seconds, nanoSeconds).toEpochMilli();
     }
 

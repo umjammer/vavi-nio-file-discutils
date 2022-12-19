@@ -22,7 +22,9 @@
 
 package discUtils.sdi;
 
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
+
+import vavi.util.ByteUtil;
 
 
 public class SectionRecord {
@@ -40,10 +42,10 @@ public class SectionRecord {
     public long size;
 
     public void readFrom(byte[] buffer, int offset) {
-        sectionType = EndianUtilities.bytesToString(buffer, offset, 8).replaceFirst("\0*$", "");
-        attr = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-        this.offset = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
-        size = EndianUtilities.toInt64LittleEndian(buffer, offset + 24);
-        partitionType = EndianUtilities.toUInt64LittleEndian(buffer, offset + 32);
+        sectionType = new String(buffer, offset, 8, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        attr = ByteUtil.readLeLong(buffer, offset + 8);
+        this.offset = ByteUtil.readLeLong(buffer, offset + 16);
+        size = ByteUtil.readLeLong(buffer, offset + 24);
+        partitionType = ByteUtil.readLeLong(buffer, offset + 32);
     }
 }

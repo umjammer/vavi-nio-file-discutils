@@ -25,9 +25,6 @@ package iSCSIBrowse;
 import java.io.IOException;
 import java.util.List;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.iscsi.Initiator;
 import discUtils.iscsi.LoginException;
@@ -35,6 +32,8 @@ import discUtils.iscsi.LunInfo;
 import discUtils.iscsi.Session;
 import discUtils.iscsi.TargetAddress;
 import discUtils.iscsi.TargetInfo;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options

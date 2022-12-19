@@ -36,8 +36,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import vavi.util.Debug;
-
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemParameters;
 import discUtils.core.FloppyDiskType;
@@ -47,7 +45,6 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.SparseStream;
 import discUtils.streams.SubStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
@@ -56,6 +53,8 @@ import dotnet4j.io.FileMode;
 import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
 import dotnet4j.util.compat.StringUtilities;
+import vavi.util.ByteUtil;
+import vavi.util.Debug;
 
 
 /**
@@ -254,7 +253,7 @@ Debug.println(Level.FINE, "stream length < 512");
 
         stream.position(0);
         byte[] bytes = StreamUtilities.readExact(stream, 512);
-        short bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bytes, 11);
+        short bpbBytesPerSec = ByteUtil.readLeShort(bytes, 11);
         if (bpbBytesPerSec != 512) {
 Debug.println(Level.FINE, "bpb bytes per sec != 512");
             return false;
@@ -265,8 +264,8 @@ Debug.println(Level.FINE, "bpb bytes per sec != 512");
             return false;
         }
 
-        short bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bytes, 19);
-        int bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bytes, 32);
+        short bpbTotSec16 = ByteUtil.readLeShort(bytes, 19);
+        int bpbTotSec32 = ByteUtil.readLeInt(bytes, 32);
         if (!((bpbTotSec16 == 0) ^ (bpbTotSec32 == 0))) {
 Debug.println(Level.FINE, "bpb tot sec == 0");
             return false;

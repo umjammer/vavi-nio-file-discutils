@@ -23,7 +23,7 @@
 package discUtils.squashFs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FragmentRecord implements IByteArraySerializable {
@@ -39,14 +39,14 @@ public class FragmentRecord implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        startBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 0);
-        compressedSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
+        startBlock = ByteUtil.readLeLong(buffer, offset + 0);
+        compressedSize = ByteUtil.readLeInt(buffer, offset + 8);
         return RecordSize;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(startBlock, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(compressedSize, buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 12);
+        ByteUtil.writeLeLong(startBlock, buffer, offset + 0);
+        ByteUtil.writeLeInt(compressedSize, buffer, offset + 8);
+        ByteUtil.writeLeInt(0, buffer, offset + 12);
     }
 }

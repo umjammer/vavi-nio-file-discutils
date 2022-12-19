@@ -22,8 +22,8 @@
 
 package discUtils.streams.readerWriter;
 
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class BigEndianDataReader extends DataReader {
@@ -34,26 +34,26 @@ public class BigEndianDataReader extends DataReader {
 
     public short readUInt16() {
         readToBuffer(2);
-        return EndianUtilities.toUInt16BigEndian(buffer, 0);
+        return ByteUtil.readBeShort(buffer, 0);
     }
 
     public int readInt32() {
         readToBuffer(4);
-        return EndianUtilities.toInt32BigEndian(buffer, 0);
+        return ByteUtil.readBeInt(buffer, 0);
     }
 
     public int readUInt32() {
         readToBuffer(4);
-        return EndianUtilities.toUInt32BigEndian(buffer, 0);
+        return ByteUtil.readBeInt(buffer, 0);
     }
 
     public long readInt64() {
         readToBuffer(8);
-        return EndianUtilities.toInt64BigEndian(buffer, 0);
+        return ByteUtil.readBeLong(buffer, 0);
     }
 
     public long readUInt64() {
         readToBuffer(8);
-        return EndianUtilities.toUInt64BigEndian(buffer, 0);
+        return ByteUtil.readBeLong(buffer, 0);
     }
 }

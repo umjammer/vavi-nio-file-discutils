@@ -25,7 +25,7 @@ package discUtils.vhdx;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class LogEntryHeader implements IByteArraySerializable {
@@ -65,16 +65,16 @@ public final class LogEntryHeader implements IByteArraySerializable {
     public int readFrom(byte[] buffer, int offset) {
         data = new byte[size()];
         System.arraycopy(buffer, offset, data, 0, size());
-        signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        entryLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        tail = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
-        sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-        descriptorCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        reserved = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
-        logGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 32);
-        flushedFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
-        lastFileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
+        signature = ByteUtil.readLeInt(buffer, offset + 0);
+        checksum = ByteUtil.readLeInt(buffer, offset + 4);
+        entryLength = ByteUtil.readLeInt(buffer, offset + 8);
+        tail = ByteUtil.readLeInt(buffer, offset + 12);
+        sequenceNumber = ByteUtil.readLeLong(buffer, offset + 16);
+        descriptorCount = ByteUtil.readLeInt(buffer, offset + 24);
+        reserved = ByteUtil.readLeInt(buffer, offset + 28);
+        logGuid = ByteUtil.readLeUUID(buffer, offset + 32);
+        flushedFileOffset = ByteUtil.readLeLong(buffer, offset + 48);
+        lastFileOffset = ByteUtil.readLeLong(buffer, offset + 56);
         return size();
     }
 

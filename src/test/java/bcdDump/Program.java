@@ -24,9 +24,6 @@ package bcdDump;
 
 import java.io.IOException;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.bootConfig.BcdObject;
 import discUtils.bootConfig.Element;
 import discUtils.bootConfig.ObjectType;
@@ -35,6 +32,8 @@ import discUtils.common.ProgramBase;
 import discUtils.registry.RegistryHive;
 import dotnet4j.io.File;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options

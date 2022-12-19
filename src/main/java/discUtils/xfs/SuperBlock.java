@@ -30,6 +30,7 @@ import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class SuperBlock implements IByteArraySerializable {
@@ -814,30 +815,30 @@ public class SuperBlock implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        magic = ByteUtil.readBeInt(buffer, offset);
         if (magic != XfsMagic)
             return size();
 
-        blocksize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
-        dataBlocks = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
-        realtimeBlocks = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x10);
-        realtimeExtents = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x18);
-        uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x20);
-        logstart = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x30);
-        rootInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x38);
-        realtimeBitmapInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x40);
-        realtimeSummaryInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x48);
-        realtimeExtentSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x50);
-        agBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x54);
-        agCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x58);
-        realtimeBitmapBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x5C);
-        logBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x60);
-        short versionFlags = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x64);
+        blocksize = ByteUtil.readBeInt(buffer, offset + 0x4);
+        dataBlocks = ByteUtil.readBeLong(buffer, offset + 0x8);
+        realtimeBlocks = ByteUtil.readBeLong(buffer, offset + 0x10);
+        realtimeExtents = ByteUtil.readBeLong(buffer, offset + 0x18);
+        uniqueId = ByteUtil.readBeUUID(buffer, offset + 0x20);
+        logstart = ByteUtil.readBeLong(buffer, offset + 0x30);
+        rootInode = ByteUtil.readBeLong(buffer, offset + 0x38);
+        realtimeBitmapInode = ByteUtil.readBeLong(buffer, offset + 0x40);
+        realtimeSummaryInode = ByteUtil.readBeLong(buffer, offset + 0x48);
+        realtimeExtentSize = ByteUtil.readBeInt(buffer, offset + 0x50);
+        agBlocks = ByteUtil.readBeInt(buffer, offset + 0x54);
+        agCount = ByteUtil.readBeInt(buffer, offset + 0x58);
+        realtimeBitmapBlocks = ByteUtil.readBeInt(buffer, offset + 0x5C);
+        logBlocks = ByteUtil.readBeInt(buffer, offset + 0x60);
+        short versionFlags = ByteUtil.readBeShort(buffer, offset + 0x64);
         version = versionFlags & VersionFlags.NumberFlag;
         this.versionFlags = VersionFlags.valueOf(versionFlags & ~VersionFlags.NumberFlag);
-        sectorSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x66);
-        inodeSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x68);
-        inodesPerBlock = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6A);
+        sectorSize = ByteUtil.readBeShort(buffer, offset + 0x66);
+        inodeSize = ByteUtil.readBeShort(buffer, offset + 0x68);
+        inodesPerBlock = ByteUtil.readBeShort(buffer, offset + 0x6A);
         filesystemName = EndianUtilities.bytesToZString(buffer, offset + 0x6C, 12);
         blocksizeLog2 = buffer[offset + 0x78];
         sectorSizeLog2 = buffer[offset + 0x79];
@@ -847,36 +848,36 @@ public class SuperBlock implements IByteArraySerializable {
         realtimeExtentsLog2 = buffer[offset + 0x7D];
         inProgress = buffer[offset + 0x7E];
         inodesMaxPercent = buffer[offset + 0x7F];
-        allocatedInodes = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x80);
-        freeInodes = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x88);
-        freeDataBlocks = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x90);
-        freeRealtimeExtents = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x98);
-        userQuotaInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0xA0);
-        groupQuotaInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0xA8);
-        quotaFlags = EndianUtilities.toUInt16BigEndian(buffer, offset + 0xB0);
+        allocatedInodes = ByteUtil.readBeLong(buffer, offset + 0x80);
+        freeInodes = ByteUtil.readBeLong(buffer, offset + 0x88);
+        freeDataBlocks = ByteUtil.readBeLong(buffer, offset + 0x90);
+        freeRealtimeExtents = ByteUtil.readBeLong(buffer, offset + 0x98);
+        userQuotaInode = ByteUtil.readBeLong(buffer, offset + 0xA0);
+        groupQuotaInode = ByteUtil.readBeLong(buffer, offset + 0xA8);
+        quotaFlags = ByteUtil.readBeShort(buffer, offset + 0xB0);
         flags = buffer[offset + 0xB2];
         sharedVersionNumber = buffer[offset + 0xB3];
-        inodeChunkAlignment = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB4);
-        unit = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xB8);
-        width = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xBC);
+        inodeChunkAlignment = ByteUtil.readBeInt(buffer, offset + 0xB4);
+        unit = ByteUtil.readBeInt(buffer, offset + 0xB8);
+        width = ByteUtil.readBeInt(buffer, offset + 0xBC);
         dirBlockLog2 = buffer[offset + 0xC0];
         logSectorSizeLog2 = buffer[offset + 0xC1];
-        logSectorSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 0xC2);
-        logUnitSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC4);
-        features2 = Version2Features.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC8));
-        badFeatures2 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xCC);
+        logSectorSize = ByteUtil.readBeShort(buffer, offset + 0xC2);
+        logUnitSize = ByteUtil.readBeInt(buffer, offset + 0xC4);
+        features2 = Version2Features.valueOf(ByteUtil.readBeInt(buffer, offset + 0xC8));
+        badFeatures2 = ByteUtil.readBeInt(buffer, offset + 0xCC);
 
         if (version >= (short) VersionFlags.Version5) {
-            compatibleFeatures = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD0);
+            compatibleFeatures = ByteUtil.readBeInt(buffer, offset + 0xD0);
             readOnlyCompatibleFeatures = ReadOnlyCompatibleFeatures
-                        .valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD4));
-            incompatibleFeatures = IncompatibleFeatures.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0xD8));
-            logIncompatibleFeatures = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xDC);
-            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xE0);
-            sparseInodeAlignment = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xE4);
-            projectQuotaInode = EndianUtilities.toUInt64BigEndian(buffer, offset + 0xE8);
-            lsn = EndianUtilities.toInt64BigEndian(buffer, offset + 0xF0);
-            metaUuid = EndianUtilities.toGuidBigEndian(buffer, offset + 0xF8);
+                        .valueOf(ByteUtil.readBeInt(buffer, offset + 0xD4));
+            incompatibleFeatures = IncompatibleFeatures.valueOf(ByteUtil.readBeInt(buffer, offset + 0xD8));
+            logIncompatibleFeatures = ByteUtil.readBeInt(buffer, offset + 0xDC);
+            crc = ByteUtil.readBeInt(buffer, offset + 0xE0);
+            sparseInodeAlignment = ByteUtil.readBeInt(buffer, offset + 0xE4);
+            projectQuotaInode = ByteUtil.readBeLong(buffer, offset + 0xE8);
+            lsn = ByteUtil.readBeLong(buffer, offset + 0xF0);
+            metaUuid = ByteUtil.readBeUUID(buffer, offset + 0xF8);
             if (Collections.disjoint(incompatibleFeatures, IncompatibleFeatures.Supported))
                 throw new UnsupportedOperationException("XFS features not supported");
         }

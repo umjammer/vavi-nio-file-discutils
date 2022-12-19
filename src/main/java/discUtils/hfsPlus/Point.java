@@ -24,6 +24,8 @@ package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
+
 
 public final class Point implements IByteArraySerializable {
 
@@ -36,8 +38,8 @@ public final class Point implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        vertical = EndianUtilities.toInt16BigEndian(buffer, offset + 0);
-        horizontal = EndianUtilities.toInt16BigEndian(buffer, offset + 2);
+        vertical = ByteUtil.readBeShort(buffer, offset + 0);
+        horizontal = ByteUtil.readBeShort(buffer, offset + 2);
 
         return 4;
     }

@@ -25,8 +25,8 @@ package discUtils.ntfs;
 import java.io.PrintWriter;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.util.compat.Tuple;
+import vavi.util.ByteUtil;
 
 
 public class ReparsePoints {
@@ -79,14 +79,14 @@ public class ReparsePoints {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-            file = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 4));
+            tag = ByteUtil.readLeInt(buffer, offset);
+            file = new FileRecordReference(ByteUtil.readLeLong(buffer, offset + 4));
             return 12;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(tag, buffer, offset);
-            EndianUtilities.writeBytesLittleEndian(file.getValue(), buffer, offset + 4);
+            ByteUtil.writeLeInt(tag, buffer, offset);
+            ByteUtil.writeLeLong(file.getValue(), buffer, offset + 4);
         }
 
         /**

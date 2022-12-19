@@ -43,8 +43,8 @@ public class PathTableRecord {
 //    public static int readFrom(byte[] src, int offset, boolean byteSwap, Charset enc, PathTableRecord[] record) {
 //        byte directoryIdentifierLength = src[offset + 0];
 //        record[0].extendedAttributeRecordLength = src[offset + 1];
-//        record[0].locationOfExtent = EndianUtilities.toUInt32LittleEndian(src, offset + 2);
-//        record[0].parentDirectoryNumber = EndianUtilities.toUInt16LittleEndian(src, offset + 6);
+//        record[0].locationOfExtent = ByteUtil.readLeInt(src, offset + 2);
+//        record[0].parentDirectoryNumber = ByteUtil.readLeShort(src, offset + 6);
 //        record[0].directoryIdentifier = IsoUtilities.readChars(src, offset + 8, directoryIdentifierLength, enc);
 //
 //        if (byteSwap) {

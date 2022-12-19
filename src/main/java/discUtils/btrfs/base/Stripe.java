@@ -25,7 +25,7 @@ package discUtils.btrfs.base;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -82,9 +82,9 @@ public class Stripe implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setDeviceId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setOffset(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setDeviceUuid(EndianUtilities.toGuidLittleEndian(buffer, offset + 0x10));
+        setDeviceId(ByteUtil.readLeLong(buffer, offset));
+        setOffset(ByteUtil.readLeLong(buffer, offset + 0x8));
+        setDeviceUuid(ByteUtil.readLeUUID(buffer, offset + 0x10));
         return size();
     }
 

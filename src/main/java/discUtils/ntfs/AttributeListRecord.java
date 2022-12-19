@@ -27,9 +27,9 @@ import java.nio.charset.StandardCharsets;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import dotnet4j.util.compat.StringUtilities;
+import vavi.util.ByteUtil;
 
 
 public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySerializable, Comparable<AttributeListRecord> {
@@ -63,13 +63,13 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
     }
 
     public int readFrom(byte[] data, int offset) {
-        type = AttributeType.valueOf(EndianUtilities.toUInt32LittleEndian(data, offset + 0x00));
-        recordLength = EndianUtilities.toUInt16LittleEndian(data, offset + 0x04);
+        type = AttributeType.valueOf(ByteUtil.readLeInt(data, offset + 0x00));
+        recordLength = ByteUtil.readLeShort(data, offset + 0x04);
         nameLength = data[offset + 0x06];
         nameOffset = data[offset + 0x07];
-        startVcn = EndianUtilities.toUInt64LittleEndian(data, offset + 0x08);
-        baseFileReference = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(data, offset + 0x10));
-        attributeId = EndianUtilities.toUInt16LittleEndian(data, offset + 0x18);
+        startVcn = ByteUtil.readLeLong(data, offset + 0x08);
+        baseFileReference = new FileRecordReference(ByteUtil.readLeLong(data, offset + 0x10));
+        attributeId = ByteUtil.readLeShort(data, offset + 0x18);
         if (getNameLength() > 0) {
             name = new String(data, offset + getNameOffset(), getNameLength() * 2, StandardCharsets.UTF_16LE);
         } else {
@@ -92,13 +92,13 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
             nameLength = (byte) bytes.length;
         }
         recordLength = (short) MathUtilities.roundUp(getNameOffset() + getNameLength() * 2, 8);
-        EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset);
-        EndianUtilities.writeBytesLittleEndian(recordLength, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(type.getValue(), buffer, offset);
+        ByteUtil.writeLeShort(recordLength, buffer, offset + 0x04);
         buffer[offset + 0x06] = nameLength;
         buffer[offset + 0x07] = nameOffset;
-        EndianUtilities.writeBytesLittleEndian(startVcn, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(baseFileReference.getValue(), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(attributeId, buffer, offset + 0x18);
+        ByteUtil.writeLeLong(startVcn, buffer, offset + 0x08);
+        ByteUtil.writeLeLong(baseFileReference.getValue(), buffer, offset + 0x10);
+        ByteUtil.writeLeShort(attributeId, buffer, offset + 0x18);
     }
 
     public int compareTo(AttributeListRecord other) {

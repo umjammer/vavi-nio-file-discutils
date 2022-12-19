@@ -25,6 +25,7 @@ package discUtils.ntfs;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -32,20 +33,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.core.ClusterMap;
 import discUtils.core.ClusterRoles;
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.core.internal.ObjectCache;
 import discUtils.streams.SubStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Range;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 /**
@@ -155,8 +154,8 @@ public class MasterFileTable implements IDiagnosticTraceable, Closeable {
             while (mftStream.position() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, getRecordSize());
 
-Debug.println(Level.FINE, "MFT records[" + index + "]: " + EndianUtilities.bytesToString(recordData, 0, 4));
-                if (!EndianUtilities.bytesToString(recordData, 0, 4).equals("FILE")) {
+Debug.println(Level.FINE, "MFT records[" + index + "]: " + new String(recordData, 0, 4, StandardCharsets.US_ASCII));
+                if (!new String(recordData, 0, 4, StandardCharsets.US_ASCII).equals("FILE")) {
                     continue;
                 }
 

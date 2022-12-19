@@ -23,7 +23,7 @@
 package discUtils.iscsi;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BasicHeaderSegment implements IByteArraySerializable {
@@ -52,8 +52,8 @@ public class BasicHeaderSegment implements IByteArraySerializable {
 //Debug.println("OpCode: " + (buffer[offset] & 0x3F));
         finalPdu = (buffer[offset + 1] & 0x80) != 0;
         totalAhsLength = buffer[offset + 4];
-        dataSegmentLength = EndianUtilities.toInt32BigEndian(buffer, offset + 4) & 0x00FF_FFFF;
-        initiatorTaskTag = EndianUtilities.toUInt32BigEndian(buffer, offset + 16);
+        dataSegmentLength = ByteUtil.readBeInt(buffer, offset + 4) & 0x00FF_FFFF;
+        initiatorTaskTag = ByteUtil.readBeInt(buffer, offset + 16);
         return 48;
     }
 
@@ -64,6 +64,6 @@ public class BasicHeaderSegment implements IByteArraySerializable {
         buffer[offset + 5] = (byte) ((dataSegmentLength >>> 16) & 0xFF);
         buffer[offset + 6] = (byte) ((dataSegmentLength >>> 8) & 0xFF);
         buffer[offset + 7] = (byte) (dataSegmentLength & 0xFF);
-        EndianUtilities.writeBytesBigEndian(initiatorTaskTag, buffer, offset + 16);
+        ByteUtil.writeBeInt(initiatorTaskTag, buffer, offset + 16);
     }
 }

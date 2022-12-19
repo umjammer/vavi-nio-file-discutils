@@ -25,6 +25,7 @@ package discUtils.registry;
 import discUtils.streams.util.EndianUtilities;
 import dotnet4j.security.accessControl.AccessControlSections;
 import dotnet4j.security.accessControl.RegistrySecurity;
+import vavi.util.ByteUtil;
 
 
 public final class SecurityCell extends Cell {
@@ -85,10 +86,10 @@ public final class SecurityCell extends Cell {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        previousIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x04);
-        nextIndex = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x08);
-        usageCount = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x0C);
-        int secDescSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 0x10);
+        previousIndex = ByteUtil.readLeInt(buffer, offset + 0x04);
+        nextIndex = ByteUtil.readLeInt(buffer, offset + 0x08);
+        usageCount = ByteUtil.readLeInt(buffer, offset + 0x0C);
+        int secDescSize = ByteUtil.readLeInt(buffer, offset + 0x10);
         byte[] secDesc = new byte[secDescSize];
         System.arraycopy(buffer, offset + 0x14, secDesc, 0, secDescSize);
         securityDescriptor = new RegistrySecurity();
@@ -99,10 +100,10 @@ public final class SecurityCell extends Cell {
     public void writeTo(byte[] buffer, int offset) {
         byte[] sd = securityDescriptor.getSecurityDescriptorBinaryForm();
         EndianUtilities.stringToBytes("sk", buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian(previousIndex, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(nextIndex, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(usageCount, buffer, offset + 0x0C);
-        EndianUtilities.writeBytesLittleEndian(sd.length, buffer, offset + 0x10);
+        ByteUtil.writeLeInt(previousIndex, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(nextIndex, buffer, offset + 0x08);
+        ByteUtil.writeLeInt(usageCount, buffer, offset + 0x0C);
+        ByteUtil.writeLeInt(sd.length, buffer, offset + 0x10);
         System.arraycopy(sd, 0, buffer, offset + 0x14, sd.length);
     }
 

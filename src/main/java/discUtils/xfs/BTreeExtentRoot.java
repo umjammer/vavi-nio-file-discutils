@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.Map;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class BTreeExtentRoot implements IByteArraySerializable {
@@ -91,17 +91,17 @@ public class BTreeExtentRoot implements IByteArraySerializable {
     }
 
     @Override public int readFrom(byte[] buffer, int offset) {
-        level = EndianUtilities.toUInt16BigEndian(buffer, offset);
-        numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
+        level = ByteUtil.readBeShort(buffer, offset);
+        numberOfRecords = ByteUtil.readBeShort(buffer, offset + 0x2);
         offset += 0x4;
         keys = new long[getNumberOfRecords()];
         pointer = new long[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            keys[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            keys[i] = ByteUtil.readBeLong(buffer, offset + i * 0x8);
         }
         offset += ((buffer.length - offset) / 16) * 8;
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            pointer[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            pointer[i] = ByteUtil.readBeLong(buffer, offset + i * 0x8);
         }
         return size();
     }

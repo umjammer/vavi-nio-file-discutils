@@ -25,7 +25,7 @@ package discUtils.btrfs.base.items;
 import java.nio.charset.StandardCharsets;
 
 import discUtils.btrfs.base.Key;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -94,9 +94,9 @@ public class RootRef extends BaseItem {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setDirectoryId(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setSequence(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
-        setNameLength(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10));
+        setDirectoryId(ByteUtil.readLeLong(buffer, offset));
+        setSequence(ByteUtil.readLeLong(buffer, offset + 0x8));
+        setNameLength(ByteUtil.readLeShort(buffer, offset + 0x10));
         setName(new String(buffer, offset + 0x12, getNameLength(), StandardCharsets.UTF_8));
         return size();
     }

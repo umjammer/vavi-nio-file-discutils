@@ -25,18 +25,17 @@ package libraryTests.squashFs;
 import java.io.File;
 import java.util.EnumSet;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.core.UnixFilePermissions;
 import discUtils.squashFs.SquashFileSystemBuilder;
 import discUtils.squashFs.SquashFileSystemReader;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public final class SquashFileSystemBuilderTest {

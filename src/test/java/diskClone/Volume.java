@@ -22,19 +22,16 @@
 
 package diskClone;
 
-import com.sun.jna.Pointer;
-
 import java.io.Closeable;
 import java.io.IOException;
 
-import dotnet4j.util.compat.StringUtilities;
+import com.sun.jna.Pointer;
 import diskClone.NativeMethods.EIOControlCode;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
-
-import static .escapeForRegex;
+import dotnet4j.util.compat.StringUtilities; .escapeForRegex;
 
 
 public final class Volume implements Closeable {

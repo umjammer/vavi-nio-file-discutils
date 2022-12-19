@@ -25,9 +25,6 @@ package fileRecover;
 import java.io.IOException;
 import java.util.EnumSet;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeInfo;
@@ -47,6 +44,8 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options

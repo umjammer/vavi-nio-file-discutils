@@ -26,6 +26,12 @@ import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 
+import discUtils.core.DiscDirectoryInfo;
+import discUtils.core.DiscFileSystem;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.FileNotFoundException;
+import dotnet4j.io.IOException;
+import dotnet4j.io.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -35,13 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.DiscDirectoryInfo;
-import discUtils.core.DiscFileSystem;
-import dotnet4j.io.FileMode;
-import dotnet4j.io.FileNotFoundException;
-import dotnet4j.io.IOException;
-import dotnet4j.io.Stream;
 
 
 public class DiscFileSystemDirectoryTest {

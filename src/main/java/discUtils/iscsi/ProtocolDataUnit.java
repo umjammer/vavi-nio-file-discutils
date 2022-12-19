@@ -22,9 +22,9 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class ProtocolDataUnit {
@@ -83,7 +83,7 @@ public class ProtocolDataUnit {
 
     private static int readDigest(Stream stream) {
         byte[] data = StreamUtilities.readExact(stream, 4);
-        return EndianUtilities.toUInt32BigEndian(data, 0);
+        return ByteUtil.readBeInt(data, 0);
     }
 
 }

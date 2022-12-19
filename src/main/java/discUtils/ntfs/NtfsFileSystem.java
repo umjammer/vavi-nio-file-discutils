@@ -35,8 +35,6 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-
 import discUtils.core.ClusterMap;
 import discUtils.core.DiscFileSystem;
 import discUtils.core.Geometry;
@@ -65,8 +63,9 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
-import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.security.accessControl.RawSecurityDescriptor;
+import dotnet4j.util.compat.StringUtilities;
+import vavi.util.Debug;
 
 
 /**

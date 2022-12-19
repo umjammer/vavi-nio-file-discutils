@@ -22,7 +22,7 @@
 
 package discUtils.udf;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class MetadataPartitionMap extends PartitionMap {
@@ -48,13 +48,13 @@ public final class MetadataPartitionMap extends PartitionMap {
     }
 
     protected int parse(byte[] buffer, int offset) {
-        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
-        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
-        metadataFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        metadataMirrorFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        metadataBitmapFileLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
-        allocationUnitSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 52);
-        alignmentUnitSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
+        volumeSequenceNumber = ByteUtil.readLeShort(buffer, offset + 36);
+        partitionNumber = ByteUtil.readLeShort(buffer, offset + 38);
+        metadataFileLocation = ByteUtil.readLeInt(buffer, offset + 40);
+        metadataMirrorFileLocation = ByteUtil.readLeInt(buffer, offset + 44);
+        metadataBitmapFileLocation = ByteUtil.readLeInt(buffer, offset + 48);
+        allocationUnitSize = ByteUtil.readLeInt(buffer, offset + 52);
+        alignmentUnitSize = ByteUtil.readLeShort(buffer, offset + 56);
         flags = buffer[offset + 58];
         return 64;
     }

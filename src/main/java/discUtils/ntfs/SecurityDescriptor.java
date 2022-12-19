@@ -27,7 +27,6 @@ import java.util.EnumSet;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.security.accessControl.AccessControlSections;
 import dotnet4j.security.accessControl.AceFlags;
@@ -35,6 +34,7 @@ import dotnet4j.security.accessControl.ControlFlags;
 import dotnet4j.security.accessControl.GenericAce;
 import dotnet4j.security.accessControl.RawAcl;
 import dotnet4j.security.accessControl.RawSecurityDescriptor;
+import vavi.util.ByteUtil;
 
 
 public final class SecurityDescriptor implements IByteArraySerializable, IDiagnosticTraceable {
@@ -72,7 +72,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         EnumSet<ControlFlags> controlFlags = getDescriptor().getControlFlags();
         buffer[offset + 0x00] = 1;
         buffer[offset + 0x01] = (byte) getDescriptor().getResourceManagerControl();
-        EndianUtilities.writeBytesLittleEndian((short) ControlFlags.valueOf(controlFlags), buffer, offset + 0x02);
+        ByteUtil.writeLeShort((short) ControlFlags.valueOf(controlFlags), buffer, offset + 0x02);
 
         // Blank out offsets, will fill later
         for (int i = 0x04; i < 0x14; ++i) {
@@ -83,27 +83,27 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
 
         RawAcl discAcl = getDescriptor().getDiscretionaryAcl();
         if (controlFlags.contains(ControlFlags.DiscretionaryAclPresent) && discAcl != null) {
-            EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x10);
+            ByteUtil.writeLeInt(pos, buffer, offset + 0x10);
             discAcl.getBinaryForm(buffer, offset + pos);
             pos += getDescriptor().getDiscretionaryAcl().getBinaryLength();
         } else {
-            EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x10);
+            ByteUtil.writeLeInt(0, buffer, offset + 0x10);
         }
 
         RawAcl sysAcl = getDescriptor().getSystemAcl();
         if (controlFlags.contains(ControlFlags.SystemAclPresent) && sysAcl != null) {
-            EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x0C);
+            ByteUtil.writeLeInt(pos, buffer, offset + 0x0C);
             sysAcl.getBinaryForm(buffer, offset + pos);
             pos += getDescriptor().getSystemAcl().getBinaryLength();
         } else {
-            EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x0C);
+            ByteUtil.writeLeInt(0, buffer, offset + 0x0C);
         }
 
-        EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(pos, buffer, offset + 0x04);
         getDescriptor().getOwner().getBinaryForm(buffer, offset + pos);
         pos += getDescriptor().getOwner().getBinaryLength();
 
-        EndianUtilities.writeBytesLittleEndian(pos, buffer, offset + 0x08);
+        ByteUtil.writeLeInt(pos, buffer, offset + 0x08);
         getDescriptor().getGroup().getBinaryForm(buffer, offset + pos);
         pos += getDescriptor().getGroup().getBinaryLength();
 
@@ -121,7 +121,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         writeTo(buffer, 0);
         int hash = 0;
         for (int i = 0; i < buffer.length / 4; ++i) {
-            hash = EndianUtilities.toUInt32LittleEndian(buffer, i * 4) + ((hash << 3) | (hash >>> 29));
+            hash = ByteUtil.readLeInt(buffer, i * 4) + ((hash << 3) | (hash >>> 29));
         }
         return hash;
     }

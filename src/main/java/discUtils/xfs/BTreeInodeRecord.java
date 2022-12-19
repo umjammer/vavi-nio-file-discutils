@@ -26,6 +26,7 @@ import java.util.BitSet;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BTreeInodeRecord implements IByteArraySerializable {
@@ -74,8 +75,8 @@ public class BTreeInodeRecord implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        startInode = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        freeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        startInode = ByteUtil.readBeInt(buffer, offset);
+        freeCount = ByteUtil.readBeInt(buffer, offset + 0x4);
         free = BitSet.valueOf(EndianUtilities.toByteArray(buffer, offset + 0x8, 0x8));
         return size();
     }

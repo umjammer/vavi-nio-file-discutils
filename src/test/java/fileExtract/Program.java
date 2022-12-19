@@ -24,9 +24,6 @@ package fileExtract;
 
 import java.io.IOException;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.HexDump;
 import discUtils.common.ProgramBase;
 import discUtils.core.DiscFileSystem;
@@ -39,6 +36,8 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options

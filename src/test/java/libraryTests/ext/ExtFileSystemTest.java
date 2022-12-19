@@ -10,20 +10,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import discUtils.core.DiscFileSystemInfo;
+import discUtils.core.FileSystemParameters;
+import discUtils.core.coreCompat.FileAttributes;
+import discUtils.ext.ExtFileSystem;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
+import libraryTests.helpers.Helpers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.DiscFileSystemInfo;
-import discUtils.core.FileSystemParameters;
-import discUtils.core.coreCompat.FileAttributes;
-import discUtils.ext.ExtFileSystem;
-import libraryTests.helpers.Helpers;
-import dotnet4j.io.FileMode;
-import dotnet4j.io.Stream;
 
 
 public class ExtFileSystemTest {

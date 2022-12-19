@@ -24,14 +24,13 @@ package libraryTests;
 
 import java.util.Map;
 
+import discUtils.core.Plist;
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.JavaIOStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import discUtils.core.Plist;
-import dotnet4j.io.Stream;
-import dotnet4j.io.compat.JavaIOStream;
 
 
 public class PlistTests {

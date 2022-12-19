@@ -24,6 +24,7 @@ package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class CatalogThread implements IByteArraySerializable {
@@ -39,8 +40,8 @@ public final class CatalogThread implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        recordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
-        parentId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
+        recordType = CatalogRecordType.values()[ByteUtil.readBeShort(buffer, offset + 0)];
+        parentId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 4));
         name = HfsPlusUtilities.readUniStr255(buffer, offset + 8);
 
         return 0;

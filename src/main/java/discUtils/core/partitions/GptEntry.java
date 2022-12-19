@@ -25,7 +25,7 @@ package discUtils.core.partitions;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class GptEntry implements Comparable<GptEntry> {
@@ -124,20 +124,20 @@ public class GptEntry implements Comparable<GptEntry> {
     }
 
     public void readFrom(byte[] buffer, int offset) {
-        partitionType = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
-        identity = EndianUtilities.toGuidLittleEndian(buffer, offset + 16);
-        firstUsedLogicalBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 32);
-        lastUsedLogicalBlock = EndianUtilities.toInt64LittleEndian(buffer, offset + 40);
-        attributes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 48);
+        partitionType = ByteUtil.readLeUUID(buffer, offset + 0);
+        identity = ByteUtil.readLeUUID(buffer, offset + 16);
+        firstUsedLogicalBlock = ByteUtil.readLeLong(buffer, offset + 32);
+        lastUsedLogicalBlock = ByteUtil.readLeLong(buffer, offset + 40);
+        attributes = ByteUtil.readLeLong(buffer, offset + 48);
         name = new String(buffer, offset + 56, 72, StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(partitionType, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(identity, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(firstUsedLogicalBlock, buffer, offset + 32);
-        EndianUtilities.writeBytesLittleEndian(lastUsedLogicalBlock, buffer, offset + 40);
-        EndianUtilities.writeBytesLittleEndian(attributes, buffer, offset + 48);
+        ByteUtil.writeLeUUID(partitionType, buffer, offset + 0);
+        ByteUtil.writeLeUUID(identity, buffer, offset + 16);
+        ByteUtil.writeLeLong(firstUsedLogicalBlock, buffer, offset + 32);
+        ByteUtil.writeLeLong(lastUsedLogicalBlock, buffer, offset + 40);
+        ByteUtil.writeLeLong(attributes, buffer, offset + 48);
         System.arraycopy((name + new String(new char[36])).getBytes(StandardCharsets.UTF_16LE), 0, buffer, offset + 56, 36);
     }
 

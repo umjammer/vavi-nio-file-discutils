@@ -25,7 +25,7 @@ package discUtils.xfs;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class BTreeExtentHeader implements IByteArraySerializable {
@@ -87,11 +87,11 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        level = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x4);
-        numberOfRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x6);
-        leftSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0x8);
-        rightSibling = EndianUtilities.toInt32BigEndian(buffer, offset + 0xC);
+        magic = ByteUtil.readBeInt(buffer, offset);
+        level = ByteUtil.readBeShort(buffer, offset + 0x4);
+        numberOfRecords = ByteUtil.readBeShort(buffer, offset + 0x6);
+        leftSibling = ByteUtil.readBeInt(buffer, offset + 0x8);
+        rightSibling = ByteUtil.readBeInt(buffer, offset + 0xC);
         return 24;
     }
 

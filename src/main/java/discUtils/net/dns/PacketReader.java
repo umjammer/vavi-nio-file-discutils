@@ -24,7 +24,7 @@ package discUtils.net.dns;
 
 import java.nio.charset.StandardCharsets;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class PacketReader {
@@ -70,7 +70,7 @@ public final class PacketReader {
                 }
 
                 hasIndirected = true;
-                readPos = EndianUtilities.toUInt16BigEndian(data, readPos) & 0x3FFF;
+                readPos = ByteUtil.readBeShort(data, readPos) & 0x3FFF;
                 break;
 
             default:
@@ -86,13 +86,13 @@ public final class PacketReader {
     }
 
     public short readUShort() {
-        short result = EndianUtilities.toUInt16BigEndian(data, getPosition());
+        short result = ByteUtil.readBeShort(data, getPosition());
         position += 2;
         return result;
     }
 
     public int readInt() {
-        int result = EndianUtilities.toInt32BigEndian(data, getPosition());
+        int result = ByteUtil.readBeShort(data, getPosition());
         position += 4;
         return result;
     }

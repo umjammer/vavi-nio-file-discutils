@@ -22,8 +22,8 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DataOutPacket {
@@ -54,11 +54,11 @@ public class DataOutPacket {
         byte[] buffer = new byte[48 + MathUtilities.roundUp(count, 4)];
         basicHeader.writeTo(buffer, 0);
         buffer[1] = (byte) (isFinalData ? 0x80 : 0x00);
-        EndianUtilities.writeBytesBigEndian(lun, buffer, 8);
-        EndianUtilities.writeBytesBigEndian(targetTransferTag, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(connection.getExpectedStatusSequenceNumber(), buffer, 28);
-        EndianUtilities.writeBytesBigEndian(dataSeqNumber, buffer, 36);
-        EndianUtilities.writeBytesBigEndian(bufferOffset, buffer, 40);
+        ByteUtil.writeBeLong(lun, buffer, 8);
+        ByteUtil.writeBeInt(targetTransferTag, buffer, 20);
+        ByteUtil.writeBeInt(connection.getExpectedStatusSequenceNumber(), buffer, 28);
+        ByteUtil.writeBeInt(dataSeqNumber, buffer, 36);
+        ByteUtil.writeBeInt(bufferOffset, buffer, 40);
         System.arraycopy(data, offset, buffer, 48, count);
         return buffer;
     }

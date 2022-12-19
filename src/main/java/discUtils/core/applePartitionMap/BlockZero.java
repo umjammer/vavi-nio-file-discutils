@@ -23,7 +23,7 @@
 package discUtils.core.applePartitionMap;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class BlockZero implements IByteArraySerializable {
@@ -47,13 +47,13 @@ public final class BlockZero implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        blockSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        blockCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        deviceType = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
-        deviceId = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
-        driverData = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        driverCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
+        signature = ByteUtil.readBeShort(buffer, offset + 0);
+        blockSize = ByteUtil.readBeShort(buffer, offset + 2);
+        blockCount = ByteUtil.readBeInt(buffer, offset + 4);
+        deviceType = ByteUtil.readBeShort(buffer, offset + 8);
+        deviceId = ByteUtil.readBeShort(buffer, offset + 10);
+        driverData = ByteUtil.readBeInt(buffer, offset + 12);
+        driverCount = ByteUtil.readLeShort(buffer, offset + 16);
         return 512;
     }
 

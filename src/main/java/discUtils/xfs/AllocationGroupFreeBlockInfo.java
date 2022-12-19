@@ -26,7 +26,7 @@ package discUtils.xfs;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
@@ -296,28 +296,28 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        version = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
-        sequenceNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8);
-        length = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xC);
+        magic = ByteUtil.readBeInt(buffer, offset);
+        version = ByteUtil.readBeInt(buffer, offset + 0x4);
+        sequenceNumber = ByteUtil.readBeInt(buffer, offset + 0x8);
+        length = ByteUtil.readBeInt(buffer, offset + 0xC);
         rootBlockNumbers = new int[2];
-        rootBlockNumbers[0] = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
-        rootBlockNumbers[1] = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14);
-        spare0 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x18);
+        rootBlockNumbers[0] = ByteUtil.readBeInt(buffer, offset + 0x10);
+        rootBlockNumbers[1] = ByteUtil.readBeInt(buffer, offset + 0x14);
+        spare0 = ByteUtil.readBeInt(buffer, offset + 0x18);
         levels = new int[2];
-        levels[0] = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x1C);
-        levels[1] = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x20);
-        spare1 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x24);
-        freeListFirst = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x28);
-        freeListLast = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x2C);
-        freeListCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x30);
-        freeBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x34);
-        longest = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x38);
-        bTreeBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x3C);
+        levels[0] = ByteUtil.readBeInt(buffer, offset + 0x1C);
+        levels[1] = ByteUtil.readBeInt(buffer, offset + 0x20);
+        spare1 = ByteUtil.readBeInt(buffer, offset + 0x24);
+        freeListFirst = ByteUtil.readBeInt(buffer, offset + 0x28);
+        freeListLast = ByteUtil.readBeInt(buffer, offset + 0x2C);
+        freeListCount = ByteUtil.readBeInt(buffer, offset + 0x30);
+        freeBlocks = ByteUtil.readBeInt(buffer, offset + 0x34);
+        longest = ByteUtil.readBeInt(buffer, offset + 0x38);
+        bTreeBlocks = ByteUtil.readBeInt(buffer, offset + 0x3C);
         if (sbVersion >= 5) {
-            uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x40);
-            lsn = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x50);
-            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x58);
+            uniqueId = ByteUtil.readBeUUID(buffer, offset + 0x40);
+            lsn = ByteUtil.readBeLong(buffer, offset + 0x50);
+            crc = ByteUtil.readBeInt(buffer, offset + 0x58);
         }
 
         return size();

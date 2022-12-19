@@ -27,7 +27,6 @@ import java.util.EnumSet;
 
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
@@ -36,6 +35,7 @@ import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 import dotnet4j.io.compression.DeflateStream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -135,7 +135,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
 
             // This is really a zlib stream, so has header and footer. We ignore
             // this right now, but we sanity check against expected header values...
-            short header = EndianUtilities.toUInt16BigEndian(readBuffer, 0);
+            short header = ByteUtil.readBeShort(readBuffer, 0);
 
             if (header % 31 != 0) {
                 throw new dotnet4j.io.IOException("Invalid ZLib header found");
@@ -183,7 +183,7 @@ public final class HostedSparseExtentStream extends CommonSparseExtentStream {
             fileStream.position(hostedHeader.rgdOffset * Sizes.Sector);
             byte[] gdAsBytes = StreamUtilities.readExact(fileStream, numGTs * 4);
             for (int i = 0; i < globalDirectory.length; ++i) {
-                redundantGlobalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
+                redundantGlobalDirectory[i] = ByteUtil.readLeInt(gdAsBytes, i * 4);
             }
         }
     }

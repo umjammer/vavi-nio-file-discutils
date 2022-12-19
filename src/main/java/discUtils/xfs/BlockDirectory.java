@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockDirectory implements IByteArraySerializable {
@@ -90,7 +90,7 @@ public class BlockDirectory implements IByteArraySerializable {
     }
 
     protected int readHeader(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.toUInt32BigEndian(buffer, offset));
+        setMagic(ByteUtil.readBeInt(buffer, offset));
         return 0x4;
     }
 
@@ -115,8 +115,8 @@ public class BlockDirectory implements IByteArraySerializable {
             getBestFree()[i] = free;
         }
         offset += getHeaderPadding();
-        leafStale = EndianUtilities.toUInt32BigEndian(buffer, buffer.length - 0x4);
-        leafCount = EndianUtilities.toUInt32BigEndian(buffer, buffer.length - 0x8);
+        leafStale = ByteUtil.readBeInt(buffer, buffer.length - 0x4);
+        leafCount = ByteUtil.readBeInt(buffer, buffer.length - 0x8);
         List<BlockDirectoryData> entries = new ArrayList<>();
         long eof = buffer.length - 0x8 - getLeafCount() * 0x8L;
         while (offset < eof) {

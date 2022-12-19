@@ -22,11 +22,12 @@
 
 package discUtils.lvm;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class VolumeGroupMetadata implements IByteArraySerializable {
@@ -64,12 +65,12 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
      *
      */
     public int readFrom(byte[] buffer, int offset) {
-        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+        crc = ByteUtil.readLeInt(buffer, offset);
         calculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x4, PhysicalVolume.SECTOR_SIZE - 0x4);
-        magic = EndianUtilities.bytesToString(buffer, offset + 0x4, 0x10);
-        version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
-        start = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
-        length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
+        magic = new String(buffer, offset + 0x4, 0x10, StandardCharsets.US_ASCII);
+        version = ByteUtil.readLeInt(buffer, offset + 0x14);
+        start = ByteUtil.readLeLong(buffer, offset + 0x18);
+        length = ByteUtil.readLeLong(buffer, offset + 0x20);
         List<RawLocation> locations = new ArrayList<>();
         int locationOffset = offset + 0x28;
         while (true) {
@@ -89,7 +90,7 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
             if (location.checksum != checksum)
                 throw new dotnet4j.io.IOException("invalid metadata checksum");
 
-            metadata = EndianUtilities.bytesToString(buffer, (int) location.offset, (int) location.length);
+            metadata = new String(buffer, (int) location.offset, (int) location.length, StandardCharsets.US_ASCII);
             parsedMetadata = Metadata.parse(metadata);
             break;
         }

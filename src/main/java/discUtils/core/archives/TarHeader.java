@@ -22,6 +22,7 @@
 
 package discUtils.core.archives;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 
@@ -73,7 +74,7 @@ public final class TarHeader {
     }
 
     private static String readNullTerminatedString(byte[] buffer, int offset, int length) {
-        return EndianUtilities.bytesToString(buffer, offset, length).replaceFirst("\0*$", "");
+        return new String(buffer, offset, length, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
     }
 
     private static long octalToLong(String value) {

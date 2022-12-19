@@ -31,6 +31,7 @@ import discUtils.streams.buffer.IBuffer;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.MemoryStream;
+import vavi.util.ByteUtil;
 
 
 public class Inode implements IByteArraySerializable {
@@ -98,17 +99,17 @@ public class Inode implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        mode = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
-        userIdLow = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        accessTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        creationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
-        modificationTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        deletionTime = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        groupIdLow = EndianUtilities.toUInt16LittleEndian(buffer, offset + 24);
-        linksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 26);
-        blocksCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
-        flags = InodeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 32));
+        mode = ByteUtil.readLeShort(buffer, offset + 0);
+        userIdLow = ByteUtil.readLeShort(buffer, offset + 2);
+        fileSize = ByteUtil.readLeInt(buffer, offset + 4);
+        accessTime = ByteUtil.readLeInt(buffer, offset + 8);
+        creationTime = ByteUtil.readLeInt(buffer, offset + 12);
+        modificationTime = ByteUtil.readLeInt(buffer, offset + 16);
+        deletionTime = ByteUtil.readLeInt(buffer, offset + 20);
+        groupIdLow = ByteUtil.readLeShort(buffer, offset + 24);
+        linksCount = ByteUtil.readLeShort(buffer, offset + 26);
+        blocksCount = ByteUtil.readLeInt(buffer, offset + 28);
+        flags = InodeFlags.valueOf(ByteUtil.readLeInt(buffer, offset + 32));
 
         fastSymlink = null;
         extents = null;
@@ -121,22 +122,22 @@ public class Inode implements IByteArraySerializable {
         } else {
             directBlocks = new int[12];
             for (int i = 0; i < 12; ++i) {
-                directBlocks[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40 + i * 4);
+                directBlocks[i] = ByteUtil.readLeInt(buffer, offset + 40 + i * 4);
             }
 
-            indirectBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 88);
-            doubleIndirectBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 92);
-            tripleIndirectBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 96);
+            indirectBlock = ByteUtil.readLeInt(buffer, offset + 88);
+            doubleIndirectBlock = ByteUtil.readLeInt(buffer, offset + 92);
+            tripleIndirectBlock = ByteUtil.readLeInt(buffer, offset + 96);
         }
 
-        fileVersion = EndianUtilities.toUInt32LittleEndian(buffer, offset + 100);
-        fileAcl = EndianUtilities.toUInt32LittleEndian(buffer, offset + 104);
-        dirAcl = EndianUtilities.toUInt32LittleEndian(buffer, offset + 108);
-        fragAddress = EndianUtilities.toUInt32LittleEndian(buffer, offset + 112);
+        fileVersion = ByteUtil.readLeInt(buffer, offset + 100);
+        fileAcl = ByteUtil.readLeInt(buffer, offset + 104);
+        dirAcl = ByteUtil.readLeInt(buffer, offset + 108);
+        fragAddress = ByteUtil.readLeInt(buffer, offset + 112);
         fragment = buffer[offset + 116];
         fragmentSize = buffer[offset + 117];
-        userIdHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 120);
-        groupIdHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 122);
+        userIdHigh = ByteUtil.readLeShort(buffer, offset + 120);
+        groupIdHigh = ByteUtil.readLeShort(buffer, offset + 122);
 
         return 128;
     }

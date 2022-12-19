@@ -27,6 +27,7 @@ import java.time.ZoneId;
 import discUtils.core.UnixFileSystemInfo;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 abstract class CommonCatalogFileInfo implements IByteArraySerializable {
@@ -52,8 +53,8 @@ abstract class CommonCatalogFileInfo implements IByteArraySerializable {
     public abstract int size();
 
     public int readFrom(byte[] buffer, int offset) {
-        recordType = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(buffer, offset + 0)];
-        fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 8));
+        recordType = CatalogRecordType.values()[ByteUtil.readBeShort(buffer, offset + 0)];
+        fileId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 8));
         createTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 12);
         contentModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 16);
         attributeModifyTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);

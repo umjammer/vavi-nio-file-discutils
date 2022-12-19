@@ -22,7 +22,7 @@
 
 package discUtils.bootConfig;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class IntegerElementValue extends ElementValue {
@@ -33,7 +33,7 @@ public class IntegerElementValue extends ElementValue {
         // Actual bytes stored may be less than 8
         byte[] buffer = new byte[8];
         System.arraycopy(value, 0, buffer, 0, value.length);
-        this.value = EndianUtilities.toUInt64LittleEndian(buffer, 0);
+        this.value = ByteUtil.readLeLong(buffer, 0);
     }
 
     public IntegerElementValue(long value) {
@@ -50,7 +50,7 @@ public class IntegerElementValue extends ElementValue {
 
     public byte[] getBytes() {
         byte[] bytes = new byte[8];
-        EndianUtilities.writeBytesLittleEndian(value, bytes, 0);
+        ByteUtil.writeLeLong(value, bytes, 0);
         return bytes;
     }
 }

@@ -24,7 +24,7 @@ package discUtils.wim;
 
 import java.util.EnumSet;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ShortResourceHeader {
@@ -40,10 +40,10 @@ public class ShortResourceHeader {
     public long originalSize;
 
     public void read(byte[] buffer, int offset) {
-        compressedSize = EndianUtilities.toInt64LittleEndian(buffer, offset);
+        compressedSize = ByteUtil.readLeLong(buffer, offset);
         flags = ResourceFlags.valueOf((int) (compressedSize >>> 56) & 0xFF);
         compressedSize = compressedSize & 0x00FF_FFFF_FFFF_FFFFL;
-        fileOffset = EndianUtilities.toInt64LittleEndian(buffer, offset + 8);
-        originalSize = EndianUtilities.toInt64LittleEndian(buffer, offset + 16);
+        fileOffset = ByteUtil.readLeLong(buffer, offset + 8);
+        originalSize = ByteUtil.readLeLong(buffer, offset + 16);
     }
 }

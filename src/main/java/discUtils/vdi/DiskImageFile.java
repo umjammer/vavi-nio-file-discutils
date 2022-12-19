@@ -33,9 +33,9 @@ import discUtils.core.FileLocator;
 import discUtils.core.Geometry;
 import discUtils.core.VirtualDiskLayer;
 import discUtils.streams.SparseStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -138,7 +138,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         HeaderRecord header = HeaderRecord.initialized(ImageType.Fixed, ImageFlags.None, capacity, 1024 * 1024, 0);
         byte[] blockTable = new byte[header.blockCount * 4];
         for (int i = 0; i < header.blockCount; ++i) {
-            EndianUtilities.writeBytesLittleEndian(i, blockTable, i * 4);
+            ByteUtil.writeLeInt(i, blockTable, i * 4);
         }
         header.blocksAllocated = header.blockCount;
         stream.position(0);

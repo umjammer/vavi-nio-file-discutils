@@ -22,10 +22,6 @@
 
 package libraryTests.partitions;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.core.Geometry;
 import discUtils.core.partitions.BiosPartitionTable;
 import discUtils.core.partitions.BiosPartitionedDiskBuilder;
@@ -34,6 +30,9 @@ import discUtils.streams.SparseStream;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class BiosPartitionedDiskBuilderTest {

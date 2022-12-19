@@ -4,11 +4,10 @@ package libraryTests.utilities;
 
 import java.io.File;
 
+import discUtils.core.internal.Utilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import discUtils.core.internal.Utilities;
 
 
 public class UtilitiesTests {

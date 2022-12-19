@@ -22,12 +22,11 @@
 
 package libraryTests;
 
+import discUtils.core.FileSystemManager;
+import dotnet4j.io.MemoryStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import discUtils.core.FileSystemManager;
-import dotnet4j.io.MemoryStream;
 
 public final class FileSystemManagerTest {
     @Test

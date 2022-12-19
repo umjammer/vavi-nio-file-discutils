@@ -29,6 +29,7 @@ import java.util.stream.IntStream;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class SwapHeader implements IByteArraySerializable {
@@ -106,14 +107,14 @@ public class SwapHeader implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        setMagic(EndianUtilities.bytesToString(buffer, PageSize - 10, 10));
+        setMagic(new String(buffer, PageSize - 10, 10, StandardCharsets.US_ASCII));
         if (!getMagic().equals(Magic1) && !getMagic().equals(Magic2))
             return size();
 
-        version = EndianUtilities.toUInt32LittleEndian(buffer, 0x400);
-        lastPage = EndianUtilities.toUInt32LittleEndian(buffer, 0x404);
-        badPages = EndianUtilities.toUInt32LittleEndian(buffer, 0x408);
-        uuid = EndianUtilities.toGuidLittleEndian(buffer, 0x40c);
+        version = ByteUtil.readLeInt(buffer, 0x400);
+        lastPage = ByteUtil.readLeInt(buffer, 0x404);
+        badPages = ByteUtil.readLeInt(buffer, 0x408);
+        uuid = ByteUtil.readLeUUID(buffer, 0x40c);
         byte[] volume = EndianUtilities.toByteArray(buffer, 0x41c, 16);
         OptionalInt nullIndex = IntStream.range(0, volume.length).filter(i -> volume[i] == (byte) 0).findFirst();
         if (nullIndex.isPresent())

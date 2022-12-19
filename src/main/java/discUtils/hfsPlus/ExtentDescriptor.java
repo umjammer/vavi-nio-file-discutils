@@ -23,7 +23,7 @@
 package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ExtentDescriptor implements IByteArraySerializable {
@@ -37,8 +37,8 @@ public final class ExtentDescriptor implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        blockCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        startBlock = ByteUtil.readBeInt(buffer, offset + 0);
+        blockCount = ByteUtil.readBeInt(buffer, offset + 4);
 
         return 8;
     }

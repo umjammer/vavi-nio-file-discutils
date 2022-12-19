@@ -8,7 +8,6 @@ package discUtils.core.pc98;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.logging.Level;
 
 import discUtils.core.DiscFileSystem;

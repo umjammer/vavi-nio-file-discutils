@@ -22,12 +22,14 @@
 
 package discUtils.registry;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class SubKeyIndirectListCell extends ListCell {
@@ -77,20 +79,20 @@ final class SubKeyIndirectListCell extends ListCell {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        listType = EndianUtilities.bytesToString(buffer, offset, 2);
-        int numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
+        listType = new String(buffer, offset, 2, StandardCharsets.US_ASCII);
+        int numElements = ByteUtil.readLeShort(buffer, offset + 2);
         cellIndexes = new ArrayList<>(numElements);
         for (int i = 0; i < numElements; ++i) {
-            cellIndexes.add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x4));
+            cellIndexes.add(ByteUtil.readLeInt(buffer, offset + 0x4 + i * 0x4));
         }
         return 4 + cellIndexes.size() * 4;
     }
 
     public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(listType, buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian((short) cellIndexes.size(), buffer, offset + 2);
+        ByteUtil.writeLeShort((short) cellIndexes.size(), buffer, offset + 2);
         for (int i = 0; i < cellIndexes.size(); ++i) {
-            EndianUtilities.writeBytesLittleEndian(cellIndexes.get(i), buffer, offset + 4 + i * 4);
+            ByteUtil.writeLeInt(cellIndexes.get(i), buffer, offset + 4 + i * 4);
         }
     }
 

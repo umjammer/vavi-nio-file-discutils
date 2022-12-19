@@ -24,17 +24,16 @@ package libraryTests.iso9660;
 
 import java.io.File;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import discUtils.iso9660.BootDeviceEmulation;
 import discUtils.iso9660.CDBuilder;
 import discUtils.iso9660.CDReader;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class BuilderTest {

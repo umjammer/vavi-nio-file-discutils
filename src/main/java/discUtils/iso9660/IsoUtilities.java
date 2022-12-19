@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 
 import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
+import vavi.util.ByteUtil;
 
 
 public class IsoUtilities {
@@ -43,29 +44,29 @@ public class IsoUtilities {
     public static final int SectorSize = 2048;
 
     public static int toUInt32FromBoth(byte[] data, int offset) {
-        return EndianUtilities.toUInt32LittleEndian(data, offset);
+        return ByteUtil.readLeInt(data, offset);
     }
 
     static short toUInt16FromBoth(byte[] data, int offset) {
-        return EndianUtilities.toUInt16LittleEndian(data, offset);
+        return ByteUtil.readLeShort(data, offset);
     }
 
     static void toBothFromUInt32(byte[] buffer, int offset, int value) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
-        EndianUtilities.writeBytesBigEndian(value, buffer, offset + 4);
+        ByteUtil.writeLeInt(value, buffer, offset);
+        ByteUtil.writeBeInt(value, buffer, offset + 4);
     }
 
     static void toBothFromUInt16(byte[] buffer, int offset, short value) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
-        EndianUtilities.writeBytesBigEndian(value, buffer, offset + 2);
+        ByteUtil.writeLeShort(value, buffer, offset);
+        ByteUtil.writeBeInt(value, buffer, offset + 2);
     }
 
     static void toBytesFromUInt32(byte[] buffer, int offset, int value) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
+        ByteUtil.writeLeInt(value, buffer, offset);
     }
 
     static void toBytesFromUInt16(byte[] buffer, int offset, short value) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
+        ByteUtil.writeLeShort(value, buffer, offset);
     }
 
     static void writeAChars(byte[] buffer, int offset, int numBytes, String str) {

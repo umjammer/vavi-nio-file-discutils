@@ -29,8 +29,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 import discUtils.core.internal.Utilities;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.IOException;
+import dotnet4j.util.compat.Tuple;
 
 
 public class Directory extends File {

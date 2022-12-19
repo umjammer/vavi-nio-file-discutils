@@ -31,11 +31,11 @@ import discUtils.core.Geometry;
 import discUtils.core.InvalidFileSystemException;
 import discUtils.core.ReportLevels;
 import discUtils.core.internal.Utilities;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -125,7 +125,7 @@ public class FileChecker {
         byte[] batData = StreamUtilities.readExact(fileStream, batSize);
         int[] bat = new int[batSize / 4];
         for (int i = 0; i < bat.length; ++i) {
-            bat[i] = EndianUtilities.toUInt32BigEndian(batData, i * 4);
+            bat[i] = ByteUtil.readBeInt(batData, i * 4);
         }
         for (int i = dynamicHeader.maxTableEntries; i < bat.length; ++i) {
             if (bat[i] != 0xffffffff) {

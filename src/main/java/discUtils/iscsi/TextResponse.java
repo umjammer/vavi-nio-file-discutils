@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class TextResponse extends BaseResponse {
@@ -48,11 +48,11 @@ public class TextResponse extends BaseResponse {
         }
 
         continue_ = (headerData[headerOffset + 1] & 0x40) != 0;
-        lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
-        targetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
-        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        lun = ByteUtil.readBeLong(headerData, headerOffset + 8);
+        targetTransferTag = ByteUtil.readBeInt(headerData, headerOffset + 20);
+        statusSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 32);
         textData = bodyData;
     }
 }

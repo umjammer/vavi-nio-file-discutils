@@ -6,16 +6,15 @@ import java.io.File;
 import java.net.URI;
 import java.util.List;
 
+import discUtils.core.DiscDirectoryInfo;
+import discUtils.core.DiscFileInfo;
+import discUtils.iso9660.CDReader;
+import dotnet4j.io.Stream;
+import libraryTests.utilities.ZipUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import discUtils.core.DiscDirectoryInfo;
-import discUtils.core.DiscFileInfo;
-import discUtils.iso9660.CDReader;
-import libraryTests.utilities.ZipUtilities;
-import dotnet4j.io.Stream;
 
 
 public class SampleDataTests {

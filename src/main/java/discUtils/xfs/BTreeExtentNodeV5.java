@@ -27,10 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
@@ -77,11 +77,11 @@ public class BTreeExtentNodeV5 extends BTreeExtentHeaderV5 {
         keys = new long[getNumberOfRecords()];
         pointer = new long[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            getKeys()[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            getKeys()[i] = ByteUtil.readBeLong(buffer, offset + i * 0x8);
         }
         offset += ((buffer.length - offset) / 16) * 8;
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            pointer[i] = EndianUtilities.toUInt64BigEndian(buffer, offset + i * 0x8);
+            pointer[i] = ByteUtil.readBeLong(buffer, offset + i * 0x8);
         }
         return size();
     }

@@ -25,7 +25,8 @@ package discUtils.btrfs.base;
 import java.time.Instant;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
+
 
 public class TimeSpec implements IByteArraySerializable {
 
@@ -70,8 +71,8 @@ public class TimeSpec implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        seconds = EndianUtilities.toInt64LittleEndian(buffer, offset);
-        nanoseconds = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8);
+        seconds = ByteUtil.readLeLong(buffer, offset);
+        nanoseconds = ByteUtil.readLeInt(buffer, offset + 0x8);
         return size();
     }
 

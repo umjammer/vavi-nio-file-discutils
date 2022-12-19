@@ -27,7 +27,7 @@ import java.util.EnumSet;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class VolumeInformation implements IByteArraySerializable, IDiagnosticTraceable {
@@ -72,15 +72,15 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
     public int readFrom(byte[] buffer, int offset) {
         majorVersion = buffer[offset + 0x08];
         minorVersion = buffer[offset + 0x09];
-        setFlags(VolumeInformationFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0a)));
+        setFlags(VolumeInformationFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x0a)));
         return 0x0c;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian((long) 0, buffer, offset + 0x00);
+        ByteUtil.writeLeLong((long) 0, buffer, offset + 0x00);
         buffer[offset + 0x08] = majorVersion;
         buffer[offset + 0x09] = minorVersion;
-        EndianUtilities.writeBytesLittleEndian((short) VolumeInformationFlags.valueOf(getFlags()), buffer, offset + 0x0a);
+        ByteUtil.writeLeShort((short) VolumeInformationFlags.valueOf(getFlags()), buffer, offset + 0x0a);
     }
 
     public void dump(PrintWriter writer, String indent) {

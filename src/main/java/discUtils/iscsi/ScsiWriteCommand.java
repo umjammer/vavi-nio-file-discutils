@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiWriteCommand extends ScsiCommand {
@@ -56,9 +56,9 @@ public class ScsiWriteCommand extends ScsiCommand {
     public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = 0x2A;
         buffer[offset + 1] = 0;
-        EndianUtilities.writeBytesBigEndian(logicalBlockAddress, buffer, offset + 2);
+        ByteUtil.writeBeInt(logicalBlockAddress, buffer, offset + 2);
         buffer[offset + 6] = 0;
-        EndianUtilities.writeBytesBigEndian(numBlocks, buffer, offset + 7);
+        ByteUtil.writeBeShort(numBlocks, buffer, offset + 7);
         buffer[offset + 9] = 0;
     }
 }

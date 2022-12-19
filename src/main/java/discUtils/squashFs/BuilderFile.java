@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.core.internal.LocalFileLocator;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class BuilderFile extends BuilderNode {
@@ -130,7 +130,7 @@ public final class BuilderFile extends BuilderNode {
         inode.writeTo(context.getIoBuffer(), 0);
         if (lengths != null && lengths.size() > 0) {
             for (int i = 0; i < lengths.size(); ++i) {
-                EndianUtilities.writeBytesLittleEndian(lengths.get(i), context.getIoBuffer(), inode.size() + i * 4);
+                ByteUtil.writeLeInt(lengths.get(i), context.getIoBuffer(), inode.size() + i * 4);
             }
             totalSize += lengths.size() * 4;
         }

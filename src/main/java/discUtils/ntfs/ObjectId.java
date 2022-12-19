@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ObjectId implements IByteArraySerializable, IDiagnosticTraceable {
@@ -38,12 +38,12 @@ public final class ObjectId implements IByteArraySerializable, IDiagnosticTracea
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        Id = EndianUtilities.toGuidLittleEndian(buffer, offset);
+        Id = ByteUtil.readLeUUID(buffer, offset);
         return 16;
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(Id, buffer, offset);
+        ByteUtil.writeLeUUID(Id, buffer, offset);
     }
 
     public void dump(PrintWriter writer, String indent) {

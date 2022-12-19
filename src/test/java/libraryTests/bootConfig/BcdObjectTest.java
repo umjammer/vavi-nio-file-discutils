@@ -22,13 +22,6 @@
 
 package libraryTests.bootConfig;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.bootConfig.BcdObject;
 import discUtils.bootConfig.ElementValue;
 import discUtils.bootConfig.InheritType;
@@ -36,6 +29,12 @@ import discUtils.bootConfig.Store;
 import discUtils.bootConfig.WellKnownElement;
 import discUtils.registry.RegistryHive;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BcdObjectTest {
 

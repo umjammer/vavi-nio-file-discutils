@@ -24,7 +24,6 @@ package discUtils.vmdk;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -32,13 +31,13 @@ import discUtils.core.internal.ObjectCache;
 import discUtils.streams.MappedStream;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public abstract class CommonSparseExtentStream extends MappedStream {
@@ -296,11 +295,11 @@ public abstract class CommonSparseExtentStream extends MappedStream {
     }
 
     protected int getGrainTableEntry(int grain) {
-        return EndianUtilities.toUInt32LittleEndian(grainTable, grain * 4);
+        return ByteUtil.readLeInt(grainTable, grain * 4);
     }
 
     protected void setGrainTableEntry(int grain, int value) {
-        EndianUtilities.writeBytesLittleEndian(value, grainTable, grain * 4);
+        ByteUtil.writeLeInt(value, grainTable, grain * 4);
     }
 
     protected int readGrain(byte[] buffer,
@@ -323,7 +322,7 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         fileStream.position(header.gdOffset * Sizes.Sector);
         byte[] gdAsBytes = StreamUtilities.readExact(fileStream, numGTs * 4);
         for (int i = 0; i < globalDirectory.length; ++i) {
-            globalDirectory[i] = EndianUtilities.toUInt32LittleEndian(gdAsBytes, i * 4);
+            globalDirectory[i] = ByteUtil.readLeInt(gdAsBytes, i * 4);
         }
     }
 

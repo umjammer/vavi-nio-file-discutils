@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.UUID;
 
 import discUtils.core.Geometry;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
 import dotnet4j.io.Stream;
 import dotnet4j.io.StreamReader;
+import vavi.util.ByteUtil;
 
 
 public class DescriptorFile {
@@ -313,7 +313,7 @@ public class DescriptorFile {
 
     private static String formatUuid(UUID value) {
         byte[] data = new byte[16];
-        EndianUtilities.writeBytesLittleEndian(value, data, 0);
+        ByteUtil.writeLeUUID(value, data, 0);
         return String.format("%02x %02x %02x %02x %02x %02x %02x %02x-%02x %02x %02x %02x %02x %02x %02x %02x",
                              data[0],
                              data[1],

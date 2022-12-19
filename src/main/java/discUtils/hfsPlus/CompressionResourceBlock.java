@@ -22,7 +22,7 @@
 
 package discUtils.hfsPlus;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class CompressionResourceBlock {
@@ -52,8 +52,8 @@ class CompressionResourceBlock {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        this.offset = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        dataSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        this.offset = ByteUtil.readLeInt(buffer, offset);
+        dataSize = ByteUtil.readLeInt(buffer, offset + 4);
 
         return getSize();
     }

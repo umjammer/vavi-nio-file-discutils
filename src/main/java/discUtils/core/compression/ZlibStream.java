@@ -24,12 +24,12 @@ package discUtils.core.compression;
 
 import java.io.IOException;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 import dotnet4j.io.compression.DeflateStream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -65,7 +65,7 @@ public class ZlibStream extends Stream {
 //        if (mode == CompressionMode.Decompress) {
 //            // We just sanity check against expected header values...
 //            byte[] headerBuffer = StreamUtilities.readExact(stream, 2);
-//            short header = EndianUtilities.toUInt16BigEndian(headerBuffer, 0);
+//            short header = ByteUtil.readBeShort(headerBuffer, 0);
 //            if (header % 31 != 0) {
 //                throw new dotnet4j.io.IOException("Invalid Zlib header found");
 //            }
@@ -84,7 +84,7 @@ public class ZlibStream extends Stream {
 //            header |= (short) (31 - header % 31);
 //
 //            byte[] headerBuffer = new byte[2];
-//            EndianUtilities.writeBytesBigEndian(header, headerBuffer, 0);
+//            ByteUtil.writeBeInt(header, headerBuffer, 0);
 //            stream.write(headerBuffer, 0, 2);
 //        }
 
@@ -142,8 +142,8 @@ public class ZlibStream extends Stream {
             if (stream.canSeek()) {
                 stream.seek(-4, SeekOrigin.End);
                 byte[] footerBuffer = StreamUtilities.readExact(stream, 4);
-                if (EndianUtilities.toInt32BigEndian(footerBuffer, 0) != adler32.getValue()) {
-//Debug.printf("R: %08x, %08x\n", EndianUtilities.toInt32BigEndian(footerBuffer, 0), adler32.getValue());
+                if (ByteUtil.readBeInt(footerBuffer, 0) != adler32.getValue()) {
+//Debug.printf("R: %08x, %08x\n", ByteUtil.readBeInt(footerBuffer, 0), adler32.getValue());
                     throw new dotnet4j.io.IOException("Corrupt decompressed data detected");
                 }
             }
@@ -153,7 +153,7 @@ public class ZlibStream extends Stream {
             deflateStream.close();
 
             byte[] footerBuffer = new byte[4];
-            EndianUtilities.writeBytesBigEndian(adler32.getValue(), footerBuffer, 0);
+            ByteUtil.writeBeInt(adler32.getValue(), footerBuffer, 0);
 //Debug.printf("W: %08x, %s\n", adler32.getValue(), stream);
             stream.write(footerBuffer, 0, 4);
         }

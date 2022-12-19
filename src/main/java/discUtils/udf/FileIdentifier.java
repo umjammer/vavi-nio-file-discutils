@@ -29,6 +29,7 @@ import discUtils.core.vfs.VfsDirEntry;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileIdentifier extends VfsDirEntry implements IByteArraySerializable {
@@ -99,11 +100,11 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
 
     public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
-        fileVersionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
+        fileVersionNumber = ByteUtil.readLeShort(buffer, offset + 16);
         fileCharacteristics = FileCharacteristic.valueOf(buffer[offset + 18]);
         nameLength = buffer[offset + 19];
         fileLocation = EndianUtilities.toStruct(LongAllocationDescriptor.class, buffer, offset + 20);
-        implementationUseLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
+        implementationUseLength = ByteUtil.readLeShort(buffer, offset + 36);
         implementationUse = EndianUtilities.toByteArray(buffer, offset + 38, implementationUseLength);
         name = UdfUtilities.readDCharacters(buffer, offset + 38 + implementationUseLength, getNameLength());
         return MathUtilities.roundUp(38 + implementationUseLength + getNameLength(), 4);

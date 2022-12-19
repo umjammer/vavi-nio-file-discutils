@@ -22,7 +22,7 @@
 
 package discUtils.ntfs;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class IndexHeader {
@@ -42,16 +42,16 @@ public class IndexHeader {
     }
 
     public IndexHeader(byte[] data, int offset) {
-        offsetToFirstEntry = EndianUtilities.toUInt32LittleEndian(data, offset + 0x00);
-        totalSizeOfEntries = EndianUtilities.toUInt32LittleEndian(data, offset + 0x04);
-        allocatedSizeOfEntries = EndianUtilities.toUInt32LittleEndian(data, offset + 0x08);
+        offsetToFirstEntry = ByteUtil.readLeInt(data, offset + 0x00);
+        totalSizeOfEntries = ByteUtil.readLeInt(data, offset + 0x04);
+        allocatedSizeOfEntries = ByteUtil.readLeInt(data, offset + 0x08);
         hasChildNodes = data[offset + 0x0C];
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(offsetToFirstEntry, buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(totalSizeOfEntries, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(allocatedSizeOfEntries, buffer, offset + 0x08);
+        ByteUtil.writeLeInt(offsetToFirstEntry, buffer, offset + 0x00);
+        ByteUtil.writeLeInt(totalSizeOfEntries, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(allocatedSizeOfEntries, buffer, offset + 0x08);
         buffer[offset + 0x0C] = hasChildNodes;
         buffer[offset + 0x0D] = 0;
         buffer[offset + 0x0E] = 0;

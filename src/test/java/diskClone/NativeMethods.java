@@ -28,7 +28,6 @@ package diskClone;
 
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
-
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;

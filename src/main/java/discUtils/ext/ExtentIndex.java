@@ -23,7 +23,7 @@
 package discUtils.ext;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ExtentIndex implements IByteArraySerializable {
@@ -51,9 +51,9 @@ public class ExtentIndex implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        firstLogicalBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        leafPhysicalBlockLo = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        leafPhysicalBlockHi = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
+        firstLogicalBlock = ByteUtil.readLeInt(buffer, offset + 0);
+        leafPhysicalBlockLo = ByteUtil.readLeInt(buffer, offset + 4);
+        leafPhysicalBlockHi = ByteUtil.readLeShort(buffer, offset + 8);
         return 12;
     }
 

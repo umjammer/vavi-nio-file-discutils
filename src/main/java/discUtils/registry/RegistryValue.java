@@ -24,7 +24,7 @@ package discUtils.registry;
 
 import java.nio.charset.StandardCharsets;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -84,7 +84,7 @@ public final class RegistryValue {
         if (cell.getDataLength() < 0) {
             int len = cell.getDataLength() & 0x7FFFFFFF;
             byte[] buffer = new byte[4];
-            EndianUtilities.writeBytesLittleEndian(cell.getDataIndex(), buffer, 0);
+            ByteUtil.writeLeInt(cell.getDataIndex(), buffer, 0);
             byte[] result = new byte[len];
             System.arraycopy(buffer, 0, result, 0, len);
             return result;
@@ -112,7 +112,7 @@ public final class RegistryValue {
             }
 
             cell.setDataLength(count | 0x80000000);
-            cell.setDataIndex(EndianUtilities.toInt32LittleEndian(data, offset));
+            cell.setDataIndex(ByteUtil.readLeInt(data, offset));
             cell.setDataType(valueType);
         } else {
             if (cell.getDataIndex() == -1 || cell.getDataLength() < 0) {
@@ -171,14 +171,14 @@ public final class RegistryValue {
         case Link:
             return new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
         case Dword:
-            return EndianUtilities.toInt32LittleEndian(data, 0);
+            return ByteUtil.readLeInt(data, 0);
         case DwordBigEndian:
-            return EndianUtilities.toInt32BigEndian(data, 0);
+            return ByteUtil.readBeInt(data, 0);
         case MultiString:
             String multiString = new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
             return multiString.split("\0");
         case QWord:
-            return "" + EndianUtilities.toUInt64LittleEndian(data, 0);
+            return "" + ByteUtil.readLeLong(data, 0);
         default:
             return data;
         }
@@ -198,11 +198,11 @@ public final class RegistryValue {
             break;
         case Dword:
             data = new byte[4];
-            EndianUtilities.writeBytesLittleEndian((Integer) value, data, 0);
+            ByteUtil.writeLeInt((int) value, data, 0);
             break;
         case DwordBigEndian:
             data = new byte[4];
-            EndianUtilities.writeBytesBigEndian((Integer) value, data, 0);
+            ByteUtil.writeBeInt((int) value, data, 0);
             break;
         case MultiString:
             String multiStrValue = String.join("\0", (String[]) value) + "\0";

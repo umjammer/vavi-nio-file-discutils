@@ -25,7 +25,7 @@ package discUtils.net.dns;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class PacketWriter {
@@ -57,7 +57,7 @@ public final class PacketWriter {
     }
 
     public void write(short val) {
-        EndianUtilities.writeBytesBigEndian(val, data, pos);
+        ByteUtil.writeBeShort(val, data, pos);
         pos += 2;
     }
 

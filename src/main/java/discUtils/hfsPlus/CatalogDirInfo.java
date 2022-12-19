@@ -22,7 +22,7 @@
 
 package discUtils.hfsPlus;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class CatalogDirInfo extends CommonCatalogFileInfo {
@@ -38,8 +38,8 @@ final class CatalogDirInfo extends CommonCatalogFileInfo {
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
 
-        flags = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        valence = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+        flags = ByteUtil.readBeShort(buffer, offset + 2);
+        valence = ByteUtil.readBeInt(buffer, offset + 4);
 
         return 0;
     }

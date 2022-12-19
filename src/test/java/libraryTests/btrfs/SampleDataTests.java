@@ -10,11 +10,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.btrfs.BtrfsFileSystem;
 import discUtils.btrfs.BtrfsFileSystemOptions;
 import discUtils.btrfs.Subvolume;
@@ -29,10 +24,14 @@ import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.vhdx.Disk;
 import discUtils.vhdx.DiskImageFile;
-import libraryTests.utilities.ZipUtilities;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.StreamReader;
+import libraryTests.utilities.ZipUtilities;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class SampleDataTests {

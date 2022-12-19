@@ -32,12 +32,12 @@ import discUtils.streams.SubStream;
 import discUtils.streams.builder.BuilderBufferExtent;
 import discUtils.streams.builder.BuilderExtent;
 import discUtils.streams.builder.StreamBuilder;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Range;
 import discUtils.streams.util.Sizes;
 import dotnet4j.io.MemoryStream;
+import vavi.util.ByteUtil;
 
 
 public final class VmfsSparseExtentBuilder extends StreamBuilder {
@@ -105,7 +105,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
         }
 
         public void setEntry(int index, int grainTableSector) {
-            EndianUtilities.writeBytesLittleEndian(grainTableSector, buffer, index * 4);
+            ByteUtil.writeLeInt(grainTableSector, buffer, index * 4);
         }
 
         @Override public void prepareForRead() {
@@ -172,8 +172,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             grainContiguousRangeMapping = new ArrayList<>();
             for (Range grainRange : StreamExtent.blocks(content.getExtents(), header.grainSize * Sizes.Sector)) {
                 for (int i = 0; i < grainRange.getCount(); ++i) {
-                    EndianUtilities
-                            .writeBytesLittleEndian((int) dataSector, grainTable, (int) (4 * (grainRange.getOffset() + i)));
+                    ByteUtil.writeLeInt((int) dataSector, grainTable, (int) (4 * (grainRange.getOffset() + i)));
                     dataSector += header.grainSize;
                     grainMapping.add(grainRange.getOffset() + i);
                     grainContiguousRangeMapping.add(grainRange.getCount() - i);

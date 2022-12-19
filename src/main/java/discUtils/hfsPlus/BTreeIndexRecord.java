@@ -24,7 +24,7 @@ package discUtils.hfsPlus;
 
 import java.lang.reflect.InvocationTargetException;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
@@ -71,7 +71,7 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
                 ++keySize;
             }
 
-            setChildId(EndianUtilities.toUInt32BigEndian(buffer, offset + keySize));
+            setChildId(ByteUtil.readBeInt(buffer, offset + keySize));
 
             return size;
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {

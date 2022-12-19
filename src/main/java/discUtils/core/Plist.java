@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -40,19 +39,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import dotnet4j.io.Stream;
+import dotnet4j.io.compat.StreamInputStream;
+import dotnet4j.io.compat.StreamOutputStream;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
-
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import dotnet4j.io.Stream;
-import dotnet4j.io.compat.StreamInputStream;
-import dotnet4j.io.compat.StreamOutputStream;
 
 
 public class Plist {

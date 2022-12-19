@@ -22,7 +22,7 @@
 
 package discUtils.powerShell.virtualRegistryProvider;
 
-import java.util.concurrent.Semaphore; // TODO
+import java.util.concurrent.Semaphore;
 
 
 public class NewDriveParameters {

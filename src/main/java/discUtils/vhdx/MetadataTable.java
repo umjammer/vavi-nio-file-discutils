@@ -29,6 +29,7 @@ import java.util.UUID;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
+import vavi.util.ByteUtil;
 
 
 public final class MetadataTable implements IByteArraySerializable {
@@ -84,8 +85,8 @@ public final class MetadataTable implements IByteArraySerializable {
 
     public int readFrom(byte[] buffer, int offset) {
         System.arraycopy(buffer, offset, headerData, 0, 32);
-        signature = EndianUtilities.toUInt64LittleEndian(headerData, 0);
-        entryCount = EndianUtilities.toUInt16LittleEndian(headerData, 10);
+        signature = ByteUtil.readLeLong(headerData, 0);
+        entryCount = ByteUtil.readLeShort(headerData, 10);
         entries = new HashMap<>();
         if (getIsValid()) {
             for (int i = 0; i < entryCount; ++i) {
@@ -99,8 +100,8 @@ public final class MetadataTable implements IByteArraySerializable {
 
     public void writeTo(byte[] buffer, int offset) {
         entryCount = (short) entries.size();
-        EndianUtilities.writeBytesLittleEndian(signature, headerData, 0);
-        EndianUtilities.writeBytesLittleEndian(entryCount, headerData, 10);
+        ByteUtil.writeLeLong(signature, headerData, 0);
+        ByteUtil.writeLeShort(entryCount, headerData, 10);
         System.arraycopy(headerData, 0, buffer, offset, 32);
         int bufferOffset = 32 + offset;
         for (Map.Entry<MetadataEntryKey, MetadataEntry> entry : entries.entrySet()) {

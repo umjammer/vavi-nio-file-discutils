@@ -30,7 +30,7 @@ import java.time.ZonedDateTime;
 import discUtils.core.UnixFilePermissions;
 import discUtils.core.UnixFileSystemInfo;
 import discUtils.core.UnixFileType;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class HfsPlusUtilities {
@@ -227,12 +227,12 @@ class HfsPlusUtilities {
     };
 
     public static String readUniStr255(byte[] buffer, int offset) {
-        int len = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+        int len = ByteUtil.readBeShort(buffer, offset + 0);
         return new String(buffer, offset + 2, len * 2, StandardCharsets.UTF_16BE);
     }
 
     public static long readHFSPlusDate(ZoneId kind, byte[] buffer, int offset) {
-        int val = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        int val = ByteUtil.readBeInt(buffer, offset);
         ZonedDateTime epoch = ZonedDateTime.of(1904, 1, 1, 0, 0, 0, 0, kind);
         long result = epoch.plusSeconds(val & 0xffffffffL).toInstant().toEpochMilli();
 
@@ -244,14 +244,14 @@ class HfsPlusUtilities {
      */
     public static UnixFileSystemInfo readBsdInfo(byte[] buffer, int offset, int[] special) {
         UnixFileSystemInfo result = new UnixFileSystemInfo();
-        result.setUserId(EndianUtilities.toInt32BigEndian(buffer, offset + 0));
-        result.setGroupId(EndianUtilities.toInt32BigEndian(buffer, offset + 4));
+        result.setUserId(ByteUtil.readBeInt(buffer, offset + 0));
+        result.setGroupId(ByteUtil.readBeInt(buffer, offset + 4));
 
-        short fileMode = EndianUtilities.toUInt16BigEndian(buffer, offset + 8);
+        short fileMode = ByteUtil.readBeShort(buffer, offset + 8);
         result.setFileType(UnixFileType.values()[((fileMode & 0xffff) >>> 12) & 0xF]);
         result.setPermissions(UnixFilePermissions.valueOf(fileMode & 0xFFF));
 
-        special[0] = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
+        special[0] = ByteUtil.readBeInt(buffer, offset + 10);
         if (result.getFileType() == UnixFileType.Block || result.getFileType() == UnixFileType.Character) {
             result.setDeviceId(special[0]);
         }

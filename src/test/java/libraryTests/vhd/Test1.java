@@ -8,15 +8,11 @@ package libraryTests.vhd;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
 import discUtils.core.DiscFileSystem;
-import discUtils.core.DiscFileSystemInfo;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemManager;
 import discUtils.core.FileSystemParameters;

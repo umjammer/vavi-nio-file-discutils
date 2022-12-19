@@ -24,13 +24,12 @@ package discUtils.core.vfs;
 
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemParameters;
 import discUtils.core.VolumeInfo;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 /**

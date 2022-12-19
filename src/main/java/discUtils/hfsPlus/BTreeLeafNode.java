@@ -25,7 +25,7 @@ package discUtils.hfsPlus;
 import java.util.ArrayList;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
@@ -66,10 +66,10 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
 
         records = new ArrayList<>(numRecords);
 
-        int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);
+        int start = ByteUtil.readBeShort(buffer, offset + nodeSize - 2);
 
         for (int i = 0; i < numRecords; ++i) {
-            int end = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - (i + 2) * 2);
+            int end = ByteUtil.readBeShort(buffer, offset + nodeSize - (i + 2) * 2);
             records.add(i, new BTreeLeafRecord<>(keyClass, end - start));
             records.get(i).readFrom(buffer, offset + start);
             start = end;

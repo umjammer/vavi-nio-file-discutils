@@ -32,11 +32,11 @@ import java.util.UUID;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.SparseStream;
 import discUtils.streams.SubStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 import dotnet4j.io.StreamReader;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -147,7 +147,7 @@ public class WimFile {
     }
 
     public ShortResourceHeader locateResource(byte[] hash) {
-        int hashHash = EndianUtilities.toUInt32LittleEndian(hash, 0);
+        int hashHash = ByteUtil.readLeInt(hash, 0);
         if (!resources.containsKey(hashHash)) {
             return null;
         }
@@ -181,7 +181,7 @@ public class WimFile {
                 numRead += ResourceInfo.Size;
                 ResourceInfo info = new ResourceInfo();
                 info.read(resBuffer, 0);
-                int hashHash = EndianUtilities.toUInt32LittleEndian(info.hash, 0);
+                int hashHash = ByteUtil.readLeInt(info.hash, 0);
                 if (!resources.containsKey(hashHash)) {
                     resources.put(hashHash, new ArrayList<>(1));
                 }

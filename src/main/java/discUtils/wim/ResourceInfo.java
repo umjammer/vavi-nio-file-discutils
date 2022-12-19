@@ -22,7 +22,7 @@
 
 package discUtils.wim;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ResourceInfo {
@@ -40,8 +40,8 @@ public class ResourceInfo {
     public void read(byte[] buffer, int offset) {
         header = new ShortResourceHeader();
         header.read(buffer, offset);
-        partNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + ShortResourceHeader.Size);
-        refCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + ShortResourceHeader.Size + 2);
+        partNumber = ByteUtil.readLeShort(buffer, offset + ShortResourceHeader.Size);
+        refCount = ByteUtil.readLeInt(buffer, offset + ShortResourceHeader.Size + 2);
         hash = new byte[20];
         System.arraycopy(buffer, offset + ShortResourceHeader.Size + 6, hash, 0, 20);
     }

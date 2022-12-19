@@ -22,9 +22,10 @@
 
 package discUtils.core.logicalDiskManager;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class DatabaseRecord {
@@ -50,7 +51,7 @@ public abstract class DatabaseRecord {
 
     public static DatabaseRecord readFrom(byte[] buffer, int[] offset) {
         DatabaseRecord result = null;
-        if (EndianUtilities.toInt32BigEndian(buffer, offset[0] + 0xC) != 0) {
+        if (ByteUtil.readBeInt(buffer, offset[0] + 0xC) != 0) {
             switch (RecordType.values()[buffer[offset[0] + 0x13] & 0xF]) {
             case Volume:
                 result = new VolumeRecord();
@@ -96,7 +97,7 @@ public abstract class DatabaseRecord {
 
     protected static String readVarString(byte[] buffer, int[] offset) {
         int length = buffer[offset[0]];
-        String result = EndianUtilities.bytesToString(buffer, offset[0] + 1, length);
+        String result = new String(buffer, offset[0] + 1, length, StandardCharsets.US_ASCII);
         offset[0] += length + 1;
         return result;
     }
@@ -107,36 +108,36 @@ public abstract class DatabaseRecord {
 
     protected static int readUInt(byte[] buffer, int[] offset) {
         offset[0] += 4;
-        return EndianUtilities.toUInt32BigEndian(buffer, offset[0] - 4);
+        return ByteUtil.readBeInt(buffer, offset[0] - 4);
     }
 
     protected static long readLong(byte[] buffer, int[] offset) {
         offset[0] += 8;
-        return EndianUtilities.toInt64BigEndian(buffer, offset[0] - 8);
+        return ByteUtil.readBeLong(buffer, offset[0] - 8);
     }
 
     protected static long readULong(byte[] buffer, int[] offset) {
         offset[0] += 8;
-        return EndianUtilities.toUInt64BigEndian(buffer, offset[0] - 8);
+        return ByteUtil.readBeLong(buffer, offset[0] - 8);
     }
 
     protected static String readString(byte[] buffer, int len, int[] offset) {
         offset[0] += len;
-        return EndianUtilities.bytesToString(buffer, offset[0] - len, len);
+        return new String(buffer, offset[0] - len, len, StandardCharsets.US_ASCII);
     }
 
     protected static UUID readBinaryGuid(byte[] buffer, int[] offset) {
         offset[0] += 16;
-        return EndianUtilities.toGuidBigEndian(buffer, offset[0] - 16);
+        return ByteUtil.readBeUUID(buffer, offset[0] - 16);
     }
 
     protected void doReadFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 4);
-        label = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x04);
-        counter = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
-        valid = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
-        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
+        signature = new String(buffer, offset + 0x00, 4, StandardCharsets.US_ASCII);
+        label = ByteUtil.readBeInt(buffer, offset + 0x04);
+        counter = ByteUtil.readBeInt(buffer, offset + 0x08);
+        valid = ByteUtil.readBeInt(buffer, offset + 0x0C);
+        flags = ByteUtil.readBeInt(buffer, offset + 0x10);
         recordType = RecordType.values()[flags & 0xF];
-        dataLength = EndianUtilities.toUInt32BigEndian(buffer, 0x14);
+        dataLength = ByteUtil.readBeInt(buffer, 0x14);
     }
 }

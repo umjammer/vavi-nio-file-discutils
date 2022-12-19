@@ -22,8 +22,10 @@
 
 package discUtils.lvm;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class PhysicalVolumeLabel implements IByteArraySerializable {
@@ -51,12 +53,12 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
 
     /* */
     public int readFrom(byte[] buffer, int offset) {
-        label = EndianUtilities.bytesToString(buffer, offset, 0x8);
-        sector = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
+        label = new String(buffer, offset, 0x8, StandardCharsets.US_ASCII);
+        sector = ByteUtil.readLeLong(buffer, offset + 0x8);
+        crc = ByteUtil.readLeInt(buffer, offset + 0x10);
         calculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x14, PhysicalVolume.SECTOR_SIZE - 0x14);
-        this.offset = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14);
-        label2 = EndianUtilities.bytesToString(buffer, offset + 0x18, 0x8);
+        this.offset = ByteUtil.readLeInt(buffer, offset + 0x14);
+        label2 = new String(buffer, offset + 0x18, 0x8, StandardCharsets.US_ASCII);
         return size();
     }
 

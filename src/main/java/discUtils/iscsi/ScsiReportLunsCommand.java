@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiReportLunsCommand extends ScsiCommand {
@@ -56,7 +56,7 @@ public class ScsiReportLunsCommand extends ScsiCommand {
         // Reserved
         buffer[offset + 5] = 0;
         // Reserved
-        EndianUtilities.writeBytesBigEndian(expected, buffer, offset + 6);
+        ByteUtil.writeBeInt(expected, buffer, offset + 6);
         buffer[offset + 10] = 0;
         // Reserved
         buffer[offset + 11] = 0;

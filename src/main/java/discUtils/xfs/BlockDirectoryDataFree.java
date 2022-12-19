@@ -23,7 +23,7 @@
 package discUtils.xfs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockDirectoryDataFree implements IByteArraySerializable {
@@ -53,8 +53,8 @@ public class BlockDirectoryDataFree implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        this.offset = EndianUtilities.toUInt16BigEndian(buffer, offset);
-        length = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
+        this.offset = ByteUtil.readBeShort(buffer, offset);
+        length = ByteUtil.readBeShort(buffer, offset + 0x2);
         return size();
     }
 

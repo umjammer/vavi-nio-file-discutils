@@ -28,8 +28,8 @@ import java.util.List;
 
 import discUtils.streams.StreamExtent;
 import discUtils.streams.buffer.Buffer;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileBuffer extends Buffer {
@@ -75,7 +75,7 @@ public class FileBuffer extends Buffer {
                     if (inode.indirectBlock != 0) {
                         context.getRawStream().position(inode.indirectBlock * (long) blockSize + logicalBlock * 4);
                         byte[] indirectData = StreamUtilities.readExact(context.getRawStream(), 4);
-                        physicalBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
+                        physicalBlock = ByteUtil.readLeInt(indirectData, 0);
                     }
 
                 } else {
@@ -86,12 +86,12 @@ public class FileBuffer extends Buffer {
                                     .position(inode.doubleIndirectBlock * (long) blockSize +
                                                  logicalBlock / (blockSize / 4) * 4L);
                             byte[] indirectData = StreamUtilities.readExact(context.getRawStream(), 4);
-                            int indirectBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
+                            int indirectBlock = ByteUtil.readLeInt(indirectData, 0);
                             if (indirectBlock != 0) {
                                 context.getRawStream()
                                         .position(indirectBlock * (long) blockSize + logicalBlock % (blockSize / 4) * 4);
                                 StreamUtilities.readExact(context.getRawStream(), indirectData, 0, 4);
-                                physicalBlock = EndianUtilities.toUInt32LittleEndian(indirectData, 0);
+                                physicalBlock = ByteUtil.readLeInt(indirectData, 0);
                             }
 
                         }

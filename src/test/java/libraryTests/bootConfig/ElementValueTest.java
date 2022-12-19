@@ -24,12 +24,6 @@ package libraryTests.bootConfig;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import discUtils.bootConfig.BcdObject;
 import discUtils.bootConfig.Element;
 import discUtils.bootConfig.ElementValue;
@@ -44,6 +38,11 @@ import discUtils.core.partitions.WellKnownPartitionType;
 import discUtils.registry.RegistryHive;
 import discUtils.streams.SparseMemoryStream;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 public class ElementValueTest {

@@ -22,7 +22,7 @@
 
 package discUtils.squashFs;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
@@ -83,13 +83,13 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
 
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        numLinks = EndianUtilities.toInt32LittleEndian(buffer, offset + 16);
-        fileSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
-        startBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 24);
-        parentInode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 28);
-        indexCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 32);
-        this.offset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 34);
-        extendedAttributes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
+        numLinks = ByteUtil.readLeInt(buffer, offset + 16);
+        fileSize = ByteUtil.readLeInt(buffer, offset + 20);
+        startBlock = ByteUtil.readLeInt(buffer, offset + 24);
+        parentInode = ByteUtil.readLeInt(buffer, offset + 28);
+        indexCount = ByteUtil.readLeShort(buffer, offset + 32);
+        this.offset = ByteUtil.readLeShort(buffer, offset + 34);
+        extendedAttributes = ByteUtil.readLeInt(buffer, offset + 36);
         return 40;
     }
 }

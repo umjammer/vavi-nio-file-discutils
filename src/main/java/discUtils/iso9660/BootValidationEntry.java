@@ -22,9 +22,11 @@
 
 package discUtils.iso9660;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BootValidationEntry {
@@ -48,13 +50,13 @@ public class BootValidationEntry {
         System.arraycopy(src, offset, data, 0, 32);
         headerId = data[0];
         platformId = data[1];
-        manfId = EndianUtilities.bytesToString(data, 4, 24).replaceFirst("[\0 ]*$", "");
+        manfId = new String(data, 4, 24, StandardCharsets.US_ASCII).replaceFirst("[\0 ]*$", "");
     }
 
     public boolean getChecksumValid() {
         short total = 0;
         for (int i = 0; i < 16; ++i) {
-            total += EndianUtilities.toUInt16LittleEndian(data, i * 2);
+            total += ByteUtil.readLeShort(data, i * 2);
         }
         return total == 0;
     }
@@ -66,13 +68,13 @@ public class BootValidationEntry {
         EndianUtilities.stringToBytes(manfId, buffer, offset + 0x04, 24);
         buffer[offset + 0x1E] = 0x55;
         buffer[offset + 0x1F] = (byte) 0xAA;
-        EndianUtilities.writeBytesLittleEndian(calcChecksum(buffer, offset), buffer, offset + 0x1C);
+        ByteUtil.writeLeShort(calcChecksum(buffer, offset), buffer, offset + 0x1C);
     }
 
     private static short calcChecksum(byte[] buffer, int offset) {
         short total = 0;
         for (int i = 0; i < 16; ++i) {
-            total = (short) (total + EndianUtilities.toUInt16LittleEndian(buffer, offset + i * 2) & 0xffff);
+            total = (short) (total + ByteUtil.readLeShort(buffer, offset + i * 2) & 0xffff);
         }
         return (short) (0 - total);
     }

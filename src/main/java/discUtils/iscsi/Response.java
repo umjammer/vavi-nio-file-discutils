@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class Response extends BaseResponse {
@@ -54,11 +54,11 @@ public class Response extends BaseResponse {
         responseCode = headerData[headerOffset + 2];
         statusPresent = true;
         status = ScsiStatus.valueOf(headerData[headerOffset + 3]);
-        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        expectedDataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
-        bidiReadResidualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
-        residualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
+        statusSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 32);
+        expectedDataSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 36);
+        bidiReadResidualCount = ByteUtil.readBeInt(headerData, headerOffset + 40);
+        residualCount = ByteUtil.readBeInt(headerData, headerOffset + 44);
     }
 }

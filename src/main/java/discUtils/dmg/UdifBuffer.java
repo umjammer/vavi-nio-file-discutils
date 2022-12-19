@@ -31,13 +31,13 @@ import discUtils.core.compression.BZip2DecoderStream;
 import discUtils.streams.StreamExtent;
 import discUtils.streams.SubStream;
 import discUtils.streams.buffer.Buffer;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 import dotnet4j.io.compression.DeflateStream;
+import vavi.util.ByteUtil;
 
 
 public class UdifBuffer extends Buffer {
@@ -179,7 +179,7 @@ public class UdifBuffer extends Buffer {
             } else if ((focusByte & 0x40) != 0) {
                 // 3 byte code
                 int chunkSize = (focusByte & 0x3F) + 4;
-                int offset = EndianUtilities.toUInt16BigEndian(inputBuffer, inputOffset + consumed + 1);
+                int offset = ByteUtil.readBeShort(inputBuffer, inputOffset + consumed + 1);
                 for (int i = 0; i < chunkSize; ++i) {
                     outputBuffer[outputOffset + written + i] = outputBuffer[outputOffset + written + i - offset - 1];
                 }

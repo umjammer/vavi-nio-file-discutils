@@ -22,11 +22,13 @@
 
 package discUtils.core.partitions;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import discUtils.core.internal.Crc32Algorithm;
 import discUtils.core.internal.Crc32LittleEndian;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class GptHeader {
@@ -87,19 +89,19 @@ public class GptHeader {
     }
 
     public boolean readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.bytesToString(buffer, offset + 0, 8);
-        version = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        headerSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
-        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        headerLba = EndianUtilities.toInt64LittleEndian(buffer, offset + 24);
-        alternateHeaderLba = EndianUtilities.toInt64LittleEndian(buffer, offset + 32);
-        firstUsable = EndianUtilities.toInt64LittleEndian(buffer, offset + 40);
-        lastUsable = EndianUtilities.toInt64LittleEndian(buffer, offset + 48);
-        diskGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 56);
-        partitionEntriesLba = EndianUtilities.toInt64LittleEndian(buffer, offset + 72);
-        partitionEntryCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 80);
-        partitionEntrySize = EndianUtilities.toInt32LittleEndian(buffer, offset + 84);
-        entriesCrc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 88);
+        signature = new String(buffer, offset + 0, 8, StandardCharsets.US_ASCII);
+        version = ByteUtil.readLeInt(buffer, offset + 8);
+        headerSize = ByteUtil.readLeInt(buffer, offset + 12);
+        crc = ByteUtil.readLeInt(buffer, offset + 16);
+        headerLba = ByteUtil.readLeLong(buffer, offset + 24);
+        alternateHeaderLba = ByteUtil.readLeLong(buffer, offset + 32);
+        firstUsable = ByteUtil.readLeLong(buffer, offset + 40);
+        lastUsable = ByteUtil.readLeLong(buffer, offset + 48);
+        diskGuid = ByteUtil.readLeUUID(buffer, offset + 56);
+        partitionEntriesLba = ByteUtil.readLeLong(buffer, offset + 72);
+        partitionEntryCount = ByteUtil.readLeInt(buffer, offset + 80);
+        partitionEntrySize = ByteUtil.readLeInt(buffer, offset + 84);
+        entriesCrc = ByteUtil.readLeInt(buffer, offset + 88);
         // In case the header has new fields unknown to us, store the entire header
         // as a byte array
         this.buffer = new byte[headerSize];
@@ -117,20 +119,20 @@ public class GptHeader {
         System.arraycopy(this.buffer, 0, buffer, offset, this.buffer.length);
         // Next, write the fields
         EndianUtilities.stringToBytes(signature, buffer, offset + 0, 8);
-        EndianUtilities.writeBytesLittleEndian(version, buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(headerSize, buffer, offset + 12);
-        EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(headerLba, buffer, offset + 24);
-        EndianUtilities.writeBytesLittleEndian(alternateHeaderLba, buffer, offset + 32);
-        EndianUtilities.writeBytesLittleEndian(firstUsable, buffer, offset + 40);
-        EndianUtilities.writeBytesLittleEndian(lastUsable, buffer, offset + 48);
-        EndianUtilities.writeBytesLittleEndian(diskGuid, buffer, offset + 56);
-        EndianUtilities.writeBytesLittleEndian(partitionEntriesLba, buffer, offset + 72);
-        EndianUtilities.writeBytesLittleEndian(partitionEntryCount, buffer, offset + 80);
-        EndianUtilities.writeBytesLittleEndian(partitionEntrySize, buffer, offset + 84);
-        EndianUtilities.writeBytesLittleEndian(entriesCrc, buffer, offset + 88);
+        ByteUtil.writeLeInt(version, buffer, offset + 8);
+        ByteUtil.writeLeInt(headerSize, buffer, offset + 12);
+        ByteUtil.writeLeInt(0, buffer, offset + 16);
+        ByteUtil.writeLeLong(headerLba, buffer, offset + 24);
+        ByteUtil.writeLeLong(alternateHeaderLba, buffer, offset + 32);
+        ByteUtil.writeLeLong(firstUsable, buffer, offset + 40);
+        ByteUtil.writeLeLong(lastUsable, buffer, offset + 48);
+        ByteUtil.writeLeUUID(diskGuid, buffer, offset + 56);
+        ByteUtil.writeLeLong(partitionEntriesLba, buffer, offset + 72);
+        ByteUtil.writeLeInt(partitionEntryCount, buffer, offset + 80);
+        ByteUtil.writeLeInt(partitionEntrySize, buffer, offset + 84);
+        ByteUtil.writeLeInt(entriesCrc, buffer, offset + 88);
         // Calculate & write the CRC
-        EndianUtilities.writeBytesLittleEndian(calcCrc(buffer, offset, headerSize), buffer, offset + 16);
+        ByteUtil.writeLeInt(calcCrc(buffer, offset, headerSize), buffer, offset + 16);
         // Update the cached copy - re-allocate the buffer to allow for headerSize potentially having changed
         this.buffer = new byte[headerSize];
         System.arraycopy(buffer, offset, this.buffer, 0, headerSize);
@@ -140,7 +142,7 @@ public class GptHeader {
         byte[] temp = new byte[count];
         System.arraycopy(buffer, offset, temp, 0, count);
         // Reset CRC field
-        EndianUtilities.writeBytesLittleEndian(0, temp, 16);
+        ByteUtil.writeLeInt(0, temp, 16);
         return Crc32LittleEndian.compute(Crc32Algorithm.Common, temp, 0, count);
     }
 }

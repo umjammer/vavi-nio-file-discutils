@@ -22,17 +22,16 @@
 
 package libraryTests.partitions;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.core.partitions.GuidPartitionTable;
 import discUtils.core.partitions.GuidPartitionTypes;
 import discUtils.core.partitions.WellKnownPartitionType;
 import discUtils.streams.util.Ownership;
 import discUtils.vhdx.Disk;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class GuidPartitionTableTest {

@@ -24,7 +24,7 @@ package discUtils.xfs;
 
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
@@ -87,11 +87,11 @@ public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
 
     public int readFrom(byte[] buffer, int offset) {
         offset += super.readFrom(buffer, offset);
-        blockNumber = EndianUtilities.toUInt64BigEndian(buffer, offset);
-        logSequenceNumber = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
-        uuid = EndianUtilities.toGuidBigEndian(buffer, offset + 0x10);
-        owner = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x20);
-        crc = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
+        blockNumber = ByteUtil.readBeLong(buffer, offset);
+        logSequenceNumber = ByteUtil.readBeLong(buffer, offset + 0x8);
+        uuid = ByteUtil.readBeUUID(buffer, offset + 0x10);
+        owner = ByteUtil.readBeLong(buffer, offset + 0x20);
+        crc = ByteUtil.readLeInt(buffer, offset + 0x28);
         return super.size() + 48;
     }
 }

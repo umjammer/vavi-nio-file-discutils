@@ -23,8 +23,8 @@
 package diskClone;
 
 import java.io.IOException;
-import com.sun.jna.Pointer;
 
+import com.sun.jna.Pointer;
 import diskClone.NativeMethods.EIOControlCode;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;

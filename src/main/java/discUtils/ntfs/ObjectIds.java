@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.util.compat.Tuple;
+import vavi.util.ByteUtil;
 
 
 public final class ObjectIds {
@@ -97,12 +97,12 @@ public final class ObjectIds {
         }
 
         public int readFrom(byte[] buffer, int offset) {
-            id = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+            id = ByteUtil.readLeUUID(buffer, offset + 0);
             return 16;
         }
 
         public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0);
+            ByteUtil.writeLeUUID(id, buffer, offset + 0);
         }
 
         public String toString() {

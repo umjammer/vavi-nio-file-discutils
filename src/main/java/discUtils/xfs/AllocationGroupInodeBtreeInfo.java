@@ -26,9 +26,9 @@ package discUtils.xfs;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
@@ -189,23 +189,23 @@ class AllocationGroupInodeBtreeInfo implements IByteArraySerializable {
     }
 
     @Override public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
-        version = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
-        sequenceNumber = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x8);
-        length = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xc);
-        count = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
-        root = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14);
-        level = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x18);
-        freeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x1c);
-        newInode = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x20);
+        magic = ByteUtil.readBeInt(buffer, offset);
+        version = ByteUtil.readBeInt(buffer, offset + 0x4);
+        sequenceNumber = ByteUtil.readBeInt(buffer, offset + 0x8);
+        length = ByteUtil.readBeInt(buffer, offset + 0xc);
+        count = ByteUtil.readBeInt(buffer, offset + 0x10);
+        root = ByteUtil.readBeInt(buffer, offset + 0x14);
+        level = ByteUtil.readBeInt(buffer, offset + 0x18);
+        freeCount = ByteUtil.readBeInt(buffer, offset + 0x1c);
+        newInode = ByteUtil.readBeInt(buffer, offset + 0x20);
         unlinked = new int[64];
         for (int i = 0; i < unlinked.length; i++) {
-            unlinked[i] = EndianUtilities.toInt32BigEndian(buffer, offset + 0x28 + i * 0x4);
+            unlinked[i] = ByteUtil.readBeInt(buffer, offset + 0x28 + i * 0x4);
         }
         if (sbVersion >= 5) {
-            uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 0x132);
-            lsn = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x142);
-            crc = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x14A);
+            uniqueId = ByteUtil.readBeUUID(buffer, offset + 0x132);
+            lsn = ByteUtil.readBeLong(buffer, offset + 0x142);
+            crc = ByteUtil.readBeInt(buffer, offset + 0x14A);
         }
         return size;
     }

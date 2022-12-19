@@ -28,6 +28,7 @@ import discUtils.core.UnixFileType;
 import discUtils.core.coreCompat.FileAttributes;
 import discUtils.core.vfs.VfsDirEntry;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class DirEntry extends VfsDirEntry {
@@ -91,12 +92,12 @@ final class DirEntry extends VfsDirEntry {
     }
 
     static boolean isFileOrDirectory(byte[] dirEntryData) {
-        CatalogRecordType type = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(dirEntryData, 0)];
+        CatalogRecordType type = CatalogRecordType.values()[ByteUtil.readBeShort(dirEntryData, 0)];
         return type == CatalogRecordType.FolderRecord || type == CatalogRecordType.FileRecord;
     }
 
     private static CommonCatalogFileInfo parseDirEntryData(byte[] dirEntryData) {
-        CatalogRecordType type = CatalogRecordType.values()[EndianUtilities.toInt16BigEndian(dirEntryData, 0)];
+        CatalogRecordType type = CatalogRecordType.values()[ByteUtil.readBeShort(dirEntryData, 0)];
         CommonCatalogFileInfo result = null;
         switch (type) {
         case FolderRecord:

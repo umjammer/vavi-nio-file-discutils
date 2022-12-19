@@ -4,16 +4,15 @@ package libraryTests.xfs;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.xfs.Context;
 import discUtils.xfs.Inode;
 import discUtils.xfs.InodeFormat;
 import discUtils.xfs.SuperBlock;
 import discUtils.xfs.Symlink;
 import discUtils.xfs.XfsFileSystemOptions;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XfsTests {
     @Test

@@ -39,8 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-
 import discUtils.core.coreCompat.FileAttributes;
 import discUtils.core.internal.LocalFileLocator;
 import discUtils.streams.SparseStream;
@@ -48,6 +46,7 @@ import discUtils.streams.util.Ownership;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
+import vavi.util.Debug;
 
 
 /**

@@ -26,6 +26,7 @@ import java.util.EnumSet;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileInfo implements IByteArraySerializable {
@@ -43,9 +44,9 @@ public class FileInfo implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        fileType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        fileCreator = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        finderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
+        fileType = ByteUtil.readBeInt(buffer, offset + 0);
+        fileCreator = ByteUtil.readBeInt(buffer, offset + 4);
+        finderFlags = FinderFlags.valueOf(ByteUtil.readBeShort(buffer, offset + 8));
         point = EndianUtilities.toStruct(Point.class, buffer, offset + 10);
 
         return 16;

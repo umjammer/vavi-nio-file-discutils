@@ -22,6 +22,7 @@
 
 package discUtils.vhd;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -31,6 +32,7 @@ import java.util.UUID;
 
 import discUtils.core.Geometry;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class Footer {
@@ -169,22 +171,22 @@ public class Footer {
 
     public static Footer fromBytes(byte[] buffer, int offset) {
         Footer result = new Footer();
-        result.cookie = EndianUtilities.bytesToString(buffer, offset + 0, 8);
-        result.features = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        result.fileFormatVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        result.dataOffset = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
-        result.timestamp = EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(buffer, offset + 24)).toEpochMilli();
-        result.creatorApp = EndianUtilities.bytesToString(buffer, offset + 28, 4);
-        result.creatorVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
-        result.creatorHostOS = EndianUtilities.bytesToString(buffer, offset + 36, 4);
-        result.originalSize = EndianUtilities.toInt64BigEndian(buffer, offset + 40);
-        result.currentSize = EndianUtilities.toInt64BigEndian(buffer, offset + 48);
-        result.geometry = new Geometry(EndianUtilities.toUInt16BigEndian(buffer, offset + 56) & 0xffff,
+        result.cookie = new String(buffer, offset + 0, 8, StandardCharsets.US_ASCII);
+        result.features = ByteUtil.readBeInt(buffer, offset + 8);
+        result.fileFormatVersion = ByteUtil.readBeInt(buffer, offset + 12);
+        result.dataOffset = ByteUtil.readBeLong(buffer, offset + 16);
+        result.timestamp = EpochUtc.plusSeconds(ByteUtil.readBeInt(buffer, offset + 24)).toEpochMilli();
+        result.creatorApp = new String(buffer, offset + 28, 4, StandardCharsets.US_ASCII);
+        result.creatorVersion = ByteUtil.readBeInt(buffer, offset + 32);
+        result.creatorHostOS = new String(buffer, offset + 36, 4, StandardCharsets.US_ASCII);
+        result.originalSize = ByteUtil.readBeLong(buffer, offset + 40);
+        result.currentSize = ByteUtil.readBeLong(buffer, offset + 48);
+        result.geometry = new Geometry(ByteUtil.readBeShort(buffer, offset + 56) & 0xffff,
                                        buffer[58] & 0xff,
                                        buffer[59] & 0xff);
-        result.diskType = FileType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 60));
-        result.checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 64);
-        result.uniqueId = EndianUtilities.toGuidBigEndian(buffer, offset + 68);
+        result.diskType = FileType.valueOf(ByteUtil.readBeInt(buffer, offset + 60));
+        result.checksum = ByteUtil.readBeInt(buffer, offset + 64);
+        result.uniqueId = ByteUtil.readBeUUID(buffer, offset + 68);
         result.savedState = buffer[84];
 
         return result;
@@ -192,23 +194,23 @@ public class Footer {
 
     public void toBytes(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(cookie, buffer, offset + 0, 8);
-        EndianUtilities.writeBytesBigEndian(features, buffer, offset + 8);
-        EndianUtilities.writeBytesBigEndian(fileFormatVersion, buffer, offset + 12);
-        EndianUtilities.writeBytesBigEndian(dataOffset, buffer, offset + 16);
-        EndianUtilities.writeBytesBigEndian((int) Duration.between(EpochUtc, Instant.ofEpochMilli(timestamp)).getSeconds(),
+        ByteUtil.writeBeInt(features, buffer, offset + 8);
+        ByteUtil.writeBeInt(fileFormatVersion, buffer, offset + 12);
+        ByteUtil.writeBeLong(dataOffset, buffer, offset + 16);
+        ByteUtil.writeBeInt((int) Duration.between(EpochUtc, Instant.ofEpochMilli(timestamp)).getSeconds(),
                                             buffer,
                                             offset + 24);
         EndianUtilities.stringToBytes(creatorApp, buffer, offset + 28, 4);
-        EndianUtilities.writeBytesBigEndian(creatorVersion, buffer, offset + 32);
+        ByteUtil.writeBeInt(creatorVersion, buffer, offset + 32);
         EndianUtilities.stringToBytes(creatorHostOS, buffer, offset + 36, 4);
-        EndianUtilities.writeBytesBigEndian(originalSize, buffer, offset + 40);
-        EndianUtilities.writeBytesBigEndian(currentSize, buffer, offset + 48);
-        EndianUtilities.writeBytesBigEndian((short) geometry.getCylinders(), buffer, offset + 56);
+        ByteUtil.writeBeLong(originalSize, buffer, offset + 40);
+        ByteUtil.writeBeLong(currentSize, buffer, offset + 48);
+        ByteUtil.writeBeShort((short) geometry.getCylinders(), buffer, offset + 56);
         buffer[offset + 58] = (byte) geometry.getHeadsPerCylinder();
         buffer[offset + 59] = (byte) geometry.getSectorsPerTrack();
-        EndianUtilities.writeBytesBigEndian(diskType.ordinal(), buffer, offset + 60);
-        EndianUtilities.writeBytesBigEndian(checksum, buffer, offset + 64);
-        EndianUtilities.writeBytesBigEndian(uniqueId, buffer, offset + 68);
+        ByteUtil.writeBeInt(diskType.ordinal(), buffer, offset + 60);
+        ByteUtil.writeBeInt(checksum, buffer, offset + 64);
+        ByteUtil.writeBeUUID(uniqueId, buffer, offset + 68);
         buffer[84] = savedState;
         Arrays.fill(buffer, 85, 85 + 427, (byte) 0);
 //Debug.println("\n" + StringUtil.getDump(buffer));

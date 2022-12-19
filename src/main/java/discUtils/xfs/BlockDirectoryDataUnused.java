@@ -22,7 +22,7 @@
 
 package discUtils.xfs;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockDirectoryDataUnused extends BlockDirectoryData {
@@ -62,9 +62,9 @@ public class BlockDirectoryDataUnused extends BlockDirectoryData {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        freetag = EndianUtilities.toUInt16BigEndian(buffer, offset);
-        length = EndianUtilities.toUInt16BigEndian(buffer, offset + 0x2);
-        tag = EndianUtilities.toUInt16BigEndian(buffer, offset + getLength() - 0x2);
+        freetag = ByteUtil.readBeShort(buffer, offset);
+        length = ByteUtil.readBeShort(buffer, offset + 0x2);
+        tag = ByteUtil.readBeShort(buffer, offset + getLength() - 0x2);
         return size();
     }
 }

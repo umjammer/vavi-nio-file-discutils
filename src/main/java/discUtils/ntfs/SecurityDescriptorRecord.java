@@ -23,7 +23,7 @@
 package discUtils.ntfs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class SecurityDescriptorRecord implements IByteArraySerializable {
@@ -49,18 +49,18 @@ public final class SecurityDescriptorRecord implements IByteArraySerializable {
 
     public void writeTo(byte[] buffer, int offset) {
         entrySize = size();
-        EndianUtilities.writeBytesLittleEndian(hash, buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(id, buffer, offset + 0x04);
-        EndianUtilities.writeBytesLittleEndian(offsetInFile, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(entrySize, buffer, offset + 0x10);
+        ByteUtil.writeLeInt(hash, buffer, offset + 0x00);
+        ByteUtil.writeLeInt(id, buffer, offset + 0x04);
+        ByteUtil.writeLeLong(offsetInFile, buffer, offset + 0x08);
+        ByteUtil.writeLeInt(entrySize, buffer, offset + 0x10);
         System.arraycopy(securityDescriptor, 0, buffer, offset + 0x14, securityDescriptor.length);
     }
 
     public boolean read(byte[] buffer, int offset) {
-        hash = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x00);
-        id = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x04);
-        offsetInFile = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x08);
-        entrySize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
+        hash = ByteUtil.readLeInt(buffer, offset + 0x00);
+        id = ByteUtil.readLeInt(buffer, offset + 0x04);
+        offsetInFile = ByteUtil.readLeLong(buffer, offset + 0x08);
+        entrySize = ByteUtil.readLeInt(buffer, offset + 0x10);
         if (entrySize > 0) {
             securityDescriptor = new byte[entrySize - 0x14];
             System.arraycopy(buffer, offset + 0x14, securityDescriptor, 0, securityDescriptor.length);

@@ -23,7 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ShortAllocationDescriptor implements IByteArraySerializable {
@@ -39,8 +39,8 @@ public final class ShortAllocationDescriptor implements IByteArraySerializable {
     }
 
     public int readFrom(byte[] buffer, int offset) {
-        int len = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        extentLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
+        int len = ByteUtil.readLeInt(buffer, offset);
+        extentLocation = ByteUtil.readLeInt(buffer, offset + 4);
         extentLength = len & 0x3FFFFFFF;
         flags = ShortAllocationFlags.values()[(len >>> 30) & 0x3];
         return 8;

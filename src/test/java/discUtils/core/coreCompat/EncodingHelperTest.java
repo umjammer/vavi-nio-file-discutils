@@ -9,11 +9,10 @@ package discUtils.core.coreCompat;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import discUtils.core.coreCompat.EncodingHelper.CodePage;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import discUtils.core.coreCompat.EncodingHelper.CodePage;
 
 
 /**

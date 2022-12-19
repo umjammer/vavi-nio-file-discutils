@@ -25,7 +25,7 @@ package discUtils.hfsPlus;
 import java.util.ArrayList;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
@@ -41,9 +41,9 @@ class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
         int totalRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
 
-        int headerRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 2);
-        int userDataRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 4);
-        int mapRecordOffset = EndianUtilities.toUInt16BigEndian(buffer, nodeSize - 6);
+        int headerRecordOffset = ByteUtil.readBeShort(buffer, nodeSize - 2);
+        int userDataRecordOffset = ByteUtil.readBeShort(buffer, nodeSize - 4);
+        int mapRecordOffset = ByteUtil.readBeShort(buffer, nodeSize - 6);
 
         List<BTreeNodeRecord> results = new ArrayList<>(3);
         results.add(0, new BTreeHeaderRecord());
