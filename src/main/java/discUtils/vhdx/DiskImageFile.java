@@ -170,7 +170,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
             try {
                 fileStream.close();
             } catch (IOException e) {
-                throw new dotnet4j.io.IOException(e);
+                e.printStackTrace();
             }
         }
     }

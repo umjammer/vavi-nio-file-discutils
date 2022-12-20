@@ -34,10 +34,6 @@ import java.util.stream.Collectors;
  */
 public enum AttributeFlags {
     /**
-     * The data is stored in linear form.
-     */
-//    None,
-    /**
      * The data is compressed.
      */
     Compressed,

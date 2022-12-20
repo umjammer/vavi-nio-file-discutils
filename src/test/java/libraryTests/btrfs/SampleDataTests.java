@@ -40,8 +40,6 @@ public class SampleDataTests {
 
     @Test
     public void btrfsVhdxZip() throws Exception {
-//        DiscUtils.setup.SetupHelper.RegisterAssembly(Disk.class.getTypeInfo().Assembly);
-//        DiscUtils.setup.SetupHelper.RegisterAssembly(BtrfsFileSystem.class.getTypeInfo().Assembly);
         File fs = new File(URI.create(getClass().getResource("btrfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);

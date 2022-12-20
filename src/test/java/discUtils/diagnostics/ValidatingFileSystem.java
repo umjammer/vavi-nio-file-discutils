@@ -590,7 +590,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                 NoSuchMethodException | SecurityException tie) {
             try {
-                Field remoteStackTraceString = Exception.class.getField("_remoteStackTraceString");
+                Field remoteStackTraceString = tie.getClass().getField("setStackTrace");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
                 throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -605,7 +605,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                 NoSuchMethodException | SecurityException tie) {
             try {
-                Field remoteStackTraceString = Exception.class.getField("_remoteStackTraceString");
+                Field remoteStackTraceString = tie.getClass().getField("setStackTrace");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
                 throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -773,8 +773,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getDirectories(String path) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -791,8 +792,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getDirectories(String path, String searchPattern) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -811,8 +813,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -827,8 +830,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFiles(String path) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -844,8 +848,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFiles(String path, String searchPattern) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -864,8 +869,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -880,8 +886,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFileSystemEntries(String path) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -898,8 +905,9 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -1031,6 +1039,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The file or directory to inspect
      * @return The attributes of the file or directory
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Map<String, Object> getAttributes(String path) {
         return (Map) performActivity((fs, context) -> {
             try {

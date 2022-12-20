@@ -111,9 +111,8 @@ public final class StreamTraceRecord {
 
     /**
      * Gets a string representation of the common fields.
-     *
-     * @return
      */
+    @Override
     public String toString() {
         return String.format("%3d%1s:%5s  %10x  [count=%d, result=%d]",
                 id,

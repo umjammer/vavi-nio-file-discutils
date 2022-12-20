@@ -129,15 +129,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
         return new ResidentAttributeRecord(buffer, offset, length);
     }
 
-    public static Comparator<AttributeRecord> compareStartVcns = (x, y) -> {
-        if (x.getStartVcn() < y.getStartVcn()) {
-            return -1;
-        }
-        if (x.getStartVcn() == y.getStartVcn()) {
-            return 0;
-        }
-        return 1;
-    };
+    public static Comparator<AttributeRecord> compareStartVcns = Comparator.comparingLong(AttributeRecord::getStartVcn);
 
     public abstract List<Range> getClusters();
 

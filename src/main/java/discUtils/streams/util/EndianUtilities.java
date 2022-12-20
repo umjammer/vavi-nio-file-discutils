@@ -31,7 +31,6 @@ import java.util.UUID;
 import discUtils.streams.IByteArraySerializable;
 
 
-// TODO to be deprecated
 public class EndianUtilities {
 
     @Deprecated

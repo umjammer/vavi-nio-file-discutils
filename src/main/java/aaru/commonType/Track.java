@@ -45,7 +45,7 @@ public class Track {
     /** Which filter stores this track */
     public Stream filter;
     /** Indexes, 00 to 99 and sector offset */
-    public Map<Short, Integer> indexes;
+    public Map<Integer, Integer> indexes;
     /** Track pre-gap */
     public long preGap;
     /** How many main channel bytes per sector are in the file with this track */

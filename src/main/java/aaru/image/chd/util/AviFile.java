@@ -17,7 +17,6 @@ class AviFile {
     static final int FORMAT_YUY2 = AVI_FOURCC('Y', 'U', 'Y', '2');
     static final int FORMAT_HFYU = AVI_FOURCC('H', 'F', 'Y', 'U');
     static final int FORMAT_I420 = AVI_FOURCC('I', '4', '2', '0');
-    ;
     static final int FORMAT_DIB = AVI_FOURCC('D', 'I', 'B', ' ');
     static final int FORMAT_RGB = AVI_FOURCC('R', 'G', 'B', ' ');
     static final int FORMAT_RAW = AVI_FOURCC('R', 'A', 'W', ' ');

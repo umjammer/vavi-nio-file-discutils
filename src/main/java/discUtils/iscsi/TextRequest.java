@@ -41,7 +41,7 @@ public class TextRequest {
     @SuppressWarnings("unused")
     private long lun;
 
-    private final int targetTransferTag = 0xFFFF_FFFF;
+    private static final int targetTransferTag = 0xFFFF_FFFF;
 
     public TextRequest(Connection connection) {
         this.connection = connection;

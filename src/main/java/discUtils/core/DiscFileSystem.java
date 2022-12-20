@@ -56,17 +56,6 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     }
 
     /**
-     * Finalizes an instance of the DiscFileSystem class.
-     */
-    protected void finalize() throws Throwable {
-        try {
-            close();
-        } finally {
-            super.finalize();
-        }
-    }
-
-    /**
      * Gets the file system options, which can be modified.
      */
     private DiscFileSystemOptions options;
@@ -86,11 +75,13 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @return true if the file system is read-write.
      */
+    @Override
     public abstract boolean canWrite();
 
     /**
      * Gets the root directory of the file system.
      */
+    @Override
     public DiscDirectoryInfo getRoot() {
         return new DiscDirectoryInfo(this, "");
     }
@@ -105,6 +96,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Gets a value indicating whether the file system is thread-safe.
      */
+    @Override
     public boolean isThreadSafe() {
         return false;
     }
@@ -115,6 +107,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile) throws IOException {
         copyFile(sourceFile, destinationFile, false);
     }
@@ -127,6 +120,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
+    @Override
     public abstract void copyFile(String sourceFile, String destinationFile, boolean overwrite) throws IOException;
 
     /**
@@ -134,6 +128,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @param path The path of the new directory.
      */
+    @Override
     public abstract void createDirectory(String path) throws IOException;
 
     /**
@@ -141,6 +136,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @param path The path of the directory to delete.
      */
+    @Override
     public abstract void deleteDirectory(String path) throws IOException;
 
     /**
@@ -149,6 +145,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the directory to delete.
      * @param recursive Determines if the all descendants should be deleted.
      */
+    @Override
     public void deleteDirectory(String path, boolean recursive) throws IOException {
         if (recursive) {
             for (String dir : getDirectories(path)) {
@@ -167,6 +164,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @param path The path of the file to delete.
      */
+    @Override
     public abstract void deleteFile(String path) throws IOException;
 
     /**
@@ -175,6 +173,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path to test.
      * @return true if the directory exists.
      */
+    @Override
     public abstract boolean directoryExists(String path) throws IOException;
 
     /**
@@ -183,6 +182,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path to test.
      * @return true if the file exists.
      */
+    @Override
     public abstract boolean fileExists(String path) throws IOException;
 
     /**
@@ -191,6 +191,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path to test.
      * @return true if the file or directory exists.
      */
+    @Override
     public boolean exists(String path) throws IOException {
         return fileExists(path) || directoryExists(path);
     }
@@ -199,8 +200,9 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
+    @Override
     public List<String> getDirectories(String path) throws IOException {
         return getDirectories(path, "*.*", TOP_DIRECTORY_ONLY);
     }
@@ -211,8 +213,9 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
     public List<String> getDirectories(String path, String searchPattern) throws IOException {
         return getDirectories(path, searchPattern, TOP_DIRECTORY_ONLY);
     }
@@ -225,16 +228,18 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
     public abstract List<String> getDirectories(String path, String searchPattern, String searchOption) throws IOException;
 
     /**
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
+    @Override
     public List<String> getFiles(String path) throws IOException {
         return getFiles(path, "*.*", TOP_DIRECTORY_ONLY);
     }
@@ -244,8 +249,9 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
     public List<String> getFiles(String path, String searchPattern) throws IOException {
         return getFiles(path, searchPattern, TOP_DIRECTORY_ONLY);
     }
@@ -258,16 +264,18 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
     public abstract List<String> getFiles(String path, String searchPattern, String searchOption) throws IOException;
 
     /**
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public abstract List<String> getFileSystemEntries(String path) throws IOException;
 
     /**
@@ -276,8 +284,9 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public abstract List<String> getFileSystemEntries(String path, String searchPattern) throws IOException;
 
     /**
@@ -286,6 +295,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public abstract void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException;
 
     /**
@@ -294,6 +304,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName) throws IOException {
         moveFile(sourceName, destinationName, false);
     }
@@ -305,6 +316,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
      */
+    @Override
     public abstract void moveFile(String sourceName, String destinationName, boolean overwrite) throws IOException;
 
     /**
@@ -314,6 +326,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param mode The file mode for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode) throws IOException {
         return openFile(path, mode, FileAccess.ReadWrite);
     }
@@ -326,6 +339,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
+    @Override
     public abstract SparseStream openFile(String path, FileMode mode, FileAccess access) throws IOException;
 
     /**
@@ -334,6 +348,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
+    @Override
     public abstract Map<String, Object> getAttributes(String path) throws IOException;
 
     /**
@@ -342,6 +357,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
+    @Override
     public abstract void setAttributes(String path, Map<String, Object> newValue) throws IOException;
 
     /**
@@ -350,6 +366,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public long getCreationTime(String path) throws IOException {
         return getCreationTimeUtc(path);
     }
@@ -360,6 +377,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTime(String path, long newTime) throws IOException {
         setCreationTimeUtc(path, newTime);
     }
@@ -370,6 +388,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public abstract long getCreationTimeUtc(String path) throws IOException;
 
     /**
@@ -378,6 +397,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public abstract void setCreationTimeUtc(String path, long newTime) throws IOException;
 
     /**
@@ -386,6 +406,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @return The last access time.
      */
+    @Override
     public long getLastAccessTime(String path) throws IOException {
         return getLastAccessTimeUtc(path);
     }
@@ -396,6 +417,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTime(String path, long newTime) throws IOException {
         setLastAccessTimeUtc(path, newTime);
     }
@@ -406,6 +428,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @return The last access time.
      */
+    @Override
     public abstract long getLastAccessTimeUtc(String path) throws IOException;
 
     /**
@@ -414,6 +437,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public abstract void setLastAccessTimeUtc(String path, long newTime) throws IOException;
 
     /**
@@ -422,6 +446,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @return The last write time.
      */
+    @Override
     public long getLastWriteTime(String path) throws IOException {
         return getLastWriteTimeUtc(path);
     }
@@ -432,6 +457,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTime(String path, long newTime) throws IOException {
         setLastWriteTimeUtc(path, newTime);
     }
@@ -442,6 +468,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path of the file or directory.
      * @return The last write time.
      */
+    @Override
     public abstract long getLastWriteTimeUtc(String path) throws IOException;
 
     /**
@@ -458,6 +485,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The path to the file.
      * @return The length in bytes.
      */
+    @Override
     public abstract long getFileLength(String path) throws IOException;
 
     /**
@@ -468,6 +496,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The file path.
      * @return The representing object.
      */
+    @Override
     public DiscFileInfo getFileInfo(String path) throws IOException {
         return new DiscFileInfo(this, path);
     }
@@ -480,6 +509,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The directory path.
      * @return The representing object.
      */
+    @Override
     public DiscDirectoryInfo getDirectoryInfo(String path) throws IOException {
         return new DiscDirectoryInfo(this, path);
     }
@@ -493,6 +523,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      * @param path The file system path.
      * @return The representing object.
      */
+    @Override
     public DiscFileSystemInfo getFileSystemInfo(String path) throws IOException {
         return new DiscFileSystemInfo(this, path);
     }
@@ -502,6 +533,7 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
      *
      * @return The boot code, or {@code null} if not available.
      */
+    @Override
     public byte[] readBootCode() throws IOException {
         return null;
     }
@@ -509,21 +541,25 @@ public abstract class DiscFileSystem implements Serializable, IFileSystem, Close
     /**
      * Size of the Filesystem in bytes
      */
+    @Override
     public abstract long getSize() throws IOException;
 
     /**
      * Used space of the Filesystem in bytes
      */
+    @Override
     public abstract long getUsedSpace() throws IOException;
 
     /**
      * Available space of the Filesystem in bytes
      */
+    @Override
     public abstract long getAvailableSpace() throws IOException;
 
     /**
      * Disposes of this instance, releasing all resources.
      */
+    @Override
     public void close() throws IOException {
     }
 }

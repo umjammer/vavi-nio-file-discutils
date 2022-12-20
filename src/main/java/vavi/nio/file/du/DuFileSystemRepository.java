@@ -52,7 +52,7 @@ public final class DuFileSystemRepository extends FileSystemRepositoryBase {
      * @throws IndexOutOfBoundsException no suitable {@link LogicalVolumeInfo} or {@link FileSystemInfo}
      */
     @Override
-    public FileSystemDriver createDriver(final URI uri, final Map<String, ?> env) throws IOException {
+    public FileSystemDriver createDriver(URI uri, Map<String, ?> env) throws IOException {
         String[] rawSchemeSpecificParts = uri.getRawSchemeSpecificPart().split("!");
 Debug.println(Level.FINE, "part[0]: " + rawSchemeSpecificParts[0]);
         URI filePart = URI.create(rawSchemeSpecificParts[0]);
@@ -86,7 +86,7 @@ Debug.println(Level.FINE, "lvi: " + lvi + " / " + manager.getLogicalVolumes().si
 Debug.println(Level.FINE, "fsi: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
         DiscFileSystem fs = fsi.open(lvi, new FileSystemParameters());
 Debug.println(Level.FINE, "fs: " + fs);
-        final DuFileStore fileStore = new DuFileStore(fs, factoryProvider.getAttributesFactory());
+        DuFileStore fileStore = new DuFileStore(fs, factoryProvider.getAttributesFactory());
         return new DuFileSystemDriver(fileStore, factoryProvider, fs, env);
     }
 

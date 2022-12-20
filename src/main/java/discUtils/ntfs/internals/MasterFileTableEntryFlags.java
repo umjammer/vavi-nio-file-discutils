@@ -32,10 +32,6 @@ import discUtils.core.coreCompat.EnumSettable;
  */
 public enum MasterFileTableEntryFlags implements EnumSettable {
     /**
-     * Default value.
-     */
-//    None,
-    /**
      * The entry is currently in use.
      */
     InUse, // 0x0001

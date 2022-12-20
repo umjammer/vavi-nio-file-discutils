@@ -373,7 +373,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     @Override
     public List<String> getParentLocations() {
@@ -384,7 +384,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the location of the parent file, given a base path.
      *
      * @param basePath The full path to this file.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      * @deprecated Use {@link #getParentLocations()} by preference
      */
     public List<String> getParentLocations(String basePath) {

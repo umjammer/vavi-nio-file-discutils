@@ -31,7 +31,7 @@ public final class DuFileStore extends FileStoreBase {
      *
      * @param session the (valid) OneDrive client to use
      */
-    public DuFileStore(final DiscFileSystem session, final FileAttributesFactory factory) {
+    public DuFileStore(DiscFileSystem session, FileAttributesFactory factory) {
         super("discutils", factory, false);
         this.session = session;
     }

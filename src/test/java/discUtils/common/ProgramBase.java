@@ -201,7 +201,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
         long now = System.currentTimeMillis();
         long timeSoFar = now - startTime;
         long remaining = (long) ((timeSoFar / (double) e.getBytesRead()) * (totalBytes - e.getBytesRead()));
-        System.err.printf("\n%s (%03d%%)  |%s| %t\n", // TODO {3:hh\:mm\:ss\.f}
+        System.err.printf("\n%s (%03d%%)  |%s| %4$tT.%4$tL\n",
                           label,
                           (e.getBytesRead() * 100) / totalBytes,
                           progressBar,

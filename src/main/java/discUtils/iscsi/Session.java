@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import discUtils.core.coreCompat.ReflectionHelper;
 import dotnet4j.io.FileAccess;
 
 
@@ -358,7 +357,7 @@ public final class Session implements Closeable {
     void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
-                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                ProtocolKeyAttribute attr = propInfo.getAnnotation(ProtocolKeyAttribute.class);
                 if (attr != null) {
                     Object value = propInfo.get(this);
                     if (ProtocolKeyAttribute.Util.shouldTransmit(attr,
@@ -379,7 +378,7 @@ public final class Session implements Closeable {
     void consumeParameters(TextBuffer inParameters, TextBuffer outParameters) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
-                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                ProtocolKeyAttribute attr = propInfo.getAnnotation(ProtocolKeyAttribute.class);
                 if (attr != null) {
                     if (inParameters.get(attr.name()) != null) {
                         Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get(attr.name()),

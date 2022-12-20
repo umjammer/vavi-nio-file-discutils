@@ -134,7 +134,7 @@ public interface IFileSystem {
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
     List<String> getDirectories(String path) throws IOException;
 
@@ -144,7 +144,7 @@ public interface IFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
     List<String> getDirectories(String path, String searchPattern) throws IOException;
 
@@ -156,7 +156,7 @@ public interface IFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
     List<String> getDirectories(String path, String searchPattern, String searchOption) throws IOException;
 
@@ -164,7 +164,7 @@ public interface IFileSystem {
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
     List<String> getFiles(String path) throws IOException;
 
@@ -173,7 +173,7 @@ public interface IFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
     List<String> getFiles(String path, String searchPattern) throws IOException;
 
@@ -185,7 +185,7 @@ public interface IFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
     List<String> getFiles(String path, String searchPattern, String searchOption) throws IOException;
 
@@ -193,7 +193,7 @@ public interface IFileSystem {
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
     List<String> getFileSystemEntries(String path) throws IOException;
 
@@ -203,7 +203,7 @@ public interface IFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
     List<String> getFileSystemEntries(String path, String searchPattern) throws IOException;
 

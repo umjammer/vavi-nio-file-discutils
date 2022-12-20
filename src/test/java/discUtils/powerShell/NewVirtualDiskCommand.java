@@ -31,6 +31,7 @@ import discUtils.core.DiscFileInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeInfo;
 import discUtils.hfsPlus.FileInfo;
+import discUtils.powerShell.conpat.ErrorCategory;
 import discUtils.powerShell.conpat.ErrorRecord;
 import discUtils.powerShell.conpat.PSCmdlet;
 import discUtils.powerShell.virtualDiskProvider.OnDemandVirtualDisk;

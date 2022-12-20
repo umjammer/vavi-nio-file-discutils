@@ -106,7 +106,7 @@ public final class RpcTcpTransport implements IRpcTransport {
                     retries++;
                     lastException = se;
                     if (!isNewConnection) {
-                        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+                        try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
                     }
                 }
             }

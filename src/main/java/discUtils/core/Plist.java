@@ -28,7 +28,6 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -101,12 +100,11 @@ public class Plist {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
 
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+
             Document xmlDoc = dbf.newDocumentBuilder().newDocument();
             DOMImplementation domImpl = dbf.newDocumentBuilder().getDOMImplementation();
-
-            Properties props = new Properties();
-            props.setProperty(OutputKeys.INDENT, "yes");
-            props.setProperty(OutputKeys.ENCODING, "utf-8");
 
             DocumentType xmlDocType = domImpl.createDocumentType("plist",
                                                                  "-//Apple//DTD PLIST 1.0//EN",
@@ -148,6 +146,7 @@ public class Plist {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private static Node createNode(Document xmlDoc, Object obj) {
         if (obj instanceof Map) {
             return createMap(xmlDoc, (Map) obj);

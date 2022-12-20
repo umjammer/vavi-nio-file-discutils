@@ -46,6 +46,7 @@ public class ResourceFork {
         return results;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static ResourceFork fromPlist(Map<String, Object> plist) {
         if (!plist.containsKey("resource-fork")) {
             throw new IllegalArgumentException("plist doesn't contain resource fork");

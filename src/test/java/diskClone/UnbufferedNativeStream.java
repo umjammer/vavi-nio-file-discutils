@@ -128,7 +128,7 @@ public class UnbufferedNativeStream extends SparseStream {
             }
 
             int toCopy = Math.min(count - totalBytesRead, usefulData);
-            System.arraycopy(this.buffer, alignmentOffset, buffer, offset + totalBytesRead, toCopy);
+            System.arraycopy(this.buffer, alignmentOffset, buffer[0], offset + totalBytesRead, toCopy);
             totalBytesRead += toCopy;
             position += toCopy;
         }

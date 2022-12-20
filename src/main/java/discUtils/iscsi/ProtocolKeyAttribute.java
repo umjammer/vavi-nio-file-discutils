@@ -28,8 +28,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
-import discUtils.core.coreCompat.ReflectionHelper;
-
 
 @Target({
     ElementType.FIELD, ElementType.METHOD
@@ -72,7 +70,7 @@ public @interface ProtocolKeyAttribute {
                         if (info.isEnumConstant()) {
                             Object literalValue = info.get(null);
                             if (literalValue.equals(value)) {
-                                ProtocolKeyValueAttribute attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
+                                ProtocolKeyValueAttribute attr = info.getAnnotation(ProtocolKeyValueAttribute.class);
                                 return attr.name();
                             }
                         }
@@ -103,7 +101,7 @@ public @interface ProtocolKeyAttribute {
                     Field[] infos = valueType.getFields();
                     for (Field info : infos) {
                         if (info.isEnumConstant()) {
-                            ProtocolKeyValueAttribute attr = ReflectionHelper.getCustomAttribute(info, ProtocolKeyValueAttribute.class);
+                            ProtocolKeyValueAttribute attr = info.getAnnotation(ProtocolKeyValueAttribute.class);
                             if (attr != null && attr.name().equals(value)) {
                                 return info.get(null);
                             }

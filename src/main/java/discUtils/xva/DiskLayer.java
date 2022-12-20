@@ -109,7 +109,7 @@ public final class DiskLayer extends VirtualDiskLayer {
     /**
      * Gets the possible locations of the parent file (if any).
      *
-     * @return Array of strings, empty if no parent.
+     * @return list of strings, empty if no parent.
      */
     public List<String> getParentLocations() {
         return Collections.emptyList();

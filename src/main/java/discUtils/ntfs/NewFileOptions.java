@@ -34,56 +34,50 @@ public final class NewFileOptions {
      * Initializes a new instance of the NewFileOptions class.
      */
     public NewFileOptions() {
-        setCompressed(Optional.empty());
-        setCreateShortNames(Optional.empty());
-        setSecurityDescriptor(null);
+        compressed = null;
+        createShortNames = null;
+        securityDescriptor = null;
     }
 
     /**
      * Gets or sets whether the new file should be compressed.
-     * The default (
-     * {@code null}
-     * ) value indicates the file system default behaviour applies.
+     * The default ({@code null}) value indicates the file system default behaviour applies.
      */
-    private Optional<Boolean> compressed;
+    private Boolean compressed;
 
-    public Optional<Boolean> getCompressed() {
+    public Boolean getCompressed() {
         return compressed;
     }
 
-    public void setCompressed(Optional<Boolean> value) {
+    public void setCompressed(Boolean value) {
         compressed = value;
     }
 
     /**
      * Gets or sets whether a short name should be created for the file.
-     * The default (
-     * {@code null}
-     * ) value indicates the file system default behaviour applies.
+     * The default ({@code null}) value indicates the file system default behaviour applies.
      */
-    private Optional<Boolean> createShortNames;
+    private Boolean createShortNames;
 
-    public Optional<Boolean> getCreateShortNames() {
+    public Boolean getCreateShortNames() {
         return createShortNames;
     }
 
-    public void setCreateShortNames(Optional<Boolean> value) {
+    public void setCreateShortNames(Boolean value) {
         createShortNames = value;
     }
 
     /**
      * Gets or sets the security descriptor that to set for the new file.
-     * The default (
-     * {@code null}
-     * ) value indicates the security descriptor is inherited.
+     * The default ({@code null}) value indicates the security descriptor is inherited.
      */
-    private RawSecurityDescriptor securitydescriptor;
+    private RawSecurityDescriptor securityDescriptor;
 
     public RawSecurityDescriptor getSecurityDescriptor() {
-        return securitydescriptor;
+        return securityDescriptor;
     }
 
     public void setSecurityDescriptor(RawSecurityDescriptor value) {
-        securitydescriptor = value;
+        securityDescriptor = value;
     }
 }

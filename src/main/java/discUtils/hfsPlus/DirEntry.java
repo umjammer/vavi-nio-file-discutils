@@ -27,7 +27,6 @@ import java.util.EnumSet;
 import discUtils.core.UnixFileType;
 import discUtils.core.coreCompat.FileAttributes;
 import discUtils.core.vfs.VfsDirEntry;
-import discUtils.streams.util.EndianUtilities;
 import vavi.util.ByteUtil;
 
 

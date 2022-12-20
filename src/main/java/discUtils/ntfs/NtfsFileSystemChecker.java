@@ -450,6 +450,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                                             cluster,
                                             clusterMap.get(cluster),
                                             attrKey);
+                            } else {
+                                clusterMap.put(cluster, attrKey);
                             }
                         }
                     }

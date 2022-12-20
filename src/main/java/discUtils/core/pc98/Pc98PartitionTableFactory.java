@@ -103,6 +103,7 @@ Debug.println(Level.FINE, "[" + count + "]: " + pe);
         for (PartitionTable table: tables) {
             if (table instanceof discUtils.core.pc98.Pc98PartitionTable) {
                 exists = true;
+                break;
             }
         }
         if (!exists) {

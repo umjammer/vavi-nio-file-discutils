@@ -130,7 +130,8 @@ class File {
 
     public boolean getHasWin32OrDosName() {
         for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
-            StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute) _attr;
+            @SuppressWarnings({"unchecked"})
+            StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute<FileNameRecord>) _attr;
             FileNameRecord fnr = attr.getContent();
             if (fnr.fileNameNamespace != FileNameNamespace.Posix) {
                 return true;
@@ -171,7 +172,8 @@ class File {
             result.add("");
         } else {
             for (Object _attr : getAttributes(AttributeType.FileName)) { // need cast
-                StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute) _attr;
+                @SuppressWarnings({"unchecked"})
+                StructuredNtfsAttribute<FileNameRecord> attr = (StructuredNtfsAttribute<FileNameRecord>) _attr;
                 String name = attr.getContent().fileName;
                 Directory parentDir = context.getGetDirectoryByRef().invoke(attr.getContent().parentDirectory);
                 if (parentDir != null) {
@@ -432,16 +434,17 @@ class File {
         removeAttribute(stream.getAttribute());
     }
 
+    @SuppressWarnings("unchecked")
     public FileNameRecord getFileNameRecord(String name, boolean freshened) {
         List<NtfsAttribute> attrs = getAttributes(AttributeType.FileName);
         StructuredNtfsAttribute<FileNameRecord> attr = null;
         if (name == null || name.isEmpty()) {
             if (attrs.size() != 0) {
-                attr = (StructuredNtfsAttribute) attrs.get(0);
+                attr = (StructuredNtfsAttribute<FileNameRecord>) attrs.get(0);
             }
         } else {
             for (Object _a : attrs) { // need cast
-                StructuredNtfsAttribute<FileNameRecord> a = (StructuredNtfsAttribute) _a;
+                StructuredNtfsAttribute<FileNameRecord> a = (StructuredNtfsAttribute<FileNameRecord>) _a;
                 if (context.getUpperCase().compare(a.getContent().fileName, name) == 0) {
                     attr = a;
                 }
@@ -622,7 +625,8 @@ class File {
         if (attrListRec != null) {
             NtfsAttribute lastAttr = null;
 
-            StructuredNtfsAttribute<AttributeList> attrListAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(this, getMftReference(), attrListRec);
+            @SuppressWarnings("unchecked")
+            StructuredNtfsAttribute<AttributeList> attrListAttr = (StructuredNtfsAttribute<AttributeList>) NtfsAttribute.fromRecord(this, getMftReference(), attrListRec);
             AttributeList attrList = attrListAttr.getContent();
             attributes.add(attrListAttr);
 
@@ -770,11 +774,13 @@ class File {
 
     private void createAttributeList() {
         short id = records.get(0).createAttribute(AttributeType.AttributeList, null, false, EnumSet.noneOf(AttributeFlags.class));
-        StructuredNtfsAttribute<AttributeList> newAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(this, getMftReference(), records.get(0).getAttribute(id));
+        @SuppressWarnings("unchecked")
+        StructuredNtfsAttribute<AttributeList> newAttr = (StructuredNtfsAttribute<AttributeList>) NtfsAttribute.fromRecord(this, getMftReference(), records.get(0).getAttribute(id));
         attributes.add(newAttr);
         updateAttributeList();
     }
 
+    @SuppressWarnings("unchecked")
     private void updateAttributeList() {
         if (records.size() > 1) {
             AttributeList attrList = new AttributeList();
@@ -786,7 +792,7 @@ class File {
                 }
             }
             StructuredNtfsAttribute<AttributeList> alAttr;
-            alAttr = (StructuredNtfsAttribute) getAttribute(AttributeType.AttributeList, null);
+            alAttr = (StructuredNtfsAttribute<AttributeList>) getAttribute(AttributeType.AttributeList, null);
             alAttr.setContent(attrList);
             alAttr.save();
         }

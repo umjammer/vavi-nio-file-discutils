@@ -89,7 +89,7 @@ public final class DiskImageFileInfo {
         if (activeLogSequence != null) {
             return activeLogSequence.stream().map(LogEntryInfo::new).collect(Collectors.toList());
         } else {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -155,7 +155,7 @@ public final class DiskImageFileInfo {
      * Gets the set of parent locators, for differencing files.
      */
     public Map<String, String> getParentLocatorEntries() {
-        return metadata.getParentLocator() != null ? metadata.getParentLocator().getEntries() : Collections.EMPTY_MAP;
+        return metadata.getParentLocator() != null ? metadata.getParentLocator().getEntries() : Collections.emptyMap();
     }
 
     /**

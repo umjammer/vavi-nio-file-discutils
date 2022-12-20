@@ -235,9 +235,9 @@ public class Crc16Context {
 
         while (read > 0) {
             if (inverse)
-                stepInverse(/*ref*/ localHashInt, localTable, buffer, (int) read);
+                stepInverse(/*ref*/ localHashInt, localTable, buffer, read);
             else
-                step(/*ref*/ localHashInt, localTable, buffer, (int) read);
+                step(/*ref*/ localHashInt, localTable, buffer, read);
 
             read = fileStream.read(buffer, 0, 65536);
         }

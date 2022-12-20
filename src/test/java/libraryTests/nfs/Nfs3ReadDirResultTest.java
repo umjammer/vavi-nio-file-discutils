@@ -70,9 +70,9 @@ public class Nfs3ReadDirResultTest {
         entry.setFileHandle(handle);
         entry.setFileId(2018);
         entry.setName("test.bin");
-        result.setDirEntries(Collections.emptyList());
+        result.setDirEntries(Collections.singletonList(entry));
 
-        Nfs3ReadDirResult clone = null;
+        Nfs3ReadDirResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

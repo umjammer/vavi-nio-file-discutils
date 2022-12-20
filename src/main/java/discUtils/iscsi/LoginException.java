@@ -60,14 +60,4 @@ public class LoginException extends IscsiException {
     public LoginException(String message, LoginStatusCode code) {
         super("iSCSI login failure (" + code + "):" + message);
     }
-
-    /**
-     * Initializes a new instance of the LoginException class.
-     *
-     * @param info The serialization info.
-     * @param context Ther context.
-     */
-//    protected LoginException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 }

@@ -188,7 +188,7 @@ e.printStackTrace();
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     public List<String> getParentLocations() {
         return null;

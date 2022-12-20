@@ -192,7 +192,7 @@ public final class Disk extends VirtualDisk {
      * Gets the layers that make up the disk.
      */
     public List<VirtualDiskLayer> getLayers() {
-        return files.stream().map(file -> file.getItem1()).collect(Collectors.toList());
+        return files.stream().map(Tuple::getItem1).collect(Collectors.toList());
     }
 
     /**

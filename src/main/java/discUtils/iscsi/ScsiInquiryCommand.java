@@ -31,11 +31,11 @@ public class ScsiInquiryCommand extends ScsiCommand {
 
     public static final int InitialResponseDataLength = 36;
 
-    private final boolean askForPage = false;
+    private static final boolean askForPage = false;
 
     private final int expected;
 
-    private final byte pageCode = 0;
+    private static final byte pageCode = 0;
 
     public ScsiInquiryCommand(long targetLun, int expected) {
         super(targetLun);

@@ -56,7 +56,7 @@ public class VirtualDiskManager {
         return typeMap;
     }
 
-    /**
+    /*
      * Locates {@link VirtualDiskFactory} factories attributed with
      * {@link VirtualDiskFactoryAttribute}, and types marked with
      * {@link VirtualDiskTransportAttribute}, that are able to work with Virtual Disk

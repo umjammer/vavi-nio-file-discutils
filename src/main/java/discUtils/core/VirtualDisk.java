@@ -54,13 +54,6 @@ public abstract class VirtualDisk implements Serializable, Closeable {
     private VirtualDiskTransport transport;
 
     /**
-     * Finalizes an instance of the VirtualDisk class.
-     */
-//    protected void finalize() throws Throwable {
-//        close();
-//    }
-
-    /**
      * Gets the set of disk formats supported as an array of file extensions.
      */
     public static Collection<String> getSupportedDiskFormats() {

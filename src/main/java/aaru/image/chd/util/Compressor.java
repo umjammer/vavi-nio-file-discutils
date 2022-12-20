@@ -267,7 +267,7 @@ public abstract class Compressor {
             long startoffs = 0;
             int length_remaining = length;
             for (int tracknum = 0; tracknum < m_toc.numtrks; tracknum++) {
-                final CdromTrackInfo trackinfo = m_toc.tracks[tracknum];
+                CdromTrackInfo trackinfo = m_toc.tracks[tracknum];
                 long endoffs = startoffs + (long) (trackinfo.frames + trackinfo.extraframes) * CD_FRAME_SIZE;
                 if (offset >= startoffs && offset < endoffs) {
                     // if we don't already have this file open, open it now

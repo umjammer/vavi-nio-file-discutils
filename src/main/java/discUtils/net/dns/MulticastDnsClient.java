@@ -114,6 +114,7 @@ Debug.println("receiver exit");
      * Disposes of this instance.
      */
     public void close() throws IOException {
+        es.shutdown();
         if (udpClient != null) {
             udpClient.close();
             udpClient = null;
@@ -277,9 +278,5 @@ Debug.println("send: " + msgBytes.length);
                 transaction.getCompleteEvent().countDown();
             }
         }
-    }
-
-    protected void finalize() {
-        es.shutdown();
     }
 }

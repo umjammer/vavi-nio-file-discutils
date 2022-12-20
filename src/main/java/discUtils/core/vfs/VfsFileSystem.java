@@ -98,6 +98,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
     /**
      * Gets the volume label.
      */
+    @Override
     public abstract String getVolumeLabel();
 
     /**
@@ -107,6 +108,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
@@ -116,6 +118,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      *
      * @param path The path of the new directory.
      */
+    @Override
     public void createDirectory(String path) {
         throw new UnsupportedOperationException();
     }
@@ -125,6 +128,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      *
      * @param path The path of the directory to delete.
      */
+    @Override
     public void deleteDirectory(String path) {
         throw new UnsupportedOperationException();
     }
@@ -144,6 +148,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path to test.
      * @return true if the directory exists.
      */
+    @Override
     public boolean directoryExists(String path) {
         if (isRoot(path)) {
             return true;
@@ -162,6 +167,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      *
      * @param path The path to test.
      * @return true if the file exists.
+     @Override
      */
     public boolean fileExists(String path) {
         TDirEntry dirEntry = getDirectoryEntry(path);
@@ -180,8 +186,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> dirs = new ArrayList<>();
@@ -197,8 +204,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
         List<String> results = new ArrayList<>();
@@ -210,8 +218,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public List<String> getFileSystemEntries(String path) {
         String fullPath = path;
         if (!fullPath.startsWith(FS)) {
@@ -232,8 +241,9 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
 
@@ -254,6 +264,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         throw new UnsupportedOperationException();
     }
@@ -265,6 +276,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param destinationName The target file name.
      * @param overwrite Overwrite any existing file.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
@@ -277,6 +289,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         if (!canWrite()) {
             if (mode != FileMode.Open) {
@@ -356,6 +369,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
+    @Override
     public Map<String, Object> getAttributes(String path) {
         if (isRoot(path)) {
             return FileAttributes.toMap(getRootDirectory().getFileAttributes());
@@ -378,6 +392,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
+    @Override
     public void setAttributes(String path, Map<String, Object> newValue) {
         throw new UnsupportedOperationException();
     }
@@ -411,6 +426,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
@@ -443,6 +459,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
@@ -453,6 +470,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path of the file or directory.
      * @return The last write time.
      */
+    @Override
     public long getLastWriteTimeUtc(String path) {
         if (isRoot(path)) {
             return getRootDirectory().getLastWriteTimeUtc();
@@ -475,6 +493,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
@@ -485,6 +504,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path to the file.
      * @return The length in bytes.
      */
+    @Override
     public long getFileLength(String path) {
         TFile file = getFile(path);
         if (file == null || file.getFileAttributes().contains(FileAttributes.Directory)) {
@@ -505,6 +525,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         return file;
     }
 
+    @SuppressWarnings({"unchecked"})
     public TDirectory getDirectory(String path) {
         if (isRoot(path)) {
             return getRootDirectory();
@@ -534,6 +555,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path to inspect.
      * @param handler Delegate invoked for each directory entry.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void forAllDirEntries(String path, DirEntryHandler handler) {
         TDirectory dir = null;
         TDirEntry self = getDirectoryEntry(path);
@@ -560,6 +582,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path to query.
      * @return The file object corresponding to the path.
      */
+    @SuppressWarnings({"unchecked"})
     protected TFile getFile(String path) {
         if (isRoot(path)) {
             return (TFile) getRootDirectory();
@@ -606,6 +629,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         return getDirectoryEntry(dir, pathElements, 0);
     }
 
+    @SuppressWarnings("unchecked")
     private TDirEntry getDirectoryEntry(TDirectory dir, String[] pathEntries, int pathOffset) {
         TDirEntry entry;
 
@@ -675,7 +699,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
             if (!(file instanceof IVfsSymlink)) {
                 throw new dotnet4j.io.FileNotFoundException("Unable to resolve symlink: " + path);
             }
-            IVfsSymlink<TDirEntry, TFile> symlink = (IVfsSymlink) file;
+            @SuppressWarnings("unchecked")
+            IVfsSymlink<TDirEntry, TFile> symlink = (IVfsSymlink<TDirEntry, TFile>) file;
 
             currentPath = Utilities.resolvePath(currentPath.replaceFirst(StringUtilities.escapeForRegex(FS + "*$"), ""),
                                                 symlink.getTargetPath());

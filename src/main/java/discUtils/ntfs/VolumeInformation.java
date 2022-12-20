@@ -77,7 +77,7 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
     }
 
     public void writeTo(byte[] buffer, int offset) {
-        ByteUtil.writeLeLong((long) 0, buffer, offset + 0x00);
+        ByteUtil.writeLeLong(0, buffer, offset + 0x00);
         buffer[offset + 0x08] = majorVersion;
         buffer[offset + 0x09] = minorVersion;
         ByteUtil.writeLeShort((short) VolumeInformationFlags.valueOf(getFlags()), buffer, offset + 0x0a);

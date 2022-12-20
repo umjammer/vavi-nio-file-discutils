@@ -35,7 +35,7 @@ public class ExtFileSystemTest {
                 ExtFileSystem fs = new ExtFileSystem(data, new FileSystemParameters())) {
             List<DiscFileSystemInfo> fsis = fs.getRoot().getFileSystemInfos();
             fsis.sort(Comparator.comparing(DiscFileSystemInfo::getName));
-            final Iterator<Consumer<DiscFileSystemInfo>> i = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
+            Iterator<Consumer<DiscFileSystemInfo>> i = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("bar", s.getName());
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
             }, s -> {
@@ -51,7 +51,7 @@ public class ExtFileSystemTest {
 
             fsis = fs.getRoot().getDirectories("bar").get(0).getFileSystemInfos();
             fsis.sort(Comparator.comparing(DiscFileSystemInfo::getName));
-            final Iterator<Consumer<DiscFileSystemInfo>> j = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
+            Iterator<Consumer<DiscFileSystemInfo>> j = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("blah.txt", s.getName());
                 assertFalse(s.getAttributes().contains(FileAttributes.Directory));
             }, s -> {

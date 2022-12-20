@@ -81,13 +81,17 @@ public class MetadataVolumeGroupSection {
                     String[] values = Metadata.parseArrayValue(parameter.getValue());
                     for (String value : values) {
                         String statusValue = value.toLowerCase().trim();
-                        if (statusValue.equals("read")) {
+                        switch (statusValue) {
+                        case "read":
                             status.add(VolumeGroupStatus.Read);
-                        } else if (statusValue.equals("write")) {
+                            break;
+                        case "write":
                             status.add(VolumeGroupStatus.Write);
-                        } else if (statusValue.equals("resizeable")) {
+                            break;
+                        case "resizeable":
                             status.add(VolumeGroupStatus.Resizeable);
-                        } else {
+                            break;
+                        default:
                             throw new IllegalArgumentException("Unexpected status in volume group metadata: " + statusValue);
                         }
                     }

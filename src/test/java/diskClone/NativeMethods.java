@@ -26,15 +26,20 @@
 
 package diskClone;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Library;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 
 
 public interface NativeMethods extends Library {
-    NativeMethods INSTANCE = null;
+    NativeMethods INSTANCE = Native.load("vssapi", NativeMethods.class);
 
     // [DllImport("vssapi.dll")]
     // internal static extern int CreateVssBackupComponentsInternal(out
@@ -53,7 +58,7 @@ public interface NativeMethods extends Library {
                                int flags,
                                int[][] template);
 
-    boolean deviceIoControl(Pointer hDevice,
+    int deviceIoControl(Pointer hDevice,
                                    EIOControlCode dwIoControlCode,
                                    Object InBuffer,
                                    int nInBufferSize,
@@ -84,7 +89,7 @@ public interface NativeMethods extends Library {
 
     boolean readFile(Pointer handle, int[] buffer, int count, int[] numRead, int[] overlapped);
 
-    class NtfsVolumeData {
+    class NtfsVolumeData extends Structure {
 
         public long volumeSerialNumber;
 
@@ -113,18 +118,29 @@ public interface NativeMethods extends Library {
         public long mftZoneStart;
 
         public long mftZoneEnd;
+
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("volumeSerialNumber", "numberSectors", "totalClusters", "freeClusters",
+                    "totalReserved", "bytesPerSector", "bytesPerCluster", "bytesPerFileRecordSegment",
+                    "clustersPerFileRecordSegment", "mftValidDataLength", "mftStartLcn",
+                    "mftZoneStart", "mftZoneEnd");
+        }
     }
 
-    class DiskExtent {
+    class DiskExtent extends Structure {
 
         public int diskNumber;
 
         public long startingOffset;
 
         public long extentLength;
+
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("diskNumber", "startingOffset", "extentLength");
+        }
     }
 
-    class DiskGeometry {
+    class DiskGeometry extends Structure {
 
         public long cylinders;
 
@@ -135,6 +151,10 @@ public interface NativeMethods extends Library {
         public int sectorsPerTrack;
 
         public int bytesPerSector;
+
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("cylinders", "mediaType", "tracksPerCylinder", "sectorsPerTrack", "bytesPerSector");
+        }
     }
 
     int ERROR_MORE_DATA = 234;

@@ -34,10 +34,6 @@ import java.util.stream.Collectors;
  */
 enum FilePermissions {
     /**
-     * No permissions.
-     */
-//    None,
-    /**
      * Any user execute permission.
      */
     OthersExecute,

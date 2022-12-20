@@ -38,6 +38,7 @@ public final class LzWindowDictionary {
      */
     private final List<Integer>[] offsetList;
 
+    @SuppressWarnings("unchecked")
     public LzWindowDictionary() {
         initalize();
         // Build the index list, so Lz compression will become significantly faster

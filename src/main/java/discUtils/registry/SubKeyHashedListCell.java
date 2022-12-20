@@ -282,7 +282,7 @@ public final class SubKeyHashedListCell extends ListCell {
             cellIndex = value;
         }
 
-        public int compare(Integer x, Integer y) {
+        @Override public int compare(Integer x, Integer y) {
             // TODO: Be more efficient at ruling out no-hopes by using the hash values
             KeyNodeCell cell = hive.getCell(x);
             int result = StringUtilities.compare(cell.name, searchName, true);

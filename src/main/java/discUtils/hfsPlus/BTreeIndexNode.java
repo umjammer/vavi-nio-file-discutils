@@ -56,7 +56,8 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             }
             if (nextResult > 0) {
                 // Next record's key is too big, so worth looking at children
-                BTreeKeyedNode<TKey> child = ((BTree) getTree()).getKeyedNode(records.get(idx).getChildId());
+                @SuppressWarnings("unchecked")
+                BTreeKeyedNode<TKey> child = ((BTree<TKey>) getTree()).getKeyedNode(records.get(idx).getChildId());
                 return child.findKey(key);
             }
 
@@ -86,7 +87,8 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             }
             if (nextResult >= 0) {
                 // Next record's key isn't too small, so worth looking at children
-                BTreeKeyedNode<TKey> child = ((BTree) getTree()).getKeyedNode(records.get(idx).getChildId());
+                @SuppressWarnings("unchecked")
+                BTreeKeyedNode<TKey> child = ((BTree<TKey>) getTree()).getKeyedNode(records.get(idx).getChildId());
                 child.visitRange(visitor);
             }
 
@@ -94,6 +96,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();

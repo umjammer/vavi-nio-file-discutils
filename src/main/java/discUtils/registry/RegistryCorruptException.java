@@ -50,14 +50,4 @@ public class RegistryCorruptException extends Exception {
     public RegistryCorruptException(String message, Exception innerException) {
         super(message, innerException);
     }
-
-    /**
-     * Initializes a new instance of the RegistryCorruptException class.
-     *
-     * @param info The serialization info.
-     * @param context The streaming context.
-     */
-//    protected RegistryCorruptException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 }

@@ -52,14 +52,4 @@ public class IscsiException extends IOException {
     public IscsiException(String message, Exception innerException) {
         super(message, innerException);
     }
-
-    /**
-     * Initializes a new instance of the IscsiException class.
-     *
-     * @param info The serialization info.
-     * @param context Ther context.
-     */
-//    protected IscsiException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 }

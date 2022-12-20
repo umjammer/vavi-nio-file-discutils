@@ -13,5 +13,5 @@ package discUtils.powerShell.conpat;
  * @version 0.00 2022-12-20 nsano initial version <br>
  */
 public enum ErrorCategory {
-    WriteError
+    InvalidArgument, ParserError, InvalidOperation, WriteError
 }

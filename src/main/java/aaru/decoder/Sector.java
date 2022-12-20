@@ -407,11 +407,8 @@ public class Sector {
             }
 
             sb.append(String.format("File number: %d", buffer[16])).append("\n");
-            ;
             sb.append(String.format("Channel number: %d", buffer[17])).append("\n");
-            ;
             sb.append(String.format("Coding information number: %d", buffer[19])).append("\n");
-            ;
 
             if ((buffer[18] & 0x80) == 0x80)
                 sb.append("End of file.").append("\n");

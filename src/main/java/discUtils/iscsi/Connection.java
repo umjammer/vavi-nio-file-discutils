@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import discUtils.core.coreCompat.ReflectionHelper;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.NetworkStream;
 import dotnet4j.io.Stream;
@@ -135,7 +134,7 @@ class Connection implements Closeable {
      * @param inBuffer The buffer to fill with returned data.
      * @param inBufferOffset The first byte to fill with returned data.
      * @param inBufferMax The maximum amount of data to receive.
-     * @returns The number of bytes received.
+     * @return The number of bytes received.
      */
     public int send(ScsiCommand cmd, byte[] outBuffer, int outBufferOffset, int outBufferCount, byte[] inBuffer, int inBufferOffset, int inBufferMax) {
         CommandRequest req = new CommandRequest(this, cmd.getTargetLun());
@@ -523,7 +522,7 @@ class Connection implements Closeable {
     private void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase, SessionType sessionType) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
-                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                ProtocolKeyAttribute attr = propInfo.getAnnotation(ProtocolKeyAttribute.class);
                 if (attr != null) {
                     Object value = propInfo.get(this);
 
@@ -541,7 +540,7 @@ class Connection implements Closeable {
     private void consumeParameters(TextBuffer inParameters, TextBuffer outParameters) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
-                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                ProtocolKeyAttribute attr = propInfo.getAnnotation(ProtocolKeyAttribute.class);
                 if (attr != null && attr.sender() == KeySender.Target) {
                     if (inParameters.get(attr.name()) != null) {
                         Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get(attr.name()), propInfo.getType());
@@ -568,6 +567,7 @@ class Connection implements Closeable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends BaseResponse> T parseResponse(Class<T> clazz, ProtocolDataUnit pdu) {
         BaseResponse resp;
 

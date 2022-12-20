@@ -247,7 +247,8 @@ public class FileRecord extends FixupRecordBase {
     public String toString() {
         for (AttributeRecord attr : getAttributes()) {
             if (attr.getAttributeType() == AttributeType.FileName) {
-                StructuredNtfsAttribute<FileNameRecord> fnAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr);
+                @SuppressWarnings("unchecked")
+                StructuredNtfsAttribute<FileNameRecord> fnAttr = (StructuredNtfsAttribute<FileNameRecord>) NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr);
                 return fnAttr.getContent().fileName;
             }
         }

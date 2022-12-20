@@ -79,10 +79,10 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
     /**
      * Specifies the size of the AG in filesystem blocks. For all AGs except the
      * last, this must be equal
-     * to the superblock's {@link SuperBlock#_agBlocks}
+     * to the superblock's {@link SuperBlock#getAgBlocks()}
      * value. For the last AG, this could be less than the
      *
-     * {@link SuperBlock#_agBlocks}
+     * {@link SuperBlock#getAgBlocks()}
      * value. It is this value that should be used to determine the size of the
      * AG.
      */

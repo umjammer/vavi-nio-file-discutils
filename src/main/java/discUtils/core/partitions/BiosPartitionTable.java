@@ -160,7 +160,7 @@ public final class BiosPartitionTable extends PartitionTable {
         for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
             // If the partition extends beyond the end of the disk, this is
             // probably an invalid partition table
-            if (record.getLBALength() != 0xFFFF_FFFF &&
+            if (record.getLBALength() != 0xFFFF_FFFFL &&
                 (record.getLBAStart() + record.getLBALength()) * Sizes.Sector > disk.getLength()) {
                 return false;
             }

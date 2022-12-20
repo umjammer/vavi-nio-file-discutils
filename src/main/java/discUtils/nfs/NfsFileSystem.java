@@ -81,6 +81,7 @@ public class NfsFileSystem extends DiscFileSystem {
     /**
      * Gets whether this file system supports modification (true for NFS).
      */
+    @Override
     public boolean canWrite() {
         return true;
     }
@@ -88,6 +89,7 @@ public class NfsFileSystem extends DiscFileSystem {
     /**
      * Gets the friendly name for this file system (NFS).
      */
+    @Override
     public String getFriendlyName() {
         return "NFS";
     }
@@ -140,6 +142,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param overwrite Whether to overwrite any existing file (true), or fail
      *            if such a file exists.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         try {
             Nfs3FileHandle sourceParent = getParentDirectory(sourceFile);
@@ -212,6 +215,7 @@ public class NfsFileSystem extends DiscFileSystem {
      *
      * @param path The path of the directory to create.
      */
+    @Override
     public void createDirectory(String path) {
         try {
             Nfs3FileHandle parent = getParentDirectory(path);
@@ -231,6 +235,7 @@ public class NfsFileSystem extends DiscFileSystem {
      *
      * @param path The directory to delete.
      */
+    @Override
     public void deleteDirectory(String path) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -274,6 +279,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path to inspect.
      * @return {@code true} if the path is a directory, else {@code false}.
      */
+    @Override
     public boolean directoryExists(String path) {
         return getAttributes(path).containsKey("Directory") && (Boolean) getAttributes(path).get("Directory");
     }
@@ -284,6 +290,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path to inspect.
      * @return {@code true} if the path is a file, else {@code false} .
      */
+    @Override
     public boolean fileExists(String path) {
         return getAttributes(path).containsKey("Normal") && (Boolean) getAttributes(path).get("Normal");
     }
@@ -296,8 +303,9 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         try {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
@@ -317,8 +325,9 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         try {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
@@ -334,8 +343,9 @@ public class NfsFileSystem extends DiscFileSystem {
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public List<String> getFileSystemEntries(String path) {
         try {
             Pattern re = Utilities.convertWildcardsToRegEx("*.*");
@@ -353,8 +363,9 @@ public class NfsFileSystem extends DiscFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         try {
             Pattern re = Utilities.convertWildcardsToRegEx(searchPattern);
@@ -372,6 +383,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         try {
             Nfs3FileHandle sourceParent = getParentDirectory(sourceDirectoryName);
@@ -403,6 +415,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         try {
             Nfs3FileHandle sourceParent = getParentDirectory(sourceName);
@@ -422,7 +435,7 @@ public class NfsFileSystem extends DiscFileSystem {
             }
 
             Nfs3FileHandle destFileHandle = client.lookup(destParent, destFileName);
-            if (destFileHandle != null && overwrite == false) {
+            if (destFileHandle != null && !overwrite) {
                 throw new dotnet4j.io.IOException(String.format("The destination file '%s' already exists", destinationName));
             }
 
@@ -440,6 +453,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         try {
             EnumSet<Nfs3AccessPermissions> requested = EnumSet.noneOf(Nfs3AccessPermissions.class);
@@ -495,6 +509,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
+    @Override
     public Map<String, Object> getAttributes(String path) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -525,6 +540,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
+    @Override
     public void setAttributes(String path, Map<String, Object> newValue) {
         if (!newValue.equals(getAttributes(path))) {
             throw new UnsupportedOperationException("Unable to change file attributes over NFS");
@@ -537,6 +553,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public long getCreationTimeUtc(String path) {
         try {
             // Note creation time is not available, so simulating from last
@@ -556,6 +573,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTimeUtc(String path, long newTime) {
         // No action - creation time is not accessible over NFS
     }
@@ -566,6 +584,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The last access time.
      */
+    @Override
     public long getLastAccessTimeUtc(String path) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -582,6 +601,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTimeUtc(String path, long newTime) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -600,6 +620,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The last write time.
      */
+    @Override
     public long getLastWriteTimeUtc(String path) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -616,6 +637,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTimeUtc(String path, long newTime) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -634,6 +656,7 @@ public class NfsFileSystem extends DiscFileSystem {
      * @param path The path to the file.
      * @return The length in bytes.
      */
+    @Override
     public long getFileLength(String path) {
         try {
             Nfs3FileHandle handle = getFile(path);
@@ -647,6 +670,7 @@ public class NfsFileSystem extends DiscFileSystem {
     /**
      * Size of the Filesystem in bytes
      */
+    @Override
     public long getSize() {
         return client.fsStat(client.getRootHandle()).getTotalSizeBytes();
     }
@@ -654,6 +678,7 @@ public class NfsFileSystem extends DiscFileSystem {
     /**
      * Used space of the Filesystem in bytes
      */
+    @Override
     public long getUsedSpace() {
         return getSize() - getAvailableSpace();
     }
@@ -661,6 +686,7 @@ public class NfsFileSystem extends DiscFileSystem {
     /**
      * Available space of the Filesystem in bytes
      */
+    @Override
     public long getAvailableSpace() {
         return client.fsStat(client.getRootHandle()).getFreeSpaceBytes();
     }
@@ -668,6 +694,7 @@ public class NfsFileSystem extends DiscFileSystem {
     /**
      * Disposes of this instance, freeing up any resources used.
      */
+    @Override
     public void close() throws IOException {
         if (client != null) {
             client.close();

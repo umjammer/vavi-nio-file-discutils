@@ -66,7 +66,7 @@ final class Directory extends File implements IVfsDirectory<DirEntry, File> {
             throw new NullPointerException("name");
         }
 
-        if (name == null || name.isEmpty()) {
+        if (name.isEmpty()) {
             throw new IllegalArgumentException("Attempt to lookup empty file name");
         }
 

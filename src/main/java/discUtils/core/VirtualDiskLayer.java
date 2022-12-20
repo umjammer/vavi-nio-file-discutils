@@ -84,14 +84,6 @@ public abstract class VirtualDiskLayer implements Closeable {
     public abstract FileLocator getRelativeFileLocator();
 
     /**
-     * Finalizes an instance of the VirtualDiskLayer class.
-     */
-    // TODO finalizer called unexpected timing w/ fuse
-//    protected void finalize() throws Throwable {
-//        close();
-//    }
-
-    /**
      * Gets the content of this layer.
      *
      * @param parent The parent stream (if any).
@@ -103,7 +95,7 @@ public abstract class VirtualDiskLayer implements Closeable {
     /**
      * Gets the possible locations of the parent file (if any).
      *
-     * @return Array of strings, empty if no parent.
+     * @return list of strings, empty if no parent.
      */
     public abstract List<String> getParentLocations();
 }

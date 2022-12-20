@@ -227,6 +227,7 @@ public class Context extends VfsContext {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     <T extends BaseItem> List<T> findKey(long treeId, Key key) {
         NodeHeader tree = getFsTree(treeId);
         switch (key.getItemType()) {

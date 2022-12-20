@@ -148,29 +148,9 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         return openVolume(database.getVolume(volumeId));
     }
 
-    private static Comparator<ExtentRecord> ExtentOffsets = (x, y) -> {
-        if (x.offsetInVolumeLba > y.offsetInVolumeLba) {
-            return 1;
-        }
+    private static Comparator<ExtentRecord> ExtentOffsets = Comparator.comparingLong(x -> x.offsetInVolumeLba);
 
-        if (x.offsetInVolumeLba < y.offsetInVolumeLba) {
-            return -1;
-        }
-
-        return 0;
-    };
-
-    private static Comparator<ExtentRecord> ExtentInterleaveOrder = (x, y) -> {
-        if (x.interleaveOrder > y.interleaveOrder) {
-            return 1;
-        }
-
-        if (x.interleaveOrder < y.interleaveOrder) {
-            return -1;
-        }
-
-        return 0;
-    };
+    private static Comparator<ExtentRecord> ExtentInterleaveOrder = Comparator.comparingLong(x -> x.interleaveOrder);
 
     private static LogicalVolumeStatus worstOf(LogicalVolumeStatus x, LogicalVolumeStatus y) {
         return LogicalVolumeStatus.values()[Math.max(x.ordinal(), y.ordinal())];

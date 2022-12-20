@@ -36,7 +36,6 @@ public class SampleDataTests {
 
     @Test
     public void xfsVhdxZip() throws Exception {
-        SetupHelper.setupComplete();
         File fs = new File(URI.create(getClass().getResource("xfs.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);
@@ -61,7 +60,6 @@ public class SampleDataTests {
 
     @Test
     public void xfs5VhdxZip() throws Exception {
-        SetupHelper.setupComplete();
         File fs = new File(URI.create(getClass().getResource("xfs5.zip").toString()));
         try (Stream vhdx = ZipUtilities.readFileFromZip(fs, null);
                 DiskImageFile diskImage = new DiskImageFile(vhdx, Ownership.Dispose);

@@ -23,7 +23,6 @@
 package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import vavi.util.ByteUtil;
 
 

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -34,17 +33,7 @@ public class ReflectionHelper {
     }
 
     @Deprecated
-    public static <T extends Annotation> T getCustomAttribute(Field field, Class<T> attributeType) {
-        return field.getAnnotation(attributeType);
-    }
-
-    @Deprecated
     public static <T extends Annotation> T getCustomAttribute(Class<?> type, Class<T> attributeType) {
-        return type.getAnnotation(attributeType);
-    }
-
-    @Deprecated
-    public static <T extends Annotation> T getCustomAttribute(Class<?> type, Class<T> attributeType, boolean inherit) {
         return type.getAnnotation(attributeType);
     }
 

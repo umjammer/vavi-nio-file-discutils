@@ -50,7 +50,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
         cacheSettings.setBlockSize((int) (32 * Sizes.OneKiB));
         cacheSettings.setOptimumReadSize((int) (128 * Sizes.OneKiB));
 
-        content = new BlockCacheStream(getContent(), Ownership.Dispose);
+        content = new BlockCacheStream(getContent(), Ownership.Dispose, cacheSettings);
     }
 
     public long getCapacity() {

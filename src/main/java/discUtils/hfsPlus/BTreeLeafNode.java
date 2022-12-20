@@ -60,6 +60,7 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();

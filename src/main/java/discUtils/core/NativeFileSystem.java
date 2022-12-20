@@ -125,7 +125,7 @@ public class NativeFileSystem extends DiscFileSystem {
      *
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void copyFile(String sourceFile, String destinationFile) throws IOException {
         copyFile(sourceFile, destinationFile, true);
@@ -138,7 +138,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) throws IOException {
         if (readOnly) {
@@ -160,7 +160,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * Creates a directory.
      *
      * @param path The path of the new directory.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void createDirectory(String path) throws IOException {
         if (readOnly) {
@@ -178,7 +178,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * Deletes a directory.
      *
      * @param path The path of the directory to delete.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void deleteDirectory(String path) throws IOException {
         if (readOnly) {
@@ -197,7 +197,7 @@ public class NativeFileSystem extends DiscFileSystem {
      *
      * @param path The path of the directory to delete.
      * @param recursive Determines if the all descendants should be deleted.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void deleteDirectory(String path, boolean recursive) throws IOException {
         if (recursive) {
@@ -216,7 +216,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * Deletes a file.
      *
      * @param path The path of the file to delete.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void deleteFile(String path) throws IOException {
         if (readOnly) {
@@ -272,7 +272,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
     public List<String> getDirectories(String path) {
         return getDirectories(path, "*.*", "TopDirectoryOnly");
@@ -284,7 +284,7 @@ public class NativeFileSystem extends DiscFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern) {
         return getDirectories(path, searchPattern, "TopDirectoryOnly");
@@ -298,7 +298,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         if (path.startsWith(FS)) {
@@ -320,7 +320,7 @@ Debug.printStackTrace(e);
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
     public List<String> getFiles(String path) {
         return getFiles(path, "*.*", "TopDirectoryOnly");
@@ -331,7 +331,7 @@ Debug.printStackTrace(e);
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern) {
         return getFiles(path, searchPattern, "TopDirectoryOnly");
@@ -345,7 +345,7 @@ Debug.printStackTrace(e);
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         if (path.startsWith(FS)) {
@@ -367,7 +367,7 @@ Debug.printStackTrace(e);
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
     public List<String> getFileSystemEntries(String path) {
         return getFileSystemEntries(path, "*.*");
@@ -379,7 +379,7 @@ Debug.printStackTrace(e);
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         if (path.startsWith(FS)) {
@@ -393,7 +393,7 @@ Debug.printStackTrace(e);
                     .collect(Collectors.toList()));
         } catch (IOException e) {
 Debug.printStackTrace(e);
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
     }
 
@@ -402,7 +402,7 @@ Debug.printStackTrace(e);
      *
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException {
         if (readOnly) {
@@ -436,7 +436,7 @@ Debug.printStackTrace(e);
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public void moveFile(String sourceName, String destinationName, boolean overwrite) throws IOException {
         if (readOnly) {
@@ -480,7 +480,7 @@ Debug.printStackTrace(e);
      * @param mode The file mode for the created stream.
      * @param access The access permissions for the created stream.
      * @return The new stream.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public SparseStream openFile(String path, FileMode mode, FileAccess access) throws IOException {
         if (readOnly && access != FileAccess.Read) {
@@ -563,7 +563,7 @@ Debug.printStackTrace(e);
      *
      * @param path The path of the file or directory.
      * @return The creation time.
-     * @throws IOException
+     * @throws IOException when an io error occurs
      */
     public long getCreationTimeUtc(String path) throws IOException {
         if (path.startsWith(FS)) {
