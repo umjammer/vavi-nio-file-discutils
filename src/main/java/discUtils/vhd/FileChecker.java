@@ -24,6 +24,7 @@ package discUtils.vhd;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.UUID;
 
@@ -312,7 +313,7 @@ public class FileChecker {
 
         fileStream.position(fileStream.getLength() - Sizes.Sector);
         byte[] footerSector = StreamUtilities.readExact(fileStream, Sizes.Sector);
-        if (!Utilities.areEqual(footerSector, headerSector)) {
+        if (!Arrays.equals(footerSector, headerSector)) {
             reportError("Header and footer are different");
         }
 

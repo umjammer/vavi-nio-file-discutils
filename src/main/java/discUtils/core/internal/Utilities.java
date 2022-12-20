@@ -46,7 +46,7 @@ public class Utilities {
      * @param xLast The highest ordinal of the first range (exclusive).
      * @param yFirst The lowest ordinal of the second range (inclusive).
      * @param yLast The highest ordinal of the second range (exclusive).
-     * @return {@code true} if the ranges overlap, else {@code false} .
+     * @return {@code true} if the ranges overlap, else {@code false}.
      */
     public static <T extends Comparable<T>> boolean rangesOverlap(T xFirst, T xLast, T yFirst, T yLast) {
         return !((xLast.compareTo(yFirst) <= 0) || (xFirst.compareTo(yLast) >= 0));
@@ -58,7 +58,6 @@ public class Utilities {
             if (buffer[i] != 0) {
                 return false;
             }
-
         }
         return true;
     }
@@ -85,6 +84,7 @@ public class Utilities {
         return val == 1;
     }
 
+    @Deprecated
     public static boolean areEqual(byte[] a, byte[] b) {
         if (a.length != b.length) {
             return false;
@@ -140,13 +140,12 @@ public class Utilities {
         String trimmed = path.replaceFirst(StringUtilities.escapeForRegex(FS + "*$"), "");
         int index = trimmed.lastIndexOf(FSC);
         if (index < 0) {
-            return trimmed;
+            return trimmed; // No directory, just a file name
         }
 
         return trimmed.substring(index + 1);
     }
 
-    // No directory, just a file name
     /**
      * Combines two paths.
      *
@@ -159,7 +158,7 @@ public class Utilities {
             return b;
         }
 
-        if (Objects.isNull(b) || b.isEmpty()) {
+        if (b.isEmpty()) {
             return a;
         }
 
@@ -259,7 +258,7 @@ public class Utilities {
      * Indicates if a file name matches the 8.3 pattern.
      *
      * @param name The name to test.
-     * @return {@code true} if the name is 8.3, otherwise {@code false} .
+     * @return {@code true} if the name is 8.3, otherwise {@code false}.
      */
     public static boolean is8Dot3(String name) {
         if (name.length() > 12) {

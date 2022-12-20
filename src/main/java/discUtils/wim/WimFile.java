@@ -24,6 +24,7 @@ package discUtils.wim;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +154,7 @@ public class WimFile {
         }
 
         for (ResourceInfo header : resources.get(hashHash)) {
-            if (Utilities.areEqual(header.hash, hash)) {
+            if (Arrays.equals(header.hash, hash)) {
                 return header.header;
             }
         }

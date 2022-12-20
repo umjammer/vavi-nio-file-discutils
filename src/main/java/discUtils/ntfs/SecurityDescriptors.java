@@ -24,6 +24,7 @@ package discUtils.ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.core.internal.Utilities;
@@ -144,7 +145,7 @@ final class SecurityDescriptors implements IDiagnosticTraceable {
             SecurityDescriptor stored = readDescriptor(entry.getValue());
             byte[] storedByteForm = new byte[stored.size()];
             stored.writeTo(storedByteForm, 0);
-            if (Utilities.areEqual(newByteForm, storedByteForm)) {
+            if (Arrays.equals(newByteForm, storedByteForm)) {
                 return entry.getValue().id;
             }
         }
