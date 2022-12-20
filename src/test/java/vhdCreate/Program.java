@@ -64,6 +64,7 @@ public class Program extends ProgramBase {
 
     static int exitCode;
 
+    @Override
     protected void doRun() throws IOException {
 
         if ((typeSwitch != null && Utilities.equals(typeSwitch, "dynamic")) || typeSwitch == null) {

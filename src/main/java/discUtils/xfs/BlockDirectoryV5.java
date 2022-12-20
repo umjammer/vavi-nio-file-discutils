@@ -81,10 +81,12 @@ public class BlockDirectoryV5 extends BlockDirectory {
         owner = value;
     }
 
+    @Override
     protected int getHeaderPadding() {
         return 4;
     }
 
+    @Override
     public int size() {
         return 0x30 + 3 * 32 + 4;
     }
@@ -93,10 +95,12 @@ public class BlockDirectoryV5 extends BlockDirectory {
         super(context);
     }
 
+    @Override
     public boolean getHasValidMagic() {
         return getMagic() == HeaderMagicV5;
     }
 
+    @Override
     protected int readHeader(byte[] buffer, int offset) {
         setMagic(ByteUtil.readBeInt(buffer, offset));
         crc = ByteUtil.readBeInt(buffer, offset + 0x04);

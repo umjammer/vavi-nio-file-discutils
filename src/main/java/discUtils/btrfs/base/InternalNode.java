@@ -58,11 +58,11 @@ public class InternalNode extends NodeHeader {
         nodes = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return super.size() + getItemCount() * KeyPointer.Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         offset += super.readFrom(buffer, offset);
         setKeyPointers(new KeyPointer[getItemCount()]);
         if (getKeyPointers().length == 0)
@@ -76,7 +76,7 @@ public class InternalNode extends NodeHeader {
         return size();
     }
 
-    public List<BaseItem> find(Key key, Context context) {
+    @Override public List<BaseItem> find(Key key, Context context) {
         List<BaseItem> result = new ArrayList<>();
         if (getKeyPointers()[0].getKey().getObjectId() > key.getObjectId())
             return result;

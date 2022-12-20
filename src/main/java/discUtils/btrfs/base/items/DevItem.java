@@ -224,11 +224,11 @@ public class DevItem extends BaseItem {
         fsUuid = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         deviceId = ByteUtil.readLeLong(buffer, offset);
         deviceSize = ByteUtil.readLeLong(buffer, offset + 0x8);
         deviceSizeUsed = ByteUtil.readLeLong(buffer, offset + 0x8);

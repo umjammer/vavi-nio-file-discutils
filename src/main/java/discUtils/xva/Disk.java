@@ -60,6 +60,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the disk's capacity (in bytes).
      */
+    @Override
     public long getCapacity() {
         return capacity;
     }
@@ -67,6 +68,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the content of the disk as a stream.
      */
+    @Override
     public SparseStream getContent() {
         if (content == null) {
             content = new DiskStream(vm.getArchive(), capacity, location);
@@ -78,6 +80,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the type of disk represented by this object.
      */
+    @Override
     public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
@@ -88,6 +91,7 @@ public final class Disk extends VirtualDisk {
      * example whether the
      * BIOS geometry is preserved in the disk file.
      */
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo();
     }
@@ -106,6 +110,7 @@ public final class Disk extends VirtualDisk {
      * The geometry is not stored with the disk, so this is at best
      * a guess of the actual geometry.
      */
+    @Override
     public Geometry getGeometry() {
         return Geometry.fromCapacity(capacity);
     }
@@ -113,6 +118,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the (single) layer of an XVA disk.
      */
+    @Override
     public List<VirtualDiskLayer> getLayers() {
         return Collections.singletonList(new DiskLayer(vm, capacity, location));
     }
@@ -133,6 +139,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOptionException("Differencing disks not supported by XVA format");
     }
@@ -143,6 +150,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOptionException("Differencing disks not supported by XVA format");
     }
@@ -150,6 +158,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Disposes of this instance, freeing underlying resources.
      */
+    @Override
     public void close() throws IOException {
         if (content != null) {
             content.close();

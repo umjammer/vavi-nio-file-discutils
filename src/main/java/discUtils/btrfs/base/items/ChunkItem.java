@@ -166,11 +166,11 @@ public class ChunkItem extends BaseItem {
         stripes = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x30 + getStripeCount() * Stripe.Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         chunkSize = ByteUtil.readLeLong(buffer, offset);
         objectId = ByteUtil.readLeLong(buffer, offset + 0x8);
         stripeLength = ByteUtil.readLeLong(buffer, offset + 0x10);

@@ -34,12 +34,15 @@ public class BuilderBytesExtent extends BuilderExtent {
         super(start, length);
     }
 
+    @Override
     public void close() {
     }
 
+    @Override
     public void prepareForRead() {
     }
 
+    @Override
     public int read(long diskOffset, byte[] block, int offset, int count) {
         int start = (int) Math.min(diskOffset - getStart(), data.length);
         int numRead = Math.min(count, data.length - start);
@@ -47,6 +50,7 @@ public class BuilderBytesExtent extends BuilderExtent {
         return numRead;
     }
 
+    @Override
     public void disposeReadState() {
     }
 

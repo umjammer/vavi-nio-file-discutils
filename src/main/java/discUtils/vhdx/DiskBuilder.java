@@ -94,6 +94,7 @@ public final class DiskBuilder extends DiskImageBuilder {
      *         disk. The first file is
      *         the 'primary' file that is normally attached to VMs.
      */
+    @Override
     public List<DiskImageFileSpecification> build(String baseName) {
         if (baseName == null || baseName.isEmpty()) {
             throw new IllegalArgumentException("Invalid base file name");
@@ -127,6 +128,7 @@ public final class DiskBuilder extends DiskImageBuilder {
         /**
          * @param totalLength {@cs out}
          */
+        @Override
         protected List<BuilderExtent> fixExtents(long[] totalLength) {
             if (diskType != DiskType.Dynamic) {
                 throw new UnsupportedOperationException("Creation of only dynamic disks currently implemented");
@@ -264,10 +266,12 @@ public final class DiskBuilder extends DiskImageBuilder {
             this.chunkRatio = chunkRatio;
         }
 
+        @Override
         public void close() {
             batData = null;
         }
 
+        @Override
         public void prepareForRead() {
             batData = new byte[(int) getLength()];
             long fileOffset = dataStart;
@@ -285,6 +289,7 @@ public final class DiskBuilder extends DiskImageBuilder {
             }
         }
 
+        @Override
         public int read(long diskOffset, byte[] block, int offset, int count) {
             int start = (int) Math.min(diskOffset - getStart(), batData.length);
             int numRead = Math.min(count, batData.length - start);
@@ -292,6 +297,7 @@ public final class DiskBuilder extends DiskImageBuilder {
             return numRead;
         }
 
+        @Override
         public void disposeReadState() {
             batData = null;
         }

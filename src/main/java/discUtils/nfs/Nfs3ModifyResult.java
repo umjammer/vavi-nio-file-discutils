@@ -23,6 +23,7 @@
 package discUtils.nfs;
 
 public final class Nfs3ModifyResult extends Nfs3CallResult {
+
     public Nfs3ModifyResult() {
     }
 
@@ -41,12 +42,12 @@ public final class Nfs3ModifyResult extends Nfs3CallResult {
         cacheConsistency = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         getCacheConsistency().write(writer);
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3ModifyResult ? (Nfs3ModifyResult) obj : null);
     }
 
@@ -58,7 +59,7 @@ public final class Nfs3ModifyResult extends Nfs3CallResult {
         return other.getStatus() == getStatus() && other.getCacheConsistency().equals(getCacheConsistency());
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(getStatus(), getCacheConsistency());
     }
 }

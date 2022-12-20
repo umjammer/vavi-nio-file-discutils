@@ -67,7 +67,7 @@ public class Nfs3DirectoryEntryTest {
         entry.setFileAttributes(attributes);
         entry.setName("test");
 
-        Nfs3DirectoryEntry clone = null;
+        Nfs3DirectoryEntry clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             entry.write(writer);

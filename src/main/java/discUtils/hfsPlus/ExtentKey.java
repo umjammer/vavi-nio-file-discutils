@@ -55,11 +55,11 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         nodeId = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 12;
     }
 
-    public int compareTo(ExtentKey other) {
+    @Override public int compareTo(ExtentKey other) {
         if (other == null) {
             throw new NullPointerException("other");
         }
@@ -80,7 +80,7 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         return 0;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         keyLength = ByteUtil.readBeShort(buffer, offset + 0);
         forkType = buffer[offset + 2];
         nodeId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 4));
@@ -89,15 +89,15 @@ Debug.println((keyLength & 0xffff) + 2);
         return (keyLength & 0xffff) + 2;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public int compareTo(BTreeKey<?> other) {
+    @Override public int compareTo(BTreeKey<?> other) {
         return compareTo(other instanceof ExtentKey ? (ExtentKey) other : null);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "ExtentKey (" + nodeId + " - " + startBlock + ")";
     }
 }

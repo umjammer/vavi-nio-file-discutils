@@ -51,10 +51,12 @@ public final class LzxBitStream extends BitStream {
         this.byteStream = byteStream;
     }
 
+    @Override
     public int getMaxReadAhead() {
         return 16;
     }
 
+    @Override
     public int read(int count) {
         if (count > 16) {
             throw new IndexOutOfBoundsException("Maximum 32 bits can be read");
@@ -70,6 +72,7 @@ public final class LzxBitStream extends BitStream {
         return (buffer >>> bufferAvailable) & mask;
     }
 
+    @Override
     public int peek(int count) {
         if (bufferAvailable < count) {
             need(count);
@@ -79,6 +82,7 @@ public final class LzxBitStream extends BitStream {
         return (buffer >>> (bufferAvailable - count)) & mask;
     }
 
+    @Override
     public void consume(int count) {
         if (bufferAvailable < count) {
             need(count);

@@ -75,6 +75,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
 
         try (VirtualDisk inDisk = VirtualDisk.openDisk(inFile, FileAccess.Read, getUserName(), getPassword())) {

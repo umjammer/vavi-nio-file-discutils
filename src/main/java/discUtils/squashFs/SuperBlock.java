@@ -78,11 +78,11 @@ public class SuperBlock implements IByteArraySerializable {
 
     public long uidGidTableStart;
 
-    public int size() {
+    @Override public int size() {
         return 96;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = ByteUtil.readLeInt(buffer, offset + 0);
         if (magic != SquashFsMagic)
             return size();
@@ -108,7 +108,7 @@ public class SuperBlock implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeInt(magic, buffer, offset + 0);
         ByteUtil.writeLeInt(inodesCount, buffer, offset + 4);
         ByteUtil.writeLeInt((int) Instant.ofEpochMilli(creationTime).getEpochSecond(), buffer, offset + 8);

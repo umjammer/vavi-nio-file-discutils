@@ -170,6 +170,7 @@ class Index implements Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (indexBitmap != null) {
             indexBitmap.close();

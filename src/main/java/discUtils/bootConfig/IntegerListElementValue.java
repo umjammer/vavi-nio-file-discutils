@@ -40,11 +40,11 @@ public class IntegerListElementValue extends ElementValue {
         this.values = values;
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.IntegerList;
     }
 
-    public String toString() {
+    @Override public String toString() {
         if (values == null || values.length == 0) {
             return "<none>";
         }

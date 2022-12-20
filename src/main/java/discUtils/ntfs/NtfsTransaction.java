@@ -49,6 +49,7 @@ public final class NtfsTransaction implements Closeable {
         return timestamp;
     }
 
+    @Override
     public void close() {
         if (ownRecord) {
             instance = null;

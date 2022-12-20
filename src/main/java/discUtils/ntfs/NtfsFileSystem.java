@@ -830,6 +830,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param offset The byte position to convert.
      * @return The cluster containing the specified byte.
      */
+    @Override
     public long offsetToCluster(long offset) {
         return offset / getClusterSize();
     }
@@ -1323,7 +1324,7 @@ Debug.println(Level.FINE, volumeInfo);
      *         the contents of the alternate streams, use OpenFile(path + ":" +
      *         name, ...).
      */
-    public List<String> getAlternateDataStreams(String path) {
+    @Override public List<String> getAlternateDataStreams(String path) {
         DirectoryEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("File not found " + path);
@@ -2084,7 +2085,7 @@ Debug.println(Level.FINE, volumeInfo);
     }
 
     File allocateFile(EnumSet<FileRecordFlags> flags) {
-        File result = null;
+        File result;
         if (flags.contains(FileRecordFlags.IsDirectory)) {
             result = new Directory(context, context.getMft().allocateRecord(flags, false));
         } else {

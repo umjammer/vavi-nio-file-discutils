@@ -39,21 +39,21 @@ public class LogicalBlockAddress implements IByteArraySerializable {
         return partition;
     }
 
-    public int size() {
+    @Override public int size() {
         return 6;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         logicalBlock = ByteUtil.readLeInt(buffer, offset);
         partition = ByteUtil.readLeShort(buffer, offset + 4);
         return 6;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public String toString() {
+    @Override public String toString() {
         return logicalBlock + ",p" + partition;
     }
 }

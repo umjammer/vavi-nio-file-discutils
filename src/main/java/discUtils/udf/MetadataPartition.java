@@ -54,6 +54,7 @@ public class MetadataPartition extends LogicalPartition {
         }
     }
 
+    @Override
     public IBuffer getContent() {
         return metadataFile.getFileContent();
     }

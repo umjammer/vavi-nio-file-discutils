@@ -32,6 +32,7 @@ import java.net.UnknownHostException;
  * instead the client is assumed to be trusted.
  */
 public final class RpcUnixCredential extends RpcCredentials {
+
     /**
      * Default credentials (nobody).
      *
@@ -76,11 +77,11 @@ public final class RpcUnixCredential extends RpcCredentials {
         }
     }
 
-    public RpcAuthFlavour getAuthFlavour() {
+    @Override public RpcAuthFlavour getAuthFlavour() {
         return RpcAuthFlavour.Unix;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(0);
         writer.write(machineName);
         writer.write(uid);

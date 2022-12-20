@@ -36,6 +36,7 @@ public final class VolumeStream extends UnbufferedNativeStream {
         length = volInfo.totalClusters * volInfo.bytesPerCluster;
     }
 
+    @Override
     public long getLength() {
         return length;
     }

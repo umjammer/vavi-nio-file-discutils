@@ -77,7 +77,7 @@ public interface NativeMethods extends Library {
                               int[][] lpSource,
                               int dwMessageId,
                               int dwLanguageId,
-                              int[][][] lpBuffer,
+                              int[][] lpBuffer,
                               int nSize,
                               int[][] pArguments);
 
@@ -119,6 +119,7 @@ public interface NativeMethods extends Library {
 
         public long mftZoneEnd;
 
+        @Override
         protected List<String> getFieldOrder() {
             return Arrays.asList("volumeSerialNumber", "numberSectors", "totalClusters", "freeClusters",
                     "totalReserved", "bytesPerSector", "bytesPerCluster", "bytesPerFileRecordSegment",
@@ -135,6 +136,7 @@ public interface NativeMethods extends Library {
 
         public long extentLength;
 
+        @Override
         protected List<String> getFieldOrder() {
             return Arrays.asList("diskNumber", "startingOffset", "extentLength");
         }
@@ -152,6 +154,7 @@ public interface NativeMethods extends Library {
 
         public int bytesPerSector;
 
+        @Override
         protected List<String> getFieldOrder() {
             return Arrays.asList("cylinders", "mediaType", "tracksPerCylinder", "sectorsPerTrack", "bytesPerSector");
         }

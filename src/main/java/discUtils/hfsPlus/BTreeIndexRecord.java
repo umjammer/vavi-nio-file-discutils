@@ -58,11 +58,11 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
         key = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return size;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         try {
             setKey(clazz.getDeclaredConstructor().newInstance());
             int keySize = getKey().readFrom(buffer, offset);
@@ -79,11 +79,11 @@ final class BTreeIndexRecord<TKey extends BTreeKey<?>> extends BTreeNodeRecord {
         }
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public String toString() {
+    @Override public String toString() {
         return key + ":" + childId;
     }
 }

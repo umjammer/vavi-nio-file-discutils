@@ -101,6 +101,7 @@ public abstract class AttributeRecord implements Comparable<AttributeRecord> {
 
     public abstract long getStartVcn();
 
+    @Override
     public int compareTo(AttributeRecord other) {
         int val = type.getValue() - other.type.getValue();
         if (val != 0) {

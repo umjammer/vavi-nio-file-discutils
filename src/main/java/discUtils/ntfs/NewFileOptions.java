@@ -22,8 +22,6 @@
 
 package discUtils.ntfs;
 
-import java.util.Optional;
-
 import dotnet4j.security.accessControl.RawSecurityDescriptor;
 
 /**

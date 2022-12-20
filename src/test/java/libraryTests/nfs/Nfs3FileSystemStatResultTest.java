@@ -60,7 +60,7 @@ public class Nfs3FileSystemStatResultTest {
         result.getPostOpAttributes().modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        Nfs3FileSystemStatResult clone = null;
+        Nfs3FileSystemStatResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

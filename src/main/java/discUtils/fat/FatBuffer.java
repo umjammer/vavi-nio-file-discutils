@@ -62,7 +62,7 @@ public class FatBuffer {
 
     private final Map<Integer, Integer> dirtySectors;
 
-    private FatType type = FatType.None;
+    private FatType type;
 
     private int nextFreeCandidate;
 

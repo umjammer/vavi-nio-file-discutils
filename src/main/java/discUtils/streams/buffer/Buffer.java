@@ -35,22 +35,26 @@ public abstract class Buffer implements Serializable, IBuffer {
     /**
      * Gets a value indicating whether this buffer can be read.
      */
+    @Override
     public abstract boolean canRead();
 
     /**
      * Gets a value indicating whether this buffer can be modified.
      */
+    @Override
     public abstract boolean canWrite();
 
     /**
      * Gets the current capacity of the buffer, in bytes.
      */
+    @Override
     public abstract long getCapacity();
 
     /**
      * Gets the parts of the stream that are stored. This may be an empty
      * enumeration if all bytes are zero.
      */
+    @Override
     public List<StreamExtent> getExtents() {
         return getExtentsInRange(0, getCapacity());
     }
@@ -64,6 +68,7 @@ public abstract class Buffer implements Serializable, IBuffer {
      * @param count The number of bytes to read.
      * @return The actual number of bytes read.
      */
+    @Override
     public abstract int read(long pos, byte[] buffer, int offset, int count);
 
     /**
@@ -74,6 +79,7 @@ public abstract class Buffer implements Serializable, IBuffer {
      * @param offset The start offset within the source byte array.
      * @param count The number of bytes to write.
      */
+    @Override
     public abstract void write(long pos, byte[] buffer, int offset, int count);
 
     /**
@@ -91,6 +97,7 @@ public abstract class Buffer implements Serializable, IBuffer {
      * @param pos The start offset within the buffer.
      * @param count The number of bytes to clear.
      */
+    @Override
     public void clear(long pos, int count) {
         write(pos, new byte[count], 0, count);
     }
@@ -99,6 +106,7 @@ public abstract class Buffer implements Serializable, IBuffer {
      * Flushes all data to the underlying storage. The default behaviour,
      * implemented by this class, is to take no action.
      */
+    @Override
     public void flush() {
     }
 
@@ -107,6 +115,7 @@ public abstract class Buffer implements Serializable, IBuffer {
      *
      * @param value The desired capacity of the buffer.
      */
+    @Override
     public abstract void setCapacity(long value);
 
     /**
@@ -116,6 +125,7 @@ public abstract class Buffer implements Serializable, IBuffer {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
+    @Override
     public abstract List<StreamExtent> getExtentsInRange(long start, long count);
 
 }

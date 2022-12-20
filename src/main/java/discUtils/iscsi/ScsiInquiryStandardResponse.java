@@ -39,7 +39,7 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         deviceType = value;
     }
 
-    public int getNeededDataLength() {
+    @Override public int getNeededDataLength() {
         return 36;
     }
 
@@ -83,7 +83,7 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         specificationVersion = value;
     }
 
-    public boolean getTruncated() {
+    @Override public boolean getTruncated() {
         return truncated;
     }
 
@@ -97,7 +97,7 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         vendorId = value;
     }
 
-    public void readFrom(byte[] buffer, int offset, int count) {
+    @Override public void readFrom(byte[] buffer, int offset, int count) {
         if (count < 36) {
             truncated = true;
             return;

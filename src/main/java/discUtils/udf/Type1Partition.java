@@ -38,6 +38,7 @@ public class Type1Partition extends LogicalPartition {
         physical = context.physicalPartitions.get(partitionMap.partitionNumber);
     }
 
+    @Override
     public IBuffer getContent() {
         return physical.getContent();
     }

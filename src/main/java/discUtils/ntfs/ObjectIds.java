@@ -92,20 +92,20 @@ public final class ObjectIds {
 
         public UUID id;
 
-        public int size() {
+        @Override public int size() {
             return 16;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             id = ByteUtil.readLeUUID(buffer, offset + 0);
             return 16;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
             ByteUtil.writeLeUUID(id, buffer, offset + 0);
         }
 
-        public String toString() {
+        @Override public String toString() {
             return String.format("[Key-Id:%s]", id);
         }
     }

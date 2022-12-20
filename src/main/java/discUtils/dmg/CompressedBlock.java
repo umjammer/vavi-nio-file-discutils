@@ -49,11 +49,11 @@ public class CompressedBlock implements IByteArraySerializable {
 
     public int signature;
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         signature = ByteUtil.readBeInt(buffer, offset + 0);
         infoVersion = ByteUtil.readBeInt(buffer, offset + 4);
         firstSector = ByteUtil.readBeLong(buffer, offset + 8);
@@ -70,7 +70,7 @@ public class CompressedBlock implements IByteArraySerializable {
         return 0;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

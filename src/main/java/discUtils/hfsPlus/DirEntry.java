@@ -43,42 +43,42 @@ final class DirEntry extends VfsDirEntry {
         return catalogFileInfo;
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return getCatalogFileInfo().createTime;
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         return UnixFileType.toFileAttributes(getCatalogFileInfo().fileSystemInfo.getFileType());
     }
 
     private String fileName;
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return fileName;
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return true;
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return true;
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return getCatalogFileInfo().recordType == CatalogRecordType.FolderRecord;
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return !isDirectory() &&
                ((CatalogFileInfo) getCatalogFileInfo()).fileInfo.fileType == FileTypeFlags.SymLinkFileType.getValue();
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return getCatalogFileInfo().accessTime;
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return getCatalogFileInfo().contentModifyTime;
     }
 
@@ -86,7 +86,7 @@ final class DirEntry extends VfsDirEntry {
         return getCatalogFileInfo().fileId;
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         return getCatalogFileInfo().fileId.getId();
     }
 
@@ -97,7 +97,7 @@ final class DirEntry extends VfsDirEntry {
 
     private static CommonCatalogFileInfo parseDirEntryData(byte[] dirEntryData) {
         CatalogRecordType type = CatalogRecordType.values()[ByteUtil.readBeShort(dirEntryData, 0)];
-        CommonCatalogFileInfo result = null;
+        CommonCatalogFileInfo result;
         switch (type) {
         case FolderRecord:
             result = new CatalogDirInfo();

@@ -35,7 +35,7 @@ public class TextResponse extends BaseResponse {
 
     public byte[] textData;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 

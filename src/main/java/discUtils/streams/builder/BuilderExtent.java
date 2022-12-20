@@ -57,6 +57,7 @@ public abstract class BuilderExtent implements Closeable {
         return Collections.singletonList(new StreamExtent(start, length));
     }
 
+    @Override
     public abstract void close() throws IOException;
 
     public abstract void prepareForRead();

@@ -29,6 +29,7 @@ import dotnet4j.io.IOException;
  * probably corruption.
  */
 public class InvalidFileSystemException extends IOException {
+
     /**
      * Initializes a new instance of the InvalidFileSystemException class.
      */

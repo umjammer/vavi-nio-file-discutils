@@ -54,6 +54,7 @@ public final class DiskLayer extends VirtualDiskLayer {
     /**
      * Gets the capacity of the layer (in bytes).
      */
+    @Override
     public long getCapacity() {
         return capacity;
     }
@@ -63,6 +64,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      * The geometry is not stored with the disk, so this is at best
      * a guess of the actual geometry.
      */
+    @Override
     public Geometry getGeometry() {
         return Geometry.fromCapacity(capacity);
     }
@@ -71,6 +73,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      * Gets a indication of whether the disk is 'sparse'.
      * Always true for XVA disks.
      */
+    @Override
     public boolean isSparse() {
         return true;
     }
@@ -78,10 +81,12 @@ public final class DiskLayer extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
+    @Override
     public boolean needsParent() {
         return false;
     }
 
+    @Override
     public FileLocator getRelativeFileLocator() {
         return null;
     }
@@ -94,6 +99,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      *            stream.
      * @return The new content stream.
      */
+    @Override
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (ownsParent == Ownership.Dispose && parent != null) {
             try {
@@ -111,6 +117,7 @@ public final class DiskLayer extends VirtualDiskLayer {
      *
      * @return list of strings, empty if no parent.
      */
+    @Override
     public List<String> getParentLocations() {
         return Collections.emptyList();
     }

@@ -40,7 +40,7 @@ public final class XdrDataReader extends BigEndianDataReader {
         return readUInt32() != 0;
     }
 
-    public byte[] readBytes(int count) {
+    @Override public byte[] readBytes(int count) {
         byte[] buffer = StreamUtilities.readExact(stream, count);
         if ((count & 0x3) != 0) {
             StreamUtilities.readExact(stream, 4 - (count & 0x3));

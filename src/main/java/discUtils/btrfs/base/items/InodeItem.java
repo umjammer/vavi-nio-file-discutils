@@ -253,11 +253,11 @@ public class InodeItem extends BaseItem {
         oTime = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         generation = ByteUtil.readLeLong(buffer, offset);
         transId = ByteUtil.readLeLong(buffer, offset + 8);
         fileSize = ByteUtil.readLeLong(buffer, offset + 16);

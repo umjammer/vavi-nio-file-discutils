@@ -102,11 +102,11 @@ public class SwapHeader implements IByteArraySerializable {
         magic = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return PageSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         setMagic(new String(buffer, PageSize - 10, 10, StandardCharsets.US_ASCII));
         if (!getMagic().equals(Magic1) && !getMagic().equals(Magic2))
             return size();
@@ -123,7 +123,7 @@ public class SwapHeader implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

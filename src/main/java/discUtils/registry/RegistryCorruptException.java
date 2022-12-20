@@ -26,6 +26,7 @@ package discUtils.registry;
  * Exception thrown when some corruption is found in the registry hive.
  */
 public class RegistryCorruptException extends Exception {
+
     /**
      * Initializes a new instance of the RegistryCorruptException class.
      */

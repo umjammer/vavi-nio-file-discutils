@@ -29,6 +29,7 @@ import vavi.util.ByteUtil;
 
 
 public class ScsiReportLunsResponse extends ScsiResponse {
+
     private int availableLuns;
 
     private List<Long> luns;
@@ -41,15 +42,15 @@ public class ScsiReportLunsResponse extends ScsiResponse {
         luns = value;
     }
 
-    public int getNeededDataLength() {
+    @Override public int getNeededDataLength() {
         return availableLuns * 8 + 8;
     }
 
-    public boolean getTruncated() {
+    @Override public boolean getTruncated() {
         return availableLuns != luns.size();
     }
 
-    public void readFrom(byte[] buffer, int offset, int count) {
+    @Override public void readFrom(byte[] buffer, int offset, int count) {
         luns = new ArrayList<>();
         if (count == 0) {
             return;

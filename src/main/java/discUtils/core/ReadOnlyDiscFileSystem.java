@@ -36,6 +36,7 @@ import dotnet4j.io.FileMode;
  * from all methods that are always invalid.
  */
 public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
+
     /**
      * Initializes a new instance of the ReadOnlyDiscFileSystem class.
      */
@@ -57,7 +58,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      *
      * @return Always false.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
@@ -68,7 +69,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
-    public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
+    @Override public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
 
@@ -77,7 +78,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      *
      * @param path The path of the new directory.
      */
-    public void createDirectory(String path) {
+    @Override public void createDirectory(String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -86,7 +87,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      *
      * @param path The path of the directory to delete.
      */
-    public void deleteDirectory(String path) {
+    @Override public void deleteDirectory(String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -95,7 +96,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      *
      * @param path The path of the file to delete.
      */
-    public void deleteFile(String path) {
+    @Override public void deleteFile(String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -105,7 +106,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
-    public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
+    @Override public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         throw new UnsupportedOperationException();
     }
 
@@ -116,7 +117,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param destinationName The target file name.
      * @param overwrite Whether to allow an existing file to be overwritten.
      */
-    public void moveFile(String sourceName, String destinationName, boolean overwrite) {
+    @Override public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
 
@@ -127,7 +128,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param mode The file mode for the created stream.
      * @return The new stream.
      */
-    public SparseStream openFile(String path, FileMode mode) throws IOException {
+    @Override public SparseStream openFile(String path, FileMode mode) throws IOException {
         return openFile(path, mode, FileAccess.Read);
     }
 
@@ -138,7 +139,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public void setAttributes(String path, Map<String, Object> newValue) {
+    @Override public void setAttributes(String path, Map<String, Object> newValue) {
         throw new UnsupportedOperationException();
     }
 
@@ -149,7 +150,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setCreationTimeUtc(String path, long newTime) {
+    @Override public void setCreationTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
 
@@ -160,7 +161,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastAccessTimeUtc(String path, long newTime) {
+    @Override public void setLastAccessTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
 
@@ -171,8 +172,7 @@ public abstract class ReadOnlyDiscFileSystem extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastWriteTimeUtc(String path, long newTime) {
+    @Override public void setLastWriteTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
-
 }

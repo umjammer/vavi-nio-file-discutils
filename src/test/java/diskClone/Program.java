@@ -66,6 +66,7 @@ public class Program extends ProgramBase {
         };
     }
 
+    @Override
     protected void doRun() throws IOException {
         if (!isAdministrator()) {
             System.err.println("\nThis utility must be run as an administrator!\n");

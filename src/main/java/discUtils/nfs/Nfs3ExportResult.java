@@ -48,7 +48,7 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
         exports = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         for (Nfs3Export export : exports) {
             writer.write(true);
             export.write(writer);
@@ -56,7 +56,7 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
         writer.write(false);
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3ExportResult ? (Nfs3ExportResult) obj : null);
     }
 
@@ -81,7 +81,7 @@ public final class Nfs3ExportResult extends Nfs3CallResult {
         return true;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return exports.hashCode();
     }
 }

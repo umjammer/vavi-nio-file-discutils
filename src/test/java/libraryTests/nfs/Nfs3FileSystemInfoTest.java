@@ -47,7 +47,7 @@ public class Nfs3FileSystemInfoTest {
         attributes.setWriteMaxBytes(7);
         attributes.setWriteMultipleSize(8);
         attributes.setWritePreferredBytes(9);
-        Nfs3FileSystemInfo clone = null;
+        Nfs3FileSystemInfo clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);

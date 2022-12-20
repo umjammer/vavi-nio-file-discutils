@@ -58,6 +58,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         if (!dontCheck) {
             try (Stream s = new FileStream(vhdFile, FileMode.Open, FileAccess.Read)) {

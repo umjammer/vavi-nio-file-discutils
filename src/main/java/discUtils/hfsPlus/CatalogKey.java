@@ -57,11 +57,11 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
         nodeId = value;
     }
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int compareTo(CatalogKey other) {
+    @Override public int compareTo(CatalogKey other) {
         if (other == null) {
             throw new NullPointerException("other");
         }
@@ -73,7 +73,7 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
         return HfsPlusUtilities.fastUnicodeCompare(name, other.name);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         keyLength = ByteUtil.readBeShort(buffer, offset + 0);
         nodeId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 2));
         name = HfsPlusUtilities.readUniStr255(buffer, offset + 6);
@@ -81,15 +81,15 @@ final class CatalogKey extends BTreeKey<CatalogKey> implements YComparable<Catal
         return (keyLength & 0xffff) + 2;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public int compareTo(BTreeKey<?> other) {
+    @Override public int compareTo(BTreeKey<?> other) {
         return compareTo(other instanceof CatalogKey ? (CatalogKey) other : null);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return name + " (" + nodeId + ")";
     }
 }

@@ -33,7 +33,7 @@ public class LogoutResponse extends BaseResponse {
 
     public short time2Wait;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 

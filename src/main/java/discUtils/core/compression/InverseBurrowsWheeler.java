@@ -36,7 +36,7 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
         nextPos = new int[256];
     }
 
-    protected boolean getBuffersMustNotOverlap() {
+    @Override protected boolean getBuffersMustNotOverlap() {
         return true;
     }
 
@@ -50,7 +50,7 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
         originalIndex = value;
     }
 
-    protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
+    @Override protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
         int outputCount = inputCount;
 
         // First find the frequency of each value
@@ -87,11 +87,11 @@ public final class InverseBurrowsWheeler extends DataBlockTransform {
         return outputCount;
     }
 
-    protected int maxOutputCount(int inputCount) {
+    @Override protected int maxOutputCount(int inputCount) {
         return inputCount;
     }
 
-    protected int minOutputCount(int inputCount) {
+    @Override protected int minOutputCount(int inputCount) {
         return inputCount;
     }
 }

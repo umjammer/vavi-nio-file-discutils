@@ -60,11 +60,11 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
 
     public int version;
 
-    public int size() {
+    @Override public int size() {
         return haveExtraFields ? 0x48 : 0x30;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         creationTime = readDateTime(buffer, 0x00);
         modificationTime = readDateTime(buffer, 0x08);
         mftChangedTime = readDateTime(buffer, 0x10);
@@ -86,7 +86,7 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
         return 0x30;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeLong(DateUtil.toFileTime(creationTime), buffer, 0x00);
         ByteUtil.writeLeLong(DateUtil.toFileTime(modificationTime), buffer, 0x08);
         ByteUtil.writeLeLong(DateUtil.toFileTime(mftChangedTime), buffer, 0x10);
@@ -104,7 +104,7 @@ public final class StandardInformation implements IByteArraySerializable, IDiagn
 
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "      Creation Time: " + creationTime);
         writer.println(indent + "  Modification Time: " + modificationTime);
         writer.println(indent + "   MFT Changed Time: " + mftChangedTime);

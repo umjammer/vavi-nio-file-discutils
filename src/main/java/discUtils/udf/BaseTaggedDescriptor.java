@@ -35,11 +35,11 @@ public abstract class BaseTaggedDescriptor implements IByteArraySerializable {
         requiredTagIdentifier = id;
     }
 
-    public int size() {
+    @Override public int size() {
         return 512;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         if (!DescriptorTag.isValid(buffer, offset)) {
             throw new IllegalStateException("Invalid Anchor Volume Descriptor Pointer (invalid tag)");
         }
@@ -53,7 +53,7 @@ public abstract class BaseTaggedDescriptor implements IByteArraySerializable {
         return parse(buffer, offset);
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

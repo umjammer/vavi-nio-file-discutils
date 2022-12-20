@@ -119,6 +119,7 @@ public class GptEntry implements Comparable<GptEntry> {
         }
     }
 
+    @Override
     public int compareTo(GptEntry other) {
         return (int) (firstUsedLogicalBlock - other.firstUsedLogicalBlock);
     }

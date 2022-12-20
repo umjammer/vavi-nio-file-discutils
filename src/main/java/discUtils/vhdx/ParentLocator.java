@@ -47,7 +47,7 @@ class ParentLocator implements IByteArraySerializable {
 
     private Map<String, String> entries;
 
-    public int size() {
+    @Override public int size() {
         if (entries.size() != 0) {
             throw new UnsupportedOperationException();
         }
@@ -55,7 +55,7 @@ class ParentLocator implements IByteArraySerializable {
         return 20;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         locatorType = ByteUtil.readLeUUID(buffer, offset + 0);
         if (!locatorType.equals(LocatorTypeGuid)) {
             throw new dotnet4j.io.IOException("Unrecognized Parent Locator type: " + locatorType);
@@ -80,7 +80,7 @@ class ParentLocator implements IByteArraySerializable {
         return 0;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         if (entries.size() != 0) {
             throw new UnsupportedOperationException();
         }

@@ -189,6 +189,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the capacity of this disk (in bytes).
      */
+    @Override
     public long getCapacity() {
         long result = 0;
         for (ExtentDescriptor extent : descriptor.getExtents()) {
@@ -218,6 +219,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the extents that comprise this file.
      */
+    @Override
     public List<VirtualDiskExtent> getExtents() {
         List<VirtualDiskExtent> extents = new ArrayList<>(descriptor.getExtents().size());
         if (monolithicStream != null) {
@@ -235,6 +237,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the Geometry of this disk.
      */
+    @Override
     public Geometry getGeometry() {
         return descriptor.getDiskGeometry();
     }
@@ -242,6 +245,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets an indication as to whether the disk file is sparse.
      */
+    @Override
     public boolean isSparse() {
         return descriptor.getCreateType() == DiskCreateType.MonolithicSparse ||
                descriptor.getCreateType() == DiskCreateType.TwoGbMaxExtentSparse ||
@@ -251,6 +255,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating whether this disk is a linked differencing disk.
      */
+    @Override
     public boolean needsParent() {
         return descriptor.getParentContentId() != 0xffffffff;
     }
@@ -264,6 +269,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *
      * Typically used to locate parent disks.
      */
+    @Override
     public FileLocator getRelativeFileLocator() {
         return fileLocator;
     }
@@ -464,6 +470,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *            stream is transfered.
      * @return The stream containing the disk contents.
      */
+    @Override
     public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (descriptor.getParentContentId() == 0xffffffff) {
             if (parent != null && ownsParent == Ownership.Dispose) {
@@ -507,6 +514,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      *
      * @return The parent locations as an array.
      */
+    @Override
     public List<String> getParentLocations() {
         return Collections.singletonList(descriptor.getParentFileNameHint());
     }
@@ -588,6 +596,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Disposes of this instance.
      */
+    @Override
     public void close() throws IOException {
         if (contentStream != null) {
             contentStream.close();

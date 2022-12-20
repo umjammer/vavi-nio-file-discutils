@@ -29,11 +29,11 @@ public class SymlinkInode extends Inode {
 
     public int symlinkSize;
 
-    public int size() {
+    @Override public int size() {
         return 24;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
         numLinks = ByteUtil.readLeInt(buffer, offset + 16);
         symlinkSize = ByteUtil.readLeInt(buffer, offset + 20);

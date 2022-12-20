@@ -85,7 +85,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
      * @return {@code true} if the file system appears valid, else
      *         {@code false}.
      */
-    public boolean check(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
+    @Override public boolean check(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         context = new NtfsContext();
         context.setRawStream(target);
         context.setOptions(new NtfsOptions());

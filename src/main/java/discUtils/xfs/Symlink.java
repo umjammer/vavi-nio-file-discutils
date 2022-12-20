@@ -33,6 +33,7 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
         super(context, inode);
     }
 
+    @Override
     public String getTargetPath() {
         if (inode.getFormat() != InodeFormat.Local && inode.getFormat() != InodeFormat.Extents) {
             throw new IOException("invalid Inode format for symlink");

@@ -89,20 +89,20 @@ public class IndexBlock extends FixupRecordBase {
         stream.flush();
     }
 
-    protected void read(byte[] buffer, int offset) {
+    @Override protected void read(byte[] buffer, int offset) {
         // Skip FixupRecord fields...
         logSequenceNumber = ByteUtil.readLeLong(buffer, offset + 0x08);
         indexBlockVcn = ByteUtil.readLeLong(buffer, offset + 0x10);
         setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), index, isRoot, buffer, offset + FieldSize));
     }
 
-    protected short write(byte[] buffer, int offset) {
+    @Override protected short write(byte[] buffer, int offset) {
         ByteUtil.writeLeLong(logSequenceNumber, buffer, offset + 0x08);
         ByteUtil.writeLeLong(indexBlockVcn, buffer, offset + 0x10);
         return (short) (FieldSize + getNode().writeTo(buffer, offset + FieldSize));
     }
 
-    protected int calcSize() {
+    @Override protected int calcSize() {
         throw new UnsupportedOperationException();
     }
 }

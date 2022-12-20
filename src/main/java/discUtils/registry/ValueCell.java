@@ -83,11 +83,11 @@ public final class ValueCell extends Cell {
         name = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x14 + (getName() == null || getName().isEmpty() ? 0 : getName().length());
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         int nameLen = ByteUtil.readLeShort(buffer, offset + 0x02);
         dataLength = ByteUtil.readLeInt(buffer, offset + 0x04);
         dataIndex = ByteUtil.readLeInt(buffer, offset + 0x08);
@@ -100,7 +100,7 @@ public final class ValueCell extends Cell {
         return 0x14 + nameLen;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         int nameLen;
         if (name == null || name.isEmpty()) {
             flags.remove(ValueFlags.Named);
@@ -120,7 +120,7 @@ public final class ValueCell extends Cell {
         }
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "ValueCell{" + name + ", " + dataType + "}";
     }
 }

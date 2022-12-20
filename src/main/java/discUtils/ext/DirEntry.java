@@ -29,43 +29,44 @@ import discUtils.core.vfs.VfsDirEntry;
 
 
 public class DirEntry extends VfsDirEntry {
+
     public DirEntry(DirectoryRecord record) {
         this.record = record;
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         throw new UnsupportedOperationException();
     }
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return getRecord().name;
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return false;
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return false;
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return getRecord().fileType == DirectoryRecord.FileTypeDirectory;
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return getRecord().fileType == DirectoryRecord.FileTypeSymlink;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
@@ -75,11 +76,11 @@ public class DirEntry extends VfsDirEntry {
         return record;
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         return getRecord().inode;
     }
 
-    public String toString() {
+    @Override public String toString() {
         return getRecord().name != null ? getRecord().name : "(no name)";
     }
 }

@@ -392,7 +392,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     static DiskImageFile initializeFixed(FileLocator locator, String path, long capacity, Geometry geometry) {
-        DiskImageFile result = null;
+        DiskImageFile result;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeFixedInternal(stream, capacity, geometry);
@@ -404,7 +404,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     static DiskImageFile initializeDynamic(FileLocator locator, String path, long capacity, Geometry geometry, long blockSize) {
-        DiskImageFile result = null;
+        DiskImageFile result;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeDynamicInternal(stream, capacity, geometry, blockSize);

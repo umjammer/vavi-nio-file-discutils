@@ -45,7 +45,7 @@ public final class Crc32BigEndian extends Crc32 {
         return ~process(Tables[algorithm.ordinal()], 0xFFFFFFFF, buffer, offset, count);
     }
 
-    public void process(byte[] buffer, int offset, int count) {
+    @Override public void process(byte[] buffer, int offset, int count) {
         value = process(table, value, buffer, offset, count);
     }
 

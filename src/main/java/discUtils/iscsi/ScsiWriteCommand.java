@@ -41,19 +41,19 @@ public class ScsiWriteCommand extends ScsiCommand {
         return numBlocks & 0xffff;
     }
 
-    public int size() {
+    @Override public int size() {
         return 10;
     }
 
-    public TaskAttributes getTaskAttributes() {
+    @Override public TaskAttributes getTaskAttributes() {
         return TaskAttributes.Simple;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = 0x2A;
         buffer[offset + 1] = 0;
         ByteUtil.writeBeInt(logicalBlockAddress, buffer, offset + 2);

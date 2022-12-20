@@ -23,6 +23,7 @@
 package discUtils.iso9660;
 
 public class VolumeDescriptorSetTerminator extends BaseVolumeDescriptor {
+
     public VolumeDescriptorSetTerminator() {
         super(VolumeDescriptorType.SetTerminator, (byte) 1);
     }

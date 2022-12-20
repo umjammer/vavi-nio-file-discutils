@@ -62,6 +62,7 @@ public class AttributeReference implements Comparable<AttributeReference> {
      * @param other The attribute reference to compare against.
      * @return Zero if references are identical.
      */
+    @Override
     public int compareTo(AttributeReference other) {
         int refDiff = fileReference.compareTo(other.fileReference);
         if (refDiff != 0) {

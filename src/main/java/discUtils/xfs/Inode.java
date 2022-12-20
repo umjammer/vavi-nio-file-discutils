@@ -495,11 +495,11 @@ public class Inode implements IByteArraySerializable {
         dataFork = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 96;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         setMagic(ByteUtil.readBeShort(buffer, offset));
         setMode(ByteUtil.readBeShort(buffer, offset + 0x2));
         setVersion(buffer[offset + 0x4]);
@@ -542,7 +542,7 @@ public class Inode implements IByteArraySerializable {
         return Instant.ofEpochSecond(seconds, nanoSeconds).toEpochMilli();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

@@ -46,7 +46,7 @@ public class Nfs3MountResultTest {
         result.setFileHandle(handle);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3MountResult clone = null;
+        Nfs3MountResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

@@ -90,11 +90,11 @@ public final class KeyNodeCell extends Cell {
         super(index);
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x4C + name.length();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         flags = RegistryKeyFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x02));
         timestamp = DateUtil.fromFileTime(ByteUtil.readLeLong(buffer, offset + 0x04));
         parentIndex = ByteUtil.readLeInt(buffer, offset + 0x10);
@@ -114,7 +114,7 @@ public final class KeyNodeCell extends Cell {
         return 0x4C + nameLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes("nk", buffer, offset, 2);
         ByteUtil.writeLeShort((short) RegistryKeyFlags.valueOf(flags), buffer, offset + 0x02);
         ByteUtil.writeLeLong(DateUtil.toFileTime(timestamp), buffer, offset + 0x04);
@@ -131,7 +131,7 @@ public final class KeyNodeCell extends Cell {
         EndianUtilities.stringToBytes(name, buffer, offset + 0x4C, name.length());
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "Key: " + name + " " + flags + " <" + timestamp + ">";
     }
 }

@@ -37,6 +37,7 @@ import dotnet4j.io.StreamWriter;
  * Provides information about a file on a disc.
  */
 public final class DiscFileInfo extends DiscFileSystemInfo {
+
     public DiscFileInfo(DiscFileSystem fileSystem, String path) {
         super(fileSystem, path);
     }
@@ -58,7 +59,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     /**
      * Gets a value indicating whether the file exists.
      */
-    public boolean exists() {
+    @Override public boolean exists() {
         try {
             return fileSystem.fileExists(path);
         } catch (IOException e) {
@@ -97,7 +98,7 @@ public final class DiscFileInfo extends DiscFileSystemInfo {
     /**
      * Deletes a file.
      */
-    public void delete() {
+    @Override public void delete() {
         try {
             fileSystem.deleteFile(path);
         } catch (IOException e) {

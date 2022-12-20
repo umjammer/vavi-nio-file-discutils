@@ -84,7 +84,7 @@ public class ZlibStream extends Stream {
 //            header |= (short) (31 - header % 31);
 //
 //            byte[] headerBuffer = new byte[2];
-//            ByteUtil.writeBeInt(header, headerBuffer, 0);
+//            ByteUtil.writeBeShort(header, headerBuffer, 0);
 //            stream.write(headerBuffer, 0, 2);
 //        }
 

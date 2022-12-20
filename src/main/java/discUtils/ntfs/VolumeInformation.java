@@ -65,30 +65,30 @@ public final class VolumeInformation implements IByteArraySerializable, IDiagnos
         return (majorVersion & 0xff) << 8 | (minorVersion & 0xff);
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x0c;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         majorVersion = buffer[offset + 0x08];
         minorVersion = buffer[offset + 0x09];
         setFlags(VolumeInformationFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x0a)));
         return 0x0c;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeLong(0, buffer, offset + 0x00);
         buffer[offset + 0x08] = majorVersion;
         buffer[offset + 0x09] = minorVersion;
         ByteUtil.writeLeShort((short) VolumeInformationFlags.valueOf(getFlags()), buffer, offset + 0x0a);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "  Version: " + majorVersion + "." + minorVersion);
         writer.println(indent + "    Flags: " + flags);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "VolumeInformation: version: " + majorVersion + "." + minorVersion;
     }
 }

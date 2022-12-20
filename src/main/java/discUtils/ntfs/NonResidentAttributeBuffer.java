@@ -55,11 +55,11 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         }
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return context.getRawStream().canWrite() && file != null;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return getPrimaryAttributeRecord().getDataLength();
     }
 
@@ -77,7 +77,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
                                        false);
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         if (!canWrite()) {
             throw new IOException("Attempt to change length of file not opened for write");
         }
@@ -106,7 +106,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         cookedRuns.collapseRuns();
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         if (!canWrite()) {
             throw new IOException("Attempt to write to file not opened for write");
         }
@@ -171,7 +171,7 @@ public class NonResidentAttributeBuffer extends NonResidentDataBuffer {
         cookedRuns.collapseRuns();
     }
 
-    public void clear(long pos, int count) {
+    @Override public void clear(long pos, int count) {
         if (!canWrite()) {
             throw new IOException("Attempt to erase bytes from file not opened for write");
         }

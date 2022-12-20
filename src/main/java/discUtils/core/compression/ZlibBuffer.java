@@ -46,19 +46,19 @@ public class ZlibBuffer extends Buffer {
         position = 0;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return stream.canRead();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return stream.canWrite();
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return stream.getLength();
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         if (pos != position) {
             throw new UnsupportedOperationException();
         }
@@ -68,15 +68,15 @@ public class ZlibBuffer extends Buffer {
         return read;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return Collections.singletonList(new StreamExtent(0, stream.getLength()));
     }
 }

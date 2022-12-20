@@ -134,6 +134,7 @@ public final class MetadataTableInfo implements Iterable<MetadataInfo> {
      *
      * @return A new enumerator.
      */
+    @Override
     public Iterator<MetadataInfo> iterator() {
         return getEntries().iterator();
     }

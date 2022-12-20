@@ -42,17 +42,17 @@ public final class FileHeader implements IByteArraySerializable {
         return signature == VhdxSignature;
     }
 
-    public int size() {
+    @Override public int size() {
         return (int) (64 * Sizes.OneKiB);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         signature = ByteUtil.readLeLong(buffer, offset + 0);
         creator = new String(buffer, offset + 8, 256 * 2, StandardCharsets.UTF_16LE).replaceFirst("\0*$", "");
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + size(), (byte) 0);
         ByteUtil.writeLeLong(signature, buffer, offset + 0);
         byte[] bytes = creator.getBytes(StandardCharsets.UTF_16LE);

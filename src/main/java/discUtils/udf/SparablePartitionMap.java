@@ -43,10 +43,12 @@ public final class SparablePartitionMap extends PartitionMap {
 
     public short volumeSequenceNumber;
 
+    @Override
     public int size() {
         return 64;
     }
 
+    @Override
     protected int parse(byte[] buffer, int offset) {
         volumeSequenceNumber = ByteUtil.readLeShort(buffer, offset + 36);
         partitionNumber = ByteUtil.readLeShort(buffer, offset + 38);

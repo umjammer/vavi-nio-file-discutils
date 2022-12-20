@@ -78,11 +78,11 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         return convertFlags(flags);
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x42 + fileName.length() * 2;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         parentDirectory = new FileRecordReference(ByteUtil.readLeLong(buffer, offset + 0x00));
         creationTime = readDateTime(buffer, offset + 0x08);
         modificationTime = readDateTime(buffer, offset + 0x10);
@@ -98,7 +98,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         return 0x42 + fnLen * 2;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeLong(parentDirectory.getValue(), buffer, offset + 0x00);
         ByteUtil.writeLeLong(DateUtil.toFileTime(creationTime), buffer, offset + 0x08);
         ByteUtil.writeLeLong(DateUtil.toFileTime(modificationTime), buffer, offset + 0x10);
@@ -114,7 +114,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         System.arraycopy(bytes, 0, buffer, offset + 0x42, bytes.length);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "FILE NAME RECORD");
         writer.println(indent + "   Parent Directory: " + parentDirectory);
         writer.println(indent + "      Creation Time: " + creationTime);
@@ -144,7 +144,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
                fileName.equals(other.fileName);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return fileName;
     }
 

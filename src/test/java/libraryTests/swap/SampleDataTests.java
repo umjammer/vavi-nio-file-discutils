@@ -7,7 +7,6 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 
-import discUtils.complete.SetupHelper;
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemManager;

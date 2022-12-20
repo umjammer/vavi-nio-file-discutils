@@ -168,11 +168,11 @@ public abstract class NodeHeader implements IByteArraySerializable {
         level = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         checksum = EndianUtilities.toByteArray(buffer, offset, 0x20);
         fsUuid = ByteUtil.readLeUUID(buffer, offset + 0x20);
         logicalAddress = ByteUtil.readLeLong(buffer, offset + 0x30);
@@ -187,7 +187,7 @@ public abstract class NodeHeader implements IByteArraySerializable {
         return Length;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

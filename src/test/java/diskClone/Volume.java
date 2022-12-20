@@ -67,6 +67,7 @@ public final class Volume implements Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (stream != null) {
             stream.close();

@@ -38,11 +38,11 @@ public class CompressedRun implements IByteArraySerializable {
 
     public RunType type;
 
-    public int size() {
+    @Override public int size() {
         return 40;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         type = RunType.valueOf(ByteUtil.readBeInt(buffer, offset + 0));
         sectorStart = ByteUtil.readBeLong(buffer, offset + 8);
         sectorCount = ByteUtil.readBeLong(buffer, offset + 16);
@@ -51,7 +51,7 @@ public class CompressedRun implements IByteArraySerializable {
         return 40;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

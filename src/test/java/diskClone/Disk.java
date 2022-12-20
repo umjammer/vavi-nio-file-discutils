@@ -47,6 +47,7 @@ public class Disk extends VirtualDisk {
         handle = Win32Wrapper.openFileHandle(path);
     }
 
+    @Override
     public void close() throws IOException {
         if (stream != null) {
             stream.close();
@@ -60,6 +61,7 @@ public class Disk extends VirtualDisk {
         super.close();
     }
 
+    @Override
     public SparseStream getContent() {
         if (stream == null) {
             stream = new DiskStream(handle);
@@ -68,10 +70,12 @@ public class Disk extends VirtualDisk {
         return stream;
     }
 
+    @Override
     public Geometry getGeometry() {
         return Geometry.fromCapacity(getCapacity());
     }
 
+    @Override
     public Geometry getBiosGeometry() {
         diskClone.NativeMethods.DiskGeometry diskGeometry = Win32Wrapper.getDiskGeometry(handle);
         return new Geometry((int) diskGeometry.cylinders,
@@ -80,26 +84,32 @@ public class Disk extends VirtualDisk {
                             diskGeometry.bytesPerSector);
     }
 
+    @Override
     public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
 
+    @Override
     public long getCapacity() {
         return Win32Wrapper.getDiskCapacity(handle);
     }
 
+    @Override
     public List<VirtualDiskLayer> getLayers() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return new VirtualDiskTypeInfo();
     }
 
+    @Override
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOperationException();
     }

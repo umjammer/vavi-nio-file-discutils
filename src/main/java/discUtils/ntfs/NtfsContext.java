@@ -29,6 +29,7 @@ public final class NtfsContext implements INtfsContext {
 
     private Stream rawStream;
 
+    @Override
     public Stream getRawStream() {
         return rawStream;
     }
@@ -39,6 +40,7 @@ public final class NtfsContext implements INtfsContext {
 
     private AttributeDefinitions attributeDefinitions;
 
+    @Override
     public AttributeDefinitions getAttributeDefinitions() {
         return attributeDefinitions;
     }
@@ -49,6 +51,7 @@ public final class NtfsContext implements INtfsContext {
 
     private UpperCase upperCase;
 
+    @Override
     public UpperCase getUpperCase() {
         return upperCase;
     }
@@ -59,6 +62,7 @@ public final class NtfsContext implements INtfsContext {
 
     private BiosParameterBlock biosParameterBlock;
 
+    @Override
     public BiosParameterBlock getBiosParameterBlock() {
         return biosParameterBlock;
     }
@@ -69,6 +73,7 @@ public final class NtfsContext implements INtfsContext {
 
     private MasterFileTable mft;
 
+    @Override
     public MasterFileTable getMft() {
         return mft;
     }
@@ -79,6 +84,7 @@ public final class NtfsContext implements INtfsContext {
 
     private ClusterBitmap clusterBitmap;
 
+    @Override
     public ClusterBitmap getClusterBitmap() {
         return clusterBitmap;
     }
@@ -89,6 +95,7 @@ public final class NtfsContext implements INtfsContext {
 
     private SecurityDescriptors securityDescriptors;
 
+    @Override
     public SecurityDescriptors getSecurityDescriptors() {
         return securityDescriptors;
     }
@@ -99,6 +106,7 @@ public final class NtfsContext implements INtfsContext {
 
     private ObjectIds objectIds;
 
+    @Override
     public ObjectIds getObjectIds() {
         return objectIds;
     }
@@ -109,6 +117,7 @@ public final class NtfsContext implements INtfsContext {
 
     private ReparsePoints reparsePoints;
 
+    @Override
     public ReparsePoints getReparsePoints() {
         return reparsePoints;
     }
@@ -119,6 +128,7 @@ public final class NtfsContext implements INtfsContext {
 
     private Quotas quotas;
 
+    @Override
     public Quotas getQuotas() {
         return quotas;
     }
@@ -129,6 +139,7 @@ public final class NtfsContext implements INtfsContext {
 
     private NtfsOptions options;
 
+    @Override
     public NtfsOptions getOptions() {
         return options;
     }
@@ -139,6 +150,7 @@ public final class NtfsContext implements INtfsContext {
 
     private GetFileByIndexFn getFileByIndex;
 
+    @Override
     public GetFileByIndexFn getGetFileByIndex() {
         return getFileByIndex;
     }
@@ -149,6 +161,7 @@ public final class NtfsContext implements INtfsContext {
 
     private GetFileByRefFn getFileByRef;
 
+    @Override
     public GetFileByRefFn getGetFileByRef() {
         return getFileByRef;
     }
@@ -159,6 +172,7 @@ public final class NtfsContext implements INtfsContext {
 
     private GetDirectoryByIndexFn getDirectoryByIndex;
 
+    @Override
     public GetDirectoryByIndexFn getGetDirectoryByIndex() {
         return getDirectoryByIndex;
     }
@@ -169,6 +183,7 @@ public final class NtfsContext implements INtfsContext {
 
     private GetDirectoryByRefFn getDirectoryByRef;
 
+    @Override
     public GetDirectoryByRefFn getGetDirectoryByRef() {
         return getDirectoryByRef;
     }
@@ -179,6 +194,7 @@ public final class NtfsContext implements INtfsContext {
 
     private AllocateFileFn allocateFile;
 
+    @Override
     public AllocateFileFn getAllocateFile() {
         return allocateFile;
     }
@@ -189,6 +205,7 @@ public final class NtfsContext implements INtfsContext {
 
     private ForgetFileFn forgetFile;
 
+    @Override
     public ForgetFileFn getForgetFile() {
         return forgetFile;
     }
@@ -199,6 +216,7 @@ public final class NtfsContext implements INtfsContext {
 
     private boolean readOnly;
 
+    @Override
     public boolean getReadOnly() {
         return readOnly;
     }

@@ -23,6 +23,7 @@
 package discUtils.iso9660.susp;
 
 public final class PaddingSystemUseEntry extends SystemUseEntry {
+
     public PaddingSystemUseEntry(String name, byte length, byte version) {
         checkAndSetCommonProperties(name, length, version, (byte) 4, (byte) 1);
     }

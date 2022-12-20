@@ -96,7 +96,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
         }
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return getContent().getLength();
     }
 
@@ -116,7 +116,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
      * Optical discs don't fit the CHS model, so dummy CHS data provided, but
      * sector size is accurate.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         // Note external sector size is always 2048 - 2352 just has extra header
         // & error-correction info
         return new Geometry(1, 1, 1, Mode1SectorSize);
@@ -125,18 +125,18 @@ public final class DiscImageFile extends VirtualDiskLayer {
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return false;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean needsParent() {
+    @Override public boolean needsParent() {
         return false;
     }
 
-    public FileLocator getRelativeFileLocator() {
+    @Override public FileLocator getRelativeFileLocator() {
         return null;
     }
 
@@ -147,7 +147,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
      * @param ownsParent Controls ownership of the parent stream.
      * @return The content as a stream.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (ownsParent == Ownership.Dispose && parent != null) {
             try {
                 parent.close();
@@ -164,14 +164,14 @@ public final class DiscImageFile extends VirtualDiskLayer {
      *
      * @return list of strings, empty if no parent.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return Collections.emptyList();
     }
 
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (toDispose != null) {
             toDispose.close();
             toDispose = null;

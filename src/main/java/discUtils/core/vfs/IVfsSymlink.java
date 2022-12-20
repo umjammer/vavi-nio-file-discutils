@@ -28,6 +28,7 @@ package discUtils.core.vfs;
  * files.
  */
 public interface IVfsSymlink<TDirEntry extends VfsDirEntry, TFile extends IVfsFile> extends IVfsFile {
+
     /**
      * Gets the target path for this symlink.
      */

@@ -160,6 +160,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
         }
     }
 
+    @Override
     public void handleException(Context<ProgramBase> context) {
         context.printHelp();
     }

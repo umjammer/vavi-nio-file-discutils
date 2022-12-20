@@ -62,7 +62,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
 
     private byte[] name;
 
-    public byte[] getName() {
+    @Override public byte[] getName() {
         return name;
     }
 
@@ -72,7 +72,7 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
 
     private long inode;
 
-    public long getInode() {
+    @Override public long getInode() {
         return inode;
     }
 
@@ -90,11 +90,11 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
         fType = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x3 + getNameLength() + (useShortInode ? 4 : 8) + (ftype ? 1 : 0);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         nameLength = buffer[offset];
         this.offset = ByteUtil.readBeShort(buffer, offset + 0x1);
         name = EndianUtilities.toByteArray(buffer, offset + 0x3, getNameLength());
@@ -112,13 +112,11 @@ public class ShortformDirectoryEntry implements IByteArraySerializable, IDirecto
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     *
-     */
+    @Override
     public String toString() {
         return inode + ": " + new String(name, 0, getNameLength(), StandardCharsets.US_ASCII);
     }

@@ -33,7 +33,7 @@ import dotnet4j.io.Stream;
 
 public class FileSystemFactory implements VfsFileSystemFactory {
 
-    public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
+    @Override public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (SwapFileSystem.detect(stream)) {
             return new FileSystemInfo[] {
                 new VfsFileSystemInfo("swap", "Linux swap", this::open)

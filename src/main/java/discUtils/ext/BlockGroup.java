@@ -25,11 +25,11 @@ public class BlockGroup implements IByteArraySerializable {
 
     public short usedDirsCount;
 
-    public int size() {
+    @Override public int size() {
         return DescriptorSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         blockBitmapBlock = ByteUtil.readLeInt(buffer, offset + 0);
         inodeBitmapBlock = ByteUtil.readLeInt(buffer, offset + 4);
         inodeTableBlock = ByteUtil.readLeInt(buffer, offset + 8);
@@ -39,7 +39,7 @@ public class BlockGroup implements IByteArraySerializable {
         return DescriptorSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

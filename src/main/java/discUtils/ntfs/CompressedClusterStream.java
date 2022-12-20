@@ -57,23 +57,23 @@ public final class CompressedClusterStream extends ClusterStream {
         ioBuffer = new byte[this.attr.getCompressionUnitSize() * context.getBiosParameterBlock().getBytesPerCluster()];
     }
 
-    public long getAllocatedClusterCount() {
+    @Override public long getAllocatedClusterCount() {
         return rawStream.getAllocatedClusterCount();
     }
 
-    public List<Range> getStoredClusters() {
+    @Override public List<Range> getStoredClusters() {
         return Range.chunked(rawStream.getStoredClusters(), attr.getCompressionUnitSize());
     }
 
-    public boolean isClusterStored(long vcn) {
+    @Override public boolean isClusterStored(long vcn) {
         return rawStream.isClusterStored(compressionStart(vcn));
     }
 
-    public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
+    @Override public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
         rawStream.expandToClusters(MathUtilities.roundUp(numVirtualClusters, attr.getCompressionUnitSize()), extent, false);
     }
 
-    public void truncateToClusters(long numVirtualClusters) {
+    @Override public void truncateToClusters(long numVirtualClusters) {
         long alignedNum = MathUtilities.roundUp(numVirtualClusters, attr.getCompressionUnitSize());
         rawStream.truncateToClusters(alignedNum);
         if (alignedNum != numVirtualClusters) {
@@ -81,7 +81,7 @@ public final class CompressedClusterStream extends ClusterStream {
         }
     }
 
-    public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
+    @Override public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
         if (buffer.length < count * bytesPerCluster + offset) {
             throw new IllegalArgumentException("Cluster buffer too small");
         }
@@ -101,7 +101,7 @@ public final class CompressedClusterStream extends ClusterStream {
         }
     }
 
-    public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
+    @Override public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
         if (buffer.length < count * bytesPerCluster + offset) {
             throw new IllegalArgumentException("Cluster buffer too small");
         }
@@ -135,7 +135,7 @@ public final class CompressedClusterStream extends ClusterStream {
         return totalAllocated;
     }
 
-    public int clearClusters(long startVcn, int count) {
+    @Override public int clearClusters(long startVcn, int count) {
         int totalReleased = 0;
         int totalCleared = 0;
         while (totalCleared < count) {

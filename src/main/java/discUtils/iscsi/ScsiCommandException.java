@@ -105,7 +105,7 @@ public class ScsiCommandException extends IscsiException {
     /**
      * Gets the SCSI status associated with this exception.
      */
-    private ScsiStatus status = ScsiStatus.Good;
+    private ScsiStatus status;
 
     public ScsiStatus getStatus() {
         return status;

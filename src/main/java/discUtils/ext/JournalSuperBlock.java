@@ -35,16 +35,12 @@ public class JournalSuperBlock implements IByteArraySerializable {
 
     public static final int Magic = 0xC03B3998;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return 1024;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         int magic = ByteUtil.readBeInt(buffer, offset);
         if (magic != Magic) {
@@ -61,9 +57,7 @@ public class JournalSuperBlock implements IByteArraySerializable {
         return 1024;
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

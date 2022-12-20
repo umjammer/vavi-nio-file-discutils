@@ -34,11 +34,11 @@ public final class CatalogThread implements IByteArraySerializable {
 
     public CatalogRecordType recordType = CatalogRecordType.None;
 
-    public int size() {
+    @Override public int size() {
         return 0;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         recordType = CatalogRecordType.values()[ByteUtil.readBeShort(buffer, offset + 0)];
         parentId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 4));
         name = HfsPlusUtilities.readUniStr255(buffer, offset + 8);
@@ -46,7 +46,7 @@ public final class CatalogThread implements IByteArraySerializable {
         return 0;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -646,7 +646,7 @@ public final class BiosPartitionTable extends PartitionTable {
         int idx = 0;
         while (idx < list.size()) {
             BiosPartitionRecord entry = list.get(idx);
-            while (idx < list.size() && startSector >= entry.getLBAStartAbsolute() + entry.getLBALength()) {
+            while (startSector >= entry.getLBAStartAbsolute() + entry.getLBALength()) {
                 idx++;
                 entry = list.get(idx);
             }

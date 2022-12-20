@@ -44,11 +44,11 @@ public final class BTreeNodeDescriptor implements IByteArraySerializable {
 
     public short reserved;
 
-    public int size() {
+    @Override public int size() {
         return 14;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         forwardLink = ByteUtil.readBeInt(buffer, offset + 0);
         backwardLink = ByteUtil.readBeInt(buffer, offset + 4);
         kind = BTreeNodeKind.valueOf(buffer[offset + 8]);
@@ -59,7 +59,7 @@ public final class BTreeNodeDescriptor implements IByteArraySerializable {
         return 14;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

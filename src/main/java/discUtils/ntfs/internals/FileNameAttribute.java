@@ -133,5 +133,4 @@ public final class FileNameAttribute extends GenericAttribute {
     public long getRealSize() {
         return fnr.realSize;
     }
-
 }

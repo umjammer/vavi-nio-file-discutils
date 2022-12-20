@@ -70,38 +70,47 @@ class File implements IVfsFileWithStreams {
         return nodeId;
     }
 
+    @Override
     public long getLastAccessTimeUtc() {
         return catalogInfo.accessTime;
     }
 
+    @Override
     public void setLastAccessTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getLastWriteTimeUtc() {
         return catalogInfo.contentModifyTime;
     }
 
+    @Override
     public void setLastWriteTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getCreationTimeUtc() {
         return catalogInfo.createTime;
     }
 
+    @Override
     public void setCreationTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public EnumSet<FileAttributes> getFileAttributes() {
         return UnixFileType.toFileAttributes(catalogInfo.fileSystemInfo.getFileType());
     }
 
+    @Override
     public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getFileLength() {
         CatalogFileInfo fileInfo = catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) catalogInfo
                                                                            : null;
@@ -112,6 +121,7 @@ class File implements IVfsFileWithStreams {
         return fileInfo.dataFork.logicalSize;
     }
 
+    @Override
     public IBuffer getFileContent() {
         CatalogFileInfo fileInfo = catalogInfo instanceof CatalogFileInfo ? (CatalogFileInfo) catalogInfo
                                                                            : null;
@@ -221,10 +231,12 @@ class File implements IVfsFileWithStreams {
         return new FileBuffer(getContext(), fileInfo.dataFork, fileInfo.fileId);
     }
 
+    @Override
     public SparseStream createStream(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public SparseStream openExistingStream(String name) {
         throw new UnsupportedOperationException();
     }

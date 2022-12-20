@@ -45,11 +45,11 @@ public abstract class Cell implements IByteArraySerializable {
         index = value;
     }
 
-    public abstract int size();
+    @Override public abstract int size();
 
-    public abstract int readFrom(byte[] buffer, int offset);
+    @Override public abstract int readFrom(byte[] buffer, int offset);
 
-    public abstract void writeTo(byte[] buffer, int offset);
+    @Override public abstract void writeTo(byte[] buffer, int offset);
 
     public static Cell parse(RegistryHive hive, int index, byte[] buffer, int pos) {
         String type = new String(buffer, pos, 2, StandardCharsets.US_ASCII);

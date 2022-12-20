@@ -34,11 +34,11 @@ public class ExtendedAttributeRecord implements IByteArraySerializable {
 
     public int attributeType;
 
-    public int size() {
+    @Override public int size() {
         return 12 + attributeData.length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         attributeType = ByteUtil.readLeInt(buffer, offset + 0);
         attributeSubType = buffer[offset + 4];
         int dataLength = ByteUtil.readLeInt(buffer, offset + 8) - 12;
@@ -47,7 +47,7 @@ public class ExtendedAttributeRecord implements IByteArraySerializable {
         return 12 + dataLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

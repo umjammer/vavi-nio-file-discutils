@@ -67,7 +67,7 @@ public class Directory extends File {
         updateRecordInMft();
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "DIRECTORY (" + super.toString() + ")");
         writer.println(indent + "  File Number: " + getIndexInMft());
         if (getIndex() != null) {
@@ -79,7 +79,7 @@ public class Directory extends File {
         }
     }
 
-    public String toString() {
+    @Override public String toString() {
         return super.toString() + java.io.File.separator;
     }
 
@@ -230,7 +230,7 @@ public class Directory extends File {
             this.upperCase = upperCase;
         }
 
-        public int compareTo(byte[] buffer) {
+        @Override public int compareTo(byte[] buffer) {
             // Note: this is internal knowledge of FileNameRecord structure - but for performance
             // reasons, we don't want to decode the entire structure.  In fact can avoid the string
             // conversion as well.
@@ -238,7 +238,7 @@ public class Directory extends File {
             return upperCase.compare(query, 0, query.length, buffer, 0x42, fnLen * 2);
         }
 
-        public String toString() {
+        @Override public String toString() {
             return new String(query, StandardCharsets.UTF_16LE) + ": " + upperCase;
         }
     }

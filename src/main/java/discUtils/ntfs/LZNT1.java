@@ -64,14 +64,14 @@ public final class LZNT1 extends BlockCompressor {
     /**
      * @param compressedLength {@cs out}
      */
-    public CompressionResult compress(byte[] source,
+    @Override public CompressionResult compress(byte[] source,
                                       int sourceOffset,
                                       int sourceLength,
                                       byte[] compressed,
                                       int compressedOffset,
                                       int[] compressedLength) {
         int sourcePointer = 0;
-        int sourceCurrentBlock = 0;
+        int sourceCurrentBlock;
         int destPointer = 0;
         // Set up the Lz compression Map
         LzWindowDictionary lzMap = new LzWindowDictionary();
@@ -186,7 +186,7 @@ public final class LZNT1 extends BlockCompressor {
         return CompressionResult.AllZeros;
     }
 
-    public int decompress(byte[] source, int sourceOffset, int sourceLength, byte[] decompressed, int decompressedOffset) {
+    @Override public int decompress(byte[] source, int sourceOffset, int sourceLength, byte[] decompressed, int decompressedOffset) {
         int sourceIdx = 0;
         int destIdx = 0;
         while (sourceIdx < sourceLength) {

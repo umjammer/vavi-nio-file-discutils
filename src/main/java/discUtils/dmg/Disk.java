@@ -60,6 +60,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the capacity of the disk (in bytes).
      */
+    @Override
     public long getCapacity() {
         return file.getCapacity();
     }
@@ -74,6 +75,7 @@ public class Disk extends VirtualDisk {
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
+    @Override
     public SparseStream getContent() {
         if (content == null) {
             content = file.openContent(null, Ownership.None);
@@ -85,6 +87,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the type of disk represented by this object.
      */
+    @Override
     public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
@@ -95,6 +98,7 @@ public class Disk extends VirtualDisk {
      * example whether the
      * BIOS geometry is preserved in the disk file.
      */
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo();
     }
@@ -102,6 +106,7 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the geometry of the disk.
      */
+    @Override
     public Geometry getGeometry() {
         return file.getGeometry();
     }
@@ -109,10 +114,12 @@ public class Disk extends VirtualDisk {
     /**
      * Gets the layers that make up the disk.
      */
+    @Override
     public List<VirtualDiskLayer> getLayers() {
         return Collections.singletonList(file);
     }
 
+    @Override
     public PartitionTable getPartitions() {
         return new UdifPartitionTable(this, file.getBuffer());
     }
@@ -124,6 +131,7 @@ public class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOperationException();
     }
@@ -134,6 +142,7 @@ public class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOperationException();
     }
@@ -141,6 +150,7 @@ public class Disk extends VirtualDisk {
     /**
      * Disposes of this instance, freeing underlying resources.
      */
+    @Override
     public void close() throws IOException {
         try {
             if (content != null) {

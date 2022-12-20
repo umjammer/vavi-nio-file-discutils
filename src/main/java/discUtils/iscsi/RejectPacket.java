@@ -33,7 +33,7 @@ public class RejectPacket extends BaseResponse {
 
     public RejectReason reason = RejectReason.None;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 

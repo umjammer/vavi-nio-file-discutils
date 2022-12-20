@@ -33,8 +33,8 @@ import discUtils.iso9660.susp.SystemUseEntry;
 
 
 public final class FileTimeSystemUseEntry extends SystemUseEntry {
+
     public enum Timestamps {
-//        None,
         Creation,
         Modify,
         Access,
@@ -83,9 +83,7 @@ public final class FileTimeSystemUseEntry extends SystemUseEntry {
         @SuppressWarnings("unused")
         int fieldLen = longForm ? 17 : 7;
         timestampsPresent = Timestamps.valueOf(flags & 0x7F);
-        int[] pos = new int[] {
-            offset + 5
-        };
+        int[] pos = new int[] {offset + 5};
         creationTime = readTimestamp(Timestamps.Creation, data, longForm, pos);
         modifyTime = readTimestamp(Timestamps.Modify, data, longForm, pos);
         accessTime = readTimestamp(Timestamps.Access, data, longForm, pos);

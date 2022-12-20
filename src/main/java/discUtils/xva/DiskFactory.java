@@ -43,34 +43,41 @@ import dotnet4j.io.FileShare;
 
 @VirtualDiskFactoryAttribute(type = "XVA", fileExtensions = { ".xva" })
 public final class DiskFactory implements VirtualDiskFactory {
+    @Override
     public String[] getVariants() {
         return new String[] {
             "dynamic"
         };
     }
 
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInformation(String variant) {
         return makeDiskTypeInfo();
     }
 
+    @Override
     public DiskImageBuilder getImageBuilder(String variant) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDisk createDisk(FileLocator locator, String variant, String path, VirtualDiskParameters diskParameters) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDisk openDisk(String path, FileAccess access) {
         return openDisk(new LocalFileLocator(Utilities.getDirectoryFromPath(path)),
                         Utilities.getFileFromPath(path),
                         access);
     }
 
+    @Override
     public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
         return openDisk(locator, path, "", new HashMap<>(), access);
     }
 
+    @Override
     public VirtualDisk openDisk(FileLocator locator,
                                 String path,
                                 String extraInfo,
@@ -96,6 +103,7 @@ public final class DiskFactory implements VirtualDiskFactory {
         return null;
     }
 
+    @Override
     public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) {
         return null;
     }

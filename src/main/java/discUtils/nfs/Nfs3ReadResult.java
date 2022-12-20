@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 
 public final class Nfs3ReadResult extends Nfs3CallResult {
+
     public Nfs3ReadResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
         if (reader.readBool()) {
@@ -82,7 +83,7 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
         fileAttributes = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         writer.write(fileAttributes != null);
         if (fileAttributes != null) {
@@ -96,7 +97,7 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3ReadResult ? (Nfs3ReadResult) obj : null);
     }
 
@@ -109,7 +110,7 @@ public final class Nfs3ReadResult extends Nfs3CallResult {
                 && other.count == count && Arrays.equals(other.data, data) && other.eof == eof;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, fileAttributes, count, eof, data);
     }
 }

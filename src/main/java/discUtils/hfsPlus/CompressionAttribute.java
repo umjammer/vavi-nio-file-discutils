@@ -94,7 +94,7 @@ class CompressionAttribute {
     public int readFrom(byte[] buffer, int offset) {
         recordType = ByteUtil.readBeInt(buffer, offset + 0);
         reserved1 = ByteUtil.readBeInt(buffer, offset + 4);
-        reserved1 = ByteUtil.readBeInt(buffer, offset + 8);
+        reserved2 = ByteUtil.readBeInt(buffer, offset + 8);
         attrSize = ByteUtil.readBeInt(buffer, offset + 12);
         compressionMagic = ByteUtil.readBeInt(buffer, offset + 16);
         compressionType = ByteUtil.readLeInt(buffer, offset + 20);

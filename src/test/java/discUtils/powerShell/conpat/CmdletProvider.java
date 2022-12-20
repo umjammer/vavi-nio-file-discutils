@@ -65,6 +65,7 @@ public abstract class CmdletProvider implements IResourceSupplier {
         return null;
     }
 
+    @Override
     public abstract String getResourceString(String baseName, String resourceId);
 
     public boolean shouldContinue(String query, String caption) {

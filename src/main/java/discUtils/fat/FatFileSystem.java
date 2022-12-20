@@ -1195,13 +1195,14 @@ Debug.printf("bpb total length: %s, %d, %d", (totalSectors * (long) bpbBytesPerS
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() {
+    @Override public long getSize() {
         return ((getTotalSectors() - bs.getReservedSectorCount() - (bs.getFatSize() * bs.getFatCount())) * getBytesPerSector());
     }
 
     /**
      * Used space of the Filesystem in bytes
      */
+    @Override
     public long getUsedSpace() {
         int usedCluster = 0;
         for (int i = 2; i < getFat().getNumEntries(); i++) {

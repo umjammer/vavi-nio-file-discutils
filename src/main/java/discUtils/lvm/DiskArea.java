@@ -35,14 +35,14 @@ public class DiskArea implements IByteArraySerializable {
     /**
      *
      */
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
     /**
      *
      */
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         this.offset = ByteUtil.readLeLong(buffer, offset);
         length = ByteUtil.readLeLong(buffer, offset + 0x8);
         return size();
@@ -51,7 +51,7 @@ public class DiskArea implements IByteArraySerializable {
     /**
      *
      */
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -62,6 +62,7 @@ public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolum
         return lad;
     }
 
+    @Override
     public int parse(byte[] buffer, int offset) {
         volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
         descriptorCharset = EndianUtilities.toByteArray(buffer, offset + 20, 64);

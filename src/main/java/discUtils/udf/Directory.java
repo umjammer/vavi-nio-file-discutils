@@ -59,19 +59,19 @@ public class Directory extends File implements IVfsDirectory<FileIdentifier, Fil
         }
     }
 
-    public List<FileIdentifier> getAllEntries() {
+    @Override public List<FileIdentifier> getAllEntries() {
         return entries;
     }
 
-    public FileIdentifier getSelf() {
+    @Override public FileIdentifier getSelf() {
         return null;
     }
 
-    public FileIdentifier createNewFile(String name) {
+    @Override public FileIdentifier createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
 
-    public FileIdentifier getEntryByName(String name) {
+    @Override public FileIdentifier getEntryByName(String name) {
         for (FileIdentifier entry : entries) {
             if (entry.name.compareTo(name) == 0) {
                 return entry;

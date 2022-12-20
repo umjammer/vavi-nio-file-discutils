@@ -41,11 +41,11 @@ public final class MetadataEntry implements IByteArraySerializable {
 
     public int reserved;
 
-    public int size() {
+    @Override public int size() {
         return 32;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         itemId = ByteUtil.readLeUUID(buffer, offset + 0);
         this.offset = ByteUtil.readLeInt(buffer, offset + 16);
         length = ByteUtil.readLeInt(buffer, offset + 20);
@@ -54,7 +54,7 @@ public final class MetadataEntry implements IByteArraySerializable {
         return 32;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeUUID(itemId, buffer, offset + 0);
         ByteUtil.writeLeInt(this.offset, buffer, offset + 16);
         ByteUtil.writeLeInt(length, buffer, offset + 20);

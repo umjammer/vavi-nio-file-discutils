@@ -58,15 +58,15 @@ public final class SubKeyHashedListCell extends ListCell {
         this.hive = hive;
     }
 
-    int getCount() {
+    @Override int getCount() {
         return subKeyIndexes.size();
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x4 + numElements * 0x8;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         hashType = new String(buffer, offset, 2, StandardCharsets.US_ASCII);
         numElements = ByteUtil.readLeShort(buffer, offset + 2);
         subKeyIndexes = new ArrayList<>(numElements);
@@ -78,7 +78,7 @@ public final class SubKeyHashedListCell extends ListCell {
         return 0x4 + numElements * 0x8;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(hashType, buffer, offset, 2);
         ByteUtil.writeLeShort(numElements, buffer, offset + 0x2);
         for (int i = 0; i < numElements; ++i) {
@@ -113,7 +113,7 @@ public final class SubKeyHashedListCell extends ListCell {
     /**
      * @param cellIndex {@cs out}
      */
-    int findKey(String name, int[] cellIndex) {
+    @Override int findKey(String name, int[] cellIndex) {
         // Check first and last, to early abort if the name is outside the range of this list
         int[] found = new int[1];
         int result = findKeyAt(name, 0, found);
@@ -134,13 +134,13 @@ public final class SubKeyHashedListCell extends ListCell {
         return idx < 0 ? -1 : 0;
     }
 
-    void enumerateKeys(List<String> names) {
+    @Override void enumerateKeys(List<String> names) {
         for (Integer subKeyIndex : subKeyIndexes) {
             names.add(hive.<KeyNodeCell>getCell(subKeyIndex).name);
         }
     }
 
-    List<KeyNodeCell> enumerateKeys() {
+    @Override List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
         for (Integer subKeyIndex : subKeyIndexes) {
             result.add(hive.getCell(subKeyIndex));
@@ -148,12 +148,12 @@ public final class SubKeyHashedListCell extends ListCell {
         return result;
     }
 
-    int linkSubKey(String name, int cellIndex) {
+    @Override int linkSubKey(String name, int cellIndex) {
         add(name, cellIndex);
         return hive.updateCell(this, true);
     }
 
-    int unlinkSubKey(String name) {
+    @Override int unlinkSubKey(String name) {
         int index = indexOf(name);
         if (index >= 0) {
             removeAt(index);
@@ -263,6 +263,7 @@ public final class SubKeyHashedListCell extends ListCell {
     }
 
     private static class KeyFinder implements Comparator<Integer> {
+
         private final RegistryHive hive;
 
         private final String searchName;

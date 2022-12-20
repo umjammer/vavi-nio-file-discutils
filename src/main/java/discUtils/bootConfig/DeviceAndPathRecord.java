@@ -31,10 +31,12 @@ public class DeviceAndPathRecord extends DeviceRecord {
 
     private String path;
 
+    @Override
     public int getSize() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void getBytes(byte[] data, int offset) {
         throw new UnsupportedOperationException();
     }
@@ -43,6 +45,7 @@ public class DeviceAndPathRecord extends DeviceRecord {
         return container + ":" + path;
     }
 
+    @Override
     protected void doParse(byte[] data, int offset) {
         super.doParse(data, offset);
         container = parse(data, offset + 0x34);

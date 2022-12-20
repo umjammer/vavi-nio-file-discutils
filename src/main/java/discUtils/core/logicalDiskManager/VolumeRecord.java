@@ -69,7 +69,7 @@ public final class VolumeRecord extends DatabaseRecord {
 
     public UUID volumeGuid;
 
-    protected void doReadFrom(byte[] buffer, int offset) {
+    @Override protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
 
         int[] pos = new int[] { offset + 0x18 };

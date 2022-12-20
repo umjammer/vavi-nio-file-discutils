@@ -64,7 +64,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
     /**
      * The parent directory, or {@code null} if none.
      */
-    public BuildDirectoryInfo getParent() {
+    @Override public BuildDirectoryInfo getParent() {
         return parent;
     }
 
@@ -86,7 +86,7 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
         sortedMembers = null;
     }
 
-    long getDataSize(Charset enc) {
+    @Override long getDataSize(Charset enc) {
         List<BuildDirectoryMember> sorted = getSortedMembers();
 
         long total = 34 * 2; // Two pseudo entries (self & parent)
@@ -182,7 +182,8 @@ public final class BuildDirectoryInfo extends BuildDirectoryMember {
     }
 
     private static class PathTableComparison implements Comparator<BuildDirectoryInfo> {
-        public int compare(BuildDirectoryInfo x, BuildDirectoryInfo y) {
+
+        @Override public int compare(BuildDirectoryInfo x, BuildDirectoryInfo y) {
             if (x.getHierarchyDepth() != y.getHierarchyDepth()) {
                 return x.getHierarchyDepth() - y.getHierarchyDepth();
             }

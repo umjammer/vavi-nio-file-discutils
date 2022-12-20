@@ -26,7 +26,9 @@ package discUtils.core.internal;
  * Calculates CRC32 of buffers.
  */
 public final class Crc32LittleEndian extends Crc32 {
+
     private static final int[][] Tables = new int[4][];
+
     static {
         Tables[Crc32Algorithm.Common.ordinal()] = calcTable(0xEDB88320);
         Tables[Crc32Algorithm.Castagnoli.ordinal()] = calcTable(0x82F63B78);
@@ -42,7 +44,7 @@ public final class Crc32LittleEndian extends Crc32 {
         return ~process(Tables[algorithm.ordinal()], 0xFFFFFFFF, buffer, offset, count);
     }
 
-    public void process(byte[] buffer, int offset, int count) {
+    @Override public void process(byte[] buffer, int offset, int count) {
         value = process(table, value, buffer, offset, count);
     }
 

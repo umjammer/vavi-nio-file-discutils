@@ -39,7 +39,7 @@ public class Response extends BaseResponse {
 
     public ScsiStatus status = ScsiStatus.Good;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 

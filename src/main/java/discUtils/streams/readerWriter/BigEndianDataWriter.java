@@ -32,19 +32,19 @@ public class BigEndianDataWriter extends DataWriter {
         super(stream);
     }
 
-    public void write(short value) {
+    @Override public void write(short value) {
         ensureBuffer();
         ByteUtil.writeBeShort(value, buffer, 0);
         flushBuffer(2);
     }
 
-    public void write(int value) {
+    @Override public void write(int value) {
         ensureBuffer();
         ByteUtil.writeBeInt(value, buffer, 0);
         flushBuffer(4);
     }
 
-    public void write(long value) {
+    @Override public void write(long value) {
         ensureBuffer();
         ByteUtil.writeBeLong(value, buffer, 0);
         flushBuffer(8);

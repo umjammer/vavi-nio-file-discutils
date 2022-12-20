@@ -60,6 +60,7 @@ public class UnbufferedNativeStream extends SparseStream {
         position = 0;
     }
 
+    @Override
     public void close() throws IOException {
         if (bufferAllocHandle != IntPtr.Zero) {
             Marshal.FreeHGlobal(bufferAllocHandle);

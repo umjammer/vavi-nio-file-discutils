@@ -69,43 +69,43 @@ public class DirEntry extends VfsDirEntry {
         inode = value;
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return inode.getFileType() == UnixFileType.Directory;
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return inode.getFileType() == UnixFileType.Link;
     }
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return name;
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return true;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return inode.getAccessTime();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return inode.getModificationTime();
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return inode.getCreationTime();
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return true;
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         return UnixFileType.toFileAttributes(inode.getFileType());
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         return ((long) inode.getAllocationGroup()) << 32 | inode.getRelativeInodeNumber();
     }
 }

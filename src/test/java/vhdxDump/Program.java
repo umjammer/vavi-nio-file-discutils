@@ -59,6 +59,7 @@ public class Program extends ProgramBase {
 
     static final UUID EMPTY = new UUID(0, 0);
 
+    @Override
     protected void doRun() throws IOException {
         try (DiskImageFile vhdxFile = new DiskImageFile(this.vhdxFile, FileAccess.Read)) {
             DiskImageFileInfo info = vhdxFile.getInformation();

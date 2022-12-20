@@ -12,6 +12,4 @@ public interface IContentWriter extends Closeable {
     List<?> write(List<?> content);
 
     void seek(long offset, SeekOrigin origin);
-
-    void close();
 }

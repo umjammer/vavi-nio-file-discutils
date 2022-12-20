@@ -32,6 +32,7 @@ public final class DiskStream extends UnbufferedNativeStream {
         length = Win32Wrapper.getDiskCapacity(handle);
     }
 
+    @Override
     public long getLength() {
         return length;
     }

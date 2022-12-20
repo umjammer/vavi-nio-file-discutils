@@ -32,27 +32,27 @@ public class BigEndianDataReader extends DataReader {
         super(stream);
     }
 
-    public short readUInt16() {
+    @Override public short readUInt16() {
         readToBuffer(2);
         return ByteUtil.readBeShort(buffer, 0);
     }
 
-    public int readInt32() {
+    @Override public int readInt32() {
         readToBuffer(4);
         return ByteUtil.readBeInt(buffer, 0);
     }
 
-    public int readUInt32() {
+    @Override public int readUInt32() {
         readToBuffer(4);
         return ByteUtil.readBeInt(buffer, 0);
     }
 
-    public long readInt64() {
+    @Override public long readInt64() {
         readToBuffer(8);
         return ByteUtil.readBeLong(buffer, 0);
     }
 
-    public long readUInt64() {
+    @Override public long readUInt64() {
         readToBuffer(8);
         return ByteUtil.readBeLong(buffer, 0);
     }

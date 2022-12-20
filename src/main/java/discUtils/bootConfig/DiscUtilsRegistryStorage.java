@@ -50,34 +50,34 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         rootKey = key;
     }
 
-    public String getString(UUID obj, int element) {
+    @Override public String getString(UUID obj, int element) {
         Object r = getValue(obj, element);
         return r instanceof String ? (String) r : null;
     }
 
-    public void setString(UUID obj, int element, String value) {
+    @Override public void setString(UUID obj, int element, String value) {
         setValue(obj, element, value);
     }
 
-    public byte[] getBinary(UUID obj, int element) {
+    @Override public byte[] getBinary(UUID obj, int element) {
         Object r = getValue(obj, element);
         return r instanceof byte[] ? (byte[]) r : null;
     }
 
-    public void setBinary(UUID obj, int element, byte[] value) {
+    @Override public void setBinary(UUID obj, int element, byte[] value) {
         setValue(obj, element, value);
     }
 
-    public String[] getMultiString(UUID obj, int element) {
+    @Override public String[] getMultiString(UUID obj, int element) {
         Object r = getValue(obj, element);
         return r instanceof String[] ? (String[]) r : null;
     }
 
-    public void setMultiString(UUID obj, int element, String[] values) {
+    @Override public void setMultiString(UUID obj, int element, String[] values) {
         setValue(obj, element, values);
     }
 
-    public List<UUID> enumerateObjects() {
+    @Override public List<UUID> enumerateObjects() {
         List<UUID> result = new ArrayList<>();
         RegistryKey parentKey = rootKey.openSubKey(ObjectsPath);
         for (String key : parentKey.getSubKeyNames()) {
@@ -86,7 +86,7 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         return result;
     }
 
-    public List<Integer> enumerateElements(UUID obj) {
+    @Override public List<Integer> enumerateElements(UUID obj) {
         List<Integer> result = new ArrayList<>();
         String path = String.format(ElementsPathTemplate, String.format("{%s}", obj));
         RegistryKey parentKey = rootKey.openSubKey(path);
@@ -96,24 +96,24 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         return result;
     }
 
-    public int getObjectType(UUID obj) {
+    @Override public int getObjectType(UUID obj) {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         RegistryKey descKey = rootKey.openSubKey(path);
         Object val = descKey.getValue("Type");
         return val == null ? 0 : (Integer) val;
     }
 
-    public boolean hasValue(UUID obj, int element) {
+    @Override public boolean hasValue(UUID obj, int element) {
         String path = String.format(ElementPathTemplate, String.format("{%s}", obj), element);
         return rootKey.openSubKey(path) != null;
     }
 
-    public boolean objectExists(UUID obj) {
+    @Override public boolean objectExists(UUID obj) {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         return rootKey.openSubKey(path) != null;
     }
 
-    public UUID createObject(UUID obj, int type) {
+    @Override public UUID createObject(UUID obj, int type) {
         UUID realObj = obj.equals(EMPTY) ? UUID.randomUUID() : obj;
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", realObj));
         RegistryKey key = rootKey.createSubKey(path);
@@ -121,17 +121,17 @@ public class DiscUtilsRegistryStorage extends BaseStorage {
         return realObj;
     }
 
-    public void createElement(UUID obj, int element) {
+    @Override public void createElement(UUID obj, int element) {
         String path = String.format(ElementPathTemplate, String.format("{%s}", obj), element);
         rootKey.createSubKey(path);
     }
 
-    public void deleteObject(UUID obj) {
+    @Override public void deleteObject(UUID obj) {
         String path = String.format(ObjectTypePathTemplate, String.format("{%s}", obj));
         rootKey.deleteSubKeyTree(path);
     }
 
-    public void deleteElement(UUID obj, int element) {
+    @Override public void deleteElement(UUID obj, int element) {
         String path = String.format(ElementPathTemplate, String.format("{%s}", obj), element);
         rootKey.deleteSubKeyTree(path);
     }

@@ -165,6 +165,7 @@ public final class VmfsSparseExtentBuilder extends StreamBuilder {
             }
         }
 
+        @Override
         public void prepareForRead() {
             byte[] grainTable = new byte[MathUtilities.roundUp(header.numGTEsPerGT * 4, Sizes.Sector)];
             long dataSector = (getStart() + grainTable.length) / Sizes.Sector;

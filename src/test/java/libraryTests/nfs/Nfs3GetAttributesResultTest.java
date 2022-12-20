@@ -50,7 +50,7 @@ public class Nfs3GetAttributesResultTest {
                 .toInstant().toEpochMilli());
         result.setAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
-        Nfs3GetAttributesResult clone = null;
+        Nfs3GetAttributesResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

@@ -39,7 +39,7 @@ public class ChapAuthenticator extends Authenticator {
 
     private final String password;
 
-    private State state = State.SendAlgorithm;
+    private State state;
 
     public ChapAuthenticator(String name, String password) {
         this.name = name;
@@ -47,11 +47,11 @@ public class ChapAuthenticator extends Authenticator {
         state = State.SendAlgorithm;
     }
 
-    public String getIdentifier() {
+    @Override public String getIdentifier() {
         return "CHAP";
     }
 
-    public boolean getParameters(TextBuffer textBuffer) {
+    @Override public boolean getParameters(TextBuffer textBuffer) {
         switch (state) {
         case SendAlgorithm:
             textBuffer.add("CHAP_A", "5");
@@ -67,7 +67,7 @@ public class ChapAuthenticator extends Authenticator {
         }
     }
 
-    public void setParameters(TextBuffer textBuffer) {
+    @Override public void setParameters(TextBuffer textBuffer) {
         switch (state) {
         case ReceiveChallenge:
             algorithm = Integer.parseInt(textBuffer.get("CHAP_A"));

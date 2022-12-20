@@ -105,10 +105,12 @@ public enum NtfsFileAttributes implements EnumSettable {
         this.value = value;
     }
 
+    @Override
     public Supplier<Integer> supplier() {
         return this::getValue;
     }
 
+    @Override
     public Function<Integer, Boolean> function() {
         return v -> (v & supplier().get()) != 0;
     }

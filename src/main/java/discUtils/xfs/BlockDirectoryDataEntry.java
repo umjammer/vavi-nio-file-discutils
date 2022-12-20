@@ -34,6 +34,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
 
     private long inode;
 
+    @Override
     public long getInode() {
         return inode;
     }
@@ -54,6 +55,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
 
     private byte[] name;
 
+    @Override
     public byte[] getName() {
         return name;
     }
@@ -82,6 +84,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
         fType = value;
     }
 
+    @Override
     public int size() {
         int size = 0xb + getNameLength() + (ftype ? 1 : 0);
         int padding = size % 8;
@@ -95,6 +98,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
         ftype = context.getSuperBlock().hasFType();
     }
 
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         inode = ByteUtil.readBeLong(buffer, offset);
         nameLength = buffer[offset + 0x8];

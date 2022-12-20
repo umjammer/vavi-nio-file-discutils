@@ -172,11 +172,11 @@ public class SuperBlock implements IByteArraySerializable {
         return 1024 << logBlockSize;
     }
 
-    public int size() {
+    @Override public int size() {
         return 1024;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = ByteUtil.readLeShort(buffer, offset + 56);
         if (magic != Ext2Magic)
             return size();
@@ -252,7 +252,7 @@ public class SuperBlock implements IByteArraySerializable {
         return 1024;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

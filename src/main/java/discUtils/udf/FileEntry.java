@@ -76,11 +76,11 @@ public class FileEntry implements IByteArraySerializable {
 
     public long uniqueId;
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         informationControlBlock = EndianUtilities.toStruct(InformationControlBlock.class, buffer, offset + 16);
         uid = ByteUtil.readLeInt(buffer, offset + 36);
@@ -108,7 +108,7 @@ public class FileEntry implements IByteArraySerializable {
         return 176 + extendedAttributesLength + allocationDescriptorsLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

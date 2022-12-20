@@ -141,12 +141,12 @@ public class IndexView<K extends IByteArraySerializable, D extends IByteArraySer
             wrapped = toWrap;
         }
 
-        public int compareTo(byte[] other) {
+        @Override public int compareTo(byte[] other) {
             return wrapped.compareTo(convert(keyClass, other));
         }
     }
 
-    public String toString() {
+    @Override public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("IndexVIew: {");
         getEntries().forEach(e -> {

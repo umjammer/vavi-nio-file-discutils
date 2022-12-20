@@ -35,7 +35,7 @@ public class RpcAuthenticationTests {
     @Test
     public void roundTripTest() throws Exception {
         RpcAuthentication authentication = new RpcAuthentication();
-        RpcAuthentication clone = null;
+        RpcAuthentication clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             authentication.write(writer);

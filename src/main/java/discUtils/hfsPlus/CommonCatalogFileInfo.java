@@ -49,9 +49,7 @@ abstract class CommonCatalogFileInfo implements IByteArraySerializable {
 
     public int unixSpecialField;
 
-    public abstract int size();
-
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         recordType = CatalogRecordType.values()[ByteUtil.readBeShort(buffer, offset + 0)];
         fileId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 8));
         createTime = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 12);
@@ -66,6 +64,4 @@ abstract class CommonCatalogFileInfo implements IByteArraySerializable {
 
         return 0;
     }
-
-    public abstract void writeTo(byte[] buffer, int offset);
 }

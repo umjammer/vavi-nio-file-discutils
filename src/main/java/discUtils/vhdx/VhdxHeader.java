@@ -85,11 +85,11 @@ public final class VhdxHeader implements IByteArraySerializable {
         return checksum == Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, checkData, 0, 4096);
     }
 
-    public int size() {
+    @Override public int size() {
         return (int) (4 * Sizes.OneKiB);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         System.arraycopy(buffer, offset, data, 0, 4096);
         signature = ByteUtil.readLeInt(data, 0);
         checksum = ByteUtil.readLeInt(data, 4);
@@ -104,7 +104,7 @@ public final class VhdxHeader implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         refreshData();
         System.arraycopy(data, 0, buffer, offset, (int) (4 * Sizes.OneKiB));
     }

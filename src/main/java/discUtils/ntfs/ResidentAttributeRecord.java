@@ -52,11 +52,11 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         memoryBuffer = new SparseMemoryBuffer(1024);
     }
 
-    public long getAllocatedLength() {
+    @Override public long getAllocatedLength() {
         return MathUtilities.roundUp(getDataLength(), 8);
     }
 
-    public void setAllocatedLength(long value) {
+    @Override public void setAllocatedLength(long value) {
         throw new UnsupportedOperationException();
     }
 
@@ -64,11 +64,11 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         return memoryBuffer;
     }
 
-    public long getDataLength() {
+    @Override public long getDataLength() {
         return memoryBuffer.getCapacity();
     }
 
-    public void setDataLength(long value) {
+    @Override public void setDataLength(long value) {
         throw new UnsupportedOperationException();
     }
 
@@ -84,15 +84,15 @@ public final class ResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of initialized data in the attribute (in bytes).
      */
-    public long getInitializedDataLength() {
+    @Override public long getInitializedDataLength() {
         return getDataLength();
     }
 
-    public void setInitializedDataLength(long value) {
+    @Override public void setInitializedDataLength(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public int getSize() {
+    @Override public int getSize() {
         byte nameLength = 0;
         short nameOffset = 0x18;
         if (getName() != null) {
@@ -103,19 +103,19 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         return (int) MathUtilities.roundUp(dataOffset + memoryBuffer.getCapacity(), 8);
     }
 
-    public long getStartVcn() {
+    @Override public long getStartVcn() {
         return 0;
     }
 
-    public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
+    @Override public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
         return memoryBuffer;
     }
 
-    public List<Range> getClusters() {
+    @Override public List<Range> getClusters() {
         return Collections.emptyList();
     }
 
-    public int write(byte[] buffer, int offset) {
+    @Override public int write(byte[] buffer, int offset) {
         byte nameLength = 0;
         short nameOffset = 0;
         if (getName() != null) {
@@ -148,13 +148,13 @@ public final class ResidentAttributeRecord extends AttributeRecord {
         return length;
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         super.dump(writer, indent);
         writer.println(indent + "     Data Length: " + getDataLength());
         writer.println(indent + "         Indexed: " + indexedFlag);
     }
 
-    protected void read(byte[] buffer, int offset, int[] length) {
+    @Override protected void read(byte[] buffer, int offset, int[] length) {
         super.read(buffer, offset, length);
 
         int dataLength = ByteUtil.readLeInt(buffer, offset + 0x10);

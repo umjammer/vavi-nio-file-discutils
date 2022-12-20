@@ -89,11 +89,11 @@ public class RootRef extends BaseItem {
         name = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x12 + getNameLength();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         setDirectoryId(ByteUtil.readLeLong(buffer, offset));
         setSequence(ByteUtil.readLeLong(buffer, offset + 0x8));
         setNameLength(ByteUtil.readLeShort(buffer, offset + 0x10));

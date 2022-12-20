@@ -36,15 +36,15 @@ public class ScsiReportLunsCommand extends ScsiCommand {
         this.expected = expected;
     }
 
-    public int size() {
+    @Override public int size() {
         return 12;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = (byte) 0xA0;
         buffer[offset + 1] = 0;
         // Reserved

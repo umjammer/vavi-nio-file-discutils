@@ -33,6 +33,7 @@ import vavi.util.ByteUtil;
  * Represents UDIF header structure. usually locates at the last of a dmg file. 
  */
 public class UdifResourceFile implements IByteArraySerializable {
+
     public UdifChecksum dataForkChecksum;
 
     public long dataForkLength;
@@ -74,11 +75,11 @@ public class UdifResourceFile implements IByteArraySerializable {
         return signature == 0x6B6F6C79;
     }
 
-    public int size() {
+    @Override public int size() {
         return 512;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         signature = ByteUtil.readBeInt(buffer, offset + 0);
         version = ByteUtil.readBeInt(buffer, offset + 4);
         headerSize = ByteUtil.readBeInt(buffer, offset + 8);
@@ -100,7 +101,7 @@ public class UdifResourceFile implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -50,22 +50,27 @@ public class FileContentBuffer implements IBuffer {
         loadExtents();
     }
 
+    @Override
     public boolean canRead() {
         return true;
     }
 
+    @Override
     public boolean canWrite() {
         return false;
     }
 
+    @Override
     public long getCapacity() {
         return fileEntry.informationLength;
     }
 
+    @Override
     public List<StreamExtent> getExtents() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public int read(long pos, byte[] buffer, int offset, int count) {
         if (fileEntry.informationControlBlock.allocationType == AllocationType.Embedded) {
             byte[] srcBuffer = fileEntry.allocationDescriptors;
@@ -81,21 +86,26 @@ public class FileContentBuffer implements IBuffer {
         return readFromExtents(pos, buffer, offset, count);
     }
 
+    @Override
     public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void clear(long pos, int count) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void flush() {
     }
 
+    @Override
     public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         throw new UnsupportedOperationException();
     }

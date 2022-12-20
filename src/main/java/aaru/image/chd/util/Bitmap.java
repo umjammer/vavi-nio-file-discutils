@@ -550,6 +550,7 @@ class Bitmap {
         public PixelType pixel_t;
 
         // getters
+        @Override
         abstract byte bpp();
 
         // pixel accessors
@@ -596,6 +597,7 @@ class Bitmap {
             super(k_bitmap_format, source, subrect);
         }
 
+        @Override
         public void wrap(byte[] base, int width, int height, int rowpixels) {
             super.wrap(base, width, height, rowpixels);
         }
@@ -605,6 +607,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -645,6 +648,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         Format format() {
             return k_bitmap_format;
         }
@@ -685,6 +689,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -725,6 +730,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         Format format() {
             return k_bitmap_format;
         }
@@ -767,6 +773,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -807,6 +814,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -847,6 +855,7 @@ class Bitmap {
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }

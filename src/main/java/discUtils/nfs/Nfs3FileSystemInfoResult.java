@@ -58,7 +58,7 @@ public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
         postOpAttributes = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         writer.write(postOpAttributes != null);
         if (postOpAttributes != null) {
@@ -70,7 +70,7 @@ public final class Nfs3FileSystemInfoResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3FileSystemInfoResult ? (Nfs3FileSystemInfoResult) obj
                                                               : null);
     }

@@ -38,11 +38,11 @@ public final class ObjectIdRecord implements IByteArraySerializable {
 
     public FileRecordReference mftReference;
 
-    public int size() {
+    @Override public int size() {
         return 0x38;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         mftReference = new FileRecordReference();
         mftReference.readFrom(buffer, offset);
         birthVolumeId = ByteUtil.readLeUUID(buffer, offset + 0x08);
@@ -51,14 +51,14 @@ public final class ObjectIdRecord implements IByteArraySerializable {
         return 0x38;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         mftReference.writeTo(buffer, offset);
         ByteUtil.writeLeUUID(birthVolumeId, buffer, offset + 0x08);
         ByteUtil.writeLeUUID(birthObjectId, buffer, offset + 0x18);
         ByteUtil.writeLeUUID(birthDomainId, buffer, offset + 0x28);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return String.format("[Data-MftRef:%s,BirthVolId:%s,BirthObjId:%s,BirthDomId:%s]",
                 mftReference,
                 birthVolumeId,

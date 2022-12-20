@@ -91,6 +91,7 @@ Debug.println(Level.FINE, "fs: " + fs);
     }
 
     /* ad-hoc hack for ignoring checking opacity */
+    @Override
     protected void checkURI(URI uri) {
         Objects.requireNonNull(uri);
         if (!uri.isAbsolute()) {

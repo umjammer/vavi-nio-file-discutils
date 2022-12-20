@@ -39,6 +39,7 @@ import dotnet4j.io.FileMode;
  * @param <TContext> The concrete type holding global state.
  */
 public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> extends VfsFileSystem<TDirEntry, TFile, TDirectory, TContext> {
+
     /**
      * Initializes a new instance of the VfsReadOnlyFileSystem class.
      *
@@ -53,6 +54,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      *
      * @return Always false.
      */
+    @Override
     public boolean canWrite() {
         return false;
     }
@@ -64,6 +66,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param destinationFile The destination file.
      * @param overwrite Whether to permit over-writing of an existing file.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
@@ -73,6 +76,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      *
      * @param path The path of the new directory.
      */
+    @Override
     public void createDirectory(String path) {
         throw new UnsupportedOperationException();
     }
@@ -82,6 +86,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      *
      * @param path The path of the directory to delete.
      */
+    @Override
     public void deleteDirectory(String path) {
         throw new UnsupportedOperationException();
     }
@@ -91,6 +96,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      *
      * @param path The path of the file to delete.
      */
+    @Override
     public void deleteFile(String path) {
         throw new UnsupportedOperationException();
     }
@@ -101,6 +107,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         throw new UnsupportedOperationException();
     }
@@ -112,6 +119,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param destinationName The target file name.
      * @param overwrite Whether to allow an existing file to be overwritten.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
@@ -123,6 +131,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param mode The file mode for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode) {
         return openFile(path, mode, FileAccess.Read);
     }
@@ -134,6 +143,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
+    @Override
     public void setAttributes(String path, Map<String, Object> newValue) {
         throw new UnsupportedOperationException();
     }
@@ -145,6 +155,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
@@ -156,6 +167,7 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
@@ -167,8 +179,8 @@ public abstract class VfsReadOnlyFileSystem<TDirEntry extends VfsDirEntry, TFile
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
-
 }

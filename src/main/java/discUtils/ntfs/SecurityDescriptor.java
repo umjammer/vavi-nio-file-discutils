@@ -56,16 +56,16 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         descriptor = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return (int) getDescriptor().getBinaryLength();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         setDescriptor(new RawSecurityDescriptor(buffer, offset));
         return (int) getDescriptor().getBinaryLength();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         // Write out the security descriptor manually because on NTFS the DACL is written
         // before the Owner & Group.  Writing the components in the same order means the
         // hashes will match for identical Security Descriptors.
@@ -112,7 +112,7 @@ public final class SecurityDescriptor implements IByteArraySerializable, IDiagno
         }
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "Descriptor: " + getDescriptor().getSddlForm(AccessControlSections.All));
     }
 

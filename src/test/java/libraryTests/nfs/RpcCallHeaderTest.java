@@ -43,7 +43,7 @@ public class RpcCallHeaderTest {
         header.setRpcVersion(6);
         header.setVerifier(new RpcAuthentication());
         header.setVersion(7);
-        RpcCallHeader clone = null;
+        RpcCallHeader clone;
 
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

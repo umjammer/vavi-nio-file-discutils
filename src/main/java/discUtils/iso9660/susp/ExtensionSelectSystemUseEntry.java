@@ -23,6 +23,7 @@
 package discUtils.iso9660.susp;
 
 public final class ExtensionSelectSystemUseEntry extends SystemUseEntry {
+
     private byte selectedExtension;
 
     public int getSelectedExtension() {

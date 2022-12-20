@@ -31,11 +31,12 @@ import discUtils.streams.util.StreamUtilities;
 
 
 public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
+
     public Symlink(Context context, int inodeNum, Inode inode) {
         super(context, inodeNum, inode);
     }
 
-    public String getTargetPath() {
+    @Override public String getTargetPath() {
         IBuffer content = getFileContent();
         byte[] data = StreamUtilities.readExact(content, 0, (int) content.getCapacity());
         return EndianUtilities.bytesToZString(data, 0, data.length, StandardCharsets.UTF_8); // TODO enc

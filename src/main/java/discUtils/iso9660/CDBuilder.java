@@ -279,7 +279,7 @@ public final class CDBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> fixedRegions = new ArrayList<>();
 
         long buildTime = System.currentTimeMillis();

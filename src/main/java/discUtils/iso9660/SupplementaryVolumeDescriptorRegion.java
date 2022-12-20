@@ -31,7 +31,7 @@ public class SupplementaryVolumeDescriptorRegion extends VolumeDescriptorDiskReg
         this.descriptor = descriptor;
     }
 
-    protected byte[] getBlockData() {
+    @Override protected byte[] getBlockData() {
         byte[] buffer = new byte[IsoUtilities.SectorSize];
         descriptor.writeTo(buffer, 0);
         return buffer;

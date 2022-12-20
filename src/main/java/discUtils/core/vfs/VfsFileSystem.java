@@ -138,6 +138,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      *
      * @param path The path of the file to delete.
      */
+    @Override
     public void deleteFile(String path) {
         throw new UnsupportedOperationException();
     }
@@ -167,8 +168,8 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      *
      * @param path The path to test.
      * @return true if the file exists.
-     @Override
      */
+    @Override
     public boolean fileExists(String path) {
         TDirEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry != null) {
@@ -337,7 +338,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         }
         TFile file = getFile(entry);
 
-        SparseStream stream = null;
+        SparseStream stream;
         if (attributeName == null || attributeName.isEmpty()) {
             stream = new BufferStream(file.getFileContent(), access);
         } else {
@@ -403,6 +404,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public long getCreationTimeUtc(String path) {
         if (isRoot(path)) {
             return getRootDirectory().getCreationTimeUtc();
@@ -437,6 +439,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
      * @param path The path of the file or directory.
      * @return The last access time.
      */
+    @Override
     public long getLastAccessTimeUtc(String path) {
         if (isRoot(path)) {
             return getRootDirectory().getLastAccessTimeUtc();

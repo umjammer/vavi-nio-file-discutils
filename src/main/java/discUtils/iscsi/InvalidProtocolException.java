@@ -26,6 +26,7 @@ package discUtils.iscsi;
  * Exception thrown when a low-level iSCSI failure is detected.
  */
 public class InvalidProtocolException extends IscsiException {
+
     /**
      * Initializes a new instance of the InvalidProtocolException class.
      */

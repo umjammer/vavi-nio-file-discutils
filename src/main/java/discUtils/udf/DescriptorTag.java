@@ -48,11 +48,11 @@ public class DescriptorTag implements IByteArraySerializable {
 
     public short tagSerialNumber;
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         tagIdentifier = TagIdentifier.valueOf(ByteUtil.readLeShort(buffer, offset));
         descriptorVersion = ByteUtil.readLeShort(buffer, offset + 2);
         tagChecksum = buffer[offset + 4];
@@ -63,7 +63,7 @@ public class DescriptorTag implements IByteArraySerializable {
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

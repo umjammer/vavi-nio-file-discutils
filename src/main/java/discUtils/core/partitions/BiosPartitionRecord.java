@@ -165,6 +165,7 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         status = value;
     }
 
+    @Override
     public int compareTo(BiosPartitionRecord other) {
         return Long.compare(getLBAStartAbsolute(), other.getLBAStartAbsolute());
     }

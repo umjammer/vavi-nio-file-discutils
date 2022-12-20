@@ -65,11 +65,11 @@ public class FileSetDescriptor implements IByteArraySerializable {
 
     public LongAllocationDescriptor systemStreamDirectoryIcb;
 
-    public int size() {
+    @Override public int size() {
         return 512;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         recordingTime = UdfUtilities.parseTimestamp(buffer, offset + 16);
         interchangeLevel = ByteUtil.readLeShort(buffer, offset + 28);
@@ -96,7 +96,7 @@ public class FileSetDescriptor implements IByteArraySerializable {
         return 512;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

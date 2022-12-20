@@ -76,11 +76,11 @@ public class InodeRef extends BaseItem {
         name = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0xa + getNameLength();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         index = ByteUtil.readLeLong(buffer, offset);
         nameLength = ByteUtil.readLeShort(buffer, offset + 0x8);
         name = new String(buffer, offset + 0xa, getNameLength(), StandardCharsets.UTF_8);

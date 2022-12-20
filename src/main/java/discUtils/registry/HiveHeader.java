@@ -71,11 +71,11 @@ public final class HiveHeader implements IByteArraySerializable {
         guid2 = UUID.randomUUID();
     }
 
-    public int size() {
+    @Override public int size() {
         return HeaderSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         int sig = ByteUtil.readLeInt(buffer, offset + 0);
         if (sig != Signature) {
             throw new IOException("Invalid signature for registry hive");
@@ -105,7 +105,7 @@ public final class HiveHeader implements IByteArraySerializable {
         return HeaderSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeInt(Signature, buffer, offset);
         ByteUtil.writeLeInt(sequence1, buffer, offset + 0x0004);
         ByteUtil.writeLeInt(sequence2, buffer, offset + 0x0008);

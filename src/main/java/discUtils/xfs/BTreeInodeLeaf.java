@@ -38,6 +38,7 @@ public class BTreeInodeLeaf extends BtreeHeader {
         records = value;
     }
 
+    @Override
     public int size() {
         return super.size() + (getNumberOfRecords() * 0x10);
     }
@@ -46,6 +47,7 @@ public class BTreeInodeLeaf extends BtreeHeader {
         super(superBlockVersion);
     }
 
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
         offset += super.size();
@@ -61,6 +63,7 @@ public class BTreeInodeLeaf extends BtreeHeader {
         return size();
     }
 
+    @Override
     public void loadBtree(AllocationGroup ag) {
     }
 }

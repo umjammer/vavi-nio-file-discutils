@@ -47,6 +47,7 @@ public final class UpperCase implements Comparator<String> {
         }
     }
 
+    @Override
     public int compare(String x, String y) {
         int compLen = Math.min(x.length(), y.length());
         for (int i = 0; i < compLen; ++i) {

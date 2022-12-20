@@ -30,6 +30,7 @@ public class BuilderBufferExtentSource extends BuilderExtentSource {
         this.buffer = buffer;
     }
 
+    @Override
     public BuilderExtent fix(long pos) {
         return new BuilderBufferExtent(pos, buffer);
     }

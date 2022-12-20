@@ -352,7 +352,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String user,
                                          String password) throws IOException {
         URI uri = pathToUri(path);
-        VirtualDisk result = null;
+        VirtualDisk result;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
             throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }

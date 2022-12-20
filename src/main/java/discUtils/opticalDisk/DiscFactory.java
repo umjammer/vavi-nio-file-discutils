@@ -39,32 +39,39 @@ import dotnet4j.io.FileShare;
 @VirtualDiskFactoryAttribute(type = "Optical", fileExtensions = { ".iso", ".bin" })
 public final class DiscFactory implements VirtualDiskFactory {
 
+    @Override
     public String[] getVariants() {
         return new String[] {};
     }
 
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInformation(String variant) {
         return makeDiskTypeInfo();
     }
 
+    @Override
     public DiskImageBuilder getImageBuilder(String variant) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDisk createDisk(FileLocator locator, String variant, String path, VirtualDiskParameters diskParameters) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDisk openDisk(String path, FileAccess access) {
         return new Disc(path, access);
     }
 
+    @Override
     public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
         OpticalFormat format = path.endsWith(".bin") ? OpticalFormat.Mode2 : OpticalFormat.Mode1;
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         return new Disc(locator.open(path, FileMode.Open, access, share), Ownership.Dispose, format);
     }
 
+    @Override
     public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) {
         return null;
     }

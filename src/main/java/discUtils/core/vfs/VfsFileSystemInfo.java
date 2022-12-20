@@ -58,6 +58,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
     /**
      * Gets a one-line description of the file system.
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -67,6 +68,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
     /**
      * Gets the name of the file system.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -78,6 +80,7 @@ public final class VfsFileSystemInfo extends FileSystemInfo {
      * @param parameters Parameters for the file system.
      * @return A file system instance.
      */
+    @Override
     public DiscFileSystem open(VolumeInfo volume, FileSystemParameters parameters) {
 Debug.println(Level.INFO, openDelegate + ", " + volume);
         return openDelegate.invoke(volume.open(), volume, parameters);
@@ -90,6 +93,7 @@ Debug.println(Level.INFO, openDelegate + ", " + volume);
      * @param parameters Parameters for the file system.
      * @return A file system instance.
      */
+    @Override
     public DiscFileSystem open(Stream stream, FileSystemParameters parameters) {
         return openDelegate.invoke(stream, null, parameters);
     }

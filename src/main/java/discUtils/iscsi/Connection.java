@@ -108,7 +108,7 @@ class Connection implements Closeable {
         return session;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         LogoutRequest req = new LogoutRequest(this);
         byte[] packet = req.getBytes(LogoutReason.CloseConnection);
         stream.write(packet, 0, packet.length);
@@ -144,7 +144,7 @@ class Connection implements Closeable {
         stream.write(packet, 0, packet.length);
         stream.flush();
 
-        int numApproved = 0;
+        int numApproved;
         int numSent = toSend;
         int pktsSent = 0;
         while (numSent < outBufferCount) {

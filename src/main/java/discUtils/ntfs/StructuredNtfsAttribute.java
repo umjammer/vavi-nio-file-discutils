@@ -76,12 +76,12 @@ public class StructuredNtfsAttribute<T extends IByteArraySerializable & IDiagnos
         }
     }
 
-    public String toString() {
+    @Override public String toString() {
         initialize();
         return structure.toString();
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         initialize();
         writer.println(indent + getAttributeTypeName() + " ATTRIBUTE (" + (getName() == null ? "No Name" : getName()) + ")");
         structure.dump(writer, indent + "  ");

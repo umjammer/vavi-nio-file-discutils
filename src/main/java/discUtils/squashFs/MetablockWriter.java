@@ -51,6 +51,7 @@ final class MetablockWriter implements Closeable {
         return new MetadataRef(currentBlockNum, currentOffset);
     }
 
+    @Override
     public void close() throws IOException {
         if (buffer != null) {
             buffer.close();

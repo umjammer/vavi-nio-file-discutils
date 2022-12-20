@@ -67,11 +67,12 @@ public class Program extends ProgramBase {
         program.doRun();
     }
 
+    @Override
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
 System.err.println("file: " + diskFile);
         volMgr.addDisk(VirtualDisk.openDisk(diskFile, diskType != null ? diskType : null, FileAccess.Read, getUserName(), getPassword()));
-        VolumeInfo volInfo = null;
+        VolumeInfo volInfo;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             volInfo = volMgr.getVolume(getVolumeId());
         } else if (getPartition() >= 0) {

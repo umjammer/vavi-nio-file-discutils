@@ -143,6 +143,7 @@ public final class Session implements Closeable {
     /**
      * Disposes of this instance, closing the session with the Target.
      */
+    @Override
     public void close() throws IOException {
         if (getActiveConnection() != null) {
             getActiveConnection().close();
@@ -435,7 +436,7 @@ public final class Session implements Closeable {
                           sender = KeySender.Initiator,
                           type = KeyType.Declarative,
                           usedForDiscovery = true)
-    SessionType sessionType = SessionType.Discovery;
+    SessionType sessionType;
 
     @ProtocolKeyAttribute(name = "MaxConnections",
                           defaultValue = "1",

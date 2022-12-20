@@ -81,10 +81,12 @@ public abstract class BTreeExtentHeaderV5 extends BTreeExtentHeader {
         crc = value;
     }
 
+    @Override
     public int size() {
         return super.size() + 48;
     }
 
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         offset += super.readFrom(buffer, offset);
         blockNumber = ByteUtil.readBeLong(buffer, offset);

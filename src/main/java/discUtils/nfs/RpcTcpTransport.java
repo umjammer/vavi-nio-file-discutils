@@ -58,6 +58,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         this.localPort = localPort;
     }
 
+    @Override
     public void close() throws IOException {
         if (tcpStream != null) {
             tcpStream.close();
@@ -70,6 +71,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         }
     }
 
+    @Override
     public byte[] sendAndReceive(byte[] message) {
         int retries = 0;
         int retryLimit = RetryLimit;
@@ -137,6 +139,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         return response;
     }
 
+    @Override
     public void send(byte[] message) {
         send(tcpStream, message);
     }
@@ -149,6 +152,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         stream.flush();
     }
 
+    @Override
     public byte[] receive() {
         return receive(tcpStream);
     }

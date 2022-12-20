@@ -40,35 +40,35 @@ public class UdifPartitionInfo extends PartitionInfo {
         this.disk = disk;
     }
 
-    public byte getBiosType() {
+    @Override public byte getBiosType() {
         return 0;
     }
 
-    public long getFirstSector() {
+    @Override public long getFirstSector() {
         return block.firstSector;
     }
 
-    public UUID getGuidType() {
+    @Override public UUID getGuidType() {
         return new UUID(0L, 0L);
     }
 
-    public long getLastSector() {
+    @Override public long getLastSector() {
         return block.firstSector + block.sectorCount;
     }
 
-    public long getSectorCount() {
+    @Override public long getSectorCount() {
         return block.sectorCount;
     }
 
-    public String getTypeAsString() {
+    @Override public String getTypeAsString() {
         return getClass().getName();
     }
 
-    public PhysicalVolumeType getVolumeType() {
+    @Override public PhysicalVolumeType getVolumeType() {
         return PhysicalVolumeType.ApplePartition;
     }
 
-    public SparseStream open() {
+    @Override public SparseStream open() {
         return new SubStream(disk.getContent(), getFirstSector() * disk.getSectorSize(), getSectorCount() * disk.getSectorSize());
     }
 }

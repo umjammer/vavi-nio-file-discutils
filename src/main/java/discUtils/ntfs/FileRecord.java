@@ -244,7 +244,7 @@ public class FileRecord extends FixupRecordBase {
         return null;
     }
 
-    public String toString() {
+    @Override public String toString() {
         for (AttributeRecord attr : getAttributes()) {
             if (attr.getAttributeType() == AttributeType.FileName) {
                 @SuppressWarnings("unchecked")
@@ -381,7 +381,7 @@ public class FileRecord extends FixupRecordBase {
         writer.println(indent + "   Index (Self Ref): " + index);
     }
 
-    protected void read(byte[] buffer, int offset) {
+    @Override protected void read(byte[] buffer, int offset) {
         logFileSequenceNumber = ByteUtil.readLeLong(buffer, offset + 0x08);
         sequenceNumber = ByteUtil.readLeShort(buffer, offset + 0x10);
         hardLinkCount = ByteUtil.readLeShort(buffer, offset + 0x12);
@@ -411,7 +411,7 @@ public class FileRecord extends FixupRecordBase {
         }
     }
 
-    protected short write(byte[] buffer, int offset) {
+    @Override protected short write(byte[] buffer, int offset) {
         short headerEnd = (short) (haveIndex ? 0x30 : 0x2A);
 
         firstAttributeOffset = (short) MathUtilities.roundUp(headerEnd + getUpdateSequenceSize(), 0x08);
@@ -442,7 +442,7 @@ public class FileRecord extends FixupRecordBase {
         return headerEnd;
     }
 
-    protected int calcSize() {
+    @Override protected int calcSize() {
         int firstAttrPos = (short) MathUtilities.roundUp((haveIndex ? 0x30 : 0x2A) + getUpdateSequenceSize(), 8);
 
         int size = firstAttrPos;

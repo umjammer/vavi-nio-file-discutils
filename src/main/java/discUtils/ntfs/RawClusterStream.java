@@ -306,7 +306,7 @@ final class RawClusterStream extends ClusterStream {
         return 0;
     }
 
-    public int clearClusters(long startVcn, int count) {
+    @Override public int clearClusters(long startVcn, int count) {
         byte[] zeroBuffer = new byte[16 * bytesPerCluster];
 
         int clustersAllocated = 0;

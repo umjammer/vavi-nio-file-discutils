@@ -68,7 +68,7 @@ public class ExtentsFileBuffer extends Buffer {
         while (totalBytesRemaining > 0) {
             int logicalBlock = (int) ((pos + totalRead) / blockSize);
             int blockOffset = (int) (pos + totalRead - logicalBlock * blockSize);
-            int numRead = 0;
+            int numRead;
             Extent extent = findExtent(extents, logicalBlock);
             if (extent == null) {
                 throw new IOException("Unable to find extent for block " + logicalBlock);

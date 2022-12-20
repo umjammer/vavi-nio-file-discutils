@@ -112,11 +112,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of space occupied by the attribute (in bytes).
      */
-    public long getAllocatedLength() {
+    @Override public long getAllocatedLength() {
         return dataAllocatedSize;
     }
 
-    public void setAllocatedLength(long value) {
+    @Override public void setAllocatedLength(long value) {
         dataAllocatedSize = value;
     }
 
@@ -142,11 +142,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of data in the attribute (in bytes).
      */
-    public long getDataLength() {
+    @Override public long getDataLength() {
         return dataRealSize;
     }
 
-    public void setDataLength(long value) {
+    @Override public void setDataLength(long value) {
         dataRealSize = value;
     }
 
@@ -159,11 +159,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of initialized data in the attribute (in bytes).
      */
-    public long getInitializedDataLength() {
+    @Override public long getInitializedDataLength() {
         return initializedDataSize;
     }
 
-    public void setInitializedDataLength(long value) {
+    @Override public void setInitializedDataLength(long value) {
         initializedDataSize = value;
     }
 
@@ -175,6 +175,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         lastVCN = value;
     }
 
+    @Override
     public int getSize() {
         int nameLength = 0;
         int nameOffset = !Collections.disjoint(flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) ? 0x48 : 0x40;
@@ -195,7 +196,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         return MathUtilities.roundUp(dataOffset + dataLen, 8);
     }
 
-    public long getStartVcn() {
+    @Override public long getStartVcn() {
         return startingVCN;
     }
 
@@ -236,7 +237,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
 //Debug.println("+1[" + index + "]: " + newRun + " / " + getDataRuns());
     }
 
-    public List<Range> getClusters() {
+    @Override public List<Range> getClusters() {
         List<DataRun> cookedRuns = dataRuns;
 
         long start = 0;
@@ -251,11 +252,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         return result;
     }
 
-    public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
+    @Override public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
         return new NonResidentDataBuffer(context, this);
     }
 
-    public int write(byte[] buffer, int offset) {
+    @Override public int write(byte[] buffer, int offset) {
         int headerLength = 0x40;
         if (!Collections.disjoint(getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             headerLength += 0x08;
@@ -345,7 +346,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         return new NonResidentAttributeRecord(type, name, (short) 0, flags, splitVcn, newRecordRuns);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         super.dump(writer, indent);
         writer.println(indent + "     Starting VCN: " + startingVCN);
         writer.println(indent + "         Last VCN: " + lastVCN);
@@ -366,7 +367,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         writer.println(indent + "        Data Runs:" + runStr);
     }
 
-    protected void read(byte[] buffer, int offset, int[] length) {
+    @Override protected void read(byte[] buffer, int offset, int[] length) {
         dataRuns = null;
 
         super.read(buffer, offset, length);
@@ -399,7 +400,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         }
     }
 
-    public String toString() {
+    @Override public String toString() {
         return StringUtil.paramString(this);
     }
 }

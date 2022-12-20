@@ -24,14 +24,14 @@ package discUtils.iscsi;
 
 public class NullAuthenticator extends Authenticator {
 
-    public String getIdentifier() {
+    @Override public String getIdentifier() {
         return "None";
     }
 
-    public boolean getParameters(TextBuffer textBuffer) {
+    @Override public boolean getParameters(TextBuffer textBuffer) {
         return true;
     }
 
-    public void setParameters(TextBuffer textBuffer) {
+    @Override public void setParameters(TextBuffer textBuffer) {
     }
 }

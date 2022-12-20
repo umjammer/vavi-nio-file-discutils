@@ -41,11 +41,11 @@ public class BigEndianBitStream extends BitStream {
         this.byteStream = byteStream;
     }
 
-    public int getMaxReadAhead() {
+    @Override public int getMaxReadAhead() {
         return 16;
     }
 
-    public int read(int count) {
+    @Override public int read(int count) {
         if (count > 16) {
             int result = read(16) << (count - 16);
             return result | read(count - 16);
@@ -57,13 +57,13 @@ public class BigEndianBitStream extends BitStream {
         return (buffer >>> bufferAvailable) & mask;
     }
 
-    public int peek(int count) {
+    @Override public int peek(int count) {
         ensureBufferFilled();
         int mask = (1 << count) - 1;
         return (buffer >>> (bufferAvailable - count)) & mask;
     }
 
-    public void consume(int count) {
+    @Override public void consume(int count) {
         ensureBufferFilled();
         bufferAvailable -= count;
     }

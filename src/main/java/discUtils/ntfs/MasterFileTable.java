@@ -183,6 +183,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + new String(recordData
         recordSize = value;
     }
 
+    @Override
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "MASTER FILE TABLE");
         writer.println(indent + "  Record Length: " + recordSize);
@@ -194,6 +195,7 @@ Debug.println(Level.FINE, "MFT records[" + index + "]: " + new String(recordData
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (recordStream != null) {
             recordStream.close();

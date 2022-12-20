@@ -40,7 +40,7 @@ public class Nfs3ModifyResultTest {
         result.setCacheConsistency(new Nfs3WeakCacheConsistency());
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3ModifyResult clone = null;
+        Nfs3ModifyResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

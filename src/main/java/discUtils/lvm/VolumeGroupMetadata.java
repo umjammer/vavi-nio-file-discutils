@@ -54,16 +54,12 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
 
     public Metadata parsedMetadata;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return (int) length;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         crc = ByteUtil.readLeInt(buffer, offset);
         calculatedCrc = PhysicalVolume.calcCrc(buffer, offset + 0x4, PhysicalVolume.SECTOR_SIZE - 0x4);
@@ -97,9 +93,7 @@ public class VolumeGroupMetadata implements IByteArraySerializable {
         return size();
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

@@ -59,6 +59,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
         record = dynDisk.getDatabase().getDiskGroup(dynDisk.getGroupId());
     }
 
+    @Override
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "DISK GROUP (" + record.name + ")");
         writer.println(linePrefix + "  Name: " + record.name);

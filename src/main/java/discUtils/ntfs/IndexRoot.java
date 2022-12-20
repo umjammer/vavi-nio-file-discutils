@@ -74,11 +74,11 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
         rawClustersPerIndexRecord = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         attributeType = ByteUtil.readLeInt(buffer, 0x00);
         collationRule = AttributeCollationRule.valueOf(ByteUtil.readLeInt(buffer, 0x04));
         indexAllocationSize = ByteUtil.readLeInt(buffer, 0x08);
@@ -86,14 +86,14 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeInt(attributeType, buffer, 0);
         ByteUtil.writeLeInt(collationRule.getValue(), buffer, 0x04);
         ByteUtil.writeLeInt(indexAllocationSize, buffer, 0x08);
         buffer[0x0C] = rawClustersPerIndexRecord;
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "                Attr Type: " + attributeType);
         writer.println(indent + "           Collation Rule: " + collationRule);
         writer.println(indent + "         Index Alloc Size: " + indexAllocationSize);
@@ -118,7 +118,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class SecurityHashComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -148,7 +148,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class UnsignedLongComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -168,7 +168,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class MultipleUnsignedLongComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -203,7 +203,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             stringComparer = upCase;
         }
 
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -222,7 +222,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class SidComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }

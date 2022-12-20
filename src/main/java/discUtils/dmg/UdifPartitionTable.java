@@ -50,34 +50,34 @@ public class UdifPartitionTable extends PartitionTable {
         }
     }
 
-    public UUID getDiskGuid() {
+    @Override public UUID getDiskGuid() {
         return EMPTY;
     }
 
     /**
      * Gets the partitions present on the disk.
      */
-    public List<PartitionInfo> getPartitions() {
+    @Override public List<PartitionInfo> getPartitions() {
         return Collections.unmodifiableList(partitions);
     }
 
-    public void delete(int index) {
+    @Override public void delete(int index) {
         throw new UnsupportedOperationException();
     }
 
-    public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(long size, WellKnownPartitionType type, boolean active, int alignment) {
         throw new UnsupportedOperationException();
     }
 
-    public int create(long size, WellKnownPartitionType type, boolean active) {
+    @Override public int create(long size, WellKnownPartitionType type, boolean active) {
         throw new UnsupportedOperationException();
     }
 
-    public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
+    @Override public int createAligned(WellKnownPartitionType type, boolean active, int alignment) {
         throw new UnsupportedOperationException();
     }
 
-    public int create(WellKnownPartitionType type, boolean active) {
+    @Override public int create(WellKnownPartitionType type, boolean active) {
         throw new UnsupportedOperationException();
     }
 }

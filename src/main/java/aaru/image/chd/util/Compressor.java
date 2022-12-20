@@ -194,6 +194,7 @@ public abstract class Compressor {
         }
 
         // read interface
+        @Override
         public int read(byte[] dest, long offset, int length) {
             offset += m_offset;
             if (offset >= m_maxoffset)
@@ -254,6 +255,7 @@ public abstract class Compressor {
         }
 
         // read interface
+        @Override
         public int read(byte[] _dest, long offset, int length) throws IOException {
             // verify assumptions made below
             assert (offset % CD_FRAME_SIZE == 0);
@@ -309,7 +311,7 @@ public abstract class Compressor {
                                                 ? src_frame_start - split_track_start
                                                 : src_frame_start
                                         );
-                                int count = 0;
+                                int count;
                                 count = m_file.read(ByteBuffer.wrap(_dest, dest, (int) bytesperframe));
                                 if (count == -1 || (count != bytesperframe))
                                     throw new IOException("Error reading input file: " + m_lastfile);
@@ -366,6 +368,7 @@ public abstract class Compressor {
         }
 
         // read interface
+        @Override
         public int read(byte[] _dest, long offset, int length) {
             int dest = 0; // _dest;
             byte interlace_factor = (byte) (m_info.interlaced ? 2 : 1);

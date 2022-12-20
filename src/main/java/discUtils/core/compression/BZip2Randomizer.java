@@ -28,6 +28,7 @@ package discUtils.core.compression;
 import java.util.Arrays;
 
 public class BZip2Randomizer extends DataBlockTransform {
+
     private static final int[] RandomVals = {
         619, 720, 127, 481, 931, 816, 813, 233, 566, 247, 985, 724, 205, 454, 863, 491, 741, 242, 949, 214, 733, 859, 335, 708,
         621, 574, 73, 654, 730, 472, 419, 436, 278, 496, 867, 210, 399, 680, 480, 51, 878, 465, 811, 169, 869, 675, 611, 697,
@@ -53,11 +54,11 @@ public class BZip2Randomizer extends DataBlockTransform {
         510, 357, 358, 850, 858, 364, 936, 638
     };
 
-    protected boolean getBuffersMustNotOverlap() {
+    @Override protected boolean getBuffersMustNotOverlap() {
         return false;
     }
 
-    protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
+    @Override protected int doProcess(byte[] input, int inputOffset, int inputCount, byte[] output, int outputOffset) {
         if (!Arrays.equals(input, output) || inputOffset != outputOffset) {
             System.arraycopy(input, inputOffset, output, outputOffset, inputCount);
         }
@@ -73,11 +74,11 @@ public class BZip2Randomizer extends DataBlockTransform {
         return inputCount;
     }
 
-    protected int maxOutputCount(int inputCount) {
+    @Override protected int maxOutputCount(int inputCount) {
         return inputCount;
     }
 
-    protected int minOutputCount(int inputCount) {
+    @Override protected int minOutputCount(int inputCount) {
         return inputCount;
     }
 }

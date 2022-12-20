@@ -39,23 +39,23 @@ public final class SparseClusterStream extends ClusterStream {
         this.rawStream = rawStream;
     }
 
-    public long getAllocatedClusterCount() {
+    @Override public long getAllocatedClusterCount() {
         return rawStream.getAllocatedClusterCount();
     }
 
-    public List<Range> getStoredClusters() {
+    @Override public List<Range> getStoredClusters() {
         return rawStream.getStoredClusters();
     }
 
-    public boolean isClusterStored(long vcn) {
+    @Override public boolean isClusterStored(long vcn) {
         return rawStream.isClusterStored(vcn);
     }
 
-    public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
+    @Override public void expandToClusters(long numVirtualClusters, NonResidentAttributeRecord extent, boolean allocate) {
         rawStream.expandToClusters(compressionStart(numVirtualClusters), extent, false);
     }
 
-    public void truncateToClusters(long numVirtualClusters) {
+    @Override public void truncateToClusters(long numVirtualClusters) {
         long alignedNum = compressionStart(numVirtualClusters);
         rawStream.truncateToClusters(alignedNum);
         if (alignedNum != numVirtualClusters) {
@@ -64,18 +64,18 @@ public final class SparseClusterStream extends ClusterStream {
 
     }
 
-    public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
+    @Override public void readClusters(long startVcn, int count, byte[] buffer, int offset) {
         rawStream.readClusters(startVcn, count, buffer, offset);
     }
 
-    public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
+    @Override public int writeClusters(long startVcn, int count, byte[] buffer, int offset) {
         int clustersAllocated = 0;
         clustersAllocated += rawStream.allocateClusters(startVcn, count);
         clustersAllocated += rawStream.writeClusters(startVcn, count, buffer, offset);
         return clustersAllocated;
     }
 
-    public int clearClusters(long startVcn, int count) {
+    @Override public int clearClusters(long startVcn, int count) {
         return rawStream.releaseClusters(startVcn, count);
     }
 

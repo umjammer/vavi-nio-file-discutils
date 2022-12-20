@@ -123,7 +123,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         for (AllocationGroup agf : getContext().getAllocationGroups()) {
             fdblocks += agf.getFreeBlockInfo().getFreeBlocks();
         }
-        long alloc_set_aside = 0;
+        long alloc_set_aside;
 
         alloc_set_aside = 4 + ((long) superblock.getAgCount() * XFS_ALLOC_AGFL_RESERVE);
 

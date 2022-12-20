@@ -41,10 +41,12 @@ public final class FileTransport implements VirtualDiskTransport {
 
     private String path;
 
+    @Override
     public boolean isRawDisk() {
         return false;
     }
 
+    @Override
     public void connect(URI uri, String username, String password) {
         path = uri.getPath();
         extraInfo = uri.getFragment();
@@ -54,18 +56,22 @@ public final class FileTransport implements VirtualDiskTransport {
         }
     }
 
+    @Override
     public VirtualDisk openDisk(FileAccess access) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FileLocator getFileLocator() {
         return new LocalFileLocator(Utilities.getDirectoryFromPath(path) + File.separator);
     }
 
+    @Override
     public String getFileName() {
         return Utilities.getFileFromPath(path);
     }
 
+    @Override
     public String getExtraInfo() {
         return extraInfo;
     }

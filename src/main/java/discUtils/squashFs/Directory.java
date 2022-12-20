@@ -40,7 +40,7 @@ public class Directory extends File implements IVfsDirectory<DirectoryEntry, Fil
         }
     }
 
-    public List<DirectoryEntry> getAllEntries() {
+    @Override public List<DirectoryEntry> getAllEntries() {
         List<DirectoryEntry> records = new ArrayList<>();
         MetablockReader reader = getContext().getDirectoryReader();
         reader.setPosition(dirInode.getStartBlock(), dirInode.getOffset());
@@ -55,11 +55,11 @@ public class Directory extends File implements IVfsDirectory<DirectoryEntry, Fil
         return records;
     }
 
-    public DirectoryEntry getSelf() {
+    @Override public DirectoryEntry getSelf() {
         return null;
     }
 
-    public DirectoryEntry getEntryByName(String name) {
+    @Override public DirectoryEntry getEntryByName(String name) {
         for (DirectoryEntry entry : getAllEntries()) {
             if (entry.getFileName().equals(name)) {
                 return entry;
@@ -68,7 +68,7 @@ public class Directory extends File implements IVfsDirectory<DirectoryEntry, Fil
         return null;
     }
 
-    public DirectoryEntry createNewFile(String name) {
+    @Override public DirectoryEntry createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
 }

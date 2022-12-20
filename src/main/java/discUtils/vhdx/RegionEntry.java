@@ -49,11 +49,11 @@ public final class RegionEntry implements IByteArraySerializable {
         length = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 32;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         guid = ByteUtil.readLeUUID(buffer, offset + 0);
         fileOffset = ByteUtil.readLeLong(buffer, offset + 16);
         length = ByteUtil.readLeInt(buffer, offset + 24);
@@ -61,14 +61,14 @@ public final class RegionEntry implements IByteArraySerializable {
         return 32;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeUUID(guid, buffer, offset + 0);
         ByteUtil.writeLeLong(fileOffset, buffer, offset + 16);
         ByteUtil.writeLeInt(length, buffer, offset + 24);
         ByteUtil.writeLeInt(flags.ordinal(), buffer, offset + 28);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return getClass().getSimpleName() + "@" + hashCode() + ": {offset: " + fileOffset + ", length: " + getLength() + "}";
     }
 }

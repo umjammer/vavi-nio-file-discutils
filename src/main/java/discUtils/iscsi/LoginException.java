@@ -26,6 +26,7 @@ package discUtils.iscsi;
  * Exception thrown when an authentication exception occurs.
  */
 public class LoginException extends IscsiException {
+
     /**
      * Initializes a new instance of the LoginException class.
      */

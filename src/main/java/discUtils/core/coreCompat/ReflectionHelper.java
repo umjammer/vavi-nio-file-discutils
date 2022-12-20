@@ -5,47 +5,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import vavi.util.Debug;
 
 
 public class ReflectionHelper {
-    @Deprecated
-    public static boolean isEnum(Class<?> type) {
-        return type.isEnum();
-    }
-
-    @Deprecated
-    public static <T extends Annotation> T getCustomAttribute(Method property, Class<T> attributeType) {
-        return property.getAnnotation(attributeType);
-    }
-
-    @Deprecated
-    public static <T extends Annotation> T getCustomAttribute(Method property, Class<T> attributeType, boolean inherit) {
-        return property.getAnnotation(attributeType);
-    }
-
-    @Deprecated
-    public static <T extends Annotation> T getCustomAttribute(Class<?> type, Class<T> attributeType) {
-        return type.getAnnotation(attributeType);
-    }
-
-    @Deprecated
-    public static <T extends Annotation> List<T> getCustomAttributes(Class<?> type, Class<T> attributeType, boolean inherit) {
-        return Arrays.asList(type.getAnnotationsByType(attributeType));
-    }
-
-    @Deprecated
-    public static List<Class<?>> getAssembly(Class<?> type) {
-        return Collections.singletonList(type);
-    }
 
     public static <T extends Serializable> int sizeOf(Class<T> c) {
         try {

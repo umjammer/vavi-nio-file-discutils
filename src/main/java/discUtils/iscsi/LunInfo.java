@@ -52,7 +52,7 @@ public class LunInfo {
     /**
      * Gets the type (or class) of this device.
      */
-    private LunClass deviceType = LunClass.BlockStorage;
+    private LunClass deviceType;
 
     public LunClass getDeviceType() {
         return deviceType;

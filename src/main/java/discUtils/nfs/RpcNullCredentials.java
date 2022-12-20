@@ -26,10 +26,13 @@ package discUtils.nfs;
  * Null RPC credentials, for use with anonymous services / procedures.
  */
 public final class RpcNullCredentials extends RpcCredentials {
+
+    @Override
     public RpcAuthFlavour getAuthFlavour() {
         return RpcAuthFlavour.Null;
     }
 
+    @Override
     public void write(XdrDataWriter writer) {
     }
 }

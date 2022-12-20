@@ -26,6 +26,7 @@ import vavi.util.ByteUtil;
 
 
 public class ScsiReadCapacityResponse extends ScsiResponse {
+
     private boolean truncated;
 
     private int logicalBlockSize;
@@ -38,7 +39,7 @@ public class ScsiReadCapacityResponse extends ScsiResponse {
         logicalBlockSize = value;
     }
 
-    public int getNeededDataLength() {
+    @Override public int getNeededDataLength() {
         return 8;
     }
 
@@ -52,11 +53,11 @@ public class ScsiReadCapacityResponse extends ScsiResponse {
         numLogicalBlocks = value;
     }
 
-    public boolean getTruncated() {
+    @Override public boolean getTruncated() {
         return truncated;
     }
 
-    public void readFrom(byte[] buffer, int offset, int count) {
+    @Override public void readFrom(byte[] buffer, int offset, int count) {
         if (count < 8) {
             truncated = true;
             return;

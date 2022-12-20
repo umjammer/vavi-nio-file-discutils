@@ -14,6 +14,7 @@ import dotnet4j.util.compat.Utilities;
 
 public class MyFileSystemFactory implements VfsFileSystemFactory {
 
+    @Override
     public discUtils.core.FileSystemInfo[] detect(Stream stream, VolumeInfo volumeInfo) {
         byte[] header = new byte[4];
         stream.read(header, 0, 4);

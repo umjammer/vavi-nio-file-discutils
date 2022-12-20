@@ -79,11 +79,11 @@ public final class MetadataTable implements IByteArraySerializable {
         return true;
     }
 
-    public int size() {
+    @Override public int size() {
         return FixedSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         System.arraycopy(buffer, offset, headerData, 0, 32);
         signature = ByteUtil.readLeLong(headerData, 0);
         entryCount = ByteUtil.readLeShort(headerData, 10);
@@ -98,7 +98,7 @@ public final class MetadataTable implements IByteArraySerializable {
         return FixedSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         entryCount = (short) entries.size();
         ByteUtil.writeLeLong(signature, headerData, 0);
         ByteUtil.writeLeShort(entryCount, headerData, 10);

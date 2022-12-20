@@ -99,6 +99,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
     /**
      * Disposes this instance, including any underlying resources.
      */
+    @Override
     public void close() throws IOException {
         for (DiskRecord r : disks) {
             if (r.item3 == Ownership.Dispose) {
@@ -134,6 +135,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
      *
      * @return The new stream.
      */
+    @Override
     public SparseStream build() {
         try {
             TarFileBuilder tarBuilder = new TarFileBuilder();
@@ -200,6 +202,7 @@ public final class VirtualMachineBuilder extends StreamBuilder implements Closea
         }
     }
 
+    @Override
     protected List<BuilderExtent> fixExtents(long[] totalLength) {
         // Not required - deferred to TarFileBuilder
         throw new UnsupportedOperationException();

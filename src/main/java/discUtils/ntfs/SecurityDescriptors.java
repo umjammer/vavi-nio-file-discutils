@@ -27,7 +27,6 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 
 import discUtils.core.IDiagnosticTraceable;
-import discUtils.core.internal.Utilities;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.StreamUtilities;

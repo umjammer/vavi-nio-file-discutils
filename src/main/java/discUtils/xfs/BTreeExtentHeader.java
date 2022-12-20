@@ -82,11 +82,11 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
         rightSibling = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 24;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = ByteUtil.readBeInt(buffer, offset);
         level = ByteUtil.readBeShort(buffer, offset + 0x4);
         numberOfRecords = ByteUtil.readBeShort(buffer, offset + 0x6);
@@ -95,7 +95,7 @@ public abstract class BTreeExtentHeader implements IByteArraySerializable {
         return 24;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

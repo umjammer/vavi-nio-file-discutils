@@ -44,10 +44,12 @@ public final class DiskTransport implements VirtualDiskTransport {
 
     private String path;
 
+    @Override
     public boolean isRawDisk() {
         return false;
     }
 
+    @Override
     public void connect(URI uri, String username, String password) {
         String fsPath = uri.getPath();
         // Find the best (least specific) export
@@ -78,22 +80,27 @@ public final class DiskTransport implements VirtualDiskTransport {
         extraInfo = uri.getFragment().replaceFirst("^#*", "");
     }
 
+    @Override
     public VirtualDisk openDisk(FileAccess access) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public FileLocator getFileLocator() {
         return new DiscFileLocator(fileSystem, Utilities.getDirectoryFromPath(path));
     }
 
+    @Override
     public String getFileName() {
         return Utilities.getFileFromPath(path);
     }
 
+    @Override
     public String getExtraInfo() {
         return extraInfo;
     }
 
+    @Override
     public void close() throws IOException {
         if (fileSystem != null) {
             fileSystem.close();

@@ -36,10 +36,12 @@ import vavi.util.Debug;
 
 public class LogicalVolumeManagerFactory implements LogicalVolumeFactory {
 
+    @Override
     public boolean handlesPhysicalVolume(PhysicalVolumeInfo volume) {
         return LogicalVolumeManager.handlesPhysicalVolume(volume);
     }
 
+    @Override
     public void mapDisks(List<VirtualDisk> disks, Map<String, LogicalVolumeInfo> result) {
         LogicalVolumeManager mgr = new LogicalVolumeManager(disks);
         for (LogicalVolumeInfo vol : mgr.getLogicalVolumes()) {

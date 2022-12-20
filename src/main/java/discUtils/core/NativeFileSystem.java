@@ -87,14 +87,14 @@ public class NativeFileSystem extends DiscFileSystem {
      *
      * @return true if the file system is read-write.
      */
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return !readOnly;
     }
 
     /**
      * Provides a friendly description of the file system type.
      */
-    public String getFriendlyName() {
+    @Override public String getFriendlyName() {
         return "Native";
     }
 
@@ -102,21 +102,21 @@ public class NativeFileSystem extends DiscFileSystem {
      * Gets a value indicating whether the file system is thread-safe. The
      * Native File System is thread safe.
      */
-    public boolean isThreadSafe() {
+    @Override public boolean isThreadSafe() {
         return true;
     }
 
     /**
      * Gets the root directory of the file system.
      */
-    public DiscDirectoryInfo getRoot() {
+    @Override public DiscDirectoryInfo getRoot() {
         return new DiscDirectoryInfo(this, "");
     }
 
     /**
      * Gets the volume label.
      */
-    public String getVolumeLabel() {
+    @Override public String getVolumeLabel() {
         return "";
     }
 
@@ -127,7 +127,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param destinationFile The destination file.
      * @throws IOException when an io error occurs
      */
-    public void copyFile(String sourceFile, String destinationFile) throws IOException {
+    @Override public void copyFile(String sourceFile, String destinationFile) throws IOException {
         copyFile(sourceFile, destinationFile, true);
     }
 
@@ -140,7 +140,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param overwrite Whether to permit over-writing of an existing file.
      * @throws IOException when an io error occurs
      */
-    public void copyFile(String sourceFile, String destinationFile, boolean overwrite) throws IOException {
+    @Override public void copyFile(String sourceFile, String destinationFile, boolean overwrite) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -162,7 +162,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path of the new directory.
      * @throws IOException when an io error occurs
      */
-    public void createDirectory(String path) throws IOException {
+    @Override public void createDirectory(String path) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -180,7 +180,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path of the directory to delete.
      * @throws IOException when an io error occurs
      */
-    public void deleteDirectory(String path) throws IOException {
+    @Override public void deleteDirectory(String path) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -199,7 +199,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param recursive Determines if the all descendants should be deleted.
      * @throws IOException when an io error occurs
      */
-    public void deleteDirectory(String path, boolean recursive) throws IOException {
+    @Override public void deleteDirectory(String path, boolean recursive) throws IOException {
         if (recursive) {
             for (String dir : getDirectories(path)) {
                 deleteDirectory(dir, true);
@@ -218,7 +218,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path of the file to delete.
      * @throws IOException when an io error occurs
      */
-    public void deleteFile(String path) throws IOException {
+    @Override public void deleteFile(String path) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -236,7 +236,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path to test.
      * @return true if the directory exists.
      */
-    public boolean directoryExists(String path) {
+    @Override public boolean directoryExists(String path) {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -250,7 +250,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path to test.
      * @return true if the file exists.
      */
-    public boolean fileExists(String path) {
+    @Override public boolean fileExists(String path) {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -264,7 +264,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path to test.
      * @return true if the file or directory exists.
      */
-    public boolean exists(String path) {
+    @Override public boolean exists(String path) {
         return fileExists(path) || directoryExists(path);
     }
 
@@ -274,7 +274,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param path The path to search.
      * @return list of directories.
      */
-    public List<String> getDirectories(String path) {
+    @Override public List<String> getDirectories(String path) {
         return getDirectories(path, "*.*", "TopDirectoryOnly");
     }
 
@@ -286,7 +286,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param searchPattern The search string to match against.
      * @return list of directories matching the search pattern.
      */
-    public List<String> getDirectories(String path, String searchPattern) {
+    @Override public List<String> getDirectories(String path, String searchPattern) {
         return getDirectories(path, searchPattern, "TopDirectoryOnly");
     }
 
@@ -300,7 +300,7 @@ public class NativeFileSystem extends DiscFileSystem {
      * @param searchOption Indicates whether to search subdirectories.
      * @return list of directories matching the search pattern.
      */
-    public List<String> getDirectories(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -322,7 +322,7 @@ Debug.printStackTrace(e);
      * @param path The path to search.
      * @return list of files.
      */
-    public List<String> getFiles(String path) {
+    @Override public List<String> getFiles(String path) {
         return getFiles(path, "*.*", "TopDirectoryOnly");
     }
 
@@ -333,7 +333,7 @@ Debug.printStackTrace(e);
      * @param searchPattern The search string to match against.
      * @return list of files matching the search pattern.
      */
-    public List<String> getFiles(String path, String searchPattern) {
+    @Override public List<String> getFiles(String path, String searchPattern) {
         return getFiles(path, searchPattern, "TopDirectoryOnly");
     }
 
@@ -347,7 +347,7 @@ Debug.printStackTrace(e);
      * @param searchOption Indicates whether to search subdirectories.
      * @return list of files matching the search pattern.
      */
-    public List<String> getFiles(String path, String searchPattern, String searchOption) {
+    @Override public List<String> getFiles(String path, String searchPattern, String searchOption) {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -369,7 +369,7 @@ Debug.printStackTrace(e);
      * @param path The path to search.
      * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path) {
+    @Override public List<String> getFileSystemEntries(String path) {
         return getFileSystemEntries(path, "*.*");
     }
 
@@ -381,7 +381,7 @@ Debug.printStackTrace(e);
      * @param searchPattern The search string to match against.
      * @return list of files and subdirectories matching the search pattern.
      */
-    public List<String> getFileSystemEntries(String path, String searchPattern) {
+    @Override public List<String> getFileSystemEntries(String path, String searchPattern) {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -404,7 +404,7 @@ Debug.printStackTrace(e);
      * @param destinationDirectoryName The target directory name.
      * @throws IOException when an io error occurs
      */
-    public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException {
+    @Override public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -426,7 +426,7 @@ Debug.printStackTrace(e);
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      */
-    public void moveFile(String sourceName, String destinationName) throws IOException {
+    @Override public void moveFile(String sourceName, String destinationName) throws IOException {
         moveFile(sourceName, destinationName, false);
     }
 
@@ -438,7 +438,7 @@ Debug.printStackTrace(e);
      * @param overwrite Whether to permit a destination file to be overwritten.
      * @throws IOException when an io error occurs
      */
-    public void moveFile(String sourceName, String destinationName, boolean overwrite) throws IOException {
+    @Override public void moveFile(String sourceName, String destinationName, boolean overwrite) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -469,7 +469,7 @@ Debug.printStackTrace(e);
      * @param mode The file mode for the created stream.
      * @return The new stream.
      */
-    public SparseStream openFile(String path, FileMode mode) throws IOException {
+    @Override public SparseStream openFile(String path, FileMode mode) throws IOException {
         return openFile(path, mode, FileAccess.ReadWrite);
     }
 
@@ -482,7 +482,7 @@ Debug.printStackTrace(e);
      * @return The new stream.
      * @throws IOException when an io error occurs
      */
-    public SparseStream openFile(String path, FileMode mode, FileAccess access) throws IOException {
+    @Override public SparseStream openFile(String path, FileMode mode, FileAccess access) throws IOException {
         if (readOnly && access != FileAccess.Read) {
             throw new IOException("read only");
         }
@@ -506,7 +506,7 @@ Debug.printStackTrace(e);
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
-    public Map<String, Object> getAttributes(String path) throws IOException {
+    @Override public Map<String, Object> getAttributes(String path) throws IOException {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -524,7 +524,7 @@ Debug.printStackTrace(e);
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
-    public void setAttributes(String path, Map<String, Object> newValue) throws IOException {
+    @Override public void setAttributes(String path, Map<String, Object> newValue) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -544,7 +544,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @return The creation time.
      */
-    public long getCreationTime(String path) throws IOException {
+    @Override public long getCreationTime(String path) throws IOException {
         return getCreationTimeUtc(path);
     }
 
@@ -554,7 +554,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setCreationTime(String path, long newTime) throws IOException {
+    @Override public void setCreationTime(String path, long newTime) throws IOException {
         setCreationTimeUtc(path, newTime);
     }
 
@@ -565,7 +565,7 @@ Debug.printStackTrace(e);
      * @return The creation time.
      * @throws IOException when an io error occurs
      */
-    public long getCreationTimeUtc(String path) throws IOException {
+    @Override public long getCreationTimeUtc(String path) throws IOException {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -579,7 +579,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setCreationTimeUtc(String path, long newTime) throws IOException {
+    @Override public void setCreationTimeUtc(String path, long newTime) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -597,7 +597,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @return The last access time.
      */
-    public long getLastAccessTime(String path) throws IOException {
+    @Override public long getLastAccessTime(String path) throws IOException {
         return getLastAccessTimeUtc(path);
     }
 
@@ -607,7 +607,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastAccessTime(String path, long newTime) throws IOException {
+    @Override public void setLastAccessTime(String path, long newTime) throws IOException {
         setLastAccessTimeUtc(path, newTime);
     }
 
@@ -617,7 +617,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @return The last access time.
      */
-    public long getLastAccessTimeUtc(String path) throws IOException {
+    @Override public long getLastAccessTimeUtc(String path) throws IOException {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -631,7 +631,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastAccessTimeUtc(String path, long newTime) throws IOException {
+    @Override public void setLastAccessTimeUtc(String path, long newTime) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -649,7 +649,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @return The last write time.
      */
-    public long getLastWriteTime(String path) throws IOException {
+    @Override public long getLastWriteTime(String path) throws IOException {
         return getLastWriteTimeUtc(path);
     }
 
@@ -659,6 +659,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTime(String path, long newTime) throws IOException {
         setLastWriteTimeUtc(path, newTime);
     }
@@ -669,7 +670,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @return The last write time.
      */
-    public long getLastWriteTimeUtc(String path) throws IOException {
+    @Override public long getLastWriteTimeUtc(String path) throws IOException {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -683,7 +684,7 @@ Debug.printStackTrace(e);
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
-    public void setLastWriteTimeUtc(String path, long newTime) throws IOException {
+    @Override public void setLastWriteTimeUtc(String path, long newTime) throws IOException {
         if (readOnly) {
             throw new IOException("read only");
         }
@@ -701,7 +702,7 @@ Debug.printStackTrace(e);
      * @param path The path to the file.
      * @return The length in bytes.
      */
-    public long getFileLength(String path) throws IOException {
+    @Override public long getFileLength(String path) throws IOException {
         if (path.startsWith(FS)) {
             path = path.substring(1);
         }
@@ -717,7 +718,7 @@ Debug.printStackTrace(e);
      * @param path The file path.
      * @return The representing object.
      */
-    public DiscFileInfo getFileInfo(String path) {
+    @Override public DiscFileInfo getFileInfo(String path) {
         return new DiscFileInfo(this, path);
     }
 
@@ -729,7 +730,7 @@ Debug.printStackTrace(e);
      * @param path The directory path.
      * @return The representing object.
      */
-    public DiscDirectoryInfo getDirectoryInfo(String path) {
+    @Override public DiscDirectoryInfo getDirectoryInfo(String path) {
         return new DiscDirectoryInfo(this, path);
     }
 
@@ -742,14 +743,14 @@ Debug.printStackTrace(e);
      * @param path The file system path.
      * @return The representing object.
      */
-    public DiscFileSystemInfo getFileSystemInfo(String path) {
+    @Override public DiscFileSystemInfo getFileSystemInfo(String path) {
         return new DiscFileSystemInfo(this, path);
     }
 
     /**
      * Size of the Filesystem in bytes
      */
-    public long getSize() throws IOException {
+    @Override public long getSize() throws IOException {
         FileStore info = Paths.get(getBasePath()).getFileSystem().getFileStores().iterator().next();
         return info.getTotalSpace();
     }
@@ -757,14 +758,14 @@ Debug.printStackTrace(e);
     /**
      * Used space of the Filesystem in bytes
      */
-    public long getUsedSpace() throws IOException {
+    @Override public long getUsedSpace() throws IOException {
         return getSize() - getAvailableSpace();
     }
 
     /**
      * Available space of the Filesystem in bytes
      */
-    public long getAvailableSpace() throws IOException {
+    @Override public long getAvailableSpace() throws IOException {
         FileStore info = Paths.get(getBasePath()).getFileSystem().getFileStores().iterator().next();
         return info.getUsableSpace();
     }

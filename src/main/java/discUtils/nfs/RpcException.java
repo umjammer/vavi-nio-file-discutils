@@ -29,6 +29,7 @@ import dotnet4j.io.IOException;
  * probably corruption.
  */
 public final class RpcException extends IOException {
+
     /**
      * Initializes a new instance of the RpcException class.
      */

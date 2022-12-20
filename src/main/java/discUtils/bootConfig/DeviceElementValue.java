@@ -72,15 +72,15 @@ public class DeviceElementValue extends ElementValue {
         record = DeviceRecord.parse(value, 0x10);
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.Device;
     }
 
-    public UUID getParentObject() {
+    @Override public UUID getParentObject() {
         return parentObject;
     }
 
-    public String toString() {
+    @Override public String toString() {
         if (!parentObject.equals(EMPTY)) {
             return parentObject + ":" + record;
         }

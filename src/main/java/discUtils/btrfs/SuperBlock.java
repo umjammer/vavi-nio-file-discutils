@@ -415,11 +415,11 @@ public class SuperBlock implements IByteArraySerializable {
         systemChunkArray = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = ByteUtil.readLeLong(buffer, offset + 0x40);
         if (magic != BtrfsMagic)
             return size();
@@ -476,7 +476,7 @@ public class SuperBlock implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

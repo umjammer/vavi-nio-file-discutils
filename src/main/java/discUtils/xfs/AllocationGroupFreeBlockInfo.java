@@ -280,7 +280,7 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
 
     private int size;
 
-    public int size() {
+    @Override public int size() {
         return size;
     }
 
@@ -295,7 +295,7 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
         size = sbVersion >= 5 ? 92 : 64;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = ByteUtil.readBeInt(buffer, offset);
         version = ByteUtil.readBeInt(buffer, offset + 0x4);
         sequenceNumber = ByteUtil.readBeInt(buffer, offset + 0x8);
@@ -323,7 +323,7 @@ public class AllocationGroupFreeBlockInfo implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

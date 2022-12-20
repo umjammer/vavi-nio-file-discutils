@@ -50,6 +50,7 @@ public final class OpticalDiscServiceClient implements Closeable {
     /**
      * Disposes of this instance.
      */
+    @Override
     public void close() throws IOException {
         if (sdClient != null) {
             sdClient.close();

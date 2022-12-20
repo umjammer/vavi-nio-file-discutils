@@ -104,6 +104,7 @@ public final class UnicastDnsClient extends DnsClient {
     /**
      * Flushes any cached DNS records.
      */
+    @Override
     public void flushCache() {
         // Nothing to do.
     }
@@ -115,6 +116,7 @@ public final class UnicastDnsClient extends DnsClient {
      * @param type The type of record requested.
      * @return The records returned by the DNS server, if any.
      */
+    @Override
     public ResourceRecord[] lookup(String name, RecordType type) {
         short transactionId = nextTransId++;
         String normName = normalizeDomainName(name);

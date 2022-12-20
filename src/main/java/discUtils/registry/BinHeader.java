@@ -40,11 +40,11 @@ public final class BinHeader implements IByteArraySerializable {
 
     public int fileOffset;
 
-    public int size() {
+    @Override public int size() {
         return HeaderSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         int sig = ByteUtil.readLeInt(buffer, offset + 0);
         if (sig != Signature) {
 Debug.printf(Level.SEVERE, "%x\n", sig);
@@ -59,7 +59,7 @@ Debug.printf(Level.SEVERE, "%x\n", sig);
         return HeaderSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeInt(Signature, buffer, offset + 0x00);
         ByteUtil.writeLeInt(fileOffset, buffer, offset + 0x04);
         ByteUtil.writeLeInt(binSize, buffer, offset + 0x08);

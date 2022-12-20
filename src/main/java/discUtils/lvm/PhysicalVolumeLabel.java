@@ -46,12 +46,12 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
 
     public String label2;
 
-    /* */
+    @Override
     public int size() {
         return PhysicalVolume.SECTOR_SIZE;
     }
 
-    /* */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         label = new String(buffer, offset, 0x8, StandardCharsets.US_ASCII);
         sector = ByteUtil.readLeLong(buffer, offset + 0x8);
@@ -62,7 +62,7 @@ public class PhysicalVolumeLabel implements IByteArraySerializable {
         return size();
     }
 
-    /* */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

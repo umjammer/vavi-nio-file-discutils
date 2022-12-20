@@ -221,7 +221,7 @@ public class IsoUtilities {
         short ver;
         try {
             ver = Short.parseShort(parts[2]);
-            if (ver > 32767 || ver < 1) {
+            if (ver < 1) {
                 ver = 1;
             }
         } catch (NumberFormatException e) {

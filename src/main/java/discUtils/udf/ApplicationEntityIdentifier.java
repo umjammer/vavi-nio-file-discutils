@@ -24,7 +24,7 @@ package discUtils.udf;
 
 public class ApplicationEntityIdentifier extends EntityIdentifier {
 
-    public String toString() {
+    @Override public String toString() {
         return identifier;
     }
 }

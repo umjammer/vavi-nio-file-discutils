@@ -49,10 +49,12 @@ public final class DiscTransport implements VirtualDiskTransport {
 
     private OpticalDiscService service;
 
+    @Override
     public boolean isRawDisk() {
         return true;
     }
 
+    @Override
     public void connect(URI uri, String username, String password) {
         try {
             String domain = uri.getHost();
@@ -86,22 +88,27 @@ Debug.println("service: " + service.getDisplayName());
         }
     }
 
+    @Override
     public VirtualDisk openDisk(FileAccess access) {
         return service.openDisc(disk);
     }
 
+    @Override
     public FileLocator getFileLocator() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getFileName() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getExtraInfo() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void close() throws IOException {
         if (odsClient != null) {
             odsClient.close();

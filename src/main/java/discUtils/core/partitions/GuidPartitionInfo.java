@@ -52,7 +52,7 @@ public final class GuidPartitionInfo extends PartitionInfo {
     /**
      * Always returns Zero.
      */
-    public byte getBiosType() {
+    @Override public byte getBiosType() {
         return 0;
     }
 
@@ -60,14 +60,14 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Gets the first sector of the partion (relative to start of disk) as a
      * Logical block Address.
      */
-    public long getFirstSector() {
+    @Override public long getFirstSector() {
         return entry.firstUsedLogicalBlock;
     }
 
     /**
      * Gets the type of the partition, as a GUID.
      */
-    public UUID getGuidType() {
+    @Override public UUID getGuidType() {
         return entry.partitionType;
     }
 
@@ -82,7 +82,7 @@ public final class GuidPartitionInfo extends PartitionInfo {
      * Gets the last sector of the partion (relative to start of disk) as a
      * Logical block Address (inclusive).
      */
-    public long getLastSector() {
+    @Override public long getLastSector() {
         return entry.lastUsedLogicalBlock;
     }
 
@@ -96,11 +96,11 @@ public final class GuidPartitionInfo extends PartitionInfo {
     /**
      * Gets the type of the partition as a string.
      */
-    public String getTypeAsString() {
+    @Override public String getTypeAsString() {
         return entry.getFriendlyPartitionType();
     }
 
-    public PhysicalVolumeType getVolumeType() {
+    @Override public PhysicalVolumeType getVolumeType() {
         return PhysicalVolumeType.GptPartition;
     }
 
@@ -109,8 +109,7 @@ public final class GuidPartitionInfo extends PartitionInfo {
      *
      * @return The new stream.
      */
-    public SparseStream open() {
+    @Override public SparseStream open() {
         return table.open(entry);
     }
-
 }

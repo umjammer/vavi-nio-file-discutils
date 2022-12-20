@@ -36,7 +36,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
         super(clazz, tree, descriptor);
     }
 
-    public byte[] findKey(TKey key) {
+    @Override public byte[] findKey(TKey key) {
         int nextResult = records.get(0).getKey().compareTo(key);
 
         int idx = 0;
@@ -67,7 +67,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
         return null;
     }
 
-    public void visitRange(BTreeVisitor<TKey> visitor) {
+    @Override public void visitRange(BTreeVisitor<TKey> visitor) {
         int nextResult = visitor.invoke(records.get(0).getKey(), null);
 
         int idx = 0;
@@ -97,7 +97,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
+    @Override protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
 

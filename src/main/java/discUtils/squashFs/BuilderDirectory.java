@@ -44,6 +44,7 @@ public final class BuilderDirectory extends BuilderNode {
         index = new HashMap<>();
     }
 
+    @Override
     public Inode getInode() {
         return inode;
     }
@@ -73,14 +74,14 @@ public final class BuilderDirectory extends BuilderNode {
         return null;
     }
 
-    public void reset() {
+    @Override public void reset() {
         for (Entry entry : children) {
             entry.node.reset();
         }
         inode = new DirectoryInode();
     }
 
-    public void write(BuilderContext context) {
+    @Override public void write(BuilderContext context) {
         if (written) {
             return;
         }
@@ -160,11 +161,12 @@ public final class BuilderDirectory extends BuilderNode {
     }
 
     private static class Entry implements Comparable<Entry> {
+
         public String name;
 
         public BuilderNode node;
 
-        public int compareTo(Entry other) {
+        @Override public int compareTo(Entry other) {
             return name.compareTo(other.name);
         }
     }

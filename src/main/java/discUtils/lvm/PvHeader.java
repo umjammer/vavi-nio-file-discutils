@@ -40,16 +40,12 @@ public class PvHeader implements IByteArraySerializable {
 
     public List<DiskArea> metadataDiskAreas;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return PhysicalVolume.SECTOR_SIZE;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         uuid = readUuid(buffer, offset);
         deviceSize = ByteUtil.readLeLong(buffer, offset + 0x20);
@@ -77,9 +73,7 @@ public class PvHeader implements IByteArraySerializable {
         return size();
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

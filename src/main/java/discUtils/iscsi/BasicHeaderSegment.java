@@ -42,11 +42,11 @@ public class BasicHeaderSegment implements IByteArraySerializable {
     public byte totalAhsLength;
 
     // In 4-byte words!
-    public int size() {
+    @Override public int size() {
         return 48;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         immediate = (buffer[offset] & 0x40) != 0;
         opCode = OpCode.valueOf(buffer[offset] & 0x3F);
 //Debug.println("OpCode: " + (buffer[offset] & 0x3F));
@@ -57,7 +57,7 @@ public class BasicHeaderSegment implements IByteArraySerializable {
         return 48;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = (byte) ((immediate ? 0x40 : 0x00) | (opCode.ordinal() & 0x3F));
         buffer[offset + 1] |= (byte) (finalPdu ? 0x80 : 0x00);
         buffer[offset + 4] = totalAhsLength;

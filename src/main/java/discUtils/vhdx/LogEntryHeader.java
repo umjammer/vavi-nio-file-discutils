@@ -58,11 +58,11 @@ public final class LogEntryHeader implements IByteArraySerializable {
         return signature == LogEntrySignature;
     }
 
-    public int size() {
+    @Override public int size() {
         return 64;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         data = new byte[size()];
         System.arraycopy(buffer, offset, data, 0, size());
         signature = ByteUtil.readLeInt(buffer, offset + 0);
@@ -78,7 +78,7 @@ public final class LogEntryHeader implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

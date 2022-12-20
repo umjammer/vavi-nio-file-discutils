@@ -27,9 +27,9 @@ import discUtils.streams.IByteArraySerializable;
 
 abstract class BTreeNodeRecord implements IByteArraySerializable {
 
-    public abstract int size();
+    @Override public abstract int size();
 
-    public abstract int readFrom(byte[] buffer, int offset);
+    @Override public abstract int readFrom(byte[] buffer, int offset);
 
-    public abstract void writeTo(byte[] buffer, int offset);
+    @Override public abstract void writeTo(byte[] buffer, int offset);
 }

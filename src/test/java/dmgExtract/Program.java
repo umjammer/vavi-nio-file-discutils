@@ -64,6 +64,7 @@ class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         try (VirtualDisk disk = VirtualDisk.openDisk(dmg, FileAccess.Read)) {
             // Find the first (and supposedly, only, HFS partition)

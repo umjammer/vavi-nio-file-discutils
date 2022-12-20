@@ -26,6 +26,7 @@ import java.util.EnumSet;
 
 
 public final class Nfs3AccessResult extends Nfs3CallResult {
+
     public Nfs3AccessResult() {
     }
 
@@ -58,7 +59,7 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
         objectAttributes = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(getStatus().getValue());
         writer.write(getObjectAttributes() != null);
         if (getObjectAttributes() != null) {
@@ -68,7 +69,7 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
         writer.write((int) Nfs3AccessPermissions.valueOf(getAccess()));
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3AccessResult ? (Nfs3AccessResult) obj : null);
     }
 
@@ -81,7 +82,7 @@ public final class Nfs3AccessResult extends Nfs3CallResult {
                 && other.getStatus() == getStatus();
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(getAccess(), getObjectAttributes(), getStatus());
     }
 }

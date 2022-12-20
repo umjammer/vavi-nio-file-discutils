@@ -36,6 +36,7 @@ public final class UnallocatedSpaceDescriptor extends TaggedDescriptor<Unallocat
         super(TagIdentifier.UnallocatedSpaceDescriptor);
     }
 
+    @Override
     public int parse(byte[] buffer, int offset) {
         volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
         int numDescriptors = ByteUtil.readLeInt(buffer, offset + 20);

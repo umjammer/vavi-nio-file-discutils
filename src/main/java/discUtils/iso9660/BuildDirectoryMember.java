@@ -102,6 +102,7 @@ public abstract class BuildDirectoryMember {
     }
 
     private static class DirectorySortedComparison implements Comparator<BuildDirectoryMember> {
+        @Override
         public int compare(BuildDirectoryMember x, BuildDirectoryMember y) {
             String[] xParts = x.getName().split("[\\.;]");
             String[] yParts = y.getName().split("[\\.;]");

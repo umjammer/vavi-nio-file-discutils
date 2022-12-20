@@ -60,7 +60,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * Gets the disk geometry of the underlying storage medium (as used in BIOS
      * calls), may be null.
      */
-    public Geometry getBiosGeometry() {
+    @Override public Geometry getBiosGeometry() {
         return physicalVol == null ? Geometry.getNull() : physicalVol.getBiosGeometry();
     }
 
@@ -69,7 +69,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      */
     private byte biosType;
 
-    public byte getBiosType() {
+    @Override public byte getBiosType() {
         return biosType;
     }
 
@@ -80,7 +80,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * practice is to add disks to the Volume Manager in a stable order, if the
      * stability of this identity is paramount.
      */
-    public String getIdentity() {
+    @Override public String getIdentity() {
         if (!guid.equals(EMPTY)) {
             return "VLG" + String.format("{%s}", guid);
         }
@@ -93,7 +93,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      */
     private long length;
 
-    public long getLength() {
+    @Override public long getLength() {
         return length;
     }
 
@@ -101,7 +101,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * Gets the disk geometry of the underlying storage medium, if any (may be
      * Geometry.Null).
      */
-    public Geometry getPhysicalGeometry() {
+    @Override public Geometry getPhysicalGeometry() {
         return physicalVol == null ? Geometry.getNull() : physicalVol.getPhysicalGeometry();
     }
 
@@ -109,14 +109,14 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      * Gets the offset of this volume in the underlying storage medium, if any
      * (may be Zero).
      */
-    public long getPhysicalStartSector() {
+    @Override public long getPhysicalStartSector() {
         return physicalVol == null ? 0 : physicalVol.getPhysicalStartSector();
     }
 
     /**
      * Gets the status of the logical volume, indicating volume health.
      */
-    private LogicalVolumeStatus status = LogicalVolumeStatus.Healthy;
+    private LogicalVolumeStatus status;
 
     public LogicalVolumeStatus getStatus() {
         return status;
@@ -134,7 +134,7 @@ public final class LogicalVolumeInfo extends VolumeInfo {
      *
      * @return The volume's content as a stream.
      */
-    public SparseStream open() {
+    @Override public SparseStream open() {
         return opener.invoke();
     }
 

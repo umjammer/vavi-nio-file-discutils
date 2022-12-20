@@ -52,6 +52,7 @@ public class PartitionDescriptor extends TaggedDescriptor<PartitionDescriptor> {
         super(TagIdentifier.PartitionDescriptor);
     }
 
+    @Override
     public int parse(byte[] buffer, int offset) {
         volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
         partitionFlags = ByteUtil.readLeShort(buffer, offset + 20);

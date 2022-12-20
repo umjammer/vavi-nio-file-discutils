@@ -58,11 +58,11 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
 
     public AttributeType type = AttributeType.None;
 
-    public int size() {
+    @Override public int size() {
         return MathUtilities.roundUp(0x20 + (name == null || name.isEmpty() ? 0 : name.getBytes(StandardCharsets.UTF_16LE).length), 8);
     }
 
-    public int readFrom(byte[] data, int offset) {
+    @Override public int readFrom(byte[] data, int offset) {
         type = AttributeType.valueOf(ByteUtil.readLeInt(data, offset + 0x00));
         recordLength = ByteUtil.readLeShort(data, offset + 0x04);
         nameLength = data[offset + 0x06];
@@ -82,7 +82,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         return recordLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         nameOffset = 0x20;
         if (name == null || name.isEmpty()) {
             nameLength = 0;
@@ -101,7 +101,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         ByteUtil.writeLeShort(attributeId, buffer, offset + 0x18);
     }
 
-    public int compareTo(AttributeListRecord other) {
+    @Override public int compareTo(AttributeListRecord other) {
         int val = type.ordinal() - other.type.ordinal();
         if (val != 0) {
             return val;
@@ -115,7 +115,7 @@ public class AttributeListRecord implements IDiagnosticTraceable, IByteArraySeri
         return (int) startVcn - (int) other.startVcn;
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "ATTRIBUTE LIST RECORD");
         writer.println(indent + "                 Type: " + type);
         writer.println(indent + "        Record Length: " + recordLength);

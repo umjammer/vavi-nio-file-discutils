@@ -139,7 +139,7 @@ public abstract class BtreeHeader implements IByteArraySerializable {
 
     private int size;
 
-    public int size() {
+    @Override public int size() {
         return size;
     }
 
@@ -154,7 +154,7 @@ public abstract class BtreeHeader implements IByteArraySerializable {
         size = sbVersion >= 5 ? 56 : 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         magic = ByteUtil.readBeInt(buffer, offset);
         level = ByteUtil.readBeShort(buffer, offset + 0x4);
         numberOfRecords = ByteUtil.readBeShort(buffer, offset + 0x6);
@@ -171,7 +171,7 @@ public abstract class BtreeHeader implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

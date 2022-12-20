@@ -52,6 +52,7 @@ final class Transaction implements Closeable {
         completeEvent = value;
     }
 
+    @Override
     public void close() throws IOException {
         if (completeEvent != null) {
             completeEvent.countDown();

@@ -40,18 +40,22 @@ import dotnet4j.io.FileShare;
 
 @VirtualDiskFactoryAttribute(type = "RAW", fileExtensions = { ".img", ".ima", ".vfd", ".flp", ".bif" })
 public final class DiskFactory implements VirtualDiskFactory {
+    @Override
     public String[] getVariants() {
         return new String[] {};
     }
 
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInformation(String variant) {
         return makeDiskTypeInfo();
     }
 
+    @Override
     public DiskImageBuilder getImageBuilder(String variant) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public VirtualDisk createDisk(FileLocator locator,
                                   String variant,
                                   String path,
@@ -62,15 +66,18 @@ public final class DiskFactory implements VirtualDiskFactory {
                                diskParameters.geometry);
     }
 
+    @Override
     public VirtualDisk openDisk(String path, FileAccess access) throws IOException {
         return new Disk(path, access);
     }
 
+    @Override
     public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) {
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         return new Disk(locator.open(path, FileMode.Open, access, share), Ownership.Dispose);
     }
 
+    @Override
     public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) {
         return null;
     }

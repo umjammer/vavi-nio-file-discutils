@@ -35,11 +35,11 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
 
     public LongAllocationDescriptor streamDirectoryIcb;
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         informationControlBlock = EndianUtilities
                 .toStruct(InformationControlBlock.class, buffer, offset + 16);
@@ -74,7 +74,7 @@ public class ExtendedFileEntry extends FileEntry implements IByteArraySerializab
         return 216 + extendedAttributesLength + allocationDescriptorsLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

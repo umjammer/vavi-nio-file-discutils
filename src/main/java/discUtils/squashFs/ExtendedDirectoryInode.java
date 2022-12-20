@@ -35,15 +35,15 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
     @SuppressWarnings("unused")
     private short indexCount;
 
-    public int size() {
+    @Override public int size() {
         return 40;
     }
 
-    public long getFileSize() {
+    @Override public long getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(long value) {
+    @Override public void setFileSize(long value) {
         if (value > 0xffff_ffffL) {
             throw new IndexOutOfBoundsException("File size greater than " + 0xffff_ffffL);
         }
@@ -53,7 +53,7 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
 
     private int startBlock;
 
-    public int getStartBlock() {
+    @Override public int getStartBlock() {
         return startBlock;
     }
 
@@ -63,7 +63,7 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
 
     private int parentInode;
 
-    public int getParentInode() {
+    @Override public int getParentInode() {
         return parentInode;
     }
 
@@ -73,7 +73,7 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
 
     private short offset;
 
-    public int getOffset() {
+    @Override public int getOffset() {
         return offset & 0xffff;
     }
 
@@ -81,7 +81,7 @@ public class ExtendedDirectoryInode extends Inode implements IDirectoryInode {
         offset = value;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
         numLinks = ByteUtil.readLeInt(buffer, offset + 16);
         fileSize = ByteUtil.readLeInt(buffer, offset + 20);

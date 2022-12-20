@@ -141,6 +141,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      *
      * @return A new enumerator.
      */
+    @Override
     public Iterator<RegionInfo> iterator() {
         return getEntries().iterator();
     }

@@ -214,7 +214,7 @@ public class VfsCDReader extends VfsReadOnlyFileSystem<ReaderDirEntry, File, Rea
         }
     }
 
-    private Iso9660Variant activeVariant = Iso9660Variant.None;
+    private Iso9660Variant activeVariant;
 
     public Iso9660Variant getActiveVariant() {
         return activeVariant;

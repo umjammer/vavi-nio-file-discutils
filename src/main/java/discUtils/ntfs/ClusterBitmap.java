@@ -54,6 +54,7 @@ class ClusterBitmap implements Closeable {
         return bitmap;
     }
 
+    @Override
     public void close() throws IOException {
         if (bitmap != null) {
             bitmap.close();

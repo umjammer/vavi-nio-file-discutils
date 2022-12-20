@@ -29,6 +29,7 @@ import vavi.util.ByteUtil;
 
 
 class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
+
     public BTreeHeaderNode(Class<TKey> clazz, BTree<?> tree, BTreeNodeDescriptor descriptor) {
         super(clazz, tree, descriptor);
     }
@@ -37,7 +38,7 @@ class BTreeHeaderNode<TKey extends BTreeKey<?>> extends BTreeNode<TKey> {
         return getRecords().get(0) instanceof BTreeHeaderRecord ? (BTreeHeaderRecord) getRecords().get(0) : null;
     }
 
-    protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
+    @Override protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int totalRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
 

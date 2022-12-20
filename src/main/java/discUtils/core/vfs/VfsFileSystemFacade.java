@@ -84,6 +84,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets the file system options, which can be modified.
      */
+    @Override
     public DiscFileSystemOptions getOptions() {
         return wrapped.getOptions();
     }
@@ -308,6 +309,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException {
         wrapped.moveDirectory(sourceDirectoryName, destinationDirectoryName);
     }
@@ -487,6 +489,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTime(String path, long newTime) throws IOException {
         wrapped.setLastWriteTime(path, newTime);
     }

@@ -199,11 +199,11 @@ public class RootItem extends BaseItem {
         level = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         inode = EndianUtilities.toStruct(InodeItem.class, buffer, offset);
         generation = ByteUtil.readLeLong(buffer, offset + 160);
         rootDirId = ByteUtil.readLeLong(buffer, offset + 168);

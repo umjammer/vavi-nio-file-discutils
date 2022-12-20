@@ -30,11 +30,11 @@ public class GuidElementValue extends ElementValue {
         this.value = value;
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.Guid;
     }
 
-    public String toString() {
+    @Override public String toString() {
         if (value == null || value.isEmpty()) {
             return "<none>";
         }

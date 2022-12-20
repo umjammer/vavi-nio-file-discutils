@@ -37,22 +37,26 @@ import dotnet4j.io.FileAccess;
 
 @VirtualDiskFactoryAttribute(type = "VMDK", fileExtensions = { ".vmdk" })
 public final class DiskFactory implements VirtualDiskFactory {
+    @Override
     public String[] getVariants() {
         return new String[] {
             "fixed", "dynamic", "vmfsfixed", "vmfsdynamic"
         };
     }
 
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInformation(String variant) {
         return makeDiskTypeInfo(variantToCreateType(variant));
     }
 
+    @Override
     public DiskImageBuilder getImageBuilder(String variant) {
         DiskBuilder builder = new DiskBuilder();
         builder.setDiskType(variantToCreateType(variant));
         return builder;
     }
 
+    @Override
     public VirtualDisk createDisk(FileLocator locator,
                                   String variant,
                                   String path,
@@ -62,14 +66,17 @@ public final class DiskFactory implements VirtualDiskFactory {
         return Disk.initialize(locator, path, vmdkParams);
     }
 
+    @Override
     public VirtualDisk openDisk(String path, FileAccess access) throws IOException {
         return new Disk(path, access);
     }
 
+    @Override
     public VirtualDisk openDisk(FileLocator locator, String path, FileAccess access) throws IOException {
         return new Disk(locator, path, access);
     }
 
+    @Override
     public VirtualDiskLayer openDiskLayer(FileLocator locator, String path, FileAccess access) {
         return new DiskImageFile(locator, path, access);
     }

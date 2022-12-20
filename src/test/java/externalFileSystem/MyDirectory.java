@@ -10,7 +10,7 @@ import dotnet4j.util.compat.StringUtilities;
 
 class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
 
-    private List<MyDirEntry> entries = new ArrayList<>();
+    private List<MyDirEntry> entries;
 
     public MyDirectory(MyDirEntry dirEntry, boolean isRoot) {
         super(dirEntry);
@@ -26,15 +26,15 @@ class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
         }
     }
 
-    public List<MyDirEntry> getAllEntries() {
+    @Override public List<MyDirEntry> getAllEntries() {
         return entries;
     }
 
-    public MyDirEntry getSelf() {
+    @Override public MyDirEntry getSelf() {
         return null;
     }
 
-    public MyDirEntry getEntryByName(String name) {
+    @Override public MyDirEntry getEntryByName(String name) {
         for (MyDirEntry entry : entries) {
             if (StringUtilities.compare(name, entry.getFileName(), true) == 0) {
                 return entry;
@@ -44,8 +44,7 @@ class MyDirectory extends MyFile implements IVfsDirectory<MyDirEntry, MyFile> {
         return null;
     }
 
-    public MyDirEntry createNewFile(String name) {
+    @Override public MyDirEntry createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
-
 }

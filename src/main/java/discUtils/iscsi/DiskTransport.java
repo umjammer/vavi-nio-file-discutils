@@ -39,10 +39,12 @@ public final class DiskTransport implements VirtualDiskTransport {
 
     private Session session;
 
+    @Override
     public boolean isRawDisk() {
         return true;
     }
 
+    @Override
     public void connect(URI uri, String username, String password) {
         lunInfo = LunInfo.parseUri(uri.toString());
         Initiator initiator = new Initiator();
@@ -50,22 +52,27 @@ public final class DiskTransport implements VirtualDiskTransport {
         session = initiator.connectTo(lunInfo.getTarget());
     }
 
+    @Override
     public VirtualDisk openDisk(FileAccess access) {
         return session.openDisk(lunInfo.getLun(), access);
     }
 
+    @Override
     public FileLocator getFileLocator() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getFileName() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getExtraInfo() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void close() throws IOException {
         if (session != null) {
             session.close();

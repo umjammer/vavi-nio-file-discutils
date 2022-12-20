@@ -132,11 +132,11 @@ public class DirItem extends BaseItem {
         data = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x1e + getNameLength() + getDataLength();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         childLocation = EndianUtilities.toStruct(Key.class, buffer, offset);
         transId = ByteUtil.readLeLong(buffer, offset + 0x11);
         dataLength = ByteUtil.readLeShort(buffer, offset + 0x19);

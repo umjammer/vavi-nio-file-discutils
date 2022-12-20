@@ -36,16 +36,12 @@ public class RawLocation implements IByteArraySerializable {
 
     public RawLocationFlags flags = RawLocationFlags.None;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return 0x18;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         this.offset = ByteUtil.readLeLong(buffer, offset);
         length = ByteUtil.readLeLong(buffer, offset + 0x8);
@@ -54,9 +50,7 @@ public class RawLocation implements IByteArraySerializable {
         return size();
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

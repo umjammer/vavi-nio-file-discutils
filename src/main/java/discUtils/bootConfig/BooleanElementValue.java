@@ -35,11 +35,11 @@ public class BooleanElementValue extends ElementValue {
         this.value = value;
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.Boolean;
     }
 
-    public String toString() {
+    @Override public String toString() {
         return value ? Boolean.TRUE.toString() : Boolean.FALSE.toString();
     }
 

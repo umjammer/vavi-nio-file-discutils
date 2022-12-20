@@ -28,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import discUtils.complete.SetupHelper;
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
 import discUtils.core.DiscFileSystem;
@@ -175,15 +174,18 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         return path != null && !path.isEmpty();
     }
 
+    @Override
     protected void getChildItems(String path, boolean recurse) {
         getChildren(Utilities.normalizePath(path), recurse, false);
     }
 
+    @Override
     protected void getChildNames(String path, ReturnContainers returnContainers) {
         // TODO: returnContainers
         getChildren(Utilities.normalizePath(path), false, true);
     }
 
+    @Override
     protected boolean hasChildItems(String path) {
         try {
             Object obj = findItemByPath(Utilities.normalizePath(path), true, true);
@@ -199,6 +201,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     protected void removeItem(String path, boolean recurse) {
         try {
             Object obj = findItemByPath(Utilities.normalizePath(path), false, false);
@@ -218,6 +221,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     protected void newItem(String path, String itemTypeName, Object newItemValue) {
         try {
             String parentPath = getParentPath(path, null);
@@ -285,6 +289,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     protected Object newItemDynamicParameters(String path, String itemTypeName, Object newItemValue) {
         if (itemTypeName == null || itemTypeName.isEmpty()) {
             return null;
@@ -298,6 +303,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         return null;
     }
 
+    @Override
     protected void renameItem(String path, String newName) {
         try {
             Object obj = findItemByPath(Utilities.normalizePath(path), true, false);
@@ -324,6 +330,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     protected void copyItem(String path, String copyPath, boolean recurse) {
         try {
             DiscDirectoryInfo destDir;
@@ -364,6 +371,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     protected boolean isItemContainer(String path) {
         try {
             Object obj = findItemByPath(Utilities.normalizePath(path), false, true);
@@ -382,10 +390,12 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     protected String makePath(String parent, String child) {
         return Utilities.NormalizePath(super.makePath(Utilities.denormalizePath(parent), Utilities.denormalizePath(child)));
     }
 
+    @Override
     public void clearContent(String path) {
         try {
             Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
@@ -406,10 +416,12 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     public Object clearContentDynamicParameters(String path) {
         return null;
     }
 
+    @Override
     public IContentReader getContentReader(String path) {
         try {
             Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
@@ -430,10 +442,12 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     public Object getContentReaderDynamicParameters(String path) {
         return new ContentParameters();
     }
 
+    @Override
     public IContentWriter getContentWriter(String path) {
         try {
             Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
@@ -454,6 +468,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
     }
 
+    @Override
     public Object getContentWriterDynamicParameters(String path) {
         return new ContentParameters();
     }
@@ -515,7 +530,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
             return disk;
         }
 
-        VolumeInfo volInfo = null;
+        VolumeInfo volInfo;
         VolumeManager volMgr = getDriveInfo() != null ? getDriveInfo().getVolumeManager() : new VolumeManager(disk);
         List<LogicalVolumeInfo> volumes = volMgr.getLogicalVolumes();
         String volNumStr = pathElems.get(0).startsWith("Volume") ? pathElems.get(0).substring(6) : null;

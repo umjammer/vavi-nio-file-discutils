@@ -55,16 +55,16 @@ public final class BuilderFile extends BuilderNode {
         setNumLinks(1);
     }
 
-    public Inode getInode() {
+    @Override public Inode getInode() {
         return inode;
     }
 
-    public void reset() {
+    @Override public void reset() {
         inode = new RegularInode();
         lengths = null;
     }
 
-    public void write(BuilderContext context) {
+    @Override public void write(BuilderContext context) {
         if (!written) {
             writeFileData(context);
             writeInode(context);

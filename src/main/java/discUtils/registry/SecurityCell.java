@@ -70,7 +70,7 @@ public final class SecurityCell extends Cell {
         securityDescriptor = value;
     }
 
-    public int size() {
+    @Override public int size() {
         int sdLen = getSecurityDescriptor().getSecurityDescriptorBinaryForm().length;
         return 0x14 + sdLen;
     }
@@ -85,7 +85,7 @@ public final class SecurityCell extends Cell {
         usageCount = value;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         previousIndex = ByteUtil.readLeInt(buffer, offset + 0x04);
         nextIndex = ByteUtil.readLeInt(buffer, offset + 0x08);
         usageCount = ByteUtil.readLeInt(buffer, offset + 0x0C);
@@ -97,7 +97,7 @@ public final class SecurityCell extends Cell {
         return 0x14 + secDescSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         byte[] sd = securityDescriptor.getSecurityDescriptorBinaryForm();
         EndianUtilities.stringToBytes("sk", buffer, offset, 2);
         ByteUtil.writeLeInt(previousIndex, buffer, offset + 0x04);
@@ -107,7 +107,7 @@ public final class SecurityCell extends Cell {
         System.arraycopy(sd, 0, buffer, offset + 0x14, sd.length);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "SecDesc:" + securityDescriptor.getSecurityDescriptorSddlForm(AccessControlSections.All) +
                 " (refCount:" + usageCount + ")";
     }

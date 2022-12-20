@@ -67,7 +67,7 @@ public class Crc16Context {
 
     /** Returns a byte array of the hash value. */
     public byte[] doFinal() {
-        short crc = 0;
+        short crc;
 
         if (inverse)
             crc = (short) ~(hashInt[0] ^ finalSeed);

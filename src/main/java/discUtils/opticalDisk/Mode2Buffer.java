@@ -48,22 +48,27 @@ class Mode2Buffer implements IBuffer {
         iobuffer = new byte[DiscImageFile.Mode2SectorSize];
     }
 
+    @Override
     public boolean canRead() {
         return true;
     }
 
+    @Override
     public boolean canWrite() {
         return false;
     }
 
+    @Override
     public long getCapacity() {
         return wrapped.getCapacity() / DiscImageFile.Mode2SectorSize * DiscImageFile.Mode1SectorSize;
     }
 
+    @Override
     public List<StreamExtent> getExtents() {
         return Collections.singletonList(new StreamExtent(0, getCapacity()));
     }
 
+    @Override
     public int read(long pos, byte[] buffer, int offset, int count) {
         int totalToRead = (int) Math.min(getCapacity() - pos, count);
         int totalRead = 0;
@@ -80,22 +85,27 @@ class Mode2Buffer implements IBuffer {
         return totalRead;
     }
 
+    @Override
     public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void clear(long pos, int count) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void flush() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         List<StreamExtent> result = new ArrayList<>();
         long capacity = getCapacity();

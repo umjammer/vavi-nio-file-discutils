@@ -45,11 +45,11 @@ public abstract class BaseItem implements IByteArraySerializable {
         key = value;
     }
 
-    public abstract int size();
+    @Override public abstract int size();
 
-    public abstract int readFrom(byte[] buffer, int offset);
+    @Override public abstract int readFrom(byte[] buffer, int offset);
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

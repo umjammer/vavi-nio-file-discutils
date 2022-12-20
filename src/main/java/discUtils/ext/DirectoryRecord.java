@@ -52,11 +52,11 @@ public class DirectoryRecord implements IByteArraySerializable {
         this.nameEncoding = nameEncoding;
     }
 
-    public int size() {
+    @Override public int size() {
         return MathUtilities.roundUp(8 + name.length(), 4);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         inode = ByteUtil.readLeInt(buffer, offset + 0);
         short recordLen = ByteUtil.readLeShort(buffer, offset + 4);
         int nameLen = buffer[offset + 6];
@@ -66,7 +66,7 @@ public class DirectoryRecord implements IByteArraySerializable {
         return recordLen;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -64,43 +64,43 @@ public class File implements IVfsFile {
         throw new UnsupportedOperationException("No rockRidge file information available for this file");
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return dirEntry.getLastAccessTimeUtc();
     }
 
-    public void setLastAccessTimeUtc(long value) {
+    @Override public void setLastAccessTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return dirEntry.getLastWriteTimeUtc();
     }
 
-    public void setLastWriteTimeUtc(long value) {
+    @Override public void setLastWriteTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return dirEntry.getCreationTimeUtc();
     }
 
-    public void setCreationTimeUtc(long value) {
+    @Override public void setCreationTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         return dirEntry.getFileAttributes();
     }
 
-    public void setFileAttributes(EnumSet<FileAttributes> value) {
+    @Override public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getFileLength() {
+    @Override public long getFileLength() {
         return dirEntry.getRecord().dataLength;
     }
 
-    public IBuffer getFileContent() {
+    @Override public IBuffer getFileContent() {
         ExtentStream es = new ExtentStream(context.getDataStream(),
                                            dirEntry.getRecord().locationOfExtent,
                                            dirEntry.getRecord().dataLength,
@@ -109,7 +109,7 @@ public class File implements IVfsFile {
         return new StreamBuffer(es, Ownership.Dispose);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return getClass() + ": " + dirEntry.getFileName() + ", " + getFileLength();
     }
 }

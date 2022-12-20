@@ -57,10 +57,12 @@ public class BlockDirectoryDataUnused extends BlockDirectoryData {
         tag = value;
     }
 
+    @Override
     public int size() {
         return getLength();
     }
 
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         freetag = ByteUtil.readBeShort(buffer, offset);
         length = ByteUtil.readBeShort(buffer, offset + 0x2);

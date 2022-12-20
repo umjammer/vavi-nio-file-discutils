@@ -55,7 +55,7 @@ public class BootVolumeDescriptor extends BaseVolumeDescriptor {
         return systemId;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
         EndianUtilities.stringToBytes(ElToritoSystemIdentifier, buffer, offset + 7, 0x20);
         ByteUtil.writeLeInt(catalogSector, buffer, offset + 0x47);

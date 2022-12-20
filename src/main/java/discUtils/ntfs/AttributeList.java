@@ -34,13 +34,14 @@ import discUtils.streams.IByteArraySerializable;
 
 
 public class AttributeList implements IByteArraySerializable, IDiagnosticTraceable, Iterable<AttributeListRecord> {
+
     private final List<AttributeListRecord> records;
 
     public AttributeList() {
         records = new ArrayList<>();
     }
 
-    public int size() {
+    @Override public int size() {
         int total = 0;
         for (AttributeListRecord record : records) {
             total += record.size();
@@ -48,7 +49,7 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
         return total;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         records.clear();
         int pos = 0;
         while (pos < buffer.length) {
@@ -59,7 +60,7 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
         return pos;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         int pos = offset;
         for (AttributeListRecord record : records) {
             record.writeTo(buffer, offset + pos);
@@ -100,7 +101,7 @@ public class AttributeList implements IByteArraySerializable, IDiagnosticTraceab
         return Collections.enumeration(records);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "ATTRIBUTE LIST RECORDS");
         for (AttributeListRecord r : records) {
             r.dump(writer, indent + "  ");

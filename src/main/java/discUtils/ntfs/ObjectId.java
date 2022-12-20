@@ -33,20 +33,20 @@ import vavi.util.ByteUtil;
 public final class ObjectId implements IByteArraySerializable, IDiagnosticTraceable {
     public UUID Id;
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         Id = ByteUtil.readLeUUID(buffer, offset);
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeUUID(Id, buffer, offset);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "  Object ID: " + Id);
     }
 }

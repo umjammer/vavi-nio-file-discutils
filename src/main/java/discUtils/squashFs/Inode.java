@@ -53,9 +53,9 @@ abstract class Inode implements IByteArraySerializable {
         throw new UnsupportedOperationException();
     }
 
-    public abstract int size();
+    @Override public abstract int size();
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         type = InodeType.values()[ByteUtil.readLeShort(buffer, offset + 0)];
         mode = ByteUtil.readLeShort(buffer, offset + 2);
         uidKey = ByteUtil.readLeShort(buffer, offset + 4);
@@ -65,7 +65,7 @@ abstract class Inode implements IByteArraySerializable {
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         ByteUtil.writeLeShort((short) type.ordinal(), buffer, offset + 0);
         ByteUtil.writeLeShort(mode, buffer, offset + 2);
         ByteUtil.writeLeShort(uidKey, buffer, offset + 4);

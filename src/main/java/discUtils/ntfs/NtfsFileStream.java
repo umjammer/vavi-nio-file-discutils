@@ -152,7 +152,7 @@ final class NtfsFileStream extends SparseStream {
         }
     }
 
-    public void clear(int count) {
+    @Override public void clear(int count) {
         assertOpen();
 
         try (NtfsTransaction c = new NtfsTransaction()) {

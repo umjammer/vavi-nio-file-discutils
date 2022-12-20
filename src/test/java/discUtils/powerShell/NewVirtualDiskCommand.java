@@ -123,7 +123,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
         String variant = typeAndVariant.length > 1 ? typeAndVariant[1] : null;
         String[] child = new String[1];
         PSObject parentObj = resolveNewDiskPath(child);
-        VirtualDisk disk = null;
+        VirtualDisk disk;
         if (parentObj.BaseObject instanceof DirectoryInfo) {
             String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child[0]);
             try (VirtualDisk realDisk = VirtualDisk.createDisk(type, variant, path, size[0], null, null)) {
@@ -165,7 +165,7 @@ public class NewVirtualDiskCommand extends PSCmdlet {
                                            null));
                 return;
             }
-            VirtualDisk newDisk = null;
+            VirtualDisk newDisk;
             if (parentObj.BaseObject instanceof DirectoryInfo) {
                 String path = Path.combine(((DirectoryInfo) parentObj.BaseObject).FullName, child);
                 try (Closeable ignored = baseDisk.createDifferencingDisk(path)) {

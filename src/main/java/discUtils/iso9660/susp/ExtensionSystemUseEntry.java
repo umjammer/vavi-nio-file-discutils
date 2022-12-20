@@ -28,6 +28,7 @@ import discUtils.iso9660.IsoUtilities;
 
 
 public final class ExtensionSystemUseEntry extends SystemUseEntry {
+
     public String extensionDescriptor;
 
     public String extensionIdentifier;

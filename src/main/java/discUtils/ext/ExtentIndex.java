@@ -46,18 +46,18 @@ public class ExtentIndex implements IByteArraySerializable {
         return getLeafPhysicalBlockLo() | ((long) getLeafPhysicalBlockHi() << 32);
     }
 
-    public int size() {
+    @Override public int size() {
         return 12;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         firstLogicalBlock = ByteUtil.readLeInt(buffer, offset + 0);
         leafPhysicalBlockLo = ByteUtil.readLeInt(buffer, offset + 4);
         leafPhysicalBlockHi = ByteUtil.readLeShort(buffer, offset + 8);
         return 12;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

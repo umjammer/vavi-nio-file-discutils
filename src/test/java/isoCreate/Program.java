@@ -58,6 +58,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         Path di = Paths.get(srcDir);
         if (!Files.exists(di)) {

@@ -174,7 +174,6 @@ public abstract class CommonSparseExtentStream extends MappedStream {
         do {
             int grainTable = (int) (position / gtCoverage);
             int grainTableOffset = (int) (position - grainTable * gtCoverage);
-            numRead = 0;
 
             if (!loadGrainTable(grainTable)) {
                 // Read from parent stream, to at most the end of grain table's coverage

@@ -39,15 +39,18 @@ public class BuilderBufferExtent extends BuilderExtent {
         this.buffer = buffer;
     }
 
+    @Override
     public void close() {
     }
 
+    @Override
     public void prepareForRead() {
         if (!fixedBuffer) {
             buffer = getBuffer();
         }
     }
 
+    @Override
     public int read(long diskOffset, byte[] block, int offset, int count) {
         int startOffset = (int) (diskOffset - start);
         int numBytes = (int) Math.min(length - startOffset, count);
@@ -55,6 +58,7 @@ public class BuilderBufferExtent extends BuilderExtent {
         return numBytes;
     }
 
+    @Override
     public void disposeReadState() {
         if (!fixedBuffer) {
             buffer = null;

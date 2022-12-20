@@ -31,6 +31,7 @@ import dotnet4j.security.accessControl.RawSecurityDescriptor;
  * Provides the base class for all file systems that support Windows semantics.
  */
 public interface IWindowsFileSystem extends IFileSystem {
+
     /**
      * Gets the security descriptor associated with the file or directory.
      *

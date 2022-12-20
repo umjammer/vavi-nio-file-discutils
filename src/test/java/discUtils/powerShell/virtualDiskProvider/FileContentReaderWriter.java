@@ -60,6 +60,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         }
     }
 
+    @Override
     public void close() {
         if (writer != null) {
             writer.flush();
@@ -75,10 +76,12 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         }
     }
 
+    @Override
     public void seek(long offset, SeekOrigin origin) {
         contentStream.seek(offset, origin);
     }
 
+    @Override
     public List<?> read(long readCount) {
         try {
             if (encoding == ContentEncoding.Byte) {
@@ -120,6 +123,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
 
     }
 
+    @Override
     public List<?> write(List<?> content) {
         try {
             if (content == null || content.size() == 0) {

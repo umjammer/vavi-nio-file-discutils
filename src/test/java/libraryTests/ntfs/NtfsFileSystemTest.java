@@ -103,11 +103,14 @@ public class NtfsFileSystemTest {
     }
 
     static class NullWriter extends Writer {
+        @Override
         public void write(char[] cbuf, int off, int len) throws IOException {
 //            System.err.print(new String(cbuf, off, len));
         }
+        @Override
         public void flush() throws IOException {
         }
+        @Override
         public void close() throws IOException {
         }
     }

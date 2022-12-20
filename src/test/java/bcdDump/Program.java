@@ -48,6 +48,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         try (Stream fileStream = File.openRead(bcdFile);
              RegistryHive hive = new RegistryHive(fileStream)) {

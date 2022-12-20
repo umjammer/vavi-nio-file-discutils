@@ -64,6 +64,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      * @param writer The writer to send the report to.
      * @param linePrefix The prefix to place at the start of each line.
      */
+    @Override
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "DISK GROUPS");
         for (DynamicDiskGroup group : groups.values()) {

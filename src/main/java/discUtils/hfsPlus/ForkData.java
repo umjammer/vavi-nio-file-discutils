@@ -39,11 +39,11 @@ public final class ForkData implements IByteArraySerializable {
 
     public int totalBlocks;
 
-    public int size() {
+    @Override public int size() {
         return StructSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         logicalSize = ByteUtil.readBeLong(buffer, offset + 0);
         clumpSize = ByteUtil.readBeInt(buffer, offset + 8);
         totalBlocks = ByteUtil.readBeInt(buffer, offset + 12);
@@ -56,7 +56,7 @@ public final class ForkData implements IByteArraySerializable {
         return StructSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -105,7 +105,7 @@ public class Nfs3ReadDirPlusResultTest {
         result.setEof(false);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3ReadDirPlusResult clone = null;
+        Nfs3ReadDirPlusResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

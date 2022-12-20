@@ -45,11 +45,11 @@ public enum FileAttributes implements EnumSettable {
 
     private final int value = 1 << ordinal();
 
-    public Supplier<Integer> supplier() {
+    @Override public Supplier<Integer> supplier() {
         return () -> value;
     }
 
-    public Function<Integer, Boolean> function() {
+    @Override public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
     }
 

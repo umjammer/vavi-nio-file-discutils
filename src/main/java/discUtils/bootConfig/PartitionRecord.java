@@ -60,10 +60,12 @@ public class PartitionRecord extends DeviceRecord {
         partitionType = value;
     }
 
+    @Override
     public int getSize() {
         return 0x48;
     }
 
+    @Override
     public void getBytes(byte[] data, int offset) {
         writeHeader(data, offset);
         if (getType() == 5) {
@@ -111,6 +113,7 @@ public class PartitionRecord extends DeviceRecord {
         return "<unknown>";
     }
 
+    @Override
     protected void doParse(byte[] data, int offset) {
         super.doParse(data, offset);
         if (getType() == 5) {

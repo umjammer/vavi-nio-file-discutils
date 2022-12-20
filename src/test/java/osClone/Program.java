@@ -86,6 +86,7 @@ public class Program extends ProgramBase {
 
     private Random random = new Random();
 
+    @Override
     protected void doRun() throws IOException {
 
         try (VirtualDisk sourceDisk = VirtualDisk.openDisk(sourceFile, FileAccess.Read, getUserName(), getPassword());

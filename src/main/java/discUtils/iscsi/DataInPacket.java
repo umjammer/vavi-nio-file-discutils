@@ -49,7 +49,7 @@ public class DataInPacket extends BaseResponse {
 
     public boolean u;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 

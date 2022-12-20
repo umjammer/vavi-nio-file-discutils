@@ -58,7 +58,7 @@ final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
         }
     }
 
-    int getNodeSize() {
+    @Override int getNodeSize() {
         return header.getNodeSize();
     }
 

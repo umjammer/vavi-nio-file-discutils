@@ -38,16 +38,16 @@ public final class SecurityDescriptorRecord implements IByteArraySerializable {
 
     public byte[] securityDescriptor;
 
-    public int size() {
+    @Override public int size() {
         return securityDescriptor.length + 0x14;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         read(buffer, offset);
         return securityDescriptor.length + 0x14;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         entrySize = size();
         ByteUtil.writeLeInt(hash, buffer, offset + 0x00);
         ByteUtil.writeLeInt(id, buffer, offset + 0x04);

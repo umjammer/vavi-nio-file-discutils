@@ -64,13 +64,14 @@ public class Program extends ProgramBase {
 
 //        return StandardSwitches.UserAndPassword | StandardSwitches.PartitionOrVolume;
 
+    @Override
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
 String[] diskFiles = new String[] {diskFile};
         for (String disk : diskFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(disk, FileAccess.Read, getUserName(), getPassword()));
         }
-        Stream partitionStream = null;
+        Stream partitionStream;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             partitionStream = volMgr.getVolume(getVolumeId()).open();
         } else if (getPartition() >= 0) {

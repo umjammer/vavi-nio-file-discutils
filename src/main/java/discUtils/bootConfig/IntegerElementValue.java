@@ -40,11 +40,11 @@ public class IntegerElementValue extends ElementValue {
         this.value = value;
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.Integer;
     }
 
-    public String toString() {
+    @Override public String toString() {
         return String.valueOf(value);
     }
 

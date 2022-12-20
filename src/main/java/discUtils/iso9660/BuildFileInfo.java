@@ -81,11 +81,11 @@ public final class BuildFileInfo extends BuildDirectoryMember {
      */
     private BuildDirectoryInfo parent;
 
-    public BuildDirectoryInfo getParent() {
+    @Override public BuildDirectoryInfo getParent() {
         return parent;
     }
 
-    long getDataSize(Charset enc) {
+    @Override long getDataSize(Charset enc) {
         return contentSize;
     }
 
@@ -142,7 +142,7 @@ public final class BuildFileInfo extends BuildDirectoryMember {
         return candidate;
     }
 
-    public String toString() {
+    @Override public String toString() {
         return getName();
     }
 }

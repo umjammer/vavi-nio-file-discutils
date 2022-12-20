@@ -54,51 +54,51 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
         return nameLength & 0xff;
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         throw new UnsupportedOperationException();
     }
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return name;
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return false;
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return false;
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return fileCharacteristics.contains(FileCharacteristic.Directory);
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return false;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         return ((long) fileLocation.extentLocation.getPartition()) << 32 | fileLocation.extentLocation.logicalBlock;
     }
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         fileVersionNumber = ByteUtil.readLeShort(buffer, offset + 16);
         fileCharacteristics = FileCharacteristic.valueOf(buffer[offset + 18]);
@@ -110,7 +110,7 @@ public class FileIdentifier extends VfsDirEntry implements IByteArraySerializabl
         return MathUtilities.roundUp(38 + implementationUseLength + getNameLength(), 4);
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -134,7 +134,7 @@ class DataRun {
 
     private static int varLongSize(long val) {
         boolean isPositive = val >= 0;
-        boolean lastByteHighBitSet = false;
+        boolean lastByteHighBitSet;
 
         int len = 0;
         do {

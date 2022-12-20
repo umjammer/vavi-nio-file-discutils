@@ -54,7 +54,7 @@ public class Nfs3AccessResultTest {
         result.setObjectAttributes(attributes);
         result.setStatus(Nfs3Status.AccessDenied);
 
-        Nfs3AccessResult clone = null;
+        Nfs3AccessResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

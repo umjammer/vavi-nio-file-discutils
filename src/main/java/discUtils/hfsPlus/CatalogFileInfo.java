@@ -36,11 +36,11 @@ final class CatalogFileInfo extends CommonCatalogFileInfo {
 
     public ForkData resourceFork;
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
 
         flags = ByteUtil.readBeShort(buffer, offset + 2);
@@ -52,7 +52,7 @@ final class CatalogFileInfo extends CommonCatalogFileInfo {
         return 0;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

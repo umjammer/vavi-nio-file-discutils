@@ -38,7 +38,7 @@ public final class XdrDataWriter extends BigEndianDataWriter {
         write(value ? 1 : 0);
     }
 
-    public void writeBytes(byte[] buffer, int offset, int count) {
+    @Override public void writeBytes(byte[] buffer, int offset, int count) {
         stream.write(buffer, offset, count);
         if ((count & 0x3) != 0) {
             int padding = 4 - (buffer.length & 0x3);

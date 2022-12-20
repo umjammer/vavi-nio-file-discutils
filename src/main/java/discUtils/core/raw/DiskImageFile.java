@@ -75,7 +75,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         this.geometry = geometry != null ? geometry : detectGeometry(getContent());
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return getContent().getLength();
     }
 
@@ -101,25 +101,25 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     private Geometry geometry;
 
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return geometry;
     }
 
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return false;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean needsParent() {
+    @Override public boolean needsParent() {
         return false;
     }
 
-    public FileLocator getRelativeFileLocator() {
+    @Override public FileLocator getRelativeFileLocator() {
         return null;
     }
 

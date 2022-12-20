@@ -28,6 +28,7 @@ import dotnet4j.io.IOException;
  * base exception for any iSCSI-related failures.
  */
 public class IscsiException extends IOException {
+
     /**
      * Initializes a new instance of the IscsiException class.
      */

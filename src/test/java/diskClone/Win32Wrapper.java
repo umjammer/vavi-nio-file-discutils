@@ -32,6 +32,7 @@ import dotnet4j.io.FileShare;
 
 
 public class Win32Wrapper {
+
     public static Pointer openFileHandle(String path) {
         Pointer handle = NativeMethods.INSTANCE
                 .createFileW(path, FileAccess.Read, FileShare.Read, null, FileMode.Open, 0, null);
@@ -44,18 +45,16 @@ public class Win32Wrapper {
 
     public static diskClone.NativeMethods.DiskGeometry getDiskGeometry(Pointer handle) {
         diskClone.NativeMethods.DiskGeometry diskGeometry = new diskClone.NativeMethods.DiskGeometry();
-        int bytesRet = Marshal.SizeOf(diskGeometry);
-        int[] refVar___0 = new int[] {bytesRet};
-        boolean boolVar___0 = !NativeMethods.INSTANCE.deviceIoControl(handle,
+        int[] bytesRet = new int[] {Marshal.SizeOf(diskGeometry)}
+        bytesRet[0] = NativeMethods.INSTANCE.deviceIoControl(handle,
                                                              EIOControlCode.DiskGetDriveGeometry,
                                                              null,
                                                              0,
                                                              diskGeometry,
-                                                             bytesRet,
-                                                             refVar___0,
+                                                             bytesRet[0],
+                                                              bytesRet,
                                                              null);
-        bytesRet = refVar___0[0];
-        if (boolVar___0) {
+        if (bytesRet[0] == 0) {
             throw Win32Wrapper.getIOExceptionForLastError();
         }
 
@@ -64,18 +63,16 @@ public class Win32Wrapper {
 
     public static diskClone.NativeMethods.NtfsVolumeData getNtfsVolumeData(Pointer volumeHandle) {
         diskClone.NativeMethods.NtfsVolumeData volumeData = new diskClone.NativeMethods.NtfsVolumeData();
-        int bytesRet = Marshal.SizeOf(volumeData);
-        Integer[] refVar___1 = new Integer[] {bytesRet};
-        boolean boolVar___1 = !NativeMethods.DeviceIoControl(volumeHandle,
+        int[] bytesRet = new int[] {Marshal.SizeOf(volumeData)}
+        bytesRet[0] = NativeMethods.DeviceIoControl(volumeHandle,
                                                              EIOControlCode.FsctlGetNtfsVolumeData,
                                                              null,
                                                              0,
                                                              volumeData,
                                                              bytesRet,
-                                                             refVar___1,
+                                                             bytesRet,
                                                              null);
-        bytesRet = refVar___1[0];
-        if (boolVar___1) {
+        if (bytesRet[0] == 0) {
             throw Win32Wrapper.getIOExceptionForLastError();
         }
 
@@ -83,9 +80,9 @@ public class Win32Wrapper {
     }
 
     public static long getDiskCapacity(Pointer diskHandle) {
-        Integer[] sizeBytes = new Integer[] {bytesRet};
+        int[] sizeBytes = new int[] {bytesRet};
         int bytesRet = sizeBytes.length;
-        boolean boolVar___2 = !NativeMethods.DeviceIoControl(diskHandle,
+        sizeBytes[0] = NativeMethods.DeviceIoControl(diskHandle,
                                                              EIOControlCode.DiskGetLengthInfo,
                                                              null,
                                                              0,
@@ -101,8 +98,8 @@ public class Win32Wrapper {
     }
 
     public static String getMessageForError(int code) {
+        int[][] buffer = new int[1][];
         try {
-            int[][] buffer = new int[1][];
             NativeMethods.INSTANCE.formatMessageW(NativeMethods.FORMAT_MESSAGE_ALLOCATE_BUFFER |
                                          NativeMethods.FORMAT_MESSAGE_FROM_SYSTEM | NativeMethods.FORMAT_MESSAGE_IGNORE_INSERTS,
                                          null,
@@ -113,7 +110,7 @@ public class Win32Wrapper {
                                          null);
             return Marshal.PtrToStringUni(buffer[0]);
         } finally {
-            if (buffer != null) {
+            if (buffer[0] != null) {
                 NativeMethods.INSTANCE.localFree(buffer);
             }
         }

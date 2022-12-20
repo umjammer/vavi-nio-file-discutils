@@ -53,6 +53,7 @@ public class Program extends ProgramBase {
 
 //        return StandardSwitches.UserAndPassword | StandardSwitches.Verbose;
 
+    @Override
     protected void doRun() throws IOException {
         Initiator initiator = new Initiator();
         if (getUserName() != null && !getUserName().isEmpty()) {

@@ -47,10 +47,12 @@ public final class RpcClient implements IRpcClient {
 
     private RpcCredentials credentials;
 
+    @Override
     public RpcCredentials getCredentials() {
         return credentials;
     }
 
+    @Override
     public void close() throws IOException {
         if (transports != null) {
             for (RpcTcpTransport transport : transports.values()) {
@@ -60,10 +62,12 @@ public final class RpcClient implements IRpcClient {
         }
     }
 
+    @Override
     public int nextTransactionId() {
         return nextTransaction++;
     }
 
+    @Override
     public IRpcTransport getTransport(int program, int version) {
         RpcTcpTransport transport;
         if (!transports.containsKey(program)) {

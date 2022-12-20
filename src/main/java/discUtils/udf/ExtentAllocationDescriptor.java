@@ -32,21 +32,21 @@ public final class ExtentAllocationDescriptor implements IByteArraySerializable 
 
     public int extentLocation;
 
-    public int size() {
+    @Override public int size() {
         return 8;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         extentLength = ByteUtil.readLeInt(buffer, offset);
         extentLocation = ByteUtil.readLeInt(buffer, offset + 4);
         return 8;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public String toString() {
+    @Override public String toString() {
         return extentLocation + ":+" + extentLength;
     }
 }

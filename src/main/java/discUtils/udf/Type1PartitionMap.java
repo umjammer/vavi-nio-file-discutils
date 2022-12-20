@@ -31,10 +31,12 @@ public final class Type1PartitionMap extends PartitionMap {
 
     public short volumeSequenceNumber;
 
+    @Override
     public int size() {
         return 6;
     }
 
+    @Override
     protected int parse(byte[] buffer, int offset) {
         volumeSequenceNumber = ByteUtil.readLeShort(buffer, offset + 2);
         partitionNumber = ByteUtil.readLeShort(buffer, offset + 4);

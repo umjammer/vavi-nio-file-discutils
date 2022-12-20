@@ -56,7 +56,7 @@ public class Nfs3SetAttributesTest {
         attributes.setSize(4);
         attributes.setUid(5);
 
-        Nfs3SetAttributes clone = null;
+        Nfs3SetAttributes clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);
