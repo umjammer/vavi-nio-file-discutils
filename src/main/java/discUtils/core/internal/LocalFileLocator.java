@@ -44,19 +44,19 @@ public final class LocalFileLocator extends FileLocator {
         this.dir = dir;
     }
 
-    public boolean exists(String fileName) {
+    @Override public boolean exists(String fileName) {
         return Files.exists(Paths.get(Utilities.combinePaths(dir, fileName)));
     }
 
-    protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
+    @Override protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
         return new FileStream(Utilities.combinePaths(dir, fileName), mode, access, share);
     }
 
-    public FileLocator getRelativeLocator(String path) {
+    @Override public FileLocator getRelativeLocator(String path) {
         return new LocalFileLocator(Utilities.combinePaths(dir, path));
     }
 
-    public String getFullPath(String path) {
+    @Override public String getFullPath(String path) {
         String combinedPath = Utilities.combinePaths(dir, path);
         if (combinedPath.isEmpty()) {
             return System.getProperty("user.dir").replace(File.separator, FS);
@@ -65,15 +65,15 @@ public final class LocalFileLocator extends FileLocator {
         return Paths.get(combinedPath).toAbsolutePath().toString();
     }
 
-    public String getDirectoryFromPath(String path) {
+    @Override public String getDirectoryFromPath(String path) {
         return Utilities.getDirectoryFromPath(path);
     }
 
-    public String getFileFromPath(String path) {
+    @Override public String getFileFromPath(String path) {
         return Utilities.getFileFromPath(path);
     }
 
-    public long getLastWriteTimeUtc(String path) {
+    @Override public long getLastWriteTimeUtc(String path) {
         try {
             return Files.getLastModifiedTime(Paths.get(dir, path)).toMillis();
         } catch (IOException e) {
@@ -81,7 +81,7 @@ public final class LocalFileLocator extends FileLocator {
         }
     }
 
-    public boolean hasCommonRoot(FileLocator other) {
+    @Override public boolean hasCommonRoot(FileLocator other) {
         if (!(other instanceof LocalFileLocator)) {
             return false;
         }
@@ -98,7 +98,7 @@ public final class LocalFileLocator extends FileLocator {
         return true;
     }
 
-    public String resolveRelativePath(String path) {
+    @Override public String resolveRelativePath(String path) {
         return Utilities.resolveRelativePath(dir, path);
     }
 }

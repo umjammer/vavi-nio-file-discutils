@@ -24,9 +24,6 @@ package virtualDiskConvert;
 
 import java.io.IOException;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemManager;
@@ -46,6 +43,8 @@ import discUtils.streams.StreamPump;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.FileAccess;
 import dotnet4j.util.compat.Utilities;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -76,6 +75,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
 
         try (VirtualDisk inDisk = VirtualDisk.openDisk(inFile, FileAccess.Read, getUserName(), getPassword())) {

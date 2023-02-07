@@ -62,21 +62,21 @@ public final class DiscContentBuffer extends Buffer {
         capacity = response.body().contentLength();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
     private long capacity;
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return capacity;
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         Response response = sendRequest(() -> new Request.Builder().url(uri.toString())
                 .get()
                 .addHeader("Range", String.format("bytes=%d-%d", (int) pos, (int) (pos + count - 1)))
@@ -93,15 +93,15 @@ public final class DiscContentBuffer extends Buffer {
         }
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException("Attempt to write to shared optical disc");
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException("Attempt to change size of shared optical disc");
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
         return StreamExtent.intersect(Collections.singletonList(new StreamExtent(0, capacity)),
                 Collections.singletonList(new StreamExtent(start, count)));
     }
@@ -141,7 +141,7 @@ public final class DiscContentBuffer extends Buffer {
             wr = wr.newBuilder().addHeader("Authorization", authHeader).build();
         }
 
-        Response wresp = null;
+        Response wresp;
         try {
             wresp = client.newCall(wr).execute();
             if (wresp.isSuccessful()) {

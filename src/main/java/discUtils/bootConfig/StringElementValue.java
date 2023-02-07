@@ -30,11 +30,11 @@ public class StringElementValue extends ElementValue {
         this.value = value;
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.String;
     }
 
-    public String toString() {
+    @Override public String toString() {
         return value;
     }
 }

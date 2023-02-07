@@ -23,7 +23,7 @@
 package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class BTreeNodeDescriptor implements IByteArraySerializable {
@@ -44,22 +44,22 @@ public final class BTreeNodeDescriptor implements IByteArraySerializable {
 
     public short reserved;
 
-    public int size() {
+    @Override public int size() {
         return 14;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        forwardLink = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        backwardLink = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        forwardLink = ByteUtil.readBeInt(buffer, offset + 0);
+        backwardLink = ByteUtil.readBeInt(buffer, offset + 4);
         kind = BTreeNodeKind.valueOf(buffer[offset + 8]);
         height = buffer[offset + 9];
-        numRecords = EndianUtilities.toUInt16BigEndian(buffer, offset + 10);
-        reserved = EndianUtilities.toUInt16BigEndian(buffer, offset + 12);
+        numRecords = ByteUtil.readBeShort(buffer, offset + 10);
+        reserved = ByteUtil.readBeShort(buffer, offset + 12);
 
         return 14;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

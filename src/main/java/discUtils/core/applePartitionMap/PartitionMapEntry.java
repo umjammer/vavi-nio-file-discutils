@@ -22,6 +22,7 @@
 
 package discUtils.core.applePartitionMap;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 import discUtils.core.PhysicalVolumeType;
@@ -29,8 +30,8 @@ import discUtils.core.partitions.PartitionInfo;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.SparseStream;
 import discUtils.streams.SubStream;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class PartitionMapEntry extends PartitionInfo implements IByteArraySerializable {
@@ -63,55 +64,55 @@ public final class PartitionMapEntry extends PartitionInfo implements IByteArray
         this.diskStream = diskStream;
     }
 
-    public byte getBiosType() {
+    @Override public byte getBiosType() {
         return (byte) 0xAF;
     }
 
-    public long getFirstSector() {
+    @Override public long getFirstSector() {
         return physicalBlockStart;
     }
 
-    public UUID getGuidType() {
+    @Override public UUID getGuidType() {
         return new UUID(0L, 0L);
     }
 
-    public long getLastSector() {
+    @Override public long getLastSector() {
         return physicalBlockStart + physicalBlocks - 1;
     }
 
-    public String getTypeAsString() {
+    @Override public String getTypeAsString() {
         return type;
     }
 
-    public PhysicalVolumeType getVolumeType() {
+    @Override public PhysicalVolumeType getVolumeType() {
         return PhysicalVolumeType.ApplePartition;
     }
 
-    public int size() {
+    @Override public int size() {
         return 512;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        mapEntries = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        physicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        physicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
-        name = EndianUtilities.bytesToString(buffer, offset + 16, 32).replaceFirst("\0*$", "");
-        type = EndianUtilities.bytesToString(buffer, offset + 48, 32).replaceFirst("\0*$", "");
-        logicalBlockStart = EndianUtilities.toUInt32BigEndian(buffer, offset + 80);
-        logicalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 84);
-        flags = EndianUtilities.toUInt32BigEndian(buffer, offset + 88);
-        bootBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 92);
-        bootBytes = EndianUtilities.toUInt32BigEndian(buffer, offset + 96);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        signature = ByteUtil.readBeShort(buffer, offset + 0);
+        mapEntries = ByteUtil.readBeInt(buffer, offset + 4);
+        physicalBlockStart = ByteUtil.readBeInt(buffer, offset + 8);
+        physicalBlocks = ByteUtil.readBeInt(buffer, offset + 12);
+        name = new String(buffer, offset + 16, 32, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        type = new String(buffer, offset + 48, 32, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        logicalBlockStart = ByteUtil.readBeInt(buffer, offset + 80);
+        logicalBlocks = ByteUtil.readBeInt(buffer, offset + 84);
+        flags = ByteUtil.readBeInt(buffer, offset + 88);
+        bootBlock = ByteUtil.readBeInt(buffer, offset + 92);
+        bootBytes = ByteUtil.readBeInt(buffer, offset + 96);
 
         return 512;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public SparseStream open() {
+    @Override public SparseStream open() {
         return new SubStream(diskStream, physicalBlockStart * 512L, physicalBlocks * 512L);
     }
 }

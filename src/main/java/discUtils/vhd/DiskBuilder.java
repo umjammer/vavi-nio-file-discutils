@@ -63,7 +63,7 @@ public class DiskBuilder extends DiskImageBuilder {
      *
      * @param baseName The base name for the VHD, for example 'foo' to create
      *            'foo.vhd'.
-     * @returns A set of one or more logical files that constitute the VHD. The
+     * @return A set of one or more logical files that constitute the VHD. The
      *          first file is the 'primary' file that is normally attached to
      *          VMs.
      */

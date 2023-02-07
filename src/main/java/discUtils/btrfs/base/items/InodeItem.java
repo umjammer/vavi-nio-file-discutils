@@ -28,6 +28,7 @@ import discUtils.btrfs.base.InodeFlag;
 import discUtils.btrfs.base.Key;
 import discUtils.btrfs.base.TimeSpec;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -252,23 +253,23 @@ public class InodeItem extends BaseItem {
         oTime = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        transId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-        fileSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-        nBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
-        blockGroup = EndianUtilities.toUInt64LittleEndian(buffer, offset + 32);
-        linkCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
-        gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48);
-        mode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 52);
-        rDev = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
-        flags = InodeFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 64));
-        sequence = EndianUtilities.toUInt64LittleEndian(buffer, offset + 72);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        generation = ByteUtil.readLeLong(buffer, offset);
+        transId = ByteUtil.readLeLong(buffer, offset + 8);
+        fileSize = ByteUtil.readLeLong(buffer, offset + 16);
+        nBytes = ByteUtil.readLeLong(buffer, offset + 24);
+        blockGroup = ByteUtil.readLeLong(buffer, offset + 32);
+        linkCount = ByteUtil.readLeInt(buffer, offset + 40);
+        uid = ByteUtil.readLeInt(buffer, offset + 44);
+        gid = ByteUtil.readLeInt(buffer, offset + 48);
+        mode = ByteUtil.readLeInt(buffer, offset + 52);
+        rDev = ByteUtil.readLeLong(buffer, offset + 56);
+        flags = InodeFlag.valueOf((int) ByteUtil.readLeLong(buffer, offset + 64));
+        sequence = ByteUtil.readLeLong(buffer, offset + 72);
         aTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 112);
         cTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 124);
         mTime = EndianUtilities.toStruct(TimeSpec.class, buffer, offset + 136);

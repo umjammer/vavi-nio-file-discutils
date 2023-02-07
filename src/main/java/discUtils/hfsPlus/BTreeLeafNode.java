@@ -25,7 +25,7 @@ package discUtils.hfsPlus;
 import java.util.ArrayList;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
@@ -36,7 +36,7 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
         super(clazz, tree, descriptor);
     }
 
-    public byte[] findKey(TKey key) {
+    @Override public byte[] findKey(TKey key) {
         int idx = 0;
         while (idx < records.size()) {
             int compResult = key.compareTo(records.get(idx).getKey());
@@ -53,23 +53,24 @@ final class BTreeLeafNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey>
         return null;
     }
 
-    public void visitRange(BTreeVisitor<TKey> visitor) {
+    @Override public void visitRange(BTreeVisitor<TKey> visitor) {
         int idx = 0;
         while (idx < records.size() && visitor.invoke(records.get(idx).getKey(), records.get(idx).getData()) <= 0) {
             idx++;
         }
     }
 
-    protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
 
         records = new ArrayList<>(numRecords);
 
-        int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);
+        int start = ByteUtil.readBeShort(buffer, offset + nodeSize - 2);
 
         for (int i = 0; i < numRecords; ++i) {
-            int end = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - (i + 2) * 2);
+            int end = ByteUtil.readBeShort(buffer, offset + nodeSize - (i + 2) * 2);
             records.add(i, new BTreeLeafRecord<>(keyClass, end - start));
             records.get(i).readFrom(buffer, offset + start);
             start = end;

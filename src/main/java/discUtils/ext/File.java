@@ -59,43 +59,43 @@ public class File implements IVfsFile {
         return inodeNumber;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return Instant.ofEpochSecond(inode.accessTime).toEpochMilli();
     }
 
-    public void setLastAccessTimeUtc(long value) {
+    @Override public void setLastAccessTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return Instant.ofEpochSecond(inode.modificationTime).toEpochMilli();
     }
 
-    public void setLastWriteTimeUtc(long value) {
+    @Override public void setLastWriteTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return Instant.ofEpochSecond(inode.creationTime).toEpochMilli();
     }
 
-    public void setCreationTimeUtc(long value) {
+    @Override public void setCreationTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         return fromMode(inode.mode);
     }
 
-    public void setFileAttributes(EnumSet<FileAttributes> value) {
+    @Override public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getFileLength() {
+    @Override public long getFileLength() {
         return inode.fileSize;
     }
 
-    public IBuffer getFileContent() {
+    @Override public IBuffer getFileContent() {
         if (content == null) {
             content = getInode().getContentBuffer(getContext());
         }

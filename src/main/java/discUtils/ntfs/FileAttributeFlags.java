@@ -12,7 +12,6 @@ import discUtils.core.coreCompat.EnumSettable;
 
 
 public enum FileAttributeFlags implements EnumSettable {
-//    None,
     ReadOnly,
     Hidden,
     System,
@@ -46,11 +45,11 @@ public enum FileAttributeFlags implements EnumSettable {
 
     private final int value = 1 << ordinal();
 
-    public Supplier<Integer> supplier() {
+    @Override public Supplier<Integer> supplier() {
         return () -> value;
     }
 
-    public Function<Integer, Boolean> function() {
+    @Override public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
     }
 

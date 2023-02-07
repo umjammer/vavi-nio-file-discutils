@@ -23,7 +23,8 @@
 package discUtils.hfsPlus;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
+
 
 public final class Point implements IByteArraySerializable {
 
@@ -31,18 +32,18 @@ public final class Point implements IByteArraySerializable {
 
     public short vertical;
 
-    public int size() {
+    @Override public int size() {
         return 4;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        vertical = EndianUtilities.toInt16BigEndian(buffer, offset + 0);
-        horizontal = EndianUtilities.toInt16BigEndian(buffer, offset + 2);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        vertical = ByteUtil.readBeShort(buffer, offset + 0);
+        horizontal = ByteUtil.readBeShort(buffer, offset + 2);
 
         return 4;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

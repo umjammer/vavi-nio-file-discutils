@@ -22,8 +22,6 @@
 
 package discUtils.nfs;
 
-import java.io.IOException;
-
 import dotnet4j.io.MemoryStream;
 
 

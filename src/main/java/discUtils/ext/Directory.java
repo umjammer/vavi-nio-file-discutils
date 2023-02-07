@@ -31,11 +31,12 @@ import discUtils.streams.util.StreamUtilities;
 
 
 public class Directory extends File implements IVfsDirectory<DirEntry, File> {
+
     public Directory(Context context, int inodeNum, Inode inode) {
         super(context, inodeNum, inode);
     }
 
-    public List<DirEntry> getAllEntries() {
+    @Override  public List<DirEntry> getAllEntries() {
         List<DirEntry> dirEntries = new ArrayList<>();
         IBuffer content = getFileContent();
         int blockSize = getContext().getSuperBlock().getBlockSize();
@@ -60,11 +61,11 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
         return dirEntries;
     }
 
-    public DirEntry getSelf() {
+    @Override public DirEntry getSelf() {
         return null;
     }
 
-    public DirEntry getEntryByName(String name) {
+    @Override public DirEntry getEntryByName(String name) {
         for (DirEntry entry : getAllEntries()) {
             if (entry.getFileName().equals(name)) {
                 return entry;
@@ -73,7 +74,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
         return null;
     }
 
-    public DirEntry createNewFile(String name) {
+    @Override public DirEntry createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
 }

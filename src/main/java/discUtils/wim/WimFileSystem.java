@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import vavi.util.win32.DateUtil;
-
 import discUtils.core.IWindowsFileSystem;
 import discUtils.core.ReadOnlyDiscFileSystem;
 import discUtils.core.ReparsePoint;
@@ -47,8 +45,9 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
-import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.security.accessControl.RawSecurityDescriptor;
+import dotnet4j.util.compat.StringUtilities;
+import vavi.util.win32.DateUtil;
 
 
 /**

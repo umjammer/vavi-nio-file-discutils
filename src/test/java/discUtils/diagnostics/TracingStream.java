@@ -76,6 +76,7 @@ public final class TracingStream extends Stream {
     /**
      * Disposes of this instance.
      */
+    @Override
     public void close() throws IOException {
         if (ownsWrapped == Ownership.Dispose && wrapped != null) {
             wrapped.close();

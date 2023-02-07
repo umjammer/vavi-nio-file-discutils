@@ -22,21 +22,20 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.RpcAuthentication;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class RpcAuthenticationTests {
     @Test
     public void roundTripTest() throws Exception {
         RpcAuthentication authentication = new RpcAuthentication();
-        RpcAuthentication clone = null;
+        RpcAuthentication clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             authentication.write(writer);

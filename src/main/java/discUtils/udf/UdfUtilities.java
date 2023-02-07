@@ -26,8 +26,8 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
+import vavi.util.ByteUtil;
 
 
 public class UdfUtilities {
@@ -73,14 +73,14 @@ public class UdfUtilities {
             return Long.MIN_VALUE;
         }
 
-        short typeAndZone = EndianUtilities.toUInt16LittleEndian(buffer, offset);
+        short typeAndZone = ByteUtil.readLeShort(buffer, offset);
         int type = (typeAndZone >>> 12) & 0x0F;
         int minutesWest = typeAndZone & 0xFFF;
         if ((minutesWest & 0x800) != 0) {
             minutesWest = (-1 & ~0xFFF) | minutesWest;
         }
 
-        int year = forceRange((short) 1, (short) 9999, EndianUtilities.toInt16LittleEndian(buffer, offset + 2));
+        int year = forceRange((short) 1, (short) 9999, ByteUtil.readLeShort(buffer, offset + 2));
         int month = forceRange((short) 1, (short) 12, buffer[offset + 4]);
         int day = forceRange((short) 1, (short) 31, buffer[offset + 5]);
         int hour = forceRange((short) 0, (short) 23, buffer[offset + 6]);

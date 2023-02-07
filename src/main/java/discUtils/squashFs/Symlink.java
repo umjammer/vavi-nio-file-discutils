@@ -26,12 +26,12 @@ import discUtils.core.vfs.IVfsSymlink;
 
 
 public class Symlink extends File implements IVfsSymlink<DirectoryEntry, File> {
+
     public Symlink(Context context, Inode inode, MetadataRef inodeRef) {
         super(context, inode, inodeRef);
     }
 
-    public String getTargetPath() {
+    @Override public String getTargetPath() {
         throw new UnsupportedOperationException();
     }
-
 }

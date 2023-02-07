@@ -80,14 +80,14 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * Gets the disk geometry of the underlying storage medium (as used in BIOS
      * calls), may be null.
      */
-    public Geometry getBiosGeometry() {
+    @Override public Geometry getBiosGeometry() {
         return disk.getBiosGeometry();
     }
 
     /**
      * Gets the one-byte BIOS type for this volume, which indicates the content.
      */
-    public byte getBiosType() {
+    @Override public byte getBiosType() {
         return partition == null ? (byte) 0 : partition.getBiosType();
     }
 
@@ -114,7 +114,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * available. Best practice is to add disks to the Volume Manager in a
      * stable order, if the stability of this identity is paramount.
      */
-    public String getIdentity() {
+    @Override public String getIdentity() {
         if (volumeType == PhysicalVolumeType.GptPartition) {
             return "VPG" + String.format("{%s}", getPartitionIdentity());
         }
@@ -138,7 +138,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
     /**
      * Gets the size of the volume, in bytes.
      */
-    public long getLength() {
+    @Override public long getLength() {
         return partition == null ? disk.getCapacity() : partition.getSectorCount() * disk.getSectorSize();
     }
 
@@ -166,7 +166,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * Gets the disk geometry of the underlying storage medium, if any (may be
      * null).
      */
-    public Geometry getPhysicalGeometry() {
+    @Override public Geometry getPhysicalGeometry() {
         return disk.getGeometry();
     }
 
@@ -174,14 +174,14 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      * Gets the offset of this volume in the underlying storage medium, if any
      * (may be Zero).
      */
-    public long getPhysicalStartSector() {
+    @Override public long getPhysicalStartSector() {
         return volumeType == PhysicalVolumeType.EntireDisk ? 0 : partition.getFirstSector();
     }
 
     /**
      * Gets the type of the volume.
      */
-    private PhysicalVolumeType volumeType = PhysicalVolumeType.None;
+    private PhysicalVolumeType volumeType;
 
     public PhysicalVolumeType getVolumeType() {
         return volumeType;
@@ -192,7 +192,7 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
      *
      * @return A stream that can be used to access the volume.
      */
-    public SparseStream open() {
+    @Override public SparseStream open() {
         return streamOpener.invoke();
     }
 

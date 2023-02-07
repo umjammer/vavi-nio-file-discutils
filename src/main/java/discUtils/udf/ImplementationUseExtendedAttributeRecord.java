@@ -22,7 +22,7 @@
 
 package discUtils.udf;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ImplementationUseExtendedAttributeRecord extends ExtendedAttributeRecord {
@@ -31,9 +31,10 @@ public final class ImplementationUseExtendedAttributeRecord extends ExtendedAttr
 
     public byte[] implementationUseData;
 
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         int read = super.readFrom(buffer, offset);
-        int iuSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 12);
+        int iuSize = ByteUtil.readLeInt(buffer, offset + 12);
         implementationIdentifier = new ImplementationEntityIdentifier();
         implementationIdentifier.readFrom(buffer, offset + 16);
         implementationUseData = new byte[iuSize];

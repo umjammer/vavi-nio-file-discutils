@@ -22,9 +22,8 @@
 
 package diskClone;
 
-import diskClone.NativeMethods.NtfsVolumeData;
-
 import com.sun.jna.Pointer;
+import diskClone.NativeMethods.NtfsVolumeData;
 
 
 public final class VolumeStream extends UnbufferedNativeStream {
@@ -37,6 +36,7 @@ public final class VolumeStream extends UnbufferedNativeStream {
         length = volInfo.totalClusters * volInfo.bytesPerCluster;
     }
 
+    @Override
     public long getLength() {
         return length;
     }

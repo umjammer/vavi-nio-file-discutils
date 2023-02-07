@@ -26,6 +26,7 @@ import java.util.EnumSet;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileInfo implements IByteArraySerializable {
@@ -38,20 +39,20 @@ public class FileInfo implements IByteArraySerializable {
 
     public Point point;
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        fileType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        fileCreator = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        finderFlags = FinderFlags.valueOf(EndianUtilities.toUInt16BigEndian(buffer, offset + 8));
+    @Override public int readFrom(byte[] buffer, int offset) {
+        fileType = ByteUtil.readBeInt(buffer, offset + 0);
+        fileCreator = ByteUtil.readBeInt(buffer, offset + 4);
+        finderFlags = FinderFlags.valueOf(ByteUtil.readBeShort(buffer, offset + 8));
         point = EndianUtilities.toStruct(Point.class, buffer, offset + 10);
 
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

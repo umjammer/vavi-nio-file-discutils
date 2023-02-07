@@ -23,8 +23,8 @@
 package discUtils.ext;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
+import vavi.util.ByteUtil;
 
 
 public class JournalSuperBlock implements IByteArraySerializable {
@@ -35,35 +35,29 @@ public class JournalSuperBlock implements IByteArraySerializable {
 
     public static final int Magic = 0xC03B3998;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return 1024;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
-        int magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        int magic = ByteUtil.readBeInt(buffer, offset);
         if (magic != Magic) {
             throw new IOException("Invalid journal magic - probably not an ext file system");
         }
 
-        int blockType = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x4);
+        int blockType = ByteUtil.readBeInt(buffer, offset + 0x4);
         if (blockType != 3 && blockType != 4) {
             throw new IOException("Invalid journal block type - no superblock found");
         }
 
-        blockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 0xc);
-        maxLength = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10);
+        blockSize = ByteUtil.readBeInt(buffer, offset + 0xc);
+        maxLength = ByteUtil.readBeInt(buffer, offset + 0x10);
         return 1024;
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

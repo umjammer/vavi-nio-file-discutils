@@ -28,18 +28,17 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 
+import discUtils.core.Geometry;
+import discUtils.streams.util.Ownership;
+import discUtils.vhd.Disk;
+import discUtils.vhd.DiskImageFile;
+import dotnet4j.io.MemoryStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.Geometry;
-import discUtils.streams.util.Ownership;
-import discUtils.vhd.Disk;
-import discUtils.vhd.DiskImageFile;
-import dotnet4j.io.MemoryStream;
 
 
 public class DiskImageFileTest {

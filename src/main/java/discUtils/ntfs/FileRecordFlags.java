@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import discUtils.core.coreCompat.EnumSettable;
 
 public enum FileRecordFlags implements EnumSettable {
-//    None,
     InUse,
     IsDirectory,
     IsMetaFile,
@@ -18,11 +17,11 @@ public enum FileRecordFlags implements EnumSettable {
 
     private final int value = 1 << ordinal();
 
-    public Supplier<Integer> supplier() {
+    @Override public Supplier<Integer> supplier() {
         return () -> value;
     }
 
-    public Function<Integer, Boolean> function() {
+    @Override public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
     }
 

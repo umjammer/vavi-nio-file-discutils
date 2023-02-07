@@ -46,11 +46,11 @@ public final class Nfs3Mount extends RpcProgram {
         super(client);
     }
 
-    public int getIdentifier() {
+    @Override public int getIdentifier() {
         return ProgramIdentifier;
     }
 
-    public int getVersion() {
+    @Override public int getVersion() {
         return ProgramVersion;
     }
 

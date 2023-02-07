@@ -22,15 +22,18 @@
 
 package discUtils.registry;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 final class SubKeyIndirectListCell extends ListCell {
+
     private final RegistryHive hive;
 
     public SubKeyIndirectListCell(RegistryHive hive, int index) {
@@ -48,7 +51,7 @@ final class SubKeyIndirectListCell extends ListCell {
         cellIndexes = value;
     }
 
-    int getCount() {
+    @Override int getCount() {
         int total = 0;
         for (int cellIndex : getCellIndexes()) {
             Cell cell = hive.getCell(cellIndex);
@@ -72,32 +75,32 @@ final class SubKeyIndirectListCell extends ListCell {
         listType = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 4 + cellIndexes.size() * 4;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        listType = EndianUtilities.bytesToString(buffer, offset, 2);
-        int numElements = EndianUtilities.toInt16LittleEndian(buffer, offset + 2);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        listType = new String(buffer, offset, 2, StandardCharsets.US_ASCII);
+        int numElements = ByteUtil.readLeShort(buffer, offset + 2);
         cellIndexes = new ArrayList<>(numElements);
         for (int i = 0; i < numElements; ++i) {
-            cellIndexes.add(EndianUtilities.toInt32LittleEndian(buffer, offset + 0x4 + i * 0x4));
+            cellIndexes.add(ByteUtil.readLeInt(buffer, offset + 0x4 + i * 0x4));
         }
         return 4 + cellIndexes.size() * 4;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(listType, buffer, offset, 2);
-        EndianUtilities.writeBytesLittleEndian((short) cellIndexes.size(), buffer, offset + 2);
+        ByteUtil.writeLeShort((short) cellIndexes.size(), buffer, offset + 2);
         for (int i = 0; i < cellIndexes.size(); ++i) {
-            EndianUtilities.writeBytesLittleEndian(cellIndexes.get(i), buffer, offset + 4 + i * 4);
+            ByteUtil.writeLeInt(cellIndexes.get(i), buffer, offset + 4 + i * 4);
         }
     }
 
     /**
      * @param cellIndex {@cs out}
      */
-    int findKey(String name, int[] cellIndex) {
+    @Override int findKey(String name, int[] cellIndex) {
         if (cellIndexes.size() <= 0) {
             cellIndex[0] = 0;
             return -1;
@@ -123,7 +126,7 @@ final class SubKeyIndirectListCell extends ListCell {
         return idx < 0 ? -1 : 0;
     }
 
-    void enumerateKeys(List<String> names) {
+    @Override void enumerateKeys(List<String> names) {
         for (Integer cellIndex : cellIndexes) {
             Cell cell = hive.getCell(cellIndex);
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
@@ -135,7 +138,7 @@ final class SubKeyIndirectListCell extends ListCell {
         }
     }
 
-    List<KeyNodeCell> enumerateKeys() {
+    @Override List<KeyNodeCell> enumerateKeys() {
         List<KeyNodeCell> result = new ArrayList<>();
         for (Integer cellIndex : cellIndexes) {
             Cell cell = hive.getCell(cellIndex);
@@ -149,7 +152,7 @@ final class SubKeyIndirectListCell extends ListCell {
         return result;
     }
 
-    int linkSubKey(String name, int cellIndex) {
+    @Override int linkSubKey(String name, int cellIndex) {
         // Look for the first sublist that has a subkey name greater than name
         if (listType.equals("ri")) {
             if (cellIndexes.size() == 0) {
@@ -183,7 +186,7 @@ final class SubKeyIndirectListCell extends ListCell {
         return hive.updateCell(this, true);
     }
 
-    int unlinkSubKey(String name) {
+    @Override int unlinkSubKey(String name) {
         if (listType.equals("ri")) {
             if (cellIndexes.size() == 0) {
                 throw new UnsupportedOperationException("Empty indirect list");
@@ -232,6 +235,7 @@ final class SubKeyIndirectListCell extends ListCell {
     }
 
     private static class KeyFinder implements Comparator<Integer> {
+
         private final RegistryHive hive;
 
         private final String searchName;
@@ -251,7 +255,7 @@ final class SubKeyIndirectListCell extends ListCell {
             cellIndex = value;
         }
 
-        public int compare(Integer x, Integer y) {
+        @Override public int compare(Integer x, Integer y) {
             Cell cell = hive.getCell(x);
             ListCell listCell = cell instanceof ListCell ? (ListCell) cell : null;
             int result;

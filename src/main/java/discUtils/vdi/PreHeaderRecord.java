@@ -22,9 +22,12 @@
 
 package discUtils.vdi;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class PreHeaderRecord {
@@ -48,9 +51,9 @@ public class PreHeaderRecord {
     }
 
     public int read(byte[] buffer, int offset) {
-        fileInfo = EndianUtilities.bytesToString(buffer, offset + 0, 64).replaceFirst("\0*$", "");
-        signature = EndianUtilities.toUInt32LittleEndian(buffer, offset + 64);
-        version = new FileVersion(EndianUtilities.toUInt32LittleEndian(buffer, offset + 68));
+        fileInfo = new String(buffer, offset + 0, 64, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        signature = ByteUtil.readLeInt(buffer, offset + 64);
+        version = new FileVersion(ByteUtil.readLeInt(buffer, offset + 68));
         return Size;
     }
 
@@ -67,7 +70,7 @@ public class PreHeaderRecord {
 
     public void write(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(fileInfo, buffer, offset + 0, 64);
-        EndianUtilities.writeBytesLittleEndian(signature, buffer, offset + 64);
-        EndianUtilities.writeBytesLittleEndian(version.getValue(), buffer, offset + 68);
+        ByteUtil.writeLeInt(signature, buffer, offset + 64);
+        ByteUtil.writeLeInt(version.getValue(), buffer, offset + 68);
     }
 }

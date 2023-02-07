@@ -27,8 +27,10 @@ import java.io.Serializable;
 
 /**
  * common interface for reading structures to/from byte arrays.
+ * TODO to be deprecate, use Serdes
  */
 public interface IByteArraySerializable extends Serializable {
+
     /**
      * Gets the total number of bytes the structure occupies.
      */

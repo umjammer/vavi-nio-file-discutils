@@ -26,11 +26,8 @@ import discUtils.streams.IByteArraySerializable;
 
 
 public abstract class BlockDirectoryData implements IByteArraySerializable {
-    public abstract int size();
 
-    public abstract int readFrom(byte[] buffer, int offset);
-
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

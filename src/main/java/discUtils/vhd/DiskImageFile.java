@@ -373,7 +373,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
     @Override
     public List<String> getParentLocations() {
@@ -384,7 +384,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * Gets the location of the parent file, given a base path.
      *
      * @param basePath The full path to this file.
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      * @deprecated Use {@link #getParentLocations()} by preference
      */
     public List<String> getParentLocations(String basePath) {
@@ -392,7 +392,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     static DiskImageFile initializeFixed(FileLocator locator, String path, long capacity, Geometry geometry) {
-        DiskImageFile result = null;
+        DiskImageFile result;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeFixedInternal(stream, capacity, geometry);
@@ -404,7 +404,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     static DiskImageFile initializeDynamic(FileLocator locator, String path, long capacity, Geometry geometry, long blockSize) {
-        DiskImageFile result = null;
+        DiskImageFile result;
 
         try (Stream stream = locator.open(path, FileMode.Create, FileAccess.ReadWrite, FileShare.None)) {
             initializeDynamicInternal(stream, capacity, geometry, blockSize);

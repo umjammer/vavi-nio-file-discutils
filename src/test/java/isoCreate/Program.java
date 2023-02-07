@@ -27,15 +27,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.iso9660.BootDeviceEmulation;
 import discUtils.iso9660.CDBuilder;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -59,6 +58,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         Path di = Paths.get(srcDir);
         if (!Files.exists(di)) {

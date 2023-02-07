@@ -16,6 +16,7 @@ import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 import vavi.util.Debug;
 
 
@@ -217,17 +218,17 @@ public class ATBootSector implements BootSector {
     }
 
     private static FatType detectFATType(byte[] bpb) {
-        int bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bpb, 11) & 0xffff;
+        int bpbBytesPerSec = ByteUtil.readLeShort(bpb, 11) & 0xffff;
         if (bpbBytesPerSec == 0) {
             throw new IllegalStateException("Bytes per sector is 0, invalid or corrupt filesystem.");
         }
 
-        int bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(bpb, 17) & 0xffff;
-        int bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(bpb, 22) & 0xffff;
-        int bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(bpb, 36);
-        int bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bpb, 19) & 0xffff;
-        int bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bpb, 32);
-        int bpbResvdSecCnt = EndianUtilities.toUInt16LittleEndian(bpb, 14);
+        int bpbRootEntCnt = ByteUtil.readLeShort(bpb, 17) & 0xffff;
+        int bpbFATSz16 = ByteUtil.readLeShort(bpb, 22) & 0xffff;
+        int bpbFATSz32 = ByteUtil.readLeInt(bpb, 36);
+        int bpbTotSec16 = ByteUtil.readLeShort(bpb, 19) & 0xffff;
+        int bpbTotSec32 = ByteUtil.readLeInt(bpb, 32);
+        int bpbResvdSecCnt = ByteUtil.readLeShort(bpb, 14);
         int bpbNumFATs = bpb[16] & 0xff;
         int bpbSecPerClus = bpb[13] & 0xff;
         int rootDirSectors = (bpbRootEntCnt * 32 + bpbBytesPerSec - 1) / bpbBytesPerSec;
@@ -261,27 +262,27 @@ public class ATBootSector implements BootSector {
 
     private void readBPB() {
         oemName = new String(bootSector, 3, 8, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
-        bpbBytesPerSec = EndianUtilities.toUInt16LittleEndian(bootSector, 11);
+        bpbBytesPerSec = ByteUtil.readLeShort(bootSector, 11);
         sectorsPerCluster = bootSector[13];
-        bpbRsvdSecCnt = EndianUtilities.toUInt16LittleEndian(bootSector, 14);
+        bpbRsvdSecCnt = ByteUtil.readLeShort(bootSector, 14);
         fatCount = bootSector[16];
-        bpbRootEntCnt = EndianUtilities.toUInt16LittleEndian(bootSector, 17);
-        bpbTotSec16 = EndianUtilities.toUInt16LittleEndian(bootSector, 19);
+        bpbRootEntCnt = ByteUtil.readLeShort(bootSector, 17);
+        bpbTotSec16 = ByteUtil.readLeShort(bootSector, 19);
         media = bootSector[21];
-        bpbFATSz16 = EndianUtilities.toUInt16LittleEndian(bootSector, 22);
-        bpbSecPerTrk = EndianUtilities.toUInt16LittleEndian(bootSector, 24);
-        bpbNumHeads = EndianUtilities.toUInt16LittleEndian(bootSector, 26);
-        bpbHiddSec = EndianUtilities.toUInt32LittleEndian(bootSector, 28);
-        bpbTotSec32 = EndianUtilities.toUInt32LittleEndian(bootSector, 32);
+        bpbFATSz16 = ByteUtil.readLeShort(bootSector, 22);
+        bpbSecPerTrk = ByteUtil.readLeShort(bootSector, 24);
+        bpbNumHeads = ByteUtil.readLeShort(bootSector, 26);
+        bpbHiddSec = ByteUtil.readLeInt(bootSector, 28);
+        bpbTotSec32 = ByteUtil.readLeInt(bootSector, 32);
         if (fatVariant != FatType.Fat32) {
             readBS(36);
         } else {
-            bpbFATSz32 = EndianUtilities.toUInt32LittleEndian(bootSector, 36);
-            bpbExtFlags = EndianUtilities.toUInt16LittleEndian(bootSector, 40);
-            bpbFSVer = EndianUtilities.toUInt16LittleEndian(bootSector, 42);
-            bpbRootClus = EndianUtilities.toUInt32LittleEndian(bootSector, 44);
-            bpbFSInfo = EndianUtilities.toUInt16LittleEndian(bootSector, 48);
-            bpbBkBootSec = EndianUtilities.toUInt16LittleEndian(bootSector, 50);
+            bpbFATSz32 = ByteUtil.readLeInt(bootSector, 36);
+            bpbExtFlags = ByteUtil.readLeShort(bootSector, 40);
+            bpbFSVer = ByteUtil.readLeShort(bootSector, 42);
+            bpbRootClus = ByteUtil.readLeInt(bootSector, 44);
+            bpbFSInfo = ByteUtil.readLeShort(bootSector, 48);
+            bpbBkBootSec = ByteUtil.readLeShort(bootSector, 50);
             readBS(64);
         }
 //Debug.println(Level.FINE, "bpbBytesPerSec: " + bpbBytesPerSec);
@@ -301,7 +302,7 @@ Debug.printf(Level.FINE, "media: %02x\n", media);
     private void readBS(int offset) {
         biosDriveNumber = bootSector[offset];
         bsBootSig = bootSector[offset + 2];
-        bsVolId = EndianUtilities.toUInt32LittleEndian(bootSector, offset + 3);
+        bsVolId = ByteUtil.readLeInt(bootSector, offset + 3);
         bsVolLab = new String(bootSector, offset + 7, 11, StandardCharsets.US_ASCII);
         fileSystemType = new String(bootSector, offset + 18, 8, StandardCharsets.US_ASCII);
     }
@@ -347,32 +348,32 @@ Debug.printf(Level.FINE, "media: %02x\n", media);
         // Sectors Per Cluster
         bootSector[13] = sectorsPerCluster;
         // Reserved Sector Count
-        EndianUtilities.writeBytesLittleEndian(reservedSectors, bootSector, 14);
+        ByteUtil.writeLeShort(reservedSectors, bootSector, 14);
         // Number of FATs
         bootSector[16] = 2;
         // Number of Entries in the root directory
-        EndianUtilities.writeBytesLittleEndian(maxRootEntries, bootSector, 17);
+        ByteUtil.writeLeShort(maxRootEntries, bootSector, 17);
         // Total number of sectors (small)
-        EndianUtilities.writeBytesLittleEndian((short) (sectors < 0x10000 ? sectors : 0), bootSector, 19);
+        ByteUtil.writeLeShort((short) (sectors < 0x10000 ? sectors : 0), bootSector, 19);
         // Media
         bootSector[21] = (byte) (isFloppy ? 0xF0 : 0xF8);
         // FAT size (FAT12/FAT16)
-        EndianUtilities.writeBytesLittleEndian((short) (fatType.getValue() < FatType.Fat32.getValue() ? fatSectors : 0),
+        ByteUtil.writeLeShort((short) (fatType.getValue() < FatType.Fat32.getValue() ? fatSectors : 0),
                 bootSector,
                 22);
         // Sectors Per Track
-        EndianUtilities.writeBytesLittleEndian((short) diskGeometry.getSectorsPerTrack(), bootSector, 24);
+        ByteUtil.writeLeShort((short) diskGeometry.getSectorsPerTrack(), bootSector, 24);
         // Heads Per Cylinder
-        EndianUtilities.writeBytesLittleEndian((short) diskGeometry.getHeadsPerCylinder(), bootSector, 26);
+        ByteUtil.writeLeShort((short) diskGeometry.getHeadsPerCylinder(), bootSector, 26);
         // Hidden Sectors
-        EndianUtilities.writeBytesLittleEndian(hiddenSectors, bootSector, 28);
+        ByteUtil.writeLeInt(hiddenSectors, bootSector, 28);
         // Total number of sectors (large)
-        EndianUtilities.writeBytesLittleEndian(sectors >= 0x10000 ? sectors : 0, bootSector, 32);
+        ByteUtil.writeLeInt(sectors >= 0x10000 ? sectors : 0, bootSector, 32);
         if (fatType.getValue() < FatType.Fat32.getValue()) {
             writeBS(bootSector, 36, isFloppy, volId, label, fatType);
         } else {
             // FAT size (FAT32)
-            EndianUtilities.writeBytesLittleEndian(fatSectors, bootSector, 36);
+            ByteUtil.writeLeInt(fatSectors, bootSector, 36);
             // ext flags: 0x80 = FAT 1 (i.e. Zero) active, mirroring
             bootSector[40] = 0x00;
             bootSector[41] = 0x00;
@@ -382,11 +383,11 @@ Debug.printf(Level.FINE, "media: %02x\n", media);
             // First cluster of the root directory, always 2 since we don't do
             // bad
             // sectors...
-            EndianUtilities.writeBytesLittleEndian(2, bootSector, 44);
+            ByteUtil.writeLeInt(2, bootSector, 44);
             // Sector number of FSINFO
-            EndianUtilities.writeBytesLittleEndian(1, bootSector, 48);
+            ByteUtil.writeLeInt(1, bootSector, 48);
             // Sector number of the Backup Boot Sector
-            EndianUtilities.writeBytesLittleEndian(6, bootSector, 50);
+            ByteUtil.writeLeInt(6, bootSector, 50);
             // Reserved area - must be set to 0
             Arrays.fill(bootSector, 52, 52 + 12, (byte) 0);
             writeBS(bootSector, 64, isFloppy, volId, label, fatType);
@@ -420,7 +421,7 @@ Debug.printf(Level.FINE, "media: %02x\n", media);
         // Boot Signature (indicates next 3 fields present)
         bootSector[offset + 2] = 0x29;
         // Volume Id
-        EndianUtilities.writeBytesLittleEndian(volId, bootSector, offset + 3);
+        ByteUtil.writeLeShort((short) volId, bootSector, offset + 3);
         // Volume Label
         EndianUtilities.stringToBytes(label + "           ", bootSector, offset + 7, 11);
         // File System Type

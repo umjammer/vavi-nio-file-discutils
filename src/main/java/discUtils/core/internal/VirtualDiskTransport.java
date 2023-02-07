@@ -23,7 +23,6 @@
 package discUtils.core.internal;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.net.URI;
 
 import discUtils.core.FileLocator;
@@ -34,8 +33,6 @@ import dotnet4j.io.FileAccess;
 public interface VirtualDiskTransport extends Closeable {
 
     boolean isRawDisk();
-
-    void close() throws IOException;
 
     void connect(URI uri, String username, String password);
 

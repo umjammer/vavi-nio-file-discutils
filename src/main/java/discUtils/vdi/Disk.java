@@ -96,6 +96,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the capacity of the disk (in bytes).
      */
+    @Override
     public long getCapacity() {
         return diskImage.getCapacity();
     }
@@ -109,6 +110,7 @@ public final class Disk extends VirtualDisk {
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
+    @Override
     public SparseStream getContent() {
         if (content == null) {
             content = diskImage.openContent(null, Ownership.None);
@@ -120,6 +122,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the type of disk represented by this object.
      */
+    @Override
     public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
@@ -129,6 +132,7 @@ public final class Disk extends VirtualDisk {
      * meta-data about the disk format, for example whether the BIOS geometry is
      * preserved in the disk file.
      */
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo(diskImage.isSparse() ? "dynamic" : "fixed");
     }
@@ -136,6 +140,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the geometry of the disk.
      */
+    @Override
     public Geometry getGeometry() {
         return diskImage.getGeometry();
     }
@@ -143,6 +148,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the layers that make up the disk.
      */
+    @Override
     public List<VirtualDiskLayer> getLayers() {
         return null;
     }
@@ -180,6 +186,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOperationException("Differencing disks not implemented for the VDI format");
     }
@@ -190,6 +197,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOperationException("Differencing disks not implemented for the VDI format");
     }
@@ -197,6 +205,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Disposes of underlying resources.
      */
+    @Override
     public void close() throws IOException {
         try {
             if (content != null) {

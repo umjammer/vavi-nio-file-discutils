@@ -23,7 +23,7 @@
 package discUtils.lvm;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class RawLocation implements IByteArraySerializable {
@@ -36,27 +36,21 @@ public class RawLocation implements IByteArraySerializable {
 
     public RawLocationFlags flags = RawLocationFlags.None;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return 0x18;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
-        this.offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        checksum = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x10);
-        flags = RawLocationFlags.values()[EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x14)];
+        this.offset = ByteUtil.readLeLong(buffer, offset);
+        length = ByteUtil.readLeLong(buffer, offset + 0x8);
+        checksum = ByteUtil.readLeInt(buffer, offset + 0x10);
+        flags = RawLocationFlags.values()[ByteUtil.readLeInt(buffer, offset + 0x14)];
         return size();
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }

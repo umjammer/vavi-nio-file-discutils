@@ -26,10 +26,6 @@ import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3FileAttributes;
 import discUtils.nfs.Nfs3FileSystemStat;
 import discUtils.nfs.Nfs3FileSystemStatResult;
@@ -37,6 +33,9 @@ import discUtils.nfs.Nfs3FileTime;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3FileSystemStatResultTest {
@@ -61,7 +60,7 @@ public class Nfs3FileSystemStatResultTest {
         result.getPostOpAttributes().modifyTime = new Nfs3FileTime(ZonedDateTime.of(2017, 1, 3, 0, 0, 0, 0, ZoneId.of("UTC"))
                 .toInstant()
                 .toEpochMilli());
-        Nfs3FileSystemStatResult clone = null;
+        Nfs3FileSystemStatResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

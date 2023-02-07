@@ -9,6 +9,7 @@ import discUtils.streams.SparseStream;
  * support multi-stream files.
  */
 public interface IVfsFileWithStreams extends IVfsFile {
+
     /**
      * Creates a new stream.
      *

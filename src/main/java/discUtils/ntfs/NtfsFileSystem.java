@@ -35,8 +35,6 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import vavi.util.Debug;
-
 import discUtils.core.ClusterMap;
 import discUtils.core.DiscFileSystem;
 import discUtils.core.Geometry;
@@ -65,8 +63,9 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileNotFoundException;
 import dotnet4j.io.Stream;
-import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.security.accessControl.RawSecurityDescriptor;
+import dotnet4j.util.compat.StringUtilities;
+import vavi.util.Debug;
 
 
 /**
@@ -831,6 +830,7 @@ Debug.println(Level.FINE, volumeInfo);
      * @param offset The byte position to convert.
      * @return The cluster containing the specified byte.
      */
+    @Override
     public long offsetToCluster(long offset) {
         return offset / getClusterSize();
     }
@@ -1324,7 +1324,7 @@ Debug.println(Level.FINE, volumeInfo);
      *         the contents of the alternate streams, use OpenFile(path + ":" +
      *         name, ...).
      */
-    public List<String> getAlternateDataStreams(String path) {
+    @Override public List<String> getAlternateDataStreams(String path) {
         DirectoryEntry dirEntry = getDirectoryEntry(path);
         if (dirEntry == null) {
             throw new FileNotFoundException("File not found " + path);
@@ -1527,8 +1527,8 @@ Debug.println(Level.FINE, volumeInfo);
                 DirectoryEntry childDirEntry = focusDir.getEntryByName(pathElement);
                 if (childDirEntry == null) {
                     EnumSet<FileAttributeFlags> newDirAttrs = focusDir.getStandardInformation().fileAttributeFlags;
-                    if (options != null && options.getCompressed().isPresent()) {
-                        if (options.getCompressed().get()) {
+                    if (options != null && options.getCompressed() != null) {
+                        if (options.getCompressed()) {
                             newDirAttrs.add(FileAttributeFlags.Compressed);
                         } else {
                             newDirAttrs.remove(FileAttributeFlags.Compressed);
@@ -1803,8 +1803,8 @@ Debug.println(Level.FINE, volumeInfo);
         DirectoryEntry parentDirEntry = getDirectoryEntry(Utilities.getDirectoryFromPath(path));
         Directory parentDir = getDirectory(parentDirEntry.getReference());
         EnumSet<FileAttributeFlags> newFileAttrs = parentDir.getStandardInformation().fileAttributeFlags;
-        if (options != null && options.getCompressed().isPresent()) {
-            if (options.getCompressed().get()) {
+        if (options != null && options.getCompressed() != null) {
+            if (options.getCompressed()) {
                 newFileAttrs.add(FileAttributeFlags.Compressed);
             } else {
                 newFileAttrs.remove(FileAttributeFlags.Compressed);
@@ -1886,8 +1886,8 @@ Debug.println(Level.FINE, volumeInfo);
     private DirectoryEntry addFileToDirectory(File file, Directory dir, String name, NewFileOptions options) {
         DirectoryEntry entry;
         boolean createShortNames;
-        if (options != null && options.getCreateShortNames().isPresent()) {
-            createShortNames = options.getCreateShortNames().get();
+        if (options != null && options.getCreateShortNames() != null) {
+            createShortNames = options.getCreateShortNames();
         } else {
             createShortNames = getCreateShortNames();
         }
@@ -2085,7 +2085,7 @@ Debug.println(Level.FINE, volumeInfo);
     }
 
     File allocateFile(EnumSet<FileRecordFlags> flags) {
-        File result = null;
+        File result;
         if (flags.contains(FileRecordFlags.IsDirectory)) {
             result = new Directory(context, context.getMft().allocateRecord(flags, false));
         } else {

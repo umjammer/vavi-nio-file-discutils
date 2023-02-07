@@ -45,6 +45,7 @@ import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
 import dotnet4j.io.lzo.SeekableLzoStream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -193,8 +194,8 @@ public class ExtentData extends BaseItem {
     }
 
     @Override public int readFrom(byte[] buffer, int offset) {
-        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        decodedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+        generation = ByteUtil.readLeLong(buffer, offset);
+        decodedSize = ByteUtil.readLeLong(buffer, offset + 0x8);
         compression = ExtentDataCompression.values()[buffer[offset + 0x10]];
         encryption = buffer[offset + 0x11] != 0;
         //12 2 UINT other encoding (0=none)
@@ -202,10 +203,10 @@ public class ExtentData extends BaseItem {
         if (type == ExtentDataType.Inline) {
             inlineData = EndianUtilities.toByteArray(buffer, offset + 0x15, buffer.length - (offset + 0x15));
         } else {
-            extentAddress = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x15);
-            extentSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x1d);
-            extentOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x25);
-            logicalSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x2d);
+            extentAddress = ByteUtil.readLeLong(buffer, offset + 0x15);
+            extentSize = ByteUtil.readLeLong(buffer, offset + 0x1d);
+            extentOffset = ByteUtil.readLeLong(buffer, offset + 0x25);
+            logicalSize = ByteUtil.readLeLong(buffer, offset + 0x2d);
         }
         return size();
     }
@@ -247,7 +248,7 @@ public class ExtentData extends BaseItem {
             break;
         case Lzo:
             byte[] buffer = StreamUtilities.readExact(stream, 4); // sizeof(int)
-            int totalLength = EndianUtilities.toUInt32LittleEndian(buffer, 0);
+            int totalLength = ByteUtil.readLeInt(buffer, 0);
             long processed = 4; // sizeof(int)
             List<SparseStream> parts = new ArrayList<>();
             long remaining = logicalSize;
@@ -255,7 +256,7 @@ public class ExtentData extends BaseItem {
             while (processed < totalLength) {
                 stream.position(processed);
                 StreamUtilities.readExact(stream, buffer, 0, 4); // sizeof(int)
-                int partLength = EndianUtilities.toUInt32LittleEndian(buffer, 0);
+                int partLength = ByteUtil.readLeInt(buffer, 0);
                 processed += 4; // sizeof(int)
 //Debug.println("processed: " + processed + ", partLength: " + partLength + ", remaining: " + remaining);
                 SubStream part = new SubStream(stream, Ownership.Dispose, processed, partLength);

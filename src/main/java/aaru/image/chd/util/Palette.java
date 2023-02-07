@@ -75,7 +75,7 @@ class Palette {
         }
 
         // internal object to track dirty states
-        private class DirtyState {
+        private static class DirtyState {
 
             // construction
             public DirtyState() {
@@ -382,12 +382,12 @@ class Palette {
         for (int index = start; index <= end; index++) {
             Color rgb = m_entry_color[index];
             int y = 299 * rgb.getRed() + 587 * rgb.getGreen() + 114 * rgb.getBlue();
-            int u = ((int) rgb.getBlue() - y / 1000) * 492 / 1000;
-            int v = ((int) rgb.getRed() - y / 1000) * 877 / 1000;
+            int u = (rgb.getBlue() - y / 1000) * 492 / 1000;
+            int v = (rgb.getRed() - y / 1000) * 877 / 1000;
             int target = tmin + ((y - ymin) * (tmax - tmin + 1)) / (ymax - ymin);
-            int r = clamp(target + 1140 * v / 1000);
-            int g = clamp(target - 395 * u / 1000 - 581 * v / 1000);
-            int b = clamp(target + 2032 * u / 1000);
+            int r = clamp(target + 1140 * v / 1000f);
+            int g = clamp(target - 395 * u / 1000f - 581 * v / 1000f);
+            int b = clamp(target + 2032 * u / 1000f);
             entry_set_color(index, new Color(r, g, b));
         }
     }

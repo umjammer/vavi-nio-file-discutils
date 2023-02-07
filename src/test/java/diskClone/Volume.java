@@ -22,19 +22,17 @@
 
 package diskClone;
 
-import com.sun.jna.Pointer;
-
 import java.io.Closeable;
 import java.io.IOException;
 
-import dotnet4j.util.compat.StringUtilities;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import diskClone.NativeMethods.EIOControlCode;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileShare;
 import dotnet4j.io.Stream;
-
-import static .escapeForRegex;
+import dotnet4j.util.compat.StringUtilities;
 
 
 public final class Volume implements Closeable {
@@ -61,18 +59,15 @@ public final class Volume implements Closeable {
 
         // Enable reading the full contents of the volume (not just the region
         // bounded by the file system)
-        int bytesRet = 0;
-        int[] refVar___0 = new int[] {
-            bytesRet
-        };
-        boolean boolVar___0 = !NativeMethods.INSTANCE
-                .deviceIoControl(handle, EIOControlCode.FsctlAllowExtendedDasdIo, null, 0, null, 0, refVar___0, null);
-        bytesRet = refVar___0[0];
-        if (boolVar___0) {
+        int[] bytesRet = new int[1];
+        bytesRet[0] = NativeMethods.INSTANCE
+                .deviceIoControl(handle, EIOControlCode.FsctlAllowExtendedDasdIo, null, 0, null, 0, bytesRet, null);
+        if (bytesRet[0] == 0) {
             throw Win32Wrapper.getIOExceptionForLastError();
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (stream != null) {
             stream.close();
@@ -94,16 +89,11 @@ public final class Volume implements Closeable {
 
     public diskClone.NativeMethods.DiskExtent[] getDiskExtents() {
         int numExtents = 1;
-        int bufferSize = 8 + Marshal.SizeOf(diskClone.NativeMethods.DiskExtent.class) * numExtents;
+        int bufferSize = 8 + Structure.sizeOf(diskClone.NativeMethods.DiskExtent.class) * numExtents;
         byte[] buffer = new byte[bufferSize];
-        int bytesRet = 0;
-        int[] refVar___1 = new int[] {
-            bytesRet
-        };
-        boolean boolVar___1 = !NativeMethods.INSTANCE
-                .deviceIoControl(handle, EIOControlCode.VolumeGetDiskExtents, null, 0, buffer, bufferSize, refVar___1, null);
-        bytesRet = refVar___1[0];
-        if (boolVar___1) {
+        int[] bytesRet = new int[] {NativeMethods.INSTANCE
+                .deviceIoControl(handle, EIOControlCode.VolumeGetDiskExtents, null, 0, buffer, bufferSize, bytesRet, null)};
+        if (bytesRet[0] == 0) {
             if (Marshal.GetLastWin32Error() != NativeMethods.ERROR_MORE_DATA) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
@@ -111,19 +101,15 @@ public final class Volume implements Closeable {
             numExtents = Marshal.readInt32(buffer, 0);
             bufferSize = 8 + Marshal.SizeOf(diskClone.NativeMethods.DiskExtent.class) * numExtents;
             buffer = new byte[bufferSize];
-            int[] refVar___2 = new int[] {
-                bytesRet
-            };
-            boolean boolVar___2 = !NativeMethods.INSTANCE.deviceIoControl(handle,
-                                                                          EIOControlCode.VolumeGetDiskExtents,
-                                                                          null,
-                                                                          0,
-                                                                          buffer,
-                                                                          bufferSize,
-                                                                          refVar___2,
-                                                                          null);
-            bytesRet = refVar___2[0];
-            if (boolVar___2) {
+            bytesRet[0] = NativeMethods.INSTANCE.deviceIoControl(handle,
+                    EIOControlCode.VolumeGetDiskExtents,
+                    null,
+                    0,
+                    buffer,
+                    bufferSize,
+                    bytesRet,
+                    null);
+            if (bytesRet[0] != 0) {
                 throw Win32Wrapper.getIOExceptionForLastError();
             }
         }

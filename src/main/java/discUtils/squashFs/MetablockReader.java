@@ -22,7 +22,9 @@
 
 package discUtils.squashFs;
 
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
+
+import vavi.util.ByteUtil;
 
 
 final class MetablockReader {
@@ -103,9 +105,9 @@ final class MetablockReader {
         if (block.getAvailable() - currentOffset < 4) {
             byte[] buffer = new byte[4];
             read(buffer, 0, 4);
-            return EndianUtilities.toUInt32LittleEndian(buffer, 0);
+            return ByteUtil.readLeInt(buffer, 0);
         }
-        int result = EndianUtilities.toUInt32LittleEndian(block.getData(), currentOffset);
+        int result = ByteUtil.readLeInt(block.getData(), currentOffset);
         currentOffset += 4;
         return result;
     }
@@ -115,9 +117,9 @@ final class MetablockReader {
         if (block.getAvailable() - currentOffset < 4) {
             byte[] buffer = new byte[4];
             read(buffer, 0, 4);
-            return EndianUtilities.toInt32LittleEndian(buffer, 0);
+            return ByteUtil.readLeInt(buffer, 0);
         }
-        int result = EndianUtilities.toInt32LittleEndian(block.getData(), currentOffset);
+        int result = ByteUtil.readLeInt(block.getData(), currentOffset);
         currentOffset += 4;
         return result;
     }
@@ -127,9 +129,9 @@ final class MetablockReader {
         if (block.getAvailable() - currentOffset < 2) {
             byte[] buffer = new byte[2];
             read(buffer, 0, 2);
-            return EndianUtilities.toUInt16LittleEndian(buffer, 0);
+            return ByteUtil.readLeShort(buffer, 0);
         }
-        short result = EndianUtilities.toUInt16LittleEndian(block.getData(), currentOffset);
+        short result = ByteUtil.readLeShort(block.getData(), currentOffset);
         currentOffset += 2;
         return result;
     }
@@ -139,9 +141,9 @@ final class MetablockReader {
         if (block.getAvailable() - currentOffset < 2) {
             byte[] buffer = new byte[2];
             read(buffer, 0, 2);
-            return EndianUtilities.toInt16LittleEndian(buffer, 0);
+            return ByteUtil.readLeShort(buffer, 0);
         }
-        short result = EndianUtilities.toInt16LittleEndian(block.getData(), currentOffset);
+        short result = ByteUtil.readLeShort(block.getData(), currentOffset);
         currentOffset += 2;
         return result;
     }
@@ -151,9 +153,9 @@ final class MetablockReader {
         if (block.getAvailable() - currentOffset < len) {
             byte[] buffer = new byte[len];
             read(buffer, 0, len);
-            return EndianUtilities.bytesToString(buffer, 0, len);
+            return new String(buffer, 0, len, StandardCharsets.US_ASCII);
         }
-        String result = EndianUtilities.bytesToString(block.getData(), currentOffset, len);
+        String result = new String(block.getData(), currentOffset, len, StandardCharsets.US_ASCII);
         currentOffset += len;
         return result;
     }

@@ -25,8 +25,8 @@ package discUtils.ntfs;
 import java.io.PrintWriter;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.util.compat.Tuple;
+import vavi.util.ByteUtil;
 
 
 public class ReparsePoints {
@@ -74,19 +74,19 @@ public class ReparsePoints {
 
         public int tag;
 
-        public int size() {
+        @Override public int size() {
             return 12;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
-            tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-            file = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 4));
+        @Override public int readFrom(byte[] buffer, int offset) {
+            tag = ByteUtil.readLeInt(buffer, offset);
+            file = new FileRecordReference(ByteUtil.readLeLong(buffer, offset + 4));
             return 12;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
-            EndianUtilities.writeBytesLittleEndian(tag, buffer, offset);
-            EndianUtilities.writeBytesLittleEndian(file.getValue(), buffer, offset + 4);
+        @Override public void writeTo(byte[] buffer, int offset) {
+            ByteUtil.writeLeInt(tag, buffer, offset);
+            ByteUtil.writeLeLong(file.getValue(), buffer, offset + 4);
         }
 
         /**
@@ -99,18 +99,18 @@ public class ReparsePoints {
 
     public final static class Data implements IByteArraySerializable {
 
-        public int size() {
+        @Override public int size() {
             return 0;
         }
 
-        public int readFrom(byte[] buffer, int offset) {
+        @Override public int readFrom(byte[] buffer, int offset) {
             return 0;
         }
 
-        public void writeTo(byte[] buffer, int offset) {
+        @Override public void writeTo(byte[] buffer, int offset) {
         }
 
-        public String toString() {
+        @Override public String toString() {
             return "<no data>";
         }
     }

@@ -27,18 +27,17 @@ import java.time.Instant;
 import java.util.EnumSet;
 import java.util.List;
 
+import discUtils.core.DiscDirectoryInfo;
+import discUtils.core.DiscFileInfo;
+import discUtils.core.coreCompat.FileAttributes;
+import discUtils.iso9660.CDBuilder;
+import discUtils.iso9660.CDReader;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.DiscDirectoryInfo;
-import discUtils.core.DiscFileInfo;
-import discUtils.core.coreCompat.FileAttributes;
-import discUtils.iso9660.CDBuilder;
-import discUtils.iso9660.CDReader;
 
 public class IsoDirectoryInfoTest {
 

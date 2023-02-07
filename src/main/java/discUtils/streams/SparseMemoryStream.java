@@ -30,6 +30,7 @@ import dotnet4j.io.FileAccess;
  * Provides a sparse equivalent to MemoryStream.
  */
 public final class SparseMemoryStream extends BufferStream {
+
     /**
      * Initializes a new instance of the SparseMemoryStream class.
      * The created instance permits read and write access.

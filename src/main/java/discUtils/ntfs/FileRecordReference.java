@@ -23,7 +23,7 @@
 package discUtils.ntfs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileRecordReference implements IByteArraySerializable, Comparable<FileRecordReference> {
@@ -57,7 +57,7 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
         return (int) (value >>> 48) & 0xFFFF;
     }
 
-    public int size() {
+    @Override public int size() {
         return 8;
     }
 
@@ -65,16 +65,16 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
         return getSequenceNumber() == 0;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        setValue(EndianUtilities.toUInt64LittleEndian(buffer, offset));
+    @Override public int readFrom(byte[] buffer, int offset) {
+        setValue(ByteUtil.readLeLong(buffer, offset));
         return 8;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
+    @Override public void writeTo(byte[] buffer, int offset) {
+        ByteUtil.writeLeLong(value, buffer, offset);
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (!(obj instanceof FileRecordReference)) {
             return false;
         }
@@ -82,16 +82,16 @@ public class FileRecordReference implements IByteArraySerializable, Comparable<F
         return value == ((FileRecordReference) obj).value;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return Long.hashCode(value);
     }
 
-    public int compareTo(FileRecordReference other) {
+    @Override public int compareTo(FileRecordReference other) {
         return Long.compare(value, other.value);
 
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "MFT:" + getMftIndex() + " (ver: " + getSequenceNumber() + ")";
     }
 }

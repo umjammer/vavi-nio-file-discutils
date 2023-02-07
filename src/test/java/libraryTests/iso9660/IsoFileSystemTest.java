@@ -24,14 +24,6 @@ package libraryTests.iso9660;
 
 import java.io.File;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
 import discUtils.core.DiscFileSystemInfo;
@@ -39,6 +31,13 @@ import discUtils.iso9660.CDBuilder;
 import discUtils.iso9660.CDReader;
 import discUtils.streams.SparseStream;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class IsoFileSystemTest {
 

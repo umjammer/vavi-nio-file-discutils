@@ -29,6 +29,7 @@ import dotnet4j.io.IOException;
  * probably corruption.
  */
 public class InvalidFileSystemException extends IOException {
+
     /**
      * Initializes a new instance of the InvalidFileSystemException class.
      */
@@ -53,14 +54,4 @@ public class InvalidFileSystemException extends IOException {
     public InvalidFileSystemException(String message, Exception innerException) {
         super(message, innerException);
     }
-
-    /**
-     * Initializes a new instance of the InvalidFileSystemException class.
-     *
-     * @param info The serialization info.
-     * @param context The streaming context.
-     */
-//    protected InvalidFileSystemException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 }

@@ -22,9 +22,11 @@
 
 package discUtils.vhd;
 
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class Header {
@@ -39,8 +41,8 @@ public class Header {
 
     public static Header fromBytes(byte[] data, int offset) {
         Header result = new Header();
-        result.cookie = EndianUtilities.bytesToString(data, offset, 8);
-        result.dataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
+        result.cookie = new String(data, offset, 8, StandardCharsets.US_ASCII);
+        result.dataOffset = ByteUtil.readBeLong(data, offset + 8);
         return result;
     }
 }

@@ -43,7 +43,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
-
 import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -105,6 +104,7 @@ public final class UnicastDnsClient extends DnsClient {
     /**
      * Flushes any cached DNS records.
      */
+    @Override
     public void flushCache() {
         // Nothing to do.
     }
@@ -116,6 +116,7 @@ public final class UnicastDnsClient extends DnsClient {
      * @param type The type of record requested.
      * @return The records returned by the DNS server, if any.
      */
+    @Override
     public ResourceRecord[] lookup(String name, RecordType type) {
         short transactionId = nextTransId++;
         String normName = normalizeDomainName(name);

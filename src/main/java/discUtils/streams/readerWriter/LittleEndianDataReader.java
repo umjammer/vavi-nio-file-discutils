@@ -22,40 +22,41 @@
 
 package discUtils.streams.readerWriter;
 
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
  * Class for reading little-endian data from a stream.
  */
 public class LittleEndianDataReader extends DataReader {
+
     public LittleEndianDataReader(Stream stream) {
         super(stream);
     }
 
-    public short readUInt16() {
+    @Override public short readUInt16() {
         readToBuffer(2);
-        return EndianUtilities.toUInt16LittleEndian(buffer, 0);
+        return ByteUtil.readLeShort(buffer, 0);
     }
 
-    public int readInt32() {
+    @Override public int readInt32() {
         readToBuffer(4);
-        return EndianUtilities.toInt32LittleEndian(buffer, 0);
+        return ByteUtil.readLeInt(buffer, 0);
     }
 
-    public int readUInt32() {
+    @Override public int readUInt32() {
         readToBuffer(4);
-        return EndianUtilities.toUInt32LittleEndian(buffer, 0);
+        return ByteUtil.readLeInt(buffer, 0);
     }
 
-    public long readInt64() {
+    @Override public long readInt64() {
         readToBuffer(8);
-        return EndianUtilities.toInt64LittleEndian(buffer, 0);
+        return ByteUtil.readLeLong(buffer, 0);
     }
 
-    public long readUInt64() {
+    @Override public long readUInt64() {
         readToBuffer(8);
-        return EndianUtilities.toUInt64LittleEndian(buffer, 0);
+        return ByteUtil.readLeLong(buffer, 0);
     }
 }

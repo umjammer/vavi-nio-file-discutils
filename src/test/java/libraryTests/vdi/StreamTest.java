@@ -22,18 +22,17 @@
 
 package libraryTests.vdi;
 
+import discUtils.streams.util.Ownership;
+import discUtils.vdi.Disk;
+import dotnet4j.io.MemoryStream;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import discUtils.streams.util.Ownership;
-import discUtils.vdi.Disk;
-import dotnet4j.io.MemoryStream;
-import dotnet4j.io.SeekOrigin;
-import dotnet4j.io.Stream;
 
 
 public class StreamTest {

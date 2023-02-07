@@ -28,6 +28,7 @@ import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileEntry implements IByteArraySerializable {
@@ -75,31 +76,31 @@ public class FileEntry implements IByteArraySerializable {
 
     public long uniqueId;
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         informationControlBlock = EndianUtilities.toStruct(InformationControlBlock.class, buffer, offset + 16);
-        uid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
-        gid = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        permissions = FilePermissions.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 44));
-        fileLinkCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 48);
+        uid = ByteUtil.readLeInt(buffer, offset + 36);
+        gid = ByteUtil.readLeInt(buffer, offset + 40);
+        permissions = FilePermissions.valueOf(ByteUtil.readLeInt(buffer, offset + 44));
+        fileLinkCount = ByteUtil.readLeShort(buffer, offset + 48);
         recordFormat = buffer[offset + 50];
         recordDisplayAttributes = buffer[offset + 51];
-        recordLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 52);
-        informationLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 56);
-        logicalBlocksRecorded = EndianUtilities.toUInt64LittleEndian(buffer, offset + 64);
+        recordLength = ByteUtil.readLeShort(buffer, offset + 52);
+        informationLength = ByteUtil.readLeLong(buffer, offset + 56);
+        logicalBlocksRecorded = ByteUtil.readLeLong(buffer, offset + 64);
         accessTime = UdfUtilities.parseTimestamp(buffer, offset + 72);
         modificationTime = UdfUtilities.parseTimestamp(buffer, offset + 84);
         attributeTime = UdfUtilities.parseTimestamp(buffer, offset + 96);
-        checkpoint = EndianUtilities.toUInt32LittleEndian(buffer, offset + 108);
+        checkpoint = ByteUtil.readLeInt(buffer, offset + 108);
         extendedAttributeIcb = EndianUtilities.toStruct(LongAllocationDescriptor.class, buffer, offset + 112);
         implementationIdentifier = EndianUtilities.toStruct(ImplementationEntityIdentifier.class, buffer, offset + 128);
-        uniqueId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 160);
-        extendedAttributesLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 168);
-        allocationDescriptorsLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 172);
+        uniqueId = ByteUtil.readLeLong(buffer, offset + 160);
+        extendedAttributesLength = ByteUtil.readLeInt(buffer, offset + 168);
+        allocationDescriptorsLength = ByteUtil.readLeInt(buffer, offset + 172);
         allocationDescriptors = EndianUtilities
                 .toByteArray(buffer, offset + 176 + extendedAttributesLength, allocationDescriptorsLength);
         byte[] eaData = EndianUtilities.toByteArray(buffer, offset + 176, extendedAttributesLength);
@@ -107,7 +108,7 @@ public class FileEntry implements IByteArraySerializable {
         return 176 + extendedAttributesLength + allocationDescriptorsLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
@@ -115,9 +116,9 @@ public class FileEntry implements IByteArraySerializable {
         if (eaData != null && eaData.length != 0) {
             DescriptorTag eaTag = new DescriptorTag();
             eaTag.readFrom(eaData, 0);
-            int implAttrLocation = EndianUtilities.toInt32LittleEndian(eaData, 16);
+            int implAttrLocation = ByteUtil.readLeInt(eaData, 16);
             @SuppressWarnings("unused")
-            int appAttrLocation = EndianUtilities.toInt32LittleEndian(eaData, 20);
+            int appAttrLocation = ByteUtil.readLeInt(eaData, 20);
             List<ExtendedAttributeRecord> extendedAttrs = new ArrayList<>();
             int pos = 24;
             while (pos < eaData.length) {

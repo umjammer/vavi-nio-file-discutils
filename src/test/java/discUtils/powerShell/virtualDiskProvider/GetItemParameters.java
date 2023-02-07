@@ -22,7 +22,7 @@
 
 package discUtils.powerShell.virtualDiskProvider;
 
-import java.util.concurrent.Semaphore; // TODO
+import java.util.concurrent.Semaphore;
 
 public class GetItemParameters {
 

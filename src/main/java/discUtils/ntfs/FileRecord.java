@@ -28,9 +28,9 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import dotnet4j.util.compat.Utilities;
+import vavi.util.ByteUtil;
 
 
 public class FileRecord extends FixupRecordBase {
@@ -244,10 +244,11 @@ public class FileRecord extends FixupRecordBase {
         return null;
     }
 
-    public String toString() {
+    @Override public String toString() {
         for (AttributeRecord attr : getAttributes()) {
             if (attr.getAttributeType() == AttributeType.FileName) {
-                StructuredNtfsAttribute<FileNameRecord> fnAttr = (StructuredNtfsAttribute) NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr);
+                @SuppressWarnings("unchecked")
+                StructuredNtfsAttribute<FileNameRecord> fnAttr = (StructuredNtfsAttribute<FileNameRecord>) NtfsAttribute.fromRecord(null, new FileRecordReference(0), attr);
                 return fnAttr.getContent().fileName;
             }
         }
@@ -380,19 +381,19 @@ public class FileRecord extends FixupRecordBase {
         writer.println(indent + "   Index (Self Ref): " + index);
     }
 
-    protected void read(byte[] buffer, int offset) {
-        logFileSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
-        sequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x10);
-        hardLinkCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x12);
-        firstAttributeOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x14);
-        flags = FileRecordFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x16));
-        realSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18);
-        allocatedSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1C);
-        baseFile = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20));
-        nextAttributeId = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x28);
+    @Override protected void read(byte[] buffer, int offset) {
+        logFileSequenceNumber = ByteUtil.readLeLong(buffer, offset + 0x08);
+        sequenceNumber = ByteUtil.readLeShort(buffer, offset + 0x10);
+        hardLinkCount = ByteUtil.readLeShort(buffer, offset + 0x12);
+        firstAttributeOffset = ByteUtil.readLeShort(buffer, offset + 0x14);
+        flags = FileRecordFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x16));
+        realSize = ByteUtil.readLeInt(buffer, offset + 0x18);
+        allocatedSize = ByteUtil.readLeInt(buffer, offset + 0x1C);
+        baseFile = new FileRecordReference(ByteUtil.readLeLong(buffer, offset + 0x20));
+        nextAttributeId = ByteUtil.readLeShort(buffer, offset + 0x28);
 
         if (getUpdateSequenceOffset() >= 0x30) {
-            index = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x2C);
+            index = ByteUtil.readLeInt(buffer, offset + 0x2C);
             haveIndex = true;
         }
 
@@ -410,25 +411,25 @@ public class FileRecord extends FixupRecordBase {
         }
     }
 
-    protected short write(byte[] buffer, int offset) {
+    @Override protected short write(byte[] buffer, int offset) {
         short headerEnd = (short) (haveIndex ? 0x30 : 0x2A);
 
         firstAttributeOffset = (short) MathUtilities.roundUp(headerEnd + getUpdateSequenceSize(), 0x08);
         realSize = calcSize();
 
-        EndianUtilities.writeBytesLittleEndian(logFileSequenceNumber, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(sequenceNumber, buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(hardLinkCount, buffer, offset + 0x12);
-        EndianUtilities.writeBytesLittleEndian(firstAttributeOffset, buffer, offset + 0x14);
-        EndianUtilities.writeBytesLittleEndian((short) FileRecordFlags.valueOf(flags), buffer, offset + 0x16);
-        EndianUtilities.writeBytesLittleEndian(realSize, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(allocatedSize, buffer, offset + 0x1C);
-        EndianUtilities.writeBytesLittleEndian(baseFile.getValue(), buffer, offset + 0x20);
-        EndianUtilities.writeBytesLittleEndian(nextAttributeId, buffer, offset + 0x28);
+        ByteUtil.writeLeLong(logFileSequenceNumber, buffer, offset + 0x08);
+        ByteUtil.writeLeShort(sequenceNumber, buffer, offset + 0x10);
+        ByteUtil.writeLeShort(hardLinkCount, buffer, offset + 0x12);
+        ByteUtil.writeLeShort(firstAttributeOffset, buffer, offset + 0x14);
+        ByteUtil.writeLeShort((short) FileRecordFlags.valueOf(flags), buffer, offset + 0x16);
+        ByteUtil.writeLeInt(realSize, buffer, offset + 0x18);
+        ByteUtil.writeLeInt(allocatedSize, buffer, offset + 0x1C);
+        ByteUtil.writeLeLong(baseFile.getValue(), buffer, offset + 0x20);
+        ByteUtil.writeLeShort(nextAttributeId, buffer, offset + 0x28);
 
         if (haveIndex) {
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x2A); // Alignment field
-            EndianUtilities.writeBytesLittleEndian(index, buffer, offset + 0x2C);
+            ByteUtil.writeLeShort((short) 0, buffer, offset + 0x2A); // Alignment field
+            ByteUtil.writeLeShort((short) index, buffer, offset + 0x2C);
         }
 
         int pos = firstAttributeOffset & 0xffff;
@@ -436,12 +437,12 @@ public class FileRecord extends FixupRecordBase {
             pos += attr.write(buffer, offset + pos);
         }
 
-        EndianUtilities.writeBytesLittleEndian(0xffff_ffff, buffer, offset + pos);
+        ByteUtil.writeLeInt(0xffff_ffff, buffer, offset + pos);
 
         return headerEnd;
     }
 
-    protected int calcSize() {
+    @Override protected int calcSize() {
         int firstAttrPos = (short) MathUtilities.roundUp((haveIndex ? 0x30 : 0x2A) + getUpdateSequenceSize(), 8);
 
         int size = firstAttrPos;

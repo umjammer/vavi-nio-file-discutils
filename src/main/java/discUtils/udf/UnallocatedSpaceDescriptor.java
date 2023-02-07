@@ -23,6 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class UnallocatedSpaceDescriptor extends TaggedDescriptor<UnallocatedSpaceDescriptor> {
@@ -35,9 +36,10 @@ public final class UnallocatedSpaceDescriptor extends TaggedDescriptor<Unallocat
         super(TagIdentifier.UnallocatedSpaceDescriptor);
     }
 
+    @Override
     public int parse(byte[] buffer, int offset) {
-        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        int numDescriptors = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
+        int numDescriptors = ByteUtil.readLeInt(buffer, offset + 20);
         extents = new ExtentAllocationDescriptor[numDescriptors];
         for (int i = 0; i < numDescriptors; ++i) {
             extents[i] = EndianUtilities.toStruct(ExtentAllocationDescriptor.class, buffer, offset + 24 + i * 8);

@@ -54,7 +54,7 @@ public class File implements IVfsFile {
         return fileEntry.extendedAttributes;
     }
 
-    public IBuffer getFileContent() {
+    @Override public IBuffer getFileContent() {
         if (content != null) {
             return content;
         }
@@ -63,23 +63,23 @@ public class File implements IVfsFile {
         return content;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return fileEntry.accessTime;
     }
 
-    public void setLastAccessTimeUtc(long value) {
+    @Override public void setLastAccessTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return fileEntry.modificationTime;
     }
 
-    public void setLastWriteTimeUtc(long value) {
+    @Override public void setLastWriteTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         ExtendedFileEntry efe = fileEntry instanceof ExtendedFileEntry ? (ExtendedFileEntry) fileEntry
                                                                         : null;
         if (efe != null) {
@@ -89,11 +89,11 @@ public class File implements IVfsFile {
         return getLastWriteTimeUtc();
     }
 
-    public void setCreationTimeUtc(long value) {
+    @Override public void setCreationTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         EnumSet<FileAttributes> attribs = EnumSet.noneOf(FileAttributes.class);
         EnumSet<InformationControlBlockFlags> flags = fileEntry.informationControlBlock.flags;
         if (fileEntry.informationControlBlock.fileType == FileType.Directory) {
@@ -122,11 +122,11 @@ public class File implements IVfsFile {
         return attribs;
     }
 
-    public void setFileAttributes(EnumSet<FileAttributes> value) {
+    @Override public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getFileLength() {
+    @Override public long getFileLength() {
         return fileEntry.informationLength;
     }
 

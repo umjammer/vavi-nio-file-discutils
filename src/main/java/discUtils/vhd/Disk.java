@@ -39,9 +39,9 @@ import discUtils.core.internal.LocalFileLocator;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.SparseStream;
 import discUtils.streams.util.Ownership;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import dotnet4j.util.compat.Tuple;
 import vavi.util.Debug;
 
 

@@ -2,7 +2,7 @@
 package discUtils.ext;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockGroup implements IByteArraySerializable {
@@ -25,21 +25,21 @@ public class BlockGroup implements IByteArraySerializable {
 
     public short usedDirsCount;
 
-    public int size() {
+    @Override public int size() {
         return DescriptorSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        blockBitmapBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        inodeBitmapBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-        inodeTableBlock = EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
-        freeBlocksCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 12);
-        freeInodesCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 14);
-        usedDirsCount = EndianUtilities.toUInt16LittleEndian(buffer, offset + 16);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        blockBitmapBlock = ByteUtil.readLeInt(buffer, offset + 0);
+        inodeBitmapBlock = ByteUtil.readLeInt(buffer, offset + 4);
+        inodeTableBlock = ByteUtil.readLeInt(buffer, offset + 8);
+        freeBlocksCount = ByteUtil.readLeShort(buffer, offset + 12);
+        freeInodesCount = ByteUtil.readLeShort(buffer, offset + 14);
+        usedDirsCount = ByteUtil.readLeShort(buffer, offset + 16);
         return DescriptorSize;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

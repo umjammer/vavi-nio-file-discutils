@@ -28,11 +28,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import discUtils.powerShell.Utilities;
 import discUtils.powerShell.conpat.ErrorRecord;
 import discUtils.powerShell.conpat.NavigationCmdletProvider;
 import discUtils.powerShell.conpat.PSDriveInfo;
 import discUtils.powerShell.conpat.ReturnContainers;
-import discUtils.powerShell.Utilities;
 import discUtils.registry.RegistryHive;
 import discUtils.registry.RegistryKey;
 import discUtils.registry.RegistryValueType;
@@ -72,7 +72,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
 
         String filePath = mountPaths[0];
         String relPath = mountPaths.length > 1 ? mountPaths[1] : "";
-        Stream hiveStream = null;
+        Stream hiveStream;
         FileAccess access = dynParams.getReadWrite().IsPresent ? FileAccess.ReadWrite : FileAccess.Read;
         FileShare share = access == FileAccess.Read ? FileShare.Read : FileShare.None;
         filePath = Utilities.resolvePsPath(SessionState, filePath);
@@ -139,6 +139,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected void getChildItems(String path, boolean recurse) {
         RegistryKey key = findItemByPath(path);
         for (Object subKeyName : key.getSubKeyNames()) {
@@ -146,6 +147,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         }
     }
 
+    @Override
     protected void getChildNames(String path, ReturnContainers returnContainers) {
         RegistryKey key = findItemByPath(path);
         for (Object subKeyName : key.getSubKeyNames()) {
@@ -153,11 +155,13 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         }
     }
 
+    @Override
     protected boolean hasChildItems(String path) {
         RegistryKey key = findItemByPath(path);
         return key.getSubKeyCount() != 0;
     }
 
+    @Override
     protected void removeItem(String path, boolean recurse) {
         String parentPath = getParentPath(path, null);
         RegistryKey parentKey = findItemByPath(parentPath);
@@ -168,24 +172,29 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         }
     }
 
+    @Override
     protected void newItem(String path, String itemTypeName, Object newItemValue) {
         String parentPath = getParentPath(path, null);
         RegistryKey parentKey = findItemByPath(parentPath);
         writeItemObject(parentKey.createSubKey(getChildName(path)), path, true);
     }
 
+    @Override
     protected void renameItem(String path, String newName) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected void copyItem(String path, String copyPath, boolean recurse) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     protected boolean isItemContainer(String path) {
         return true;
     }
 
+    @Override
     protected String makePath(String parent, String child) {
         return Utilities.normalizePath(super.makePath(Utilities.denormalizePath(parent), Utilities.denormalizePath(child)));
     }

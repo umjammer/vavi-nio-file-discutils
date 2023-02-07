@@ -15,9 +15,6 @@ import java.util.logging.Level;
 
 import com.github.fge.filesystem.driver.FileSystemDriver;
 import com.github.fge.filesystem.provider.FileSystemRepositoryBase;
-
-import vavi.util.Debug;
-
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemManager;
@@ -27,6 +24,7 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeManager;
 import discUtils.core.internal.VirtualDiskFactory;
 import dotnet4j.io.FileAccess;
+import vavi.util.Debug;
 
 
 /**
@@ -54,7 +52,7 @@ public final class DuFileSystemRepository extends FileSystemRepositoryBase {
      * @throws IndexOutOfBoundsException no suitable {@link LogicalVolumeInfo} or {@link FileSystemInfo}
      */
     @Override
-    public FileSystemDriver createDriver(final URI uri, final Map<String, ?> env) throws IOException {
+    public FileSystemDriver createDriver(URI uri, Map<String, ?> env) throws IOException {
         String[] rawSchemeSpecificParts = uri.getRawSchemeSpecificPart().split("!");
 Debug.println(Level.FINE, "part[0]: " + rawSchemeSpecificParts[0]);
         URI filePart = URI.create(rawSchemeSpecificParts[0]);
@@ -88,11 +86,12 @@ Debug.println(Level.FINE, "lvi: " + lvi + " / " + manager.getLogicalVolumes().si
 Debug.println(Level.FINE, "fsi: " + fsi + " / " + FileSystemManager.detectFileSystems(lvi).size());
         DiscFileSystem fs = fsi.open(lvi, new FileSystemParameters());
 Debug.println(Level.FINE, "fs: " + fs);
-        final DuFileStore fileStore = new DuFileStore(fs, factoryProvider.getAttributesFactory());
+        DuFileStore fileStore = new DuFileStore(fs, factoryProvider.getAttributesFactory());
         return new DuFileSystemDriver(fileStore, factoryProvider, fs, env);
     }
 
     /* ad-hoc hack for ignoring checking opacity */
+    @Override
     protected void checkURI(URI uri) {
         Objects.requireNonNull(uri);
         if (!uri.isAbsolute()) {

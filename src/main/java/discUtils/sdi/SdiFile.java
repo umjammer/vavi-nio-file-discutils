@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.SubStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -75,7 +75,7 @@ public final class SdiFile implements Closeable {
         byte[] toc = StreamUtilities.readExact(this.stream, (int) (header.pageAlignment * 512));
         sections = new ArrayList<>();
         int pos = 0;
-        while (EndianUtilities.toUInt64LittleEndian(toc, pos) != 0) {
+        while (ByteUtil.readLeLong(toc, pos) != 0) {
             SectionRecord record = new SectionRecord();
             record.readFrom(toc, pos);
             sections.add(record);

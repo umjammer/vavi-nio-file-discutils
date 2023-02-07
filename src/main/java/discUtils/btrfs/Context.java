@@ -41,10 +41,10 @@ import discUtils.btrfs.base.items.RootItem;
 import discUtils.core.internal.Crc32Algorithm;
 import discUtils.core.internal.Crc32LittleEndian;
 import discUtils.core.vfs.VfsContext;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class Context extends VfsContext {
@@ -177,7 +177,7 @@ public class Context extends VfsContext {
         Crc32LittleEndian crc = new Crc32LittleEndian(Crc32Algorithm.Castagnoli);
         crc.process(data, offset, count);
         byte[] calculated = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(crc.getValue(), calculated, 0);
+        ByteUtil.writeLeInt(crc.getValue(), calculated, 0);
         for (int i = 0; i < calculated.length; i++) {
             if (calculated[i] != checksum[i])
                 throw new IOException("Invalid checksum");
@@ -227,6 +227,7 @@ public class Context extends VfsContext {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     <T extends BaseItem> List<T> findKey(long treeId, Key key) {
         NodeHeader tree = getFsTree(treeId);
         switch (key.getItemType()) {

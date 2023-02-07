@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LeafDirectory implements IByteArraySerializable {
@@ -67,12 +67,12 @@ public class LeafDirectory implements IByteArraySerializable {
         entries = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 16 + 3 * 32;
     }
 
     protected int readHeader(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt32BigEndian(buffer, offset);
+        magic = ByteUtil.readBeInt(buffer, offset);
         return 0x4;
     }
 
@@ -88,7 +88,7 @@ public class LeafDirectory implements IByteArraySerializable {
         return getMagic() == HeaderMagic;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         offset += readHeader(buffer, offset);
         bestFree = new BlockDirectoryDataFree[3];
         for (int i = 0; i < getBestFree().length; i++) {
@@ -114,7 +114,7 @@ public class LeafDirectory implements IByteArraySerializable {
         return buffer.length - offset;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

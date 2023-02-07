@@ -22,9 +22,9 @@
 
 package discUtils.ntfs;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class IndexBlock extends FixupRecordBase {
@@ -89,20 +89,20 @@ public class IndexBlock extends FixupRecordBase {
         stream.flush();
     }
 
-    protected void read(byte[] buffer, int offset) {
+    @Override protected void read(byte[] buffer, int offset) {
         // Skip FixupRecord fields...
-        logSequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
-        indexBlockVcn = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
+        logSequenceNumber = ByteUtil.readLeLong(buffer, offset + 0x08);
+        indexBlockVcn = ByteUtil.readLeLong(buffer, offset + 0x10);
         setNode(new IndexNode(this::writeToDisk, getUpdateSequenceSize(), index, isRoot, buffer, offset + FieldSize));
     }
 
-    protected short write(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(logSequenceNumber, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(indexBlockVcn, buffer, offset + 0x10);
+    @Override protected short write(byte[] buffer, int offset) {
+        ByteUtil.writeLeLong(logSequenceNumber, buffer, offset + 0x08);
+        ByteUtil.writeLeLong(indexBlockVcn, buffer, offset + 0x10);
         return (short) (FieldSize + getNode().writeTo(buffer, offset + FieldSize));
     }
 
-    protected int calcSize() {
+    @Override protected int calcSize() {
         throw new UnsupportedOperationException();
     }
 }

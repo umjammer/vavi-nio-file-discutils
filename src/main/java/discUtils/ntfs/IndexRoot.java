@@ -27,7 +27,7 @@ import java.util.Comparator;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class IndexRoot implements IByteArraySerializable, IDiagnosticTraceable {
@@ -74,26 +74,26 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
         rawClustersPerIndexRecord = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        attributeType = EndianUtilities.toUInt32LittleEndian(buffer, 0x00);
-        collationRule = AttributeCollationRule.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, 0x04));
-        indexAllocationSize = EndianUtilities.toUInt32LittleEndian(buffer, 0x08);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        attributeType = ByteUtil.readLeInt(buffer, 0x00);
+        collationRule = AttributeCollationRule.valueOf(ByteUtil.readLeInt(buffer, 0x04));
+        indexAllocationSize = ByteUtil.readLeInt(buffer, 0x08);
         rawClustersPerIndexRecord = buffer[0x0C];
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(attributeType, buffer, 0);
-        EndianUtilities.writeBytesLittleEndian(collationRule.getValue(), buffer, 0x04);
-        EndianUtilities.writeBytesLittleEndian(indexAllocationSize, buffer, 0x08);
-        EndianUtilities.writeBytesLittleEndian(rawClustersPerIndexRecord, buffer, 0x0C);
+    @Override public void writeTo(byte[] buffer, int offset) {
+        ByteUtil.writeLeInt(attributeType, buffer, 0);
+        ByteUtil.writeLeInt(collationRule.getValue(), buffer, 0x04);
+        ByteUtil.writeLeInt(indexAllocationSize, buffer, 0x08);
+        buffer[0x0C] = rawClustersPerIndexRecord;
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "                Attr Type: " + attributeType);
         writer.println(indent + "           Collation Rule: " + collationRule);
         writer.println(indent + "         Index Alloc Size: " + indexAllocationSize);
@@ -118,7 +118,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class SecurityHashComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -129,8 +129,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 return 1;
             }
 
-            long xHash = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffL;
-            long yHash = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffL;
+            long xHash = ByteUtil.readLeInt(x, 0) & 0xffffffffL;
+            long yHash = ByteUtil.readLeInt(y, 0) & 0xffffffffL;
 
             if (xHash < yHash) {
                 return -1;
@@ -139,8 +139,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 return 1;
             }
 
-            long xId = EndianUtilities.toUInt32LittleEndian(x, 4) & 0xffffffffL;
-            long yId = EndianUtilities.toUInt32LittleEndian(y, 4) & 0xffffffffL;
+            long xId = ByteUtil.readLeInt(x, 4) & 0xffffffffL;
+            long yId = ByteUtil.readLeInt(y, 4) & 0xffffffffL;
 
             return Long.compare(xId, yId);
 
@@ -148,7 +148,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class UnsignedLongComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -159,8 +159,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
                 return 1;
             }
 
-            long xVal = EndianUtilities.toUInt32LittleEndian(x, 0) & 0xffffffffL;
-            long yVal = EndianUtilities.toUInt32LittleEndian(y, 0) & 0xffffffffL;
+            long xVal = ByteUtil.readLeInt(x, 0) & 0xffffffffL;
+            long yVal = ByteUtil.readLeInt(y, 0) & 0xffffffffL;
 
             return Long.compare(xVal, yVal);
 
@@ -168,7 +168,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class MultipleUnsignedLongComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -180,8 +180,8 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             }
 
             for (int i = 0; i < x.length / 4; ++i) {
-                long xVal = EndianUtilities.toUInt32LittleEndian(x, i * 4) & 0xffffffffL;
-                long yVal = EndianUtilities.toUInt32LittleEndian(y, i * 4) & 0xffffffffL;
+                long xVal = ByteUtil.readLeInt(x, i * 4) & 0xffffffffL;
+                long yVal = ByteUtil.readLeInt(y, i * 4) & 0xffffffffL;
 
                 if (xVal < yVal) {
                     return -1;
@@ -203,7 +203,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
             stringComparer = upCase;
         }
 
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }
@@ -222,7 +222,7 @@ public final class IndexRoot implements IByteArraySerializable, IDiagnosticTrace
     }
 
     private final static class SidComparer implements Comparator<byte[]> {
-        public int compare(byte[] x, byte[] y) {
+        @Override public int compare(byte[] x, byte[] y) {
             if (x == null && y == null) {
                 return 0;
             }

@@ -26,10 +26,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import com.sun.jna.Pointer;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
 import dotnet4j.io.SeekOrigin;
-import com.sun.jna.Pointer;
 
 
 /**
@@ -60,6 +60,7 @@ public class UnbufferedNativeStream extends SparseStream {
         position = 0;
     }
 
+    @Override
     public void close() throws IOException {
         if (bufferAllocHandle != IntPtr.Zero) {
             Marshal.FreeHGlobal(bufferAllocHandle);
@@ -128,7 +129,7 @@ public class UnbufferedNativeStream extends SparseStream {
             }
 
             int toCopy = Math.min(count - totalBytesRead, usefulData);
-            System.arraycopy(this.buffer, alignmentOffset, buffer, offset + totalBytesRead, toCopy);
+            System.arraycopy(this.buffer, alignmentOffset, buffer[0], offset + totalBytesRead, toCopy);
             totalBytesRead += toCopy;
             position += toCopy;
         }

@@ -32,15 +32,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.core.internal.ObjectCache;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.StreamUtilities;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import dotnet4j.util.compat.Tuple;
+import vavi.util.Debug;
 
 
 class Index implements Closeable {
@@ -171,6 +170,7 @@ class Index implements Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (indexBitmap != null) {
             indexBitmap.close();

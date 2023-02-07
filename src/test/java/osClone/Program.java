@@ -27,9 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.bootConfig.BcdObject;
 import discUtils.bootConfig.Element;
 import discUtils.bootConfig.Store;
@@ -48,6 +45,8 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.Stream;
 import dotnet4j.util.compat.Utilities;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -87,6 +86,7 @@ public class Program extends ProgramBase {
 
     private Random random = new Random();
 
+    @Override
     protected void doRun() throws IOException {
 
         try (VirtualDisk sourceDisk = VirtualDisk.openDisk(sourceFile, FileAccess.Read, getUserName(), getPassword());

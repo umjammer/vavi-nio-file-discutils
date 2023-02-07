@@ -28,16 +28,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.klab.commons.cli.HelpOption;
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.core.FileSystemParameters;
 import discUtils.core.GenericDiskAdapterType;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VirtualDiskManager;
 import discUtils.core.VirtualDiskParameters;
 import discUtils.streams.PumpProgressEventArgs;
+import org.klab.commons.cli.HelpOption;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @HelpOption(option = "h", argName = "help", description = "Show this help.", helpHandler = ProgramBase.class)
@@ -161,6 +160,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
         }
     }
 
+    @Override
     public void handleException(Context<ProgramBase> context) {
         context.printHelp();
     }
@@ -202,7 +202,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
         long now = System.currentTimeMillis();
         long timeSoFar = now - startTime;
         long remaining = (long) ((timeSoFar / (double) e.getBytesRead()) * (totalBytes - e.getBytesRead()));
-        System.err.printf("\n%s (%03d%%)  |%s| %t\n", // TODO {3:hh\:mm\:ss\.f}
+        System.err.printf("\n%s (%03d%%)  |%s| %4$tT.%4$tL\n",
                           label,
                           (e.getBytesRead() * 100) / totalBytes,
                           progressBar,

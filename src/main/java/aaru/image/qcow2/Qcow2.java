@@ -348,7 +348,7 @@ public class Qcow2 {
 
         long l1Off = (byteAddress & l1Mask) >> l1Shift;
 
-        if ((long) l1Off >= l1Table.length) {
+        if (l1Off >= l1Table.length) {
             Debug.printf("QCOW2 plugin",
                     "Trying to read past L1 table, position %d of a max %d", l1Off, l1Table.length);
 
@@ -364,7 +364,7 @@ public class Qcow2 {
 
         long[] l2Table = l2TableCache.getOrDefault(l1Off, null);
         if (l2Table == null) {
-            imageStream.seek((long) (l1Table[(int) l1Off] & Constants.QCOW_FLAGS_MASK), SeekOrigin.Begin);
+            imageStream.seek(l1Table[(int) l1Off] & Constants.QCOW_FLAGS_MASK, SeekOrigin.Begin);
             byte[] l2TableB = new byte[l2Size * 8];
             imageStream.read(l2TableB, 0, l2Size * 8);
             Debug.printf("QCOW plugin: Reading L2 table #%d", l1Off);
@@ -416,7 +416,7 @@ public class Qcow2 {
                 clusterCache.put(offset, cluster);
             }
 
-            System.arraycopy(cluster, (int) (byteAddress & sectorMask), buffer, 0, 512);
+            System.arraycopy(cluster, (int) (byteAddress & sectorMask), buffer[0], 0, 512);
         }
 
         if (sectorCache.size() >= Constants.MAX_CACHED_SECTORS)
@@ -478,13 +478,10 @@ public class Qcow2 {
             return false;
         }
 
-        imageInfo = new ImageInfo() {
-            {
-                mediaType = mediaType;
-                sectorSize = sectorSize;
-                sectors = sectors;
-            }
-        };
+        imageInfo = new ImageInfo();
+        imageInfo.mediaType = mediaType;
+        imageInfo.sectorSize = sectorSize;
+        imageInfo.sectors = sectors;
 
         try {
             writingStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
@@ -497,15 +494,12 @@ public class Qcow2 {
         String extension = Path.getExtension(path);
         boolean version3 = extension.equals(".qcow3") || extension.equals(".qc3");
 
-        header = new Header() {
-            {
-                magic = Constants.QCOW_MAGIC;
-                version = version3 ? Constants.QCOW_VERSION3 : Constants.QCOW_VERSION2;
-                size = sectors * sectorSize;
-                clusterBits = 16;
-                headerLength = 512; // TODO sizeof Header
-            }
-        };
+        header = new Header();
+        header.magic = Constants.QCOW_MAGIC;
+        header.version = version3 ? Constants.QCOW_VERSION3 : Constants.QCOW_VERSION2;
+        header.size = sectors * sectorSize;
+        header.clusterBits = 16;
+        header.headerLength = 512; // TODO sizeof Header
 
         clusterSize = 1 << header.clusterBits;
         clusterSectors = 1 << (header.clusterBits - 9);
@@ -561,8 +555,8 @@ public class Qcow2 {
             header.refCountTableClusters = 1;
 
         refCountTable = new long[(int) refCountBlocks];
-        header.l1TableOffset = header.refCountTableOffset + (long) (header.refCountTableClusters * clusterSize);
-        long l1TableClusters = header.l1Size * 8 / (long) clusterSize;
+        header.l1TableOffset = header.refCountTableOffset + ((long) header.refCountTableClusters * clusterSize);
+        long l1TableClusters = header.l1Size * 8L / (long) clusterSize;
 
         if (l1TableClusters == 0)
             l1TableClusters = 1;
@@ -602,7 +596,7 @@ public class Qcow2 {
         }
 
         // Ignore empty sectors
-        if (ArrayHelpers.ArrayIsNullOrEmpty(data))
+        if (ArrayHelpers.isArrayNullOrEmpty(data))
             return true;
 
         long byteAddress = sectorAddress * 512;
@@ -617,7 +611,7 @@ public class Qcow2 {
 
         if (l1Table[(int) l1Off] == 0) {
             writingStream.seek(0, SeekOrigin.End);
-            l1Table[(int) l1Off] = (long) writingStream.position();
+            l1Table[(int) l1Off] = writingStream.position();
             byte[] l2TableB = new byte[l2Size * 8];
             writingStream.seek(0, SeekOrigin.End);
             writingStream.write(l2TableB, 0, l2TableB.length);
@@ -625,7 +619,7 @@ public class Qcow2 {
 
         writingStream.position(l1Table[(int) l1Off]);
 
-        long l2Off = (byteAddress & l2Mask) >> (int) header.clusterBits;
+        long l2Off = (byteAddress & l2Mask) >> header.clusterBits;
 
         writingStream.seek(l1Table[(int) l1Off] + (l2Off * 8), SeekOrigin.Begin);
 
@@ -692,7 +686,7 @@ public class Qcow2 {
         }
 
         // Ignore empty sectors
-        if (ArrayHelpers.ArrayIsNullOrEmpty(data))
+        if (ArrayHelpers.isArrayNullOrEmpty(data))
             return true;
 
         for (int i = 0; i < length; i++) {

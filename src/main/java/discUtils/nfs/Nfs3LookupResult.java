@@ -71,7 +71,7 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
         objectHandle = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(this.status.getValue());
         if (status == Nfs3Status.Ok) {
             objectHandle.write(writer);
@@ -87,7 +87,7 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3LookupResult ? (Nfs3LookupResult) obj : null);
     }
 
@@ -100,7 +100,7 @@ public final class Nfs3LookupResult extends Nfs3CallResult {
                other.objectAttributes.equals(objectAttributes) && other.dirAttributes.equals(dirAttributes);
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, objectHandle, objectAttributes, dirAttributes);
     }
 }

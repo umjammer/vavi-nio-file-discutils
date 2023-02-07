@@ -106,7 +106,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the capacity of the disk (in bytes).
      */
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return file.getCapacity();
     }
 
@@ -119,14 +119,14 @@ public final class Disk extends VirtualDisk {
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
-    public SparseStream getContent() {
+    @Override public SparseStream getContent() {
         return file.getContent();
     }
 
     /**
      * Gets the type of disk represented by this object.
      */
-    public VirtualDiskClass getDiskClass() {
+    @Override public VirtualDiskClass getDiskClass() {
         return file.getDiskType();
     }
 
@@ -136,21 +136,21 @@ public final class Disk extends VirtualDisk {
      * example whether the
      * BIOS geometry is preserved in the disk file.
      */
-    public VirtualDiskTypeInfo getDiskTypeInfo() {
+    @Override public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo();
     }
 
     /**
      * Gets the geometry of the disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return file.getGeometry();
     }
 
     /**
      * Gets the layers that make up the disk.
      */
-    public List<VirtualDiskLayer> getLayers() {
+    @Override public List<VirtualDiskLayer> getLayers() {
         return Collections.singletonList(file);
     }
 
@@ -205,7 +205,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
-    public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
+    @Override public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOperationException("Differencing disks not supported for raw disks");
     }
 
@@ -215,14 +215,14 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
-    public VirtualDisk createDifferencingDisk(String path) {
+    @Override public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOperationException("Differencing disks not supported for raw disks");
     }
 
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         try {
             if (file != null) {
                 file.close();

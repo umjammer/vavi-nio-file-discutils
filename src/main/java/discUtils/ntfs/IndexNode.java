@@ -27,10 +27,9 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-import vavi.util.Debug;
-
 import discUtils.streams.util.MathUtilities;
 import dotnet4j.io.IOException;
+import vavi.util.Debug;
 
 
 class IndexNode {

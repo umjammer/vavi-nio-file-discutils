@@ -22,14 +22,13 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.PortMap2Port;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class PortMap2PortTest {
@@ -38,7 +37,7 @@ public class PortMap2PortTest {
         PortMap2Port port = new PortMap2Port();
         port.setPort(2);
 
-        PortMap2Port clone = null;
+        PortMap2Port clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             port.write(writer);

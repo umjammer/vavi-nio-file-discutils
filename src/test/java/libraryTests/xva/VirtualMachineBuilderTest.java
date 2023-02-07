@@ -25,18 +25,17 @@ package libraryTests.xva;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import discUtils.streams.util.Ownership;
 import discUtils.xva.Disk;
 import discUtils.xva.VirtualMachine;
 import discUtils.xva.VirtualMachineBuilder;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class VirtualMachineBuilderTest {

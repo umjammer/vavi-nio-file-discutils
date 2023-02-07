@@ -22,8 +22,8 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LoginRequest {
@@ -79,12 +79,12 @@ public class LoginRequest {
         buffer[1] = packState();
         buffer[2] = 0; // Max Version
         buffer[3] = 0; // Min Version
-        EndianUtilities.writeBytesBigEndian(connection.getSession().getInitiatorSessionId(), buffer, 8);
-        EndianUtilities.writeBytesBigEndian(IsidQualifier, buffer, 12);
-        EndianUtilities.writeBytesBigEndian(connection.getSession().getTargetSessionId(), buffer, 14);
-        EndianUtilities.writeBytesBigEndian(connectionId, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(commandSequenceNumber, buffer, 24);
-        EndianUtilities.writeBytesBigEndian(expectedStatusSequenceNumber, buffer, 28);
+        ByteUtil.writeBeInt(connection.getSession().getInitiatorSessionId(), buffer, 8);
+        ByteUtil.writeBeShort(IsidQualifier, buffer, 12);
+        ByteUtil.writeBeShort(connection.getSession().getTargetSessionId(), buffer, 14);
+        ByteUtil.writeBeShort(connectionId, buffer, 20);
+        ByteUtil.writeBeInt(commandSequenceNumber, buffer, 24);
+        ByteUtil.writeBeInt(expectedStatusSequenceNumber, buffer, 28);
         System.arraycopy(data, offset, buffer, 48, count);
         return buffer;
     }

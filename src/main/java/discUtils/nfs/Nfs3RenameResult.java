@@ -23,6 +23,7 @@
 package discUtils.nfs;
 
 public final class Nfs3RenameResult extends Nfs3CallResult {
+
     public Nfs3RenameResult(XdrDataReader reader) {
         setStatus(Nfs3Status.valueOf(reader.readInt32()));
         setFromDirCacheConsistency(new Nfs3WeakCacheConsistency(reader));

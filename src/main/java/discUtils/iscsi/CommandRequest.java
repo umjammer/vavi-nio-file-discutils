@@ -22,8 +22,8 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class CommandRequest {
@@ -55,10 +55,10 @@ public class CommandRequest {
         byte[] buffer = new byte[48 + MathUtilities.roundUp(count, 4)];
         basicHeader.writeTo(buffer, 0);
         buffer[1] = packAttrByte(isFinalData, willRead, willWrite, cmd.getTaskAttributes());
-        EndianUtilities.writeBytesBigEndian(lun, buffer, 8);
-        EndianUtilities.writeBytesBigEndian(expected, buffer, 20);
-        EndianUtilities.writeBytesBigEndian(connection.getSession().getCommandSequenceNumber(), buffer, 24);
-        EndianUtilities.writeBytesBigEndian(connection.getExpectedStatusSequenceNumber(), buffer, 28);
+        ByteUtil.writeBeLong(lun, buffer, 8);
+        ByteUtil.writeBeInt(expected, buffer, 20);
+        ByteUtil.writeBeInt(connection.getSession().getCommandSequenceNumber(), buffer, 24);
+        ByteUtil.writeBeInt(connection.getExpectedStatusSequenceNumber(), buffer, 28);
         cmd.writeTo(buffer, 32);
         if (immediateData != null && count != 0) {
             System.arraycopy(immediateData, offset, buffer, 48, count);

@@ -135,7 +135,7 @@ public class NewVolumeCommand extends PSCmdlet {
             newIndex = disk.getPartitions().create(size[0], getType(), getActive());
         }
         long startSector = disk.getPartitions().get(newIndex).getFirstSector();
-        VolumeManager volMgr = null;
+        VolumeManager volMgr;
         // Changed volume layout, force a rescan
         VirtualDiskPSDriveInfo drive = diskObject.Properties
                 .get("PSDrive").Value instanceof VirtualDiskPSDriveInfo ? (VirtualDiskPSDriveInfo) diskObject.Properties.get("PSDrive").Value

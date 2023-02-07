@@ -50,10 +50,10 @@ public final class DiscImageFile extends VirtualDiskLayer {
         cacheSettings.setBlockSize((int) (32 * Sizes.OneKiB));
         cacheSettings.setOptimumReadSize((int) (128 * Sizes.OneKiB));
 
-        content = new BlockCacheStream(getContent(), Ownership.Dispose);
+        content = new BlockCacheStream(getContent(), Ownership.Dispose, cacheSettings);
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return getContent().getLength();
     }
 
@@ -64,23 +64,23 @@ public final class DiscImageFile extends VirtualDiskLayer {
     }
 
     // Note external sector size is always 2048
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return new Geometry(1, 1, 1, Mode1SectorSize);
     }
 
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return false;
     }
 
-    public boolean needsParent() {
+    @Override public boolean needsParent() {
         return false;
     }
 
-    public FileLocator getRelativeFileLocator() {
+    @Override public FileLocator getRelativeFileLocator() {
         return null;
     }
 
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (ownsParent == Ownership.Dispose && parent != null) {
             try {
                 parent.close();
@@ -92,7 +92,7 @@ public final class DiscImageFile extends VirtualDiskLayer {
         return SparseStream.fromStream(getContent(), Ownership.None);
     }
 
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return Collections.emptyList();
     }
 

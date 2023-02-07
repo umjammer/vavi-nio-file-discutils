@@ -24,21 +24,20 @@ package libraryTests.vmdk;
 
 import java.util.List;
 
+import discUtils.core.DiscFileSystem;
+import discUtils.streams.StreamExtent;
+import discUtils.vmdk.Disk;
+import discUtils.vmdk.DiskCreateType;
+import dotnet4j.io.FileAccess;
+import dotnet4j.io.IOException;
+import dotnet4j.io.SeekOrigin;
+import dotnet4j.io.Stream;
+import libraryTests.InMemoryFileSystem;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import discUtils.core.DiscFileSystem;
-import discUtils.streams.StreamExtent;
-import discUtils.vmdk.Disk;
-import discUtils.vmdk.DiskCreateType;
-import libraryTests.InMemoryFileSystem;
-import dotnet4j.io.FileAccess;
-import dotnet4j.io.IOException;
-import dotnet4j.io.SeekOrigin;
-import dotnet4j.io.Stream;
 
 
 public class DynamicStreamTest {

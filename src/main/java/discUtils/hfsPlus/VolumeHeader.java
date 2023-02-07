@@ -27,6 +27,7 @@ import java.util.EnumSet;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class VolumeHeader implements IByteArraySerializable {
@@ -89,43 +90,43 @@ public final class VolumeHeader implements IByteArraySerializable {
         return signature == HfsPlusSignature;
     }
 
-    public int size() {
+    @Override public int size() {
         return 512;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        signature = ByteUtil.readBeShort(buffer, offset + 0);
         if (!isValid())
             return size();
 
-        version = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        attributes = VolumeAttributes.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        lastMountedVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
-        journalInfoBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 12);
+        version = ByteUtil.readBeShort(buffer, offset + 2);
+        attributes = VolumeAttributes.valueOf(ByteUtil.readBeInt(buffer, offset + 4));
+        lastMountedVersion = ByteUtil.readBeInt(buffer, offset + 8);
+        journalInfoBlock = ByteUtil.readBeInt(buffer, offset + 12);
 
         createDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.systemDefault(), buffer, offset + 16);
         modifyDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 20);
         backupDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 24);
         checkedDate = HfsPlusUtilities.readHFSPlusDate(ZoneId.of("UTC"), buffer, offset + 28);
 
-        fileCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
-        folderCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+        fileCount = ByteUtil.readBeInt(buffer, offset + 32);
+        folderCount = ByteUtil.readBeInt(buffer, offset + 36);
 
-        blockSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 40);
-        totalBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 44);
-        freeBlocks = EndianUtilities.toUInt32BigEndian(buffer, offset + 48);
+        blockSize = ByteUtil.readBeInt(buffer, offset + 40);
+        totalBlocks = ByteUtil.readBeInt(buffer, offset + 44);
+        freeBlocks = ByteUtil.readBeInt(buffer, offset + 48);
 
-        nextAllocation = EndianUtilities.toUInt32BigEndian(buffer, offset + 52);
-        resourceClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 56);
-        dataClumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 60);
-        nextCatalogId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 64));
+        nextAllocation = ByteUtil.readBeInt(buffer, offset + 52);
+        resourceClumpSize = ByteUtil.readBeInt(buffer, offset + 56);
+        dataClumpSize = ByteUtil.readBeInt(buffer, offset + 60);
+        nextCatalogId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 64));
 
-        writeCount = EndianUtilities.toUInt32BigEndian(buffer, offset + 68);
-        encodingsBitmap = EndianUtilities.toUInt64BigEndian(buffer, offset + 72);
+        writeCount = ByteUtil.readBeInt(buffer, offset + 68);
+        encodingsBitmap = ByteUtil.readBeLong(buffer, offset + 72);
 
         finderInfo = new int[8];
         for (int i = 0; i < 8; ++i) {
-            finderInfo[i] = EndianUtilities.toUInt32BigEndian(buffer, offset + 80 + i * 4);
+            finderInfo[i] = ByteUtil.readBeInt(buffer, offset + 80 + i * 4);
         }
 
         allocationFile = EndianUtilities.toStruct(ForkData.class, buffer, offset + 112);
@@ -137,7 +138,7 @@ public final class VolumeHeader implements IByteArraySerializable {
         return 512;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

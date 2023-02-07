@@ -25,10 +25,6 @@ package libraryTests.nfs;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.core.UnixFilePermissions;
 import discUtils.nfs.Nfs3FileAttributes;
 import discUtils.nfs.Nfs3FileTime;
@@ -38,6 +34,9 @@ import discUtils.nfs.Nfs3WeakCacheConsistencyAttr;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3WeakCacheConsistencyTest {
@@ -68,11 +67,10 @@ public class Nfs3WeakCacheConsistencyTest {
         after.size = 9;
         after.type = Nfs3FileType.NamedPipe;
         after.uid = 10;
-        Nfs3WeakCacheConsistency wcc = new Nfs3WeakCacheConsistency();
-        wcc.setBefore(before);
-        wcc.setAfter(after);
+        consistency.setBefore(before);
+        consistency.setAfter(after);
 
-        Nfs3WeakCacheConsistency clone = null;
+        Nfs3WeakCacheConsistency clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             consistency.write(writer);

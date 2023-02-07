@@ -25,6 +25,7 @@ package discUtils.nfs;
 import dotnet4j.util.compat.Utilities;
 
 public final class Nfs3WriteResult extends Nfs3CallResult {
+
     public Nfs3WriteResult(XdrDataReader reader) {
         status = Nfs3Status.valueOf(reader.readInt32());
         cacheConsistency = new Nfs3WeakCacheConsistency(reader);
@@ -78,7 +79,7 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
         writeVerifier = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         getCacheConsistency().write(writer);
         if (status == Nfs3Status.Ok) {
@@ -88,7 +89,7 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3WriteResult ? (Nfs3WriteResult) obj : null);
     }
 
@@ -102,7 +103,7 @@ public final class Nfs3WriteResult extends Nfs3CallResult {
                other.howCommitted == howCommitted;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return Utilities.getCombinedHashCode(status, cacheConsistency, count, writeVerifier, howCommitted);
     }
 }

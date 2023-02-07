@@ -110,7 +110,7 @@ public final class TarFileBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> result = new ArrayList<>(files.size() * 2 + 2);
         long pos = 0;
         for (UnixBuildFileRecord file : files) {

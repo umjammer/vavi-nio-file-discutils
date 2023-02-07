@@ -36,18 +36,22 @@ public final class DiskExtent extends VirtualDiskExtent {
         this.file = file;
     }
 
+    @Override
     public long getCapacity() {
         return file.getCapacity();
     }
 
+    @Override
     public boolean isSparse() {
         return file.isSparse();
     }
 
+    @Override
     public long getStoredSize() {
         return file.getStoredSize();
     }
 
+    @Override
     public MappedStream openContent(SparseStream parent, Ownership ownsParent) {
         return file.doOpenContent(parent, ownsParent);
     }

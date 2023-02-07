@@ -48,21 +48,21 @@ public final class VolumeName implements IByteArraySerializable, IDiagnosticTrac
         name = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return getName().getBytes(StandardCharsets.UTF_16LE).length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         setName(new String(buffer, offset, buffer.length - offset, StandardCharsets.UTF_16LE));
         return buffer.length - offset;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         byte[] bytes = getName().getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset, bytes.length);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "  Volume Name: " + name);
     }
 }

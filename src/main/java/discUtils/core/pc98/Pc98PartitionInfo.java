@@ -7,15 +7,12 @@
 package discUtils.core.pc98;
 
 import java.util.UUID;
-import java.util.logging.Level;
 
 import discUtils.core.Geometry;
-import vavi.util.Debug;
-import vavix.io.partition.PC98PartitionEntry;
-
 import discUtils.core.PhysicalVolumeType;
 import discUtils.core.partitions.PartitionInfo;
 import discUtils.streams.SparseStream;
+import vavix.io.partition.PC98PartitionEntry;
 
 
 /**

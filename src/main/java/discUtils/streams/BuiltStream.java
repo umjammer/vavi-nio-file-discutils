@@ -116,7 +116,7 @@ public class BuiltStream extends SparseStream {
                 }
             }
 
-            int numRead = 0;
+            int numRead;
 
             // If the block is outside any known extent, defer to base stream.
             if (currentExtent == null) {
@@ -201,6 +201,7 @@ public class BuiltStream extends SparseStream {
     }
 
     private static class SearchExtent extends BuilderExtent {
+
         public SearchExtent(long pos) {
             super(pos, 1);
         }

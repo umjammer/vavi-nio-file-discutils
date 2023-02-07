@@ -31,13 +31,13 @@ import java.util.stream.Collectors;
 import discUtils.core.internal.Crc32Algorithm;
 import discUtils.core.internal.Crc32LittleEndian;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Range;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class LogEntry {
@@ -109,7 +109,7 @@ public final class LogEntry {
             return false;
         }
 
-        int sig = EndianUtilities.toUInt32LittleEndian(sectorBuffer, 0);
+        int sig = ByteUtil.readLeInt(sectorBuffer, 0);
         if (sig != LogEntryHeader.LogEntrySignature) {
             entry[0] = null;
             return false;
@@ -128,7 +128,7 @@ public final class LogEntry {
 
         StreamUtilities.readExact(logStream, logEntryBuffer, LogSectorSize, logEntryBuffer.length - LogSectorSize);
 
-        EndianUtilities.writeBytesLittleEndian(0, logEntryBuffer, 4);
+        ByteUtil.writeLeInt(0, logEntryBuffer, 4);
         if (header.checksum != Crc32LittleEndian.compute(Crc32Algorithm.Castagnoli, logEntryBuffer, 0, header.entryLength)) {
             entry[0] = null;
             return false;
@@ -141,7 +141,7 @@ public final class LogEntry {
             int offset = i * 32 + 64;
             Descriptor descriptor;
 
-            int descriptorSig = EndianUtilities.toUInt32LittleEndian(logEntryBuffer, offset);
+            int descriptorSig = ByteUtil.readLeInt(logEntryBuffer, offset);
             switch (descriptorSig) {
             case Descriptor.ZeroDescriptorSignature:
                 descriptor = new ZeroDescriptor();
@@ -204,9 +204,9 @@ public final class LogEntry {
         }
 
         @Override public int readFrom(byte[] buffer, int offset) {
-            zeroLength = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-            fileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-            sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
+            zeroLength = ByteUtil.readLeLong(buffer, offset + 8);
+            fileOffset = ByteUtil.readLeLong(buffer, offset + 16);
+            sequenceNumber = ByteUtil.readLeLong(buffer, offset + 24);
 
             return 32;
         }
@@ -255,12 +255,12 @@ public final class LogEntry {
         }
 
         @Override public int readFrom(byte[] buffer, int offset) {
-            trailingBytes = EndianUtilities.toUInt32LittleEndian(buffer, offset + 4);
-            leadingBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 8);
-            fileOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 16);
-            sequenceNumber = EndianUtilities.toUInt64LittleEndian(buffer, offset + 24);
+            trailingBytes = ByteUtil.readLeInt(buffer, offset + 4);
+            leadingBytes = ByteUtil.readLeLong(buffer, offset + 8);
+            fileOffset = ByteUtil.readLeLong(buffer, offset + 16);
+            sequenceNumber = ByteUtil.readLeLong(buffer, offset + 24);
 
-            dataSignature = EndianUtilities.toUInt32LittleEndian(data, this.offset);
+            dataSignature = ByteUtil.readLeInt(data, this.offset);
 
             return 32;
         }
@@ -271,9 +271,9 @@ public final class LogEntry {
 
         @Override public boolean isValid(long sequenceNumber) {
             return this.sequenceNumber == sequenceNumber && offset + LogSectorSize <= data.length &&
-                   (EndianUtilities.toUInt32LittleEndian(data, offset + LogSectorSize - 4) & 0xFFFF_FFFFL) == (sequenceNumber &
+                   (ByteUtil.readLeInt(data, offset + LogSectorSize - 4) & 0xFFFF_FFFFL) == (sequenceNumber &
                            0xFFFF_FFFFL) &&
-                   (EndianUtilities.toUInt32LittleEndian(data, offset + 4) &
+                   (ByteUtil.readLeInt(data, offset + 4) &
                            0xFFFF_FFFFL) == ((sequenceNumber >>> 32) & 0xFFFF_FFFFL) &&
                    dataSignature == DataSectorSignature;
         }
@@ -281,9 +281,9 @@ public final class LogEntry {
         @Override public void writeData(Stream target) {
             target.seek(fileOffset, SeekOrigin.Begin);
             byte[] leading = new byte[8];
-            EndianUtilities.writeBytesLittleEndian(leadingBytes, leading, 0);
+            ByteUtil.writeLeLong(leadingBytes, leading, 0);
             byte[] trailing = new byte[4];
-            EndianUtilities.writeBytesLittleEndian(trailingBytes, trailing, 0);
+            ByteUtil.writeLeInt(trailingBytes, trailing, 0);
 
             target.write(leading, 0, leading.length);
             target.write(data, offset + 8, 4084);

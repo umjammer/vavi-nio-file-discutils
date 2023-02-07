@@ -71,6 +71,7 @@ public final class Nfs3Client implements Closeable {
         return rootHandle;
     }
 
+    @Override
     public void close() throws IOException {
         if (rpcClient != null) {
             rpcClient.close();

@@ -46,7 +46,7 @@ public class SectorBuilder {
 
         for (int i = 0; i < 256; i++) {
             int edc = i;
-            int j = (int) ((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+            int j = (i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0);
             eccFTable[i] = (byte) j;
             eccBTable[i ^ j] = (byte) i;
 
@@ -58,7 +58,7 @@ public class SectorBuilder {
     }
 
     static Tuple3<Byte, Byte, Byte> lbaToMsf(long pos) {
-        return new Tuple3((byte) ((pos + 150) / 75 / 60), (byte) ((pos + 150) / 75 % 60), (byte) ((pos + 150) % 75));
+        return new Tuple3<>((byte) ((pos + 150) / 75 / 60), (byte) ((pos + 150) / 75 % 60), (byte) ((pos + 150) % 75));
     }
 
     /**
@@ -113,7 +113,7 @@ public class SectorBuilder {
 
             break;
         default:
-            return;
+            break;
         }
     }
 

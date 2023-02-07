@@ -54,44 +54,44 @@ public class File implements IVfsFile {
         return inode;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return getInode().modificationTime;
     }
 
-    public void setLastAccessTimeUtc(long value) {
+    @Override public void setLastAccessTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return getInode().modificationTime;
     }
 
-    public void setLastWriteTimeUtc(long value) {
+    @Override public void setLastWriteTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return getInode().modificationTime;
     }
 
-    public void setCreationTimeUtc(long value) {
+    @Override public void setCreationTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(getInode().type);
         return UnixFileType.toFileAttributes(fileType);
     }
 
-    public void setFileAttributes(EnumSet<FileAttributes> value) {
+    @Override public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getFileLength() {
+    @Override public long getFileLength() {
         return getInode().getFileSize();
     }
 
-    public IBuffer getFileContent() {
+    @Override public IBuffer getFileContent() {
         if (content == null) {
             content = new FileContentBuffer(context, (RegularInode) inode, inodeRef);
         }

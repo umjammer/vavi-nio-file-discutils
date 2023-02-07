@@ -28,9 +28,9 @@ import java.util.List;
 
 import discUtils.streams.util.Range;
 import discUtils.streams.util.StreamUtilities;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
+import dotnet4j.util.compat.Tuple;
 
 
 /**
@@ -306,7 +306,7 @@ final class RawClusterStream extends ClusterStream {
         return 0;
     }
 
-    public int clearClusters(long startVcn, int count) {
+    @Override public int clearClusters(long startVcn, int count) {
         byte[] zeroBuffer = new byte[16 * bytesPerCluster];
 
         int clustersAllocated = 0;

@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public abstract class PSCmdlet extends Cmdlet {
 
-    protected PSCmdlet();
+    protected PSCmdlet() {}
 
     public PSEventManager getEvents() {
         return null;

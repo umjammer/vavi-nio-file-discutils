@@ -30,12 +30,11 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import vavi.util.StringUtil;
-
 import discUtils.streams.buffer.IBuffer;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Range;
+import vavi.util.ByteUtil;
+import vavi.util.StringUtil;
 
 
 final class NonResidentAttributeRecord extends AttributeRecord {
@@ -113,11 +112,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of space occupied by the attribute (in bytes).
      */
-    public long getAllocatedLength() {
+    @Override public long getAllocatedLength() {
         return dataAllocatedSize;
     }
 
-    public void setAllocatedLength(long value) {
+    @Override public void setAllocatedLength(long value) {
         dataAllocatedSize = value;
     }
 
@@ -143,11 +142,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of data in the attribute (in bytes).
      */
-    public long getDataLength() {
+    @Override public long getDataLength() {
         return dataRealSize;
     }
 
-    public void setDataLength(long value) {
+    @Override public void setDataLength(long value) {
         dataRealSize = value;
     }
 
@@ -160,11 +159,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
     /**
      * The amount of initialized data in the attribute (in bytes).
      */
-    public long getInitializedDataLength() {
+    @Override public long getInitializedDataLength() {
         return initializedDataSize;
     }
 
-    public void setInitializedDataLength(long value) {
+    @Override public void setInitializedDataLength(long value) {
         initializedDataSize = value;
     }
 
@@ -176,6 +175,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         lastVCN = value;
     }
 
+    @Override
     public int getSize() {
         int nameLength = 0;
         int nameOffset = !Collections.disjoint(flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) ? 0x48 : 0x40;
@@ -196,7 +196,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         return MathUtilities.roundUp(dataOffset + dataLen, 8);
     }
 
-    public long getStartVcn() {
+    @Override public long getStartVcn() {
         return startingVCN;
     }
 
@@ -237,7 +237,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
 //Debug.println("+1[" + index + "]: " + newRun + " / " + getDataRuns());
     }
 
-    public List<Range> getClusters() {
+    @Override public List<Range> getClusters() {
         List<DataRun> cookedRuns = dataRuns;
 
         long start = 0;
@@ -252,11 +252,11 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         return result;
     }
 
-    public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
+    @Override public IBuffer getReadOnlyDataBuffer(INtfsContext context) {
         return new NonResidentDataBuffer(context, this);
     }
 
-    public int write(byte[] buffer, int offset) {
+    @Override public int write(byte[] buffer, int offset) {
         int headerLength = 0x40;
         if (!Collections.disjoint(getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
             headerLength += 0x08;
@@ -281,24 +281,24 @@ final class NonResidentAttributeRecord extends AttributeRecord {
 
         int length = MathUtilities.roundUp(dataOffset + dataLen, 8);
 
-        EndianUtilities.writeBytesLittleEndian(type.getValue(), buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(length, buffer, offset + 0x04);
+        ByteUtil.writeLeInt(type.getValue(), buffer, offset + 0x00);
+        ByteUtil.writeLeInt(length, buffer, offset + 0x04);
         buffer[offset + 0x08] = nonResidentFlag;
         buffer[offset + 0x09] = (byte) nameLength;
-        EndianUtilities.writeBytesLittleEndian((short) nameOffset, buffer, offset + 0x0A);
-        EndianUtilities.writeBytesLittleEndian((short) AttributeFlags.valueOf(flags), buffer, offset + 0x0C);
-        EndianUtilities.writeBytesLittleEndian(attributeId, buffer, offset + 0x0E);
+        ByteUtil.writeLeShort((short) nameOffset, buffer, offset + 0x0A);
+        ByteUtil.writeLeShort((short) AttributeFlags.valueOf(flags), buffer, offset + 0x0C);
+        ByteUtil.writeLeShort(attributeId, buffer, offset + 0x0E);
 
-        EndianUtilities.writeBytesLittleEndian(startingVCN, buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(lastVCN, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian((short) dataOffset, buffer, offset + 0x20);
-        EndianUtilities.writeBytesLittleEndian(compressionUnitSize, buffer, offset + 0x22);
-        EndianUtilities.writeBytesLittleEndian(0, buffer, offset + 0x24); // Padding
-        EndianUtilities.writeBytesLittleEndian(dataAllocatedSize, buffer, offset + 0x28);
-        EndianUtilities.writeBytesLittleEndian(dataRealSize, buffer, offset + 0x30);
-        EndianUtilities.writeBytesLittleEndian(initializedDataSize, buffer, offset + 0x38);
+        ByteUtil.writeLeLong(startingVCN, buffer, offset + 0x10);
+        ByteUtil.writeLeLong(lastVCN, buffer, offset + 0x18);
+        ByteUtil.writeLeShort((short) dataOffset, buffer, offset + 0x20);
+        ByteUtil.writeLeShort(compressionUnitSize, buffer, offset + 0x22);
+        ByteUtil.writeLeInt(0, buffer, offset + 0x24); // Padding
+        ByteUtil.writeLeLong(dataAllocatedSize, buffer, offset + 0x28);
+        ByteUtil.writeLeLong(dataRealSize, buffer, offset + 0x30);
+        ByteUtil.writeLeLong(initializedDataSize, buffer, offset + 0x38);
         if (!Collections.disjoint(getFlags(), EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse))) {
-            EndianUtilities.writeBytesLittleEndian(compressedSize, buffer, offset + 0x40);
+            ByteUtil.writeLeLong(compressedSize, buffer, offset + 0x40);
         }
 
         if (getName() != null) {
@@ -346,7 +346,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         return new NonResidentAttributeRecord(type, name, (short) 0, flags, splitVcn, newRecordRuns);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         super.dump(writer, indent);
         writer.println(indent + "     Starting VCN: " + startingVCN);
         writer.println(indent + "         Last VCN: " + lastVCN);
@@ -367,21 +367,21 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         writer.println(indent + "        Data Runs:" + runStr);
     }
 
-    protected void read(byte[] buffer, int offset, int[] length) {
+    @Override protected void read(byte[] buffer, int offset, int[] length) {
         dataRuns = null;
 
         super.read(buffer, offset, length);
 
-        startingVCN = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
-        lastVCN = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
-        dataRunsOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x20);
-        compressionUnitSize = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x22);
-        dataAllocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
-        dataRealSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
-        initializedDataSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x38);
+        startingVCN = ByteUtil.readLeLong(buffer, offset + 0x10);
+        lastVCN = ByteUtil.readLeLong(buffer, offset + 0x18);
+        dataRunsOffset = ByteUtil.readLeShort(buffer, offset + 0x20);
+        compressionUnitSize = ByteUtil.readLeShort(buffer, offset + 0x22);
+        dataAllocatedSize = ByteUtil.readLeLong(buffer, offset + 0x28);
+        dataRealSize = ByteUtil.readLeLong(buffer, offset + 0x30);
+        initializedDataSize = ByteUtil.readLeLong(buffer, offset + 0x38);
         if (!Collections.disjoint(flags, EnumSet.of(AttributeFlags.Compressed, AttributeFlags.Sparse)) &&
             (dataRunsOffset & 0xffff) > 0x40) {
-            compressedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
+            compressedSize = ByteUtil.readLeLong(buffer, offset + 0x40);
         }
 
         dataRuns = new ArrayList<>();
@@ -400,7 +400,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
         }
     }
 
-    public String toString() {
+    @Override public String toString() {
         return StringUtil.paramString(this);
     }
 }

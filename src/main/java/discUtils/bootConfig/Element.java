@@ -35,7 +35,7 @@ import java.util.UUID;
  */
 public class Element {
 
-    private ApplicationType appType = ApplicationType.None;
+    private ApplicationType appType;
 
     private final int identifier;
 

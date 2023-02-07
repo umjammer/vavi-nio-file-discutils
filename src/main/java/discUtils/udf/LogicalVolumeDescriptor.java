@@ -23,6 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolumeDescriptor> {
@@ -61,15 +62,16 @@ public final class LogicalVolumeDescriptor extends TaggedDescriptor<LogicalVolum
         return lad;
     }
 
+    @Override
     public int parse(byte[] buffer, int offset) {
-        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
+        volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
         descriptorCharset = EndianUtilities.toByteArray(buffer, offset + 20, 64);
         logicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 84, 128);
-        logicalBlockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 212);
+        logicalBlockSize = ByteUtil.readLeInt(buffer, offset + 212);
         domainIdentifier = EndianUtilities.toStruct(DomainEntityIdentifier.class, buffer, offset + 216);
         logicalVolumeContentsUse = EndianUtilities.toByteArray(buffer, offset + 248, 16);
-        mapTableLength = EndianUtilities.toUInt32LittleEndian(buffer, offset + 264);
-        numPartitionMaps = EndianUtilities.toUInt32LittleEndian(buffer, offset + 268);
+        mapTableLength = ByteUtil.readLeInt(buffer, offset + 264);
+        numPartitionMaps = ByteUtil.readLeInt(buffer, offset + 268);
         implementationIdentifier = EndianUtilities.toStruct(ImplementationEntityIdentifier.class, buffer, offset + 272);
         implementationUse = EndianUtilities.toByteArray(buffer, offset + 304, 128);
         integritySequenceExtent = new ExtentDescriptor();

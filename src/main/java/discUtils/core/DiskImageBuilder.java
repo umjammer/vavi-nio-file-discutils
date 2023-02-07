@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import discUtils.core.coreCompat.ReflectionHelper;
 import discUtils.core.internal.VirtualDiskFactory;
 import discUtils.core.internal.VirtualDiskFactoryAttribute;
 import discUtils.streams.SparseStream;
@@ -144,8 +143,7 @@ public abstract class DiskImageBuilder {
         ServiceLoader<VirtualDiskFactory> loader = ServiceLoader.load(VirtualDiskFactory.class);
         typeMap = new HashMap<>();
         for (VirtualDiskFactory factory : loader) {
-            VirtualDiskFactoryAttribute attr = ReflectionHelper
-                    .getCustomAttribute(factory.getClass(), VirtualDiskFactoryAttribute.class, false);
+            VirtualDiskFactoryAttribute attr = factory.getClass().getAnnotation(VirtualDiskFactoryAttribute.class);
             typeMap.put(attr.type(), factory);
         }
     }

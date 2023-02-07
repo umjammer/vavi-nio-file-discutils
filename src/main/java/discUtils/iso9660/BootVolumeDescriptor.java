@@ -22,7 +22,10 @@
 
 package discUtils.iso9660;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BootVolumeDescriptor extends BaseVolumeDescriptor {
@@ -36,8 +39,8 @@ public class BootVolumeDescriptor extends BaseVolumeDescriptor {
 
     public BootVolumeDescriptor(byte[] src, int offset) {
         super(src, offset);
-        systemId = EndianUtilities.bytesToString(src, offset + 0x7, 0x20).replaceFirst("\0*$", "");
-        catalogSector = EndianUtilities.toUInt32LittleEndian(src, offset + 0x47);
+        systemId = new String(src, offset + 0x7, 0x20, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        catalogSector = ByteUtil.readLeInt(src, offset + 0x47);
     }
 
     private int catalogSector;
@@ -52,9 +55,9 @@ public class BootVolumeDescriptor extends BaseVolumeDescriptor {
         return systemId;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         super.writeTo(buffer, offset);
         EndianUtilities.stringToBytes(ElToritoSystemIdentifier, buffer, offset + 7, 0x20);
-        EndianUtilities.writeBytesLittleEndian(catalogSector, buffer, offset + 0x47);
+        ByteUtil.writeLeInt(catalogSector, buffer, offset + 0x47);
     }
 }

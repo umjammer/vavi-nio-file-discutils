@@ -32,11 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import discUtils.core.coreCompat.ReflectionHelper;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.NetworkStream;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 class Connection implements Closeable {
@@ -109,7 +108,7 @@ class Connection implements Closeable {
         return session;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         LogoutRequest req = new LogoutRequest(this);
         byte[] packet = req.getBytes(LogoutReason.CloseConnection);
         stream.write(packet, 0, packet.length);
@@ -135,7 +134,7 @@ class Connection implements Closeable {
      * @param inBuffer The buffer to fill with returned data.
      * @param inBufferOffset The first byte to fill with returned data.
      * @param inBufferMax The maximum amount of data to receive.
-     * @returns The number of bytes received.
+     * @return The number of bytes received.
      */
     public int send(ScsiCommand cmd, byte[] outBuffer, int outBufferOffset, int outBufferCount, byte[] inBuffer, int inBufferOffset, int inBufferMax) {
         CommandRequest req = new CommandRequest(this, cmd.getTargetLun());
@@ -145,7 +144,7 @@ class Connection implements Closeable {
         stream.write(packet, 0, packet.length);
         stream.flush();
 
-        int numApproved = 0;
+        int numApproved;
         int numSent = toSend;
         int pktsSent = 0;
         while (numSent < outBufferCount) {
@@ -177,7 +176,7 @@ class Connection implements Closeable {
                 Response resp = parseResponse(Response.class, pdu);
 
                 if (resp.statusPresent && resp.status == ScsiStatus.CheckCondition) {
-                    short senseLength = EndianUtilities.toUInt16BigEndian(pdu.getContentData(), 0);
+                    short senseLength = ByteUtil.readBeShort(pdu.getContentData(), 0);
                     byte[] senseData = new byte[senseLength];
                     System.arraycopy(pdu.getContentData(), 2, senseData, 0, senseLength);
                     throw new ScsiCommandException(resp.status, "Target indicated SCSI failure", senseData);
@@ -523,7 +522,7 @@ class Connection implements Closeable {
     private void getParametersToNegotiate(TextBuffer parameters, KeyUsagePhase phase, SessionType sessionType) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
-                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                ProtocolKeyAttribute attr = propInfo.getAnnotation(ProtocolKeyAttribute.class);
                 if (attr != null) {
                     Object value = propInfo.get(this);
 
@@ -541,7 +540,7 @@ class Connection implements Closeable {
     private void consumeParameters(TextBuffer inParameters, TextBuffer outParameters) {
         try {
             for (Field propInfo : getClass().getDeclaredFields()) {
-                ProtocolKeyAttribute attr = ReflectionHelper.getCustomAttribute(propInfo, ProtocolKeyAttribute.class);
+                ProtocolKeyAttribute attr = propInfo.getAnnotation(ProtocolKeyAttribute.class);
                 if (attr != null && attr.sender() == KeySender.Target) {
                     if (inParameters.get(attr.name()) != null) {
                         Object value = ProtocolKeyAttribute.Util.getValueAsObject(inParameters.get(attr.name()), propInfo.getType());
@@ -568,6 +567,7 @@ class Connection implements Closeable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends BaseResponse> T parseResponse(Class<T> clazz, ProtocolDataUnit pdu) {
         BaseResponse resp;
 

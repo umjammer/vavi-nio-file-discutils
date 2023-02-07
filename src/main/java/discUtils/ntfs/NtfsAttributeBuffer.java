@@ -44,19 +44,19 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         this.attribute = attribute;
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return true;
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return file.getContext().getRawStream().canWrite();
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return attribute.getPrimaryRecord().getDataLength();
     }
 
-    public long mapPosition(long pos) {
+    @Override public long mapPosition(long pos) {
         if (attribute.isNonResident()) {
             return ((IMappedBuffer) attribute.getRawBuffer()).mapPosition(pos);
         }
@@ -73,7 +73,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
                 .offsetToAbsolutePos(mftPos);
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         AttributeRecord record = attribute.getPrimaryRecord();
         if (!canRead()) {
             throw new IOException("Attempt to read from file not opened for read");
@@ -120,7 +120,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         return totalToRead;
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         if (!canWrite()) {
             throw new IOException("Attempt to change length of file not opened for write");
         }
@@ -133,7 +133,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         file.markMftRecordDirty();
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         AttributeRecord record = attribute.getPrimaryRecord();
 
         if (!canWrite()) {
@@ -153,7 +153,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         }
     }
 
-    public void clear(long pos, int count) {
+    @Override public void clear(long pos, int count) {
         AttributeRecord record = attribute.getPrimaryRecord();
 
         if (!canWrite()) {
@@ -171,7 +171,7 @@ public class NtfsAttributeBuffer extends Buffer implements IMappedBuffer {
         }
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
 //Debug.println(count + ", " + attribute.getRawBuffer().getExtentsInRange(start, count) + ", " + new StreamExtent(0, getCapacity()));
         return StreamExtent.intersect(attribute.getRawBuffer().getExtentsInRange(start, count),
                                       new StreamExtent(0, getCapacity()));

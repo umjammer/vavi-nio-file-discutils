@@ -24,16 +24,15 @@ package libraryTests.registry;
 
 import java.util.List;
 
+import discUtils.registry.RegistryHive;
+import discUtils.registry.RegistryKey;
+import discUtils.registry.RegistryValueType;
+import dotnet4j.io.MemoryStream;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import discUtils.registry.RegistryHive;
-import discUtils.registry.RegistryKey;
-import discUtils.registry.RegistryValueType;
-import dotnet4j.io.MemoryStream;
 
 public class RegistryKeyTest {
 

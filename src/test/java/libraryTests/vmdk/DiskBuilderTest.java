@@ -24,19 +24,18 @@ package libraryTests.vmdk;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.core.DiskImageFileSpecification;
 import discUtils.streams.SparseStream;
 import discUtils.streams.util.Ownership;
 import discUtils.vmdk.Disk;
 import discUtils.vmdk.DiskBuilder;
 import discUtils.vmdk.DiskCreateType;
-import libraryTests.DiskBuilderFileSystem;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.MemoryStream;
+import libraryTests.DiskBuilderFileSystem;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class DiskBuilderTest {

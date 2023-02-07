@@ -31,14 +31,15 @@ import java.util.UUID;
 import discUtils.streams.IByteArraySerializable;
 
 
-// TODO to be deprecated
 public class EndianUtilities {
 
+    @Deprecated
     public static void writeBytesLittleEndian(short val, byte[] buffer, int offset) {
         buffer[offset] = (byte) (val & 0xFF);
         buffer[offset + 1] = (byte) ((val >>> 8) & 0xFF);
     }
 
+    @Deprecated
     public static void writeBytesLittleEndian(int val, byte[] buffer, int offset) {
         buffer[offset] = (byte) (val & 0xFF);
         buffer[offset + 1] = (byte) ((val >>> 8) & 0xFF);
@@ -46,6 +47,7 @@ public class EndianUtilities {
         buffer[offset + 3] = (byte) ((val >>> 24) & 0xFF);
     }
 
+    @Deprecated
     public static void writeBytesLittleEndian(long val, byte[] buffer, int offset) {
         buffer[offset] = (byte) (val & 0xFF);
         buffer[offset + 1] = (byte) ((val >>> 8) & 0xFF);
@@ -57,6 +59,7 @@ public class EndianUtilities {
         buffer[offset + 7] = (byte) ((val >>> 56) & 0xFF);
     }
 
+    @Deprecated
     public static void writeBytesLittleEndian(UUID val, byte[] buffer, int offset) {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]).order(ByteOrder.BIG_ENDIAN);
         bb.putLong(val.getMostSignificantBits());
@@ -68,11 +71,13 @@ public class EndianUtilities {
         System.arraycopy(le, 8, buffer, offset + 8, 8);
     }
 
+    @Deprecated
     public static void writeBytesBigEndian(short val, byte[] buffer, int offset) {
         buffer[offset] = (byte) (val >>> 8);
         buffer[offset + 1] = (byte) (val & 0xFF);
     }
 
+    @Deprecated
     public static void writeBytesBigEndian(int val, byte[] buffer, int offset) {
         buffer[offset] = (byte) ((val >>> 24) & 0xFF);
         buffer[offset + 1] = (byte) ((val >>> 16) & 0xFF);
@@ -80,6 +85,7 @@ public class EndianUtilities {
         buffer[offset + 3] = (byte) (val & 0xFF);
     }
 
+    @Deprecated
     public static void writeBytesBigEndian(long val, byte[] buffer, int offset) {
         buffer[offset] = (byte) ((val >>> 56) & 0xFF);
         buffer[offset + 1] = (byte) ((val >>> 48) & 0xFF);
@@ -91,6 +97,7 @@ public class EndianUtilities {
         buffer[offset + 7] = (byte) (val & 0xFF);
     }
 
+    @Deprecated
     public static void writeBytesBigEndian(UUID val, byte[] buffer, int offset) {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]).order(ByteOrder.BIG_ENDIAN);
         bb.putLong(val.getMostSignificantBits());
@@ -99,60 +106,73 @@ public class EndianUtilities {
         System.arraycopy(be, 0, buffer, offset, 16);
     }
 
+    @Deprecated
     public static short toUInt16LittleEndian(byte[] buffer, int offset) {
         return (short) (((buffer[offset + 1] << 8) & 0xFF00) | ((buffer[offset + 0] << 0) & 0x00FF));
     }
 
+    @Deprecated
     public static int toUInt32LittleEndian(byte[] buffer, int offset) {
         return ((buffer[offset + 3] << 24) & 0xFF000000) | ((buffer[offset + 2] << 16) & 0x00FF0000) |
                ((buffer[offset + 1] << 8) & 0x0000FF00) | ((buffer[offset + 0] << 0) & 0x000000FF);
     }
 
+    @Deprecated
     public static long toUInt64LittleEndian(byte[] buffer, int offset) {
         return ((toUInt32LittleEndian(buffer, offset + 4) & 0xffffffffL) << 32) |
                (toUInt32LittleEndian(buffer, offset + 0) & 0xffffffffL);
     }
 
+    @Deprecated
     public static short toInt16LittleEndian(byte[] buffer, int offset) {
         return toUInt16LittleEndian(buffer, offset);
     }
 
+    @Deprecated
     public static int toInt32LittleEndian(byte[] buffer, int offset) {
         return toUInt32LittleEndian(buffer, offset);
     }
 
+    @Deprecated
     public static long toInt64LittleEndian(byte[] buffer, int offset) {
         return toUInt64LittleEndian(buffer, offset);
     }
 
+    @Deprecated
     public static short toUInt16BigEndian(byte[] buffer, int offset) {
         short val = (short) (((buffer[offset] << 8) & 0xFF00) | ((buffer[offset + 1] << 0) & 0x00FF));
         return val;
     }
 
+    @Deprecated
     public static int toUInt32BigEndian(byte[] buffer, int offset) {
         int val = ((buffer[offset + 0] << 24) & 0xFF000000) | ((buffer[offset + 1] << 16) & 0x00FF0000) |
                   ((buffer[offset + 2] << 8) & 0x0000FF00) | ((buffer[offset + 3] << 0) & 0x000000FF);
         return val;
     }
 
+    @Deprecated
     public static long toUInt64BigEndian(byte[] buffer, int offset) {
         return ((toUInt32BigEndian(buffer, offset + 0) & 0xffffffffL) << 32) |
                (toUInt32BigEndian(buffer, offset + 4) & 0xffffffffL);
     }
 
+    @Deprecated
     public static short toInt16BigEndian(byte[] buffer, int offset) {
         return toUInt16BigEndian(buffer, offset);
     }
 
+    @Deprecated
     public static int toInt32BigEndian(byte[] buffer, int offset) {
         return toUInt32BigEndian(buffer, offset);
     }
 
+    @Deprecated
     public static long toInt64BigEndian(byte[] buffer, int offset) {
         return toUInt64BigEndian(buffer, offset);
     }
 
+    @Deprecated
     public static UUID toGuidLittleEndian(byte[] buffer, int offset) {
         byte[] temp = new byte[16];
         writeBytesBigEndian(toInt32LittleEndian(buffer, offset + 0), temp, 0);
@@ -165,6 +185,7 @@ public class EndianUtilities {
         return new UUID(msb, lsb);
     }
 
+    @Deprecated
     public static UUID toGuidBigEndian(byte[] buffer, int offset) {
         byte[] temp = new byte[16];
         System.arraycopy(buffer, offset, temp, 0, 16);
@@ -230,6 +251,7 @@ public class EndianUtilities {
      * @param count The number of bytes to convert.
      * @return The string.
      */
+    @Deprecated
     public static String bytesToString(byte[] data, int offset, int count) {
         char[] result = new char[count];
 

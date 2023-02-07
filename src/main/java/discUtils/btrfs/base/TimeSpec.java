@@ -25,7 +25,8 @@ package discUtils.btrfs.base;
 import java.time.Instant;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
+
 
 public class TimeSpec implements IByteArraySerializable {
 
@@ -61,7 +62,7 @@ public class TimeSpec implements IByteArraySerializable {
         return Instant.ofEpochSecond(seconds, nanoseconds).toEpochMilli();
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
@@ -69,13 +70,13 @@ public class TimeSpec implements IByteArraySerializable {
         return Instant.ofEpochSecond(seconds, nanoseconds).toEpochMilli();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        seconds = EndianUtilities.toInt64LittleEndian(buffer, offset);
-        nanoseconds = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x8);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        seconds = ByteUtil.readLeLong(buffer, offset);
+        nanoseconds = ByteUtil.readLeInt(buffer, offset + 0x8);
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

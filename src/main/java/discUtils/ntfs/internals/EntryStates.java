@@ -32,10 +32,6 @@ import java.util.EnumSet;
  */
 public enum EntryStates {
     /**
-     * No entries match.
-     */
-//    None,
-    /**
      * The entry is currently in use.
      */
     InUse, // 1

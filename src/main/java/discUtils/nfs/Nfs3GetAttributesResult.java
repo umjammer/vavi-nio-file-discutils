@@ -42,14 +42,14 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
         attributes = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         if (status == Nfs3Status.Ok) {
             attributes.write(writer);
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3GetAttributesResult ? (Nfs3GetAttributesResult) obj : null);
     }
 
@@ -61,7 +61,7 @@ public class Nfs3GetAttributesResult extends Nfs3CallResult {
         return other.status == status && dotnet4j.util.compat.Utilities.equals(other.attributes, attributes);
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, attributes);
     }
 }

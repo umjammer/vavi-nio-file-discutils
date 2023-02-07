@@ -22,7 +22,7 @@
 
 package discUtils.hfsPlus;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class BTreeHeaderRecord extends BTreeNodeRecord {
@@ -59,30 +59,30 @@ class BTreeHeaderRecord extends BTreeNodeRecord {
 
     public byte treeType;
 
-    public int size() {
+    @Override public int size() {
         return 104;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        treeDepth = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        rootNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 2);
-        numLeafRecords = EndianUtilities.toUInt32BigEndian(buffer, offset + 6);
-        firstLeafNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 10);
-        lastLeafNode = EndianUtilities.toUInt32BigEndian(buffer, offset + 14);
-        nodeSize = EndianUtilities.toUInt16BigEndian(buffer, offset + 18);
-        maxKeyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 20);
-        totalNodes = EndianUtilities.toUInt16BigEndian(buffer, offset + 22);
-        freeNodes = EndianUtilities.toUInt32BigEndian(buffer, offset + 24);
-        res1 = EndianUtilities.toUInt16BigEndian(buffer, offset + 28);
-        clumpSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 30);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        treeDepth = ByteUtil.readBeShort(buffer, offset + 0);
+        rootNode = ByteUtil.readBeInt(buffer, offset + 2);
+        numLeafRecords = ByteUtil.readBeInt(buffer, offset + 6);
+        firstLeafNode = ByteUtil.readBeInt(buffer, offset + 10);
+        lastLeafNode = ByteUtil.readBeInt(buffer, offset + 14);
+        nodeSize = ByteUtil.readBeShort(buffer, offset + 18);
+        maxKeyLength = ByteUtil.readBeShort(buffer, offset + 20);
+        totalNodes = ByteUtil.readBeShort(buffer, offset + 22);
+        freeNodes = ByteUtil.readBeInt(buffer, offset + 24);
+        res1 = ByteUtil.readBeShort(buffer, offset + 28);
+        clumpSize = ByteUtil.readBeInt(buffer, offset + 30);
         treeType = buffer[offset + 34];
         keyCompareType = buffer[offset + 35];
-        attributes = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+        attributes = ByteUtil.readBeInt(buffer, offset + 36);
 
         return 104;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

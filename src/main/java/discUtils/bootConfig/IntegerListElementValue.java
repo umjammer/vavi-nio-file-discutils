@@ -22,7 +22,7 @@
 
 package discUtils.bootConfig;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class IntegerListElementValue extends ElementValue {
@@ -32,7 +32,7 @@ public class IntegerListElementValue extends ElementValue {
     public IntegerListElementValue(byte[] value) {
         values = new long[value.length / 8];
         for (int i = 0; i < values.length; ++i) {
-            values[i] = EndianUtilities.toUInt64LittleEndian(value, i * 8);
+            values[i] = ByteUtil.readLeLong(value, i * 8);
         }
     }
 
@@ -40,11 +40,11 @@ public class IntegerListElementValue extends ElementValue {
         this.values = values;
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.IntegerList;
     }
 
-    public String toString() {
+    @Override public String toString() {
         if (values == null || values.length == 0) {
             return "<none>";
         }
@@ -63,7 +63,7 @@ public class IntegerListElementValue extends ElementValue {
     public byte[] getBytes() {
         byte[] bytes = new byte[values.length * 8];
         for (int i = 0; i < values.length; ++i) {
-            EndianUtilities.writeBytesLittleEndian(values[i], bytes, i * 8);
+            ByteUtil.writeLeLong(values[i], bytes, i * 8);
         }
         return bytes;
     }

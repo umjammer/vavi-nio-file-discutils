@@ -23,6 +23,7 @@
 package discUtils.ntfs;
 
 public final class GenericFixupRecord extends FixupRecordBase {
+
     private final int bytesPerSector;
 
     public GenericFixupRecord(int bytesPerSector) {
@@ -40,16 +41,16 @@ public final class GenericFixupRecord extends FixupRecordBase {
         content = value;
     }
 
-    protected void read(byte[] buffer, int offset) {
+    @Override protected void read(byte[] buffer, int offset) {
         setContent(new byte[(getUpdateSequenceCount() - 1) * bytesPerSector]);
         System.arraycopy(buffer, offset, content, 0, content.length);
     }
 
-    protected short write(byte[] buffer, int offset) {
+    @Override protected short write(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    protected int calcSize() {
+    @Override protected int calcSize() {
         throw new UnsupportedOperationException();
     }
 }

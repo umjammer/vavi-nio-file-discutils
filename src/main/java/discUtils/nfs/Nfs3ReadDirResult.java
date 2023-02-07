@@ -27,6 +27,7 @@ import java.util.List;
 
 
 public class Nfs3ReadDirResult extends Nfs3CallResult {
+
     public Nfs3ReadDirResult() {
     }
 
@@ -86,7 +87,7 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
         eof = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         writer.write(dirAttributes != null);
         if (dirAttributes != null) {
@@ -104,7 +105,7 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3ReadDirResult ? (Nfs3ReadDirResult) obj : null);
     }
 
@@ -118,7 +119,7 @@ public class Nfs3ReadDirResult extends Nfs3CallResult {
                other.eof == eof;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, dirAttributes, cookieVerifier, dirEntries, eof);
     }
 }

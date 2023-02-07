@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import com.github.fge.filesystem.driver.CachedFileSystemDriver;
 import org.junit.jupiter.api.BeforeEach;
@@ -101,7 +102,10 @@ public class Main4 {
 
         try (Fuse fuse = Fuse.getFuse()) {
             fuse.mount(fs, mountPoint, options);
-            while (true) Thread.yield();
+
+            // using cdl cause junit stops awt thread suddenly
+            CountDownLatch cdl = new CountDownLatch(1);
+            cdl.await(); // terminate by yourself
         }
     }
 

@@ -25,9 +25,6 @@ package ntfsDump;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeManager;
@@ -37,6 +34,8 @@ import discUtils.streams.block.BlockCacheStream;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -65,13 +64,14 @@ public class Program extends ProgramBase {
 
 //        return StandardSwitches.UserAndPassword | StandardSwitches.PartitionOrVolume;
 
+    @Override
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
 String[] diskFiles = new String[] {diskFile};
         for (String disk : diskFiles) {
             volMgr.addDisk(VirtualDisk.openDisk(disk, FileAccess.Read, getUserName(), getPassword()));
         }
-        Stream partitionStream = null;
+        Stream partitionStream;
         if (getVolumeId() != null && !getVolumeId().isEmpty()) {
             partitionStream = volMgr.getVolume(getVolumeId()).open();
         } else if (getPartition() >= 0) {

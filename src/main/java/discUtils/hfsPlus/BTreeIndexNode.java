@@ -25,7 +25,7 @@ package discUtils.hfsPlus;
 import java.util.ArrayList;
 import java.util.List;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
@@ -36,7 +36,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
         super(clazz, tree, descriptor);
     }
 
-    public byte[] findKey(TKey key) {
+    @Override public byte[] findKey(TKey key) {
         int nextResult = records.get(0).getKey().compareTo(key);
 
         int idx = 0;
@@ -56,7 +56,8 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             }
             if (nextResult > 0) {
                 // Next record's key is too big, so worth looking at children
-                BTreeKeyedNode<TKey> child = ((BTree) getTree()).getKeyedNode(records.get(idx).getChildId());
+                @SuppressWarnings("unchecked")
+                BTreeKeyedNode<TKey> child = ((BTree<TKey>) getTree()).getKeyedNode(records.get(idx).getChildId());
                 return child.findKey(key);
             }
 
@@ -66,7 +67,7 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
         return null;
     }
 
-    public void visitRange(BTreeVisitor<TKey> visitor) {
+    @Override public void visitRange(BTreeVisitor<TKey> visitor) {
         int nextResult = visitor.invoke(records.get(0).getKey(), null);
 
         int idx = 0;
@@ -86,7 +87,8 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
             }
             if (nextResult >= 0) {
                 // Next record's key isn't too small, so worth looking at children
-                BTreeKeyedNode<TKey> child = ((BTree) getTree()).getKeyedNode(records.get(idx).getChildId());
+                @SuppressWarnings("unchecked")
+                BTreeKeyedNode<TKey> child = ((BTree<TKey>) getTree()).getKeyedNode(records.get(idx).getChildId());
                 child.visitRange(visitor);
             }
 
@@ -94,16 +96,17 @@ class BTreeIndexNode<TKey extends BTreeKey<?>> extends BTreeKeyedNode<TKey> {
         }
     }
 
-    protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override protected List<BTreeNodeRecord> readRecords(byte[] buffer, int offset) {
         int numRecords = getDescriptor().getNumRecords();
         int nodeSize = getTree().getNodeSize();
 
         records = new ArrayList<>(numRecords);
 
-        int start = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - 2);
+        int start = ByteUtil.readBeShort(buffer, offset + nodeSize - 2);
 
         for (int i = 0; i < numRecords; ++i) {
-            int end = EndianUtilities.toUInt16BigEndian(buffer, offset + nodeSize - (i + 2) * 2);
+            int end = ByteUtil.readBeShort(buffer, offset + nodeSize - (i + 2) * 2);
 
             records.add(i, new BTreeIndexRecord<>(keyClass, end - start));
             records.get(i).readFrom(buffer, offset + start);

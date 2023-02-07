@@ -78,6 +78,7 @@ public final class StreamExtent implements Comparable<StreamExtent> {
      *         , zero if they start at the same position, else a value less than
      *         zero.
      */
+    @Override
     public int compareTo(StreamExtent other) {
         return Long.compare(start, other.start);
 

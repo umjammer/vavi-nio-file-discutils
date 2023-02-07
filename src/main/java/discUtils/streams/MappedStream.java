@@ -36,6 +36,7 @@ import dotnet4j.io.Stream;
  * parent stream.
  */
 public abstract class MappedStream extends SparseStream {
+
     /**
      * Converts any stream into a non-linear stream.
      * <p>

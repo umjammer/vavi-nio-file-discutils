@@ -53,23 +53,23 @@ public class DirEntry extends VfsDirEntry {
         this.item = item;
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return inode.getCTime().getDateTime();
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return inode.getATime().getDateTime();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return inode.getMTime().getDateTime();
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return true;
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         UnixFileType unixFileType = UnixFileType.None;
         switch (item.getChildType()) {
         case Unknown:
@@ -107,23 +107,23 @@ public class DirEntry extends VfsDirEntry {
         return result;
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return item != null;
     }
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return item.getName();
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return item.getChildType() == DirItemChildType.Directory;
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return item.getChildType() == DirItemChildType.Symlink;
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         long result = inode == null ? 0 : inode.getTransId();
         result = (result * 397) ^ item.getTransId();
         result = (result * 397) ^ item.getChildLocation().getObjectId();

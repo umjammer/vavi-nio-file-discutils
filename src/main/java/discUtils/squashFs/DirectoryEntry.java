@@ -40,24 +40,24 @@ public class DirectoryEntry extends VfsDirEntry {
         this.record = record;
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         UnixFileType fileType = VfsSquashFileSystemReader.fileTypeFromInodeType(record.type);
         return UnixFileType.toFileAttributes(fileType);
     }
 
-    public String getFileName() {
+    @Override public String getFileName() {
         return record.name;
     }
 
-    public boolean hasVfsFileAttributes() {
+    @Override public boolean hasVfsFileAttributes() {
         return true;
     }
 
-    public boolean hasVfsTimeInfo() {
+    @Override public boolean hasVfsTimeInfo() {
         return false;
     }
 
@@ -65,23 +65,23 @@ public class DirectoryEntry extends VfsDirEntry {
         return new MetadataRef(header.startBlock, record.getOffset());
     }
 
-    public boolean isDirectory() {
+    @Override public boolean isDirectory() {
         return record.type == InodeType.Directory || record.type == InodeType.ExtendedDirectory;
     }
 
-    public boolean isSymlink() {
+    @Override public boolean isSymlink() {
         return record.type == InodeType.Symlink || record.type == InodeType.ExtendedSymlink;
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         throw new UnsupportedOperationException();
     }
 
-    public long getUniqueCacheId() {
+    @Override public long getUniqueCacheId() {
         return header.inodeNumber + record.inodeNumber;
     }
 }

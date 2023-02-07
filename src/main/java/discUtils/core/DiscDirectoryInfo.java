@@ -50,7 +50,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets a value indicating whether the directory exists.
      */
-    public boolean exists() {
+    @Override public boolean exists() {
         try {
             return fileSystem.directoryExists(path);
         } catch (IOException e) {
@@ -61,7 +61,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Gets the full path of the directory.
      */
-    public String getFullName() {
+    @Override public String getFullName() {
         return super.getFullName() + File.separator;
     }
 
@@ -79,7 +79,7 @@ public final class DiscDirectoryInfo extends DiscFileSystemInfo {
     /**
      * Deletes a directory, even if it's not empty.
      */
-    public void delete() {
+    @Override public void delete() {
         try {
             fileSystem.deleteDirectory(path, false);
         } catch (IOException e) {

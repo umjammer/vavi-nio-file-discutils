@@ -26,20 +26,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import discUtils.core.DiscFileSystem;
+import discUtils.vmdk.Disk;
+import discUtils.vmdk.DiskAdapterType;
+import discUtils.vmdk.DiskCreateType;
+import discUtils.vmdk.DiskImageFile;
+import dotnet4j.io.FileAccess;
+import libraryTests.InMemoryFileSystem;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.DiscFileSystem;
-import discUtils.vmdk.Disk;
-import discUtils.vmdk.DiskAdapterType;
-import discUtils.vmdk.DiskCreateType;
-import discUtils.vmdk.DiskImageFile;
-import libraryTests.InMemoryFileSystem;
-import dotnet4j.io.FileAccess;
 
 
 public class DiskTest {

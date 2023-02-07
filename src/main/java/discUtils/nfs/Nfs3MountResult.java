@@ -27,6 +27,7 @@ import java.util.List;
 
 
 public final class Nfs3MountResult extends Nfs3CallResult {
+
     public Nfs3MountResult(XdrDataReader reader) {
         status = Nfs3Status.valueOf(reader.readInt32());
         if (status == Nfs3Status.Ok) {
@@ -64,7 +65,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
         fileHandle = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         if (status == Nfs3Status.Ok) {
             fileHandle.write(writer);
@@ -75,7 +76,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3MountResult ? (Nfs3MountResult) obj : null);
     }
 
@@ -88,7 +89,7 @@ public final class Nfs3MountResult extends Nfs3CallResult {
                other.fileHandle.equals(fileHandle);
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(status, fileHandle, authFlavours);
     }
 }

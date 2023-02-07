@@ -29,6 +29,7 @@ import dotnet4j.io.IOException;
  * probably corruption.
  */
 public final class RpcException extends IOException {
+
     /**
      * Initializes a new instance of the RpcException class.
      */
@@ -62,16 +63,6 @@ public final class RpcException extends IOException {
     public RpcException(RpcReplyHeader reply) {
         super(generateMessage(reply));
     }
-
-    /**
-     * Initializes a new instance of the RpcException class.
-     *
-     * @param info The serialization info.
-     * @param context The streaming context.
-     */
-//    private RpcException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 
     private static String generateMessage(RpcReplyHeader reply) {
         if (reply.Status == RpcReplyStatus.Accepted) {

@@ -41,10 +41,10 @@ import discUtils.core.internal.LocalFileLocator;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.SparseStream;
 import discUtils.streams.util.Ownership;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
+import dotnet4j.util.compat.Tuple;
 
 
 /**
@@ -129,6 +129,7 @@ public final class Disk extends VirtualDisk {
      * Gets the geometry of the disk as it is anticipated a hypervisor BIOS will
      * represent it.
      */
+    @Override
     public Geometry getBiosGeometry() {
         VirtualDiskLayer item1 = files.get(files.size() - 1).getItem1();
         if (item1 instanceof DiskImageFile) {
@@ -141,6 +142,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the capacity of this disk (in bytes).
      */
+    @Override
     public long getCapacity() {
         return files.get(0).getItem1().getCapacity();
     }
@@ -152,6 +154,7 @@ public final class Disk extends VirtualDisk {
      * to the disk contents pass through a single stream instance. Set the
      * stream position before accessing the stream.
      */
+    @Override
     public SparseStream getContent() {
         if (content == null) {
             SparseStream stream = null;
@@ -168,6 +171,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the type of disk represented by this object.
      */
+    @Override
     public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.HardDisk;
     }
@@ -177,6 +181,7 @@ public final class Disk extends VirtualDisk {
      * meta-data about the disk format, for example whether the BIOS geometry is
      * preserved in the disk file.
      */
+    @Override
     public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiskFactory.makeDiskTypeInfo(((DiskImageFile) files.get(files.size() - 1).getItem1()).getCreateType());
     }
@@ -184,6 +189,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the Geometry of this disk.
      */
+    @Override
     public Geometry getGeometry() {
         return files.get(files.size() - 1).getItem1().getGeometry();
     }
@@ -191,8 +197,9 @@ public final class Disk extends VirtualDisk {
     /**
      * Gets the layers that make up the disk.
      */
+    @Override
     public List<VirtualDiskLayer> getLayers() {
-        return files.stream().map(file -> file.getItem1()).collect(Collectors.toList());
+        return files.stream().map(Tuple::getItem1).collect(Collectors.toList());
     }
 
     /**
@@ -206,6 +213,7 @@ public final class Disk extends VirtualDisk {
      * Gets the parameters of the disk. Most of the parameters are also
      * available individually, such as DiskType and Capacity.
      */
+    @Override
     public VirtualDiskParameters getParameters() {
         DiskImageFile file = (DiskImageFile) files.get(files.size() - 1).getItem1();
 
@@ -364,6 +372,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) throws IOException {
         return initializeDifferencing(fileSystem, path, diffDiskCreateType(files.get(0).getItem1()), this.path);
     }
@@ -374,6 +383,7 @@ public final class Disk extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return The newly created disk.
      */
+    @Override
     public VirtualDisk createDifferencingDisk(String path) throws IOException {
         VirtualDiskLayer firstLayer = files.get(0).getItem1();
         return initializeDifferencing(path,
@@ -388,6 +398,7 @@ public final class Disk extends VirtualDisk {
     /**
      * Disposes of this instance.
      */
+    @Override
     public void close() throws IOException {
         try {
             if (content != null) {

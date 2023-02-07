@@ -28,7 +28,7 @@ public final class DiskGroupRecord extends DatabaseRecord {
 
     public int unknown1;
 
-    protected void doReadFrom(byte[] buffer, int offset) {
+    @Override protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
         int[] pos = new int[] { offset + 0x18 };
         id = readVarULong(buffer, pos);

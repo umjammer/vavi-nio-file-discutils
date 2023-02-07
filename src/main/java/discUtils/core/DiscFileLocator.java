@@ -41,7 +41,7 @@ public final class DiscFileLocator extends FileLocator {
         this.basePath = basePath;
     }
 
-    public boolean exists(String fileName) {
+    @Override public boolean exists(String fileName) {
         try {
             return fileSystem.fileExists(Utilities.combinePaths(basePath, fileName));
         } catch (IOException e) {
@@ -49,7 +49,7 @@ public final class DiscFileLocator extends FileLocator {
         }
     }
 
-    protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
+    @Override protected Stream openFile(String fileName, FileMode mode, FileAccess access, FileShare share) {
         try {
             return fileSystem.openFile(Utilities.combinePaths(basePath, fileName), mode, access);
         } catch (IOException e) {
@@ -57,23 +57,23 @@ public final class DiscFileLocator extends FileLocator {
         }
     }
 
-    public FileLocator getRelativeLocator(String path) {
+    @Override public FileLocator getRelativeLocator(String path) {
         return new DiscFileLocator(fileSystem, Utilities.combinePaths(basePath, path));
     }
 
-    public String getFullPath(String path) {
+    @Override public String getFullPath(String path) {
         return Utilities.combinePaths(basePath, path);
     }
 
-    public String getDirectoryFromPath(String path) {
+    @Override public String getDirectoryFromPath(String path) {
         return Utilities.getDirectoryFromPath(path);
     }
 
-    public String getFileFromPath(String path) {
+    @Override public String getFileFromPath(String path) {
         return Utilities.getFileFromPath(path);
     }
 
-    public long getLastWriteTimeUtc(String path) {
+    @Override public long getLastWriteTimeUtc(String path) {
         try {
             return fileSystem.getLastWriteTimeUtc(Utilities.combinePaths(basePath, path));
         } catch (IOException e) {
@@ -81,7 +81,7 @@ public final class DiscFileLocator extends FileLocator {
         }
     }
 
-    public boolean hasCommonRoot(FileLocator other) {
+    @Override public boolean hasCommonRoot(FileLocator other) {
         if (!(other instanceof DiscFileLocator)) {
             return false;
         }
@@ -90,7 +90,7 @@ public final class DiscFileLocator extends FileLocator {
         return ((DiscFileLocator) other).fileSystem == fileSystem; // TODO object compare
     }
 
-    public String resolveRelativePath(String path) {
+    @Override public String resolveRelativePath(String path) {
         return Utilities.resolveRelativePath(basePath, path);
     }
 }

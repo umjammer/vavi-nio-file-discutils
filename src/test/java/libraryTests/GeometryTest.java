@@ -22,13 +22,12 @@
 
 package libraryTests;
 
+import discUtils.core.ChsAddress;
+import discUtils.core.Geometry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.ChsAddress;
-import discUtils.core.Geometry;
 
 public class GeometryTest {
     @Test

@@ -24,6 +24,7 @@ package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileSetDescriptor implements IByteArraySerializable {
@@ -64,19 +65,19 @@ public class FileSetDescriptor implements IByteArraySerializable {
 
     public LongAllocationDescriptor systemStreamDirectoryIcb;
 
-    public int size() {
+    @Override public int size() {
         return 512;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         descriptorTag = EndianUtilities.toStruct(DescriptorTag.class, buffer, offset);
         recordingTime = UdfUtilities.parseTimestamp(buffer, offset + 16);
-        interchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 28);
-        maximumInterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 30);
-        characterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 32);
-        maximumCharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 36);
-        fileSetNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 40);
-        fileSetDescriptorNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
+        interchangeLevel = ByteUtil.readLeShort(buffer, offset + 28);
+        maximumInterchangeLevel = ByteUtil.readLeShort(buffer, offset + 30);
+        characterSetList = ByteUtil.readLeInt(buffer, offset + 32);
+        maximumCharacterSetList = ByteUtil.readLeInt(buffer, offset + 36);
+        fileSetNumber = ByteUtil.readLeInt(buffer, offset + 40);
+        fileSetDescriptorNumber = ByteUtil.readLeInt(buffer, offset + 44);
         logicalVolumeIdentifierCharset = EndianUtilities
                 .toStruct(CharacterSetSpecification.class, buffer, offset + 48);
         logicalVolumeIdentifier = UdfUtilities.readDString(buffer, offset + 112, 128);
@@ -95,7 +96,7 @@ public class FileSetDescriptor implements IByteArraySerializable {
         return 512;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

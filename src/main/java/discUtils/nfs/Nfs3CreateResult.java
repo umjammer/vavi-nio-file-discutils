@@ -72,7 +72,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
         fileHandle = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         if (status == Nfs3Status.Ok) {
             writer.write(fileHandle != null);
@@ -89,7 +89,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
         getCacheConsistency().write(writer);
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3CreateResult ? (Nfs3CreateResult) obj : null);
     }
 
@@ -103,7 +103,7 @@ public class Nfs3CreateResult extends Nfs3CallResult {
                other.cacheConsistency.equals(cacheConsistency);
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities
                 .getCombinedHashCode(status, fileHandle, fileAttributes, cacheConsistency);
     }

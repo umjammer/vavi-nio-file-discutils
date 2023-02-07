@@ -26,7 +26,7 @@ import java.util.UUID;
 
 import discUtils.core.PhysicalVolumeInfo;
 import discUtils.core.PhysicalVolumeType;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DeviceElementValue extends ElementValue {
@@ -51,15 +51,15 @@ public class DeviceElementValue extends ElementValue {
         if (pvi.getVolumeType() == PhysicalVolumeType.BiosPartition) {
             record.setPartitionType(1);
             record.setDiskIdentity(new byte[4]);
-            EndianUtilities.writeBytesLittleEndian(pvi.getDiskSignature(), record.getDiskIdentity(), 0);
+            ByteUtil.writeLeInt(pvi.getDiskSignature(), record.getDiskIdentity(), 0);
             record.setPartitionIdentity(new byte[8]);
-            EndianUtilities.writeBytesLittleEndian(pvi.getPhysicalStartSector() * 512, record.getPartitionIdentity(), 0);
+            ByteUtil.writeLeLong(pvi.getPhysicalStartSector() * 512, record.getPartitionIdentity(), 0);
         } else if (pvi.getVolumeType() == PhysicalVolumeType.GptPartition) {
             record.setPartitionType(0);
             record.setDiskIdentity(new byte[16]);
-            EndianUtilities.writeBytesLittleEndian(pvi.getDiskIdentity(), record.getDiskIdentity(), 0);
+            ByteUtil.writeLeUUID(pvi.getDiskIdentity(), record.getDiskIdentity(), 0);
             record.setPartitionIdentity(new byte[16]);
-            EndianUtilities.writeBytesLittleEndian(pvi.getPartitionIdentity(), record.getPartitionIdentity(), 0);
+            ByteUtil.writeLeUUID(pvi.getPartitionIdentity(), record.getPartitionIdentity(), 0);
         } else {
             throw new IllegalArgumentException(String.format("Unknown how to convert volume type %s to a Device element",
                                                              pvi.getVolumeType()));
@@ -68,19 +68,19 @@ public class DeviceElementValue extends ElementValue {
     }
 
     public DeviceElementValue(byte[] value) {
-        parentObject = EndianUtilities.toGuidLittleEndian(value, 0x00);
+        parentObject = ByteUtil.readLeUUID(value, 0x00);
         record = DeviceRecord.parse(value, 0x10);
     }
 
-    public ElementFormat getFormat() {
+    @Override public ElementFormat getFormat() {
         return ElementFormat.Device;
     }
 
-    public UUID getParentObject() {
+    @Override public UUID getParentObject() {
         return parentObject;
     }
 
-    public String toString() {
+    @Override public String toString() {
         if (!parentObject.equals(EMPTY)) {
             return parentObject + ":" + record;
         }
@@ -94,7 +94,7 @@ public class DeviceElementValue extends ElementValue {
 
     public byte[] getBytes() {
         byte[] buffer = new byte[record.getSize() + 0x10];
-        EndianUtilities.writeBytesLittleEndian(parentObject, buffer, 0);
+        ByteUtil.writeLeUUID(parentObject, buffer, 0);
         record.getBytes(buffer, 0x10);
         return buffer;
     }

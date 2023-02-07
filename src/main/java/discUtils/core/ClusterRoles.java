@@ -13,10 +13,6 @@ import java.util.stream.Collectors;
  */
 public enum ClusterRoles {
     /**
-     * Unknown, or unspecified role.
-     */
-//    None,
-    /**
      * Cluster is free.
      */
     Free,

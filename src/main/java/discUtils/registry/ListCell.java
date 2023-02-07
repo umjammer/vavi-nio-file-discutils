@@ -25,6 +25,7 @@ package discUtils.registry;
 import java.util.List;
 
 public abstract class ListCell extends Cell {
+
     public ListCell(int index) {
         super(index);
     }

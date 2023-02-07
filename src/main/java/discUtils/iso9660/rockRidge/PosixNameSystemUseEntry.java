@@ -22,8 +22,9 @@
 
 package discUtils.iso9660.rockRidge;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.iso9660.susp.SystemUseEntry;
-import discUtils.streams.util.EndianUtilities;
 
 
 public final class PosixNameSystemUseEntry extends SystemUseEntry {
@@ -35,6 +36,6 @@ public final class PosixNameSystemUseEntry extends SystemUseEntry {
     public PosixNameSystemUseEntry(String name, byte length, byte version, byte[] data, int offset) {
         checkAndSetCommonProperties(name, length, version, (byte) 5, (byte) 1);
         flags = data[offset + 4];
-        nameData = EndianUtilities.bytesToString(data, offset + 5, length - 5);
+        nameData = new String(data, offset + 5, length - 5, StandardCharsets.US_ASCII);
     }
 }

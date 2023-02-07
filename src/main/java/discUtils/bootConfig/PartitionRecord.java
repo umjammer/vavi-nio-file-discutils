@@ -25,7 +25,7 @@ package discUtils.bootConfig;
 import java.util.Arrays;
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class PartitionRecord extends DeviceRecord {
@@ -60,16 +60,18 @@ public class PartitionRecord extends DeviceRecord {
         partitionType = value;
     }
 
+    @Override
     public int getSize() {
         return 0x48;
     }
 
+    @Override
     public void getBytes(byte[] data, int offset) {
         writeHeader(data, offset);
         if (getType() == 5) {
             Arrays.fill(data, offset + 0x10, offset + 0x10 + 0x38, (byte) 0);
         } else if (getType() == 6) {
-            EndianUtilities.writeBytesLittleEndian(getPartitionType(), data, offset + 0x24);
+            ByteUtil.writeLeInt(getPartitionType(), data, offset + 0x24);
             if (getPartitionType() == 1) {
                 System.arraycopy(getDiskIdentity(), 0, data, offset + 0x28, 4);
                 System.arraycopy(getPartitionIdentity(), 0, data, offset + 0x10, 8);
@@ -96,11 +98,11 @@ public class PartitionRecord extends DeviceRecord {
                                      getDiskIdentity()[1],
                                      getDiskIdentity()[2],
                                      getDiskIdentity()[3],
-                                     EndianUtilities.toUInt64LittleEndian(getPartitionIdentity(), 0));
+                                     ByteUtil.readLeLong(getPartitionIdentity(), 0));
             }
 
-            UUID diskGuid = EndianUtilities.toGuidLittleEndian(getDiskIdentity(), 0);
-            UUID partitionGuid = EndianUtilities.toGuidLittleEndian(getPartitionIdentity(), 0);
+            UUID diskGuid = ByteUtil.readLeUUID(getDiskIdentity(), 0);
+            UUID partitionGuid = ByteUtil.readLeUUID(getPartitionIdentity(), 0);
             return String.format("(disk:%s partition:%s)", diskGuid, partitionGuid);
         }
 
@@ -111,12 +113,13 @@ public class PartitionRecord extends DeviceRecord {
         return "<unknown>";
     }
 
+    @Override
     protected void doParse(byte[] data, int offset) {
         super.doParse(data, offset);
         if (getType() == 5) {
             // Nothing to do - just empty...
         } else if (getType() == 6) {
-            setPartitionType(EndianUtilities.toInt32LittleEndian(data, offset + 0x24));
+            setPartitionType(ByteUtil.readLeInt(data, offset + 0x24));
             if (getPartitionType() == 1) {
                 // BIOS disk
                 setDiskIdentity(new byte[4]);

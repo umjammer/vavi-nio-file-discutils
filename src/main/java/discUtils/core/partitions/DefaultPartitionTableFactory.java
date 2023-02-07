@@ -28,10 +28,12 @@ import dotnet4j.io.Stream;
 
 public final class DefaultPartitionTableFactory implements PartitionTableFactory {
 
+    @Override
     public boolean detectIsPartitioned(Stream s) {
         return BiosPartitionTable.isValid(s);
     }
 
+    @Override
     public PartitionTable detectPartitionTable(VirtualDisk disk) {
         if (BiosPartitionTable.isValid(disk.getContent())) {
             BiosPartitionTable table = new BiosPartitionTable(disk);

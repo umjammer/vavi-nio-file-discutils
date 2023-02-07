@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import discUtils.btrfs.base.DirItemChildType;
 import discUtils.btrfs.base.Key;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -131,15 +132,15 @@ public class DirItem extends BaseItem {
         data = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x1e + getNameLength() + getDataLength();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         childLocation = EndianUtilities.toStruct(Key.class, buffer, offset);
-        transId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x11);
-        dataLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x19);
-        nameLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x1b);
+        transId = ByteUtil.readLeLong(buffer, offset + 0x11);
+        dataLength = ByteUtil.readLeShort(buffer, offset + 0x19);
+        nameLength = ByteUtil.readLeShort(buffer, offset + 0x1b);
         childType = DirItemChildType.values()[buffer[offset + 0x1d]];
         name = new String(buffer, offset + 0x1e, getNameLength(), StandardCharsets.UTF_8);
         data = EndianUtilities.toByteArray(buffer, offset + 0x1e + getNameLength(), getDataLength());

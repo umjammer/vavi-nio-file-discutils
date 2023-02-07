@@ -192,6 +192,7 @@ public class ThreadSafeStream extends SparseStream {
     /**
      * Causes the stream to flush all changes.
      */
+    @Override
     public void flush() {
         synchronized (common) {
             getWrapped().flush();

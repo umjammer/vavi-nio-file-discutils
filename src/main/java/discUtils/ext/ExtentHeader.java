@@ -23,7 +23,7 @@
 package discUtils.ext;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ExtentHeader implements IByteArraySerializable {
@@ -48,20 +48,20 @@ public class ExtentHeader implements IByteArraySerializable {
         return maxEntries & 0xffff;
     }
 
-    public int size() {
+    @Override public int size() {
         return 12;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0);
-        entries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
-        maxEntries = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
-        depth = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        generation = (short) EndianUtilities.toUInt32LittleEndian(buffer, offset + 8);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        magic = ByteUtil.readLeShort(buffer, offset + 0);
+        entries = ByteUtil.readLeShort(buffer, offset + 2);
+        maxEntries = ByteUtil.readLeShort(buffer, offset + 4);
+        depth = ByteUtil.readLeShort(buffer, offset + 6);
+        generation = (short) ByteUtil.readLeInt(buffer, offset + 8);
         return 12;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

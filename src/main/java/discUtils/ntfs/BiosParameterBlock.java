@@ -23,11 +23,13 @@
 package discUtils.ntfs;
 
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 import discUtils.core.Geometry;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
+import vavi.util.ByteUtil;
 
 
 class BiosParameterBlock {
@@ -172,60 +174,60 @@ class BiosParameterBlock {
 
     static BiosParameterBlock fromBytes(byte[] bytes, int offset) {
         BiosParameterBlock bpb = new BiosParameterBlock();
-        bpb.oemId = EndianUtilities.bytesToString(bytes, offset + 0x03, 8);
-        bpb.bytesPerSector = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0B);
-        bpb.totalSectors16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x13);
-        bpb.totalSectors32 = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x20);
+        bpb.oemId = new String(bytes, offset + 0x03, 8, StandardCharsets.US_ASCII);
+        bpb.bytesPerSector = ByteUtil.readLeShort(bytes, offset + 0x0B);
+        bpb.totalSectors16 = ByteUtil.readLeShort(bytes, offset + 0x13);
+        bpb.totalSectors32 = ByteUtil.readLeInt(bytes, offset + 0x20);
         bpb.signatureByte = bytes[offset + 0x26];
-        bpb.totalSectors64 = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x28);
-        bpb.mftCluster = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x30);
+        bpb.totalSectors64 = ByteUtil.readLeLong(bytes, offset + 0x28);
+        bpb.mftCluster = ByteUtil.readLeLong(bytes, offset + 0x30);
         bpb.rawMftRecordSize = bytes[offset + 0x40];
         bpb.sectorsPerCluster = bytes[offset + 0x0D];
         if (!bpb.isValid(Long.MAX_VALUE))
             return bpb;
 
-        bpb.reservedSectors = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x0E);
+        bpb.reservedSectors = ByteUtil.readLeShort(bytes, offset + 0x0E);
         bpb.numFats = bytes[offset + 0x10];
-        bpb.fatRootEntriesCount = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x11);
+        bpb.fatRootEntriesCount = ByteUtil.readLeShort(bytes, offset + 0x11);
         bpb.media = bytes[offset + 0x15];
-        bpb.fatSize16 = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x16);
-        bpb.sectorsPerTrack = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x18);
-        bpb.numHeads = EndianUtilities.toUInt16LittleEndian(bytes, offset + 0x1A);
-        bpb.hiddenSectors = EndianUtilities.toUInt32LittleEndian(bytes, offset + 0x1C);
+        bpb.fatSize16 = ByteUtil.readLeShort(bytes, offset + 0x16);
+        bpb.sectorsPerTrack = ByteUtil.readLeShort(bytes, offset + 0x18);
+        bpb.numHeads = ByteUtil.readLeShort(bytes, offset + 0x1A);
+        bpb.hiddenSectors = ByteUtil.readLeInt(bytes, offset + 0x1C);
         bpb.biosDriveNumber = bytes[offset + 0x24];
         bpb.chkDskFlags = bytes[offset + 0x25];
         bpb.paddingByte = bytes[offset + 0x27];
-        bpb.mftMirrorCluster = EndianUtilities.toInt64LittleEndian(bytes, offset + 0x38);
+        bpb.mftMirrorCluster = ByteUtil.readLeLong(bytes, offset + 0x38);
         bpb.rawIndexBufferSize = bytes[offset + 0x44];
-        bpb.volumeSerialNumber = EndianUtilities.toUInt64LittleEndian(bytes, offset + 0x48);
+        bpb.volumeSerialNumber = ByteUtil.readLeLong(bytes, offset + 0x48);
 
         return bpb;
     }
 
     void toBytes(byte[] buffer, int offset) {
         EndianUtilities.stringToBytes(oemId, buffer, offset + 0x03, 8);
-        EndianUtilities.writeBytesLittleEndian(bytesPerSector, buffer, offset + 0x0B);
+        ByteUtil.writeLeShort(bytesPerSector, buffer, offset + 0x0B);
         buffer[offset + 0x0D] = sectorsPerCluster;
-        EndianUtilities.writeBytesLittleEndian(reservedSectors, buffer, offset + 0x0E);
+        ByteUtil.writeLeShort(reservedSectors, buffer, offset + 0x0E);
         buffer[offset + 0x10] = numFats;
-        EndianUtilities.writeBytesLittleEndian(fatRootEntriesCount, buffer, offset + 0x11);
-        EndianUtilities.writeBytesLittleEndian(totalSectors16, buffer, offset + 0x13);
+        ByteUtil.writeLeShort(fatRootEntriesCount, buffer, offset + 0x11);
+        ByteUtil.writeLeShort(totalSectors16, buffer, offset + 0x13);
         buffer[offset + 0x15] = media;
-        EndianUtilities.writeBytesLittleEndian(fatSize16, buffer, offset + 0x16);
-        EndianUtilities.writeBytesLittleEndian(sectorsPerTrack, buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(numHeads, buffer, offset + 0x1A);
-        EndianUtilities.writeBytesLittleEndian(hiddenSectors, buffer, offset + 0x1C);
-        EndianUtilities.writeBytesLittleEndian(totalSectors32, buffer, offset + 0x20);
+        ByteUtil.writeLeShort(fatSize16, buffer, offset + 0x16);
+        ByteUtil.writeLeShort(sectorsPerTrack, buffer, offset + 0x18);
+        ByteUtil.writeLeShort(numHeads, buffer, offset + 0x1A);
+        ByteUtil.writeLeInt(hiddenSectors, buffer, offset + 0x1C);
+        ByteUtil.writeLeInt(totalSectors32, buffer, offset + 0x20);
         buffer[offset + 0x24] = biosDriveNumber;
         buffer[offset + 0x25] = chkDskFlags;
         buffer[offset + 0x26] = signatureByte;
         buffer[offset + 0x27] = paddingByte;
-        EndianUtilities.writeBytesLittleEndian(totalSectors64, buffer, offset + 0x28);
-        EndianUtilities.writeBytesLittleEndian(mftCluster, buffer, offset + 0x30);
-        EndianUtilities.writeBytesLittleEndian(mftMirrorCluster, buffer, offset + 0x38);
+        ByteUtil.writeLeLong(totalSectors64, buffer, offset + 0x28);
+        ByteUtil.writeLeLong(mftCluster, buffer, offset + 0x30);
+        ByteUtil.writeLeLong(mftMirrorCluster, buffer, offset + 0x38);
         buffer[offset + 0x40] = rawMftRecordSize;
         buffer[offset + 0x44] = rawIndexBufferSize;
-        EndianUtilities.writeBytesLittleEndian(volumeSerialNumber, buffer, offset + 0x48);
+        ByteUtil.writeLeLong(volumeSerialNumber, buffer, offset + 0x48);
     }
 
     int calcRecordSize(byte rawSize) {
@@ -259,7 +261,7 @@ class BiosParameterBlock {
         byte[] buffer = new byte[8];
         Random rng = new Random();
         rng.nextBytes(buffer);
-        return EndianUtilities.toUInt64LittleEndian(buffer, 0);
+        return ByteUtil.readLeLong(buffer, 0);
     }
 
     private byte codeRecordSize(int size) {

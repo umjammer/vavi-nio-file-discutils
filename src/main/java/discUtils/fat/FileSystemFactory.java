@@ -22,9 +22,6 @@
 
 package discUtils.fat;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
 import discUtils.core.DiscFileSystem;
 import discUtils.core.FileSystemInfo;
 import discUtils.core.FileSystemParameters;
@@ -37,6 +34,7 @@ import dotnet4j.io.Stream;
 
 public class FileSystemFactory implements VfsFileSystemFactory {
 
+    @Override
     public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (FatFileSystem.detect(stream)) {
             return new FileSystemInfo[] {

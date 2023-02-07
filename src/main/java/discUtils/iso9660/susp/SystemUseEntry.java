@@ -23,8 +23,7 @@
 package discUtils.iso9660.susp;
 
 import java.nio.charset.Charset;
-
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
 
 
 public abstract class SystemUseEntry {
@@ -45,7 +44,7 @@ public abstract class SystemUseEntry {
             return null;
         }
 
-        String name = EndianUtilities.bytesToString(data, offset, 2);
+        String name = new String(data, offset, 2, StandardCharsets.US_ASCII);
         length[0] = data[offset + 2];
         byte version = data[offset + 3];
 

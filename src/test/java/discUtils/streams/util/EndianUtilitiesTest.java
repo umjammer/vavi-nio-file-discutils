@@ -10,7 +10,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author <a href="mailto:vavivavi@yahoo.co.jp">Naohide Sano</a> (nsano)
  * @version 0.00 2019/10/13 nsano initial version <br>
  */
+@SuppressWarnings("deprecation")
 class EndianUtilitiesTest {
 
     @Test

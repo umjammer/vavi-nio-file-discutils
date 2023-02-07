@@ -64,7 +64,7 @@ class Bitmap {
         }
 
         // compute intersection with another rect
-        Rectangle operatorAndEquals(final Rectangle src) {
+        Rectangle operatorAndEquals(Rectangle src) {
             if (src.min_x > min_x) min_x = src.min_x;
             if (src.max_x < max_x) max_x = src.max_x;
             if (src.min_y > min_y) min_y = src.min_y;
@@ -73,7 +73,7 @@ class Bitmap {
         }
 
         // compute union with another rect
-        Rectangle operatorOrEquals(final Rectangle src) {
+        Rectangle operatorOrEquals(Rectangle src) {
             if (src.min_x < min_x) min_x = src.min_x;
             if (src.max_x > max_x) max_x = src.max_x;
             if (src.min_y < min_y) min_y = src.min_y;
@@ -81,40 +81,40 @@ class Bitmap {
             return this;
         }
 
-        Rectangle operatorAnd(final Rectangle b) {
+        Rectangle operatorAnd(Rectangle b) {
             Rectangle a = this;
             a = a.operatorAndEquals(b);
             return a;
         }
 
-        Rectangle operatorOr(final Rectangle b) {
+        Rectangle operatorOr(Rectangle b) {
             Rectangle a = this;
             a = a.operatorOrEquals(b);
             return a;
         }
 
         // comparisons
-        boolean operatorEquals(final Rectangle rhs) {
+        boolean operatorEquals(Rectangle rhs) {
             return min_x == rhs.min_x && max_x == rhs.max_x && min_y == rhs.min_y && max_y == rhs.max_y;
         }
 
-        boolean operatorNotEquals(final Rectangle rhs) {
+        boolean operatorNotEquals(Rectangle rhs) {
             return min_x != rhs.min_x || max_x != rhs.max_x || min_y != rhs.min_y || max_y != rhs.max_y;
         }
 
-        boolean operatorGT(final Rectangle rhs) {
+        boolean operatorGT(Rectangle rhs) {
             return min_x < rhs.min_x && min_y < rhs.min_y && max_x > rhs.max_x && max_y > rhs.max_y;
         }
 
-        boolean operatorGE(final Rectangle rhs) {
+        boolean operatorGE(Rectangle rhs) {
             return min_x <= rhs.min_x && min_y <= rhs.min_y && max_x >= rhs.max_x && max_y >= rhs.max_y;
         }
 
-        boolean operatorLT(final Rectangle rhs) {
+        boolean operatorLT(Rectangle rhs) {
             return min_x >= rhs.min_x || min_y >= rhs.min_y || max_x <= rhs.max_x || max_y <= rhs.max_y;
         }
 
-        boolean operatorLE(final Rectangle rhs) {
+        boolean operatorLE(Rectangle rhs) {
             return min_x > rhs.min_x || min_y > rhs.min_y || max_x < rhs.max_x || max_y < rhs.max_y;
         }
 
@@ -127,7 +127,7 @@ class Bitmap {
             return (x >= min_x) && (x <= max_x) && (y >= min_y) && (y <= max_y);
         }
 
-        boolean contains(final Rectangle rect) {
+        boolean contains(Rectangle rect) {
             return (min_x <= rect.min_x) && (max_x >= rect.max_x) && (min_y <= rect.min_y) && (max_y >= rect.max_y);
         }
 
@@ -240,7 +240,7 @@ class Bitmap {
         m_cliprect = new Rectangle(0, width - 1, 0, height - 1);
     }
 
-    protected Bitmap(Format format, byte bpp, Bitmap source, final Rectangle subrect) {
+    protected Bitmap(Format format, byte bpp, Bitmap source, Rectangle subrect) {
         m_alloc = null;
         m_allocbytes = 0;
         m_base = source.raw_pixptr(subrect.top(), subrect.left());
@@ -386,7 +386,7 @@ class Bitmap {
         fill(color, m_cliprect);
     }
 
-    void fill(long color, final Rectangle bounds) {
+    void fill(long color, Rectangle bounds) {
         // if we have a cliprect, intersect with that
         Rectangle fill = bounds;
         fill = fill.operatorAndEquals(m_cliprect);
@@ -442,7 +442,7 @@ class Bitmap {
         m_cliprect.set(0, m_width - 1, 0, m_height - 1);
     }
 
-    protected void wrap(Bitmap source, final Rectangle subrect) {
+    protected void wrap(Bitmap source, Rectangle subrect) {
         assert (m_format == source.m_format);
         assert (m_bpp == source.m_bpp);
         assert (source.cliprect().contains(subrect));
@@ -540,7 +540,7 @@ class Bitmap {
             super(format, PIXEL_BITS, base, width, height, rowpixels);
         }
 
-        protected bitmap_specific(Format format, PixelType source, final Rectangle subrect) {
+        protected bitmap_specific(Format format, PixelType source, Rectangle subrect) {
             super(format, PIXEL_BITS, source, subrect);
         }
 
@@ -550,11 +550,12 @@ class Bitmap {
         public PixelType pixel_t;
 
         // getters
+        @Override
         abstract byte bpp();
 
         // pixel accessors
         PixelType pix(int y, int x /*= 0*/) {
-            return super.<PixelType>pixt(y, x);
+            return super.pixt(y, x);
         }
 
         // operations
@@ -562,7 +563,7 @@ class Bitmap {
             fill(color, cliprect());
         }
 
-        void fill(PixelType color, final Rectangle bounds) {
+        void fill(PixelType color, Rectangle bounds) {
             // if we have a cliprect, intersect with that
             Rectangle fill = bounds;
             fill = fill.operatorAndEquals(cliprect());
@@ -592,19 +593,21 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_ind8(bitmap_ind8 source, final Rectangle subrect) {
+        public bitmap_ind8(bitmap_ind8 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
+        @Override
         public void wrap(byte[] base, int width, int height, int rowpixels) {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_ind8 source, final Rectangle subrect) {
-            super.wrap((Bitmap) source, subrect);
+        public void wrap(bitmap_ind8 source, Rectangle subrect) {
+            super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -632,7 +635,7 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_ind16(bitmap_ind16 source, final Rectangle subrect) {
+        public bitmap_ind16(bitmap_ind16 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
@@ -640,11 +643,12 @@ class Bitmap {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_ind8 source, final Rectangle subrect) {
+        public void wrap(bitmap_ind8 source, Rectangle subrect) {
             super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         Format format() {
             return k_bitmap_format;
         }
@@ -672,7 +676,7 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_ind32(bitmap_ind32 source, final Rectangle subrect) {
+        public bitmap_ind32(bitmap_ind32 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
@@ -680,11 +684,12 @@ class Bitmap {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_ind8 source, final Rectangle subrect) {
+        public void wrap(bitmap_ind8 source, Rectangle subrect) {
             super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -712,7 +717,7 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_ind64(bitmap_ind64 source, final Rectangle subrect) {
+        public bitmap_ind64(bitmap_ind64 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
@@ -720,11 +725,12 @@ class Bitmap {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_ind8 source, final Rectangle subrect) {
-            super.wrap((Bitmap) source, subrect);
+        public void wrap(bitmap_ind8 source, Rectangle subrect) {
+            super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         Format format() {
             return k_bitmap_format;
         }
@@ -754,7 +760,7 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_yuy16(bitmap_yuy16 source, final Rectangle subrect) {
+        public bitmap_yuy16(bitmap_yuy16 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
@@ -762,11 +768,12 @@ class Bitmap {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_yuy16 source, final Rectangle subrect) {
-            super.wrap((Bitmap) source, subrect);
+        public void wrap(bitmap_yuy16 source, Rectangle subrect) {
+            super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -794,7 +801,7 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_rgb32(bitmap_rgb32 source, final Rectangle subrect) {
+        public bitmap_rgb32(bitmap_rgb32 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
@@ -802,11 +809,12 @@ class Bitmap {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_rgb32 source, final Rectangle subrect) {
-            super.wrap((Bitmap) source, subrect);
+        public void wrap(bitmap_rgb32 source, Rectangle subrect) {
+            super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }
@@ -834,7 +842,7 @@ class Bitmap {
             super(k_bitmap_format, base, width, height, rowpixels);
         }
 
-        public bitmap_argb32(bitmap_argb32 source, final Rectangle subrect) {
+        public bitmap_argb32(bitmap_argb32 source, Rectangle subrect) {
             super(k_bitmap_format, source, subrect);
         }
 
@@ -842,11 +850,12 @@ class Bitmap {
             super.wrap(base, width, height, rowpixels);
         }
 
-        public void wrap(bitmap_argb32 source, final Rectangle subrect) {
-            super.wrap((Bitmap) source, subrect);
+        public void wrap(bitmap_argb32 source, Rectangle subrect) {
+            super.wrap(source, subrect);
         }
 
         // getters
+        @Override
         public Format format() {
             return k_bitmap_format;
         }

@@ -27,6 +27,7 @@ import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class CompressedBlock implements IByteArraySerializable {
@@ -48,28 +49,28 @@ public class CompressedBlock implements IByteArraySerializable {
 
     public int signature;
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        infoVersion = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
-        firstSector = EndianUtilities.toInt64BigEndian(buffer, offset + 8);
-        sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
-        dataStart = EndianUtilities.toUInt64BigEndian(buffer, offset + 24);
-        decompressBufferRequested = EndianUtilities.toUInt32BigEndian(buffer, offset + 32);
-        blocksDescriptor = EndianUtilities.toUInt32BigEndian(buffer, offset + 36);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        signature = ByteUtil.readBeInt(buffer, offset + 0);
+        infoVersion = ByteUtil.readBeInt(buffer, offset + 4);
+        firstSector = ByteUtil.readBeLong(buffer, offset + 8);
+        sectorCount = ByteUtil.readBeLong(buffer, offset + 16);
+        dataStart = ByteUtil.readBeLong(buffer, offset + 24);
+        decompressBufferRequested = ByteUtil.readBeInt(buffer, offset + 32);
+        blocksDescriptor = ByteUtil.readBeInt(buffer, offset + 36);
         checkSum = EndianUtilities.toStruct(UdifChecksum.class, buffer, offset + 60);
         runs = new ArrayList<>();
-        int numRuns = EndianUtilities.toInt32BigEndian(buffer, offset + 200);
+        int numRuns = ByteUtil.readBeInt(buffer, offset + 200);
         for (int i = 0; i < numRuns; ++i) {
             runs.add(EndianUtilities.toStruct(CompressedRun.class, buffer, offset + 204 + i * 40));
         }
         return 0;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

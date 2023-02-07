@@ -22,10 +22,6 @@
 
 package libraryTests.bootConfig;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.bootConfig.BcdObject;
 import discUtils.bootConfig.Element;
 import discUtils.bootConfig.ElementValue;
@@ -34,6 +30,9 @@ import discUtils.bootConfig.Store;
 import discUtils.bootConfig.WellKnownElement;
 import discUtils.registry.RegistryHive;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ElementTest {
 

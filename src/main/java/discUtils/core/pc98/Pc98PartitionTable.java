@@ -9,28 +9,22 @@ package discUtils.core.pc98;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import discUtils.core.Geometry;
-import discUtils.core.partitions.BiosPartitionRecord;
+import discUtils.core.VirtualDisk;
+import discUtils.core.partitions.PartitionInfo;
+import discUtils.core.partitions.PartitionTable;
+import discUtils.core.partitions.WellKnownPartitionType;
 import discUtils.streams.SparseStream;
 import discUtils.streams.SubStream;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
 import vavi.util.Debug;
 import vavi.util.serdes.Serdes;
-
 import vavix.io.partition.PC98PartitionEntry;
-
-import discUtils.core.VirtualDisk;
-import discUtils.core.partitions.PartitionInfo;
-import discUtils.core.partitions.PartitionTable;
-import discUtils.core.partitions.WellKnownPartitionType;
 
 
 /**

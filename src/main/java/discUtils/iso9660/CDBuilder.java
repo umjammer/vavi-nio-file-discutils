@@ -35,7 +35,6 @@ import discUtils.streams.builder.BuilderBufferExtent;
 import discUtils.streams.builder.BuilderExtent;
 import discUtils.streams.builder.BuilderStreamExtent;
 import discUtils.streams.builder.StreamBuilder;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
@@ -43,6 +42,7 @@ import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.util.compat.StringUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -279,7 +279,7 @@ public final class CDBuilder extends StreamBuilder {
     /**
      * @param totalLength {@cs out}
      */
-    protected List<BuilderExtent> fixExtents(long[] totalLength) {
+    @Override protected List<BuilderExtent> fixExtents(long[] totalLength) {
         List<BuilderExtent> fixedRegions = new ArrayList<>();
 
         long buildTime = System.currentTimeMillis();
@@ -472,13 +472,13 @@ public final class CDBuilder extends StreamBuilder {
 
         int checkSum = 0;
         for (int i = 64; i < bootData.length; i += 4) {
-            checkSum += EndianUtilities.toUInt32LittleEndian(bootData, i);
+            checkSum += ByteUtil.readLeInt(bootData, i);
         }
 
-        EndianUtilities.writeBytesLittleEndian(pvdLba, bootData, 8);
-        EndianUtilities.writeBytesLittleEndian(bootImageLba, bootData, 12);
-        EndianUtilities.writeBytesLittleEndian(bootData.length, bootData, 16);
-        EndianUtilities.writeBytesLittleEndian(checkSum, bootData, 20);
+        ByteUtil.writeLeInt(pvdLba, bootData, 8);
+        ByteUtil.writeLeInt(bootImageLba, bootData, 12);
+        ByteUtil.writeLeInt(bootData.length, bootData, 16);
+        ByteUtil.writeLeInt(checkSum, bootData, 20);
 
         return new MemoryStream(bootData, false);
     }

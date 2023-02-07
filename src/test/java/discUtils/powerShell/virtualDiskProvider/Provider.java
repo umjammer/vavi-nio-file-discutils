@@ -25,13 +25,9 @@ package discUtils.powerShell.virtualDiskProvider;
 import java.io.Closeable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.SecurityPermission;
 import java.util.Arrays;
 import java.util.List;
 
-import discUtils.complete.SetupHelper;
-import discUtils.core.coreCompat.IContentReader;
-import discUtils.core.coreCompat.IContentWriter;
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
 import discUtils.core.DiscFileSystem;
@@ -41,25 +37,30 @@ import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.VirtualDisk;
 import discUtils.core.VolumeInfo;
 import discUtils.core.VolumeManager;
+import discUtils.core.coreCompat.FileAttributes;
+import discUtils.core.coreCompat.IContentReader;
+import discUtils.core.coreCompat.IContentWriter;
 import discUtils.ntfs.NtfsFileSystem;
+import discUtils.powerShell.Utilities;
+import discUtils.powerShell.conpat.ErrorCategory;
 import discUtils.powerShell.conpat.ErrorRecord;
+import discUtils.powerShell.conpat.IContentCmdletProvider;
 import discUtils.powerShell.conpat.NavigationCmdletProvider;
 import discUtils.powerShell.conpat.PSDriveInfo;
 import discUtils.powerShell.conpat.ReturnContainers;
-import discUtils.powerShell.Utilities;
-import discUtils.powerShell.conpat.IContentCmdletProvider;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
+import dotnet4j.security.accessControl.RawSecurityDescriptor;
+import dotnet4j.util.compat.StringUtilities;
 
 
-public final class Provider extends NavigationCmdletProvider implements IContentCmdletProvider {
+public class Provider extends NavigationCmdletProvider implements IContentCmdletProvider {
 
     private static final String FS = java.io.File.separator;
 
     protected PSDriveInfo newDrive(PSDriveInfo drive) {
-        SetupHelper.setupComplete();
         NewDriveParameters dynParams = DynamicParameters instanceof NewDriveParameters ? (NewDriveParameters) DynamicParameters
                                                                                        : null;
         if (drive == null) {
@@ -70,7 +71,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             return null;
         }
 
-        if (String.IsNullOrEmpty(drive.Root)) {
+        if (drive.Root == null || drive.Root.isEmpty()) {
             writeError(new ErrorRecord(new IllegalArgumentException("drive"), "NoRoot", ErrorCategory.InvalidArgument, drive));
             return null;
         }
@@ -139,14 +140,17 @@ public final class Provider extends NavigationCmdletProvider implements IContent
     }
 
     protected void getItem(String path) {
-        GetItemParameters dynParams = DynamicParameters instanceof GetItemParameters ? (GetItemParameters) DynamicParameters
-                                                                                     : null;
-        boolean readOnly = !(dynParams != null && dynParams.getReadWrite().IsPresent);
-        Object obj = findItemByPath(Utilities.normalizePath(path), false, readOnly);
-        if (obj != null) {
-            writeItemObject(obj, path.replaceAll("(^\\*|\\*$)", ""), true);
+        try {
+            GetItemParameters dynParams = DynamicParameters instanceof GetItemParameters ? (GetItemParameters) DynamicParameters
+                                                                                         : null;
+            boolean readOnly = !(dynParams != null && dynParams.getReadWrite().IsPresent);
+            Object obj = findItemByPath(Utilities.normalizePath(path), false, readOnly);
+            if (obj != null) {
+                writeItemObject(obj, path.replaceAll("(^\\*|\\*$)", ""), true);
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
-
     }
 
     protected Object getItemDynamicParameters(String path) {
@@ -158,112 +162,134 @@ public final class Provider extends NavigationCmdletProvider implements IContent
     }
 
     protected boolean itemExists(String path) {
-        boolean result = findItemByPath(Utilities.normalizePath(path), false, true) != null;
-        return result;
+        try {
+            boolean result = findItemByPath(Utilities.normalizePath(path), false, true) != null;
+            return result;
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
+        }
     }
 
     protected boolean isValidPath(String path) {
         return path != null && !path.isEmpty();
     }
 
+    @Override
     protected void getChildItems(String path, boolean recurse) {
         getChildren(Utilities.normalizePath(path), recurse, false);
     }
 
+    @Override
     protected void getChildNames(String path, ReturnContainers returnContainers) {
         // TODO: returnContainers
         getChildren(Utilities.normalizePath(path), false, true);
     }
 
+    @Override
     protected boolean hasChildItems(String path) {
-        Object obj = findItemByPath(Utilities.normalizePath(path), true, true);
-        if (obj instanceof DiscFileInfo) {
-            return false;
-        } else if (obj instanceof DiscDirectoryInfo) {
-            return ((DiscDirectoryInfo) obj).getFileSystemInfos().size() > 0;
-        } else {
-            return true;
+        try {
+            Object obj = findItemByPath(Utilities.normalizePath(path), true, true);
+            if (obj instanceof DiscFileInfo) {
+                return false;
+            } else if (obj instanceof DiscDirectoryInfo) {
+                return ((DiscDirectoryInfo) obj).getFileSystemInfos().size() > 0;
+            } else {
+                return true;
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     protected void removeItem(String path, boolean recurse) {
-        Object obj = findItemByPath(Utilities.normalizePath(path), false, false);
-        if (obj instanceof DiscDirectoryInfo) {
-            ((DiscDirectoryInfo) obj).delete(true);
-        } else if (obj instanceof DiscFileInfo) {
-            ((DiscFileInfo) obj).delete();
-        } else {
-            writeError(new ErrorRecord(new UnsupportedOperationException("Cannot delete items of this type: " +
-                                                                         (obj != null ? obj.getClass() : null)),
-                                       "UnknownObjectTypeToRemove",
-                                       ErrorCategory.InvalidOperation,
-                                       obj));
+        try {
+            Object obj = findItemByPath(Utilities.normalizePath(path), false, false);
+            if (obj instanceof DiscDirectoryInfo) {
+                ((DiscDirectoryInfo) obj).delete(true);
+            } else if (obj instanceof DiscFileInfo) {
+                ((DiscFileInfo) obj).delete();
+            } else {
+                writeError(new ErrorRecord(new UnsupportedOperationException("Cannot delete items of this type: " +
+                                                                             (obj != null ? obj.getClass() : null)),
+                                           "UnknownObjectTypeToRemove",
+                                           ErrorCategory.InvalidOperation,
+                                           obj));
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     protected void newItem(String path, String itemTypeName, Object newItemValue) {
-        String parentPath = getParentPath(path, null);
-        if (itemTypeName == null || itemTypeName.isEmpty()) {
-            writeError(new ErrorRecord(new UnsupportedOperationException("No type specified.  Specify \"file\" or \"directory\" as the type."),
-                                       "NoTypeForNewItem",
-                                       ErrorCategory.InvalidArgument,
-                                       itemTypeName));
-            return;
-        }
-
-        String itemTypeUpper = itemTypeName.toUpperCase();
-        Object obj = findItemByPath(Utilities.normalizePath(parentPath), true, false);
-        if (obj instanceof DiscDirectoryInfo) {
-            DiscDirectoryInfo dirInfo = (DiscDirectoryInfo) obj;
-            switch (itemTypeUpper) {
-            case "FILE":
-                try (Closeable ignored = dirInfo.getFileSystem()
-                        .openFile(Path.Combine(dirInfo.getFullName(), getChildName(path)), FileMode.Create)) {
-                    {
-                    }
-                }
-                break;
-            case "DIRECTORY":
-                dirInfo.getFileSystem().createDirectory(Path.Combine(dirInfo.getFullName(), getChildName(path)));
-                break;
-            case "HARDLINK":
-                NtfsFileSystem ntfs = dirInfo.getFileSystem() instanceof NtfsFileSystem
-                        ? (NtfsFileSystem) dirInfo
-                        .getFileSystem()
-                        : null;
-                if (ntfs != null) {
-                    NewHardLinkDynamicParameters hlParams = (NewHardLinkDynamicParameters) DynamicParameters;
-                    Object srcItems = SessionState.InvokeProvider.Item.get(hlParams.getSourcePath());
-                    if (srcItems.size() != 1) {
-                        writeError(new ErrorRecord(new UnsupportedOperationException("The type is unknown for this provider.  Only \"file\" and \"directory\" can be specified."),
-                                "UnknownTypeForNewItem",
-                                ErrorCategory.InvalidArgument,
-                                itemTypeName));
-                        return;
-                    }
-
-                    DiscFileSystemInfo srcFsi = srcItems[0].BaseObject instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) srcItems[0].BaseObject
-                            : null;
-                    ntfs.CreateHardLink(srcFsi.getFullName(), Path.Combine(dirInfo.getFullName(), getChildName(path)));
-                }
-
-                break;
-            default:
-                writeError(new ErrorRecord(new UnsupportedOperationException("The type is unknown for this provider.  Only \"file\" and \"directory\" can be specified."),
-                        "UnknownTypeForNewItem",
+        try {
+            String parentPath = getParentPath(path, null);
+            if (itemTypeName == null || itemTypeName.isEmpty()) {
+                writeError(new ErrorRecord(new UnsupportedOperationException("No type specified.  Specify \"file\" or \"directory\" as the type."),
+                        "NoTypeForNewItem",
                         ErrorCategory.InvalidArgument,
                         itemTypeName));
-                break;
+                return;
             }
-        } else {
-            writeError(new ErrorRecord(new UnsupportedOperationException("Cannot create items in an object of this type: " +
-                                                                         (obj != null ? obj.getClass() : null)),
-                                       "UnknownObjectTypeForNewItemParent",
-                                       ErrorCategory.InvalidOperation,
-                                       obj));
+
+            String itemTypeUpper = itemTypeName.toUpperCase();
+            Object obj = findItemByPath(Utilities.normalizePath(parentPath), true, false);
+            if (obj instanceof DiscDirectoryInfo) {
+                DiscDirectoryInfo dirInfo = (DiscDirectoryInfo) obj;
+                switch (itemTypeUpper) {
+                case "FILE":
+                    try (Closeable ignored = dirInfo.getFileSystem()
+                            .openFile(Path.Combine(dirInfo.getFullName(), getChildName(path)), FileMode.Create)) {
+                        {
+                        }
+                    }
+                    break;
+                case "DIRECTORY":
+                    dirInfo.getFileSystem().createDirectory(Path.Combine(dirInfo.getFullName(), getChildName(path)));
+                    break;
+                case "HARDLINK":
+                    NtfsFileSystem ntfs = dirInfo.getFileSystem() instanceof NtfsFileSystem
+                            ? (NtfsFileSystem) dirInfo
+                            .getFileSystem()
+                            : null;
+                    if (ntfs != null) {
+                        NewHardLinkDynamicParameters hlParams = (NewHardLinkDynamicParameters) DynamicParameters;
+                        Object srcItems = SessionState.InvokeProvider.Item.get(hlParams.getSourcePath());
+                        if (srcItems.size() != 1) {
+                            writeError(new ErrorRecord(new UnsupportedOperationException("The type is unknown for this provider.  Only \"file\" and \"directory\" can be specified."),
+                                    "UnknownTypeForNewItem",
+                                    ErrorCategory.InvalidArgument,
+                                    itemTypeName));
+                            return;
+                        }
+
+                        DiscFileSystemInfo srcFsi = srcItems[0].BaseObject instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) srcItems[0].BaseObject
+                                : null;
+                        ntfs.CreateHardLink(srcFsi.getFullName(), Path.Combine(dirInfo.getFullName(), getChildName(path)));
+                    }
+
+                    break;
+                default:
+                    writeError(new ErrorRecord(new UnsupportedOperationException("The type is unknown for this provider.  Only \"file\" and \"directory\" can be specified."),
+                            "UnknownTypeForNewItem",
+                            ErrorCategory.InvalidArgument,
+                            itemTypeName));
+                    break;
+                }
+            } else {
+                writeError(new ErrorRecord(new UnsupportedOperationException("Cannot create items in an object of this type: " +
+                        (obj != null ? obj.getClass() : null)),
+                        "UnknownObjectTypeForNewItemParent",
+                        ErrorCategory.InvalidOperation,
+                        obj));
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     protected Object newItemDynamicParameters(String path, String itemTypeName, Object newItemValue) {
         if (itemTypeName == null || itemTypeName.isEmpty()) {
             return null;
@@ -277,138 +303,172 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         return null;
     }
 
+    @Override
     protected void renameItem(String path, String newName) {
-        Object obj = findItemByPath(Utilities.normalizePath(path), true, false);
-        DiscFileSystemInfo fsiObj = obj instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) obj : null;
-        if (fsiObj == null) {
-            writeError(new ErrorRecord(new UnsupportedOperationException("Cannot move items to this location"),
-                                       "BadParentForNewItem",
-                                       ErrorCategory.InvalidArgument,
-                                       newName));
-            return;
-        }
+        try {
+            Object obj = findItemByPath(Utilities.normalizePath(path), true, false);
+            DiscFileSystemInfo fsiObj = obj instanceof DiscFileSystemInfo ? (DiscFileSystemInfo) obj : null;
+            if (fsiObj == null) {
+                writeError(new ErrorRecord(new UnsupportedOperationException("Cannot move items to this location"),
+                        "BadParentForNewItem",
+                        ErrorCategory.InvalidArgument,
+                        newName));
+                return;
+            }
 
-        String newFullName = Paths.get(Paths.get(fsiObj.getFullName().replaceFirst("\\*$", "")).getParent().toString(), newName)
-                .toString();
-        if (obj instanceof DiscDirectoryInfo) {
-            DiscDirectoryInfo dirObj = (DiscDirectoryInfo) obj;
-            dirObj.moveTo(newFullName);
-        } else {
-            DiscFileInfo fileObj = (DiscFileInfo) obj;
-            fileObj.moveTo(newFullName);
+            String newFullName = Paths.get(Paths.get(fsiObj.getFullName().replaceFirst("\\*$", "")).getParent().toString(), newName)
+                    .toString();
+            if (obj instanceof DiscDirectoryInfo) {
+                DiscDirectoryInfo dirObj = (DiscDirectoryInfo) obj;
+                dirObj.moveTo(newFullName);
+            } else {
+                DiscFileInfo fileObj = (DiscFileInfo) obj;
+                fileObj.moveTo(newFullName);
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     protected void copyItem(String path, String copyPath, boolean recurse) {
-        DiscDirectoryInfo destDir;
-        String destFileName = null;
-        Object destObj = findItemByPath(Utilities.normalizePath(copyPath), true, false);
-        destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : null;
-        if (destDir != null) {
-            destFileName = getChildName(path);
-        } else if (destObj == null || destObj instanceof DiscFileInfo) {
-            destObj = FindItemByPath(Utilities.NormalizePath(getParentPath(copyPath, null)), true, false);
+        try {
+            DiscDirectoryInfo destDir;
+            String destFileName = null;
+            Object destObj = findItemByPath(Utilities.normalizePath(copyPath), true, false);
             destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : null;
-            destFileName = getChildName(copyPath);
-        }
+            if (destDir != null) {
+                destFileName = getChildName(path);
+            } else if (destObj == null || destObj instanceof DiscFileInfo) {
+                destObj = FindItemByPath(Utilities.NormalizePath(getParentPath(copyPath, null)), true, false);
+                destDir = destObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) destObj : null;
+                destFileName = getChildName(copyPath);
+            }
 
-        if (destDir == null) {
-            writeError(new ErrorRecord(new UnsupportedOperationException("Cannot copy items to this location"),
-                                       "BadParentForNewItem",
-                                       ErrorCategory.InvalidArgument,
-                                       copyPath));
-            return;
-        }
+            if (destDir == null) {
+                writeError(new ErrorRecord(new UnsupportedOperationException("Cannot copy items to this location"),
+                        "BadParentForNewItem",
+                        ErrorCategory.InvalidArgument,
+                        copyPath));
+                return;
+            }
 
-        Object srcDirObj = FindItemByPath(Utilities.NormalizePath(getParentPath(path, null)), true, true);
-        DiscDirectoryInfo srcDir = srcDirObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) srcDirObj
-                                                                          : null;
-        String srcFileName = getChildName(path);
-        if (srcDir == null) {
-            writeError(new ErrorRecord(new UnsupportedOperationException("Cannot copy items from this location"),
-                                       "BadParentForNewItem",
-                                       ErrorCategory.InvalidArgument,
-                                       copyPath));
-            return;
-        }
+            Object srcDirObj = FindItemByPath(Utilities.NormalizePath(getParentPath(path, null)), true, true);
+            DiscDirectoryInfo srcDir = srcDirObj instanceof DiscDirectoryInfo ? (DiscDirectoryInfo) srcDirObj
+                    : null;
+            String srcFileName = getChildName(path);
+            if (srcDir == null) {
+                writeError(new ErrorRecord(new UnsupportedOperationException("Cannot copy items from this location"),
+                        "BadParentForNewItem",
+                        ErrorCategory.InvalidArgument,
+                        copyPath));
+                return;
+            }
 
-        doCopy(srcDir, srcFileName, destDir, destFileName, recurse);
+            doCopy(srcDir, srcFileName, destDir, destFileName, recurse);
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
+        }
     }
 
+    @Override
     protected boolean isItemContainer(String path) {
-        Object obj = findItemByPath(Utilities.normalizePath(path), false, true);
-        boolean result = false;
-        if (obj instanceof VirtualDisk) {
-            result = true;
-        } else if (obj instanceof LogicalVolumeInfo) {
-            result = true;
-        } else if (obj instanceof DiscDirectoryInfo) {
-            result = true;
-        }
+        try {
+            Object obj = findItemByPath(Utilities.normalizePath(path), false, true);
+            boolean result = false;
+            if (obj instanceof VirtualDisk) {
+                result = true;
+            } else if (obj instanceof LogicalVolumeInfo) {
+                result = true;
+            } else if (obj instanceof DiscDirectoryInfo) {
+                result = true;
+            }
 
-        return result;
+            return result;
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
+        }
     }
 
+    @Override
     protected String makePath(String parent, String child) {
         return Utilities.NormalizePath(super.makePath(Utilities.denormalizePath(parent), Utilities.denormalizePath(child)));
     }
 
+    @Override
     public void clearContent(String path) {
-        Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
-        if (destObj instanceof DiscFileInfo) {
-            try (Stream s = ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite)) {
-                {
-                    s.setLength(0);
+        try {
+            Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
+            if (destObj instanceof DiscFileInfo) {
+                try (Stream s = ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite)) {
+                    {
+                        s.setLength(0);
+                    }
                 }
+            } else {
+                writeError(new ErrorRecord(new IOException("Cannot write to this item"),
+                                           "BadContentDestination",
+                                           ErrorCategory.InvalidOperation,
+                                           destObj));
             }
-        } else {
-            writeError(new ErrorRecord(new IOException("Cannot write to this item"),
-                                       "BadContentDestination",
-                                       ErrorCategory.InvalidOperation,
-                                       destObj));
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     public Object clearContentDynamicParameters(String path) {
         return null;
     }
 
+    @Override
     public IContentReader getContentReader(String path) {
-        Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
-        if (destObj instanceof DiscFileInfo) {
-            return new FileContentReaderWriter(this,
-                                               ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.Read),
-                                               DynamicParameters instanceof ContentParameters ? (ContentParameters) DynamicParameters
-                                                                                              : null);
-        } else {
-            writeError(new ErrorRecord(new IOException("Cannot read from this item"),
-                                       "BadContentSource",
-                                       ErrorCategory.InvalidOperation,
-                                       destObj));
-            return null;
+        try {
+            Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
+            if (destObj instanceof DiscFileInfo) {
+                return new FileContentReaderWriter(this,
+                                                   ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.Read),
+                                                   DynamicParameters instanceof ContentParameters ? (ContentParameters) DynamicParameters
+                                                                                                  : null);
+            } else {
+                writeError(new ErrorRecord(new IOException("Cannot read from this item"),
+                                           "BadContentSource",
+                                           ErrorCategory.InvalidOperation,
+                                           destObj));
+                return null;
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     public Object getContentReaderDynamicParameters(String path) {
         return new ContentParameters();
     }
 
+    @Override
     public IContentWriter getContentWriter(String path) {
-        Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
-        if (destObj instanceof DiscFileInfo) {
-            return new FileContentReaderWriter(this,
-                                               ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite),
-                                               DynamicParameters instanceof ContentParameters ? (ContentParameters) DynamicParameters
-                                                                                              : null);
-        } else {
-            writeError(new ErrorRecord(new IOException("Cannot write to this item"),
-                                       "BadContentDestination",
-                                       ErrorCategory.InvalidOperation,
-                                       destObj));
-            return null;
+        try {
+            Object destObj = findItemByPath(Utilities.normalizePath(path), true, false);
+            if (destObj instanceof DiscFileInfo) {
+                return new FileContentReaderWriter(this,
+                        ((DiscFileInfo) destObj).open(FileMode.Open, FileAccess.ReadWrite),
+                        DynamicParameters instanceof ContentParameters ? (ContentParameters) DynamicParameters
+                                : null);
+            } else {
+                writeError(new ErrorRecord(new IOException("Cannot write to this item"),
+                        "BadContentDestination",
+                        ErrorCategory.InvalidOperation,
+                        destObj));
+                return null;
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
+    @Override
     public Object getContentWriterDynamicParameters(String path) {
         return new ContentParameters();
     }
@@ -424,13 +484,12 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             return "";
         }
 
-        StringBuilder result = new StringBuilder(5);
-        result.append(fsi.getAttributes().containsKey("Directory") ? "d" : "-");
-        result.append(fsi.getAttributes().containsKey("Archive") ? "a" : "-");
-        result.append(fsi.getAttributes().containsKey("ReadOnly") ? "r" : "-");
-        result.append(fsi.getAttributes().containsKey("Hidden") ? "h" : "-");
-        result.append(fsi.getAttributes().containsKey("System") ? "s" : "-");
-        return result.toString();
+        String result = (fsi.getAttributes().contains(FileAttributes.Directory) ? "d" : "-") +
+                (fsi.getAttributes().contains(FileAttributes.Archive) ? "a" : "-") +
+                (fsi.getAttributes().contains(FileAttributes.ReadOnly) ? "r" : "-") +
+                (fsi.getAttributes().contains(FileAttributes.Hidden) ? "h" : "-") +
+                (fsi.getAttributes().contains(FileAttributes.System) ? "s" : "-");
+        return result;
     }
 
     private VirtualDiskPSDriveInfo getDriveInfo() {
@@ -466,12 +525,12 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             }
         }
 
-        List<String> pathElems = Arrays.asList(relPath.split(discUtils.core.internal.Utilities.escapeForRegex(FS)));
+        List<String> pathElems = Arrays.asList(relPath.split(StringUtilities.escapeForRegex(FS)));
         if (pathElems.size() == 0) {
             return disk;
         }
 
-        VolumeInfo volInfo = null;
+        VolumeInfo volInfo;
         VolumeManager volMgr = getDriveInfo() != null ? getDriveInfo().getVolumeManager() : new VolumeManager(disk);
         List<LogicalVolumeInfo> volumes = volMgr.getLogicalVolumes();
         String volNumStr = pathElems.get(0).startsWith("Volume") ? pathElems.get(0).substring(6) : null;
@@ -557,38 +616,42 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         return null;
     }
 
-    private void getChildren(String path, boolean recurse, boolean namesOnly) throws java.io.IOException {
+    private void getChildren(String path, boolean recurse, boolean namesOnly) {
         if (path == null || path.isEmpty()) {
             return;
         }
 
-        Object obj = findItemByPath(path, false, true);
-        if (obj instanceof VirtualDisk) {
-            VirtualDisk vd = (VirtualDisk) obj;
-            enumerateDisk(vd, path, recurse, namesOnly);
-        } else if (obj instanceof LogicalVolumeInfo) {
-            LogicalVolumeInfo lvi = (LogicalVolumeInfo) obj;
-            boolean[] dispose = new boolean[1];
-            DiscFileSystem fs = getFileSystem(lvi, dispose);
-            try {
-                if (fs != null) {
-                    enumerateDirectory(fs.getRoot(), path, recurse, namesOnly);
-                }
+        try {
+            Object obj = findItemByPath(path, false, true);
+            if (obj instanceof VirtualDisk) {
+                VirtualDisk vd = (VirtualDisk) obj;
+                enumerateDisk(vd, path, recurse, namesOnly);
+            } else if (obj instanceof LogicalVolumeInfo) {
+                LogicalVolumeInfo lvi = (LogicalVolumeInfo) obj;
+                boolean[] dispose = new boolean[1];
+                DiscFileSystem fs = getFileSystem(lvi, dispose);
+                try {
+                    if (fs != null) {
+                        enumerateDirectory(fs.getRoot(), path, recurse, namesOnly);
+                    }
 
-            } finally {
-                if (dispose[0] && fs != null) {
-                    fs.close();
+                } finally {
+                    if (dispose[0] && fs != null) {
+                        fs.close();
+                    }
                 }
+            } else if (obj instanceof DiscDirectoryInfo) {
+                DiscDirectoryInfo ddi = (DiscDirectoryInfo) obj;
+                enumerateDirectory(ddi, path, recurse, namesOnly);
+            } else {
+                writeError(new ErrorRecord(new UnsupportedOperationException("Unrecognized object type: " +
+                        (obj != null ? obj.getClass() : null)),
+                        "UnknownObjectType",
+                        ErrorCategory.ParserError,
+                        obj));
             }
-        } else if (obj instanceof DiscDirectoryInfo) {
-            DiscDirectoryInfo ddi = (DiscDirectoryInfo) obj;
-            enumerateDirectory(ddi, path, recurse, namesOnly);
-        } else {
-            writeError(new ErrorRecord(new UnsupportedOperationException("Unrecognized object type: " +
-                                                                         (obj != null ? obj.getClass() : null)),
-                                       "UnknownObjectType",
-                                       ErrorCategory.ParserError,
-                                       obj));
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
@@ -618,7 +681,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
             }
 
         }
-        for (DiscDirectoryInfo file : parent.getFiles()) {
+        for (DiscFileInfo file : parent.getFiles()) {
             writeItemObject(namesOnly ? file.getName() : file, makePath(basePath, file.getName()), false);
         }
     }
@@ -628,47 +691,59 @@ public final class Provider extends NavigationCmdletProvider implements IContent
                         DiscDirectoryInfo destDir,
                         String destFileName,
                         boolean recurse) {
-        String srcPath = Paths.get(srcDir.getFullName(), srcFileName).toString();
-        String destPath = Paths.get(destDir.getFullName(), destFileName).toString();
-        if (srcDir.getFileSystem().getAttributes(srcPath).containsKey("Directory")) {
-            doCopyFile(srcDir.getFileSystem(), srcPath, destDir.getFileSystem(), destPath);
-        } else {
-            doCopyDirectory(srcDir.getFileSystem(), srcPath, destDir.getFileSystem(), destPath);
-            if (recurse) {
-                doRecursiveCopy(srcDir.getFileSystem(), srcPath, destDir.getFileSystem(), destPath);
+        try {
+            String srcPath = Paths.get(srcDir.getFullName(), srcFileName).toString();
+            String destPath = Paths.get(destDir.getFullName(), destFileName).toString();
+            if (srcDir.getFileSystem().getAttributes(srcPath).containsKey("Directory")) {
+                doCopyFile(srcDir.getFileSystem(), srcPath, destDir.getFileSystem(), destPath);
+            } else {
+                doCopyDirectory(srcDir.getFileSystem(), srcPath, destDir.getFileSystem(), destPath);
+                if (recurse) {
+                    doRecursiveCopy(srcDir.getFileSystem(), srcPath, destDir.getFileSystem(), destPath);
+                }
             }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
     private void doRecursiveCopy(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) {
-        for (String dir : srcFs.getDirectories(srcPath)) {
-            String srcDirPath = Paths.get(srcPath, dir).toString();
-            String destDirPath = Paths.get(destPath, dir).toString();
-            doCopyDirectory(srcFs, srcDirPath, destFs, destDirPath);
-            doRecursiveCopy(srcFs, srcDirPath, destFs, destDirPath);
-        }
-        for (String file : srcFs.getFiles(srcPath)) {
-            String srcFilePath = Paths.get(srcPath, file).toString();
-            String destFilePath = Paths.get(destPath, file).toString();
-            doCopyFile(srcFs, srcFilePath, destFs, destFilePath);
+        try {
+            for (String dir : srcFs.getDirectories(srcPath)) {
+                String srcDirPath = Paths.get(srcPath, dir).toString();
+                String destDirPath = Paths.get(destPath, dir).toString();
+                doCopyDirectory(srcFs, srcDirPath, destFs, destDirPath);
+                doRecursiveCopy(srcFs, srcDirPath, destFs, destDirPath);
+            }
+            for (String file : srcFs.getFiles(srcPath)) {
+                String srcFilePath = Paths.get(srcPath, file).toString();
+                String destFilePath = Paths.get(destPath, file).toString();
+                doCopyFile(srcFs, srcFilePath, destFs, destFilePath);
+            }
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
     }
 
     private void doCopyDirectory(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) {
-        IWindowsFileSystem destWindowsFs = destFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) destFs
-                                                                                : null;
-        IWindowsFileSystem srcWindowsFs = srcFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) srcFs
-                                                                              : null;
-        destFs.createDirectory(destPath);
-        if (srcWindowsFs != null && destWindowsFs != null) {
-            if (srcWindowsFs.getAttributes(srcPath).containsKey("ReparsePoint")) {
-                destWindowsFs.setReparsePoint(destPath, srcWindowsFs.getReparsePoint(srcPath));
+        try {
+            IWindowsFileSystem destWindowsFs = destFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) destFs
+                                                                                    : null;
+            IWindowsFileSystem srcWindowsFs = srcFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) srcFs
+                                                                                  : null;
+            destFs.createDirectory(destPath);
+            if (srcWindowsFs != null && destWindowsFs != null) {
+                if (srcWindowsFs.getAttributes(srcPath).containsKey("ReparsePoint")) {
+                    destWindowsFs.setReparsePoint(destPath, srcWindowsFs.getReparsePoint(srcPath));
+                }
+
+                destWindowsFs.setSecurity(destPath, srcWindowsFs.getSecurity(srcPath));
             }
 
-            destWindowsFs.setSecurity(destPath, srcWindowsFs.getSecurity(srcPath));
+            destFs.setAttributes(destPath, srcFs.getAttributes(srcPath));
+        } catch (java.io.IOException e) {
+            throw new IOException(e);
         }
-
-        destFs.setAttributes(destPath, srcFs.getAttributes(srcPath));
     }
 
     private void doCopyFile(DiscFileSystem srcFs, String srcPath, DiscFileSystem destFs, String destPath) throws java.io.IOException {
@@ -677,8 +752,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
         IWindowsFileSystem srcWindowsFs = srcFs instanceof IWindowsFileSystem ? (IWindowsFileSystem) srcFs
                                                                               : null;
         try (Stream src = srcFs.openFile(srcPath, FileMode.Open, FileAccess.Read)) {
-            Stream dest = destFs.openFile(destPath, FileMode.Create, FileAccess.ReadWrite);
-            try {
+            try (Stream dest = destFs.openFile(destPath, FileMode.Create, FileAccess.ReadWrite)) {
                 dest.setLength(src.getLength());
                 byte[] buffer = new byte[1024 * 1024];
                 int numRead = src.read(buffer, 0, buffer.length);
@@ -686,9 +760,6 @@ public final class Provider extends NavigationCmdletProvider implements IContent
                     dest.write(buffer, 0, numRead);
                     numRead = src.read(buffer, 0, buffer.length);
                 }
-            } finally {
-                if (dest != null)
-                    dest.close();
             }
         }
         if (srcWindowsFs != null && destWindowsFs != null) {
@@ -696,7 +767,7 @@ public final class Provider extends NavigationCmdletProvider implements IContent
                 destWindowsFs.setReparsePoint(destPath, srcWindowsFs.getReparsePoint(srcPath));
             }
 
-            SecurityPermission sd = srcWindowsFs.getSecurity(srcPath);
+            RawSecurityDescriptor sd = srcWindowsFs.getSecurity(srcPath);
             if (sd != null) {
                 destWindowsFs.setSecurity(destPath, sd);
             }

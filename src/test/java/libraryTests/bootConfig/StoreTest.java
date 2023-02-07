@@ -24,13 +24,6 @@ package libraryTests.bootConfig;
 
 import java.util.UUID;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.bootConfig.ApplicationImageType;
 import discUtils.bootConfig.ApplicationType;
 import discUtils.bootConfig.BcdObject;
@@ -39,6 +32,12 @@ import discUtils.bootConfig.ObjectType;
 import discUtils.bootConfig.Store;
 import discUtils.registry.RegistryHive;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class StoreTest {

@@ -25,7 +25,7 @@ package discUtils.fat;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -67,9 +67,9 @@ public enum FatType {
         }
         @Override public int getNext(int cluster, byte[] buffer) {
             if ((cluster & 1) != 0) {
-                return (EndianUtilities.toUInt16LittleEndian(buffer, cluster + cluster / 2) >>> 4) & 0x0fff;
+                return (ByteUtil.readLeShort(buffer, cluster + cluster / 2) >>> 4) & 0x0fff;
             } else {
-                return EndianUtilities.toUInt16LittleEndian(buffer, cluster + cluster / 2) & 0x0fff;
+                return ByteUtil.readLeShort(buffer, cluster + cluster / 2) & 0x0fff;
             }
         }
         @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
@@ -80,13 +80,13 @@ public enum FatType {
             short maskedOldVal;
             if ((cluster & 1) != 0) {
                 next = next << 4;
-                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(buffer, offset) & 0x000f);
+                maskedOldVal = (short) (ByteUtil.readLeShort(buffer, offset) & 0x000f);
             } else {
                 next = next & 0x0fff;
-                maskedOldVal = (short) (EndianUtilities.toUInt16LittleEndian(buffer, offset) & 0xf000);
+                maskedOldVal = (short) (ByteUtil.readLeShort(buffer, offset) & 0xf000);
             }
             short newVal = (short) (maskedOldVal | next);
-            EndianUtilities.writeBytesLittleEndian(newVal, buffer, offset);
+            ByteUtil.writeLeShort(newVal, buffer, offset);
         }
     },
     /**
@@ -103,11 +103,11 @@ public enum FatType {
             return (val & 0xffff) == 0xfff7;
         }
         @Override public int getNext(int cluster, byte[] buffer) {
-            return EndianUtilities.toUInt16LittleEndian(buffer, cluster * 2);
+            return ByteUtil.readLeShort(buffer, cluster * 2);
         }
         @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
             markDirty.accept(cluster * 2);
-            EndianUtilities.writeBytesLittleEndian((short) next, buffer, cluster * 2);
+            ByteUtil.writeLeShort((short) next, buffer, cluster * 2);
         }
     },
     /**
@@ -124,13 +124,13 @@ public enum FatType {
             return (val & 0x0fff_ffff) == 0x0fff_fff7; // TODO bug report
         }
         @Override public int getNext(int cluster, byte[] buffer) {
-            return EndianUtilities.toUInt32LittleEndian(buffer, cluster * 4) & 0x0fff_ffff;
+            return ByteUtil.readLeInt(buffer, cluster * 4) & 0x0fff_ffff;
         }
         @Override public void setNext(int cluster, int next, byte[] buffer, Consumer<Integer> markDirty) {
             markDirty.accept(cluster * 4);
-            int oldVal = EndianUtilities.toUInt32LittleEndian(buffer, cluster * 4);
+            int oldVal = ByteUtil.readLeInt(buffer, cluster * 4);
             int newVal = (oldVal & 0xf000_0000) | (next & 0x0fff_ffff);
-            EndianUtilities.writeBytesLittleEndian(newVal, buffer, cluster * 4);
+            ByteUtil.writeLeInt(newVal, buffer, cluster * 4);
         }
     };
 

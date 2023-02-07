@@ -62,7 +62,7 @@ public final class TarHeaderExtent extends BuilderBufferExtent {
         this(start, fileName, fileLength, EnumSet.noneOf(UnixFilePermissions.class), 0, 0, 0L /* UnixEpoch */);
     }
 
-    protected byte[] getBuffer() {
+    @Override protected byte[] getBuffer() {
         byte[] buffer = new byte[TarHeader.Length];
         TarHeader header = new TarHeader();
         header.fileName = fileName;
@@ -74,5 +74,4 @@ public final class TarHeaderExtent extends BuilderBufferExtent {
         header.writeTo(buffer, 0);
         return buffer;
     }
-
 }

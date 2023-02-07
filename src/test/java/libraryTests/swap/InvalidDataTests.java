@@ -2,9 +2,8 @@
 
 package libraryTests.swap;
 
-import org.junit.jupiter.api.Test;
-
 import discUtils.swap.SwapHeader;
+import org.junit.jupiter.api.Test;
 
 
 public class InvalidDataTests {

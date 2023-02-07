@@ -26,16 +26,19 @@ import java.nio.charset.Charset;
 
 
 public final class GenericSuspExtension extends SuspExtension {
+
     public GenericSuspExtension(String identifier) {
         this.identifier = identifier;
     }
 
     private String identifier;
 
+    @Override
     public String getIdentifier() {
         return identifier;
     }
 
+    @Override
     public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
         return new GenericSystemUseEntry(name, length, version, data, offset);
     }

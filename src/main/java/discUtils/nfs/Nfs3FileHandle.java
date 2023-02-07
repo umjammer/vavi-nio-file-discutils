@@ -41,6 +41,7 @@ public final class Nfs3FileHandle implements Comparable<Nfs3FileHandle> {
         this.value = value;
     }
 
+    @Override
     public int compareTo(Nfs3FileHandle other) {
         if (other.getValue() == null) {
             return getValue() == null ? 0 : 1;

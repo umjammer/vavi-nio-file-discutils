@@ -31,6 +31,7 @@ import java.util.UUID;
 import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class DynamicHeader {
@@ -102,15 +103,15 @@ public class DynamicHeader {
 
     public static DynamicHeader fromBytes(byte[] data, int offset) {
         DynamicHeader result = new DynamicHeader();
-        result.cookie = EndianUtilities.bytesToString(data, offset, 8);
-        result.dataOffset = EndianUtilities.toInt64BigEndian(data, offset + 8);
-        result.tableOffset = EndianUtilities.toInt64BigEndian(data, offset + 16);
-        result.headerVersion = EndianUtilities.toUInt32BigEndian(data, offset + 24);
-        result.maxTableEntries = EndianUtilities.toInt32BigEndian(data, offset + 28);
-        result.blockSize = EndianUtilities.toUInt32BigEndian(data, offset + 32);
-        result.checksum = EndianUtilities.toUInt32BigEndian(data, offset + 36);
-        result.parentUniqueId = EndianUtilities.toGuidBigEndian(data, offset + 40);
-        result.parentTimestamp = Footer.EpochUtc.plusSeconds(EndianUtilities.toUInt32BigEndian(data, offset + 56))
+        result.cookie = new String(data, offset, 8, StandardCharsets.US_ASCII);
+        result.dataOffset = ByteUtil.readBeLong(data, offset + 8);
+        result.tableOffset = ByteUtil.readBeLong(data, offset + 16);
+        result.headerVersion = ByteUtil.readBeInt(data, offset + 24);
+        result.maxTableEntries = ByteUtil.readBeInt(data, offset + 28);
+        result.blockSize = ByteUtil.readBeInt(data, offset + 32);
+        result.checksum = ByteUtil.readBeInt(data, offset + 36);
+        result.parentUniqueId = ByteUtil.readBeUUID(data, offset + 40);
+        result.parentTimestamp = Footer.EpochUtc.plusSeconds(ByteUtil.readBeInt(data, offset + 56))
                 .toEpochMilli();
         result.parentUnicodeName = new String(data, offset + 64, 512, StandardCharsets.UTF_16BE).replaceFirst("\0*$", "");
 
@@ -124,18 +125,18 @@ public class DynamicHeader {
 
     public void toBytes(byte[] data, int offset) {
         EndianUtilities.stringToBytes(cookie, data, offset, 8);
-        EndianUtilities.writeBytesBigEndian(dataOffset, data, offset + 8);
-        EndianUtilities.writeBytesBigEndian(tableOffset, data, offset + 16);
-        EndianUtilities.writeBytesBigEndian(headerVersion, data, offset + 24);
-        EndianUtilities.writeBytesBigEndian(maxTableEntries, data, offset + 28);
-        EndianUtilities.writeBytesBigEndian(blockSize, data, offset + 32);
-        EndianUtilities.writeBytesBigEndian(checksum, data, offset + 36);
-        EndianUtilities.writeBytesBigEndian(parentUniqueId, data, offset + 40);
-        EndianUtilities.writeBytesBigEndian((int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(parentTimestamp))
+        ByteUtil.writeBeLong(dataOffset, data, offset + 8);
+        ByteUtil.writeBeLong(tableOffset, data, offset + 16);
+        ByteUtil.writeBeInt(headerVersion, data, offset + 24);
+        ByteUtil.writeBeInt(maxTableEntries, data, offset + 28);
+        ByteUtil.writeBeInt(blockSize, data, offset + 32);
+        ByteUtil.writeBeInt(checksum, data, offset + 36);
+        ByteUtil.writeBeUUID(parentUniqueId, data, offset + 40);
+        ByteUtil.writeBeInt((int) Duration.between(Footer.EpochUtc, Instant.ofEpochMilli(parentTimestamp))
                                                     .getSeconds(),
                                             data,
                                             offset + 56);
-        EndianUtilities.writeBytesBigEndian(0, data, offset + 60);
+        ByteUtil.writeBeInt(0, data, offset + 60);
         Arrays.fill(data, offset + 64, offset + 64 + 512, (byte) 0);
         byte[] bytes = parentUnicodeName.getBytes(StandardCharsets.UTF_16BE);
         System.arraycopy(bytes, 0, data, offset + 64, bytes.length);

@@ -22,16 +22,15 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3ModifyResult;
 import discUtils.nfs.Nfs3Status;
 import discUtils.nfs.Nfs3WeakCacheConsistency;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3ModifyResultTest {
@@ -41,7 +40,7 @@ public class Nfs3ModifyResultTest {
         result.setCacheConsistency(new Nfs3WeakCacheConsistency());
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3ModifyResult clone = null;
+        Nfs3ModifyResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

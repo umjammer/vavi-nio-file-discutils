@@ -52,5 +52,6 @@ public abstract class TaggedDescriptor<T extends BaseTaggedDescriptor> extends B
         }
     }
 
+    @Override
     public abstract int parse(byte[] buffer, int offset);
 }

@@ -30,14 +30,14 @@ public abstract class PartitionMap implements IByteArraySerializable {
 
     public byte type;
 
-    public abstract int size();
+    @Override public abstract int size();
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         type = buffer[offset];
         return parse(buffer, offset);
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

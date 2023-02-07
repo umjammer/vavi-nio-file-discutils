@@ -29,11 +29,12 @@ import discUtils.core.vfs.IVfsDirectory;
 
 
 final class Directory extends File implements IVfsDirectory<DirEntry, File> {
+
     public Directory(Context context, CatalogNodeId nodeId, CommonCatalogFileInfo fileInfo) {
         super(context, nodeId, fileInfo);
     }
 
-    public List<DirEntry> getAllEntries() {
+    @Override public List<DirEntry> getAllEntries() {
         List<DirEntry> results = new ArrayList<>();
 
         getContext().getCatalog().visitRange((key, data) -> {
@@ -50,7 +51,7 @@ final class Directory extends File implements IVfsDirectory<DirEntry, File> {
         return results;
     }
 
-    public DirEntry getSelf() {
+    @Override public DirEntry getSelf() {
         byte[] dirThreadData = getContext().getCatalog().find(new CatalogKey(getNodeId(), ""));
 
         CatalogThread dirThread = new CatalogThread();
@@ -61,12 +62,12 @@ final class Directory extends File implements IVfsDirectory<DirEntry, File> {
         return new DirEntry(dirThread.name, dirEntryData);
     }
 
-    public DirEntry getEntryByName(String name) {
+    @Override public DirEntry getEntryByName(String name) {
         if (name == null) {
             throw new NullPointerException("name");
         }
 
-        if (name == null || name.isEmpty()) {
+        if (name.isEmpty()) {
             throw new IllegalArgumentException("Attempt to lookup empty file name");
         }
 
@@ -78,7 +79,7 @@ final class Directory extends File implements IVfsDirectory<DirEntry, File> {
         return new DirEntry(name, dirEntryData);
     }
 
-    public DirEntry createNewFile(String name) {
+    @Override public DirEntry createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
 }

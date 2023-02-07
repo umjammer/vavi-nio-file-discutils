@@ -17,7 +17,7 @@ public class ArrayHelpers {
 
     private ArrayHelpers() {}
 
-    public static boolean ArrayIsNullOrEmpty(byte[] a) {
+    public static boolean isArrayNullOrEmpty(byte[] a) {
         return a == null || a.length == 0;
     }
 

@@ -26,8 +26,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.EnumSet;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class IndexEntry {
@@ -120,12 +120,12 @@ public class IndexEntry {
 
     public void read(byte[] buffer, int offset) {
         @SuppressWarnings("unused")
-        short dataOffset = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x00);
-        short dataLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x02);
-        short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x08);
-        short keyLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0A);
+        short dataOffset = ByteUtil.readLeShort(buffer, offset + 0x00);
+        short dataLength = ByteUtil.readLeShort(buffer, offset + 0x02);
+        short length = ByteUtil.readLeShort(buffer, offset + 0x08);
+        short keyLength = ByteUtil.readLeShort(buffer, offset + 0x0A);
 //        assert dataLength >= 0 && length >=0 && keyLength >= 0;
-        flags = IndexEntryFlags.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x0C));
+        flags = IndexEntryFlags.valueOf(ByteUtil.readLeShort(buffer, offset + 0x0C));
 
         if (!flags.contains(IndexEntryFlags.End)) {
             keyBuffer = new byte[keyLength];
@@ -142,7 +142,7 @@ public class IndexEntry {
         }
 
         if (flags.contains(IndexEntryFlags.Node)) {
-            vcn = EndianUtilities.toInt64LittleEndian(buffer, offset + length - 8);
+            vcn = ByteUtil.readLeLong(buffer, offset + length - 8);
         }
     }
 
@@ -158,24 +158,24 @@ public class IndexEntry {
                 int dataOffset = isFileIndexEntry() ? 0 : 0x10 + keyLength;
                 int dataLength = dataBuffer.length;
 
-                EndianUtilities.writeBytesLittleEndian((short) dataOffset, buffer, offset + 0x00);
-                EndianUtilities.writeBytesLittleEndian((short) dataLength, buffer, offset + 0x02);
+                ByteUtil.writeLeShort((short) dataOffset, buffer, offset + 0x00);
+                ByteUtil.writeLeShort((short) dataLength, buffer, offset + 0x02);
                 System.arraycopy(dataBuffer, 0, buffer, offset + dataOffset, dataBuffer.length);
             }
-            EndianUtilities.writeBytesLittleEndian((short) keyLength, buffer, offset + 0x0A);
+            ByteUtil.writeLeShort((short) keyLength, buffer, offset + 0x0A);
 //Debug.println(keyBuffer.length + " | " + buffer.length + ", " + (offset + 0x10));
             assert buffer.length > offset  + 0x10 + keyBuffer.length : buffer.length + ", " + (offset + 0x10) + ", " + keyBuffer.length;
             System.arraycopy(keyBuffer, 0, buffer, offset + 0x10, keyBuffer.length);
         } else {
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x00); // dataOffset
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x02); // dataLength
-            EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 0x0A); // keyLength
+            ByteUtil.writeLeShort((short) 0, buffer, offset + 0x00); // dataOffset
+            ByteUtil.writeLeShort((short) 0, buffer, offset + 0x02); // dataLength
+            ByteUtil.writeLeShort((short) 0, buffer, offset + 0x0A); // keyLength
         }
 
-        EndianUtilities.writeBytesLittleEndian((short) length, buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian((short) IndexEntryFlags.valueOf(flags), buffer, offset + 0x0C);
+        ByteUtil.writeLeShort((short) length, buffer, offset + 0x08);
+        ByteUtil.writeLeShort((short) IndexEntryFlags.valueOf(flags), buffer, offset + 0x0C);
         if (flags.contains(IndexEntryFlags.Node)) {
-            EndianUtilities.writeBytesLittleEndian(vcn, buffer, offset + length - 8);
+            ByteUtil.writeLeLong(vcn, buffer, offset + length - 8);
         }
     }
 

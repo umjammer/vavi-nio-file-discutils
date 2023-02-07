@@ -22,9 +22,8 @@
 
 package discUtils.hfsPlus;
 
+import vavi.util.ByteUtil;
 import vavi.util.Debug;
-
-import discUtils.streams.util.EndianUtilities;
 
 
 final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentKey> {
@@ -56,11 +55,11 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         nodeId = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return 12;
     }
 
-    public int compareTo(ExtentKey other) {
+    @Override public int compareTo(ExtentKey other) {
         if (other == null) {
             throw new NullPointerException("other");
         }
@@ -81,24 +80,24 @@ final class ExtentKey extends BTreeKey<ExtentKey> implements XComparable<ExtentK
         return 0;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        keyLength = ByteUtil.readBeShort(buffer, offset + 0);
         forkType = buffer[offset + 2];
-        nodeId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+        nodeId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 4));
+        startBlock = ByteUtil.readBeInt(buffer, offset + 8);
 Debug.println((keyLength & 0xffff) + 2);
         return (keyLength & 0xffff) + 2;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public int compareTo(BTreeKey<?> other) {
+    @Override public int compareTo(BTreeKey<?> other) {
         return compareTo(other instanceof ExtentKey ? (ExtentKey) other : null);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return "ExtentKey (" + nodeId + " - " + startBlock + ")";
     }
 }

@@ -95,14 +95,14 @@ public final class Disc extends VirtualDisk {
     /**
      * Gets the sector size of the disk (2048 for optical discs).
      */
-    public int getBlockSize() {
+    @Override public int getBlockSize() {
         return DiscImageFile.Mode1SectorSize;
     }
 
     /**
      * Gets the capacity of the disc (in bytes).
      */
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return file.getCapacity();
     }
 
@@ -115,14 +115,14 @@ public final class Disc extends VirtualDisk {
      * through a single stream instance. Set the stream position before
      * accessing the stream.
      */
-    public SparseStream getContent() {
+    @Override public SparseStream getContent() {
         return file.getContent();
     }
 
     /**
      * Gets the type of disk represented by this object.
      */
-    public VirtualDiskClass getDiskClass() {
+    @Override public VirtualDiskClass getDiskClass() {
         return VirtualDiskClass.OpticalDisk;
     }
 
@@ -132,21 +132,21 @@ public final class Disc extends VirtualDisk {
      * example whether the
      * BIOS geometry is preserved in the disk file.
      */
-    public VirtualDiskTypeInfo getDiskTypeInfo() {
+    @Override public VirtualDiskTypeInfo getDiskTypeInfo() {
         return DiscFactory.makeDiskTypeInfo();
     }
 
     /**
      * Gets the geometry of the disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return file.getGeometry();
     }
 
     /**
      * Gets the layers that make up the disc.
      */
-    public List<VirtualDiskLayer> getLayers() {
+    @Override public List<VirtualDiskLayer> getLayers() {
         return Collections.singletonList(file);
     }
 
@@ -157,7 +157,7 @@ public final class Disc extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return Not Applicable.
      */
-    public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
+    @Override public VirtualDisk createDifferencingDisk(DiscFileSystem fileSystem, String path) {
         throw new UnsupportedOperationException("Differencing disks not supported for optical disks");
     }
 
@@ -167,14 +167,14 @@ public final class Disc extends VirtualDisk {
      * @param path The path (or URI) for the disk to create.
      * @return Not Applicable.
      */
-    public VirtualDisk createDifferencingDisk(String path) {
+    @Override public VirtualDisk createDifferencingDisk(String path) {
         throw new UnsupportedOperationException("Differencing disks not supported for optical disks");
     }
 
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         try {
             if (file != null) {
                 file.close();

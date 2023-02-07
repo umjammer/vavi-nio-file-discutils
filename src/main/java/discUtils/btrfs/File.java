@@ -50,23 +50,23 @@ public class File implements IVfsFile {
         this.context = context;
     }
 
-    public long getCreationTimeUtc() {
+    @Override public long getCreationTimeUtc() {
         return dirEntry.getCreationTimeUtc();
     }
 
-    public void setCreationTimeUtc(long value) {
+    @Override public void setCreationTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public EnumSet<FileAttributes> getFileAttributes() {
+    @Override public EnumSet<FileAttributes> getFileAttributes() {
         return dirEntry.getFileAttributes();
     }
 
-    public void setFileAttributes(EnumSet<FileAttributes> value) {
+    @Override public void setFileAttributes(EnumSet<FileAttributes> value) {
         throw new UnsupportedOperationException();
     }
 
-    public IBuffer getFileContent() {
+    @Override public IBuffer getFileContent() {
         List<ExtentData> extents = context.findKey(dirEntry.getTreeId(), new Key(dirEntry.getObjectId(), ItemType.ExtentData));
         return bufferFromExtentList(extents);
     }
@@ -81,23 +81,23 @@ public class File implements IVfsFile {
         return new StreamBuffer(new BuiltStream(dirEntry.getFileSize(), builderExtents), Ownership.Dispose);
     }
 
-    public long getFileLength() {
+    @Override public long getFileLength() {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastAccessTimeUtc() {
+    @Override public long getLastAccessTimeUtc() {
         return dirEntry.getLastAccessTimeUtc();
     }
 
-    public void setLastAccessTimeUtc(long value) {
+    @Override public void setLastAccessTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 
-    public long getLastWriteTimeUtc() {
+    @Override public long getLastWriteTimeUtc() {
         return dirEntry.getLastWriteTimeUtc();
     }
 
-    public void setLastWriteTimeUtc(long value) {
+    @Override public void setLastWriteTimeUtc(long value) {
         throw new UnsupportedOperationException();
     }
 }

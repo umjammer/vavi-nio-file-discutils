@@ -22,7 +22,7 @@
 
 package discUtils.ext;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockGroup64 extends BlockGroup {
@@ -49,18 +49,18 @@ public class BlockGroup64 extends BlockGroup {
         this.descriptorSize = descriptorSize;
     }
 
-    public int size() {
+    @Override public int size() {
         return this.descriptorSize;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         super.readFrom(buffer, offset);
-        blockBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
-        inodeBitmapBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x24);
-        inodeTableBlockHigh = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x28);
-        freeBlocksCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2C);
-        freeInodesCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x2E);
-        usedDirsCountHigh = EndianUtilities.toUInt16LittleEndian(buffer, offset + 0x30);
+        blockBitmapBlockHigh = ByteUtil.readLeInt(buffer, offset + 0x20);
+        inodeBitmapBlockHigh = ByteUtil.readLeInt(buffer, offset + 0x24);
+        inodeTableBlockHigh = ByteUtil.readLeInt(buffer, offset + 0x28);
+        freeBlocksCountHigh = ByteUtil.readLeShort(buffer, offset + 0x2C);
+        freeInodesCountHigh = ByteUtil.readLeShort(buffer, offset + 0x2E);
+        usedDirsCountHigh = ByteUtil.readLeShort(buffer, offset + 0x30);
         return this.descriptorSize;
     }
 }

@@ -35,10 +35,6 @@ import discUtils.core.coreCompat.EnumSettable;
  */
 public enum NtfsFileAttributes implements EnumSettable {
     /**
-     * No attributes.
-     */
-//    None(0x00000000),
-    /**
      * The file is read-only.
      */
     ReadOnly(0x00000001),
@@ -109,10 +105,12 @@ public enum NtfsFileAttributes implements EnumSettable {
         this.value = value;
     }
 
+    @Override
     public Supplier<Integer> supplier() {
         return this::getValue;
     }
 
+    @Override
     public Function<Integer, Boolean> function() {
         return v -> (v & supplier().get()) != 0;
     }

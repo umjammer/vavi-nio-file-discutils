@@ -30,6 +30,7 @@ import java.util.List;
 
 import discUtils.core.coreCompat.IContentReader;
 import discUtils.core.coreCompat.IContentWriter;
+import discUtils.powerShell.conpat.ErrorCategory;
 import discUtils.powerShell.conpat.ErrorRecord;
 import dotnet4j.io.IOException;
 import dotnet4j.io.SeekOrigin;
@@ -59,6 +60,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         }
     }
 
+    @Override
     public void close() {
         if (writer != null) {
             writer.flush();
@@ -74,10 +76,12 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
         }
     }
 
+    @Override
     public void seek(long offset, SeekOrigin origin) {
         contentStream.seek(offset, origin);
     }
 
+    @Override
     public List<?> read(long readCount) {
         try {
             if (encoding == ContentEncoding.Byte) {
@@ -119,6 +123,7 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
 
     }
 
+    @Override
     public List<?> write(List<?> content) {
         try {
             if (content == null || content.size() == 0) {
@@ -168,20 +173,6 @@ public final class FileContentReaderWriter implements IContentWriter, IContentRe
             return null;
         }
 
-    }
-
-    protected void finalize() throws Throwable {
-        if (writer != null) {
-            writer.close();
-        }
-
-        if (reader != null) {
-            reader.close();
-        }
-
-        if (contentStream != null) {
-            contentStream.close();
-        }
     }
 
     /**

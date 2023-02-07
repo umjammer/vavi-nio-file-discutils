@@ -14,10 +14,12 @@ class MyFileSystem extends VfsFileSystem<MyDirEntry, MyFile, MyDirectory, MyCont
         this.setRootDirectory(new MyDirectory(new MyDirEntry("", true), true));
     }
 
+    @Override
     public String getVolumeLabel() {
         return "Volume Label";
     }
 
+    @Override
     protected MyFile convertDirEntryToFile(MyDirEntry dirEntry) {
         if (dirEntry.isDirectory()) {
             return new MyDirectory(dirEntry, false);
@@ -26,22 +28,27 @@ class MyFileSystem extends VfsFileSystem<MyDirEntry, MyFile, MyDirectory, MyCont
         }
     }
 
+    @Override
     public String getFriendlyName() {
         return "My File System";
     }
 
+    @Override
     public boolean canWrite() {
         return false;
     }
 
+    @Override
     public long getSize() throws IOException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getUsedSpace() throws IOException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getAvailableSpace() throws IOException {
         throw new UnsupportedOperationException();
     }

@@ -60,6 +60,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @return true if the file system is read-write.
      */
+    @Override
     public boolean canWrite() {
         return wrapped.canWrite();
     }
@@ -67,6 +68,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets a friendly name for the file system.
      */
+    @Override
     public String getFriendlyName() {
         return wrapped.getFriendlyName();
     }
@@ -74,6 +76,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets a value indicating whether the file system is thread-safe.
      */
+    @Override
     public boolean isThreadSafe() {
         return wrapped.isThreadSafe();
     }
@@ -81,6 +84,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets the file system options, which can be modified.
      */
+    @Override
     public DiscFileSystemOptions getOptions() {
         return wrapped.getOptions();
     }
@@ -88,6 +92,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets the root directory of the file system.
      */
+    @Override
     public DiscDirectoryInfo getRoot() {
         return new DiscDirectoryInfo(this, "");
     }
@@ -95,6 +100,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Gets the volume label.
      */
+    @Override
     public String getVolumeLabel() {
         return wrapped.getVolumeLabel();
     }
@@ -105,6 +111,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param sourceFile The source file.
      * @param destinationFile The destination file.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile) throws IOException {
         wrapped.copyFile(sourceFile, destinationFile);
     }
@@ -116,6 +123,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param destinationFile The destination file.
      * @param overwrite Overwrite any existing file.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) throws IOException {
         wrapped.copyFile(sourceFile, destinationFile, overwrite);
     }
@@ -125,6 +133,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @param path The path of the new directory.
      */
+    @Override
     public void createDirectory(String path) throws IOException {
         wrapped.createDirectory(path);
     }
@@ -134,6 +143,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @param path The path of the directory to delete.
      */
+    @Override
     public void deleteDirectory(String path) throws IOException {
         wrapped.deleteDirectory(path);
     }
@@ -144,6 +154,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the directory to delete.
      * @param recursive Determines if the all descendants should be deleted.
      */
+    @Override
     public void deleteDirectory(String path, boolean recursive) throws IOException {
         wrapped.deleteDirectory(path, recursive);
     }
@@ -153,6 +164,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @param path The path of the file to delete.
      */
+    @Override
     public void deleteFile(String path) throws IOException {
         wrapped.deleteFile(path);
     }
@@ -163,6 +175,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path to test.
      * @return true if the directory exists.
      */
+    @Override
     public boolean directoryExists(String path) throws IOException {
         return wrapped.directoryExists(path);
     }
@@ -173,6 +186,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path to test.
      * @return true if the file exists.
      */
+    @Override
     public boolean fileExists(String path) throws IOException {
         return wrapped.fileExists(path);
     }
@@ -183,6 +197,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path to test.
      * @return true if the file or directory exists.
      */
+    @Override
     public boolean exists(String path) throws IOException {
         return wrapped.exists(path);
     }
@@ -191,8 +206,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
+    @Override
     public List<String> getDirectories(String path) throws IOException {
         return wrapped.getDirectories(path);
     }
@@ -203,8 +219,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
     public List<String> getDirectories(String path, String searchPattern) throws IOException {
         return wrapped.getDirectories(path, searchPattern);
     }
@@ -217,8 +234,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
     public List<String> getDirectories(String path, String searchPattern, String searchOption) throws IOException {
         return wrapped.getDirectories(path, searchPattern, searchOption);
     }
@@ -227,8 +245,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
+    @Override
     public List<String> getFiles(String path) throws IOException {
         return wrapped.getFiles(path);
     }
@@ -238,8 +257,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
     public List<String> getFiles(String path, String searchPattern) throws IOException {
         return wrapped.getFiles(path, searchPattern);
     }
@@ -252,8 +272,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
     public List<String> getFiles(String path, String searchPattern, String searchOption) throws IOException {
         return wrapped.getFiles(path, searchPattern, searchOption);
     }
@@ -262,8 +283,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public List<String> getFileSystemEntries(String path) throws IOException {
         return wrapped.getFileSystemEntries(path);
     }
@@ -274,8 +296,9 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
     public List<String> getFileSystemEntries(String path, String searchPattern) throws IOException {
         return wrapped.getFileSystemEntries(path, searchPattern);
     }
@@ -286,6 +309,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) throws IOException {
         wrapped.moveDirectory(sourceDirectoryName, destinationDirectoryName);
     }
@@ -296,6 +320,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName) throws IOException {
         wrapped.moveFile(sourceName, destinationName);
     }
@@ -307,6 +332,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName, boolean overwrite) throws IOException {
         wrapped.moveFile(sourceName, destinationName, overwrite);
     }
@@ -318,6 +344,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param mode The file mode for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode) throws IOException {
         return wrapped.openFile(path, mode);
     }
@@ -330,6 +357,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode, FileAccess access) throws IOException {
         return wrapped.openFile(path, mode, access);
     }
@@ -340,6 +368,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The file or directory to inspect.
      * @return The attributes of the file or directory.
      */
+    @Override
     public Map<String, Object> getAttributes(String path) throws IOException {
         return wrapped.getAttributes(path);
     }
@@ -350,6 +379,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The file or directory to change.
      * @param newValue The new attributes of the file or directory.
      */
+    @Override
     public void setAttributes(String path, Map<String, Object> newValue) throws IOException {
         wrapped.setAttributes(path, newValue);
     }
@@ -360,6 +390,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public long getCreationTime(String path) throws IOException {
         return wrapped.getCreationTime(path);
     }
@@ -370,6 +401,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTime(String path, long newTime) throws IOException {
         wrapped.setCreationTime(path, newTime);
     }
@@ -380,6 +412,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public long getCreationTimeUtc(String path) throws IOException {
         return wrapped.getCreationTimeUtc(path);
     }
@@ -390,6 +423,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTimeUtc(String path, long newTime) throws IOException {
         wrapped.setCreationTimeUtc(path, newTime);
     }
@@ -400,6 +434,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The last access time.
      */
+    @Override
     public long getLastAccessTime(String path) throws IOException {
         return wrapped.getLastAccessTime(path);
     }
@@ -410,6 +445,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTime(String path, long newTime) throws IOException {
         wrapped.setLastAccessTime(path, newTime);
     }
@@ -420,6 +456,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The last access time.
      */
+    @Override
     public long getLastAccessTimeUtc(String path) throws IOException {
         return wrapped.getLastAccessTimeUtc(path);
     }
@@ -430,6 +467,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTimeUtc(String path, long newTime) throws IOException {
         wrapped.setLastAccessTimeUtc(path, newTime);
     }
@@ -440,6 +478,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The last write time.
      */
+    @Override
     public long getLastWriteTime(String path) throws IOException {
         return wrapped.getLastWriteTime(path);
     }
@@ -450,6 +489,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTime(String path, long newTime) throws IOException {
         wrapped.setLastWriteTime(path, newTime);
     }
@@ -460,6 +500,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @return The last write time.
      */
+    @Override
     public long getLastWriteTimeUtc(String path) throws IOException {
         return wrapped.getLastWriteTimeUtc(path);
     }
@@ -470,6 +511,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTimeUtc(String path, long newTime) throws IOException {
         wrapped.setLastWriteTimeUtc(path, newTime);
     }
@@ -480,6 +522,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The path to the file.
      * @return The length in bytes.
      */
+    @Override
     public long getFileLength(String path) throws IOException {
         return wrapped.getFileLength(path);
     }
@@ -492,6 +535,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The file path.
      * @return The representing object.
      */
+    @Override
     public DiscFileInfo getFileInfo(String path) {
         return new DiscFileInfo(this, path);
     }
@@ -504,6 +548,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The directory path.
      * @return The representing object.
      */
+    @Override
     public DiscDirectoryInfo getDirectoryInfo(String path) {
         return new DiscDirectoryInfo(this, path);
     }
@@ -517,6 +562,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param path The file system path.
      * @return The representing object.
      */
+    @Override
     public DiscFileSystemInfo getFileSystemInfo(String path) {
         return new DiscFileSystemInfo(this, path);
     }
@@ -524,6 +570,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Size of the Filesystem in bytes
      */
+    @Override
     public long getSize() throws IOException {
         return wrapped.getSize();
     }
@@ -531,6 +578,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Used space of the Filesystem in bytes
      */
+    @Override
     public long getUsedSpace() throws IOException {
         return wrapped.getUsedSpace();
     }
@@ -538,6 +586,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
     /**
      * Available space of the Filesystem in bytes
      */
+    @Override
     public long getAvailableSpace() throws IOException {
         return wrapped.getAvailableSpace();
     }
@@ -551,6 +600,7 @@ public abstract class VfsFileSystemFacade extends DiscFileSystem {
      * @param <TContext> The concrete type holding global state.
      * @return The actual file system instance.
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected <TDirEntry extends VfsDirEntry, TFile extends IVfsFile, TDirectory extends IVfsDirectory<TDirEntry, TFile> & IVfsFile, TContext extends VfsContext> VfsFileSystem<TDirEntry, TFile, TDirectory, TContext> getRealFileSystem() {
         return (VfsFileSystem) wrapped;
     }

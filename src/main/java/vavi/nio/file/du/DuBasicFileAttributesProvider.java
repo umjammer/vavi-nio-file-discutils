@@ -18,7 +18,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import com.github.fge.filesystem.attributes.provider.BasicFileAttributesProvider;
-
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
 import discUtils.core.DiscFileSystemInfo;

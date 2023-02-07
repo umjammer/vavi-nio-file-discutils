@@ -24,15 +24,14 @@ package libraryTests.compression;
 
 import java.nio.charset.StandardCharsets;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import discUtils.core.compression.BZip2DecoderStream;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 public class BZip2DecoderStreamTest {

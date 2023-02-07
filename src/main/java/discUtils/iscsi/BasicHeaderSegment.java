@@ -23,7 +23,7 @@
 package discUtils.iscsi;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BasicHeaderSegment implements IByteArraySerializable {
@@ -42,28 +42,28 @@ public class BasicHeaderSegment implements IByteArraySerializable {
     public byte totalAhsLength;
 
     // In 4-byte words!
-    public int size() {
+    @Override public int size() {
         return 48;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         immediate = (buffer[offset] & 0x40) != 0;
         opCode = OpCode.valueOf(buffer[offset] & 0x3F);
 //Debug.println("OpCode: " + (buffer[offset] & 0x3F));
         finalPdu = (buffer[offset + 1] & 0x80) != 0;
         totalAhsLength = buffer[offset + 4];
-        dataSegmentLength = EndianUtilities.toInt32BigEndian(buffer, offset + 4) & 0x00FF_FFFF;
-        initiatorTaskTag = EndianUtilities.toUInt32BigEndian(buffer, offset + 16);
+        dataSegmentLength = ByteUtil.readBeInt(buffer, offset + 4) & 0x00FF_FFFF;
+        initiatorTaskTag = ByteUtil.readBeInt(buffer, offset + 16);
         return 48;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = (byte) ((immediate ? 0x40 : 0x00) | (opCode.ordinal() & 0x3F));
         buffer[offset + 1] |= (byte) (finalPdu ? 0x80 : 0x00);
         buffer[offset + 4] = totalAhsLength;
         buffer[offset + 5] = (byte) ((dataSegmentLength >>> 16) & 0xFF);
         buffer[offset + 6] = (byte) ((dataSegmentLength >>> 8) & 0xFF);
         buffer[offset + 7] = (byte) (dataSegmentLength & 0xFF);
-        EndianUtilities.writeBytesBigEndian(initiatorTaskTag, buffer, offset + 16);
+        ByteUtil.writeBeInt(initiatorTaskTag, buffer, offset + 16);
     }
 }

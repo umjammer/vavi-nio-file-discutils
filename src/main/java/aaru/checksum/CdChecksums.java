@@ -102,7 +102,7 @@ public class CdChecksums {
 
         for (int i = 0; i < 256; i++) {
             int edc = i;
-            int j = (int) ((i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0));
+            int j = (i << 1) ^ ((i & 0x80) == 0x80 ? 0x11D : 0);
             eccFTable[i] = (byte) j;
             eccBTable[i ^ j] = (byte) i;
 
@@ -249,20 +249,18 @@ public class CdChecksums {
         }
 
         if ((channel[0x00F] & 0x03) == 0x02) { // mode (1 byte)
-            //Debug.printf("CD checksum", "Mode 2 sector at address %2x:%2x:%2x",
-            //                          channel[0x00C], channel[0x00D], channel[0x00E]);
+//Debug.printf("CD checksum", "Mode 2 sector at address %2x:%2x:%2x", channel[0x00C], channel[0x00D], channel[0x00E]);
             byte[] mode2Sector = new byte[channel.length - 0x10];
             System.arraycopy(channel, 0x10, mode2Sector, 0, mode2Sector.length);
 
-            if ((channel[0x012] & 0x20) == 0x20) // mode 2 form 2
-            {
+            if ((channel[0x012] & 0x20) == 0x20) { // mode 2 form 2
                 if (channel[0x010] != channel[0x014] ||
                         channel[0x011] != channel[0x015] ||
                         channel[0x012] != channel[0x016] ||
-                        channel[0x013] != channel[0x017])
-                    Debug.printf("CD checksum",
-                            "Subheader copies differ in mode 2 form 2 sector at address: %2x:%2x:%2x",
+                        channel[0x013] != channel[0x017]) {
+Debug.printf("CD checksum", "Subheader copies differ in mode 2 form 2 sector at address: %2x:%2x:%2x",
                             channel[0x00C], channel[0x00D], channel[0x00E]);
+                }
 
                 int storedEdc = ByteUtil.readLeInt(mode2Sector, 0x91C);
 
@@ -349,7 +347,7 @@ public class CdChecksums {
     }
 
     static Boolean checkCdSectorSubChannel(byte[] subchannel) {
-        Boolean status = true;
+        boolean status = true;
         byte[] qSubChannel = new byte[12];
         byte[] cdTextPack1 = new byte[18];
         byte[] cdTextPack2 = new byte[18];

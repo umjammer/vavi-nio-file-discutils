@@ -62,7 +62,7 @@ public class NtfsStream {
 
     /**
      * Gets the content of a stream. The stream's content structure.
-     * @param contentType 
+     * @param contentType content tpe
      * @return The content.
      */
     public <T extends IByteArraySerializable & IDiagnosticTraceable> T getContent(Class<T> contentType) {

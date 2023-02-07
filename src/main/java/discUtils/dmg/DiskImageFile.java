@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.core.FileLocator;
 import discUtils.core.Geometry;
 import discUtils.core.Plist;
@@ -42,6 +40,7 @@ import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
+import vavi.util.Debug;
 
 
 public final class DiskImageFile extends VirtualDiskLayer {

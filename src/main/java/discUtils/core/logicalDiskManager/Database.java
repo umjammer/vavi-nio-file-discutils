@@ -124,6 +124,7 @@ public class Database {
         return findRecord(r -> r.volumeGuid.equals(id), RecordType.Volume);
     }
 
+    @SuppressWarnings({"unchecked"})
     public <T extends DatabaseRecord> T findRecord(Predicate<T> pred, RecordType typeId) {
         for (DatabaseRecord record : records.values()) {
             if (record.recordType == typeId) {

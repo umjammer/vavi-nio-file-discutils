@@ -22,21 +22,20 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3FileTime;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3FileTimeTest {
     @Test
     public void roundTripTest() throws Exception {
         Nfs3FileTime time = new Nfs3FileTime(1, 2);
-        Nfs3FileTime clone = null;
+        Nfs3FileTime clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             time.write(writer);

@@ -28,8 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import vavi.util.Debug;
-
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.core.LogicalVolumeInfo;
 import discUtils.core.PhysicalVolumeInfo;
@@ -37,6 +35,7 @@ import discUtils.core.VirtualDisk;
 import discUtils.core.partitions.BiosPartitionTypes;
 import discUtils.core.partitions.GuidPartitionTypes;
 import discUtils.core.partitions.PartitionInfo;
+import vavi.util.Debug;
 
 
 /**
@@ -65,6 +64,7 @@ public class DynamicDiskManager implements IDiagnosticTraceable {
      * @param writer The writer to send the report to.
      * @param linePrefix The prefix to place at the start of each line.
      */
+    @Override
     public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "DISK GROUPS");
         for (DynamicDiskGroup group : groups.values()) {

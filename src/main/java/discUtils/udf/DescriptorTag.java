@@ -23,9 +23,9 @@
 package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class DescriptorTag implements IByteArraySerializable {
@@ -48,28 +48,28 @@ public class DescriptorTag implements IByteArraySerializable {
 
     public short tagSerialNumber;
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        tagIdentifier = TagIdentifier.valueOf(EndianUtilities.toUInt16LittleEndian(buffer, offset));
-        descriptorVersion = EndianUtilities.toUInt16LittleEndian(buffer, offset + 2);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        tagIdentifier = TagIdentifier.valueOf(ByteUtil.readLeShort(buffer, offset));
+        descriptorVersion = ByteUtil.readLeShort(buffer, offset + 2);
         tagChecksum = buffer[offset + 4];
-        tagSerialNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 6);
-        descriptorCrc = EndianUtilities.toUInt16LittleEndian(buffer, offset + 8);
-        descriptorCrcLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 10);
-        tagLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 12);
+        tagSerialNumber = ByteUtil.readLeShort(buffer, offset + 6);
+        descriptorCrc = ByteUtil.readLeShort(buffer, offset + 8);
+        descriptorCrcLength = ByteUtil.readLeShort(buffer, offset + 10);
+        tagLocation = ByteUtil.readLeInt(buffer, offset + 12);
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
     public static boolean isValid(byte[] buffer, int offset) {
         byte checkSum = 0;
-        if (EndianUtilities.toUInt16LittleEndian(buffer, offset) == 0) {
+        if (ByteUtil.readLeShort(buffer, offset) == 0) {
             return false;
         }
 

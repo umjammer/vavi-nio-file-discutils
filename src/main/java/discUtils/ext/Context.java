@@ -27,6 +27,7 @@ import dotnet4j.io.Stream;
 
 
 public class Context extends VfsContext {
+
     private ExtFileSystemOptions options;
 
     public ExtFileSystemOptions getOptions() {

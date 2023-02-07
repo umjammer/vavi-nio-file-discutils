@@ -46,7 +46,7 @@ public final class BiosPartitionInfo extends PartitionInfo {
     /**
      * Gets the type of the partition.
      */
-    public byte getBiosType() {
+    @Override public byte getBiosType() {
         return record.getPartitionType();
     }
 
@@ -61,14 +61,14 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * Gets the first sector of the partion (relative to start of disk) as a
      * Logical block Address.
      */
-    public long getFirstSector() {
+    @Override public long getFirstSector() {
         return record.getLBAStartAbsolute();
     }
 
     /**
      * Always returns {@link UUID} empty.
      */
-    public UUID getGuidType() {
+    @Override public UUID getGuidType() {
         return new UUID(0L, 0L);
     }
 
@@ -91,7 +91,7 @@ public final class BiosPartitionInfo extends PartitionInfo {
      * Gets the last sector of the partion (relative to start of disk) as a
      * Logical block Address (inclusive).
      */
-    public long getLastSector() {
+    @Override public long getLastSector() {
         return record.getLBAStartAbsolute() + record.getLBALength() - 1;
     }
 
@@ -113,11 +113,11 @@ public final class BiosPartitionInfo extends PartitionInfo {
     /**
      * Gets the type of the partition as a string.
      */
-    public String getTypeAsString() {
+    @Override public String getTypeAsString() {
         return record.getFriendlyPartitionType();
     }
 
-    public PhysicalVolumeType getVolumeType() {
+    @Override public PhysicalVolumeType getVolumeType() {
         return PhysicalVolumeType.BiosPartition;
     }
 
@@ -126,7 +126,7 @@ public final class BiosPartitionInfo extends PartitionInfo {
      *
      * @return The new stream.
      */
-    public SparseStream open() {
+    @Override public SparseStream open() {
         return table.open(record);
     }
 }

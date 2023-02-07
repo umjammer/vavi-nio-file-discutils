@@ -25,10 +25,10 @@ package discUtils.wim;
 import java.io.IOException;
 
 import discUtils.core.compression.HuffmanTree;
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.BufferedStream;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -182,7 +182,7 @@ public class LzxStream extends Stream {
         while (i < bufferCount - 10) {
             if ((buffer[i] & 0xff) == 0xE8) {
                 System.arraycopy(buffer, i + 1, temp, 0, 4);
-                int absoluteValue = EndianUtilities.toInt32LittleEndian(buffer, i + 1);
+                int absoluteValue = ByteUtil.readLeInt(buffer, i + 1);
                 if (absoluteValue >= -i && absoluteValue < fileSize) {
                     int offsetValue;
                     if (absoluteValue >= 0) {
@@ -190,7 +190,7 @@ public class LzxStream extends Stream {
                     } else {
                         offsetValue = absoluteValue + fileSize;
                     }
-                    EndianUtilities.writeBytesLittleEndian(offsetValue, buffer, i + 1);
+                    ByteUtil.writeLeInt(offsetValue, buffer, i + 1);
                 }
 
                 i += 4;
@@ -202,9 +202,9 @@ public class LzxStream extends Stream {
 
     private void decodeUncompressedBlock(int blockSize) {
         bitStream.align(16);
-        repeatedOffsets[0] = EndianUtilities.toUInt32LittleEndian(bitStream.readBytes(4), 0);
-        repeatedOffsets[1] = EndianUtilities.toUInt32LittleEndian(bitStream.readBytes(4), 0);
-        repeatedOffsets[2] = EndianUtilities.toUInt32LittleEndian(bitStream.readBytes(4), 0);
+        repeatedOffsets[0] = ByteUtil.readLeInt(bitStream.readBytes(4), 0);
+        repeatedOffsets[1] = ByteUtil.readLeInt(bitStream.readBytes(4), 0);
+        repeatedOffsets[2] = ByteUtil.readLeInt(bitStream.readBytes(4), 0);
         int numRead = bitStream.readBytes(buffer, bufferCount, blockSize);
         bufferCount += numRead;
         if ((numRead & 1) != 0) {

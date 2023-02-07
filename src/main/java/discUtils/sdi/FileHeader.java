@@ -22,9 +22,10 @@
 
 package discUtils.sdi;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileHeader {
@@ -60,21 +61,21 @@ public class FileHeader {
     public long vendorId;
 
     public void readFrom(byte[] buffer, int offset) {
-        tag = EndianUtilities.bytesToString(buffer, offset, 8);
+        tag = new String(buffer, offset, 8, StandardCharsets.US_ASCII);
         if (!tag.equals("$SDI0001")) {
             throw new IllegalArgumentException("SDI format marker not found");
         }
 
-        type = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x08);
-        bootCodeOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x10);
-        bootCodeSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x18);
-        vendorId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
-        deviceId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
-        deviceModel = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x30);
-        deviceRole = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
-        runtimeGuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x50);
-        runtimeOEMRev = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x60);
-        pageAlignment = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x70);
-        checksum = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x1F8);
+        type = ByteUtil.readLeLong(buffer, offset + 0x08);
+        bootCodeOffset = ByteUtil.readLeLong(buffer, offset + 0x10);
+        bootCodeSize = ByteUtil.readLeLong(buffer, offset + 0x18);
+        vendorId = ByteUtil.readLeLong(buffer, offset + 0x20);
+        deviceId = ByteUtil.readLeLong(buffer, offset + 0x28);
+        deviceModel = ByteUtil.readLeUUID(buffer, offset + 0x30);
+        deviceRole = ByteUtil.readLeLong(buffer, offset + 0x40);
+        runtimeGuid = ByteUtil.readLeUUID(buffer, offset + 0x50);
+        runtimeOEMRev = ByteUtil.readLeLong(buffer, offset + 0x60);
+        pageAlignment = ByteUtil.readLeLong(buffer, offset + 0x70);
+        checksum = ByteUtil.readLeLong(buffer, offset + 0x1F8);
     }
 }

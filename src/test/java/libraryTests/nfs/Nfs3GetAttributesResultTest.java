@@ -25,10 +25,6 @@ package libraryTests.nfs;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3FileAttributes;
 import discUtils.nfs.Nfs3FileTime;
 import discUtils.nfs.Nfs3GetAttributesResult;
@@ -36,6 +32,9 @@ import discUtils.nfs.Nfs3Status;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3GetAttributesResultTest {
@@ -51,7 +50,7 @@ public class Nfs3GetAttributesResultTest {
                 .toInstant().toEpochMilli());
         result.setAttributes(attributes);
         result.setStatus(Nfs3Status.Ok);
-        Nfs3GetAttributesResult clone = null;
+        Nfs3GetAttributesResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

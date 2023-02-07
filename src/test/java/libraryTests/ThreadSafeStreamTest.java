@@ -25,13 +25,6 @@ package libraryTests;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import discUtils.streams.SparseMemoryBuffer;
 import discUtils.streams.SparseMemoryStream;
 import discUtils.streams.SparseStream;
@@ -42,6 +35,12 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.IOException;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class ThreadSafeStreamTest {
     @Test

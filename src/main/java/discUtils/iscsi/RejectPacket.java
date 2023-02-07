@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class RejectPacket extends BaseResponse {
@@ -33,7 +33,7 @@ public class RejectPacket extends BaseResponse {
 
     public RejectReason reason = RejectReason.None;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0);
     }
 
@@ -46,9 +46,9 @@ public class RejectPacket extends BaseResponse {
         }
 
         reason = RejectReason.values()[headerData[headerOffset + 2]];
-        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        dataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
+        statusSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 32);
+        dataSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 36);
     }
 }

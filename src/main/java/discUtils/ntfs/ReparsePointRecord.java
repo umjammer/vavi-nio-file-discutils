@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class ReparsePointRecord implements IByteArraySerializable, IDiagnosticTraceable {
@@ -35,26 +35,26 @@ public final class ReparsePointRecord implements IByteArraySerializable, IDiagno
 
     public int tag;
 
-    public int size() {
+    @Override public int size() {
         return 8 + content.length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        tag = EndianUtilities.toUInt32LittleEndian(buffer, offset);
-        short length = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        tag = ByteUtil.readLeInt(buffer, offset);
+        short length = ByteUtil.readLeShort(buffer, offset + 4);
         content = new byte[length];
         System.arraycopy(buffer, offset + 8, content, 0, length);
         return 8 + length;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(tag, buffer, offset);
-        EndianUtilities.writeBytesLittleEndian((short) content.length, buffer, offset + 4);
-        EndianUtilities.writeBytesLittleEndian((short) 0, buffer, offset + 6);
+    @Override public void writeTo(byte[] buffer, int offset) {
+        ByteUtil.writeLeInt(tag, buffer, offset);
+        ByteUtil.writeLeShort((short) content.length, buffer, offset + 4);
+        ByteUtil.writeLeShort((short) 0, buffer, offset + 6);
         System.arraycopy(content, 0, buffer, offset + 8, content.length);
     }
 
-    public void dump(PrintWriter writer, String linePrefix) {
+    @Override public void dump(PrintWriter writer, String linePrefix) {
         writer.println(linePrefix + "                Tag: " + Integer.toHexString(tag));
         StringBuilder hex = new StringBuilder();
         for (int i = 0; i < Math.min(content.length, 32); ++i) {

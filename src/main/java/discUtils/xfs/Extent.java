@@ -23,8 +23,8 @@
 package discUtils.xfs;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
+import vavi.util.ByteUtil;
 
 
 public class Extent implements IByteArraySerializable {
@@ -77,9 +77,9 @@ public class Extent implements IByteArraySerializable {
     }
 
     @Override public int readFrom(byte[] buffer, int offset) {
-        long lower = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x8);
-        long middle = EndianUtilities.toUInt64BigEndian(buffer, offset + 0x6);
-        long upper = EndianUtilities.toUInt64BigEndian(buffer, offset + 0);
+        long lower = ByteUtil.readBeLong(buffer, offset + 0x8);
+        long middle = ByteUtil.readBeLong(buffer, offset + 0x6);
+        long upper = ByteUtil.readBeLong(buffer, offset + 0);
         blockCount = (int) (lower & 0x001F_FFFF);
         startBlock = (middle >>> 5) & 0x000F_FFFF_FFFF_FFFFL;
         startOffset = (upper >>> 9) & 0x003F_FFFF_FFFF_FFFFL;

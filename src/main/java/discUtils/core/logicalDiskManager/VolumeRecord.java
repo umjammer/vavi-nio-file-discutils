@@ -24,7 +24,7 @@ package discUtils.core.logicalDiskManager;
 
 import java.util.UUID;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class VolumeRecord extends DatabaseRecord {
@@ -69,7 +69,7 @@ public final class VolumeRecord extends DatabaseRecord {
 
     public UUID volumeGuid;
 
-    protected void doReadFrom(byte[] buffer, int offset) {
+    @Override protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
 
         int[] pos = new int[] { offset + 0x18 };
@@ -90,7 +90,7 @@ public final class VolumeRecord extends DatabaseRecord {
         size = readVarLong(buffer, pos);
         unknown2 = readUInt(buffer, pos);
         biosType = readByte(buffer, pos);
-        volumeGuid = EndianUtilities.toGuidBigEndian(buffer, pos[0]);
+        volumeGuid = ByteUtil.readBeUUID(buffer, pos[0]);
         pos[0] += 16;
 
         if ((flags & 0x0200) != 0) {

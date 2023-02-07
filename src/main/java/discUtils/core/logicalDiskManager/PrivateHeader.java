@@ -22,7 +22,9 @@
 
 package discUtils.core.logicalDiskManager;
 
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
+
+import vavi.util.ByteUtil;
 
 
 public class PrivateHeader {
@@ -87,29 +89,29 @@ public class PrivateHeader {
 
     // 2.12
     public void readFrom(byte[] buffer, int offset) {
-        signature = EndianUtilities.bytesToString(buffer, offset + 0x00, 8);
-        checksum = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x08);
-        version = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x0C);
-        timestamp = EndianUtilities.toInt64BigEndian(buffer, offset + 0x10);
-        unknown2 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x18);
-        unknown3 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x20);
-        unknown4 = EndianUtilities.toInt64BigEndian(buffer, offset + 0x28);
-        diskId = EndianUtilities.bytesToString(buffer, offset + 0x30, 0x40).replaceFirst("\0*$", "");
-        hostId = EndianUtilities.bytesToString(buffer, offset + 0x70, 0x40).replaceFirst("\0*$", "");
-        diskGroupId = EndianUtilities.bytesToString(buffer, offset + 0xB0, 0x40).replaceFirst("\0*$", "");
-        diskGroupName = EndianUtilities.bytesToString(buffer, offset + 0xF0, 31).replaceFirst("\0*$", "");
-        unknown5 = EndianUtilities.toUInt32BigEndian(buffer, offset + 0x10F);
-        dataStartLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x11B);
-        dataSizeLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x123);
-        configurationStartLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x12B);
-        configurationSizeLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x133);
-        tocSizeLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x13B);
-        nextTocLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x143);
+        signature = new String(buffer, offset + 0x00, 8, StandardCharsets.US_ASCII);
+        checksum = ByteUtil.readBeInt(buffer, offset + 0x08);
+        version = ByteUtil.readBeInt(buffer, offset + 0x0C);
+        timestamp = ByteUtil.readBeLong(buffer, offset + 0x10);
+        unknown2 = ByteUtil.readBeLong(buffer, offset + 0x18);
+        unknown3 = ByteUtil.readBeLong(buffer, offset + 0x20);
+        unknown4 = ByteUtil.readBeLong(buffer, offset + 0x28);
+        diskId = new String(buffer, offset + 0x30, 0x40, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        hostId = new String(buffer, offset + 0x70, 0x40, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        diskGroupId = new String(buffer, offset + 0xB0, 0x40, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        diskGroupName = new String(buffer, offset + 0xF0, 31, StandardCharsets.US_ASCII).replaceFirst("\0*$", "");
+        unknown5 = ByteUtil.readBeInt(buffer, offset + 0x10F);
+        dataStartLba = ByteUtil.readBeLong(buffer, offset + 0x11B);
+        dataSizeLba = ByteUtil.readBeLong(buffer, offset + 0x123);
+        configurationStartLba = ByteUtil.readBeLong(buffer, offset + 0x12B);
+        configurationSizeLba = ByteUtil.readBeLong(buffer, offset + 0x133);
+        tocSizeLba = ByteUtil.readBeLong(buffer, offset + 0x13B);
+        nextTocLba = ByteUtil.readBeLong(buffer, offset + 0x143);
         // These two may be reversed
-        numberOfConfigs = EndianUtilities.toInt32BigEndian(buffer, offset + 0x14B);
-        numberOfLogs = EndianUtilities.toInt32BigEndian(buffer, offset + 0x14F);
-        configSizeLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x153);
-        logSizeLba = EndianUtilities.toInt64BigEndian(buffer, offset + 0x15B);
+        numberOfConfigs = ByteUtil.readBeInt(buffer, offset + 0x14B);
+        numberOfLogs = ByteUtil.readBeInt(buffer, offset + 0x14F);
+        configSizeLba = ByteUtil.readBeLong(buffer, offset + 0x153);
+        logSizeLba = ByteUtil.readBeLong(buffer, offset + 0x15B);
     }
 
 }

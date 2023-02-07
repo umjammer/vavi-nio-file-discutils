@@ -23,7 +23,7 @@
 package discUtils.dmg;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class CompressedRun implements IByteArraySerializable {
@@ -38,20 +38,20 @@ public class CompressedRun implements IByteArraySerializable {
 
     public RunType type;
 
-    public int size() {
+    @Override public int size() {
         return 40;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        type = RunType.valueOf(EndianUtilities.toUInt32BigEndian(buffer, offset + 0));
-        sectorStart = EndianUtilities.toInt64BigEndian(buffer, offset + 8);
-        sectorCount = EndianUtilities.toInt64BigEndian(buffer, offset + 16);
-        compOffset = EndianUtilities.toInt64BigEndian(buffer, offset + 24);
-        compLength = EndianUtilities.toInt64BigEndian(buffer, offset + 32);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        type = RunType.valueOf(ByteUtil.readBeInt(buffer, offset + 0));
+        sectorStart = ByteUtil.readBeLong(buffer, offset + 8);
+        sectorCount = ByteUtil.readBeLong(buffer, offset + 16);
+        compOffset = ByteUtil.readBeLong(buffer, offset + 24);
+        compLength = ByteUtil.readBeLong(buffer, offset + 32);
         return 40;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

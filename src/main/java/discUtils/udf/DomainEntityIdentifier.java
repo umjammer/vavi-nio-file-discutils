@@ -23,7 +23,8 @@
 package discUtils.udf;
 
 public class DomainEntityIdentifier extends EntityIdentifier {
-    public String toString() {
+
+    @Override public String toString() {
         String major = String.format("%02x", suffix[1]);
         String minor = String.format("%02x", suffix[0]);
         DomainFlags flags = DomainFlags.values()[suffix[2]];

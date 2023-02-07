@@ -187,6 +187,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Disposes of this instance, forcing a checkpoint if one is outstanding.
      */
+    @Override
     public void close() throws IOException {
         try {
             checkpointAndThrow();
@@ -590,7 +591,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                 NoSuchMethodException | SecurityException tie) {
             try {
-                Field remoteStackTraceString = Exception.class.getField("_remoteStackTraceString");
+                Field remoteStackTraceString = tie.getClass().getField("setStackTrace");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
                 throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -605,7 +606,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | IllegalArgumentException |
                 NoSuchMethodException | SecurityException tie) {
             try {
-                Field remoteStackTraceString = Exception.class.getField("_remoteStackTraceString");
+                Field remoteStackTraceString = tie.getClass().getField("setStackTrace");
                 remoteStackTraceString.set(tie.getCause(), tie.getCause().getStackTrace());
                 throw new dotnet4j.io.IOException(tie.getCause());
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
@@ -617,6 +618,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Provides a friendly description of the file system type.
      */
+    @Override
     public String getFriendlyName() {
         return (String) performActivity((fs, context) -> fs.getFriendlyName());
     }
@@ -626,6 +628,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @return true if the file system is read-write.
      */
+    @Override
     public boolean canWrite() {
         return (Boolean) performActivity((fs, context) -> fs.canWrite());
     }
@@ -633,6 +636,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Gets the root directory of the file system.
      */
+    @Override
     public DiscDirectoryInfo getRoot() {
         return new DiscDirectoryInfo(this, "");
     }
@@ -643,6 +647,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param sourceFile The source file
      * @param destinationFile The destination file
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile) {
         performActivity((fs, context) -> {
             try {
@@ -662,6 +667,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param destinationFile The destination file
      * @param overwrite Whether to permit over-writing of an existing file.
      */
+    @Override
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         performActivity((fs, context) -> {
             try {
@@ -678,6 +684,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path of the new directory
      */
+    @Override
     public void createDirectory(String path) {
         performActivity((fs, context) -> {
             try {
@@ -694,6 +701,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path of the directory to delete.
      */
+    @Override
     public void deleteDirectory(String path) {
         performActivity((fs, context) -> {
             try {
@@ -710,6 +718,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path of the file to delete.
      */
+    @Override
     public void deleteFile(String path) {
         performActivity((fs, context) -> {
             try {
@@ -727,6 +736,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to test
      * @return true if the directory exists
      */
+    @Override
     public boolean directoryExists(String path) {
         return (boolean) performActivity((fs, context) -> {
             try {
@@ -743,6 +753,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to test
      * @return true if the file exists
      */
+    @Override
     public boolean fileExists(String path) {
         return (boolean) performActivity((fs, context) -> {
             try {
@@ -759,6 +770,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to test
      * @return true if the file or directory exists
      */
+    @Override
     public boolean exists(String path) {
         return (Boolean) performActivity((fs, context) -> {
             try {
@@ -773,8 +785,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the names of subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of directories.
+     * @return list of directories.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getDirectories(String path) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -791,8 +805,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getDirectories(String path, String searchPattern) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -811,8 +827,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of directories matching the search pattern.
+     * @return list of directories matching the search pattern.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -827,8 +845,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the names of files in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files.
+     * @return list of files.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFiles(String path) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -844,8 +864,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFiles(String path, String searchPattern) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -864,8 +886,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to search.
      * @param searchPattern The search string to match against.
      * @param searchOption Indicates whether to search subdirectories.
-     * @return Array of files matching the search pattern.
+     * @return list of files matching the search pattern.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -880,8 +904,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * Gets the names of all files and subdirectories in a specified directory.
      *
      * @param path The path to search.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFileSystemEntries(String path) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -898,8 +924,10 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      *
      * @param path The path to search.
      * @param searchPattern The search string to match against.
-     * @return Array of files and subdirectories matching the search pattern.
+     * @return list of files and subdirectories matching the search pattern.
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         return (List) performActivity((fs, context) -> {
             try {
@@ -916,6 +944,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param sourceDirectoryName The directory to move.
      * @param destinationDirectoryName The target directory name.
      */
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         performActivity((fs, context) -> {
             try {
@@ -933,6 +962,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param sourceName The file to move.
      * @param destinationName The target file name.
      */
+    @Override
     public void moveFile(String sourceName, String destinationName) {
         performActivity((fs, context) -> {
             try {
@@ -951,6 +981,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param destinationName The target file name.
      * @param overwrite Whether to permit a destination file to be overwritten
      */
+    @Override
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         performActivity((fs, context) -> {
             try {
@@ -971,6 +1002,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param mode The file mode for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode) {
         // This delegate can be used at any time the wrapper needs it, if it's
         // in a
@@ -1002,6 +1034,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param access The access permissions for the created stream.
      * @return The new stream.
      */
+    @Override
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         // This delegate can be used at any time the wrapper needs it, if it's
         // in a
@@ -1031,6 +1064,8 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The file or directory to inspect
      * @return The attributes of the file or directory
      */
+    @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Map<String, Object> getAttributes(String path) {
         return (Map) performActivity((fs, context) -> {
             try {
@@ -1047,6 +1082,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The file or directory to change
      * @param newValue The new attributes of the file or directory
      */
+    @Override
     public void setAttributes(String path, Map<String, Object> newValue) {
         performActivity((fs, context) -> {
             try {
@@ -1064,6 +1100,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory
      * @return The creation time.
      */
+    @Override
     public long getCreationTime(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1080,6 +1117,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTime(String path, long newTime) throws IOException {
         performActivity((fs, context) -> {
             try {
@@ -1097,6 +1135,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @return The creation time.
      */
+    @Override
     public long getCreationTimeUtc(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1113,6 +1152,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setCreationTimeUtc(String path, long newTime) {
         performActivity((fs, context) -> {
             try {
@@ -1130,6 +1170,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory
      * @return The last access time
      */
+    @Override
     public long getLastAccessTime(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1146,6 +1187,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTime(String path, long newTime) {
         performActivity((fs, context) -> {
             try {
@@ -1163,6 +1205,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory
      * @return The last access time
      */
+    @Override
     public long getLastAccessTimeUtc(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1179,6 +1222,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastAccessTimeUtc(String path, long newTime) {
         performActivity((fs, context) -> {
             try {
@@ -1196,6 +1240,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory
      * @return The last write time
      */
+    @Override
     public long getLastWriteTime(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1212,6 +1257,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTime(String path, long newTime) {
         performActivity((fs, context) -> {
             try {
@@ -1229,6 +1275,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory
      * @return The last write time
      */
+    @Override
     public long getLastWriteTimeUtc(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1245,6 +1292,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path of the file or directory.
      * @param newTime The new time to set.
      */
+    @Override
     public void setLastWriteTimeUtc(String path, long newTime) {
         performActivity((fs, context) -> {
             try {
@@ -1262,6 +1310,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The path to the file
      * @return The length in bytes
      */
+    @Override
     public long getFileLength(String path) {
         return (long) performActivity((fs, context) -> {
             try {
@@ -1278,6 +1327,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The file path
      * @return The representing objectThe file does not need to exist
      */
+    @Override
     public DiscFileInfo getFileInfo(String path) {
         return (DiscFileInfo) performActivity((fs, context) -> {
             try {
@@ -1294,6 +1344,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @param path The directory path
      * @return The representing objectThe directory does not need to exist
      */
+    @Override
     public DiscDirectoryInfo getDirectoryInfo(String path) {
         return (DiscDirectoryInfo) performActivity((fs, context) -> {
             try {
@@ -1312,6 +1363,7 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
      * @return The representing objectThe file system object does not need to
      *         exist
      */
+    @Override
     public DiscFileSystemInfo getFileSystemInfo(String path) {
         return (DiscFileSystemInfo) performActivity((fs, context) -> {
             try {
@@ -1325,18 +1377,22 @@ public class ValidatingFileSystem<TFileSystem extends DiscFileSystem & IDiagnost
     /**
      * Gets the Volume Label.
      */
+    @Override
     public String getVolumeLabel() {
         return (String) performActivity((fs, context) -> fs.getVolumeLabel());
     }
 
+    @Override
     public long getSize() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getUsedSpace() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getAvailableSpace() {
         throw new UnsupportedOperationException();
     }

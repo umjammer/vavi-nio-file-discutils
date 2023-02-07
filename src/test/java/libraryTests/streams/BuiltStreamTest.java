@@ -24,13 +24,12 @@ package libraryTests.streams;
 
 import java.util.Collections;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.streams.BuiltStream;
 import discUtils.streams.ZeroStream;
 import discUtils.streams.builder.BuilderSparseStreamExtent;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class BuiltStreamTest {

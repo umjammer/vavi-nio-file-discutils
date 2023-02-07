@@ -94,6 +94,7 @@ public class Partition implements Comparable<Partition> {
      * @param other Partition to compare with
      * @return A value that indicates the relative equality of the partitions being compared.
      */
+    @Override
     public int compareTo(Partition other) {
         if (start == other.start &&
                 end() == other.end())

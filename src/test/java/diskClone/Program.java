@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.core.DiskImageBuilder;
 import discUtils.core.DiskImageFileSpecification;
@@ -28,6 +25,8 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -67,6 +66,7 @@ public class Program extends ProgramBase {
         };
     }
 
+    @Override
     protected void doRun() throws IOException {
         if (!isAdministrator()) {
             System.err.println("\nThis utility must be run as an administrator!\n");

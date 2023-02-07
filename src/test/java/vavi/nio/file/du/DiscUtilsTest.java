@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
-
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.Checksum;

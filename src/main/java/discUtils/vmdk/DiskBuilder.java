@@ -79,10 +79,12 @@ public final class DiskBuilder extends DiskImageBuilder {
      * Gets or sets the adaptor type for created virtual disk, setting to SCSI
      * implies LSI logic adapter.
      */
+    @Override
     public GenericDiskAdapterType getGenericAdapterType() {
         return getAdapterType() == DiskAdapterType.Ide ? GenericDiskAdapterType.Ide : GenericDiskAdapterType.Scsi;
     }
 
+    @Override
     public void setGenericAdapterType(GenericDiskAdapterType value) {
         if (value == GenericDiskAdapterType.Ide) {
             adapterType = DiskAdapterType.Ide;
@@ -94,6 +96,7 @@ public final class DiskBuilder extends DiskImageBuilder {
     /**
      * Gets whether this file format preserves BIOS geometry information.
      */
+    @Override
     public boolean getPreservesBiosGeometry() {
         return true;
     }
@@ -107,6 +110,7 @@ public final class DiskBuilder extends DiskImageBuilder {
      *         first file is
      *         the 'primary' file that is normally attached to VMs.
      */
+    @Override
     public List<DiskImageFileSpecification> build(String baseName) {
         if (baseName == null || baseName.isEmpty()) {
             throw new IllegalArgumentException("Invalid base file name");

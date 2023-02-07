@@ -59,6 +59,7 @@ public abstract class VirtualDiskExtent implements Closeable {
     /**
      * Disposes of this instance, freeing underlying resources.
      */
+    @Override
     public void close() {
     }
 

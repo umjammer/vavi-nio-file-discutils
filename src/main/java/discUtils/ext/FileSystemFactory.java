@@ -33,6 +33,7 @@ import dotnet4j.io.Stream;
 
 public class FileSystemFactory implements VfsFileSystemFactory {
 
+    @Override
     public FileSystemInfo[] detect(Stream stream, VolumeInfo volume) {
         if (ExtFileSystem.detect(stream)) {
             return new FileSystemInfo[] {

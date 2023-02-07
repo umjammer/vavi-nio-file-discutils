@@ -24,6 +24,7 @@ package discUtils.dmg;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class UdifChecksum implements IByteArraySerializable {
@@ -33,18 +34,18 @@ public class UdifChecksum implements IByteArraySerializable {
 
     public int type;
 
-    public int size() {
+    @Override public int size() {
         return 136;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        type = EndianUtilities.toUInt32BigEndian(buffer, offset + 0);
-        checksumSize = EndianUtilities.toUInt32BigEndian(buffer, offset + 4);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        type = ByteUtil.readBeInt(buffer, offset + 0);
+        checksumSize = ByteUtil.readBeInt(buffer, offset + 4);
         data = EndianUtilities.toByteArray(buffer, offset + 8, 128);
         return 136;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

@@ -28,9 +28,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.HexDump;
 import discUtils.common.ProgramBase;
 import discUtils.core.DiscDirectoryInfo;
@@ -51,6 +48,8 @@ import discUtils.core.partitions.PartitionInfo;
 import discUtils.streams.StreamExtent;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -100,6 +99,7 @@ public class Program extends ProgramBase {
 
 //    StandardSwitches.UserAndPassword | StandardSwitches.FileNameEncoding;
 
+    @Override
     protected void doRun() throws IOException {
 //        System.setProperty("file.encoding", StandardCharsets.UTF_8.name());
 

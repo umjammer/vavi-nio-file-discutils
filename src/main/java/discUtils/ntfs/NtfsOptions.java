@@ -164,7 +164,7 @@ public final class NtfsOptions extends DiscFileSystemOptions {
      *
      * @return A string of the form Show: XX XX XX.
      */
-    public String toString() {
+    @Override public String toString() {
         return "Show: Normal " + (hideMetafiles ? "" : "Meta ") + (hideHiddenFiles ? "" : "Hidden ")
                 + (hideSystemFiles ? "" : "System ") + (hideDosFileNames ? "" : "ShortNames ");
     }

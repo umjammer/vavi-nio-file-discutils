@@ -23,7 +23,7 @@
 package discUtils.lvm;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DiskArea implements IByteArraySerializable {
@@ -35,23 +35,23 @@ public class DiskArea implements IByteArraySerializable {
     /**
      *
      */
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
     /**
      *
      */
-    public int readFrom(byte[] buffer, int offset) {
-        this.offset = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        length = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        this.offset = ByteUtil.readLeLong(buffer, offset);
+        length = ByteUtil.readLeLong(buffer, offset + 0x8);
         return size();
     }
 
     /**
      *
      */
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

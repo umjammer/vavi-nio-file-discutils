@@ -73,6 +73,7 @@ public final class SparseMemoryBuffer extends Buffer {
     /**
      * Indicates this stream can be read (always {@code true} ).
      */
+    @Override
     public boolean canRead() {
         return true;
     }
@@ -80,6 +81,7 @@ public final class SparseMemoryBuffer extends Buffer {
     /**
      * Indicates this stream can be written (always {@code true} ).
      */
+    @Override
     public boolean canWrite() {
         return true;
     }
@@ -88,6 +90,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * Gets the current capacity of the sparse buffer (number of logical bytes
      * stored).
      */
+    @Override
     public long getCapacity() {
         return capacity;
     }
@@ -132,6 +135,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param count The number of bytes to read.
      * @return The actual number of bytes read.
      */
+    @Override
     public int read(long pos, byte[] buffer, int offset, int count) {
         int totalRead = 0;
         while (count > 0 && pos < capacity) {
@@ -160,6 +164,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param offset The start offset within the source byte array.
      * @param count The number of bytes to write.
      */
+    @Override
     public void write(long pos, byte[] buffer, int offset, int count) {
         while (count > 0) {
             int chunk = (int) (pos / getChunkSize());
@@ -186,6 +191,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param pos The start offset within the buffer.
      * @param count The number of bytes to clear.
      */
+    @Override
     public void clear(long pos, int count) {
         while (count > 0) {
             int chunk = (int) (pos / getChunkSize());
@@ -215,6 +221,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * 
      * @param value The desired capacity of the buffer.
      */
+    @Override
     public void setCapacity(long value) {
         capacity = value;
     }
@@ -226,6 +233,7 @@ public final class SparseMemoryBuffer extends Buffer {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
+    @Override
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         long end = start + count;
         return getAllocatedChunks().stream().filter(chunk -> {

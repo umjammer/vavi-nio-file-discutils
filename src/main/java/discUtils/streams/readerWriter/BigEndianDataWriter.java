@@ -22,8 +22,8 @@
 
 package discUtils.streams.readerWriter;
 
-import discUtils.streams.util.EndianUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class BigEndianDataWriter extends DataWriter {
@@ -32,21 +32,21 @@ public class BigEndianDataWriter extends DataWriter {
         super(stream);
     }
 
-    public void write(short value) {
+    @Override public void write(short value) {
         ensureBuffer();
-        EndianUtilities.writeBytesBigEndian(value, buffer, 0);
+        ByteUtil.writeBeShort(value, buffer, 0);
         flushBuffer(2);
     }
 
-    public void write(int value) {
+    @Override public void write(int value) {
         ensureBuffer();
-        EndianUtilities.writeBytesBigEndian(value, buffer, 0);
+        ByteUtil.writeBeInt(value, buffer, 0);
         flushBuffer(4);
     }
 
-    public void write(long value) {
+    @Override public void write(long value) {
         ensureBuffer();
-        EndianUtilities.writeBytesBigEndian(value, buffer, 0);
+        ByteUtil.writeBeLong(value, buffer, 0);
         flushBuffer(8);
     }
 }

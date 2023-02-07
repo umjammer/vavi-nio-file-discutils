@@ -54,6 +54,7 @@ public final class ServiceDiscoveryClient implements Closeable {
     /**
      * Disposes of this instance.
      */
+    @Override
     public void close() throws IOException {
         if (mDnsClient != null) {
             mDnsClient.close();

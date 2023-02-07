@@ -113,7 +113,8 @@ Debug.println("receiver exit");
     /**
      * Disposes of this instance.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
+        es.shutdown();
         if (udpClient != null) {
             udpClient.close();
             udpClient = null;
@@ -123,7 +124,7 @@ Debug.println("receiver exit");
     /**
      * Flushes any cached DNS records.
      */
-    public void flushCache() {
+    @Override public void flushCache() {
         synchronized (transactions) {
             cache = new HashMap<>();
         }
@@ -136,7 +137,7 @@ Debug.println("receiver exit");
      * @param type The type of record requested.
      * @return The records returned by the DNS server, if any.
      */
-    public ResourceRecord[] lookup(String name, RecordType type) {
+    @Override public ResourceRecord[] lookup(String name, RecordType type) {
         String normName = normalizeDomainName(name);
 
         synchronized (transactions) {
@@ -277,9 +278,5 @@ Debug.println("send: " + msgBytes.length);
                 transaction.getCompleteEvent().countDown();
             }
         }
-    }
-
-    protected void finalize() {
-        es.shutdown();
     }
 }

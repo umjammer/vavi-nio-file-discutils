@@ -28,11 +28,11 @@ import java.util.EnumSet;
 import java.util.List;
 
 import discUtils.core.internal.Utilities;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
-import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.security.accessControl.RegistrySecurity;
+import dotnet4j.util.compat.StringUtilities;
 import dotnet4j.win32.RegistryValueOptions;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -133,7 +133,7 @@ public final class RegistryKey {
         if (cell.numValues != 0) {
             byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
             for (int i = 0; i < cell.numValues; ++i) {
-                int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
+                int valueIndex = ByteUtil.readLeInt(valueList, i * 4);
                 result.add(new RegistryValue(hive, hive.getCell(valueIndex)));
             }
         }
@@ -305,7 +305,7 @@ public final class RegistryKey {
             byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
             int i = 0;
             while (i < cell.numValues) {
-                int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
+                int valueIndex = ByteUtil.readLeInt(valueList, i * 4);
                 ValueCell valueCell = hive.getCell(valueIndex);
 //Debug.println(valueCell.getName() + ", " + name);
                 if (StringUtilities.compare(valueCell.getName(), name, true) == 0) {
@@ -321,8 +321,8 @@ public final class RegistryKey {
             // Move following value's to fill gap
             if (i < cell.numValues) {
                 while (i < cell.numValues) {
-                    int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, (i + 1) * 4);
-                    EndianUtilities.writeBytesLittleEndian(valueIndex, valueList, i * 4);
+                    int valueIndex = ByteUtil.readLeInt(valueList, (i + 1) * 4);
+                    ByteUtil.writeLeInt(valueIndex, valueList, i * 4);
                     ++i;
                 }
                 hive.writeRawCellData(cell.valueListIndex, valueList, 0, cell.numValues * 4);
@@ -522,7 +522,7 @@ public final class RegistryKey {
         if (cell.numValues != 0) {
             byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
             for (int i = 0; i < cell.numValues; ++i) {
-                int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
+                int valueIndex = ByteUtil.readLeInt(valueList, i * 4);
                 ValueCell cell = hive.getCell(valueIndex);
 //Debug.println(name + ", " + cell);
                 if (StringUtilities.compare(cell.getName(), name, true) == 0) {
@@ -542,7 +542,7 @@ public final class RegistryKey {
 
         int insertIdx = 0;
         while (insertIdx < cell.numValues) {
-            int valueCellIndex = EndianUtilities.toInt32LittleEndian(valueList, insertIdx * 4);
+            int valueCellIndex = ByteUtil.readLeInt(valueList, insertIdx * 4);
             ValueCell cell = hive.getCell(valueCellIndex);
             if (StringUtilities.compare(name, cell.getName(), true) < 0) {
                 break;
@@ -558,7 +558,7 @@ public final class RegistryKey {
         // Update the value list, re-allocating if necessary
         byte[] newValueList = new byte[cell.numValues * 4 + 4];
         System.arraycopy(valueList, 0, newValueList, 0, insertIdx * 4);
-        EndianUtilities.writeBytesLittleEndian(valueCell.getIndex(), newValueList, insertIdx * 4);
+        ByteUtil.writeLeInt(valueCell.getIndex(), newValueList, insertIdx * 4);
         System.arraycopy(valueList, insertIdx * 4, newValueList, insertIdx * 4 + 4, (cell.numValues - insertIdx) * 4);
         if (cell.valueListIndex == -1 || !hive.writeRawCellData(cell.valueListIndex, newValueList, 0, newValueList.length)) {
             int newListCellIndex = hive.allocateRawCell(MathUtilities.roundUp(newValueList.length, 8));
@@ -646,7 +646,7 @@ public final class RegistryKey {
             byte[] valueList = hive.rawCellData(cell.valueListIndex, cell.numValues * 4);
 
             for (int i = 0; i < cell.numValues; ++i) {
-                int valueIndex = EndianUtilities.toInt32LittleEndian(valueList, i * 4);
+                int valueIndex = ByteUtil.readLeInt(valueList, i * 4);
                 hive.freeCell(valueIndex);
             }
 

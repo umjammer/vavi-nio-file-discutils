@@ -32,6 +32,7 @@ public class BuilderStreamExtentSource extends BuilderExtentSource {
         this.stream = stream;
     }
 
+    @Override
     public BuilderExtent fix(long pos) {
         return new BuilderStreamExtent(pos, stream);
     }

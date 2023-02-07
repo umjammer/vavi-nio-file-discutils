@@ -49,7 +49,8 @@ final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
         byte[] node0data = StreamUtilities.readExact(this.data, 0, header.getNodeSize());
 
         BTreeNode<?> node = BTreeNode.readNode(keyClass, this, node0data, 0);
-        BTreeHeaderNode<TKey> node0 = (BTreeHeaderNode) node;
+        @SuppressWarnings("unchecked")
+        BTreeHeaderNode<TKey> node0 = (BTreeHeaderNode<TKey>) node;
         node0.readFrom(node0data, 0);
 
         if (node0.getHeaderRecord().rootNode != 0) {
@@ -57,7 +58,7 @@ final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
         }
     }
 
-    int getNodeSize() {
+    @Override int getNodeSize() {
         return header.getNodeSize();
     }
 
@@ -73,7 +74,7 @@ final class BTree<TKey extends BTreeKey<?>> extends InternalBTree {
         byte[] nodeData = StreamUtilities.readExact(data, (long) nodeId * header.getNodeSize(), header.getNodeSize());
 
         BTreeNode<TKey> node_ = BTreeNode.readNode2(keyClass, this, nodeData, 0);
-        BTreeKeyedNode<TKey> node = (BTreeKeyedNode) node_;
+        BTreeKeyedNode<TKey> node = (BTreeKeyedNode<TKey>) node_;
         node.readFrom(nodeData, 0);
         return node;
     }

@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DataInPacket extends BaseResponse {
@@ -49,7 +49,7 @@ public class DataInPacket extends BaseResponse {
 
     public boolean u;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 
@@ -66,14 +66,14 @@ public class DataInPacket extends BaseResponse {
             status = ScsiStatus.valueOf(headerData[headerOffset + 3]);
         }
 
-        lun = EndianUtilities.toUInt64BigEndian(headerData, headerOffset + 8);
-        targetTransferTag = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 20);
-        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
-        dataSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 36);
-        bufferOffset = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 40);
-        residualCount = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 44);
+        lun = ByteUtil.readBeLong(headerData, headerOffset + 8);
+        targetTransferTag = ByteUtil.readBeInt(headerData, headerOffset + 20);
+        statusSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 32);
+        dataSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 36);
+        bufferOffset = ByteUtil.readBeInt(headerData, headerOffset + 40);
+        residualCount = ByteUtil.readBeInt(headerData, headerOffset + 44);
         readData = bodyData;
     }
 

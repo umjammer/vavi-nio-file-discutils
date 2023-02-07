@@ -66,19 +66,19 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         return cookedRuns.getNextVirtualCluster();
     }
 
-    public boolean canRead() {
+    @Override public boolean canRead() {
         return context.getRawStream().canRead();
     }
 
-    public boolean canWrite() {
+    @Override public boolean canWrite() {
         return false;
     }
 
-    public long getCapacity() {
+    @Override public long getCapacity() {
         return getVirtualClusterCount() * bytesPerCluster;
     }
 
-    public List<StreamExtent> getExtents() {
+    @Override public List<StreamExtent> getExtents() {
         List<StreamExtent> extents = new ArrayList<>();
         for (Range range : activeStream.getStoredClusters()) {
             extents.add(new StreamExtent(range.getOffset() * bytesPerCluster, range.getCount() * bytesPerCluster));
@@ -87,12 +87,12 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         return StreamExtent.intersect(extents, new StreamExtent(0, getCapacity()));
     }
 
-    public List<StreamExtent> getExtentsInRange(long start, long count) {
+    @Override public List<StreamExtent> getExtentsInRange(long start, long count) {
 //Debug.println(getExtents() + ", " + new StreamExtent(start, count));
         return StreamExtent.intersect(getExtents(), new StreamExtent(start, count));
     }
 
-    public long mapPosition(long pos) {
+    @Override public long mapPosition(long pos) {
         long vcn = pos / bytesPerCluster;
         int dataRunIdx = cookedRuns.findDataRun(vcn, 0);
 
@@ -103,7 +103,7 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
                (pos - cookedRuns.get(dataRunIdx).getStartVcn() * bytesPerCluster);
     }
 
-    public int read(long pos, byte[] buffer, int offset, int count) {
+    @Override public int read(long pos, byte[] buffer, int offset, int count) {
         if (!canRead()) {
             throw new IOException("Attempt to read from file not opened for read");
         }
@@ -143,11 +143,11 @@ public class NonResidentDataBuffer extends Buffer implements IMappedBuffer {
         return totalToRead;
     }
 
-    public void write(long pos, byte[] buffer, int offset, int count) {
+    @Override public void write(long pos, byte[] buffer, int offset, int count) {
         throw new UnsupportedOperationException();
     }
 
-    public void setCapacity(long value) {
+    @Override public void setCapacity(long value) {
         throw new UnsupportedOperationException();
     }
 }

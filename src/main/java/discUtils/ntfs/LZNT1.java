@@ -33,7 +33,7 @@ import java.util.Arrays;
 
 import discUtils.core.compression.BlockCompressor;
 import discUtils.core.compression.CompressionResult;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -64,14 +64,14 @@ public final class LZNT1 extends BlockCompressor {
     /**
      * @param compressedLength {@cs out}
      */
-    public CompressionResult compress(byte[] source,
+    @Override public CompressionResult compress(byte[] source,
                                       int sourceOffset,
                                       int sourceLength,
                                       byte[] compressed,
                                       int compressedOffset,
                                       int[] compressedLength) {
         int sourcePointer = 0;
-        int sourceCurrentBlock = 0;
+        int sourceCurrentBlock;
         int destPointer = 0;
         // Set up the Lz compression Map
         LzWindowDictionary lzMap = new LzWindowDictionary();
@@ -114,7 +114,7 @@ public final class LZNT1 extends BlockCompressor {
                         int convertedOffset = (rawOffset - 1) << lengthBits;
                         int convertedSize = (rawLength - 3) & ((1 << lengthMask) - 1);
                         short convertedData = (short) (convertedOffset | convertedSize);
-                        EndianUtilities.writeBytesLittleEndian(convertedData, compressed, compressedOffset + destPointer);
+                        ByteUtil.writeLeShort(convertedData, compressed, compressedOffset + destPointer);
                         lzMap.addEntryRange(source,
                                             sourceOffset + subBlock,
                                             sourcePointer - subBlock,
@@ -151,7 +151,7 @@ public final class LZNT1 extends BlockCompressor {
             // If compressed size >= block size just store block
             if (compressedSize >= getBlockSize()) {
                 // Set the header to indicate non-compressed block
-                EndianUtilities.writeBytesLittleEndian((short) (0x3000 | (getBlockSize() - 1)),
+                ByteUtil.writeLeShort((short) (0x3000 | (getBlockSize() - 1)),
                                                        compressed,
                                                        compressedOffset + headerPosition);
                 System.arraycopy(source,
@@ -166,7 +166,7 @@ public final class LZNT1 extends BlockCompressor {
                 compressed[destPointer + 1] = 0;
             } else {
                 // Set the header to indicate compressed and the right length
-                EndianUtilities.writeBytesLittleEndian((short) (0xb000 | (compressedSize - 1)),
+                ByteUtil.writeLeShort((short) (0xb000 | (compressedSize - 1)),
                                                        compressed,
                                                        compressedOffset + headerPosition);
             }
@@ -186,11 +186,11 @@ public final class LZNT1 extends BlockCompressor {
         return CompressionResult.AllZeros;
     }
 
-    public int decompress(byte[] source, int sourceOffset, int sourceLength, byte[] decompressed, int decompressedOffset) {
+    @Override public int decompress(byte[] source, int sourceOffset, int sourceLength, byte[] decompressed, int decompressedOffset) {
         int sourceIdx = 0;
         int destIdx = 0;
         while (sourceIdx < sourceLength) {
-            short header = EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
+            short header = ByteUtil.readLeShort(source, sourceOffset + sourceIdx);
             sourceIdx += 2;
             // Look for null-terminating sub-block header
             if (header == 0) {
@@ -227,7 +227,7 @@ public final class LZNT1 extends BlockCompressor {
                         } else {
                             short lengthBits = (short) (16 - compressionBits[destIdx - destSubBlockStart]);
                             short lengthMask = (short) ((1 << lengthBits) - 1);
-                            short phraseToken = EndianUtilities.toUInt16LittleEndian(source, sourceOffset + sourceIdx);
+                            short phraseToken = ByteUtil.readLeShort(source, sourceOffset + sourceIdx);
                             sourceIdx += 2;
                             int destBackAddr = destIdx - (phraseToken >>> lengthBits) - 1;
                             int length = (phraseToken & lengthMask) + 3;

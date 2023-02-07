@@ -74,6 +74,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         VolumeManager volMgr = new VolumeManager();
 String[] inFiles = new String[] {inFile};

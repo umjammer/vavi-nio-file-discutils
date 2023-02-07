@@ -22,7 +22,7 @@
 
 package discUtils.hfsPlus;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<AttributeKey> {
@@ -63,29 +63,29 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
         name = value;
     }
 
-    public int size() {
+    @Override public int size() {
         throw new UnsupportedOperationException();
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        keyLength = EndianUtilities.toUInt16BigEndian(buffer, offset + 0);
-        pad = EndianUtilities.toUInt16BigEndian(buffer, offset + 2);
-        fileId = new CatalogNodeId(EndianUtilities.toUInt32BigEndian(buffer, offset + 4));
-        startBlock = EndianUtilities.toUInt32BigEndian(buffer, offset + 8);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        keyLength = ByteUtil.readBeShort(buffer, offset + 0);
+        pad = ByteUtil.readBeShort(buffer, offset + 2);
+        fileId = new CatalogNodeId(ByteUtil.readBeInt(buffer, offset + 4));
+        startBlock = ByteUtil.readBeInt(buffer, offset + 8);
         name = HfsPlusUtilities.readUniStr255(buffer, offset + 12);
 
         return keyLength + 2;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public int compareTo(BTreeKey<?> other) {
+    @Override public int compareTo(BTreeKey<?> other) {
         return compareTo(other instanceof AttributeKey ? (AttributeKey) other : null);
     }
 
-    public int compareTo(AttributeKey other) {
+    @Override public int compareTo(AttributeKey other) {
         if (other == null) {
             throw new NullPointerException("other");
         }
@@ -97,7 +97,7 @@ public class AttributeKey extends BTreeKey<AttributeKey> implements XComparable<
         return HfsPlusUtilities.fastUnicodeCompare(name, other.name);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return name + " (" + fileId + ")";
     }
 }

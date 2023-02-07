@@ -32,7 +32,7 @@ public class AnchorVolumeDescriptorPointer extends TaggedDescriptor<AnchorVolume
         super(TagIdentifier.AnchorVolumeDescriptorPointer);
     }
 
-    public int parse(byte[] buffer, int offset) {
+    @Override public int parse(byte[] buffer, int offset) {
         mainDescriptorSequence = new ExtentDescriptor();
         mainDescriptorSequence.readFrom(buffer, offset + tag.size());
         reserveDescriptorSequence = new ExtentDescriptor();

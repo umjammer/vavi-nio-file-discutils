@@ -63,6 +63,7 @@ public class SubBuffer extends Buffer {
     /**
      * Can this buffer be read.
      */
+    @Override
     public boolean canRead() {
         return parent.canRead();
     }
@@ -70,6 +71,7 @@ public class SubBuffer extends Buffer {
     /**
      * Can this buffer be modified.
      */
+    @Override
     public boolean canWrite() {
         return parent.canWrite();
     }
@@ -77,6 +79,7 @@ public class SubBuffer extends Buffer {
     /**
      * Gets the current capacity of the buffer, in bytes.
      */
+    @Override
     public long getCapacity() {
         return length;
     }
@@ -85,6 +88,7 @@ public class SubBuffer extends Buffer {
      * Gets the parts of the buffer that are stored.
      * This may be an empty enumeration if all bytes are zero.
      */
+    @Override
     public List<StreamExtent> getExtents() {
         return offsetExtents(parent.getExtentsInRange(first, length));
     }
@@ -92,6 +96,7 @@ public class SubBuffer extends Buffer {
     /**
      * Flushes all data to the underlying storage.
      */
+    @Override
     public void flush() {
         parent.flush();
     }
@@ -105,6 +110,7 @@ public class SubBuffer extends Buffer {
      * @param count The number of bytes to read.
      * @return The actual number of bytes read.
      */
+    @Override
     public int read(long pos, byte[] buffer, int offset, int count) {
         if (count < 0) {
             throw new IndexOutOfBoundsException("Attempt to read negative bytes");
@@ -125,6 +131,7 @@ public class SubBuffer extends Buffer {
      * @param offset The start offset within the source byte array.
      * @param count The number of bytes to write.
      */
+    @Override
     public void write(long pos, byte[] buffer, int offset, int count) {
         if (count < 0) {
             throw new IndexOutOfBoundsException("Attempt to write negative bytes");
@@ -142,6 +149,7 @@ public class SubBuffer extends Buffer {
      *
      * @param value The desired capacity of the buffer.
      */
+    @Override
     public void setCapacity(long value) {
         throw new UnsupportedOperationException("Attempt to change length of a subbuffer");
     }
@@ -153,6 +161,7 @@ public class SubBuffer extends Buffer {
      * @param count The number of bytes of interest.
      * @return An enumeration of stream extents, indicating stored bytes.
      */
+    @Override
     public List<StreamExtent> getExtentsInRange(long start, long count) {
         long absStart = first + start;
         long absEnd = Math.min(absStart + count, first + length);

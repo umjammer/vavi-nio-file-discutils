@@ -23,10 +23,11 @@
 package discUtils.btrfs.base;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class KeyPointer implements IByteArraySerializable {
+
     public static final int Length = 0x21;
 
     /**
@@ -68,19 +69,19 @@ public class KeyPointer implements IByteArraySerializable {
         generation = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         setKey(new Key());
         offset += getKey().readFrom(buffer, offset);
-        setBlockNumber(EndianUtilities.toUInt64LittleEndian(buffer, offset));
-        setGeneration(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8));
+        setBlockNumber(ByteUtil.readLeLong(buffer, offset));
+        setGeneration(ByteUtil.readLeLong(buffer, offset + 0x8));
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

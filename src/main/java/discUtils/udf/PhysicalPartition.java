@@ -47,6 +47,7 @@ public class PhysicalPartition extends Partition {
 
     private IBuffer content;
 
+    @Override
     public IBuffer getContent() {
         return content;
     }

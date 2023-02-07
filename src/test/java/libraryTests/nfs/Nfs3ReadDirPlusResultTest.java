@@ -27,10 +27,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.EnumSet;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.core.UnixFilePermissions;
 import discUtils.nfs.Nfs3DirectoryEntry;
 import discUtils.nfs.Nfs3FileAttributes;
@@ -42,6 +38,9 @@ import discUtils.nfs.Nfs3Status;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3ReadDirPlusResultTest {
@@ -106,7 +105,7 @@ public class Nfs3ReadDirPlusResultTest {
         result.setEof(false);
         result.setStatus(Nfs3Status.Ok);
 
-        Nfs3ReadDirPlusResult clone = null;
+        Nfs3ReadDirPlusResult clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             result.write(writer);

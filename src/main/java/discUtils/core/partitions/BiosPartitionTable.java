@@ -41,7 +41,6 @@ import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
-import vavi.util.Debug;
 
 
 /**
@@ -161,7 +160,7 @@ public final class BiosPartitionTable extends PartitionTable {
         for (BiosPartitionRecord record : readPrimaryRecords(bootSector)) {
             // If the partition extends beyond the end of the disk, this is
             // probably an invalid partition table
-            if (record.getLBALength() != 0xFFFF_FFFF &&
+            if (record.getLBALength() != 0xFFFF_FFFFL &&
                 (record.getLBAStart() + record.getLBALength()) * Sizes.Sector > disk.getLength()) {
                 return false;
             }
@@ -647,7 +646,7 @@ public final class BiosPartitionTable extends PartitionTable {
         int idx = 0;
         while (idx < list.size()) {
             BiosPartitionRecord entry = list.get(idx);
-            while (idx < list.size() && startSector >= entry.getLBAStartAbsolute() + entry.getLBALength()) {
+            while (startSector >= entry.getLBAStartAbsolute() + entry.getLBALength()) {
                 idx++;
                 entry = list.get(idx);
             }

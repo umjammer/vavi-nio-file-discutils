@@ -27,9 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.core.DiscDirectoryInfo;
 import discUtils.core.DiscFileInfo;
@@ -42,6 +39,8 @@ import discUtils.hfsPlus.HfsPlusFileSystem;
 import dotnet4j.io.File;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -65,6 +64,7 @@ class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         try (VirtualDisk disk = VirtualDisk.openDisk(dmg, FileAccess.Read)) {
             // Find the first (and supposedly, only, HFS partition)

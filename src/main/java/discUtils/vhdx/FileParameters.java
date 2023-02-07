@@ -25,8 +25,8 @@ package discUtils.vhdx;
 import java.util.EnumSet;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
+import vavi.util.ByteUtil;
 
 
 public final class FileParameters implements IByteArraySerializable {
@@ -41,18 +41,18 @@ public final class FileParameters implements IByteArraySerializable {
 
     public EnumSet<FileParametersFlags> flags;
 
-    public int size() {
+    @Override public int size() {
         return 8;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        blockSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        flags = FileParametersFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 4));
+    @Override public int readFrom(byte[] buffer, int offset) {
+        blockSize = ByteUtil.readLeInt(buffer, offset + 0);
+        flags = FileParametersFlags.valueOf(ByteUtil.readLeInt(buffer, offset + 4));
         return 8;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(blockSize, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian((int) FileParametersFlags.valueOf(flags), buffer, offset + 4);
+    @Override public void writeTo(byte[] buffer, int offset) {
+        ByteUtil.writeLeInt(blockSize, buffer, offset + 0);
+        ByteUtil.writeLeInt((int) FileParametersFlags.valueOf(flags), buffer, offset + 4);
     }
 }

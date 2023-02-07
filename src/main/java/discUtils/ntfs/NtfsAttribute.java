@@ -220,6 +220,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
         return primaryRecord.getAttributeType();
     }
 
+    @Override
     public void dump(PrintWriter writer, String indent) {
         writer.println(indent + getAttributeTypeName() + " ATTRIBUTE (" + (getName() == null ? "No Name" : getName()) + ")");
         writer.println(indent + "  Length: " + primaryRecord.getDataLength() + " bytes");

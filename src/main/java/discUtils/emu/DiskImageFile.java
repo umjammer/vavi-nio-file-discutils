@@ -50,7 +50,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      */
     private Stream fileStream;
 
-  /**
+    /**
      * Indicates if this object controls the lifetime of the stream.
      */
     private Ownership ownership;
@@ -118,7 +118,7 @@ e.printStackTrace();
     /**
      * Gets the extent that comprises this file.
      */
-    public List<VirtualDiskExtent> getExtents() {
+    @Override public List<VirtualDiskExtent> getExtents() {
         List<VirtualDiskExtent> result = new ArrayList<>();
         return result;
     }
@@ -126,7 +126,7 @@ e.printStackTrace();
     /**
      * Gets the full path to this disk layer, or empty string.
      */
-    public String getFullPath() {
+    @Override public String getFullPath() {
         if (fileLocator != null && fileName != null) {
             return fileLocator.getFullPath(fileName);
         }
@@ -137,7 +137,7 @@ e.printStackTrace();
     /**
      * Gets the geometry of the virtual disk.
      */
-    public Geometry getGeometry() {
+    @Override public Geometry getGeometry() {
         return new Geometry(
                 disk.getGeometry().cylinders,
                 disk.getGeometry().heads,
@@ -148,18 +148,18 @@ e.printStackTrace();
     /**
      * Gets a value indicating if the layer only stores meaningful sectors.
      */
-    public boolean isSparse() {
+    @Override public boolean isSparse() {
         return false;
     }
 
     /**
      * Gets a value indicating whether the file is a differencing disk.
      */
-    public boolean needsParent() {
+    @Override public boolean needsParent() {
         return false;
     }
 
-    public FileLocator getRelativeFileLocator() {
+    @Override public FileLocator getRelativeFileLocator() {
         return fileLocator;
     }
 
@@ -171,7 +171,7 @@ e.printStackTrace();
      *            stream.
      * @return The new content stream.
      */
-    public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
+    @Override public SparseStream openContent(SparseStream parent, Ownership ownsParent) {
         if (parent != null && ownsParent == Ownership.Dispose) {
             try {
                 // Not needed until differencing disks supported.
@@ -188,16 +188,16 @@ e.printStackTrace();
     /**
      * Gets the location of the parent file, given a base path.
      *
-     * @return Array of candidate file locations.
+     * @return list of candidate file locations.
      */
-    public List<String> getParentLocations() {
+    @Override public List<String> getParentLocations() {
         return null;
     }
 
     /**
      * Disposes of underlying resources.
      */
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownership == Ownership.Dispose && fileStream != null) {
             fileStream.close();
         }

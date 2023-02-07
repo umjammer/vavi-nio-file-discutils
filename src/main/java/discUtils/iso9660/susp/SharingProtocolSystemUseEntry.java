@@ -23,6 +23,7 @@
 package discUtils.iso9660.susp;
 
 public final class SharingProtocolSystemUseEntry extends SystemUseEntry {
+
     private byte systemAreaSkip;
 
     public int getSystemAreaSkip() {

@@ -198,7 +198,7 @@ public class Chd {
         stream.read(magic, 0, 8);
 
         if (!Arrays.equals(chdTag, magic)) {
-Debug.println(StringUtil.getDump(magic));
+            Debug.println(StringUtil.getDump(magic));
             throw new IllegalArgumentException("invalid magic");
         }
 
@@ -206,15 +206,15 @@ Debug.println(StringUtil.getDump(magic));
         byte[] buffer = new byte[4];
         stream.read(buffer, 0, 4);
         int length = ByteUtil.readBeInt(buffer, 0);
-Debug.println("length: " + length);
+        Debug.println("length: " + length);
         buffer = new byte[4];
         stream.read(buffer, 0, 4);
         int version = ByteUtil.readBeInt(buffer, 0);
-Debug.println("version: " + version);
+        Debug.println("version: " + version);
 
         buffer = new byte[length];
         stream.seek(0, SeekOrigin.Begin);
-        stream.read(buffer, 0, (int) length);
+        stream.read(buffer, 0, length);
 
         long nextMetaOff = 0;
 
@@ -244,7 +244,7 @@ Debug.println("version: " + version);
             Debug.printf("CHD plugin: hdrV1.md5 = %d", ByteUtil.toHexString(hdrV1.md5));
 
             Debug.printf("CHD plugin: hdrV1.parentMd5 = %d",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV1.parentMd5) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV1.parentMd5) ? "null"
                             : ByteUtil.toHexString(hdrV1.parentMd5));
 
             Debug.printf("CHD plugin: Reading Hunk map.");
@@ -326,7 +326,7 @@ Debug.println("version: " + version);
             Debug.printf("CHD plugin: hdrV2.md5 = %d", ByteUtil.toHexString(hdrV2.md5));
 
             Debug.printf("CHD plugin: hdrV2.parentMd5 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV2.parentMd5) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV2.parentMd5) ? "null"
                             : ByteUtil.toHexString(hdrV2.parentMd5));
 
             Debug.printf("CHD plugin: hdrV2.seclen = %d", hdrV2.seclen);
@@ -409,7 +409,7 @@ Debug.println("version: " + version);
             Debug.printf("CHD plugin: hdrV3.md5 = %d", ByteUtil.toHexString(hdrV3.md5));
 
             Debug.printf("CHD plugin: hdrV3.parentMd5 = %d",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentMd5) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV3.parentMd5) ? "null"
                             : ByteUtil.toHexString(hdrV3.parentMd5));
 
             Debug.printf("CHD plugin: hdrV3.hunkBytes = %d", hdrV3.hunkBytes);
@@ -418,7 +418,7 @@ Debug.println("version: " + version);
                     ByteUtil.toHexString(hdrV3.sha1));
 
             Debug.printf("CHD plugin: hdrV3.parentSha1 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV3.parentSha1) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV3.parentSha1) ? "null"
                             : ByteUtil.toHexString(hdrV3.parentSha1));
 
             Debug.printf("CHD plugin: Reading Hunk map.");
@@ -469,7 +469,7 @@ Debug.println("version: " + version);
                     ByteUtil.toHexString(hdrV4.sha1));
 
             Debug.printf("CHD plugin: hdrV4.parentSha1 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV4.parentSha1) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV4.parentSha1) ? "null"
                             : ByteUtil.toHexString(hdrV4.parentSha1));
 
             Debug.printf("CHD plugin: hdrV4.rawSha1 = %s",
@@ -538,7 +538,7 @@ Debug.println("version: " + version);
                     ByteUtil.toHexString(hdrV5.sha1));
 
             Debug.printf("CHD plugin: hdrV5.parentSha1 = %s",
-                    ArrayHelpers.ArrayIsNullOrEmpty(hdrV5.parentsha1) ? "null"
+                    ArrayHelpers.isArrayNullOrEmpty(hdrV5.parentsha1) ? "null"
                             : ByteUtil.toHexString(hdrV5.parentsha1));
 
             Debug.printf("CHD plugin: hdrV5.rawSha1 = %s",
@@ -624,7 +624,7 @@ Debug.println("version: " + version);
 
             while (nextMetaOff > 0) {
                 byte[] hdrBytes = new byte[16];
-                stream.seek((long) nextMetaOff, SeekOrigin.Begin);
+                stream.seek(nextMetaOff, SeekOrigin.Begin);
                 stream.read(hdrBytes, 0, hdrBytes.length);
                 Structs.MetadataHeader header = new Structs.MetadataHeader();
                 try {
@@ -684,7 +684,7 @@ Debug.println("version: " + version);
                     currentSector = 0;
 
                     for (int i = 0; i < chdTracksNumber; i++) {
-                        final int x = i;
+                        int x = i;
                         Structs.TrackOld chdTrack = new Structs.TrackOld() {{
                             type = ByteUtil.readBeInt(meta, 4 + (x * 24) + 0);
                             subType = ByteUtil.readBeInt(meta, 4 + (x * 24) + 4);
@@ -781,9 +781,9 @@ Debug.println("version: " + version);
                         aaruTrack.session = 1;
 
                         if (aaruTrack.sequence == 1)
-                            aaruTrack.indexes.put((short) 0, -150);
+                            aaruTrack.indexes.put(0, -150);
 
-                        aaruTrack.indexes.put((short) 1, (int) currentSector);
+                        aaruTrack.indexes.put(1, (int) currentSector);
                         currentSector += chdTrack.frames + chdTrack.extraFrames;
                         tracks.put(aaruTrack.sequence, aaruTrack);
                     }
@@ -806,7 +806,7 @@ Debug.println("version: " + version);
                         return -1;
                     }
 
-                    String chtr = new String(meta, StandardCharsets.US_ASCII).replace("\u0000*$", "");;
+                    String chtr = new String(meta, StandardCharsets.US_ASCII).replace("\u0000*$", "");
                     Pattern chtrRegEx = Pattern.compile(Constants.REGEX_METADATA_CDROM);
                     Matcher chtrMatch = chtrRegEx.matcher(chtr);
 
@@ -917,9 +917,9 @@ Debug.println("version: " + version);
                         aaruTrack.session = 1;
 
                         if (aaruTrack.sequence == 1)
-                            aaruTrack.indexes.put((short) 0, -150);
+                            aaruTrack.indexes.put(0, -150);
 
-                        aaruTrack.indexes.put((short) 1, (int) currentSector);
+                        aaruTrack.indexes.put(1, (int) currentSector);
                         currentSector += frames;
                         currentTrack++;
                         tracks.put(aaruTrack.sequence, aaruTrack);
@@ -941,7 +941,7 @@ Debug.println("version: " + version);
                         return -1;
                     }
 
-                    String cht2 = new String(meta, StandardCharsets.US_ASCII).replace("\u0000*$", "");;
+                    String cht2 = new String(meta, StandardCharsets.US_ASCII).replace("\u0000*$", "");
                     Pattern cht2RegEx = Pattern.compile(Constants.REGEX_METADATA_CDROM2);
                     Matcher cht2Match = cht2RegEx.matcher(cht2);
 
@@ -1067,20 +1067,20 @@ Debug.println("version: " + version);
 
                         if (aaruTrack.sequence == 1) {
                             if (preGap <= 150) {
-                                aaruTrack.indexes.put((short) 0, -150);
+                                aaruTrack.indexes.put(0, -150);
                                 aaruTrack.preGap = 150;
                             } else {
-                                aaruTrack.indexes.put((short) 0, -1 * (int) preGap);
+                                aaruTrack.indexes.put(0, -1 * preGap);
                                 aaruTrack.preGap = preGap;
                             }
 
-                            aaruTrack.indexes.put((short) 1, (int) currentSector);
+                            aaruTrack.indexes.put(1, (int) currentSector);
                         } else if (preGap > 0) {
-                            aaruTrack.indexes.put((short) 0, (int) currentSector);
+                            aaruTrack.indexes.put(0, (int) currentSector);
                             aaruTrack.preGap = preGap;
-                            aaruTrack.indexes.put((short) 1, (int) (currentSector + preGap));
+                            aaruTrack.indexes.put(1, (int) (currentSector + preGap));
                         } else
-                            aaruTrack.indexes.put((short) 1, (int) currentSector);
+                            aaruTrack.indexes.put(1, (int) currentSector);
 
                         currentSector += frames;
                         currentTrack++;
@@ -1108,7 +1108,7 @@ Debug.println("version: " + version);
                         return -1;
                     }
 
-                    String chgd = new String(meta, StandardCharsets.US_ASCII).replace("\u0000*$", "");;
+                    String chgd = new String(meta, StandardCharsets.US_ASCII).replace("\u0000*$", "");
                     Pattern chgdRegEx = Pattern.compile(Constants.REGEX_METADATA_GDROM);
                     Matcher chgdMatch = chgdRegEx.matcher(chgd);
 
@@ -1227,20 +1227,20 @@ Debug.println("version: " + version);
 
                         if (aaruTrack.sequence == 1) {
                             if (pregap <= 150) {
-                                aaruTrack.indexes.put((short) 0, -150);
+                                aaruTrack.indexes.put(0, -150);
                                 aaruTrack.preGap = 150;
                             } else {
-                                aaruTrack.indexes.put((short) 0, -1 * (int) pregap);
+                                aaruTrack.indexes.put(0, -1 * pregap);
                                 aaruTrack.preGap = pregap;
                             }
 
-                            aaruTrack.indexes.put((short) 1, (int) currentSector);
+                            aaruTrack.indexes.put(1, (int) currentSector);
                         } else if (pregap > 0) {
-                            aaruTrack.indexes.put((short) 0, (int) currentSector);
+                            aaruTrack.indexes.put(0, (int) currentSector);
                             aaruTrack.preGap = pregap;
-                            aaruTrack.indexes.put((short) 1, (int) (currentSector + pregap));
+                            aaruTrack.indexes.put(1, (int) (currentSector + pregap));
                         } else
-                            aaruTrack.indexes.put((short) 1, (int) currentSector);
+                            aaruTrack.indexes.put(1, (int) currentSector);
 
                         currentSector += frames;
                         currentTrack++;
@@ -1325,7 +1325,7 @@ Debug.println("version: " + version);
             long partPos = 0;
 
             for (Track track : tracks.values()) {
-                final long pos = partPos;
+                long pos = partPos;
                 Partition partition = new Partition() {{
                     description = track.description;
                     size = (track.endSector - (long) track.indexes.get(1) + 1) *
@@ -1447,7 +1447,7 @@ Debug.println("version: " + version);
             }
 
             long hunkNo = sectorAddress / sectorsPerHunk;
-            long secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
+            long secOff = sectorAddress * sectorSize % ((long) sectorsPerHunk * sectorSize);
 
             byte[][] hunk = new byte[1][];
             int errno = getHunk(hunkNo, /*out byte[]*/ hunk);
@@ -1455,7 +1455,7 @@ Debug.println("version: " + version);
                 return errno;
 
             sector = new byte[imageInfo.sectorSize];
-            System.arraycopy(hunk, (int) secOff, sector, 0, sector.length);
+            System.arraycopy(hunk[0], (int) secOff, sector, 0, sector.length);
 
             if (sectorCache.size() >= maxSectorCache)
                 sectorCache.clear();
@@ -1512,7 +1512,7 @@ Debug.println("version: " + version);
 
         case CdMode2Formless: {
             sectorOffset = 0;
-            sectorSize = (int) track.rawBytesPerSector;
+            sectorSize = track.rawBytesPerSector;
             mode2 = true;
 
             break;
@@ -1561,10 +1561,10 @@ Debug.println("version: " + version);
         byte[] sector = sectorCache.getOrDefault(sectorAddress, null);
         if (sector == null) {
             track = getTrack(sectorAddress);
-            sectorSize = (int) track.rawBytesPerSector;
+            sectorSize = track.rawBytesPerSector;
 
             long hunkNo = sectorAddress / sectorsPerHunk;
-            long secOff = sectorAddress * sectorSize % (sectorsPerHunk * sectorSize);
+            long secOff = sectorAddress * sectorSize % ((long) sectorsPerHunk * sectorSize);
 
             byte[][] hunk = new byte[1][];
             int errno = getHunk(hunkNo, /*out byte[]*/ hunk);
@@ -1852,7 +1852,7 @@ Debug.println("version: " + version);
         byte[] sector = sectorCache.getOrDefault(sectorAddress, null);
         if (sector != null) {
             track = getTrack(sectorAddress);
-            int sectorSize = (int) track.rawBytesPerSector;
+            int sectorSize = track.rawBytesPerSector;
 
             long hunkNo = sectorAddress / sectorsPerHunk;
             long secOff = sectorAddress * sectorSize % ((long) sectorsPerHunk * sectorSize);
@@ -1863,7 +1863,7 @@ Debug.println("version: " + version);
                 return errno;
 
             sector = new byte[imageInfo.sectorSize];
-            System.arraycopy(hunk, (int) secOff, sector, 0, sector.length);
+            System.arraycopy(hunk[0], (int) secOff, sector, 0, sector.length);
 
             if (sectorCache.size() >= maxSectorCache)
                 sectorCache.clear();
@@ -1887,7 +1887,7 @@ Debug.println("version: " + version);
                 byte[] fullSector = new byte[2352];
 
                 System.arraycopy(buffer[0], 0, fullSector, 16, 2048);
-                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode1, (long) sectorAddress);
+                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode1, sectorAddress);
                 sectorBuilder.reconstructEcc(/*ref*/ fullSector, TrackType.CdMode1);
 
                 buffer[0] = fullSector;
@@ -1898,7 +1898,7 @@ Debug.println("version: " + version);
                 byte[] fullSector = new byte[2352];
 
                 System.arraycopy(buffer[0], 0, fullSector, 24, 2048);
-                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode2Form1, (long) sectorAddress);
+                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode2Form1, sectorAddress);
                 sectorBuilder.reconstructEcc(/*ref*/ fullSector, TrackType.CdMode2Form1);
 
                 buffer[0] = fullSector;
@@ -1909,7 +1909,7 @@ Debug.println("version: " + version);
                 byte[] fullSector = new byte[2352];
 
                 System.arraycopy(buffer[0], 0, fullSector, 24, 2324);
-                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode2Form2, (long) sectorAddress);
+                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode2Form2, sectorAddress);
                 sectorBuilder.reconstructEcc(/*ref*/ fullSector, TrackType.CdMode2Form2);
 
                 buffer[0] = fullSector;
@@ -1919,7 +1919,7 @@ Debug.println("version: " + version);
             if (track.rawBytesPerSector == 2336) {
                 byte[] fullSector = new byte[2352];
 
-                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode2Formless, (long) sectorAddress);
+                sectorBuilder.reconstructPrefix(/*ref*/ fullSector, TrackType.CdMode2Formless, sectorAddress);
                 System.arraycopy(buffer[0], 0, fullSector, 16, 2336);
 
                 buffer[0] = fullSector;
@@ -1964,13 +1964,13 @@ Debug.println("version: " + version);
         switch (tag) {
         case ATA_IDENTIFY:
             if (imageInfo.readableMediaTags.contains(MediaTagType.ATA_IDENTIFY))
-                buffer[0] = identify != null ? (byte[]) identify.clone() : null;
+                buffer[0] = identify != null ? identify.clone() : null;
 
             if (buffer[0] == null) throw new NoSuchElementException();
             return 0;
         case PCMCIA_CIS:
             if (imageInfo.readableMediaTags.contains(MediaTagType.PCMCIA_CIS))
-                buffer[0] = cis != null ? (byte[]) cis.clone() : null;
+                buffer[0] = cis != null ? cis.clone() : null;
 
             if (buffer[0] == null) throw new NoSuchElementException();
             return 0;
@@ -2066,7 +2066,7 @@ Debug.println("version: " + version);
             long length = hunkTable[(int) hunkNo] >> 44;
 
             byte[] compHunk = new byte[(int) length];
-            imageStream.seek((long) offset, SeekOrigin.Begin);
+            imageStream.seek(offset, SeekOrigin.Begin);
             imageStream.read(compHunk, 0, compHunk.length);
 
             if (length == (long) sectorsPerHunk * imageInfo.sectorSize)
@@ -2078,7 +2078,7 @@ Debug.println("version: " + version);
             } else {
                 try (DeflateStream zStream = new DeflateStream(new MemoryStream(compHunk), CompressionMode.Decompress)) {
                     buffer[0] = new byte[sectorsPerHunk * imageInfo.sectorSize];
-                    int read = zStream.read(buffer[0], 0, (int) (sectorsPerHunk * imageInfo.sectorSize));
+                    int read = zStream.read(buffer[0], 0, sectorsPerHunk * imageInfo.sectorSize);
 
                     if (read != sectorsPerHunk * imageInfo.sectorSize) {
                         Debug.printf("Unable to decompress hunk correctly, got %d bytes, expected %d", read, sectorsPerHunk * imageInfo.sectorSize);
@@ -2117,14 +2117,14 @@ Debug.println("version: " + version);
                 case ZlibPlus:
                     if (isHdd) {
                         byte[] zHunk = new byte[(entry.lengthLsb << 16) + entry.lengthLsb];
-                        imageStream.seek((long) entry.offset, SeekOrigin.Begin);
+                        imageStream.seek(entry.offset, SeekOrigin.Begin);
                         imageStream.read(zHunk, 0, zHunk.length);
 
                         try (DeflateStream zStream =
-                                new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress)) {
+                                     new DeflateStream(new MemoryStream(zHunk), CompressionMode.Decompress)) {
 
                             buffer[0] = new byte[bytesPerHunk];
-                            int read = zStream.read(buffer[0], 0, (int) bytesPerHunk);
+                            int read = zStream.read(buffer[0], 0, bytesPerHunk);
 
                             if (read != bytesPerHunk) {
                                 Debug.printf("Unable to decompress hunk correctly, got %d bytes, expected %d", read, bytesPerHunk);
@@ -2152,7 +2152,7 @@ Debug.println("version: " + version);
 
                 break;
             case Uncompressed:
-uncompressedV3:
+                uncompressedV3:
                 buffer[0] = new byte[bytesPerHunk];
                 imageStream.seek(entry.offset, SeekOrigin.Begin);
                 imageStream.read(buffer[0], 0, buffer.length);
@@ -2257,7 +2257,7 @@ uncompressedV3:
         byte[] sector = new byte[bps];
 
         for (int i = 0; i < length; i++) {
-            System.arraycopy(buffer, i * bps, sector, 0, bps);
+            System.arraycopy(buffer[0], i * bps, sector, 0, bps);
             Boolean sectorStatus = CdChecksums.checkCdSector(sector);
 
             if (sectorStatus == null) {

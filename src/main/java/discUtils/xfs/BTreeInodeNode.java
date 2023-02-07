@@ -26,10 +26,10 @@ package discUtils.xfs;
 import java.util.HashMap;
 import java.util.Map;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.IOException;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class BTreeInodeNode extends BtreeHeader {
@@ -81,10 +81,10 @@ public class BTreeInodeNode extends BtreeHeader {
         keys = new int[getNumberOfRecords()];
         pointer = new int[getNumberOfRecords()];
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            keys[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
+            keys[i] = ByteUtil.readBeInt(buffer, offset);
         }
         for (int i = 0; i < getNumberOfRecords(); i++) {
-            pointer[i] = EndianUtilities.toUInt32BigEndian(buffer, offset);
+            pointer[i] = ByteUtil.readBeInt(buffer, offset);
         }
         return size();
     }

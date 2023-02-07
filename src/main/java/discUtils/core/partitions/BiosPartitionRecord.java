@@ -22,7 +22,7 @@
 
 package discUtils.core.partitions;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
@@ -42,8 +42,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         endHead = data[offset + 5];
         endSector = (byte) (data[offset + 6] & 0x3F);
         endCylinder = (data[offset + 7] & 0xff)  | ((data[offset + 6] & 0xC0) << 2);
-        lbaStart = EndianUtilities.toUInt32LittleEndian(data, offset + 8);
-        lbaLength = EndianUtilities.toUInt32LittleEndian(data, offset + 12);
+        lbaStart = ByteUtil.readLeInt(data, offset + 8);
+        lbaLength = ByteUtil.readLeInt(data, offset + 12);
         this.index = index;
     }
 
@@ -165,6 +165,7 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         status = value;
     }
 
+    @Override
     public int compareTo(BiosPartitionRecord other) {
         return Long.compare(getLBAStartAbsolute(), other.getLBAStartAbsolute());
     }
@@ -178,8 +179,8 @@ public class BiosPartitionRecord implements Comparable<BiosPartitionRecord> {
         buffer[offset + 5] = endHead;
         buffer[offset + 6] = (byte) ((endSector & 0x3F) | ((endCylinder >>> 2) & 0xC0));
         buffer[offset + 7] = (byte) endCylinder;
-        EndianUtilities.writeBytesLittleEndian(lbaStart, buffer, offset + 8);
-        EndianUtilities.writeBytesLittleEndian(lbaLength, buffer, offset + 12);
+        ByteUtil.writeLeInt(lbaStart, buffer, offset + 8);
+        ByteUtil.writeLeInt(lbaLength, buffer, offset + 12);
     }
 
     @Override

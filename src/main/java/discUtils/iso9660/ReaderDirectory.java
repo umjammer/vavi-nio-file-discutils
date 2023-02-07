@@ -77,21 +77,21 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
         }
     }
 
-    public byte[] getSystemUseData() {
+    @Override public byte[] getSystemUseData() {
         return getSelf().getRecord().systemUseData;
     }
 
-    public List<ReaderDirEntry> getAllEntries() {
+    @Override public List<ReaderDirEntry> getAllEntries() {
         return records;
     }
 
     private ReaderDirEntry self;
 
-    public ReaderDirEntry getSelf() {
+    @Override public ReaderDirEntry getSelf() {
         return self;
     }
 
-    public ReaderDirEntry getEntryByName(String name) {
+    @Override public ReaderDirEntry getEntryByName(String name) {
         boolean anyVerMatch = name.indexOf(';') < 0;
         String normName = IsoUtilities.normalizeFileName(name).toUpperCase();
         if (anyVerMatch) {
@@ -110,7 +110,7 @@ public class ReaderDirectory extends File implements IVfsDirectory<ReaderDirEntr
         return null;
     }
 
-    public ReaderDirEntry createNewFile(String name) {
+    @Override public ReaderDirEntry createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
 }

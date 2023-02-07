@@ -23,7 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ExtendedAttributeRecord implements IByteArraySerializable {
@@ -34,20 +34,20 @@ public class ExtendedAttributeRecord implements IByteArraySerializable {
 
     public int attributeType;
 
-    public int size() {
+    @Override public int size() {
         return 12 + attributeData.length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        attributeType = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        attributeType = ByteUtil.readLeInt(buffer, offset + 0);
         attributeSubType = buffer[offset + 4];
-        int dataLength = EndianUtilities.toInt32LittleEndian(buffer, offset + 8) - 12;
+        int dataLength = ByteUtil.readLeInt(buffer, offset + 8) - 12;
         attributeData = new byte[dataLength];
         System.arraycopy(buffer, offset + 12, attributeData, 0, dataLength);
         return 12 + dataLength;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

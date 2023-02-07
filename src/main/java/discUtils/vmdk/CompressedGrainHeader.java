@@ -22,7 +22,7 @@
 
 package discUtils.vmdk;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class CompressedGrainHeader {
@@ -34,7 +34,7 @@ public class CompressedGrainHeader {
     public long logicalBlockAddress;
 
     public void read(byte[] buffer, int offset) {
-        logicalBlockAddress = EndianUtilities.toInt64LittleEndian(buffer, offset + 0);
-        dataSize = EndianUtilities.toInt32LittleEndian(buffer, offset + 8);
+        logicalBlockAddress = ByteUtil.readLeLong(buffer, offset + 0);
+        dataSize = ByteUtil.readLeInt(buffer, offset + 8);
     }
 }

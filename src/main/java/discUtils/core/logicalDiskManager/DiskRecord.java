@@ -26,7 +26,7 @@ public final class DiskRecord extends DatabaseRecord {
 
     public String diskGuidString;
 
-    protected void doReadFrom(byte[] buffer, int offset) {
+    @Override protected void doReadFrom(byte[] buffer, int offset) {
         super.doReadFrom(buffer, offset);
         int[] pos = new int[] { offset + 0x18 };
         id = readVarULong(buffer, pos);

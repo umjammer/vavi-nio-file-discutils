@@ -26,6 +26,7 @@ import discUtils.streams.IByteArraySerializable;
 
 
 public abstract class ScsiCommand implements IByteArraySerializable {
+
     public ScsiCommand(long targetLun) {
         this.targetLun = targetLun;
     }
@@ -43,10 +44,4 @@ public abstract class ScsiCommand implements IByteArraySerializable {
     public TaskAttributes getTaskAttributes() {
         return TaskAttributes.Untagged;
     }
-
-    public abstract int size();
-
-    public abstract int readFrom(byte[] buffer, int offset);
-
-    public abstract void writeTo(byte[] buffer, int offset);
 }

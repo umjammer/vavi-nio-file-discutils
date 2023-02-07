@@ -22,16 +22,15 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.NfsProc3;
 import discUtils.nfs.RpcAuthentication;
 import discUtils.nfs.RpcCallHeader;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class RpcCallHeaderTest {
@@ -44,7 +43,7 @@ public class RpcCallHeaderTest {
         header.setRpcVersion(6);
         header.setVerifier(new RpcAuthentication());
         header.setVersion(7);
-        RpcCallHeader clone = null;
+        RpcCallHeader clone;
 
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);

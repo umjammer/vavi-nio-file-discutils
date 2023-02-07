@@ -22,12 +22,6 @@
 
 package libraryTests.partitions;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import discUtils.core.ChsAddress;
 import discUtils.core.Geometry;
 import discUtils.core.partitions.BiosPartitionInfo;
@@ -35,6 +29,11 @@ import discUtils.core.partitions.BiosPartitionTable;
 import discUtils.core.partitions.BiosPartitionTypes;
 import discUtils.core.partitions.WellKnownPartitionType;
 import discUtils.streams.SparseMemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BiosPartitionTableTest {
     @Test

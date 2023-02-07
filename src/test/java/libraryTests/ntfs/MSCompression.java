@@ -146,7 +146,7 @@ public interface MSCompression extends Library {
      *
      * @param format one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
      *            MSCOMP_XPRESS_HUFF (4).
-     * @parma in_len the number of bytes that will be compressed.
+     * @param in_len the number of bytes that will be compressed.
      *
      * @return some value >=in_len.
      */

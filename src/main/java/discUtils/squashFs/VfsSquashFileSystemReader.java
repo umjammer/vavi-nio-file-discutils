@@ -33,12 +33,12 @@ import discUtils.core.compression.ZlibStream;
 import discUtils.core.vfs.VfsReadOnlyFileSystem;
 import discUtils.streams.block.Block;
 import discUtils.streams.block.BlockCache;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compression.CompressionMode;
+import vavi.util.ByteUtil;
 
 
 class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, File, Directory, Context>
@@ -207,7 +207,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
         byte[] tableBytes = StreamUtilities.readExact(context.getRawStream(), numBlocks * 8);
         MetablockReader[] result = new MetablockReader[numBlocks];
         for (int i = 0; i < numBlocks; ++i) {
-            long block = EndianUtilities.toInt64LittleEndian(tableBytes, i * 8);
+            long block = ByteUtil.readLeLong(tableBytes, i * 8);
             result[i] = new MetablockReader(context, block);
         }
 
@@ -270,7 +270,7 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
 
         byte[] buffer = StreamUtilities.readExact(stream, 2);
 
-        int readLen = EndianUtilities.toUInt16LittleEndian(buffer, 0);
+        int readLen = ByteUtil.readLeShort(buffer, 0);
         boolean isCompressed = (readLen & 0x8000) == 0;
         readLen &= 0x7FFF;
         if (readLen == 0) {

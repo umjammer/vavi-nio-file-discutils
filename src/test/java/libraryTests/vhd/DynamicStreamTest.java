@@ -24,13 +24,6 @@ package libraryTests.vhd;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import discUtils.streams.StreamExtent;
 import discUtils.streams.util.Ownership;
 import discUtils.vhd.Disk;
@@ -38,6 +31,12 @@ import dotnet4j.io.IOException;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class DynamicStreamTest {

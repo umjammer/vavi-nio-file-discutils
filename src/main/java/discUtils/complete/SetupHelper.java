@@ -4,7 +4,7 @@ package discUtils.complete;
 @Deprecated
 public class SetupHelper {
     public static void setupComplete() {
-        Class[] x = new Class[] {
+        Class<?>[] x = new Class[] {
             discUtils.bootConfig.Store.class,
             discUtils.dmg.Disk.class,
             discUtils.btrfs.BtrfsFileSystem.class,

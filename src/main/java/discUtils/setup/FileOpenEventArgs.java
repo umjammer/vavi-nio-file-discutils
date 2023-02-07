@@ -111,7 +111,7 @@ public class FileOpenEventArgs /* extends EventArgs */ {
     /**
      * returns the result from the builtin FileLocator
      *
-     * @return
+     * @return a stream
      */
     public Stream getFileStream() {
         return opener.invoke(fileName, fileMode, fileAccess, fileShare);

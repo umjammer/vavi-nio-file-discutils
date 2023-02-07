@@ -7,12 +7,11 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 
-import vavi.util.Debug;
-
 import discUtils.core.internal.VirtualDiskFactory;
 import discUtils.core.internal.VirtualDiskFactoryAttribute;
 import discUtils.core.internal.VirtualDiskTransport;
 import discUtils.core.internal.VirtualDiskTransportAttribute;
+import vavi.util.Debug;
 
 
 /**
@@ -57,7 +56,7 @@ public class VirtualDiskManager {
         return typeMap;
     }
 
-    /**
+    /*
      * Locates {@link VirtualDiskFactory} factories attributed with
      * {@link VirtualDiskFactoryAttribute}, and types marked with
      * {@link VirtualDiskTransportAttribute}, that are able to work with Virtual Disk

@@ -51,7 +51,7 @@ public class Constants {
     static final long QCOW_COPIED = 0x8000000000000000L;
     static final long QCOW_COMPRESSED = 0x4000000000000000L;
 
-    static final long QCOW_HEADER_EXTENSION_BACKING_FILE = 0xE2792ACA;
+    static final long QCOW_HEADER_EXTENSION_BACKING_FILE = 0xE2792ACAL;
     static final long QCOW_HEADER_EXTENSION_FEATURE_TABLE = 0x6803F857;
     static final long QCOW_HEADER_EXTENSION_BITMAPS = 0x23852875;
 

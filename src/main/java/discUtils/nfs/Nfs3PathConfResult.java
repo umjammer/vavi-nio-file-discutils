@@ -139,7 +139,7 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
         casePreserving = value;
     }
 
-    public void write(XdrDataWriter writer) {
+    @Override public void write(XdrDataWriter writer) {
         writer.write(status.getValue());
         objectAttributes.write(writer);
         if (status == Nfs3Status.Ok) {
@@ -152,7 +152,7 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
         }
     }
 
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         return equals(obj instanceof Nfs3PathConfResult ? (Nfs3PathConfResult) obj : null);
     }
 
@@ -166,7 +166,7 @@ public class Nfs3PathConfResult extends Nfs3CallResult {
                other.caseInsensitive == caseInsensitive && other.casePreserving == casePreserving;
     }
 
-    public int hashCode() {
+    @Override public int hashCode() {
         return dotnet4j.util.compat.Utilities.getCombinedHashCode(status,
                 linkMax,
                 nameMax,

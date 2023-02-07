@@ -36,6 +36,7 @@ import dotnet4j.io.Stream;
  * after it is created.
  */
 public class SquashFileSystemReader extends VfsFileSystemFacade implements IUnixFileSystem {
+
     /**
      * Initializes a new instance of the SquashFileSystemReader class.
      *
@@ -51,7 +52,7 @@ public class SquashFileSystemReader extends VfsFileSystemFacade implements IUnix
     *  @param path Path to the file or directory.
     *  @return Unix information about the file or directory.
     */
-    public UnixFileSystemInfo getUnixFileInfo(String path) {
+    @Override public UnixFileSystemInfo getUnixFileInfo(String path) {
         return VfsSquashFileSystemReader.class.cast(getRealFileSystem()).getUnixFileInfo(path);
     }
 

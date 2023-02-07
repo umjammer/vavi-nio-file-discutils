@@ -30,6 +30,7 @@ import discUtils.btrfs.Context;
 import discUtils.btrfs.base.items.BaseItem;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public abstract class NodeHeader implements IByteArraySerializable {
@@ -167,26 +168,26 @@ public abstract class NodeHeader implements IByteArraySerializable {
         level = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         checksum = EndianUtilities.toByteArray(buffer, offset, 0x20);
-        fsUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20);
-        logicalAddress = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
+        fsUuid = ByteUtil.readLeUUID(buffer, offset + 0x20);
+        logicalAddress = ByteUtil.readLeLong(buffer, offset + 0x30);
         // TODO: validate shift
-        flags = EndianUtilities.toInt64LittleEndian(buffer, offset + 0x38) >>> 8;
+        flags = ByteUtil.readLeLong(buffer, offset + 0x38) >>> 8;
         backrefRevision = buffer[offset + 0x3f];
-        chunkTreeUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x40);
-        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x50);
-        treeId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x58);
-        itemCount = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x60);
+        chunkTreeUuid = ByteUtil.readLeUUID(buffer, offset + 0x40);
+        generation = ByteUtil.readLeLong(buffer, offset + 0x50);
+        treeId = ByteUtil.readLeLong(buffer, offset + 0x58);
+        itemCount = ByteUtil.readLeInt(buffer, offset + 0x60);
         level = buffer[offset + 0x64];
         return Length;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 

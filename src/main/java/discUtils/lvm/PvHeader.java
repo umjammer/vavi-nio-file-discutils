@@ -22,11 +22,12 @@
 
 package discUtils.lvm;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class PvHeader implements IByteArraySerializable {
@@ -39,19 +40,15 @@ public class PvHeader implements IByteArraySerializable {
 
     public List<DiskArea> metadataDiskAreas;
 
-    /**
-     *
-     */
+    @Override
     public int size() {
         return PhysicalVolume.SECTOR_SIZE;
     }
 
-    /**
-     *
-     */
+    @Override
     public int readFrom(byte[] buffer, int offset) {
         uuid = readUuid(buffer, offset);
-        deviceSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x20);
+        deviceSize = ByteUtil.readLeLong(buffer, offset + 0x20);
         List<DiskArea> areas = new ArrayList<>();
         long areaOffset = offset + 0x28;
         while (true) {
@@ -76,21 +73,19 @@ public class PvHeader implements IByteArraySerializable {
         return size();
     }
 
-    /**
-     *
-     */
+    @Override
     public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
     private static String readUuid(byte[] buffer, int offset) {
-        String sb = EndianUtilities.bytesToString(buffer, offset, 0x6) + '-' +
-                EndianUtilities.bytesToString(buffer, offset + 0x6, 0x4) + '-' +
-                EndianUtilities.bytesToString(buffer, offset + 0xA, 0x4) + '-' +
-                EndianUtilities.bytesToString(buffer, offset + 0xE, 0x4) + '-' +
-                EndianUtilities.bytesToString(buffer, offset + 0x12, 0x4) + '-' +
-                EndianUtilities.bytesToString(buffer, offset + 0x16, 0x4) + '-' +
-                EndianUtilities.bytesToString(buffer, offset + 0x1A, 0x6);
+        String sb = new String(buffer, offset, 0x6, StandardCharsets.US_ASCII) + '-' +
+                new String(buffer, offset + 0x6, 0x4, StandardCharsets.US_ASCII) + '-' +
+                new String(buffer, offset + 0xA, 0x4, StandardCharsets.US_ASCII) + '-' +
+                new String(buffer, offset + 0xE, 0x4, StandardCharsets.US_ASCII) + '-' +
+                new String(buffer, offset + 0x12, 0x4, StandardCharsets.US_ASCII) + '-' +
+                new String(buffer, offset + 0x16, 0x4, StandardCharsets.US_ASCII) + '-' +
+                new String(buffer, offset + 0x1A, 0x6, StandardCharsets.US_ASCII);
         return sb;
     }
 }

@@ -17,7 +17,7 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
         super(context, nodeId, catalogInfo);
     }
 
-    public String getTargetPath() {
+    @Override public String getTargetPath() {
         if (targetPath == null) {
             try (BufferStream stream = new BufferStream(getFileContent(), FileAccess.Read)) {
                 try (StreamReader reader = new StreamReader(stream)) {

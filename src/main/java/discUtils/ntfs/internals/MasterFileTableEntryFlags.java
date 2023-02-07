@@ -32,10 +32,6 @@ import discUtils.core.coreCompat.EnumSettable;
  */
 public enum MasterFileTableEntryFlags implements EnumSettable {
     /**
-     * Default value.
-     */
-//    None,
-    /**
      * The entry is currently in use.
      */
     InUse, // 0x0001
@@ -54,10 +50,12 @@ public enum MasterFileTableEntryFlags implements EnumSettable {
 
     private final int value = 1 << ordinal();
 
+    @Override
     public Supplier<Integer> supplier() {
         return () -> value;
     }
 
+    @Override
     public Function<Integer, Boolean> function() {
         return v -> (v & value) != 0;
     }

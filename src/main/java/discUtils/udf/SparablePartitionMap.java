@@ -22,7 +22,7 @@
 
 package discUtils.udf;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class SparablePartitionMap extends PartitionMap {
@@ -43,19 +43,21 @@ public final class SparablePartitionMap extends PartitionMap {
 
     public short volumeSequenceNumber;
 
+    @Override
     public int size() {
         return 64;
     }
 
+    @Override
     protected int parse(byte[] buffer, int offset) {
-        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 36);
-        partitionNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 38);
-        packetLength = EndianUtilities.toUInt16LittleEndian(buffer, offset + 40);
+        volumeSequenceNumber = ByteUtil.readLeShort(buffer, offset + 36);
+        partitionNumber = ByteUtil.readLeShort(buffer, offset + 38);
+        packetLength = ByteUtil.readLeShort(buffer, offset + 40);
         numSparingTables = buffer[offset + 42];
-        sparingTableSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 44);
+        sparingTableSize = ByteUtil.readLeInt(buffer, offset + 44);
         locationsOfSparingTables = new int[getNumSparingTables()];
         for (int i = 0; i < getNumSparingTables(); ++i) {
-            locationsOfSparingTables[i] = EndianUtilities.toUInt32LittleEndian(buffer, offset + 48 + 4 * i);
+            locationsOfSparingTables[i] = ByteUtil.readLeInt(buffer, offset + 48 + 4 * i);
         }
         return 64;
     }

@@ -27,7 +27,7 @@ import java.util.UUID;
 
 import discUtils.btrfs.base.BlockGroupFlag;
 import discUtils.btrfs.base.Key;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -224,25 +224,25 @@ public class DevItem extends BaseItem {
         fsUuid = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        deviceId = EndianUtilities.toUInt64LittleEndian(buffer, offset);
-        deviceSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        deviceSizeUsed = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x8);
-        optimalIoAlignment = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x18);
-        optimalIoWidth = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x1c);
-        minimalIoSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x20);
-        type = BlockGroupFlag.valueOf((int) EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x24));
-        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x2c);
-        startOffset = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x34);
-        devGroup = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3c);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        deviceId = ByteUtil.readLeLong(buffer, offset);
+        deviceSize = ByteUtil.readLeLong(buffer, offset + 0x8);
+        deviceSizeUsed = ByteUtil.readLeLong(buffer, offset + 0x8);
+        optimalIoAlignment = ByteUtil.readLeInt(buffer, offset + 0x18);
+        optimalIoWidth = ByteUtil.readLeInt(buffer, offset + 0x1c);
+        minimalIoSize = ByteUtil.readLeInt(buffer, offset + 0x20);
+        type = BlockGroupFlag.valueOf((int) ByteUtil.readLeLong(buffer, offset + 0x24));
+        generation = ByteUtil.readLeLong(buffer, offset + 0x2c);
+        startOffset = ByteUtil.readLeLong(buffer, offset + 0x34);
+        devGroup = ByteUtil.readLeInt(buffer, offset + 0x3c);
         seekSpeed = buffer[offset + 0x40];
         bandwidth = buffer[offset + 0x41];
-        deviceUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x42);
-        fsUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x52);
+        deviceUuid = ByteUtil.readLeUUID(buffer, offset + 0x42);
+        fsUuid = ByteUtil.readLeUUID(buffer, offset + 0x52);
         return size();
     }
 }

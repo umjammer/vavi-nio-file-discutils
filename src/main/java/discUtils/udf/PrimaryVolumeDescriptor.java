@@ -23,6 +23,7 @@
 package discUtils.udf;
 
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public final class PrimaryVolumeDescriptor extends TaggedDescriptor<PrimaryVolumeDescriptor> {
@@ -71,16 +72,17 @@ public final class PrimaryVolumeDescriptor extends TaggedDescriptor<PrimaryVolum
         super(TagIdentifier.PrimaryVolumeDescriptor);
     }
 
+    @Override
     public int parse(byte[] buffer, int offset) {
-        volumeDescriptorSequenceNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 16);
-        primaryVolumeDescriptorNumber = EndianUtilities.toUInt32LittleEndian(buffer, offset + 20);
+        volumeDescriptorSequenceNumber = ByteUtil.readLeInt(buffer, offset + 16);
+        primaryVolumeDescriptorNumber = ByteUtil.readLeInt(buffer, offset + 20);
         volumeIdentifier = UdfUtilities.readDString(buffer, offset + 24, 32);
-        volumeSequenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 56);
-        maxVolumeSquenceNumber = EndianUtilities.toUInt16LittleEndian(buffer, offset + 58);
-        interchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 60);
-        maxInterchangeLevel = EndianUtilities.toUInt16LittleEndian(buffer, offset + 62);
-        characterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 64);
-        maxCharacterSetList = EndianUtilities.toUInt32LittleEndian(buffer, offset + 68);
+        volumeSequenceNumber = ByteUtil.readLeShort(buffer, offset + 56);
+        maxVolumeSquenceNumber = ByteUtil.readLeShort(buffer, offset + 58);
+        interchangeLevel = ByteUtil.readLeShort(buffer, offset + 60);
+        maxInterchangeLevel = ByteUtil.readLeShort(buffer, offset + 62);
+        characterSetList = ByteUtil.readLeInt(buffer, offset + 64);
+        maxCharacterSetList = ByteUtil.readLeInt(buffer, offset + 68);
         volumeSetIdentifier = UdfUtilities.readDString(buffer, offset + 72, 128);
         descriptorCharSet = EndianUtilities
                 .toStruct(CharacterSetSpecification.class, buffer, offset + 200);
@@ -96,8 +98,8 @@ public final class PrimaryVolumeDescriptor extends TaggedDescriptor<PrimaryVolum
         implementationIdentifier = EndianUtilities
                 .toStruct(ImplementationEntityIdentifier.class, buffer, offset + 388);
         implementationUse = EndianUtilities.toByteArray(buffer, offset + 420, 64);
-        predecessorVolumeDescriptorSequenceLocation = EndianUtilities.toUInt32LittleEndian(buffer, offset + 484);
-        flags = EndianUtilities.toUInt16LittleEndian(buffer, offset + 488);
+        predecessorVolumeDescriptorSequenceLocation = ByteUtil.readLeInt(buffer, offset + 484);
+        flags = ByteUtil.readLeShort(buffer, offset + 488);
         return 512;
     }
 }

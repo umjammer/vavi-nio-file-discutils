@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import java.nio.charset.StandardCharsets;
 
 
 public class ScsiInquiryStandardResponse extends ScsiResponse {
@@ -39,7 +39,7 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         deviceType = value;
     }
 
-    public int getNeededDataLength() {
+    @Override public int getNeededDataLength() {
         return 36;
     }
 
@@ -83,7 +83,7 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         specificationVersion = value;
     }
 
-    public boolean getTruncated() {
+    @Override public boolean getTruncated() {
         return truncated;
     }
 
@@ -97,7 +97,7 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         vendorId = value;
     }
 
-    public void readFrom(byte[] buffer, int offset, int count) {
+    @Override public void readFrom(byte[] buffer, int offset, int count) {
         if (count < 36) {
             truncated = true;
             return;
@@ -106,8 +106,8 @@ public class ScsiInquiryStandardResponse extends ScsiResponse {
         deviceType = LunClass.valueOf(buffer[0] & 0x1F);
         removable = (buffer[1] & 0x80) != 0;
         specificationVersion = buffer[2];
-        vendorId = EndianUtilities.bytesToString(buffer, 8, 8);
-        productId = EndianUtilities.bytesToString(buffer, 16, 16);
-        productRevision = EndianUtilities.bytesToString(buffer, 32, 4);
+        vendorId = new String(buffer, 8, 8, StandardCharsets.US_ASCII);
+        productId = new String(buffer, 16, 16, StandardCharsets.US_ASCII);
+        productRevision = new String(buffer, 32, 4, StandardCharsets.US_ASCII);
     }
 }

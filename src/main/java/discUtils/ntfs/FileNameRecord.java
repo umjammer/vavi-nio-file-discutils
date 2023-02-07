@@ -26,12 +26,11 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 
-import vavi.util.win32.DateUtil;
-
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.core.coreCompat.FileAttributes;
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
+import vavi.util.win32.DateUtil;
 
 
 public class FileNameRecord implements IByteArraySerializable, IDiagnosticTraceable {
@@ -79,43 +78,43 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
         return convertFlags(flags);
     }
 
-    public int size() {
+    @Override public int size() {
         return 0x42 + fileName.length() * 2;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        parentDirectory = new FileRecordReference(EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x00));
+    @Override public int readFrom(byte[] buffer, int offset) {
+        parentDirectory = new FileRecordReference(ByteUtil.readLeLong(buffer, offset + 0x00));
         creationTime = readDateTime(buffer, offset + 0x08);
         modificationTime = readDateTime(buffer, offset + 0x10);
         mftChangedTime = readDateTime(buffer, offset + 0x18);
         lastAccessTime = readDateTime(buffer, offset + 0x20);
-        allocatedSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x28);
-        realSize = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
-        flags = FileAttributeFlags.valueOf(EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x38));
-        eaSizeOrReparsePointTag = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x3C);
+        allocatedSize = ByteUtil.readLeLong(buffer, offset + 0x28);
+        realSize = ByteUtil.readLeLong(buffer, offset + 0x30);
+        flags = FileAttributeFlags.valueOf(ByteUtil.readLeInt(buffer, offset + 0x38));
+        eaSizeOrReparsePointTag = ByteUtil.readLeInt(buffer, offset + 0x3C);
         int fnLen = buffer[offset + 0x40] & 0xff;
         fileNameNamespace = FileNameNamespace.valueOf(buffer[offset + 0x41]);
         fileName = new String(buffer, offset + 0x42, fnLen * 2, StandardCharsets.UTF_16LE);
         return 0x42 + fnLen * 2;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(parentDirectory.getValue(), buffer, offset + 0x00);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(creationTime), buffer, offset + 0x08);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(modificationTime), buffer, offset + 0x10);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(mftChangedTime), buffer, offset + 0x18);
-        EndianUtilities.writeBytesLittleEndian(DateUtil.toFileTime(lastAccessTime), buffer, offset + 0x20);
-        EndianUtilities.writeBytesLittleEndian(allocatedSize, buffer, offset + 0x28);
-        EndianUtilities.writeBytesLittleEndian(realSize, buffer, offset + 0x30);
-        EndianUtilities.writeBytesLittleEndian((int) FileAttributeFlags.valueOf(flags), buffer, offset + 0x38);
-        EndianUtilities.writeBytesLittleEndian(eaSizeOrReparsePointTag, buffer, offset + 0x3C);
+    @Override public void writeTo(byte[] buffer, int offset) {
+        ByteUtil.writeLeLong(parentDirectory.getValue(), buffer, offset + 0x00);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(creationTime), buffer, offset + 0x08);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(modificationTime), buffer, offset + 0x10);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(mftChangedTime), buffer, offset + 0x18);
+        ByteUtil.writeLeLong(DateUtil.toFileTime(lastAccessTime), buffer, offset + 0x20);
+        ByteUtil.writeLeLong(allocatedSize, buffer, offset + 0x28);
+        ByteUtil.writeLeLong(realSize, buffer, offset + 0x30);
+        ByteUtil.writeLeInt((int) FileAttributeFlags.valueOf(flags), buffer, offset + 0x38);
+        ByteUtil.writeLeInt(eaSizeOrReparsePointTag, buffer, offset + 0x3C);
         buffer[offset + 0x40] = (byte) fileName.length();
         buffer[offset + 0x41] = (byte) fileNameNamespace.ordinal();
         byte[] bytes = fileName.getBytes(StandardCharsets.UTF_16LE);
         System.arraycopy(bytes, 0, buffer, offset + 0x42, bytes.length);
     }
 
-    public void dump(PrintWriter writer, String indent) {
+    @Override public void dump(PrintWriter writer, String indent) {
         writer.println(indent + "FILE NAME RECORD");
         writer.println(indent + "   Parent Directory: " + parentDirectory);
         writer.println(indent + "      Creation Time: " + creationTime);
@@ -145,7 +144,7 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
                fileName.equals(other.fileName);
     }
 
-    public String toString() {
+    @Override public String toString() {
         return fileName;
     }
 
@@ -170,6 +169,6 @@ public class FileNameRecord implements IByteArraySerializable, IDiagnosticTracea
 
     /** @return epoch millis */
     private static long readDateTime(byte[] buffer, int offset) {
-        return DateUtil.fromFileTime(EndianUtilities.toInt64LittleEndian(buffer, offset));
+        return DateUtil.fromFileTime(ByteUtil.readLeLong(buffer, offset));
     }
 }

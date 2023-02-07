@@ -22,16 +22,15 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.Nfs3FileSystemInfo;
 import discUtils.nfs.Nfs3FileSystemProperties;
 import discUtils.nfs.Nfs3FileTime;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class Nfs3FileSystemInfoTest {
@@ -48,7 +47,7 @@ public class Nfs3FileSystemInfoTest {
         attributes.setWriteMaxBytes(7);
         attributes.setWriteMultipleSize(8);
         attributes.setWritePreferredBytes(9);
-        Nfs3FileSystemInfo clone = null;
+        Nfs3FileSystemInfo clone;
         try (MemoryStream stream = new MemoryStream()) {
             XdrDataWriter writer = new XdrDataWriter(stream);
             attributes.write(writer);

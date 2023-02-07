@@ -26,6 +26,7 @@ package discUtils.iscsi;
  * Exception thrown when a low-level iSCSI failure is detected.
  */
 public class InvalidProtocolException extends IscsiException {
+
     /**
      * Initializes a new instance of the InvalidProtocolException class.
      */
@@ -50,14 +51,4 @@ public class InvalidProtocolException extends IscsiException {
     public InvalidProtocolException(String message, Exception innerException) {
         super(message, innerException);
     }
-
-    /**
-     * Initializes a new instance of the InvalidProtocolException class.
-     *
-     * @param info The serialization info.
-     * @param context Ther context.
-     */
-//    protected InvalidProtocolException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 }

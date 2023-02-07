@@ -123,7 +123,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
         for (AllocationGroup agf : getContext().getAllocationGroups()) {
             fdblocks += agf.getFreeBlockInfo().getFreeBlocks();
         }
-        long alloc_set_aside = 0;
+        long alloc_set_aside;
 
         alloc_set_aside = 4 + ((long) superblock.getAgCount() * XFS_ALLOC_AGFL_RESERVE);
 
@@ -143,7 +143,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     }
 
     /**
-     * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L832
+     * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L832"
      * XFS_AG_DADDR
      */
     private long xFS_AG_DADDR(SuperBlock sb, int agno, long d) {
@@ -151,7 +151,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     }
 
     /**
-     * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L829
+     * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L829"
      * XFS_AGB_TO_DADDR
      */
     private long xFS_AGB_TO_DADDR(SuperBlock sb, int agno, int agbno) {
@@ -159,7 +159,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     }
 
     /**
-     * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L587
+     * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L587"
      * XFS_FSB_TO_BB
      */
     private long fsbToBb(SuperBlock sb, long fsbno) {
@@ -167,7 +167,7 @@ public final class VfsXfsFileSystem extends VfsReadOnlyFileSystem<DirEntry, File
     }
 
     /**
-     * https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L716
+     * @see "https://github.com/torvalds/linux/blob/2a610b8aa8e5bd449ba270e517b0e72295d62c9c/fs/xfs/libxfs/xfs_format.h#L716"
      * XFS_AGF_DADDR
      */
     private long xFS_AGF_DADDR(SuperBlock sb) {

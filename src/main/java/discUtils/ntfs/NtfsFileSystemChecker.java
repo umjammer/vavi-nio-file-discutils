@@ -24,26 +24,28 @@ package discUtils.ntfs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
 import discUtils.core.ClusterMap;
 import discUtils.core.DiscFileSystemChecker;
 import discUtils.core.IDiagnosticTraceable;
 import discUtils.core.InvalidFileSystemException;
 import discUtils.core.ReportLevels;
 import discUtils.streams.SnapshotStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.Range;
 import discUtils.streams.util.StreamUtilities;
-import dotnet4j.util.compat.Tuple;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.Stream;
+import dotnet4j.util.compat.Tuple;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -83,7 +85,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
      * @return {@code true} if the file system appears valid, else
      *         {@code false}.
      */
-    public boolean check(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
+    @Override public boolean check(PrintWriter reportOutput, EnumSet<ReportLevels> levels) {
         context = new NtfsContext();
         context.setRawStream(target);
         context.setOptions(new NtfsOptions());
@@ -398,7 +400,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             while (mftStream.position() < mftStream.getLength()) {
                 byte[] recordData = StreamUtilities.readExact(mftStream, recordLength);
 
-                String magic = EndianUtilities.bytesToString(recordData, 0, 4);
+                String magic = new String(recordData, 0, 4, StandardCharsets.US_ASCII);
                 if (!magic.equals("FILE")) {
                     if (bitmap.isPresent(index)) {
                         reportError("Invalid MFT record magic at index %s - was ({2},{3},{4},{5}) \"%s\"",
@@ -448,6 +450,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                                             cluster,
                                             clusterMap.get(cluster),
                                             attrKey);
+                            } else {
+                                clusterMap.put(cluster, attrKey);
                             }
                         }
                     }
@@ -467,8 +471,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         GenericFixupRecord genericRecord = new GenericFixupRecord(bytesPerSector);
         genericRecord.fromBytes(tempBuffer, 0);
 
-        int pos = EndianUtilities.toUInt16LittleEndian(genericRecord.getContent(), 0x14);
-        while (EndianUtilities.toUInt32LittleEndian(genericRecord.getContent(), pos) != 0xFFFFFFFF) {
+        int pos = ByteUtil.readLeShort(genericRecord.getContent(), 0x14);
+        while (ByteUtil.readLeInt(genericRecord.getContent(), pos) != 0xFFFFFFFF) {
             int[] attrLen = new int[1];
             try {
                 AttributeRecord ar = AttributeRecord.fromBytes(genericRecord.getContent(), pos, attrLen);
@@ -521,7 +525,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
             ok = false;
         }
 
-        if (EndianUtilities.toUInt32LittleEndian(recordData, record.getRealSize() - 8) != 0xffffffff) {
+        if (ByteUtil.readLeInt(recordData, record.getRealSize() - 8) != 0xffffffff) {
             reportError("MFT record is not correctly terminated with 0xFFFFFFFF");
             ok = false;
         }

@@ -47,10 +47,12 @@ public class XpressBitStream extends BitStream {
         this.byteStream = byteStream;
     }
 
+    @Override
     public int getMaxReadAhead() {
         return 16;
     }
 
+    @Override
     public int read(int count) {
         if (count > 16) {
             throw new IndexOutOfBoundsException("Maximum 16 bits can be read");
@@ -62,12 +64,14 @@ public class XpressBitStream extends BitStream {
         return (buffer >>> bufferAvailable) & mask;
     }
 
+    @Override
     public int peek(int count) {
         ensureBufferFilled();
         int mask = (1 << count) - 1;
         return (buffer >>> (bufferAvailable - count)) & mask;
     }
 
+    @Override
     public void consume(int count) {
         ensureBufferFilled();
         bufferAvailable -= count;

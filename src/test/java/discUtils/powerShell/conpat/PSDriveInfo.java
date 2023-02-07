@@ -59,6 +59,7 @@ public class PSDriveInfo implements Comparable<PSDriveInfo> {
         return null;
     }
 
+    @Override
     public int compareTo(PSDriveInfo drive) {
         return 0;
     }

@@ -22,9 +22,10 @@
 
 package discUtils.lvm;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.core.partitions.PartitionInfo;
 import discUtils.streams.SparseStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
 
@@ -100,7 +101,7 @@ public class PhysicalVolume {
                 return false;
             }
 
-            String label = EndianUtilities.bytesToString(buffer, 0x0, 0x8);
+            String label = new String(buffer, 0x0, 0x8, StandardCharsets.US_ASCII);
             if (label.equals(PhysicalVolumeLabel.LABEL_ID)) {
                 pvLabel[0] = new PhysicalVolumeLabel();
                 pvLabel[0].readFrom(buffer, 0x0);
@@ -127,8 +128,8 @@ public class PhysicalVolume {
      */
     static int calcCrc(byte[] buffer, int offset, int length) {
         long crc = INITIAL_CRC;
-        final long[] crcTab = new long[] {
-            0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c, 0xedb88320,
+        long[] crcTab = new long[] {
+            0x00000000, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c, 0xedb88320L,
             0xf00f9344L, 0xd6d6a3e8L, 0xcb61b38cL, 0x9b64c2b0L, 0x86d3d2d4L, 0xa00ae278L, 0xbdbdf21cL
         };
         int i = offset;

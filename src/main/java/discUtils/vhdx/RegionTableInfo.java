@@ -22,13 +22,14 @@
 
 package discUtils.vhdx;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -58,8 +59,8 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      */
     public String getSignature() {
         byte[] buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(table.signature, buffer, 0);
-        return EndianUtilities.bytesToString(buffer, 0, 4);
+        ByteUtil.writeLeInt(table.signature, buffer, 0);
+        return new String(buffer, 0, 4, StandardCharsets.US_ASCII);
     }
 
     /**
@@ -140,6 +141,7 @@ public final class RegionTableInfo implements Iterable<RegionInfo> {
      *
      * @return A new enumerator.
      */
+    @Override
     public Iterator<RegionInfo> iterator() {
         return getEntries().iterator();
     }

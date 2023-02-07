@@ -48,74 +48,92 @@ public class InMemoryFileSystem extends DiscFileSystem {
         files = new HashMap<>();
     }
 
+    @Override
     public String getFriendlyName() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean canWrite() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getSize() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getUsedSpace() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getAvailableSpace() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void copyFile(String sourceFile, String destinationFile, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void createDirectory(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void deleteDirectory(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void deleteFile(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean directoryExists(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public boolean fileExists(String path) {
         return files.containsKey(path);
     }
 
+    @Override
     public List<String> getDirectories(String path, String searchPattern, String searchOption) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public List<String> getFiles(String path, String searchPattern, String searchOption) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public List<String> getFileSystemEntries(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public List<String> getFileSystemEntries(String path, String searchPattern) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void moveDirectory(String sourceDirectoryName, String destinationDirectoryName) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void moveFile(String sourceName, String destinationName, boolean overwrite) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public SparseStream openFile(String path, FileMode mode, FileAccess access) {
         if (files.containsKey(path)) {
             if (mode == FileMode.CreateNew) {
@@ -132,38 +150,47 @@ public class InMemoryFileSystem extends DiscFileSystem {
         }
     }
 
+    @Override
     public Map<String, Object> getAttributes(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setAttributes(String path, Map<String, Object> newValue) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getCreationTimeUtc(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setCreationTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getLastAccessTimeUtc(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setLastAccessTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getLastWriteTimeUtc(String path) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setLastWriteTimeUtc(String path, long newTime) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public long getFileLength(String path) {
         if (files.containsKey(path)) {
             return files.get(path).getCapacity();

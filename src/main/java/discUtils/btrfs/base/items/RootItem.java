@@ -24,6 +24,7 @@ package discUtils.btrfs.base.items;
 
 import discUtils.btrfs.base.Key;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -198,20 +199,20 @@ public class RootItem extends BaseItem {
         level = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         inode = EndianUtilities.toStruct(InodeItem.class, buffer, offset);
-        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 160);
-        rootDirId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 168);
-        byteNr = EndianUtilities.toUInt64LittleEndian(buffer, offset + 176);
-        byteLimit = EndianUtilities.toUInt64LittleEndian(buffer, offset + 184);
-        bytesUsed = EndianUtilities.toUInt64LittleEndian(buffer, offset + 192);
-        lastSnapshot = EndianUtilities.toUInt64LittleEndian(buffer, offset + 200);
-        flags = EndianUtilities.toUInt64LittleEndian(buffer, offset + 208);
-        refs = EndianUtilities.toUInt32LittleEndian(buffer, offset + 216);
+        generation = ByteUtil.readLeLong(buffer, offset + 160);
+        rootDirId = ByteUtil.readLeLong(buffer, offset + 168);
+        byteNr = ByteUtil.readLeLong(buffer, offset + 176);
+        byteLimit = ByteUtil.readLeLong(buffer, offset + 184);
+        bytesUsed = ByteUtil.readLeLong(buffer, offset + 192);
+        lastSnapshot = ByteUtil.readLeLong(buffer, offset + 200);
+        flags = ByteUtil.readLeLong(buffer, offset + 208);
+        refs = ByteUtil.readLeInt(buffer, offset + 216);
         dropProgress = EndianUtilities.toStruct(Key.class, buffer, offset + 220);
         dropLevel = buffer[offset + 237];
         level = buffer[offset + 238];

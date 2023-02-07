@@ -61,7 +61,7 @@ public class BitCounter {
      * @param values the array to process
      * @param offset the values offset to start from
      * @param count the number of bytes to count
-     * @return
+     * @return count
      */
     public static long count(byte[] values, int offset, int count) {
         int end = offset + count;

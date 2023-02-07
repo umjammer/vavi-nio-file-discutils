@@ -34,6 +34,7 @@ public class Symlink extends File implements IVfsSymlink<DirEntry, File> {
         super(dirEntry, context);
     }
 
+    @Override
     public String getTargetPath() {
         IBuffer content = getFileContent();
         byte[] data = StreamUtilities.readExact(content, 0, (int) content.getCapacity());

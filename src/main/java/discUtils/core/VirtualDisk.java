@@ -32,8 +32,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import vavi.util.Debug;
-
 import discUtils.core.internal.Utilities;
 import discUtils.core.internal.VirtualDiskFactory;
 import discUtils.core.internal.VirtualDiskTransport;
@@ -41,10 +39,11 @@ import discUtils.core.partitions.BiosPartitionTable;
 import discUtils.core.partitions.GuidPartitionTable;
 import discUtils.core.partitions.PartitionTable;
 import discUtils.streams.SparseStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Sizes;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.FileAccess;
+import vavi.util.ByteUtil;
+import vavi.util.Debug;
 
 
 /**
@@ -53,13 +52,6 @@ import dotnet4j.io.FileAccess;
 public abstract class VirtualDisk implements Serializable, Closeable {
 
     private VirtualDiskTransport transport;
-
-    /**
-     * Finalizes an instance of the VirtualDisk class.
-     */
-//    protected void finalize() throws Throwable {
-//        close();
-//    }
 
     /**
      * Gets the set of disk formats supported as an array of file extensions.
@@ -134,12 +126,12 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      * identifies the disk.
      */
     public int getSignature() {
-        return EndianUtilities.toInt32LittleEndian(getMasterBootRecord(), 0x01B8);
+        return ByteUtil.readLeInt(getMasterBootRecord(), 0x01B8);
     }
 
     public void setSignature(int value) throws IOException {
         byte[] mbr = getMasterBootRecord();
-        EndianUtilities.writeBytesLittleEndian(value, mbr, 0x01B8);
+        ByteUtil.writeLeInt(value, mbr, 0x01B8);
         setMasterBootRecord(mbr);
     }
 
@@ -360,7 +352,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
                                          String user,
                                          String password) throws IOException {
         URI uri = pathToUri(path);
-        VirtualDisk result = null;
+        VirtualDisk result;
         if (!VirtualDiskManager.getDiskTransports().containsKey(uri.getScheme().toUpperCase())) {
             throw new dotnet4j.io.FileNotFoundException(String.format("Unable to parse path '%s'", path));
         }

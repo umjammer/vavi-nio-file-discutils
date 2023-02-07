@@ -49,22 +49,22 @@ class DirectoryExtent extends BuilderExtent {
         this.enc = enc;
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
     }
 
-    public void prepareForRead() {
+    @Override public void prepareForRead() {
         readCache = new byte[(int) getLength()];
         dirInfo.write(readCache, 0, locationTable, enc);
     }
 
-    public int read(long diskOffset, byte[] buffer, int offset, int count) {
+    @Override public int read(long diskOffset, byte[] buffer, int offset, int count) {
         long relPos = diskOffset - getStart();
         int numRead = (int) Math.min(count, readCache.length - relPos);
         System.arraycopy(readCache, (int) relPos, buffer, offset, numRead);
         return numRead;
     }
 
-    public void disposeReadState() {
+    @Override public void disposeReadState() {
         readCache = null;
     }
 }

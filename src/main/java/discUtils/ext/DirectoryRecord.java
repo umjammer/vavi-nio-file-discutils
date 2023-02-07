@@ -25,8 +25,8 @@ package discUtils.ext;
 import java.nio.charset.Charset;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class DirectoryRecord implements IByteArraySerializable {
@@ -52,13 +52,13 @@ public class DirectoryRecord implements IByteArraySerializable {
         this.nameEncoding = nameEncoding;
     }
 
-    public int size() {
+    @Override public int size() {
         return MathUtilities.roundUp(8 + name.length(), 4);
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        inode = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0);
-        short recordLen = EndianUtilities.toUInt16LittleEndian(buffer, offset + 4);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        inode = ByteUtil.readLeInt(buffer, offset + 0);
+        short recordLen = ByteUtil.readLeShort(buffer, offset + 4);
         int nameLen = buffer[offset + 6];
         fileType = buffer[offset + 7];
         name = new String(buffer, offset + 8, nameLen, nameEncoding);
@@ -66,7 +66,7 @@ public class DirectoryRecord implements IByteArraySerializable {
         return recordLen;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

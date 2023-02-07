@@ -24,6 +24,7 @@ package discUtils.udf;
 
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LongAllocationDescriptor implements IByteArraySerializable {
@@ -34,23 +35,23 @@ public class LongAllocationDescriptor implements IByteArraySerializable {
 
     public byte[] implementationUse;
 
-    public int size() {
+    @Override public int size() {
         return 16;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        extentLength = EndianUtilities.toUInt32LittleEndian(buffer, offset);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        extentLength = ByteUtil.readLeInt(buffer, offset);
         extentLocation = new LogicalBlockAddress();
         extentLocation.readFrom(buffer, offset + 4);
         implementationUse = EndianUtilities.toByteArray(buffer, offset + 10, 6);
         return 16;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public String toString() {
+    @Override public String toString() {
         return extentLocation + ":+" + extentLength;
     }
 }

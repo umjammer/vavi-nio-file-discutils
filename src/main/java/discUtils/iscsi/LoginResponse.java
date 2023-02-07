@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LoginResponse extends BaseResponse {
@@ -47,7 +47,7 @@ public class LoginResponse extends BaseResponse {
 
     public boolean transit;
 
-    public void parse(ProtocolDataUnit pdu) {
+    @Override public void parse(ProtocolDataUnit pdu) {
         parse(pdu.getHeaderData(), 0, pdu.getContentData());
     }
 
@@ -62,13 +62,13 @@ public class LoginResponse extends BaseResponse {
         unpackState(headerData[headerOffset + 1]);
         maxVersion = headerData[headerOffset + 2];
         activeVersion = headerData[headerOffset + 3];
-        targetSessionId = EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 14);
+        targetSessionId = ByteUtil.readBeShort(headerData, headerOffset + 14);
         statusPresent = true;
-        statusSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 24);
-        expectedCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 28);
-        maxCommandSequenceNumber = EndianUtilities.toUInt32BigEndian(headerData, headerOffset + 32);
+        statusSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 24);
+        expectedCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 28);
+        maxCommandSequenceNumber = ByteUtil.readBeInt(headerData, headerOffset + 32);
         statusClass = headerData[headerOffset + 36];
-        statusCode = LoginStatusCode.valueOf(EndianUtilities.toUInt16BigEndian(headerData, headerOffset + 36));
+        statusCode = LoginStatusCode.valueOf(ByteUtil.readBeShort(headerData, headerOffset + 36));
         textData = bodyData;
     }
 

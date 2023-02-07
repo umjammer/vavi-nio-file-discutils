@@ -43,6 +43,7 @@ import discUtils.net.dns.ServiceInstanceFields;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compat.JavaIOStream;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -153,14 +154,14 @@ public final class OpticalDiscService {
         ServiceInstanceEndPoint siep = instance.getEndPoints().get(0);
         List<InetSocketAddress> ipAddrs = new ArrayList<>(siep.getInetSocketAddresss());
 
-        URI uri = URI
-                .create("http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort() + "/" + name + ".dmg");
+        URI uri = URI.create(
+                "http" + "://" + ipAddrs.get(0).getAddress() + ":" + ipAddrs.get(0).getPort() + "/" + name + ".dmg");
         return new Disc(uri, userName, askToken);
     }
 
     private static String getAskToken(String askId, URI uri, int maxWaitSecs) {
-        URI newURI = URI.create(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask-status" + "?" +
-                                "askID=" + askId);
+        URI newURI = URI.create(
+                uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + "/ods-ask-status" + "?" + "askID=" + askId);
 
         boolean askBusy = true;
         String askStatus = "unknown";
@@ -174,7 +175,7 @@ public final class OpticalDiscService {
             try {
                 try {
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                 }
 
                 Request wreq = new Request.Builder().url(newURI.toString()).get().build();
@@ -221,9 +222,9 @@ public final class OpticalDiscService {
                 req.put("computer", computerName);
                 req.put("user", userName);
                 Plist.write(outStream, req);
-                rb = RequestBody.create(MediaType.get("text/xml"), outStream.toArray());
+                rb = FormBody.create(outStream.toArray(), MediaType.get("text/xml"));
             }
-            Request wreq = new Request.Builder().url(uri.toString()).post(rb).build();
+            Request wreq = new Request.Builder().url(newURI.toString()).post(rb).build();
             String askId;
             Response wrsp = client.newCall(wreq).execute();
 

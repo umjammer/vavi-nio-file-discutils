@@ -26,21 +26,18 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.xml.sax.InputSource;
-
 import discUtils.core.archives.TarFile;
 import discUtils.streams.util.Ownership;
 import dotnet4j.io.Stream;
 import dotnet4j.io.compat.StreamInputStream;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 
 /**

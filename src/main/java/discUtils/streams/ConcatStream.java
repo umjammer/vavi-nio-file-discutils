@@ -123,7 +123,7 @@ public class ConcatStream extends SparseStream {
         checkDisposed();
 
         int totalRead = 0;
-        int numRead = 0;
+        int numRead;
 
         do {
             long[] activeStreamStartPos = new long[1];
@@ -198,7 +198,7 @@ public class ConcatStream extends SparseStream {
         }
     }
 
-    public void close() throws IOException {
+    @Override public void close() throws IOException {
         if (ownsStreams == Ownership.Dispose && streams != null) {
             for (SparseStream stream : streams) {
                 stream.close();

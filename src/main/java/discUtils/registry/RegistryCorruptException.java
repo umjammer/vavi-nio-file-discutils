@@ -26,6 +26,7 @@ package discUtils.registry;
  * Exception thrown when some corruption is found in the registry hive.
  */
 public class RegistryCorruptException extends Exception {
+
     /**
      * Initializes a new instance of the RegistryCorruptException class.
      */
@@ -50,14 +51,4 @@ public class RegistryCorruptException extends Exception {
     public RegistryCorruptException(String message, Exception innerException) {
         super(message, innerException);
     }
-
-    /**
-     * Initializes a new instance of the RegistryCorruptException class.
-     *
-     * @param info The serialization info.
-     * @param context The streaming context.
-     */
-//    protected RegistryCorruptException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//    }
 }

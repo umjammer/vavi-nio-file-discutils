@@ -28,7 +28,7 @@ import java.util.List;
 import discUtils.streams.StreamExtent;
 import discUtils.streams.block.Block;
 import discUtils.streams.buffer.IBuffer;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class FileContentBuffer implements IBuffer {
@@ -55,7 +55,7 @@ public class FileContentBuffer implements IBuffer {
         context.getInodeReader().read(lengthData, 0, lengthData.length);
         blockLengths = new int[numBlocks];
         for (int i = 0; i < numBlocks; ++i) {
-            blockLengths[i] = EndianUtilities.toInt32LittleEndian(lengthData, i * 4);
+            blockLengths[i] = ByteUtil.readLeInt(lengthData, i * 4);
         }
     }
 

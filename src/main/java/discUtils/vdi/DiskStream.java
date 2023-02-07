@@ -31,11 +31,11 @@ import java.util.function.BiConsumer;
 import discUtils.core.internal.Utilities;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.Ownership;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class DiskStream extends SparseStream {
@@ -298,13 +298,13 @@ public class DiskStream extends SparseStream {
 
         blockTable = new int[fileHeader.blockCount];
         for (int i = 0; i < fileHeader.blockCount; ++i) {
-            blockTable[i] = EndianUtilities.toUInt32LittleEndian(buffer, i * 4);
+            blockTable[i] = ByteUtil.readLeInt(buffer, i * 4);
         }
     }
 
     private void writeBlockTableEntry(int block) {
         byte[] buffer = new byte[4];
-        EndianUtilities.writeBytesLittleEndian(blockTable[block], buffer, 0);
+        ByteUtil.writeLeInt(blockTable[block], buffer, 0);
 
         fileStream.position(fileHeader.blocksOffset + block * 4L);
         fileStream.write(buffer, 0, 4);

@@ -22,7 +22,7 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiReportLunsCommand extends ScsiCommand {
@@ -36,15 +36,15 @@ public class ScsiReportLunsCommand extends ScsiCommand {
         this.expected = expected;
     }
 
-    public int size() {
+    @Override public int size() {
         return 12;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = (byte) 0xA0;
         buffer[offset + 1] = 0;
         // Reserved
@@ -56,7 +56,7 @@ public class ScsiReportLunsCommand extends ScsiCommand {
         // Reserved
         buffer[offset + 5] = 0;
         // Reserved
-        EndianUtilities.writeBytesBigEndian(expected, buffer, offset + 6);
+        ByteUtil.writeBeInt(expected, buffer, offset + 6);
         buffer[offset + 10] = 0;
         // Reserved
         buffer[offset + 11] = 0;

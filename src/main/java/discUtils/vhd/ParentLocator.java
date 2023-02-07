@@ -22,7 +22,10 @@
 
 package discUtils.vhd;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ParentLocator {
@@ -52,18 +55,18 @@ public class ParentLocator {
 
     public static ParentLocator fromBytes(byte[] data, int offset) {
         ParentLocator result = new ParentLocator();
-        result.platformCode = EndianUtilities.bytesToString(data, offset, 4);
-        result.platformDataSpace = EndianUtilities.toInt32BigEndian(data, offset + 4);
-        result.platformDataLength = EndianUtilities.toInt32BigEndian(data, offset + 8);
-        result.platformDataOffset = EndianUtilities.toInt64BigEndian(data, offset + 16);
+        result.platformCode = new String(data, offset, 4, StandardCharsets.US_ASCII);
+        result.platformDataSpace = ByteUtil.readBeInt(data, offset + 4);
+        result.platformDataLength = ByteUtil.readBeInt(data, offset + 8);
+        result.platformDataOffset = ByteUtil.readBeLong(data, offset + 16);
         return result;
     }
 
     public void toBytes(byte[] data, int offset) {
         EndianUtilities.stringToBytes(platformCode, data, offset, 4);
-        EndianUtilities.writeBytesBigEndian(platformDataSpace, data, offset + 4);
-        EndianUtilities.writeBytesBigEndian(platformDataLength, data, offset + 8);
-        EndianUtilities.writeBytesBigEndian(0, data, offset + 12);
-        EndianUtilities.writeBytesBigEndian(platformDataOffset, data, offset + 16);
+        ByteUtil.writeBeInt(platformDataSpace, data, offset + 4);
+        ByteUtil.writeBeInt(platformDataLength, data, offset + 8);
+        ByteUtil.writeBeInt(0, data, offset + 12);
+        ByteUtil.writeBeLong(platformDataOffset, data, offset + 16);
     }
 }

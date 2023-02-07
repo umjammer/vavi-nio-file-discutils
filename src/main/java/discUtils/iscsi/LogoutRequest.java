@@ -22,8 +22,8 @@
 
 package discUtils.iscsi;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
+import vavi.util.ByteUtil;
 
 
 public class LogoutRequest {
@@ -45,9 +45,9 @@ public class LogoutRequest {
         byte[] buffer = new byte[MathUtilities.roundUp(48, 4)];
         basicHeader.writeTo(buffer, 0);
         buffer[1] |= (byte) (reason.ordinal() & 0x7F);
-        EndianUtilities.writeBytesBigEndian(connection.getId(), buffer, 20);
-        EndianUtilities.writeBytesBigEndian(connection.getSession().getCommandSequenceNumber(), buffer, 24);
-        EndianUtilities.writeBytesBigEndian(connection.getExpectedStatusSequenceNumber(), buffer, 28);
+        ByteUtil.writeBeShort(connection.getId(), buffer, 20);
+        ByteUtil.writeBeInt(connection.getSession().getCommandSequenceNumber(), buffer, 24);
+        ByteUtil.writeBeInt(connection.getExpectedStatusSequenceNumber(), buffer, 28);
         return buffer;
     }
 }

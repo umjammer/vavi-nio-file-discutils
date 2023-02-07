@@ -24,25 +24,25 @@ package discUtils.iscsi;
 
 import java.util.Arrays;
 
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class ScsiInquiryCommand extends ScsiCommand {
 
     public static final int InitialResponseDataLength = 36;
 
-    private final boolean askForPage = false;
+    private static final boolean askForPage = false;
 
     private final int expected;
 
-    private final byte pageCode = 0;
+    private static final byte pageCode = 0;
 
     public ScsiInquiryCommand(long targetLun, int expected) {
         super(targetLun);
         this.expected = expected;
     }
 
-    public int size() {
+    @Override public int size() {
         return 6;
     }
 
@@ -53,21 +53,21 @@ public class ScsiInquiryCommand extends ScsiCommand {
 //        this.expected = expected;
 //    }
 
-    public TaskAttributes getTaskAttributes() {
+    @Override public TaskAttributes getTaskAttributes() {
         return TaskAttributes.Untagged;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         Arrays.fill(buffer, offset, offset + 10, (byte) 0);
         buffer[offset] = 0x12;
         // OpCode
         buffer[offset + 1] = (byte) (askForPage ? 0x01 : 0x00);
         buffer[offset + 2] = pageCode;
-        EndianUtilities.writeBytesBigEndian((short) expected, buffer, offset + 3);
+        ByteUtil.writeBeShort((short) expected, buffer, offset + 3);
         buffer[offset + 5] = 0;
     }
 }

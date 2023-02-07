@@ -30,11 +30,8 @@ import java.util.stream.Collectors;
 
 enum Version2Features {
     /**
-     * Additional version flags if
-     * {@link VersionFlags#MOREBITSBIT}
-     * is set in
-     * {@link SuperBlock#getVersion()}
-     * .
+     * Additional version flags if {@link VersionFlags#MOREBITSBIT}
+     * is set in {@link SuperBlock#getVersion()}.
      */
     Reserved1,
     /**

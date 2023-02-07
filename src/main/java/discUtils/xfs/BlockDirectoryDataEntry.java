@@ -22,7 +22,10 @@
 
 package discUtils.xfs;
 
+import java.nio.charset.StandardCharsets;
+
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDirectoryEntry {
@@ -31,6 +34,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
 
     private long inode;
 
+    @Override
     public long getInode() {
         return inode;
     }
@@ -51,6 +55,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
 
     private byte[] name;
 
+    @Override
     public byte[] getName() {
         return name;
     }
@@ -79,6 +84,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
         fType = value;
     }
 
+    @Override
     public int size() {
         int size = 0xb + getNameLength() + (ftype ? 1 : 0);
         int padding = size % 8;
@@ -92,8 +98,9 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
         ftype = context.getSuperBlock().hasFType();
     }
 
+    @Override
     public int readFrom(byte[] buffer, int offset) {
-        inode = EndianUtilities.toUInt64BigEndian(buffer, offset);
+        inode = ByteUtil.readBeLong(buffer, offset);
         nameLength = buffer[offset + 0x8];
         name = EndianUtilities.toByteArray(buffer, offset + 0x9, getNameLength());
         offset += 0x9 + getNameLength();
@@ -107,7 +114,7 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
             padding += 8;
 
         offset += padding;
-        tag = EndianUtilities.toUInt16BigEndian(buffer, offset);
+        tag = ByteUtil.readBeShort(buffer, offset);
         return size();
     }
 
@@ -115,6 +122,6 @@ public class BlockDirectoryDataEntry extends BlockDirectoryData implements IDire
      *
      */
     public String toString() {
-        return String.format("%d : %s", inode, EndianUtilities.bytesToString(name, 0, nameLength));
+        return String.format("%d : %s", inode, new String(name, 0, nameLength, StandardCharsets.US_ASCII));
     }
 }

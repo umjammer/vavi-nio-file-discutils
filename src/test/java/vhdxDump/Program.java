@@ -30,9 +30,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Map;
 import java.util.UUID;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.streams.util.Range;
 import discUtils.vhdx.DiskImageFile;
@@ -44,6 +41,8 @@ import discUtils.vhdx.MetadataTableInfo;
 import discUtils.vhdx.RegionInfo;
 import discUtils.vhdx.RegionTableInfo;
 import dotnet4j.io.FileAccess;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -60,6 +59,7 @@ public class Program extends ProgramBase {
 
     static final UUID EMPTY = new UUID(0, 0);
 
+    @Override
     protected void doRun() throws IOException {
         try (DiskImageFile vhdxFile = new DiskImageFile(this.vhdxFile, FileAccess.Read)) {
             DiskImageFileInfo info = vhdxFile.getInformation();

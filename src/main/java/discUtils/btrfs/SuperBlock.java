@@ -36,6 +36,7 @@ import discUtils.btrfs.base.Key;
 import discUtils.btrfs.base.items.ChunkItem;
 import discUtils.streams.IByteArraySerializable;
 import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class SuperBlock implements IByteArraySerializable {
@@ -414,37 +415,37 @@ public class SuperBlock implements IByteArraySerializable {
         systemChunkArray = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        magic = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x40);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        magic = ByteUtil.readLeLong(buffer, offset + 0x40);
         if (magic != BtrfsMagic)
             return size();
 
         checksum = EndianUtilities.toByteArray(buffer, offset, 0x20);
-        fsUuid = EndianUtilities.toGuidLittleEndian(buffer, offset + 0x20);
-        physicalAddress = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x30);
-        flags = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x38);
-        generation = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x48);
-        root = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x50);
-        chunkRoot = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x58);
-        logRoot = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x60);
-        logRootTransId = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x68);
-        totalBytes = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x70);
-        bytesUsed = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x78);
-        rootDirObjectid = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x80);
-        numDevices = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0x88);
-        sectorSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x90);
-        nodeSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x94);
-        leafSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x98);
-        stripeSize = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0x9c);
-        chunkRootGeneration = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xa4);
-        compatFlags = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xac);
-        compatRoFlags = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xb4);
-        incompatFlags = EndianUtilities.toUInt64LittleEndian(buffer, offset + 0xbc);
-        checksumType = ChecksumType.values()[EndianUtilities.toUInt16LittleEndian(buffer, offset + 0xc4)];
+        fsUuid = ByteUtil.readLeUUID(buffer, offset + 0x20);
+        physicalAddress = ByteUtil.readLeLong(buffer, offset + 0x30);
+        flags = ByteUtil.readLeLong(buffer, offset + 0x38);
+        generation = ByteUtil.readLeLong(buffer, offset + 0x48);
+        root = ByteUtil.readLeLong(buffer, offset + 0x50);
+        chunkRoot = ByteUtil.readLeLong(buffer, offset + 0x58);
+        logRoot = ByteUtil.readLeLong(buffer, offset + 0x60);
+        logRootTransId = ByteUtil.readLeLong(buffer, offset + 0x68);
+        totalBytes = ByteUtil.readLeLong(buffer, offset + 0x70);
+        bytesUsed = ByteUtil.readLeLong(buffer, offset + 0x78);
+        rootDirObjectid = ByteUtil.readLeLong(buffer, offset + 0x80);
+        numDevices = ByteUtil.readLeLong(buffer, offset + 0x88);
+        sectorSize = ByteUtil.readLeInt(buffer, offset + 0x90);
+        nodeSize = ByteUtil.readLeInt(buffer, offset + 0x94);
+        leafSize = ByteUtil.readLeInt(buffer, offset + 0x98);
+        stripeSize = ByteUtil.readLeInt(buffer, offset + 0x9c);
+        chunkRootGeneration = ByteUtil.readLeLong(buffer, offset + 0xa4);
+        compatFlags = ByteUtil.readLeLong(buffer, offset + 0xac);
+        compatRoFlags = ByteUtil.readLeLong(buffer, offset + 0xb4);
+        incompatFlags = ByteUtil.readLeLong(buffer, offset + 0xbc);
+        checksumType = ChecksumType.values()[ByteUtil.readLeShort(buffer, offset + 0xc4)];
         rootLevel = buffer[offset + 0xc6];
         chunkRootLevel = buffer[offset + 0xc7];
         logRootLevel = buffer[offset + 0xc8];
@@ -456,7 +457,7 @@ public class SuperBlock implements IByteArraySerializable {
         }
 
         // 22b 100 reserved
-        int n = EndianUtilities.toUInt32LittleEndian(buffer, offset + 0xa0);
+        int n = ByteUtil.readLeInt(buffer, offset + 0xa0);
         offset += 0x32b;
         List<ChunkItem> systemChunks = new ArrayList<>();
         while (n > 0) {
@@ -475,7 +476,7 @@ public class SuperBlock implements IByteArraySerializable {
         return size();
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         throw new UnsupportedOperationException();
     }
 }

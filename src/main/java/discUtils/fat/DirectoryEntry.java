@@ -27,14 +27,14 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.EnumSet;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public class DirectoryEntry {
 
-    private FatType fatVariant = FatType.None;
+    private FatType fatVariant;
 
     private FatFileSystemOptions options;
 
@@ -188,14 +188,14 @@ public class DirectoryEntry {
         getName().getBytes(buffer, 0);
         buffer[11] = attr;
         buffer[13] = creationTimeTenth;
-        EndianUtilities.writeBytesLittleEndian(creationTime, buffer, 14);
-        EndianUtilities.writeBytesLittleEndian(creationDate, buffer, 16);
-        EndianUtilities.writeBytesLittleEndian(lastAccessDate, buffer, 18);
-        EndianUtilities.writeBytesLittleEndian(firstClusterHi, buffer, 20);
-        EndianUtilities.writeBytesLittleEndian(lastWriteTime, buffer, 22);
-        EndianUtilities.writeBytesLittleEndian(lastWriteDate, buffer, 24);
-        EndianUtilities.writeBytesLittleEndian(firstClusterLo, buffer, 26);
-        EndianUtilities.writeBytesLittleEndian(fileSize, buffer, 28);
+        ByteUtil.writeLeShort(creationTime, buffer, 14);
+        ByteUtil.writeLeShort(creationDate, buffer, 16);
+        ByteUtil.writeLeShort(lastAccessDate, buffer, 18);
+        ByteUtil.writeLeShort(firstClusterHi, buffer, 20);
+        ByteUtil.writeLeShort(lastWriteTime, buffer, 22);
+        ByteUtil.writeLeShort(lastWriteDate, buffer, 24);
+        ByteUtil.writeLeShort(firstClusterLo, buffer, 26);
+        ByteUtil.writeLeInt(fileSize, buffer, 28);
         stream.write(buffer, 0, buffer.length);
     }
 
@@ -261,13 +261,13 @@ public class DirectoryEntry {
         name = new FileName(data, offset);
         attr = data[offset + 11];
         creationTimeTenth = data[offset + 13];
-        creationTime = EndianUtilities.toUInt16LittleEndian(data, offset + 14);
-        creationDate = EndianUtilities.toUInt16LittleEndian(data, offset + 16);
-        lastAccessDate = EndianUtilities.toUInt16LittleEndian(data, offset + 18);
-        firstClusterHi = EndianUtilities.toUInt16LittleEndian(data, offset + 20);
-        lastWriteTime = EndianUtilities.toUInt16LittleEndian(data, offset + 22);
-        lastWriteDate = EndianUtilities.toUInt16LittleEndian(data, offset + 24);
-        firstClusterLo = EndianUtilities.toUInt16LittleEndian(data, offset + 26);
-        fileSize = EndianUtilities.toUInt32LittleEndian(data, offset + 28);
+        creationTime = ByteUtil.readLeShort(data, offset + 14);
+        creationDate = ByteUtil.readLeShort(data, offset + 16);
+        lastAccessDate = ByteUtil.readLeShort(data, offset + 18);
+        firstClusterHi = ByteUtil.readLeShort(data, offset + 20);
+        lastWriteTime = ByteUtil.readLeShort(data, offset + 22);
+        lastWriteDate = ByteUtil.readLeShort(data, offset + 24);
+        firstClusterLo = ByteUtil.readLeShort(data, offset + 26);
+        fileSize = ByteUtil.readLeInt(data, offset + 28);
     }
 }

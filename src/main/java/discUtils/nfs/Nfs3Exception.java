@@ -30,6 +30,7 @@ import dotnet4j.io.IOException;
  * probably corruption.
  */
 public class Nfs3Exception extends IOException {
+
     /**
      * Initializes a new instance of the Nfs3Exception class.
      */
@@ -38,7 +39,7 @@ public class Nfs3Exception extends IOException {
 
     /**
      * Initializes a new instance of the Nfs3Exception class.
-     * <param name="message">The exception message.</param>
+     * @param message The exception message. 
      */
     public Nfs3Exception(String message) {
         super(message);
@@ -46,8 +47,8 @@ public class Nfs3Exception extends IOException {
 
     /**
      * Initializes a new instance of the Nfs3Exception class.
-     * <param name="message">The exception message.</param>
-     * <param name="status">The status result of an NFS procedure.</param>
+     * @param message The exception message. 
+     * @param status The status result of an NFS procedure. 
      */
     public Nfs3Exception(String message, Nfs3Status status) {
         super(message);
@@ -56,8 +57,8 @@ public class Nfs3Exception extends IOException {
 
     /**
      * Initializes a new instance of the Nfs3Exception class.
-     * <param name="message">The exception message.</param>
-     * <param name="innerException">The inner exception.</param>
+     * @param message The exception message. 
+     * @param innerException The inner exception. 
      */
     public Nfs3Exception(String message, Exception innerException) {
         super(message, innerException);
@@ -65,22 +66,12 @@ public class Nfs3Exception extends IOException {
 
     /**
      * Initializes a new instance of the Nfs3Exception class.
-     * <param name="status">The status result of an NFS procedure.</param>
+     * @param status The status result of an NFS procedure. 
      */
     Nfs3Exception(Nfs3Status status) {
         this(generateMessage(status));
         nfsStatus = status;
     }
-
-    /**
-     * Initializes a new instance of the Nfs3Exception class.
-     * <param name="info">The serialization info.</param>
-     * <param name="context">The streaming context.</param>
-     */
-//    private Nfs3Exception(SerializationInfo info, StreamingContext context) {
-//        this(info, context);
-//        nfsStatus = (Nfs3Status) info.GetInt32("Status");
-//    }
 
     /**
      * Gets the NFS status code that lead to the exception.
@@ -90,18 +81,6 @@ public class Nfs3Exception extends IOException {
     }
 
     private Nfs3Status nfsStatus = Nfs3Status.Unknown;
-
-    /**
-     * Serializes this exception.
-     * <param name="info">The object to populate with serialized data.</param>
-     * <param name="context">The context for this serialization.</param>
-     * [SecurityPermission(SecurityAction.LinkDemand, flags =
-     * SecurityPermissionFlag.SerializationFormatter)]
-     */
-//    public void getObjectData(SerializationInfo info, StreamingContext context) {
-//        info.AadValue("Status", (int) nfsStatus.ordinal());
-//        super.getObjectData(info, context);
-//    }
 
     private static String generateMessage(Nfs3Status status) {
         switch (status) {

@@ -23,7 +23,7 @@
 package discUtils.vhdx;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 public class BatEntry implements IByteArraySerializable {
@@ -34,7 +34,7 @@ public class BatEntry implements IByteArraySerializable {
     private long value;
 
     public BatEntry(byte[] buffer, int offset) {
-        value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+        value = ByteUtil.readLeLong(buffer, offset);
     }
 
     public PayloadBlockStatus getPayloadBlockStatus() {
@@ -54,23 +54,23 @@ public class BatEntry implements IByteArraySerializable {
     }
 
     public long getFileOffsetMB() {
-        return value >>> 20 & 0xFFFFFFFFFFFL;
+        return value >>> 20 & 0xFFF_FFFF_FFFFL;
     }
 
     public void setFileOffsetMB(long value) {
-        this.value = (this.value & 0xFFFFF) | value << 20;
+        this.value = (this.value & 0xF_FFFF) | value << 20;
     }
 
-    public int size() {
+    @Override public int size() {
         return 8;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        value = EndianUtilities.toUInt64LittleEndian(buffer, offset);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        value = ByteUtil.readLeLong(buffer, offset);
         return 8;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
-        EndianUtilities.writeBytesLittleEndian(value, buffer, offset);
+    @Override public void writeTo(byte[] buffer, int offset) {
+        ByteUtil.writeLeLong(value, buffer, offset);
     }
 }

@@ -43,7 +43,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
     private Map<String, DirEntry> allEntries;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<DirEntry> getAllEntries() {
+    @Override public List<DirEntry> getAllEntries() {
         if (allEntries != null)
             return new ArrayList<>(allEntries.values());
 
@@ -120,11 +120,11 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
         }
     }
 
-    public DirEntry getSelf() {
+    @Override public DirEntry getSelf() {
         return null;
     }
 
-    public DirEntry getEntryByName(String name) {
+    @Override public DirEntry getEntryByName(String name) {
         for (DirEntry entry  : getAllEntries()) {
             if (entry.getFileName().equals(name)) {
                 return entry;
@@ -133,7 +133,7 @@ public class Directory extends File implements IVfsDirectory<DirEntry, File> {
         return null;
     }
 
-    public DirEntry createNewFile(String name) {
+    @Override public DirEntry createNewFile(String name) {
         throw new UnsupportedOperationException();
     }
 }

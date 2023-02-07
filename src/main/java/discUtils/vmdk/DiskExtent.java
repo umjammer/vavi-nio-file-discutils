@@ -62,15 +62,18 @@ public final class DiskExtent extends VirtualDiskExtent {
         this.monolithicStream = monolithicStream;
     }
 
+    @Override
     public long getCapacity() {
         return descriptor.getSizeInSectors() * Sizes.Sector;
     }
 
+    @Override
     public boolean isSparse() {
         return descriptor.getType() == ExtentType.Sparse || descriptor.getType() == ExtentType.VmfsSparse ||
                descriptor.getType() == ExtentType.Zero;
     }
 
+    @Override
     public long getStoredSize() {
         if (monolithicStream != null) {
             return monolithicStream.getLength();
@@ -83,6 +86,7 @@ public final class DiskExtent extends VirtualDiskExtent {
         }
     }
 
+    @Override
     public MappedStream openContent(SparseStream parent, Ownership ownsParent) throws IOException {
         FileAccess access = FileAccess.Read;
         FileShare share = FileShare.Read;

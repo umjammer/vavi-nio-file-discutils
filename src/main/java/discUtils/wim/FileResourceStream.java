@@ -29,11 +29,11 @@ import java.util.List;
 import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
 import discUtils.streams.SubStream;
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.MathUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.SeekOrigin;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 /**
@@ -77,7 +77,7 @@ public class FileResourceStream extends SparseStream {
         chunkOffsets = new long[numChunks];
         chunkLength = new long[numChunks];
         for (int i = 1; i < numChunks; ++i) {
-            chunkOffsets[i] = EndianUtilities.toUInt32LittleEndian(StreamUtilities.readExact(this.baseStream, 4), 0);
+            chunkOffsets[i] = ByteUtil.readLeInt(StreamUtilities.readExact(this.baseStream, 4), 0);
             chunkLength[i - 1] = chunkOffsets[i] - chunkOffsets[i - 1];
         }
         chunkLength[numChunks - 1] = this.baseStream.getLength() - this.baseStream.position() - chunkOffsets[numChunks - 1];

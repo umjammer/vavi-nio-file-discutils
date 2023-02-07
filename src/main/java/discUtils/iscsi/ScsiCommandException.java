@@ -103,37 +103,13 @@ public class ScsiCommandException extends IscsiException {
     }
 
     /**
-     * Initializes a new instance of the ScsiCommandException class.
-     *
-     * @param info The serialization info.
-     * @param context Ther context.
-     */
-//    protected ScsiCommandException(SerializationInfo info, StreamingContext context) {
-//        super(info, context);
-//        _status = (ScsiStatus) info.getByte("status");
-//        senseData = (byte[]) info.getValue("senseData", byte[].class);
-//    }
-
-    /**
      * Gets the SCSI status associated with this exception.
      */
-    private ScsiStatus status = ScsiStatus.Good;
+    private ScsiStatus status;
 
     public ScsiStatus getStatus() {
         return status;
     }
-
-    /**
-     * Gets the serialized state of this exception.
-     *
-     * @param info The serialization info.
-     * @param context The serialization context.
-     */
-//    public void getObjectData(SerializationInfo info, StreamingContext context) {
-//        super.GetObjectData(info, context);
-//        info.addValue("status", (byte) _status.getValue());
-//        info.addValue("senseData", senseData);
-//    }
 
     /**
      * Gets the SCSI sense data (if any) associated with this exception.

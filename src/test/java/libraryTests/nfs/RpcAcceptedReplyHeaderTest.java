@@ -22,10 +22,6 @@
 
 package libraryTests.nfs;
 
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import discUtils.nfs.RpcAcceptStatus;
 import discUtils.nfs.RpcAcceptedReplyHeader;
 import discUtils.nfs.RpcAuthentication;
@@ -33,6 +29,9 @@ import discUtils.nfs.RpcMismatchInfo;
 import discUtils.nfs.XdrDataReader;
 import discUtils.nfs.XdrDataWriter;
 import dotnet4j.io.MemoryStream;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class RpcAcceptedReplyHeaderTest {

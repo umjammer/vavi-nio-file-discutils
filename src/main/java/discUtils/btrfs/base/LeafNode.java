@@ -68,11 +68,11 @@ public class LeafNode extends NodeHeader {
         nodeData = value;
     }
 
-    public int size() {
+    @Override public int size() {
         return super.size() + getItemCount() * KeyPointer.Length;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
+    @Override public int readFrom(byte[] buffer, int offset) {
         int itemOffset = super.readFrom(buffer, offset);
         items = new NodeItem[getItemCount()];
         nodeData = new BaseItem[getItemCount()];
@@ -136,7 +136,7 @@ public class LeafNode extends NodeHeader {
         return result;
     }
 
-    public List<BaseItem> find(Key key, Context context) {
+    @Override public List<BaseItem> find(Key key, Context context) {
         List<BaseItem> result = new ArrayList<>();
         for (int i = 0; i < items.length; i++) {
             if (items[i].getKey().getObjectId() > key.getObjectId())

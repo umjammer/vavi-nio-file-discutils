@@ -10,20 +10,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import discUtils.core.DiscFileSystemInfo;
+import discUtils.core.FileSystemParameters;
+import discUtils.core.coreCompat.FileAttributes;
+import discUtils.ext.ExtFileSystem;
+import dotnet4j.io.FileMode;
+import dotnet4j.io.Stream;
+import libraryTests.helpers.Helpers;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import discUtils.core.DiscFileSystemInfo;
-import discUtils.core.FileSystemParameters;
-import discUtils.core.coreCompat.FileAttributes;
-import discUtils.ext.ExtFileSystem;
-import libraryTests.helpers.Helpers;
-import dotnet4j.io.FileMode;
-import dotnet4j.io.Stream;
 
 
 public class ExtFileSystemTest {
@@ -36,7 +35,7 @@ public class ExtFileSystemTest {
                 ExtFileSystem fs = new ExtFileSystem(data, new FileSystemParameters())) {
             List<DiscFileSystemInfo> fsis = fs.getRoot().getFileSystemInfos();
             fsis.sort(Comparator.comparing(DiscFileSystemInfo::getName));
-            final Iterator<Consumer<DiscFileSystemInfo>> i = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
+            Iterator<Consumer<DiscFileSystemInfo>> i = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("bar", s.getName());
                 assertTrue(s.getAttributes().contains(FileAttributes.Directory));
             }, s -> {
@@ -52,7 +51,7 @@ public class ExtFileSystemTest {
 
             fsis = fs.getRoot().getDirectories("bar").get(0).getFileSystemInfos();
             fsis.sort(Comparator.comparing(DiscFileSystemInfo::getName));
-            final Iterator<Consumer<DiscFileSystemInfo>> j = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
+            Iterator<Consumer<DiscFileSystemInfo>> j = Arrays.<Consumer<DiscFileSystemInfo>> asList(s -> {
                 assertEquals("blah.txt", s.getName());
                 assertFalse(s.getAttributes().contains(FileAttributes.Directory));
             }, s -> {

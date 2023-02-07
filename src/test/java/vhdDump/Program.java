@@ -29,9 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
-import org.klab.commons.cli.Option;
-import org.klab.commons.cli.Options;
-
 import discUtils.common.ProgramBase;
 import discUtils.core.ReportLevels;
 import discUtils.vhd.DiskImageFile;
@@ -42,6 +39,8 @@ import dotnet4j.io.FileAccess;
 import dotnet4j.io.FileMode;
 import dotnet4j.io.FileStream;
 import dotnet4j.io.Stream;
+import org.klab.commons.cli.Option;
+import org.klab.commons.cli.Options;
 
 
 @Options
@@ -59,6 +58,7 @@ public class Program extends ProgramBase {
         program.run(args);
     }
 
+    @Override
     protected void doRun() throws IOException {
         if (!dontCheck) {
             try (Stream s = new FileStream(vhdFile, FileMode.Open, FileAccess.Read)) {

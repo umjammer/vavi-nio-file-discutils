@@ -3,7 +3,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
-  <version>0.14.4</version>
+  <version>0.14.5</version>
 
   <properties>
     <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId> <!-- com.github.umjammer.vavi-apps-fuse -->
@@ -104,6 +104,43 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>qlgenerator</id>
+      <activation>
+        <property>
+          <name>qlgenerator</name>
+          <value/>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <jar jarfile="${project.build.directory}/vavi-qlgenerator.jar"
+                         manifest="src/qlgenerator/resources/manifest.mf">
+                      <fileset dir="${project.build.outputDirectory}">
+                        <include name="vavi/apps/qlgenerator/*.class" />
+                      </fileset>
+                    </jar>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <build>
@@ -125,29 +162,6 @@
             <testExclude>msBuildTask/**</testExclude>
           </testExcludes>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <jar jarfile="${project.build.directory}/vavi-qlgenerator.jar"
-                     manifest="src/qlgenerator/resources/manifest.mf">
-                  <fileset dir="${project.build.outputDirectory}">
-                    <include name="vavi/apps/qlgenerator/*.class" />
-                  </fileset>
-                </jar>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -182,7 +196,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.1</version>
+        <version>5.9.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -193,14 +207,9 @@
     <dependency>
       <groupId>com.github.umjammer</groupId> <!-- com.github.umjammer -->
       <artifactId>vavi-commons</artifactId>
-      <version>1.1.8</version>
+      <version>1.1.9</version>
     </dependency>
 
-    <dependency>
-      <groupId>com.github.umjammer</groupId>
-      <artifactId>vavi-nio-file</artifactId>
-      <version>0.0.15</version>
-    </dependency>
     <dependency>
       <groupId>com.github.umjammer</groupId>
       <artifactId>java7-fs-base</artifactId>
@@ -287,6 +296,13 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>3.8.5</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.k9mail</groupId>
+      <artifactId>jutf7</artifactId>
+      <version>master-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

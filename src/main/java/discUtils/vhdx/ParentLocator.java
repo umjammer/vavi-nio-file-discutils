@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import discUtils.streams.IByteArraySerializable;
-import discUtils.streams.util.EndianUtilities;
+import vavi.util.ByteUtil;
 
 
 class ParentLocator implements IByteArraySerializable {
@@ -47,7 +47,7 @@ class ParentLocator implements IByteArraySerializable {
 
     private Map<String, String> entries;
 
-    public int size() {
+    @Override public int size() {
         if (entries.size() != 0) {
             throw new UnsupportedOperationException();
         }
@@ -55,21 +55,21 @@ class ParentLocator implements IByteArraySerializable {
         return 20;
     }
 
-    public int readFrom(byte[] buffer, int offset) {
-        locatorType = EndianUtilities.toGuidLittleEndian(buffer, offset + 0);
+    @Override public int readFrom(byte[] buffer, int offset) {
+        locatorType = ByteUtil.readLeUUID(buffer, offset + 0);
         if (!locatorType.equals(LocatorTypeGuid)) {
             throw new dotnet4j.io.IOException("Unrecognized Parent Locator type: " + locatorType);
         }
 
         entries = new HashMap<>();
 
-        count = EndianUtilities.toUInt16LittleEndian(buffer, offset + 18);
+        count = ByteUtil.readLeShort(buffer, offset + 18);
         for (short i = 0; i < (count & 0xffff); ++i) {
             int kvOffset = offset + 20 + i * 12;
-            int keyOffset = EndianUtilities.toInt32LittleEndian(buffer, kvOffset + 0);
-            int valueOffset = EndianUtilities.toInt32LittleEndian(buffer, kvOffset + 4);
-            int keyLength = EndianUtilities.toUInt16LittleEndian(buffer, kvOffset + 8);
-            int valueLength = EndianUtilities.toUInt16LittleEndian(buffer, kvOffset + 10);
+            int keyOffset = ByteUtil.readLeInt(buffer, kvOffset + 0);
+            int valueOffset = ByteUtil.readLeInt(buffer, kvOffset + 4);
+            int keyLength = ByteUtil.readLeShort(buffer, kvOffset + 8);
+            int valueLength = ByteUtil.readLeShort(buffer, kvOffset + 10);
 
             String key = new String(buffer, keyOffset, keyLength, StandardCharsets.UTF_16LE);
             String value = new String(buffer, valueOffset, valueLength, StandardCharsets.UTF_16LE);
@@ -80,15 +80,15 @@ class ParentLocator implements IByteArraySerializable {
         return 0;
     }
 
-    public void writeTo(byte[] buffer, int offset) {
+    @Override public void writeTo(byte[] buffer, int offset) {
         if (entries.size() != 0) {
             throw new UnsupportedOperationException();
         }
 
         count = (short) entries.size();
 
-        EndianUtilities.writeBytesLittleEndian(locatorType, buffer, offset + 0);
-        EndianUtilities.writeBytesLittleEndian(reserved, buffer, offset + 16);
-        EndianUtilities.writeBytesLittleEndian(count, buffer, offset + 18);
+        ByteUtil.writeLeUUID(locatorType, buffer, offset + 0);
+        ByteUtil.writeLeShort(reserved, buffer, offset + 16);
+        ByteUtil.writeLeShort(count, buffer, offset + 18);
     }
 }

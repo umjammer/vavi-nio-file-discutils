@@ -27,11 +27,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import discUtils.streams.util.EndianUtilities;
 import discUtils.streams.util.StreamUtilities;
 import dotnet4j.io.MemoryStream;
 import dotnet4j.io.NetworkStream;
 import dotnet4j.io.Stream;
+import vavi.util.ByteUtil;
 
 
 public final class RpcTcpTransport implements IRpcTransport {
@@ -58,6 +58,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         this.localPort = localPort;
     }
 
+    @Override
     public void close() throws IOException {
         if (tcpStream != null) {
             tcpStream.close();
@@ -70,6 +71,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         }
     }
 
+    @Override
     public byte[] sendAndReceive(byte[] message) {
         int retries = 0;
         int retryLimit = RetryLimit;
@@ -106,7 +108,7 @@ public final class RpcTcpTransport implements IRpcTransport {
                     retries++;
                     lastException = se;
                     if (!isNewConnection) {
-                        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+                        try { Thread.sleep(1000); } catch (InterruptedException ignored) {}
                     }
                 }
             }
@@ -137,18 +139,20 @@ public final class RpcTcpTransport implements IRpcTransport {
         return response;
     }
 
+    @Override
     public void send(byte[] message) {
         send(tcpStream, message);
     }
 
     public static void send(Stream stream, byte[] message) {
         byte[] header = new byte[4];
-        EndianUtilities.writeBytesBigEndian(0x80000000 | message.length, header, 0);
+        ByteUtil.writeBeInt(0x80000000 | message.length, header, 0);
         stream.write(header, 0, 4);
         stream.write(message, 0, message.length);
         stream.flush();
     }
 
+    @Override
     public byte[] receive() {
         return receive(tcpStream);
     }
@@ -158,7 +162,7 @@ public final class RpcTcpTransport implements IRpcTransport {
         boolean lastFragFound = false;
         while (!lastFragFound) {
             byte[] header = StreamUtilities.readExact(stream, 4);
-            int headerVal = EndianUtilities.toUInt32BigEndian(header, 0);
+            int headerVal = ByteUtil.readBeInt(header, 0);
             lastFragFound = (headerVal & 0x80000000) != 0;
             byte[] frag = StreamUtilities.readExact(stream, headerVal & 0x7FFFFFFF);
             if (ms != null) {

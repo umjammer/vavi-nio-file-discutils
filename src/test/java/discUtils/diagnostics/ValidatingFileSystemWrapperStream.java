@@ -121,7 +121,7 @@ public final class ValidatingFileSystemWrapperStream<Tfs extends DiscFileSystem 
         shadowPosition = value;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override public List<StreamExtent> getExtents() {
         long pos = shadowPosition;
         return (List) fileSystem.performActivity((fs, context) -> getNativeStream(fs, context, pos).getExtents());
