@@ -3,7 +3,7 @@
 
   <groupId>vavi</groupId>
   <artifactId>vavi-nio-file-discutils</artifactId>
-  <version>0.14.4</version>
+  <version>0.14.5</version>
 
   <properties>
     <vavi-net-fuse.groupId>com.github.umjammer.vavi-apps-fuse</vavi-net-fuse.groupId> <!-- com.github.umjammer.vavi-apps-fuse -->
@@ -113,31 +113,31 @@
           <value/>
         </property>
       </activation>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <target>
-                <jar jarfile="${project.build.directory}/vavi-qlgenerator.jar"
-                     manifest="src/qlgenerator/resources/manifest.mf">
-                  <fileset dir="${project.build.outputDirectory}">
-                    <include name="vavi/apps/qlgenerator/*.class" />
-                  </fileset>
-                </jar>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+              <execution>
+                <phase>compile</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <jar jarfile="${project.build.directory}/vavi-qlgenerator.jar"
+                         manifest="src/qlgenerator/resources/manifest.mf">
+                      <fileset dir="${project.build.outputDirectory}">
+                        <include name="vavi/apps/qlgenerator/*.class" />
+                      </fileset>
+                    </jar>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
