@@ -1744,8 +1744,7 @@ logger.log(Level.DEBUG, volumeInfo);
         }
 
         BlockCompressor _disposableCompressor = context.getOptions().getCompressor();
-        if (_disposableCompressor instanceof Closeable) {
-            Closeable disposableCompressor = (Closeable) _disposableCompressor;
+        if (_disposableCompressor instanceof Closeable disposableCompressor) {
             disposableCompressor.close();
             context.getOptions().setCompressor(null);
         }

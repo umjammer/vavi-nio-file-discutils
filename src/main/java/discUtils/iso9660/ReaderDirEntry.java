@@ -61,7 +61,7 @@ public final class ReaderDirEntry extends VfsDirEntry {
             // The full name is taken from this record, even if it's a child-link record
             List<SystemUseEntry> nameEntries = getSuspRecords().getEntries(this.context.getRockRidgeIdentifier(), "NM");
             StringBuilder rrName = new StringBuilder();
-            if (nameEntries != null && nameEntries.size() > 0) {
+            if (nameEntries != null && !nameEntries.isEmpty()) {
                 for (SystemUseEntry nameEntry : nameEntries) {
                     rrName.append(((PosixNameSystemUseEntry) nameEntry).nameData);
                 }

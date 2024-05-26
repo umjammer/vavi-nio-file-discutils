@@ -369,7 +369,7 @@ public class DynamicStream extends MappedStream {
                 fileStream.write(sectorBuffer, 0, Sizes.Sector);
                 // Update the in-memory block bitmap
                 if ((blockBitmaps[(int) block][sectorInBlock / 8] & sectorMask) == 0) {
-                    blockBitmaps[(int) block][sectorInBlock / 8] |= sectorMask;
+                    blockBitmaps[(int) block][sectorInBlock / 8] = (byte) (blockBitmaps[(int) block][sectorInBlock / 8] | sectorMask);
                     blockBitmapDirty = true;
                 }
 
@@ -382,7 +382,7 @@ public class DynamicStream extends MappedStream {
                     // Update all of the bits in the block bitmap
                     byte sectorMask = (byte) (1 << (7 - sectorInBlock % 8));
                     if ((blockBitmaps[(int) block][sectorInBlock / 8] & sectorMask) == 0) {
-                        blockBitmaps[(int) block][sectorInBlock / 8] |= sectorMask;
+                        blockBitmaps[(int) block][sectorInBlock / 8] = (byte) (blockBitmaps[(int) block][sectorInBlock / 8] | sectorMask);
                         blockBitmapDirty = true;
                     }
 

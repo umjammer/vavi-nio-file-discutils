@@ -238,15 +238,10 @@ public final class DiskImageFile extends VirtualDiskLayer {
     }
 
     private static long floppyCapacity(FloppyDiskType type) {
-        switch (type) {
-        case DoubleDensity:
-            return Sizes.Sector * 1440;
-        case HighDensity:
-            return Sizes.Sector * 2880;
-        case Extended:
-            return Sizes.Sector * 5760;
-        default:
-            throw new IllegalArgumentException("Invalid floppy disk type " + type);
-        }
+        return switch (type) {
+            case DoubleDensity -> Sizes.Sector * 1440;
+            case HighDensity -> Sizes.Sector * 2880;
+            case Extended -> Sizes.Sector * 5760;
+        };
     }
 }

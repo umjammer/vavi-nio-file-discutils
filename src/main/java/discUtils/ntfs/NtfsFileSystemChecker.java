@@ -141,7 +141,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
         context.setBiosParameterBlock(BiosParameterBlock.fromBytes(bytes, 0));
 
-        // -----------------------------------------------------------------------
+        //
         // MASTER FILE TABLE
         //
 
@@ -159,7 +159,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         verifyMft();
         context.getMft().dump(report, "INFO: ");
 
-        // -----------------------------------------------------------------------
+        //
         // INDEXES
         //
 
@@ -168,22 +168,22 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         context.setUpperCase(new UpperCase(ucFile));
         selfCheckIndexes();
 
-        // -----------------------------------------------------------------------
+        //
         // DIRECTORIES
         //
         verifyDirectories();
 
-        // -----------------------------------------------------------------------
+        //
         // WELL KNOWN FILES
         //
         verifyWellKnownFilesExist();
 
-        // -----------------------------------------------------------------------
+        //
         // OBJECT IDS
         //
         verifyObjectIds();
 
-        // -----------------------------------------------------------------------
+        //
         // FINISHED
         //
 
@@ -247,7 +247,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
         for (Map.Entry<UUID, ObjectIdRecord> objIdRec : context.getObjectIds().getAll().entrySet()) {
             if (context.getMft().getRecord(objIdRec.getValue().mftReference) == null) {
-                reportError("ObjectId %s refers to non-existant file %s", objIdRec.getKey(), objIdRec.getValue().mftReference);
+                reportError("ObjectId %s refers to non-existent file %s", objIdRec.getKey(), objIdRec.getValue().mftReference);
             }
         }
     }
@@ -420,12 +420,12 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
                 } else {
                     if (!verifyMftRecord(recordData, bitmap.isPresent(index), bytesPerSector)) {
                         reportError("Invalid MFT record at index %s", index);
-                        StringBuilder bldr = new StringBuilder();
+                        StringBuilder sb = new StringBuilder();
                         for (byte recordDatum : recordData) {
-                            bldr.append(String.format(" %2x}", recordDatum));
+                            sb.append(String.format(" %2x}", recordDatum));
                         }
 
-                        reportInfo("MFT record binary data for index %s:%s", index, bldr.toString());
+                        reportInfo("MFT record binary data for index %s:%s", index, sb.toString());
                     }
                 }
 
@@ -436,8 +436,8 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
         }
     }
 
+    /** Cluster allocation check - check for double allocations */
     private void verifyMft() {
-        // Cluster allocation check - check for double allocations
         Map<Long, String> clusterMap = new HashMap<>();
         for (FileRecord fr : context.getMft().getRecords()) {
             if (fr.getFlags().contains(FileRecordFlags.InUse)) {
@@ -489,7 +489,7 @@ public final class NtfsFileSystemChecker extends DiscFileSystemChecker {
 
                 if (ar.isNonResident()) {
                     NonResidentAttributeRecord nrr = (NonResidentAttributeRecord) ar;
-                    if (nrr.getDataRuns().size() > 0) {
+                    if (!nrr.getDataRuns().isEmpty()) {
                         long totalVcn = 0;
                         for (DataRun run : nrr.getDataRuns()) {
                             totalVcn += run.getRunLength();

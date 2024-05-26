@@ -237,7 +237,7 @@ logger.log(Level.DEBUG, "send: " + msgBytes.length);
                     }
                 }
 
-                if (typeRecords.getValue().size() == 0) {
+                if (typeRecords.getValue().isEmpty()) {
                     removeTypes.add(typeRecords.getKey());
                 }
             }
@@ -246,7 +246,7 @@ logger.log(Level.DEBUG, "send: " + msgBytes.length);
                 nameRecord.getValue().remove(recordType);
             }
 
-            if (nameRecord.getValue().size() == 0) {
+            if (nameRecord.getValue().isEmpty()) {
                 removeNames.add(nameRecord.getKey());
             }
         }

@@ -63,7 +63,7 @@ public final class DiscTransport implements VirtualDiskTransport {
         try {
             String domain = uri.getHost();
             String[] pathParts;
-            pathParts = Arrays.stream(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8.name()).split("/"))
+            pathParts = Arrays.stream(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8).split("/"))
                     .filter(e -> !e.isEmpty())
                     .toArray(String[]::new);
             String instance = pathParts[0];
@@ -87,7 +87,7 @@ logger.log(Level.DEBUG, "service: " + service.getDisplayName());
             if (disk == null) {
                 throw new FileNotFoundException("No such disk " + uri);
             }
-        } catch (UnsupportedEncodingException | UnknownHostException e) {
+        } catch (UnknownHostException e) {
             throw new IllegalStateException(e);
         }
     }

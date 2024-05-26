@@ -393,6 +393,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
      * @return list of candidate file locations.
      * @deprecated Use {@link #getParentLocations()} by preference
      */
+    @Deprecated
     public List<String> getParentLocations(String basePath) {
         return getParentLocations(new LocalFileLocator(basePath));
     }
@@ -616,7 +617,7 @@ public final class DiskImageFile extends VirtualDiskLayer {
         paths.addAll(relPaths);
 
         // As a back-up, try to infer from the parent name...
-        if (paths.size() == 0) {
+        if (paths.isEmpty()) {
             paths.add(fileLocator.resolveRelativePath(dynamicHeader.parentUnicodeName));
         }
 

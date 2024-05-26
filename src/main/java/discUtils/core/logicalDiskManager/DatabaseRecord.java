@@ -52,26 +52,14 @@ public abstract class DatabaseRecord {
     public static DatabaseRecord readFrom(byte[] buffer, int[] offset) {
         DatabaseRecord result = null;
         if (ByteUtil.readBeInt(buffer, offset[0] + 0xC) != 0) {
-            switch (RecordType.values()[buffer[offset[0] + 0x13] & 0xF]) {
-            case Volume:
-                result = new VolumeRecord();
-                break;
-            case Component:
-                result = new ComponentRecord();
-                break;
-            case Extent:
-                result = new ExtentRecord();
-                break;
-            case Disk:
-                result = new DiskRecord();
-                break;
-            case DiskGroup:
-                result = new DiskGroupRecord();
-                break;
-            default:
-                throw new IllegalArgumentException("Unrecognized record type: " + buffer[offset[0] + 0x13]);
-
-            }
+            result = switch (RecordType.values()[buffer[offset[0] + 0x13] & 0xF]) {
+                case Volume -> new VolumeRecord();
+                case Component -> new ComponentRecord();
+                case Extent -> new ExtentRecord();
+                case Disk -> new DiskRecord();
+                case DiskGroup -> new DiskGroupRecord();
+                default -> throw new IllegalArgumentException("Unrecognized record type: " + buffer[offset[0] + 0x13]);
+            };
             result.doReadFrom(buffer, offset[0]);
         }
 

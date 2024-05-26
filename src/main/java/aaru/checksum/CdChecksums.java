@@ -71,23 +71,23 @@ public class CdChecksums {
 
         switch (buffer.length) {
         case 2448: {
-            byte[] subchannel = new byte[96];
+            byte[] subChannel = new byte[96];
             byte[] channel = new byte[2352];
 
             System.arraycopy(buffer, 0, channel, 0, 2352);
-            System.arraycopy(buffer, 2352, subchannel, 0, 96);
+            System.arraycopy(buffer, 2352, subChannel, 0, 96);
 
             Boolean channelStatus =
                     checkCdSectorChannel(channel, /*out*/ correctEccP, /*out*/ correctEccQ, /*out*/ correctEdc);
 
-            Boolean subchannelStatus = checkCdSectorSubChannel(subchannel);
+            Boolean subChannelStatus = checkCdSectorSubChannel(subChannel);
             Boolean status = null;
 
-            if (!channelStatus || !subchannelStatus)
+            if (!channelStatus || !subChannelStatus)
                 status = false;
-            if (channelStatus == null && subchannelStatus) {
+            if (channelStatus == null && subChannelStatus) {
                 status = true;
-            } else if (channelStatus && subchannelStatus == null) {
+            } else if (channelStatus && subChannelStatus == null) {
                 status = true;
             }
 
@@ -137,8 +137,8 @@ public class CdChecksums {
                 if (index >= size)
                     index -= size;
 
-                eccA ^= temp;
-                eccB ^= temp;
+                eccA = (byte) (eccA ^ temp);
+                eccB = (byte) (eccB ^ temp);
                 eccA = eccFTable[eccA];
             }
 

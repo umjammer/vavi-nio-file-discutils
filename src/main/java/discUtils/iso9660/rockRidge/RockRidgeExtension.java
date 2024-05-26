@@ -42,17 +42,12 @@ public final class RockRidgeExtension extends SuspExtension {
     }
 
     @Override public SystemUseEntry parse(String name, byte length, byte version, byte[] data, int offset, Charset encoding) {
-        switch (name) {
-        case "PX":
-            return new PosixFileInfoSystemUseEntry(name, length, version, data, offset);
-        case "NM":
-            return new PosixNameSystemUseEntry(name, length, version, data, offset);
-        case "CL":
-            return new ChildLinkSystemUseEntry(name, length, version, data, offset);
-        case "TF":
-            return new FileTimeSystemUseEntry(name, length, version, data, offset);
-        default:
-            return new GenericSystemUseEntry(name, length, version, data, offset);
-        }
+        return switch (name) {
+            case "PX" -> new PosixFileInfoSystemUseEntry(name, length, version, data, offset);
+            case "NM" -> new PosixNameSystemUseEntry(name, length, version, data, offset);
+            case "CL" -> new ChildLinkSystemUseEntry(name, length, version, data, offset);
+            case "TF" -> new FileTimeSystemUseEntry(name, length, version, data, offset);
+            default -> new GenericSystemUseEntry(name, length, version, data, offset);
+        };
     }
 }

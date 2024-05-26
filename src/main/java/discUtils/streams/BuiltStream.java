@@ -179,7 +179,7 @@ public class BuiltStream extends SparseStream {
         int min = 0;
         int max = extents.size() - 1;
 
-        if (extents.size() == 0 ||
+        if (extents.isEmpty() ||
             extents.get(extents.size() - 1).getStart() + extents.get(extents.size() - 1).getLength() <= pos) {
             return null;
         }

@@ -53,28 +53,14 @@ public abstract class Cell implements IByteArraySerializable {
 
     public static Cell parse(RegistryHive hive, int index, byte[] buffer, int pos) {
         String type = new String(buffer, pos, 2, StandardCharsets.US_ASCII);
-        Cell result;
-        switch (type) {
-        case "nk":
-            result = new KeyNodeCell(index);
-            break;
-        case "sk":
-            result = new SecurityCell(index);
-            break;
-        case "vk":
-            result = new ValueCell(index);
-            break;
-        case "lh":
-        case "lf":
-            result = new SubKeyHashedListCell(hive, index);
-            break;
-        case "li":
-        case "ri":
-            result = new SubKeyIndirectListCell(hive, index);
-            break;
-        default:
-            throw new IllegalArgumentException("Unknown cell type '" + type + "'");
-        }
+        Cell result = switch (type) {
+            case "nk" -> new KeyNodeCell(index);
+            case "sk" -> new SecurityCell(index);
+            case "vk" -> new ValueCell(index);
+            case "lh", "lf" -> new SubKeyHashedListCell(hive, index);
+            case "li", "ri" -> new SubKeyIndirectListCell(hive, index);
+            default -> throw new IllegalArgumentException("Unknown cell type '" + type + "'");
+        };
         result.readFrom(buffer, pos);
         return result;
     }

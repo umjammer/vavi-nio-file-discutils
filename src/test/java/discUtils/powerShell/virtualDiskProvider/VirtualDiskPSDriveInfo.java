@@ -65,7 +65,7 @@ public final class VirtualDiskPSDriveInfo extends PSDriveInfo {
         DiscFileSystem result;
         if (!fsCache.containsKey(volInfo.getIdentity())) {
             List<FileSystemInfo> fsInfo = FileSystemManager.detectFileSystems(volInfo);
-            if (fsInfo != null && fsInfo.size() > 0) {
+            if (fsInfo != null && !fsInfo.isEmpty()) {
                 result = fsInfo.get(0).open(volInfo);
                 fsCache.put(volInfo.getIdentity(), result);
             }

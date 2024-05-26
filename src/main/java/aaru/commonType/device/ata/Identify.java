@@ -734,7 +734,7 @@ public class Identify {
          */
         @Element(sequence = 1, value = "unsigned short")
         public EnumSet<GeneralConfigurationBit> generalConfigurationBit;
-        /** Word 1 cylinders in default translation mode Obsoleted in ATA/ATAPI-6 */
+        /** Word 1: cylinders in default translation mode Obsoleted in ATA/ATAPI-6 */
         @Element(sequence = 2)
         public short cylinders;
         /** Word 2 Specific configuration */
@@ -1292,8 +1292,7 @@ logger.log(Level.DEBUG, "ATA/ATAPI IDENTIFY decoder IDENTIFY response is differe
     static byte[] scrambleATAString(String str, int length) {
         byte[] buf = new byte[length];
 
-        for (int i = 0; i < length; i++)
-            buf[i] = 0x20;
+        Arrays.fill(buf, (byte) 0x20);
 
         if (str == null)
             return buf;

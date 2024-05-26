@@ -47,11 +47,11 @@ import static java.lang.System.getLogger;
  */
 public class LogicalVolumeManager {
 
-    private List<PhysicalVolume> devices;
     private static final Logger logger = getLogger(LogicalVolumeManager.class.getName());
 
+    private final List<PhysicalVolume> devices;
 
-    private List<MetadataVolumeGroupSection> volumeGroups;
+    private final List<MetadataVolumeGroupSection> volumeGroups;
 
     /**
      * Initializes a new instance of the LogicalVolumeManager class.

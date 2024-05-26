@@ -121,7 +121,7 @@ public class BiosPartitionedDiskBuilder extends StreamBuilder {
     /**
      * Gets the partition table in the disk.
      */
-    private BiosPartitionTable partitionTable;
+    private final BiosPartitionTable partitionTable;
 
     public BiosPartitionTable getPartitionTable() {
         return partitionTable;

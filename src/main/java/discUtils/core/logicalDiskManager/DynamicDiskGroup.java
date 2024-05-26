@@ -245,7 +245,7 @@ public class DynamicDiskGroup implements IDiagnosticTraceable {
             }
 
         }
-        if (cmpntStreams.size() < 1) {
+        if (cmpntStreams.isEmpty()) {
             throw new dotnet4j.io.IOException("Volume with no associated or healthy components");
         }
 

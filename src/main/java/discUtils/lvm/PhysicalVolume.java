@@ -58,7 +58,7 @@ public class PhysicalVolume {
         content.position(physicalVolumeLabel.sector * SECTOR_SIZE);
         byte[] buffer = StreamUtilities.readExact(content, SECTOR_SIZE);
         pvHeader.readFrom(buffer, (int) physicalVolumeLabel.offset);
-        if (pvHeader.metadataDiskAreas.size() > 0) {
+        if (!pvHeader.metadataDiskAreas.isEmpty()) {
             DiskArea area = pvHeader.metadataDiskAreas.get(0);
             VolumeGroupMetadata metadata = new VolumeGroupMetadata();
             content.position(area.offset);

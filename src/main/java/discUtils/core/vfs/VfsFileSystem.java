@@ -347,8 +347,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
         if (attributeName == null || attributeName.isEmpty()) {
             stream = new BufferStream(file.getFileContent(), access);
         } else {
-            if (file instanceof IVfsFileWithStreams) {
-                IVfsFileWithStreams fileStreams = (IVfsFileWithStreams) file;
+            if (file instanceof IVfsFileWithStreams fileStreams) {
                 stream = fileStreams.openExistingStream(attributeName);
                 if (stream == null) {
                     if (mode == FileMode.Create || mode == FileMode.OpenOrCreate) {
@@ -697,7 +696,7 @@ public abstract class VfsFileSystem<TDirEntry extends VfsDirEntry, TFile extends
 
     private TDirEntry resolveSymlink(TDirEntry entry, String path) {
         TDirEntry currentEntry = entry;
-        if (path.length() > 0 && path.charAt(0) != FSC) {
+        if (!path.isEmpty() && path.charAt(0) != FSC) {
             path = FSC + path;
         }
         String currentPath = path;

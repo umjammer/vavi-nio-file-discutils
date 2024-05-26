@@ -221,8 +221,8 @@ public class SectorBuilder {
                 if (idx >= size)
                     idx -= size;
 
-                eccA ^= temp;
-                eccB ^= temp;
+                eccA = (byte) (eccA ^ temp);
+                eccB = (byte) (eccB ^ temp);
                 eccA = eccFTable[eccA];
             }
 

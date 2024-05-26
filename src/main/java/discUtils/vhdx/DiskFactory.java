@@ -66,14 +66,13 @@ public final class DiskFactory implements VirtualDiskFactory {
                                   String variant,
                                   String path,
                                   VirtualDiskParameters diskParameters) {
-        switch (variant) {
-        case "fixed":
-            return Disk.initializeFixed(locator, path, diskParameters.getCapacity(), diskParameters.getGeometry());
-        case "dynamic":
-            return Disk.initializeDynamic(locator, path, diskParameters.getCapacity(), FileParameters.DefaultDynamicBlockSize);
-        default:
-            throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
-        }
+        return switch (variant) {
+            case "fixed" ->
+                    Disk.initializeFixed(locator, path, diskParameters.getCapacity(), diskParameters.getGeometry());
+            case "dynamic" ->
+                    Disk.initializeDynamic(locator, path, diskParameters.getCapacity(), FileParameters.DefaultDynamicBlockSize);
+            default -> throw new IllegalArgumentException(String.format("Unknown VHD disk variant '%s'", variant));
+        };
     }
 
     @Override

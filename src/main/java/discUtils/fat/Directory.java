@@ -102,7 +102,7 @@ public class Directory implements Closeable {
     }
 
     public boolean isEmpty() {
-        return entries.size() == 0;
+        return entries.isEmpty();
     }
 
     public List<DirectoryEntry> getDirectories() {
@@ -264,7 +264,7 @@ public class Directory implements Closeable {
         // Unlink an entry from the free list (or add to the end of the existing
         // directory)
         long pos;
-        if (freeEntries.size() > 0) {
+        if (!freeEntries.isEmpty()) {
             pos = freeEntries.get(0);
             freeEntries.remove(0);
         } else {

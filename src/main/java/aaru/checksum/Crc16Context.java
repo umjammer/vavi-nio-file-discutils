@@ -242,7 +242,7 @@ public class Crc16Context {
             read = fileStream.read(buffer, 0, 65536);
         }
 
-        localHashInt[0] ^= seed;
+        localHashInt[0] = (short) (localHashInt[0] ^ seed);
 
         if (inverse)
             localHashInt[0] = (short) ~localHashInt[0];
@@ -284,7 +284,7 @@ public class Crc16Context {
         else
             step(/*ref*/ localHashInt, localTable, data, len);
 
-        localHashInt[0] ^= seed;
+        localHashInt[0] = (short) (localHashInt[0] ^ seed);
 
         if (inverse)
             localHashInt[0] = (short) ~localHashInt[0];
@@ -321,7 +321,7 @@ public class Crc16Context {
         else
             step(/*ref*/ localHashInt, localTable, buffer, buffer.length);
 
-        localHashInt[0] ^= seed;
+        localHashInt[0] = (short) (localHashInt[0] ^ seed);
 
         if (inverse)
             localHashInt[0] = (short) ~localHashInt[0];

@@ -48,33 +48,26 @@ public abstract class SystemUseEntry {
         length[0] = data[offset + 2];
         byte version = data[offset + 3];
 
-        switch (name) {
-        case "CE":
-            return new ContinuationSystemUseEntry(name, length[0], version, data, offset);
-        case "PD":
-            return new PaddingSystemUseEntry(name, length[0], version);
-        case "SP":
-            return new SharingProtocolSystemUseEntry(name, length[0], version, data, offset);
-        case "ST":
-            // Termination entry. There's no point in storing or validating this one.
-            // Return null to indicate to the caller that SUSP parsing is terminated.
-            return null;
-        case "ER":
-            return new ExtensionSystemUseEntry(name, length[0], version, data, offset, encoding);
-        case "ES":
-            return new ExtensionSelectSystemUseEntry(name, length[0], version, data, offset);
-        case "AA":
-        case "AB":
-        case "AS":
-            // Placeholder support for Apple and Amiga extension records.
-            return new GenericSystemUseEntry(name, length[0], version, data, offset);
-        default:
-            if (extension == null) {
-                return new GenericSystemUseEntry(name, length[0], version, data, offset);
+        return switch (name) {
+            case "CE" -> new ContinuationSystemUseEntry(name, length[0], version, data, offset);
+            case "PD" -> new PaddingSystemUseEntry(name, length[0], version);
+            case "SP" -> new SharingProtocolSystemUseEntry(name, length[0], version, data, offset);
+            case "ST" ->
+                // Termination entry. There's no point in storing or validating this one.
+                // Return null to indicate to the caller that SUSP parsing is terminated.
+                    null;
+            case "ER" -> new ExtensionSystemUseEntry(name, length[0], version, data, offset, encoding);
+            case "ES" -> new ExtensionSelectSystemUseEntry(name, length[0], version, data, offset);
+            case "AA", "AB", "AS" ->
+                // Placeholder support for Apple and Amiga extension records.
+                    new GenericSystemUseEntry(name, length[0], version, data, offset);
+            default -> {
+                if (extension == null) {
+                    yield new GenericSystemUseEntry(name, length[0], version, data, offset);
+                }
+                yield extension.parse(name, length[0], version, data, offset, encoding);
             }
-
-            return extension.parse(name, length[0], version, data, offset, encoding);
-        }
+        };
     }
 
     protected void checkAndSetCommonProperties(String name, byte length, byte version, byte minLength, byte maxVersion) {

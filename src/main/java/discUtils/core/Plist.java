@@ -126,24 +126,16 @@ public class Plist {
 
     private static Object parseNode(Node xmlNode) {
         String nodeName = xmlNode.getNodeName();
-        switch (nodeName) {
-        case "dict":
-            return parseMap(xmlNode);
-        case "array":
-            return parseArray(xmlNode);
-        case "string":
-            return parseString(xmlNode);
-        case "data":
-            return parseData(xmlNode);
-        case "integer":
-            return parseInteger(xmlNode);
-        case "true":
-            return true;
-        case "false":
-            return false;
-        default:
-            throw new UnsupportedOperationException();
-        }
+        return switch (nodeName) {
+            case "dict" -> parseMap(xmlNode);
+            case "array" -> parseArray(xmlNode);
+            case "string" -> parseString(xmlNode);
+            case "data" -> parseData(xmlNode);
+            case "integer" -> parseInteger(xmlNode);
+            case "true" -> true;
+            case "false" -> false;
+            default -> throw new UnsupportedOperationException();
+        };
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

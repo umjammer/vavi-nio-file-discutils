@@ -135,7 +135,7 @@ public final class Disk extends VirtualDisk {
      *            the image files.
      */
     public Disk(List<DiskImageFile> files, Ownership ownsFiles) {
-        if (files == null || files.size() == 0) {
+        if (files == null || files.isEmpty()) {
             throw new IllegalArgumentException("At least one file must be provided");
         }
 

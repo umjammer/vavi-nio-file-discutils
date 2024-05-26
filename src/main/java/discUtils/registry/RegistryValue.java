@@ -165,23 +165,18 @@ public final class RegistryValue {
     }
 
     private static Object convertToObject(byte[] data, RegistryValueType type) {
-        switch (type) {
-        case String:
-        case ExpandString:
-        case Link:
-            return new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
-        case Dword:
-            return ByteUtil.readLeInt(data, 0);
-        case DwordBigEndian:
-            return ByteUtil.readBeInt(data, 0);
-        case MultiString:
-            String multiString = new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
-            return multiString.split("\0");
-        case QWord:
-            return "" + ByteUtil.readLeLong(data, 0);
-        default:
-            return data;
-        }
+        return switch (type) {
+            case String, ExpandString, Link ->
+                    new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
+            case Dword -> ByteUtil.readLeInt(data, 0);
+            case DwordBigEndian -> ByteUtil.readBeInt(data, 0);
+            case MultiString -> {
+                String multiString = new String(data, StandardCharsets.UTF_16LE).replaceAll("(^\0*|\0*$)", "");
+                yield multiString.split("\0");
+            }
+            case QWord -> "" + ByteUtil.readLeLong(data, 0);
+            default -> data;
+        };
     }
 
     private static byte[] convertToData(Object value, RegistryValueType valueType) {

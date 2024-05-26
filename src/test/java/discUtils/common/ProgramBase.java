@@ -213,7 +213,7 @@ public class ProgramBase implements Options.ExceptionHandler<ProgramBase> {
         List<String> outputTypes = new ArrayList<>();
         for (String type : VirtualDiskManager.getSupportedDiskTypes()) {
             List<String> variants = Arrays.asList(VirtualDisk.getSupportedDiskVariants(type));
-            if (variants.size() == 0) {
+            if (variants.isEmpty()) {
                 outputTypes.add(type.toUpperCase());
             } else {
                 for (String variant : variants) {

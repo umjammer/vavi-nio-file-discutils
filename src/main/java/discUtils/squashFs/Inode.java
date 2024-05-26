@@ -97,20 +97,13 @@ abstract class Inode implements IByteArraySerializable {
     }
 
     private static Inode instantiateType(InodeType type) {
-        switch (type) {
-        case Directory:
-            return new DirectoryInode();
-        case ExtendedDirectory:
-            return new ExtendedDirectoryInode();
-        case File:
-            return new RegularInode();
-        case Symlink:
-            return new SymlinkInode();
-        case CharacterDevice:
-        case BlockDevice:
-            return new DeviceInode();
-        default:
-            throw new UnsupportedOperationException("Inode type not implemented: " + type);
-        }
+        return switch (type) {
+            case Directory -> new DirectoryInode();
+            case ExtendedDirectory -> new ExtendedDirectoryInode();
+            case File -> new RegularInode();
+            case Symlink -> new SymlinkInode();
+            case CharacterDevice, BlockDevice -> new DeviceInode();
+            default -> throw new UnsupportedOperationException("Inode type not implemented: " + type);
+        };
     }
 }

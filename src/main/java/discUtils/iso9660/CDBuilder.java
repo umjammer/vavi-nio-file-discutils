@@ -509,10 +509,9 @@ public final class CDBuilder extends StreamBuilder {
                     return null;
                 }
             } else {
-                if (!(next[0] instanceof BuildDirectoryInfo)) {
+                if (!(next[0] instanceof BuildDirectoryInfo nextAsBuildDirectoryInfo)) {
                     throw new IOException("File with conflicting name exists");
                 }
-                BuildDirectoryInfo nextAsBuildDirectoryInfo = (BuildDirectoryInfo) next[0];
                 focus = nextAsBuildDirectoryInfo;
             }
         }

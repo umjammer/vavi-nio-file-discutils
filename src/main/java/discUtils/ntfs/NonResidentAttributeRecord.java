@@ -99,7 +99,7 @@ final class NonResidentAttributeRecord extends AttributeRecord {
             compressionUnitSize = DefaultCompressionUnitSize;
         }
 
-        if (dataRuns != null && dataRuns.size() != 0) {
+        if (dataRuns != null && !dataRuns.isEmpty()) {
             lastVCN = startingVCN;
             for (DataRun run : dataRuns) {
                 lastVCN += run.getRunLength();

@@ -139,7 +139,7 @@ public class Utilities {
      * @return The combined path.
      */
     public static String combinePaths(String a, String b) {
-        if (Objects.isNull(a) || a.isEmpty() || (b.length() > 0 && b.charAt(0) == FSC)) {
+        if (Objects.isNull(a) || a.isEmpty() || (!b.isEmpty() && b.charAt(0) == FSC)) {
             return b;
         }
 
@@ -197,12 +197,12 @@ public class Utilities {
     public static String makeRelativePath(String path, String basePath) {
         List<String> pathElements = Arrays.stream(path.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
-                .collect(Collectors.toList());
+                .toList();
         List<String> basePathElements = Arrays.stream(basePath.split(StringUtilities.escapeForRegex(FS)))
                 .filter(e -> !e.isEmpty())
                 .collect(Collectors.toList());
 
-        if (!basePath.endsWith(FS) && basePathElements.size() > 0) {
+        if (!basePath.endsWith(FS) && !basePathElements.isEmpty()) {
             basePathElements.remove(basePathElements.size() - 1);
         }
 

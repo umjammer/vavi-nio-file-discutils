@@ -89,7 +89,7 @@ try {
     }
 
     @Override public void close() throws IOException {
-new Exception("*** DUMMY ***").printStackTrace();
+new Exception("*** DUMMY ***").printStackTrace(System.err);
         wrapped.close();
         wrapped = null;
     }

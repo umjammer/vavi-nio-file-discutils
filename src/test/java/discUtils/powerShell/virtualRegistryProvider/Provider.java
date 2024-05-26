@@ -366,7 +366,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
         } else {
             filePath = path.substring(0, mountSepIdx);
             relPath = path.substring(mountSepIdx + 1);
-            if (relPath.length() > 0 && relPath.charAt(0) == File.separatorChar) {
+            if (!relPath.isEmpty() && relPath.charAt(0) == File.separatorChar) {
                 relPath = relPath.substring(1);
             }
 
@@ -396,7 +396,7 @@ public final class Provider extends NavigationCmdletProvider implements IDynamic
     }
 
     private boolean isMatch(String valueName, Collection<String> filters) {
-        if (filters == null || filters.size() == 0) {
+        if (filters == null || filters.isEmpty()) {
             return true;
         }
 

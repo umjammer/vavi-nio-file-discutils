@@ -24,5 +24,3 @@ public interface EnumSettable {
 
     Function<Integer, Boolean> function();
 }
-
-/* */

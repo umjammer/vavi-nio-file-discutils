@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
+import vavi.util.Debug;
 import vavi.util.properties.annotation.Property;
 import vavi.util.properties.annotation.PropsEntity;
 import vavix.util.Checksum;
@@ -76,7 +77,7 @@ class DiscUtilsTest {
             try {
                 System.err.println(p + ", " + Files.getLastModifiedTime(p));
             } catch (IOException e) {
-                e.printStackTrace();
+                Debug.printStackTrace(e);
             }
         });
         fs.close();
@@ -140,6 +141,7 @@ class DiscUtilsTest {
     }
 
     @Test
+    @Disabled("no win95 disk")
     @DisplayName("vdi/fat16")
     void test6() throws Exception {
         String file = discImageVDI;
@@ -162,5 +164,3 @@ class DiscUtilsTest {
         fs.close();
     }
 }
-
-/* */

@@ -59,7 +59,7 @@ public class BasicHeaderSegment implements IByteArraySerializable {
 
     @Override public void writeTo(byte[] buffer, int offset) {
         buffer[offset] = (byte) ((immediate ? 0x40 : 0x00) | (opCode.ordinal() & 0x3F));
-        buffer[offset + 1] |= (byte) (finalPdu ? 0x80 : 0x00);
+        buffer[offset + 1] = (byte) (buffer[offset + 1] | (byte) (finalPdu ? 0x80 : 0x00));
         buffer[offset + 4] = totalAhsLength;
         buffer[offset + 5] = (byte) ((dataSegmentLength >>> 16) & 0xFF);
         buffer[offset + 6] = (byte) ((dataSegmentLength >>> 8) & 0xFF);

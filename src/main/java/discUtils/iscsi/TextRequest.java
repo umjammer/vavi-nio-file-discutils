@@ -61,7 +61,7 @@ public class TextRequest {
         expectedStatusSequenceNumber = connection.getExpectedStatusSequenceNumber();
         byte[] buffer = new byte[MathUtilities.roundUp(48 + count, 4)];
         basicHeader.writeTo(buffer, 0);
-        buffer[1] |= (byte) (continue_ ? 0x40 : 0x00);
+        buffer[1] = (byte) (buffer[1] | (byte) (continue_ ? 0x40 : 0x00));
         ByteUtil.writeBeLong(lun, buffer, 8);
         ByteUtil.writeBeInt(targetTransferTag, buffer, 20);
         ByteUtil.writeBeInt(commandSequenceNumber, buffer, 24);

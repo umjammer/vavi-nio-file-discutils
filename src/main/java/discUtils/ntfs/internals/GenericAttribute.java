@@ -99,15 +99,11 @@ public abstract class GenericAttribute {
     }
 
     public static GenericAttribute fromAttributeRecord(INtfsContext context, AttributeRecord record) {
-        switch (record.getAttributeType()) {
-        case AttributeList:
-            return new AttributeListAttribute(context, record);
-        case FileName:
-            return new FileNameAttribute(context, record);
-        case StandardInformation:
-            return new StandardInformationAttribute(context, record);
-        default:
-            return new UnknownAttribute(context, record);
-        }
+        return switch (record.getAttributeType()) {
+            case AttributeList -> new AttributeListAttribute(context, record);
+            case FileName -> new FileNameAttribute(context, record);
+            case StandardInformation -> new StandardInformationAttribute(context, record);
+            default -> new UnknownAttribute(context, record);
+        };
     }
 }

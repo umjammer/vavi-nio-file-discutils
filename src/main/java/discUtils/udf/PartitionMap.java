@@ -48,19 +48,12 @@ public abstract class PartitionMap implements IByteArraySerializable {
             result = new Type1PartitionMap();
         } else if (type == 2) {
             EntityIdentifier id = EndianUtilities.toStruct(UdfEntityIdentifier.class, buffer, offset + 4);
-            switch (id.identifier) {
-            case "*UDF Virtual Partition":
-                result = new VirtualPartitionMap();
-                break;
-            case "*UDF Sparable Partition":
-                result = new SparablePartitionMap();
-                break;
-            case "*UDF Metadata Partition":
-                result = new MetadataPartitionMap();
-                break;
-            default:
-                throw new IllegalArgumentException("Unrecognized partition map entity id: " + id);
-            }
+            result = switch (id.identifier) {
+                case "*UDF Virtual Partition" -> new VirtualPartitionMap();
+                case "*UDF Sparable Partition" -> new SparablePartitionMap();
+                case "*UDF Metadata Partition" -> new MetadataPartitionMap();
+                default -> throw new IllegalArgumentException("Unrecognized partition map entity id: " + id);
+            };
         }
 
         if (result != null) {

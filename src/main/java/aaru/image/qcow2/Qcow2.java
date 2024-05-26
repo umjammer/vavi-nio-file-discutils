@@ -445,6 +445,8 @@ logger.log(Level.DEBUG, String.format("QCOW plugin: Reading L2 table #%d", l1Off
 
         buffer[0] = ms.toArray();
 
+        ms.close();
+
         return 0;
     }
 

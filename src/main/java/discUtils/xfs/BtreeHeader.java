@@ -137,13 +137,13 @@ public abstract class BtreeHeader implements IByteArraySerializable {
         crc = value;
     }
 
-    private int size;
+    private final int size;
 
     @Override public int size() {
         return size;
     }
 
-    private int sbVersion;
+    private final int sbVersion;
 
     protected int getSbVersion() {
         return sbVersion;

@@ -30,5 +30,3 @@ class EncodingHelperTest {
         assertEquals(Charset.forName("IBM855"), EncodingHelper.forCodePage(855));
     }
 }
-
-/* */

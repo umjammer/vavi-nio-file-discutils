@@ -192,7 +192,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
             if (obj instanceof DiscFileInfo) {
                 return false;
             } else if (obj instanceof DiscDirectoryInfo) {
-                return ((DiscDirectoryInfo) obj).getFileSystemInfos().size() > 0;
+                return !((DiscDirectoryInfo) obj).getFileSystemInfos().isEmpty();
             } else {
                 return true;
             }
@@ -235,8 +235,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
 
             String itemTypeUpper = itemTypeName.toUpperCase();
             Object obj = findItemByPath(Utilities.normalizePath(parentPath), true, false);
-            if (obj instanceof DiscDirectoryInfo) {
-                DiscDirectoryInfo dirInfo = (DiscDirectoryInfo) obj;
+            if (obj instanceof DiscDirectoryInfo dirInfo) {
                 switch (itemTypeUpper) {
                 case "FILE":
                     try (Closeable ignored = dirInfo.getFileSystem()
@@ -318,8 +317,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
 
             String newFullName = Paths.get(Paths.get(fsiObj.getFullName().replaceFirst("\\*$", "")).getParent().toString(), newName)
                     .toString();
-            if (obj instanceof DiscDirectoryInfo) {
-                DiscDirectoryInfo dirObj = (DiscDirectoryInfo) obj;
+            if (obj instanceof DiscDirectoryInfo dirObj) {
                 dirObj.moveTo(newFullName);
             } else {
                 DiscFileInfo fileObj = (DiscFileInfo) obj;
@@ -526,7 +524,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
         }
 
         List<String> pathElems = Arrays.asList(relPath.split(StringUtilities.escapeForRegex(FS)));
-        if (pathElems.size() == 0) {
+        if (pathElems.isEmpty()) {
             return disk;
         }
 
@@ -548,7 +546,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
             volInfo = volMgr.getVolume(Utilities.denormalizePath(pathElems.get(0)));
         }
         pathElems.remove(0);
-        if (volInfo == null || (pathElems.size() == 0 && !preferFs)) {
+        if (volInfo == null || (pathElems.isEmpty() && !preferFs)) {
             return volInfo;
         }
 
@@ -562,7 +560,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
             // Special marker in the path - disambiguates the root folder from the volume
             // containing it.  By this point it's done it's job (we didn't return volInfo),
             // so we just remove it.
-            if (pathElems.size() > 0 && pathElems.get(0).equals("$Root")) {
+            if (!pathElems.isEmpty() && pathElems.get(0).equals("$Root")) {
                 pathElems.remove(0);
             }
 
@@ -623,11 +621,9 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
 
         try {
             Object obj = findItemByPath(path, false, true);
-            if (obj instanceof VirtualDisk) {
-                VirtualDisk vd = (VirtualDisk) obj;
+            if (obj instanceof VirtualDisk vd) {
                 enumerateDisk(vd, path, recurse, namesOnly);
-            } else if (obj instanceof LogicalVolumeInfo) {
-                LogicalVolumeInfo lvi = (LogicalVolumeInfo) obj;
+            } else if (obj instanceof LogicalVolumeInfo lvi) {
                 boolean[] dispose = new boolean[1];
                 DiscFileSystem fs = getFileSystem(lvi, dispose);
                 try {
@@ -640,8 +636,7 @@ public class Provider extends NavigationCmdletProvider implements IContentCmdlet
                         fs.close();
                     }
                 }
-            } else if (obj instanceof DiscDirectoryInfo) {
-                DiscDirectoryInfo ddi = (DiscDirectoryInfo) obj;
+            } else if (obj instanceof DiscDirectoryInfo ddi) {
                 enumerateDirectory(ddi, path, recurse, namesOnly);
             } else {
                 writeError(new ErrorRecord(new UnsupportedOperationException("Unrecognized object type: " +

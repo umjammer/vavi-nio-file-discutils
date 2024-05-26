@@ -73,7 +73,7 @@ public class CommandRequest {
                                      TaskAttributes taskAttr) {
         byte value = 0;
         if (isFinalData) {
-            value |= 0x80;
+            value = (byte) (value | 0x80);
         }
 
         if (expectReadFromTarget) {

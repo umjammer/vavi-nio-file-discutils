@@ -48,7 +48,7 @@ class ParentLocator implements IByteArraySerializable {
     private Map<String, String> entries;
 
     @Override public int size() {
-        if (entries.size() != 0) {
+        if (!entries.isEmpty()) {
             throw new UnsupportedOperationException();
         }
 
@@ -81,7 +81,7 @@ class ParentLocator implements IByteArraySerializable {
     }
 
     @Override public void writeTo(byte[] buffer, int offset) {
-        if (entries.size() != 0) {
+        if (!entries.isEmpty()) {
             throw new UnsupportedOperationException();
         }
 

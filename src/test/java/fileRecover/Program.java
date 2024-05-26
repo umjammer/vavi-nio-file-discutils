@@ -130,7 +130,7 @@ public class Program extends ProgramBase {
                     // never been used. We're certainly
                     // not going to manage to recover any useful data from
                     // them.
-                    if (entry.getAttributes().size() == 0)
+                    if (entry.getAttributes().isEmpty())
                         continue;
 
                     // Skip directories - any useful files inside will be

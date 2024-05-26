@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import vavi.util.Debug;
+
 
 public class Utilities {
     public static String[] wordWrap(String text, int width) {
@@ -90,23 +92,27 @@ public class Utilities {
                 // suffix is KB, MB or GB
                 long quantity = Long.parseLong(size.substring(0, size.length() - 2));
 
-                switch (unitChar) {
-                case 'K':
-                    value[0] = quantity * 1024L;
-                    return true;
-                case 'M':
-                    value[0] = quantity * 1024L * 1024L;
-                    return true;
-                case 'G':
-                    value[0] = quantity * 1024L * 1024L * 1024L;
-                    return true;
-                default:
-                    value[0] = 0;
-                    return false;
-                }
+                return switch (unitChar) {
+                    case 'K' -> {
+                        value[0] = quantity * 1024L;
+                        yield true;
+                    }
+                    case 'M' -> {
+                        value[0] = quantity * 1024L * 1024L;
+                        yield true;
+                    }
+                    case 'G' -> {
+                        value[0] = quantity * 1024L * 1024L * 1024L;
+                        yield true;
+                    }
+                    default -> {
+                        value[0] = 0;
+                        yield false;
+                    }
+                };
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            Debug.printStackTrace(e);
         }
 
         value[0] = 0;

@@ -79,5 +79,3 @@ public class Pc98PartitionInfo extends PartitionInfo {
         return table.open(pe);
     }
 }
-
-/* */

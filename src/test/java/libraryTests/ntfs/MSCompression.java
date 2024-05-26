@@ -152,144 +152,142 @@ public interface MSCompression extends Library {
      */
     int ms_max_compressed_size(int format, int in_len);
 
-    /**
-     * // Deflate [Compress] - Streaming // MSCompStatus
-     * ms_deflate_init(MSCompFormat format, mscomp_stream* stream)
-     *
-     * Initialize a stream for compressing data of the given format. This
-     * initializes all values of the stream, however it your responsibility to set
-     * in, in_avail, out, and out_avail to usable values before calling ms_deflate.
-     *
-     * <format> is one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
-     * MSCOMP_XPRESS_HUFF (4). <stream> is a pointer to a mscomp_stream structure
-     * with fields uninitialized.
-     *
-     * The return value is MSCOMP_OK (0) if successful or negative if an error
-     * occurred (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), or
-     * MSCOMP_MEM_ERROR (-4)).
-     */
+//    /**
+//     * // Deflate [Compress] - Streaming // MSCompStatus
+//     * ms_deflate_init(MSCompFormat format, mscomp_stream* stream)
+//     *
+//     * Initialize a stream for compressing data of the given format. This
+//     * initializes all values of the stream, however it your responsibility to set
+//     * in, in_avail, out, and out_avail to usable values before calling ms_deflate.
+//     *
+//     * <format> is one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
+//     * MSCOMP_XPRESS_HUFF (4). <stream> is a pointer to a mscomp_stream structure
+//     * with fields uninitialized.
+//     *
+//     * The return value is MSCOMP_OK (0) if successful or negative if an error
+//     * occurred (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), or
+//     * MSCOMP_MEM_ERROR (-4)).
+//     */
 //    int ms_deflate_init(MSCompFormat format, mscomp_stream stream);
 
-    /**
-     * // MSCompStatus ms_deflate(mscomp_stream* stream, MSCompFlush flush)
-     *
-     * Deflate as much as possible from a stream's input to its output.
-     *
-     * <stream> is a pointer to a mscomp_stream structure that is initialized for
-     * compression. The in, in_avail, out, and out_avail need to be set
-     * appropriately. If this returns successfully, either in_avail or out_avail
-     * will be 0. If this returns a failure, the stream will be in an indeterminate
-     * state and must be closed. The fields in, in_avail, in_total, out, out_avail,
-     * and out_total are updated, and if an error or warning is generated and
-     * support for messages is enabled then those fields are updated as well.
-     *
-     * <flush> is one of MSCOMP_NO_FLUSH (0), MSCOMP_FLUSH (2), or MSCOMP_FINISH
-     * (4). Some formats might not support MSCOMP_FLUSH and will generate a
-     * MSCOMP_ARG_ERROR if that is given. MSCOMP_NO_FLUSH is the value that should
-     * usually be given. MSCOMP_FLUSH forces data to not be buffered by such that if
-     * the call causes all input data to be consumed (in_avail==0) then the output
-     * contains all the data given to in and can be decompressed, while possibly
-     * sacrificing the compression ratio. MSCOMP_FINISH causes the compressor to
-     * assume what data is in the input buffer is the last to be compressed.
-     *
-     * If either MSCOMP_FLUSH or MSCOMP_FINISH is given, ms_deflate must be called
-     * repeatedly with the same flush value without modifying in or in_avail until
-     * in_avail is 0. If MSCOMP_FINISH is given, when in_avail reaches 0 the return
-     * value will be MSCOMP_STREAM_END. At this point no further calls to ms_deflate
-     * are allowed.
-     *
-     * The return value is MSCOMP_OK (0) if successful, MSCOMP_STREAM_END (1) if
-     * flush == MSCOMP_FINISH and all data in the input has been compressed. Or it
-     * is negative if an error occurred (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR
-     * (-2), or MSCOMP_MEM_ERROR (-4)).
-     */
+//    /**
+//     * // MSCompStatus ms_deflate(mscomp_stream* stream, MSCompFlush flush)
+//     *
+//     * Deflate as much as possible from a stream's input to its output.
+//     *
+//     * <stream> is a pointer to a mscomp_stream structure that is initialized for
+//     * compression. The in, in_avail, out, and out_avail need to be set
+//     * appropriately. If this returns successfully, either in_avail or out_avail
+//     * will be 0. If this returns a failure, the stream will be in an indeterminate
+//     * state and must be closed. The fields in, in_avail, in_total, out, out_avail,
+//     * and out_total are updated, and if an error or warning is generated and
+//     * support for messages is enabled then those fields are updated as well.
+//     *
+//     * <flush> is one of MSCOMP_NO_FLUSH (0), MSCOMP_FLUSH (2), or MSCOMP_FINISH
+//     * (4). Some formats might not support MSCOMP_FLUSH and will generate a
+//     * MSCOMP_ARG_ERROR if that is given. MSCOMP_NO_FLUSH is the value that should
+//     * usually be given. MSCOMP_FLUSH forces data to not be buffered by such that if
+//     * the call causes all input data to be consumed (in_avail==0) then the output
+//     * contains all the data given to in and can be decompressed, while possibly
+//     * sacrificing the compression ratio. MSCOMP_FINISH causes the compressor to
+//     * assume what data is in the input buffer is the last to be compressed.
+//     *
+//     * If either MSCOMP_FLUSH or MSCOMP_FINISH is given, ms_deflate must be called
+//     * repeatedly with the same flush value without modifying in or in_avail until
+//     * in_avail is 0. If MSCOMP_FINISH is given, when in_avail reaches 0 the return
+//     * value will be MSCOMP_STREAM_END. At this point no further calls to ms_deflate
+//     * are allowed.
+//     *
+//     * The return value is MSCOMP_OK (0) if successful, MSCOMP_STREAM_END (1) if
+//     * flush == MSCOMP_FINISH and all data in the input has been compressed. Or it
+//     * is negative if an error occurred (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR
+//     * (-2), or MSCOMP_MEM_ERROR (-4)).
+//     */
 //    int ms_deflate(mscomp_stream stream, MSCompFlush flush);
 
-    /**
-     * MSCompStatus ms_deflate_end(mscomp_stream* stream)
-     *
-     * Closes a compression stream. This does not compress any more data, but frees
-     * any resources used by the stream object. If this returns MSCOMP_ARG_ERROR,
-     * then the stream is not closed. In all other cases, the stream is closed and
-     * the stream is left in an uninitialized state (the values of in_total and
-     * out_total will be unchanged). If there was more data to compress (the last
-     * call to ms_inflate did not have flush set to MSCOMP_FINISH and did not return
-     * MSCOMP_STREAM_END), this will return MSCOMP_DATA_ERROR.
-     *
-     * <stream> is a pointer to a mscomp_stream structure that is initialized for
-     * compression.
-     *
-     * The return value is MSCOMP_OK (0) if successful or negative if an error
-     * occurred (either MSCOMP_ARG_ERROR (-2) or MSCOMP_DATA_ERROR (-3)).
-     */
+//    /**
+//     * MSCompStatus ms_deflate_end(mscomp_stream* stream)
+//     *
+//     * Closes a compression stream. This does not compress any more data, but frees
+//     * any resources used by the stream object. If this returns MSCOMP_ARG_ERROR,
+//     * then the stream is not closed. In all other cases, the stream is closed and
+//     * the stream is left in an uninitialized state (the values of in_total and
+//     * out_total will be unchanged). If there was more data to compress (the last
+//     * call to ms_inflate did not have flush set to MSCOMP_FINISH and did not return
+//     * MSCOMP_STREAM_END), this will return MSCOMP_DATA_ERROR.
+//     *
+//     * <stream> is a pointer to a mscomp_stream structure that is initialized for
+//     * compression.
+//     *
+//     * The return value is MSCOMP_OK (0) if successful or negative if an error
+//     * occurred (either MSCOMP_ARG_ERROR (-2) or MSCOMP_DATA_ERROR (-3)).
+//     */
 //  int ms_deflate_end(mscomp_stream stream);
 
-    /**
-     * // Inflate [Decompress] - Streaming MSCompStatus ms_inflate_init(MSCompFormat
-     * format, mscomp_stream* stream)
-     *
-     * Initialize a stream for decompressing data of the given format. This
-     * initializes all values of the stream, however it your responsibility to set
-     * in, in_avail, out, and out_avail to usable values before calling ms_inflate.
-     *
-     * <format> is one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
-     * MSCOMP_XPRESS_HUFF (4). <stream> is a pointer to a mscomp_stream structure
-     * with fields uninitialized.
-     *
-     * The return value is MSCOMP_OK (0) if successful or negative if an error
-     * occurred (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), or
-     * MSCOMP_MEM_ERROR (-4)).
-     */
+//    /**
+//     * // Inflate [Decompress] - Streaming MSCompStatus ms_inflate_init(MSCompFormat
+//     * format, mscomp_stream* stream)
+//     *
+//     * Initialize a stream for decompressing data of the given format. This
+//     * initializes all values of the stream, however it your responsibility to set
+//     * in, in_avail, out, and out_avail to usable values before calling ms_inflate.
+//     *
+//     * <format> is one of MSCOMP_NONE (0), MSCOMP_LZNT1 (2), MSCOMP_XPRESS (3), or
+//     * MSCOMP_XPRESS_HUFF (4). <stream> is a pointer to a mscomp_stream structure
+//     * with fields uninitialized.
+//     *
+//     * The return value is MSCOMP_OK (0) if successful or negative if an error
+//     * occurred (one of MSCOMP_ERRNO (-1), MSCOMP_ARG_ERROR (-2), or
+//     * MSCOMP_MEM_ERROR (-4)).
+//     */
 //  int ms_inflate_init(MSCompFormat format, mscomp_stream stream);
 
-    /**
-     * MSCompStatus ms_inflate(mscomp_stream* stream)
-     *
-     * Inflate as much as possible from a stream's input to its output.
-     *
-     * <stream> is a pointer to a mscomp_stream structure that is initialized for
-     * decompression. The in, in_avail, out, and out_avail need to be set
-     * appropriately. If this returns successfully, either in_avail or out_avail
-     * will be 0. If this returns a failure, the stream will be in an indeterminate
-     * state and must be closed. The fields in, in_avail, in_total, out, out_avail,
-     * and out_total are updated, and if an error or warning is generated and
-     * support for messages is enabled then those fields are updated as well.
-     *
-     * Most of the formats support do not have definite end-of-stream indications
-     * (special symbol, embedded decompressed length, or some form of CRC/hash) so
-     * there are many cases in which it may seem that the stream could be at its
-     * end, thus MSCOMP_POSSIBLE_STREAM_END is returned whenever it is possible that
-     * we are at the end of the stream, and if the caller knows there is no more
-     * input data, then it is the end of the stream, otherwise you should treat the
-     * return value as MSCOMP_OK. Some formats under some situations may return
-     * MSCOMP_STREAM_END. In these cases the stream has reached the end and
-     * ms_inflate can not be called with any more input data.
-     *
-     * The return value is MSCOMP_OK (0), MSCOMP_STREAM_END (1), or
-     * MSCOMP_POSSIBLE_STREAM_END (2) if successful (see above for explanation) or
-     * it is negative if an error occurred (one of MSCOMP_ERRNO (-1),
-     * MSCOMP_ARG_ERROR (-2), or MSCOMP_MEM_ERROR (-4)).
-     */
+//    /**
+//     * MSCompStatus ms_inflate(mscomp_stream* stream)
+//     *
+//     * Inflate as much as possible from a stream's input to its output.
+//     *
+//     * <stream> is a pointer to a mscomp_stream structure that is initialized for
+//     * decompression. The in, in_avail, out, and out_avail need to be set
+//     * appropriately. If this returns successfully, either in_avail or out_avail
+//     * will be 0. If this returns a failure, the stream will be in an indeterminate
+//     * state and must be closed. The fields in, in_avail, in_total, out, out_avail,
+//     * and out_total are updated, and if an error or warning is generated and
+//     * support for messages is enabled then those fields are updated as well.
+//     *
+//     * Most of the formats support do not have definite end-of-stream indications
+//     * (special symbol, embedded decompressed length, or some form of CRC/hash) so
+//     * there are many cases in which it may seem that the stream could be at its
+//     * end, thus MSCOMP_POSSIBLE_STREAM_END is returned whenever it is possible that
+//     * we are at the end of the stream, and if the caller knows there is no more
+//     * input data, then it is the end of the stream, otherwise you should treat the
+//     * return value as MSCOMP_OK. Some formats under some situations may return
+//     * MSCOMP_STREAM_END. In these cases the stream has reached the end and
+//     * ms_inflate can not be called with any more input data.
+//     *
+//     * The return value is MSCOMP_OK (0), MSCOMP_STREAM_END (1), or
+//     * MSCOMP_POSSIBLE_STREAM_END (2) if successful (see above for explanation) or
+//     * it is negative if an error occurred (one of MSCOMP_ERRNO (-1),
+//     * MSCOMP_ARG_ERROR (-2), or MSCOMP_MEM_ERROR (-4)).
+//     */
 //  int ms_inflate(mscomp_stream stream);
 
-    /**
-     * MSCompStatus ms_inflate_end(mscomp_stream* stream)
-     *
-     * Closes a decompression stream. This does not decompress any more data, but
-     * frees any resources used by the stream object. If this returns
-     * MSCOMP_ARG_ERROR, then the stream is not closed. In all other cases, the
-     * stream is closed and the stream is left in an uninitialized state (the values
-     * of in_total and out_total will be unchanged). If there was more data to
-     * decompress (the last call to ms_inflate did not return MSCOMP_STREAM_END or
-     * MSCOMP_POSSIBLE_STREAM_END), this will return MSCOMP_DATA_ERROR.
-     *
-     * <stream> is a pointer to a mscomp_stream structure that is initialized for
-     * decompression.
-     *
-     * The return value is MSCOMP_OK (0) if successful or negative if an error
-     * occurred (either MSCOMP_ARG_ERROR (-2) or MSCOMP_DATA_ERROR (-3)).
-     */
+//    /**
+//     * MSCompStatus ms_inflate_end(mscomp_stream* stream)
+//     *
+//     * Closes a decompression stream. This does not decompress any more data, but
+//     * frees any resources used by the stream object. If this returns
+//     * MSCOMP_ARG_ERROR, then the stream is not closed. In all other cases, the
+//     * stream is closed and the stream is left in an uninitialized state (the values
+//     * of in_total and out_total will be unchanged). If there was more data to
+//     * decompress (the last call to ms_inflate did not return MSCOMP_STREAM_END or
+//     * MSCOMP_POSSIBLE_STREAM_END), this will return MSCOMP_DATA_ERROR.
+//     *
+//     * <stream> is a pointer to a mscomp_stream structure that is initialized for
+//     * decompression.
+//     *
+//     * The return value is MSCOMP_OK (0) if successful or negative if an error
+//     * occurred (either MSCOMP_ARG_ERROR (-2) or MSCOMP_DATA_ERROR (-3)).
+//     */
 //  int ms_inflate_end(mscomp_stream stream);
 }
-
-/* */

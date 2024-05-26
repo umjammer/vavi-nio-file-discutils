@@ -207,95 +207,59 @@ public class DescriptorFile {
     }
 
     private static DiskAdapterType parseAdapterType(String value) {
-        switch (value) {
-        case "ide":
-            return DiskAdapterType.Ide;
-        case "buslogic":
-            return DiskAdapterType.BusLogicScsi;
-        case "lsilogic":
-            return DiskAdapterType.LsiLogicScsi;
-        case "legacyESX":
-            return DiskAdapterType.LegacyEsx;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
-        }
+        return switch (value) {
+            case "ide" -> DiskAdapterType.Ide;
+            case "buslogic" -> DiskAdapterType.BusLogicScsi;
+            case "lsilogic" -> DiskAdapterType.LsiLogicScsi;
+            case "legacyESX" -> DiskAdapterType.LegacyEsx;
+            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+        };
     }
 
     private static String formatAdapterType(DiskAdapterType value) {
-        switch (value) {
-        case Ide:
-            return "ide";
-        case BusLogicScsi:
-            return "buslogic";
-        case LsiLogicScsi:
-            return "lsilogic";
-        case LegacyEsx:
-            return "legacyESX";
-        default:
-            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
-        }
+        return switch (value) {
+            case Ide -> "ide";
+            case BusLogicScsi -> "buslogic";
+            case LsiLogicScsi -> "lsilogic";
+            case LegacyEsx -> "legacyESX";
+            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+        };
     }
 
     private static DiskCreateType parseCreateType(String value) {
-        switch (value) {
-        case "monolithicSparse":
-            return DiskCreateType.MonolithicSparse;
-        case "vmfsSparse":
-            return DiskCreateType.VmfsSparse;
-        case "monolithicFlat":
-            return DiskCreateType.MonolithicFlat;
-        case "vmfs":
-            return DiskCreateType.Vmfs;
-        case "twoGbMaxExtentSparse":
-            return DiskCreateType.TwoGbMaxExtentSparse;
-        case "twoGbMaxExtentFlat":
-            return DiskCreateType.TwoGbMaxExtentFlat;
-        case "fullDevice":
-            return DiskCreateType.FullDevice;
-        case "vmfsRaw":
-            return DiskCreateType.VmfsRaw;
-        case "partitionedDevice":
-            return DiskCreateType.PartitionedDevice;
-        case "vmfsRawDeviceMap":
-            return DiskCreateType.VmfsRawDeviceMap;
-        case "vmfsPassthroughRawDeviceMap":
-            return DiskCreateType.VmfsPassthroughRawDeviceMap;
-        case "streamOptimized":
-            return DiskCreateType.StreamOptimized;
-        default:
-            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
-        }
+        return switch (value) {
+            case "monolithicSparse" -> DiskCreateType.MonolithicSparse;
+            case "vmfsSparse" -> DiskCreateType.VmfsSparse;
+            case "monolithicFlat" -> DiskCreateType.MonolithicFlat;
+            case "vmfs" -> DiskCreateType.Vmfs;
+            case "twoGbMaxExtentSparse" -> DiskCreateType.TwoGbMaxExtentSparse;
+            case "twoGbMaxExtentFlat" -> DiskCreateType.TwoGbMaxExtentFlat;
+            case "fullDevice" -> DiskCreateType.FullDevice;
+            case "vmfsRaw" -> DiskCreateType.VmfsRaw;
+            case "partitionedDevice" -> DiskCreateType.PartitionedDevice;
+            case "vmfsRawDeviceMap" -> DiskCreateType.VmfsRawDeviceMap;
+            case "vmfsPassthroughRawDeviceMap" -> DiskCreateType.VmfsPassthroughRawDeviceMap;
+            case "streamOptimized" -> DiskCreateType.StreamOptimized;
+            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+        };
     }
 
     private static String formatCreateType(DiskCreateType value) {
-        switch (value) {
-        case MonolithicSparse:
-            return "monolithicSparse";
-        case VmfsSparse:
-            return "vmfsSparse";
-        case MonolithicFlat:
-            return "monolithicFlat";
-        case Vmfs:
-            return "vmfs";
-        case TwoGbMaxExtentSparse:
-            return "twoGbMaxExtentSparse";
-        case TwoGbMaxExtentFlat:
-            return "twoGbMaxExtentFlat";
-        case FullDevice:
-            return "fullDevice";
-        case VmfsRaw:
-            return "vmfsRaw";
-        case PartitionedDevice:
-            return "partitionedDevice";
-        case VmfsRawDeviceMap:
-            return "vmfsRawDeviceMap";
-        case VmfsPassthroughRawDeviceMap:
-            return "vmfsPassthroughRawDeviceMap";
-        case StreamOptimized:
-            return "streamOptimized";
-        default:
-            throw new IllegalArgumentException(String.format("Unknown type: %s", value));
-        }
+        return switch (value) {
+            case MonolithicSparse -> "monolithicSparse";
+            case VmfsSparse -> "vmfsSparse";
+            case MonolithicFlat -> "monolithicFlat";
+            case Vmfs -> "vmfs";
+            case TwoGbMaxExtentSparse -> "twoGbMaxExtentSparse";
+            case TwoGbMaxExtentFlat -> "twoGbMaxExtentFlat";
+            case FullDevice -> "fullDevice";
+            case VmfsRaw -> "vmfsRaw";
+            case PartitionedDevice -> "partitionedDevice";
+            case VmfsRawDeviceMap -> "vmfsRawDeviceMap";
+            case VmfsPassthroughRawDeviceMap -> "vmfsPassthroughRawDeviceMap";
+            case StreamOptimized -> "streamOptimized";
+            default -> throw new IllegalArgumentException(String.format("Unknown type: %s", value));
+        };
     }
 
     private static UUID parseUuid(String value) {
@@ -387,7 +351,7 @@ public class DescriptorFile {
                 line = line.substring(0, commentPos);
             }
 
-            if (line.length() > 0) {
+            if (!line.isEmpty()) {
                 if (line.startsWith("RW") || line.startsWith("RDONLY") || line.startsWith("NOACCESS")) {
                     getExtents().add(ExtentDescriptor.parse(line));
                 } else {

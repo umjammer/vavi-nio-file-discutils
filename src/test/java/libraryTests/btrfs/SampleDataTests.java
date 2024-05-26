@@ -31,7 +31,7 @@ import libraryTests.utilities.ZipUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
 public class SampleDataTests {
@@ -53,7 +53,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("btrfs", filesystem.getName());
             try (DiscFileSystem btrfs = filesystem.open(volume)) {
-                assertTrue(btrfs instanceof BtrfsFileSystem);
+                assertInstanceOf(BtrfsFileSystem.class, btrfs);
                 assertEquals(1072594944, btrfs.getAvailableSpace());
                 assertEquals(1072693248, btrfs.getSize());
                 assertEquals(98304, btrfs.getUsedSpace());

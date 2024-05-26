@@ -83,67 +83,37 @@ public class Nfs3Exception extends IOException {
     private Nfs3Status nfsStatus = Nfs3Status.Unknown;
 
     private static String generateMessage(Nfs3Status status) {
-        switch (status) {
-        case Ok:
-            return "OK";
-        case NotOwner:
-            return "Not owner";
-        case NoSuchEntity:
-            return "No such file or directory";
-        case IOError:
-            return "Hardware I/O error";
-        case NoSuchDeviceOrAddress:
-            return "I/O error - no such device or address";
-        case AccessDenied:
-            return "Permission denied";
-        case FileExists:
-            return "File exists";
-        case AttemptedCrossDeviceHardLink:
-            return "Attempted cross-device hard link";
-        case NoSuchDevice:
-            return "No such device";
-        case NotDirectory:
-            return "Not a directory";
-        case IsADirectory:
-            return "Is a directory";
-        case InvalidArgument:
-            return "Invalid or unsupported argument";
-        case FileTooLarge:
-            return "File too large";
-        case NoSpaceAvailable:
-            return "No space left on device";
-        case ReadOnlyFileSystem:
-            return "Read-only file system";
-        case TooManyHardLinks:
-            return "Too many hard links";
-        case NameTooLong:
-            return "Name too long";
-        case DirectoryNotEmpty:
-            return "Directory not empty";
-        case QuotaHardLimitExceeded:
-            return "Quota hard limit exceeded";
-        case StaleFileHandle:
-            return "Invalid (stale) file handle";
-        case TooManyRemoteAccessLevels:
-            return "Too many levels of remote access";
-        case BadFileHandle:
-            return "Illegal NFS file handle";
-        case UpdateSynchronizationError:
-            return "Update synchronization error";
-        case StaleCookie:
-            return "Read directory cookie stale";
-        case NotSupported:
-            return "Operation is not supported";
-        case TooSmall:
-            return "buffer or request is too small";
-        case ServerFault:
-            return "Server fault";
-        case BadType:
-            return "Server doesn't support object type";
-        case SlowJukebox:
-            return "Unable to complete in timely fashion";
-        default:
-            return "Unknown error: " + status;
-        }
+        return switch (status) {
+            case Ok -> "OK";
+            case NotOwner -> "Not owner";
+            case NoSuchEntity -> "No such file or directory";
+            case IOError -> "Hardware I/O error";
+            case NoSuchDeviceOrAddress -> "I/O error - no such device or address";
+            case AccessDenied -> "Permission denied";
+            case FileExists -> "File exists";
+            case AttemptedCrossDeviceHardLink -> "Attempted cross-device hard link";
+            case NoSuchDevice -> "No such device";
+            case NotDirectory -> "Not a directory";
+            case IsADirectory -> "Is a directory";
+            case InvalidArgument -> "Invalid or unsupported argument";
+            case FileTooLarge -> "File too large";
+            case NoSpaceAvailable -> "No space left on device";
+            case ReadOnlyFileSystem -> "Read-only file system";
+            case TooManyHardLinks -> "Too many hard links";
+            case NameTooLong -> "Name too long";
+            case DirectoryNotEmpty -> "Directory not empty";
+            case QuotaHardLimitExceeded -> "Quota hard limit exceeded";
+            case StaleFileHandle -> "Invalid (stale) file handle";
+            case TooManyRemoteAccessLevels -> "Too many levels of remote access";
+            case BadFileHandle -> "Illegal NFS file handle";
+            case UpdateSynchronizationError -> "Update synchronization error";
+            case StaleCookie -> "Read directory cookie stale";
+            case NotSupported -> "Operation is not supported";
+            case TooSmall -> "buffer or request is too small";
+            case ServerFault -> "Server fault";
+            case BadType -> "Server doesn't support object type";
+            case SlowJukebox -> "Unable to complete in timely fashion";
+            default -> "Unknown error: " + status;
+        };
     }
 }

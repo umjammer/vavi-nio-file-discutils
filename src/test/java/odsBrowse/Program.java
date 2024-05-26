@@ -57,7 +57,7 @@ public class Program extends ProgramBase {
             boolean found = false;
             for (OpticalDiscService service : odsClient.lookupServices()) {
                 if (Utilities.equals(host, service.getDisplayName()) ||
-                    Utilities.equals(host, URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8.name()))) {
+                    Utilities.equals(host, URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8))) {
                     found = true;
 
                     System.err.println("Connecting to " + service.getDisplayName() + " - the owner may need to accept...");
@@ -83,7 +83,7 @@ public class Program extends ProgramBase {
     private static void showService(OpticalDiscService service) throws IOException {
         System.err.println();
         System.err.println("Service: " + service.getDisplayName());
-        System.err.println("  Safe Name: " + URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8.name()) +
+        System.err.println("  Safe Name: " + URLEncoder.encode(service.getDisplayName(), StandardCharsets.UTF_8) +
                            "  (for URLs, copy+paste)");
         System.err.println();
 
@@ -95,7 +95,7 @@ public class Program extends ProgramBase {
             System.err.println("    Type: " + disk.getVolumeType());
             System.err.println("     Url: " +
                                URLEncoder.encode("ods://local/" + service.getDisplayName() + "/" + disk.getVolumeLabel(),
-                                                 StandardCharsets.UTF_8.name()));
+                                       StandardCharsets.UTF_8));
         }
 
         if (!foundDisk) {

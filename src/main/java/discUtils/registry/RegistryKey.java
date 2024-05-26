@@ -515,7 +515,7 @@ public final class RegistryKey {
     }
 
     private RegistryValue getRegistryValue(String name) {
-        if (name != null && name.length() == 0) {
+        if (name != null && name.isEmpty()) {
             name = null;
         }
 
@@ -664,8 +664,7 @@ public final class RegistryKey {
         }
 
         Cell list = hive.getCell(subkeyCell.subKeysIndex);
-        if (list instanceof SubKeyIndirectListCell) {
-            SubKeyIndirectListCell indirectList = (SubKeyIndirectListCell) list;
+        if (list instanceof SubKeyIndirectListCell indirectList) {
             // foreach (int listIndex in indirectList.CellIndexes)
             for (int i = 0; i < indirectList.getCellIndexes().size(); ++i) {
                 int listIndex = indirectList.getCellIndexes().get(i);

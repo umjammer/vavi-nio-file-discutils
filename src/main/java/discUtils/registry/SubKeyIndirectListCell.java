@@ -155,7 +155,7 @@ final class SubKeyIndirectListCell extends ListCell {
     @Override int linkSubKey(String name, int cellIndex) {
         // Look for the first sublist that has a subkey name greater than name
         if (listType.equals("ri")) {
-            if (cellIndexes.size() == 0) {
+            if (cellIndexes.isEmpty()) {
                 throw new UnsupportedOperationException("Empty indirect list");
             }
 
@@ -188,7 +188,7 @@ final class SubKeyIndirectListCell extends ListCell {
 
     @Override int unlinkSubKey(String name) {
         if (listType.equals("ri")) {
-            if (cellIndexes.size() == 0) {
+            if (cellIndexes.isEmpty()) {
                 throw new UnsupportedOperationException("Empty indirect list");
             }
 

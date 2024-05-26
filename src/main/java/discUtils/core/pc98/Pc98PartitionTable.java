@@ -38,11 +38,11 @@ import static java.lang.System.getLogger;
  */
 public class Pc98PartitionTable extends PartitionTable {
 
-    private Stream diskData;
     private static final Logger logger = getLogger(Pc98PartitionTable.class.getName());
 
+    private final Stream diskData;
 
-    private int bytesPerSector;
+    private final int bytesPerSector;
 
     /**
      * The partition entries

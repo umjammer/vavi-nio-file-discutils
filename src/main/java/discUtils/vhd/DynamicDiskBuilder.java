@@ -198,7 +198,7 @@ public final class DynamicDiskBuilder extends StreamBuilder {
             for (Range range: StreamExtent.blocks(content.getExtents(), Sizes.Sector)) {
                 for (int i = 0; i < range.getCount(); ++i) {
                     byte mask = (byte) (1 << (7 - (int) ((range.getOffset() + i) % 8)));
-                    bitmap[(int) ((range.getOffset() + i) / 8)] |= mask;
+                    bitmap[(int) ((range.getOffset() + i) / 8)] = (byte) (bitmap[(int) ((range.getOffset() + i) / 8)] | mask);
                 }
             }
 

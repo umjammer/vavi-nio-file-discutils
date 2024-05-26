@@ -123,5 +123,3 @@ public class Main4 {
         }
     }
 }
-
-/* */

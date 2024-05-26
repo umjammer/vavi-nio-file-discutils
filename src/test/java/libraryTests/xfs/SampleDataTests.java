@@ -26,6 +26,7 @@ import libraryTests.utilities.ZipUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -48,7 +49,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("xfs", filesystem.getName());
             try (DiscFileSystem xfs = filesystem.open(volume)) {
-                assertTrue(xfs instanceof XfsFileSystem);
+                assertInstanceOf(XfsFileSystem.class, xfs);
                 assertEquals(9081139200L, xfs.getAvailableSpace());
                 assertEquals(10725863424L, xfs.getSize());
                 assertEquals(1644724224, xfs.getUsedSpace());
@@ -72,7 +73,7 @@ public class SampleDataTests {
             FileSystemInfo filesystem = filesystems.get(0);
             assertEquals("xfs", filesystem.getName());
             try (DiscFileSystem xfs = filesystem.open(volume)) {
-                assertTrue(xfs instanceof XfsFileSystem);
+                assertInstanceOf(XfsFileSystem.class, xfs);
                 assertEquals(9080827904L, xfs.getAvailableSpace());
                 assertEquals(10725883904L, xfs.getSize());
                 assertEquals(1645056000, xfs.getUsedSpace());

@@ -134,7 +134,7 @@ public final class BuilderFile extends BuilderNode {
         setInodeRef(context.getInodeWriter().getPosition());
         int totalSize = inode.size();
         inode.writeTo(context.getIoBuffer(), 0);
-        if (lengths != null && lengths.size() > 0) {
+        if (lengths != null && !lengths.isEmpty()) {
             for (int i = 0; i < lengths.size(); ++i) {
                 ByteUtil.writeLeInt(lengths.get(i), context.getIoBuffer(), inode.size() + i * 4);
             }

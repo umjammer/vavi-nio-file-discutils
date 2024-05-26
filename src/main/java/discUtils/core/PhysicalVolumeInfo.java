@@ -118,19 +118,12 @@ public final class PhysicalVolumeInfo extends VolumeInfo {
         if (volumeType == PhysicalVolumeType.GptPartition) {
             return "VPG" + String.format("{%s}", getPartitionIdentity());
         }
-        String partId;
-        switch (volumeType) {
-        case EntireDisk:
-            partId = "PD";
-            break;
-        case BiosPartition:
-        case ApplePartition:
-            partId = "PO" + Long.toHexString(partition.getFirstSector() * disk.getSectorSize());
-            break;
-        default:
-            partId = "P*";
-            break;
-        }
+        String partId = switch (volumeType) {
+            case EntireDisk -> "PD";
+            case BiosPartition, ApplePartition ->
+                    "PO" + Long.toHexString(partition.getFirstSector() * disk.getSectorSize());
+            default -> "P*";
+        };
 
         return "VPD:" + diskId + ":" + partId;
     }

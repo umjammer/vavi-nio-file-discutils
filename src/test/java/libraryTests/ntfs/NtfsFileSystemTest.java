@@ -366,7 +366,7 @@ public class NtfsFileSystemTest {
             try (Stream stream = ntfs.openFile("DIR" + FS + "file" + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
                 stream.write(buffer, 0, buffer.length);
             }
-            try (Stream stream = ntfs.openFile("DIR" + FS + "" + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
+            try (Stream stream = ntfs.openFile("DIR" + FS + i + ".bin", FileMode.Create, FileAccess.ReadWrite)) {
                 stream.write(buffer, 0, buffer.length);
             }
         }

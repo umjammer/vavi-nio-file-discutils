@@ -37,6 +37,7 @@ import discUtils.streams.SparseStream;
 import discUtils.streams.StreamExtent;
 import dotnet4j.io.FileAccess;
 import dotnet4j.io.SeekOrigin;
+import vavi.util.Debug;
 
 
 public final class OnDemandVirtualDisk extends VirtualDisk {
@@ -77,7 +78,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -91,7 +92,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -105,7 +106,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -119,7 +120,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -141,7 +142,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -157,7 +158,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -173,7 +174,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                 try {
                     disk.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Debug.printStackTrace(e);
                 }
         }
     }
@@ -211,7 +212,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -225,7 +226,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -239,7 +240,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -253,7 +254,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -270,7 +271,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -293,7 +294,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -323,7 +324,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }
@@ -338,7 +339,7 @@ public final class OnDemandVirtualDisk extends VirtualDisk {
                     try {
                         disk.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Debug.printStackTrace(e);
                     }
             }
         }

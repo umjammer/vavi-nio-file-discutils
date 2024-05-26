@@ -94,7 +94,7 @@ logger.log(Level.DEBUG, "fs: " + fs);
         return new DuFileSystemDriver(fileStore, factoryProvider, fs, env);
     }
 
-    /* ad-hoc hack for ignoring checking opacity */
+    // ad-hoc hack for ignoring checking opacity
     @Override
     protected void checkURI(URI uri) {
         Objects.requireNonNull(uri);

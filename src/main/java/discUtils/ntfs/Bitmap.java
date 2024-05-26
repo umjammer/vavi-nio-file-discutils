@@ -95,7 +95,7 @@ final class Bitmap implements Closeable {
         for (long i = index; i < index + count; ++i) {
             long byteIdx = i / 8 - firstByte;
             byte mask = (byte) (1 << (byte) (i % 8));
-            buffer[(int) byteIdx] |= mask;
+            buffer[(int) byteIdx] = (byte) (buffer[(int) byteIdx] | mask);
         }
 
         setBytes(firstByte, buffer);
@@ -136,7 +136,7 @@ final class Bitmap implements Closeable {
             long byteIdx = i / 8 - firstByte;
             byte mask = (byte) (1 << (byte) (i % 8));
 
-            buffer[(int) byteIdx] &= (byte) ~mask;
+            buffer[(int) byteIdx] = (byte) (buffer[(int) byteIdx] & (byte) ~mask);
         }
 
         setBytes(firstByte, buffer);

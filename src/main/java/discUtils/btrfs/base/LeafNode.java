@@ -91,47 +91,21 @@ public class LeafNode extends NodeHeader {
 
     private BaseItem createItem(NodeItem item, byte[] buffer, int offset) {
         byte[] data = EndianUtilities.toByteArray(buffer, (offset + item.getDataOffset()), item.getDataSize());
-        BaseItem result;
-        switch (item.getKey().getItemType()) {
-        case ChunkItem:
-            result = new ChunkItem(item.getKey());
-            break;
-        case DevItem:
-            result = new DevItem(item.getKey());
-            break;
-        case RootItem:
-            result = new RootItem(item.getKey());
-            break;
-        case InodeRef:
-            result = new InodeRef(item.getKey());
-            break;
-        case InodeItem:
-            result = new InodeItem(item.getKey());
-            break;
-        case DirItem:
-            result = new DirItem(item.getKey());
-            break;
-        case DirIndex:
-            result = new DirIndex(item.getKey());
-            break;
-        case ExtentData:
-            result = new ExtentData(item.getKey());
-            break;
-        case RootRef:
-            result = new RootRef(item.getKey());
-            break;
-        case RootBackref:
-            result = new RootBackref(item.getKey());
-            break;
-        case XattrItem:
-            result = new XattrItem(item.getKey());
-            break;
-        case OrphanItem:
-            result = new OrphanItem(item.getKey());
-            break;
-        default:
-            throw new IOException("Unsupported item type {item.Key.ItemType}");
-        }
+        BaseItem result = switch (item.getKey().getItemType()) {
+            case ChunkItem -> new ChunkItem(item.getKey());
+            case DevItem -> new DevItem(item.getKey());
+            case RootItem -> new RootItem(item.getKey());
+            case InodeRef -> new InodeRef(item.getKey());
+            case InodeItem -> new InodeItem(item.getKey());
+            case DirItem -> new DirItem(item.getKey());
+            case DirIndex -> new DirIndex(item.getKey());
+            case ExtentData -> new ExtentData(item.getKey());
+            case RootRef -> new RootRef(item.getKey());
+            case RootBackref -> new RootBackref(item.getKey());
+            case XattrItem -> new XattrItem(item.getKey());
+            case OrphanItem -> new OrphanItem(item.getKey());
+            default -> throw new IOException("Unsupported item type {item.Key.ItemType}");
+        };
         result.readFrom(data, 0);
         return result;
     }

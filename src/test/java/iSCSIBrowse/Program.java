@@ -34,6 +34,7 @@ import discUtils.iscsi.TargetAddress;
 import discUtils.iscsi.TargetInfo;
 import org.klab.commons.cli.Option;
 import org.klab.commons.cli.Options;
+import vavi.util.Debug;
 
 
 @Options
@@ -81,7 +82,7 @@ public class Program extends ProgramBase {
                             for (int i = 0; i < uris.size(); ++i) {
                                 System.err.println("  URI[" + i + "]: " + uris.get(i));
                             }
-                        } else if (uris.size() > 0) {
+                        } else if (!uris.isEmpty()) {
                             System.err.println("  URI: " + uris.get(0));
                         }
 
@@ -101,7 +102,7 @@ public class Program extends ProgramBase {
                 System.err.println("No targets found");
             }
         } catch (LoginException e) {
-            e.printStackTrace();
+            Debug.printStackTrace(e);
             System.err.println("ERROR: Need credentials, or the credentials specified were invalid");
         }
     }

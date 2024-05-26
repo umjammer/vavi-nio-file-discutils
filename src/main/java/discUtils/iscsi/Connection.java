@@ -93,13 +93,10 @@ class Connection implements Closeable {
     }
 
     LoginStages getNextLoginStage() {
-        switch (currentLoginStage) {
-        case SecurityNegotiation:
-            return LoginStages.LoginOperationalNegotiation;
-        case LoginOperationalNegotiation:
-        default:
-            return LoginStages.FullFeaturePhase;
-        }
+        return switch (currentLoginStage) {
+            case SecurityNegotiation -> LoginStages.LoginOperationalNegotiation;
+            default -> LoginStages.FullFeaturePhase;
+        };
     }
 
     private Session session;
@@ -322,7 +319,7 @@ class Connection implements Closeable {
         }
 
         if (resp.continue_) {
-            MemoryStream ms = new MemoryStream();
+            try (MemoryStream ms = new MemoryStream()) {
                 ms.write(resp.textData, 0, resp.textData.length);
 
                 while (resp.continue_) {
@@ -332,6 +329,7 @@ class Connection implements Closeable {
                 }
 
                 settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
+            }
         } else if (resp.textData != null) {
             settings.readFrom(resp.textData, 0, resp.textData.length);
         }
@@ -438,7 +436,7 @@ class Connection implements Closeable {
         }
 
         if (resp.continue_) {
-            MemoryStream ms = new MemoryStream();
+            try (MemoryStream ms = new MemoryStream()) {
                 ms.write(resp.textData, 0, resp.textData.length);
 
                 while (resp.continue_) {
@@ -448,6 +446,7 @@ class Connection implements Closeable {
                 }
 
                 settings.readFrom(ms.toArray(), 0, (int) ms.getLength());
+            }
         } else if (resp.textData != null) {
             settings.readFrom(resp.textData, 0, resp.textData.length);
         }
@@ -569,33 +568,16 @@ class Connection implements Closeable {
 
     @SuppressWarnings("unchecked")
     private <T extends BaseResponse> T parseResponse(Class<T> clazz, ProtocolDataUnit pdu) {
-        BaseResponse resp;
-
-        switch (pdu.getOpCode()) {
-        case LoginResponse:
-            resp = new LoginResponse();
-            break;
-        case LogoutResponse:
-            resp = new LogoutResponse();
-            break;
-        case ReadyToTransfer:
-            resp = new ReadyToTransferPacket();
-            break;
-        case Reject:
-            resp = new RejectPacket();
-            break;
-        case ScsiDataIn:
-            resp = new DataInPacket();
-            break;
-        case ScsiResponse:
-            resp = new Response();
-            break;
-        case TextResponse:
-            resp = new TextResponse();
-            break;
-        default:
-            throw new InvalidProtocolException("Unrecognized response opcode: " + pdu.getOpCode());
-        }
+        BaseResponse resp = switch (pdu.getOpCode()) {
+            case LoginResponse -> new LoginResponse();
+            case LogoutResponse -> new LogoutResponse();
+            case ReadyToTransfer -> new ReadyToTransferPacket();
+            case Reject -> new RejectPacket();
+            case ScsiDataIn -> new DataInPacket();
+            case ScsiResponse -> new Response();
+            case TextResponse -> new TextResponse();
+            default -> throw new InvalidProtocolException("Unrecognized response opcode: " + pdu.getOpCode());
+        };
 
         resp.parse(pdu);
         if (resp.statusPresent) {

@@ -115,7 +115,7 @@ public final class DuFileSystemDriver extends ExtendedFileSystemDriver<DiscFileS
 
     @Override
     protected boolean hasChildren(DiscFileSystemInfo dirEntry, Path dir) throws IOException {
-        return getDirectoryEntries(dirEntry, dir).size() > 0;
+        return !getDirectoryEntries(dirEntry, dir).isEmpty();
     }
 
     @Override

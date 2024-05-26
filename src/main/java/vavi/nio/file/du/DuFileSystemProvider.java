@@ -38,7 +38,7 @@ public final class DuFileSystemProvider extends FileSystemProviderBase {
      * TODO consider more
      */
     public static URI createURI(String path) throws IOException {
-        String url = URLEncoder.encode(Paths.get(path).toAbsolutePath().toString(), "utf-8");
+        String url = URLEncoder.encode(Paths.get(path).toAbsolutePath().toString(), StandardCharsets.UTF_8);
         url = url.replace("%2F", "/");
         url = url.replace("+", "%20");
         URI uri = URI.create("discutils:file:" + url);

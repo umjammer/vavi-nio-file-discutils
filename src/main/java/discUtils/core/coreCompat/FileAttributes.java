@@ -111,5 +111,3 @@ public enum FileAttributes implements EnumSettable {
         return toEnumSet(bs);
     }
 }
-
-/* */

@@ -54,14 +54,14 @@ class CookedDataRuns {
     }
 
     public CookedDataRun getLast() {
-        if (runs.size() == 0) {
+        if (runs.isEmpty()) {
             return null;
         }
         return runs.get(runs.size() - 1);
     }
 
     public long getNextVirtualCluster() {
-        if (runs.size() == 0) {
+        if (runs.isEmpty()) {
             return 0;
         }
         int lastRun = runs.size() - 1;

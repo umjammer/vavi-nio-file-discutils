@@ -56,7 +56,7 @@ public class BootValidationEntry {
     public boolean getChecksumValid() {
         short total = 0;
         for (int i = 0; i < 16; ++i) {
-            total += ByteUtil.readLeShort(data, i * 2);
+            total = (short) (total + ByteUtil.readLeShort(data, i * 2));
         }
         return total == 0;
     }

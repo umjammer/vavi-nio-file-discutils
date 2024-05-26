@@ -178,5 +178,3 @@ public class JavaNIOStream extends Stream {
         super.writeByte(value);
     }
 }
-
-/* */

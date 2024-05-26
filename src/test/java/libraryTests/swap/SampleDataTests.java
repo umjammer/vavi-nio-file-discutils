@@ -21,7 +21,7 @@ import libraryTests.utilities.ZipUtilities;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 
 public class SampleDataTests {
@@ -44,7 +44,7 @@ public class SampleDataTests {
             assertEquals("swap", filesystem.getName());
 
             DiscFileSystem swap = filesystem.open(volume);
-            assertTrue(swap instanceof SwapFileSystem);
+            assertInstanceOf(SwapFileSystem.class, swap);
 
             assertEquals(0, swap.getAvailableSpace());
             assertEquals(10737414144L, swap.getSize());

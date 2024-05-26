@@ -66,43 +66,30 @@ public final class RpcException extends IOException {
 
     private static String generateMessage(RpcReplyHeader reply) {
         if (reply.Status == RpcReplyStatus.Accepted) {
-            switch (reply.acceptReply.AcceptStatus) {
-            case Success:
-                return "RPC success";
-            case ProgramUnavailable:
-                return "RPC program unavailable";
-            case ProgramVersionMismatch:
-                if (reply.acceptReply.mismatchInfo.low == reply.acceptReply.mismatchInfo.high) {
-                    return "RPC program version mismatch, server supports version " + reply.acceptReply.mismatchInfo.low;
+            return switch (reply.acceptReply.AcceptStatus) {
+                case Success -> "RPC success";
+                case ProgramUnavailable -> "RPC program unavailable";
+                case ProgramVersionMismatch -> {
+                    if (reply.acceptReply.mismatchInfo.low == reply.acceptReply.mismatchInfo.high) {
+                        yield "RPC program version mismatch, server supports version " + reply.acceptReply.mismatchInfo.low;
+                    }
+                    yield "RPC program version mismatch, server supports versions " + reply.acceptReply.mismatchInfo.low +
+                            " through " + reply.acceptReply.mismatchInfo.high;
                 }
-
-                return "RPC program version mismatch, server supports versions " + reply.acceptReply.mismatchInfo.low +
-                       " through " + reply.acceptReply.mismatchInfo.high;
-            case ProcedureUnavailable:
-                return "RPC procedure unavailable";
-            case GarbageArguments:
-                return "RPC corrupt procedure arguments";
-            default:
-                return "RPC failure";
-
-            }
+                case ProcedureUnavailable -> "RPC procedure unavailable";
+                case GarbageArguments -> "RPC corrupt procedure arguments";
+            };
         }
 
         if (reply.rejectedReply.status == RpcRejectedStatus.AuthError) {
-            switch (reply.rejectedReply.authenticationStatus) {
-            case BadCredentials:
-                return "RPC authentication credentials bad";
-            case RejectedCredentials:
-                return "RPC rejected authentication credentials";
-            case BadVerifier:
-                return "RPC bad authentication verifier";
-            case RejectedVerifier:
-                return "RPC rejected authentication verifier";
-            case TooWeak:
-                return "RPC authentication credentials too weak";
-            default:
-                return "RPC authentication failure";
-            }
+            return switch (reply.rejectedReply.authenticationStatus) {
+                case BadCredentials -> "RPC authentication credentials bad";
+                case RejectedCredentials -> "RPC rejected authentication credentials";
+                case BadVerifier -> "RPC bad authentication verifier";
+                case RejectedVerifier -> "RPC rejected authentication verifier";
+                case TooWeak -> "RPC authentication credentials too weak";
+                default -> "RPC authentication failure";
+            };
         }
 
         if (reply.rejectedReply.mismatchInfo != null) {

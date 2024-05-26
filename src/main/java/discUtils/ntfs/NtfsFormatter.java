@@ -273,7 +273,7 @@ public class NtfsFormatter {
         ntfs.setSecurity("$Extend" + FS + "$Reparse",
                          new RawSecurityDescriptor("O:" + localAdminString + "G:BAD:(A;;0x12019f;;;SY)(A;;0x12019f;;;BA)"));
         ntfs.createDirectory("System Volume Information");
-        ntfs.setAttributes("System Volume Information", new HashMap<String, Object>() {
+        ntfs.setAttributes("System Volume Information", new HashMap<>() {
             {
                 put(FileAttributeFlags.Hidden.name(), true);
                 put(FileAttributeFlags.System.name(), true);
@@ -285,7 +285,7 @@ public class NtfsFormatter {
         } catch (IOException e) {
             throw new dotnet4j.io.IOException(e);
         }
-        ntfs.setAttributes("System Volume Information" + FS + "MountPointManagerRemoteDatabase", new HashMap<String, Object>() {
+        ntfs.setAttributes("System Volume Information" + FS + "MountPointManagerRemoteDatabase", new HashMap<>() {
             {
                 put(FileAttributeFlags.Hidden.name(), true);
                 put(FileAttributeFlags.System.name(), true);

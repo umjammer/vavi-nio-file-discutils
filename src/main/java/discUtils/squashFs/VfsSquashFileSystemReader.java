@@ -158,31 +158,16 @@ class VfsSquashFileSystemReader extends VfsReadOnlyFileSystem<DirectoryEntry, Fi
     }
 
     static UnixFileType fileTypeFromInodeType(InodeType inodeType) {
-        switch (inodeType) {
-        case BlockDevice:
-        case ExtendedBlockDevice:
-            return UnixFileType.Block;
-        case CharacterDevice:
-        case ExtendedCharacterDevice:
-            return UnixFileType.Character;
-        case Directory:
-        case ExtendedDirectory:
-            return UnixFileType.Directory;
-        case Fifo:
-        case ExtendedFifo:
-            return UnixFileType.Fifo;
-        case File:
-        case ExtendedFile:
-            return UnixFileType.Regular;
-        case Socket:
-        case ExtendedSocket:
-            return UnixFileType.Socket;
-        case Symlink:
-        case ExtendedSymlink:
-            return UnixFileType.Link;
-        default:
-            throw new IllegalArgumentException("Unrecognized inode type: " + inodeType);
-        }
+        return switch (inodeType) {
+            case BlockDevice, ExtendedBlockDevice -> UnixFileType.Block;
+            case CharacterDevice, ExtendedCharacterDevice -> UnixFileType.Character;
+            case Directory, ExtendedDirectory -> UnixFileType.Directory;
+            case Fifo, ExtendedFifo -> UnixFileType.Fifo;
+            case File, ExtendedFile -> UnixFileType.Regular;
+            case Socket, ExtendedSocket -> UnixFileType.Socket;
+            case Symlink, ExtendedSymlink -> UnixFileType.Link;
+            default -> throw new IllegalArgumentException("Unrecognized inode type: " + inodeType);
+        };
     }
 
     @Override protected File convertDirEntryToFile(DirectoryEntry dirEntry) {

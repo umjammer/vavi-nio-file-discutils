@@ -164,7 +164,7 @@ public abstract class VirtualDisk implements Serializable, Closeable {
      */
     public PartitionTable getPartitions() {
         List<PartitionTable> tables = PartitionTable.getPartitionTables(this);
-        if (tables == null || tables.size() == 0) {
+        if (tables == null || tables.isEmpty()) {
             return null;
         }
         if (tables.size() == 1) {
@@ -582,7 +582,7 @@ logger.log(Level.DEBUG, extension + " / " + VirtualDiskManager.getExtensionMap()
 
         // Built-in Uri class does cope well with query params on file Uris, so
         // do some parsing ourselves...
-        if (path.length() >= 1 && path.charAt(0) == '/') {
+        if (!path.isEmpty() && path.charAt(0) == '/') {
             URI builder = URI.create("file:" + path.replace(" ", "%20"));
             return builder;
         }

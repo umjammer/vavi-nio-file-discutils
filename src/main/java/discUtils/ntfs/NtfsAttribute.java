@@ -67,34 +67,21 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     protected String getAttributeTypeName() {
-        switch (primaryRecord.getAttributeType()) {
-        case StandardInformation:
-            return "STANDARD INFORMATION";
-        case FileName:
-            return "FILE NAME";
-        case SecurityDescriptor:
-            return "SECURITY DESCRIPTOR";
-        case Data:
-            return "DATA";
-        case Bitmap:
-            return "BITMAP";
-        case VolumeName:
-            return "VOLUME NAME";
-        case VolumeInformation:
-            return "VOLUME INFORMATION";
-        case IndexRoot:
-            return "INDEX ROOT";
-        case IndexAllocation:
-            return "INDEX ALLOCATION";
-        case ObjectId:
-            return "OBJECT ID";
-        case ReparsePoint:
-            return "REPARSE POINT";
-        case AttributeList:
-            return "ATTRIBUTE LIST";
-        default:
-            return "UNKNOWN";
-        }
+        return switch (primaryRecord.getAttributeType()) {
+            case StandardInformation -> "STANDARD INFORMATION";
+            case FileName -> "FILE NAME";
+            case SecurityDescriptor -> "SECURITY DESCRIPTOR";
+            case Data -> "DATA";
+            case Bitmap -> "BITMAP";
+            case VolumeName -> "VOLUME NAME";
+            case VolumeInformation -> "VOLUME INFORMATION";
+            case IndexRoot -> "INDEX ROOT";
+            case IndexAllocation -> "INDEX ALLOCATION";
+            case ObjectId -> "OBJECT ID";
+            case ReparsePoint -> "REPARSE POINT";
+            case AttributeList -> "ATTRIBUTE LIST";
+            default -> "UNKNOWN";
+        };
     }
 
     public long getCompressedDataSize() {
@@ -172,12 +159,11 @@ class NtfsAttribute implements IDiagnosticTraceable {
             long lastVcn = 0;
             for (Map.Entry<AttributeReference, AttributeRecord> extent : extents.entrySet()) {
                 AttributeRecord record = extent.getValue();
-                if (!(record instanceof NonResidentAttributeRecord)) {
+                if (!(record instanceof NonResidentAttributeRecord nonResident)) {
                     // Resident attribute, so there can only be one...
                     return extent.getValue();
                 }
 
-                NonResidentAttributeRecord nonResident = (NonResidentAttributeRecord) record;
                 if (nonResident.getLastVcn() >= lastVcn) {
                     last = extent.getValue();
                     lastVcn = nonResident.getLastVcn();
@@ -252,34 +238,23 @@ class NtfsAttribute implements IDiagnosticTraceable {
     }
 
     public static NtfsAttribute fromRecord(File file, FileRecordReference recordFile, AttributeRecord record) {
-        switch (record.getAttributeType()) {
-        case StandardInformation:
-            return new StructuredNtfsAttribute<>(StandardInformation.class, file, recordFile, record);
-        case FileName:
-            return new StructuredNtfsAttribute<>(FileNameRecord.class, file, recordFile, record);
-        case SecurityDescriptor:
-            return new StructuredNtfsAttribute<>(SecurityDescriptor.class, file, recordFile, record);
-        case Data:
-            return new NtfsAttribute(file, recordFile, record);
-        case Bitmap:
-            return new NtfsAttribute(file, recordFile, record);
-        case VolumeName:
-            return new StructuredNtfsAttribute<>(VolumeName.class, file, recordFile, record);
-        case VolumeInformation:
-            return new StructuredNtfsAttribute<>(VolumeInformation.class, file, recordFile, record);
-        case IndexRoot:
-            return new NtfsAttribute(file, recordFile, record);
-        case IndexAllocation:
-            return new NtfsAttribute(file, recordFile, record);
-        case ObjectId:
-            return new StructuredNtfsAttribute<>(ObjectId.class, file, recordFile, record);
-        case ReparsePoint:
-            return new StructuredNtfsAttribute<>(ReparsePointRecord.class, file, recordFile, record);
-        case AttributeList:
-            return new StructuredNtfsAttribute<>(AttributeList.class, file, recordFile, record);
-        default:
-            return new NtfsAttribute(file, recordFile, record);
-        }
+        return switch (record.getAttributeType()) {
+            case StandardInformation ->
+                    new StructuredNtfsAttribute<>(StandardInformation.class, file, recordFile, record);
+            case FileName -> new StructuredNtfsAttribute<>(FileNameRecord.class, file, recordFile, record);
+            case SecurityDescriptor ->
+                    new StructuredNtfsAttribute<>(SecurityDescriptor.class, file, recordFile, record);
+            case Data -> new NtfsAttribute(file, recordFile, record);
+            case Bitmap -> new NtfsAttribute(file, recordFile, record);
+            case VolumeName -> new StructuredNtfsAttribute<>(VolumeName.class, file, recordFile, record);
+            case VolumeInformation -> new StructuredNtfsAttribute<>(VolumeInformation.class, file, recordFile, record);
+            case IndexRoot -> new NtfsAttribute(file, recordFile, record);
+            case IndexAllocation -> new NtfsAttribute(file, recordFile, record);
+            case ObjectId -> new StructuredNtfsAttribute<>(ObjectId.class, file, recordFile, record);
+            case ReparsePoint -> new StructuredNtfsAttribute<>(ReparsePointRecord.class, file, recordFile, record);
+            case AttributeList -> new StructuredNtfsAttribute<>(AttributeList.class, file, recordFile, record);
+            default -> new NtfsAttribute(file, recordFile, record);
+        };
     }
 
     public void setExtent(FileRecordReference containingFile, AttributeRecord record) {
@@ -307,7 +282,7 @@ class NtfsAttribute implements IDiagnosticTraceable {
             return false;
         }
 
-        if (oldRef.equals(getReference()) || extents.size() == 0) {
+        if (oldRef.equals(getReference()) || extents.isEmpty()) {
             primaryRecord = record;
             containingFile = newRef.getFile();
         }
