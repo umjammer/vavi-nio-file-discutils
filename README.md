@@ -1,7 +1,7 @@
 [![Release](https://jitpack.io/v/umjammer/vavi-nio-file-discutils.svg)](https://jitpack.io/#umjammer/vavi-nio-file-discutils)
-[![Actions Status](https://github.com/umjammer/vavi-nio-file-discutils/workflows/Java%20CI/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions)
+[![Java CI](https://github.com/umjammer/vavi-nio-file-discutils/actions/workflows/maven.yml/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions/workflows/maven.yml)
 [![CodeQL](https://github.com/umjammer/vavi-nio-file-discutils/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/umjammer/vavi-nio-file-discutils/actions/workflows/codeql-analysis.yml)
-![Java](https://img.shields.io/badge/Java-8-b07219)
+![Java](https://img.shields.io/badge/Java-17-b07219)
 [![Parent](https://img.shields.io/badge/Parent-vavi--apps--fuse-pink)](https://github.com/umjammer/vavi-apps-fuse)
 
 # vavi-nio-file-discutils
@@ -10,22 +10,7 @@ A Java NIO FileSystem implementation over [DiscUtils](https://github.com/DiscUti
 
 all formats are mounted by fuse also!
 
-## Install
-
-https://jitpack.io/#umjammer/vavi-nio-file-discutils
-
-## Usage
-
-```Java
- URI uri = URI.create("discutils:file:/Users/foo/bar.vdi");
- FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
- // use java nio file system
- Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
- // mount as fuse
- Fuse.getFuse().mount(fs, "/your/mountPoint", Collections.emptyMap());
-```
-
-## Status
+### Status
 
 | fs       | list           | upload | download  | copy | move | rm | mkdir | cache | watch | create | comment                                                                                                                               |
 |----------|----------------|--------|-----------|------|------|----|-------|-------|-------|--------|---------------------------------------------------------------------------------------------------------------------------------------|
@@ -47,8 +32,9 @@ https://jitpack.io/#umjammer/vavi-nio-file-discutils
 | NFS      | 🚫             |        |           |      |      |    |       |       |       | -      | server [nfs4j](https://github.com/dcache/nfs4j)                                                                                       |
 | ODS      | 🚫             |        |           |      |      |    |       |       |       | -      | server [vavi-net-ods](https://github.com/umjammer/vavi-net-ods)                                                                       |
 | EMU      | ✅ (nhd)        |        |           |      |      |    |       | -     |       | -      | [vavi-nio-file-emu](https://github.com/umjammer/vavi-nio-file-emu) [vavi-nio-file-fat](https://github.com/umjammer/vavi-nio-file-Fat) |
+| CHD      |                |        |           |      |      |    |       |      |       | -      | [jpcsp](https://github.com/jpcsp/jpcsp)                                                                                |
 
-## Project Description
+### Project Description
 
 vavi-nio-file-discutils is a Java library to read and write ISO files and Virtual Machine disk files (VHD, VDI, XVA, VMDK, etc). DiscUtils is developed in Java with no native code.
 
@@ -56,11 +42,11 @@ Implementation of the ISO, UDF, FAT and NTFS file systems is now fairly stable. 
 
 Note: this is a fork of https://github.com/DiscUtils/DiscUtils, which itself is a fork of https://github.com/quamotion/DiscUtils, which itself is a fork of https://discutils.codeplex.com/. 
 
-### Wiki (at original site)
+#### Wiki (at original site)
 
 See more up to date documentation at the [Wiki](https://github.com/DiscUtils/DiscUtils/wiki)
 
-### Implementation in this repository
+#### Implementation in this repository
 
 This repository has performed a few changes to the core DiscUtils library. For starters, all projects have been converted to Java, and are targeting Java 8.
 
@@ -83,17 +69,35 @@ For this to work, you must register your filesystem providers with the discUtils
 
 Where `class name` is the classes you wish to register.:
 
-    META-INF/services/discUtils.core.internal.VirtualDiskFactory // From complete
-    META-INF/services/discUtils.core.internal.LogicalVolumeFactory // From containers
-    META-INF/services/discUtils.core.vfs.VfsFileSystemFactory // From fileSystems
-    META-INF/services/discUtils.core.internal.VirtualDiskTransport // From transports
-    META-INF/services/discUtils.core.partitions.PartitionTableFactory // From partitions
+```properties
+META-INF/services/discUtils.core.internal.LogicalVolumeFactory # From containers
+META-INF/services/discUtils.core.vfs.VfsFileSystemFactory # From fileSystems
+META-INF/services/discUtils.core.internal.VirtualDiskTransport # From transports
+META-INF/services/discUtils.core.partitions.PartitionTableFactory # From partitions
+```
 
-## How to use the Library
+## Install
+
+* https://jitpack.io/#umjammer/vavi-nio-file-discutils
+
+## Usage
+
+as a java nio filesystem spi
+
+```Java
+ URI uri = URI.create("discutils:file:/Users/foo/bar.vdi");
+ FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap());
+ // use java nio file system
+ Files.list(fs.getRootDirectories().iterator().next()).forEach(System.err::println);
+ // mount as fuse
+ Fuse.getFuse().mount(fs, "/your/mountPoint", Collections.emptyMap());
+```
+
+### How to use the Library
 
 Here's a few really simple examples.
 
-### How to create a new ISO:
+#### How to create a new ISO:
 
 ```Java
  CDBuilder builder = new CDBuilder();
@@ -106,7 +110,7 @@ Here's a few really simple examples.
 You can add files as byte arrays (shown above), as files from the Windows filesystem, or as a Stream. By using a different form of Build, you can get a Stream to the ISO file, rather than writing it to the Windows filesystem.
 
 
-### How to extract a file from an ISO:
+#### How to extract a file from an ISO:
 
 ```Java
  try (FileStream isoStream = File.open("/tmp/sample.iso")) {
@@ -118,7 +122,7 @@ You can add files as byte arrays (shown above), as files from the Windows filesy
 
 You can also browse through the directory hierarchy, starting at cd.Root.
 
-### How to create a virtual hard disk:
+#### How to create a virtual hard disk:
 
 ```Java
  long diskSize = 30 * 1024 * 1024; // 30MB
@@ -135,7 +139,7 @@ You can also browse through the directory hierarchy, starting at cd.Root.
 As with ISOs, you can browse the file system, starting at fs.Root.
 
 
-### How to create a virtual floppy disk:
+#### How to create a virtual floppy disk:
 
 ```Java
  try (FileStream fs = File.create("myfloppy.vfd");
@@ -155,7 +159,7 @@ Again, start browsing the file system at floppy.Root.
 
 ## TODO
 
- * compile by jdk8
+ * ~~compile by jdk8~~
  * ~~https://github.com/AssafTzurEl/discUtils/commit/3853944811a16d6220dcb6e8d408561e05569e43~~
    * img ... https://github.com/hessu/bchunk
  * ~~file separator~~
@@ -166,7 +170,10 @@ Again, start browsing the file system at floppy.Root.
  * chd (wip, see aaru)
    * qlgenerator (wip, see vavi.apps.qlgenerator package)
    * https://mamedev.emulab.it/haze/2012/02/16/chd-v5/
+   * https://github.com/rtissera/libchdr
+   * [pscx2](https://github.com/PCSX2/pcsx2) has already chd code! 
  * iso9660
    * `CommonVolumeDescriptor` as `user:attributes` 
+   * https://github.com/Janix520/java-iso-tools
  * ~~registry~~
  * ~~🐛 vdi check sector length?~~ -> Util#SeekableByteChannel*
